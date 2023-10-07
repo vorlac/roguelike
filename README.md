@@ -4,25 +4,26 @@
     fmt
     spdlog
     argparse
-   
+
 #  # Physics
         box2d
-        
+
 ## ECS
       flecs
       entityx
 
 ## Graphics
+            glm
+            glfw3
+
+
+## Scenes
+      argparse
+      box2d
+      flecs
+      fmt
       glm
-      glfw3
 
 
-----
 
-
-        #find_package(argparse CONFIG REQUIRED)
-        #find_package(box2d CONFIG REQUIRED)
-        #find_package(flecs CONFIG REQUIRED)
-        #find_package(fmt CONFIG REQUIRED)
-        #find_package(glm CONFIG REQUIRED)
-        #find_package(spdlog CONFIG REQUIRED)
+https://github.com/maktoobgar/scene_manager
