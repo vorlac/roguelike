@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.8" tiledversion="1.8.4" orientation="orthogonal" renderorder="right-down" width="16" height="16" tilewidth="32" tileheight="32" infinite="0" nextlayerid="3" nextobjectid="2">
+ <editorsettings>
+  <export target="shuttle01.json" format="json"/>
+ </editorsettings>
+ <tileset firstgid="1" source="../tileset/scifi.tsx"/>
+ <tileset firstgid="257" source="../tileset/scifi-objects.tsx"/>
+ <layer id="1" name="Tile Layer 1" width="16" height="16">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,2,3,4,0,0,0,0,0,0,0,0,
+0,0,0,0,0,21,23,21,0,0,0,0,0,0,0,0,
+0,0,0,0,0,21,23,21,0,0,0,0,0,0,0,0,
+0,0,0,0,5,39,23,37,7,0,0,0,0,0,0,0,
+0,0,0,0,21,23,23,23,21,0,0,0,0,0,0,0,
+0,0,0,0,21,23,23,23,21,0,0,0,151,0,0,0,
+0,0,0,0,21,23,23,23,21,0,0,0,0,0,0,0,
+0,0,0,0,37,6,6,17,39,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+ <objectgroup id="2" name="Object Layer 1">
+  <object id="1" gid="258" x="224" y="96" width="32" height="32" rotation="-90"/>
+ </objectgroup>
+</map>

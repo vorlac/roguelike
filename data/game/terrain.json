@@ -1,0 +1,10 @@
+[
+    {
+        "Id": "empty_space",
+        "Name": "empty space",
+        "Description": "Empty space...",
+        "TileID": "Null",
+        "MoveCost": 0,
+        "Flags": [ "SOLID", "BLOCKS_VISION" ]
+    }
+]
