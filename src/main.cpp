@@ -4,34 +4,35 @@
 
 #include <argparse/argparse.hpp>
 #include <iostream>
+#include <string>
 
 bool parse_args(int argc, char** argv)
 {
-    argparse::ArgumentParser args("roguelike", "0.0.1", argparse::default_arguments::none);
-
-    // clang-format off
-    args.add_argument("-h", "--help")
-        .help("prints this message")
-        .implicit_value(true);
-
-    args.add_argument("-v", "--verbose")
-        .help("enables verbose output")
-        .implicit_value(true);
-
-    args.add_argument("-c", "--console")
-        .default_value("info")
-        .help("specifies stdout message level");
-
-    args.add_argument("-c", "--log")
-        .default_value("error")
-        .help("specifies logfile message level");
-
-    // clang-format on
+    auto args = argparse::ArgumentParser{ "roguelike", "0.0.1", argparse::default_arguments::help };
 
     try
     {
+        // clang-format off
+
+        args.add_argument("-v", "--verbose")
+            .help("enables verbose output")
+            .implicit_value(true);
+
+        args.add_argument("-c", "--console")
+            .default_value("info")
+            .help("specifies stdout message level");
+
+        args.add_argument("-c", "--log")
+            .default_value("error")
+            .help("specifies logfile message level");
+
+        // clang-format on
+
         args.parse_args(argc, argv);
+
+        // get arg example
         auto console_verbosity = args.get<std::string>("--console");
+
         return true;
     }
     catch (const std::runtime_error& err)
@@ -48,8 +49,6 @@ int main(int argc, char** argv)
     if (!parse_args(argc, argv))
         return -1;
 
-    rl::dims2i screen_dims{ 800, 600 };
-    std::string window_title{ "window title" };
-    auto game = rl::Application(screen_dims, window_title);
+    rl::Application game{};
     return game.run();
 }

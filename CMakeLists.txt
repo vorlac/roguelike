@@ -1,6 +1,7 @@
 ﻿cmake_minimum_required(VERSION 3.22)
+set(CMAKE_MESSAGE_LOG_LEVEL STATUS)
 
-project(roguelike 
+project(roguelike
     LANGUAGES
       C CXX
     VERSION
@@ -33,19 +34,36 @@ set(compiler_is_gnu "$<CXX_COMPILER_ID:GNU>")
 set(compiler_is_clang "$<OR:$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:Clang>>")
 
 file(GLOB_RECURSE
+  raylib_dummy_sources
+    CONFIGURE_DEPENDS
+      "${CMAKE_CURRENT_SOURCE_DIR}/extern/vcpkg/buildtrees/raylib/src/*/src/*.[hc]"
+      "${CMAKE_CURRENT_SOURCE_DIR}/extern/vcpkg/buildtrees/raylib/src/*/src/*.[hc]pp"
+)
+
+add_library(raylib_dummy EXCLUDE_FROM_ALL ${raylib_dummy_sources})
+
+target_include_directories(raylib_dummy PUBLIC
+  "${CMAKE_CURRENT_SOURCE_DIR}/extern/vcpkg/buildtrees/raylib/src/*/src/"
+)
+
+target_compile_definitions(raylib_dummy PUBLIC
+  PLATFORM_DESKTOP
+)
+
+set(raylib_VERBOSE 1)
+find_package(raylib CONFIG REQUIRED)
+find_package(argparse CONFIG REQUIRED)
+find_package(flecs CONFIG REQUIRED)
+find_package(EnTT CONFIG REQUIRED)
+find_package(fmt CONFIG REQUIRED)
+find_package(nlohmann_json CONFIG REQUIRED)
+
+file(GLOB_RECURSE
   roguelike_sources
     CONFIGURE_DEPENDS
       "${CMAKE_CURRENT_SOURCE_DIR}/src/*.[hc]"
       "${CMAKE_CURRENT_SOURCE_DIR}/src/*.[hc]pp"
 )
-
-
-set(raylib_VERBOSE 1)
-find_package(raylib CONFIG REQUIRED)
-find_package(argparse CONFIG REQUIRED)
-find_package(EnTT CONFIG REQUIRED)
-find_package(fmt CONFIG REQUIRED)
-find_package(nlohmann_json CONFIG REQUIRED)
 
 add_executable(${PROJECT_NAME}
   ${roguelike_sources}
@@ -95,9 +113,10 @@ target_link_options(${PROJECT_NAME}
     >
 )
 
-target_link_libraries(${PROJECT_NAME} 
+target_link_libraries(${PROJECT_NAME}
   PRIVATE raylib
   PRIVATE EnTT::EnTT
+  PRIVATE $<IF:$<TARGET_EXISTS:flecs::flecs>,flecs::flecs,flecs::flecs_static>
   PRIVATE nlohmann_json::nlohmann_json
   PRIVATE fmt::fmt
   PRIVATE winmm
@@ -105,16 +124,15 @@ target_link_libraries(${PROJECT_NAME}
 
 include(clang-format)
 
-set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} 
-  PROPERTY VS_STARTUP_PROJECT 
+set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+  PROPERTY VS_STARTUP_PROJECT
     ${PROJECT_NAME}
 )
 
-set_property(TARGET ${PROJECT_NAME} 
-  PROPERTY VS_DEBUGGER_ENVIRONMENT 
+set_property(TARGET ${PROJECT_NAME}
+  PROPERTY VS_DEBUGGER_ENVIRONMENT
     "PATH=${CMAKE_CURRENT_INSTALL_DIR}/${PROJECT_NAME}${CMAKE_EXECUTABLE_SUFFIX}"
 )
 
-# set(CMAKE_MESSAGE_LOG_LEVEL DEBUG)
 include(cmake-utils)
 print_project_variables()

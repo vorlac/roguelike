@@ -15,6 +15,17 @@ namespace rl
     {
         T x{ 0 };
         T y{ 0 };
+
+        vector2(Vector2&& vec2)
+        {
+            *this = std::move(vec2);
+        }
+
+        operator Vector2()
+            requires FloatingPoint<T>
+        {
+            return { x, y };
+        }
     };
 
     using vector2f = vector2<float>;

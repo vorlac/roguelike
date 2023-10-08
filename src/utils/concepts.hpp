@@ -6,8 +6,13 @@
 namespace rl
 {
     template <typename T>
-    concept Numeric = std::disjunction_v<std::is_same<T, float>, std::is_same<T, double>,
-                                         std::is_same<T, int32_t>, std::is_same<T, uint32_t>>;
+    concept FloatingPoint = std::disjunction_v<std::is_same<T, float>, std::is_same<T, double>>;
+
+    template <typename T>
+    concept Integer = std::disjunction_v<std::is_same<T, int32_t>, std::is_same<T, uint32_t>>;
+
+    template <typename T>
+    concept Numeric = FloatingPoint<T> || Integer<T>;
 
     template <auto N>
     concept PositiveNumeric = Numeric<decltype(N)> && N > 0;

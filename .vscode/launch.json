@@ -5,17 +5,37 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "project (gdb)",
+      "name": "rogulike (vsdbg)",
+      "type": "cppvsdbg",
+      "request": "launch",
+      "requireExactSource": true,
+      "symbolOptions": {
+        "searchPaths": [
+          "${workspaceFolder}"
+        ],
+        "searchMicrosoftSymbolServer": true
+      },
+      "program": "${command:cmake.launchTargetPath}",
+      "args": [
+        "--console",
+        "info",
+        "--log",
+        "error"
+      ],
+      "cwd": "${workspaceFolder}",
+      "visualizerFile": "${workspaceFolder}/.out/build/msvc-debug/vcpkg_installed/x64-windows/share/entt/natvis/entt/*",
+      "internalConsoleOptions": "openOnSessionStart",
+      "console": "internalConsole",
+      "externalConsole": false,
+    },
+    {
+      "name": "rogulike (gdb)",
       "type": "cppdbg",
       "request": "launch",
       "MIMode": "gdb",
       "linux": {
         "program": "${command:cmake.launchTargetPath}",
         "miDebuggerPath": "/usr/bin/gdb"
-      },
-      "windows": {
-        "program": "${command:cmake.launchTargetPath}",
-        "miDebuggerPath": "C:\\tools\\mingw64\\bin\\gdb.exe"
       },
       "args": [],
       "cwd": "${workspaceFolder}",
@@ -35,73 +55,6 @@
           "ignoreFailures": true
         }
       ]
-    },
-    {
-      "name": "editor (gdb)",
-      "type": "cppdbg",
-      "request": "launch",
-      "MIMode": "gdb",
-      "program": "unsupported platform, add executable path to launch.json",
-      "linux": {
-        "program": "${command:cmake.launchTargetPath}",
-        "miDebuggerPath": "/usr/bin/gdb"
-      },
-      "args": [],
-      "cwd": "${workspaceFolder}",
-      "visualizerFile": "${workspaceFolder}/.out/build/msvc-debug/vcpkg_installed/x64-windows/share/entt/natvis/entt/*",
-      "internalConsoleOptions": "openOnSessionStart",
-      "launchCompleteCommand": "exec-run",
-      "targetArchitecture": "x64",
-      "externalConsole": false,
-      "symbolLoadInfo": {
-        "loadAll": true,
-        "exceptionList": ""
-      },
-      "setupCommands": [
-        {
-          "description": "Enable pretty-printing for gdb",
-          "text": "-enable-pretty-printing",
-          "ignoreFailures": true
-        }
-      ]
-    },
-    {
-      "name": "project (vsdbg)",
-      "type": "cppvsdbg",
-      "request": "launch",
-      "requireExactSource": true,
-      "symbolOptions": {
-        "searchPaths": [
-          "${workspaceFolder}"
-        ],
-        "searchMicrosoftSymbolServer": true
-      },
-      "program": "${command:cmake.launchTargetPath}",
-      "args": [],
-      "cwd": "${workspaceFolder}",
-      "visualizerFile": "${workspaceFolder}/.out/build/msvc-debug/vcpkg_installed/x64-windows/share/entt/natvis/entt/*",
-      "internalConsoleOptions": "openOnSessionStart",
-      "console": "internalConsole",
-      "externalConsole": false,
-    },
-    {
-      "name": "editor (vsdbg)",
-      "type": "cppvsdbg",
-      "request": "launch",
-      "requireExactSource": true,
-      "symbolOptions": {
-        "searchPaths": [
-          "${workspaceFolder}"
-        ],
-        "searchMicrosoftSymbolServer": true
-      },
-      "program": "${command:cmake.launchTargetPath}",
-      "args": [],
-      "cwd": "${workspaceFolder}",
-      "visualizerFile": "${workspaceFolder}/.out/build/msvc-debug/vcpkg_installed/x64-windows/share/entt/natvis/entt/*",
-      "internalConsoleOptions": "openOnSessionStart",
-      "console": "internalConsole",
-      "externalConsole": false,
     }
   ]
 }

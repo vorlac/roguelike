@@ -42,7 +42,7 @@ namespace rl
             Active,
             Teardown,
             Finished,
-        }
+        };
 
         State state{ State::Invalid };
     };

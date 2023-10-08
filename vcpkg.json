@@ -8,6 +8,7 @@
     "nlohmann-json",
     "entt",
     "raylib",
-    "fmt"
+    "fmt",
+    "flecs"
   ]
 }
