@@ -105,14 +105,6 @@ target_include_directories(${PROJECT_NAME}
   PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src"
 )
 
-target_link_options(${PROJECT_NAME}
-  PRIVATE
-    $<$<NOT:${compiler_is_msvc}>:
-      -static-libgcc
-      -static-libstdc++
-    >
-)
-
 target_link_libraries(${PROJECT_NAME}
   PRIVATE raylib
   PRIVATE EnTT::EnTT
