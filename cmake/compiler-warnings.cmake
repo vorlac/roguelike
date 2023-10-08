@@ -16,22 +16,19 @@ target_compile_options(${PROJECT_NAME}
     PRIVATE
         # MSVC only
         $<${compiler_is_msvc}:
+            # Enable all warnings
+            #/Wall
             /W4
 
-            /w14263 # 'function': member function does not override any base class virtual member function
-            /w14296 # 'operator': expression is always 'boolean_value'
-            /w14311 # 'variable': pointer truncation from 'type1' to 'type2'
-            /w14545 # expression before comma evaluates to a function which is missing an argument list
-            /w14546 # function call before comma missing argument list
-            /w14547 # 'operator': operator before comma has no effect; expected operator with side-effect
-            /w14549 # 'operator': operator before comma has no effect; did you intend 'operator'?
-            /w14619 # pragma warning: there is no warning number 'number'
-            /w14640 # thread un-safe static member initialization
-            /w14905 # wide string literal cast to 'LPSTR'
-            /w14906 # string literal cast to 'LPWSTR'
+            # Treat all warning as errors
+            /WX 
 
             # Disable warnings which bleed through from godot-cpp's macros.
-            /wd4100  # unreferenced formal parameter
+            /wd4514 # unreferenced inline function has been removed
+            /wd4866  # compiler may not enforce left-to-right evaluation order for call
+
+            # coming from argparse...
+            /wd5045 # compiler will insert Spectre mitigation for memory load if /Qspectre switch specified
         >
 
         # Clang and GNU
@@ -51,16 +48,14 @@ target_compile_options(${PROJECT_NAME}
 
             # Disable warnings which bleed through from godot-cpp's macros.
             -Wno-unused-parameter
+            -Wno-c++98-compat
+            -Wno-pre-c++20-compat-pedantic
         >
 
         # Clang only
         $<${compiler_is_clang}:
             -Wdocumentation
             -Wimplicit-fallthrough
-
-            # Disable
-            -Wno-ignored-attributes
-            -Wno-unknown-attributes
         >
 
         # GNU only
@@ -69,10 +64,6 @@ target_compile_options(${PROJECT_NAME}
             -Wduplicated-branches
             -Wduplicated-cond
             -Wlogical-op
-
-            # Disable
-            -Wno-attributes
-            -Wno-attributes=rl::
         >
 )
 

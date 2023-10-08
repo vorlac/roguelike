@@ -2,14 +2,14 @@
   "version": "0.2.1",
   "configurations": [
     {
-      "type": "cppdbg",
-      "isDefaultConfiguration": true,
       "args": [
         "--console=info",
-        "--logging=error"
+        "--log=error"
       ],
+      "isDefaultConfiguration": true,
+      "name": "roguelike",
       "project": "CMakeLists.txt",
-      "name": "roguelike"
+      "type": "default"
     }
   ]
 }

@@ -1,6 +1,7 @@
 ﻿cmake_minimum_required(VERSION 3.22)
 
-project(roguelike LANGUAGES
+project(roguelike 
+    LANGUAGES
       C CXX
     VERSION
       0.0.1
@@ -19,7 +20,7 @@ list(APPEND CMAKE_MODULE_PATH
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_COLOR_DIAGNOSTICS ON)
 
 string(TOLOWER "${CMAKE_SYSTEM_NAME}" host_os)
@@ -38,13 +39,17 @@ file(GLOB_RECURSE
       "${CMAKE_CURRENT_SOURCE_DIR}/src/*.[hc]pp"
 )
 
-add_executable(${PROJECT_NAME}
-    ${roguelike_sources}
-)
 
+set(raylib_VERBOSE 1)
 find_package(raylib CONFIG REQUIRED)
+find_package(argparse CONFIG REQUIRED)
 find_package(EnTT CONFIG REQUIRED)
+find_package(fmt CONFIG REQUIRED)
 find_package(nlohmann_json CONFIG REQUIRED)
+
+add_executable(${PROJECT_NAME}
+  ${roguelike_sources}
+)
 
 include(compiler-warnings)
 
@@ -76,20 +81,6 @@ target_compile_options(${PROJECT_NAME} PUBLIC
       /O2
     >
   >
-
-  $<$<NOT:${compiler_is_msvc}>:
-    -g
-
-    $<$<CONFIG:Debug>:
-      -fno-omit-frame-pointer
-      -O0
-    >
-
-    $<$<CONFIG:Release>:
-      -fomit-frame-pointer
-      -O3
-    >
-  >
 )
 
 target_include_directories(${PROJECT_NAME}
@@ -99,32 +90,30 @@ target_include_directories(${PROJECT_NAME}
 target_link_options(${PROJECT_NAME}
   PRIVATE
     $<$<NOT:${compiler_is_msvc}>:
-        -static-libgcc
-        -static-libstdc++
+      -static-libgcc
+      -static-libstdc++
     >
 )
 
-# =======================================================================
-# Dependency linkage
-# =======================================================================
-
 target_link_libraries(${PROJECT_NAME} 
-    PRIVATE raylib
-    PRIVATE EnTT::EnTT
-    PRIVATE nlohmann_json::nlohmann_json
-    PRIVATE winmm
+  PRIVATE raylib
+  PRIVATE EnTT::EnTT
+  PRIVATE nlohmann_json::nlohmann_json
+  PRIVATE fmt::fmt
+  PRIVATE winmm
 )
 
-#target_link_libraries(${PROJECT_NAME} PRIVATE argparse::argparse)
-#target_link_libraries(${PROJECT_NAME} PRIVATE box2d::box2d)
-#target_link_libraries(${PROJECT_NAME} PRIVATE $<IF:$<TARGET_EXISTS:flecs::flecs>,flecs::flecs,flecs::flecs_static>)
-#target_link_libraries(${PROJECT_NAME} PRIVATE fmt::fmt)
-#target_link_libraries(${PROJECT_NAME} PRIVATE glm::glm)
-#target_link_libraries(${PROJECT_NAME} PRIVATE spdlog::spdlog)
+include(clang-format)
 
-# =======================================================================
-# Print configuration report
-# =======================================================================
+set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} 
+  PROPERTY VS_STARTUP_PROJECT 
+    ${PROJECT_NAME}
+)
+
+set_property(TARGET ${PROJECT_NAME} 
+  PROPERTY VS_DEBUGGER_ENVIRONMENT 
+    "PATH=${CMAKE_CURRENT_INSTALL_DIR}/${PROJECT_NAME}${CMAKE_EXECUTABLE_SUFFIX}"
+)
 
 # set(CMAKE_MESSAGE_LOG_LEVEL DEBUG)
 include(cmake-utils)

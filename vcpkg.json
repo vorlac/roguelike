@@ -4,9 +4,10 @@
   "name": "roguelike",
   "version": "0.1.0",
   "dependencies": [
+    "argparse",
     "nlohmann-json",
-    "raylib",
     "entt",
-    "glfw3"
+    "raylib",
+    "fmt"
   ]
 }

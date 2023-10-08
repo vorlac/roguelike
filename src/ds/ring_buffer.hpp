@@ -1,8 +1,7 @@
 #pragma once
 
-#include "core/constants.hpp"
-#include "task/task_status.hpp"
-#include "util/runtime_assert.hpp"
+#include "utils/assert.hpp"
+#include "utils/concepts.hpp"
 
 #include <algorithm>
 #include <array>
@@ -13,10 +12,7 @@
 #include <condition_variable>
 #include <cstdint>
 #include <functional>
-#include <iterator>
 #include <mutex>
-#include <parallel_hashmap\phmap.h>
-#include <ranges>
 #include <set>
 #include <thread>
 #include <tuple>
@@ -28,11 +24,6 @@ namespace rl
 {
     using namespace std::chrono_literals;
 
-    namespace concepts
-    {
-
-    }
-
     enum class BufferItemStatus : uint_fast8_t
     {
         None = 0,
@@ -42,8 +33,22 @@ namespace rl
         Unknown
     };
 
-    template <concepts::BufferElement TElem, auto BufferSize = params::SHARED_BUFFER_SIZE>
-        requires concepts::PositiveInteger<BufferSize>
+    struct BufferSubscriber
+    {
+        enum class State
+        {
+            Invalid,
+            Initializing,
+            Active,
+            Teardown,
+            Finished,
+        }
+
+        State state{ State::Invalid };
+    };
+
+    template <std::movable TElem, auto BufferSize = 512U>
+        requires PositiveInteger<BufferSize>
     class ring_buffer
     {
     public:
@@ -186,41 +191,16 @@ namespace rl
             return false;
         }
 
-        inline void register_reader(std::shared_ptr<TaskStatus> status)
+        inline void register_reader(std::string reader_name)
         {
             std::scoped_lock<std::mutex> lock(m_taskinfo_lock);
             m_registered_readers.push_back(status);
         }
 
-        inline void register_writer(std::shared_ptr<TaskStatus> status)
+        inline void register_writer(std::string status)
         {
             std::scoped_lock<std::mutex> lock(m_taskinfo_lock);
             m_registered_writers.push_back(status);
-        }
-
-        inline auto get_registered_task_info(const task::Category filter = task::Category::None)
-            -> std::set<std::shared_ptr<TaskStatus>>
-        {
-            auto get_tasks = [&](auto& source, auto& dest) {
-                if (source.empty())
-                    return;
-
-                if (filter == task::Category::None)
-                    dest.insert(source.begin(), source.end());
-                else
-                {
-                    std::copy_if(source.begin(), source.end(), std::inserter(dest, dest.begin()),
-                                 [&](auto&& ti) {
-                                     return ti->category == filter;
-                                 });
-                }
-            };
-
-            std::set<std::shared_ptr<TaskStatus>> tasks;
-            std::scoped_lock<std::mutex> lock(m_taskinfo_lock);
-            get_tasks(m_registered_readers, tasks);
-            get_tasks(m_registered_writers, tasks);
-            return tasks;
         }
 
         inline float utilization()
@@ -253,8 +233,8 @@ namespace rl
         std::condition_variable m_buffer_not_full_cv{};
         std::condition_variable m_buffer_not_empty_cv{};
 
-        std::vector<std::shared_ptr<TaskStatus>> m_registered_writers = {};
-        std::vector<std::shared_ptr<TaskStatus>> m_registered_readers = {};
+        std::vector<std::string> m_registered_writers = {};
+        std::vector<std::string> m_registered_readers = {};
     };
 
     template <typename T>
