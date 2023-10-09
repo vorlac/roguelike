@@ -1,11 +1,11 @@
 #pragma once
 
-#include "utils/concepts.hpp"
-
 #include <concepts>
 #include <cstdint>
 #include <raylib.h>
 #include <type_traits>
+
+#include "utils/concepts.hpp"
 
 namespace rl
 {

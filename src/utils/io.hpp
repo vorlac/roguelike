@@ -1,12 +1,12 @@
 #pragma once
 
-#include "math/point2d.hpp"
-#include "math/vector2d.hpp"
-
 #include <concepts>
-#include <fmt/format.h>
 #include <locale>
 #include <string>
+#include <fmt/format.h>
+
+#include "math/point2d.hpp"
+#include "math/vector2d.hpp"
 
 namespace rl::io
 {

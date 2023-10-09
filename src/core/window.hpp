@@ -1,13 +1,12 @@
 #pragma once
+#include <string>
+#include <utility>
+#include <vector>
+#include <raylib.h>
 
 #include "math/dimension2d.hpp"
 #include "math/point2d.hpp"
 #include "math/vector2d.hpp"
-
-#include <raylib.h>
-#include <string>
-#include <utility>
-#include <vector>
 
 namespace rl
 {

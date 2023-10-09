@@ -1,13 +1,13 @@
 #pragma once
 
-#include "core/display.hpp"
-#include "core/window.hpp"
-#include "utils/scoped_render.hpp"
-
+#include <string>
 #include <fmt/core.h>
 #include <fmt/format.h>
 #include <raylib.h>
-#include <string>
+
+#include "core/display.hpp"
+#include "core/window.hpp"
+#include "utils/scoped_render.hpp"
 
 namespace rl
 {

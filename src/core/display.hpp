@@ -1,9 +1,9 @@
+#include <cstdint>
+#include <string>
+#include <raylib.h>
+
 #include "math/dimension2d.hpp"
 #include "math/point2d.hpp"
-
-#include <cstdint>
-#include <raylib.h>
-#include <string>
 
 namespace rl
 {

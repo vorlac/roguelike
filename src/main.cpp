@@ -1,10 +1,10 @@
+#include <iostream>
+#include <string>
+#include <argparse/argparse.hpp>
+
 #include "core/application.hpp"
 #include "math/vector2d.hpp"
 #include "utils/assert.hpp"
-
-#include <argparse/argparse.hpp>
-#include <iostream>
-#include <string>
 
 bool parse_args(int argc, char** argv)
 {
