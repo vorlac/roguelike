@@ -1,6 +1,12 @@
 ﻿cmake_minimum_required(VERSION 3.22)
 set(CMAKE_MESSAGE_LOG_LEVEL STATUS)
 
+list(APPEND CMAKE_MODULE_PATH
+  "${CMAKE_CURRENT_SOURCE_DIR}/cmake"
+)
+
+include(vcpkg-init)
+
 project(roguelike
     LANGUAGES
       C CXX
@@ -12,10 +18,6 @@ option(
   AUTOFORMAT_SRC_ON_CONFIGURE
     "If enabled, clang-format will be used to format all sources in src/ during configuration"
       ON
-)
-
-list(APPEND CMAKE_MODULE_PATH
-  "${CMAKE_CURRENT_SOURCE_DIR}/cmake"
 )
 
 set(CMAKE_CXX_STANDARD 23)
