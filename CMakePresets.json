@@ -70,7 +70,7 @@
       "cacheVariables": {
         "CMAKE_C_COMPILER": "gcc",
         "CMAKE_CXX_COMPILER": "g++",
-        "VCPKG_TARGET_TRIPLET": "x64-linux-static"
+        "VCPKG_TARGET_TRIPLET": "x64-linux"
       },
       "condition": {
         "type": "equals",
@@ -109,7 +109,7 @@
       "cacheVariables": {
         "CMAKE_C_COMPILER": "clang",
         "CMAKE_CXX_COMPILER": "clang++",
-        "VCPKG_TARGET_TRIPLET": "x64-linux-static"
+        "VCPKG_TARGET_TRIPLET": "x64-linux"
       },
       "condition": {
         "type": "equals",
