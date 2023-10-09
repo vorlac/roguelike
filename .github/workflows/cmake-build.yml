@@ -12,7 +12,7 @@ jobs:
       - name: '[linux | gcc] => cmake - delete cache'
         run: rm -rf ${{ github.workspace }}/.out/*
       - name: '[linux | gcc] => cmake - build'
-        run: cmake --preset gcc-debug --parallel 48
+        run: cmake --preset gcc-debug
 
         # linux / clang build
       - name: '[linux | clang] => cmake - delete cache'
