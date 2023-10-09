@@ -5,10 +5,9 @@
   "version": "0.1.0",
   "dependencies": [
     "argparse",
-    "nlohmann-json",
-    "entt",
-    "raylib",
+    "simdjson",
     "fmt",
-    "flecs"
+    "raylib",
+    "entityx"
   ]
 }
