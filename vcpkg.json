@@ -8,6 +8,6 @@
     "simdjson",
     "fmt",
     "raylib",
-    "entityx"
+    "flecs"
   ]
 }

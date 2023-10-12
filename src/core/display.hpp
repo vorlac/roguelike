@@ -2,8 +2,8 @@
 #include <string>
 #include <raylib.h>
 
-#include "math/dimension2d.hpp"
-#include "math/point2d.hpp"
+#include "ds/dimensions.hpp"
+#include "ds/point.hpp"
 
 namespace rl
 {
@@ -33,33 +33,33 @@ namespace rl
         /**
          * @brief Get specified monitor position
          * @param monitor
-         * @return point2f&&
+         * @return pointf&&
          */
-        inline point2f&& monitor_position(uint16_t monitor) const
+        inline position<float>&& monitor_position(uint16_t monitor) const
         {
-            // TODO: change to point2i?
+            // TODO: change to pointi?
             return GetMonitorPosition(monitor);
         }
 
         /**
          * @brief Get specified monitor width (current video mode used by monitor)
          * @param monitor
-         * @return dims2i&&
+         * @return dimensions<int32_t>&&
          */
-        inline dims2i&& monitor_dims(uint16_t monitor) const
+        inline dimensions<int32_t>&& monitor_dims(int16_t monitor) const
         {
             return {
-                .width = GetMonitorWidth(monitor),
-                .height = GetMonitorHeight(monitor),
+                .width = ::GetMonitorWidth(monitor),
+                .height = ::GetMonitorHeight(monitor),
             };
         }
 
         /**
          * @brief Get specified monitor physical dimensions in millimetres
          * @param monitor
-         * @return dims2i&&
+         * @return dimensions<int32_t>&&
          */
-        inline dims2i&& monitor_physical_dims(uint16_t monitor) const
+        inline dimensions<int32_t>&& monitor_physical_dims(int16_t monitor) const
         {
             return {
                 .width = GetMonitorPhysicalWidth(monitor),

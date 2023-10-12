@@ -21,15 +21,25 @@ namespace rl
             *this = std::move(vec2);
         }
 
+        vector2(vector2&& other)
+        {
+            *this = std::move(other);
+        }
+
+        vector2 operator=(const vector2& other)
+        {
+            memcpy(this, &other, sizeof(*this));
+        }
+
+        vector2 operator=(const Vector2& other)
+        {
+            memcpy(this, &other, sizeof(*this));
+        }
+
         operator Vector2()
             requires FloatingPoint<T>
         {
             return { x, y };
         }
     };
-
-    using vector2f = vector2<float>;
-    using vector2i = vector2<int32_t>;
-    using vector2u = vector2<uint32_t>;
-
 }

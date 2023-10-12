@@ -56,6 +56,7 @@ set(raylib_VERBOSE TRUE)
 find_package(argparse CONFIG REQUIRED)
 find_package(simdjson CONFIG REQUIRED)
 find_package(raylib CONFIG REQUIRED)
+find_package(flecs CONFIG REQUIRED)
 find_package(fmt CONFIG REQUIRED)
 
 set(ENTITYX_BUILD_SHARED FALSE)
@@ -115,6 +116,7 @@ target_link_libraries(${PROJECT_NAME}
   PRIVATE fmt::fmt
   PRIVATE raylib
   PRIVATE entityx
+  PRIVATE flecs::flecs
   PRIVATE winmm
 )
 

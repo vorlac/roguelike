@@ -1,12 +1,13 @@
 #pragma once
+#include <functional>
 #include <string>
 #include <utility>
 #include <vector>
 #include <raylib.h>
 
-#include "math/dimension2d.hpp"
-#include "math/point2d.hpp"
-#include "math/vector2d.hpp"
+#include "ds/dimensions.hpp"
+#include "ds/point.hpp"
+#include "ds/vector2d.hpp"
 
 namespace rl
 {
@@ -18,17 +19,9 @@ namespace rl
             this->init();
         }
 
-        inline Window(const dims2i& dimensions, const std::string& title = "")
-            : m_dims{ dimensions }
-            , m_title{ title }
+        inline Window(dimensions<int32_t> dimensions, const std::string& title = "")
         {
-            this->init(m_dims.width, m_dims.height, m_title);
-        }
-
-        inline Window(Window&& window)
-        {
-            *this = std::move(window);
-            this->init(m_dims.width, m_dims.height, m_title);
+            this->init(dimensions.width, dimensions.height, title);
         }
 
         inline ~Window()
@@ -36,9 +29,32 @@ namespace rl
             this->teardown();
         }
 
-        inline dims2i screen_dims() const
+        /**
+         * @brief Scoped render call that will execute the render logic passed in wrapped in calls
+         * @param render_func a callable type (lambda / std::function / functor) including render
+         * logic that should be wrapped in BeginDrawing and EndDrawing calls
+         * */
+        inline void render(auto render_func) const
         {
-            return m_dims;
+            this->begin_drawing();
+            render_func();
+            this->end_drawing();
+        }
+
+        /**
+         * @brief Setup canvas (framebuffer) to start drawing
+         * */
+        inline void begin_drawing() const
+        {
+            return ::BeginDrawing();
+        }
+
+        /**
+         * @brief End canvas drawing and swap buffers (double buffering)
+         * */
+        inline void end_drawing() const
+        {
+            return ::EndDrawing();
         }
 
         /**
@@ -47,7 +63,7 @@ namespace rl
          */
         inline bool is_ready() const
         {
-            return IsWindowReady();
+            return ::IsWindowReady();
         }
 
         /**
@@ -56,7 +72,15 @@ namespace rl
          */
         inline bool should_close() const
         {
-            return WindowShouldClose();
+            return ::WindowShouldClose();
+        }
+
+        /**
+         * @brief Close window and unload OpenGL context
+         */
+        inline void close() const
+        {
+            return ::CloseWindow();
         }
 
         /**
@@ -65,7 +89,7 @@ namespace rl
          */
         inline bool is_fullscreen() const
         {
-            return IsWindowFullscreen();
+            return ::IsWindowFullscreen();
         }
 
         /**
@@ -75,7 +99,7 @@ namespace rl
          */
         inline bool is_hidden() const
         {
-            RLAPI bool IsWindowHidden(void);
+            return ::IsWindowHidden();
         }
 
         /**
@@ -85,7 +109,7 @@ namespace rl
          */
         inline bool is_minimized() const
         {
-            RLAPI bool IsWindowMinimized();
+            return ::IsWindowMinimized();
         }
 
         /**
@@ -95,7 +119,7 @@ namespace rl
          */
         inline bool is_maximized() const
         {
-            return IsWindowMaximized();
+            return ::IsWindowMaximized();
         }
 
         /**
@@ -105,7 +129,7 @@ namespace rl
          */
         inline bool is_focused() const
         {
-            return IsWindowFocused();
+            return ::IsWindowFocused();
         }
 
         /**
@@ -114,7 +138,7 @@ namespace rl
          */
         inline bool is_resized() const
         {
-            return IsWindowResized();
+            return ::IsWindowResized();
         }
 
         /**
@@ -124,7 +148,7 @@ namespace rl
          */
         inline bool is_state(uint32_t flag) const
         {
-            return IsWindowState(flag);
+            return ::IsWindowState(flag);
         }
 
         /**
@@ -135,7 +159,7 @@ namespace rl
          */
         inline void set_state(uint32_t flags) const
         {
-            return SetWindowState(flags);
+            return ::SetWindowState(flags);
         }
 
         /**
@@ -144,7 +168,7 @@ namespace rl
          */
         inline void clear_state(uint32_t flags) const
         {
-            return ClearWindowState(flags);
+            return ::ClearWindowState(flags);
         }
 
         /**
@@ -154,7 +178,7 @@ namespace rl
          */
         inline void toggle_fullscreen() const
         {
-            return ToggleFullscreen();
+            return ::ToggleFullscreen();
         }
 
         /**
@@ -164,7 +188,7 @@ namespace rl
          */
         inline void maximize() const
         {
-            return MaximizeWindow();
+            return ::MaximizeWindow();
         }
 
         /**
@@ -174,7 +198,7 @@ namespace rl
          */
         inline void minimize() const
         {
-            return MinimizeWindow();
+            return ::MinimizeWindow();
         }
 
         /**
@@ -184,7 +208,7 @@ namespace rl
          */
         inline void restore() const
         {
-            return RestoreWindow();
+            return ::RestoreWindow();
         }
 
         /**
@@ -192,9 +216,9 @@ namespace rl
          * @note single image, RGBA 32bit, only PLATFORM_DESKTOP
          * @return void
          */
-        inline void set_icon(Image&& image) const
+        inline void set_icon(::Image&& image) const
         {
-            return SetWindowIcon(image);
+            return ::SetWindowIcon(image);
         }
 
         /**
@@ -202,9 +226,9 @@ namespace rl
          * @note multiple images, RGBA 32bit, only PLATFORM_DESKTOP
          * @return void
          */
-        inline void set_icons(std::vector<Image>&& images) const
+        inline void set_icons(std::vector<::Image>&& images) const
         {
-            return SetWindowIcons(images.data(), static_cast<int>(images.size()));
+            return ::SetWindowIcons(images.data(), static_cast<int>(images.size()));
         }
 
         /**
@@ -214,7 +238,7 @@ namespace rl
          */
         inline void title(std::string&& title) const
         {
-            return SetWindowTitle(title.c_str());
+            return ::SetWindowTitle(title.c_str());
         }
 
         /**
@@ -222,66 +246,71 @@ namespace rl
          * @note PLATFORM_DESKTOP only
          * @return void
          */
-        inline void xxxxx(point2i&& pos) const
+        inline void set_position(position<int32_t>&& pos) const
         {
-            return SetWindowPosition(pos.x, pos.y);
+            return ::SetWindowPosition(pos.x, pos.y);
         }
 
         /**
-         * @brief Set monitor for the current window (fullscreen mode)
+         * @brief Set monitor for the current window
+         * @note fullscreen mode
          * @return void
          */
-        inline void xxxxx(uint16_t monitor) const
+        inline void set_monitor(uint16_t monitor) const
         {
-            return SetWindowMonitor(monitor);
+            return ::SetWindowMonitor(monitor);
         }
 
         /**
-         * @brief Set window minimum dimensions (for FLAG_WINDOW_RESIZABLE)
+         * @brief Set window minimum dimensions
+         * @param min_size The minimum window dimensions to set
+         * @note PLATFORM_DESKTOP only
          * @return void
          */
-        inline void min_size(dims2i&& min_size) const
+        inline void min_size(dimensions<int32_t> min_size) const
         {
-            return SetWindowMinSize(min_size.width, min_size.height);
+            return ::SetWindowMinSize(min_size.width, min_size.height);
         }
 
         /**
          * @brief Set window dimensions
+         * @param size The window dimensions to set
          * @return void
          */
-        inline void size(dims2i&& size) const
+        inline void size(dimensions<int32_t> size) const
         {
-            return SetWindowSize(size.width, size.height);
+            return ::SetWindowSize(size.width, size.height);
         }
 
         /**
-         * @brief Set window opacity [0.0f..1.0f] (only PLATFORM_DESKTOP)
+         * @brief Sets window opacity
+         * @param opacity The window opacity to set [0.0f..1.0f]
          * @note PLATFORM_DESKTOP only
          * @return void
          */
         inline void opacity(float opacity) const
         {
-            return SetWindowOpacity(opacity);
+            return ::SetWindowOpacity(opacity);
         }
 
         /**
          * @brief Get native window handle
-         * @return void*
+         * @return void* window handle pointer
          */
         inline void* handle() const
         {
-            return GetWindowHandle();
+            return ::GetWindowHandle();
         }
 
         /**
          * @brief Get current screen dimensions
          * @return void
          */
-        inline dims2i screen_size() const
+        inline dimensions<int32_t> screen_size() const
         {
             return {
-                .width = GetScreenWidth(),
-                .height = GetScreenHeight(),
+                .width = ::GetScreenWidth(),
+                .height = ::GetScreenHeight(),
             };
         }
 
@@ -290,11 +319,11 @@ namespace rl
          * @note it considers HiDPI
          * @return void
          */
-        inline dims2i render_size() const
+        inline dimensions<int32_t> render_size() const
         {
             return {
-                .width = GetRenderWidth(),
-                .height = GetRenderHeight(),
+                .width = ::GetRenderWidth(),
+                .height = ::GetRenderHeight(),
             };
         }
 
@@ -302,53 +331,39 @@ namespace rl
          * @brief Get window position XY on monitor
          * @return void
          */
-        inline point2f position() const
+        inline point<float> position() const
         {
-            return GetWindowPosition();
+            return ::GetWindowPosition();
         }
 
         /**
          * @brief Get window scale DPI factor
          * @return void
          */
-        vector2f scale_dpi_factor() const
+        vector2<float> scale_dpi_factor() const
         {
-            return GetWindowScaleDPI();
+            return ::GetWindowScaleDPI();
         }
 
     public:
+        Window& operator=(Window window) = delete;
         Window& operator=(Window& window) = delete;
+        Window& operator=(Window&& window) = delete;
         Window& operator=(const Window& window) = delete;
-
-        Window& operator=(Window&& window)
-        {
-            m_dims = std::move(window.m_dims);
-            m_title = std::move(window.m_title);
-            return *this;
-        }
 
     private:
         inline bool init(int32_t width = 1024, int32_t height = 768, const std::string& title = "") const
         {
-            InitWindow(width, height, title.c_str());
+            ::InitWindow(width, height, title.c_str());
             return true;
         }
 
         inline bool teardown() const
         {
-            if (IsWindowReady())
-                CloseWindow();
+            if (this->is_ready())
+                this->close();
 
             return true;
         }
-
-    private:
-        dims2i m_dims{
-            .width = 1024,
-            .height = 768,
-        };
-
-        std::string m_title{ "roguelike" };
     };
-
 }

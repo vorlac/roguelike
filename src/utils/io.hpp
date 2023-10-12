@@ -5,7 +5,7 @@
 #include <string>
 #include <fmt/format.h>
 
-#include "math/point2d.hpp"
+#include "math/pointd.hpp"
 #include "math/vector2d.hpp"
 
 namespace rl::io

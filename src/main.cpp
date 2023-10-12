@@ -3,7 +3,7 @@
 #include <argparse/argparse.hpp>
 
 #include "core/application.hpp"
-#include "math/vector2d.hpp"
+#include "ds/vector2d.hpp"
 #include "utils/assert.hpp"
 
 bool parse_args(int argc, char** argv)
