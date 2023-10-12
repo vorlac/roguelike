@@ -116,7 +116,7 @@ target_link_libraries(${PROJECT_NAME}
   PRIVATE fmt::fmt
   PRIVATE raylib
   PRIVATE entityx
-  PRIVATE flecs::flecs
+  PRIVATE flecs::flecs_static
   PRIVATE winmm
 )
 
