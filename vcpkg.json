@@ -6,8 +6,9 @@
   "dependencies": [
     "argparse",
     "simdjson",
-    "fmt",
     "raylib",
-    "flecs"
+    "box2d",
+    "flecs",
+    "fmt"
   ]
 }

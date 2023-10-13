@@ -1,6 +1,5 @@
 #pragma once
 
-#include <string>
 #include <flecs.h>
 
 namespace rl
@@ -12,6 +11,12 @@ namespace rl
     /// @brief Represents the
     ///        current scene
     struct ActiveScene
+    {
+    };
+
+    /// @brief Parent for all entities
+    ///        unique to the scene
+    struct SceneRoot
     {
     };
 
@@ -28,7 +33,7 @@ namespace rl
 
         /// @brief Scene owning all
         ///        level 1 entities
-        struct Level1
+        struct Level
         {
             Pipeline pipeline{};
         };
