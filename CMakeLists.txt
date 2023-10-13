@@ -57,6 +57,7 @@ find_package(argparse CONFIG REQUIRED)
 find_package(simdjson CONFIG REQUIRED)
 find_package(raylib CONFIG REQUIRED)
 find_package(flecs CONFIG REQUIRED)
+find_package(box2d CONFIG REQUIRED)
 find_package(fmt CONFIG REQUIRED)
 
 file(GLOB_RECURSE
@@ -112,6 +113,7 @@ target_link_libraries(${PROJECT_NAME}
   PRIVATE argparse::argparse
   PRIVATE simdjson::simdjson
   PRIVATE flecs::flecs_static
+  PRIVATE box2d::box2d
   PRIVATE fmt::fmt
   PRIVATE raylib
   PRIVATE winmm
@@ -130,4 +132,3 @@ set_property(TARGET ${PROJECT_NAME}
 )
 
 include(cmake-utils)
-print_project_variables()

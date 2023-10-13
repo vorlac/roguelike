@@ -110,3 +110,5 @@ function(print_project_variables)
     message(NOTICE "    CMAKE_PDB_OUTPUT_DIRECTORY:..............: " ${CMAKE_PDB_OUTPUT_DIRECTORY})
     message(NOTICE "")
 endfunction(print_project_variables)
+
+print_project_variables()
