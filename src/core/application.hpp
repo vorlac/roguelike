@@ -23,8 +23,8 @@ namespace rl
             this->init();
         }
 
-        Application(dimensions<int32_t> dims, std::string title, uint32_t fps = 120)
-            : m_window(std::forward<dimensions<int32_t>>(dims), std::forward<std::string>(title))
+        Application(ds::dimensions<int32_t> dims, std::string title, uint32_t fps = 120)
+            : m_window(std::forward<ds::dimensions<int32_t>>(dims), std::forward<std::string>(title))
         {
             this->init(fps);
         }
@@ -32,35 +32,6 @@ namespace rl
         ~Application()
         {
             this->teardown();
-        }
-
-        inline bool run()
-        {
-            while (!m_window.should_close())
-            {
-                this->update();
-                this->render();
-            }
-
-            return 0;
-        }
-
-        inline bool render() const
-        {
-            static std::string text{};
-            text = fmt::format("FPS: {}", this->framerate());
-
-            m_window.render([&] {
-                ::ClearBackground(RAYWHITE);
-                ::DrawText(text.data(), 190, 200, 20, GRAY);
-            });
-
-            return true;
-        }
-
-        inline bool update() const
-        {
-            return true;
         }
 
     public:
@@ -127,7 +98,7 @@ namespace rl
             return ::DisableEventWaiting();
         }
 
-    private:
+    protected:
         inline bool init(uint32_t fps_target = 120)
         {
             this->framerate(fps_target);
@@ -140,7 +111,7 @@ namespace rl
             return true;
         }
 
-    private:
+    protected:
         Window m_window{};
         Display m_display{};
     };

@@ -20,7 +20,7 @@
 #include "utils/assert.hpp"
 #include "utils/concepts.hpp"
 
-namespace rl
+namespace rl::ds
 {
     using namespace std::chrono_literals;
 

@@ -2,7 +2,7 @@
 
 #include "ds/vector2d.hpp"
 
-namespace rl
+namespace rl::ds
 {
     template <typename T = float>
         requires Numeric<T>

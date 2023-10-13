@@ -1,8 +1,7 @@
-#include <iostream>
 #include <string>
 #include <argparse/argparse.hpp>
 
-#include "core/application.hpp"
+#include "core/game.hpp"
 #include "ds/vector2d.hpp"
 #include "utils/assert.hpp"
 
@@ -13,7 +12,6 @@ bool parse_args(int argc, char** argv)
     try
     {
         // clang-format off
-
         args.add_argument("-v", "--verbose")
             .help("enables verbose output")
             .implicit_value(true);
@@ -27,7 +25,6 @@ bool parse_args(int argc, char** argv)
             .help("specifies logfile message level");
 
         // clang-format on
-
         args.parse_args(argc, argv);
 
         // get arg example
@@ -49,6 +46,6 @@ int main(int argc, char** argv)
     if (!parse_args(argc, argv))
         return -1;
 
-    rl::Application game{};
+    rl::Game game{};
     return game.run();
 }

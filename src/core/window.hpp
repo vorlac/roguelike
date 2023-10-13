@@ -19,7 +19,7 @@ namespace rl
             this->init();
         }
 
-        inline Window(dimensions<int32_t> dimensions, const std::string& title = "")
+        inline Window(ds::dimensions<int32_t> dimensions, const std::string& title = "")
         {
             this->init(dimensions.width, dimensions.height, title);
         }
@@ -246,7 +246,7 @@ namespace rl
          * @note PLATFORM_DESKTOP only
          * @return void
          */
-        inline void set_position(position<int32_t>&& pos) const
+        inline void set_position(ds::position<int32_t>&& pos) const
         {
             return ::SetWindowPosition(pos.x, pos.y);
         }
@@ -267,7 +267,7 @@ namespace rl
          * @note PLATFORM_DESKTOP only
          * @return void
          */
-        inline void min_size(dimensions<int32_t> min_size) const
+        inline void min_size(ds::dimensions<int32_t> min_size) const
         {
             return ::SetWindowMinSize(min_size.width, min_size.height);
         }
@@ -277,7 +277,7 @@ namespace rl
          * @param size The window dimensions to set
          * @return void
          */
-        inline void size(dimensions<int32_t> size) const
+        inline void size(ds::dimensions<int32_t> size) const
         {
             return ::SetWindowSize(size.width, size.height);
         }
@@ -306,7 +306,7 @@ namespace rl
          * @brief Get current screen dimensions
          * @return void
          */
-        inline dimensions<int32_t> screen_size() const
+        inline ds::dimensions<int32_t> screen_size() const
         {
             return {
                 .width = ::GetScreenWidth(),
@@ -319,7 +319,7 @@ namespace rl
          * @note it considers HiDPI
          * @return void
          */
-        inline dimensions<int32_t> render_size() const
+        inline ds::dimensions<int32_t> render_size() const
         {
             return {
                 .width = ::GetRenderWidth(),
@@ -331,7 +331,7 @@ namespace rl
          * @brief Get window position XY on monitor
          * @return void
          */
-        inline point<float> position() const
+        inline ds::point<float> position() const
         {
             return ::GetWindowPosition();
         }
@@ -340,7 +340,7 @@ namespace rl
          * @brief Get window scale DPI factor
          * @return void
          */
-        vector2<float> scale_dpi_factor() const
+        ds::vector2<float> scale_dpi_factor() const
         {
             return ::GetWindowScaleDPI();
         }

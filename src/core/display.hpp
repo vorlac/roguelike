@@ -10,15 +10,13 @@ namespace rl
     class Display
     {
     public:
-        Display() = default;
-
         /**
          * @brief Get number of connected monitors
          * @return int
          */
         inline int monitor_count() const
         {
-            return GetMonitorCount();
+            return ::GetMonitorCount();
         }
 
         /**
@@ -27,7 +25,7 @@ namespace rl
          */
         inline int32_t current_monitor() const
         {
-            return GetCurrentMonitor();
+            return ::GetCurrentMonitor();
         }
 
         /**
@@ -35,10 +33,10 @@ namespace rl
          * @param monitor
          * @return pointf&&
          */
-        inline position<float>&& monitor_position(uint16_t monitor) const
+        inline ds::position<float> monitor_position(uint16_t monitor) const
         {
             // TODO: change to pointi?
-            return GetMonitorPosition(monitor);
+            return ::GetMonitorPosition(monitor);
         }
 
         /**
@@ -46,7 +44,7 @@ namespace rl
          * @param monitor
          * @return dimensions<int32_t>&&
          */
-        inline dimensions<int32_t>&& monitor_dims(int16_t monitor) const
+        inline ds::dimensions<int32_t> monitor_dims(int16_t monitor) const
         {
             return {
                 .width = ::GetMonitorWidth(monitor),
@@ -59,11 +57,11 @@ namespace rl
          * @param monitor
          * @return dimensions<int32_t>&&
          */
-        inline dimensions<int32_t>&& monitor_physical_dims(int16_t monitor) const
+        inline ds::dimensions<int32_t> monitor_physical_dims(int16_t monitor) const
         {
             return {
-                .width = GetMonitorPhysicalWidth(monitor),
-                .height = GetMonitorPhysicalHeight(monitor),
+                .width = ::GetMonitorPhysicalWidth(monitor),
+                .height = ::GetMonitorPhysicalHeight(monitor),
             };
         }
 
@@ -74,7 +72,7 @@ namespace rl
          */
         inline uint32_t monitor_refresh_rate(uint16_t monitor) const
         {
-            return GetMonitorRefreshRate(monitor);
+            return ::GetMonitorRefreshRate(monitor);
         }
 
         /**
@@ -84,7 +82,7 @@ namespace rl
          */
         inline std::string monitor_name(uint16_t monitor) const
         {
-            return GetMonitorName(monitor);
+            return ::GetMonitorName(monitor);
         }
     };
 }

@@ -7,7 +7,7 @@
 
 #include "utils/concepts.hpp"
 
-namespace rl
+namespace rl::ds
 {
     template <typename T = float>
         requires Numeric<T>
@@ -16,30 +16,22 @@ namespace rl
         T x{ 0 };
         T y{ 0 };
 
-        vector2(Vector2&& vec2)
-        {
-            *this = std::move(vec2);
-        }
-
-        vector2(vector2&& other)
-        {
-            *this = std::move(other);
-        }
-
-        vector2 operator=(const vector2& other)
-        {
-            memcpy(this, &other, sizeof(*this));
-        }
-
-        vector2 operator=(const Vector2& other)
-        {
-            memcpy(this, &other, sizeof(*this));
-        }
-
-        operator Vector2()
-            requires FloatingPoint<T>
-        {
-            return { x, y };
-        }
+        vector2(::Vector2 other);
+        operator Vector2();
     };
+
+    template <typename T>
+        requires Numeric<T>
+    vector2<T>::vector2(::Vector2 other)
+    {
+        x = other.x;
+        y = other.y;
+    }
+
+    template <typename T>
+        requires Numeric<T>
+    vector2<T>::operator std::type_identity_t<::Vector2>()
+    {
+        return *this;
+    }
 }

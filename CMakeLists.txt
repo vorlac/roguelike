@@ -59,10 +59,6 @@ find_package(raylib CONFIG REQUIRED)
 find_package(flecs CONFIG REQUIRED)
 find_package(fmt CONFIG REQUIRED)
 
-set(ENTITYX_BUILD_SHARED FALSE)
-set(ENTITYX_BUILD_TESTING FALSE)
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/extern/entityx")
-
 file(GLOB_RECURSE
   roguelike_sources
     CONFIGURE_DEPENDS
@@ -76,13 +72,13 @@ add_executable(${PROJECT_NAME}
 
 include(compiler-warnings)
 
-target_compile_features(${PROJECT_NAME}
+target_compile_features(${PROJECT_NAME} PRIVATE
   PRIVATE
     cxx_std_23
     c_std_17
 )
 
-target_compile_definitions(${PROJECT_NAME} PUBLIC
+target_compile_definitions(${PROJECT_NAME} PRIVATE
   $<$<CONFIG:Debug>:
     ROGUELIKE_DEBUG
     ROGUELIKE_LOGGER_ENABLED
@@ -90,10 +86,12 @@ target_compile_definitions(${PROJECT_NAME} PUBLIC
   NOMINMAX
 )
 
-target_compile_options(${PROJECT_NAME} PUBLIC
+target_compile_options(${PROJECT_NAME} PRIVATE
   $<${compiler_is_msvc}:
-    /utf-8
     /Zc:preprocessor
+    /utf-8
+    /EHsc
+    /nologo
 
     $<$<CONFIG:Debug>:
       /MDd
@@ -113,10 +111,9 @@ target_include_directories(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}
   PRIVATE argparse::argparse
   PRIVATE simdjson::simdjson
+  PRIVATE flecs::flecs_static
   PRIVATE fmt::fmt
   PRIVATE raylib
-  PRIVATE entityx
-  PRIVATE flecs::flecs_static
   PRIVATE winmm
 )
 
