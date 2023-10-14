@@ -1,10 +1,9 @@
-#include "core/game.hpp"
-
 #include <chrono>
 #include <fmt/format.h>
 #include <fmt/printf.h>
 
 #include "core/application.hpp"
+#include "core/game.hpp"
 #include "ds/dimensions.hpp"
 #include "ds/point.hpp"
 #include "ecs/components.hpp"
@@ -70,7 +69,7 @@ namespace rl
 
         auto time_pregen{ clock::now() };
 
-        generate_world_entities(10000);
+        generate_world_entities(100000);
 
         auto time_postgen = duration_cast<milliseconds>(clock::now() - time_pregen);
         fmt::print("\nEntity creation time: [{:L}ms]\n", time_postgen.count());
@@ -103,7 +102,7 @@ namespace rl
         return 0;
     }
 
-    constexpr float circle_radius = 10.0f;
+    constexpr int rect_radius = 10;
 
     // clang-format off
     void Game::update(float delta_time)
@@ -115,10 +114,10 @@ namespace rl
                 p.x += v.x * delta_time;
                 p.y += v.y * delta_time;
 
-                bool top_collision = p.y <= circle_radius;
-                bool left_collision = p.x <= circle_radius;
-                bool right_collision = p.x >= (dims.width - circle_radius);
-                bool bottom_collision = p.y >= (dims.height - circle_radius);
+                bool top_collision = p.y <= rect_radius;
+                bool left_collision = p.x <= rect_radius;
+                bool right_collision = p.x >= (dims.width - rect_radius);
+                bool bottom_collision = p.y >= (dims.height - rect_radius);
 
                 if (right_collision || left_collision)
                     v.x *= -1.0f;
@@ -129,24 +128,23 @@ namespace rl
         m_world.progress(delta_time);
     }
 
+    // clang-format on
+
     void Game::render(float)
     {
         m_window.render([&]() {
             ClearBackground(color::lightgray);
 
-            m_world.each(
-                [](const asdf::position& p, const asdf::velocity&, const asdf::style& s) {
-                    DrawCircleV(
-                        *reinterpret_cast<const Vector2*>(&p), 
-                        circle_radius, s.color
-                    );
-                });
+            m_world.each([](const asdf::position& p, const asdf::velocity&, const asdf::style& s) {
+                DrawRectangle(static_cast<int>(p.x) - rect_radius,
+                              static_cast<int>(p.y) - rect_radius, static_cast<int>(rect_radius * 2U),
+                              static_cast<int>(rect_radius * 2U), s.color);
+            });
 
             DrawFPS(10, 10);
         });
     }
 
-    // clang-format on
     bool Game::should_quit()
     {
         return m_world.should_quit() || m_window.should_close();

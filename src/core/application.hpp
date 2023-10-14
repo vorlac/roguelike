@@ -11,9 +11,11 @@ namespace rl
 {
     class Application
     {
+        static constexpr inline auto DefaultFPS{ 1000 };
+
     public:
         Application();
-        Application(ds::dimensions<int32_t> dims, std::string title, uint32_t fps = 120);
+        Application(ds::dimensions<int32_t> dims, std::string title, uint32_t fps = DefaultFPS);
         ~Application();
 
     public:
@@ -26,7 +28,7 @@ namespace rl
         void disable_event_waiting();
 
     protected:
-        void init(uint32_t fps_target = 120);
+        void init(uint32_t fps_target = DefaultFPS);
         void teardown();
 
     protected:
