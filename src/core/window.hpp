@@ -1,10 +1,7 @@
 #pragma once
 
-#include <functional>
 #include <string>
-#include <utility>
 #include <vector>
-#include <raylib.h>
 
 #include "ds/dimensions.hpp"
 #include "ds/point.hpp"
@@ -15,208 +12,70 @@ namespace rl
     class Window
     {
     public:
-        Window()
-        {
-            this->init();
-        }
+        Window();
+        Window(ds::dimensions<int32_t> dimensions, std::string title);
 
-        Window(ds::dimensions<int32_t> dimensions, const std::string& title = "")
-        {
-            this->init(dimensions.width, dimensions.height, title);
-        }
+        ~Window();
 
-        ~Window()
-        {
-            this->teardown();
-        }
-
-        void render(auto render_func) const
+        void render(auto render_func)
         {
             this->begin_drawing();
             render_func();
             this->end_drawing();
         }
 
-        void begin_drawing() const
-        {
-            return ::BeginDrawing();
-        }
+        void begin_drawing();
+        void end_drawing();
 
-        void end_drawing() const
-        {
-            return ::EndDrawing();
-        }
+        bool should_close();
+        void close();
 
-        bool is_ready() const
-        {
-            return ::IsWindowReady();
-        }
+        bool is_ready();
+        bool is_hidden();
+        bool is_fullscreen();
+        bool is_minimized();
+        bool is_maximized();
+        bool is_focused();
+        bool is_resized();
 
-        bool should_close() const
-        {
-            return ::WindowShouldClose();
-        }
+        bool get_state(uint32_t flag);
+        void set_state(uint32_t flags);
+        void clear_state(uint32_t flags);
 
-        void close() const
-        {
-            return ::CloseWindow();
-        }
+        void toggle_fullscreen();
+        void maximize();
+        void minimize();
+        void restore();
 
-        inline bool is_fullscreen() const
-        {
-            return ::IsWindowFullscreen();
-        }
+        void set_icon(::Image&& image);
+        void set_icons(std::vector<::Image> images);
 
-        bool is_hidden() const
-        {
-            return ::IsWindowHidden();
-        }
+        void title(std::string title);
 
-        bool is_minimized() const
-        {
-            return ::IsWindowMinimized();
-        }
+        void set_position(ds::position<int32_t> pos);
+        void set_monitor(uint16_t monitor);
+        void min_size(ds::dimensions<int32_t> min_size);
+        void size(ds::dimensions<int32_t> size);
+        void opacity(float opacity);
 
-        bool is_maximized() const
-        {
-            return ::IsWindowMaximized();
-        }
+        void* handle();
 
-        bool is_focused() const
-        {
-            return ::IsWindowFocused();
-        }
+        ds::vector2<float> scale_dpi_factor();
 
-        bool is_resized() const
-        {
-            return ::IsWindowResized();
-        }
+        ds::dimensions<int32_t> screen_size();
+        ds::dimensions<int32_t> render_size();
 
-        bool is_state(uint32_t flag) const
-        {
-            return ::IsWindowState(flag);
-        }
-
-        void set_state(uint32_t flags) const
-        {
-            return ::SetWindowState(flags);
-        }
-
-        void clear_state(uint32_t flags) const
-        {
-            return ::ClearWindowState(flags);
-        }
-
-        void toggle_fullscreen() const
-        {
-            return ::ToggleFullscreen();
-        }
-
-        void maximize() const
-        {
-            return ::MaximizeWindow();
-        }
-
-        void minimize() const
-        {
-            return ::MinimizeWindow();
-        }
-
-        void restore() const
-        {
-            return ::RestoreWindow();
-        }
-
-        void set_icon(::Image&& image) const
-        {
-            return ::SetWindowIcon(image);
-        }
-
-        void set_icons(std::vector<::Image>&& images) const
-        {
-            return ::SetWindowIcons(images.data(), static_cast<int>(images.size()));
-        }
-
-        void title(std::string&& title) const
-        {
-            return ::SetWindowTitle(title.c_str());
-        }
-
-        void set_position(ds::position<int32_t>&& pos) const
-        {
-            return ::SetWindowPosition(pos.x, pos.y);
-        }
-
-        void set_monitor(uint16_t monitor) const
-        {
-            return ::SetWindowMonitor(monitor);
-        }
-
-        void min_size(ds::dimensions<int32_t> min_size) const
-        {
-            return ::SetWindowMinSize(min_size.width, min_size.height);
-        }
-
-        void size(ds::dimensions<int32_t> size) const
-        {
-            return ::SetWindowSize(size.width, size.height);
-        }
-
-        void opacity(float opacity) const
-        {
-            return ::SetWindowOpacity(opacity);
-        }
-
-        void* handle() const
-        {
-            return ::GetWindowHandle();
-        }
-
-        ds::dimensions<int32_t> screen_size() const
-        {
-            return {
-                .width = ::GetScreenWidth(),
-                .height = ::GetScreenHeight(),
-            };
-        }
-
-        ds::dimensions<int32_t> render_size() const
-        {
-            return {
-                .width = ::GetRenderWidth(),
-                .height = ::GetRenderHeight(),
-            };
-        }
-
-        ds::point<float> position() const
-        {
-            return ::GetWindowPosition();
-        }
-
-        ds::vector2<float> scale_dpi_factor() const
-        {
-            return ::GetWindowScaleDPI();
-        }
+        ds::point<float> position();
+        ds::point<float> center();
 
     public:
-        Window& operator=(Window window) = delete;
-        Window& operator=(Window& window) = delete;
-        Window& operator=(Window&& window) = delete;
-        Window& operator=(const Window& window) = delete;
+        rl::Window& operator=(Window window) = delete;
+        rl::Window& operator=(Window& window) = delete;
+        rl::Window& operator=(Window&& window) = delete;
+        rl::Window& operator=(const Window& window) = delete;
 
     protected:
-        bool init(int32_t width = 1024, int32_t height = 768, const std::string& title = "") const
-        {
-            ::InitWindow(width, height, title.c_str());
-            return true;
-        }
-
-        bool teardown() const
-        {
-            if (this->is_ready())
-                this->close();
-
-            return true;
-        }
+        bool init(int32_t width = 1920, int32_t height = 1080, std::string title = "roguelite");
+        bool teardown();
     };
 }

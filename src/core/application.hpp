@@ -13,7 +13,6 @@ namespace rl
     {
     public:
         Application();
-
         Application(ds::dimensions<int32_t> dims, std::string title, uint32_t fps = 120);
         ~Application();
 
@@ -27,8 +26,8 @@ namespace rl
         void disable_event_waiting();
 
     protected:
-        bool init(uint32_t fps_target = 120);
-        bool teardown();
+        void init(uint32_t fps_target = 120);
+        void teardown();
 
     protected:
         rl::Window m_window{};

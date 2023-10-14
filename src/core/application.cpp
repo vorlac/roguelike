@@ -59,15 +59,13 @@ namespace rl
         return ::DisableEventWaiting();
     }
 
-    bool Application::init(uint32_t fps_target)
+    void Application::init(uint32_t fps_target)
     {
         this->framerate(fps_target);
-        return true;
     }
 
-    bool Application::teardown()
+    void Application::teardown()
     {
-        return true;
     }
 
 }

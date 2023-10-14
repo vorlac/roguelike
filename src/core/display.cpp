@@ -19,7 +19,8 @@ namespace rl
     ds::position<float> Display::monitor_position(uint16_t monitor)
     {
         // TODO: change to pointi?
-        return ::GetMonitorPosition(monitor);
+        auto pos{ ::GetMonitorPosition(monitor) };
+        return ds::position<float>(pos.x, pos.y);
     }
 
     ds::dimensions<int32_t> Display::monitor_dims(int16_t monitor)

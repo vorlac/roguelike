@@ -1,8 +1,8 @@
 ---
 Language: Cpp
 AccessModifierOffset: -4
-AlignAfterOpenBracket: Align # BlockIndent
-AlignArrayOfStructures: None # Left
+AlignAfterOpenBracket: Align # [BlockIndent, Align]
+AlignArrayOfStructures: Left # [None, Left, Right]
 AlignConsecutiveMacros: AcrossComments
 AlignConsecutiveAssignments: None
 AlignConsecutiveBitFields: Consecutive
@@ -15,7 +15,7 @@ AllowAllParametersOfDeclarationOnNextLine: false
 AllowShortEnumsOnASingleLine: false
 AllowShortBlocksOnASingleLine: false
 AllowShortCaseLabelsOnASingleLine: false
-AllowShortFunctionsOnASingleLine: false # InlineOnly # true
+AllowShortFunctionsOnASingleLine: false # [InlineOnly, true]
 AllowShortLambdasOnASingleLine: false
 AllowShortIfStatementsOnASingleLine: false
 AllowShortLoopsOnASingleLine: false
@@ -48,7 +48,7 @@ BraceWrapping:
   SplitEmptyFunction: true
   SplitEmptyRecord: true
   SplitEmptyNamespace: true
-BreakBeforeBinaryOperators: true # None
+BreakBeforeBinaryOperators: None # true
 BreakBeforeConceptDeclarations: true
 BreakBeforeInheritanceComma: true
 BreakInheritanceList: AfterComma
@@ -69,7 +69,7 @@ DerivePointerAlignment: false
 DisableFormat: false
 EmptyLineAfterAccessModifier: Never
 EmptyLineBeforeAccessModifier: LogicalBlock
-ExperimentalAutoDetectBinPacking: false
+ExperimentalAutoDetectBinPacking: true # false
 PackConstructorInitializers: Never
 ConstructorInitializerAllOnOneLineOrOnePerLine: false
 AllowAllConstructorInitializersOnNextLine: true
@@ -106,19 +106,12 @@ IndentRequires: true
 IndentWidth: 4
 IndentWrappedFunctionNames: false
 InsertTrailingCommas: None # [None, Wrapped] ==> trailing comma insertion cannot be used with bin packing
-# JavaScriptQuotes: Leave
-# JavaScriptWrapImports: true
 KeepEmptyLinesAtTheStartOfBlocks: false
 LambdaBodyIndentation: Signature
 MacroBlockBegin: ''
 MacroBlockEnd: ''
 MaxEmptyLinesToKeep: 1
 NamespaceIndentation: All
-# ObjCBinPackProtocolList: Auto
-# ObjCBlockIndentWidth: 4
-# ObjCBreakBeforeNestedBlockParam: true
-# ObjCSpaceAfterProperty: false
-# ObjCSpaceBeforeProtocolList: true
 PenaltyBreakAssignment: 50
 PenaltyBreakBeforeFirstCallParameter: 10
 PenaltyBreakComment: 50
@@ -176,12 +169,6 @@ SpacesInSquareBrackets: false
 SpaceBeforeSquareBrackets: false
 BitFieldColonSpacing: Both
 Standard: Latest
-StatementAttributeLikeMacros:
-  - Q_EMIT
-  - emit
-StatementMacros:
-  - Q_UNUSED
-  - QT_REQUIRE_VERSION
 TabWidth: 4
 UseCRLF: false
 UseTab: Never

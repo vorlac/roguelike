@@ -6,7 +6,8 @@
 namespace rl
 {
     template <typename T>
-    concept FloatingPoint = std::disjunction_v<std::is_same<T, float>, std::is_same<T, double>>;
+    concept FloatingPoint = std::disjunction_v<std::is_same<std::remove_cvref_t<T>, float>,
+                                               std::is_same<std::remove_cvref_t<T>, double>>;
 
     template <typename T>
     concept Integer = std::disjunction_v<std::is_same<T, int32_t>, std::is_same<T, uint32_t>>;

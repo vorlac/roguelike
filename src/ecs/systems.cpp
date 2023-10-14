@@ -1,22 +1,26 @@
 #pragma once
 
-#include "core/ecs/systems.hpp"
+#include "ecs/systems.hpp"
 
 #include <iostream>
+#include <flecs.h>
+#include <raylib.h>
 
-#include "core/ecs/components.hpp"
-#include "core/ecs/scenes.hpp"
+#include "ds/vector2d.hpp"
+#include "ecs/components.hpp"
+#include "ecs/scenes.hpp"
+#include "utils/color.hpp"
 
 namespace rl::systems
 {
     void init_level_systems(flecs::world& world)
     {
         // Will run every time regardless of the current scene we're in.
-        world.system<const components::Position>("Print Position")
-            .each([](flecs::entity e, const components::Position& p) {
-                // Prints out the position of the entity.
-                std::cout << e.name() << ": {" << p.x << ", " << p.y << "}\n";
-            });
+        // world.system<Vector2, Vector2>("Print Position")
+        //    .each([](flecs::entity, Vector2& p, Vector2& v) {
+        //        std::cout << "(" << p.x << ", " << v.y << ")" << std::endl;
+        //    })
+        //    .add_flags(flecs::IsEntity | flecs::Pipeline);
 
         // Will only run when the game scene is currently active.
         world.system<components::Health>("Characters Lose Health")

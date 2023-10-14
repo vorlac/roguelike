@@ -1,12 +1,12 @@
 
-#include "core/ecs/scenes.hpp"
+#include "ecs/scenes.hpp"
 
 namespace rl::scenes
 {
     void init_level_scenes(flecs::world& world)
     {
-        // Can only have one active scene in a game at a time.
-        world.component<ActiveScene>().add(flecs::Exclusive);
+        // // Can only have one active scene in a game at a time.
+        // world.component<scenes::ActiveScene>().add(flecs::Exclusive);
 
         // Each scene gets a pipeline that runs the associated
         // systems plus all other scene-agnostic systems.
@@ -18,7 +18,7 @@ namespace rl::scenes
         flecs::entity menu_scene{
             world.pipeline()
                 .with(flecs::System)
-                .without<Level>()
+                .without<scenes::Level>()
                 .build()
         };
 

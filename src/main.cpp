@@ -1,13 +1,14 @@
-#include <string>
 #include <argparse/argparse.hpp>
 
 #include "core/game.hpp"
-#include "ds/vector2d.hpp"
-#include "utils/assert.hpp"
 
 bool parse_args(int argc, char** argv)
 {
-    auto args = argparse::ArgumentParser{ "roguelike", "0.0.1", argparse::default_arguments::help };
+    auto args = argparse::ArgumentParser{
+        "roguelike",
+        "0.0.1",
+        argparse::default_arguments::help,
+    };
 
     try
     {
@@ -29,14 +30,12 @@ bool parse_args(int argc, char** argv)
 
         // get arg example
         auto console_verbosity = args.get<std::string>("--console");
-
         return true;
     }
     catch (const std::runtime_error& err)
     {
         std::cerr << err.what() << std::endl;
         std::cerr << args;
-        runtime_assert(false, "Invalid program argument");
         return false;
     }
 }

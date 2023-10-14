@@ -9,16 +9,13 @@ namespace rl
     class Game : public Application
     {
     public:
-        Game();
+        Game() = default;
         ~Game();
 
         bool run();
 
-        void update();
-        bool render();
-
-        void initialize_systems();
-        void initialize_scenes();
+        void update(float delta_time);
+        void render(float delta_time);
 
         bool should_quit();
 

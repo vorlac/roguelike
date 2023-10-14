@@ -2,9 +2,11 @@
 
 #include <concepts>
 #include <cstdint>
+#include <cstdio>
 #include <raylib.h>
 #include <type_traits>
 
+#include "ecs/components.hpp"
 #include "utils/concepts.hpp"
 
 namespace rl::ds
@@ -16,22 +18,26 @@ namespace rl::ds
         T x{ 0 };
         T y{ 0 };
 
-        vector2(::Vector2 other);
-        operator Vector2();
+        ~vector2()
+        {
+        }
+
+        vector2(const T _x, const T _y)
+            : x{ _x }
+            , y{ _y }
+        {
+        }
+
+        template <typename V>
+            requires std::same_as<T, V>
+        vector2(const ::Vector2& other)
+        {
+            std::memcpy(this, &other, sizeof(*this));
+        }
+
+        operator ::Vector2() const
+        {
+            return *reinterpret_cast<const ::Vector2*>(this);
+        }
     };
-
-    template <typename T>
-        requires Numeric<T>
-    vector2<T>::vector2(::Vector2 other)
-    {
-        x = other.x;
-        y = other.y;
-    }
-
-    template <typename T>
-        requires Numeric<T>
-    vector2<T>::operator std::type_identity_t<::Vector2>()
-    {
-        return *this;
-    }
 }

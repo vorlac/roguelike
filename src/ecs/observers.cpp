@@ -1,12 +1,10 @@
-#pragma once
-
-#include "core/ecs/observers.hpp"
+#include "ecs/observers.hpp"
 
 #include <iostream>
 #include <flecs.h>
 
-#include "core/ecs/components.hpp"
-#include "core/ecs/scenes.hpp"
+#include "ecs/components.hpp"
+#include "ecs/scenes.hpp"
 
 namespace rl::observers
 {
@@ -20,7 +18,8 @@ namespace rl::observers
 
     void add_level_observers(flecs::world& world)
     {
-        // Observer to call scene change logic for scene::MainMenu when added to the ActiveScene.
+        // Observer to call scene change logic for
+        // scene::MainMenu when added to the ActiveScene.
         world.observer<scenes::ActiveScene>("Scene Change to Menu")
             .event(flecs::OnAdd)
             .second<scenes::MainMenu>()
@@ -30,7 +29,8 @@ namespace rl::observers
                 flecs::world ecs = it.world();
                 flecs::entity scene = ecs.component<scenes::SceneRoot>();
 
-                // Removes all entities who are children of the current scene root.
+                // Removes all entities who are
+                // children of the current scene root.
                 reset_scene(ecs);
 
                 // Creates a start menu button
@@ -43,7 +43,8 @@ namespace rl::observers
                 ecs.set_pipeline(ecs.get<scenes::MainMenu>()->pipeline);
             });
 
-        // Observer to call scene change logic for scene::Level1 when added to the ActiveScene.
+        // Observer to call scene change logic for
+        // scene::Level when added to the ActiveScene.
         world.observer<scenes::ActiveScene>("Scene Change to Game")
             .event(flecs::OnAdd)
             .second<scenes::Level>()
@@ -60,6 +61,14 @@ namespace rl::observers
                 ecs.entity("Player")
                     .set(components::Character{})
                     .set(components::Health{ 2 })
+                    .set(components::Position{ 0, 0 })
+                    .child_of(scene);
+
+                // Creates a player character
+                // when we enter the game scene.
+                ecs.entity("Ball")
+                    .set(components::Character{})
+                    .set(components::Dimensions{})
                     .set(components::Position{ 0, 0 })
                     .child_of(scene);
 

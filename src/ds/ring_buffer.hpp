@@ -214,9 +214,8 @@ namespace rl::ds
                     << "  items = " << m_occupancies << std::endl
                     << "  openings = " << m_vacancies << std::endl);
 
-            return 100.0
-                   * (m_occupancies.load(std::memory_order_relaxed)
-                      / static_cast<float>(m_buffer.size()));
+            return 100.0 * (m_occupancies.load(std::memory_order_relaxed) /
+                            static_cast<float>(m_buffer.size()));
         }
 
     private:
