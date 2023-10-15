@@ -1,15 +1,18 @@
 #pragma once
 
-#include <array>
 #include <string>
 #include <tuple>
 #include <utility>
+#include <vector>
 #include <raylib.h>
 #include <string_view>
 
 namespace rl
 {
-    constexpr auto KeyLabelMapp = std::array{
+    using key = ::KeyboardKey;
+    using key_map = std::pair<key, std::string_view>;
+
+    constexpr std::vector<key_map> KeyLabelMapp = {
         {KEY_A,            "A"          },
         { KEY_B,           "B"          },
         { KEY_C,           "C"          },

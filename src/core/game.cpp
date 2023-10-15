@@ -1,3 +1,5 @@
+#include "core/game.hpp"
+
 #include <chrono>
 #include <string>
 #include <fmt/compile.h>
@@ -5,7 +7,6 @@
 #include <fmt/printf.h>
 
 #include "core/application.hpp"
-#include "core/game.hpp"
 #include "ds/dimensions.hpp"
 #include "ds/point.hpp"
 #include "ecs/components.hpp"
@@ -15,7 +16,6 @@
 #include "utils/color.hpp"
 #include "utils/io.hpp"
 #include "utils/time.hpp"
-
 
 namespace rl
 {

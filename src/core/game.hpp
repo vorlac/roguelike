@@ -3,6 +3,7 @@
 #include <flecs.h>
 
 #include "core/application.hpp"
+#include "core/input/input.hpp"
 #include "ds/dimensions.hpp"
 
 namespace rl
@@ -28,5 +29,7 @@ namespace rl
             .width = 10,
             .height = 10,
         };
+
+        input::Input m_input{};
     };
 }
