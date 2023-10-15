@@ -27,8 +27,8 @@ namespace rl
         void begin_drawing();
         void end_drawing();
 
-        bool should_close();
-        void close();
+        bool should_close() const;
+        void close() const;
 
         bool is_ready();
         bool is_hidden();

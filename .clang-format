@@ -52,7 +52,7 @@ BreakBeforeBinaryOperators: None # true
 BreakBeforeConceptDeclarations: true
 BreakBeforeInheritanceComma: true
 BreakInheritanceList: AfterComma
-BreakBeforeTernaryOperators: false # true
+BreakBeforeTernaryOperators: true # false
 BreakConstructorInitializersBeforeComma: true
 BreakConstructorInitializers: BeforeColon
 BreakAfterJavaFieldAnnotations: false

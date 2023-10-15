@@ -39,12 +39,12 @@ namespace rl
         return ::IsWindowReady();
     }
 
-    bool Window::should_close()
+    bool Window::should_close() const
     {
         return ::WindowShouldClose();
     }
 
-    void Window::close()
+    void Window::close() const
     {
         return ::CloseWindow();
     }

@@ -10,7 +10,7 @@
 
 namespace rl::io
 {
-    const static std::locale locale = std::locale("en_US.UTF-8");
+    const static std::locale locale{ "en_US.UTF-8" };
 
     template <typename T>
     constexpr std::string to_string(const ds::vector2<T>& vec)

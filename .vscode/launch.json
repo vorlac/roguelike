@@ -25,8 +25,7 @@
       "cwd": "${workspaceFolder}",
       "visualizerFile": "${workspaceFolder}/.out/build/msvc-debug/vcpkg_installed/x64-windows/share/entt/natvis/entt/*",
       "internalConsoleOptions": "openOnSessionStart",
-      "console": "internalConsole",
-      "externalConsole": false,
+      "console": "integratedTerminal"
     },
     {
       "name": "rogulike (gdb)",

@@ -1,4 +1,6 @@
 #include <chrono>
+#include <string>
+#include <fmt/compile.h>
 #include <fmt/format.h>
 #include <fmt/printf.h>
 
@@ -11,11 +13,13 @@
 #include "ecs/scenes.hpp"
 #include "ecs/systems.hpp"
 #include "utils/color.hpp"
+#include "utils/io.hpp"
 #include "utils/time.hpp"
+
 
 namespace rl
 {
-    namespace asdf
+    namespace c
     {
         struct position
         {
@@ -35,118 +39,116 @@ namespace rl
         };
     }
 
-    Game::~Game()
+    bool Game::teardown()
     {
         m_world.quit();
+        return true;
     }
 
-    bool Game::run()
+    bool Game::init()
     {
-        using namespace std::chrono;
-        using namespace std::literals;
-        using clock = std::chrono::high_resolution_clock;
-        static auto loc{ std::locale("en_US.UTF-8") };
+        const auto generate_world_entities = [&](uint32_t count) {
+            const ds::position centroid{ m_window.center() };
 
-        static auto generate_world_entities = [&](uint32_t count) {
-            ds::position position{ m_window.center() };
-
-            SetRandomSeed(12345);
+            SetRandomSeed(1111111);
             for (size_t i = 0; i < count; ++i)
             {
                 Color color{ rand_color(GetRandomValue(0, 64)) };
                 std::string name{ fmt::format("Ball {}", i) };
                 ds::velocity velocity{
-                    static_cast<float>(GetRandomValue(-200, 200)) / 1.0f,
-                    static_cast<float>(GetRandomValue(-200, 200)) / 1.0f,
+                    static_cast<float>(GetRandomValue(-500, 500)) / 1.0f,
+                    static_cast<float>(GetRandomValue(-500, 500)) / 1.0f,
                 };
 
                 m_world.entity(name.data())
-                    .set<asdf::position>({ position.x, position.y })
-                    .set<asdf::velocity>({ velocity.x, velocity.y })
-                    .set<asdf::style>({ color });
+                    .set<c::position>({ centroid.x, centroid.y })
+                    .set<c::velocity>({ velocity.x, velocity.y })
+                    .set<c::style>({ color });
             }
+
+            return m_world.count<c::position>();
         };
 
-        auto time_pregen{ clock::now() };
+        rl::timer timer{ "Entity creation time" };
+        return timer.measure(generate_world_entities, 10000);
+    }
 
-        generate_world_entities(100000);
-
-        auto time_postgen = duration_cast<milliseconds>(clock::now() - time_pregen);
-        fmt::print("\nEntity creation time: [{:L}ms]\n", time_postgen.count());
+    bool Game::run()
+    {
+        this->init();
 
         auto update_count{ 0 };
-        auto last_update{ clock::now() };
+        rl::timer delta_timer{ "delta_time" };
         while (!this->should_quit())
         {
             float delta_time{ this->delta_time() };
-            using us_tm = nanoseconds;
-            auto mdelta = clock::now() - last_update;
-            last_update = clock::now();
-            auto ddelta = to_durations<milliseconds, nanoseconds, microseconds>(mdelta);
-            auto ecount = m_world.count<asdf::velocity>();
-
-            if (++update_count % 60 == 0)
-            {
-                fmt::print(
-                    "delta_time:[{:<6L}s]  highres_clock:[ {:>6}ms | {:>6}us | {:>6}ns] ]  updates:[{:L}] entities [{:L}]\n",
-                    delta_time, std::get<0>(ddelta).count(), std::get<1>(ddelta).count(),
-                    std::get<2>(ddelta).count(), update_count, ecount);
-            }
 
             this->update(delta_time);
             this->render(delta_time);
 
-            m_world.progress(delta_time);
+            // clang-format off
+            ++update_count % 60 == 0
+                ? delta_timer.print_delta_time()
+                : delta_timer.delta_update();
+            // clang-format on
         }
 
         return 0;
     }
 
-    constexpr int rect_radius = 10;
-
-    // clang-format off
     void Game::update(float delta_time)
     {
-        static auto const dims{ m_window.render_size() };
+        const auto window_size{ this->m_window.render_size() };
 
-        m_world.each(
-            [&](flecs::entity, asdf::position& p, asdf::velocity& v, asdf::style&) {
-                p.x += v.x * delta_time;
-                p.y += v.y * delta_time;
+        auto top_bottom_collision = [&](const c::position& p) {
+            bool top_collision = p.y - (rect_size.height / 2.0) <= 0.0;
+            bool bottom_collision = p.y + (rect_size.height / 2.0) >= window_size.height;
+            return top_collision || bottom_collision;
+        };
 
-                bool top_collision = p.y <= rect_radius;
-                bool left_collision = p.x <= rect_radius;
-                bool right_collision = p.x >= (dims.width - rect_radius);
-                bool bottom_collision = p.y >= (dims.height - rect_radius);
+        auto left_right_collision = [&](const c::position& p) {
+            bool left_collision = p.x - (rect_size.width / 2.0) <= 0.0;
+            bool right_collision = p.x + (rect_size.width / 2.0) >= window_size.width;
+            return left_collision || right_collision;
+        };
 
-                if (right_collision || left_collision)
-                    v.x *= -1.0f;
-                if (bottom_collision || top_collision)
-                    v.y *= -1.0f;
-            });
+        m_world.each([&](flecs::entity, c::position& p, c::velocity& v, c::style&) {
+            p.x += v.x * delta_time;
+            p.y += v.y * delta_time;
+
+            if (left_right_collision(p))
+                v.x = -v.x;
+            if (top_bottom_collision(p))
+                v.y = -v.y;
+        });
 
         m_world.progress(delta_time);
     }
-
-    // clang-format on
 
     void Game::render(float)
     {
         m_window.render([&]() {
             ClearBackground(color::lightgray);
 
-            m_world.each([](const asdf::position& p, const asdf::velocity&, const asdf::style& s) {
-                DrawRectangle(static_cast<int>(p.x) - rect_radius,
-                              static_cast<int>(p.y) - rect_radius, static_cast<int>(rect_radius * 2U),
-                              static_cast<int>(rect_radius * 2U), s.color);
+            m_world.each([](const c::position& p, const c::velocity&, const c::style& s) {
+                DrawRectangle(
+                    static_cast<int32_t>(p.x) - static_cast<int32_t>(rect_size.width / 2.0),
+                    static_cast<int32_t>(p.y) - static_cast<int32_t>(rect_size.height / 2.0),
+                    static_cast<int32_t>(rect_size.width), static_cast<int>(rect_size.height),
+                    s.color);
             });
 
             DrawFPS(10, 10);
         });
     }
 
-    bool Game::should_quit()
+    bool Game::should_quit() const
     {
         return m_world.should_quit() || m_window.should_close();
+    }
+
+    void Game::quit() const
+    {
+        m_world.quit();
     }
 }
