@@ -105,37 +105,37 @@ namespace rl::log
     using namespace std::chrono_literals;
 
     template <auto log_level, typename... TArgs>
-    inline void log(fmt::format_string<TArgs...> format_str, TArgs&&... args)
+    inline constexpr void log(fmt::format_string<TArgs...> format_str, TArgs&&... args)
     {
         ::TraceLog(log_level, fmt::format(format_str, std::forward<TArgs>(args)...).data());
     }
 
     template <typename... TArgs>
-    inline void info(fmt::format_string<TArgs...> format_str, TArgs&&... args)
+    inline constexpr void info(fmt::format_string<TArgs...> format_str, TArgs&&... args)
     {
         log<::LOG_INFO>(format_str, std::forward<TArgs>(args)...);
     }
 
     template <typename... TArgs>
-    inline void debug(fmt::format_string<TArgs...> format_str, TArgs&&... args)
+    inline constexpr void debug(fmt::format_string<TArgs...> format_str, TArgs&&... args)
     {
         log<::LOG_DEBUG>(format_str, std::forward<TArgs>(args)...);
     }
 
     template <typename... TArgs>
-    inline void warning(fmt::format_string<TArgs...> format_str, TArgs&&... args)
+    inline constexpr void warning(fmt::format_string<TArgs...> format_str, TArgs&&... args)
     {
         log<::LOG_WARNING>(format_str, std::forward<TArgs>(args)...);
     }
 
     template <typename... TArgs>
-    inline void error(fmt::format_string<TArgs...> format_str, TArgs&&... args)
+    inline constexpr void error(fmt::format_string<TArgs...> format_str, TArgs&&... args)
     {
         log<::LOG_ERROR>(format_str, std::forward<TArgs>(args)...);
     }
 
     template <typename... TArgs>
-    inline void fatal(fmt::format_string<TArgs...> format_str, TArgs&&... args)
+    inline constexpr void fatal(fmt::format_string<TArgs...> format_str, TArgs&&... args)
     {
         log<::LOG_FATAL>(format_str, std::forward<TArgs>(args)...);
         exit(-1);
