@@ -1,11 +1,11 @@
 #pragma once
 
 #include <string>
-#include <raylib.h>
 
 #include "core/display.hpp"
+#include "core/ds/dimensions.hpp"
 #include "core/window.hpp"
-#include "ds/dimensions.hpp"
+#include "thirdparty/raylib.hpp"
 
 namespace rl
 {
@@ -28,7 +28,7 @@ namespace rl
         void disable_event_waiting();
 
     protected:
-        void init(uint32_t fps_target = DefaultFPS);
+        void setup(uint32_t fps_target = DefaultFPS);
         void teardown();
 
     protected:

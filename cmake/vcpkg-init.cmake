@@ -33,34 +33,37 @@ endif()
 # =======================================================================
 # VCPKG bootstrap / initialization.
 # =======================================================================
-if(WIN32)
-    set(vcpkg_executable "${CMAKE_CURRENT_SOURCE_DIR}/extern/vcpkg/vcpkg.exe")
-else()
-    set(vcpkg_executable "${CMAKE_CURRENT_SOURCE_DIR}/extern/vcpkg/vcpkg")
+if (WIN32)
+    set(EXECUTABLE_EXTENSION ".exe")
 endif()
+set(VCPKG_PROGRAM "${CMAKE_CURRENT_SOURCE_DIR}/extern/vcpkg/vcpkg${EXECUTABLE_EXTENSION}")
 
-if(EXISTS "${vcpkg_executable}")
-    message(NOTICE "Found VCPKG Executable: ${vcpkg_executable}")
+if(EXISTS "${VCPKG_PROGRAM}")
+    message(NOTICE "Found VCPKG Executable: ${VCPKG_PROGRAM}")
 else()
-    message(NOTICE "Could not find VCPKG Executable: ${vcpkg_executable}")
+    message(NOTICE "Could not find VCPKG Executable: ${VCPKG_PROGRAM}")
     message(NOTICE "Calling VCPKG bootstrap scripts.")
 
     if(WIN32)
-        execute_process(
-            COMMAND powershell -c "${CMAKE_CURRENT_SOURCE_DIR}/extern/vcpkg/bootstrap-vcpkg.bat"
-            WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-            COMMAND_ERROR_IS_FATAL ANY
+        set(VCPKG_INSTALL_COMMAND
+            powershell 
+            -c
+            "${CMAKE_CURRENT_SOURCE_DIR}/extern/vcpkg/bootstrap-vcpkg.bat"
         )
-    elseif(UNIX)
-        execute_process(
-            COMMAND bash "${CMAKE_CURRENT_SOURCE_DIR}/extern/vcpkg/bootstrap-vcpkg.sh"
-            WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-            COMMAND_ERROR_IS_FATAL ANY
+    else()
+        set(VCPKG_INSTALL_COMMAND
+            bash
+            "${CMAKE_CURRENT_SOURCE_DIR}/extern/vcpkg/bootstrap-vcpkg.sh"
         )
     endif()
 
-    # fail out if vcpkg isn't found after setup
-    if(NOT EXISTS "${vcpkg_executable}")
-        message(FATAL_ERROR "ERROR: '${vcpkg_executable}' not found!")
+    execute_process(
+        COMMAND ${VCPKG_INSTALL_COMMAND}
+        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+        COMMAND_ERROR_IS_FATAL ANY
+    )
+
+    if(NOT EXISTS "${VCPKG_PROGRAM}")
+        message(FATAL_ERROR "ERROR: '${VCPKG_PROGRAM}' not found!")
     endif()
 endif()

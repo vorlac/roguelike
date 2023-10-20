@@ -3,7 +3,7 @@
 #include <cstdio>
 #include <iostream>
 
-#ifndef NDEBUG
+#ifdef _DEBUG
 //
 // In debug mode, checks the passed in condition and outputs
 // detailed information to stederr, including a custom error
@@ -19,7 +19,7 @@
                         << "  File     = " << __FILE__ << std::endl                \
                         << "  Line     = " << __LINE__ << std::endl                \
                         << "  Message  = " << message << std::endl,                \
-                  abort(), 0;                                                      \
+                  __debugbreak(), 0;                                               \
           }                                                                        \
       }                                                                            \
       while (0)
@@ -31,6 +31,6 @@
 // the execution of the condition so don't define the expression
 // as anything that would be considered program logis.
 //
-  #define runtime_assert(condition, message) ((void)0)
-  #define assert_msg(message)                ((void)0)
+  #define runtime_assert(condition, message) static_cast<void>(0)
+  #define assert_msg(message)                static_cast<void>(0)
 #endif

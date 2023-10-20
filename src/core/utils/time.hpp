@@ -11,7 +11,7 @@
 #include <fmt/format.h>
 #include <string_view>
 
-#include "utils/io.hpp"
+#include "core/utils/io.hpp"
 
 namespace rl
 {
@@ -43,7 +43,7 @@ namespace rl
         }
 
         template <typename... TArgs>
-        inline decltype(auto) measure(auto function, TArgs... args)
+        [[maybe_unused]] inline decltype(auto) measure(auto function, TArgs... args)
         {
             m_prev_delta_time = clock_t::now();
             auto ret = function(args...);

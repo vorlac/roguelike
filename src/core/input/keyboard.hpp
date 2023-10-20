@@ -1,15 +1,16 @@
 #pragma once
 
 #include <cstdint>
-#include <raylib.h>
 #include <type_traits>
+
+#include "thirdparty/raylib.hpp"
 
 namespace rl::input::device
 {
     class Keyboard
     {
     public:
-        using ButtonID = std::underlying_type_t<::KeyboardKey>;
+        using ButtonID = std::underlying_type_t<raylib::KeyboardKey>;
 
     public:
         bool is_key_up(ButtonID key) const;

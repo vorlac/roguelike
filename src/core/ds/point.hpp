@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ds/vector2d.hpp"
+#include "core/ds/vector2d.hpp"
 
 namespace rl::ds
 {

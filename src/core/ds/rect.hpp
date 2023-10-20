@@ -1,7 +1,7 @@
 #pragma once
 
-#include "ds/dimensions.hpp"
-#include "ds/point.hpp"
+#include "core/ds/dimensions.hpp"
+#include "core/ds/point.hpp"
 
 namespace rl::ds
 {

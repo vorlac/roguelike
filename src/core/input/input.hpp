@@ -49,7 +49,7 @@ namespace rl::input
                 switch (action.device)
                 {
                     case InputDevice::Keyboard:
-                        if (::IsKeyDown(button))
+                        if (raylib::IsKeyDown(button))
                             m_active_game_actions.push_back(action.action);
                 }
             }
@@ -68,7 +68,7 @@ namespace rl::input
                 switch (action.device)
                 {
                     case InputDevice::Keyboard:
-                        if (::IsKeyDown(button))
+                        if (raylib::IsKeyDown(button))
                             m_active_ui_actions.push_back(action.action);
                 }
             }

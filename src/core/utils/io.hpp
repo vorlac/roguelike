@@ -9,13 +9,13 @@
 #include <fmt/chrono.h>
 #include <fmt/core.h>
 #include <fmt/format.h>
-#include <raylib.h>
 #include <string_view>
 #include <type_traits>
 
+#include "core/ds/point.hpp"
+#include "core/ds/vector2d.hpp"
 #include "core/input/keymap.hpp"
-#include "ds/point.hpp"
-#include "ds/vector2d.hpp"
+#include "thirdparty/raylib.hpp"
 #include "utils/assert.hpp"
 
 namespace rl::io
@@ -107,37 +107,37 @@ namespace rl::log
     template <auto log_level, typename... TArgs>
     inline constexpr void log(fmt::format_string<TArgs...> format_str, TArgs&&... args)
     {
-        ::TraceLog(log_level, fmt::format(format_str, std::forward<TArgs>(args)...).data());
+        raylib::TraceLog(log_level, fmt::format(format_str, std::forward<TArgs>(args)...).data());
     }
 
     template <typename... TArgs>
     inline constexpr void info(fmt::format_string<TArgs...> format_str, TArgs&&... args)
     {
-        log<::LOG_INFO>(format_str, std::forward<TArgs>(args)...);
+        log<raylib::LOG_INFO>(format_str, std::forward<TArgs>(args)...);
     }
 
     template <typename... TArgs>
     inline constexpr void debug(fmt::format_string<TArgs...> format_str, TArgs&&... args)
     {
-        log<::LOG_DEBUG>(format_str, std::forward<TArgs>(args)...);
+        log<raylib::LOG_DEBUG>(format_str, std::forward<TArgs>(args)...);
     }
 
     template <typename... TArgs>
     inline constexpr void warning(fmt::format_string<TArgs...> format_str, TArgs&&... args)
     {
-        log<::LOG_WARNING>(format_str, std::forward<TArgs>(args)...);
+        log<raylib::LOG_WARNING>(format_str, std::forward<TArgs>(args)...);
     }
 
     template <typename... TArgs>
     inline constexpr void error(fmt::format_string<TArgs...> format_str, TArgs&&... args)
     {
-        log<::LOG_ERROR>(format_str, std::forward<TArgs>(args)...);
+        log<raylib::LOG_ERROR>(format_str, std::forward<TArgs>(args)...);
     }
 
     template <typename... TArgs>
     inline constexpr void fatal(fmt::format_string<TArgs...> format_str, TArgs&&... args)
     {
-        log<::LOG_FATAL>(format_str, std::forward<TArgs>(args)...);
+        log<raylib::LOG_FATAL>(format_str, std::forward<TArgs>(args)...);
         exit(-1);
     }
 }

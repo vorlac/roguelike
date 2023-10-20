@@ -1,51 +1,51 @@
-#include "core/display.hpp"
-
 #include <cstdint>
 #include <string>
-#include <raylib.h>
+
+#include "core/display.hpp"
+#include "thirdparty/raylib.hpp"
 
 namespace rl
 {
-    int Display::monitor_count()
+    int32_t Display::monitor_count()
     {
-        return ::GetMonitorCount();
+        return raylib::GetMonitorCount();
     }
 
     int32_t Display::current_monitor()
     {
-        return ::GetCurrentMonitor();
+        return raylib::GetCurrentMonitor();
+    }
+
+    uint32_t Display::monitor_refresh_rate(uint16_t monitor)
+    {
+        return raylib::GetMonitorRefreshRate(monitor);
+    }
+
+    std::string Display::monitor_name(uint16_t monitor)
+    {
+        return raylib::GetMonitorName(monitor);
     }
 
     ds::position<float> Display::monitor_position(uint16_t monitor)
     {
         // TODO: change to pointi?
-        auto pos{ ::GetMonitorPosition(monitor) };
+        auto pos{ raylib::GetMonitorPosition(monitor) };
         return ds::position<float>(pos.x, pos.y);
     }
 
     ds::dimensions<int32_t> Display::monitor_dims(int16_t monitor)
     {
         return {
-            .width = ::GetMonitorWidth(monitor),
-            .height = ::GetMonitorHeight(monitor),
+            .width = raylib::GetMonitorWidth(monitor),
+            .height = raylib::GetMonitorHeight(monitor),
         };
     }
 
     ds::dimensions<int32_t> Display::monitor_physical_dims(int16_t monitor)
     {
         return {
-            .width = ::GetMonitorPhysicalWidth(monitor),
-            .height = ::GetMonitorPhysicalHeight(monitor),
+            .width = raylib::GetMonitorPhysicalWidth(monitor),
+            .height = raylib::GetMonitorPhysicalHeight(monitor),
         };
-    }
-
-    uint32_t Display::monitor_refresh_rate(uint16_t monitor)
-    {
-        return ::GetMonitorRefreshRate(monitor);
-    }
-
-    std::string Display::monitor_name(uint16_t monitor)
-    {
-        return ::GetMonitorName(monitor);
     }
 }

@@ -2,12 +2,11 @@
 
 #include <concepts>
 #include <cstdint>
-#include <cstdio>
-#include <raylib.h>
+#include <memory>
 #include <type_traits>
 
-#include "ecs/components.hpp"
-#include "utils/concepts.hpp"
+#include "core/utils/concepts.hpp"
+#include "thirdparty/raylib.hpp"
 
 namespace rl::ds
 {
@@ -30,14 +29,14 @@ namespace rl::ds
 
         template <typename V>
             requires std::same_as<T, V>
-        vector2(const ::Vector2& other)
+        vector2(const raylib::Vector2& other)
         {
             std::memcpy(this, &other, sizeof(*this));
         }
 
-        operator ::Vector2() const
+        operator raylib::Vector2() const
         {
-            return *reinterpret_cast<const ::Vector2*>(this);
+            return *reinterpret_cast<const raylib::Vector2*>(this);
         }
     };
 }

@@ -3,8 +3,8 @@
 #include <flecs.h>
 
 #include "core/application.hpp"
+#include "core/ds/dimensions.hpp"
 #include "core/input/input.hpp"
-#include "ds/dimensions.hpp"
 
 namespace rl
 {
@@ -12,7 +12,7 @@ namespace rl
     {
     public:
         bool run();
-        bool init();
+        bool setup();
         bool teardown();
 
         void update(float delta_time);

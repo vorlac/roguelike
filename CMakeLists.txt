@@ -131,9 +131,9 @@ set_property(TARGET ${PROJECT_NAME}
     "PATH=${CMAKE_CURRENT_INSTALL_DIR}/${PROJECT_NAME}${CMAKE_EXECUTABLE_SUFFIX}"
 )
 
-add_custom_command(TARGET ${PROJECT_NAME} 
-  POST_BUILD COMMAND 
-    ${CMAKE_COMMAND} -E copy_directory_if_different 
+add_custom_command(TARGET ${PROJECT_NAME}
+  POST_BUILD COMMAND
+    ${CMAKE_COMMAND} -E copy_directory_if_different
       ${CMAKE_CURRENT_SOURCE_DIR}/data
       $<TARGET_FILE_DIR:${PROJECT_NAME}>/data
 )

@@ -1,19 +1,19 @@
 #pragma once
 
 #include <cstdint>
-#include <raylib.h>
 #include <type_traits>
 
-#include "ds/point.hpp"
-#include "ds/vector2d.hpp"
+#include "core/ds/point.hpp"
+#include "core/ds/vector2d.hpp"
+#include "thirdparty/raylib.hpp"
 
 namespace rl::input::device
 {
     class Mouse
     {
     public:
-        using ButtonID = std::underlying_type_t<::MouseButton>;
-        using CursorID = std::underlying_type_t<::MouseCursor>;
+        using ButtonID = std::underlying_type_t<raylib::MouseButton>;
+        using CursorID = std::underlying_type_t<raylib::MouseCursor>;
 
     public:
         bool is_button_up(ButtonID button) const;
@@ -29,7 +29,7 @@ namespace rl::input::device
         void set_offset(ds::vector2<int32_t> offset) const;
         void set_scale(float x_scale = 1.0f, float y_scale = 1.0f) const;
         void set_scale(ds::vector2<float> scale) const;
-        void set_cursor(CursorID cursor = ::MouseCursor::MOUSE_CURSOR_DEFAULT) const;
+        void set_cursor(CursorID cursor = raylib::MouseCursor::MOUSE_CURSOR_DEFAULT) const;
 
         int32_t get_x() const;
         int32_t get_y() const;

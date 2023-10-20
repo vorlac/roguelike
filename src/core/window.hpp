@@ -3,9 +3,9 @@
 #include <string>
 #include <vector>
 
-#include "ds/dimensions.hpp"
-#include "ds/point.hpp"
-#include "ds/vector2d.hpp"
+#include "core/ds/dimensions.hpp"
+#include "core/ds/point.hpp"
+#include "core/ds/vector2d.hpp"
 
 namespace rl
 {
@@ -47,8 +47,8 @@ namespace rl
         void minimize();
         void restore();
 
-        void set_icon(::Image&& image);
-        void set_icons(std::vector<::Image> images);
+        void set_icon(raylib::Image&& image);
+        void set_icons(std::vector<raylib::Image> images);
 
         void title(std::string title);
 
@@ -65,8 +65,8 @@ namespace rl
         ds::dimensions<int32_t> screen_size();
         ds::dimensions<int32_t> render_size();
 
-        ds::point<float> position();
-        ds::point<float> center();
+        ds::position<float> position();
+        ds::position<float> center();
 
     public:
         rl::Window& operator=(Window window) = delete;
@@ -75,7 +75,7 @@ namespace rl
         rl::Window& operator=(const Window& window) = delete;
 
     protected:
-        bool init(int32_t width = 1920, int32_t height = 1080, std::string title = "roguelite");
+        bool setup(int32_t width = 1920, int32_t height = 1080, std::string title = "roguelite");
         bool teardown();
     };
 }

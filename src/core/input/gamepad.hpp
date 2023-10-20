@@ -2,16 +2,17 @@
 
 #include <cstdint>
 #include <string>
-#include <raylib.h>
 #include <type_traits>
+
+#include "thirdparty/raylib.hpp"
 
 namespace rl::input::device
 {
     class Gamepad
     {
     public:
-        using AxisID = std::underlying_type_t<::GamepadAxis>;
-        using ButtonID = std::underlying_type_t<::GamepadButton>;
+        using AxisID = std::underlying_type_t<raylib::GamepadAxis>;
+        using ButtonID = std::underlying_type_t<raylib::GamepadButton>;
 
     public:
         Gamepad(int32_t id = 0);
