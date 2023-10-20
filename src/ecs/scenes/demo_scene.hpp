@@ -55,7 +55,7 @@ namespace rl::scene
             };
 
             rl::timer timer{ "scene::demo init" };
-            timer.measure(generate_world_entities, 100000);
+            timer.measure(generate_world_entities, 25000);
             world.set_pipeline(world.get<scene::demo_level>()->pipeline);
         }
     }
