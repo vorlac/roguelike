@@ -11,6 +11,8 @@
 #include <fmt/format.h>
 #include <string_view>
 
+#include "utils/io.hpp"
+
 namespace rl
 {
     using namespace std::chrono_literals;
@@ -74,7 +76,7 @@ namespace rl
         inline void print_delta_time()
         {
             auto dt{ this->delta_time() };
-            fmt::print("     > {} => [{}]\n", m_label, dt);
+            log::info("     > {} => [{}]", m_label, dt);
         }
 
         template <typename TOut>

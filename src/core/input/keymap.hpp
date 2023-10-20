@@ -124,6 +124,91 @@ namespace rl::input
         NP_Equal = KEY_KP_EQUAL,           // Key: Keypad =
     };
 
+    static constexpr inline std::array KeyboardButtonMap =
+        std::to_array<std::pair<std::string_view, Key>>({
+            { "A", Key::A },
+            { "B", Key::B },
+            { "C", Key::C },
+            { "D", Key::D },
+            { "E", Key::E },
+            { "F", Key::F },
+            { "G", Key::G },
+            { "H", Key::H },
+            { "I", Key::I },
+            { "J", Key::J },
+            { "K", Key::K },
+            { "L", Key::L },
+            { "M", Key::M },
+            { "N", Key::N },
+            { "O", Key::O },
+            { "P", Key::P },
+            { "Q", Key::Q },
+            { "R", Key::R },
+            { "S", Key::S },
+            { "T", Key::T },
+            { "U", Key::U },
+            { "V", Key::V },
+            { "W", Key::W },
+            { "X", Key::X },
+            { "Y", Key::Y },
+            { "Z", Key::Z },
+
+            { "1", Key::One },
+            { "2", Key::Two },
+            { "3", Key::Three },
+            { "4", Key::Four },
+            { "5", Key::Five },
+            { "6", Key::Six },
+            { "7", Key::Seven },
+            { "8", Key::Eight },
+            { "9", Key::Nine },
+            { "0", Key::Zero },
+
+            { "F1", Key::F1 },
+            { "F2", Key::F2 },
+            { "F3", Key::F3 },
+            { "F4", Key::F4 },
+            { "F5", Key::F5 },
+            { "F6", Key::F6 },
+            { "F7", Key::F7 },
+            { "F8", Key::F8 },
+            { "F9", Key::F9 },
+            { "F10", Key::F10 },
+            { "F11", Key::F11 },
+            { "F12", Key::F12 },
+
+            { "'", Key::Apostrophe },
+            { ",", Key::Comma },
+            { "-", Key::Minus },
+            { ".", Key::Period },
+            { "/", Key::ForwardSlash },
+            { ";", Key::Semicolon },
+            { "=", Key::Equal },
+
+            { "Space", Key::Space },
+            { "Escape", Key::Escape },
+            { "Enter", Key::Enter },
+            { "Tab", Key::Tab },
+            { "Backspace", Key::Backspace },
+            { "Insert", Key::Insert },
+            { "Delete", Key::Delete },
+
+            { "LShift", Key::LeftShift },
+            { "RShift", Key::RightShift },
+            { "LCtrl", Key::LeftCtrl },
+            { "RCtrl", Key::RightCtrl },
+            { "LCtrl", Key::LeftAlt },
+            { "RCtrl", Key::RightAlt },
+
+            { "Up", Key::Up },
+            { "Down", Key::Down },
+            { "Left", Key::Left },
+            { "Right", Key::Right },
+
+            { "NPAdd", Key::NP_Add },
+            { "NPSubtract", Key::NP_Subtract },
+        });
+
     enum class InputDevice
     {
         None,
@@ -133,6 +218,14 @@ namespace rl::input
         Gamepad
     };
 
+    static constexpr inline std::array InputDeviceMap =
+        std::to_array<std::pair<std::string_view, InputDevice>>({
+            { "None", InputDevice::None },
+            { "Mouse", InputDevice::Mouse },
+            { "Keyboard", InputDevice::Keyboard },
+            { "Gamepad", InputDevice::Gamepad },
+        });
+
     enum class ActionCategory
     {
         None,
@@ -140,13 +233,20 @@ namespace rl::input
         Game
     };
 
+    static constexpr inline std::array ActionCategoryMap =
+        std::to_array<std::pair<std::string_view, ActionCategory>>({
+            { "None", ActionCategory::None },
+            { "UI", ActionCategory::UI },
+            { "Game", ActionCategory::Game },
+        });
+
     enum class GameplayAction
     {
         None,
-        MoveLeft,
-        MoveRight,
         MoveUp,
         MoveDown,
+        MoveLeft,
+        MoveRight,
         RotateUp,
         RotateDown,
         RotateLeft,
@@ -159,8 +259,23 @@ namespace rl::input
         ToggleDebugInfo,
     };
 
+    static constexpr inline std::array GameActionMap =
+        std::to_array<std::pair<std::string_view, GameplayAction>>({
+            { "move_up", GameplayAction::MoveUp },
+            { "move_down", GameplayAction::MoveDown },
+            { "move_left", GameplayAction::MoveLeft },
+            { "move_right", GameplayAction::MoveRight },
+            { "dash", GameplayAction::Dash },
+            { "shoot", GameplayAction::Shoot },
+            { "use_item", GameplayAction::UseItem },
+            { "prev_weapon", GameplayAction::PrevWeapon },
+            { "next_weapon", GameplayAction::NextWeapon },
+            { "debug_mode", GameplayAction::ToggleDebugInfo },
+        });
+
     enum class UIAction
     {
+        None,
         Up,
         Down,
         Left,
@@ -171,9 +286,21 @@ namespace rl::input
         Cancel,
     };
 
+    static constexpr inline std::array UIActionMap =
+        std::to_array<std::pair<std::string_view, UIAction>>({
+            { "navigate_up", UIAction::Up },
+            { "navigate_down", UIAction::Down },
+            { "navigate_left", UIAction::Left },
+            { "navigate_right", UIAction::Right },
+            { "accept", UIAction::Accept },
+            { "cancel", UIAction::Cancel },
+        });
+
+    template <typename TAction>
     struct ActionInput
     {
-        std::string action;
+        std::string action_name;
+        TAction action;
         Key button{ KEY_NULL };
         bool modifier_ctrl{ false };
         bool modifier_shift{ false };
@@ -183,139 +310,45 @@ namespace rl::input
 
     struct Keymap
     {
-        inline static std::filesystem::path keymap_cfg{ "./data/configs/keymap.json" };
-
-        const static inline std::array InputDeviceMap =
-            std::to_array<std::pair<std::string_view, InputDevice>>({
-                { "None", InputDevice::None },
-                { "Mouse", InputDevice::Mouse },
-                { "Keyboard", InputDevice::Keyboard },
-                { "Gamepad", InputDevice::Gamepad },
-            });
-
-        const static inline std::array UIActionMap =
-            std::to_array<std::pair<std::string_view, UIAction>>({
-                { "navigate_up", UIAction::Up },
-                { "navigate_down", UIAction::Down },
-                { "navigate_left", UIAction::Left },
-                { "navigate_right", UIAction::Right },
-                { "accept", UIAction::Accept },
-                { "cancel", UIAction::Cancel },
-            });
-
-        const static inline std::array GameActionMap =
-            std::to_array<std::pair<std::string_view, GameplayAction>>({
-                { "move_up", GameplayAction::MoveUp },
-                { "move_down", GameplayAction::MoveDown },
-                { "move_left", GameplayAction::MoveLeft },
-                { "move_right", GameplayAction::MoveRight },
-                { "dash", GameplayAction::Dash },
-                { "shoot", GameplayAction::Shoot },
-                { "use_item", GameplayAction::UseItem },
-                { "prev_weapon", GameplayAction::PrevWeapon },
-                { "next_weapon", GameplayAction::NextWeapon },
-                { "debug_mode", GameplayAction::ToggleDebugInfo },
-            });
-
-        const static inline std::array KeyboardButtonMap =
-            std::to_array<std::pair<std::string_view, Key>>({
-                { "A", Key::A },
-                { "B", Key::B },
-                { "C", Key::C },
-                { "D", Key::D },
-                { "E", Key::E },
-                { "F", Key::F },
-                { "G", Key::G },
-                { "H", Key::H },
-                { "I", Key::I },
-                { "J", Key::J },
-                { "K", Key::K },
-                { "L", Key::L },
-                { "M", Key::M },
-                { "N", Key::N },
-                { "O", Key::O },
-                { "P", Key::P },
-                { "Q", Key::Q },
-                { "R", Key::R },
-                { "S", Key::S },
-                { "T", Key::T },
-                { "U", Key::U },
-                { "V", Key::V },
-                { "W", Key::W },
-                { "X", Key::X },
-                { "Y", Key::Y },
-                { "Z", Key::Z },
-
-                { "1", Key::One },
-                { "2", Key::Two },
-                { "3", Key::Three },
-                { "4", Key::Four },
-                { "5", Key::Five },
-                { "6", Key::Six },
-                { "7", Key::Seven },
-                { "8", Key::Eight },
-                { "9", Key::Nine },
-                { "0", Key::Zero },
-
-                { "F1", Key::F1 },
-                { "F2", Key::F2 },
-                { "F3", Key::F3 },
-                { "F4", Key::F4 },
-                { "F5", Key::F5 },
-                { "F6", Key::F6 },
-                { "F7", Key::F7 },
-                { "F8", Key::F8 },
-                { "F9", Key::F9 },
-                { "F10", Key::F10 },
-                { "F11", Key::F11 },
-                { "F12", Key::F12 },
-
-                { "'", Key::Apostrophe },
-                { ",", Key::Comma },
-                { "-", Key::Minus },
-                { ".", Key::Period },
-                { "/", Key::ForwardSlash },
-                { ";", Key::Semicolon },
-                { "=", Key::Equal },
-
-                { "Space", Key::Space },
-                { "Escape", Key::Escape },
-                { "Enter", Key::Enter },
-                { "Tab", Key::Tab },
-                { "Backspace", Key::Backspace },
-                { "Insert", Key::Insert },
-                { "Delete", Key::Delete },
-
-                { "LShift", Key::LeftShift },
-                { "RShift", Key::RightShift },
-                { "LCtrl", Key::LeftCtrl },
-                { "RCtrl", Key::RightCtrl },
-                { "LCtrl", Key::LeftAlt },
-                { "RCtrl", Key::RightAlt },
-
-                { "Up", Key::Up },
-                { "Down", Key::Down },
-                { "Left", Key::Left },
-                { "Right", Key::Right },
-
-                { "NPAdd", Key::NP_Add },
-                { "NPSubtract", Key::NP_Subtract },
-            });
+        static const inline std::filesystem::path keymap_cfg{ "./data/configs/keymap.json" };
 
         Keymap()
         {
             simdjson::dom::parser config_parser{};
             simdjson::dom::element keymap{ config_parser.load(keymap_cfg.string()) };
+            m_game_input_mappings = load_action_inputs<GameplayAction>("game", keymap, GameActionMap);
+            m_ui_input_mappings = load_action_inputs<UIAction>("ui", keymap, UIActionMap);
+        }
 
-            auto game_actions = keymap["game"];
-            for (const auto& actions : GameActionMap)
+        const std::vector<ActionInput<GameplayAction>>& game_action_keymap() const
+        {
+            return m_game_input_mappings;
+        }
+
+        const std::vector<ActionInput<UIAction>>& ui_action_keymap() const
+        {
+            return m_ui_input_mappings;
+        }
+
+    public:
+        template <typename TAction>
+        std::vector<ActionInput<TAction>> load_action_inputs(std::string category_name,
+                                                             simdjson::dom::element& keymap,
+                                                             auto text_to_keycode_map)
+        {
+            std::vector<ActionInput<TAction>> action_input_mappings{};
+            action_input_mappings.reserve(128);
+
+            auto game_actions = keymap[category_name];
+            for (const auto& actions : text_to_keycode_map)
             {
                 const auto& [action_label, action_type] = actions;
                 auto&& curr_action_keys = game_actions[action_label];
                 for (const auto&& action_keys : curr_action_keys)
                 {
-                    ActionInput action = {
-                        .action = std::string{ action_label },
+                    ActionInput<TAction> action = {
+                        .action_name = std::string{ action_label },
+                        .action = get_action<TAction>(std::string{ action_label }),
                         .button = get_button(std::string{ action_keys["button"] }),
                         .modifier_ctrl = false,
                         .modifier_shift = false,
@@ -323,12 +356,63 @@ namespace rl::input
                         .category = ActionCategory::Game,
                     };
 
-                    game_input_mappings.push_back(std::move(action));
+                    action_input_mappings.push_back(std::move(action));
                 }
+            }
+
+            return action_input_mappings;
+        }
+
+        template <typename TAction>
+        static TAction get_action(std::string name)
+        {
+            if constexpr (std::is_same_v<TAction, GameplayAction>)
+            {
+                for (const auto& mapping : GameActionMap)
+                {
+                    auto&& [action_name, action_type] = mapping;
+                    if (name == action_name)
+                        return action_type;
+                }
+                return GameplayAction::None;
+            }
+            if constexpr (std::is_same_v<TAction, UIAction>)
+            {
+                for (const auto& mapping : UIActionMap)
+                {
+                    auto&& [action_name, action_type] = mapping;
+                    if (name == action_name)
+                        return action_type;
+                }
+                return UIAction::None;
             }
         }
 
-    private:
+        template <typename TAction>
+        static constexpr std::string get_action_name(TAction action)
+        {
+            if constexpr (std::is_same_v<TAction, GameplayAction>)
+            {
+                for (const auto& mapping : GameActionMap)
+                {
+                    auto&& [action_name, action_type] = mapping;
+                    if (action_type == action)
+                        return action_name.data();
+                }
+                return "none";
+            }
+            if constexpr (std::is_same_v<TAction, UIAction>)
+            {
+                for (const auto& mapping : UIActionMap)
+                {
+                    auto&& [action_name, action_type] = mapping;
+                    if (action_type == action)
+                        return action_name.data();
+                }
+                return "unknown";
+            }
+        }
+
         static Key get_button(std::string label)
         {
             for (const auto& mapping : KeyboardButtonMap)
@@ -351,7 +435,8 @@ namespace rl::input
             return InputDevice::Unknown;
         }
 
-        std::vector<ActionInput> ui_input_mappings{};
-        std::vector<ActionInput> game_input_mappings{};
+    private:
+        std::vector<ActionInput<UIAction>> m_ui_input_mappings{};
+        std::vector<ActionInput<GameplayAction>> m_game_input_mappings{};
     };
 }

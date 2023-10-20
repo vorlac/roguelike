@@ -7,6 +7,7 @@
 #include <fmt/printf.h>
 
 #include "core/application.hpp"
+#include "core/input/keymap.hpp"
 #include "ds/dimensions.hpp"
 #include "ds/point.hpp"
 #include "ecs/components.hpp"
@@ -98,6 +99,13 @@ namespace rl
 
     void Game::update(float delta_time)
     {
+        auto&& input_actions = m_input.active_game_actions();
+#ifdef _DEBUG
+        if (input_actions.size() > 0)
+            for (auto&& action : input_actions)
+                log::info("Input: {}", action);
+#endif
+
         const auto window_size{ this->m_window.render_size() };
 
         auto top_bottom_collision = [&](const c::position& p) {
