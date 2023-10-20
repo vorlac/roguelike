@@ -83,6 +83,7 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
   $<$<CONFIG:Debug>:
     ROGUELIKE_DEBUG
     ROGUELIKE_LOGGER_ENABLED
+    DEBUG_HEAP=0
   >
   NOMINMAX
 )
@@ -100,7 +101,12 @@ target_compile_options(${PROJECT_NAME} PRIVATE
 
     $<$<CONFIG:Release>:
       /MD
-      /O2
+      /Ox
+    >
+
+    $<$<CONFIG:RelWithDebInfo>:
+      /MD
+      /Ox
     >
   >
 )

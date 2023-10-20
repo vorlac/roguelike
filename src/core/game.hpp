@@ -15,9 +15,6 @@ namespace rl
         bool setup();
         bool teardown();
 
-        void update(float delta_time);
-        void render(float delta_time);
-
         bool should_quit() const;
         void quit() const;
 

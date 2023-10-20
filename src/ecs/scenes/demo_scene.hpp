@@ -2,6 +2,7 @@
 
 #include <flecs.h>
 
+#include "core/ds/dimensions.hpp"
 #include "core/ds/point.hpp"
 #include "core/utils/assert.hpp"
 #include "core/utils/io.hpp"
@@ -54,13 +55,33 @@ namespace rl::scene
             };
 
             rl::timer timer{ "scene::demo init" };
-            timer.measure(generate_world_entities, 10000);
+            timer.measure(generate_world_entities, 25000);
             world.set_pipeline(world.get<scene::demo_level>()->pipeline);
         }
     }
 
-    auto init_demo_scene(flecs::world& world)
+    auto init_demo_scene(flecs::world& world, ds::dimensions<int32_t> render_window_size)
     {
+        // variables / lambdas captured by the update system
+        static constexpr ds::dimensions rect_size{
+            .width = 10,
+            .height = 10,
+        };
+
+        static const auto window_size{ render_window_size };
+
+        auto top_bottom_collision = [&](const component::position& pos) {
+            bool top_collision = pos.y - (rect_size.height / 2.0) <= 0.0;
+            bool bottom_collision = pos.y + (rect_size.height / 2.0) >= window_size.height;
+            return top_collision || bottom_collision;
+        };
+
+        auto left_right_collision = [&](const component::position& pos) {
+            bool left_collision = pos.x - (rect_size.width / 2.0) <= 0.0;
+            bool right_collision = pos.x + (rect_size.width / 2.0) >= window_size.width;
+            return left_collision || right_collision;
+        };
+
         // Each scene gets a pipeline that
         // runs the associated systems plus
         // all other scene-agnostic systems.
@@ -77,6 +98,47 @@ namespace rl::scene
         };
 
         world.set<scene::demo_level>({ demo_scene });
+
+        static std::atomic<uint64_t> update_calls = 0;
+        static thread_local rl::timer delta_timer{ "delta_time" };
+
+        world.system<component::position, component::velocity>("Movement")
+            .kind(flecs::OnUpdate)
+            .interval(1.0f / 120.0f)
+            .iter([&](flecs::iter& it, component::position* p, component::velocity* v) {
+                const float delta_time = it.delta_time();
+                ++update_calls % 120 == 0       ? delta_timer.print_delta_time()
+                : (update_calls + 1) % 120 == 0 ? delta_timer.delta_update()
+                                                : (void)0;
+
+                for ([[maybe_unused]] const auto i : it)
+                {
+                    p->x += v->x * delta_time;
+                    p->y += v->y * delta_time;
+
+                    if (left_right_collision(*p))
+                        v->x = -v->x;
+                    if (top_bottom_collision(*p))
+                        v->y = -v->y;
+
+                    ++v, ++p;
+                }
+            });
+
+        raylib::BeginDrawing();
+        raylib::ClearBackground(color::lightgray);
+        world.system<const component::position, const component::style>("Render")
+            .kind(flecs::PostUpdate)
+            .each([&](const component::position& p, const component::style& s) {
+                raylib::DrawRectangle(
+                    static_cast<int32_t>(p.x) - static_cast<int32_t>(rect_size.width / 2.0),
+                    static_cast<int32_t>(p.y) - static_cast<int32_t>(rect_size.height / 2.0),
+                    static_cast<int32_t>(rect_size.width), static_cast<int>(rect_size.height),
+                    s.color);
+            });
+        raylib::DrawRectangle(0, 0, 95, 40, color::black);
+        raylib::DrawFPS(10, 10);
+        raylib::EndDrawing();
 
         // scene::observer callback that implements scene change/creation
         // logic for scene::demo when it becomes the new scene::active.

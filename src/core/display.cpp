@@ -1,7 +1,8 @@
+#include "core/display.hpp"
+
 #include <cstdint>
 #include <string>
 
-#include "core/display.hpp"
 #include "thirdparty/raylib.hpp"
 
 namespace rl
