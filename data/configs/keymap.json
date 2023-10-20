@@ -1,0 +1,178 @@
+{
+  "game": {
+    "move_up": [
+      {
+        "button": "Up",
+        "device": "Keyboard",
+        "hold": false,
+        "doube_tap": false,
+        "modifiers": []
+      },
+      {
+        "button": "W",
+        "device": "Keyboard",
+        "hold": false,
+        "doube_tap": false,
+        "modifiers": []
+      }
+    ],
+    "move_down": [
+      {
+        "button": "Down",
+        "device": "Keyboard",
+        "hold": false,
+        "doube_tap": false,
+        "modifiers": []
+      },
+      {
+        "button": "S",
+        "device": "Keyboard",
+        "hold": false,
+        "doube_tap": false,
+        "modifiers": []
+      }
+    ],
+    "move_left": [
+      {
+        "button": "Left",
+        "device": "Keyboard",
+        "hold": false,
+        "doube_tap": false,
+        "modifiers": []
+      },
+      {
+        "button": "A",
+        "device": "Keyboard",
+        "hold": false,
+        "doube_tap": false,
+        "modifiers": []
+      }
+    ],
+    "move_right": [
+      {
+        "button": "Right",
+        "device": "Keyboard",
+        "hold": false,
+        "doube_tap": false,
+        "modifiers": []
+      },
+      {
+        "button": "D",
+        "device": "Keyboard",
+        "hold": false,
+        "doube_tap": false,
+        "modifiers": []
+      }
+    ],
+    "dash": [
+      {
+        "button": "LShift",
+        "device": "Keyboard",
+        "hold": false,
+        "doube_tap": false,
+        "modifiers": []
+      }
+    ],
+    "shoot": [
+      {
+        "button": "LMB",
+        "device": "Mouse",
+        "hold": false,
+        "doube_tap": false,
+        "modifiers": []
+      }
+    ],
+    "use_item": [
+      {
+        "button": "E",
+        "device": "Keyboard",
+        "hold": false,
+        "doube_tap": false,
+        "modifiers": []
+      }
+    ],
+    "prev_weapon": [
+      {
+        "button": "ScrollWheelDown",
+        "device": "Mouse",
+        "hold": false,
+        "doube_tap": false,
+        "modifiers": []
+      }
+    ],
+    "next_weapon": [
+      {
+        "button": "ScrollWheelUp",
+        "device": "Mouse",
+        "hold": false,
+        "doube_tap": false,
+        "modifiers": []
+      }
+    ],
+    "debug_mode": [
+      {
+        "button": "F1",
+        "device": "Keyboard",
+        "hold": false,
+        "double_tap": false,
+        "modifiers": [ "LCtrl" ]
+      }
+    ]
+  },
+  "ui": {
+    "navigate_up": [
+      {
+        "button": "Up",
+        "device": "Keyboard",
+        "hold": false,
+        "doube_tap": false,
+        "modifiers": []
+      }
+    ],
+    "navigate_down": [
+      {
+        "button": "Down",
+        "device": "Keyboard",
+        "hold": false,
+        "doube_tap": false,
+        "modifiers": []
+      }
+    ],
+    "navigate_left": [
+      {
+        "button": "Left",
+        "device": "Keyboard",
+        "hold": false,
+        "doube_tap": false,
+        "modifiers": []
+      }
+    ],
+    "navigate_right": [
+      {
+        "button": "Right",
+        "device": "Keyboard",
+        "hold": false,
+        "doube_tap": false,
+        "modifiers": []
+      }
+    ],
+    "accept": [
+      {
+        "button": "Enter",
+        "device": "Keyboard",
+        "hold": false,
+        "doube_tap": false,
+        "modifiers": []
+      }
+    ],
+    "cancel": [
+      {
+        "button": "Esc",
+        "device": "Keyboard",
+        "hold": false,
+        "doube_tap": false,
+        "modifiers": []
+      }
+    ]
+  }
+}

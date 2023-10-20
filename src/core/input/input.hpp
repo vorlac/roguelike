@@ -2,18 +2,11 @@
 
 #include "core/input/gamepad.hpp"
 #include "core/input/keyboard.hpp"
+#include "core/input/keymap.hpp"
 #include "core/input/mouse.hpp"
 
 namespace rl::input
 {
-    enum class InputDevice
-    {
-        None,
-        Mouse,
-        Keyboard,
-        Gamepad
-    };
-
     struct ButtonInfo
     {
         uint32_t id{ 0 };
@@ -45,5 +38,6 @@ namespace rl::input
         input::device::Mouse m_mouse{};
         input::device::Keyboard m_keyboard{};
         input::device::Gamepad m_gamepad{};
+        input::Keymap m_keymap{};
     };
 }
