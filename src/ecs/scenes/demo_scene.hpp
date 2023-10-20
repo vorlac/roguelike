@@ -55,7 +55,7 @@ namespace rl::scene
             };
 
             rl::timer timer{ "scene::demo init" };
-            timer.measure(generate_world_entities, 25000);
+            timer.measure(generate_world_entities, 100000);
             world.set_pipeline(world.get<scene::demo_level>()->pipeline);
         }
     }
@@ -82,19 +82,11 @@ namespace rl::scene
             return left_collision || right_collision;
         };
 
-        // Each scene gets a pipeline that
-        // runs the associated systems plus
-        // all other scene-agnostic systems.
-        //
-        // Use "without()" of the other
-        // scenes so that we can run every
-        // system that doesn't have a scene
-        // attached to it.
         flecs::entity demo_scene = {
             world.pipeline()
-                .with(flecs::System)          // has system
-                .without<scene::main_menu>()  // doesn't have a menu
-                .build()                      // construct
+                .with(flecs::System)
+                .without<scene::main_menu>()  //
+                .build()                      //
         };
 
         world.set<scene::demo_level>({ demo_scene });

@@ -10,7 +10,7 @@
 #### High Level Architecture
 ![Diagram1](data/docs/architecture.png)
 #### Component add flow
-![Diagram2](data/docs/diagram2.png)
+![Diagram2](data/docs/component_add_flow.png)
 #### Component remove flow
 ![Component Remove Flow](data/docs/component_remove_flow.png)
 #### Staging flow
