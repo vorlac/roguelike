@@ -1,13 +1,3 @@
-# entityx submodule init/update
-if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/extern/entityx/entityx")
-    message(NOTICE "entityx submodule sources not found")
-    message(NOTICE "initializing/updating the entityx submodule...")
-    execute_process(
-        COMMAND git submodule update --init extern/entityx
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        COMMAND_ERROR_IS_FATAL ANY
-    )
-endif()
 
 # VCPKG submodule init/update
 if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/extern/vcpkg/ports")

@@ -107,7 +107,7 @@ namespace rl::log
     template <auto log_level, typename... TArgs>
     inline constexpr void log(fmt::format_string<TArgs...> format_str, TArgs&&... args)
     {
-        raylib::TraceLog(log_level, fmt::format(format_str, std::forward<TArgs>(args)...).data());
+        raylib::TraceLog(fmt::format(io::locale, format_str, std::forward<TArgs>(args)...).data());
     }
 
     template <typename... TArgs>

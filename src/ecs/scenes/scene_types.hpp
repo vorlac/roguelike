@@ -14,12 +14,12 @@ namespace rl::scene
     {
     };
 
-    struct main_menu
+    struct main_menu_scene
     {
         scene::pipeline pipeline{};
     };
 
-    struct demo_level
+    struct benchmark_scene
     {
         scene::pipeline pipeline{};
     };

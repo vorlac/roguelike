@@ -13,8 +13,8 @@
 #include "ecs/components/kinematic_components.hpp"
 #include "ecs/components/style_components.hpp"
 #include "ecs/components/transform_components.hpp"
-#include "ecs/scenes/demo_scene.hpp"
-#include "ecs/scenes/menu_scene.hpp"
+#include "ecs/scenes/benchmark_scene.hpp"
+#include "ecs/scenes/main_menu_scene.hpp"
 #include "ecs/scenes/scene_types.hpp"
 #include "utils/color.hpp"
 #include "utils/io.hpp"
@@ -27,10 +27,10 @@ namespace rl
         Application::setup();
         // Can only have one active scene in a game at a time.
         m_world.component<scene::active>().add(flecs::Exclusive);
-        scene::init_demo_scene(m_world, std::move(this->m_window.render_size()));
-        scene::init_main_menu_scene(m_world);
+        scene::benchmark::init(m_world, std::move(this->m_window.render_size()));
+        scene::main_menu::init(m_world);
 
-        scene::set_active<scene::demo_level>(m_world);
+        scene::set_active<scene::benchmark_scene>(m_world);
 
         return true;
     }
