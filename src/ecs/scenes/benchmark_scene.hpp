@@ -1,10 +1,12 @@
 #pragma once
 
+#include <vector>
 #include <flecs.h>
 
 #include "core/ds/dimensions.hpp"
 #include "core/ds/point.hpp"
 #include "core/input/input.hpp"
+#include "core/input/keymap.hpp"
 #include "core/utils/assert.hpp"
 #include "core/utils/io.hpp"
 #include "core/utils/time.hpp"
@@ -51,10 +53,18 @@ namespace rl::scene
                     };
 
                     world.entity(fmt::format("Rect {}", i).data())
-                        .set<component::position>({ centroid.x, centroid.y })
-                        .set<component::velocity>({ velocity.x, velocity.y })
-                        .set<component::style>({ rect_color });
+                        .set<component::position>({ .x = centroid.x, .y = centroid.y })
+                        .set<component::velocity>({ .x = velocity.x, .y = velocity.y })
+                        .set<component::style>({ .color = rect_color })
+                        .set<component::scale>({ .factor = 1.0f });
                 }
+
+                world.entity("Player")
+                    .set<component::position>({ .x = centroid.x, .y = centroid.y })
+                    .set<component::velocity>({ .x = 0.0f, .y = 0.0f })
+                    .set<component::style>({ .color = color::orange })
+                    .set<component::character>({ .alive = true })
+                    .set<component::scale>({ .factor = 5.0f });
 
                 world.set_pipeline(world.get<benchmark_scene>()->pipeline);
             }
@@ -64,16 +74,15 @@ namespace rl::scene
         {
             static void define_rect_movement(flecs::world& world, ds::dimensions<int32_t> window_rect)
             {
-                uint64_t update_calls = 0;
-                static const auto window_size{ window_rect };
+                const static ds::dimensions<int32_t> window_size{ window_rect };
 
-                auto top_bottom_collision = [&](const component::position& pos) {
+                static auto top_bottom_collision = [](const component::position& pos) {
                     bool top_collision = pos.y - (rect_size.height / 2.0) <= 0.0;
                     bool bottom_collision = pos.y + (rect_size.height / 2.0) >= window_size.height;
                     return top_collision || bottom_collision;
                 };
 
-                auto left_right_collision = [&](const component::position& pos) {
+                static auto left_right_collision = [](const component::position& pos) {
                     bool left_collision = pos.x - (rect_size.width / 2.0) <= 0.0;
                     bool right_collision = pos.x + (rect_size.width / 2.0) >= window_size.width;
                     return left_collision || right_collision;
@@ -82,45 +91,74 @@ namespace rl::scene
                 world.system<component::position, component::velocity>("Rect Movement")
                     .kind(flecs::OnUpdate)
                     .interval(1.0f / 120.0f)
-                    .iter([&](flecs::iter& it, component::position* pos, component::velocity* vel) {
-                        const float delta_time = it.delta_system_time();
-                        if (++update_calls % 120 == 0)
+                    .run([](flecs::iter_t* it) {
+                        if (++m_update_calls % 120 == 0)
+                            rl::log::info("delta time: [{:>10.6f} ms]", m_delta_time);
+
+                        m_delta_time = it->delta_system_time;
+                        while (ecs_iter_next(it))
+                            it->callback(it);
+                    })
+                    .each([](flecs::entity, component::position& pos, component::velocity& vel) {
+                        pos.x += vel.x * m_delta_time;
+                        pos.y += vel.y * m_delta_time;
+
+                        if (left_right_collision(pos))
+                            vel.x = -vel.x;
+                        if (top_bottom_collision(pos))
+                            vel.y = -vel.y;
+                    });
+            }
+
+            static void define_player_movement(flecs::world& world)
+            {
+                static float delta_time{ 0.0f };
+                constexpr float target_speed{ 100.0f };
+                static std::vector<input::GameplayAction> input_actions{};
+
+                world.system<component::character, component::velocity>("Player Movement")
+                    .kind(flecs::OnUpdate)
+                    .run([](flecs::iter_t* it) {
+                        delta_time = it->delta_system_time;
+                        input_actions = std::move(m_input.active_game_actions());
+                        while (ecs_iter_next(it))
+                            it->callback(it);
+                    })
+                    .interval(1.0f / 120.0f)
+                    .each([](flecs::entity, component::character&, component::velocity& vel) {
+                        std::vector<input::GameplayAction> inputs{
+                            std::move(m_input.active_game_actions()),
+                        };
+
+                        if (inputs.empty())
+                            return;
+
+                        for (const auto action : inputs)
                         {
-                            rl::log::info(
-                                "delta time: [{:>10.6f} ms]  update movment: (x:{:>4.3f}, y:{:<4.3f})",
-                                delta_time * 1000.0f, vel->x * delta_time, vel->y * delta_time);
-                        }
-
-                        for (const auto i : it)
-                        {
-                            pos->x += vel->x * delta_time;
-                            pos->y += vel->y * delta_time;
-
-                            if (left_right_collision(*pos))
-                                vel->x = -vel->x;
-                            if (top_bottom_collision(*pos))
-                                vel->y = -vel->y;
-
-                            ++vel;
-                            ++pos;
+                            switch (action)
+                            {
+                                case input::GameplayAction::MoveLeft:
+                                    vel.x -= 1.0f * target_speed * delta_time;
+                                    break;
+                                case input::GameplayAction::MoveRight:
+                                    vel.x += 1.0f * target_speed * delta_time;
+                                    break;
+                                case input::GameplayAction::MoveUp:
+                                    vel.y -= 1.0f * target_speed * delta_time;
+                                    break;
+                                case input::GameplayAction::MoveDown:
+                                    vel.y += 1.0f * target_speed * delta_time;
+                                    break;
+                            }
                         }
                     });
             }
 
-            static void define_player_movement(flecs::world&)
-            {
-                // world.system<const component::character, component::velocity>("Player Movement")
-                //     .kind(flecs::OnUpdate)
-                //     .interval(1.0f / 120.0f)
-                //     .each([](flecs::entity& e, const component::character&, component::velocity&
-                //     vel) {
-                //         static std::vector<input::GameplayAction> inputs =
-                //     });
-            }
-
             static void define_entity_rendering(flecs::world& world)
             {
-                world.system<const component::position, const component::style>("Render")
+                world
+                    .system<const component::position, const component::style, const component::scale>(
+                        "Render Rects")
                     .kind(flecs::PostUpdate)
                     .run([](flecs::iter_t* it) {
                         raylib::BeginDrawing();
@@ -133,12 +171,13 @@ namespace rl::scene
                         raylib::DrawFPS(10, 10);
                         raylib::EndDrawing();
                     })
-                    .each([&](const component::position& p, const component::style& s) {
+                    .each([&](const component::position& p, const component::style& c,
+                              const component::scale& s) {
                         raylib::DrawRectangle(
                             static_cast<int32_t>(p.x) - static_cast<int32_t>(rect_size.width / 2.0),
                             static_cast<int32_t>(p.y) - static_cast<int32_t>(rect_size.height / 2.0),
-                            static_cast<int32_t>(rect_size.width),
-                            static_cast<int32_t>(rect_size.height), s.color);
+                            static_cast<int32_t>(rect_size.width * s.factor),
+                            static_cast<int32_t>(rect_size.height * s.factor), c.color);
                     });
             }
 
@@ -158,8 +197,8 @@ namespace rl::scene
 
             static void init_systems(flecs::world& world, ds::dimensions<int32_t> window_rect)
             {
-                define_player_movement(world);
                 define_rect_movement(world, window_rect);
+                define_player_movement(world);
                 define_entity_rendering(world);
                 define_entity_timeout(world);
             }
@@ -193,8 +232,10 @@ namespace rl::scene
     public:
         scene::pipeline pipeline{};
 
-    private:
-        static constexpr ds::dimensions rect_size{
+        static inline input::Input m_input{};
+        static inline thread_local float m_delta_time{ 0.0f };
+        static inline thread_local int64_t m_update_calls{ 0 };
+        static constexpr inline ds::dimensions<int32_t> rect_size{
             .width = 10,
             .height = 10,
         };

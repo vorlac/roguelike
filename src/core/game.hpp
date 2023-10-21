@@ -26,7 +26,5 @@ namespace rl
             .width = 10,
             .height = 10,
         };
-
-        input::Input m_input{};
     };
 }
