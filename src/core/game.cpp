@@ -25,11 +25,12 @@ namespace rl
     bool Game::setup()
     {
         Application::setup();
-        // Can only have one active scene in a game at a time.
-        m_world.component<scene::active>().add(flecs::Exclusive);
-        scene::benchmark::init(m_world, std::move(this->m_window.render_size()));
-        scene::main_menu::init(m_world);
 
+        scene::main_menu::init(m_world);
+        scene::benchmark::init(m_world, std::move(this->m_window.render_size()));
+
+        // restrict to one active scene at a time
+        m_world.component<scene::active>().add(flecs::Exclusive);
         scene::set_active<scene::benchmark_scene>(m_world);
 
         return true;
@@ -47,18 +48,9 @@ namespace rl
         this->setup();
 
         while (!this->should_quit()) [[unlikely]]
-        {
-            raylib::BeginDrawing();
-            raylib::ClearBackground(color::lightgray);
-
             m_world.progress();
 
-            raylib::DrawRectangle(0, 0, 95, 40, color::black);
-            raylib::DrawFPS(10, 10);
-            raylib::EndDrawing();
-        }
-
-        return 0;
+        return true;
     }
 
     bool Game::should_quit() const
