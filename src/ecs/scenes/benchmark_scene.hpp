@@ -58,6 +58,55 @@ namespace rl::scene
             }
         };
 
+        struct system
+        {
+            static inline auto movement(ds::dimensions<int32_t> render_window_size)
+            {
+                uint64_t update_calls = 0;
+                static const auto window_size{ render_window_size };
+
+                auto top_bottom_collision = [&](const component::position& pos) {
+                    bool top_collision = pos.y - (rect_size.height / 2.0) <= 0.0;
+                    bool bottom_collision = pos.y + (rect_size.height / 2.0) >= window_size.height;
+                    return top_collision || bottom_collision;
+                };
+
+                auto left_right_collision = [&](const component::position& pos) {
+                    bool left_collision = pos.x - (rect_size.width / 2.0) <= 0.0;
+                    bool right_collision = pos.x + (rect_size.width / 2.0) >= window_size.width;
+                    return left_collision || right_collision;
+                };
+
+                auto rect_movement = [&](flecs::iter& it,
+                                         component::position* pos,
+                                         component::velocity* vel) {
+                    const float delta_time{ it.delta_system_time() };
+                    if (++update_calls % 60 == 0)
+                    {
+                        rl::log::info(
+                            "delta time: [{:>10.6f} ms]  update movment: (x:{:>4.3f}, y:{:<4.3f})",
+                            delta_time * 1000.0f, vel->x * delta_time, vel->y * delta_time);
+                    }
+
+                    for (const auto i : it)
+                    {
+                        pos->x += vel->x * delta_time;
+                        pos->y += vel->y * delta_time;
+
+                        if (left_right_collision(*pos))
+                            vel->x = -vel->x;
+                        if (top_bottom_collision(*pos))
+                            vel->y = -vel->y;
+
+                        ++vel;
+                        ++pos;
+                    }
+                };
+
+                return rect_movement;
+            }
+        };
+
         static auto init(flecs::world& world, ds::dimensions<int32_t> render_window_size)
         {
             world.set<benchmark_scene>({
@@ -68,52 +117,10 @@ namespace rl::scene
                     .build()  //
             });
 
-            uint64_t update_calls = 0;
-            static const auto window_size{ render_window_size };
-            static constexpr ds::dimensions rect_size{
-                .width = 10,
-                .height = 10,
-            };
-
-            auto top_bottom_collision = [&](const component::position& pos) {
-                bool top_collision = pos.y - (rect_size.height / 2.0) <= 0.0;
-                bool bottom_collision = pos.y + (rect_size.height / 2.0) >= window_size.height;
-                return top_collision || bottom_collision;
-            };
-
-            auto left_right_collision = [&](const component::position& pos) {
-                bool left_collision = pos.x - (rect_size.width / 2.0) <= 0.0;
-                bool right_collision = pos.x + (rect_size.width / 2.0) >= window_size.width;
-                return left_collision || right_collision;
-            };
-
             world.system<component::position, component::velocity>("Movement")
                 .kind(flecs::OnUpdate)
                 .interval(1.0f / 120.0f)
-                .iter([&](flecs::iter& it, component::position* p, component::velocity* v) {
-                    const float delta_time{ it.delta_system_time() };
-
-                    if (++update_calls % 60 == 0)
-                    {
-                        log::info(
-                            "delta time: [{:>10.6f} ms]  update movment: (x:{:>4.3f}, y:{:<4.3f})",
-                            delta_time * 1000.0, v->x * delta_time, v->y * delta_time);
-                    }
-
-                    for ([[maybe_unused]] const auto i : it)
-                    {
-                        p->x += v->x * delta_time;
-                        p->y += v->y * delta_time;
-
-                        if (left_right_collision(*p))
-                            v->x = -v->x;
-                        if (top_bottom_collision(*p))
-                            v->y = -v->y;
-
-                        ++v;
-                        ++p;
-                    }
-                });
+                .iter(system::movement(render_window_size));
 
             {
                 raylib::BeginDrawing();
@@ -140,6 +147,13 @@ namespace rl::scene
                 .each(observer::onadd_benchmark_scene);
         }
 
+    public:
         scene::pipeline pipeline{};
+
+    private:
+        static constexpr ds::dimensions rect_size{
+            .width = 10,
+            .height = 10,
+        };
     };
 }

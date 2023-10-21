@@ -80,12 +80,18 @@ target_compile_features(${PROJECT_NAME} PRIVATE
 )
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
+  NOMINMAX
+
   $<$<CONFIG:Debug>:
     ROGUELIKE_DEBUG
     ROGUELIKE_LOGGER_ENABLED
     DEBUG_HEAP=0
   >
-  NOMINMAX
+
+  $<${compiler_is_msvc}:
+    ECS_TARGET_MSVC
+    ECS_TARGET_WINDOWS
+  >
 )
 
 target_compile_options(${PROJECT_NAME} PRIVATE

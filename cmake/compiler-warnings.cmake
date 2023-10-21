@@ -25,7 +25,8 @@ target_compile_options(${PROJECT_NAME}
 
             # Disable warnings which bleed through from godot-cpp's macros.
             /wd4514 # unreferenced inline function has been removed
-            /wd4866  # compiler may not enforce left-to-right evaluation order for call
+            /wd4866 # compiler may not enforce left-to-right evaluation order for call
+            /wd4189 # local variable is initialized but not referenced
 
             # coming from argparse...
             /wd5045 # compiler will insert Spectre mitigation for memory load if /Qspectre switch specified

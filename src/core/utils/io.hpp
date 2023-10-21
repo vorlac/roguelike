@@ -7,6 +7,7 @@
 #include <string>
 #include <utility>
 #include <fmt/chrono.h>
+#include <fmt/color.h>
 #include <fmt/core.h>
 #include <fmt/format.h>
 #include <string_view>
@@ -15,8 +16,8 @@
 #include "core/ds/point.hpp"
 #include "core/ds/vector2d.hpp"
 #include "core/input/keymap.hpp"
+#include "core/utils/assert.hpp"
 #include "thirdparty/raylib.hpp"
-#include "utils/assert.hpp"
 
 namespace rl::io
 {
@@ -107,7 +108,20 @@ namespace rl::log
     template <auto log_level, typename... TArgs>
     inline constexpr void log(fmt::format_string<TArgs...> format_str, TArgs&&... args)
     {
-        raylib::TraceLog(fmt::format(io::locale, format_str, std::forward<TArgs>(args)...).data());
+        fmt::text_style style;
+
+        if constexpr (log_level == raylib::LOG_TRACE)
+            style = fmt::emphasis::faint | fmt::fg(fmt::color::red);
+        else if constexpr (log_level == raylib::LOG_DEBUG)
+            style = fmt::fg(fmt::color::green);
+        else if constexpr (log_level == raylib::LOG_INFO)
+            style = fmt::emphasis::bold | fmt::fg(fmt::color::beige);
+        else if constexpr (log_level == raylib::LOG_WARNING)
+            style = fmt::emphasis::bold | fmt::fg(fmt::color::yellow);
+        else if constexpr (log_level >= raylib::LOG_ERROR)
+            style = fmt::emphasis::bold | fmt::fg(fmt::color::red);
+
+        fmt::print(style, fmt::format(format_str, std::forward<TArgs>(args)...) + "\n");
     }
 
     template <typename... TArgs>
