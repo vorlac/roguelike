@@ -6,6 +6,7 @@
 #include "core/input/keyboard.hpp"
 #include "core/input/keymap.hpp"
 #include "core/input/mouse.hpp"
+#include "core/math.hpp"
 
 namespace rl::input
 {
@@ -74,6 +75,29 @@ namespace rl::input
             }
 
             return m_active_ui_actions;
+        }
+
+    private:
+        ds::vector2<float> get_vector() const
+        {
+            device::Gamepad::AxisID pos_x = 0;
+            device::Gamepad::AxisID neg_x = 1;
+            device::Gamepad::AxisID pos_y = 2;
+            device::Gamepad::AxisID neg_y = 3;
+            float deadzone = 0.1f;
+
+            ds::vector2<float> vec = {
+                m_gamepad.get_axis_movement(pos_x) - m_gamepad.get_axis_movement(neg_x),
+                m_gamepad.get_axis_movement(pos_y) - m_gamepad.get_axis_movement(neg_y),
+            };
+
+            float length = vec.length();
+            if (length <= deadzone)
+                return { 0.0f, 0.0f };
+            else if (length > 1.0f)
+                return { vec / length };
+            else
+                return vec * (rl::math::inverse_lerp(deadzone, 1.0f, length) / length);
         }
 
     private:
