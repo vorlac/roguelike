@@ -9,6 +9,7 @@
 #include "core/utils/time.hpp"
 #include "ecs/components/character_components.hpp"
 #include "ecs/components/kinematic_components.hpp"
+#include "ecs/components/projectile_components.hpp"
 #include "ecs/components/style_components.hpp"
 #include "ecs/components/transform_components.hpp"
 #include "ecs/scenes/scene_types.hpp"
@@ -60,7 +61,7 @@ namespace rl::scene
 
         struct system
         {
-            static inline auto movement(ds::dimensions<int32_t> render_window_size)
+            static void init_movement(flecs::world& world, ds::dimensions<int32_t> render_window_size)
             {
                 uint64_t update_calls = 0;
                 static const auto window_size{ render_window_size };
@@ -77,11 +78,11 @@ namespace rl::scene
                     return left_collision || right_collision;
                 };
 
-                auto rect_movement = [&](flecs::iter& it,
-                                         component::position* pos,
-                                         component::velocity* vel) {
+                auto movement_system = [&](flecs::iter& it,
+                                           component::position* pos,
+                                           component::velocity* vel) {
                     const float delta_time{ it.delta_system_time() };
-                    if (++update_calls % 60 == 0)
+                    if (++update_calls % 120 == 0)
                     {
                         rl::log::info(
                             "delta time: [{:>10.6f} ms]  update movment: (x:{:>4.3f}, y:{:<4.3f})",
@@ -103,25 +104,13 @@ namespace rl::scene
                     }
                 };
 
-                return rect_movement;
+                world.system<component::position, component::velocity>("Movement")
+                    .kind(flecs::OnUpdate)
+                    .interval(1.0f / 120.0f)
+                    .iter(movement_system);
             }
-        };
 
-        static auto init(flecs::world& world, ds::dimensions<int32_t> render_window_size)
-        {
-            world.set<benchmark_scene>({
-                world.pipeline()
-                    .with(flecs::System)
-                    .without<main_menu_scene>()
-                    .write()  //
-                    .build()  //
-            });
-
-            world.system<component::position, component::velocity>("Movement")
-                .kind(flecs::OnUpdate)
-                .interval(1.0f / 120.0f)
-                .iter(system::movement(render_window_size));
-
+            static void init_rendering(flecs::world& world)
             {
                 raylib::BeginDrawing();
                 raylib::ClearBackground(color::lightgray);
@@ -140,6 +129,34 @@ namespace rl::scene
                 raylib::DrawFPS(10, 10);
                 raylib::EndDrawing();
             }
+
+            static void timeout(flecs::world& world)
+            {
+                world.system<component::timeout>().each(
+                    [](flecs::iter& it, size_t index, component::timeout& t) {
+                        t.ttl -= it.delta_time();
+                        if (t.ttl <= 0)
+                        {
+                            flecs::entity e{ it.entity(index) };
+                            log::info("{} TTL expired, deleting", e.name());
+                            e.destruct();
+                        }
+                    });
+            }
+        };
+
+        static auto init(flecs::world& world, ds::dimensions<int32_t> render_window_size)
+        {
+            world.set<benchmark_scene>({
+                world.pipeline()
+                    .with(flecs::System)
+                    .without<main_menu_scene>()
+                    .write()  //
+                    .build()  //
+            });
+
+            system::init_movement(world, render_window_size);
+            system::init_rendering(world);
 
             world.observer<scene::active>("active scene changed to scene::benchmark")
                 .second<benchmark_scene>()
