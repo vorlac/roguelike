@@ -1,10 +1,9 @@
-#include "core/window.hpp"
-
 #include <functional>
 
 #include "core/ds/dimensions.hpp"
 #include "core/ds/point.hpp"
 #include "core/ds/vector2d.hpp"
+#include "core/window.hpp"
 #include "thirdparty/raylib.hpp"
 
 namespace rl

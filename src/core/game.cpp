@@ -1,5 +1,3 @@
-#include "core/game.hpp"
-
 #include <chrono>
 #include <string>
 #include <fmt/compile.h>
@@ -9,6 +7,7 @@
 #include "core/application.hpp"
 #include "core/ds/dimensions.hpp"
 #include "core/ds/point.hpp"
+#include "core/game.hpp"
 #include "core/input/keymap.hpp"
 #include "ecs/components/kinematic_components.hpp"
 #include "ecs/components/style_components.hpp"

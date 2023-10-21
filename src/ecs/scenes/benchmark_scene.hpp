@@ -176,7 +176,6 @@ namespace rl::scene
             });
 
             system::init_systems(world, window_rect);
-            // system::init_rendering(world);
 
             world.observer<scene::active>("active scene changed to scene::benchmark")
                 .second<benchmark_scene>()

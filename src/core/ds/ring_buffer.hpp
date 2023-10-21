@@ -17,8 +17,8 @@
 #include <condition_variable>
 #include <type_traits>
 
-#include "utils/assert.hpp"
-#include "utils/concepts.hpp"
+#include "core/utils/assert.hpp"
+#include "core/utils/concepts.hpp"
 
 namespace rl::ds
 {
