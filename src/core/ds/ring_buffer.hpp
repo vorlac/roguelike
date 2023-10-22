@@ -105,7 +105,7 @@ namespace rl::ds
                     return m_occupancies > 0;
                 }))
             {
-                // remove the item fromm the buffer, then update
+                // remove the item from the buffer, then update
                 // the the read index to the next available slot
                 auto item = std::move(m_buffer[m_read_idx]);
                 ++m_read_idx %= m_buffer.size();
@@ -125,7 +125,7 @@ namespace rl::ds
             else
             {
                 // if we land in here then this thread timed out waiting for
-                // the condition to be met above. this might mean nohing has
+                // the condition to be met above. this might mean nothing has
                 // been added to the buffer yet/recently and it's empty, but
                 // could also mean the threads writing to the buffer are done
                 // with their work. The calling code is responsible for handling

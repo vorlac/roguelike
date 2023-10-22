@@ -1,0 +1,466 @@
+{
+    "software": {
+        "name": "rTexPacker v2.0",
+        "url": "https://www.raylibtech.com/rtexpacker"
+    },
+    "atlas": {
+        "imagePath": "koala.png",
+        "width": 1024,
+        "height": 1024,
+        "spriteCount": 50,
+        "isFont": false,
+        "fontSize": 32
+    },
+    "sprites": [
+        {
+            "nameId": "ending_button_trophy",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 888, "y": 735 },
+            "sourceSize": { "width": 123, "height": 123 },
+            "padding": 0,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 0, "width": 123, "height": 123 }
+        },
+        {
+            "nameId": "ending_goals_check_v",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 865, "y": 929 },
+            "sourceSize": { "width": 50, "height": 42 },
+            "padding": 0,
+            "trimmed": false,
+            "trimRec": { "x": 2, "y": 2, "width": 48, "height": 38 }
+        },
+        {
+            "nameId": "ending_goals_check_x",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 60, "y": 903 },
+            "sourceSize": { "width": 42, "height": 51 },
+            "padding": 0,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 0, "width": 42, "height": 51 }
+        },
+        {
+            "nameId": "ending_goals_icon_death",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 696, "y": 892 },
+            "sourceSize": { "width": 60, "height": 60 },
+            "padding": 0,
+            "trimmed": false,
+            "trimRec": { "x": 3, "y": 3, "width": 54, "height": 56 }
+        },
+        {
+            "nameId": "ending_goals_icon_leaves",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 636, "y": 892 },
+            "sourceSize": { "width": 60, "height": 60 },
+            "padding": 0,
+            "trimmed": false,
+            "trimRec": { "x": 3, "y": 3, "width": 54, "height": 56 }
+        },
+        {
+            "nameId": "ending_goals_icon_special",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 0, "y": 903 },
+            "sourceSize": { "width": 60, "height": 60 },
+            "padding": 0,
+            "trimmed": false,
+            "trimRec": { "x": 3, "y": 3, "width": 54, "height": 56 }
+        },
+        {
+            "nameId": "ending_goals_icon_time",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 576, "y": 892 },
+            "sourceSize": { "width": 60, "height": 60 },
+            "padding": 0,
+            "trimmed": false,
+            "trimRec": { "x": 3, "y": 3, "width": 54, "height": 56 }
+        },
+        {
+            "nameId": "ending_paint_koalabee",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 219, "y": 348 },
+            "sourceSize": { "width": 219, "height": 216 },
+            "padding": 0,
+            "trimmed": false,
+            "trimRec": { "x": 9, "y": 6, "width": 202, "height": 207 }
+        },
+        {
+            "nameId": "ending_paint_koaladingo",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 765, "y": 519 },
+            "sourceSize": { "width": 219, "height": 216 },
+            "padding": 0,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 6, "width": 219, "height": 210 }
+        },
+        {
+            "nameId": "ending_paint_koalaeagle",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 765, "y": 303 },
+            "sourceSize": { "width": 219, "height": 216 },
+            "padding": 0,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 54, "width": 219, "height": 153 }
+        },
+        {
+            "nameId": "ending_paint_koalafire",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 512, "y": 553 },
+            "sourceSize": { "width": 219, "height": 216 },
+            "padding": 0,
+            "trimmed": false,
+            "trimRec": { "x": 21, "y": 12, "width": 182, "height": 187 }
+        },
+        {
+            "nameId": "ending_paint_koalageneric",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 512, "y": 303 },
+            "sourceSize": { "width": 253, "height": 250 },
+            "padding": 0,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 0, "width": 253, "height": 250 }
+        },
+        {
+            "nameId": "ending_paint_koalaowl",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 765, "y": 858 },
+            "sourceSize": { "width": 100, "height": 81 },
+            "padding": 0,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 0, "width": 100, "height": 81 }
+        },
+        {
+            "nameId": "ending_paint_koalasnake",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 0, "y": 348 },
+            "sourceSize": { "width": 219, "height": 216 },
+            "padding": 0,
+            "trimmed": false,
+            "trimRec": { "x": 29, "y": 21, "width": 132, "height": 184 }
+        },
+        {
+            "nameId": "ending_plate_headbee",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 440, "y": 888 },
+            "sourceSize": { "width": 62, "height": 60 },
+            "padding": 0,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 0, "width": 62, "height": 60 }
+        },
+        {
+            "nameId": "ending_plate_headdingo",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 926, "y": 858 },
+            "sourceSize": { "width": 56, "height": 70 },
+            "padding": 0,
+            "trimmed": false,
+            "trimRec": { "x": 2, "y": 0, "width": 54, "height": 70 }
+        },
+        {
+            "nameId": "ending_plate_headeagle",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 982, "y": 924 },
+            "sourceSize": { "width": 39, "height": 48 },
+            "padding": 0,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 0, "width": 39, "height": 48 }
+        },
+        {
+            "nameId": "ending_plate_headowl",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 327, "y": 908 },
+            "sourceSize": { "width": 72, "height": 48 },
+            "padding": 0,
+            "trimmed": false,
+            "trimRec": { "x": 2, "y": 0, "width": 68, "height": 48 }
+        },
+        {
+            "nameId": "ending_plate_headsnake",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 119, "y": 880 },
+            "sourceSize": { "width": 46, "height": 67 },
+            "padding": 0,
+            "trimmed": false,
+            "trimRec": { "x": 3, "y": 0, "width": 39, "height": 65 }
+        },
+        {
+            "nameId": "ending_score_enemyicon",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 327, "y": 817 },
+            "sourceSize": { "width": 113, "height": 91 },
+            "padding": 0,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 0, "width": 113, "height": 91 }
+        },
+        {
+            "nameId": "ending_score_frame",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 0, "y": 780 },
+            "sourceSize": { "width": 119, "height": 123 },
+            "padding": 0,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 0, "width": 119, "height": 123 }
+        },
+        {
+            "nameId": "ending_score_frameback",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 635, "y": 769 },
+            "sourceSize": { "width": 119, "height": 123 },
+            "padding": 0,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 2, "width": 119, "height": 119 }
+        },
+        {
+            "nameId": "ending_score_leavesicon",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 330, "y": 564 },
+            "sourceSize": { "width": 135, "height": 130 },
+            "padding": 0,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 0, "width": 135, "height": 130 }
+        },
+        {
+            "nameId": "gameplay_countdown_1",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 0, "y": 564 },
+            "sourceSize": { "width": 110, "height": 216 },
+            "padding": 0,
+            "trimmed": false,
+            "trimRec": { "x": 18, "y": 11, "width": 79, "height": 193 }
+        },
+        {
+            "nameId": "gameplay_countdown_2",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 110, "y": 564 },
+            "sourceSize": { "width": 110, "height": 216 },
+            "padding": 0,
+            "trimmed": false,
+            "trimRec": { "x": 12, "y": 13, "width": 91, "height": 192 }
+        },
+        {
+            "nameId": "gameplay_countdown_3",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 220, "y": 564 },
+            "sourceSize": { "width": 110, "height": 216 },
+            "padding": 0,
+            "trimmed": false,
+            "trimRec": { "x": 11, "y": 12, "width": 92, "height": 192 }
+        },
+        {
+            "nameId": "gameplay_gui_seasonsclock_disc",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 512, "y": 0 },
+            "sourceSize": { "width": 300, "height": 303 },
+            "padding": 0,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 6, "width": 300, "height": 297 }
+        },
+        {
+            "nameId": "gameplay_koala_dash",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 219, "y": 780 },
+            "sourceSize": { "width": 100, "height": 100 },
+            "padding": 0,
+            "trimmed": false,
+            "trimRec": { "x": 18, "y": 3, "width": 64, "height": 94 }
+        },
+        {
+            "nameId": "gameplay_koala_die",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 119, "y": 780 },
+            "sourceSize": { "width": 100, "height": 100 },
+            "padding": 0,
+            "trimmed": false,
+            "trimRec": { "x": 10, "y": 11, "width": 81, "height": 78 }
+        },
+        {
+            "nameId": "gameplay_props_leaf_lil",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 230, "y": 880 },
+            "sourceSize": { "width": 64, "height": 64 },
+            "padding": 0,
+            "trimmed": false,
+            "trimRec": { "x": 13, "y": 4, "width": 50, "height": 54 }
+        },
+        {
+            "nameId": "gameplay_props_leaf_mid",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 512, "y": 892 },
+            "sourceSize": { "width": 64, "height": 64 },
+            "padding": 0,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 6, "width": 56, "height": 46 }
+        },
+        {
+            "nameId": "particle_dandelion",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 576, "y": 952 },
+            "sourceSize": { "width": 32, "height": 32 },
+            "padding": 0,
+            "trimmed": false,
+            "trimRec": { "x": 2, "y": 1, "width": 24, "height": 30 }
+        },
+        {
+            "nameId": "particle_dandelion_bw",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 640, "y": 952 },
+            "sourceSize": { "width": 32, "height": 32 },
+            "padding": 0,
+            "trimmed": false,
+            "trimRec": { "x": 2, "y": 1, "width": 24, "height": 30 }
+        },
+        {
+            "nameId": "particle_ecualyptusflower",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 440, "y": 948 },
+            "sourceSize": { "width": 32, "height": 32 },
+            "padding": 0,
+            "trimmed": false,
+            "trimRec": { "x": 4, "y": 1, "width": 25, "height": 29 }
+        },
+        {
+            "nameId": "particle_ecualyptusflower_bw",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 119, "y": 947 },
+            "sourceSize": { "width": 32, "height": 32 },
+            "padding": 0,
+            "trimmed": false,
+            "trimRec": { "x": 4, "y": 1, "width": 25, "height": 29 }
+        },
+        {
+            "nameId": "particle_ecualyptusleaf",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 165, "y": 946 },
+            "sourceSize": { "width": 32, "height": 32 },
+            "padding": 0,
+            "trimmed": false,
+            "trimRec": { "x": 2, "y": 0, "width": 29, "height": 32 }
+        },
+        {
+            "nameId": "particle_icecrystal",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 262, "y": 944 },
+            "sourceSize": { "width": 32, "height": 32 },
+            "padding": 0,
+            "trimmed": false,
+            "trimRec": { "x": 1, "y": 0, "width": 30, "height": 32 }
+        },
+        {
+            "nameId": "particle_icecrystal_bw",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 608, "y": 952 },
+            "sourceSize": { "width": 32, "height": 32 },
+            "padding": 0,
+            "trimmed": false,
+            "trimRec": { "x": 1, "y": 0, "width": 30, "height": 32 }
+        },
+        {
+            "nameId": "particle_planetreeleaf",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 230, "y": 944 },
+            "sourceSize": { "width": 32, "height": 32 },
+            "padding": 0,
+            "trimmed": false,
+            "trimRec": { "x": 3, "y": 1, "width": 28, "height": 31 }
+        },
+        {
+            "nameId": "particle_planetreeleaf_bw",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 926, "y": 928 },
+            "sourceSize": { "width": 32, "height": 32 },
+            "padding": 0,
+            "trimmed": false,
+            "trimRec": { "x": 3, "y": 1, "width": 28, "height": 31 }
+        },
+        {
+            "nameId": "particle_waterdrop",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 765, "y": 939 },
+            "sourceSize": { "width": 32, "height": 32 },
+            "padding": 0,
+            "trimmed": false,
+            "trimRec": { "x": 13, "y": 2, "width": 5, "height": 24 }
+        },
+        {
+            "nameId": "particle_waterdrop_bw",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 797, "y": 939 },
+            "sourceSize": { "width": 32, "height": 32 },
+            "padding": 0,
+            "trimmed": false,
+            "trimRec": { "x": 13, "y": 2, "width": 5, "height": 24 }
+        },
+        {
+            "nameId": "title_music_off",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 165, "y": 880 },
+            "sourceSize": { "width": 65, "height": 66 },
+            "padding": 0,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 0, "width": 65, "height": 66 }
+        },
+        {
+            "nameId": "title_music_on",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 982, "y": 858 },
+            "sourceSize": { "width": 39, "height": 66 },
+            "padding": 0,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 0, "width": 39, "height": 66 }
+        },
+        {
+            "nameId": "title_speaker_off",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 865, "y": 858 },
+            "sourceSize": { "width": 61, "height": 71 },
+            "padding": 0,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 0, "width": 61, "height": 71 }
+        },
+        {
+            "nameId": "title_speaker_on",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 440, "y": 817 },
+            "sourceSize": { "width": 61, "height": 71 },
+            "padding": 0,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 0, "width": 61, "height": 71 }
+        },
+        {
+            "nameId": "title_titletext",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 0, "y": 0 },
+            "sourceSize": { "width": 512, "height": 348 },
+            "padding": 0,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 6, "width": 510, "height": 335 }
+        },
+        {
+            "nameId": "ending_button_replay",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 765, "y": 735 },
+            "sourceSize": { "width": 123, "height": 123 },
+            "padding": 0,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 0, "width": 123, "height": 123 }
+        },
+        {
+            "nameId": "ending_button_share",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 330, "y": 694 },
+            "sourceSize": { "width": 123, "height": 123 },
+            "padding": 0,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 0, "width": 123, "height": 123 }
+        },
+        {
+            "nameId": "ending_button_shop",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 512, "y": 769 },
+            "sourceSize": { "width": 123, "height": 123 },
+            "padding": 0,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 0, "width": 123, "height": 123 }
+        }
+    ]
+}

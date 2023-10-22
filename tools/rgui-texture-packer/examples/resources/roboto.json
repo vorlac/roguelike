@@ -1,0 +1,1346 @@
+{
+    "software": {
+        "name": "rTexPacker v2.0",
+        "url": "https://raylibtech.itch.io/rtexpacker"
+    },
+    "atlas": {
+        "imagePath": "roboto.png",
+        "width": 256,
+        "height": 256,
+        "spriteCount": 95,
+        "isFont": true,
+        "fontSize": 30
+    },
+    "sprites": [
+        {
+            "nameId": "RobotoMono-Regular-U0020",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 2, "y": 2 },
+            "sourceSize": { "width": 13, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 0, "width": 0, "height": 0 },
+            "char": {
+                "value": 32,
+                "offset": { "x": 0, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0021",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 21, "y": 2 },
+            "sourceSize": { "width": 3, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 6, "width": 3, "height": 18 },
+            "char": {
+                "value": 33,
+                "offset": { "x": 5, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0022",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 30, "y": 2 },
+            "sourceSize": { "width": 7, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 5, "width": 7, "height": 7 },
+            "char": {
+                "value": 34,
+                "offset": { "x": 3, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0023",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 43, "y": 2 },
+            "sourceSize": { "width": 14, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 6, "width": 14, "height": 17 },
+            "char": {
+                "value": 35,
+                "offset": { "x": 0, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0024",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 63, "y": 2 },
+            "sourceSize": { "width": 12, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 4, "width": 12, "height": 22 },
+            "char": {
+                "value": 36,
+                "offset": { "x": 1, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0025",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 81, "y": 2 },
+            "sourceSize": { "width": 14, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 6, "width": 14, "height": 18 },
+            "char": {
+                "value": 37,
+                "offset": { "x": 0, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0026",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 101, "y": 2 },
+            "sourceSize": { "width": 13, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 6, "width": 13, "height": 18 },
+            "char": {
+                "value": 38,
+                "offset": { "x": 1, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0027",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 120, "y": 2 },
+            "sourceSize": { "width": 3, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 5, "width": 3, "height": 7 },
+            "char": {
+                "value": 39,
+                "offset": { "x": 5, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0028",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 129, "y": 2 },
+            "sourceSize": { "width": 7, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 4, "width": 7, "height": 25 },
+            "char": {
+                "value": 40,
+                "offset": { "x": 3, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0029",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 142, "y": 2 },
+            "sourceSize": { "width": 7, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 4, "width": 7, "height": 25 },
+            "char": {
+                "value": 41,
+                "offset": { "x": 3, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U002A",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 155, "y": 2 },
+            "sourceSize": { "width": 12, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 9, "width": 12, "height": 12 },
+            "char": {
+                "value": 42,
+                "offset": { "x": 1, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U002B",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 173, "y": 2 },
+            "sourceSize": { "width": 12, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 9, "width": 12, "height": 13 },
+            "char": {
+                "value": 43,
+                "offset": { "x": 1, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U002C",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 191, "y": 2 },
+            "sourceSize": { "width": 5, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 20, "width": 5, "height": 7 },
+            "char": {
+                "value": 44,
+                "offset": { "x": 3, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U002D",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 202, "y": 2 },
+            "sourceSize": { "width": 9, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 15, "width": 9, "height": 2 },
+            "char": {
+                "value": 45,
+                "offset": { "x": 2, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U002E",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 217, "y": 2 },
+            "sourceSize": { "width": 4, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 20, "width": 4, "height": 4 },
+            "char": {
+                "value": 46,
+                "offset": { "x": 5, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U002F",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 227, "y": 2 },
+            "sourceSize": { "width": 10, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 6, "width": 10, "height": 19 },
+            "char": {
+                "value": 47,
+                "offset": { "x": 2, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0030",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 2, "y": 38 },
+            "sourceSize": { "width": 12, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 6, "width": 12, "height": 18 },
+            "char": {
+                "value": 48,
+                "offset": { "x": 1, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0031",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 20, "y": 38 },
+            "sourceSize": { "width": 7, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 6, "width": 7, "height": 17 },
+            "char": {
+                "value": 49,
+                "offset": { "x": 2, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0032",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 33, "y": 38 },
+            "sourceSize": { "width": 12, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 6, "width": 12, "height": 17 },
+            "char": {
+                "value": 50,
+                "offset": { "x": 0, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0033",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 51, "y": 38 },
+            "sourceSize": { "width": 11, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 6, "width": 11, "height": 18 },
+            "char": {
+                "value": 51,
+                "offset": { "x": 1, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0034",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 68, "y": 38 },
+            "sourceSize": { "width": 13, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 6, "width": 13, "height": 17 },
+            "char": {
+                "value": 52,
+                "offset": { "x": 0, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0035",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 87, "y": 38 },
+            "sourceSize": { "width": 11, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 6, "width": 11, "height": 18 },
+            "char": {
+                "value": 53,
+                "offset": { "x": 2, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0036",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 104, "y": 38 },
+            "sourceSize": { "width": 11, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 6, "width": 11, "height": 18 },
+            "char": {
+                "value": 54,
+                "offset": { "x": 1, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0037",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 121, "y": 38 },
+            "sourceSize": { "width": 12, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 6, "width": 12, "height": 17 },
+            "char": {
+                "value": 55,
+                "offset": { "x": 1, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0038",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 139, "y": 38 },
+            "sourceSize": { "width": 12, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 6, "width": 12, "height": 18 },
+            "char": {
+                "value": 56,
+                "offset": { "x": 1, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0039",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 157, "y": 38 },
+            "sourceSize": { "width": 11, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 6, "width": 11, "height": 18 },
+            "char": {
+                "value": 57,
+                "offset": { "x": 1, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U003A",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 174, "y": 38 },
+            "sourceSize": { "width": 4, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 10, "width": 4, "height": 14 },
+            "char": {
+                "value": 58,
+                "offset": { "x": 6, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U003B",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 184, "y": 38 },
+            "sourceSize": { "width": 5, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 10, "width": 5, "height": 17 },
+            "char": {
+                "value": 59,
+                "offset": { "x": 5, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U003C",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 195, "y": 38 },
+            "sourceSize": { "width": 11, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 10, "width": 11, "height": 11 },
+            "char": {
+                "value": 60,
+                "offset": { "x": 1, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U003D",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 212, "y": 38 },
+            "sourceSize": { "width": 11, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 12, "width": 11, "height": 7 },
+            "char": {
+                "value": 61,
+                "offset": { "x": 1, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U003E",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 229, "y": 38 },
+            "sourceSize": { "width": 11, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 10, "width": 11, "height": 11 },
+            "char": {
+                "value": 62,
+                "offset": { "x": 1, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U003F",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 2, "y": 74 },
+            "sourceSize": { "width": 10, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 6, "width": 10, "height": 18 },
+            "char": {
+                "value": 63,
+                "offset": { "x": 2, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0040",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 18, "y": 74 },
+            "sourceSize": { "width": 13, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 6, "width": 13, "height": 18 },
+            "char": {
+                "value": 64,
+                "offset": { "x": 0, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0041",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 37, "y": 74 },
+            "sourceSize": { "width": 13, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 6, "width": 13, "height": 17 },
+            "char": {
+                "value": 65,
+                "offset": { "x": 0, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0042",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 56, "y": 74 },
+            "sourceSize": { "width": 12, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 6, "width": 12, "height": 17 },
+            "char": {
+                "value": 66,
+                "offset": { "x": 1, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0043",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 74, "y": 74 },
+            "sourceSize": { "width": 12, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 6, "width": 12, "height": 18 },
+            "char": {
+                "value": 67,
+                "offset": { "x": 1, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0044",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 92, "y": 74 },
+            "sourceSize": { "width": 12, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 6, "width": 12, "height": 17 },
+            "char": {
+                "value": 68,
+                "offset": { "x": 1, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0045",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 110, "y": 74 },
+            "sourceSize": { "width": 10, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 6, "width": 10, "height": 17 },
+            "char": {
+                "value": 69,
+                "offset": { "x": 2, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0046",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 126, "y": 74 },
+            "sourceSize": { "width": 11, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 6, "width": 11, "height": 17 },
+            "char": {
+                "value": 70,
+                "offset": { "x": 2, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0047",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 143, "y": 74 },
+            "sourceSize": { "width": 12, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 6, "width": 12, "height": 18 },
+            "char": {
+                "value": 71,
+                "offset": { "x": 1, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0048",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 161, "y": 74 },
+            "sourceSize": { "width": 12, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 6, "width": 12, "height": 17 },
+            "char": {
+                "value": 72,
+                "offset": { "x": 1, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0049",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 179, "y": 74 },
+            "sourceSize": { "width": 11, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 6, "width": 11, "height": 17 },
+            "char": {
+                "value": 73,
+                "offset": { "x": 1, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U004A",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 196, "y": 74 },
+            "sourceSize": { "width": 11, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 6, "width": 11, "height": 18 },
+            "char": {
+                "value": 74,
+                "offset": { "x": 1, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U004B",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 213, "y": 74 },
+            "sourceSize": { "width": 13, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 6, "width": 13, "height": 17 },
+            "char": {
+                "value": 75,
+                "offset": { "x": 1, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U004C",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 232, "y": 74 },
+            "sourceSize": { "width": 11, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 6, "width": 11, "height": 17 },
+            "char": {
+                "value": 76,
+                "offset": { "x": 2, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U004D",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 2, "y": 110 },
+            "sourceSize": { "width": 12, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 6, "width": 12, "height": 17 },
+            "char": {
+                "value": 77,
+                "offset": { "x": 1, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U004E",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 20, "y": 110 },
+            "sourceSize": { "width": 12, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 6, "width": 12, "height": 17 },
+            "char": {
+                "value": 78,
+                "offset": { "x": 1, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U004F",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 38, "y": 110 },
+            "sourceSize": { "width": 12, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 6, "width": 12, "height": 18 },
+            "char": {
+                "value": 79,
+                "offset": { "x": 1, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0050",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 56, "y": 110 },
+            "sourceSize": { "width": 11, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 6, "width": 11, "height": 17 },
+            "char": {
+                "value": 80,
+                "offset": { "x": 2, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0051",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 73, "y": 110 },
+            "sourceSize": { "width": 12, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 6, "width": 12, "height": 20 },
+            "char": {
+                "value": 81,
+                "offset": { "x": 1, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0052",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 91, "y": 110 },
+            "sourceSize": { "width": 11, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 6, "width": 11, "height": 17 },
+            "char": {
+                "value": 82,
+                "offset": { "x": 2, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0053",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 108, "y": 110 },
+            "sourceSize": { "width": 12, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 6, "width": 12, "height": 18 },
+            "char": {
+                "value": 83,
+                "offset": { "x": 1, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0054",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 126, "y": 110 },
+            "sourceSize": { "width": 13, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 6, "width": 13, "height": 17 },
+            "char": {
+                "value": 84,
+                "offset": { "x": 0, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0055",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 145, "y": 110 },
+            "sourceSize": { "width": 12, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 6, "width": 12, "height": 18 },
+            "char": {
+                "value": 85,
+                "offset": { "x": 1, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0056",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 163, "y": 110 },
+            "sourceSize": { "width": 13, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 6, "width": 13, "height": 17 },
+            "char": {
+                "value": 86,
+                "offset": { "x": 0, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0057",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 182, "y": 110 },
+            "sourceSize": { "width": 14, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 6, "width": 14, "height": 17 },
+            "char": {
+                "value": 87,
+                "offset": { "x": 0, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0058",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 202, "y": 110 },
+            "sourceSize": { "width": 13, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 1, "y": 6, "width": 12, "height": 17 },
+            "char": {
+                "value": 88,
+                "offset": { "x": 0, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0059",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 221, "y": 110 },
+            "sourceSize": { "width": 13, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 6, "width": 13, "height": 17 },
+            "char": {
+                "value": 89,
+                "offset": { "x": 0, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U005A",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 2, "y": 146 },
+            "sourceSize": { "width": 11, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 6, "width": 11, "height": 17 },
+            "char": {
+                "value": 90,
+                "offset": { "x": 1, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U005B",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 19, "y": 146 },
+            "sourceSize": { "width": 6, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 4, "width": 6, "height": 23 },
+            "char": {
+                "value": 91,
+                "offset": { "x": 4, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U005C",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 31, "y": 146 },
+            "sourceSize": { "width": 10, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 6, "width": 10, "height": 19 },
+            "char": {
+                "value": 92,
+                "offset": { "x": 2, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U005D",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 47, "y": 146 },
+            "sourceSize": { "width": 5, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 4, "width": 5, "height": 23 },
+            "char": {
+                "value": 93,
+                "offset": { "x": 4, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U005E",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 58, "y": 146 },
+            "sourceSize": { "width": 10, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 6, "width": 10, "height": 10 },
+            "char": {
+                "value": 94,
+                "offset": { "x": 2, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U005F",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 74, "y": 146 },
+            "sourceSize": { "width": 11, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 23, "width": 11, "height": 2 },
+            "char": {
+                "value": 95,
+                "offset": { "x": 1, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0060",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 91, "y": 146 },
+            "sourceSize": { "width": 6, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 6, "width": 5, "height": 4 },
+            "char": {
+                "value": 96,
+                "offset": { "x": 4, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0061",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 103, "y": 146 },
+            "sourceSize": { "width": 11, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 10, "width": 11, "height": 14 },
+            "char": {
+                "value": 97,
+                "offset": { "x": 1, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0062",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 120, "y": 146 },
+            "sourceSize": { "width": 12, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 5, "width": 12, "height": 19 },
+            "char": {
+                "value": 98,
+                "offset": { "x": 1, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0063",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 138, "y": 146 },
+            "sourceSize": { "width": 11, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 10, "width": 11, "height": 14 },
+            "char": {
+                "value": 99,
+                "offset": { "x": 1, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0064",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 155, "y": 146 },
+            "sourceSize": { "width": 11, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 5, "width": 11, "height": 19 },
+            "char": {
+                "value": 100,
+                "offset": { "x": 1, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0065",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 172, "y": 146 },
+            "sourceSize": { "width": 12, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 10, "width": 12, "height": 14 },
+            "char": {
+                "value": 101,
+                "offset": { "x": 1, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0066",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 190, "y": 146 },
+            "sourceSize": { "width": 12, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 5, "width": 12, "height": 18 },
+            "char": {
+                "value": 102,
+                "offset": { "x": 1, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0067",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 208, "y": 146 },
+            "sourceSize": { "width": 11, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 10, "width": 11, "height": 18 },
+            "char": {
+                "value": 103,
+                "offset": { "x": 1, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0068",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 225, "y": 146 },
+            "sourceSize": { "width": 11, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 5, "width": 11, "height": 18 },
+            "char": {
+                "value": 104,
+                "offset": { "x": 1, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0069",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 2, "y": 182 },
+            "sourceSize": { "width": 11, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 6, "width": 11, "height": 17 },
+            "char": {
+                "value": 105,
+                "offset": { "x": 2, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U006A",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 19, "y": 182 },
+            "sourceSize": { "width": 8, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 6, "width": 8, "height": 22 },
+            "char": {
+                "value": 106,
+                "offset": { "x": 2, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U006B",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 33, "y": 182 },
+            "sourceSize": { "width": 12, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 5, "width": 12, "height": 18 },
+            "char": {
+                "value": 107,
+                "offset": { "x": 1, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U006C",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 51, "y": 182 },
+            "sourceSize": { "width": 11, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 5, "width": 11, "height": 18 },
+            "char": {
+                "value": 108,
+                "offset": { "x": 2, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U006D",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 68, "y": 182 },
+            "sourceSize": { "width": 12, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 10, "width": 12, "height": 13 },
+            "char": {
+                "value": 109,
+                "offset": { "x": 1, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U006E",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 86, "y": 182 },
+            "sourceSize": { "width": 11, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 10, "width": 11, "height": 13 },
+            "char": {
+                "value": 110,
+                "offset": { "x": 1, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U006F",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 103, "y": 182 },
+            "sourceSize": { "width": 12, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 10, "width": 12, "height": 14 },
+            "char": {
+                "value": 111,
+                "offset": { "x": 1, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0070",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 121, "y": 182 },
+            "sourceSize": { "width": 12, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 10, "width": 12, "height": 18 },
+            "char": {
+                "value": 112,
+                "offset": { "x": 1, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0071",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 139, "y": 182 },
+            "sourceSize": { "width": 11, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 10, "width": 11, "height": 18 },
+            "char": {
+                "value": 113,
+                "offset": { "x": 1, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0072",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 156, "y": 182 },
+            "sourceSize": { "width": 9, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 10, "width": 9, "height": 13 },
+            "char": {
+                "value": 114,
+                "offset": { "x": 3, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0073",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 171, "y": 182 },
+            "sourceSize": { "width": 11, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 10, "width": 11, "height": 14 },
+            "char": {
+                "value": 115,
+                "offset": { "x": 1, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0074",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 188, "y": 182 },
+            "sourceSize": { "width": 11, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 8, "width": 11, "height": 16 },
+            "char": {
+                "value": 116,
+                "offset": { "x": 1, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0075",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 205, "y": 182 },
+            "sourceSize": { "width": 11, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 1, "y": 10, "width": 10, "height": 14 },
+            "char": {
+                "value": 117,
+                "offset": { "x": 1, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0076",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 222, "y": 182 },
+            "sourceSize": { "width": 12, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 10, "width": 12, "height": 13 },
+            "char": {
+                "value": 118,
+                "offset": { "x": 1, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0077",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 2, "y": 218 },
+            "sourceSize": { "width": 14, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 10, "width": 14, "height": 13 },
+            "char": {
+                "value": 119,
+                "offset": { "x": 0, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0078",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 22, "y": 218 },
+            "sourceSize": { "width": 12, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 10, "width": 12, "height": 13 },
+            "char": {
+                "value": 120,
+                "offset": { "x": 1, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U0079",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 40, "y": 218 },
+            "sourceSize": { "width": 13, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 10, "width": 13, "height": 18 },
+            "char": {
+                "value": 121,
+                "offset": { "x": 0, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U007A",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 59, "y": 218 },
+            "sourceSize": { "width": 12, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 10, "width": 12, "height": 13 },
+            "char": {
+                "value": 122,
+                "offset": { "x": 1, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U007B",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 77, "y": 218 },
+            "sourceSize": { "width": 9, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 5, "width": 9, "height": 23 },
+            "char": {
+                "value": 123,
+                "offset": { "x": 3, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U007C",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 92, "y": 218 },
+            "sourceSize": { "width": 3, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 6, "width": 3, "height": 22 },
+            "char": {
+                "value": 124,
+                "offset": { "x": 5, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U007D",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 101, "y": 218 },
+            "sourceSize": { "width": 9, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 5, "width": 9, "height": 23 },
+            "char": {
+                "value": 125,
+                "offset": { "x": 3, "y": 0 },
+                "advanceX": 13
+            }
+        },
+        {
+            "nameId": "RobotoMono-Regular-U007E",
+            "origin": { "x": 0, "y": 0 },
+            "position": { "x": 116, "y": 218 },
+            "sourceSize": { "width": 14, "height": 30 },
+            "padding": 2,
+            "trimmed": false,
+            "trimRec": { "x": 0, "y": 14, "width": 14, "height": 5 },
+            "char": {
+                "value": 126,
+                "offset": { "x": 0, "y": 0 },
+                "advanceX": 13
+            }
+        }
+    ]
+}

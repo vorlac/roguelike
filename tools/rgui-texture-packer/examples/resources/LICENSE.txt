@@ -1,0 +1,9 @@
+Koala Seassons assets
+----------------------------------------------------------------------------
+All the sprites used in the `koala` atlas are original from the open-source game Koala Seassons (https://github.com/raysan5/raylib-games/tree/master/koala_seasons) 
+Those assets are are licensed under a Creative Commons license, as CC-BY 4.0. Details: https://creativecommons.org/licenses/by/4.0/legalcode
+
+Roboto Font
+----------------------------------------------------------------------------
+The font atlas `roboto` has been generated using `RobotoMono-Regular.ttf` font that is part of Google Fonts and
+it's licensed under the Apache License, Version 2.0. Details: https://fonts.google.com/specimen/Roboto+Mono#license

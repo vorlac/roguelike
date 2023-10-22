@@ -1,0 +1,106 @@
+#
+# rTexPacker atlas descriptor file (v2.0)
+#
+# Number of packed sprites:     95
+#
+# Atlas info:    a <imagePath> <width> <height> <spriteCount> <isFont> <fontSize>
+# Sprite info:   s <nameId> <originX> <originY> <positionX> <positionY> <sourceWidth> <sourceHeight> <padding> <trimmed> <trimRecX> <trimRecY> <trimRecWidth> <trimRecHeight> <charValue> <charOffsetX> <charOffsetY> <charAdvanceX>
+#
+# NOTE: This atlas contains a sprite font description
+#
+a roboto.png 256 256 95 1 30
+s RobotoMono-Regular-U0020 0 0 2 2 13 30 2 0 0 0 0 0 32 0 0 13
+s RobotoMono-Regular-U0021 0 0 21 2 3 30 2 0 0 6 3 18 33 5 0 13
+s RobotoMono-Regular-U0022 0 0 30 2 7 30 2 0 0 5 7 7 34 3 0 13
+s RobotoMono-Regular-U0023 0 0 43 2 14 30 2 0 0 6 14 17 35 0 0 13
+s RobotoMono-Regular-U0024 0 0 63 2 12 30 2 0 0 4 12 22 36 1 0 13
+s RobotoMono-Regular-U0025 0 0 81 2 14 30 2 0 0 6 14 18 37 0 0 13
+s RobotoMono-Regular-U0026 0 0 101 2 13 30 2 0 0 6 13 18 38 1 0 13
+s RobotoMono-Regular-U0027 0 0 120 2 3 30 2 0 0 5 3 7 39 5 0 13
+s RobotoMono-Regular-U0028 0 0 129 2 7 30 2 0 0 4 7 25 40 3 0 13
+s RobotoMono-Regular-U0029 0 0 142 2 7 30 2 0 0 4 7 25 41 3 0 13
+s RobotoMono-Regular-U002A 0 0 155 2 12 30 2 0 0 9 12 12 42 1 0 13
+s RobotoMono-Regular-U002B 0 0 173 2 12 30 2 0 0 9 12 13 43 1 0 13
+s RobotoMono-Regular-U002C 0 0 191 2 5 30 2 0 0 20 5 7 44 3 0 13
+s RobotoMono-Regular-U002D 0 0 202 2 9 30 2 0 0 15 9 2 45 2 0 13
+s RobotoMono-Regular-U002E 0 0 217 2 4 30 2 0 0 20 4 4 46 5 0 13
+s RobotoMono-Regular-U002F 0 0 227 2 10 30 2 0 0 6 10 19 47 2 0 13
+s RobotoMono-Regular-U0030 0 0 2 38 12 30 2 0 0 6 12 18 48 1 0 13
+s RobotoMono-Regular-U0031 0 0 20 38 7 30 2 0 0 6 7 17 49 2 0 13
+s RobotoMono-Regular-U0032 0 0 33 38 12 30 2 0 0 6 12 17 50 0 0 13
+s RobotoMono-Regular-U0033 0 0 51 38 11 30 2 0 0 6 11 18 51 1 0 13
+s RobotoMono-Regular-U0034 0 0 68 38 13 30 2 0 0 6 13 17 52 0 0 13
+s RobotoMono-Regular-U0035 0 0 87 38 11 30 2 0 0 6 11 18 53 2 0 13
+s RobotoMono-Regular-U0036 0 0 104 38 11 30 2 0 0 6 11 18 54 1 0 13
+s RobotoMono-Regular-U0037 0 0 121 38 12 30 2 0 0 6 12 17 55 1 0 13
+s RobotoMono-Regular-U0038 0 0 139 38 12 30 2 0 0 6 12 18 56 1 0 13
+s RobotoMono-Regular-U0039 0 0 157 38 11 30 2 0 0 6 11 18 57 1 0 13
+s RobotoMono-Regular-U003A 0 0 174 38 4 30 2 0 0 10 4 14 58 6 0 13
+s RobotoMono-Regular-U003B 0 0 184 38 5 30 2 0 0 10 5 17 59 5 0 13
+s RobotoMono-Regular-U003C 0 0 195 38 11 30 2 0 0 10 11 11 60 1 0 13
+s RobotoMono-Regular-U003D 0 0 212 38 11 30 2 0 0 12 11 7 61 1 0 13
+s RobotoMono-Regular-U003E 0 0 229 38 11 30 2 0 0 10 11 11 62 1 0 13
+s RobotoMono-Regular-U003F 0 0 2 74 10 30 2 0 0 6 10 18 63 2 0 13
+s RobotoMono-Regular-U0040 0 0 18 74 13 30 2 0 0 6 13 18 64 0 0 13
+s RobotoMono-Regular-U0041 0 0 37 74 13 30 2 0 0 6 13 17 65 0 0 13
+s RobotoMono-Regular-U0042 0 0 56 74 12 30 2 0 0 6 12 17 66 1 0 13
+s RobotoMono-Regular-U0043 0 0 74 74 12 30 2 0 0 6 12 18 67 1 0 13
+s RobotoMono-Regular-U0044 0 0 92 74 12 30 2 0 0 6 12 17 68 1 0 13
+s RobotoMono-Regular-U0045 0 0 110 74 10 30 2 0 0 6 10 17 69 2 0 13
+s RobotoMono-Regular-U0046 0 0 126 74 11 30 2 0 0 6 11 17 70 2 0 13
+s RobotoMono-Regular-U0047 0 0 143 74 12 30 2 0 0 6 12 18 71 1 0 13
+s RobotoMono-Regular-U0048 0 0 161 74 12 30 2 0 0 6 12 17 72 1 0 13
+s RobotoMono-Regular-U0049 0 0 179 74 11 30 2 0 0 6 11 17 73 1 0 13
+s RobotoMono-Regular-U004A 0 0 196 74 11 30 2 0 0 6 11 18 74 1 0 13
+s RobotoMono-Regular-U004B 0 0 213 74 13 30 2 0 0 6 13 17 75 1 0 13
+s RobotoMono-Regular-U004C 0 0 232 74 11 30 2 0 0 6 11 17 76 2 0 13
+s RobotoMono-Regular-U004D 0 0 2 110 12 30 2 0 0 6 12 17 77 1 0 13
+s RobotoMono-Regular-U004E 0 0 20 110 12 30 2 0 0 6 12 17 78 1 0 13
+s RobotoMono-Regular-U004F 0 0 38 110 12 30 2 0 0 6 12 18 79 1 0 13
+s RobotoMono-Regular-U0050 0 0 56 110 11 30 2 0 0 6 11 17 80 2 0 13
+s RobotoMono-Regular-U0051 0 0 73 110 12 30 2 0 0 6 12 20 81 1 0 13
+s RobotoMono-Regular-U0052 0 0 91 110 11 30 2 0 0 6 11 17 82 2 0 13
+s RobotoMono-Regular-U0053 0 0 108 110 12 30 2 0 0 6 12 18 83 1 0 13
+s RobotoMono-Regular-U0054 0 0 126 110 13 30 2 0 0 6 13 17 84 0 0 13
+s RobotoMono-Regular-U0055 0 0 145 110 12 30 2 0 0 6 12 18 85 1 0 13
+s RobotoMono-Regular-U0056 0 0 163 110 13 30 2 0 0 6 13 17 86 0 0 13
+s RobotoMono-Regular-U0057 0 0 182 110 14 30 2 0 0 6 14 17 87 0 0 13
+s RobotoMono-Regular-U0058 0 0 202 110 13 30 2 0 1 6 12 17 88 0 0 13
+s RobotoMono-Regular-U0059 0 0 221 110 13 30 2 0 0 6 13 17 89 0 0 13
+s RobotoMono-Regular-U005A 0 0 2 146 11 30 2 0 0 6 11 17 90 1 0 13
+s RobotoMono-Regular-U005B 0 0 19 146 6 30 2 0 0 4 6 23 91 4 0 13
+s RobotoMono-Regular-U005C 0 0 31 146 10 30 2 0 0 6 10 19 92 2 0 13
+s RobotoMono-Regular-U005D 0 0 47 146 5 30 2 0 0 4 5 23 93 4 0 13
+s RobotoMono-Regular-U005E 0 0 58 146 10 30 2 0 0 6 10 10 94 2 0 13
+s RobotoMono-Regular-U005F 0 0 74 146 11 30 2 0 0 23 11 2 95 1 0 13
+s RobotoMono-Regular-U0060 0 0 91 146 6 30 2 0 0 6 5 4 96 4 0 13
+s RobotoMono-Regular-U0061 0 0 103 146 11 30 2 0 0 10 11 14 97 1 0 13
+s RobotoMono-Regular-U0062 0 0 120 146 12 30 2 0 0 5 12 19 98 1 0 13
+s RobotoMono-Regular-U0063 0 0 138 146 11 30 2 0 0 10 11 14 99 1 0 13
+s RobotoMono-Regular-U0064 0 0 155 146 11 30 2 0 0 5 11 19 100 1 0 13
+s RobotoMono-Regular-U0065 0 0 172 146 12 30 2 0 0 10 12 14 101 1 0 13
+s RobotoMono-Regular-U0066 0 0 190 146 12 30 2 0 0 5 12 18 102 1 0 13
+s RobotoMono-Regular-U0067 0 0 208 146 11 30 2 0 0 10 11 18 103 1 0 13
+s RobotoMono-Regular-U0068 0 0 225 146 11 30 2 0 0 5 11 18 104 1 0 13
+s RobotoMono-Regular-U0069 0 0 2 182 11 30 2 0 0 6 11 17 105 2 0 13
+s RobotoMono-Regular-U006A 0 0 19 182 8 30 2 0 0 6 8 22 106 2 0 13
+s RobotoMono-Regular-U006B 0 0 33 182 12 30 2 0 0 5 12 18 107 1 0 13
+s RobotoMono-Regular-U006C 0 0 51 182 11 30 2 0 0 5 11 18 108 2 0 13
+s RobotoMono-Regular-U006D 0 0 68 182 12 30 2 0 0 10 12 13 109 1 0 13
+s RobotoMono-Regular-U006E 0 0 86 182 11 30 2 0 0 10 11 13 110 1 0 13
+s RobotoMono-Regular-U006F 0 0 103 182 12 30 2 0 0 10 12 14 111 1 0 13
+s RobotoMono-Regular-U0070 0 0 121 182 12 30 2 0 0 10 12 18 112 1 0 13
+s RobotoMono-Regular-U0071 0 0 139 182 11 30 2 0 0 10 11 18 113 1 0 13
+s RobotoMono-Regular-U0072 0 0 156 182 9 30 2 0 0 10 9 13 114 3 0 13
+s RobotoMono-Regular-U0073 0 0 171 182 11 30 2 0 0 10 11 14 115 1 0 13
+s RobotoMono-Regular-U0074 0 0 188 182 11 30 2 0 0 8 11 16 116 1 0 13
+s RobotoMono-Regular-U0075 0 0 205 182 11 30 2 0 1 10 10 14 117 1 0 13
+s RobotoMono-Regular-U0076 0 0 222 182 12 30 2 0 0 10 12 13 118 1 0 13
+s RobotoMono-Regular-U0077 0 0 2 218 14 30 2 0 0 10 14 13 119 0 0 13
+s RobotoMono-Regular-U0078 0 0 22 218 12 30 2 0 0 10 12 13 120 1 0 13
+s RobotoMono-Regular-U0079 0 0 40 218 13 30 2 0 0 10 13 18 121 0 0 13
+s RobotoMono-Regular-U007A 0 0 59 218 12 30 2 0 0 10 12 13 122 1 0 13
+s RobotoMono-Regular-U007B 0 0 77 218 9 30 2 0 0 5 9 23 123 3 0 13
+s RobotoMono-Regular-U007C 0 0 92 218 3 30 2 0 0 6 3 22 124 5 0 13
+s RobotoMono-Regular-U007D 0 0 101 218 9 30 2 0 0 5 9 23 125 3 0 13
+s RobotoMono-Regular-U007E 0 0 116 218 14 30 2 0 0 14 14 5 126 0 0 13
