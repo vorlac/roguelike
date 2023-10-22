@@ -7,6 +7,7 @@
 #include "core/input/keymap.hpp"
 #include "core/input/mouse.hpp"
 #include "core/math.hpp"
+#include "core/utils/assert.hpp"
 
 namespace rl::input
 {
@@ -49,8 +50,19 @@ namespace rl::input
                 auto button = std::to_underlying(action.button);
                 switch (action.device)
                 {
+                    case InputDevice::None:
+                        [[fallthrough]];
+                    case InputDevice::Unknown:
+                        assert_msg("invalid input type");
+                        break;
+
+                    case InputDevice::Mouse:
+                        [[fallthrough]];
+                    case InputDevice::Gamepad:
+                        break;
+
                     case InputDevice::Keyboard:
-                        if (raylib::IsKeyDown(button))
+                        if (m_keyboard.is_key_down(button))
                             m_active_game_actions.push_back(action.action);
                 }
             }
@@ -68,13 +80,39 @@ namespace rl::input
                 auto button = std::to_underlying(action.button);
                 switch (action.device)
                 {
+                    case InputDevice::None:
+                        [[fallthrough]];
+                    case InputDevice::Unknown:
+                        assert_msg("invalid input type");
+                        break;
+
+                    case InputDevice::Mouse:
+                        [[fallthrough]];
+                    case InputDevice::Gamepad:
+                        break;
+
                     case InputDevice::Keyboard:
-                        if (raylib::IsKeyDown(button))
+                        if (m_keyboard.is_key_down(button))
                             m_active_ui_actions.push_back(action.action);
                 }
             }
 
             return m_active_ui_actions;
+        }
+
+        inline constexpr auto mouse_button_states() const
+        {
+            return m_mouse.get_button_states();
+        }
+
+        inline constexpr auto mouse_cursor_states() const
+        {
+            return m_mouse.get_cursor_states();
+        }
+
+        inline ds::point<int32_t> mouse_cursor_position() const
+        {
+            return m_mouse.get_position();
         }
 
     private:

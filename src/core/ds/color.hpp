@@ -9,9 +9,9 @@ namespace rl
 {
     struct color : public raylib::Color
     {
-        constexpr operator raylib::Color() const
+        constexpr color(const raylib::Color& other)
+            : raylib::Color(other)
         {
-            return static_cast<raylib::Color>(*this);
         }
 
         static constexpr inline auto lightgray{ raylib::LIGHTGRAY };
@@ -44,15 +44,15 @@ namespace rl
 
     constexpr rl::color rand_color(int32_t val)
     {
-        constexpr auto color_list = std::to_array<const raylib::Color>({
+        constexpr std::array color_list{
             color::lightgray, color::gray,      color::darkgray,   color::yellow, color::gold,
             color::orange,    color::pink,      color::red,        color::maroon, color::green,
             color::lime,      color::darkgreen, color::skyblue,    color::blue,   color::darkblue,
             color::purple,    color::violet,    color::darkpurple, color::beige,  color::brown,
             color::darkbrown, color::white,     color::black,      color::blank,  color::magenta,
             color::raywhite,
-        });
+        };
 
-        return static_cast<rl::color>(color_list.at(val % color_list.size()));
+        return color_list.at(static_cast<std::size_t>(val) % color_list.size());
     }
 }

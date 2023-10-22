@@ -6,13 +6,21 @@
 #include "core/ds/dimensions.hpp"
 #include "core/input/input.hpp"
 
+namespace rl::ui
+{
+    class GUI;
+}
+
 namespace rl
 {
     class Game : public Application
     {
     public:
-        bool run();
+        Game();
+        ~Game();
+
         bool setup();
+        bool run();
         bool teardown();
 
         bool should_quit() const;
@@ -20,11 +28,6 @@ namespace rl
 
     protected:
         flecs::world m_world{};
-
-    private:
-        inline static constexpr ds::dimensions rect_size{
-            .width = 10,
-            .height = 10,
-        };
+        ui::GUI* m_gui{ nullptr };
     };
 }

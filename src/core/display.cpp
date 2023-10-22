@@ -18,7 +18,7 @@ namespace rl
 
     uint32_t Display::monitor_refresh_rate(uint16_t monitor)
     {
-        return raylib::GetMonitorRefreshRate(monitor);
+        return static_cast<uint32_t>(raylib::GetMonitorRefreshRate(monitor));
     }
 
     std::string Display::monitor_name(uint16_t monitor)

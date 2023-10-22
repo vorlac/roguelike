@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core/utils/color.hpp"
+#include "core/ds/color.hpp"
 
 namespace rl::component
 {

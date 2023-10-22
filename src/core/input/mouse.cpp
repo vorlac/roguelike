@@ -2,26 +2,6 @@
 
 namespace rl::input::device
 {
-    bool Mouse::is_button_pressed(ButtonID button) const
-    {
-        return raylib::IsMouseButtonPressed(button);
-    }
-
-    bool Mouse::is_button_down(ButtonID button) const
-    {
-        return raylib::IsMouseButtonDown(button);
-    }
-
-    bool Mouse::is_button_released(ButtonID button) const
-    {
-        return raylib::IsMouseButtonReleased(button);
-    }
-
-    bool Mouse::is_button_up(ButtonID button) const
-    {
-        return raylib::IsMouseButtonUp(button);
-    }
-
     int32_t Mouse::get_x() const
     {
         return raylib::GetMouseX();
@@ -42,7 +22,7 @@ namespace rl::input::device
         return raylib::SetMousePosition(this->get_x(), y);
     }
 
-    ds::position<int32_t> Mouse::get_position() const
+    ds::point<int32_t> Mouse::get_position() const
     {
         auto pos{ raylib::GetMousePosition() };
         return {
@@ -56,7 +36,7 @@ namespace rl::input::device
         return raylib::SetMousePosition(x, y);
     }
 
-    void Mouse::set_position(ds::position<int32_t> pos) const
+    void Mouse::set_position(ds::point<int32_t> pos) const
     {
         return raylib::SetMousePosition(pos.x, pos.y);
     }

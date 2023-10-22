@@ -1,18 +1,17 @@
 #pragma once
 
 #include "core/ui/control.hpp"
-#include "core/ui/properties.hpp"
 
 namespace rl::ui
 {
-    class Menu : public Control
+    class Button : public Control
     {
     public:
-        Menu()
+        Button()
         {
         }
 
-        ~Menu()
+        constexpr ~Button()
         {
         }
 

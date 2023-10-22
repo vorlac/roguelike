@@ -1,4 +1,5 @@
 #include <chrono>
+#include <memory>
 #include <string>
 #include <fmt/compile.h>
 #include <fmt/format.h>
@@ -8,24 +9,39 @@
 #include "core/ds/dimensions.hpp"
 #include "core/ds/point.hpp"
 #include "core/game.hpp"
+#include "core/ui/dialog.hpp"
+#include "core/ui/gui.hpp"
 #include "ecs/components/kinematic_components.hpp"
 #include "ecs/components/style_components.hpp"
 #include "ecs/components/transform_components.hpp"
 #include "ecs/scenes/benchmark_scene.hpp"
 #include "ecs/scenes/main_menu_scene.hpp"
 #include "ecs/scenes/scene_types.hpp"
-#include "utils/color.hpp"
 #include "utils/io.hpp"
 #include "utils/time.hpp"
 
 namespace rl
 {
+    Game::Game()
+        : m_gui{ new ui::GUI }
+    {
+    }
+
+    Game::~Game()
+    {
+        if (m_gui != nullptr)
+        {
+            delete m_gui;
+            m_gui = nullptr;
+        }
+    }
+
     bool Game::setup()
     {
         Application::setup();
 
         scene::main_menu::init(m_world);
-        scene::benchmark::init(m_world, std::move(this->m_window.render_size()));
+        scene::benchmark::init(m_world, this->m_window.render_size());
 
         // restrict to one active scene at a time
         m_world.component<scene::active>().add(flecs::Exclusive);
@@ -34,12 +50,49 @@ namespace rl
         return true;
     }
 
-    bool Game::teardown()
+#define RL_PROTOTYPING 1
+#if (RL_PROTOTYPING)
+
+    bool Game::run()
     {
-        m_world.quit();
-        Application::teardown();
+        this->setup();
+        this->framerate(60);
+        scene::set_active<scene::main_menu_scene>(m_world);
+
+        if (m_gui != nullptr)
+        {
+            ui::Dialog* dialog = new ui::Dialog{ 100, 100, 1024, 768, "asdf" };
+            dialog->set_type(ui::Control::Type::Dialog);
+            m_gui->add_control(dialog);
+        }
+
+        while (!this->should_quit()) [[unlikely]]
+        {
+            auto&& mouse_buttons{ m_input.mouse_button_states() };
+            auto&& cursor_position{ m_input.mouse_cursor_position() };
+            m_gui->update_gui(mouse_buttons, cursor_position);
+
+            std::string s{ "None" };
+            if (mouse_buttons[0] == input::device::Mouse::ButtonState::Held)
+                s = "Held";
+            if (mouse_buttons[0] == input::device::Mouse::ButtonState::Pressed)
+                s = "Pressed";
+            if (mouse_buttons[0] == input::device::Mouse::ButtonState::Released)
+                s = "Released";
+            log::info("LMB: {}", s);
+
+            m_window.begin_drawing();
+            raylib::ClearBackground(color::raywhite);
+            m_gui->draw_gui();
+            raylib::DrawRectangle(0, 0, 95, 40, color::black);
+            raylib::DrawFPS(10, 10);
+            m_window.end_drawing();
+        }
+
         return true;
     }
+
+#else
 
     bool Game::run()
     {
@@ -48,6 +101,15 @@ namespace rl
         while (!this->should_quit()) [[unlikely]]
             m_world.progress();
 
+        return true;
+    }
+
+#endif
+
+    bool Game::teardown()
+    {
+        m_world.quit();
+        Application::teardown();
         return true;
     }
 

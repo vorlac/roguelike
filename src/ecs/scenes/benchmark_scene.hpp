@@ -35,7 +35,7 @@ namespace rl::scene
 
                 raylib::SetRandomSeed(2147483647);
 
-                const ds::position centroid{
+                const ds::position<float> centroid{
                     static_cast<float>(raylib::GetScreenWidth()) / 2.0f,
                     static_cast<float>(raylib::GetScreenHeight()) / 2.0f,
                 };
@@ -47,7 +47,7 @@ namespace rl::scene
                         rand_color(raylib::GetRandomValue(0, 100)),
                     };
 
-                    ds::velocity velocity{
+                    ds::velocity<float> velocity{
                         static_cast<float>(raylib::GetRandomValue(-1000, 1000) / 10.0),
                         static_cast<float>(raylib::GetRandomValue(-1000, 1000) / 10.0),
                     };
@@ -56,7 +56,8 @@ namespace rl::scene
                         .set<component::position>({ .x = centroid.x, .y = centroid.y })
                         .set<component::velocity>({ .x = velocity.x, .y = velocity.y })
                         .set<component::style>({ .color = rect_color })
-                        .set<component::scale>({ .factor = 1.0f });
+                        .set<component::scale>({ .factor = 1.0f })
+                        .child_of(scene);
                 }
 
                 world.entity("Player")
@@ -64,7 +65,8 @@ namespace rl::scene
                     .set<component::velocity>({ .x = 0.0f, .y = 0.0f })
                     .set<component::style>({ .color = color::orange })
                     .set<component::character>({ .alive = true })
-                    .set<component::scale>({ .factor = 5.0f });
+                    .set<component::scale>({ .factor = 5.0f })
+                    .child_of(scene);
 
                 world.set_pipeline(world.get<benchmark_scene>()->pipeline);
             }
@@ -77,14 +79,16 @@ namespace rl::scene
                 const static ds::dimensions<int32_t> window_size{ window_rect };
 
                 static auto top_bottom_collision = [](const component::position& pos) {
-                    bool top_collision = pos.y - (rect_size.height / 2.0) <= 0.0;
-                    bool bottom_collision = pos.y + (rect_size.height / 2.0) >= window_size.height;
+                    bool top_collision = pos.y - (rect_size.height / 2.0f) <= 0.0f;
+                    bool bottom_collision = pos.y + (rect_size.height / 2.0f) >=
+                                            static_cast<float>(window_size.height);
                     return top_collision || bottom_collision;
                 };
 
                 static auto left_right_collision = [](const component::position& pos) {
-                    bool left_collision = pos.x - (rect_size.width / 2.0) <= 0.0;
-                    bool right_collision = pos.x + (rect_size.width / 2.0) >= window_size.width;
+                    bool left_collision = pos.x - (rect_size.width / 2.0f) <= 0.0f;
+                    bool right_collision = pos.x + (rect_size.width / 2.0f) >=
+                                           static_cast<float>(window_size.width);
                     return left_collision || right_collision;
                 };
 
@@ -120,14 +124,14 @@ namespace rl::scene
                     .kind(flecs::OnUpdate)
                     .run([](flecs::iter_t* it) {
                         delta_time = it->delta_system_time;
-                        input_actions = std::move(m_input.active_game_actions());
+                        input_actions = m_input.active_game_actions();
                         while (ecs_iter_next(it))
                             it->callback(it);
                     })
                     .interval(1.0f / 120.0f)
                     .each([](flecs::entity, component::character&, component::velocity& vel) {
                         std::vector<input::GameplayAction> inputs{
-                            std::move(m_input.active_game_actions()),
+                            m_input.active_game_actions(),
                         };
 
                         if (inputs.empty())
@@ -137,6 +141,29 @@ namespace rl::scene
                         {
                             switch (action)
                             {
+                                case input::GameplayAction::None:
+                                    [[fallthrough]];
+                                case input::GameplayAction::Dash:
+                                    [[fallthrough]];
+                                case input::GameplayAction::Shoot:
+                                    [[fallthrough]];
+                                case input::GameplayAction::UseItem:
+                                    [[fallthrough]];
+                                case input::GameplayAction::NextWeapon:
+                                    [[fallthrough]];
+                                case input::GameplayAction::PrevWeapon:
+                                    [[fallthrough]];
+                                case input::GameplayAction::ToggleDebugInfo:
+                                    [[fallthrough]];
+                                case input::GameplayAction::RotateUp:
+                                    [[fallthrough]];
+                                case input::GameplayAction::RotateDown:
+                                    [[fallthrough]];
+                                case input::GameplayAction::RotateLeft:
+                                    [[fallthrough]];
+                                case input::GameplayAction::RotateRight:
+                                    break;
+
                                 case input::GameplayAction::MoveLeft:
                                     vel.x -= 1.0f * target_speed * delta_time;
                                     break;

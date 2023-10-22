@@ -50,7 +50,13 @@ target_compile_options(${PROJECT_NAME}
             # Disable warnings which bleed through from godot-cpp's macros.
             -Wno-unused-parameter
             -Wno-c++98-compat
+            -Wno-c++98-compat-pedantic
             -Wno-pre-c++20-compat-pedantic
+            -Wno-exit-time-destructors
+            -Wno-global-constructors
+            -Wno-missing-prototypes
+            -Wno-c++20-extensions
+            -Wno-c++20-compat
         >
 
         # Clang only

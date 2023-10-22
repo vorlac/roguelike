@@ -10,7 +10,8 @@ namespace rl
                                                std::is_same<std::remove_cvref_t<T>, double>>;
 
     template <typename T>
-    concept Integer = std::disjunction_v<std::is_same<T, int32_t>, std::is_same<T, uint32_t>>;
+    concept Integer = std::disjunction_v<std::is_same<T, int32_t>, std::is_same<T, uint32_t>,
+                                         std::is_same<T, std::size_t>>;
 
     template <typename T>
     concept Numeric = FloatingPoint<T> || Integer<T>;

@@ -1,0 +1,19 @@
+#
+# rgl layout text file (v4.0) - raygui layout file generated using rGuiLayout
+#
+# Number of controls:     8
+#
+# Ref. window:    r <x> <y> <width> <height>
+# Anchor info:    a <id> <name> <posx> <posy> <enabled>
+# Control info:   c <id> <type> <name> <rectangle> <anchor_id> <text>
+#
+r 0 40 -1 -1
+a 001 anchor01 72 72 1
+c 000 0 main_menu_dialog 0 -8 1024 768 1 Main Menu
+c 001 5 button_top 192 144 120 24 1 Button (Top)
+c 002 5 button_bottom 192 216 120 24 1 Button (Bottom)
+c 003 7 check_box 176 64 24 24 1 Check Box
+c 004 11 drop_down 24 64 120 24 1 One;Two;Three
+c 005 8 toggle_button 304 64 96 24 1 Toggle Button
+c 006 19 status_bar 424 64 272 24 1 Status Bar
+c 007 21 list_view 24 144 136 96 1 Start Game;Options;Exit

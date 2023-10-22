@@ -35,7 +35,7 @@ namespace flecs
         return fmt::string_view{ str.c_str() };
     }
 
-    constexpr auto format_as(const flecs::entity& e)
+    auto format_as(const flecs::entity& e)
     {
         return fmt::string_view{ e.name().c_str() };
     }

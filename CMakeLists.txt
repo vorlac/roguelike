@@ -7,6 +7,12 @@ list(APPEND CMAKE_MODULE_PATH
 
 include(vcpkg-init)
 
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS ON)
+set(EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_COLOR_DIAGNOSTICS ON)
+
 project(roguelike
     LANGUAGES
       C CXX
@@ -19,12 +25,6 @@ option(
     "If enabled, clang-format will be used to format all sources in src/ during configuration"
       ON
 )
-
-set(CMAKE_CXX_STANDARD 23)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS ON)
-set(EXPORT_COMPILE_COMMANDS ON)
-set(CMAKE_COLOR_DIAGNOSTICS ON)
 
 string(TOLOWER "${CMAKE_SYSTEM_NAME}" host_os)
 string(TOLOWER "${CMAKE_BUILD_TYPE}" build_type)
@@ -83,6 +83,8 @@ target_compile_features(${PROJECT_NAME} PRIVATE
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
   NOMINMAX
+  RAYGUI_IMPLEMENTATION
+  # RAYGUI_STANDALONE
 
   $<$<CONFIG:Debug>:
     ROGUELIKE_DEBUG

@@ -4,6 +4,7 @@
 
 #include "core/display.hpp"
 #include "core/ds/dimensions.hpp"
+#include "core/input/input.hpp"
 #include "core/window.hpp"
 #include "thirdparty/raylib.hpp"
 
@@ -34,5 +35,6 @@ namespace rl
     protected:
         rl::Window m_window{};
         rl::Display m_display{};
+        rl::input::Input m_input{};
     };
 }

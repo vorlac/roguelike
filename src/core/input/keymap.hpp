@@ -4,6 +4,7 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+#include <memory>
 #include <string>
 #include <tuple>
 #include <utility>
@@ -311,12 +312,12 @@ namespace rl::input
 
     struct Keymap
     {
-        static const inline std::filesystem::path keymap_cfg{ "./data/configs/keymap.json" };
+        const static inline std::filesystem::path keymap_cfg{ "./data/configs/keymap.json" };
 
         Keymap()
         {
             simdjson::dom::parser config_parser{};
-            simdjson::dom::element keymap{ config_parser.load(keymap_cfg.string()) };
+            simdjson::dom::element keymap{ config_parser.load(Keymap::keymap_cfg.string()) };
             m_game_input_mappings = load_action_inputs<GameplayAction>("game", keymap, GameActionMap);
             m_ui_input_mappings = load_action_inputs<UIAction>("ui", keymap, UIActionMap);
         }
@@ -350,10 +351,10 @@ namespace rl::input
                     ActionInput<TAction> action = {
                         .action_name = std::string{ action_label },
                         .action = get_action<TAction>(std::string{ action_label }),
-                        .button = get_button(std::string{ action_keys["button"] }),
+                        .button = get_button(std::string(action_keys["button"])),
                         .modifier_ctrl = false,
                         .modifier_shift = false,
-                        .device = get_device(std::string{ action_keys["device"] }),
+                        .device = get_device(std::string(action_keys["device"])),
                         .category = ActionCategory::Game,
                     };
 

@@ -19,14 +19,17 @@ namespace rl::ds
         T x{ 0 };
         T y{ 0 };
 
-        ~vector2()
-        {
-        }
-
-        vector2(const T _x, const T _y)
+        constexpr vector2(const T _x, const T _y)
             : x{ _x }
             , y{ _y }
         {
+        }
+
+        constexpr vector2(std::initializer_list<T>& xy)
+        {
+            static_assert(xy.size() == 2, "must be initialized with exactly 2 values");
+            x = *(xy.begin());
+            y = *(xy.end());
         }
 
     public:
@@ -37,13 +40,32 @@ namespace rl::ds
             std::memcpy(this, &other, sizeof(*this));
         }
 
-        operator raylib::Vector2() const
+        constexpr operator raylib::Vector2() const
         {
             return *reinterpret_cast<const raylib::Vector2*>(this);
         }
 
     public:
-        inline float length() const
+        constexpr bool is_zero(bool exact = false) noexcept
+        {
+            if (exact)
+                return this->operator==(vector2<T>::zero());
+            else
+            {
+                return std::abs(x) < std::numeric_limits<T>::epsilon() &&
+                       std::abs(y) < std::numeric_limits<T>::epsilon();
+            }
+        }
+
+        static constexpr inline vector2<T> zero() noexcept
+        {
+            return {
+                static_cast<T>(0),
+                static_cast<T>(0),
+            };
+        }
+
+        constexpr inline float length() const
         {
             return std::sqrtf(this->length_squared());
         }
