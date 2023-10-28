@@ -8,7 +8,6 @@
 
 #include "core/utils/assert.hpp"
 #include "core/utils/concepts.hpp"
-#include "ui/control.hpp"
 #include "ui/properties.hpp"
 
 namespace rl::ui

@@ -13,7 +13,6 @@
 #include "core/input/input.hpp"
 #include "core/numerics.hpp"
 #include "core/utils/io.hpp"
-#include "ui/controls/control.hpp"
 #include "ui/properties.hpp"
 
 namespace rl::ui

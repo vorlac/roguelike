@@ -12,7 +12,7 @@
 #include "core/input/mouse.hpp"
 #include "core/numerics.hpp"
 #include "thirdparty/raygui.hpp"
-#include "ui/controls/control.hpp"
+#include "ui/control.hpp"
 #include "ui/properties.hpp"
 
 namespace rl::ui
