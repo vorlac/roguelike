@@ -28,7 +28,7 @@ namespace rl::input::device
             Disabled,
         };
 
-        enum class Button : uint16_t {
+        enum Button : uint16_t {
             Left    = raylib::MOUSE_BUTTON_LEFT,     // Left mouse button
             Right   = raylib::MOUSE_BUTTON_RIGHT,    // Right mouse button
             Middle  = raylib::MOUSE_BUTTON_MIDDLE,   // Middle mouse button (pressed wheel)

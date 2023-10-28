@@ -35,7 +35,7 @@ namespace rl::ds
         {
         }
 
-        constexpr explicit rect(point<T> pt, dimensions<T> size)
+        constexpr explicit rect(point<T>&& pt, dimensions<T>&& size)
             : m_pt{ pt }
             , m_size{ size }
         {
@@ -304,7 +304,7 @@ namespace rl::ds
         /**
          * returns an array of the 4 quadrants of this rectangle
          * */
-        constexpr inline rect<T> quads() const
+        inline rect<T> quads() const
         {
             std::array<rect<T>, 4> quadrants{ 0 };
             quads[Quad::TopLeft]     = this->quad(Quad::TopLeft);
@@ -320,7 +320,7 @@ namespace rl::ds
          * */
         constexpr inline std::array<rect<T>, 2> split(ds::Axis axis) const
         {
-            if constexpr (axis == ds::Axis::Horizontal)
+            if (axis == ds::Axis::Horizontal)
             {
                 // split the rect in half using a
                 // horizontal line as the slice point
@@ -339,7 +339,7 @@ namespace rl::ds
                     },
                 };
             }
-            else if constexpr (axis == ds::Axis::Vertical)
+            else if (axis == ds::Axis::Vertical)
             {
                 // split the rect in half using a
                 // vertical line as the slice point

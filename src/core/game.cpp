@@ -11,6 +11,7 @@
 #include "core/game.hpp"
 #include "core/ui/dialog.hpp"
 #include "core/ui/gui.hpp"
+#include "core/ui/properties.hpp"
 #include "ecs/components/kinematic_components.hpp"
 #include "ecs/components/style_components.hpp"
 #include "ecs/components/transform_components.hpp"
@@ -23,7 +24,7 @@
 namespace rl
 {
     Game::Game()
-        : m_gui{ new ui::GUI }
+        : m_gui{ new ui::GUI{} }
     {
     }
 
@@ -61,8 +62,12 @@ namespace rl
 
         if (m_gui != nullptr)
         {
-            ui::Dialog* dialog = new ui::Dialog{ 100, 100, 1024, 768, "asdf" };
-            dialog->set_type(ui::Control::Type::Dialog);
+            ui::Dialog* dialog = new ui::Dialog;
+            dialog->set_properties({
+                .text     = std::string{ "asdsdasa" },
+                .size     = ds::dimensions<int32_t>{ 800, 600 },
+                .position = ds::point<int32_t>{ 100, 100 },
+            });
             m_gui->add_control(dialog);
         }
 

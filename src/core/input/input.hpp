@@ -142,14 +142,14 @@ namespace rl::input
             device::Gamepad::AxisID neg_x = 1;
             device::Gamepad::AxisID pos_y = 2;
             device::Gamepad::AxisID neg_y = 3;
-            float deadzone                = 0.1f;
 
             ds::vector2<float> vec = {
                 m_gamepad.get_axis_movement(pos_x) - m_gamepad.get_axis_movement(neg_x),
                 m_gamepad.get_axis_movement(pos_y) - m_gamepad.get_axis_movement(neg_y),
             };
 
-            float length = vec.length();
+            const float deadzone{ 0.1f };
+            const float length{ vec.length() };
             if (length <= deadzone)
                 return { 0.0f, 0.0f };
             else if (length > 1.0f)

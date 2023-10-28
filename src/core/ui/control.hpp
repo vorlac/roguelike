@@ -1,8 +1,10 @@
 #pragma once
 
+#include <concepts>
 #include <memory>
 #include <string>
 #include <vector>
+#include <type_traits>
 
 #include "core/ds/dimensions.hpp"
 #include "core/ds/point.hpp"
@@ -12,168 +14,72 @@
 
 namespace rl::ui
 {
+    template <typename T>
+    class Widget;
+
     /**
      * @brief Base class of all widgets/containers
      * */
     class Control
     {
     public:
-        enum class Type {
-            Control,
-            Dialog,
-            Button,
-            ToggleButton,
-            Checkbox,
-        };
-
-        struct Margins
-        {
-            uint32_t top{ 0 };
-            uint32_t bottom{ 0 };
-            uint32_t left{ 0 };
-            uint32_t right{ 0 };
-        };
-
-    public:
-        constexpr Control() = default;
-
-        constexpr Control(Control* other)
-        {
-            if (other == nullptr) [[unlikely]]
-                return;
-            *this = std::move(*other);
-        }
-
-        Control(const Control& other)
-        {
-            *this = other;
-        }
-
-        Control(Control&& other)
-        {
-            *this = std::move(other);
-        }
-
-        constexpr Control(int32_t x, int32_t y, int32_t width, int32_t height, std::string text = "")
-            : m_text{ text }
-            , m_anchor{ x, y }
-            , m_rect{ x, y, width, height }
-        {
-        }
-
-        constexpr Control(ds::point<int32_t> anchor, ds::rect<int32_t> rect, std::string text = "")
-            : m_text{ text }
-            , m_anchor{ anchor }
-            , m_rect{ rect }
-        {
-        }
-
-        constexpr Control(ds::point<int32_t> anchor, ds::point<int32_t>, ds::rect<int32_t> rect,
-                          std::string text)
-            : m_text{ text }
-            , m_anchor{ anchor }
-            , m_rect{ rect }
-        {
-        }
-
-        constexpr virtual ~Control() = default;
-
-        Control& operator=(const Control& other)
-        {
-            m_anchor   = other.m_anchor;
-            m_children = other.m_children;
-            m_rect     = other.m_rect;
-            m_text     = other.m_text;
-            m_visible  = other.m_visible;
-            m_type     = other.m_type;
-            return *this;
-        }
-
-        Control& operator=(Control&& other)
-        {
-            m_anchor   = std::move(other.m_anchor);
-            m_children = std::move(other.m_children);
-            m_rect     = std::move(other.m_rect);
-            m_text     = std::move(other.m_text);
-            m_visible  = other.m_visible;
-            m_type     = other.m_type;
-            return *this;
-        }
-
-        /**
-         * @brief Moves a control by some delta.
-         * @returns false if it's unable to move
-         * the full distance due to a collision
-         * */
-        constexpr bool move(const ds::vector2<int32_t>& offset)
-        {
-            // TODO: handle collisions..
-            // ds::rect<int32_t> moved{ m_rect + offset };
-            // if (moved.contained_by())
-            //     ...
-
-            m_rect += offset;
-            return true;
-        }
-
-        constexpr virtual bool check_collision(ds::point<int32_t>)
+        inline bool handle_inputs(const input::Input&)
         {
             return false;
         }
 
-        virtual void draw()
+        inline bool handle_mouse_inputs(const input::Input&)
         {
-            return;
-        }
-
-        constexpr void visible(bool visible)
-        {
-            m_visible = visible;
-        }
-
-        constexpr bool visible() const
-        {
-            return m_visible;
-        }
-
-        virtual void setup()
-        {
-            return;
-        }
-
-        virtual void teardown()
-        {
-            return;
-        }
-
-        constexpr void add_child(Control* control)
-        {
-            m_children.emplace_back(control);
-        }
-
-        inline void set_type(Control::Type type)
-        {
-            m_type = type;
-        }
-
-        inline Control::Type type() const
-        {
-            return m_type;
+            return false;
         }
 
     protected:
+        inline bool move(ds::vector2<int32_t>&& cursor_movement_delta)
+        {
+            // static_cast<this->element_type>(this)->handle_inputs(input);
+            //
+            //  TODO: handle collisions..
+            //  ds::rect<int32_t> moved{ m_rect + offset };
+            //  if (moved.contained_by())
+            //      ...
+
+            m_rect += cursor_movement_delta;
+            return true;
+        }
+
+        inline constexpr bool check_collision(ds::point<int32_t>&& pt)
+        {
+            return m_rect.overlaps(pt);
+        }
+
+        inline constexpr void draw()
+        {
+            return;
+        }
+
+        template <typename TControl>
+        constexpr void add_child(TControl&& control)
+        {
+            m_children.emplace_back(std::move(control));
+        }
+
+    protected:
+        static inline std::atomic<uint32_t> m_control_count{ 0 };
+
         bool m_visible{ true };
+        bool m_enabled{ true };
         // label text
         std::string m_text{};
         // reference point in local space
         ds::point<int32_t> m_anchor{ 0, 0 };
         // control's size and position, relative to anchor
         ds::rect<int32_t> m_rect{
-            ds::point<int32_t>{ 0, 0 },
-            ds::dimensions<int32_t>{ 0, 0 },
+            { 0, 0 },
+            { 0, 0 },
         };
+
         // all controls/widgets contained by this one
-        std::vector<std::shared_ptr<Control>> m_children{};
-        Control::Type m_type{ Control::Type::Control };
+        std::vector<std::type_identity_t<Widget<Control>>*> m_children{};
+        const uint32_t m_id{ m_control_count.fetch_add(1, std::memory_order_relaxed) };
     };
 }

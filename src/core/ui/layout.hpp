@@ -13,12 +13,6 @@
 
 namespace rl::ui
 {
-    enum class LayoutMode {
-        None,
-        Horizontal,
-        Vertical,
-        Grid
-    };
 
     template <std::size_t Cols, std::size_t Rows>
         requires rl::PositiveInteger<Cols> && rl::PositiveInteger<Rows>

@@ -32,7 +32,6 @@ namespace rl::ds
         Unknown
     };
 
-
     template <std::movable TElem, auto BufferSize = 512U>
         requires PositiveInteger<BufferSize>
     class ring_buffer
@@ -187,21 +186,6 @@ namespace rl::ds
         {
             std::scoped_lock<std::mutex> lock(m_taskinfo_lock);
             m_registered_writers.push_back(writer_name);
-        }
-
-        inline float utilization()
-        {
-            runtime_assert(
-                m_vacancies + m_occupancies.load(std::memory_order_relaxed) == m_buffer.size(),
-                "Buffer counts are off by "
-                    << m_buffer.size() - (m_occupancies.load(std::memory_order_relaxed) + m_vacancies)
-                    << std::endl
-                    << "  size = " << m_buffer.size() << std::endl
-                    << "  items = " << m_occupancies << std::endl
-                    << "  openings = " << m_vacancies << std::endl);
-
-            return 100.0 * (m_occupancies.load(std::memory_order_relaxed) /
-                            static_cast<float>(m_buffer.size()));
         }
 
     private:
