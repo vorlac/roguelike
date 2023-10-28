@@ -6,10 +6,10 @@
 #include <span>
 #include <vector>
 
-#include "core/ui/control.hpp"
-#include "core/ui/properties.hpp"
 #include "core/utils/assert.hpp"
 #include "core/utils/concepts.hpp"
+#include "ui/control.hpp"
+#include "ui/properties.hpp"
 
 namespace rl::ui
 {

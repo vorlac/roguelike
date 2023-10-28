@@ -7,6 +7,7 @@
 #include "core/ds/point.hpp"
 #include "core/input/input.hpp"
 #include "core/input/keymap.hpp"
+#include "core/numerics.hpp"
 #include "core/utils/assert.hpp"
 #include "core/utils/io.hpp"
 #include "core/utils/time.hpp"
@@ -35,9 +36,9 @@ namespace rl::scene
 
                 raylib::SetRandomSeed(2147483647);
 
-                const ds::position<float> centroid{
-                    static_cast<float>(raylib::GetScreenWidth()) / 2.0f,
-                    static_cast<float>(raylib::GetScreenHeight()) / 2.0f,
+                const ds::position<f32> centroid{
+                    static_cast<f32>(raylib::GetScreenWidth()) / 2.0f,
+                    static_cast<f32>(raylib::GetScreenHeight()) / 2.0f,
                 };
 
                 constexpr size_t count = 25000;
@@ -47,9 +48,9 @@ namespace rl::scene
                         rand_color(raylib::GetRandomValue(0, 100)),
                     };
 
-                    ds::velocity<float> velocity{
-                        static_cast<float>(raylib::GetRandomValue(-1000, 1000) / 10.0),
-                        static_cast<float>(raylib::GetRandomValue(-1000, 1000) / 10.0),
+                    ds::velocity<f32> velocity{
+                        static_cast<f32>(raylib::GetRandomValue(-1000, 1000) / 10.0),
+                        static_cast<f32>(raylib::GetRandomValue(-1000, 1000) / 10.0),
                     };
 
                     world.entity(fmt::format("Rect {}", i).data())
@@ -74,9 +75,9 @@ namespace rl::scene
 
         struct system
         {
-            static void define_rect_movement(flecs::world& world, ds::dimensions<int32_t> window_rect)
+            static void define_rect_movement(flecs::world& world, ds::dimensions<i32> window_rect)
             {
-                const static ds::dimensions<int32_t> window_size{ window_rect };
+                const static ds::dimensions<i32> window_size{ window_rect };
 
                 static auto top_bottom_collision = [](const component::position& pos) {
                     bool top_collision    = pos.y - (rect_size.height / 2.0f) <= 0.0f;
@@ -201,10 +202,10 @@ namespace rl::scene
                     .each([&](const component::position& p, const component::style& c,
                               const component::scale& s) {
                         raylib::DrawRectangle(
-                            static_cast<int32_t>(p.x) - static_cast<int32_t>(rect_size.width / 2.0),
-                            static_cast<int32_t>(p.y) - static_cast<int32_t>(rect_size.height / 2.0),
-                            static_cast<int32_t>(rect_size.width * s.factor),
-                            static_cast<int32_t>(rect_size.height * s.factor), c.color);
+                            static_cast<i32>(p.x) - static_cast<i32>(rect_size.width / 2.0f),
+                            static_cast<i32>(p.y) - static_cast<i32>(rect_size.height / 2.0f),
+                            static_cast<i32>(rect_size.width * s.factor),
+                            static_cast<i32>(rect_size.height * s.factor), c.color);
                     });
             }
 
@@ -222,7 +223,7 @@ namespace rl::scene
                     });
             }
 
-            static void init_systems(flecs::world& world, ds::dimensions<int32_t> window_rect)
+            static void init_systems(flecs::world& world, ds::dimensions<i32> window_rect)
             {
                 define_rect_movement(world, window_rect);
                 define_player_movement(world);
@@ -232,7 +233,7 @@ namespace rl::scene
         };
 
     public:
-        static auto init(flecs::world& world, ds::dimensions<int32_t> window_rect)
+        static auto init(flecs::world& world, ds::dimensions<i32> window_rect)
         {
             world.set<benchmark_scene>({
                 world.pipeline()
@@ -262,9 +263,6 @@ namespace rl::scene
         static inline input::Input m_input{};
         static inline thread_local float m_delta_time{ 0.0f };
         static inline thread_local int64_t m_update_calls{ 0 };
-        static constexpr inline ds::dimensions<int32_t> rect_size{
-            .width  = 10,
-            .height = 10,
-        };
+        static constexpr inline ds::dimensions<i32> rect_size{ 10, 10 };
     };
 }

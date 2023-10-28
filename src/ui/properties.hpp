@@ -9,7 +9,7 @@
 
 namespace rl::ui
 {
-    enum Justification : uint_fast16_t {
+    enum Justification : u16_fast {
         Top         = 1 << 0,
         Bottom      = 1 << 1,
         Left        = 1 << 2,
@@ -23,7 +23,7 @@ namespace rl::ui
 
     struct Layout
     {
-        enum Orientation : uint_fast16_t {
+        enum class Orientation : u16_fast {
             None       = 0,
             Horizontal = 1,
             Vertical   = 2,
@@ -32,12 +32,12 @@ namespace rl::ui
 
         struct Matrix
         {
-            static constexpr inline uint_fast16_t DynamicScaling{ 0 };
+            static constexpr inline u16_fast DynamicScaling{ 0 };
 
             struct Constraints
             {
-                uint_fast16_t cols = Matrix::DynamicScaling;
-                uint_fast16_t rows = Matrix::DynamicScaling;
+                u16_fast cols = Matrix::DynamicScaling;
+                u16_fast rows = Matrix::DynamicScaling;
             };
 
             // defines the minimum number of rows and columns
@@ -67,13 +67,13 @@ namespace rl::ui
 
     struct Margins
     {
-        uint_fast16_t top    = 0;
-        uint_fast16_t bottom = 0;
-        uint_fast16_t left   = 0;
-        uint_fast16_t right  = 0;
+        u16_fast top    = 0;
+        u16_fast bottom = 0;
+        u16_fast left   = 0;
+        u16_fast right  = 0;
     };
 
-    struct Properties
+    struct properties
     {
         std::string text{};
         ds::dimensions<int32_t> size{ 0, 0 };
@@ -84,14 +84,14 @@ namespace rl::ui
         Layout layout{ .orientation = Layout::Orientation::None };
 
         // inner and outer margins of the panel and the control it contains
-        Margins inner_margin = {
+        Margins inner_margin{
             .top    = 0,
             .bottom = 0,
             .left   = 0,
             .right  = 0,
         };
 
-        Margins outer_margin = {
+        Margins outer_margin{
             .top    = 0,
             .bottom = 0,
             .left   = 0,

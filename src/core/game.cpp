@@ -9,15 +9,15 @@
 #include "core/ds/dimensions.hpp"
 #include "core/ds/point.hpp"
 #include "core/game.hpp"
-#include "core/ui/dialog.hpp"
-#include "core/ui/gui.hpp"
-#include "core/ui/properties.hpp"
 #include "ecs/components/kinematic_components.hpp"
 #include "ecs/components/style_components.hpp"
 #include "ecs/components/transform_components.hpp"
 #include "ecs/scenes/benchmark_scene.hpp"
 #include "ecs/scenes/main_menu_scene.hpp"
 #include "ecs/scenes/scene_types.hpp"
+#include "ui/controls/dialog.hpp"
+#include "ui/gui.hpp"
+#include "ui/properties.hpp"
 #include "utils/io.hpp"
 #include "utils/time.hpp"
 
@@ -60,24 +60,26 @@ namespace rl
         this->framerate(60);
         scene::set_active<scene::main_menu_scene>(m_world);
 
-        if (m_gui != nullptr)
-        {
-            ui::Dialog* dialog = new ui::Dialog;
-            dialog->set_properties({
-                .text     = std::string{ "asdsdasa" },
-                .size     = ds::dimensions<int32_t>{ 800, 600 },
-                .position = ds::point<int32_t>{ 100, 100 },
-            });
-            m_gui->add_control(dialog);
-        }
+        // if (m_gui != nullptr)
+        //{
+        //     std::shared_ptr cdialog = ui::dialog::create({
+        //         .text     = std::string{ "asdsdasa" },
+        //         .size     = ds::dimensions<i32>{ 800, 600 },
+        //         .position = ds::point<i32>{ 100, 100 },
+        //     });
+
+        //    // m_test_dialog = control->getptr();
+
+        //    m_gui->add_control(cdialog);
+        //}
 
         while (!this->should_quit()) [[unlikely]]
         {
-            m_gui->update_gui(m_input);
+            m_gui->update(m_input);
 
             m_window.begin_drawing();
             raylib::ClearBackground(color::darkgray);
-            m_gui->draw_gui();
+            m_gui->render();
             raylib::DrawRectangle(0, 0, 95, 40, color::black);
             raylib::DrawFPS(10, 10);
             m_window.end_drawing();

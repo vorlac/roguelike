@@ -4,11 +4,25 @@
 
 namespace rl::ds
 {
-    template <typename T = float>
+    template <typename T>
         requires Numeric<T>
     struct dimensions
     {
         T width{ 0 };
         T height{ 0 };
+
+        constexpr dimensions(T w, T h)
+            : width{ w }
+            , height{ h }
+        {
+        }
+
+        constexpr dimensions()
+        {
+        }
+
+        constexpr ~dimensions()
+        {
+        }
     };
 }

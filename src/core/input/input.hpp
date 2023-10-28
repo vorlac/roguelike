@@ -7,13 +7,14 @@
 #include "core/input/keymap.hpp"
 #include "core/input/mouse.hpp"
 #include "core/math.hpp"
+#include "core/numerics.hpp"
 #include "core/utils/assert.hpp"
 
 namespace rl::input
 {
     struct ButtonInfo
     {
-        uint32_t id{ 0 };
+        u32 id{ 0 };
         std::string_view description{};
     };
 
@@ -22,7 +23,7 @@ namespace rl::input
         bool pressed{ false };
         bool released{ false };
         bool held{ false };
-        int32_t axis{ 9999 };
+        i32 axis{ 9999 };
     };
 
     struct InputEvent
@@ -115,41 +116,41 @@ namespace rl::input
             return m_mouse.get_cursor_states();
         }
 
-        inline ds::point<int32_t> mouse_cursor_position() const
+        inline ds::point<i32> mouse_cursor_position() const
         {
             return m_mouse.get_position();
         }
 
-        inline ds::vector2<int32_t> mouse_cursor_delta() const
+        inline ds::vector2<i32> mouse_cursor_delta() const
         {
             return m_mouse.get_delta();
         }
 
-        inline void set_selection(const bool picked, uint64_t id = 0)
+        inline void set_selection(const bool picked, u64 id = 0)
         {
             m_selection.exchange(std::make_pair(picked, id), std::memory_order_relaxed);
         }
 
-        inline std::pair<bool, uint64_t> get_selection() const
+        inline std::pair<bool, u64> get_selection() const
         {
             return m_selection.load(std::memory_order_relaxed);
         }
 
     private:
-        ds::vector2<float> get_vector() const
+        ds::vector2<f32> get_vector() const
         {
             device::Gamepad::AxisID pos_x = 0;
             device::Gamepad::AxisID neg_x = 1;
             device::Gamepad::AxisID pos_y = 2;
             device::Gamepad::AxisID neg_y = 3;
 
-            ds::vector2<float> vec = {
+            ds::vector2<f32> vec = {
                 m_gamepad.get_axis_movement(pos_x) - m_gamepad.get_axis_movement(neg_x),
                 m_gamepad.get_axis_movement(pos_y) - m_gamepad.get_axis_movement(neg_y),
             };
 
-            const float deadzone{ 0.1f };
-            const float length{ vec.length() };
+            const f32 deadzone{ 0.1f };
+            const f32 length{ vec.length() };
             if (length <= deadzone)
                 return { 0.0f, 0.0f };
             else if (length > 1.0f)
@@ -159,7 +160,7 @@ namespace rl::input
         }
 
     private:
-        std::atomic<std::pair<bool, uint64_t>> m_selection{ std::make_pair(false, 0) };
+        std::atomic<std::pair<bool, u64>> m_selection{ std::make_pair(false, 0) };
         input::device::Mouse m_mouse{};
         input::device::Keyboard m_keyboard{};
         input::device::Gamepad m_gamepad{};

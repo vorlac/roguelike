@@ -2,29 +2,30 @@
 
 #include "core/ds/dimensions.hpp"
 #include "core/ds/point.hpp"
+#include "core/numerics.hpp"
 
 namespace rl::ds
 {
-    enum Side : int_fast8_t {
+    enum Side : i8_fast {
         Top    = 1 << 0,
         Bottom = 1 << 1,
         Left   = 1 << 2,
         Right  = 1 << 3,
     };
 
-    enum Quad : int_fast8_t {
+    enum Quad : i8_fast {
         TopLeft     = (Side::Top | Side::Left),
         BottomLeft  = (Side::Bottom | Side::Left),
         TopRight    = (Side::Top | Side::Right),
         BottomRight = (Side::Bottom | Side::Right),
     };
 
-    enum Axis : int_fast8_t {
+    enum Axis : i8_fast {
         Horizontal = 1,  // x axis
         Vertical   = 2,  // y axis
     };
 
-    template <typename T = float>
+    template <typename T>
         requires Numeric<T>
     class rect
     {
@@ -52,19 +53,19 @@ namespace rl::ds
         }
 
         constexpr operator raylib::Rectangle()
-            requires std::same_as<T, float>
+            requires std::same_as<T, f32>
         {
             return *reinterpret_cast<raylib::Rectangle*>(this);
         }
 
         constexpr operator raylib::Rectangle()
-            requires(!std::same_as<T, float>)
+            requires(!std::same_as<T, f32>)
         {
             return raylib::Rectangle{
-                .x      = static_cast<float>(m_pt.x),
-                .y      = static_cast<float>(m_pt.y),
-                .width  = static_cast<float>(m_size.width),
-                .height = static_cast<float>(m_size.height),
+                .x      = static_cast<f32>(m_pt.x),
+                .y      = static_cast<f32>(m_pt.y),
+                .width  = static_cast<f32>(m_size.width),
+                .height = static_cast<f32>(m_size.height),
             };
         }
 

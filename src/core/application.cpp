@@ -11,8 +11,8 @@ namespace rl
         this->setup();
     }
 
-    Application::Application(ds::dimensions<int32_t> dims, std::string title, uint32_t fps)
-        : m_window(std::forward<ds::dimensions<int32_t>>(dims), std::forward<std::string>(title))
+    Application::Application(ds::dimensions<i32> dims, std::string title, u32 fps)
+        : m_window(std::forward<ds::dimensions<i32>>(dims), std::forward<std::string>(title))
     {
         this->setup(fps);
     }
@@ -22,12 +22,12 @@ namespace rl
         this->teardown();
     }
 
-    uint32_t Application::framerate()
+    u32 Application::framerate()
     {
-        return static_cast<uint32_t>(raylib::GetFPS());
+        return static_cast<u32>(raylib::GetFPS());
     }
 
-    void Application::framerate(uint32_t target_fps)
+    void Application::framerate(u32 target_fps)
     {
         raylib::SetTargetFPS(static_cast<int>(target_fps));
     }
@@ -57,7 +57,7 @@ namespace rl
         return raylib::DisableEventWaiting();
     }
 
-    void Application::setup(uint32_t fps_target)
+    void Application::setup(u32 fps_target)
     {
         this->framerate(fps_target);
     }

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "core/ui/control.hpp"
-#include "core/ui/properties.hpp"
+#include "ui/control.hpp"
+#include "ui/properties.hpp"
 
 namespace rl::ui
 {

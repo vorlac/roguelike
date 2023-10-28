@@ -5,6 +5,7 @@
 #include "core/display.hpp"
 #include "core/ds/dimensions.hpp"
 #include "core/input/input.hpp"
+#include "core/numerics.hpp"
 #include "core/window.hpp"
 #include "thirdparty/raylib.hpp"
 
@@ -16,12 +17,12 @@ namespace rl
 
     public:
         Application();
-        Application(ds::dimensions<int32_t> dims, std::string title, uint32_t fps = DefaultFPS);
+        Application(ds::dimensions<i32> dims, std::string title, u32 fps = DefaultFPS);
         ~Application();
 
     public:
-        uint32_t framerate();
-        void framerate(uint32_t target_fps);
+        u32 framerate();
+        void framerate(u32 target_fps);
         float delta_time();
         void clipboard_text(std::string text);
         std::string clipboard_text();
@@ -29,7 +30,7 @@ namespace rl
         void disable_event_waiting();
 
     protected:
-        void setup(uint32_t fps_target = DefaultFPS);
+        void setup(u32 fps_target = DefaultFPS);
         void teardown();
 
     protected:

@@ -3,6 +3,7 @@
 #include <array>
 #include <utility>
 
+#include "core/numerics.hpp"
 #include "thirdparty/raylib.hpp"
 
 namespace rl
@@ -42,7 +43,7 @@ namespace rl
         static constexpr inline auto raywhite{ raylib::RAYWHITE };
     };
 
-    constexpr rl::color rand_color(int32_t val)
+    constexpr rl::color rand_color(i32 val)
     {
         constexpr std::array color_list{
             color::lightgray, color::gray,      color::darkgray,   color::yellow, color::gold,
@@ -53,6 +54,6 @@ namespace rl
             color::raywhite,
         };
 
-        return color_list.at(static_cast<std::size_t>(val) % color_list.size());
+        return color_list.at(static_cast<u64>(val) % color_list.size());
     }
 }
