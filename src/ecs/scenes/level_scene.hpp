@@ -18,7 +18,7 @@ namespace rl::scene
     {
         log::info("=== ActiveScene has changed to scene::level1");
 
-        flecs::world world = it.world();
+        flecs::world world  = it.world();
         flecs::entity scene = world.component<scene::root>();
 
         scene::reset(world);

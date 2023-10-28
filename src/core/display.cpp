@@ -36,7 +36,7 @@ namespace rl
     ds::dimensions<int32_t> Display::monitor_dims(int16_t monitor)
     {
         return {
-            .width = raylib::GetMonitorWidth(monitor),
+            .width  = raylib::GetMonitorWidth(monitor),
             .height = raylib::GetMonitorHeight(monitor),
         };
     }
@@ -44,7 +44,7 @@ namespace rl
     ds::dimensions<int32_t> Display::monitor_physical_dims(int16_t monitor)
     {
         return {
-            .width = raylib::GetMonitorPhysicalWidth(monitor),
+            .width  = raylib::GetMonitorPhysicalWidth(monitor),
             .height = raylib::GetMonitorPhysicalHeight(monitor),
         };
     }

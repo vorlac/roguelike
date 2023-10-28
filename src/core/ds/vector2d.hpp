@@ -12,7 +12,7 @@
 
 namespace rl::ds
 {
-    template <typename T = float>
+    template <typename T>
         requires Numeric<T>
     struct vector2
     {
@@ -23,13 +23,6 @@ namespace rl::ds
             : x{ _x }
             , y{ _y }
         {
-        }
-
-        constexpr vector2(std::initializer_list<T>& xy)
-        {
-            static_assert(xy.size() == 2, "must be initialized with exactly 2 values");
-            x = *(xy.begin());
-            y = *(xy.end());
         }
 
     public:
@@ -192,17 +185,20 @@ namespace rl::ds
 
         inline vector2<T> slerp(const vector2<T>& to, const float weight) const
         {
-            float start_length_sq = this->length_squared();
-            float end_length_sq = to.length_squared();
+            float start_length_sq{ this->length_squared() };
+            float end_length_sq{ to.length_squared() };
+
             if (start_length_sq == 0.0f || end_length_sq == 0.0f) [[unlikely]]
             {
                 // Zero length vectors have no angle, so the best
                 // we can do is either lerp or throw an error.
                 return this->lerp(to, weight);
             }
-            float start_length = std::sqrtf(start_length_sq);
-            float result_length = std::lerp(start_length, std::sqrtf(end_length_sq), weight);
+
+            float start_length{ std::sqrtf(start_length_sq) };
+            float result_length{ std::lerp(start_length, std::sqrtf(end_length_sq), weight) };
             float angle = this->angle_to(to);
+
             return this->rotated(angle * weight) * (result_length / start_length);
         }
 
@@ -212,8 +208,8 @@ namespace rl::ds
 
             float vd_len = vec_delta.length();
             return vd_len <= delta || vd_len < std::numeric_limits<float>::epsilon()
-                     ? target
-                     : (*this + vec_delta) / (vd_len * delta);
+                       ? target
+                       : (*this + vec_delta) / (vd_len * delta);
         }
 
         inline vector2<T> slide(const vector2<T>& normal) const

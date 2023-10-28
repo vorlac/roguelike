@@ -18,8 +18,7 @@ namespace rl::ui
     class Control
     {
     public:
-        enum class Type
-        {
+        enum class Type {
             Control,
             Dialog,
             Button,
@@ -81,24 +80,40 @@ namespace rl::ui
 
         Control& operator=(const Control& other)
         {
-            this->m_anchor = other.m_anchor;
-            this->m_children = other.m_children;
-            this->m_rect = other.m_rect;
-            this->m_text = other.m_text;
-            this->m_visible = other.m_visible;
-            this->m_type = other.m_type;
+            m_anchor   = other.m_anchor;
+            m_children = other.m_children;
+            m_rect     = other.m_rect;
+            m_text     = other.m_text;
+            m_visible  = other.m_visible;
+            m_type     = other.m_type;
             return *this;
         }
 
         Control& operator=(Control&& other)
         {
-            this->m_anchor = std::move(other.m_anchor);
-            this->m_children = std::move(other.m_children);
-            this->m_rect = std::move(other.m_rect);
-            this->m_text = std::move(other.m_text);
-            this->m_visible = other.m_visible;
-            this->m_type = other.m_type;
+            m_anchor   = std::move(other.m_anchor);
+            m_children = std::move(other.m_children);
+            m_rect     = std::move(other.m_rect);
+            m_text     = std::move(other.m_text);
+            m_visible  = other.m_visible;
+            m_type     = other.m_type;
             return *this;
+        }
+
+        /**
+         * @brief Moves a control by some delta.
+         * @returns false if it's unable to move
+         * the full distance due to a collision
+         * */
+        constexpr bool move(const ds::vector2<int32_t>& offset)
+        {
+            // TODO: handle collisions..
+            // ds::rect<int32_t> moved{ m_rect + offset };
+            // if (moved.contained_by())
+            //     ...
+
+            m_rect += offset;
+            return true;
         }
 
         constexpr virtual bool check_collision(ds::point<int32_t>)
@@ -155,7 +170,7 @@ namespace rl::ui
         // control's size and position, relative to anchor
         ds::rect<int32_t> m_rect{
             ds::point<int32_t>{ 0, 0 },
-            ds::dimensions<int32_t>{ .width = 0, .height = 0 },
+            ds::dimensions<int32_t>{ 0, 0 },
         };
         // all controls/widgets contained by this one
         std::vector<std::shared_ptr<Control>> m_children{};

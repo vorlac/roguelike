@@ -13,8 +13,7 @@
 
 namespace rl::ui
 {
-    enum class LayoutMode
-    {
+    enum class LayoutMode {
         None,
         Horizontal,
         Vertical,
@@ -29,8 +28,8 @@ namespace rl::ui
         static constexpr auto layout_rows{ Rows };
         static constexpr auto layout_cols{ Cols };
         using layout_t = Layout<layout_cols, layout_rows>;
-        using rows_t = std::array<std::shared_ptr<Control>, layout_rows>;
-        using cols_t = std::array<rows_t, Cols>;
+        using rows_t   = std::array<std::shared_ptr<Control>, layout_rows>;
+        using cols_t   = std::array<rows_t, Cols>;
 
     public:
         constexpr Layout(LayoutMode mode = LayoutMode::Grid)

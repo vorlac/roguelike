@@ -32,10 +32,10 @@ namespace rl
     template <typename TRep = double, typename TPeriod = std::milli>
     struct timer
     {
-        using rep_t = TRep;
-        using preiod_t = TPeriod;
+        using rep_t      = TRep;
+        using preiod_t   = TPeriod;
         using duration_t = std::chrono::duration<TRep, TPeriod>;
-        using clock_t = std::chrono::high_resolution_clock;
+        using clock_t    = std::chrono::high_resolution_clock;
 
         timer(std::string label)
             : m_label{ std::forward<std::string>(label) }
@@ -46,7 +46,9 @@ namespace rl
         [[maybe_unused]] inline decltype(auto) measure(auto function, TArgs... args)
         {
             m_prev_delta_time = clock_t::now();
+
             auto ret = function(args...);
+
             this->print_delta_time();
             return ret;
         }

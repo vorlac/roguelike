@@ -29,7 +29,7 @@ namespace rl::ui
         constexpr virtual bool check_collision(ds::point<int32_t> pos) override
         {
             ds::rect<int32_t> status_bar{ m_rect };
-            status_bar.set_height(RAYGUI_WINDOWBOX_STATUSBAR_HEIGHT);
+            status_bar.height(RAYGUI_WINDOWBOX_STATUSBAR_HEIGHT);
             if (status_bar.intersects(pos))
                 return true;
 

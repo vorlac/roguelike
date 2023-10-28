@@ -69,9 +69,9 @@ namespace rl
         ds::position<float> center();
 
     public:
-        rl::Window& operator=(Window window) = delete;
-        rl::Window& operator=(Window& window) = delete;
-        rl::Window& operator=(Window&& window) = delete;
+        rl::Window& operator=(Window window)        = delete;
+        rl::Window& operator=(Window& window)       = delete;
+        rl::Window& operator=(Window&& window)      = delete;
         rl::Window& operator=(const Window& window) = delete;
 
     protected:

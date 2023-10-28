@@ -24,8 +24,7 @@ namespace rl::ds
 {
     using namespace std::chrono_literals;
 
-    enum class BufferItemStatus : uint_fast8_t
-    {
+    enum class BufferItemStatus : uint_fast8_t {
         None = 0,
         Valid,
         Timeout,
@@ -33,19 +32,6 @@ namespace rl::ds
         Unknown
     };
 
-    struct BufferSubscriber
-    {
-        enum class State
-        {
-            Invalid,
-            Initializing,
-            Active,
-            Teardown,
-            Finished,
-        };
-
-        State state{ State::Invalid };
-    };
 
     template <std::movable TElem, auto BufferSize = 512U>
         requires PositiveInteger<BufferSize>
@@ -156,7 +142,7 @@ namespace rl::ds
             for (auto&& writer : m_registered_writers)
             {
                 auto state = writer->get_state();
-                if (state == task::State::Initializing || state == task::State::Active)
+                if (state == rl::State::Initializing || state == rl::State::Active)
                     ++ret;
             }
 
@@ -194,13 +180,13 @@ namespace rl::ds
         inline void register_reader(std::string reader_name)
         {
             std::scoped_lock<std::mutex> lock(m_taskinfo_lock);
-            m_registered_readers.push_back(status);
+            m_registered_readers.push_back(reader_name);
         }
 
-        inline void register_writer(std::string status)
+        inline void register_writer(std::string writer_name)
         {
             std::scoped_lock<std::mutex> lock(m_taskinfo_lock);
-            m_registered_writers.push_back(status);
+            m_registered_writers.push_back(writer_name);
         }
 
         inline float utilization()

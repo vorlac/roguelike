@@ -11,7 +11,7 @@ namespace rl::input::device
     class Gamepad
     {
     public:
-        using AxisID = std::underlying_type_t<raylib::GamepadAxis>;
+        using AxisID   = std::underlying_type_t<raylib::GamepadAxis>;
         using ButtonID = std::underlying_type_t<raylib::GamepadButton>;
 
     public:

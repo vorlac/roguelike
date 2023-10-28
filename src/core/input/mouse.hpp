@@ -14,47 +14,43 @@ namespace rl::input::device
     class Mouse
     {
     public:
-        enum class ButtonState
-        {
+        enum class ButtonState {
             None,
             Pressed,
             Held,
             Released,
         };
 
-        enum class CursorState
-        {
+        enum class CursorState {
             None,
             Moving,
             Still,
             Disabled,
         };
 
-        enum class Button : uint16_t
-        {
-            Left = raylib::MOUSE_BUTTON_LEFT,        // Left mouse button
-            Right = raylib::MOUSE_BUTTON_RIGHT,      // Right mouse button
-            Middle = raylib::MOUSE_BUTTON_MIDDLE,    // Middle mouse button (pressed wheel)
-            Side = raylib::MOUSE_BUTTON_SIDE,        // Side mouse button (advanced mouse device)
-            Extra = raylib::MOUSE_BUTTON_EXTRA,      // Extra mouse button (advanced mouse device)
+        enum class Button : uint16_t {
+            Left    = raylib::MOUSE_BUTTON_LEFT,     // Left mouse button
+            Right   = raylib::MOUSE_BUTTON_RIGHT,    // Right mouse button
+            Middle  = raylib::MOUSE_BUTTON_MIDDLE,   // Middle mouse button (pressed wheel)
+            Side    = raylib::MOUSE_BUTTON_SIDE,     // Side mouse button (advanced mouse device)
+            Extra   = raylib::MOUSE_BUTTON_EXTRA,    // Extra mouse button (advanced mouse device)
             Forward = raylib::MOUSE_BUTTON_FORWARD,  // Forward button (advanced mouse device)
-            Back = raylib::MOUSE_BUTTON_BACK,        // Back button (advanced mouse device)
+            Back    = raylib::MOUSE_BUTTON_BACK,     // Back button (advanced mouse device)
             Count
         };
 
-        enum class Cursor : uint16_t
-        {
-            Default = raylib::MOUSE_CURSOR_DEFAULT,
-            Arrow = raylib::MOUSE_CURSOR_ARROW,
-            IBeam = raylib::MOUSE_CURSOR_IBEAM,
-            Cross = raylib::MOUSE_CURSOR_CROSSHAIR,
-            Hand = raylib::MOUSE_CURSOR_POINTING_HAND,
-            HorizResize = raylib::MOUSE_CURSOR_RESIZE_EW,
-            VertResize = raylib::MOUSE_CURSOR_RESIZE_NS,
+        enum class Cursor : uint16_t {
+            Default      = raylib::MOUSE_CURSOR_DEFAULT,
+            Arrow        = raylib::MOUSE_CURSOR_ARROW,
+            IBeam        = raylib::MOUSE_CURSOR_IBEAM,
+            Cross        = raylib::MOUSE_CURSOR_CROSSHAIR,
+            Hand         = raylib::MOUSE_CURSOR_POINTING_HAND,
+            HorizResize  = raylib::MOUSE_CURSOR_RESIZE_EW,
+            VertResize   = raylib::MOUSE_CURSOR_RESIZE_NS,
             TLtoBRResize = raylib::MOUSE_CURSOR_RESIZE_NWSE,
             TRtoBLResize = raylib::MOUSE_CURSOR_RESIZE_NESW,
-            OmniResize = raylib::MOUSE_CURSOR_RESIZE_ALL,
-            Disabled = raylib::MOUSE_CURSOR_NOT_ALLOWED,
+            OmniResize   = raylib::MOUSE_CURSOR_RESIZE_ALL,
+            Disabled     = raylib::MOUSE_CURSOR_NOT_ALLOWED,
             Count
         };
 
@@ -118,13 +114,14 @@ namespace rl::input::device
             for (ButtonID id = 0; check && id < button_count; ++id)
             {
                 Mouse::ButtonState& state = m_button_states[id];
-                state = this->is_button_down(id)
-                          ? (state != Mouse::ButtonState::Held && state != ButtonState::Pressed
-                                 ? ButtonState::Pressed
-                                 : ButtonState::Held)
-                          : (state == Mouse::ButtonState::Pressed || state == Mouse::ButtonState::Held
-                                 ? ButtonState::Released
-                                 : ButtonState::None);
+                state = this->is_button_down(id) ? ((state != Mouse::ButtonState::Held &&  //
+                                                     state != ButtonState::Pressed)
+                                                        ? ButtonState::Pressed
+                                                        : ButtonState::Held)
+                                                 : ((state == Mouse::ButtonState::Pressed ||  //
+                                                     state == Mouse::ButtonState::Held)
+                                                        ? ButtonState::Released
+                                                        : ButtonState::None);
             }
 
             return m_button_states;
@@ -137,15 +134,15 @@ namespace rl::input::device
             else
             {
                 auto&& delta = this->get_delta();
+
                 std::pair curr_state = {
                     delta.is_zero() ? CursorState::Moving : CursorState::Still,
                     std::forward<ds::vector2<int32_t>>(delta),
                 };
 
-                auto&& ret = std::make_pair(std::move(m_movement_state.second),
-                                            std::move(curr_state));
-                m_movement_state = ret;
-                return ret;
+                m_movement_state = std::make_pair(std::move(m_movement_state.second),
+                                                  std::move(curr_state));
+                return m_movement_state;
             }
         }
 
@@ -171,6 +168,5 @@ namespace rl::input::device
             };
 
         mutable std::array<ButtonState, static_cast<std::size_t>(Button::Count)> m_button_states{};
-        // mutable std::array<CursorState, static_cast<std::size_t>(Cursor::Count)> m_cursor_states{};
     };
 }

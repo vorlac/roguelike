@@ -68,21 +68,10 @@ namespace rl
 
         while (!this->should_quit()) [[unlikely]]
         {
-            auto&& mouse_buttons{ m_input.mouse_button_states() };
-            auto&& cursor_position{ m_input.mouse_cursor_position() };
-            m_gui->update_gui(mouse_buttons, cursor_position);
-
-            std::string s{ "None" };
-            if (mouse_buttons[0] == input::device::Mouse::ButtonState::Held)
-                s = "Held";
-            if (mouse_buttons[0] == input::device::Mouse::ButtonState::Pressed)
-                s = "Pressed";
-            if (mouse_buttons[0] == input::device::Mouse::ButtonState::Released)
-                s = "Released";
-            log::info("LMB: {}", s);
+            m_gui->update_gui(m_input);
 
             m_window.begin_drawing();
-            raylib::ClearBackground(color::raywhite);
+            raylib::ClearBackground(color::darkgray);
             m_gui->draw_gui();
             raylib::DrawRectangle(0, 0, 95, 40, color::black);
             raylib::DrawFPS(10, 10);

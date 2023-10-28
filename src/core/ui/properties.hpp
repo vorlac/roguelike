@@ -2,8 +2,7 @@
 
 namespace rl::ui
 {
-    enum class Justification
-    {
+    enum class Justification {
         Top,
         Bottom,
         Left,

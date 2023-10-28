@@ -167,7 +167,7 @@ namespace rl
     ds::dimensions<int32_t> Window::screen_size()
     {
         return {
-            .width = raylib::GetScreenWidth(),
+            .width  = raylib::GetScreenWidth(),
             .height = raylib::GetScreenHeight(),
         };
     }
@@ -175,7 +175,7 @@ namespace rl
     ds::dimensions<int32_t> Window::render_size()
     {
         return {
-            .width = raylib::GetRenderWidth(),
+            .width  = raylib::GetRenderWidth(),
             .height = raylib::GetRenderHeight(),
         };
     }

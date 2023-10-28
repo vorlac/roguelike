@@ -92,8 +92,13 @@ namespace rl::input
                         break;
 
                     case InputDevice::Keyboard:
+                    {
                         if (m_keyboard.is_key_down(button))
                             m_active_ui_actions.push_back(action.action);
+                        else
+                            this->set_selection(false);
+                        break;
+                    }
                 }
             }
 
@@ -115,6 +120,21 @@ namespace rl::input
             return m_mouse.get_position();
         }
 
+        inline ds::vector2<int32_t> mouse_cursor_delta() const
+        {
+            return m_mouse.get_delta();
+        }
+
+        inline void set_selection(const bool picked, uint64_t id = 0)
+        {
+            m_selection.exchange(std::make_pair(picked, id), std::memory_order_relaxed);
+        }
+
+        inline std::pair<bool, uint64_t> get_selection() const
+        {
+            return m_selection.load(std::memory_order_relaxed);
+        }
+
     private:
         ds::vector2<float> get_vector() const
         {
@@ -122,7 +142,7 @@ namespace rl::input
             device::Gamepad::AxisID neg_x = 1;
             device::Gamepad::AxisID pos_y = 2;
             device::Gamepad::AxisID neg_y = 3;
-            float deadzone = 0.1f;
+            float deadzone                = 0.1f;
 
             ds::vector2<float> vec = {
                 m_gamepad.get_axis_movement(pos_x) - m_gamepad.get_axis_movement(neg_x),
@@ -139,6 +159,7 @@ namespace rl::input
         }
 
     private:
+        std::atomic<std::pair<bool, uint64_t>> m_selection{ std::make_pair(false, 0) };
         input::device::Mouse m_mouse{};
         input::device::Keyboard m_keyboard{};
         input::device::Gamepad m_gamepad{};
