@@ -9,8 +9,11 @@
 #include "core/ds/rect.hpp"
 #include "core/ds/vector2d.hpp"
 #include "core/input/input.hpp"
-#include "thirdparty/raygui.hpp"
 #include "ui/properties.hpp"
+
+#include "thirdparty/raygui.hpp"
+
+// #include "thirdparty/raylib.hpp"
 
 namespace rl::ui
 {
@@ -41,22 +44,37 @@ namespace rl::ui
     public:
         explicit control(properties&& props)
         {
-            this->pos  = std::move(props.position);
-            this->size = std::move(props.size);
-            this->text = std::move(props.text);
+            pos  = std::move(props.position);
+            size = std::move(props.size);
+            text = std::move(props.text);
         }
 
-        bool update(this auto&& self, input::Input& inputs)
+        // bool inputs_impl(input::Input& inputs);
+
+        // constexpr inline bool update_gui(this auto&& self, input::Input& inputs);
+        // constexpr inline bool draw(this auto&& self);
+
+        constexpr inline decltype(auto) update_gui(this auto&& self, input::Input& inputs)
         {
             return self.inputs_impl(inputs);
         }
 
-        inline bool draw(this auto&& self)
+        constexpr inline decltype(auto) draw(this auto&& self)
         {
             return self.draw_impl();
         }
 
-        bool inputs_impl(input::Input& inputs)
+        constexpr bool draw_impl()
+        {
+            return false;
+        }
+
+        // constexpr bool inputs_impl(input::Input&)
+        // {
+        //     return false;
+        // }
+
+        constexpr bool inputs_impl(this auto&& self, input::Input& inputs)
         {
             bool inputs_captured{ false };
             for (auto&& child : children)
@@ -64,24 +82,19 @@ namespace rl::ui
                 if (!child.visible || !child.enabled)
                     continue;
 
-                inputs_captured |= child.update(inputs);
+                inputs_captured |= child.update_gui(inputs);
                 if (inputs_captured)
                     break;
             }
 
             if (!inputs_captured)  // && !processed_inputs)
-                inputs_captured |= this->inputs_impl(inputs);
+                inputs_captured |= self.inputs_impl(inputs);
 
             return inputs_captured;
         }
 
-        bool draw_impl()
-        {
-            return false;
-        }
-
     private:
-        control() = delete;
+        control() = default;
 
     public:
         u64 m_global_count{ 1 };

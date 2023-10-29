@@ -3,6 +3,7 @@
 
 #include "core/display.hpp"
 #include "core/numerics.hpp"
+
 #include "thirdparty/raylib.hpp"
 
 namespace rl

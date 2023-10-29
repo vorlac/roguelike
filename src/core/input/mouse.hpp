@@ -7,6 +7,7 @@
 #include "core/ds/point.hpp"
 #include "core/ds/vector2d.hpp"
 #include "core/utils/assert.hpp"
+
 #include "thirdparty/raylib.hpp"
 
 namespace rl::input::device

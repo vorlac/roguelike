@@ -1,8 +1,8 @@
 #pragma once
 
 #include "core/input/input.hpp"
-// #include "thirdparty/raygui.hpp"
-#include "ui/controls/dialog.hpp"
+
+#include "thirdparty/raygui.hpp"
 
 namespace rl::input
 {
@@ -11,24 +11,20 @@ namespace rl::input
 
 namespace rl::ui
 {
+    class dialog;
+
     class GUI
     {
     public:
-        GUI();
-        ~GUI() = default;
+        constexpr GUI();
 
-        bool update(input::Input& input)
-        {
-            return m_test_dialog->update(input);
-        }
+        constexpr ~GUI() = default;
 
-        bool render()
-        {
-            return m_test_dialog->draw();
-        }
+        inline bool update(this auto&& self, input::Input& input);
+        inline bool render(this auto&& self);
 
-    private:
-        ui::dialog* m_test_dialog;
+    protected:
+        std::shared_ptr<ui::dialog> m_test_dialog{};
         input::Input m_input{};
     };
 }

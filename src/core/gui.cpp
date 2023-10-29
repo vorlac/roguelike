@@ -1,20 +1,30 @@
 #include <string>
 
 #include "core/ds/dimensions.hpp"
-#include "core/ds/point.hpp"
 #include "core/gui.hpp"
-#include "core/input/input.hpp"
-#include "core/numerics.hpp"
-#include "ui/control.hpp"
+#include "input/input.hpp"
 #include "ui/controls/dialog.hpp"
-#include "ui/properties.hpp"
+
+#include "thirdparty/raygui.hpp"
 
 namespace rl::ui
 {
-    GUI::GUI()
+
+    // GUI::GUI()
+    //     : m_test_dialog{ new dialog(
+    //           { "asdsdasa", ds::dimensions<i32>{ 800, 600 }, ds::point<i32>{ 100, 100 } }) }
+    // {
+    // }
+
+    inline bool GUI::update(this auto&& self, input::Input& input)
     {
-        m_test_dialog = new dialog(
-            { "asdsdasa", ds::dimensions<i32>{ 800, 600 }, ds::point<i32>{ 100, 100 } });
+        if (m_test_dialog)
+            m_test_dialog->update_gui(input);
+        return false;
     }
 
+    inline bool GUI::render(this auto&& self)
+    {
+        return self->draw();
+    }
 }

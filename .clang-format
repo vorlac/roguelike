@@ -82,7 +82,12 @@ ForEachMacros:
 IfMacros:
   - KJ_IF_MAYBE
 IncludeBlocks: Regroup
+
 IncludeCategories:
+  - Regex: '("thirdparty/ray.*[.]hpp")'
+    Priority: 5
+    SortPriority: 5
+    CaseSensitive: false
   - Regex: '(<[A-Za-z]*>)'
     Priority: 0
     SortPriority: 0

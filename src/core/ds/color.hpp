@@ -4,6 +4,7 @@
 #include <type_traits>
 
 #include "core/numerics.hpp"
+
 #include "thirdparty/raygui.hpp"
 
 namespace rl

@@ -1,18 +1,21 @@
 #pragma once
 
+#include "core/ds/vector2d.hpp"
 #include "ui/control.hpp"
+
+#include "thirdparty/raygui.hpp"
 
 namespace rl::input
 {
     class Input;
 }
 
-namespace rl::ds
-{
-    template <typename T>
-        requires Numeric<T>
-    struct vector2;
-}
+// namespace rl::ds
+// {
+//     template <typename T>
+//         requires Numeric<T>
+//     struct vector2;
+// }
 
 namespace rl::ui
 {
@@ -21,8 +24,8 @@ namespace rl::ui
     public:
         using control::control;
 
-        bool inputs_impl(input::Input& input);
-        bool reposition(ds::vector2<i32>&& movement_offset);
+        constexpr inline bool inputs_impl(input::Input& input);
+        constexpr inline bool reposition(ds::vector2<i32>&& movement_offset);
 
         // constexpr bool check_collision(ds::point<i32>&& cursor_position);
 
@@ -35,15 +38,16 @@ namespace rl::ui
             }.intersects(cursor_position);
         }
 
-        bool draw_impl()
+        const inline bool draw_impl()
         {
-            raylib::Rectangle window_rect{
-                static_cast<f32>(pos.x),
-                static_cast<f32>(pos.y),
-                static_cast<f32>(size.width),
-                static_cast<f32>(size.height),
-            };
-            raylib::GuiWindowBox(window_rect, text.c_str());
+            raylib::GuiWindowBox(
+                raylib::Rectangle{
+                    static_cast<f32>(pos.x),
+                    static_cast<f32>(pos.y),
+                    static_cast<f32>(size.width),
+                    static_cast<f32>(size.height),
+                },
+                text.c_str());
             return true;
         }
     };

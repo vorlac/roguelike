@@ -1,7 +1,8 @@
 #pragma once
 
-#include "thirdparty/raygui.hpp"
 #include "ui/control.hpp"
+
+#include "thirdparty/raygui.hpp"
 
 namespace rl::input
 {

@@ -7,6 +7,7 @@
 #include "core/input/input.hpp"
 #include "core/numerics.hpp"
 #include "core/window.hpp"
+
 #include "thirdparty/raylib.hpp"
 
 namespace rl

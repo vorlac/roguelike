@@ -1,14 +1,15 @@
-#include <chrono>
-#include <memory>
-#include <string>
-#include <fmt/compile.h>
-#include <fmt/format.h>
-#include <fmt/printf.h>
+// #include <chrono>
+// #include <memory>
+// #include <string>
+// #include <fmt/compile.h>
+// #include <fmt/format.h>
+// #include <fmt/printf.h>
+
+#include "core/game.hpp"
 
 #include "core/application.hpp"
 #include "core/ds/dimensions.hpp"
 #include "core/ds/point.hpp"
-#include "core/game.hpp"
 #include "core/gui.hpp"
 #include "ecs/components/kinematic_components.hpp"
 #include "ecs/components/style_components.hpp"
@@ -23,19 +24,6 @@
 
 namespace rl
 {
-    Game::Game()
-        : m_gui{ new ui::GUI{} }
-    {
-    }
-
-    Game::~Game()
-    {
-        if (m_gui != nullptr)
-        {
-            delete m_gui;
-            m_gui = nullptr;
-        }
-    }
 
     bool Game::setup()
     {
@@ -60,18 +48,18 @@ namespace rl
         this->framerate(60);
         scene::set_active<scene::main_menu_scene>(m_world);
 
-        // if (m_gui != nullptr)
-        //{
-        //     std::shared_ptr cdialog = ui::dialog::create({
-        //         .text     = std::string{ "asdsdasa" },
-        //         .size     = ds::dimensions<i32>{ 800, 600 },
-        //         .position = ds::point<i32>{ 100, 100 },
-        //     });
+        if (m_gui != nullptr)
+        {
+            m_test_dialog = new std::make_shared<rl::ui::GUI>({
+                std::string{ "asdsdasa" },
+                ds::dimensions<i32>{ 800, 600 },
+                ds::point<i32>{ 100, 100 },
+            });
 
-        //    // m_test_dialog = control->getptr();
+            // m_test_dialog = control->getptr();
 
-        //    m_gui->add_control(cdialog);
-        //}
+            m_gui->update(m_input);
+        }
 
         while (!this->should_quit()) [[unlikely]]
         {

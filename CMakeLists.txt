@@ -8,7 +8,7 @@ list(APPEND CMAKE_MODULE_PATH
 include(vcpkg-init)
 
 set(CMAKE_CXX_STANDARD 23)
-set(CMAKE_C_STANDARD 17)
+#set(CMAKE_C_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
 set(EXPORT_COMPILE_COMMANDS ON)
@@ -16,7 +16,7 @@ set(CMAKE_COLOR_DIAGNOSTICS ON)
 
 project(roguelike
     LANGUAGES
-      C CXX
+      CXX
     VERSION
       0.0.1
 )
@@ -36,18 +36,18 @@ set(compiler_is_msvc "$<CXX_COMPILER_ID:MSVC>")
 set(compiler_is_gnu "$<CXX_COMPILER_ID:GNU>")
 set(compiler_is_clang "$<OR:$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:Clang>>")
 
-file(GLOB_RECURSE
-  raylib_dummy_sources
-    CONFIGURE_DEPENDS
-      "${CMAKE_CURRENT_SOURCE_DIR}/extern/vcpkg/buildtrees/raylib/src/*/src/*.[hc]"
-      "${CMAKE_CURRENT_SOURCE_DIR}/extern/vcpkg/buildtrees/raylib/src/*/src/*.[hc]pp"
-)
+# file(GLOB_RECURSE
+#   raylib_dummy_sources
+#     CONFIGURE_DEPENDS
+#       "${CMAKE_CURRENT_SOURCE_DIR}/extern/vcpkg/buildtrees/raylib/src/*/src/*.[hc]"
+#       "${CMAKE_CURRENT_SOURCE_DIR}/extern/vcpkg/buildtrees/raylib/src/*/src/*.[hc]pp"
+# )
 
-add_library(raylib_dummy EXCLUDE_FROM_ALL ${raylib_dummy_sources})
+# add_library(raylib_dummy EXCLUDE_FROM_ALL ${raylib_dummy_sources})
 
-target_include_directories(raylib_dummy PUBLIC
-  "${CMAKE_CURRENT_SOURCE_DIR}/extern/vcpkg/buildtrees/raylib/src/*/src/"
-)
+# target_include_directories(raylib_dummy PUBLIC
+#   "${CMAKE_CURRENT_SOURCE_DIR}/extern/vcpkg/buildtrees/raylib/src/*/src/"
+# )
 
 #target_compile_definitions(raylib_dummy PUBLIC
 #  PLATFORM_DESKTOP
@@ -55,12 +55,13 @@ target_include_directories(raylib_dummy PUBLIC
 
 set(raylib_VERBOSE TRUE)
 find_package(argparse CONFIG REQUIRED)
-find_package(box2d CONFIG REQUIRED)
+#find_package(box2d CONFIG REQUIRED)
 find_package(flecs CONFIG REQUIRED)
 find_package(fmt CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)
 find_package(raylib CONFIG REQUIRED)
 find_package(simdjson CONFIG REQUIRED)
+find_path(RAYGUI_INCLUDE_DIRS "raygui.h")
 #find_package(Vulkan REQUIRED)
 
 file(GLOB_RECURSE
@@ -76,21 +77,20 @@ add_executable(${PROJECT_NAME}
 
 include(compiler-warnings)
 
-#target_compile_features(${PROJECT_NAME} PRIVATE
-#  PRIVATE
-#    cxx_std_23
-#    c_std_11
-#)
+target_compile_features(${PROJECT_NAME} PRIVATE
+ PRIVATE
+   cxx_std_23
+   #c_std_11
+)
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
   NOMINMAX
   # RAYGUI_IMPLEMENTATION
   # RAYGUI_STANDALONE
- 
+
   $<$<CONFIG:Debug>:
     ROGUELIKE_DEBUG
     ROGUELIKE_LOGGER_ENABLED
-    DEBUG_HEAP=0
   >
 
   $<${compiler_is_msvc}:
@@ -99,43 +99,46 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
   >
 )
 
-# target_compile_options(${PROJECT_NAME} PRIVATE
-#   $<${compiler_is_msvc}:
-#     #/Zc:preprocessor
-#     #/utf-8
-#     /EHsc
-#     /nologo
+target_compile_options(${PROJECT_NAME} PRIVATE
+  $<${compiler_is_msvc}:
+    /Zc:preprocessor
+    #/utf-8
+    #/EHsc
+    #/nologo
 
-#     $<$<CONFIG:Debug>:
-#       /MDd
-#     >
+    $<$<CONFIG:Debug>:
+      /MDd
+      #/MTDd
+    >
 
-#     $<$<CONFIG:Release>:
-#       /MD
-#       /Ox
-#     >
+    $<$<CONFIG:Release>:
+      /MD
+      /Ox
+    >
 
-#     $<$<CONFIG:RelWithDebInfo>:
-#       /MD
-#       /Ox
-#     >
-#   >
-# )
+    $<$<CONFIG:RelWithDebInfo>:
+      /MD
+      /Ox
+    >
+  >
+)
 
+#target_include_directories(main PRIVATE ${RAYGUI_INCLUDE_DIRS})
 target_include_directories(${PROJECT_NAME}
   PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src"
+  ${RAYGUI_INCLUDE_DIRS}
 )
 
 target_link_libraries(${PROJECT_NAME}
   PRIVATE argparse::argparse
-  PRIVATE box2d::box2d
+  #PRIVATE box2d::box2d
   PRIVATE flecs::flecs_static
   PRIVATE fmt::fmt
   PRIVATE glfw
-  PRIVATE raylib
+  PUBLIC raylib
   PRIVATE simdjson::simdjson
   #PRIVATE Vulkan::Vulkan
-  #PRIVATE winmm
+  PRIVATE winmm
 )
 
 include(clang-format)

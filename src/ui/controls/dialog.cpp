@@ -7,13 +7,13 @@
 namespace rl::ui
 {
 
-    bool dialog::reposition(ds::vector2<i32>&& movement_offset)
+    constexpr bool dialog::reposition(ds::vector2<i32>&& movement_offset)
     {
         this->pos += movement_offset;
         return true;
     }
 
-    bool dialog::inputs_impl(input::Input& input)
+    constexpr bool dialog::inputs_impl(input::Input& input)
     {
         MouseEventCapture ret = MouseEventCapture::Unknown;
 
@@ -58,7 +58,7 @@ namespace rl::ui
                 break;
         }
 
-        if (ret == MouseEventCapture::Unknown) [[unlikely]]
+        if (ret == MouseEventCapture::Unknown)
             return false;
 
         return ret != MouseEventCapture::None;

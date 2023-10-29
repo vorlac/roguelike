@@ -17,6 +17,7 @@
 #include "ecs/components/style_components.hpp"
 #include "ecs/components/transform_components.hpp"
 #include "ecs/scenes/scene_types.hpp"
+
 #include "thirdparty/raylib.hpp"
 
 namespace rl::scene

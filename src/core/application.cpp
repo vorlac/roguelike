@@ -2,6 +2,7 @@
 #include <memory>
 
 #include "core/application.hpp"
+
 #include "thirdparty/raylib.hpp"
 
 namespace rl

@@ -6,6 +6,7 @@
 
 #include "core/numerics.hpp"
 #include "core/utils/concepts.hpp"
+
 #include "thirdparty/raylib.hpp"
 
 namespace rl::ds
