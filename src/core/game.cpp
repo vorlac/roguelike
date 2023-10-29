@@ -78,9 +78,10 @@ namespace rl
             m_gui->update(m_input);
 
             m_window.begin_drawing();
-            raylib::ClearBackground(color::darkgray);
+            raylib::ClearBackground(*reinterpret_cast<const raylib::Color*>(&colors::darkgray));
             m_gui->render();
-            raylib::DrawRectangle(0, 0, 95, 40, color::black);
+            raylib::DrawRectangle(0, 0, 95, 40,
+                                  *reinterpret_cast<const raylib::Color*>(&colors::black));
             raylib::DrawFPS(10, 10);
             m_window.end_drawing();
         }

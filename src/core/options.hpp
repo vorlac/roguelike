@@ -3,12 +3,11 @@
 #include <any>
 #include <array>
 #include <optional>
+#include <string>
 #include <argparse/argparse.hpp>
 
 namespace rl
 {
-    bool parse_args(int argc, char** argv);
-
     bool parse_args(int argc, char** argv)
     {
         auto args = argparse::ArgumentParser{

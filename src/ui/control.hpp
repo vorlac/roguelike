@@ -1,22 +1,20 @@
 #pragma once
 
-#include <atomic>
-#include <memory>
-#include <ranges>
 #include <string>
-#include <utility>
 #include <vector>
+#include <initializer_list>
 
 #include "core/ds/dimensions.hpp"
 #include "core/ds/point.hpp"
+#include "core/ds/rect.hpp"
 #include "core/ds/vector2d.hpp"
 #include "core/input/input.hpp"
-#include "core/numerics.hpp"
-#include "core/utils/io.hpp"
+#include "thirdparty/raygui.hpp"
 #include "ui/properties.hpp"
 
 namespace rl::ui
 {
+
     enum class InputCaptureError {
         Unknown,
     };
@@ -41,12 +39,27 @@ namespace rl::ui
     class control
     {
     public:
-    public:
-        inline bool update(this auto&& self, input::Input& inputs)
+        explicit control(properties&& props)
+        {
+            this->pos  = std::move(props.position);
+            this->size = std::move(props.size);
+            this->text = std::move(props.text);
+        }
+
+        bool update(this auto&& self, input::Input& inputs)
+        {
+            return self.inputs_impl(inputs);
+        }
+
+        inline bool draw(this auto&& self)
+        {
+            return self.draw_impl();
+        }
+
+        bool inputs_impl(input::Input& inputs)
         {
             bool inputs_captured{ false };
-
-            for (auto&& child : self.children)
+            for (auto&& child : children)
             {
                 if (!child.visible || !child.enabled)
                     continue;
@@ -57,47 +70,22 @@ namespace rl::ui
             }
 
             if (!inputs_captured)  // && !processed_inputs)
-                inputs_captured |= self.inputs_impl(inputs);
+                inputs_captured |= this->inputs_impl(inputs);
 
             return inputs_captured;
         }
 
-        inline bool draw(this auto&& self)
+        bool draw_impl()
         {
-            return self.draw_impl();
-        }
-
-        inline bool inputs_impl(input::Input&)
-        {
-            log::info("{}::handle_inputs_impl()", name());
             return false;
         }
-
-        inline bool draw_impl()
-        {
-            log::info("{}::draw_controls_impl()", this->name());
-            return false;
-        }
-
-        constexpr control(ui::properties&& props)
-        {
-            this->pos  = std::move(props.position);
-            this->size = std::move(props.size);
-            this->text = std::move(props.text);
-        }
-
-        static inline std::atomic<u64> m_global_count{ 1 };
 
     private:
-        constexpr control() = delete;
-
-        constexpr inline std::string name()
-        {
-            return "ControlBase";
-        }
+        control() = delete;
 
     public:
-        mutable u64 id{ 0 };
+        u64 m_global_count{ 1 };
+        u64 id{ m_global_count++ };
 
         bool visible{ true };
         bool enabled{ true };
@@ -105,6 +93,6 @@ namespace rl::ui
         std::string text{};
         ds::point<i32> pos{ 0, 0 };
         ds::dimensions<i32> size{ 0, 0 };
-        std::vector<ui::control> children{};
+        std::vector<control> children{};
     };
 }

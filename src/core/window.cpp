@@ -78,17 +78,17 @@ namespace rl
         return raylib::IsWindowResized();
     }
 
-    bool Window::get_state(uint32_t flag)
+    bool Window::get_state(u32 flag)
     {
         return raylib::IsWindowState(flag);
     }
 
-    void Window::set_state(uint32_t flags)
+    void Window::set_state(u32 flags)
     {
         return raylib::SetWindowState(flags);
     }
 
-    void Window::clear_state(uint32_t flags)
+    void Window::clear_state(u32 flags)
     {
         return raylib::ClearWindowState(flags);
     }
@@ -113,15 +113,15 @@ namespace rl
         return raylib::RestoreWindow();
     }
 
-    void Window::set_icon(raylib::Image&& image)
-    {
-        return raylib::SetWindowIcon(image);
-    }
+    // void Window::set_icon(raylib::Image&& image)
+    //{
+    //     return raylib::SetWindowIcon(image);
+    // }
 
-    void Window::set_icons(std::vector<raylib::Image> images)
-    {
-        return raylib::SetWindowIcons(images.data(), static_cast<int>(images.size()));
-    }
+    // void Window::set_icons(std::vector<raylib::Image> images)
+    //{
+    //     return raylib::SetWindowIcons(images.data(), static_cast<int>(images.size()));
+    // }
 
     void Window::title(std::string title)
     {

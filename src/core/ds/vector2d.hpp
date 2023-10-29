@@ -2,10 +2,7 @@
 
 #include <algorithm>
 #include <cmath>
-#include <concepts>
-#include <cstdint>
 #include <memory>
-#include <type_traits>
 
 #include "core/numerics.hpp"
 #include "core/utils/concepts.hpp"
@@ -27,17 +24,17 @@ namespace rl::ds
         }
 
     public:
-        template <typename V>
-            requires std::same_as<T, V>
-        constexpr vector2(const raylib::Vector2& other)
-        {
-            std::memcpy(this, &other, sizeof(*this));
-        }
+        // template <typename V>
+        //     requires std::same_as<T, V>
+        // constexpr vector2(const raylib::Vector2& other)
+        //{
+        //     std::memcpy(this, &other, sizeof(*this));
+        // }
 
-        constexpr operator raylib::Vector2() const
-        {
-            return *reinterpret_cast<const raylib::Vector2*>(this);
-        }
+        // constexpr operator raylib::Vector2() const
+        //{
+        //     return *reinterpret_cast<const raylib::Vector2*>(this);
+        // }
 
     public:
         constexpr bool is_zero(bool exact = false) noexcept
@@ -106,7 +103,7 @@ namespace rl::ds
         constexpr inline const vector2<T>& normalize()
         {
             f32 len_sq = this->length_squared();
-            if (len_sq != 0)
+            if (len_sq != static_cast<T>(0))
             {
                 f32 len = std::sqrtf(len_sq);
                 x /= len;

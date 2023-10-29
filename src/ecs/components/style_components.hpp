@@ -6,6 +6,6 @@ namespace rl::component
 {
     struct style
     {
-        rl::color color{ rl::color::lime };
+        rl::color color{ rl::colors::lime };
     };
 }

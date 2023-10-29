@@ -28,7 +28,7 @@ namespace rl::input::device
             Disabled,
         };
 
-        enum Button : uint16_t {
+        enum Button : i32 {
             Left    = raylib::MOUSE_BUTTON_LEFT,     // Left mouse button
             Right   = raylib::MOUSE_BUTTON_RIGHT,    // Right mouse button
             Middle  = raylib::MOUSE_BUTTON_MIDDLE,   // Middle mouse button (pressed wheel)
@@ -39,7 +39,7 @@ namespace rl::input::device
             Count
         };
 
-        enum class Cursor : uint16_t {
+        enum class Cursor : i32 {
             Default      = raylib::MOUSE_CURSOR_DEFAULT,
             Arrow        = raylib::MOUSE_CURSOR_ARROW,
             IBeam        = raylib::MOUSE_CURSOR_IBEAM,
@@ -110,10 +110,10 @@ namespace rl::input::device
 
         inline constexpr auto get_button_states(const bool check = true) const
         {
-            constexpr ButtonID button_count{ std::to_underlying(Mouse::Button::Count) };
-            for (ButtonID id = 0; check && id < button_count; ++id)
+            constexpr size_t button_count{ std::to_underlying(Mouse::Button::Count) };
+            for (size_t id = 0; check && id < button_count; ++id)
             {
-                Mouse::ButtonState& state = m_button_states[id];
+                Mouse::ButtonState state = m_button_states[id];
                 state = this->is_button_down(id) ? ((state != Mouse::ButtonState::Held &&  //
                                                      state != ButtonState::Pressed)
                                                         ? ButtonState::Pressed

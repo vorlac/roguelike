@@ -38,17 +38,17 @@ namespace rl
         bool is_focused();
         bool is_resized();
 
-        bool get_state(uint32_t flag);
-        void set_state(uint32_t flags);
-        void clear_state(uint32_t flags);
+        bool get_state(u32 flag);
+        void set_state(u32 flags);
+        void clear_state(u32 flags);
 
         void toggle_fullscreen();
         void maximize();
         void minimize();
         void restore();
 
-        void set_icon(raylib::Image&& image);
-        void set_icons(std::vector<raylib::Image> images);
+        // void set_icon(raylib::Image&& image);
+        // void set_icons(std::vector<raylib::Image> images);
 
         void title(std::string title);
 

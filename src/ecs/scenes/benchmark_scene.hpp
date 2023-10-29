@@ -64,7 +64,7 @@ namespace rl::scene
                 world.entity("Player")
                     .set<component::position>({ .x = centroid.x, .y = centroid.y })
                     .set<component::velocity>({ .x = 0.0f, .y = 0.0f })
-                    .set<component::style>({ .color = color::orange })
+                    .set<component::style>({ .color = colors::orange })
                     .set<component::character>({ .alive = true })
                     .set<component::scale>({ .factor = 5.0f })
                     .child_of(scene);
@@ -190,12 +190,14 @@ namespace rl::scene
                     .kind(flecs::PostUpdate)
                     .run([](flecs::iter_t* it) {
                         raylib::BeginDrawing();
-                        raylib::ClearBackground(color::lightgray);
+                        raylib::ClearBackground(
+                            *reinterpret_cast<const raylib::Color*>(&colors::lightgray));
 
                         while (ecs_iter_next(it))
                             it->callback(it);
 
-                        raylib::DrawRectangle(0, 0, 95, 40, color::black);
+                        raylib::DrawRectangle(
+                            0, 0, 95, 40, *reinterpret_cast<const raylib::Color*>(&colors::black));
                         raylib::DrawFPS(10, 10);
                         raylib::EndDrawing();
                     })
@@ -205,7 +207,8 @@ namespace rl::scene
                             static_cast<i32>(p.x) - static_cast<i32>(rect_size.width / 2.0f),
                             static_cast<i32>(p.y) - static_cast<i32>(rect_size.height / 2.0f),
                             static_cast<i32>(rect_size.width * s.factor),
-                            static_cast<i32>(rect_size.height * s.factor), c.color);
+                            static_cast<i32>(rect_size.height * s.factor),
+                            *reinterpret_cast<const raylib::Color*>(&c.color));
                     });
             }
 

@@ -23,10 +23,10 @@ namespace rl::scene
 
                 scene::reset(world);
 
-                world.entity("Start Game Button")
-                    .set(component::button{ "Start Game" })
-                    .set(component::position{ 50.0, 50.0 })
-                    .child_of(scene);
+                // world.entity("Start Game Button")
+                //     .set(component::button{ "Start Game" })
+                //     .set(component::position{ 50.0, 50.0 })
+                //     .child_of(scene);
 
                 world.set_pipeline(world.get<main_menu_scene>()->pipeline);
             }

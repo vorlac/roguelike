@@ -30,44 +30,44 @@ namespace rl::ds
     class rect
     {
     public:
-        constexpr explicit rect(const T x, const T y, const T width, const T height)
+        explicit constexpr rect(const T x, const T y, const T width, const T height)
             : m_pt{ x, y }
             , m_size{ width, height }
         {
         }
 
-        constexpr explicit rect(point<T>&& pt, dimensions<T>&& size)
+        explicit constexpr rect(point<T>&& pt, dimensions<T>&& size)
             : m_pt{ pt }
             , m_size{ size }
         {
         }
 
-        constexpr explicit rect(const rect<T>& other)
-        {
-            this->operator=(std::forward<const rect<T>>(other));
-        }
-
-        constexpr explicit rect(rect<T>&& other)
+        explicit constexpr rect(const rect<T>& other)
         {
             this->operator=(other);
         }
 
-        constexpr operator raylib::Rectangle()
-            requires std::same_as<T, f32>
+        explicit constexpr rect(rect<T>&& other)
         {
-            return *reinterpret_cast<raylib::Rectangle*>(this);
+            this->operator=(std::forward<const rect<T>>(other));
         }
 
-        constexpr operator raylib::Rectangle()
-            requires(!std::same_as<T, f32>)
-        {
-            return raylib::Rectangle{
-                .x      = static_cast<f32>(m_pt.x),
-                .y      = static_cast<f32>(m_pt.y),
-                .width  = static_cast<f32>(m_size.width),
-                .height = static_cast<f32>(m_size.height),
-            };
-        }
+        // constexpr operator raylib::Rectangle()
+        //     requires std::same_as<T, f32>
+        //{
+        //     return *reinterpret_cast<raylib::Rectangle*>(this);
+        // }
+
+        // constexpr operator raylib::Rectangle()
+        //     requires(!std::same_as<T, f32>)
+        //{
+        //     return raylib::Rectangle{
+        //         .x      = static_cast<f32>(m_pt.x),
+        //         .y      = static_cast<f32>(m_pt.y),
+        //         .width  = static_cast<f32>(m_size.width),
+        //         .height = static_cast<f32>(m_size.height),
+        //     };
+        // }
 
         /**
          * @brief Get rectangle's height

@@ -8,6 +8,7 @@ list(APPEND CMAKE_MODULE_PATH
 include(vcpkg-init)
 
 set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_C_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
 set(EXPORT_COMPILE_COMMANDS ON)
@@ -48,9 +49,9 @@ target_include_directories(raylib_dummy PUBLIC
   "${CMAKE_CURRENT_SOURCE_DIR}/extern/vcpkg/buildtrees/raylib/src/*/src/"
 )
 
-target_compile_definitions(raylib_dummy PUBLIC
-  PLATFORM_DESKTOP
-)
+#target_compile_definitions(raylib_dummy PUBLIC
+#  PLATFORM_DESKTOP
+#)
 
 set(raylib_VERBOSE TRUE)
 find_package(argparse CONFIG REQUIRED)
@@ -60,7 +61,7 @@ find_package(fmt CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)
 find_package(raylib CONFIG REQUIRED)
 find_package(simdjson CONFIG REQUIRED)
-find_package(Vulkan REQUIRED)
+#find_package(Vulkan REQUIRED)
 
 file(GLOB_RECURSE
   roguelike_sources
@@ -75,17 +76,17 @@ add_executable(${PROJECT_NAME}
 
 include(compiler-warnings)
 
-target_compile_features(${PROJECT_NAME} PRIVATE
-  PRIVATE
-    cxx_std_23
-    c_std_17
-)
+#target_compile_features(${PROJECT_NAME} PRIVATE
+#  PRIVATE
+#    cxx_std_23
+#    c_std_11
+#)
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
   NOMINMAX
-  RAYGUI_IMPLEMENTATION
+  # RAYGUI_IMPLEMENTATION
   # RAYGUI_STANDALONE
-
+ 
   $<$<CONFIG:Debug>:
     ROGUELIKE_DEBUG
     ROGUELIKE_LOGGER_ENABLED
@@ -98,28 +99,28 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
   >
 )
 
-target_compile_options(${PROJECT_NAME} PRIVATE
-  $<${compiler_is_msvc}:
-    /Zc:preprocessor
-    /utf-8
-    /EHsc
-    /nologo
+# target_compile_options(${PROJECT_NAME} PRIVATE
+#   $<${compiler_is_msvc}:
+#     #/Zc:preprocessor
+#     #/utf-8
+#     /EHsc
+#     /nologo
 
-    $<$<CONFIG:Debug>:
-      /MDd
-    >
+#     $<$<CONFIG:Debug>:
+#       /MDd
+#     >
 
-    $<$<CONFIG:Release>:
-      /MD
-      /Ox
-    >
+#     $<$<CONFIG:Release>:
+#       /MD
+#       /Ox
+#     >
 
-    $<$<CONFIG:RelWithDebInfo>:
-      /MD
-      /Ox
-    >
-  >
-)
+#     $<$<CONFIG:RelWithDebInfo>:
+#       /MD
+#       /Ox
+#     >
+#   >
+# )
 
 target_include_directories(${PROJECT_NAME}
   PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src"
@@ -133,8 +134,8 @@ target_link_libraries(${PROJECT_NAME}
   PRIVATE glfw
   PRIVATE raylib
   PRIVATE simdjson::simdjson
-  PRIVATE Vulkan::Vulkan
-  PRIVATE winmm
+  #PRIVATE Vulkan::Vulkan
+  #PRIVATE winmm
 )
 
 include(clang-format)

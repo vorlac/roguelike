@@ -10,19 +10,5 @@ namespace rl::ds
     {
         T width{ 0 };
         T height{ 0 };
-
-        constexpr dimensions(T w, T h)
-            : width{ w }
-            , height{ h }
-        {
-        }
-
-        constexpr dimensions()
-        {
-        }
-
-        constexpr ~dimensions()
-        {
-        }
     };
 }

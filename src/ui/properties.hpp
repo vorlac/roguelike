@@ -1,15 +1,16 @@
 #pragma once
 
-#include <cstdint>
 #include <string>
 
+#include "core/ds/color.hpp"
 #include "core/ds/dimensions.hpp"
 #include "core/ds/point.hpp"
 #include "core/ds/vector2d.hpp"
+#include "core/numerics.hpp"
 
 namespace rl::ui
 {
-    enum Justification : u16_fast {
+    enum justification : u16_fast {
         Top         = 1 << 0,
         Bottom      = 1 << 1,
         Left        = 1 << 2,
@@ -21,51 +22,65 @@ namespace rl::ui
         BottomRight = Bottom | Right,
     };
 
-    struct Layout
+    struct style
     {
-        enum class Orientation : u16_fast {
+        rl::color bg_color{};
+        rl::color fg_color{};
+        rl::color fill_color{};
+        rl::color border_color{};
+        rl::color border_style{};
+        rl::color border_thickness{};
+        rl::color text_fg_color{};
+        rl::color text_bg_color{};
+        // raylib::FontType font_type{};
+        // raylib::Font font{};
+    };
+
+    struct layout_info
+    {
+        enum class orientation : u16_fast {
             None       = 0,
             Horizontal = 1,
             Vertical   = 2,
             Grid       = 3,
         };
 
-        struct Matrix
+        struct matrix
         {
             static constexpr inline u16_fast DynamicScaling{ 0 };
 
-            struct Constraints
+            struct constraints
             {
-                u16_fast cols = Matrix::DynamicScaling;
-                u16_fast rows = Matrix::DynamicScaling;
+                u16_fast cols = matrix::DynamicScaling;
+                u16_fast rows = matrix::DynamicScaling;
             };
 
             // defines the minimum number of rows and columns
             // that can/will be created within a layout
-            Constraints max = {
-                .cols = Matrix::DynamicScaling,
-                .rows = Matrix::DynamicScaling,
+            constraints max = {
+                .cols = matrix::DynamicScaling,
+                .rows = matrix::DynamicScaling,
             };
             // defines the maximum number of rows and columns
             // that can/will be created within a layout
-            Constraints min = {
-                .cols = Matrix::DynamicScaling,
-                .rows = Matrix::DynamicScaling,
+            constraints min = {
+                .cols = matrix::DynamicScaling,
+                .rows = matrix::DynamicScaling,
             };
         };
 
-        Orientation orientation{ Orientation::None };
-        Matrix::Constraints max = {
-            .cols = Matrix::DynamicScaling,
-            .rows = Matrix::DynamicScaling,
+        orientation orientation{ orientation::None };
+        matrix::constraints max = {
+            .cols = matrix::DynamicScaling,
+            .rows = matrix::DynamicScaling,
         };
-        Matrix::Constraints min = {
-            .cols = Matrix::DynamicScaling,
-            .rows = Matrix::DynamicScaling,
+        matrix::constraints min = {
+            .cols = matrix::DynamicScaling,
+            .rows = matrix::DynamicScaling,
         };
     };
 
-    struct Margins
+    struct margins
     {
         u16_fast top    = 0;
         u16_fast bottom = 0;
@@ -78,24 +93,9 @@ namespace rl::ui
         std::string text{};
         ds::dimensions<int32_t> size{ 0, 0 };
         ds::point<int32_t> position{ 0, 0 };
-        // identifies how the control ui element should align in it's parent
-        Justification justification = Justification::Centered;
-        // defines how the control should organize any children as they're added
-        Layout layout{ .orientation = Layout::Orientation::None };
-
-        // inner and outer margins of the panel and the control it contains
-        Margins inner_margin{
-            .top    = 0,
-            .bottom = 0,
-            .left   = 0,
-            .right  = 0,
-        };
-
-        Margins outer_margin{
-            .top    = 0,
-            .bottom = 0,
-            .left   = 0,
-            .right  = 0,
-        };
+        ui::justification justification{ justification::Centered };
+        ui::margins inner_margin{};
+        ui::margins outer_margin{};
+        ui::style style{};
     };
 }
