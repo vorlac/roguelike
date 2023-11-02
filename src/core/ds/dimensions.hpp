@@ -24,5 +24,10 @@ namespace rl::ds
         constexpr ~dimensions()
         {
         }
+
+        constexpr auto area() const -> decltype(width * height)
+        {
+            return width * height;
+        }
     };
 }

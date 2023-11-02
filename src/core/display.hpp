@@ -5,7 +5,7 @@
 
 #include "core/ds/dimensions.hpp"
 #include "core/ds/point.hpp"
-#include "core/numerics.hpp"
+#include "core/numeric_types.hpp"
 
 namespace rl
 {
@@ -16,7 +16,7 @@ namespace rl
         i32 current_monitor();
         u32 monitor_refresh_rate(u16 monitor);
         std::string monitor_name(u16 monitor);
-        ds::position<f32> monitor_position(u16 monitor);
+        ds::point<f32> monitor_position(u16 monitor);
         ds::dimensions<i32> monitor_dims(i16 monitor);
         ds::dimensions<i32> monitor_physical_dims(i16 monitor);
     };

@@ -7,8 +7,6 @@
 
 namespace rl
 {
-    bool parse_args(int argc, char** argv);
-
     bool parse_args(int argc, char** argv)
     {
         auto args = argparse::ArgumentParser{
@@ -17,22 +15,24 @@ namespace rl
             argparse::default_arguments::help,
         };
 
+        // clang-format off
+
+        args.add_argument("-v", "--verbose")
+            .help("enables verbose output")
+            .implicit_value(true);
+
+        args.add_argument("-c", "--console")
+            .default_value("info")
+            .help("specifies stdout message level");
+
+        args.add_argument("-c", "--log")
+            .default_value("error")
+            .help("specifies logfile message level");
+
+        // clang-format on
+
         try
         {
-            // clang-format off
-            args.add_argument("-v", "--verbose")
-                .help("enables verbose output")
-                .implicit_value(true);
-
-            args.add_argument("-c", "--console")
-                .default_value("info")
-                .help("specifies stdout message level");
-
-            args.add_argument("-c", "--log")
-                .default_value("error")
-                .help("specifies logfile message level");
-
-            // clang-format on
             args.parse_args(argc, argv);
 
             // get arg example

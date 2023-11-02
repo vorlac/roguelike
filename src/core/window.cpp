@@ -1,10 +1,12 @@
 #include <functional>
 
+#include "core/ds/color.hpp"
 #include "core/ds/dimensions.hpp"
 #include "core/ds/point.hpp"
 #include "core/ds/vector2d.hpp"
 #include "core/window.hpp"
 #include "thirdparty/raylib.hpp"
+#include "thirdparty/rlimgui.hpp"
 
 namespace rl
 {
@@ -13,7 +15,7 @@ namespace rl
         this->setup();
     }
 
-    Window::Window(ds::dimensions<int32_t> dimensions, std::string title)
+    Window::Window(ds::dimensions<i32> dimensions, std::string title)
     {
         this->setup(dimensions.width, dimensions.height, title);
     }
@@ -25,12 +27,21 @@ namespace rl
 
     void Window::begin_drawing()
     {
-        return raylib::BeginDrawing();
+        raylib::BeginDrawing();
+        rlimgui::Begin();
+        raylib::ClearBackground(color::darkgray);
     }
 
-    void Window::end_drawing()
+    void Window::end_drawing(bool draw_fps /* = true*/)
     {
-        return raylib::EndDrawing();
+        if (draw_fps) [[likely]]
+        {
+            raylib::DrawRectangle(0, 0, 95, 40, color::black);
+            raylib::DrawFPS(10, 10);
+        }
+
+        rlimgui::End();
+        raylib::EndDrawing();
     }
 
     bool Window::is_ready()
@@ -78,17 +89,17 @@ namespace rl
         return raylib::IsWindowResized();
     }
 
-    bool Window::get_state(uint32_t flag)
+    bool Window::get_state(u32 flag)
     {
         return raylib::IsWindowState(flag);
     }
 
-    void Window::set_state(uint32_t flags)
+    void Window::set_state(u32 flags)
     {
         return raylib::SetWindowState(flags);
     }
 
-    void Window::clear_state(uint32_t flags)
+    void Window::clear_state(u32 flags)
     {
         return raylib::ClearWindowState(flags);
     }
@@ -118,7 +129,7 @@ namespace rl
         return raylib::SetWindowIcon(image);
     }
 
-    void Window::set_icons(std::vector<raylib::Image> images)
+    void Window::set_icons(std::vector<raylib::Image>&& images)
     {
         return raylib::SetWindowIcons(images.data(), static_cast<int>(images.size()));
     }
@@ -128,27 +139,27 @@ namespace rl
         return raylib::SetWindowTitle(title.c_str());
     }
 
-    void Window::set_position(ds::position<int32_t> pos)
+    void Window::set_position(ds::point<i32> pos)
     {
         return raylib::SetWindowPosition(pos.x, pos.y);
     }
 
-    void Window::set_monitor(uint16_t monitor)
+    void Window::set_monitor(i16 monitor)
     {
         return raylib::SetWindowMonitor(monitor);
     }
 
-    void Window::min_size(ds::dimensions<int32_t> min_size)
+    void Window::min_size(ds::dimensions<i32> min_size)
     {
         return raylib::SetWindowMinSize(min_size.width, min_size.height);
     }
 
-    void Window::size(ds::dimensions<int32_t> size)
+    void Window::size(ds::dimensions<i32> size)
     {
         return raylib::SetWindowSize(size.width, size.height);
     }
 
-    void Window::opacity(float opacity)
+    void Window::opacity(f32 opacity)
     {
         return raylib::SetWindowOpacity(opacity);
     }
@@ -158,13 +169,13 @@ namespace rl
         return raylib::GetWindowHandle();
     }
 
-    ds::position<float> Window::center()
+    ds::point<f32> Window::center()
     {
-        return ds::point<float>(static_cast<float>(raylib::GetScreenWidth()) / 2.0f,
-                                static_cast<float>(raylib::GetScreenHeight()) / 2.0f);
+        return ds::point<f32>(static_cast<f32>(raylib::GetScreenWidth()) / 2.0f,
+                              static_cast<f32>(raylib::GetScreenHeight()) / 2.0f);
     }
 
-    ds::dimensions<int32_t> Window::screen_size()
+    ds::dimensions<i32> Window::screen_size()
     {
         return {
             raylib::GetScreenWidth(),
@@ -172,7 +183,7 @@ namespace rl
         };
     }
 
-    ds::dimensions<int32_t> Window::render_size()
+    ds::dimensions<i32> Window::render_size()
     {
         return {
             raylib::GetRenderWidth(),
@@ -180,7 +191,7 @@ namespace rl
         };
     }
 
-    ds::position<float> Window::position()
+    ds::point<f32> Window::position()
     {
         auto pos{ raylib::GetWindowPosition() };
         return {
@@ -189,22 +200,27 @@ namespace rl
         };
     }
 
-    ds::vector2<float> Window::scale_dpi_factor()
+    ds::vector2<f32> Window::scale_dpi_factor()
     {
-        auto dpi{ raylib::GetWindowScaleDPI() };
-        return ds::vector2<float>(dpi.x, dpi.y);
+        const auto dpi{ raylib::GetWindowScaleDPI() };
+        return ds::vector2<f32>(dpi.x, dpi.y);
     }
 
-    bool Window::setup(int32_t width, int32_t height, std::string title)
+    bool Window::setup(i32 width, i32 height, std::string title)
     {
-        raylib::SetConfigFlags(raylib::ConfigFlags::FLAG_MSAA_4X_HINT |
-                               raylib::ConfigFlags::FLAG_WINDOW_RESIZABLE);
+        constexpr i32 flags{ raylib::ConfigFlags::FLAG_MSAA_4X_HINT |
+                             raylib::ConfigFlags::FLAG_WINDOW_RESIZABLE |
+                             raylib::ConfigFlags::FLAG_VSYNC_HINT };
+
+        raylib::SetConfigFlags(flags);
         raylib::InitWindow(width, height, title.c_str());
+        rlimgui::Setup(true);
         return true;
     }
 
     bool Window::teardown()
     {
+        rlimgui::Shutdown();
         if (this->is_ready())
             this->close();
 

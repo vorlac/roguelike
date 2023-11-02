@@ -7,7 +7,7 @@
 #include "core/ds/point.hpp"
 #include "core/input/input.hpp"
 #include "core/input/keymap.hpp"
-#include "core/numerics.hpp"
+#include "core/numeric_types.hpp"
 #include "core/utils/assert.hpp"
 #include "core/utils/io.hpp"
 #include "core/utils/time.hpp"
@@ -36,7 +36,7 @@ namespace rl::scene
 
                 raylib::SetRandomSeed(2147483647);
 
-                const ds::position<f32> centroid{
+                const ds::point<f32> centroid{
                     static_cast<f32>(raylib::GetScreenWidth()) / 2.0f,
                     static_cast<f32>(raylib::GetScreenHeight()) / 2.0f,
                 };

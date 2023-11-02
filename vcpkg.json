@@ -7,7 +7,7 @@
     "argparse",
     "simdjson",
     "raylib",
-    "raygui",
+    "imgui",
     "box2d",
     "glfw3",
     "vulkan",

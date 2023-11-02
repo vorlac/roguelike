@@ -3,6 +3,8 @@
 #include <concepts>
 #include <type_traits>
 
+#include "core/numeric_types.hpp"
+
 namespace rl
 {
     template <typename T>
@@ -10,8 +12,8 @@ namespace rl
                                                std::is_same<std::remove_cvref_t<T>, double>>;
 
     template <typename T>
-    concept Integer = std::disjunction_v<std::is_same<T, int32_t>, std::is_same<T, uint32_t>,
-                                         std::is_same<T, std::size_t>>;
+    concept Integer =
+        std::disjunction_v<std::is_same<T, i32>, std::is_same<T, u32>, std::is_same<T, std::size_t>>;
 
     template <typename T>
     concept Numeric = FloatingPoint<T> || Integer<T>;

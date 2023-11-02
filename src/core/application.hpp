@@ -5,7 +5,7 @@
 #include "core/display.hpp"
 #include "core/ds/dimensions.hpp"
 #include "core/input/input.hpp"
-#include "core/numerics.hpp"
+#include "core/numeric_types.hpp"
 #include "core/window.hpp"
 #include "thirdparty/raylib.hpp"
 

@@ -13,11 +13,10 @@ namespace rl
     {
     public:
         Window();
-        Window(ds::dimensions<int32_t> dimensions, std::string title);
-
+        Window(ds::dimensions<i32> dimensions, std::string title);
         ~Window();
 
-        void render(auto render_func)
+        constexpr inline void render(auto render_func)
         {
             this->begin_drawing();
             render_func();
@@ -25,7 +24,7 @@ namespace rl
         }
 
         void begin_drawing();
-        void end_drawing();
+        void end_drawing(bool draw_fps = true);
 
         bool should_close() const;
         void close() const;
@@ -38,9 +37,9 @@ namespace rl
         bool is_focused();
         bool is_resized();
 
-        bool get_state(uint32_t flag);
-        void set_state(uint32_t flags);
-        void clear_state(uint32_t flags);
+        bool get_state(u32 flag);
+        void set_state(u32 flags);
+        void clear_state(u32 flags);
 
         void toggle_fullscreen();
         void maximize();
@@ -48,25 +47,24 @@ namespace rl
         void restore();
 
         void set_icon(raylib::Image&& image);
-        void set_icons(std::vector<raylib::Image> images);
+        void set_icons(std::vector<raylib::Image>&& images);
 
         void title(std::string title);
 
-        void set_position(ds::position<int32_t> pos);
-        void set_monitor(uint16_t monitor);
-        void min_size(ds::dimensions<int32_t> min_size);
-        void size(ds::dimensions<int32_t> size);
-        void opacity(float opacity);
+        void set_position(ds::point<i32> pos);
+        void set_monitor(i16 monitor);
+        void min_size(ds::dimensions<i32> min_size);
+        void size(ds::dimensions<i32> size);
+        void opacity(f32 opacity);
 
         void* handle();
 
-        ds::vector2<float> scale_dpi_factor();
+        ds::vector2<f32> scale_dpi_factor();
+        ds::dimensions<i32> screen_size();
+        ds::dimensions<i32> render_size();
 
-        ds::dimensions<int32_t> screen_size();
-        ds::dimensions<int32_t> render_size();
-
-        ds::position<float> position();
-        ds::position<float> center();
+        ds::point<f32> position();
+        ds::point<f32> center();
 
     public:
         rl::Window& operator=(Window window)        = delete;
@@ -75,7 +73,7 @@ namespace rl
         rl::Window& operator=(const Window& window) = delete;
 
     protected:
-        bool setup(int32_t width = 1920, int32_t height = 1080, std::string title = "roguelite");
+        bool setup(i32 width = 1920, i32 height = 1080, std::string title = "roguelite");
         bool teardown();
     };
 }

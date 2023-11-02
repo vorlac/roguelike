@@ -30,6 +30,7 @@
     "cmake.outputLogEncoding": "utf-8",
     "cmake.parallelJobs": 0,
     "cmake.parseBuildDiagnostics": true,
+    "C_Cpp.default.cppStandard": "c++23",
     "cmake.useCMakePresets": "always",
     "debug.autoExpandLazyVariables": true,
     "debug.console.closeOnEnd": true,

@@ -90,21 +90,21 @@ namespace rl::input::device
             return raylib::IsMouseButtonUp(button_id);
         }
 
-        void set_x(int32_t x) const;
-        void set_y(int32_t y) const;
-        void set_position(int32_t x, int32_t y) const;
-        void set_position(ds::point<int32_t> pos) const;
-        void set_offset(int32_t x_offset = 0, int32_t y_offset = 0) const;
-        void set_offset(ds::vector2<int32_t> offset) const;
+        void set_x(i32 x) const;
+        void set_y(i32 y) const;
+        void set_position(i32 x, i32 y) const;
+        void set_position(ds::point<i32> pos) const;
+        void set_offset(i32 x_offset = 0, i32 y_offset = 0) const;
+        void set_offset(ds::vector2<i32> offset) const;
         void set_scale(float x_scale = 1.0f, float y_scale = 1.0f) const;
         void set_scale(ds::vector2<float> scale) const;
         void set_cursor(CursorID cursor = raylib::MouseCursor::MOUSE_CURSOR_DEFAULT) const;
 
-        int32_t get_x() const;
-        int32_t get_y() const;
+        i32 get_x() const;
+        i32 get_y() const;
 
-        ds::point<int32_t> get_position() const;
-        ds::vector2<int32_t> get_delta() const;
+        ds::point<i32> get_position() const;
+        ds::vector2<i32> get_delta() const;
         ds::vector2<float> get_wheel_move_v() const;
         float get_wheel_move() const;
 
@@ -137,7 +137,7 @@ namespace rl::input::device
 
                 std::pair curr_state = {
                     delta.is_zero() ? CursorState::Moving : CursorState::Still,
-                    std::forward<ds::vector2<int32_t>>(delta),
+                    std::forward<ds::vector2<i32>>(delta),
                 };
 
                 m_movement_state = std::make_pair(std::move(m_movement_state.second),
@@ -160,11 +160,11 @@ namespace rl::input::device
 
     private:
         // pair<prev state, curr state>
-        mutable std::pair<std::pair<Mouse::CursorState, ds::vector2<int32_t>>,
-                          std::pair<Mouse::CursorState, ds::vector2<int32_t>>>
+        mutable std::pair<std::pair<Mouse::CursorState, ds::vector2<i32>>,
+                          std::pair<Mouse::CursorState, ds::vector2<i32>>>
             m_movement_state{
-                { CursorState::None, ds::vector2<int32_t>::zero() },  // prev
-                { CursorState::None, ds::vector2<int32_t>::zero() },  // curr
+                { CursorState::None, ds::vector2<i32>::zero() },  // prev
+                { CursorState::None, ds::vector2<i32>::zero() },  // curr
             };
 
         mutable std::array<ButtonState, static_cast<std::size_t>(Button::Count)> m_button_states{};

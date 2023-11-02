@@ -1,6 +1,10 @@
 #pragma once
 
-namespace raylib
-{
+// clang-format off
+
+namespace raylib {
 #include <raylib.h>
+#include <rlgl.h>
 }
+
+// clang-format on

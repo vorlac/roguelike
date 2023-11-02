@@ -2,7 +2,7 @@
 
 namespace rl::input::device
 {
-    Gamepad::Gamepad(int32_t id)
+    Gamepad::Gamepad(i32 id)
         : m_gamepad_id(id)
     {
     }

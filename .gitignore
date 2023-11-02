@@ -5,6 +5,7 @@ export.cfg
 export_presets.cfg
 .sconsign.dblite
 
+imgui.ini
 *.translation
 *.obj
 

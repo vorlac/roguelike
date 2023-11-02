@@ -2,7 +2,7 @@
 #include <string>
 
 #include "core/display.hpp"
-#include "core/numerics.hpp"
+#include "core/numeric_types.hpp"
 #include "thirdparty/raylib.hpp"
 
 namespace rl
@@ -27,11 +27,11 @@ namespace rl
         return raylib::GetMonitorName(monitor);
     }
 
-    ds::position<f32> Display::monitor_position(u16 monitor)
+    ds::point<f32> Display::monitor_position(u16 monitor)
     {
         // TODO: change to pointi?
         auto pos{ raylib::GetMonitorPosition(monitor) };
-        return ds::position<f32>(pos.x, pos.y);
+        return ds::point<f32>(pos.x, pos.y);
     }
 
     ds::dimensions<i32> Display::monitor_dims(i16 monitor)

@@ -2,60 +2,60 @@
 
 namespace rl::input::device
 {
-    int32_t Mouse::get_x() const
+    i32 Mouse::get_x() const
     {
         return raylib::GetMouseX();
     }
 
-    int32_t Mouse::get_y() const
+    i32 Mouse::get_y() const
     {
         return raylib::GetMouseY();
     }
 
-    void Mouse::set_x(int32_t x) const
+    void Mouse::set_x(i32 x) const
     {
         return raylib::SetMousePosition(x, this->get_y());
     }
 
-    void Mouse::set_y(int32_t y) const
+    void Mouse::set_y(i32 y) const
     {
         return raylib::SetMousePosition(this->get_x(), y);
     }
 
-    ds::point<int32_t> Mouse::get_position() const
+    ds::point<i32> Mouse::get_position() const
     {
         auto pos{ raylib::GetMousePosition() };
         return {
-            static_cast<int32_t>(pos.x),
-            static_cast<int32_t>(pos.y),
+            static_cast<i32>(pos.x),
+            static_cast<i32>(pos.y),
         };
     }
 
-    void Mouse::set_position(int32_t x, int32_t y) const
+    void Mouse::set_position(i32 x, i32 y) const
     {
         return raylib::SetMousePosition(x, y);
     }
 
-    void Mouse::set_position(ds::point<int32_t> pos) const
+    void Mouse::set_position(ds::point<i32> pos) const
     {
         return raylib::SetMousePosition(pos.x, pos.y);
     }
 
-    ds::vector2<int32_t> Mouse::get_delta() const
+    ds::vector2<i32> Mouse::get_delta() const
     {
         auto delta{ raylib::GetMouseDelta() };
         return {
-            static_cast<int32_t>(delta.x),
-            static_cast<int32_t>(delta.y),
+            static_cast<i32>(delta.x),
+            static_cast<i32>(delta.y),
         };
     }
 
-    void Mouse::set_offset(int32_t x_offset, int32_t y_offset) const
+    void Mouse::set_offset(i32 x_offset, i32 y_offset) const
     {
         return raylib::SetMouseOffset(x_offset, y_offset);
     }
 
-    void Mouse::set_offset(ds::vector2<int32_t> offset) const
+    void Mouse::set_offset(ds::vector2<i32> offset) const
     {
         return raylib::SetMouseOffset(offset.x, offset.y);
     }

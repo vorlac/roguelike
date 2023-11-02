@@ -135,7 +135,7 @@ ReflowComments: true
 RemoveBracesLLVM: true
 # RemoveParentheses: true ## clang v17 only
 RequiresClausePosition: OwnLine
-SeparateDefinitionBlocks: Always
+SeparateDefinitionBlocks: Always # Leave
 ShortNamespaceLines: 1
 SortIncludes: true
 SortUsingDeclarations: true

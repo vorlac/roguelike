@@ -42,7 +42,7 @@ namespace rl::ds
         using container_t = std::array<TElem, BufferSize>;
 
     public:
-        uint32_t push(TElem item)
+        u32 push(TElem item)
         {
             // if the buffer happens to be full, block any threads
             // trying to transfer a new item to the buffer until

@@ -7,7 +7,7 @@
 #include <memory>
 #include <type_traits>
 
-#include "core/numerics.hpp"
+#include "core/numeric_types.hpp"
 #include "core/utils/concepts.hpp"
 #include "thirdparty/raylib.hpp"
 

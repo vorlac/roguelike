@@ -4,6 +4,7 @@
 #include <string>
 #include <type_traits>
 
+#include "core/numeric_types.hpp"
 #include "thirdparty/raylib.hpp"
 
 namespace rl::input::device
@@ -15,7 +16,7 @@ namespace rl::input::device
         using ButtonID = std::underlying_type_t<raylib::GamepadButton>;
 
     public:
-        Gamepad(int32_t id = 0);
+        Gamepad(i32 id = 0);
 
         bool is_button_pressed(Gamepad::ButtonID button) const;
         bool is_button_down(Gamepad::ButtonID button) const;
@@ -27,8 +28,8 @@ namespace rl::input::device
         Gamepad::ButtonID get_button_pressed() const;
 
         std::string get_name() const;
-        int32_t get_axis_count() const;
-        int32_t set_mappings(const std::string& mappings) const;
+        i32 get_axis_count() const;
+        i32 set_mappings(const std::string& mappings) const;
 
     protected:
         Gamepad::ButtonID m_gamepad_id{ 0 };

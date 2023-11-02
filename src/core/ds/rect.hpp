@@ -2,7 +2,7 @@
 
 #include "core/ds/dimensions.hpp"
 #include "core/ds/point.hpp"
-#include "core/numerics.hpp"
+#include "core/numeric_types.hpp"
 
 namespace rl::ds
 {
@@ -55,7 +55,7 @@ namespace rl::ds
         constexpr operator raylib::Rectangle()
             requires std::same_as<T, f32>
         {
-            return *reinterpret_cast<raylib::Rectangle*>(this);
+            return *static_cast<raylib::Rectangle*>(this);
         }
 
         constexpr operator raylib::Rectangle()
@@ -106,7 +106,7 @@ namespace rl::ds
          * */
         constexpr inline T area() const
         {
-            return m_size.width * m_size.height;
+            return m_size.area();
         }
 
         /**
@@ -305,7 +305,7 @@ namespace rl::ds
         /**
          * returns an array of the 4 quadrants of this rectangle
          * */
-        inline rect<T> quads() const
+        constexpr inline rect<T> quads() const
         {
             std::array<rect<T>, 4> quadrants{ 0 };
             quads[Quad::TopLeft]     = this->quad(Quad::TopLeft);

@@ -29,7 +29,7 @@ namespace rl
 
     void Application::framerate(u32 target_fps)
     {
-        raylib::SetTargetFPS(static_cast<int>(target_fps));
+        raylib::SetTargetFPS(static_cast<i32>(target_fps));
     }
 
     float Application::delta_time()

@@ -1,7 +1,6 @@
 #include <chrono>
 #include <memory>
 #include <string>
-#include <fmt/compile.h>
 #include <fmt/format.h>
 #include <fmt/printf.h>
 
@@ -16,8 +15,6 @@
 #include "ecs/scenes/benchmark_scene.hpp"
 #include "ecs/scenes/main_menu_scene.hpp"
 #include "ecs/scenes/scene_types.hpp"
-#include "ui/controls/dialog.hpp"
-#include "ui/properties.hpp"
 #include "utils/io.hpp"
 #include "utils/time.hpp"
 
@@ -57,31 +54,13 @@ namespace rl
     bool Game::run()
     {
         this->setup();
-        this->framerate(60);
+
         scene::set_active<scene::main_menu_scene>(m_world);
-
-        // if (m_gui != nullptr)
-        //{
-        //     std::shared_ptr cdialog = ui::dialog::create({
-        //         .text     = std::string{ "asdsdasa" },
-        //         .size     = ds::dimensions<i32>{ 800, 600 },
-        //         .position = ds::point<i32>{ 100, 100 },
-        //     });
-
-        //    // m_test_dialog = control->getptr();
-
-        //    m_gui->add_control(cdialog);
-        //}
 
         while (!this->should_quit()) [[unlikely]]
         {
-            m_gui->update(m_input);
-
             m_window.begin_drawing();
-            raylib::ClearBackground(color::darkgray);
             m_gui->render();
-            raylib::DrawRectangle(0, 0, 95, 40, color::black);
-            raylib::DrawFPS(10, 10);
             m_window.end_drawing();
         }
 

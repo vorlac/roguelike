@@ -11,11 +11,11 @@ namespace rl::component
 
     struct health
     {
-        int32_t amount{ 100 };
+        i32 amount{ 100 };
     };
 
     struct move_speed
     {
-        int32_t speed{ 100 };
+        i32 speed{ 100 };
     };
 }
