@@ -57,9 +57,15 @@ find_package(argparse CONFIG REQUIRED)
 find_package(flecs CONFIG REQUIRED)
 find_package(fmt CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)
-find_package(imgui CONFIG REQUIRED)
 find_package(raylib CONFIG REQUIRED)
 find_package(simdjson CONFIG REQUIRED)
+find_package(imgui 
+  CONFIG 
+    REQUIRED 
+  COMPONENTS 
+    glfw-binding
+    vulkan-binding
+)
 
 file(GLOB_RECURSE
   roguelike_sources

@@ -222,7 +222,7 @@ namespace rl
 
         raylib::SetConfigFlags(flags);
         raylib::InitWindow(width, height, title.c_str());
-        m_gui.setup(*this);
+        m_gui.init(*this);
         return true;
     }
 
