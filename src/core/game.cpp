@@ -36,38 +36,29 @@ namespace rl
         return true;
     }
 
-#define RL_PROTOTYPING 1
-#if (RL_PROTOTYPING)
-
     bool Game::run()
     {
         this->setup();
 
-        scene::set_active<scene::main_menu_scene>(m_world);
-
-        while (!this->should_quit()) [[unlikely]]
+        static constexpr bool RL_PROTOTYPING = true;
+        if constexpr (RL_PROTOTYPING)
         {
-            m_window.render([] {
-                return true;
-            });
+            scene::set_active<scene::main_menu_scene>(m_world);
+            while (!this->should_quit()) [[unlikely]]
+            {
+                m_window.render([] {
+                    return true;
+                });
+            }
+        }
+        else
+        {
+            while (!this->should_quit()) [[unlikely]]
+                m_world.progress();
         }
 
         return true;
     }
-
-#else
-
-    bool Game::run()
-    {
-        this->setup();
-
-        while (!this->should_quit()) [[unlikely]]
-            m_world.progress();
-
-        return true;
-    }
-
-#endif
 
     bool Game::teardown()
     {
