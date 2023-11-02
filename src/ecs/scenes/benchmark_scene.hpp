@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+
 #include <flecs.h>
 
 #include "core/ds/dimensions.hpp"

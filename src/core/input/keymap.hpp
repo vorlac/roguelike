@@ -6,11 +6,12 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <string_view>
 #include <tuple>
 #include <utility>
 #include <vector>
+
 #include <simdjson.h>
-#include <string_view>
 
 #include "thirdparty/raylib.hpp"
 

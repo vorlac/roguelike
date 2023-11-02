@@ -1,6 +1,12 @@
+#include <atomic>
+#include <vector>
+
+#include <GLFW/glfw3.h>
+
 #include "core/display.hpp"
 #include "core/gui.hpp"
 #include "core/window.hpp"
+#include "thirdparty/raylib.hpp"
 
 namespace rl
 {

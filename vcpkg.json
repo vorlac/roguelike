@@ -8,9 +8,7 @@
     "simdjson",
     "raylib",
     "imgui",
-    "box2d",
     "glfw3",
-    "vulkan",
     "flecs",
     "fmt"
   ]

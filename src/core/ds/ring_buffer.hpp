@@ -6,16 +6,16 @@
 #include <cassert>
 #include <chrono>
 #include <concepts>
+#include <condition_variable>
 #include <cstdint>
 #include <functional>
 #include <mutex>
 #include <set>
 #include <thread>
 #include <tuple>
+#include <type_traits>
 #include <utility>
 #include <vector>
-#include <condition_variable>
-#include <type_traits>
 
 #include "core/utils/assert.hpp"
 #include "core/utils/concepts.hpp"

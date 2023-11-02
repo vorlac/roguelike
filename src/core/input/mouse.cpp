@@ -1,5 +1,4 @@
 #include "core/input/mouse.hpp"
-
 #include "core/utils/conversions.hpp"
 
 namespace rl::input

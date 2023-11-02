@@ -5,8 +5,9 @@
 #include <concepts>
 #include <cstdint>
 #include <memory>
-#include <imgui.h>
 #include <type_traits>
+
+#include <imgui.h>
 
 #include "core/numeric_types.hpp"
 #include "core/utils/concepts.hpp"

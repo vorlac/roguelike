@@ -5,13 +5,14 @@
 #include <locale>
 #include <memory>
 #include <string>
+#include <type_traits>
 #include <utility>
+
 #include <flecs.h>
 #include <fmt/chrono.h>
 #include <fmt/color.h>
 #include <fmt/core.h>
 #include <fmt/format.h>
-#include <type_traits>
 
 #include "core/ds/point.hpp"
 #include "core/ds/vector2d.hpp"

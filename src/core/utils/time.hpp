@@ -4,12 +4,13 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <string_view>
 #include <thread>
 #include <tuple>
 #include <vector>
+
 #include <fmt/chrono.h>
 #include <fmt/format.h>
-#include <string_view>
 
 #include "core/utils/io.hpp"
 

@@ -1,10 +1,10 @@
 #pragma once
 
+#include <unordered_map>
 #include <utility>
 #include <vector>
-#include <GLFW/glfw3.h>
+
 #include <imgui.h>
-#include <unordered_map>
 
 #include "core/ds/rect.hpp"
 #include "core/input.hpp"

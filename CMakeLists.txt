@@ -54,14 +54,12 @@ target_compile_definitions(raylib_dummy PUBLIC
 
 set(raylib_VERBOSE TRUE)
 find_package(argparse CONFIG REQUIRED)
-find_package(box2d CONFIG REQUIRED)
 find_package(flecs CONFIG REQUIRED)
 find_package(fmt CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)
-find_package(raylib CONFIG REQUIRED)
 find_package(imgui CONFIG REQUIRED)
+find_package(raylib CONFIG REQUIRED)
 find_package(simdjson CONFIG REQUIRED)
-find_package(Vulkan REQUIRED)
 
 file(GLOB_RECURSE
   roguelike_sources
@@ -125,14 +123,11 @@ target_include_directories(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME}
   PRIVATE argparse::argparse
-  PRIVATE box2d::box2d
   PRIVATE flecs::flecs_static
   PRIVATE fmt::fmt
   PRIVATE imgui::imgui
-  PRIVATE glfw
   PRIVATE raylib
   PRIVATE simdjson::simdjson
-  PRIVATE Vulkan::Vulkan
   PRIVATE winmm
 )
 
