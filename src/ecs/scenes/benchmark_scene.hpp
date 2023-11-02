@@ -5,7 +5,7 @@
 
 #include "core/ds/dimensions.hpp"
 #include "core/ds/point.hpp"
-#include "core/input/input.hpp"
+#include "core/input.hpp"
 #include "core/input/keymap.hpp"
 #include "core/numeric_types.hpp"
 #include "core/utils/assert.hpp"
@@ -260,9 +260,9 @@ namespace rl::scene
     public:
         scene::pipeline pipeline{};
 
-        static inline input::Input m_input{};
-        static inline thread_local float m_delta_time{ 0.0f };
-        static inline thread_local int64_t m_update_calls{ 0 };
+        static inline rl::Input m_input{};
+        static inline thread_local f32 m_delta_time{ 0.0f };
+        static inline thread_local i64 m_update_calls{ 0 };
         static constexpr inline ds::dimensions<i32> rect_size{ 10, 10 };
     };
 }

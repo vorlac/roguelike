@@ -6,6 +6,7 @@
 #include "core/ds/dimensions.hpp"
 #include "core/ds/point.hpp"
 #include "core/ds/vector2d.hpp"
+#include "core/gui.hpp"
 
 namespace rl
 {
@@ -20,10 +21,12 @@ namespace rl
         {
             this->begin_drawing();
             render_func();
+            this->update_gui();
             this->end_drawing();
         }
 
         void begin_drawing();
+        void update_gui();
         void end_drawing(bool draw_fps = true);
 
         bool should_close() const;
@@ -75,5 +78,9 @@ namespace rl
     protected:
         bool setup(i32 width = 1920, i32 height = 1080, std::string title = "roguelite");
         bool teardown();
+
+    private:
+        rl::GUI m_gui{};
+        rl::Input m_input{};
     };
 }

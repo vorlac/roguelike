@@ -167,14 +167,13 @@ namespace rlimgui::internal
                                      rl::i32 indexStart,
                                      const ImVector<ImDrawIdx>& indexBuffer,
                                      const ImVector<ImDrawVert>& vertBuffer,
-                                     void* texturePtr)
+                                     void* texture_data)
     {
         if (count < 3)
             return;
 
-        raylib::Texture* texture = static_cast<raylib::Texture*>(texturePtr);
-
-        unsigned int textureId{ texture == nullptr ? 0 : texture->id };
+        raylib::Texture* texture = static_cast<raylib::Texture*>(texture_data);
+        rl::u32 textureId{ texture == nullptr ? 0 : texture->id };
 
         raylib::rlBegin(RL_TRIANGLES);
         raylib::rlSetTexture(textureId);
@@ -690,7 +689,7 @@ namespace rlimgui
     }
 
     // API
-    void BeginDelta(float deltaTime)
+    void BeginDelta(rl::f32 deltaTime)
     {
         ImGui::SetCurrentContext(internal::GlobalContext);
         internal::ImGuiNewFrame(deltaTime);

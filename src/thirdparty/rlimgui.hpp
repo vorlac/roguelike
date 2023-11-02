@@ -72,7 +72,7 @@ namespace rlimgui
      *
      * @param delta_time any value < 0 will use raylib GetFrameTime
      * */
-    void BeginDelta(float deltaTime);
+    void BeginDelta(rl::f32 deltaTime);
 
     /**
      * ImGui Image API extensions

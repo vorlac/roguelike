@@ -20,19 +20,6 @@
 
 namespace rl
 {
-    Game::Game()
-        : m_gui{ new ui::GUI{} }
-    {
-    }
-
-    Game::~Game()
-    {
-        if (m_gui != nullptr)
-        {
-            delete m_gui;
-            m_gui = nullptr;
-        }
-    }
 
     bool Game::setup()
     {
@@ -59,9 +46,9 @@ namespace rl
 
         while (!this->should_quit()) [[unlikely]]
         {
-            m_window.begin_drawing();
-            m_gui->render();
-            m_window.end_drawing();
+            m_window.render([] {
+                return true;
+            });
         }
 
         return true;

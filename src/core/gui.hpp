@@ -4,26 +4,38 @@
 #include <vector>
 #include <imgui.h>
 
-#include "core/input/input.hpp"
+#include "core/input.hpp"
+#include "thirdparty/rlimgui.hpp"
 
-namespace rl::ui
+namespace rl
 {
     class GUI
     {
     public:
-        inline bool update(input::Input&)
+        inline void setup() const
         {
-            return false;
+            rlimgui::Setup(true);
         }
 
-        inline bool render()
+        inline void teardown() const
+        {
+            rlimgui::Shutdown();
+        }
+
+        inline bool update(Input&)
+        {
+            rlimgui::Begin();
+            this->draw();
+            rlimgui::End();
+            return true;
+        }
+
+    private:
+        inline bool draw()
         {
             bool open = true;
             ImGui::ShowDemoWindow(&open);
             return true;
         }
-
-    private:
-        input::Input m_input{};
     };
 }

@@ -10,7 +10,7 @@
 #include "core/numeric_types.hpp"
 #include "core/utils/assert.hpp"
 
-namespace rl::input
+namespace rl
 {
     struct ButtonInfo
     {
@@ -28,7 +28,7 @@ namespace rl::input
 
     struct InputEvent
     {
-        InputDevice device{ InputDevice::None };
+        input::InputDevice device{ input::InputDevice::None };
         ButtonInfo button{};
     };
 
@@ -41,7 +41,7 @@ namespace rl::input
             m_active_ui_actions.reserve(64);
         }
 
-        std::vector<GameplayAction> active_game_actions()
+        std::vector<input::GameplayAction> active_game_actions()
         {
             m_active_game_actions.clear();
 
@@ -51,18 +51,18 @@ namespace rl::input
                 auto button = std::to_underlying(action.button);
                 switch (action.device)
                 {
-                    case InputDevice::None:
+                    case input::InputDevice::None:
                         [[fallthrough]];
-                    case InputDevice::Unknown:
+                    case input::InputDevice::Unknown:
                         assert_msg("invalid input type");
                         break;
 
-                    case InputDevice::Mouse:
+                    case input::InputDevice::Mouse:
                         [[fallthrough]];
-                    case InputDevice::Gamepad:
+                    case input::InputDevice::Gamepad:
                         break;
 
-                    case InputDevice::Keyboard:
+                    case input::InputDevice::Keyboard:
                         if (m_keyboard.is_key_down(button))
                             m_active_game_actions.push_back(action.action);
                 }
@@ -71,7 +71,7 @@ namespace rl::input
             return m_active_game_actions;
         }
 
-        std::vector<UIAction> active_ui_actions()
+        std::vector<input::UIAction> active_ui_actions()
         {
             m_active_ui_actions.clear();
 
@@ -81,18 +81,18 @@ namespace rl::input
                 auto button = std::to_underlying(action.button);
                 switch (action.device)
                 {
-                    case InputDevice::None:
+                    case input::InputDevice::None:
                         [[fallthrough]];
-                    case InputDevice::Unknown:
+                    case input::InputDevice::Unknown:
                         assert_msg("invalid input type");
                         break;
 
-                    case InputDevice::Mouse:
+                    case input::InputDevice::Mouse:
                         [[fallthrough]];
-                    case InputDevice::Gamepad:
+                    case input::InputDevice::Gamepad:
                         break;
 
-                    case InputDevice::Keyboard:
+                    case input::InputDevice::Keyboard:
                     {
                         if (m_keyboard.is_key_down(button))
                             m_active_ui_actions.push_back(action.action);
@@ -139,10 +139,10 @@ namespace rl::input
     private:
         ds::vector2<f32> get_vector() const
         {
-            device::Gamepad::AxisID pos_x = 0;
-            device::Gamepad::AxisID neg_x = 1;
-            device::Gamepad::AxisID pos_y = 2;
-            device::Gamepad::AxisID neg_y = 3;
+            input::device::Gamepad::AxisID pos_x = 0;
+            input::device::Gamepad::AxisID neg_x = 1;
+            input::device::Gamepad::AxisID pos_y = 2;
+            input::device::Gamepad::AxisID neg_y = 3;
 
             ds::vector2<f32> vec = {
                 m_gamepad.get_axis_movement(pos_x) - m_gamepad.get_axis_movement(neg_x),
@@ -166,7 +166,7 @@ namespace rl::input
         input::device::Gamepad m_gamepad{};
 
         input::Keymap m_keymap{};
-        std::vector<GameplayAction> m_active_game_actions{};
-        std::vector<UIAction> m_active_ui_actions{};
+        std::vector<input::GameplayAction> m_active_game_actions{};
+        std::vector<input::UIAction> m_active_ui_actions{};
     };
 }

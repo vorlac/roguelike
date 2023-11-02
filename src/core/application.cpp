@@ -32,7 +32,7 @@ namespace rl
         raylib::SetTargetFPS(static_cast<i32>(target_fps));
     }
 
-    float Application::delta_time()
+    f32 Application::delta_time()
     {
         return raylib::GetFrameTime();
     }
@@ -65,5 +65,4 @@ namespace rl
     void Application::teardown()
     {
     }
-
 }

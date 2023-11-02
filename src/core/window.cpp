@@ -28,7 +28,6 @@ namespace rl
     void Window::begin_drawing()
     {
         raylib::BeginDrawing();
-        rlimgui::Begin();
         raylib::ClearBackground(color::darkgray);
     }
 
@@ -40,8 +39,12 @@ namespace rl
             raylib::DrawFPS(10, 10);
         }
 
-        rlimgui::End();
         raylib::EndDrawing();
+    }
+
+    void Window::update_gui()
+    {
+        m_gui.update(m_input);
     }
 
     bool Window::is_ready()
@@ -214,13 +217,13 @@ namespace rl
 
         raylib::SetConfigFlags(flags);
         raylib::InitWindow(width, height, title.c_str());
-        rlimgui::Setup(true);
+        m_gui.setup();
         return true;
     }
 
     bool Window::teardown()
     {
-        rlimgui::Shutdown();
+        m_gui.teardown();
         if (this->is_ready())
             this->close();
 
