@@ -1,264 +1,362 @@
 #pragma once
 
-#include <map>
 #include <utility>
 #include <vector>
+#include <GLFW/glfw3.h>
 #include <imgui.h>
+#include <unordered_map>
 
+#include "core/ds/rect.hpp"
 #include "core/input.hpp"
-#include "thirdparty/rlimgui.hpp"
+#include "core/utils/assert.hpp"
+#include "thirdparty/free_solid_font_data.hpp"
+#include "thirdparty/icons_font_awesome.hpp"
 
 namespace rl
 {
-    class GUI
+    class Window;
+    class Display;
+
+    class gui
     {
     public:
-        inline void setup() const
+        /**
+         * @brief Sets up ImGui, loads fonts and themes
+         * Calls imgui_impl_init and sets the theme. Will install Font awesome by default
+         *
+         * @param dark_theme when true(default) the dark theme is used, when false the light theme
+         * is used
+         * */
+        void setup(const rl::Window& window, bool dark_theme = true);
+
+        /**
+         * @brief Starts a new ImGui Frame
+         * Calls imgui_impl_newframe, imgui_impl_process_events, and ImGui::NewFrame
+         * together
+         * */
+        void begin(const rl::Window& window, const rl::Display& display);
+
+        /**
+         * @brief Ends an ImGui frame and submits all ImGui drawing to raylib for processing.
+         * Calls ImGui:Render, an d imgui_impl_render_draw_data to draw to the current raylib
+         * render target
+         * */
+        void end()
         {
-            rlimgui::Setup(true);
+            ImGui::SetCurrentContext(m_context);
+            ImGui::Render();
+
+            const ImDrawData* draw_data{ ImGui::GetDrawData() };
+            this->imgui_impl_render_draw_data(draw_data);
         }
 
-        inline void teardown() const
+        /**
+         * @brief Cleanup ImGui and unload font atlas
+         * Calls imgui_impl_shutdown
+         * */
+        void teardown()
         {
-            rlimgui::Shutdown();
+            ImGui::SetCurrentContext(m_context);
+            this->imgui_impl_shutdown();
+            ImGui::DestroyContext();
         }
 
-        inline bool update(Input&)
+        bool update(const Window& window, const Display& display)
         {
-            rlimgui::Begin();
+            this->begin(window, display);
             bool open = true;
             ImGui::ShowDemoWindow(&open);
-            rlimgui::End();
+            this->end();
             return true;
         }
 
-    protected:
-        void EndInitImGui()
+        // Advanced StartupAPI
+
+        /**
+         * @brief Custom initialization. Not needed if you call Setup. Only needed if you want to
+         * add custom setup code. must be followed by EndInitImGui Called by
+         * imgui_impl_init, and does the first part of setup, before fonts are rendered
+         * */
+        void begin_init_imgui(const rl::Window& window);
+
+        /**
+         * @brief End Custom initialization. Not needed if you call Setup. Only needed if you want
+         * to add custom setup code. must be proceeded by BeginInitImGui Called by
+         * imgui_impl_init and does the second part of setup, and renders fonts.
+         * */
+        void end_init_imgui()
         {
-            ImGui::SetCurrentContext(internal::GlobalContext);
-            internal::SetupFontAwesome();
-            internal::SetupMouseCursors();
-            internal::SetupBackend();
-            ReloadFontsInternal();
+            ImGui::SetCurrentContext(m_context);
+            this->setup_font_awesome();
+            this->setup_imgui_backend();
+            this->reload_fonts_internal();
         }
 
-        void BeginInitImGui()
+        /**
+         * @brief Forces the font texture atlas to be recomputed and re-cached
+         * */
+        void reload_fonts()
         {
-            internal::SetupGlobals();
-            internal::GlobalContext = ImGui::CreateContext(nullptr);
-            internal::SetupKeymap();
-
-            ImGuiIO& io = ImGui::GetIO();
-            io.Fonts->AddFontDefault();
+            ImGui::SetCurrentContext(m_context);
+            this->reload_fonts_internal();
         }
 
-        void Setup(bool dark)
+        /**
+         * @brief Starts a new ImGui Frame with a specified delta time
+         * */
+        void begin_delta(const rl::Window& window, const rl::Display& display);
+
+        /**
+         * ImGui Image API extensions
+         * Purely for convenience in working with raylib textures as images.
+         * If you want to call ImGui image functions directly, simply pass them the pointer to the
+         * texture.
+         * */
+
+        /**
+         * @brief Draw a texture as an image in an ImGui Context* Uses the current ImGui Cursor
+         * position and the full texture size.
+         *
+         * @param image The raylib texture to draw
+         * */
+        void image(raylib::Texture* image)
         {
-            BeginInitImGui();
-
-            if (dark)
-                ImGui::StyleColorsDark();
-            else
-                ImGui::StyleColorsLight();
-
-            EndInitImGui();
-        }
-
-        void ReloadFonts()
-        {
-            ImGui::SetCurrentContext(internal::GlobalContext);
-            internal::ReloadFonts();
-        }
-
-        void Begin()
-        {
-            ImGui::SetCurrentContext(internal::GlobalContext);
-            BeginDelta(raylib::GetFrameTime());
-        }
-
-        void Image(const raylib::Texture* image)
-        {
-            if (!image)
+            if (image == nullptr)
                 return;
-            if (internal::GlobalContext)
-                ImGui::SetCurrentContext(internal::GlobalContext);
-            ImGui::Image((ImTextureID)image, ImVec2(float(image->width), float(image->height)));
+            if (m_context != nullptr)
+                ImGui::SetCurrentContext(m_context);
+
+            ImGui::Image(reinterpret_cast<const ImTextureID>(image),
+                         ImVec2(cast::to<f32>(image->width), cast::to<f32>(image->height)));
         }
 
-        bool ImageButton(const char* name, const raylib::Texture* image)
+        /**
+         * @brief Draw a texture as an image in an ImGui Context at a specific size
+         * Uses the current ImGui Cursor position and the specified width and height
+         * The image will be scaled up or down to fit as needed
+         *
+         * @param image The raylib texture to draw
+         * @param width The width of the drawn image
+         * @param height The height of the drawn image
+         * */
+        void image_size(raylib::Texture* image, i32 width, i32 height)
         {
-            if (!image)
-                return false;
-            if (internal::GlobalContext)
-                ImGui::SetCurrentContext(internal::GlobalContext);
-            return ImGui::ImageButton(name,
-                                      (ImTextureID)image,
-                                      ImVec2(float(image->width), float(image->height)));
-        }
-
-        bool ImageButtonSize(const char* name, const raylib::Texture* image, ImVec2 size)
-        {
-            if (!image)
-                return false;
-            if (internal::GlobalContext)
-                ImGui::SetCurrentContext(internal::GlobalContext);
-            return ImGui::ImageButton(name, (ImTextureID)image, size);
-        }
-
-        void ImageSize(const raylib::Texture* image, int width, int height)
-        {
-            if (!image)
+            if (image == nullptr)
                 return;
-            if (internal::GlobalContext)
-                ImGui::SetCurrentContext(internal::GlobalContext);
-            ImGui::Image((ImTextureID)image, ImVec2(float(width), float(height)));
+            if (m_context != nullptr)
+                ImGui::SetCurrentContext(m_context);
+
+            ImGui::Image(reinterpret_cast<const ImTextureID>(image),
+                         ImVec2(cast::to<f32>(width), cast::to<f32>(height)));
         }
 
-        void ImageSizeV(const raylib::Texture* image, raylib::Vector2 size)
+        /**
+         * @brief Draw a texture as an image in an ImGui Context at a specific size
+         * Uses the current ImGui Cursor position and the specified size
+         * The image will be scaled up or down to fit as needed
+         *
+         * @param image The raylib texture to draw
+         * @param size The size of drawn image
+         * */
+        void image_size_v(raylib::Texture* image, raylib::Vector2 size)
         {
-            if (!image)
+            if (image == nullptr)
                 return;
-            if (internal::GlobalContext)
-                ImGui::SetCurrentContext(internal::GlobalContext);
-            ImGui::Image((ImTextureID)image, ImVec2(size.x, size.y));
+            if (m_context != nullptr)
+                ImGui::SetCurrentContext(m_context);
+
+            ImGui::Image(reinterpret_cast<const ImTextureID>(image),
+                         ImVec2(cast::to<f32>(size.x), cast::to<f32>(size.y)));
         }
 
-        void ImageRect(const raylib::Texture* image,
-                       int destWidth,
-                       int destHeight,
-                       raylib::Rectangle sourceRect)
+        /**
+         * @brief Draw a portion texture as an image in an ImGui Context at a defined size
+         * Uses the current ImGui Cursor position and the specified size
+         * The image will be scaled up or down to fit as needed
+         *
+         * @param image The raylib texture to draw
+         * @param destWidth The width of the drawn image
+         * @param destHeight The height of the drawn image
+         * @param sourceRect The portion of the texture to draw as an image. Negative values
+         * for the width and height will flip the image
+         * */
+        void image_rect(raylib::Texture* image,
+                        i32 destWidth,
+                        i32 destHeight,
+                        raylib::Rectangle sourceRect)
         {
-            if (!image)
+            if (image == nullptr)
                 return;
-            if (internal::GlobalContext)
-                ImGui::SetCurrentContext(internal::GlobalContext);
+            if (m_context != nullptr)
+                ImGui::SetCurrentContext(m_context);
 
-            ImVec2 uv0;
-            ImVec2 uv1;
+            ImVec2 uv0{};
+            ImVec2 uv1{};
 
             if (sourceRect.width < 0)
             {
-                uv0.x = -((float)sourceRect.x / image->width);
-                uv1.x = (uv0.x - static_cast<float>(std::fabs(sourceRect.width) / image->width));
+                uv0.x = -(sourceRect.x / cast::to<f32>(image->width));
+                uv1.x = uv0.x - (std::fabs(sourceRect.width) / cast::to<f32>(image->width));
             }
             else
             {
-                uv0.x = static_cast<float>(sourceRect.x) / image->width;
-                uv1.x = uv0.x + static_cast<float>(sourceRect.width / image->width);
+                uv0.x = sourceRect.x / cast::to<f32>(image->width);
+                uv1.x = uv0.x + (sourceRect.width / cast::to<f32>(image->width));
             }
 
             if (sourceRect.height < 0)
             {
-                uv0.y = -static_cast<float>(sourceRect.y) / image->height;
-                uv1.y = (uv0.y - (float)(fabs(sourceRect.height) / image->height));
+                uv0.y = -(sourceRect.y / cast::to<f32>(image->height));
+                uv1.y = uv0.y - (std::fabs(sourceRect.height) / cast::to<f32>(image->height));
             }
             else
             {
-                uv0.y = static_cast<float>(sourceRect.y) / image->height;
-                uv1.y = uv0.y + (float)(sourceRect.height / image->height);
+                uv0.y = sourceRect.y / cast::to<f32>(image->height);
+                uv1.y = uv0.y + (sourceRect.height / cast::to<f32>(image->height));
             }
 
-            ImGui::Image((ImTextureID)image, ImVec2(float(destWidth), float(destHeight)), uv0, uv1);
+            ImGui::Image(reinterpret_cast<const ImTextureID>(image),
+                         ImVec2(cast::to<f32>(destWidth), cast::to<f32>(destHeight)), uv0, uv1);
+            // ImGui::Image((ImTextureID)image, ImVec2(float(destWidth), float(destHeight)), uv0, uv1);
         }
 
-        // API
-        void ImageRenderTexture(const raylib::RenderTexture* image)
+        /**
+         * @brief Draws a render texture as an image an ImGui Context, automatically flipping the Y
+         * axis so it will show correctly on screen
+         *
+         * @param image The render texture to draw
+         * */
+        void image_render_texture(raylib::RenderTexture* image)
         {
-            if (!image)
+            if (image == nullptr)
                 return;
+            if (m_context != nullptr)
+                ImGui::SetCurrentContext(m_context);
 
-            if (internal::GlobalContext)
-                ImGui::SetCurrentContext(internal::GlobalContext);
-
-            ImageRect(&image->texture,
-                      image->texture.width,
-                      image->texture.height,
-                      raylib::Rectangle{ 0, 0, float(image->texture.width),
-                                         -float(image->texture.height) });
+            this->image_rect(&image->texture,
+                             image->texture.width,
+                             image->texture.height,
+                             ds::rect<f32>{
+                                 0,
+                                 0,
+                                 float(image->texture.width),
+                                 -float(image->texture.height),
+                             });
         }
 
-        // API
-        void ImageRenderTextureFit(const raylib::RenderTexture* image, bool center)
+        /**
+         * @brief Draws a render texture as an image an ImGui Context, automatically flipping the Y
+         * axis so it will show correctly on screen Fits the render texture to the available content
+         * area
+         *
+         * @param image The render texture to draw
+         * @param center When true the image will be centered in the content area
+         * */
+        void image_render_texture_fit(raylib::RenderTexture* image, bool center)
         {
-            if (!image)
+            if (image == nullptr)
                 return;
-            if (internal::GlobalContext)
-                ImGui::SetCurrentContext(internal::GlobalContext);
 
-            ImVec2 area = ImGui::GetContentRegionAvail();
+            if (this->m_context != nullptr)
+                ImGui::SetCurrentContext(this->m_context);
 
-            float scale = area.x / image->texture.width;
+            ImVec2 area{ ImGui::GetContentRegionAvail() };
 
-            float y = image->texture.height * scale;
+            f32 scale{ area.x / image->texture.width };
+            f32 y{ image->texture.height * scale };
             if (y > area.y)
-                scale = area.y / image->texture.height;
+                scale = area.y / cast::to<f32>(image->texture.height);
 
-            int sizeX = int(image->texture.width * scale);
-            int sizeY = int(image->texture.height * scale);
+            i32 sizeX{ cast::to<i32>(image->texture.width * scale) };
+            i32 sizeY{ cast::to<i32>(image->texture.height * scale) };
 
             if (center)
             {
-                ImGui::SetCursorPosX(0);
-                ImGui::SetCursorPosX(area.x / 2 - sizeX / 2);
-                ImGui::SetCursorPosY(ImGui::GetCursorPosY() + (area.y / 2 - sizeY / 2));
+                ImGui::SetCursorPosX(0.0f);
+                ImGui::SetCursorPosX(cast::to<f32>(area.x) / 2.0f - cast::to<f32>(sizeX) / 2.0f);
+                ImGui::SetCursorPosY(ImGui::GetCursorPosY() +
+                                     (cast::to<f32>(area.y) / 2.0f - cast::to<f32>(sizeY) / 2.0f));
             }
 
-            ImageRect(&image->texture,
-                      sizeX,
-                      sizeY,
-                      raylib::Rectangle{ 0, 0, float(image->texture.width),
-                                         -float(image->texture.height) });
+            this->image_rect(&image->texture,
+                             sizeX,
+                             sizeY,
+                             ds::rect<f32>{
+                                 0.0f,
+                                 0.0f,
+                                 cast::to<f32>(image->texture.width),
+                                 -cast::to<f32>(image->texture.height),
+                             });
+        }
+
+        /**
+         * @brief Draws a texture as an image button in an ImGui context. Uses the current ImGui
+         * cursor position and the full size of the texture
+         *
+         * @param name The display name and ImGui ID for the button
+         * @param image The texture to draw
+         * @returns True if the button was clicked
+         * */
+        bool image_button(const char* name, raylib::Texture* image)
+        {
+            if (image == nullptr)
+                return false;
+            if (m_context)
+                ImGui::SetCurrentContext(m_context);
+
+            return ImGui::ImageButton(
+                name,
+                static_cast<const ImTextureID>(image),
+                ImVec2(cast::to<f32>(image->width), cast::to<f32>(image->height)));
+        }
+
+        /**
+         * @brief Draws a texture as an image button in an ImGui context. Uses the current ImGui
+         * cursor position and the specified size.
+         *
+         * @param name The display name and ImGui ID for the button
+         * @param image The texture to draw
+         * @param size The size of the button
+         * @returns true if the button was clicked
+         * */
+        bool image_button_size(const char* name, raylib::Texture* image, ImVec2 size)
+        {
+            if (image == nullptr)
+                return false;
+            if (m_context != nullptr)
+                ImGui::SetCurrentContext(m_context);
+
+            return ImGui::ImageButton(name, static_cast<const ImTextureID>(image), size);
         }
 
         // raw ImGui backend API
-        bool ImGui_ImplRaylib_Init()
-        {
-            internal::SetupGlobals();
-            internal::SetupKeymap();
+        bool imgui_impl_init(const rl::Window& window);
 
-            ImGuiIO& io{ ImGui::GetIO() };
-            io.Fonts->AddFontDefault();
-
-            internal::SetupFontAwesome();
-            internal::SetupMouseCursors();
-            internal::SetupBackend();
-            internal::ReloadFonts();
-
-            return true;
-        }
-
-        void ImGui_ImplRaylib_Shutdown()
+        void imgui_impl_shutdown()
         {
             ImGuiIO& io{ ImGui::GetIO() };
-            raylib::Texture2D* fontTexture = (raylib::Texture2D*)io.Fonts->TexID;
 
+            auto fontTexture{ static_cast<raylib::Texture2D*>(io.Fonts->TexID) };
             if (fontTexture && fontTexture->id != 0)
                 raylib::UnloadTexture(*fontTexture);
 
-            io.Fonts->TexID = 0;
+            io.Fonts->TexID = nullptr;
         }
 
-        void ImGui_ImplRaylib_NewFrame()
-        {
-            internal::ImGuiNewFrame(raylib::GetFrameTime());
-        }
-
-        void ImGui_ImplRaylib_RenderDrawData(ImDrawData* draw_data)
+        void imgui_impl_render_draw_data(const ImDrawData* draw_data)
         {
             raylib::rlDrawRenderBatchActive();
             raylib::rlDisableBackfaceCulling();
 
             for (int l = 0; l < draw_data->CmdListsCount; ++l)
             {
-                const ImDrawList* commandList = draw_data->CmdLists[l];
-
+                const ImDrawList* commandList{ draw_data->CmdLists[l] };
                 for (const auto& cmd : commandList->CmdBuffer)
                 {
-                    internal::EnableScissor(
-                        cmd.ClipRect.x - draw_data->DisplayPos.x,
-                        cmd.ClipRect.y - draw_data->DisplayPos.y,
-                        cmd.ClipRect.z - (cmd.ClipRect.x - draw_data->DisplayPos.x),
-                        cmd.ClipRect.w - (cmd.ClipRect.y - draw_data->DisplayPos.y));
+                    this->EnableScissor(cmd.ClipRect.x - draw_data->DisplayPos.x,
+                                        cmd.ClipRect.y - draw_data->DisplayPos.y,
+                                        cmd.ClipRect.z - (cmd.ClipRect.x - draw_data->DisplayPos.x),
+                                        cmd.ClipRect.w - (cmd.ClipRect.y - draw_data->DisplayPos.y));
 
                     if (cmd.UserCallback != nullptr)
                     {
@@ -266,11 +364,11 @@ namespace rl
                         continue;
                     }
 
-                    internal::ImGuiRenderTriangles(cmd.ElemCount,
-                                                   cmd.IdxOffset,
-                                                   commandList->IdxBuffer,
-                                                   commandList->VtxBuffer,
-                                                   cmd.TextureId);
+                    this->imgui_render_triangles(cast::to<i32>(cmd.ElemCount),
+                                                 cast::to<i32>(cmd.IdxOffset),
+                                                 commandList->IdxBuffer,
+                                                 commandList->VtxBuffer,
+                                                 cmd.TextureId);
 
                     raylib::rlDrawRenderBatchActive();
                 }
@@ -281,220 +379,40 @@ namespace rl
             raylib::rlEnableBackfaceCulling();
         }
 
-        bool ImGui_ImplRaylib_ProcessEvents()
-        {
-            ImGuiIO& io{ ImGui::GetIO() };
-
-            bool focused = raylib::IsWindowFocused();
-            if (focused != internal::LastFrameFocused)
-                io.AddFocusEvent(focused);
-            internal::LastFrameFocused = focused;
-
-            // handle the modifyer key events so that shortcuts work
-            bool ctrlDown = internal::IsControlDown();
-            if (ctrlDown != internal::LastControlPressed)
-                io.AddKeyEvent(ImGuiMod_Ctrl, ctrlDown);
-            internal::LastControlPressed = ctrlDown;
-
-            bool shiftDown = internal::IsShiftDown();
-            if (shiftDown != internal::LastShiftPressed)
-                io.AddKeyEvent(ImGuiMod_Shift, shiftDown);
-            internal::LastShiftPressed = shiftDown;
-
-            bool altDown = internal::IsAltDown();
-            if (altDown != internal::LastAltPressed)
-                io.AddKeyEvent(ImGuiMod_Alt, altDown);
-            internal::LastAltPressed = altDown;
-
-            bool superDown = internal::IsSuperDown();
-            if (superDown != internal::LastSuperPressed)
-                io.AddKeyEvent(ImGuiMod_Super, superDown);
-            internal::LastSuperPressed = superDown;
-
-            // get the pressed keys, they are in event order
-            int keyId = raylib::GetKeyPressed();
-            while (keyId != 0)
-            {
-                auto keyItr = m_rlkeymap.find(raylib::KeyboardKey(keyId));
-                if (keyItr != m_rlkeymap.end())
-                    io.AddKeyEvent(keyItr->second, true);
-                keyId = raylib::GetKeyPressed();
-            }
-
-            // look for any keys that were down last frame and see if they were down and are released
-            for (const auto keyItr : m_rlkeymap)
-                if (raylib::IsKeyReleased(keyItr.first))
-                    io.AddKeyEvent(keyItr.second, false);
-
-            // add the text input in order
-            unsigned int pressed = raylib::GetCharPressed();
-            while (pressed != 0)
-            {
-                io.AddInputCharacter(pressed);
-                pressed = raylib::GetCharPressed();
-            }
-
-            return true;
-        }
-
-        // API
-        void BeginDelta(rl::f32 deltaTime)
-        {
-            ImGui::SetCurrentContext(internal::GlobalContext);
-            internal::ImGuiNewFrame(deltaTime);
-            ImGui_ImplRaylib_ProcessEvents();
-            ImGui::NewFrame();
-        }
-
-        void End()
-        {
-            ImGui::SetCurrentContext(internal::GlobalContext);
-            ImGui::Render();
-            ImGui_ImplRaylib_RenderDrawData(ImGui::GetDrawData());
-        }
-
-        void Shutdown()
-        {
-            ImGui::SetCurrentContext(internal::GlobalContext);
-            ImGui_ImplRaylib_Shutdown();
-            ImGui::DestroyContext();
-        }
+        bool imgui_impl_process_events(const rl::Window& window);
 
     private:
-        bool IsControlDown()
-        {
-            return raylib::IsKeyDown(raylib::KEY_RIGHT_CONTROL) ||
-                   raylib::IsKeyDown(raylib::KEY_LEFT_CONTROL);
-        }
-
-        bool IsShiftDown()
-        {
-            return raylib::IsKeyDown(raylib::KEY_RIGHT_SHIFT) ||
-                   raylib::IsKeyDown(raylib::KEY_LEFT_SHIFT);
-        }
-
-        bool IsAltDown()
-        {
-            return raylib::IsKeyDown(raylib::KEY_RIGHT_ALT) ||
-                   raylib::IsKeyDown(raylib::KEY_LEFT_ALT);
-        }
-
-        bool IsSuperDown()
-        {
-            return raylib::IsKeyDown(raylib::KEY_RIGHT_SUPER) ||
-                   raylib::IsKeyDown(raylib::KEY_LEFT_SUPER);
-        }
-
-        void ReloadFontsInternal()
+        void reload_fonts_internal()
         {
             ImGuiIO& io{ ImGui::GetIO() };
-            unsigned char* pixels{ nullptr };
 
-            int width{};
-            int height{};
+            u8* pixels{ nullptr };
+            size_t width{ 0 };
+            size_t height{ 0 };
+            io.Fonts->GetTexDataAsRGBA32(&pixels, reinterpret_cast<i32*>(&width),
+                                         reinterpret_cast<i32*>(&height), nullptr);
 
-            io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height, nullptr);
-            raylib::Image image = raylib::GenImageColor(width, height, raylib::BLANK);
-            memcpy(image.data, pixels, width * height * 4);
+            raylib::Image image{ raylib::GenImageColor(cast::to<i32>(width), cast::to<i32>(height),
+                                                       raylib::BLANK) };
+            std::memcpy(image.data, pixels, width * height * 4);
 
-            raylib::Texture2D* fontTexture = (raylib::Texture2D*)io.Fonts->TexID;
-            if (fontTexture && fontTexture->id != 0)
+            raylib::Texture2D* font_texture{ static_cast<raylib::Texture2D*>(io.Fonts->TexID) };
+            if (font_texture != nullptr && font_texture->id != 0)
             {
-                raylib::UnloadTexture(*fontTexture);
-                raylib::MemFree(fontTexture);
+                raylib::UnloadTexture(*font_texture);
+                delete font_texture;
+                font_texture = nullptr;
             }
 
-            fontTexture  = (raylib::Texture2D*)raylib::MemAlloc(sizeof(raylib::Texture2D));
-            *fontTexture = raylib::LoadTextureFromImage(image);
+            runtime_assert(font_texture == nullptr, "leaking font texture, hasn't been deallocated");
+            font_texture = new raylib::Texture2D{ raylib::LoadTextureFromImage(image) };
             raylib::UnloadImage(image);
-            io.Fonts->TexID = fontTexture;
+            io.Fonts->TexID = font_texture;
         }
 
-        const char* GetClipTextCallback(void*)
-        {
-            return raylib::GetClipboardText();
-        }
+        void imgui_new_frame(const rl::Window& window, const rl::Display& display);
 
-        void SetClipTextCallback(void*, const char* text)
-        {
-            raylib::SetClipboardText(text);
-        }
-
-        void ImGuiNewFrame(float deltaTime)
-        {
-            ImGuiIO& io{ ImGui::GetIO() };
-
-            if (raylib::IsWindowFullscreen())
-            {
-                int monitor      = raylib::GetCurrentMonitor();
-                io.DisplaySize.x = float(raylib::GetMonitorWidth(monitor));
-                io.DisplaySize.y = float(raylib::GetMonitorHeight(monitor));
-            }
-            else
-            {
-                io.DisplaySize.x = float(raylib::GetScreenWidth());
-                io.DisplaySize.y = float(raylib::GetScreenHeight());
-            }
-
-            int width = int(io.DisplaySize.x), height = int(io.DisplaySize.y);
-            glfwGetFramebufferSize(glfwGetCurrentContext(), &width, &height);
-
-            if (width > 0 && height > 0)
-                io.DisplayFramebufferScale = ImVec2(width / io.DisplaySize.x,
-                                                    height / io.DisplaySize.y);
-            else
-                io.DisplayFramebufferScale = ImVec2(1.0f, 1.0f);
-
-            io.DeltaTime = deltaTime;
-
-            if (io.WantSetMousePos)
-            {
-                raylib::SetMousePosition(static_cast<rl::i32>(io.MousePos.x),
-                                         static_cast<rl::i32>(io.MousePos.y));
-            }
-            else
-            {
-                io.MousePos.x = static_cast<float>(raylib::GetMouseX());
-                io.MousePos.y = static_cast<float>(raylib::GetMouseY());
-            }
-
-            io.MouseDown[0] = raylib::IsMouseButtonDown(raylib::MOUSE_LEFT_BUTTON);
-            io.MouseDown[1] = raylib::IsMouseButtonDown(raylib::MOUSE_RIGHT_BUTTON);
-            io.MouseDown[2] = raylib::IsMouseButtonDown(raylib::MOUSE_MIDDLE_BUTTON);
-
-            {
-                raylib::Vector2 mouseWheel{ raylib::GetMouseWheelMoveV() };
-                io.MouseWheel += mouseWheel.y;
-                io.MouseWheelH += mouseWheel.x;
-            }
-
-            if ((io.ConfigFlags & ImGuiConfigFlags_NoMouseCursorChange) == 0)
-            {
-                ImGuiMouseCursor imgui_cursor{ ImGui::GetMouseCursor() };
-                if (imgui_cursor != internal::CurrentMouseCursor || io.MouseDrawCursor)
-                {
-                    internal::CurrentMouseCursor = imgui_cursor;
-                    if (io.MouseDrawCursor || imgui_cursor == ImGuiMouseCursor_None)
-                    {
-                        raylib::HideCursor();
-                    }
-                    else
-                    {
-                        raylib::ShowCursor();
-
-                        if (!(io.ConfigFlags & ImGuiConfigFlags_NoMouseCursorChange))
-                        {
-                            raylib::SetMouseCursor(
-                                (imgui_cursor > -1 && imgui_cursor < ImGuiMouseCursor_COUNT)
-                                    ? MouseCursorMap[imgui_cursor]
-                                    : raylib::MOUSE_CURSOR_DEFAULT);
-                        }
-                    }
-                }
-            }
-        }
-
-        static void ImGuiTriangleVert(ImDrawVert& idx_vert)
+        void imgui_triangle_vert(ImDrawVert& idx_vert)
         {
             raylib::Color* c;
             c = reinterpret_cast<raylib::Color*>(&idx_vert.col);
@@ -503,22 +421,22 @@ namespace rl
             raylib::rlVertex2f(idx_vert.pos.x, idx_vert.pos.y);
         }
 
-        static void ImGuiRenderTriangles(rl::i32 count,
-                                         rl::i32 indexStart,
-                                         const ImVector<ImDrawIdx>& indexBuffer,
-                                         const ImVector<ImDrawVert>& vertBuffer,
-                                         void* texture_data)
+        void imgui_render_triangles(i32 count,
+                                    i32 indexStart,
+                                    const ImVector<ImDrawIdx>& indexBuffer,
+                                    const ImVector<ImDrawVert>& vertBuffer,
+                                    void* texture_data)
         {
             if (count < 3)
                 return;
 
             raylib::Texture* texture = static_cast<raylib::Texture*>(texture_data);
-            rl::u32 textureId{ texture == nullptr ? 0 : texture->id };
+            u32 textureId{ texture == nullptr ? 0 : texture->id };
 
             raylib::rlBegin(RL_TRIANGLES);
             raylib::rlSetTexture(textureId);
 
-            for (rl::i32 i = 0; i <= (count - 3); i += 3)
+            for (i32 i = 0; i <= (count - 3); i += 3)
             {
                 if (raylib::rlCheckRenderBatchLimit(3))
                 {
@@ -534,40 +452,26 @@ namespace rl
                 ImDrawVert vertexB{ vertBuffer[indexB] };
                 ImDrawVert vertexC{ vertBuffer[indexC] };
 
-                ImGuiTriangleVert(vertexA);
-                ImGuiTriangleVert(vertexB);
-                ImGuiTriangleVert(vertexC);
+                this->imgui_triangle_vert(vertexA);
+                this->imgui_triangle_vert(vertexB);
+                this->imgui_triangle_vert(vertexC);
             }
 
             raylib::rlEnd();
         }
 
-        static void EnableScissor(float x, float y, float width, float height)
+        void EnableScissor(float x, float y, float width, float height)
         {
             raylib::rlEnableScissorTest();
             ImGuiIO& io{ ImGui::GetIO() };
-            raylib::rlScissor(
-                static_cast<rl::i32>(x * io.DisplayFramebufferScale.x),
-                static_cast<rl::i32>((raylib::GetScreenHeight() - static_cast<rl::i32>(y + height)) *
-                                     io.DisplayFramebufferScale.y),
-                static_cast<rl::i32>(width * io.DisplayFramebufferScale.x),
-                static_cast<rl::i32>(height * io.DisplayFramebufferScale.y));
+            raylib::rlScissor(cast::to<i32>(x * io.DisplayFramebufferScale.x),
+                              cast::to<i32>((raylib::GetScreenHeight() - cast::to<i32>(y + height)) *
+                                            cast::to<i32>(io.DisplayFramebufferScale.y)),
+                              cast::to<i32>(width * io.DisplayFramebufferScale.x),
+                              cast::to<i32>(height * io.DisplayFramebufferScale.y));
         }
 
-        static void SetupMouseCursors()
-        {
-            internal::MouseCursorMap[ImGuiMouseCursor_Arrow]     = raylib::MOUSE_CURSOR_ARROW;
-            internal::MouseCursorMap[ImGuiMouseCursor_TextInput] = raylib::MOUSE_CURSOR_IBEAM;
-            internal::MouseCursorMap[ImGuiMouseCursor_Hand] = raylib::MOUSE_CURSOR_POINTING_HAND;
-            internal::MouseCursorMap[ImGuiMouseCursor_ResizeAll] = raylib::MOUSE_CURSOR_RESIZE_ALL;
-            internal::MouseCursorMap[ImGuiMouseCursor_ResizeEW]  = raylib::MOUSE_CURSOR_RESIZE_EW;
-            internal::MouseCursorMap[ImGuiMouseCursor_ResizeNESW] = raylib::MOUSE_CURSOR_RESIZE_NESW;
-            internal::MouseCursorMap[ImGuiMouseCursor_ResizeNS] = raylib::MOUSE_CURSOR_RESIZE_NS;
-            internal::MouseCursorMap[ImGuiMouseCursor_ResizeNWSE] = raylib::MOUSE_CURSOR_RESIZE_NWSE;
-            internal::MouseCursorMap[ImGuiMouseCursor_NotAllowed] = raylib::MOUSE_CURSOR_NOT_ALLOWED;
-        }
-
-        void SetupFontAwesome()
+        void setup_font_awesome()
         {
             static const ImWchar icons_ranges[] = {
                 ICON_MIN_FA,
@@ -582,158 +486,166 @@ namespace rl
             icons_config.GlyphRanges          = icons_ranges;
 
             ImGuiIO& io{ ImGui::GetIO() };
-            io.Fonts->AddFontFromMemoryCompressedTTF((void*)(fa_solid_900_compressed_data),
-                                                     fa_solid_900_compressed_size,
-                                                     FONT_AWESOME_ICON_SIZE,
-                                                     &icons_config,
-                                                     icons_ranges);
+            io.Fonts->AddFontFromMemoryCompressedTTF(
+                reinterpret_cast<const void*>(fa_solid_900_compressed_data),
+                fa_solid_900_compressed_size,
+                gui::FONT_AWESOME_ICON_SIZE,
+                &icons_config,
+                icons_ranges);
         }
 
-        void SetupBackend()
+        void setup_imgui_backend()
         {
             ImGuiIO& io{ ImGui::GetIO() };
             io.BackendPlatformName = "imgui_impl_raylib";
+
+            io.ClipboardUserData = nullptr;
             io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
-            io.MousePos           = { 0, 0 };
-            io.SetClipboardTextFn = internal::SetClipTextCallback;
-            io.GetClipboardTextFn = internal::GetClipTextCallback;
-            io.ClipboardUserData  = nullptr;
+            io.MousePos = { 0, 0 };
+
+            io.SetClipboardTextFn = [](void*, const char* text) {
+                return raylib::SetClipboardText(text);
+            };
+
+            io.GetClipboardTextFn = [](void*) {
+                return raylib::GetClipboardText();
+            };
         }
 
-        static void SetupKeymap()
-        {
-            if (!m_rlkeymap.empty())
-                return;
-
-            // build up a map of raylib keys to ImGuiKeys
-            m_rlkeymap[raylib::KEY_APOSTROPHE]    = ImGuiKey_Apostrophe;
-            m_rlkeymap[raylib::KEY_COMMA]         = ImGuiKey_Comma;
-            m_rlkeymap[raylib::KEY_MINUS]         = ImGuiKey_Minus;
-            m_rlkeymap[raylib::KEY_PERIOD]        = ImGuiKey_Period;
-            m_rlkeymap[raylib::KEY_SLASH]         = ImGuiKey_Slash;
-            m_rlkeymap[raylib::KEY_ZERO]          = ImGuiKey_0;
-            m_rlkeymap[raylib::KEY_ONE]           = ImGuiKey_1;
-            m_rlkeymap[raylib::KEY_TWO]           = ImGuiKey_2;
-            m_rlkeymap[raylib::KEY_THREE]         = ImGuiKey_3;
-            m_rlkeymap[raylib::KEY_FOUR]          = ImGuiKey_4;
-            m_rlkeymap[raylib::KEY_FIVE]          = ImGuiKey_5;
-            m_rlkeymap[raylib::KEY_SIX]           = ImGuiKey_6;
-            m_rlkeymap[raylib::KEY_SEVEN]         = ImGuiKey_7;
-            m_rlkeymap[raylib::KEY_EIGHT]         = ImGuiKey_8;
-            m_rlkeymap[raylib::KEY_NINE]          = ImGuiKey_9;
-            m_rlkeymap[raylib::KEY_SEMICOLON]     = ImGuiKey_Semicolon;
-            m_rlkeymap[raylib::KEY_EQUAL]         = ImGuiKey_Equal;
-            m_rlkeymap[raylib::KEY_A]             = ImGuiKey_A;
-            m_rlkeymap[raylib::KEY_B]             = ImGuiKey_B;
-            m_rlkeymap[raylib::KEY_C]             = ImGuiKey_C;
-            m_rlkeymap[raylib::KEY_D]             = ImGuiKey_D;
-            m_rlkeymap[raylib::KEY_E]             = ImGuiKey_E;
-            m_rlkeymap[raylib::KEY_F]             = ImGuiKey_F;
-            m_rlkeymap[raylib::KEY_G]             = ImGuiKey_G;
-            m_rlkeymap[raylib::KEY_H]             = ImGuiKey_H;
-            m_rlkeymap[raylib::KEY_I]             = ImGuiKey_I;
-            m_rlkeymap[raylib::KEY_J]             = ImGuiKey_J;
-            m_rlkeymap[raylib::KEY_K]             = ImGuiKey_K;
-            m_rlkeymap[raylib::KEY_L]             = ImGuiKey_L;
-            m_rlkeymap[raylib::KEY_M]             = ImGuiKey_M;
-            m_rlkeymap[raylib::KEY_N]             = ImGuiKey_N;
-            m_rlkeymap[raylib::KEY_O]             = ImGuiKey_O;
-            m_rlkeymap[raylib::KEY_P]             = ImGuiKey_P;
-            m_rlkeymap[raylib::KEY_Q]             = ImGuiKey_Q;
-            m_rlkeymap[raylib::KEY_R]             = ImGuiKey_R;
-            m_rlkeymap[raylib::KEY_S]             = ImGuiKey_S;
-            m_rlkeymap[raylib::KEY_T]             = ImGuiKey_T;
-            m_rlkeymap[raylib::KEY_U]             = ImGuiKey_U;
-            m_rlkeymap[raylib::KEY_V]             = ImGuiKey_V;
-            m_rlkeymap[raylib::KEY_W]             = ImGuiKey_W;
-            m_rlkeymap[raylib::KEY_X]             = ImGuiKey_X;
-            m_rlkeymap[raylib::KEY_Y]             = ImGuiKey_Y;
-            m_rlkeymap[raylib::KEY_Z]             = ImGuiKey_Z;
-            m_rlkeymap[raylib::KEY_SPACE]         = ImGuiKey_Space;
-            m_rlkeymap[raylib::KEY_ESCAPE]        = ImGuiKey_Escape;
-            m_rlkeymap[raylib::KEY_ENTER]         = ImGuiKey_Enter;
-            m_rlkeymap[raylib::KEY_TAB]           = ImGuiKey_Tab;
-            m_rlkeymap[raylib::KEY_BACKSPACE]     = ImGuiKey_Backspace;
-            m_rlkeymap[raylib::KEY_INSERT]        = ImGuiKey_Insert;
-            m_rlkeymap[raylib::KEY_DELETE]        = ImGuiKey_Delete;
-            m_rlkeymap[raylib::KEY_RIGHT]         = ImGuiKey_RightArrow;
-            m_rlkeymap[raylib::KEY_LEFT]          = ImGuiKey_LeftArrow;
-            m_rlkeymap[raylib::KEY_DOWN]          = ImGuiKey_DownArrow;
-            m_rlkeymap[raylib::KEY_UP]            = ImGuiKey_UpArrow;
-            m_rlkeymap[raylib::KEY_PAGE_UP]       = ImGuiKey_PageUp;
-            m_rlkeymap[raylib::KEY_PAGE_DOWN]     = ImGuiKey_PageDown;
-            m_rlkeymap[raylib::KEY_HOME]          = ImGuiKey_Home;
-            m_rlkeymap[raylib::KEY_END]           = ImGuiKey_End;
-            m_rlkeymap[raylib::KEY_CAPS_LOCK]     = ImGuiKey_CapsLock;
-            m_rlkeymap[raylib::KEY_SCROLL_LOCK]   = ImGuiKey_ScrollLock;
-            m_rlkeymap[raylib::KEY_NUM_LOCK]      = ImGuiKey_NumLock;
-            m_rlkeymap[raylib::KEY_PRINT_SCREEN]  = ImGuiKey_PrintScreen;
-            m_rlkeymap[raylib::KEY_PAUSE]         = ImGuiKey_Pause;
-            m_rlkeymap[raylib::KEY_F1]            = ImGuiKey_F1;
-            m_rlkeymap[raylib::KEY_F2]            = ImGuiKey_F2;
-            m_rlkeymap[raylib::KEY_F3]            = ImGuiKey_F3;
-            m_rlkeymap[raylib::KEY_F4]            = ImGuiKey_F4;
-            m_rlkeymap[raylib::KEY_F5]            = ImGuiKey_F5;
-            m_rlkeymap[raylib::KEY_F6]            = ImGuiKey_F6;
-            m_rlkeymap[raylib::KEY_F7]            = ImGuiKey_F7;
-            m_rlkeymap[raylib::KEY_F8]            = ImGuiKey_F8;
-            m_rlkeymap[raylib::KEY_F9]            = ImGuiKey_F9;
-            m_rlkeymap[raylib::KEY_F10]           = ImGuiKey_F10;
-            m_rlkeymap[raylib::KEY_F11]           = ImGuiKey_F11;
-            m_rlkeymap[raylib::KEY_F12]           = ImGuiKey_F12;
-            m_rlkeymap[raylib::KEY_LEFT_SHIFT]    = ImGuiKey_LeftShift;
-            m_rlkeymap[raylib::KEY_LEFT_CONTROL]  = ImGuiKey_LeftCtrl;
-            m_rlkeymap[raylib::KEY_LEFT_ALT]      = ImGuiKey_LeftAlt;
-            m_rlkeymap[raylib::KEY_LEFT_SUPER]    = ImGuiKey_LeftSuper;
-            m_rlkeymap[raylib::KEY_RIGHT_SHIFT]   = ImGuiKey_RightShift;
-            m_rlkeymap[raylib::KEY_RIGHT_CONTROL] = ImGuiKey_RightCtrl;
-            m_rlkeymap[raylib::KEY_RIGHT_ALT]     = ImGuiKey_RightAlt;
-            m_rlkeymap[raylib::KEY_RIGHT_SUPER]   = ImGuiKey_RightSuper;
-            m_rlkeymap[raylib::KEY_KB_MENU]       = ImGuiKey_Menu;
-            m_rlkeymap[raylib::KEY_LEFT_BRACKET]  = ImGuiKey_LeftBracket;
-            m_rlkeymap[raylib::KEY_BACKSLASH]     = ImGuiKey_Backslash;
-            m_rlkeymap[raylib::KEY_RIGHT_BRACKET] = ImGuiKey_RightBracket;
-            m_rlkeymap[raylib::KEY_GRAVE]         = ImGuiKey_GraveAccent;
-            m_rlkeymap[raylib::KEY_KP_0]          = ImGuiKey_Keypad0;
-            m_rlkeymap[raylib::KEY_KP_1]          = ImGuiKey_Keypad1;
-            m_rlkeymap[raylib::KEY_KP_2]          = ImGuiKey_Keypad2;
-            m_rlkeymap[raylib::KEY_KP_3]          = ImGuiKey_Keypad3;
-            m_rlkeymap[raylib::KEY_KP_4]          = ImGuiKey_Keypad4;
-            m_rlkeymap[raylib::KEY_KP_5]          = ImGuiKey_Keypad5;
-            m_rlkeymap[raylib::KEY_KP_6]          = ImGuiKey_Keypad6;
-            m_rlkeymap[raylib::KEY_KP_7]          = ImGuiKey_Keypad7;
-            m_rlkeymap[raylib::KEY_KP_8]          = ImGuiKey_Keypad8;
-            m_rlkeymap[raylib::KEY_KP_9]          = ImGuiKey_Keypad9;
-            m_rlkeymap[raylib::KEY_KP_DECIMAL]    = ImGuiKey_KeypadDecimal;
-            m_rlkeymap[raylib::KEY_KP_DIVIDE]     = ImGuiKey_KeypadDivide;
-            m_rlkeymap[raylib::KEY_KP_MULTIPLY]   = ImGuiKey_KeypadMultiply;
-            m_rlkeymap[raylib::KEY_KP_SUBTRACT]   = ImGuiKey_KeypadSubtract;
-            m_rlkeymap[raylib::KEY_KP_ADD]        = ImGuiKey_KeypadAdd;
-            m_rlkeymap[raylib::KEY_KP_ENTER]      = ImGuiKey_KeypadEnter;
-            m_rlkeymap[raylib::KEY_KP_EQUAL]      = ImGuiKey_KeypadEqual;
-        }
-
-        static void SetupGlobals()
-        {
-            internal::LastFrameFocused   = raylib::IsWindowFocused();
-            internal::LastControlPressed = false;
-            internal::LastShiftPressed   = false;
-            internal::LastAltPressed     = false;
-            internal::LastSuperPressed   = false;
-        }
+        void reset_gui_state(const rl::Window& window);
 
     private:
-        ImGuiMouseCursor CurrentMouseCursor = ImGuiMouseCursor_COUNT;
-        raylib::MouseCursor MouseCursorMap[ImGuiMouseCursor_COUNT];
+        rl::Input m_input{};
 
-        ImGuiContext* GlobalContext{ nullptr };
+        bool m_last_frame_focused{ false };
+        bool m_last_control_pressed{ false };
+        bool m_last_shift_pressed{ false };
+        bool m_last_alt_pressed{ false };
+        bool m_last_super_pressed{ false };
 
-        std::map<raylib::KeyboardKey, ImGuiKey> m_m_rl_keymap;
+        ImGuiContext* m_context{ nullptr };
+        ImGuiMouseCursor m_curr_mouse_cursor{ ImGuiMouseCursor_COUNT };
 
-        bool LastFrameFocused{ false };
-        bool LastControlPressed{ false };
-        bool LastShiftPressed{ false };
-        bool LastAltPressed{ false };
-        bool LastSuperPressed{ false };
+        static constexpr inline i32 FONT_AWESOME_ICON_SIZE{ 12 };
+
+        static constexpr inline std::array m_mouse_cursor_map = {
+            input::Mouse::Cursor::Arrow,         // ImGuiMouseCursor_Arrow      (0)
+            input::Mouse::Cursor::IBeam,         // ImGuiMouseCursor_TextInput  (1)
+            input::Mouse::Cursor::OmniResize,    // ImGuiMouseCursor_ResizeAll  (2)
+            input::Mouse::Cursor::VertResize,    // ImGuiMouseCursor_ResizeNS   (3)
+            input::Mouse::Cursor::HorizResize,   // ImGuiMouseCursor_ResizeEW   (4)
+            input::Mouse::Cursor::TRtoBLResize,  // ImGuiMouseCursor_ResizeNESW (5)
+            input::Mouse::Cursor::TLtoBRResize,  // ImGuiMouseCursor_ResizeNWSE (6)
+            input::Mouse::Cursor::Hand,          // ImGuiMouseCursor_Hand       (7)
+            input::Mouse::Cursor::Disabled,      // ImGuiMouseCursor_NotAllowed (8)
+        };
+
+        static const inline std::unordered_map<input::Key, ImGuiKey> m_imgui_keymap = {
+            { input::Key::Apostrophe, ImGuiKey_Apostrophe },
+            { input::Key::Comma, ImGuiKey_Comma },
+            { input::Key::Minus, ImGuiKey_Minus },
+            { input::Key::Period, ImGuiKey_Period },
+            { input::Key::ForwardSlash, ImGuiKey_Slash },
+            { input::Key::Zero, ImGuiKey_0 },
+            { input::Key::One, ImGuiKey_1 },
+            { input::Key::Two, ImGuiKey_2 },
+            { input::Key::Three, ImGuiKey_3 },
+            { input::Key::Four, ImGuiKey_4 },
+            { input::Key::Five, ImGuiKey_5 },
+            { input::Key::Six, ImGuiKey_6 },
+            { input::Key::Seven, ImGuiKey_7 },
+            { input::Key::Eight, ImGuiKey_8 },
+            { input::Key::Nine, ImGuiKey_9 },
+            { input::Key::Semicolon, ImGuiKey_Semicolon },
+            { input::Key::Equal, ImGuiKey_Equal },
+            { input::Key::A, ImGuiKey_A },
+            { input::Key::B, ImGuiKey_B },
+            { input::Key::C, ImGuiKey_C },
+            { input::Key::D, ImGuiKey_D },
+            { input::Key::E, ImGuiKey_E },
+            { input::Key::F, ImGuiKey_F },
+            { input::Key::G, ImGuiKey_G },
+            { input::Key::H, ImGuiKey_H },
+            { input::Key::I, ImGuiKey_I },
+            { input::Key::J, ImGuiKey_J },
+            { input::Key::K, ImGuiKey_K },
+            { input::Key::L, ImGuiKey_L },
+            { input::Key::M, ImGuiKey_M },
+            { input::Key::N, ImGuiKey_N },
+            { input::Key::O, ImGuiKey_O },
+            { input::Key::P, ImGuiKey_P },
+            { input::Key::Q, ImGuiKey_Q },
+            { input::Key::R, ImGuiKey_R },
+            { input::Key::S, ImGuiKey_S },
+            { input::Key::T, ImGuiKey_T },
+            { input::Key::U, ImGuiKey_U },
+            { input::Key::V, ImGuiKey_V },
+            { input::Key::W, ImGuiKey_W },
+            { input::Key::X, ImGuiKey_X },
+            { input::Key::Y, ImGuiKey_Y },
+            { input::Key::Z, ImGuiKey_Z },
+            { input::Key::Space, ImGuiKey_Space },
+            { input::Key::Escape, ImGuiKey_Escape },
+            { input::Key::Enter, ImGuiKey_Enter },
+            { input::Key::Tab, ImGuiKey_Tab },
+            { input::Key::Backspace, ImGuiKey_Backspace },
+            { input::Key::Insert, ImGuiKey_Insert },
+            { input::Key::Delete, ImGuiKey_Delete },
+            { input::Key::Right, ImGuiKey_RightArrow },
+            { input::Key::Left, ImGuiKey_LeftArrow },
+            { input::Key::Down, ImGuiKey_DownArrow },
+            { input::Key::Up, ImGuiKey_UpArrow },
+            { input::Key::PageUp, ImGuiKey_PageUp },
+            { input::Key::PageDown, ImGuiKey_PageDown },
+            { input::Key::Home, ImGuiKey_Home },
+            { input::Key::End, ImGuiKey_End },
+            { input::Key::CapsLock, ImGuiKey_CapsLock },
+            { input::Key::ScrollLock, ImGuiKey_ScrollLock },
+            { input::Key::NumLock, ImGuiKey_NumLock },
+            { input::Key::PrintScreen, ImGuiKey_PrintScreen },
+            { input::Key::Pause, ImGuiKey_Pause },
+            { input::Key::F1, ImGuiKey_F1 },
+            { input::Key::F2, ImGuiKey_F2 },
+            { input::Key::F3, ImGuiKey_F3 },
+            { input::Key::F4, ImGuiKey_F4 },
+            { input::Key::F5, ImGuiKey_F5 },
+            { input::Key::F6, ImGuiKey_F6 },
+            { input::Key::F7, ImGuiKey_F7 },
+            { input::Key::F8, ImGuiKey_F8 },
+            { input::Key::F9, ImGuiKey_F9 },
+            { input::Key::F10, ImGuiKey_F10 },
+            { input::Key::F11, ImGuiKey_F11 },
+            { input::Key::F12, ImGuiKey_F12 },
+            { input::Key::LeftShift, ImGuiKey_LeftShift },
+            { input::Key::LeftCtrl, ImGuiKey_LeftCtrl },
+            { input::Key::LeftAlt, ImGuiKey_LeftAlt },
+            { input::Key::LeftSuper, ImGuiKey_LeftSuper },
+            { input::Key::LeftShift, ImGuiKey_RightShift },
+            { input::Key::RightCtrl, ImGuiKey_RightCtrl },
+            { input::Key::RightAlt, ImGuiKey_RightAlt },
+            { input::Key::RightSuper, ImGuiKey_RightSuper },
+            { input::Key::KB_Menu, ImGuiKey_Menu },
+            { input::Key::LeftBracket, ImGuiKey_LeftBracket },
+            { input::Key::Backslash, ImGuiKey_Backslash },
+            { input::Key::RightBracket, ImGuiKey_RightBracket },
+            { input::Key::Tilda, ImGuiKey_GraveAccent },
+            { input::Key::NP_0, ImGuiKey_Keypad0 },
+            { input::Key::NP_1, ImGuiKey_Keypad1 },
+            { input::Key::NP_2, ImGuiKey_Keypad2 },
+            { input::Key::NP_3, ImGuiKey_Keypad3 },
+            { input::Key::NP_4, ImGuiKey_Keypad4 },
+            { input::Key::NP_5, ImGuiKey_Keypad5 },
+            { input::Key::NP_6, ImGuiKey_Keypad6 },
+            { input::Key::NP_7, ImGuiKey_Keypad7 },
+            { input::Key::NP_8, ImGuiKey_Keypad8 },
+            { input::Key::NP_9, ImGuiKey_Keypad9 },
+            { input::Key::NP_Decimal, ImGuiKey_KeypadDecimal },
+            { input::Key::NP_Divide, ImGuiKey_KeypadDivide },
+            { input::Key::NP_Multiply, ImGuiKey_KeypadMultiply },
+            { input::Key::NP_Subtract, ImGuiKey_KeypadSubtract },
+            { input::Key::NP_Add, ImGuiKey_KeypadAdd },
+            { input::Key::NP_Enter, ImGuiKey_KeypadEnter },
+            { input::Key::NP_Equal, ImGuiKey_KeypadEqual },
+        };
     };
 }

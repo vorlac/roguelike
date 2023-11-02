@@ -37,8 +37,8 @@ namespace rl::scene
                 raylib::SetRandomSeed(2147483647);
 
                 const ds::point<f32> centroid{
-                    static_cast<f32>(raylib::GetScreenWidth()) / 2.0f,
-                    static_cast<f32>(raylib::GetScreenHeight()) / 2.0f,
+                    cast::to<f32>(raylib::GetScreenWidth()) / 2.0f,
+                    cast::to<f32>(raylib::GetScreenHeight()) / 2.0f,
                 };
 
                 constexpr size_t count = 25000;
@@ -49,8 +49,8 @@ namespace rl::scene
                     };
 
                     ds::velocity<f32> velocity{
-                        static_cast<f32>(raylib::GetRandomValue(-1000, 1000) / 10.0),
-                        static_cast<f32>(raylib::GetRandomValue(-1000, 1000) / 10.0),
+                        cast::to<f32>(raylib::GetRandomValue(-1000, 1000) / 10.0),
+                        cast::to<f32>(raylib::GetRandomValue(-1000, 1000) / 10.0),
                     };
 
                     world.entity(fmt::format("Rect {}", i).data())
@@ -82,14 +82,14 @@ namespace rl::scene
                 static auto top_bottom_collision = [](const component::position& pos) {
                     bool top_collision    = pos.y - (rect_size.height / 2.0f) <= 0.0f;
                     bool bottom_collision = pos.y + (rect_size.height / 2.0f) >=
-                                            static_cast<float>(window_size.height);
+                                            cast::to<float>(window_size.height);
                     return top_collision || bottom_collision;
                 };
 
                 static auto left_right_collision = [](const component::position& pos) {
                     bool left_collision  = pos.x - (rect_size.width / 2.0f) <= 0.0f;
                     bool right_collision = pos.x + (rect_size.width / 2.0f) >=
-                                           static_cast<float>(window_size.width);
+                                           cast::to<float>(window_size.width);
                     return left_collision || right_collision;
                 };
 
@@ -202,10 +202,10 @@ namespace rl::scene
                     .each([&](const component::position& p, const component::style& c,
                               const component::scale& s) {
                         raylib::DrawRectangle(
-                            static_cast<i32>(p.x) - static_cast<i32>(rect_size.width / 2.0f),
-                            static_cast<i32>(p.y) - static_cast<i32>(rect_size.height / 2.0f),
-                            static_cast<i32>(rect_size.width * s.factor),
-                            static_cast<i32>(rect_size.height * s.factor), c.color);
+                            cast::to<i32>(p.x) - cast::to<i32>(rect_size.width / 2.0f),
+                            cast::to<i32>(p.y) - cast::to<i32>(rect_size.height / 2.0f),
+                            cast::to<i32>(rect_size.width * s.factor),
+                            cast::to<i32>(rect_size.height * s.factor), c.color);
                     });
             }
 

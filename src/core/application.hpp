@@ -35,6 +35,5 @@ namespace rl
 
     protected:
         rl::Window m_window{};
-        rl::Display m_display{};
     };
 }

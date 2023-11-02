@@ -12,12 +12,12 @@ namespace rl
     class Display
     {
     public:
-        i32 monitor_count();
-        i32 current_monitor();
-        u32 monitor_refresh_rate(u16 monitor);
-        std::string monitor_name(u16 monitor);
-        ds::point<f32> monitor_position(u16 monitor);
-        ds::dimensions<i32> monitor_dims(i16 monitor);
-        ds::dimensions<i32> monitor_physical_dims(i16 monitor);
+        i32 monitor_count() const;
+        i32 current_monitor() const;
+        u32 monitor_refresh_rate(i32 monitor) const;
+        std::string monitor_name(i32 monitor) const;
+        ds::point<f32> monitor_position(i32 monitor) const;
+        ds::dimensions<i32> monitor_dims(i32 monitor) const;
+        ds::dimensions<i32> monitor_physical_dims(i32 monitor) const;
     };
 }

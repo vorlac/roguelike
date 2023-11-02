@@ -118,7 +118,7 @@ namespace rl::input
         NP_9         = raylib::KEY_KP_9,           // Key: Keypad 9
         NP_Decimal   = raylib::KEY_KP_DECIMAL,     // Key: Keypad .
         NP_Divide    = raylib::KEY_KP_DIVIDE,      // Key: Keypad /
-        NP_MULTIPLY  = raylib::KEY_KP_MULTIPLY,    // Key: Keypad *
+        NP_Multiply  = raylib::KEY_KP_MULTIPLY,    // Key: Keypad *
         NP_Subtract  = raylib::KEY_KP_SUBTRACT,    // Key: Keypad -
         NP_Add       = raylib::KEY_KP_ADD,         // Key: Keypad +
         NP_Enter     = raylib::KEY_KP_ENTER,       // Key: Keypad Enter

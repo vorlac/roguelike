@@ -1,6 +1,6 @@
 #include "core/input/gamepad.hpp"
 
-namespace rl::input::device
+namespace rl::input
 {
     Gamepad::Gamepad(i32 id)
         : m_gamepad_id(id)

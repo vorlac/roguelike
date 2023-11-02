@@ -7,7 +7,7 @@
 #include "core/numeric_types.hpp"
 #include "thirdparty/raylib.hpp"
 
-namespace rl::input::device
+namespace rl::input
 {
     class Gamepad
     {

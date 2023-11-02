@@ -1,11 +1,13 @@
 #pragma once
 
 #include <cstdint>
+#include <type_traits>
 
 namespace rl
 {
-    using f32 = float;
-    using f64 = double;
+    using f32  = float;
+    using f64  = double;
+    using lf64 = long double;
 
     using i8  = int8_t;
     using i16 = int16_t;

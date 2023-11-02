@@ -25,8 +25,7 @@ namespace rl::ds
         Vertical   = 2,  // y axis
     };
 
-    template <typename T>
-        requires Numeric<T>
+    template <rl::numeric T>
     class rect
     {
     public:
@@ -55,17 +54,17 @@ namespace rl::ds
         constexpr operator raylib::Rectangle()
             requires std::same_as<T, f32>
         {
-            return *static_cast<raylib::Rectangle*>(this);
+            return *reinterpret_cast<raylib::Rectangle*>(this);
         }
 
         constexpr operator raylib::Rectangle()
             requires(!std::same_as<T, f32>)
         {
             return raylib::Rectangle{
-                .x      = static_cast<f32>(m_pt.x),
-                .y      = static_cast<f32>(m_pt.y),
-                .width  = static_cast<f32>(m_size.width),
-                .height = static_cast<f32>(m_size.height),
+                .x      = cast::to<f32>(m_pt.x),
+                .y      = cast::to<f32>(m_pt.y),
+                .width  = cast::to<f32>(m_size.width),
+                .height = cast::to<f32>(m_size.height),
             };
         }
 
@@ -114,7 +113,7 @@ namespace rl::ds
          * */
         constexpr inline bool is_empty() const
         {
-            return this->area() == static_cast<T>(0);
+            return this->area() == cast::to<T>(0);
         }
 
         /**
@@ -175,8 +174,8 @@ namespace rl::ds
         constexpr inline point<T> centroid() const
         {
             return {
-                .x = m_pt.x + (m_size.width / static_cast<T>(2)),
-                .y = m_pt.y + (m_size.height / static_cast<T>(2)),
+                .x = m_pt.x + (m_size.width / cast::to<T>(2)),
+                .y = m_pt.y + (m_size.height / cast::to<T>(2)),
             };
         }
 
@@ -273,8 +272,8 @@ namespace rl::ds
         {
             constexpr point<T> center{ this->centroid() };
             const dimensions<T> quad_size{
-                m_size.width / static_cast<T>(2),
-                m_size.height / static_cast<T>(2),
+                m_size.width / cast::to<T>(2),
+                m_size.height / cast::to<T>(2),
             };
 
             switch (quad)
@@ -305,7 +304,7 @@ namespace rl::ds
         /**
          * returns an array of the 4 quadrants of this rectangle
          * */
-        constexpr inline rect<T> quads() const
+        inline rect<T> quads() const
         {
             std::array<rect<T>, 4> quadrants{ 0 };
             quads[Quad::TopLeft]     = this->quad(Quad::TopLeft);
@@ -327,14 +326,14 @@ namespace rl::ds
                 // horizontal line as the slice point
                 ds::dimensions<T> size{
                     m_size.width,
-                    m_size.height / static_cast<T>(2),
+                    m_size.height / cast::to<T>(2),
                 };
                 return std::array{
                     rect<T>{ m_pt, size },
                     rect<T>{
                         {
-                            m_pt + static_cast<T>(0),
-                            m_size.height / static_cast<T>(2),
+                            m_pt + cast::to<T>(0),
+                            m_size.height / cast::to<T>(2),
                         },
                         size,
                     },
@@ -345,15 +344,15 @@ namespace rl::ds
                 // split the rect in half using a
                 // vertical line as the slice point
                 ds::dimensions<T> size{
-                    m_size.width / static_cast<T>(2),
+                    m_size.width / cast::to<T>(2),
                     m_size.height,
                 };
                 return std::array{
                     rect<T>{ m_pt, size },
                     rect<T>{
                         {
-                            m_pt + (m_size.height / static_cast<T>(2)),
-                            static_cast<T>(0),
+                            m_pt + (m_size.height / cast::to<T>(2)),
+                            cast::to<T>(0),
                         },
                         size,
                     },
@@ -403,14 +402,14 @@ namespace rl::ds
     private:
         // position of the rect's top left point
         point<T> m_pt{
-            static_cast<T>(0),  // x
-            static_cast<T>(0),  // y
+            cast::to<T>(0),  // x
+            cast::to<T>(0),  // y
         };
 
         // 2D size of the rect, relative to m_pt
         dimensions<T> m_size{
-            static_cast<T>(0),  // width
-            static_cast<T>(0),  // height
+            cast::to<T>(0),  // width
+            cast::to<T>(0),  // height
         };
     };
 }

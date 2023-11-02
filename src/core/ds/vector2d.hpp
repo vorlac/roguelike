@@ -5,16 +5,17 @@
 #include <concepts>
 #include <cstdint>
 #include <memory>
+#include <imgui.h>
 #include <type_traits>
 
 #include "core/numeric_types.hpp"
 #include "core/utils/concepts.hpp"
+#include "core/utils/conversions.hpp"
 #include "thirdparty/raylib.hpp"
 
 namespace rl::ds
 {
-    template <typename T>
-        requires Numeric<T>
+    template <rl::numeric T>
     struct vector2
     {
         T x{ 0 };
@@ -26,21 +27,50 @@ namespace rl::ds
         {
         }
 
-    public:
-        template <typename V>
-            requires std::same_as<T, V>
-        constexpr vector2(const raylib::Vector2& other)
+        constexpr inline vector2(const raylib::Vector2& other)
+            requires std::same_as<T, f32>
         {
             std::memcpy(this, &other, sizeof(*this));
         }
 
-        constexpr operator raylib::Vector2() const
+        constexpr inline vector2(const raylib::Vector2& other)
+            requires(!std::same_as<T, f32>)
+            : x{ cast::to<T>(other.x) }
+            , y{ cast::to<T>(other.y) }
         {
-            return *reinterpret_cast<const raylib::Vector2*>(this);
         }
 
-    public:
-        constexpr bool is_zero(bool exact = false) noexcept
+        constexpr inline operator raylib::Vector2()
+            requires std::same_as<T, f32>
+        {
+            return *reinterpret_cast<raylib::Vector2*>(this);
+        }
+
+        constexpr inline operator ::ImVec2()
+            requires std::same_as<T, f32>
+        {
+            return *reinterpret_cast<::ImVec2*>(this);
+        }
+
+        constexpr inline operator raylib::Vector2()
+            requires(!std::same_as<T, f32>)
+        {
+            return {
+                cast::to<f32>(this->x),
+                cast::to<f32>(this->y),
+            };
+        }
+
+        constexpr inline operator ::ImVec2()
+            requires(!std::same_as<T, f32>)
+        {
+            return {
+                cast::to<f32>(this->x),
+                cast::to<f32>(this->y),
+            };
+        }
+
+        constexpr inline bool is_zero(bool exact = false) noexcept
         {
             if (exact)
                 return this->operator==(vector2<T>::zero());
@@ -54,8 +84,8 @@ namespace rl::ds
         static constexpr inline vector2<T> zero() noexcept
         {
             return {
-                static_cast<T>(0),
-                static_cast<T>(0),
+                cast::to<std::type_identity_t<T>>(0),
+                cast::to<std::type_identity_t<T>>(0),
             };
         }
 
@@ -106,7 +136,7 @@ namespace rl::ds
         constexpr inline const vector2<T>& normalize()
         {
             f32 len_sq = this->length_squared();
-            if (len_sq != 0)
+            if (len_sq != 0.0f)
             {
                 f32 len = std::sqrtf(len_sq);
                 x /= len;

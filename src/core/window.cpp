@@ -4,9 +4,9 @@
 #include "core/ds/dimensions.hpp"
 #include "core/ds/point.hpp"
 #include "core/ds/vector2d.hpp"
+#include "core/utils/conversions.hpp"
 #include "core/window.hpp"
 #include "thirdparty/raylib.hpp"
-#include "thirdparty/rlimgui.hpp"
 
 namespace rl
 {
@@ -25,13 +25,13 @@ namespace rl
         this->teardown();
     }
 
-    void Window::begin_drawing()
+    void Window::begin_drawing() const
     {
         raylib::BeginDrawing();
         raylib::ClearBackground(color::darkgray);
     }
 
-    void Window::end_drawing(bool draw_fps /* = true*/)
+    void Window::end_drawing(bool draw_fps /* = true*/) const
     {
         if (draw_fps) [[likely]]
         {
@@ -44,10 +44,10 @@ namespace rl
 
     void Window::update_gui()
     {
-        m_gui.update(m_input);
+        m_gui.update(*this, m_display);
     }
 
-    bool Window::is_ready()
+    bool Window::is_ready() const
     {
         return raylib::IsWindowReady();
     }
@@ -62,123 +62,128 @@ namespace rl
         return raylib::CloseWindow();
     }
 
-    bool Window::is_fullscreen()
+    bool Window::is_fullscreen() const
     {
         return raylib::IsWindowFullscreen();
     }
 
-    bool Window::is_hidden()
+    bool Window::is_hidden() const
     {
         return raylib::IsWindowHidden();
     }
 
-    bool Window::is_minimized()
+    bool Window::is_minimized() const
     {
         return raylib::IsWindowMinimized();
     }
 
-    bool Window::is_maximized()
+    bool Window::is_maximized() const
     {
         return raylib::IsWindowMaximized();
     }
 
-    bool Window::is_focused()
+    bool Window::is_focused() const
     {
         return raylib::IsWindowFocused();
     }
 
-    bool Window::is_resized()
+    bool Window::is_resized() const
     {
         return raylib::IsWindowResized();
     }
 
-    bool Window::get_state(u32 flag)
+    bool Window::get_state(u32 flag) const
     {
         return raylib::IsWindowState(flag);
     }
 
-    void Window::set_state(u32 flags)
+    void Window::set_state(u32 flags) const
     {
         return raylib::SetWindowState(flags);
     }
 
-    void Window::clear_state(u32 flags)
+    void Window::clear_state(u32 flags) const
     {
         return raylib::ClearWindowState(flags);
     }
 
-    void Window::toggle_fullscreen()
+    void Window::toggle_fullscreen() const
     {
         return raylib::ToggleFullscreen();
     }
 
-    void Window::maximize()
+    void Window::maximize() const
     {
         return raylib::MaximizeWindow();
     }
 
-    void Window::minimize()
+    void Window::minimize() const
     {
         return raylib::MinimizeWindow();
     }
 
-    void Window::restore()
+    void Window::restore() const
     {
         return raylib::RestoreWindow();
     }
 
-    void Window::set_icon(raylib::Image&& image)
+    void Window::set_icon(raylib::Image&& image) const
     {
         return raylib::SetWindowIcon(image);
     }
 
-    void Window::set_icons(std::vector<raylib::Image>&& images)
+    void Window::set_icons(std::vector<raylib::Image>&& images) const
     {
-        return raylib::SetWindowIcons(images.data(), static_cast<int>(images.size()));
+        return raylib::SetWindowIcons(images.data(), cast::to<i32>(images.size()));
     }
 
-    void Window::title(std::string title)
+    void Window::title(std::string title) const
     {
         return raylib::SetWindowTitle(title.c_str());
     }
 
-    void Window::set_position(ds::point<i32> pos)
+    void Window::set_position(ds::point<i32> pos) const
     {
         return raylib::SetWindowPosition(pos.x, pos.y);
     }
 
-    void Window::set_monitor(i16 monitor)
+    void Window::set_monitor(i16 monitor) const
     {
         return raylib::SetWindowMonitor(monitor);
     }
 
-    void Window::min_size(ds::dimensions<i32> min_size)
+    void Window::min_size(ds::dimensions<i32> min_size) const
     {
         return raylib::SetWindowMinSize(min_size.width, min_size.height);
     }
 
-    void Window::size(ds::dimensions<i32> size)
+    void Window::size(ds::dimensions<i32> size) const
     {
         return raylib::SetWindowSize(size.width, size.height);
     }
 
-    void Window::opacity(f32 opacity)
+    void Window::opacity(f32 opacity) const
     {
         return raylib::SetWindowOpacity(opacity);
     }
 
-    void* Window::handle()
+    void* Window::handle() const
     {
         return raylib::GetWindowHandle();
     }
 
-    ds::point<f32> Window::center()
+    f32 Window::frame_time() const
     {
-        return ds::point<f32>(static_cast<f32>(raylib::GetScreenWidth()) / 2.0f,
-                              static_cast<f32>(raylib::GetScreenHeight()) / 2.0f);
+        return raylib::GetFrameTime();
     }
 
-    ds::dimensions<i32> Window::screen_size()
+    ds::point<f32> Window::center() const
+    {
+        return ds::point<f32>(cast::to<f32>(raylib::GetScreenWidth()) / 2.0f,
+                              cast::to<f32>(raylib::GetScreenHeight()) / 2.0f);
+    }
+
+    ds::dimensions<i32> Window::screen_size() const
     {
         return {
             raylib::GetScreenWidth(),
@@ -186,7 +191,7 @@ namespace rl
         };
     }
 
-    ds::dimensions<i32> Window::render_size()
+    ds::dimensions<i32> Window::render_size() const
     {
         return {
             raylib::GetRenderWidth(),
@@ -194,7 +199,7 @@ namespace rl
         };
     }
 
-    ds::point<f32> Window::position()
+    ds::point<f32> Window::position() const
     {
         auto pos{ raylib::GetWindowPosition() };
         return {
@@ -203,7 +208,7 @@ namespace rl
         };
     }
 
-    ds::vector2<f32> Window::scale_dpi_factor()
+    ds::vector2<f32> Window::scale_dpi_factor() const
     {
         const auto dpi{ raylib::GetWindowScaleDPI() };
         return ds::vector2<f32>(dpi.x, dpi.y);
@@ -217,7 +222,7 @@ namespace rl
 
         raylib::SetConfigFlags(flags);
         raylib::InitWindow(width, height, title.c_str());
-        m_gui.setup();
+        m_gui.setup(*this);
         return true;
     }
 

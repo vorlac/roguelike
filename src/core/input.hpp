@@ -63,7 +63,7 @@ namespace rl
                         break;
 
                     case input::InputDevice::Keyboard:
-                        if (m_keyboard.is_key_down(button))
+                        if (keyboard.is_key_down(button))
                             m_active_game_actions.push_back(action.action);
                 }
             }
@@ -94,7 +94,7 @@ namespace rl
 
                     case input::InputDevice::Keyboard:
                     {
-                        if (m_keyboard.is_key_down(button))
+                        if (keyboard.is_key_down(button))
                             m_active_ui_actions.push_back(action.action);
                         else
                             this->set_selection(false);
@@ -108,22 +108,22 @@ namespace rl
 
         inline constexpr auto mouse_button_states() const
         {
-            return m_mouse.get_button_states();
+            return mouse.get_button_states();
         }
 
         inline constexpr auto mouse_cursor_states() const
         {
-            return m_mouse.get_cursor_states();
+            return mouse.get_cursor_states();
         }
 
         inline ds::point<i32> mouse_cursor_position() const
         {
-            return m_mouse.get_position();
+            return mouse.get_position();
         }
 
         inline ds::vector2<i32> mouse_cursor_delta() const
         {
-            return m_mouse.get_delta();
+            return mouse.get_delta();
         }
 
         inline void set_selection(const bool picked, u64 id = 0)
@@ -139,14 +139,14 @@ namespace rl
     private:
         ds::vector2<f32> get_vector() const
         {
-            input::device::Gamepad::AxisID pos_x = 0;
-            input::device::Gamepad::AxisID neg_x = 1;
-            input::device::Gamepad::AxisID pos_y = 2;
-            input::device::Gamepad::AxisID neg_y = 3;
+            input::Gamepad::AxisID pos_x{ 0 };
+            input::Gamepad::AxisID neg_x{ 1 };
+            input::Gamepad::AxisID pos_y{ 2 };
+            input::Gamepad::AxisID neg_y{ 3 };
 
             ds::vector2<f32> vec = {
-                m_gamepad.get_axis_movement(pos_x) - m_gamepad.get_axis_movement(neg_x),
-                m_gamepad.get_axis_movement(pos_y) - m_gamepad.get_axis_movement(neg_y),
+                gamepad.get_axis_movement(pos_x) - gamepad.get_axis_movement(neg_x),
+                gamepad.get_axis_movement(pos_y) - gamepad.get_axis_movement(neg_y),
             };
 
             const f32 deadzone{ 0.1f };
@@ -159,11 +159,13 @@ namespace rl
                 return vec * (rl::math::inverse_lerp(deadzone, 1.0f, length) / length);
         }
 
+    public:
+        input::Mouse mouse{};
+        input::Keyboard keyboard{};
+        input::Gamepad gamepad{};
+
     private:
         std::atomic<std::pair<bool, u64>> m_selection{ std::make_pair(false, 0) };
-        input::device::Mouse m_mouse{};
-        input::device::Keyboard m_keyboard{};
-        input::device::Gamepad m_gamepad{};
 
         input::Keymap m_keymap{};
         std::vector<input::GameplayAction> m_active_game_actions{};

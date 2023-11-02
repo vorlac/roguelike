@@ -9,7 +9,7 @@
 #include "core/utils/assert.hpp"
 #include "thirdparty/raylib.hpp"
 
-namespace rl::input::device
+namespace rl::input
 {
     class Mouse
     {
@@ -28,7 +28,7 @@ namespace rl::input::device
             Disabled,
         };
 
-        enum Button : uint16_t {
+        enum Button : i16_fast {
             Left    = raylib::MOUSE_BUTTON_LEFT,     // Left mouse button
             Right   = raylib::MOUSE_BUTTON_RIGHT,    // Right mouse button
             Middle  = raylib::MOUSE_BUTTON_MIDDLE,   // Middle mouse button (pressed wheel)
@@ -36,10 +36,10 @@ namespace rl::input::device
             Extra   = raylib::MOUSE_BUTTON_EXTRA,    // Extra mouse button (advanced mouse device)
             Forward = raylib::MOUSE_BUTTON_FORWARD,  // Forward button (advanced mouse device)
             Back    = raylib::MOUSE_BUTTON_BACK,     // Back button (advanced mouse device)
-            Count
+            MouseButtonCount
         };
 
-        enum class Cursor : uint16_t {
+        enum Cursor : i16_fast {
             Default      = raylib::MOUSE_CURSOR_DEFAULT,
             Arrow        = raylib::MOUSE_CURSOR_ARROW,
             IBeam        = raylib::MOUSE_CURSOR_IBEAM,
@@ -51,7 +51,7 @@ namespace rl::input::device
             TRtoBLResize = raylib::MOUSE_CURSOR_RESIZE_NESW,
             OmniResize   = raylib::MOUSE_CURSOR_RESIZE_ALL,
             Disabled     = raylib::MOUSE_CURSOR_NOT_ALLOWED,
-            Count
+            MouseCursorCount
         };
 
         using ButtonID = std::underlying_type_t<Mouse::Button>;
@@ -92,16 +92,28 @@ namespace rl::input::device
 
         void set_x(i32 x) const;
         void set_y(i32 y) const;
-        void set_position(i32 x, i32 y) const;
-        void set_position(ds::point<i32> pos) const;
         void set_offset(i32 x_offset = 0, i32 y_offset = 0) const;
         void set_offset(ds::vector2<i32> offset) const;
         void set_scale(float x_scale = 1.0f, float y_scale = 1.0f) const;
         void set_scale(ds::vector2<float> scale) const;
         void set_cursor(CursorID cursor = raylib::MouseCursor::MOUSE_CURSOR_DEFAULT) const;
+        void hide_cursor() const;
+        void show_cursor() const;
 
         i32 get_x() const;
         i32 get_y() const;
+
+        template <rl::numeric T>
+        void set_position(T x, T y) const
+        {
+            return raylib::SetMousePosition(cast::to<i32>(x), cast::to<i32>(y));
+        }
+
+        template <rl::numeric T>
+        void set_position(ds::point<i32> pos) const
+        {
+            return raylib::SetMousePosition(cast::to<i32>(pos.x), cast::to<i32>(pos.y));
+        }
 
         ds::point<i32> get_position() const;
         ds::vector2<i32> get_delta() const;
@@ -110,10 +122,10 @@ namespace rl::input::device
 
         inline constexpr auto get_button_states(const bool check = true) const
         {
-            constexpr ButtonID button_count{ std::to_underlying(Mouse::Button::Count) };
+            constexpr ButtonID button_count{ Mouse::Button::MouseButtonCount };
             for (ButtonID id = 0; check && id < button_count; ++id)
             {
-                Mouse::ButtonState& state = m_button_states[id];
+                Mouse::ButtonState& state = m_button_states[cast::to<u32>(id)];
                 state = this->is_button_down(id) ? ((state != Mouse::ButtonState::Held &&  //
                                                      state != ButtonState::Pressed)
                                                         ? ButtonState::Pressed
@@ -148,13 +160,13 @@ namespace rl::input::device
 
         static inline constexpr Mouse::ButtonID button_id(Mouse::Button button)
         {
-            runtime_assert(button < Mouse::Button::Count, "invalid mouse button");
+            runtime_assert(button < Mouse::Button::MouseButtonCount, "invalid mouse button");
             return std::to_underlying(button);
         }
 
         static inline consteval Mouse::CursorID cursor_id(Mouse::Cursor cursor)
         {
-            runtime_assert(cursor < Mouse::Cursor::Count, "invalid mouse cursor");
+            runtime_assert(cursor < Mouse::Cursor::MouseCursorCount, "invalid mouse cursor");
             return std::to_underlying(cursor);
         }
 
@@ -167,6 +179,6 @@ namespace rl::input::device
                 { CursorState::None, ds::vector2<i32>::zero() },  // curr
             };
 
-        mutable std::array<ButtonState, static_cast<std::size_t>(Button::Count)> m_button_states{};
+        mutable std::array<ButtonState, Button::MouseButtonCount> m_button_states{};
     };
 }

@@ -4,6 +4,7 @@
 #include <utility>
 
 #include "core/numeric_types.hpp"
+#include "core/utils/conversions.hpp"
 #include "thirdparty/raylib.hpp"
 
 namespace rl
@@ -13,11 +14,6 @@ namespace rl
         constexpr color(const raylib::Color& other)
             : raylib::Color(other)
         {
-        }
-
-        constexpr operator raylib::Color()
-        {
-            return *static_cast<raylib::Color*>(this);
         }
 
         static constexpr inline auto lightgray{ raylib::LIGHTGRAY };
@@ -59,6 +55,6 @@ namespace rl
             color::raywhite,
         };
 
-        return color_list[static_cast<u64>(val) % color_list.size()];
+        return color_list[cast::to<u64>(val) % color_list.size()];
     }
 }

@@ -1,6 +1,8 @@
 #include "core/input/mouse.hpp"
 
-namespace rl::input::device
+#include "core/utils/conversions.hpp"
+
+namespace rl::input
 {
     i32 Mouse::get_x() const
     {
@@ -26,27 +28,17 @@ namespace rl::input::device
     {
         auto pos{ raylib::GetMousePosition() };
         return {
-            static_cast<i32>(pos.x),
-            static_cast<i32>(pos.y),
+            cast::to<i32>(pos.x),
+            cast::to<i32>(pos.y),
         };
-    }
-
-    void Mouse::set_position(i32 x, i32 y) const
-    {
-        return raylib::SetMousePosition(x, y);
-    }
-
-    void Mouse::set_position(ds::point<i32> pos) const
-    {
-        return raylib::SetMousePosition(pos.x, pos.y);
     }
 
     ds::vector2<i32> Mouse::get_delta() const
     {
         auto delta{ raylib::GetMouseDelta() };
         return {
-            static_cast<i32>(delta.x),
-            static_cast<i32>(delta.y),
+            cast::to<i32>(delta.x),
+            cast::to<i32>(delta.y),
         };
     }
 
@@ -60,12 +52,12 @@ namespace rl::input::device
         return raylib::SetMouseOffset(offset.x, offset.y);
     }
 
-    void Mouse::set_scale(float x_scale, float y_scale) const
+    void Mouse::set_scale(f32 x_scale, f32 y_scale) const
     {
         return raylib::SetMouseScale(x_scale, y_scale);
     }
 
-    void Mouse::set_scale(ds::vector2<float> scale) const
+    void Mouse::set_scale(ds::vector2<f32> scale) const
     {
         return raylib::SetMouseScale(scale.x, scale.y);
     }
@@ -75,7 +67,7 @@ namespace rl::input::device
         return raylib::GetMouseWheelMove();
     }
 
-    ds::vector2<float> Mouse::get_wheel_move_v() const
+    ds::vector2<f32> Mouse::get_wheel_move_v() const
     {
         auto mov = raylib::GetMouseWheelMoveV();
         return {
@@ -87,5 +79,15 @@ namespace rl::input::device
     void Mouse::set_cursor(CursorID cursor) const
     {
         return raylib::SetMouseCursor(cursor);
+    }
+
+    void Mouse::hide_cursor() const
+    {
+        return raylib::HideCursor();
+    }
+
+    void Mouse::show_cursor() const
+    {
+        return raylib::ShowCursor();
     }
 }

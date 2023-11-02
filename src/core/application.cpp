@@ -2,6 +2,7 @@
 #include <memory>
 
 #include "core/application.hpp"
+#include "core/utils/conversions.hpp"
 #include "thirdparty/raylib.hpp"
 
 namespace rl
@@ -24,17 +25,17 @@ namespace rl
 
     u32 Application::framerate()
     {
-        return static_cast<u32>(raylib::GetFPS());
+        return cast::to<u32>(raylib::GetFPS());
     }
 
     void Application::framerate(u32 target_fps)
     {
-        raylib::SetTargetFPS(static_cast<i32>(target_fps));
+        raylib::SetTargetFPS(cast::to<i32>(target_fps));
     }
 
     f32 Application::delta_time()
     {
-        return raylib::GetFrameTime();
+        return m_window.frame_time();
     }
 
     void Application::clipboard_text(std::string text)

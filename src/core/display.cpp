@@ -7,34 +7,34 @@
 
 namespace rl
 {
-    i32 Display::monitor_count()
+    i32 Display::monitor_count() const
     {
         return raylib::GetMonitorCount();
     }
 
-    i32 Display::current_monitor()
+    i32 Display::current_monitor() const
     {
         return raylib::GetCurrentMonitor();
     }
 
-    u32 Display::monitor_refresh_rate(u16 monitor)
+    u32 Display::monitor_refresh_rate(i32 monitor) const
     {
-        return static_cast<u32>(raylib::GetMonitorRefreshRate(monitor));
+        return cast::to<u32>(raylib::GetMonitorRefreshRate(monitor));
     }
 
-    std::string Display::monitor_name(u16 monitor)
+    std::string Display::monitor_name(i32 monitor) const
     {
         return raylib::GetMonitorName(monitor);
     }
 
-    ds::point<f32> Display::monitor_position(u16 monitor)
+    ds::point<f32> Display::monitor_position(i32 monitor) const
     {
         // TODO: change to pointi?
         auto pos{ raylib::GetMonitorPosition(monitor) };
         return ds::point<f32>(pos.x, pos.y);
     }
 
-    ds::dimensions<i32> Display::monitor_dims(i16 monitor)
+    ds::dimensions<i32> Display::monitor_dims(i32 monitor) const
     {
         return {
             raylib::GetMonitorWidth(monitor),
@@ -42,7 +42,7 @@ namespace rl
         };
     }
 
-    ds::dimensions<i32> Display::monitor_physical_dims(i16 monitor)
+    ds::dimensions<i32> Display::monitor_physical_dims(i32 monitor) const
     {
         return {
             raylib::GetMonitorPhysicalWidth(monitor),
