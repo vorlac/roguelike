@@ -4,13 +4,14 @@
   },
   "ExcludedItems": [
     ".git*",
-    ".clang*",
     ".idea",
+    ".clang-*",
     ".vscode",
     "*.md",
     "!.out*",
     "!.out/*",
     "!.out/build/*",
+    "!.clang-format",
     "!README.md"
   ],
   "Indexing": {

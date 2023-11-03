@@ -6,7 +6,10 @@
 #include "core/display.hpp"
 #include "core/ds/color.hpp"
 #include "core/gui.hpp"
+#include "core/ui/constraints_dialog.hpp"
+#include "core/ui/debug_dialog.hpp"
 #include "core/ui/debug_overlay.hpp"
+#include "core/ui/file_menu.hpp"
 #include "core/ui/styles.hpp"
 #include "core/window.hpp"
 #include "thirdparty/raylib.hpp"
@@ -49,9 +52,18 @@ namespace rl
 
     void gui::update(const Window& window, const Display& display)
     {
+        static ui::fps_overlay dbg_overlay{};
+        static ui::debug_dialog dgb_dialog{};
+        static ui::file_menu main_file_menu{};
+        static ui::constraints_dialog constraint_dialog{};
+
         this->begin(window, display);
-        static ui::fps_overlay overlay{};
-        overlay.update(window.frame_time(), raylib::GetFPS());
+
+        dgb_dialog.update();
+        main_file_menu.update();
+        constraint_dialog.update();
+        dbg_overlay.update(window.frame_time(), raylib::GetFPS());
+
         this->end();
     }
 
@@ -486,7 +498,7 @@ namespace rl
             font_texture = nullptr;
         }
 
-        runtime_assert(font_texture == nullptr, "leaking font texture, hasn't been deallocated");
+        assertion(font_texture == nullptr, "leaking font texture, hasn't been deallocated");
         font_texture = new raylib::Texture2D{ raylib::LoadTextureFromImage(image) };
         raylib::UnloadImage(image);
         io.Fonts->TexID = font_texture;

@@ -160,13 +160,13 @@ namespace rl::input
 
         static inline constexpr Mouse::ButtonID button_id(Mouse::Button button)
         {
-            runtime_assert(button < Mouse::Button::MouseButtonCount, "invalid mouse button");
+            assertion(button < Mouse::Button::MouseButtonCount, "invalid mouse button");
             return std::to_underlying(button);
         }
 
         static inline consteval Mouse::CursorID cursor_id(Mouse::Cursor cursor)
         {
-            runtime_assert(cursor < Mouse::Cursor::MouseCursorCount, "invalid mouse cursor");
+            assertion(cursor < Mouse::Cursor::MouseCursorCount, "invalid mouse cursor");
             return std::to_underlying(cursor);
         }
 
