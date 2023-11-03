@@ -72,16 +72,10 @@ set(raylib_VERBOSE TRUE)
 find_package(argparse CONFIG REQUIRED)
 find_package(flecs CONFIG REQUIRED)
 find_package(fmt CONFIG REQUIRED)
-find_package(glfw3 CONFIG REQUIRED)
+find_package(OpenGL REQUIRED COMPONENTS OpenGL)
 find_package(raylib CONFIG REQUIRED)
 find_package(simdjson CONFIG REQUIRED)
-find_package(imgui
-  CONFIG
-    REQUIRED
-  COMPONENTS
-    glfw-binding
-    vulkan-binding
-)
+find_package(imgui CONFIG REQUIRED)
 
 file(GLOB_RECURSE
   roguelike_sources
@@ -103,7 +97,11 @@ target_compile_features(${PROJECT_NAME} PRIVATE
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
   NOMINMAX
+  # RLGL_IMPLEMENTATION
+  # GL_GLEXT_PROTOTYPES
   # IMGUI_HAS_DOCK
+  # IMGUI_DEBUG_NAV_RECTS=1
+  # IMGUI_DEBUG_NAV_SCORING
 
   $<$<CONFIG:Debug>:
     ROGUELIKE_DEBUG
@@ -142,6 +140,7 @@ target_compile_options(${PROJECT_NAME} PRIVATE
 
 target_include_directories(${PROJECT_NAME}
   PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src"
+  ${OPENGL_INCLUDE_DIR}
 )
 
 target_link_libraries(${PROJECT_NAME}
@@ -149,6 +148,7 @@ target_link_libraries(${PROJECT_NAME}
   PRIVATE flecs::flecs_static
   PRIVATE fmt::fmt
   PRIVATE imgui::imgui
+  PRIVATE OpenGL::GL
   PRIVATE raylib
   PRIVATE simdjson::simdjson
   PRIVATE winmm

@@ -2,7 +2,6 @@
 
 #include <imgui.h>
 
-#include "core/ds/vector2d.hpp"
 #include "core/utils/conversions.hpp"
 
 namespace rl::ds
@@ -43,6 +42,34 @@ namespace rl::ds
         constexpr auto area() const -> decltype(width * height)
         {
             return width * height;
+        }
+
+        constexpr dimensions operator/=(auto div)
+        {
+            this->width /= cast::to<T>(div);
+            this->height /= cast::to<T>(div);
+        }
+
+        constexpr dimensions operator/(auto div)
+        {
+            return {
+                this->width / cast::to<T>(div),
+                this->height / cast::to<T>(div),
+            };
+        }
+
+        constexpr dimensions operator*=(auto mul)
+        {
+            this->width *= cast::to<T>(mul);
+            this->height *= cast::to<T>(mul);
+        }
+
+        constexpr dimensions operator*(auto mul)
+        {
+            return {
+                this->width * cast::to<T>(mul),
+                this->height * cast::to<T>(mul),
+            };
         }
     };
 }

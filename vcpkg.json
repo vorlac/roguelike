@@ -7,8 +7,10 @@
     "argparse",
     "simdjson",
     "raylib",
-    "imgui",
+    "opengl",
+    "vulkan",
     "glfw3",
+    "imgui",
     "flecs",
     "fmt"
   ]

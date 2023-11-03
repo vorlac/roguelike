@@ -25,5 +25,4 @@ namespace rl::ui
             ImGui::EndTooltip();
         }
     }
-
 }

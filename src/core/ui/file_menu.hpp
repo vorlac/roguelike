@@ -1,11 +1,12 @@
 #pragma once
 
 #include <string>
+#include <string_view>
 
 #include <imgui.h>
 
 #include "core/numeric_types.hpp"
-#include "core/ui/imgui_utils.hpp"
+#include "core/ui/imgui_helpers.hpp"
 #include "core/utils/assert.hpp"
 
 namespace rl::ui
@@ -98,7 +99,7 @@ namespace rl::ui
                 ImGui::MenuItem("Enabled", "", &enabled);
                 ImGui::BeginChild("child", { 0, 60 }, true);
 
-                for (int i = 0; i < 10; i++)
+                for (i32 i = 0; i < 10; ++i)
                     ImGui::Text("Scrolling Text %d", i);
 
                 ImGui::EndChild();
@@ -112,17 +113,19 @@ namespace rl::ui
 
             if (ImGui::BeginMenu("Colors"))
             {
-                float sz = ImGui::GetTextLineHeight();
-                for (int i = 0; i < ImGuiCol_COUNT; i++)
+                f32 sz{ ImGui::GetTextLineHeight() };
+                for (ImGuiCol i = 0; i < ImGuiCol_COUNT; i++)
                 {
-                    const char* name = ImGui::GetStyleColorName((ImGuiCol)i);
-                    ImVec2 p         = ImGui::GetCursorScreenPos();
-                    ImGui::GetWindowDrawList()->AddRectFilled(p, ImVec2(p.x + sz, p.y + sz),
-                                                              ImGui::GetColorU32((ImGuiCol)i));
-                    ImGui::Dummy(ImVec2(sz, sz));
+                    std::string_view name{ ImGui::GetStyleColorName(i) };
+                    u32 color_code{ ImGui::GetColorU32(i) };
+                    ds::point<f32> p{ ImGui::GetCursorScreenPos() };
+
+                    ImGui::GetWindowDrawList()->AddRectFilled(p, { p.x + sz, p.y + sz }, color_code);
+                    ImGui::Dummy({ sz, sz });
                     ImGui::SameLine();
-                    ImGui::MenuItem(name);
+                    ImGui::MenuItem(name.data());
                 }
+
                 ImGui::EndMenu();
             }
 
@@ -130,7 +133,6 @@ namespace rl::ui
             if (ImGui::BeginMenu("Options"))
             {
                 void* cb_user_data{ nullptr };
-
                 if (ui::file_menu::m_callback != nullptr)
                     ui::file_menu::m_callback(
                         __FILE__, __LINE__, "Examples/Menu/Append to an existing menu", cb_user_data);
@@ -144,11 +146,9 @@ namespace rl::ui
             if (ImGui::BeginMenu("Disabled", false))
                 assertion(false, "disabled menu item selected");
 
-            bool checked_selected{ ImGui::MenuItem("Checked", NULL, true) };
-
+            ImGui::MenuItem("Checked", NULL, true);
             ImGui::Separator();
-
-            bool quit_selected{ ImGui::MenuItem("Quit", "Alt+F4") };
+            ImGui::MenuItem("Quit", "Alt+F4");
         }
     };
 }

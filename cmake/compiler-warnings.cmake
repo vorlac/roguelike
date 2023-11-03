@@ -57,12 +57,20 @@ target_compile_options(${PROJECT_NAME}
             -Wno-missing-prototypes
             -Wno-c++20-extensions
             -Wno-c++20-compat
+			-Wno-double-promotion
+			-Wno-invalid-constexpr
+			-Wno-unused-variable
+			-Wno-uninitialized
+			-Wno-unsafe-buffer-usage
+			-Wno-zero-as-null-pointer-constant
+			-Wno-format-security
         >
 
         # Clang only
         $<${compiler_is_clang}:
             -Wdocumentation
             -Wimplicit-fallthrough
+
         >
 
         # GNU only
@@ -87,6 +95,8 @@ function(set_warn_everything)
                 -Wno-c++98-compat
                 -Wno-c++98-compat-pedantic
                 -Wno-padded
+				# prints extra hardening suggestions for unsafe buffer access
+				-fsafe-buffer-usage-suggestions
             >
    )
 endfunction()

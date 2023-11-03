@@ -11,7 +11,7 @@
 
 namespace rl::ui
 {
-    class fps_overlay
+    class diag_overlay
     {
     public:
         inline void update(const f32 frame_time, const i32 fps)
@@ -43,12 +43,9 @@ namespace rl::ui
                 ImGui::Text("Diagnostics");
                 ImGui::Separator();
 
-                std::string&& line1{ fmt::format("Cursor Position: {}", m_io.MousePos).data() };
-                std::string&& line2{ fmt::format("Frametime: {:2.6f} ms\n", frame_time).data() };
-                std::string&& line3{ fmt::format("FPS: {}\n", fps).data() };
-                ImGui::Text(line1.data());
-                ImGui::Text(line2.data());
-                ImGui::Text(line3.data());
+                ImGui::Text(fmt::format("Cursor Position: {}", m_io.MousePos).data());
+                ImGui::Text(fmt::format("Frametime: {:2.6f} ms\n", frame_time).data());
+                ImGui::Text(fmt::format("FPS: {}\n", fps).data());
 
                 if (ImGui::BeginPopupContextWindow())
                 {

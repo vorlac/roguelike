@@ -80,6 +80,6 @@ namespace rl::input
         {
             return this->is_key_down(input::Key::LeftSuper) ||
                    this->is_key_down(input::Key::RightSuper);
-        };
+        }
     };
 }

@@ -31,8 +31,6 @@ namespace rl
          * @brief Sets up imgui, loads fonts, and loads themes
          * Calls imgui_init and sets the theme. Will install Font awesome by default
          *
-         * @param dark_theme when true(default) the dark theme is used, when false the light theme
-         * is used
          * */
         void init(const rl::Window& window);
 

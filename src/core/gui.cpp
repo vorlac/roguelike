@@ -8,8 +8,9 @@
 #include "core/gui.hpp"
 #include "core/ui/constraints_dialog.hpp"
 #include "core/ui/debug_dialog.hpp"
-#include "core/ui/debug_overlay.hpp"
+#include "core/ui/diag_overlay.hpp"
 #include "core/ui/file_menu.hpp"
+#include "core/ui/main_menu.hpp"
 #include "core/ui/styles.hpp"
 #include "core/window.hpp"
 #include "thirdparty/raylib.hpp"
@@ -52,17 +53,19 @@ namespace rl
 
     void gui::update(const Window& window, const Display& display)
     {
-        static ui::fps_overlay dbg_overlay{};
+        static ui::constraints_dialog constraint_dialog{};
+        static ui::diag_overlay diag_overlay{};
         static ui::debug_dialog dgb_dialog{};
         static ui::file_menu main_file_menu{};
-        static ui::constraints_dialog constraint_dialog{};
+        static ui::main_menu main_menu{};
 
         this->begin(window, display);
 
-        dgb_dialog.update();
-        main_file_menu.update();
-        constraint_dialog.update();
-        dbg_overlay.update(window.frame_time(), raylib::GetFPS());
+        // dgb_dialog.update();
+        // main_file_menu.update();
+        // constraint_dialog.update();
+        main_menu.update();
+        diag_overlay.update(window.frame_time(), raylib::GetFPS());
 
         this->end();
     }
@@ -211,19 +214,19 @@ namespace rl
         }
     }
 
-    bool gui::imgui_init(const rl::Window& window)
-    {
-        this->reset_gui_state(window);
+    // bool gui::imgui_init(const rl::Window& window)
+    //{
+    //     this->reset_gui_state(window);
 
-        ImGuiIO& io{ ImGui::GetIO() };
-        io.Fonts->AddFontDefault();
+    //    ImGuiIO& io{ ImGui::GetIO() };
+    //    io.Fonts->AddFontDefault();
 
-        this->setup_font_awesome();
-        this->setup_imgui_backend();
-        this->imgui_reload_fonts();
+    //    this->setup_font_awesome();
+    //    this->setup_imgui_backend();
+    //    this->imgui_reload_fonts();
 
-        return true;
-    }
+    //    return true;
+    //}
 
     void gui::reset_gui_state(const rl::Window& window)
     {

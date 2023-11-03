@@ -5,7 +5,7 @@
 
 #include <imgui.h>
 
-#include "core/ui/imgui_utils.hpp"
+#include "core/ui/imgui_helpers.hpp"
 
 namespace rl::ui
 {
@@ -23,7 +23,6 @@ namespace rl::ui
 
     public:
         inline void update()
-
         {
             // We demonstrate using the full viewport area or the work area (without menu-bars,
             // task-bars etc.) Based on your use case you may want one or the other.

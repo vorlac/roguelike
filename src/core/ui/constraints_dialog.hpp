@@ -53,8 +53,8 @@ namespace rl::ui
             {
                 f32 step{ *static_cast<f32*>(data->UserData) };
                 data->DesiredSize = {
-                    cast::to<i32>(data->CurrentSize.x / step + 0.5f) * step,
-                    cast::to<i32>(data->CurrentSize.y / step + 0.5f) * step,
+                    (data->CurrentSize.x / step + 0.5f) * step,
+                    (data->CurrentSize.y / step + 0.5f) * step,
                 };
             }
         };

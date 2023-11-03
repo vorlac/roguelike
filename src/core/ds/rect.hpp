@@ -35,7 +35,7 @@ namespace rl::ds
         {
         }
 
-        constexpr explicit rect(point<T>&& pt, dimensions<T>&& size)
+        constexpr explicit rect(point<T> pt, dimensions<T> size)
             : m_pt{ pt }
             , m_size{ size }
         {
@@ -87,7 +87,7 @@ namespace rl::ds
         /**
          * @brief Get rectangle's width
          * */
-        inline T width() const
+        constexpr inline T width() const
         {
             return m_size.height;
         }
@@ -98,6 +98,14 @@ namespace rl::ds
         constexpr inline void width(const T width)
         {
             m_size.width = width;
+        }
+
+        /**
+         * @brief Get rectangle's size as dimensions
+         * */
+        constexpr inline ds::dimensions<T> size() const
+        {
+            return m_size;
         }
 
         /**
@@ -130,8 +138,8 @@ namespace rl::ds
         constexpr inline point<T> top_left() const
         {
             return {
-                .x = m_pt.x,
-                .y = m_pt.y,
+                m_pt.x,
+                m_pt.y,
             };
         }
 
@@ -141,8 +149,8 @@ namespace rl::ds
         constexpr inline point<T> top_right() const
         {
             return {
-                .x = m_pt.x + m_size.width,
-                .y = m_pt.y,
+                m_pt.x + m_size.width,
+                m_pt.y,
             };
         }
 
@@ -152,8 +160,8 @@ namespace rl::ds
         constexpr inline point<T> bot_left() const
         {
             return {
-                .x = m_pt.x,
-                .y = m_pt.y + m_size.height,
+                m_pt.x,
+                m_pt.y + m_size.height,
             };
         }
 
@@ -163,8 +171,8 @@ namespace rl::ds
         constexpr inline point<T> bot_right() const
         {
             return {
-                .x = m_pt.x + m_size.width,
-                .y = m_pt.y + m_size.height,
+                m_pt.x + m_size.width,
+                m_pt.y + m_size.height,
             };
         }
 
@@ -174,8 +182,8 @@ namespace rl::ds
         constexpr inline point<T> centroid() const
         {
             return {
-                .x = m_pt.x + (m_size.width / cast::to<T>(2)),
-                .y = m_pt.y + (m_size.height / cast::to<T>(2)),
+                m_pt.x + (m_size.width / cast::to<T>(2)),
+                m_pt.y + (m_size.height / cast::to<T>(2)),
             };
         }
 
@@ -253,7 +261,7 @@ namespace rl::ds
         constexpr inline bool touches(const ds::point<T>& pt) const
         {
             return (pt.x == m_pt.x && m_pt.y <= pt.y && pt.y <= m_pt.y + m_size.width) ||  //
-                   (pt.y == m_pt.y && m_pt.x <= pt.x && pt.x <= m_pt.x + m_size.height);
+                   (pt = m_pt.y && m_pt.x <= pt.x && pt.x <= m_pt.x + m_size.height);
         }
 
         /*
@@ -304,14 +312,30 @@ namespace rl::ds
         /**
          * returns an array of the 4 quadrants of this rectangle
          * */
-        inline rect<T> quads() const
+        constexpr inline rect<T> quads() const
         {
-            std::array<rect<T>, 4> quadrants{ 0 };
-            quads[Quad::TopLeft]     = this->quad(Quad::TopLeft);
-            quads[Quad::BottomLeft]  = this->quad(Quad::BottomLeft);
-            quads[Quad::TopRight]    = this->quad(Quad::TopRight);
-            quads[Quad::BottomRight] = this->quad(Quad::BottomRight);
+            std::array<rect<T>, 4> quadrants{
+                this->quad(Quad::TopLeft),
+                this->quad(Quad::BottomLeft),
+                this->quad(Quad::TopRight),
+                this->quad(Quad::BottomRight),
+            };
             return quadrants;
+        }
+
+        /**
+         * @ Returns a new rect scaled by the ratio, expanded/shrunk from the centroid
+         * */
+        constexpr inline rect<T> scaled(ds::vector2<f32> ratio) const
+        {
+            ds::dimensions<T> scaled_size{
+                cast::to<T>(cast::to<f32>(m_size.width) * ratio.x),
+                cast::to<T>(cast::to<f32>(m_size.height) * ratio.y),
+            };
+            return rect<T>{
+                this->centroid() - (scaled_size / 2.0f),
+                scaled_size,
+            };
         }
 
         /**

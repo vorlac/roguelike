@@ -20,7 +20,7 @@ namespace rl::ui
                 config.FontDataOwnedByAtlas = false;
             }
 
-            std::string path;
+            std::string path{};
             f32 size{ 18.0f };
             ImFontConfig config{};
         };
@@ -30,6 +30,9 @@ namespace rl::ui
             {
                 // fonts
                 ImGuiIO& io{ ImGui::GetIO() };
+                io.Fonts->AddFontFromFileTTF(m_firacode.path.data(), m_firacode.size,
+                                             &m_firacode.config);
+                m_firacode.size = 64;
                 io.Fonts->AddFontFromFileTTF(m_firacode.path.data(), m_firacode.size,
                                              &m_firacode.config);
             }
@@ -91,6 +94,6 @@ namespace rl::ui
             }
         }
 
-        const static inline style::font m_firacode{ "./data/fonts/fira-code-retina.ttf", 18.0f };
+        static inline style::font m_firacode{ "./data/fonts/fira-code-retina.ttf", 18.0f };
     };
 }

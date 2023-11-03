@@ -9,6 +9,7 @@
 
 #include <imgui.h>
 
+#include "core/ds/dimensions.hpp"
 #include "core/numeric_types.hpp"
 #include "core/utils/concepts.hpp"
 #include "core/utils/conversions.hpp"
@@ -281,24 +282,42 @@ namespace rl::ds
             };
         }
 
-        constexpr inline void operator+=(const vector2<T>& other)
+        constexpr inline vector2<T> operator+=(const vector2<T>& other)
         {
             x += other.x;
             y += other.y;
+            return *this;
         }
 
-        constexpr inline vector2<T> operator-(const vector2<T>& other) const
+        template <typename V>
+        constexpr inline vector2<T> operator-(const vector2<V>& other) const
         {
             return {
-                x - other.x,
-                y - other.y,
+                x - cast::to<T>(other.x),
+                y - cast::to<T>(other.y),
             };
         }
 
-        constexpr inline void operator-=(const vector2<T>& other)
+        constexpr inline vector2<T> operator-(const dimensions<T>& other) const
+        {
+            return {
+                x - other.width,
+                y - other.height,
+            };
+        }
+
+        constexpr inline vector2<T> operator-=(const vector2<T>& other)
         {
             x -= other.x;
             y -= other.y;
+            return *this;
+        }
+
+        constexpr inline vector2<T> operator-=(const dimensions<T>& other) const
+        {
+            x -= other.width;
+            y -= other.height;
+            return *this;
         }
 
         constexpr inline vector2<T> operator*(const vector2<T>& other) const
@@ -317,10 +336,11 @@ namespace rl::ds
             };
         }
 
-        constexpr inline void operator*=(const f32 val)
+        constexpr inline vector2<T> operator*=(const f32 val)
         {
             x *= val;
             y *= val;
+            return *this;
         }
 
         constexpr inline vector2<T> operator/(const vector2<T>& other) const
@@ -336,10 +356,11 @@ namespace rl::ds
             return { x / val, y / val };
         }
 
-        constexpr inline void operator/=(const f32& val)
+        constexpr inline vector2<T> operator/=(const f32& val)
         {
             x /= val;
             y /= val;
+            return *this;
         }
 
         constexpr inline vector2<T> operator-() const
