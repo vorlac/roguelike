@@ -40,8 +40,8 @@ namespace rl
     {
         this->setup();
 
-        static constexpr bool RL_PROTOTYPING = true;
-        if constexpr (RL_PROTOTYPING)
+        static constexpr bool PROTOTYPING_LOOP = true;
+        if constexpr (PROTOTYPING_LOOP)
         {
             scene::set_active<scene::main_menu_scene>(m_world);
             while (!this->should_quit()) [[unlikely]]

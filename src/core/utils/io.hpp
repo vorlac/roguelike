@@ -9,6 +9,7 @@
 #include <utility>
 
 #include <flecs.h>
+#include <imgui.h>
 #include <fmt/chrono.h>
 #include <fmt/color.h>
 #include <fmt/core.h>
@@ -17,6 +18,7 @@
 #include "core/ds/point.hpp"
 #include "core/ds/vector2d.hpp"
 #include "core/input/keymap.hpp"
+#include "core/numeric_types.hpp"
 #include "core/utils/assert.hpp"
 
 namespace rl::io
@@ -36,7 +38,7 @@ namespace flecs
         return fmt::string_view{ str.c_str() };
     }
 
-    auto format_as(const flecs::entity& e)
+    constexpr auto format_as(const flecs::entity& e)
     {
         return fmt::string_view{ e.name().c_str() };
     }
@@ -49,6 +51,13 @@ namespace rl::ds
     {
         return fmt::format("({},{})", vec.x, vec.y);
     }
+
+}
+
+constexpr inline auto format_as(const ImVec2& vec)
+{
+    rl::ds::vector2<rl::f32> tmp{ vec };
+    return rl::ds::format_as(tmp);
 }
 
 namespace rl::input

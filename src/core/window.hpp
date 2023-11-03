@@ -29,7 +29,7 @@ namespace rl
         void update_gui();
 
         void begin_drawing() const;
-        void end_drawing(bool draw_fps = true) const;
+        void end_drawing() const;
 
         bool should_close() const;
         void close() const;

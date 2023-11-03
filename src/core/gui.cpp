@@ -4,7 +4,10 @@
 #include <GLFW/glfw3.h>
 
 #include "core/display.hpp"
+#include "core/ds/color.hpp"
 #include "core/gui.hpp"
+#include "core/ui/debug_overlay.hpp"
+#include "core/ui/styles.hpp"
 #include "core/window.hpp"
 #include "thirdparty/raylib.hpp"
 
@@ -14,22 +17,18 @@ namespace rl
     {
         this->reset_gui_state(window);
         m_context = ImGui::CreateContext();
-        ImGuiIO& io{ ImGui::GetIO() };
-        io.Fonts->AddFontDefault();
     }
 
-    void gui::init(const rl::Window& window, bool dark_theme /* = true*/)
+    void gui::init(const rl::Window& window)
     {
         this->pre_init(window);
-        dark_theme ? ImGui::StyleColorsDark()  //
-                   : ImGui::StyleColorsLight();
+        ui::style::load();
         this->post_init();
     }
 
     void gui::post_init()
     {
         ImGui::SetCurrentContext(m_context);
-        this->setup_font_awesome();
         this->setup_imgui_backend();
         this->imgui_reload_fonts();
     }
@@ -51,8 +50,8 @@ namespace rl
     void gui::update(const Window& window, const Display& display)
     {
         this->begin(window, display);
-        bool open = true;
-        ImGui::ShowDemoWindow(&open);
+        static ui::fps_overlay overlay{};
+        overlay.update(window.frame_time(), raylib::GetFPS());
         this->end();
     }
 
@@ -81,19 +80,15 @@ namespace rl
     void gui::imgui_process_events(const rl::Window& window)
     {
         ImGuiIO& io{ ImGui::GetIO() };
-        const bool focused = window.is_focused();
 
-        const bool ctrl_down = m_input.keyboard.is_key_down(input::Key::LeftCtrl) ||
-                               m_input.keyboard.is_key_down(input::Key::RightCtrl);
-        const bool shift_down = m_input.keyboard.is_key_down(input::Key::LeftShift) ||
-                                m_input.keyboard.is_key_down(input::Key::RightShift);
-        const bool alt_down = m_input.keyboard.is_key_down(input::Key::LeftAlt) ||
-                              m_input.keyboard.is_key_down(input::Key::RightAlt);
-        const bool super_down = m_input.keyboard.is_key_down(input::Key::LeftSuper) ||
-                                m_input.keyboard.is_key_down(input::Key::RightSuper);
+        const bool window_focus = window.is_focused();
+        const bool ctrl_down{ m_input.keyboard.is_ctrl_down() };
+        const bool shift_down{ m_input.keyboard.is_shift_down() };
+        const bool alt_down{ m_input.keyboard.is_alt_down() };
+        const bool super_down{ m_input.keyboard.is_super_down() };
 
-        if (focused != m_last_frame_focused)
-            io.AddFocusEvent(focused);
+        if (window_focus != m_last_frame_focused)
+            io.AddFocusEvent(window_focus);
         if (ctrl_down != m_last_control_pressed)
             io.AddKeyEvent(ImGuiMod_Ctrl, ctrl_down);
         if (shift_down != m_last_shift_pressed)
@@ -103,7 +98,7 @@ namespace rl
         if (super_down != m_last_super_pressed)
             io.AddKeyEvent(ImGuiMod_Super, super_down);
 
-        m_last_frame_focused   = focused;
+        m_last_frame_focused   = window_focus;
         m_last_control_pressed = ctrl_down;
         m_last_shift_pressed   = shift_down;
         m_last_alt_pressed     = alt_down;
@@ -189,7 +184,7 @@ namespace rl
                 else
                 {
                     m_input.mouse.show_cursor();
-                    if (!(io.ConfigFlags & ImGuiConfigFlags_NoMouseCursorChange))
+                    if ((io.ConfigFlags & ImGuiConfigFlags_NoMouseCursorChange) == 0)
                     {
                         input::Mouse::Cursor cursor_type =
                             (imgui_cursor > -1 &&
@@ -424,7 +419,7 @@ namespace rl
     void gui::imgui_triangle_vert(ImDrawVert& idx_vert)
     {
         raylib::Color* c;
-        c = reinterpret_cast<raylib::Color*>(&idx_vert.col);
+        c = reinterpret_cast<rl::color*>(&idx_vert.col);
         raylib::rlColor4ub(c->r, c->g, c->b, c->a);
         raylib::rlTexCoord2f(idx_vert.uv.x, idx_vert.uv.y);
         raylib::rlVertex2f(idx_vert.pos.x, idx_vert.pos.y);
@@ -480,7 +475,7 @@ namespace rl
                                      reinterpret_cast<i32*>(&height), nullptr);
 
         raylib::Image image{ raylib::GenImageColor(cast::to<i32>(width), cast::to<i32>(height),
-                                                   raylib::BLANK) };
+                                                   rl::color::blank) };
         std::memcpy(image.data, pixels, width * height * 4);
 
         raylib::Texture2D* font_texture{ static_cast<raylib::Texture2D*>(io.Fonts->TexID) };

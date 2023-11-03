@@ -41,15 +41,31 @@ file(GLOB_RECURSE
       "${CMAKE_CURRENT_SOURCE_DIR}/extern/vcpkg/buildtrees/raylib/src/*/src/*.[hc]"
       "${CMAKE_CURRENT_SOURCE_DIR}/extern/vcpkg/buildtrees/raylib/src/*/src/*.[hc]pp"
 )
+file(GLOB_RECURSE
+  imgui_dummy_sources
+    CONFIGURE_DEPENDS
+      "${CMAKE_CURRENT_SOURCE_DIR}/extern/vcpkg/buildtrees/imgui/src/*/*.[hc]"
+      "${CMAKE_CURRENT_SOURCE_DIR}/extern/vcpkg/buildtrees/imgui/src/*/*.[hc]pp"
+)
 
-add_library(raylib_dummy EXCLUDE_FROM_ALL ${raylib_dummy_sources})
+add_library(raylib_dummy
+  EXCLUDE_FROM_ALL
+    ${raylib_dummy_sources}
+)
+
+add_library(imgui_dummy
+  EXCLUDE_FROM_ALL
+    ${imgui_dummy_sources}
+)
 
 target_include_directories(raylib_dummy PUBLIC
   "${CMAKE_CURRENT_SOURCE_DIR}/extern/vcpkg/buildtrees/raylib/src/*/src/"
 )
-
 target_compile_definitions(raylib_dummy PUBLIC
   PLATFORM_DESKTOP
+)
+target_include_directories(imgui_dummy PUBLIC
+  "${CMAKE_CURRENT_SOURCE_DIR}/extern/vcpkg/buildtrees/imgui/*/src/"
 )
 
 set(raylib_VERBOSE TRUE)
@@ -59,10 +75,10 @@ find_package(fmt CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)
 find_package(raylib CONFIG REQUIRED)
 find_package(simdjson CONFIG REQUIRED)
-find_package(imgui 
-  CONFIG 
-    REQUIRED 
-  COMPONENTS 
+find_package(imgui
+  CONFIG
+    REQUIRED
+  COMPONENTS
     glfw-binding
     vulkan-binding
 )
@@ -87,6 +103,7 @@ target_compile_features(${PROJECT_NAME} PRIVATE
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
   NOMINMAX
+  # IMGUI_HAS_DOCK
 
   $<$<CONFIG:Debug>:
     ROGUELIKE_DEBUG

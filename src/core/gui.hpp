@@ -34,7 +34,7 @@ namespace rl
          * @param dark_theme when true(default) the dark theme is used, when false the light theme
          * is used
          * */
-        void init(const rl::Window& window, bool dark_theme = true);
+        void init(const rl::Window& window);
 
         /**
          * @brief End Custom initialization. Not needed if you call Setup. Only needed if you want

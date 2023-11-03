@@ -13,7 +13,7 @@ namespace rl
 {
     class Application
     {
-        static constexpr inline auto DefaultFPS{ 1000 };
+        static constexpr inline auto DefaultFPS{ 0 };
 
     public:
         Application();

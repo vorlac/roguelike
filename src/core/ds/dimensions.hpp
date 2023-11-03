@@ -19,10 +19,16 @@ namespace rl::ds
         {
         }
 
+        constexpr dimensions(const ImVec2& other)
+            : width{ cast::to<T>(other.x) }
+            , height{ cast::to<T>(other.y) }
+        {
+        }
+
         constexpr operator ::ImVec2()
             requires std::same_as<T, f32>
         {
-            return *cast::to<::ImVec2*>(this);
+            return *reinterpret_cast<::ImVec2*>(this);
         }
 
         constexpr operator ::ImVec2()

@@ -28,12 +28,13 @@ namespace rl
     void Window::begin_drawing() const
     {
         raylib::BeginDrawing();
-        raylib::ClearBackground(color::darkgray);
+        raylib::ClearBackground(color::lightgray);
     }
 
-    void Window::end_drawing(bool draw_fps /* = true*/) const
+    void Window::end_drawing() const
     {
-        if (draw_fps) [[likely]]
+        static constexpr bool draw_fps = false;
+        if constexpr (draw_fps)
         {
             raylib::DrawRectangle(0, 0, 95, 40, color::black);
             raylib::DrawFPS(10, 10);
@@ -216,9 +217,11 @@ namespace rl
 
     bool Window::setup(i32 width, i32 height, std::string title)
     {
-        constexpr i32 flags{ raylib::ConfigFlags::FLAG_MSAA_4X_HINT |
-                             raylib::ConfigFlags::FLAG_WINDOW_RESIZABLE |
-                             raylib::ConfigFlags::FLAG_VSYNC_HINT };
+        constexpr i32 flags{
+            raylib::ConfigFlags::FLAG_MSAA_4X_HINT |    //
+            raylib::ConfigFlags::FLAG_WINDOW_RESIZABLE  //
+            // raylib::ConfigFlags::FLAG_VSYNC_HINT     //
+        };
 
         raylib::SetConfigFlags(flags);
         raylib::InitWindow(width, height, title.c_str());

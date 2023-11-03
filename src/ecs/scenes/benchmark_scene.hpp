@@ -49,7 +49,7 @@ namespace rl::scene
                         rand_color(raylib::GetRandomValue(0, 100)),
                     };
 
-                    ds::velocity<f32> velocity{
+                    ds::vector2<f32> velocity{
                         cast::to<f32>(raylib::GetRandomValue(-1000, 1000) / 10.0),
                         cast::to<f32>(raylib::GetRandomValue(-1000, 1000) / 10.0),
                     };

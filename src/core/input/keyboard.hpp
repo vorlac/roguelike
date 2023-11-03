@@ -57,5 +57,29 @@ namespace rl::input
             // chars queued, returns 0 when the queue is empty
             return static_cast<T>(raylib::GetCharPressed());
         }
+
+        constexpr inline bool is_ctrl_down() const
+        {
+            return this->is_key_down(input::Key::LeftCtrl) ||
+                   this->is_key_down(input::Key::RightCtrl);
+        }
+
+        constexpr inline bool is_shift_down() const
+        {
+            return this->is_key_down(input::Key::LeftShift) ||
+                   this->is_key_down(input::Key::RightShift);
+        }
+
+        constexpr inline bool is_alt_down() const
+        {
+            return this->is_key_down(input::Key::RightAlt) ||  //
+                   this->is_key_down(input::Key::LeftAlt);
+        }
+
+        constexpr inline bool is_super_down() const
+        {
+            return this->is_key_down(input::Key::LeftSuper) ||
+                   this->is_key_down(input::Key::RightSuper);
+        };
     };
 }

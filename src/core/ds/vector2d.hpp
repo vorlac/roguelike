@@ -29,7 +29,7 @@ namespace rl::ds
         }
 
         constexpr inline vector2(const raylib::Vector2& other)
-            requires std::same_as<T, f32>
+            requires(std::same_as<T, f32>)
         {
             std::memcpy(this, &other, sizeof(*this));
         }
@@ -42,15 +42,9 @@ namespace rl::ds
         }
 
         constexpr inline operator raylib::Vector2()
-            requires std::same_as<T, f32>
+            requires(std::same_as<T, f32>)
         {
             return *reinterpret_cast<raylib::Vector2*>(this);
-        }
-
-        constexpr inline operator ::ImVec2()
-            requires std::same_as<T, f32>
-        {
-            return *reinterpret_cast<::ImVec2*>(this);
         }
 
         constexpr inline operator raylib::Vector2()
@@ -60,6 +54,25 @@ namespace rl::ds
                 cast::to<f32>(this->x),
                 cast::to<f32>(this->y),
             };
+        }
+
+        constexpr inline vector2(const ::ImVec2& other)
+            requires(std::same_as<T, f32>)
+        {
+            std::memcpy(this, &other, sizeof(*this));
+        }
+
+        constexpr inline vector2(const ::ImVec2& other)
+            requires(!std::same_as<T, f32>)
+            : x{ cast::to<T>(other.x) }
+            , y{ cast::to<T>(other.y) }
+        {
+        }
+
+        constexpr inline operator ::ImVec2()
+            requires(std::same_as<T, f32>)
+        {
+            return *reinterpret_cast<::ImVec2*>(this);
         }
 
         constexpr inline operator ::ImVec2()
