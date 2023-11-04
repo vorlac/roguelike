@@ -6,6 +6,12 @@
 #include "core/ds/dimensions.hpp"
 #include "core/ds/point.hpp"
 #include "core/numeric_types.hpp"
+#include "core/utils/concepts.hpp"
+
+namespace SDL3
+{
+#include <SDL3/SDL.h>
+}
 
 namespace rl::ds
 {
@@ -32,30 +38,129 @@ namespace rl::ds
     class rect
     {
     public:
+        constexpr rect()
+            : pt{ 0, 0 }
+            , size{ 0, 0 }
+        {
+        }
+
         constexpr rect(const T x, const T y, const T width, const T height)
             : pt{ x, y }
             , size{ width, height }
         {
         }
 
-        constexpr rect(point<T> pt, dimensions<T> size)
-            : pt{ pt }
-            , size{ size }
+        constexpr rect(point<T> pnt, dimensions<T> dims)
+            : pt{ pnt }
+            , size{ dims }
         {
         }
 
-        constexpr rect(const point<T>& pt, const dimensions<T>& size)
-            : pt{ pt }
-            , size{ size }
+        constexpr rect(const point<T>& pnt, const dimensions<T>& dims)
+            : pt{ pnt }
+            , size{ dims }
         {
         }
 
-        constexpr explicit rect(const rect<T>& other)
+        constexpr rect(SDL3::SDL_FRect other)
+            requires std::same_as<T, f32>
+            : pt{ other.x, other.y }
+            , size{ other.w, other.h }
+        {
+        }
+
+        constexpr rect(SDL3::SDL_Rect other)
+            requires std::same_as<T, i32>
+            : pt{ other.x, other.y }
+            , size{ other.w, other.h }
+        {
+            return *this;
+        }
+
+        constexpr rect(const SDL3::SDL_FRect* other)
+            requires std::same_as<T, f32>
+            : pt{ other->x, other->y }
+            , size{ other->w, other->h }
+        {
+        }
+
+        constexpr rect(const SDL3::SDL_Rect& other)
+            requires std::same_as<T, i32>
+            : pt{ other.x, other.y }
+            , size{ other.w, other.h }
+        {
+        }
+
+        constexpr operator SDL3::SDL_FRect()
+            requires std::same_as<T, f32>
+        {
+            return SDL3::SDL_FRect{
+                pt.x,
+                pt.y,
+                size.width,
+                size.height,
+            };
+        }
+
+        constexpr operator const SDL3::SDL_FRect() const&
+            requires std::same_as<T, f32>
+        {
+            return SDL3::SDL_FRect{
+                pt.x,
+                pt.y,
+                size.width,
+                size.height,
+            };
+        }
+
+        constexpr operator SDL3::SDL_Rect()
+            requires std::same_as<T, i32>
+        {
+            return SDL3::SDL_Rect{
+                pt.x,
+                pt.y,
+                size.width,
+                size.height,
+            };
+        }
+
+        constexpr operator const SDL3::SDL_FRect*()
+            requires std::same_as<T, f32>
+        {
+            return this;
+        }
+
+        constexpr operator SDL3::SDL_Rect*()
+            requires std::same_as<T, i32>
+        {
+            return reinterpret_cast<SDL3::SDL_Rect*>(this);
+        }
+
+        constexpr operator const SDL3::SDL_FRect*() const
+            requires std::same_as<T, f32>
+        {
+            return reinterpret_cast<const SDL3::SDL_FRect*>(this);
+        }
+
+        constexpr operator const SDL3::SDL_Rect*() const
+            requires std::same_as<T, i32>
+        {
+            return reinterpret_cast<const SDL3::SDL_Rect*>(this);
+        }
+
+        constexpr SDL3::SDL_FRect& operator=(rect<f32>&& other)
+            requires std::same_as<T, f32>
+        {
+            SDL3::SDL_memcpy(this, &other, sizeof(*this));
+            return *this;
+        }
+
+        constexpr rect(const rect<T>& other)
         {
             this->operator=(std::forward<const rect<T>>(other));
         }
 
-        constexpr explicit rect(rect<T>&& other)
+        constexpr rect(rect<T>&& other)
         {
             this->operator=(other);
         }
@@ -106,6 +211,15 @@ namespace rl::ds
         constexpr inline bool is_empty() const
         {
             return this->area() == cast::to<T>(0);
+        }
+
+        /**
+         * @brief Checks if the rectangle has a negative width or height
+         * */
+        constexpr inline bool is_invalid() const
+        {
+            return this->size.height < cast::to<T>(0) ||  //
+                   this->width < cast::to<T>(0);
         }
 
         /**
@@ -174,10 +288,10 @@ namespace rl::ds
         /**
          * @brief Checks if the rect shares any space with pt
          * */
-        constexpr inline bool overlaps(const ds::point<T>& pt) const
+        constexpr inline bool overlaps(const ds::point<T>& pnt) const
         {
-            return (pt.x >= this->pt.x && pt.x <= this->pt.x + this->size.width) &&
-                   (pt.y >= this->pt.y && pt.y <= this->pt.y + this->size.height);
+            return (pnt.x >= this->pt.x && pnt.x <= this->pt.x + this->size.width) &&
+                   (pnt.y >= this->pt.y && pnt.y <= this->pt.y + this->size.height);
         }
 
         /**
@@ -194,10 +308,10 @@ namespace rl::ds
          * @brief Checks if the rect intersects with the point beyond
          *        just a single pixel touch/overlap.
          * */
-        constexpr inline bool intersects(const ds::point<T>& pt) const
+        constexpr inline bool intersects(const ds::point<T>& pnt) const
         {
-            return (pt.x > this->pt.x && pt.x < this->pt.x + this->size.width) &&
-                   (pt.y > this->pt.y && pt.y < this->pt.y + this->size.height);
+            return (pnt.x > this->pt.x && pnt.x < this->pt.x + this->size.width) &&
+                   (pnt.y > this->pt.y && pnt.y < this->pt.y + this->size.height);
         }
 
         /**
@@ -213,10 +327,10 @@ namespace rl::ds
         /**
          * @brief Checks if the rect fully contains the point
          * */
-        constexpr inline bool contains(const ds::point<T>& pt) const
+        constexpr inline bool contains(const ds::point<T>& pnt) const
         {
-            return (this->pt.x < pt.x && pt.x > this->pt.x + this->size.width) &&
-                   (this->pt.y < pt.y && pt.y > this->pt.y + this->size.height);
+            return (this->pt.x < pnt.x && pnt.x > this->pt.x + this->size.width) &&
+                   (this->pt.y < pnt.y && pnt.y > this->pt.y + this->size.height);
         }
 
         /**
@@ -240,11 +354,12 @@ namespace rl::ds
         /*
          * @brief Checks if the point perfeclty falls somewhere on the rect's bounds
          * */
-        constexpr inline bool touches(const ds::point<T>& pt) const
+        constexpr inline bool touches(const ds::point<T>& pnt) const
         {
-            return (pt.x == this->pt.x && this->pt.y <= pt.y &&
-                    pt.y <= this->pt.y + this->size.width) ||  //
-                   (pt = this->pt.y && this->pt.x <= pt.x && pt.x <= this->pt.x + this->size.height);
+            return (pnt.x == this->pt.x && this->pt.y <= pnt.y &&
+                    pnt.y <= this->pt.y + this->size.width) ||  //
+                   (pnt = this->pt.y && this->pt.x <= pnt.x &&
+                          pnt.x <= this->pt.x + this->size.height);
         }
 
         /*
@@ -331,18 +446,18 @@ namespace rl::ds
             {
                 // split the rect in half using a
                 // horizontal line as the slice point
-                ds::dimensions<T> size{
+                ds::dimensions<T> half_size{
                     this->size.width,
                     this->size.height / cast::to<T>(2),
                 };
                 return std::array{
-                    rect<T>{ this->pt, size },
+                    rect<T>{ this->pt, half_size },
                     rect<T>{
                         {
                             this->pt + cast::to<T>(0),
                             this->size.height / cast::to<T>(2),
                         },
-                        size,
+                        half_size,
                     },
                 };
             }
@@ -350,18 +465,18 @@ namespace rl::ds
             {
                 // split the rect in half using a
                 // vertical line as the slice point
-                ds::dimensions<T> size{
+                ds::dimensions<T> half_size{
                     this->size.width / cast::to<T>(2),
                     this->size.height,
                 };
                 return std::array{
-                    rect<T>{ this->pt, size },
+                    rect<T>{ this->pt, half_size },
                     rect<T>{
                         {
                             this->pt + (this->size.height / cast::to<T>(2)),
                             cast::to<T>(0),
                         },
-                        size,
+                        half_size,
                     },
                 };
             }

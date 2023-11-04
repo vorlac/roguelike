@@ -35,8 +35,12 @@ set(compiler_is_msvc "$<CXX_COMPILER_ID:MSVC>")
 set(compiler_is_gnu "$<CXX_COMPILER_ID:GNU>")
 set(compiler_is_clang "$<OR:$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:Clang>>")
 
+
+set(SDL_LIBC ON)
 set(SDL_STATIC ON)
 set(SDL_SHARED OFF)
+set(FORCE_STATIC_VCRT ON)
+set(SDL_VULKAN ON)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl)
 
 find_package(argparse CONFIG REQUIRED)

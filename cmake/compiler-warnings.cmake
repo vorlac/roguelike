@@ -64,11 +64,15 @@ target_compile_options(${PROJECT_NAME}
 			-Wno-unsafe-buffer-usage
 			-Wno-zero-as-null-pointer-constant
 			-Wno-format-security
+			-Wno-reserved-macro-identifier
+			-Wno-old-style-cast
+			-Wno-microsoft-enum-value
+            -Wno-documentation
+			-Wno-documentation-unknown-command
         >
 
         # Clang only
         $<${compiler_is_clang}:
-            -Wdocumentation
             -Wimplicit-fallthrough
 
         >

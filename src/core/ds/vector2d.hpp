@@ -12,6 +12,11 @@
 #include "core/utils/concepts.hpp"
 #include "core/utils/conversions.hpp"
 
+namespace SDL3
+{
+#include <SDL3/SDL_rect.h>
+}
+
 namespace rl::ds
 {
     template <rl::numeric T>
@@ -24,6 +29,30 @@ namespace rl::ds
             : x{ _x }
             , y{ _y }
         {
+        }
+
+        constexpr vector2(const SDL3::SDL_Point& pt)
+            : x{ pt.x }
+            , y{ pt.y }
+        {
+        }
+
+        constexpr vector2(SDL3::SDL_Point pt)
+            : x{ pt.x }
+            , y{ pt.y }
+        {
+        }
+
+        constexpr operator SDL3::SDL_Point()
+            requires std::same_as<T, i32>
+        {
+            return *reinterpret_cast<SDL3::SDL_Point*>(this);
+        }
+
+        constexpr operator const SDL3::SDL_Point() const
+            requires std::same_as<T, i32>
+        {
+            return *reinterpret_cast<const SDL3::SDL_Point*>(this);
         }
 
         constexpr inline bool is_zero(bool exact = false) noexcept

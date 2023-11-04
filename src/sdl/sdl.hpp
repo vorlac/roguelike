@@ -1,18 +1,16 @@
 #pragma once
 
-namespace SDL3
-{
-#include <SDL.h>
-#include <SDL3/SDL_error.h>
-#include <SDL3/SDL_stdinc.h>
-#include <SDL3/SDL_thread.h>
-}
-
 #include <atomic>
 #include <string>
 
 #include "core/numeric_types.hpp"
+#include "sdl/renderer.hpp"
 #include "sdl/window.hpp"
+
+namespace SDL3
+{
+#include <SDL3/SDL.h>
+}
 
 namespace rl::sdl
 {
@@ -84,5 +82,6 @@ namespace rl::sdl
         // guard that makes sure only one exists
         static inline std::atomic<bool> m_initialized{ false };
         sdl::window m_window{};
+        sdl::renderer m_renderer{};
     };
 }

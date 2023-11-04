@@ -1,12 +1,5 @@
 #pragma once
 
-namespace SDL3
-{
-#include <SDL3/SDL.h>
-#include <SDL3/SDL_surface.h>
-#include <SDL3/SDL_video.h>
-}
-
 #include <string>
 #include <utility>
 
@@ -15,6 +8,13 @@ namespace SDL3
 #include "core/ds/rect.hpp"
 #include "core/ds/vector2d.hpp"
 #include "core/utils/assert.hpp"
+
+namespace SDL3
+{
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_surface.h>
+#include <SDL3/SDL_video.h>
+}
 
 namespace rl::sdl
 {
@@ -203,14 +203,14 @@ namespace rl::sdl
             return id;
         }
 
-        SDL3::SDL_DisplayMode&& get_display_mode() const
+        SDL3::SDL_DisplayMode get_display_mode() const
         {
             const SDL3::SDL_DisplayMode* mode{ SDL3::SDL_GetWindowFullscreenMode(m_handle) };
             runtime_assert(mode == nullptr, "failed to get window display mode");
 
             SDL3::SDL_DisplayMode ret{};
             SDL_memcpy(&ret, mode, sizeof(ret));
-            return std::move(ret);
+            return ret;
         }
 
         u32 get_flags() const
