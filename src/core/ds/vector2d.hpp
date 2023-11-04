@@ -7,13 +7,10 @@
 #include <memory>
 #include <type_traits>
 
-#include <imgui.h>
-
 #include "core/ds/dimensions.hpp"
 #include "core/numeric_types.hpp"
 #include "core/utils/concepts.hpp"
 #include "core/utils/conversions.hpp"
-#include "thirdparty/raylib.hpp"
 
 namespace rl::ds
 {
@@ -27,62 +24,6 @@ namespace rl::ds
             : x{ _x }
             , y{ _y }
         {
-        }
-
-        constexpr inline vector2(const raylib::Vector2& other)
-            requires(std::same_as<T, f32>)
-        {
-            std::memcpy(this, &other, sizeof(*this));
-        }
-
-        constexpr inline vector2(const raylib::Vector2& other)
-            requires(!std::same_as<T, f32>)
-            : x{ cast::to<T>(other.x) }
-            , y{ cast::to<T>(other.y) }
-        {
-        }
-
-        constexpr inline operator raylib::Vector2()
-            requires(std::same_as<T, f32>)
-        {
-            return *reinterpret_cast<raylib::Vector2*>(this);
-        }
-
-        constexpr inline operator raylib::Vector2()
-            requires(!std::same_as<T, f32>)
-        {
-            return {
-                cast::to<f32>(this->x),
-                cast::to<f32>(this->y),
-            };
-        }
-
-        constexpr inline vector2(const ::ImVec2& other)
-            requires(std::same_as<T, f32>)
-        {
-            std::memcpy(this, &other, sizeof(*this));
-        }
-
-        constexpr inline vector2(const ::ImVec2& other)
-            requires(!std::same_as<T, f32>)
-            : x{ cast::to<T>(other.x) }
-            , y{ cast::to<T>(other.y) }
-        {
-        }
-
-        constexpr inline operator ::ImVec2()
-            requires(std::same_as<T, f32>)
-        {
-            return *reinterpret_cast<::ImVec2*>(this);
-        }
-
-        constexpr inline operator ::ImVec2()
-            requires(!std::same_as<T, f32>)
-        {
-            return {
-                cast::to<f32>(this->x),
-                cast::to<f32>(this->y),
-            };
         }
 
         constexpr inline bool is_zero(bool exact = false) noexcept

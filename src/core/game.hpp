@@ -2,12 +2,12 @@
 
 #include <flecs.h>
 
-#include "core/application.hpp"
 #include "core/ds/dimensions.hpp"
+#include "sdl/sdl.hpp"
 
 namespace rl
 {
-    class Game : public Application
+    class Game
     {
     public:
         bool setup();
@@ -15,9 +15,11 @@ namespace rl
         bool teardown();
 
         bool should_quit() const;
-        void quit() const;
+        void quit();
 
     protected:
         flecs::world m_world{};
+
+        sdl::sdl_app m_sdl{};
     };
 }

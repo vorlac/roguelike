@@ -1,5 +1,8 @@
 #pragma once
 
+#include <memory>
+#include <type_traits>
+
 #include "core/ds/dimensions.hpp"
 #include "core/ds/point.hpp"
 #include "core/numeric_types.hpp"
@@ -29,15 +32,21 @@ namespace rl::ds
     class rect
     {
     public:
-        constexpr explicit rect(const T x, const T y, const T width, const T height)
-            : m_pt{ x, y }
-            , m_size{ width, height }
+        constexpr rect(const T x, const T y, const T width, const T height)
+            : pt{ x, y }
+            , size{ width, height }
         {
         }
 
-        constexpr explicit rect(point<T> pt, dimensions<T> size)
-            : m_pt{ pt }
-            , m_size{ size }
+        constexpr rect(point<T> pt, dimensions<T> size)
+            : pt{ pt }
+            , size{ size }
+        {
+        }
+
+        constexpr rect(const point<T>& pt, const dimensions<T>& size)
+            : pt{ pt }
+            , size{ size }
         {
         }
 
@@ -51,29 +60,12 @@ namespace rl::ds
             this->operator=(other);
         }
 
-        constexpr operator raylib::Rectangle()
-            requires std::same_as<T, f32>
-        {
-            return *reinterpret_cast<raylib::Rectangle*>(this);
-        }
-
-        constexpr operator raylib::Rectangle()
-            requires(!std::same_as<T, f32>)
-        {
-            return raylib::Rectangle{
-                .x      = cast::to<f32>(m_pt.x),
-                .y      = cast::to<f32>(m_pt.y),
-                .width  = cast::to<f32>(m_size.width),
-                .height = cast::to<f32>(m_size.height),
-            };
-        }
-
         /**
          * @brief Get rectangle's height
          * */
         constexpr inline T height() const
         {
-            return m_size.height;
+            return size.height;
         }
 
         /**
@@ -81,7 +73,7 @@ namespace rl::ds
          * */
         constexpr inline void height(const T height)
         {
-            m_size.height = height;
+            size.height = height;
         }
 
         /**
@@ -89,7 +81,7 @@ namespace rl::ds
          * */
         constexpr inline T width() const
         {
-            return m_size.height;
+            return size.height;
         }
 
         /**
@@ -97,15 +89,7 @@ namespace rl::ds
          * */
         constexpr inline void width(const T width)
         {
-            m_size.width = width;
-        }
-
-        /**
-         * @brief Get rectangle's size as dimensions
-         * */
-        constexpr inline ds::dimensions<T> size() const
-        {
-            return m_size;
+            size.width = width;
         }
 
         /**
@@ -113,7 +97,7 @@ namespace rl::ds
          * */
         constexpr inline T area() const
         {
-            return m_size.area();
+            return size.area();
         }
 
         /**
@@ -129,7 +113,7 @@ namespace rl::ds
          * */
         constexpr inline bool is_null() const
         {
-            return this->is_empty() && m_pt == vector2<T>::zero();
+            return this->is_empty() && pt == vector2<T>::zero();
         }
 
         /**
@@ -138,8 +122,8 @@ namespace rl::ds
         constexpr inline point<T> top_left() const
         {
             return {
-                m_pt.x,
-                m_pt.y,
+                pt.x,
+                pt.y,
             };
         }
 
@@ -149,8 +133,8 @@ namespace rl::ds
         constexpr inline point<T> top_right() const
         {
             return {
-                m_pt.x + m_size.width,
-                m_pt.y,
+                pt.x + size.width,
+                pt.y,
             };
         }
 
@@ -160,8 +144,8 @@ namespace rl::ds
         constexpr inline point<T> bot_left() const
         {
             return {
-                m_pt.x,
-                m_pt.y + m_size.height,
+                pt.x,
+                pt.y + size.height,
             };
         }
 
@@ -171,8 +155,8 @@ namespace rl::ds
         constexpr inline point<T> bot_right() const
         {
             return {
-                m_pt.x + m_size.width,
-                m_pt.y + m_size.height,
+                pt.x + size.width,
+                pt.y + size.height,
             };
         }
 
@@ -182,20 +166,18 @@ namespace rl::ds
         constexpr inline point<T> centroid() const
         {
             return {
-                m_pt.x + (m_size.width / cast::to<T>(2)),
-                m_pt.y + (m_size.height / cast::to<T>(2)),
+                pt.x + (size.width / cast::to<T>(2)),
+                pt.y + (size.height / cast::to<T>(2)),
             };
         }
-
-        // TODO: look up if intersects and overlaps are named backwards
 
         /**
          * @brief Checks if the rect shares any space with pt
          * */
         constexpr inline bool overlaps(const ds::point<T>& pt) const
         {
-            return (pt.x >= m_pt.x && pt.x <= m_pt.x + m_size.width) &&
-                   (pt.y >= m_pt.y && pt.y <= m_pt.y + m_size.height);
+            return (pt.x >= this->pt.x && pt.x <= this->pt.x + this->size.width) &&
+                   (pt.y >= this->pt.y && pt.y <= this->pt.y + this->size.height);
         }
 
         /**
@@ -214,8 +196,8 @@ namespace rl::ds
          * */
         constexpr inline bool intersects(const ds::point<T>& pt) const
         {
-            return (pt.x > m_pt.x && pt.x < m_pt.x + m_size.width) &&
-                   (pt.y > m_pt.y && pt.y < m_pt.y + m_size.height);
+            return (pt.x > this->pt.x && pt.x < this->pt.x + this->size.width) &&
+                   (pt.y > this->pt.y && pt.y < this->pt.y + this->size.height);
         }
 
         /**
@@ -233,8 +215,8 @@ namespace rl::ds
          * */
         constexpr inline bool contains(const ds::point<T>& pt) const
         {
-            return (m_pt.x < pt.x && pt.x > m_pt.x + m_size.width) &&
-                   (m_pt.y < pt.y && pt.y > m_pt.y + m_size.height);
+            return (this->pt.x < pt.x && pt.x > this->pt.x + this->size.width) &&
+                   (this->pt.y < pt.y && pt.y > this->pt.y + this->size.height);
         }
 
         /**
@@ -260,8 +242,9 @@ namespace rl::ds
          * */
         constexpr inline bool touches(const ds::point<T>& pt) const
         {
-            return (pt.x == m_pt.x && m_pt.y <= pt.y && pt.y <= m_pt.y + m_size.width) ||  //
-                   (pt = m_pt.y && m_pt.x <= pt.x && pt.x <= m_pt.x + m_size.height);
+            return (pt.x == this->pt.x && this->pt.y <= pt.y &&
+                    pt.y <= this->pt.y + this->size.width) ||  //
+                   (pt = this->pt.y && this->pt.x <= pt.x && pt.x <= this->pt.x + this->size.height);
         }
 
         /*
@@ -280,25 +263,25 @@ namespace rl::ds
         {
             constexpr point<T> center{ this->centroid() };
             const dimensions<T> quad_size{
-                m_size.width / cast::to<T>(2),
-                m_size.height / cast::to<T>(2),
+                this->size.width / cast::to<T>(2),
+                this->size.height / cast::to<T>(2),
             };
 
             switch (quad)
             {
                 case Quad::TopLeft:
                     return {
-                        { m_pt.x, m_pt.y },
+                        { this->pt.x, this->pt.y },
                         { quad_size },
                     };
                 case Quad::BottomLeft:
                     return {
-                        { m_pt.x, center.y },
+                        { this->pt.x, center.y },
                         { quad_size },
                     };
                 case Quad::TopRight:
                     return {
-                        { center.x, m_pt.y },
+                        { center.x, this->pt.y },
                         { quad_size },
                     };
                 case Quad::BottomRight:
@@ -329,8 +312,8 @@ namespace rl::ds
         constexpr inline rect<T> scaled(ds::vector2<f32> ratio) const
         {
             ds::dimensions<T> scaled_size{
-                cast::to<T>(cast::to<f32>(m_size.width) * ratio.x),
-                cast::to<T>(cast::to<f32>(m_size.height) * ratio.y),
+                cast::to<T>(cast::to<f32>(this->size.width) * ratio.x),
+                cast::to<T>(cast::to<f32>(this->size.height) * ratio.y),
             };
             return rect<T>{
                 this->centroid() - (scaled_size / 2.0f),
@@ -349,15 +332,15 @@ namespace rl::ds
                 // split the rect in half using a
                 // horizontal line as the slice point
                 ds::dimensions<T> size{
-                    m_size.width,
-                    m_size.height / cast::to<T>(2),
+                    this->size.width,
+                    this->size.height / cast::to<T>(2),
                 };
                 return std::array{
-                    rect<T>{ m_pt, size },
+                    rect<T>{ this->pt, size },
                     rect<T>{
                         {
-                            m_pt + cast::to<T>(0),
-                            m_size.height / cast::to<T>(2),
+                            this->pt + cast::to<T>(0),
+                            this->size.height / cast::to<T>(2),
                         },
                         size,
                     },
@@ -368,14 +351,14 @@ namespace rl::ds
                 // split the rect in half using a
                 // vertical line as the slice point
                 ds::dimensions<T> size{
-                    m_size.width / cast::to<T>(2),
-                    m_size.height,
+                    this->size.width / cast::to<T>(2),
+                    this->size.height,
                 };
                 return std::array{
-                    rect<T>{ m_pt, size },
+                    rect<T>{ this->pt, size },
                     rect<T>{
                         {
-                            m_pt + (m_size.height / cast::to<T>(2)),
+                            this->pt + (this->size.height / cast::to<T>(2)),
                             cast::to<T>(0),
                         },
                         size,
@@ -409,7 +392,7 @@ namespace rl::ds
          * */
         constexpr const rect<T>& operator+=(const vector2<T>& vec)
         {
-            m_pt += vec;
+            this->pt += vec;
             return *this;
         }
 
@@ -423,15 +406,14 @@ namespace rl::ds
             return ret;
         }
 
-    private:
         // position of the rect's top left point
-        point<T> m_pt{
+        point<T> pt{
             cast::to<T>(0),  // x
             cast::to<T>(0),  // y
         };
 
-        // 2D size of the rect, relative to m_pt
-        dimensions<T> m_size{
+        // 2D size of the rect, relative to pt
+        dimensions<T> size{
             cast::to<T>(0),  // width
             cast::to<T>(0),  // height
         };

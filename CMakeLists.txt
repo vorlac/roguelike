@@ -35,45 +35,15 @@ set(compiler_is_msvc "$<CXX_COMPILER_ID:MSVC>")
 set(compiler_is_gnu "$<CXX_COMPILER_ID:GNU>")
 set(compiler_is_clang "$<OR:$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:Clang>>")
 
-file(GLOB_RECURSE
-  raylib_dummy_sources
-    CONFIGURE_DEPENDS
-      "${CMAKE_CURRENT_SOURCE_DIR}/extern/vcpkg/buildtrees/raylib/src/*/src/*.[hc]"
-      "${CMAKE_CURRENT_SOURCE_DIR}/extern/vcpkg/buildtrees/raylib/src/*/src/*.[hc]pp"
-)
-file(GLOB_RECURSE
-  imgui_dummy_sources
-    CONFIGURE_DEPENDS
-      "${CMAKE_CURRENT_SOURCE_DIR}/extern/vcpkg/buildtrees/imgui/src/*/*.[hc]"
-      "${CMAKE_CURRENT_SOURCE_DIR}/extern/vcpkg/buildtrees/imgui/src/*/*.[hc]pp"
-)
+set(SDL_STATIC ON)
+set(SDL_SHARED OFF)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl)
 
-add_library(raylib_dummy
-  EXCLUDE_FROM_ALL
-    ${raylib_dummy_sources}
-)
-
-add_library(imgui_dummy
-  EXCLUDE_FROM_ALL
-    ${imgui_dummy_sources}
-)
-
-target_include_directories(raylib_dummy PUBLIC
-  "${CMAKE_CURRENT_SOURCE_DIR}/extern/vcpkg/buildtrees/raylib/src/*/src/"
-)
-target_compile_definitions(raylib_dummy PUBLIC
-  PLATFORM_DESKTOP
-)
-target_include_directories(imgui_dummy PUBLIC
-  "${CMAKE_CURRENT_SOURCE_DIR}/extern/vcpkg/buildtrees/imgui/*/src/"
-)
-
-set(raylib_VERBOSE TRUE)
 find_package(argparse CONFIG REQUIRED)
 find_package(flecs CONFIG REQUIRED)
 find_package(fmt CONFIG REQUIRED)
 find_package(OpenGL REQUIRED COMPONENTS OpenGL)
-find_package(raylib CONFIG REQUIRED)
+find_package(Vulkan REQUIRED)
 find_package(simdjson CONFIG REQUIRED)
 find_package(imgui CONFIG REQUIRED)
 
@@ -97,11 +67,6 @@ target_compile_features(${PROJECT_NAME} PRIVATE
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
   NOMINMAX
-  # RLGL_IMPLEMENTATION
-  # GL_GLEXT_PROTOTYPES
-  # IMGUI_HAS_DOCK
-  # IMGUI_DEBUG_NAV_RECTS=1
-  # IMGUI_DEBUG_NAV_SCORING
 
   $<$<CONFIG:Debug>:
     ROGUELIKE_DEBUG
@@ -146,12 +111,12 @@ target_include_directories(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}
   PRIVATE argparse::argparse
   PRIVATE flecs::flecs_static
-  PRIVATE fmt::fmt
   PRIVATE imgui::imgui
+  PRIVATE Vulkan::Vulkan
   PRIVATE OpenGL::GL
-  PRIVATE raylib
+  PRIVATE SDL3::SDL3
   PRIVATE simdjson::simdjson
-  PRIVATE winmm
+  PRIVATE fmt::fmt
 )
 
 include(clang-format)

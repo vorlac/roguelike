@@ -1,9 +1,12 @@
-#include <argparse/argparse.hpp>
-
 #include "core/game.hpp"
 #include "core/options.hpp"
 
-int main(int argc, char** argv)
+namespace SDL3
+{
+#include <SDL3/SDL_main.h>
+}
+
+int SDL3::main(int argc, char** argv)
 {
     if (!rl::parse_args(argc, argv))
         return -1;
