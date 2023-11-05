@@ -8,6 +8,7 @@
 #include "core/ds/rect.hpp"
 #include "core/ds/vector2d.hpp"
 #include "core/utils/assert.hpp"
+#include "sdl/utils.hpp"
 
 namespace SDL3
 {
@@ -22,125 +23,123 @@ namespace rl::sdl
     {
     public:
         window(std::string title = "SDL3", ds::dimensions<i32> pos = { 1920, 1080 }, u32 flags = 0)
-            : m_handle(SDL3::SDL_CreateWindow(title.data(), pos.width, pos.height, flags))
+            : m_sdl_window(SDL3::SDL_CreateWindow(title.data(), pos.width, pos.height, flags))
         {
         }
 
         window(std::string title, ds::rect<i32> bounds = { 0, 0, 1024, 768 }, u32 flags = 0)
-            : m_handle(SDL3::SDL_CreateWindowWithPosition(title.data(),
-                                                          bounds.pt.x,
-                                                          bounds.pt.y,
-                                                          bounds.size.width,
-                                                          bounds.size.height,
-                                                          flags))
-
+            : m_sdl_window{ SDL3::SDL_CreateWindowWithPosition(title.data(),
+                                                               bounds.pt.x,
+                                                               bounds.pt.y,
+                                                               bounds.size.width,
+                                                               bounds.size.height,
+                                                               flags) }
         {
         }
 
         ~window()
         {
-            if (m_handle != nullptr)
+            if (m_sdl_window != nullptr)
             {
-                SDL3::SDL_DestroyWindow(m_handle);
-                m_handle = nullptr;
+                SDL3::SDL_DestroyWindow(m_sdl_window);
+                m_sdl_window = nullptr;
             }
         }
 
         window(sdl::window&& other)
-            : m_handle{ other.m_handle }
+            : m_sdl_window{ other.m_sdl_window }
         {
-            other.m_handle = nullptr;
+            other.m_sdl_window = nullptr;
         }
 
         const window& operator=(sdl::window&& other)
         {
-            if (m_handle != nullptr)
+            if (m_sdl_window != nullptr)
             {
-                SDL3::SDL_DestroyWindow(m_handle);
-                m_handle = nullptr;
+                SDL3::SDL_DestroyWindow(m_sdl_window);
+                m_sdl_window = nullptr;
             }
 
-            std::swap(m_handle, other.m_handle);
+            std::swap(m_sdl_window, other.m_sdl_window);
             return *this;
         }
 
         SDL3::SDL_Window* get_handle() const
         {
-            return m_handle;
+            return m_sdl_window;
         }
 
         ds::dimensions<i32> get_size() const
         {
             ds::dimensions<i32> size{ 0, 0 };
-            SDL3::SDL_GetWindowSize(m_handle, &size.width, &size.height);
+            SDL3::SDL_GetWindowSize(m_sdl_window, &size.width, &size.height);
             return size;
         }
 
         ds::dimensions<i32> get_render_size() const
         {
             ds::dimensions<i32> size{ 0, 0 };
-            SDL3::SDL_GetWindowSizeInPixels(m_handle, &size.width, &size.height);
+            SDL3::SDL_GetWindowSizeInPixels(m_sdl_window, &size.width, &size.height);
             return size;
         }
 
         const window& set_title(const std::string& title)
         {
-            SDL3::SDL_SetWindowTitle(m_handle, title.c_str());
+            SDL3::SDL_SetWindowTitle(m_sdl_window, title.c_str());
             return *this;
         }
 
         std::string get_title() const
         {
-            return std::string{ SDL3::SDL_GetWindowTitle(m_handle) };
+            return std::string{ SDL3::SDL_GetWindowTitle(m_sdl_window) };
         }
 
         const window& maximize()
         {
-            SDL3::SDL_MaximizeWindow(m_handle);
+            SDL3::SDL_MaximizeWindow(m_sdl_window);
             return *this;
         }
 
         const window& minimize()
         {
-            SDL3::SDL_MinimizeWindow(m_handle);
+            SDL3::SDL_MinimizeWindow(m_sdl_window);
             return *this;
         }
 
         const window& hide()
         {
-            SDL3::SDL_HideWindow(m_handle);
+            SDL3::SDL_HideWindow(m_sdl_window);
             return *this;
         }
 
         const window& restore()
         {
-            SDL3::SDL_RestoreWindow(m_handle);
+            SDL3::SDL_RestoreWindow(m_sdl_window);
             return *this;
         }
 
         const window& raise()
         {
-            SDL3::SDL_RaiseWindow(m_handle);
+            SDL3::SDL_RaiseWindow(m_sdl_window);
             return *this;
         }
 
         const window& show()
         {
-            SDL3::SDL_ShowWindow(m_handle);
+            SDL3::SDL_ShowWindow(m_sdl_window);
             return *this;
         }
 
         const window& set_fullscreen(bool fullscreen)
         {
-            i32 result{ SDL3::SDL_SetWindowFullscreen(m_handle,
-                                                      fullscreen ? SDL3::SDL_TRUE : SDL3::SDL_FALSE) };
+            i32 result{ SDL3::SDL_SetWindowFullscreen(m_sdl_window, sdl::boolean(fullscreen)) };
             runtime_assert(result == 0, "Failed to set window to fullscreen");
             return *this;
         }
 
         const window& set_size(const ds::dimensions<i32>& size)
         {
-            i32 result{ SDL3::SDL_SetWindowSize(m_handle, size.width, size.height) };
+            i32 result{ SDL3::SDL_SetWindowSize(m_sdl_window, size.width, size.height) };
             runtime_assert(result == 0, "failed to set window size");
             return *this;
         }
@@ -148,64 +147,64 @@ namespace rl::sdl
         ds::point<i32> get_position() const
         {
             ds::point<i32> pos{ 0, 0 };
-            SDL3::SDL_GetWindowPosition(m_handle, &pos.x, &pos.y);
+            SDL3::SDL_GetWindowPosition(m_sdl_window, &pos.x, &pos.y);
             return pos;
         }
 
         const window& set_position(ds::point<i32> pos)
         {
-            SDL3::SDL_SetWindowPosition(m_handle, pos.x, pos.y);
+            SDL3::SDL_SetWindowPosition(m_sdl_window, pos.x, pos.y);
             return *this;
         }
 
         ds::dimensions<i32> get_min_size() const
         {
             ds::dimensions<i32> size{ 0, 0 };
-            SDL3::SDL_GetWindowMinimumSize(m_handle, &size.width, &size.height);
+            SDL3::SDL_GetWindowMinimumSize(m_sdl_window, &size.width, &size.height);
             return size;
         }
 
         ds::dimensions<i32> get_max_size() const
         {
             ds::dimensions<i32> size{ 0, 0 };
-            SDL3::SDL_GetWindowMaximumSize(m_handle, &size.width, &size.height);
+            SDL3::SDL_GetWindowMaximumSize(m_sdl_window, &size.width, &size.height);
             return size;
         }
 
         const window& set_min_size(ds::dimensions<i32> size)
         {
-            SDL3::SDL_SetWindowMinimumSize(m_handle, size.width, size.height);
+            SDL3::SDL_SetWindowMinimumSize(m_sdl_window, size.width, size.height);
             return *this;
         }
 
         const window& set_max_size(ds::dimensions<i32>& size)
         {
-            SDL3::SDL_SetWindowMaximumSize(m_handle, size.width, size.height);
+            SDL3::SDL_SetWindowMaximumSize(m_sdl_window, size.width, size.height);
             return *this;
         }
 
         bool get_grab() const
         {
-            bool grab{ SDL3::SDL_GetWindowGrab(m_handle) == SDL3::SDL_TRUE };
+            bool grab{ SDL3::SDL_GetWindowGrab(m_sdl_window) == SDL3::SDL_TRUE };
             return grab;
         }
 
         const window& set_grab(bool grabbed)
         {
-            SDL3::SDL_SetWindowGrab(m_handle, grabbed ? SDL3::SDL_TRUE : SDL3::SDL_FALSE);
+            SDL3::SDL_SetWindowGrab(m_sdl_window, sdl::boolean(grabbed));
             return *this;
         }
 
         SDL3::SDL_DisplayID get_display() const
         {
-            SDL3::SDL_DisplayID id{ SDL3::SDL_GetDisplayForWindow(m_handle) };
+            SDL3::SDL_DisplayID id{ SDL3::SDL_GetDisplayForWindow(m_sdl_window) };
             runtime_assert(id < 0, "failed to set window display idx");
             return id;
         }
 
         SDL3::SDL_DisplayMode get_display_mode() const
         {
-            const SDL3::SDL_DisplayMode* mode{ SDL3::SDL_GetWindowFullscreenMode(m_handle) };
+            const SDL3::SDL_DisplayMode* mode{ SDL3::SDL_GetWindowFullscreenMode(m_sdl_window) };
             runtime_assert(mode == nullptr, "failed to get window display mode");
 
             SDL3::SDL_DisplayMode ret{};
@@ -215,18 +214,18 @@ namespace rl::sdl
 
         u32 get_flags() const
         {
-            return SDL3::SDL_GetWindowFlags(m_handle);
+            return SDL3::SDL_GetWindowFlags(m_sdl_window);
         }
 
         const window& set_bordered(bool bordered)
         {
-            SDL3::SDL_SetWindowBordered(m_handle, bordered ? SDL3::SDL_TRUE : SDL3::SDL_FALSE);
+            SDL3::SDL_SetWindowBordered(m_sdl_window, sdl::boolean(bordered));
             return *this;
         }
 
         const window& set_opacity(float opacity)
         {
-            i32 result{ SDL3::SDL_SetWindowOpacity(m_handle, opacity) };
+            i32 result{ SDL3::SDL_SetWindowOpacity(m_sdl_window, opacity) };
             runtime_assert(result != 0, "failed to set window opacity");
             return *this;
         }
@@ -234,18 +233,18 @@ namespace rl::sdl
         f32 get_opacity() const
         {
             f32 opacity{ 0.0f };
-            i32 result{ SDL3::SDL_GetWindowOpacity(m_handle, &opacity) };
+            i32 result{ SDL3::SDL_GetWindowOpacity(m_sdl_window, &opacity) };
             runtime_assert(result == -1, "failed to get window opacity");
             return opacity;
         }
 
         const window& set_resizable(bool resizable)
         {
-            SDL3::SDL_SetWindowResizable(m_handle, resizable ? SDL3::SDL_TRUE : SDL3::SDL_FALSE);
+            SDL3::SDL_SetWindowResizable(m_sdl_window, sdl::boolean(resizable));
             return *this;
         }
 
     private:
-        SDL3::SDL_Window* m_handle{};
+        SDL3::SDL_Window* m_sdl_window{ nullptr };
     };
 }

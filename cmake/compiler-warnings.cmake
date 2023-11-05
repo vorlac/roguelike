@@ -69,6 +69,9 @@ target_compile_options(${PROJECT_NAME}
 			-Wno-microsoft-enum-value
             -Wno-documentation
 			-Wno-documentation-unknown-command
+			-Wno-sign-conversion
+			-Wno-switch-enum
+			-Wno-nonportable-system-include-path # #include <windows.h> in SDL3 (SDL_syswm.h)
         >
 
         # Clang only

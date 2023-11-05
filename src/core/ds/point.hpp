@@ -6,5 +6,5 @@
 namespace rl::ds
 {
     template <rl::numeric T>
-    using point = vector2<T>;
+    using point = std::type_identity<vector2<T>>::type;
 }

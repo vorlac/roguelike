@@ -11,22 +11,27 @@
 
 namespace SDL3
 {
-    struct SDL_Texture;
-    typedef SDL_Texture SDL_Texture;
+#include <SDL3/SDL_stdinc.h>
+    //
+#include <SDL3/SDL_blendmode.h>
+    //
+#include <SDL3/SDL_render.h>
+#include <SDL3/SDL_syswm.h>
 }
 
 namespace rl::sdl
 {
+    class renderer;
+
     class texture
     {
     public:
         texture(texture&& tex);
+        texture(sdl::renderer& renderer, u32 format = SDL3::SDL_PIXELFORMAT_RGBA8888,
+                i32 accesss = SDL3::SDL_TEXTUREACCESS_TARGET, i32 width = 1024, i32 height = 768);
 
-        operator SDL3::SDL_Texture();
-
-        i32 width();
-        i32 height();
-        SDL3::SDL_Texture* sdl_data();
+        ds::dimensions<i32> size();
+        SDL3::SDL_Texture* sdl_handle();
 
     protected:
         SDL3::SDL_Texture* m_sdl_texture{};

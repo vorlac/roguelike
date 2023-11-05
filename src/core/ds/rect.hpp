@@ -44,6 +44,16 @@ namespace rl::ds
         {
         }
 
+        constexpr rect(const rect<T>& other)
+        {
+            this->operator=(other);
+        }
+
+        constexpr rect(rect<T>&& other)
+        {
+            this->operator=(other);
+        }
+
         constexpr rect(const T x, const T y, const T width, const T height)
             : pt{ x, y }
             , size{ width, height }
@@ -62,25 +72,81 @@ namespace rl::ds
         {
         }
 
-        constexpr rect(SDL3::SDL_FRect other)
+        /// SDL_FRect conversions ///
+
+        /**
+         * @brief construct rect<f32> from SDL_FRect&&
+         * */
+        constexpr rect(SDL3::SDL_FRect&& other)
             requires std::same_as<T, f32>
             : pt{ other.x, other.y }
             , size{ other.w, other.h }
         {
         }
 
-        constexpr rect(SDL3::SDL_Rect other)
-            requires std::same_as<T, i32>
-            : pt{ other.x, other.y }
-            , size{ other.w, other.h }
+        /**
+         * @brief cast rect<f32> to SDL_FRect
+         * */
+        constexpr operator SDL3::SDL_FRect()
+            requires std::same_as<T, f32>
         {
-            return *this;
+            return {
+                pt.x,
+                pt.y,
+                size.width,
+                size.height,
+            };
         }
 
+        /**
+         * @brief implicit cast from
+         * const rect<f32>& to const SDL_FRect&
+         * */
+        constexpr operator const SDL3::SDL_FRect&() const&
+            requires std::same_as<T, f32>
+        {
+            return *reinterpret_cast<const SDL3::SDL_FRect*>(this);
+            /*return {
+                pt.x,
+                pt.y,
+                size.width,
+                size.height,
+            };*/
+        }
+
+        /**
+         * @brief construct rect<f32> from SDL_FRect
+         * */
         constexpr rect(const SDL3::SDL_FRect* other)
             requires std::same_as<T, f32>
             : pt{ other->x, other->y }
             , size{ other->w, other->h }
+        {
+        }
+
+        constexpr SDL3::SDL_FRect& operator=(rect<f32>&& other)
+            requires std::same_as<T, f32>
+        {
+            SDL3::SDL_memcpy(this, &other, sizeof(*this));
+            return *this;
+        }
+
+        constexpr operator const SDL3::SDL_FRect*() const
+            requires std::same_as<T, f32>
+        {
+            return reinterpret_cast<const SDL3::SDL_FRect*>(this);
+        }
+
+        constexpr operator const SDL3::SDL_FRect*()
+            requires std::same_as<T, f32>
+        {
+            return this;
+        }
+
+        constexpr rect(SDL3::SDL_Rect&& other)
+            requires std::same_as<T, i32>
+            : pt{ other.x, other.y }
+            , size{ other.w, other.h }
         {
         }
 
@@ -91,43 +157,10 @@ namespace rl::ds
         {
         }
 
-        constexpr operator SDL3::SDL_FRect()
-            requires std::same_as<T, f32>
-        {
-            return SDL3::SDL_FRect{
-                pt.x,
-                pt.y,
-                size.width,
-                size.height,
-            };
-        }
-
-        constexpr operator const SDL3::SDL_FRect() const&
-            requires std::same_as<T, f32>
-        {
-            return SDL3::SDL_FRect{
-                pt.x,
-                pt.y,
-                size.width,
-                size.height,
-            };
-        }
-
-        constexpr operator SDL3::SDL_Rect()
+        constexpr operator SDL3::SDL_Rect() const&
             requires std::same_as<T, i32>
         {
-            return SDL3::SDL_Rect{
-                pt.x,
-                pt.y,
-                size.width,
-                size.height,
-            };
-        }
-
-        constexpr operator const SDL3::SDL_FRect*()
-            requires std::same_as<T, f32>
-        {
-            return this;
+            return *reinterpret_cast<const SDL3::SDL_Rect*>(this);
         }
 
         constexpr operator SDL3::SDL_Rect*()
@@ -136,33 +169,10 @@ namespace rl::ds
             return reinterpret_cast<SDL3::SDL_Rect*>(this);
         }
 
-        constexpr operator const SDL3::SDL_FRect*() const
-            requires std::same_as<T, f32>
-        {
-            return reinterpret_cast<const SDL3::SDL_FRect*>(this);
-        }
-
         constexpr operator const SDL3::SDL_Rect*() const
             requires std::same_as<T, i32>
         {
             return reinterpret_cast<const SDL3::SDL_Rect*>(this);
-        }
-
-        constexpr SDL3::SDL_FRect& operator=(rect<f32>&& other)
-            requires std::same_as<T, f32>
-        {
-            SDL3::SDL_memcpy(this, &other, sizeof(*this));
-            return *this;
-        }
-
-        constexpr rect(const rect<T>& other)
-        {
-            this->operator=(std::forward<const rect<T>>(other));
-        }
-
-        constexpr rect(rect<T>&& other)
-        {
-            this->operator=(other);
         }
 
         /**

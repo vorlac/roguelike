@@ -41,8 +41,8 @@ namespace rl::sdl
 
     public:
         sdl_app()
-            : sdl_app(Subsystem::All)
         {
+            this->init_subsystem(Subsystem::All);
         }
 
         sdl_app(Subsystem flags)
@@ -68,9 +68,10 @@ namespace rl::sdl
         }
 
     private:
-        sdl_app(const sdl::sdl_app& other)       = delete;
+        sdl_app(const sdl::sdl_app& other) = delete;
+        sdl_app(sdl::sdl_app&& other)      = delete;
+
         sdl_app& operator=(const sdl_app& other) = delete;
-        sdl_app(sdl::sdl_app&& other)            = delete;
         sdl_app& operator=(sdl_app&& other)      = delete;
 
         void report_error()
@@ -80,6 +81,7 @@ namespace rl::sdl
 
     private:
         // guard that makes sure only one exists
+        std::once_flag init_flag{};
         static inline std::atomic<bool> m_initialized{ false };
         sdl::window m_window{};
         sdl::renderer m_renderer{};

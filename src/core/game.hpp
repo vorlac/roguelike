@@ -14,7 +14,8 @@ namespace rl
         bool run();
         bool teardown();
 
-        bool should_quit() const;
+        bool print_log_msg(const char* event_type, const char* text);
+        bool process_inputs() const;
         void quit();
 
     protected:

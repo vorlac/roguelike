@@ -39,7 +39,7 @@ set(compiler_is_clang "$<OR:$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:Clan
 set(SDL_LIBC ON)
 set(SDL_STATIC ON)
 set(SDL_SHARED OFF)
-set(FORCE_STATIC_VCRT ON)
+set(FORCE_STATIC_VCRT OFF)
 set(SDL_VULKAN ON)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl)
 
@@ -73,8 +73,6 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
   NOMINMAX
 
   $<$<CONFIG:Debug>:
-    ROGUELIKE_DEBUG
-    ROGUELIKE_LOGGER_ENABLED
     DEBUG_HEAP=0
   >
 
@@ -96,11 +94,6 @@ target_compile_options(${PROJECT_NAME} PRIVATE
     >
 
     $<$<CONFIG:Release>:
-      /MD
-      /Ox
-    >
-
-    $<$<CONFIG:RelWithDebInfo>:
       /MD
       /Ox
     >

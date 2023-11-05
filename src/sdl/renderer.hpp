@@ -1,6 +1,8 @@
 #pragma once
 
+#include <memory>
 #include <string>
+#include <type_traits>
 #include <utility>
 #include <vector>
 
@@ -10,6 +12,7 @@
 #include "core/ds/vector2d.hpp"
 #include "core/numeric_types.hpp"
 #include "core/utils/assert.hpp"
+#include "core/utils/conversions.hpp"
 #include "sdl/color.hpp"
 #include "sdl/texture.hpp"
 #include "sdl/window.hpp"
@@ -47,6 +50,12 @@ namespace rl::sdl
                 SDL3::SDL_DestroyRenderer(m_sdl_renderer);
         }
 
+        SDL3::SDL_Renderer* sdl_handle() const
+        {
+            runtime_assert(m_sdl_renderer != nullptr, "sdl renderer handle not initialized");
+            return m_sdl_renderer;
+        }
+
         renderer& operator=(renderer&& other) noexcept
         {
             if (m_sdl_renderer != nullptr)
@@ -79,11 +88,6 @@ namespace rl::sdl
             runtime_assert(result != 0, "failed to get renderer info");
             return info;
         }
-
-        // operator SDL3::SDL_Renderer()
-        //{
-        //     return *m_sdl_renderer;
-        // }
 
         ds::dimensions<i32> get_output_size() const
         {
@@ -142,9 +146,10 @@ namespace rl::sdl
                             SDL3::SDL_RendererFlip flip)
         {
             // resolve rectangles
+            ds::dimensions<i32> tsize{ tex.size() };
             ds::dimensions<i32> rsize{ this->get_output_size() };
             ds::rect<i32> src = { (src_rect ? *src_rect
-                                            : ds::rect<i32>{ 0, 0, tex.width(), tex.height() }) };
+                                            : ds::rect<i32>{ 0, 0, tsize.width, tsize.height }) };
             ds::rect<i32> dst = { (dst_rect ? *dst_rect
                                             : ds::rect<i32>{ 0, 0, rsize.width, rsize.height }) };
 
@@ -248,7 +253,7 @@ namespace rl::sdl
 
         renderer& set_target(sdl::texture& tex)
         {
-            i32 result = SDL3::SDL_SetRenderTarget(m_sdl_renderer, tex.sdl_data());
+            i32 result = SDL3::SDL_SetRenderTarget(m_sdl_renderer, tex.sdl_handle());
             runtime_assert(result != 0, "failed to set draw color");
             return *this;
         }
@@ -269,10 +274,13 @@ namespace rl::sdl
 
         renderer& draw_points(const std::vector<ds::point<f32>>& points)
         {
-            i32 result = SDL3::SDL_RenderPoints(m_sdl_renderer,
-                                                points.data(),
-                cast::to<i32>(points.size());
-            runtime_assert(result != 0, "failed to set draw color");
+            i32 count{ cast::to<i32>(points.size()) };
+            if (count > 0) [[likely]]
+            {
+                const SDL3::SDL_FPoint& sdl_point{ *points.front() };
+                i32 result = SDL3::SDL_RenderPoints(m_sdl_renderer, &sdl_point, count);
+                runtime_assert(result != 0, "failed to set draw color");
+            }
             return *this;
         }
 
@@ -285,81 +293,101 @@ namespace rl::sdl
 
         renderer& draw_lines(const std::vector<ds::point<f32>>& lines)
         {
-            i32 result = SDL3::SDL_RenderLines(
-                m_sdl_renderer,
-                reinterpret_cast<const ds::point<f32>* const>(lines.data()),
-                lines.size());
+            i32 count{ cast::to<i32>(lines.size()) };
+            if (count > 0) [[likely]]
+            {
+                const SDL3::SDL_FPoint& sdl_points{ *lines.front() };
+                i32 result{ SDL3::SDL_RenderLines(m_sdl_renderer, &sdl_points, count) };
+                runtime_assert(result != 0, "failed to set draw color");
+            }
+            return *this;
+        }
 
+        renderer& draw_rect(ds::rect<f32>& rect)
+        {
+            const SDL3::SDL_FRect& sdl_rect = rect;
+            i32 result{ SDL3::SDL_RenderRect(m_sdl_renderer, &sdl_rect) };
             runtime_assert(result != 0, "failed to set draw color");
             return *this;
         }
 
-        renderer& draw_rect(ds::rect<i32>& rect)
-
+        renderer& draw_rects(const std::vector<ds::rect<f32>>& rects)
         {
-            i32 result = SDL3::SDL_RenderRect(m_sdl_renderer, &rect);
+            i32 count{ cast::to<i32>(rects.size()) };
+            if (count > 0) [[likely]]
+            {
+                const SDL3::SDL_FRect& sdl_rects{ *rects.front() };
+                i32 result = SDL3::SDL_RenderRects(m_sdl_renderer, &sdl_rects, count);
+                runtime_assert(result != 0, "failed to set draw color");
+            }
+            return *this;
+        }
+
+        renderer& fill_rect(const ds::rect<f32>& rect)
+        {
+            const SDL3::SDL_FRect& sdl_rect = rect;
+            i32 result{ SDL3::SDL_RenderFillRect(m_sdl_renderer, &sdl_rect) };
             runtime_assert(result != 0, "failed to set draw color");
             return *this;
         }
 
-        renderer& draw_rects(std::vector<ds::rect<i32>>& rects)
+        renderer& fill_rects(const std::vector<ds::rect<f32>>& rects)
         {
-            i32 result = SDL3::SDL_RenderRects(m_sdl_renderer, rects.data(), rects.size());
-            runtime_assert(result != 0, "failed to set draw color");
+            i32 count{ cast::to<i32>(rects.size()) };
+            if (count > 0) [[likely]]
+            {
+                const SDL3::SDL_FRect& sdl_rects{ *rects.front() };
+                i32 result = SDL3::SDL_RenderFillRects(m_sdl_renderer, &sdl_rects, count);
+                runtime_assert(result != 0, "failed to set draw color");
+            }
             return *this;
         }
 
-        renderer& fill_rect(ds::rect<i32> rect)
+        void read_pixels(const ds::rect<i32>& rect, u32 format, void* pixels, i32 pitch)
         {
-            i32 result = SDL3::SDL_RenderFillRect(m_sdl_renderer, &rect);
-            runtime_assert(result != 0, "failed to set draw color");
-            return *this;
-        }
-
-        renderer& fill_rects(const std::vector<ds::rect<i32>>& rects)
-        {
-            i32 result = SDL3::SDL_RenderFillRects(m_sdl_renderer, rects.data(), rects.size());
-            runtime_assert(result != 0, "failed to set draw color");
-            return *this;
-        }
-
-        void read_pixels(const ds::rect<i32>* rect, u32 format, void* pixels, i32 pitch)
-        {
-            i32 result = SDL3::SDL_RenderReadPixels(m_sdl_renderer, &rect, format, pixels, pitch);
+            const SDL3::SDL_Rect& sdl_rect = rect;
+            i32 result = SDL3::SDL_RenderReadPixels(m_sdl_renderer, &sdl_rect, format, pixels, pitch);
             runtime_assert(result != 0, "failed to set draw color");
         }
 
-        renderer& set_clip_rect(const ds::rect<i32>*& rect)
+        renderer& set_clip_rect(const ds::rect<i32>& rect)
         {
-            i32 result = SDL3::SDL_SetRenderClipRect(m_sdl_renderer, rect);
+            const SDL3::SDL_Rect& r = rect;
+            i32 result{ SDL3::SDL_SetRenderClipRect(m_sdl_renderer, &r) };
             runtime_assert(result != 0, "failed to set draw color");
             return *this;
         }
 
         renderer& set_logical_size(i32 width, i32 height)
         {
-            i32 result = SDL3::SDL_SetRenderLogicalPresentation(m_sdl_renderer, width, height);
+            i32 result = SDL3::SDL_SetRenderLogicalPresentation(
+                m_sdl_renderer,
+                width,
+                height,
+                SDL3::SDL_LOGICAL_PRESENTATION_DISABLED,
+                SDL3::SDL_SCALEMODE_NEAREST);
             runtime_assert(result != 0, "failed to set draw color");
             return *this;
         }
 
-        renderer& set_scale(float scaleX, float scaleY)
+        renderer& set_scale(f32 scaleX, f32 scaleY)
         {
             i32 result = SDL3::SDL_SetRenderScale(m_sdl_renderer, scaleX, scaleY);
             runtime_assert(result != 0, "failed to set draw color");
             return *this;
         }
 
-        renderer& set_viewport(ds::rect<i32>* rect)
+        renderer& set_viewport(const ds::rect<i32>& rect)
         {
-            i32 result = SDL3::SDL_SetRenderViewport(m_sdl_renderer, rect);
+            const SDL3::SDL_Rect& r = rect;
+            i32 result              = SDL3::SDL_SetRenderViewport(m_sdl_renderer, &r);
             runtime_assert(result != 0, "failed to set draw color");
             return *this;
         }
 
         ds::rect<i32> get_clip_rect() const
         {
-            ds::rect<i32> rect{ 0, 0, 0, 0 };
+            SDL3::SDL_Rect rect{ 0, 0, 0, 0 };
             i32 result = SDL3::SDL_GetRenderClipRect(m_sdl_renderer, &rect);
             runtime_assert(result, "failed to set draw color");
             return rect;
@@ -368,7 +396,11 @@ namespace rl::sdl
         ds::dimensions<i32> get_logical_size() const
         {
             ds::dimensions<i32> size{ 0, 0 };
-            SDL3::SDL_GetRenderLogicalPresentation(m_sdl_renderer, &size.width, &size.height);
+            SDL3::SDL_GetRenderLogicalPresentation(m_sdl_renderer,
+                                                   &size.width,
+                                                   &size.height,
+                                                   nullptr,
+                                                   nullptr);
             return size;
         }
 
