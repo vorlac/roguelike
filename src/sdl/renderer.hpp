@@ -6,6 +6,9 @@
 #include <utility>
 #include <vector>
 
+#include <fmt/core.h>
+#include <fmt/format.h>
+
 #include "core/ds/dimensions.hpp"
 #include "core/ds/point.hpp"
 #include "core/ds/rect.hpp"
@@ -13,6 +16,7 @@
 #include "core/numeric_types.hpp"
 #include "core/utils/assert.hpp"
 #include "core/utils/conversions.hpp"
+#include "core/utils/io.hpp"
 #include "sdl/color.hpp"
 #include "sdl/texture.hpp"
 #include "sdl/window.hpp"
@@ -25,29 +29,78 @@ namespace SDL3
 #include <SDL3/SDL_render.h>
 }
 
+namespace SDL3
+{
+    inline static auto format_as(const SDL_RendererInfo& ri)
+    {
+        bool hw_accel = 0 != (ri.flags & SDL_RENDERER_ACCELERATED);
+        bool software = 0 != (ri.flags & SDL_RENDERER_SOFTWARE);
+        bool en_vsync = 0 != (ri.flags & SDL_RENDERER_PRESENTVSYNC);
+
+        std::string buffer{};
+        buffer.reserve(512);
+        auto&& inserter = std::back_inserter(buffer);
+
+        fmt::format_to(inserter, "Renderer Info:      \n");
+        fmt::format_to(inserter, "  Name: {}          \n", ri.name);
+        fmt::format_to(inserter, "  Max Texture Size: \n");
+        fmt::format_to(inserter, "    Width:  {}      \n", ri.max_texture_width);
+        fmt::format_to(inserter, "    Height: {}      \n", ri.max_texture_height);
+        fmt::format_to(inserter, "  Context Flags:    \n");
+        fmt::format_to(inserter, "    [{}] SDL_RENDERER_ACCELERATED \n", hw_accel ? "✓" : " ");
+        fmt::format_to(inserter, "    [{}] SDL_RENDERER_SOFTWARE    \n", software ? "✓" : " ");
+        fmt::format_to(inserter, "    [{}] SDL_RENDERER_PRESENTVSYNC\n", hw_accel ? "✓" : " ");
+        fmt::format_to(inserter, "  Available Texture Formats: {}   \n", ri.num_texture_formats);
+        for (rl::u32 i = 0; i < ri.num_texture_formats; ++i)
+        {
+            auto format = SDL3::SDL_GetPixelFormatName(ri.texture_formats[i]);
+            fmt::format_to(inserter, "    {} \n", format);
+        }
+        return buffer;
+    }
+}
+
 namespace rl::sdl
 {
     class renderer
     {
-    public:
-        renderer() = default;
+        renderer()                      = delete;
+        renderer(renderer&& other)      = delete;
+        renderer(const renderer& other) = delete;
 
-        renderer(renderer&& other)
-            : m_sdl_renderer{ other.m_sdl_renderer }
+    public:
+        renderer(const sdl::window& window, u32 flags)
+            : m_sdl_renderer{ SDL3::SDL_CreateRenderer(window.get_handle(), nullptr, flags) }
         {
-            other.m_sdl_renderer = nullptr;
+            runtime_assert(m_sdl_renderer != nullptr, "failed to create renderer");
+            this->print_render_info();
         }
 
         renderer(const sdl::window& window, const std::string& name, u32 flags)
             : m_sdl_renderer{ SDL3::SDL_CreateRenderer(window.get_handle(), name.c_str(), flags) }
         {
             runtime_assert(m_sdl_renderer != nullptr, "failed to create renderer");
+            this->print_render_info();
         }
 
         ~renderer()
         {
             if (m_sdl_renderer != nullptr)
                 SDL3::SDL_DestroyRenderer(m_sdl_renderer);
+        }
+
+        void print_render_info()
+        {
+            if (m_sdl_renderer == nullptr)
+            {
+                auto style = fmt::emphasis::bold | fmt::fg(fmt::color::light_coral);
+                fmt::print(style, "Renderer Invalid\n");
+                return;
+            }
+
+            auto&& info{ this->get_info() };
+            auto&& style = fmt::fg(fmt::color::light_steel_blue);
+            fmt::print(style, "{}\n", info);
         }
 
         SDL3::SDL_Renderer* sdl_handle() const
@@ -76,8 +129,8 @@ namespace rl::sdl
 
         renderer& clear()
         {
-            const i32 result{ SDL3::SDL_RenderClear(m_sdl_renderer) };
-            runtime_assert(result != 0, "failed to clear renderer");
+            const i32 result = SDL3::SDL_RenderClear(m_sdl_renderer);
+            runtime_assert(result == 0, "failed to clear renderer");
             return *this;
         }
 
@@ -85,25 +138,26 @@ namespace rl::sdl
         {
             SDL3::SDL_RendererInfo info{};
             i32 result = SDL3::SDL_GetRendererInfo(m_sdl_renderer, &info);
-            runtime_assert(result != 0, "failed to get renderer info");
+            runtime_assert(result == 0, "failed to get renderer info");
             return info;
         }
 
         ds::dimensions<i32> get_output_size() const
         {
             ds::dimensions<i32> s{ 0, 0 };
-            i32 result{ SDL3::SDL_GetCurrentRenderOutputSize(m_sdl_renderer, &s.width, &s.height) };
-            runtime_assert(result != 0, "failed to get renderer output size");
+            i32 result = SDL3::SDL_GetCurrentRenderOutputSize(m_sdl_renderer, &s.width, &s.height);
+            runtime_assert(result == 0, "failed to get renderer output size");
             return s;
         }
 
-        renderer& copy(texture& tex, const ds::rect<i32>& src_rect, const ds::rect<i32>& dst_rect)
+        renderer& copy(texture& tex, const ds::rect<i32>& src_rect = ds::rect<i32>::null(),
+                       const ds::rect<i32>& dst_rect = ds::rect<i32>::null())
         {
             const ds::rect<f32>& src_frect{ src_rect };
             const ds::rect<f32>& dst_frect{ dst_rect };
-            i32 result =
-                SDL3::SDL_RenderTexture(m_sdl_renderer, tex.sdl_handle(), src_frect, dst_frect);
-            runtime_assert(result != 0, "failed to copy texture");
+            i32 result = SDL3::SDL_RenderTexture(m_sdl_renderer, tex.sdl_handle(), src_frect,
+                                                 dst_frect);
+            runtime_assert(result == 0, "failed to copy texture");
             return *this;
         }
 
@@ -121,8 +175,8 @@ namespace rl::sdl
                        const ds::rect<i32>& src_rect,
                        const ds::rect<i32>& dst_rect,
                        f64 angle,
-                       const ds::point<i32>& center_pt,
-                       SDL3::SDL_RendererFlip flip)
+                       const ds::point<i32>& center_pt = ds::point<i32>{},
+                       SDL3::SDL_RendererFlip flip     = SDL3::SDL_RendererFlip::SDL_FLIP_NONE)
         {
             const ds::rect<f32>& src_frect{ src_rect };
             const ds::rect<f32>& dst_frect{ dst_rect };
@@ -135,7 +189,7 @@ namespace rl::sdl
                                                         center_fpt,
                                                         flip);
 
-            runtime_assert(result != 0, "failed to copy rotated texture");
+            runtime_assert(result == 0, "failed to copy rotated texture");
             return *this;
         }
 
@@ -143,8 +197,8 @@ namespace rl::sdl
                        const ds::rect<i32>& src_rect,
                        const ds::point<i32>& dst_point,
                        f64 angle,
-                       const ds::point<i32>& center_pt,
-                       SDL3::SDL_RendererFlip flip)
+                       const ds::point<i32>& center_pt = ds::point<i32>{},
+                       SDL3::SDL_RendererFlip flip     = SDL3::SDL_RendererFlip::SDL_FLIP_NONE)
         {
             auto&& tsize{ tex.size() };
             ds::rect<i32> dst_rect = {
@@ -253,7 +307,7 @@ namespace rl::sdl
                                    std::forward<ds::rect<i32>&>(tile_src),
                                    std::forward<ds::rect<i32>&>(tile_dst),
                                    0.0,
-                                   std::forward<ds::point<i32> const&>(ds::point<i32>::null),
+                                   std::forward<ds::point<i32>>(ds::point<i32>::null()),
                                    flip);
                     }
                     else
@@ -271,45 +325,45 @@ namespace rl::sdl
         renderer& set_draw_color(sdl::color&& c)
         {
             i32 result = SDL3::SDL_SetRenderDrawColor(m_sdl_renderer, c.r, c.g, c.b, c.a);
-            runtime_assert(result != 0, "failed to set draw color");
+            runtime_assert(result == 0, "failed to set draw color");
             return *this;
         }
 
         renderer& set_target()
         {
             i32 result = SDL3::SDL_SetRenderTarget(m_sdl_renderer, nullptr);
-            runtime_assert(result != 0, "failed to set draw color");
+            runtime_assert(result == 0, "failed to set draw color");
             return *this;
         }
 
         renderer& set_target(sdl::texture& tex)
         {
             i32 result = SDL3::SDL_SetRenderTarget(m_sdl_renderer, tex.sdl_handle());
-            runtime_assert(result != 0, "failed to set draw color");
+            runtime_assert(result == 0, "failed to set draw color");
             return *this;
         }
 
         renderer& set_draw_blend_mode(SDL3::SDL_BlendMode blend_mode)
         {
             i32 result = SDL3::SDL_SetRenderDrawBlendMode(m_sdl_renderer, blend_mode);
-            runtime_assert(result != 0, "failed to set draw color");
+            runtime_assert(result == 0, "failed to set draw color");
             return *this;
         }
 
         renderer& draw_point(const ds::point<f32>& pt)
         {
             i32 result = SDL3::SDL_RenderPoint(m_sdl_renderer, pt.x, pt.y);
-            runtime_assert(result != 0, "failed to set draw color");
+            runtime_assert(result == 0, "failed to set draw color");
             return *this;
         }
 
         renderer& draw_points(const std::vector<ds::point<f32>>& points)
         {
-            i32 count{ cast::to<i32>(points.size()) };
+            i32 count = cast::to<i32>(points.size());
             if (count > 0) [[likely]]
             {
                 i32 result = SDL3::SDL_RenderPoints(m_sdl_renderer, points.front(), count);
-                runtime_assert(result != 0, "failed to set draw color");
+                runtime_assert(result == 0, "failed to set draw color");
             }
             return *this;
         }
@@ -317,53 +371,53 @@ namespace rl::sdl
         renderer& draw_line(const ds::point<f32>& pt1, const ds::point<f32>& pt2)
         {
             i32 result = SDL3::SDL_RenderLine(m_sdl_renderer, pt1.x, pt1.y, pt2.x, pt2.y);
-            runtime_assert(result != 0, "failed to set draw color");
+            runtime_assert(result == 0, "failed to set draw color");
             return *this;
         }
 
         renderer& draw_lines(const std::vector<ds::point<f32>>& lines)
         {
-            i32 count{ cast::to<i32>(lines.size()) };
+            i32 count = cast::to<i32>(lines.size());
             if (count > 0) [[likely]]
             {
-                i32 result{ SDL3::SDL_RenderLines(m_sdl_renderer, lines.front(), count) };
-                runtime_assert(result != 0, "failed to set draw color");
+                i32 result = SDL3::SDL_RenderLines(m_sdl_renderer, lines.front(), count);
+                runtime_assert(result == 0, "failed to set draw color");
             }
             return *this;
         }
 
         renderer& draw_rect(ds::rect<f32>& rect)
         {
-            i32 result{ SDL3::SDL_RenderRect(m_sdl_renderer, rect) };
-            runtime_assert(result != 0, "failed to set draw color");
+            i32 result = SDL3::SDL_RenderRect(m_sdl_renderer, rect);
+            runtime_assert(result == 0, "failed to set draw color");
             return *this;
         }
 
         renderer& draw_rects(const std::vector<ds::rect<f32>>& rects)
         {
-            i32 count{ cast::to<i32>(rects.size()) };
+            const i32 count = cast::to<i32>(rects.size());
             if (count > 0) [[likely]]
             {
                 i32 result = SDL3::SDL_RenderRects(m_sdl_renderer, rects.front(), count);
-                runtime_assert(result != 0, "failed to set draw color");
+                runtime_assert(result == 0, "failed to set draw color");
             }
             return *this;
         }
 
         renderer& fill_rect(const ds::rect<f32>& rect)
         {
-            i32 result{ SDL3::SDL_RenderFillRect(m_sdl_renderer, rect) };
-            runtime_assert(result != 0, "failed to set draw color");
+            i32 result = SDL3::SDL_RenderFillRect(m_sdl_renderer, rect);
+            runtime_assert(result == 0, "failed to set draw color");
             return *this;
         }
 
         renderer& fill_rects(const std::vector<ds::rect<f32>>& rects)
         {
-            i32 count{ cast::to<i32>(rects.size()) };
+            i32 count = cast::to<i32>(rects.size());
             if (count > 0) [[likely]]
             {
                 i32 result = SDL3::SDL_RenderFillRects(m_sdl_renderer, rects.front(), count);
-                runtime_assert(result != 0, "failed to set draw color");
+                runtime_assert(result == 0, "failed to set draw color");
             }
             return *this;
         }
@@ -371,13 +425,13 @@ namespace rl::sdl
         void read_pixels(const ds::rect<i32>& rect, u32 format, void* pixels, i32 pitch)
         {
             i32 result = SDL3::SDL_RenderReadPixels(m_sdl_renderer, rect, format, pixels, pitch);
-            runtime_assert(result != 0, "failed to set draw color");
+            runtime_assert(result == 0, "failed to set draw color");
         }
 
         renderer& set_clip_rect(const ds::rect<i32>& rect)
         {
-            i32 result{ SDL3::SDL_SetRenderClipRect(m_sdl_renderer, rect) };
-            runtime_assert(result != 0, "failed to set draw color");
+            i32 result = SDL3::SDL_SetRenderClipRect(m_sdl_renderer, rect);
+            runtime_assert(result == 0, "failed to set draw color");
             return *this;
         }
 
@@ -389,14 +443,14 @@ namespace rl::sdl
                 height,
                 SDL3::SDL_LOGICAL_PRESENTATION_DISABLED,
                 SDL3::SDL_SCALEMODE_NEAREST);
-            runtime_assert(result != 0, "failed to set draw color");
+            runtime_assert(result == 0, "failed to set draw color");
             return *this;
         }
 
         renderer& set_scale(f32 scaleX, f32 scaleY)
         {
             i32 result = SDL3::SDL_SetRenderScale(m_sdl_renderer, scaleX, scaleY);
-            runtime_assert(result != 0, "failed to set draw color");
+            runtime_assert(result == 0, "failed to set draw color");
             return *this;
         }
 
@@ -404,7 +458,7 @@ namespace rl::sdl
         {
             const SDL3::SDL_Rect& r = rect;
             i32 result              = SDL3::SDL_SetRenderViewport(m_sdl_renderer, &r);
-            runtime_assert(result != 0, "failed to set draw color");
+            runtime_assert(result == 0, "failed to set draw color");
             return *this;
         }
 
@@ -434,11 +488,11 @@ namespace rl::sdl
             return rect;
         }
 
-        SDL3::SDL_BlendMode GetDrawBlendMode() const
+        SDL3::SDL_BlendMode get_draw_blend_mode() const
         {
             SDL3::SDL_BlendMode mode{ SDL3::SDL_BLENDMODE_NONE };
-            i32 result{ SDL3::SDL_GetRenderDrawBlendMode(m_sdl_renderer, &mode) };
-            runtime_assert(result != 0, "failed to get renderer output size");
+            i32 result = SDL3::SDL_GetRenderDrawBlendMode(m_sdl_renderer, &mode);
+            runtime_assert(result == 0, "failed to get renderer output size");
             return mode;
         }
 
@@ -446,7 +500,7 @@ namespace rl::sdl
         {
             sdl::color c{};
             i32 result = SDL3::SDL_GetRenderDrawColor(m_sdl_renderer, &c.r, &c.g, &c.b, &c.a);
-            runtime_assert(result != 0, "failed to get renderer output size");
+            runtime_assert(result == 0, "failed to get renderer output size");
             return c;
         }
 

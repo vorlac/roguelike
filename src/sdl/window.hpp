@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include <utility>
 
@@ -8,6 +9,7 @@
 #include "core/ds/rect.hpp"
 #include "core/ds/vector2d.hpp"
 #include "core/utils/assert.hpp"
+#include "sdl/renderer.hpp"
 #include "sdl/utils.hpp"
 
 namespace SDL3
@@ -22,18 +24,23 @@ namespace rl::sdl
     class window
     {
     public:
-        window(std::string title = "SDL3", ds::dimensions<i32> pos = { 1920, 1080 }, u32 flags = 0)
-            : m_sdl_window(SDL3::SDL_CreateWindow(title.data(), pos.width, pos.height, flags))
-        {
-        }
-
-        window(std::string title, ds::rect<i32> bounds = { 0, 0, 1024, 768 }, u32 flags = 0)
+        window(std::string title    = "SDL3",
+               ds::rect<i32> bounds = ds::rect<i32>{ SDL_WINDOWPOS_CENTERED_MASK,
+                                                     SDL_WINDOWPOS_CENTERED_MASK, 640, 480 },
+               u32 flags            = SDL3::SDL_WINDOW_RESIZABLE)
             : m_sdl_window{ SDL3::SDL_CreateWindowWithPosition(title.data(),
                                                                bounds.pt.x,
                                                                bounds.pt.y,
                                                                bounds.size.width,
                                                                bounds.size.height,
                                                                flags) }
+        {
+        }
+
+        window(std::string title,
+               ds::dimensions<i32> dims = { 640, 480 },
+               u32 flags                = SDL3::SDL_WINDOW_RESIZABLE)
+            : m_sdl_window(SDL3::SDL_CreateWindow(title.data(), dims.width, dims.height, flags))
         {
         }
 

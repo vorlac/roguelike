@@ -12,16 +12,16 @@
 #include "sdl/color.hpp"
 #include "sdl/window.hpp"
 
-namespace SDL3
-{
-#include <SDL3/SDL_stdinc.h>
-    //
-#include <SDL3/SDL_blendmode.h>
-    //
-#include <SDL3/SDL_pixels.h>
-#include <SDL3/SDL_render.h>
-#include <SDL3/SDL_syswm.h>
-}
+// namespace SDL3
+//{
+//     // #include <SDL3/SDL_stdinc.h>
+//     //
+//     // #include <SDL3/SDL_blendmode.h>
+//     //
+//     // #include <SDL3/SDL_pixels.h>
+//     // #include <SDL3/SDL_render.h>
+//     // #include <SDL3/SDL_syswm.h>
+// }
 
 namespace rl::sdl
 {
@@ -44,13 +44,13 @@ namespace rl::sdl
         SDL3::SDL_Texture* sdl_handle();
 
         texture& operator=(texture&& other);
-        texture& update(void* const& pixels, i32 pitch,
-                        const ds::rect<i32>& rect = ds::rect<i32>::null);
-        texture& update(sdl::surface& surface, const ds::rect<i32>& rect = ds::rect<i32>::null);
-        texture& update(sdl::surface&& surface, const ds::rect<i32>& rect = ds::rect<i32>::null);
+        texture& update(const void* pixels, i32 pitch,
+                        const ds::rect<i32>& rect = ds::rect<i32>::null());
+        texture& update(sdl::surface& surface, const ds::rect<i32>& rect = ds::rect<i32>::null());
+        texture& update(sdl::surface&& surface, const ds::rect<i32>& rect = ds::rect<i32>::null());
         texture& update_yuv(const u8* yplane, i32 ypitch, const u8* uplane, i32 upitch,
                             const u8* vplane, i32 vpitch,
-                            const ds::rect<i32>& rect = ds::rect<i32>::null);
+                            const ds::rect<i32>& rect = ds::rect<i32>::null());
         texture& set_blend_mode(SDL3::SDL_BlendMode blend_mode);
         texture& set_alpha_mod(u8 alpha);
         texture& set_color_mod(u8 r, u8 g, u8 b);

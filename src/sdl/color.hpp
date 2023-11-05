@@ -1,5 +1,7 @@
 #pragma once
 
+#include <array>
+
 #include "core/numeric_types.hpp"
 
 namespace SDL3
@@ -45,6 +47,16 @@ namespace rl::sdl
         operator SDL3::SDL_Color()
         {
             return *reinterpret_cast<SDL3::SDL_Color*>(this);
+        }
+
+        constexpr operator std::array<u8, 4>()
+        {
+            return std::array<u8, 4>{ r, g, b, a };
+        }
+
+        constexpr operator std::tuple<u8, u8, u8, u8>()
+        {
+            return { r, g, b, a };
         }
     };
 }

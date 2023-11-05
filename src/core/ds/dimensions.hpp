@@ -4,6 +4,8 @@
 #include <memory>
 #include <utility>
 
+#include <memory.h>
+
 #include "core/utils/conversions.hpp"
 
 namespace rl::ds
@@ -11,12 +13,12 @@ namespace rl::ds
     template <rl::numeric T>
     struct dimensions
     {
-        T width{ 0 };
-        T height{ 0 };
+        T width{ cast::to<T>(0) };
+        T height{ cast::to<T>(0) };
 
         inline constexpr dimensions()
-            : width{ 0 }
-            , height{ 0 }
+            : width{ cast::to<T>(0) }
+            , height{ cast::to<T>(0) }
         {
         }
 
@@ -38,7 +40,33 @@ namespace rl::ds
         {
         }
 
-        static inline constexpr const dimensions<T>& null = {};
+        // constexpr dimensions(dimensions<T>&& other)
+        // {
+        //     width  = std::move(other.width);
+        //     height = std::move(other.height);
+        // }
+
+        constexpr dimensions(dimensions<T>& other)
+            : width{ other.width }
+            , height{ other.height }
+        {
+        }
+
+        static constexpr inline dimensions<T> null()
+        {
+            return {
+                cast::to<T>(0),
+                cast::to<T>(0),
+            };
+        }
+
+        static constexpr inline dimensions<T> zero()
+        {
+            return {
+                cast::to<T>(0),
+                cast::to<T>(0),
+            };
+        }
 
         // constexpr dimensions(const ImVec2& other)
         //     : width{ cast::to<T>(other.x) }

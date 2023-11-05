@@ -44,8 +44,24 @@ namespace rl::ds
         {
         }
 
-        static inline constexpr const vector2<T>& null = vector2{};
-        static inline constexpr const vector2<T>& zero = { cast::to<T>(0), cast::to<T>(0) };
+        constexpr vector2(const vector2<T>& other)
+            : x(other.x)
+            , y(other.y)
+        {
+        }
+
+        constexpr vector2(vector2<T>&& other)
+            : x(std::forward<T>(other.x))
+            , y(std::forward<T>(other.y))
+        {
+        }
+
+        // using type_t =
+        //     std::remove_reference_t<decltype(std::declval<std::type_identity_t<vector2<T>>>())>;
+        // static inline constexpr std::type_identity_t<type_t> null =
+        //     std::declval<std::add_lvalue_reference_t<vector2::type_t>>();
+
+        // static inline constexpr vector2<T> zero{ cast::to<T>(0), cast::to<T>(0) };
 
         constexpr vector2(const SDL3::SDL_Point& pt)
             requires std::same_as<T, i32>
@@ -108,6 +124,27 @@ namespace rl::ds
         {
             return reinterpret_cast<const SDL3::SDL_FPoint*>(this);
         }
+
+        static constexpr inline vector2<T> null()
+        {
+            return vector2<T>{};
+        }
+
+        static constexpr inline vector2<T> zero()
+        {
+            return vector2<T>{
+                cast::to<T>(0),
+                cast::to<T>(0),
+            };
+        }
+
+        // static constexpr inline vector2<T> zero() noexcept
+        //{
+        //     return {
+        //         cast::to<T>(0),
+        //         cast::to<T>(0),
+        //     };
+        // }
 
         constexpr inline bool is_zero(bool exact = false) noexcept
         {

@@ -56,7 +56,7 @@ namespace rl::sdl
     texture& texture::operator=(texture&& other)
     {
 #ifndef NDEBUG
-        runtime_assert(this == &other, "texture assigned to itself");
+        runtime_assert(this != &other, "texture assigned to itself");
         if (this == &other)
             return *this;
 #endif
@@ -75,7 +75,7 @@ namespace rl::sdl
         return m_sdl_texture;
     }
 
-    texture& texture::update(void* const& pixels, i32 pitch, const ds::rect<i32>& rect /*= {}*/)
+    texture& texture::update(const void* pixels, i32 pitch, const ds::rect<i32>& rect /*= {}*/)
     {
         i32 result = SDL3::SDL_UpdateTexture(m_sdl_texture, rect, pixels, pitch);
         runtime_assert(result == 0, "_________");

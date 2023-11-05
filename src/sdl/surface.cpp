@@ -274,9 +274,9 @@ namespace rl::sdl
         };
     }
 
-    u32 surface::get_format() const
+    SDL3::SDL_PixelFormatEnum surface::get_format() const
     {
-        return m_sdl_surface->format->format;
+        return static_cast<SDL3::SDL_PixelFormatEnum>(m_sdl_surface->format->format);
     }
 
 }

@@ -40,8 +40,8 @@ namespace rl::ds
     {
     public:
         explicit constexpr rect()
-            : pt{ point<T>::null }
-            , size{ dimensions<T>::null }
+            : pt{ point<T>::null() }
+            , size{ dimensions<T>::null() }
         {
         }
 
@@ -83,10 +83,21 @@ namespace rl::ds
         {
         }
 
-        static inline constexpr const rect<T>& null = {
-            point<T>::null,
-            dimensions<T>::null,
-        };
+        inline static constexpr rect<T> null()
+        {
+            return rect<T>{
+                point<T>::null(),
+                dimensions<T>::null(),
+            };
+        }
+
+        inline static constexpr rect<T> zero()
+        {
+            return rect<T>{
+                point<T>::zero(),
+                dimensions<T>::zero(),
+            };
+        }
 
         /// SDL_FRect conversions ///
 
@@ -267,7 +278,7 @@ namespace rl::ds
          * */
         constexpr inline bool is_null() const
         {
-            return this->is_empty() && pt == vector2<T>::zero;
+            return this->is_empty() && pt == vector2<T>::zero();
         }
 
         /**

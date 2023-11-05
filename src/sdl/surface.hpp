@@ -7,9 +7,10 @@
 
 namespace SDL3
 {
-    // #include <SDL3/SDL_pixels.h>
-    // #include <SDL3/SDL_blendmode.h>
+#include <SDL3/SDL_blendmode.h>
+#include <SDL3/SDL_pixels.h>
     // #include <SDL3/SDL_surface.h>
+    struct SDL_Surface;
 }
 
 namespace rl::sdl
@@ -37,7 +38,7 @@ namespace rl::sdl
 
         void blit(surface& dst_surface, ds::rect<i32>& dst_rect);
         void blit_rect(surface& dst_surface, ds::rect<i32>& dst_rect,
-                       const ds::rect<i32>& src_rect = ds::rect<i32>::null);
+                       const ds::rect<i32>& src_rect = ds::rect<i32>::null());
         void blit_scaled_rect(const ds::rect<i32>& src_rect, surface& dst_surface,
                               ds::rect<i32>& dst_rect);
         void blit_scaled(surface& dst_surface, ds::rect<i32>& dst_rect);
@@ -63,7 +64,7 @@ namespace rl::sdl
         surface& fill_rect(const ds::rect<i32>& rect, u32 color);
         surface& fill_rects(const ds::rect<i32>* rects, i32 count, u32 color);
         ds::dimensions<i32> size() const;
-        u32 get_format() const;
+        SDL3::SDL_PixelFormatEnum get_format() const;
 
     private:
         template <typename T>
