@@ -5,3 +5,6 @@
 #define DECLSPEC
 #define DECLSPEC __attribute__ ((visibility("default")))
 #define SDLCALL
+#define SDL_MUSTLOCK(S) (((S)->flags & SDL_RLEACCEL) != 0)
+#define runtime_assert(condition, message) static_cast<void>(0)
+#define runtime_assert(condition, message) do { if (!(condition)) [[unlikely]] { std::cerr << "Assertion failed: (" << #condition << ")" << std::endl << "  Function = " << __FUNCTION__ << std::endl << "  File     = " << __FILE__ << std::endl << "  Line     = " << __LINE__ << std::endl << "  Message  = " << message << std::endl, __debugbreak(), 0; } } while (0)

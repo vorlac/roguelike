@@ -5,6 +5,7 @@
 
 #include "core/ds/dimensions.hpp"
 #include "core/ds/point.hpp"
+#include "core/ds/vector2d.hpp"
 #include "core/numeric_types.hpp"
 #include "core/utils/concepts.hpp"
 
@@ -38,20 +39,30 @@ namespace rl::ds
     class rect
     {
     public:
-        constexpr rect()
-            : pt{ 0, 0 }
-            , size{ 0, 0 }
+        explicit constexpr rect()
+            : pt{ point<T>::null }
+            , size{ dimensions<T>::null }
         {
         }
 
         constexpr rect(const rect<T>& other)
+            : pt{ other.pt }
+            , size{ other.size }
         {
-            this->operator=(other);
+        }
+
+        template <rl::integer I>
+        constexpr rect(const rect<I>& other)
+            requires rl::floating_point<T>
+            : pt(cast::to<T>(pt.x), cast::to<T>(pt.y))
+            , size(cast::to<T>(other.size.width), cast::to<T>(other.size.height))
+        {
         }
 
         constexpr rect(rect<T>&& other)
+            : pt{ std::forward<point<T>>(other.pt) }
+            , size{ std::forward<dimensions<T>>(other.size) }
         {
-            this->operator=(other);
         }
 
         constexpr rect(const T x, const T y, const T width, const T height)
@@ -60,7 +71,7 @@ namespace rl::ds
         {
         }
 
-        constexpr rect(point<T> pnt, dimensions<T> dims)
+        constexpr rect(point<T>&& pnt, dimensions<T>&& dims)
             : pt{ pnt }
             , size{ dims }
         {
@@ -71,6 +82,11 @@ namespace rl::ds
             , size{ dims }
         {
         }
+
+        static inline constexpr const rect<T>& null = {
+            point<T>::null,
+            dimensions<T>::null,
+        };
 
         /// SDL_FRect conversions ///
 
@@ -106,12 +122,6 @@ namespace rl::ds
             requires std::same_as<T, f32>
         {
             return *reinterpret_cast<const SDL3::SDL_FRect*>(this);
-            /*return {
-                pt.x,
-                pt.y,
-                size.width,
-                size.height,
-            };*/
         }
 
         /**
@@ -124,24 +134,30 @@ namespace rl::ds
         {
         }
 
-        constexpr SDL3::SDL_FRect& operator=(rect<f32>&& other)
-            requires std::same_as<T, f32>
-        {
-            SDL3::SDL_memcpy(this, &other, sizeof(*this));
-            return *this;
-        }
+        // constexpr SDL3::SDL_FRect& operator=(rect<f32>&& other)
+        //{
+        //     this->pt   = std::move(other.pt);
+        //     this->size = std::move(other.size);
+        //     return *this;
+        // }
 
         constexpr operator const SDL3::SDL_FRect*() const
             requires std::same_as<T, f32>
         {
+            if (this->is_null())
+                return nullptr;
             return reinterpret_cast<const SDL3::SDL_FRect*>(this);
         }
 
-        constexpr operator const SDL3::SDL_FRect*()
+        constexpr operator SDL3::SDL_FRect*()
             requires std::same_as<T, f32>
         {
-            return this;
+            if (this->is_null())
+                return nullptr;
+            return reinterpret_cast<SDL3::SDL_FRect*>(this);
         }
+
+        /// SDL_Rect conversions
 
         constexpr rect(SDL3::SDL_Rect&& other)
             requires std::same_as<T, i32>
@@ -166,12 +182,16 @@ namespace rl::ds
         constexpr operator SDL3::SDL_Rect*()
             requires std::same_as<T, i32>
         {
+            if (this->is_null())
+                return nullptr;
             return reinterpret_cast<SDL3::SDL_Rect*>(this);
         }
 
-        constexpr operator const SDL3::SDL_Rect*() const
+        constexpr operator const SDL3::SDL_Rect*() const&
             requires std::same_as<T, i32>
         {
+            if (this->is_null())
+                return nullptr;
             return reinterpret_cast<const SDL3::SDL_Rect*>(this);
         }
 
@@ -219,8 +239,18 @@ namespace rl::ds
          * @brief Checks if the rectangle has no area
          * */
         constexpr inline bool is_empty() const
+            requires rl::floating_point<T>
         {
-            return this->area() == cast::to<T>(0);
+            return std::abs(this->area()) <= std::numeric_limits<T>::epsilon();
+        }
+
+        /**
+         * @brief Checks if the rectangle has no area
+         * */
+        constexpr inline bool is_empty() const
+            requires rl::integer<T>
+        {
+            return this->area() == 0;
         }
 
         /**
@@ -237,7 +267,7 @@ namespace rl::ds
          * */
         constexpr inline bool is_null() const
         {
-            return this->is_empty() && pt == vector2<T>::zero();
+            return this->is_empty() && pt == vector2<T>::zero;
         }
 
         /**

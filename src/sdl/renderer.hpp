@@ -97,64 +97,88 @@ namespace rl::sdl
             return s;
         }
 
-        // renderer& copy(texture& tex, ds::rect<f32> src_rect, ds::rect<f32> dst_rect)
-        //{
-        //     i32 result = SDL3::SDL_RenderTexture(m_sdl_renderer, tex.sdl_data(), src_rect,
-        //     dst_rect); runtime_assert(result != 0, "failed to copy texture"); return *this;
-        // }
+        renderer& copy(texture& tex, const ds::rect<i32>& src_rect, const ds::rect<i32>& dst_rect)
+        {
+            const ds::rect<f32>& src_frect{ src_rect };
+            const ds::rect<f32>& dst_frect{ dst_rect };
+            i32 result =
+                SDL3::SDL_RenderTexture(m_sdl_renderer, tex.sdl_handle(), src_frect, dst_frect);
+            runtime_assert(result != 0, "failed to copy texture");
+            return *this;
+        }
 
-        // renderer& copy(sdl::texture& texture,
-        //                ds::rect<f32>& src_rect,
-        //                ds::rect<f32>& dst_rect,
-        //                f64 angle,
-        //                ds::point<f32>& center_pt,
-        //                SDL3::SDL_RendererFlip flip)
-        //{
-        //     i32 result = SDL3::SDL_RenderTextureRotated(m_sdl_renderer,
-        //                                                 texture.sdl_data(),
-        //                                                 ((const SDL3::SDL_FRect*)&src_rect),
-        //                                                 ((const SDL3::SDL_FRect*)&dst_rect),
-        //                                                 angle,
-        //                                                 (const SDL3::SDL_Point*)&center_pt,
-        //                                                 flip);
+        renderer& copy(texture& tex, const ds::rect<i32>& src_rect, const ds::point<i32>& dst_pnt)
+        {
+            const auto&& tsize{ tex.size() };
+            ds::rect<i32> dst_rect(dst_pnt.x,
+                                   dst_pnt.y,
+                                   src_rect.is_null() ? src_rect.width() : tsize.width,
+                                   src_rect.is_null() ? src_rect.height() : tsize.height);
+            return this->copy(tex, src_rect, dst_rect);
+        }
 
-        //    runtime_assert(result != 0, "failed to copy rotated texture");
-        //    return *this;
-        //}
+        renderer& copy(texture& tex,
+                       const ds::rect<i32>& src_rect,
+                       const ds::rect<i32>& dst_rect,
+                       f64 angle,
+                       const ds::point<i32>& center_pt,
+                       SDL3::SDL_RendererFlip flip)
+        {
+            const ds::rect<f32>& src_frect{ src_rect };
+            const ds::rect<f32>& dst_frect{ dst_rect };
+            const ds::point<f32>& center_fpt{ center_pt };
+            i32 result = SDL3::SDL_RenderTextureRotated(m_sdl_renderer,
+                                                        tex.sdl_handle(),
+                                                        src_frect,
+                                                        dst_frect,
+                                                        angle,
+                                                        center_fpt,
+                                                        flip);
 
-        // renderer& copy(texture& tex,
-        //                ds::rect<i32>& src_rect,
-        //                ds::point<i32>& dst_point,
-        //                f64 angle,
-        //                ds::point<i32>& center,
-        //                int flip)
-        //{
-        //     ds::rect<i32> dst_rect = ds::rect<i32>{ ds::point<i32>{ dst_point.x, dst_point.y },
-        //                                             ds::dimensions<i32>{
-        //                                                 (src_rect ? src_rect.width() :
-        //                                                 tex.width()), (src_rect ?
-        //                                                 src_rect.height() : tex.height()),
-        //                                             } };
+            runtime_assert(result != 0, "failed to copy rotated texture");
+            return *this;
+        }
 
-        //    return copy(tex, src_rect, dst_rect, angle, center, flip);
-        //}
+        renderer& copy(texture& tex,
+                       const ds::rect<i32>& src_rect,
+                       const ds::point<i32>& dst_point,
+                       f64 angle,
+                       const ds::point<i32>& center_pt,
+                       SDL3::SDL_RendererFlip flip)
+        {
+            auto&& tsize{ tex.size() };
+            ds::rect<i32> dst_rect = {
+                { dst_point.x, dst_point.y },
+                {
+                    (src_rect ? src_rect.width() : tsize.width),
+                    (src_rect ? src_rect.height() : tsize.height),
+                },
+            };
+
+            return this->copy(tex,
+                              src_rect,
+                              std::forward<ds::rect<i32> const&>(dst_rect),
+                              angle,
+                              std::forward<ds::point<i32> const&>(center_pt),
+                              flip);
+        }
 
         renderer& fill_copy(texture& tex,
-                            ds::rect<i32>* src_rect,
-                            ds::rect<i32>* dst_rect,
-                            ds::vector2<i32>* offset,
+                            const ds::rect<i32>& src_rect,
+                            const ds::rect<i32>& dst_rect,
+                            const ds::vector2<i32>& offset,
                             SDL3::SDL_RendererFlip flip)
         {
             // resolve rectangles
             ds::dimensions<i32> tsize{ tex.size() };
             ds::dimensions<i32> rsize{ this->get_output_size() };
-            ds::rect<i32> src = { (src_rect ? *src_rect
-                                            : ds::rect<i32>{ 0, 0, tsize.width, tsize.height }) };
-            ds::rect<i32> dst = { (dst_rect ? *dst_rect
-                                            : ds::rect<i32>{ 0, 0, rsize.width, rsize.height }) };
+            ds::rect<i32> src = { (
+                src_rect.is_null() ? src_rect : ds::rect<i32>{ 0, 0, tsize.width, tsize.height }) };
+            ds::rect<i32> dst = { (
+                dst_rect.is_null() ? dst_rect : ds::rect<i32>{ 0, 0, rsize.width, rsize.height }) };
 
             // rectangle for single tile
-            ds::rect<i32> start_tile{ offset->x, offset->y, src.width(), src.height() };
+            ds::rect<i32> start_tile{ offset.x, offset.y, src.width(), src.height() };
 
             // ensure tile is leftmost and topmost
             if (start_tile.pt.x + start_tile.width() <= 0)
@@ -225,11 +249,18 @@ namespace rl::sdl
                         if (0 != (flip & SDL3::SDL_RendererFlip::SDL_FLIP_VERTICAL))
                             tile_src.pt.y = src.height() - tile_src.pt.y - tile_src.height();
 
-                        // copy(tex, tile_src, tile_dst, 0.0, nullptr, flip);
+                        this->copy(tex,
+                                   std::forward<ds::rect<i32>&>(tile_src),
+                                   std::forward<ds::rect<i32>&>(tile_dst),
+                                   0.0,
+                                   std::forward<ds::point<i32> const&>(ds::point<i32>::null),
+                                   flip);
                     }
                     else
                     {
-                        // copy(tex, tile_src, tile_dst);
+                        this->copy(tex,
+                                   std::forward<ds::rect<i32>>(tile_src),
+                                   std::forward<ds::rect<i32>>(tile_dst));
                     }
                 }
             }
@@ -277,8 +308,7 @@ namespace rl::sdl
             i32 count{ cast::to<i32>(points.size()) };
             if (count > 0) [[likely]]
             {
-                const SDL3::SDL_FPoint& sdl_point{ *points.front() };
-                i32 result = SDL3::SDL_RenderPoints(m_sdl_renderer, &sdl_point, count);
+                i32 result = SDL3::SDL_RenderPoints(m_sdl_renderer, points.front(), count);
                 runtime_assert(result != 0, "failed to set draw color");
             }
             return *this;
@@ -296,8 +326,7 @@ namespace rl::sdl
             i32 count{ cast::to<i32>(lines.size()) };
             if (count > 0) [[likely]]
             {
-                const SDL3::SDL_FPoint& sdl_points{ *lines.front() };
-                i32 result{ SDL3::SDL_RenderLines(m_sdl_renderer, &sdl_points, count) };
+                i32 result{ SDL3::SDL_RenderLines(m_sdl_renderer, lines.front(), count) };
                 runtime_assert(result != 0, "failed to set draw color");
             }
             return *this;
@@ -305,8 +334,7 @@ namespace rl::sdl
 
         renderer& draw_rect(ds::rect<f32>& rect)
         {
-            const SDL3::SDL_FRect& sdl_rect = rect;
-            i32 result{ SDL3::SDL_RenderRect(m_sdl_renderer, &sdl_rect) };
+            i32 result{ SDL3::SDL_RenderRect(m_sdl_renderer, rect) };
             runtime_assert(result != 0, "failed to set draw color");
             return *this;
         }
@@ -316,8 +344,7 @@ namespace rl::sdl
             i32 count{ cast::to<i32>(rects.size()) };
             if (count > 0) [[likely]]
             {
-                const SDL3::SDL_FRect& sdl_rects{ *rects.front() };
-                i32 result = SDL3::SDL_RenderRects(m_sdl_renderer, &sdl_rects, count);
+                i32 result = SDL3::SDL_RenderRects(m_sdl_renderer, rects.front(), count);
                 runtime_assert(result != 0, "failed to set draw color");
             }
             return *this;
@@ -325,8 +352,7 @@ namespace rl::sdl
 
         renderer& fill_rect(const ds::rect<f32>& rect)
         {
-            const SDL3::SDL_FRect& sdl_rect = rect;
-            i32 result{ SDL3::SDL_RenderFillRect(m_sdl_renderer, &sdl_rect) };
+            i32 result{ SDL3::SDL_RenderFillRect(m_sdl_renderer, rect) };
             runtime_assert(result != 0, "failed to set draw color");
             return *this;
         }
@@ -336,8 +362,7 @@ namespace rl::sdl
             i32 count{ cast::to<i32>(rects.size()) };
             if (count > 0) [[likely]]
             {
-                const SDL3::SDL_FRect& sdl_rects{ *rects.front() };
-                i32 result = SDL3::SDL_RenderFillRects(m_sdl_renderer, &sdl_rects, count);
+                i32 result = SDL3::SDL_RenderFillRects(m_sdl_renderer, rects.front(), count);
                 runtime_assert(result != 0, "failed to set draw color");
             }
             return *this;
@@ -345,15 +370,13 @@ namespace rl::sdl
 
         void read_pixels(const ds::rect<i32>& rect, u32 format, void* pixels, i32 pitch)
         {
-            const SDL3::SDL_Rect& sdl_rect = rect;
-            i32 result = SDL3::SDL_RenderReadPixels(m_sdl_renderer, &sdl_rect, format, pixels, pitch);
+            i32 result = SDL3::SDL_RenderReadPixels(m_sdl_renderer, rect, format, pixels, pitch);
             runtime_assert(result != 0, "failed to set draw color");
         }
 
         renderer& set_clip_rect(const ds::rect<i32>& rect)
         {
-            const SDL3::SDL_Rect& r = rect;
-            i32 result{ SDL3::SDL_SetRenderClipRect(m_sdl_renderer, &r) };
+            i32 result{ SDL3::SDL_SetRenderClipRect(m_sdl_renderer, rect) };
             runtime_assert(result != 0, "failed to set draw color");
             return *this;
         }

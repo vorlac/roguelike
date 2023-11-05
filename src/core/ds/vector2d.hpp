@@ -4,6 +4,7 @@
 #include <cmath>
 #include <concepts>
 #include <cstdint>
+#include <limits>
 #include <memory>
 #include <type_traits>
 
@@ -19,17 +20,32 @@ namespace SDL3
 
 namespace rl::ds
 {
+
     template <rl::numeric T>
     struct vector2
     {
-        T x{ 0 };
-        T y{ 0 };
+        explicit constexpr vector2()
+            : x{ std::numeric_limits<T>::max() }
+            , y{ std::numeric_limits<T>::max() }
+        {
+        }
 
         constexpr vector2(const T _x, const T _y)
             : x{ _x }
             , y{ _y }
         {
         }
+
+        template <rl::integer I>
+        constexpr vector2(const vector2<I>& other)
+            requires rl::floating_point<T>
+            : x(cast::to<T>(other.x))
+            , y(cast::to<T>(other.y))
+        {
+        }
+
+        static inline constexpr const vector2<T>& null = vector2{};
+        static inline constexpr const vector2<T>& zero = { cast::to<T>(0), cast::to<T>(0) };
 
         constexpr vector2(const SDL3::SDL_Point& pt)
             requires std::same_as<T, i32>
@@ -102,14 +118,6 @@ namespace rl::ds
                 return std::abs(x) < std::numeric_limits<T>::epsilon() &&
                        std::abs(y) < std::numeric_limits<T>::epsilon();
             }
-        }
-
-        static constexpr inline vector2<T> zero() noexcept
-        {
-            return {
-                cast::to<std::type_identity_t<T>>(0),
-                cast::to<std::type_identity_t<T>>(0),
-            };
         }
 
         constexpr inline f32 length() const
@@ -224,6 +232,13 @@ namespace rl::ds
             return x == other.x && y == other.y;
         }
 
+        constexpr inline bool operator==(const vector2<T>& other) const
+            requires rl::floating_point<T>
+        {
+            return std::abs(x - other.x) <= std::numeric_limits<T>::epsilon() &&
+                   std::abs(y - other.y) <= std::numeric_limits<T>::epsilon();
+        }
+
         constexpr inline bool operator!=(const vector2<T>& other) const
         {
             return x != other.x || y != other.y;
@@ -281,7 +296,6 @@ namespace rl::ds
             return -this->reflect(normal);
         }
 
-    public:
         constexpr inline vector2<T> operator+(const vector2<T>& other) const
         {
             return {
@@ -378,5 +392,8 @@ namespace rl::ds
                 -y,
             };
         }
+
+        T x{ 0 };
+        T y{ 0 };
     };
 }

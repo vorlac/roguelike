@@ -1,6 +1,8 @@
 #pragma once
 
 // #include <imgui.h>
+#include <memory>
+#include <utility>
 
 #include "core/utils/conversions.hpp"
 
@@ -12,11 +14,31 @@ namespace rl::ds
         T width{ 0 };
         T height{ 0 };
 
+        inline constexpr dimensions()
+            : width{ 0 }
+            , height{ 0 }
+        {
+        }
+
         constexpr dimensions(T w, T h)
             : width{ w }
             , height{ h }
         {
         }
+
+        constexpr dimensions(const dimensions<T>& other)
+            : width{ other.width }
+            , height{ other.height }
+        {
+        }
+
+        constexpr dimensions(dimensions<T>&& other)
+            : width{ std::forward<T>(other.width) }
+            , height{ std::forward<T>(other.height) }
+        {
+        }
+
+        static inline constexpr const dimensions<T>& null = {};
 
         // constexpr dimensions(const ImVec2& other)
         //     : width{ cast::to<T>(other.x) }
