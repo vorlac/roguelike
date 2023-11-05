@@ -40,12 +40,6 @@ namespace rl::ds
         {
         }
 
-        // constexpr dimensions(dimensions<T>&& other)
-        // {
-        //     width  = std::move(other.width);
-        //     height = std::move(other.height);
-        // }
-
         constexpr dimensions(dimensions<T>& other)
             : width{ other.width }
             , height{ other.height }
@@ -67,27 +61,6 @@ namespace rl::ds
                 cast::to<T>(0),
             };
         }
-
-        // constexpr dimensions(const ImVec2& other)
-        //     : width{ cast::to<T>(other.x) }
-        //     , height{ cast::to<T>(other.y) }
-        //{
-        // }
-
-        // constexpr operator ::ImVec2()
-        //     requires std::same_as<T, f32>
-        //{
-        //     return *reinterpret_cast<::ImVec2*>(this);
-        // }
-
-        // constexpr operator ::ImVec2()
-        //     requires(!std::same_as<T, f32>)
-        //{
-        //     return ::ImVec2{
-        //         cast::to<f32>(this->width),
-        //         cast::to<f32>(this->height),
-        //     };
-        // }
 
         constexpr auto area() const -> decltype(width * height)
         {

@@ -31,20 +31,6 @@ namespace rl::sdl
         runtime_assert(m_sdl_surface != nullptr, "faied to construct surface");
     }
 
-#ifdef SDL2PP_WITH_IMAGE
-    surface(RWops& rwops)
-    {
-        if ((m_sdl_surface = IMG_Load_RW(rwops.Get(), 0)) == nullptr)
-            throw Exception("IMG_Load_RW");
-    }
-
-    surface(const std::string& path)
-    {
-        if ((m_sdl_surface = IMG_Load(path.c_str())) == nullptr)
-            throw Exception("IMG_Load");
-    }
-#endif
-
     surface::~surface()
     {
         if (m_sdl_surface != nullptr)

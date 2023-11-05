@@ -12,17 +12,6 @@
 #include "sdl/color.hpp"
 #include "sdl/window.hpp"
 
-// namespace SDL3
-//{
-//     // #include <SDL3/SDL_stdinc.h>
-//     //
-//     // #include <SDL3/SDL_blendmode.h>
-//     //
-//     // #include <SDL3/SDL_pixels.h>
-//     // #include <SDL3/SDL_render.h>
-//     // #include <SDL3/SDL_syswm.h>
-// }
-
 namespace rl::sdl
 {
     template <typename T>

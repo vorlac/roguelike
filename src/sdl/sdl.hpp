@@ -19,6 +19,60 @@ namespace SDL3
 
 namespace rl::sdl
 {
+    class PixelInspector
+    {
+    private:
+        std::vector<unsigned char> pixels_;
+        int width_;
+        int height_;
+        int bpp_;
+
+    public:
+        PixelInspector(int width, int height, int bpp)
+            : pixels_(width * height * bpp, 0)
+            , width_(width)
+            , height_(height)
+            , bpp_(bpp)
+        {
+        }
+
+        void Retrieve(sdl::renderer& renderer)
+        {
+            renderer.read_pixels({ 0, 0, width_, height_ }, SDL3::SDL_PIXELFORMAT_ARGB8888,
+                                 pixels_.data(), width_ * bpp_);
+        }
+
+        bool Test(int x, int y, int r, int g, int b, int a = -1)
+        {
+            int offset = (x + y * width_) * bpp_;
+
+            if (b >= 0 && pixels_[offset] != b)
+                return false;
+            if (g >= 0 && pixels_[offset + 1] != g)
+                return false;
+            if (r >= 0 && pixels_[offset + 2] != r)
+                return false;
+            if (a >= 0 && pixels_[offset + 3] != a)
+                return false;
+
+            return true;
+        }
+
+        bool Test3x3(int x, int y, int mask, int r, int g, int b, int a = -1)
+        {
+            for (int dy = -1; dy <= 1; dy++)
+            {
+                for (int dx = -1; dx <= 1; dx++)
+                {
+                    bool maskbit = !!(mask & (1 << ((1 - dx) + (1 - dy) * 4)));
+                    if (Test(x + dx, y + dy, r, g, b, a) != maskbit)
+                        return false;
+                }
+            }
+            return true;
+        }
+    };
+
     class sdl_app
     {
     public:
@@ -49,17 +103,14 @@ namespace rl::sdl
 
         // #define RGBA(r, g, b, a) r, g, b, a
 
-        static constexpr inline std::array<std::array<u8, 4>, 4 * 4> pixels = {
-            sdl::color(0xff, 0x00, 0x00, 0xff), sdl::color(0xff, 0x80, 0x00, 0xff),
-            sdl::color(0xff, 0xff, 0x00, 0xff), sdl::color(0x80, 0xff, 0x00, 0xff),
-            sdl::color(0xff, 0x00, 0x80, 0xff), sdl::color(0xff, 0xff, 0xff, 0xff),
-            sdl::color(0x00, 0x00, 0x00, 0x00), sdl::color(0x00, 0xff, 0x00, 0xff),
-            sdl::color(0xff, 0x00, 0xff, 0xff), sdl::color(0x00, 0x00, 0x00, 0x00),
-            sdl::color(0x00, 0x00, 0x00, 0xff), sdl::color(0x00, 0xff, 0x80, 0xff),
-            sdl::color(0x80, 0x00, 0xff, 0xff), sdl::color(0x00, 0x00, 0xff, 0xff),
-            sdl::color(0x00, 0x80, 0xff, 0xff), sdl::color(0x00, 0xff, 0xff, 0xff),
+        static constexpr inline u8 pixel_array[] = {
+            0xff, 0x00, 0x00, 0xff, 0xff, 0x80, 0x00, 0xff, 0xff, 0xff, 0x00, 0xff, 0x80,
+            0xff, 0x00, 0xff, 0xff, 0x00, 0x80, 0xff, 0xff, 0xff, 0xff, 0xff, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0xff, 0x00, 0xff, 0xff, 0x00, 0xff, 0xff, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0xff, 0x00, 0xff, 0x80, 0xff, 0x80, 0x00, 0xff, 0xff,
+            0x00, 0x00, 0xff, 0xff, 0x00, 0x80, 0xff, 0xff, 0x00, 0xff, 0xff, 0xff,
         };
-        static inline constexpr void* pixel_array = ((void*)(pixels.data()->data()));
+        // static inline constexpr void* pixel_array = ((void*)(pixels.data()->data()));
 
     public:
         sdl_app()
@@ -130,6 +181,83 @@ namespace rl::sdl
             // Frame limiter
             SDL3::SDL_Delay(1);
             return true;
+        }
+
+        void loop2()
+        {
+            PixelInspector pixels(320, 240, 4);
+
+            {
+                // Clear, draw color
+                m_renderer.set_draw_color({ 1, 2, 3 });
+
+                sdl::color&& c = m_renderer.get_draw_color();
+                runtime_assert(c.r == 1 && c.g == 2 && c.b == 3 && c.a == 255, "test failed");
+
+                m_renderer.clear();
+                pixels.Retrieve(m_renderer);
+
+                auto res = pixels.Test(0, 0, 1, 2, 3);
+                runtime_assert(res, "test failed");
+
+                m_renderer.present();
+                SDL3::SDL_Delay(1000);
+            }
+
+            {
+                // Draw points
+                m_renderer.set_draw_color(sdl::color{ 0, 0, 0 });
+                m_renderer.clear();
+
+                m_renderer.set_draw_color(sdl::color{ 255, 128, 0 });
+                m_renderer.draw_point({ 10, 10 });
+
+                m_renderer.set_draw_color(sdl::color{ 0, 255, 128 });
+                m_renderer.draw_point(ds::point<i32>{ 20, 20 });
+
+                m_renderer.set_draw_color(sdl::color{ 128, 0, 255 });
+                std::vector<ds::point<f32>> points = { { 30, 30 } };
+                m_renderer.draw_points(points);
+                pixels.Retrieve(m_renderer);
+
+                auto res1 = pixels.Test3x3(10, 10, 0x020, 255, 128, 0);
+                auto res2 = pixels.Test3x3(20, 20, 0x020, 0, 255, 128);
+                auto res3 = pixels.Test3x3(30, 30, 0x020, 128, 0, 255);
+                runtime_assert(res1, "test failed");
+                runtime_assert(res2, "test failed");
+                runtime_assert(res3, "test failed");
+
+                m_renderer.present();
+                SDL3::SDL_Delay(1000);
+            }
+
+            {
+                // Draw lines
+                m_renderer.set_draw_color(sdl::color{ 0, 0, 0 });
+                m_renderer.clear();
+
+                m_renderer.set_draw_color(sdl::color{ 255, 128, 0 });
+                m_renderer.draw_line({ 10, 10 }, { 10, 50 });
+
+                m_renderer.set_draw_color(sdl::color{ 0, 255, 128 });
+                m_renderer.draw_line(ds::point<i32>{ 20, 10 }, ds::point<i32>{ 20, 50 });
+
+                m_renderer.set_draw_color(sdl::color{ 128, 0, 255 });
+                std::vector<ds::point<f32>> points = { { 30, 10 }, { 30, 50 } };
+                m_renderer.draw_lines(points);
+
+                pixels.Retrieve(m_renderer);
+
+                auto res1 = pixels.Test3x3(10, 20, 0x222, 255, 128, 0);
+                auto res2 = pixels.Test3x3(20, 20, 0x222, 0, 255, 128);
+                auto res3 = pixels.Test3x3(30, 20, 0x222, 128, 0, 255);
+                runtime_assert(res1, "test failed");
+                runtime_assert(res2, "test failed");
+                runtime_assert(res3, "test failed");
+
+                m_renderer.present();
+                SDL3::SDL_Delay(1000);
+            }
         }
 
         bool is_initialized() const

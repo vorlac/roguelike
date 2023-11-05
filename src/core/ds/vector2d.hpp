@@ -56,13 +56,6 @@ namespace rl::ds
         {
         }
 
-        // using type_t =
-        //     std::remove_reference_t<decltype(std::declval<std::type_identity_t<vector2<T>>>())>;
-        // static inline constexpr std::type_identity_t<type_t> null =
-        //     std::declval<std::add_lvalue_reference_t<vector2::type_t>>();
-
-        // static inline constexpr vector2<T> zero{ cast::to<T>(0), cast::to<T>(0) };
-
         constexpr vector2(const SDL3::SDL_Point& pt)
             requires std::same_as<T, i32>
             : x{ pt.x }
@@ -137,14 +130,6 @@ namespace rl::ds
                 cast::to<T>(0),
             };
         }
-
-        // static constexpr inline vector2<T> zero() noexcept
-        //{
-        //     return {
-        //         cast::to<T>(0),
-        //         cast::to<T>(0),
-        //     };
-        // }
 
         constexpr inline bool is_zero(bool exact = false) noexcept
         {

@@ -145,13 +145,6 @@ namespace rl::ds
         {
         }
 
-        // constexpr SDL3::SDL_FRect& operator=(rect<f32>&& other)
-        //{
-        //     this->pt   = std::move(other.pt);
-        //     this->size = std::move(other.size);
-        //     return *this;
-        // }
-
         constexpr operator const SDL3::SDL_FRect*() const
             requires std::same_as<T, f32>
         {

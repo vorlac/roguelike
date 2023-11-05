@@ -16,9 +16,17 @@ namespace rl::sdl
         u8 r{ 0 };
         u8 g{ 0 };
         u8 b{ 0 };
-        u8 a{ 0 };
+        u8 a{ 255 };
 
         constexpr color() = default;
+
+        constexpr color(u8 cr, u8 cg, u8 cb)
+            : r{ cr }
+            , g{ cg }
+            , b{ cb }
+            , a{ 255 }
+        {
+        }
 
         constexpr color(u8 cr, u8 cg, u8 cb, u8 ca)
             : r{ cr }
