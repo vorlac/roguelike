@@ -72,28 +72,28 @@ namespace rl::sdl
     void* const& surface::get_pixels() const&
     {
         if (SDL_MUSTLOCK(m_sdl_surface))
-            runtime_assert(this->is_locked, "unsafe surface pixels access");
+            runtime_assert(this->is_locked, "unsafe surface pixels access, not locked");
         return m_sdl_surface->pixels;
     }
 
     i32& surface::get_pitch()
     {
         if (SDL_MUSTLOCK(m_sdl_surface))
-            runtime_assert(this->is_locked, "unsafe surface pixels access");
+            runtime_assert(this->is_locked, "unsafe surface pixels access, not locked");
         return m_sdl_surface->pitch;
     }
 
     surface surface::convert(const SDL3::SDL_PixelFormat& format)
     {
         SDL3::SDL_Surface* sdl_surface{ SDL3::SDL_ConvertSurface(m_sdl_surface, &format) };
-        runtime_assert(sdl_surface != nullptr, "failed to conver surface");
+        runtime_assert(sdl_surface != nullptr, "failed to convert surface");
         return surface(sdl_surface);
     }
 
     surface surface::convert(u32 pixel_format)
     {
         SDL3::SDL_Surface* sdl_surface{ SDL3::SDL_ConvertSurfaceFormat(m_sdl_surface, pixel_format) };
-        runtime_assert(sdl_surface != nullptr, "failed to conver surface");
+        runtime_assert(sdl_surface != nullptr, "failed to convert surface");
         return surface(sdl_surface);
     }
 
@@ -139,7 +139,7 @@ namespace rl::sdl
     {
         u32 color_key{ 0 };
         i32 result = SDL3::SDL_GetSurfaceColorKey(m_sdl_surface, &color_key);
-        runtime_assert(result != 0, "_______________");
+        runtime_assert(result != 0, "failed to get color key");
         return color_key;
     }
 
@@ -147,7 +147,7 @@ namespace rl::sdl
     {
         u8 alpha{ 0 };
         i32 result = SDL3::SDL_GetSurfaceAlphaMod(m_sdl_surface, &alpha);
-        runtime_assert(result != 0, "_______________");
+        runtime_assert(result != 0, "failed to get alpha mod");
         return alpha;
     }
 
@@ -155,7 +155,7 @@ namespace rl::sdl
     {
         SDL3::SDL_BlendMode blend_mode{ SDL3::SDL_BLENDMODE_NONE };
         i32 result = SDL3::SDL_GetSurfaceBlendMode(m_sdl_surface, &blend_mode);
-        runtime_assert(result != 0, "_______________");
+        runtime_assert(result != 0, "failed to get blend mode");
         return blend_mode;
     }
 
@@ -170,41 +170,41 @@ namespace rl::sdl
     void surface::get_color_mod(u8& r, u8& g, u8& b) const
     {
         i32 result = SDL3::SDL_GetSurfaceColorMod(m_sdl_surface, &r, &g, &b);
-        runtime_assert(result != 0, "_______________");
+        runtime_assert(result != 0, "failed to get surface color mod");
     }
 
     surface& surface::set_clip_rect(const ds::rect<i32>& rect)
     {
         i32 result = SDL3::SDL_SetSurfaceClipRect(m_sdl_surface, rect);
-        runtime_assert(result != sdl::boolean(true), "_______________");
+        runtime_assert(result != sdl::boolean(true), "failed to set clip rect");
         return *this;
     }
 
     surface& surface::set_color_key(bool flag, u32 key)
     {
         i32 result = SDL3::SDL_SetSurfaceColorKey(m_sdl_surface, flag, key);
-        runtime_assert(result != 0, "_______________");
+        runtime_assert(result != 0, "failed to set color key");
         return *this;
     }
 
     surface& surface::set_alpha_mod(u8 alpha)
     {
         i32 result = SDL3::SDL_SetSurfaceAlphaMod(m_sdl_surface, alpha);
-        runtime_assert(result != 0, "_______________");
+        runtime_assert(result != 0, "failed to set alpha mod");
         return *this;
     }
 
     surface& surface::set_blend_mode(SDL3::SDL_BlendMode blendMode)
     {
         i32 result = SDL3::SDL_SetSurfaceBlendMode(m_sdl_surface, blendMode);
-        runtime_assert(result != 0, "_______________");
+        runtime_assert(result != 0, "failed to set blend mode");
         return *this;
     }
 
     surface& surface::set_color_mod(u8 r, u8 g, u8 b)
     {
         i32 result = SDL3::SDL_SetSurfaceColorMod(m_sdl_surface, r, g, b);
-        runtime_assert(result != 0, "_______________");
+        runtime_assert(result != 0, "failed to set color mode");
         return *this;
     }
 
@@ -221,14 +221,14 @@ namespace rl::sdl
     surface& surface::set_rle_acceleration(bool flag)
     {
         i32 result = SDL3::SDL_SetSurfaceRLE(m_sdl_surface, flag ? 1 : 0);
-        runtime_assert(result != 0, "_______________");
+        runtime_assert(result != 0, "failed to set rle accelleration");
         return *this;
     }
 
     surface& surface::fill(u32 color)
     {
         i32 result = SDL3::SDL_FillSurfaceRect(m_sdl_surface, nullptr, color);
-        runtime_assert(result != 0, "_______________");
+        runtime_assert(result != 0, "failed to fill surface");
         return *this;
     }
 
@@ -236,7 +236,7 @@ namespace rl::sdl
     {
         const SDL3::SDL_Rect& sdl_rect = rect;
         i32 result                     = SDL3::SDL_FillSurfaceRect(m_sdl_surface, &sdl_rect, color);
-        runtime_assert(result != 0, "_______________");
+        runtime_assert(result != 0, "failed to fill rect");
         return *this;
     }
 
@@ -248,7 +248,7 @@ namespace rl::sdl
             sdl_rects.emplace_back(*r);
 
         i32 result = SDL3::SDL_FillSurfaceRects(m_sdl_surface, sdl_rects.data(), count, color);
-        runtime_assert(result != 0, "_______________");
+        runtime_assert(result != 0, "failed to fill rects");
         return *this;
     }
 

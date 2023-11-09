@@ -332,28 +332,28 @@ namespace rl::sdl
         renderer& set_target()
         {
             i32 result = SDL3::SDL_SetRenderTarget(m_sdl_renderer, nullptr);
-            runtime_assert(result == 0, "failed to set draw color");
+            runtime_assert(result == 0, "failed to reset render target");
             return *this;
         }
 
         renderer& set_target(sdl::texture& tex)
         {
             i32 result = SDL3::SDL_SetRenderTarget(m_sdl_renderer, tex.sdl_handle());
-            runtime_assert(result == 0, "failed to set draw color");
+            runtime_assert(result == 0, "failed to set render target");
             return *this;
         }
 
         renderer& set_draw_blend_mode(SDL3::SDL_BlendMode blend_mode)
         {
             i32 result = SDL3::SDL_SetRenderDrawBlendMode(m_sdl_renderer, blend_mode);
-            runtime_assert(result == 0, "failed to set draw color");
+            runtime_assert(result == 0, "failed to set draw blend mode");
             return *this;
         }
 
         renderer& draw_point(const ds::point<f32>& pt)
         {
             i32 result = SDL3::SDL_RenderPoint(m_sdl_renderer, pt.x, pt.y);
-            runtime_assert(result == 0, "failed to set draw color");
+            runtime_assert(result == 0, "failed to draw point");
             return *this;
         }
 
@@ -363,7 +363,7 @@ namespace rl::sdl
             if (count > 0) [[likely]]
             {
                 i32 result = SDL3::SDL_RenderPoints(m_sdl_renderer, points.front(), count);
-                runtime_assert(result == 0, "failed to set draw color");
+                runtime_assert(result == 0, "failed to draw points");
             }
             return *this;
         }
@@ -371,7 +371,7 @@ namespace rl::sdl
         renderer& draw_line(const ds::point<f32>& pt1, const ds::point<f32>& pt2)
         {
             i32 result = SDL3::SDL_RenderLine(m_sdl_renderer, pt1.x, pt1.y, pt2.x, pt2.y);
-            runtime_assert(result == 0, "failed to set draw color");
+            runtime_assert(result == 0, "failed to draw line");
             return *this;
         }
 
@@ -381,7 +381,7 @@ namespace rl::sdl
             if (count > 0) [[likely]]
             {
                 i32 result = SDL3::SDL_RenderLines(m_sdl_renderer, lines.front(), count);
-                runtime_assert(result == 0, "failed to set draw color");
+                runtime_assert(result == 0, "failed to draw lines");
             }
             return *this;
         }
@@ -389,7 +389,7 @@ namespace rl::sdl
         renderer& draw_rect(ds::rect<f32>& rect)
         {
             i32 result = SDL3::SDL_RenderRect(m_sdl_renderer, rect);
-            runtime_assert(result == 0, "failed to set draw color");
+            runtime_assert(result == 0, "failed to draw rect");
             return *this;
         }
 
@@ -399,7 +399,7 @@ namespace rl::sdl
             if (count > 0) [[likely]]
             {
                 i32 result = SDL3::SDL_RenderRects(m_sdl_renderer, rects.front(), count);
-                runtime_assert(result == 0, "failed to set draw color");
+                runtime_assert(result == 0, "failed to draw rects");
             }
             return *this;
         }
@@ -407,7 +407,7 @@ namespace rl::sdl
         renderer& fill_rect(const ds::rect<f32>& rect)
         {
             i32 result = SDL3::SDL_RenderFillRect(m_sdl_renderer, rect);
-            runtime_assert(result == 0, "failed to set draw color");
+            runtime_assert(result == 0, "failed to fill rect");
             return *this;
         }
 
@@ -417,7 +417,7 @@ namespace rl::sdl
             if (count > 0) [[likely]]
             {
                 i32 result = SDL3::SDL_RenderFillRects(m_sdl_renderer, rects.front(), count);
-                runtime_assert(result == 0, "failed to set draw color");
+                runtime_assert(result == 0, "failed to fill rects");
             }
             return *this;
         }
@@ -425,13 +425,13 @@ namespace rl::sdl
         void read_pixels(const ds::rect<i32>& rect, u32 format, void* pixels, i32 pitch)
         {
             i32 result = SDL3::SDL_RenderReadPixels(m_sdl_renderer, rect, format, pixels, pitch);
-            runtime_assert(result == 0, "failed to set draw color");
+            runtime_assert(result == 0, "failed to read pixels");
         }
 
         renderer& set_clip_rect(const ds::rect<i32>& rect)
         {
             i32 result = SDL3::SDL_SetRenderClipRect(m_sdl_renderer, rect);
-            runtime_assert(result == 0, "failed to set draw color");
+            runtime_assert(result == 0, "failed to set clip rect");
             return *this;
         }
 
@@ -443,14 +443,14 @@ namespace rl::sdl
                 height,
                 SDL3::SDL_LOGICAL_PRESENTATION_DISABLED,
                 SDL3::SDL_SCALEMODE_NEAREST);
-            runtime_assert(result == 0, "failed to set draw color");
+            runtime_assert(result == 0, "failed to set logical size");
             return *this;
         }
 
         renderer& set_scale(f32 scaleX, f32 scaleY)
         {
             i32 result = SDL3::SDL_SetRenderScale(m_sdl_renderer, scaleX, scaleY);
-            runtime_assert(result == 0, "failed to set draw color");
+            runtime_assert(result == 0, "failed to set scale");
             return *this;
         }
 
@@ -458,7 +458,7 @@ namespace rl::sdl
         {
             const SDL3::SDL_Rect& r = rect;
             i32 result              = SDL3::SDL_SetRenderViewport(m_sdl_renderer, &r);
-            runtime_assert(result == 0, "failed to set draw color");
+            runtime_assert(result == 0, "failed to set viewport");
             return *this;
         }
 
@@ -466,25 +466,28 @@ namespace rl::sdl
         {
             SDL3::SDL_Rect rect{ 0, 0, 0, 0 };
             i32 result = SDL3::SDL_GetRenderClipRect(m_sdl_renderer, &rect);
-            runtime_assert(result, "failed to set draw color");
+            runtime_assert(result, "failed to get clip rect");
             return rect;
         }
 
         ds::dimensions<i32> get_logical_size() const
         {
             ds::dimensions<i32> size{ 0, 0 };
-            SDL3::SDL_GetRenderLogicalPresentation(m_sdl_renderer,
-                                                   &size.width,
-                                                   &size.height,
-                                                   nullptr,
-                                                   nullptr);
+            i32 result = SDL3::SDL_GetRenderLogicalPresentation(m_sdl_renderer,
+                                                                &size.width,
+                                                                &size.height,
+                                                                nullptr,
+                                                                nullptr);
+            runtime_assert(result == 0, "failed to get logical size");
             return size;
         }
 
         ds::rect<i32> get_viewport()
         {
             ds::rect<i32> rect{ 0, 0, 0, 0 };
-            SDL3::SDL_GetRenderViewport(m_sdl_renderer, reinterpret_cast<SDL3::SDL_Rect*>(&rect));
+            i32 result = SDL3::SDL_GetRenderViewport(m_sdl_renderer,
+                                                     reinterpret_cast<SDL3::SDL_Rect*>(&rect));
+            runtime_assert(result == 0, "failed to get viewport");
             return rect;
         }
 
@@ -492,7 +495,7 @@ namespace rl::sdl
         {
             SDL3::SDL_BlendMode mode{ SDL3::SDL_BLENDMODE_NONE };
             i32 result = SDL3::SDL_GetRenderDrawBlendMode(m_sdl_renderer, &mode);
-            runtime_assert(result == 0, "failed to get renderer output size");
+            runtime_assert(result == 0, "failed to get draw blend mode");
             return mode;
         }
 
@@ -500,15 +503,15 @@ namespace rl::sdl
         {
             sdl::color c{};
             i32 result = SDL3::SDL_GetRenderDrawColor(m_sdl_renderer, &c.r, &c.g, &c.b, &c.a);
-            runtime_assert(result == 0, "failed to get renderer output size");
+            runtime_assert(result == 0, "failed to get draw color");
             return c;
         }
 
     protected:
-        renderer(SDL3::SDL_Renderer* rend)
-            : m_sdl_renderer{ rend }
+        renderer(SDL3::SDL_Renderer* sdl_renderer)
+            : m_sdl_renderer{ sdl_renderer }
         {
-            rend = nullptr;
+            sdl_renderer = nullptr;
         }
 
     private:

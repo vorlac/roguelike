@@ -78,7 +78,7 @@ namespace rl::sdl
     texture& texture::update(const void* pixels, i32 pitch, const ds::rect<i32>& rect /*= {}*/)
     {
         i32 result = SDL3::SDL_UpdateTexture(m_sdl_texture, rect, pixels, pitch);
-        runtime_assert(result == 0, "_________");
+        runtime_assert(result == 0, "failed to update texture");
         return *this;
     }
 
@@ -143,14 +143,14 @@ namespace rl::sdl
     {
         i32 result = SDL3::SDL_UpdateYUVTexture(m_sdl_texture, rect, y_plane, y_pitch, u_plane,
                                                 u_pitch, v_plane, v_pitch);
-        runtime_assert(result == 0, "_________");
+        runtime_assert(result == 0, "failed to update YUV");
         return *this;
     }
 
     texture& texture::set_blend_mode(SDL3::SDL_BlendMode blend_mode)
     {
         i32 result = SDL3::SDL_SetTextureBlendMode(m_sdl_texture, blend_mode);
-        runtime_assert(result == 0, "_________");
+        runtime_assert(result == 0, "failed to set blend mode");
 
         return *this;
     }
@@ -158,14 +158,14 @@ namespace rl::sdl
     texture& texture::set_alpha_mod(u8 a)
     {
         i32 result = SDL3::SDL_SetTextureAlphaMod(m_sdl_texture, a);
-        runtime_assert(result == 0, "_________");
+        runtime_assert(result == 0, "failed to set alpha mod");
         return *this;
     }
 
     texture& texture::set_color_mod(u8 r, u8 g, u8 b)
     {
         i32 result = SDL3::SDL_SetTextureColorMod(m_sdl_texture, r, g, b);
-        runtime_assert(result == 0, "_________");
+        runtime_assert(result == 0, "failed to set color mod");
         return *this;
     }
 
@@ -181,7 +181,7 @@ namespace rl::sdl
         SDL3::SDL_PixelFormatEnum format{ SDL3::SDL_PIXELFORMAT_UNKNOWN };
         i32 result = SDL3::SDL_QueryTexture(m_sdl_texture, reinterpret_cast<u32*>(&format), nullptr,
                                             nullptr, nullptr);
-        runtime_assert(result == 0, "_________");
+        runtime_assert(result == 0, "failed to get format");
         return format;
     }
 
@@ -190,7 +190,7 @@ namespace rl::sdl
         SDL3::SDL_TextureAccess access{ SDL3::SDL_TEXTUREACCESS_STATIC };
         i32 result = SDL3::SDL_QueryTexture(m_sdl_texture, nullptr, reinterpret_cast<i32*>(&access),
                                             nullptr, nullptr);
-        runtime_assert(result == 0, "_________");
+        runtime_assert(result == 0, "failed to get access");
         return static_cast<SDL3::SDL_TextureAccess>(access);
     }
 
@@ -207,7 +207,7 @@ namespace rl::sdl
     {
         u8 alpha;
         i32 result = SDL3::SDL_GetTextureAlphaMod(m_sdl_texture, &alpha);
-        runtime_assert(result == 0, "_________");
+        runtime_assert(result == 0, "failed to get alpha mod");
 
         return alpha;
     }
@@ -216,7 +216,7 @@ namespace rl::sdl
     {
         SDL3::SDL_BlendMode mode;
         i32 result = SDL3::SDL_GetTextureBlendMode(m_sdl_texture, &mode);
-        runtime_assert(result == 0, "_________");
+        runtime_assert(result == 0, "failed to get blend mode");
 
         return mode;
     }
@@ -225,7 +225,7 @@ namespace rl::sdl
     {
         color c{ 0, 0, 0, 0 };
         i32 result = SDL3::SDL_GetTextureColorMod(m_sdl_texture, &c.r, &c.g, &c.b);
-        runtime_assert(result == 0, "_________");
+        runtime_assert(result == 0, "failed to get color mod");
         return c;
     }
 
