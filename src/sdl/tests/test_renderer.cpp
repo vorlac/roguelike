@@ -1,33 +1,22 @@
+#include <fmt/format.h>
+
 #include "core/utils/conversions.hpp"
 #include "sdl/color.hpp"
 #include "sdl/renderer.hpp"
-#include "sdl/sdl.hpp"
 #include "sdl/surface.hpp"
 #include "sdl/tests/data/images.hpp"
-#include "sdl/tests/test_renderer.hpp"
 #include "sdl/texture.hpp"
+
+// #include "sdl/tests/test_renderer.hpp"
 
 namespace SDL3
 {
 #include <SDL3/SDL_blendmode.h>
-#include <SDL3/SDL_rect.h>
+// #include <SDL3/SDL_rect.h>
 #include <SDL3/SDL_render.h>
 #include <SDL3/SDL_test.h>
-#include <SDL3/SDL_test_assert.h>
+    // #include <SDL3/SDL_test_assert.h>
 }
-
-//
-// #define CHECK_FUNC(FUNC, PARAMS) \
-//    { \
-//        int result = FUNC PARAMS; \
-//        if (result != 0) \
-//        { \
-//            SDL3::SDLTest_AssertCheck(result == 0, \
-//                                      "Validate result from %s, expected: 0, got: %i, %s", #FUNC,
-//                                      \
-//                                      result, SDL3::SDL_GetError()); \
-//        } \
-//    }
 
 namespace rl::sdl::test
 {
@@ -227,6 +216,7 @@ namespace rl::sdl::test
         /* Clear surface. */
         clear_screen(renderer);
 
+        has_draw_color(renderer);
         /* Need drawcolor or just skip test. */
         // SDL3::SDLTest_AssertCheck(has_draw_color(renderer), "_has_draw_color");
 
@@ -314,6 +304,8 @@ namespace rl::sdl::test
         // Clear surface.
         clear_screen(renderer);
 
+        has_draw_color(renderer);
+        has_blend_modes(renderer);
         // Need drawcolor and blendmode or just skip test.
         // SDL3::SDLTest_AssertCheck(has_draw_color(renderer), "_has_draw_color");
         // SDL3::SDLTest_AssertCheck(has_blend_modes(renderer), "_has_blend_modes");
@@ -468,6 +460,7 @@ namespace rl::sdl::test
         /* Clear surface. */
         clear_screen(renderer);
 
+        has_draw_color(renderer);
         /* Need drawcolor or just skip test. */
         // SDL3::SDLTest_AssertCheck(has_draw_color(renderer), "_has_draw_color)");
 
@@ -604,6 +597,7 @@ namespace rl::sdl::test
         /* Clear surface. */
         clear_screen(renderer);
 
+        has_tex_alpha(renderer);
         /* Need alpha or just skip test. */
         // SDL3::SDLTest_AssertCheck(has_tex_alpha(renderer), "_has_tex_alpha");
         if (!has_tex_alpha(renderer))
@@ -676,8 +670,6 @@ namespace rl::sdl::test
      * */
     static void test_blit_blend_mode(sdl::renderer& renderer, sdl::texture& tface, int mode)
     {
-        int ret;
-
         /* Clear surface. */
         clear_screen(renderer);
 
@@ -734,6 +726,10 @@ namespace rl::sdl::test
     static int render_test_blit_blend(sdl::renderer& renderer)
     {
         int ret = 0;
+
+        has_blend_modes(renderer);
+        has_tex_color(renderer);
+        has_tex_alpha(renderer);
 
         // SDL3::SDLTest_AssertCheck(has_blend_modes(renderer), "_has_blend_modes");
         // SDL3::SDLTest_AssertCheck(has_tex_color(renderer), "_has_tex_color");
@@ -1139,19 +1135,15 @@ namespace rl::sdl::test
         rl::i32 width{ 320 };
         rl::i32 height{ 240 };
         rl::u32 renderer_flags{ SDL3::SDL_RENDERER_ACCELERATED };
-
         sdl::window window{ "render_testCreateRenderer", { width, height }, 0 };
 
-        // SDL3::SDLTest_AssertCheck(window.is_valid(), "window.is_valid() result");
         if (!window.is_valid())
             return -1;
 
-        if (sdl::sdl_app::current_video_driver() == "dummy")
+        if (renderer::current_video_driver() == "dummy")
             renderer_flags = 0;
 
         sdl::renderer renderer{ window, renderer_flags };
-        // SDL3::SDLTest_AssertCheck(renderer.is_valid(), "Check SDL3::SDL_CreateRenderer result");
-
         if (!renderer.is_valid())
             return -1;
 
@@ -1164,6 +1156,8 @@ namespace rl::sdl::test
         ret |= render_test_blit_blend(renderer);
         ret |= render_test_viewport(renderer);
         ret |= render_test_logical_size(renderer);
+
+        runtime_assert(ret == 0, "rendering test failure");
         return ret;
     }
 }

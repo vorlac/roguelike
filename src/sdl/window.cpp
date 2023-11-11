@@ -1,6 +1,8 @@
 #include <memory>
 #include <utility>
 
+#include <fmt/format.h>
+
 #include "core/ds/dimensions.hpp"
 #include "core/ds/point.hpp"
 #include "core/ds/rect.hpp"
@@ -99,7 +101,6 @@ namespace rl::sdl
         return *this;
     }
 
-    ///////////////////////////////////////////////////
     const window& window::set_grab(bool grabbed)
     {
         SDL3::SDL_SetWindowGrab(m_sdl_window, sdl::boolean(grabbed));

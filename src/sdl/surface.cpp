@@ -10,7 +10,6 @@ namespace SDL3
 {
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_pixels.h>
-#include <SDL3/SDL_stdinc.h>
 #include <SDL3/SDL_surface.h>
 #include <SDL3/SDL_video.h>
 }

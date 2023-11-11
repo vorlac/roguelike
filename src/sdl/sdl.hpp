@@ -9,13 +9,11 @@
 
 #include "core/numeric_types.hpp"
 #include "sdl/renderer.hpp"
-#include "sdl/tests/test_renderer.hpp"
 #include "sdl/window.hpp"
 
 namespace SDL3
 {
 #include <SDL3/SDL_blendmode.h>
-#include <SDL3/SDL_init.h>
 }
 
 namespace rl::sdl
@@ -128,17 +126,6 @@ namespace rl::sdl
         ~sdl_app()
         {
             SDL3::SDL_Quit();
-        }
-
-        bool run_sdl_tests()
-        {
-            i32 ret = sdl::test::execute_render_tests();
-            return ret == 0;
-        }
-
-        static std::string current_video_driver()
-        {
-            return std::string{ SDL3::SDL_GetCurrentVideoDriver() };
         }
 
         bool loop()

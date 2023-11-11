@@ -6,8 +6,7 @@
 #include <utility>
 #include <vector>
 
-// #include <fmt/core.h>
-// #include <fmt/format.h>
+#include <fmt/format.h>
 
 #include "core/ds/dimensions.hpp"
 #include "core/ds/point.hpp"
@@ -23,7 +22,6 @@
 
 namespace SDL3
 {
-#include <SDL3/SDL.h>
 #include <SDL3/SDL_blendmode.h>
 #include <SDL3/SDL_rect.h>
 #include <SDL3/SDL_render.h>
@@ -121,6 +119,11 @@ namespace rl::sdl
         {
             sdl_assert(m_sdl_renderer != nullptr, "sdl renderer handle not initialized");
             return m_sdl_renderer;
+        }
+
+        static std::string current_video_driver()
+        {
+            return std::string{ SDL3::SDL_GetCurrentVideoDriver() };
         }
 
         static std::vector<std::string> get_render_drivers()

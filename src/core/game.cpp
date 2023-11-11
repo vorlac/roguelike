@@ -29,8 +29,10 @@ namespace rl
         u64 i = 0;
         while (!quit_requested())
         {
-            m_sdl.run_sdl_tests();
-            // m_sdl.loop2();
+            i32 ret = sdl::test::execute_render_tests();
+
+            // m_sdl.run_sdl_tests();
+            //  m_sdl.loop2();
             fmt::print("{}\n", ++i);
             using namespace std::literals;
             std::this_thread::sleep_for(0.1s);
