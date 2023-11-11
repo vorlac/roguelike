@@ -7,19 +7,15 @@
 #include "sdl/tests/data/images.hpp"
 #include "sdl/texture.hpp"
 
-// #include "sdl/tests/test_renderer.hpp"
-
 namespace SDL3 {
 #include <SDL3/SDL_blendmode.h>
-// #include <SDL3/SDL_rect.h>
 #include <SDL3/SDL_render.h>
 #include <SDL3/SDL_test.h>
-    // #include <SDL3/SDL_test_assert.h>
 }
 
 namespace rl::sdl::test {
-    constexpr rl::i32 TESTRENDER_SCREEN_W{ 80 };
-    constexpr rl::i32 TESTRENDER_SCREEN_H{ 60 };
+    constexpr rl::i32 TESTRENDER_SCREEN_W{ 1024 };
+    constexpr rl::i32 TESTRENDER_SCREEN_H{ 768 };
     constexpr SDL3::SDL_PixelFormatEnum RENDER_COMPARE_FORMAT{ SDL3::SDL_PIXELFORMAT_ARGB8888 };
     constexpr rl::u32 RENDER_COLOR_CLEAR{ 0xFF000000 };
     constexpr rl::u32 RENDER_COLOR_GREEN{ 0xFF00FF00 };
@@ -130,8 +126,6 @@ namespace rl::sdl::test {
         // Read pixels.
         pixels = static_cast<rl::u8*>(
             SDL3::SDL_malloc(4 * sdl::test::TESTRENDER_SCREEN_W * sdl::test::TESTRENDER_SCREEN_H));
-
-        // SDL3::SDLTest_AssertCheck(pixels != nullptr, "Validate allocated temp pixel buffer");
         if (pixels == nullptr)
             return;
 
@@ -149,16 +143,8 @@ namespace rl::sdl::test {
         sdl::surface test_surface{ pixels, rect.width(), rect.height(), pitch,
                                    sdl::test::RENDER_COMPARE_FORMAT };
 
-        // SDL3::SDLTest_AssertCheck(test_surface.is_valid(),
-        //                           "Verify result from SDL3::SDL_CreateSurfaceFrom is not NULL");
-
         /* Compare surface. */
         rl::i32 failures = test_surface.compare(reference_surface, allowable_error);
-        // rl::i32 ret = SDL3::SDLTest_CompareSurfaces(testSurface, reference_surface,
-        // allowable_error);
-        // SDL3::SDLTest_AssertCheck(
-        //    failures == 0,
-        //    "Validate result from SDL3::SDLTest_CompareSurfaces, expected: 0, got: %i", failures);
     }
 
     /**
@@ -168,26 +154,12 @@ namespace rl::sdl::test {
     {
         /* Make current */
         renderer.present();
-
         rl::i32 ret = renderer.set_draw_color({ 0, 0, 0 });
-        /* Set color. */
-        // SDL3::SDLTest_AssertCheck(
-        //     ret, "Validate result from SDL3::SDL_SetRenderDrawColor, expected: 0, got: %i", ret);
-
         ret = renderer.clear();
-        /* Clear screen. */
-        // SDL3::SDLTest_AssertCheck(
-        //     ret, "Validate result from SDL3::SDL_RenderClear, expected: 0, got: %i", ret);
 
         /* Set defaults. */
         ret = renderer.set_draw_blend_mode(SDL3::SDL_BLENDMODE_NONE);
-        // SDL3::SDLTest_AssertCheck(
-        //     ret, "Validate result from SDL3::SDL_SetRenderDrawBlendMode, expected: 0, got: %i",
-        //     ret);
-
         ret = renderer.set_draw_color({ 255, 255, 255 });
-        // SDL3::SDLTest_AssertCheck(
-        //     ret, "Validate result from SDL3::SDL_SetRenderDrawColor, expected: 0, got: %i", ret);
 
         return 0;
     }
@@ -198,9 +170,7 @@ namespace rl::sdl::test {
     static int render_test_get_num_render_drivers(sdl::renderer& renderer)
     {
         auto drivers = renderer.get_render_drivers();
-        // SDL3::SDLTest_AssertCheck(drivers.size() >= 1, "Number of renderers >= 1, reported as
-        // %i",
-        //                           drivers.size());
+        sdl_assert(drivers.size() > 0, "no render drivers found");
         return TEST_COMPLETED;
     }
 
@@ -214,9 +184,8 @@ namespace rl::sdl::test {
         /* Clear surface. */
         clear_screen(renderer);
 
-        has_draw_color(renderer);
         /* Need drawcolor or just skip test. */
-        // SDL3::SDLTest_AssertCheck(has_draw_color(renderer), "_has_draw_color");
+        has_draw_color(renderer);
 
         /* Draw a rectangle. */
         ds::rect<rl::f32> rect{
@@ -249,27 +218,21 @@ namespace rl::sdl::test {
             for (rl::i32 x = y % 2; x < sdl::test::TESTRENDER_SCREEN_W; x += 2)
             {
                 ret = renderer.set_draw_color({
-                    cast::to<u8>(x * y),
-                    cast::to<u8>(x * y / 2),
-                    cast::to<u8>(x * y / 3),
+                    static_cast<u8>(x * y),
+                    static_cast<u8>(x * y / 2),
+                    static_cast<u8>(x * y / 3),
                 });
-                if (ret != 0)
+                if (!ret)
                     ++check_fail_count_1;
 
                 ret = renderer.draw_point({ cast::to<f32>(x), cast::to<f32>(y) });
-                if (ret != 0)
+                if (!ret)
                     check_fail_count_2++;
             }
         }
 
-        // SDL3::SDLTest_AssertCheck(
-        //     check_fail_count_1 == 0,
-        //     "Validate results from calls to SDL3::SDL_SetRenderDrawColor, expected: 0, got: %i",
-        //     check_fail_count_1);
-        // SDL3::SDLTest_AssertCheck(
-        //     check_fail_count_2 == 0,
-        //     "Validate results from calls to SDL3::SDL_RenderPoint, expected: 0, got: %i",
-        //     check_fail_count_2);
+        sdl_assert(check_fail_count_1 == 0, "render test 1 failed");
+        sdl_assert(check_fail_count_2 == 0, "render test 2 failed");
 
         // draw stuff...
         renderer.set_draw_color({ 0, 255, 0 });
@@ -302,11 +265,9 @@ namespace rl::sdl::test {
         // Clear surface.
         clear_screen(renderer);
 
+        // Need drawcolor and blendmode or just skip test.
         has_draw_color(renderer);
         has_blend_modes(renderer);
-        // Need drawcolor and blendmode or just skip test.
-        // SDL3::SDLTest_AssertCheck(has_draw_color(renderer), "_has_draw_color");
-        // SDL3::SDLTest_AssertCheck(has_blend_modes(renderer), "_has_blend_modes");
 
         // Create some rectangles for each blend mode.
         renderer.set_draw_color({ 255, 255, 255, 0 });
@@ -352,7 +313,8 @@ namespace rl::sdl::test {
                               : (((i / 2) % 3) == 1) ? SDL3::SDL_BLENDMODE_ADD
                                                      : SDL3::SDL_BLENDMODE_NONE;
 
-            if (!renderer.set_draw_color({ 60 + 2 * i, 240 - 2 * i, 50, 3 * i }))
+            if (!renderer.set_draw_color(
+                    { abs((60 + 2 * i) % 255), abs((240 - 2 * i) % 255), abs((50, 3 * i) % 255) }))
                 ++check_fail_count_1;
             if (!renderer.set_draw_blend_mode(blend_mode))
                 check_fail_count_2++;
@@ -360,18 +322,9 @@ namespace rl::sdl::test {
                 check_fail_count_3++;
         }
 
-        // SDL3::SDLTest_AssertCheck(
-        //     check_fail_count_1 == 0,
-        //     "Validate results from calls to SDL3::SDL_SetRenderDrawColor, expected: 0, got: %i",
-        //     check_fail_count_1);
-        // SDL3::SDLTest_AssertCheck(
-        //     check_fail_count_2 == 0,
-        //     "Validate results from calls to SDL3::SDL_SetRenderDrawBlendMode, expected: 0, got:
-        //     %i", check_fail_count_2);
-        // SDL3::SDLTest_AssertCheck(
-        //     check_fail_count_3 == 0,
-        //     "Validate results from calls to SDL3::SDL_RenderLine, expected: 0, got: %i",
-        //     check_fail_count_3);
+        sdl_assert(check_fail_count_1 == 0, "render test 1 failed");
+        sdl_assert(check_fail_count_2 == 0, "render test 2 failed");
+        sdl_assert(check_fail_count_3 == 0, "render test 3 failed");
 
         check_fail_count_1 = 0;
         check_fail_count_2 = 0;
@@ -381,7 +334,8 @@ namespace rl::sdl::test {
             auto blend_mode = (((i / 2) % 3) == 0)   ? SDL3::SDL_BLENDMODE_BLEND
                               : (((i / 2) % 3) == 1) ? SDL3::SDL_BLENDMODE_ADD
                                                      : SDL3::SDL_BLENDMODE_NONE;
-            if (!renderer.set_draw_color({ 60 + 2 * i, 240 - 2 * i, 50, 3 * i }))
+            if (!renderer.set_draw_color(
+                    { abs((60 + 2 * i) % 255), abs((240 - 2 * i) % 255), abs((50, 3 * i) % 255) }))
                 ++check_fail_count_1;
 
             if (!renderer.set_draw_blend_mode(blend_mode))
@@ -391,18 +345,9 @@ namespace rl::sdl::test {
                 check_fail_count_3++;
         }
 
-        // SDL3::SDLTest_AssertCheck(
-        //     check_fail_count_1 == 0,
-        //     "Validate results from calls to SDL3::SDL_SetRenderDrawColor, expected: 0, got: %i",
-        //     check_fail_count_1);
-        // SDL3::SDLTest_AssertCheck(
-        //     check_fail_count_2 == 0,
-        //     "Validate results from calls to SDL3::SDL_SetRenderDrawBlendMode, expected: 0, got:
-        //     %i", check_fail_count_2);
-        // SDL3::SDLTest_AssertCheck(
-        //     check_fail_count_3 == 0,
-        //     "Validate results from calls to SDL3::SDL_RenderLine, expected: 0, got: %i",
-        //     check_fail_count_3);
+        sdl_assert(check_fail_count_1 == 0, "render test 1 failed");
+        sdl_assert(check_fail_count_2 == 0, "render test 2 failed");
+        sdl_assert(check_fail_count_3 == 0, "render test 3 failed");
 
         /* Draw points. */
         check_fail_count_1 = 0;
@@ -416,7 +361,8 @@ namespace rl::sdl::test {
                                   : ((((i + j) / 3) % 3) == 1) ? SDL3::SDL_BLENDMODE_ADD
                                                                : SDL3::SDL_BLENDMODE_NONE;
 
-                if (!renderer.set_draw_color({ j * 4, i * 3, j * 4, i * 3 }))
+                if (!renderer.set_draw_color({ abs((j * 4) % 255), abs((i * 3) % 255),
+                                               abs((j * 4) % 255), abs((i * 3) % 255) }))
                     ++check_fail_count_1;
                 if (!renderer.set_draw_blend_mode(blend_mode))
                     check_fail_count_2++;
@@ -425,18 +371,9 @@ namespace rl::sdl::test {
             }
         }
 
-        // SDL3::SDLTest_AssertCheck(
-        //     check_fail_count_1 == 0,
-        //     "Validate results from calls to SDL3::SDL_SetRenderDrawColor, expected: 0, got: %i",
-        //     check_fail_count_1);
-        // SDL3::SDLTest_AssertCheck(
-        //     check_fail_count_2 == 0,
-        //     "Validate results from calls to SDL3::SDL_SetRenderDrawBlendMode, expected: 0, got:
-        //     %i", check_fail_count_2);
-        // SDL3::SDLTest_AssertCheck(
-        //     check_fail_count_3 == 0,
-        //     "Validate results from calls to SDL3::SDL_RenderPoint, expected: 0, got: %i",
-        //     check_fail_count_3);
+        sdl_assert(check_fail_count_1 == 0, "render test 1 failed");
+        sdl_assert(check_fail_count_2 == 0, "render test 2 failed");
+        sdl_assert(check_fail_count_3 == 0, "render test 3 failed");
 
         /* See if it's the same. */
         sdl::surface reference_surface = sdl::test::image::ImagePrimitivesBlend();
@@ -458,13 +395,11 @@ namespace rl::sdl::test {
         /* Clear surface. */
         clear_screen(renderer);
 
-        has_draw_color(renderer);
         /* Need drawcolor or just skip test. */
-        // SDL3::SDLTest_AssertCheck(has_draw_color(renderer), "_has_draw_color)");
+        has_draw_color(renderer);
 
         /* Create face surface. */
         sdl::texture tface = load_test_face(renderer);
-        // SDL3::SDLTest_AssertCheck(tface.is_valid(), "Verify load_test_face(renderer) result");
         if (!tface.is_valid())
             return TEST_ABORTED;
 
@@ -498,11 +433,6 @@ namespace rl::sdl::test {
             }
         }
 
-        // SDL3::SDLTest_AssertCheck(
-        //     check_fail_count_1 == 0,
-        //     "Validate results from calls to SDL3::SDL_RenderTexture, expected: 0, got: %i",
-        //     check_fail_count_1);
-
         /* See if it's the same */
         sdl::surface reference_surface = sdl::test::image::ImageBlit();
         compare(renderer, reference_surface, ALLOWABLE_ERROR_OPAQUE);
@@ -525,7 +455,6 @@ namespace rl::sdl::test {
 
         /* Create face surface. */
         sdl::texture tface = load_test_face(renderer);
-        // SDL3::SDLTest_AssertCheck(tface.is_valid(), "Verify load_test_face(renderer) result");
         if (!tface.is_valid())
             return TEST_ABORTED;
 
@@ -566,15 +495,6 @@ namespace rl::sdl::test {
             }
         }
 
-        // SDL3::SDLTest_AssertCheck(
-        //     check_fail_count_1 == 0,
-        //     "Validate results from calls to SDL3::SDL_SetTextureColorMod, expected: 0, got: %i",
-        //     check_fail_count_1);
-        // SDL3::SDLTest_AssertCheck(
-        //     check_fail_count_2 == 0,
-        //     "Validate results from calls to SDL3::SDL_RenderTexture, expected: 0, got: %i",
-        //     check_fail_count_2);
-
         /* See if it's the same. */
         sdl::surface reference_surface = sdl::test::image::ImageBlitColor();
         compare(renderer, reference_surface, ALLOWABLE_ERROR_OPAQUE);
@@ -597,13 +517,11 @@ namespace rl::sdl::test {
 
         has_tex_alpha(renderer);
         /* Need alpha or just skip test. */
-        // SDL3::SDLTest_AssertCheck(has_tex_alpha(renderer), "_has_tex_alpha");
         if (!has_tex_alpha(renderer))
             return -1;
 
         /* Create face surface. */
         sdl::texture tface = load_test_face(renderer);
-        // SDL3::SDLTest_AssertCheck(tface.is_valid(), "Verify load_test_face(renderer) result");
         if (!tface.is_valid())
             return TEST_ABORTED;
 
@@ -631,8 +549,6 @@ namespace rl::sdl::test {
             for (rl::i32 i = 0; i <= ni; i += 4)
             {
                 /* Set alpha mod. */
-
-                // ret = SDL3::SDL_SetTextureAlphaMod(tface, (255 / ni) * i);
                 if (!tface.set_alpha_mod(cast::to<u8>((255 / ni) * i)))
                     ++check_fail_count_1;
 
@@ -643,15 +559,6 @@ namespace rl::sdl::test {
                     check_fail_count_2++;
             }
         }
-
-        // SDL3::SDLTest_AssertCheck(
-        //     check_fail_count_1 == 0,
-        //     "Validate results from calls to SDL3::SDL_SetTextureAlphaMod, expected: 0, got: %i",
-        //     check_fail_count_1);
-        // SDL3::SDLTest_AssertCheck(
-        //     check_fail_count_2 == 0,
-        //     "Validate results from calls to SDL3::SDL_RenderTexture, expected: 0, got: %i",
-        //     check_fail_count_2);
 
         /* See if it's the same. */
         sdl::surface reference_surface = sdl::test::image::ImageBlitAlpha();
@@ -707,15 +614,6 @@ namespace rl::sdl::test {
                     check_fail_count_2++;
             }
         }
-
-        // SDL3::SDLTest_AssertCheck(
-        //     check_fail_count_1 == 0,
-        //     "Validate results from calls to SDL3::SDL_SetTextureBlendMode, expected: 0, got: %i",
-        //     check_fail_count_1);
-        // SDL3::SDLTest_AssertCheck(
-        //     check_fail_count_2 == 0,
-        //     "Validate results from calls to SDL3::SDL_RenderTexture, expected: 0, got: %i",
-        //     check_fail_count_2);
     }
 
     /**
@@ -729,15 +627,9 @@ namespace rl::sdl::test {
         has_tex_color(renderer);
         has_tex_alpha(renderer);
 
-        // SDL3::SDLTest_AssertCheck(has_blend_modes(renderer), "_has_blend_modes");
-        // SDL3::SDLTest_AssertCheck(has_tex_color(renderer), "_has_tex_color");
-        // SDL3::SDLTest_AssertCheck(has_tex_alpha(renderer), "_has_tex_alpha");
-
-        /* Create face surface. */
         {
+            /* Create face surface. */
             sdl::texture tface = load_test_face(renderer);
-            // SDL3::SDLTest_AssertCheck(tface.is_valid(), "Verify load_test_face(renderer)
-            // result");
             if (!tface.is_valid())
                 return TEST_ABORTED;
 
@@ -836,25 +728,6 @@ namespace rl::sdl::test {
                         ++check_fail_count_4;
                 }
             }
-
-            // SDL3::SDLTest_AssertCheck(
-            //     check_fail_count_1 == 0,
-            //     "Validate results from calls to SDL3::SDL_SetTextureColorMod, expected: 0, got:
-            //     %i", check_fail_count_1);
-            // SDL3::SDLTest_AssertCheck(
-            //     check_fail_count_2 == 0,
-            //     "Validate results from calls to SDL3::SDL_SetTextureAlphaMod, expected: 0, got:
-            //     %i", check_fail_count_2);
-            // SDL3::SDLTest_AssertCheck(
-            //     check_fail_count_3 == 0,
-            //     "Validate results from calls to SDL3::SDL_SetTextureBlendMode, expected: 0, got:
-            //     %i", check_fail_count_3);
-            // SDL3::SDLTest_AssertCheck(
-            //     check_fail_count_4 == 0,
-            //     "Validate results from calls to SDL3::SDL_RenderTexture, expected: 0, got: %i",
-            //     check_fail_count_4);
-
-            // ... tface raii cleanup
         }
 
         /* Check to see if final image matches. */
@@ -862,11 +735,7 @@ namespace rl::sdl::test {
         compare(renderer, reference_surface, ALLOWABLE_ERROR_BLENDED);
 
         /* Make current */
-        // might need to move this in scope of reference_surface?
         renderer.present();
-
-        // SDL3::SDL_DestroySurface(reference_surface);
-        // reference_surface = NULL;
 
         return TEST_COMPLETED;
     }
@@ -876,8 +745,6 @@ namespace rl::sdl::test {
      */
     static int render_test_viewport(sdl::renderer& renderer)
     {
-        // SDL3::SDL_Surface* reference_surface;
-        // SDL3::SDL_Rect viewport;
         ds::rect<i32> viewport{
             TESTRENDER_SCREEN_W / 3,
             TESTRENDER_SCREEN_H / 3,
@@ -910,12 +777,6 @@ namespace rl::sdl::test {
         renderer.fill_rect();
         renderer.set_viewport();
 
-        /* Set the viewport and do a fill operation */
-        // CHECK_FUNC(SDL_SetRenderViewport, (renderer, &viewport))
-        // CHECK_FUNC(SDL_SetRenderDrawColor, (renderer, 0, 255, 0, sdl::color::ALPHA_OPAQUE))
-        // CHECK_FUNC(SDL_RenderFillRect, (renderer, NULL))
-        // CHECK_FUNC(SDL_SetRenderViewport, (renderer, NULL))
-
         /* Check to see if final image matches. */
         compare(renderer, reference_surface, sdl::test::ALLOWABLE_ERROR_OPAQUE);
 
@@ -925,7 +786,6 @@ namespace rl::sdl::test {
 
         /* Create expected result */
         reference_surface.fill(RENDER_COLOR_GREEN);
-        // CHECK_FUNC(SDL_FillSurfaceRect, (reference_surface, NULL, RENDER_COLOR_GREEN))
 
         /* Clear surface. */
         clear_screen(renderer);
@@ -935,10 +795,6 @@ namespace rl::sdl::test {
         renderer.set_draw_color({ 0, 255, 0 });
         renderer.clear();
         renderer.set_viewport();
-        // CHECK_FUNC(SDL_SetRenderViewport, (renderer, &viewport))
-        // CHECK_FUNC(SDL_SetRenderDrawColor, (renderer, 0, 255, 0, sdl::color::Alpha::Opaque))
-        // CHECK_FUNC(SDL_RenderClear, (renderer))
-        // CHECK_FUNC(SDL_SetRenderViewport, (renderer, NULL))
 
         /* Check to see if final image matches. */
         compare(renderer, reference_surface, sdl::test::ALLOWABLE_ERROR_OPAQUE);
@@ -974,9 +830,6 @@ namespace rl::sdl::test {
         reference_surface.fill(sdl::test::RENDER_COLOR_CLEAR);
         reference_surface.fill_rect(sdl::test::RENDER_COLOR_GREEN, viewport);
 
-        // CHECK_FUNC(SDL_FillSurfaceRect, (reference_surface, NULL, RENDER_COLOR_CLEAR))
-        // CHECK_FUNC(SDL_FillSurfaceRect, (reference_surface, &viewport, RENDER_COLOR_GREEN))
-
         /* Clear surface. */
         clear_screen(renderer);
 
@@ -987,18 +840,12 @@ namespace rl::sdl::test {
                                   SDL3::SDL_SCALEMODE_NEAREST);
 
         out_size = renderer.get_output_size();
-        // CHECK_FUNC(SDL_GetCurrentRenderOutputSize, (renderer, &out_size.width, &out_size.height))
 
         auto logical_size = renderer.set_logical_size(
             { out_size.width / factor, out_size.height / factor },
             SDL3::SDL_LOGICAL_PRESENTATION_LETTERBOX, SDL3::SDL_SCALEMODE_NEAREST);
 
-        // CHECK_FUNC(SDL_SetRenderLogicalPresentation,
-        //            (renderer, out_size.width / factor, out_size.height / factor,
-        //             SDL3::SDL_LOGICAL_PRESENTATION_LETTERBOX, SDL3::SDL_SCALEMODE_NEAREST))
-
         renderer.set_draw_color({ 0, 255, 0, color::Alpha::Opaque });
-        // CHECK_FUNC(SDL_SetRenderDrawColor, (renderer, 0, 255, 0, SDL3::SDL_ALPHA_OPAQUE))
 
         ds::rect<f32> rect = {
             (float)viewport.pt.x / factor,
@@ -1008,15 +855,8 @@ namespace rl::sdl::test {
         };
 
         renderer.fill_rect(rect);
-        // CHECK_FUNC(SDL_RenderFillRect, (renderer, &rect))
-
         renderer.set_logical_size({ 0, 0 }, SDL3::SDL_LOGICAL_PRESENTATION_DISABLED,
                                   SDL3::SDL_SCALEMODE_NEAREST);
-
-        // CHECK_FUNC(
-        //     SDL_SetRenderLogicalPresentation,
-        //     (renderer, 0, 0, SDL3::SDL_LOGICAL_PRESENTATION_DISABLED,
-        //     SDL3::SDL_SCALEMODE_NEAREST))
 
         /* Check to see if final image matches. */
         compare(renderer, reference_surface, sdl::test::ALLOWABLE_ERROR_OPAQUE);
@@ -1026,15 +866,10 @@ namespace rl::sdl::test {
 
         /* Set the logical size and viewport and do a fill operation */
         out_size = renderer.get_output_size();
-        // CHECK_FUNC(SDL_GetCurrentRenderOutputSize, (renderer, &w, &h))
 
         renderer.set_logical_size({ out_size.width / factor, out_size.height / factor },
                                   SDL3::SDL_LOGICAL_PRESENTATION_LETTERBOX,
                                   SDL3::SDL_SCALEMODE_NEAREST);
-
-        // CHECK_FUNC(SDL_SetRenderLogicalPresentation,
-        //            (renderer, w / factor, h / factor, SDL3::SDL_LOGICAL_PRESENTATION_LETTERBOX,
-        //             SDL3::SDL_SCALEMODE_NEAREST))
 
         viewport = {
             {
@@ -1048,23 +883,11 @@ namespace rl::sdl::test {
         };
 
         renderer.set_viewport(viewport);
-        // CHECK_FUNC(SDL_SetRenderViewport, (renderer, &viewport))
-
         renderer.set_draw_color({ 0, 255, 0 });
-        // CHECK_FUNC(SDL_SetRenderDrawColor, (renderer, 0, 255, 0, SDL3::SDL_ALPHA_OPAQUE))
-
         renderer.fill_rect();
-        // CHECK_FUNC(SDL_RenderFillRect, (renderer, NULL))
-
         renderer.set_viewport();
-        // CHECK_FUNC(SDL_SetRenderViewport, (renderer, NULL))
-
         renderer.set_logical_size({ 0, 0 }, SDL3::SDL_LOGICAL_PRESENTATION_DISABLED,
                                   SDL3::SDL_SCALEMODE_NEAREST);
-        // CHECK_FUNC(
-        //     SDL_SetRenderLogicalPresentation,
-        //     (renderer, 0, 0, SDL3::SDL_LOGICAL_PRESENTATION_DISABLED,
-        //     SDL3::SDL_SCALEMODE_NEAREST))
 
         /* Check to see if final image matches. */
         compare(renderer, reference_surface, sdl::test::ALLOWABLE_ERROR_OPAQUE);
@@ -1079,37 +902,21 @@ namespace rl::sdl::test {
 
         /* Create expected result */
         reference_surface.fill(RENDER_COLOR_CLEAR);
-        // CHECK_FUNC(SDL_FillSurfaceRect, (reference_surface, NULL, RENDER_COLOR_CLEAR))
         reference_surface.fill_rect(RENDER_COLOR_GREEN, viewport);
-        // CHECK_FUNC(SDL_FillSurfaceRect, (reference_surface, &viewport, RENDER_COLOR_GREEN))
 
         /* Clear surface. */
         clear_screen(renderer);
 
         /* Set the logical size and do a fill operation */
         out_size = renderer.get_output_size();
-        // CHECK_FUNC(SDL_GetCurrentRenderOutputSize, (renderer, &w, &h))
-
         renderer.set_logical_size(
             { out_size.width - 2 * (TESTRENDER_SCREEN_W / 4), out_size.height },
             SDL3::SDL_LOGICAL_PRESENTATION_LETTERBOX, SDL3::SDL_SCALEMODE_LINEAR);
 
-        // CHECK_FUNC(SDL_SetRenderLogicalPresentation,
-        //            (renderer, w - 2 * (TESTRENDER_SCREEN_W / 4), h,
-        //             SDL3::SDL_LOGICAL_PRESENTATION_LETTERBOX, SDL3::SDL_SCALEMODE_LINEAR))
-
         renderer.set_draw_color({ 0, 255, 0, sdl::color::Alpha::Opaque });
-        // CHECK_FUNC(SDL_SetRenderDrawColor, (renderer, 0, 255, 0, SDL3::SDL_ALPHA_OPAQUE))
-
         renderer.fill_rect();
-        // CHECK_FUNC(SDL_RenderFillRect, (renderer, NULL))
-
         renderer.set_logical_size({ 0, 0 }, SDL3::SDL_LOGICAL_PRESENTATION_DISABLED,
                                   SDL3::SDL_SCALEMODE_NEAREST);
-        // CHECK_FUNC(
-        //     SDL_SetRenderLogicalPresentation,
-        //     (renderer, 0, 0, SDL3::SDL_LOGICAL_PRESENTATION_DISABLED,
-        //     SDL3::SDL_SCALEMODE_NEAREST))
 
         /* Check to see if final image matches. */
         compare(renderer, reference_surface, ALLOWABLE_ERROR_OPAQUE);
@@ -1130,23 +937,10 @@ namespace rl::sdl::test {
     {
         int ret = 0;
 
-        // rl::i32 width{ 320 };
-        // rl::i32 height{ 240 };
-        // sdl::window window{ "render_testCreateRenderer", { width, height }, 0 };
-
         if (!main_window.is_valid())
             return -1;
         if (!window_renderer.is_valid())
             return -1;
-
-        // SDL3::SDL_RendererFlags renderer_flags{ SDL3::SDL_RENDERER_ACCELERATED };
-        // std::string driver_name{ renderer::current_video_driver() };
-        // if (driver_name == "dummy")
-        //     renderer_flags = renderer::flag::Null;
-        //
-        // sdl::renderer renderer{ window, renderer_flags };
-        // if (!renderer.is_valid())
-        //     return -1;
 
         ret |= render_test_get_num_render_drivers(window_renderer);
         ret |= render_test_primitives(window_renderer);

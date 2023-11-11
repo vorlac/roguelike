@@ -32,26 +32,24 @@ namespace rl::sdl {
         ~window();
 
     public:
-        const window& maximize();
-        const window& minimize();
-        const window& hide();
-        const window& restore();
-        const window& raise();
-        const window& show();
+        bool maximize();
+        bool minimize();
+        bool hide();
+        bool restore();
+        bool raise();
+        bool show();
 
-    public:
-        const window& set_grab(bool grabbed);
-        const window& set_bordered(bool bordered);
-        const window& set_resizable(bool resizable);
-        const window& set_fullscreen(bool fullscreen);
-        const window& set_opacity(float opacity);
-        const window& set_title(std::string title);
-        const window& set_position(ds::point<i32> pos);
-        const window& set_size(ds::dimensions<i32> size);
-        const window& set_min_size(ds::dimensions<i32> size);
-        const window& set_max_size(ds::dimensions<i32> size);
+        bool set_grab(bool grabbed);
+        bool set_bordered(bool bordered);
+        bool set_resizable(bool resizable);
+        bool set_fullscreen(bool fullscreen);
+        bool set_opacity(float opacity);
+        bool set_title(std::string title);
+        bool set_position(ds::point<i32> pos);
+        bool set_size(ds::dimensions<i32> size);
+        bool set_min_size(ds::dimensions<i32> size);
+        bool set_max_size(ds::dimensions<i32> size);
 
-    public:
         bool get_grab() const;
         f32 get_opacity() const;
         std::string get_title() const;

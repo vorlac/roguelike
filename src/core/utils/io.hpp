@@ -113,7 +113,7 @@ namespace rl::log {
     template <auto log_level, typename... TArgs>
     constexpr inline void log(fmt::format_string<TArgs...> format_str, TArgs&&... args)
     {
-        fmt::text_style style = fmt::fg(fmt::color::rosy_brown);
+        fmt::text_style style = fmt::fg(fmt::color::dark_gray);
         fmt::print(style, fmt::format(format_str, std::forward<TArgs>(args)...) + "\n");
     }
 

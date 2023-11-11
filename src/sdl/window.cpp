@@ -69,109 +69,121 @@ namespace rl::sdl {
         return *this;
     }
 
-    const window& window::maximize()
+    bool window::maximize()
     {
-        SDL3::SDL_MaximizeWindow(m_sdl_window);
-        return *this;
+        i32 result = SDL3::SDL_MaximizeWindow(m_sdl_window);
+        sdl_assert(result == 0, "failed to maximize");
+        return result == 0;
     }
 
-    const window& window::minimize()
+    bool window::minimize()
     {
-        SDL3::SDL_MinimizeWindow(m_sdl_window);
-        return *this;
+        i32 result = SDL3::SDL_MinimizeWindow(m_sdl_window);
+        sdl_assert(result == 0, "failed to minimize");
+        return result == 0;
     }
 
-    const window& window::hide()
+    bool window::hide()
     {
-        SDL3::SDL_HideWindow(m_sdl_window);
-        return *this;
+        i32 result = SDL3::SDL_HideWindow(m_sdl_window);
+        sdl_assert(result == 0, "failed hiding");
+        return result == 0;
     }
 
-    const window& window::restore()
+    bool window::restore()
     {
-        SDL3::SDL_RestoreWindow(m_sdl_window);
-        return *this;
+        i32 result = SDL3::SDL_RestoreWindow(m_sdl_window);
+        sdl_assert(result == 0, "failed restoring");
+        return result == 0;
     }
 
-    const window& window::raise()
+    bool window::raise()
     {
-        SDL3::SDL_RaiseWindow(m_sdl_window);
-        return *this;
+        i32 result = SDL3::SDL_RaiseWindow(m_sdl_window);
+        sdl_assert(result == 0, "failed raising");
+        return result == 0;
     }
 
-    const window& window::show()
+    bool window::show()
     {
-        SDL3::SDL_ShowWindow(m_sdl_window);
-        return *this;
+        i32 result = SDL3::SDL_ShowWindow(m_sdl_window);
+        sdl_assert(result == 0, "failed to show");
+        return result == 0;
     }
 
-    const window& window::set_grab(bool grabbed)
+    bool window::set_grab(bool grabbed)
     {
-        SDL3::SDL_SetWindowGrab(m_sdl_window, sdl::boolean(grabbed));
-        return *this;
+        i32 result = SDL3::SDL_SetWindowGrab(m_sdl_window, sdl::boolean(grabbed));
+        sdl_assert(result == 0, "failed to set grab");
+        return result == 0;
     }
 
-    const window& window::set_bordered(bool bordered)
+    bool window::set_bordered(bool bordered)
     {
-        SDL3::SDL_SetWindowBordered(m_sdl_window, sdl::boolean(bordered));
-        return *this;
+        i32 result = SDL3::SDL_SetWindowBordered(m_sdl_window, sdl::boolean(bordered));
+        sdl_assert(result == 0, "failed to set bordered");
+        return result == 0;
     }
 
-    const window& window::set_resizable(bool resizable)
+    bool window::set_resizable(bool resizable)
     {
-        SDL3::SDL_SetWindowResizable(m_sdl_window, sdl::boolean(resizable));
-        return *this;
+        i32 result = SDL3::SDL_SetWindowResizable(m_sdl_window, sdl::boolean(resizable));
+        sdl_assert(result == 0, "failed to set resizeable");
+        return result == 0;
     }
 
-    const window& window::set_fullscreen(bool fullscreen)
+    bool window::set_fullscreen(bool fullscreen)
     {
         i32 result{ SDL3::SDL_SetWindowFullscreen(m_sdl_window, sdl::boolean(fullscreen)) };
         runtime_assert(result == 0, "Failed to set window to fullscreen");
-        return *this;
+        return result == 0;
     }
 
-    const window& window::set_opacity(float opacity)
+    bool window::set_opacity(float opacity)
     {
-        i32 result{ SDL3::SDL_SetWindowOpacity(m_sdl_window, opacity) };
+        i32 result = SDL3::SDL_SetWindowOpacity(m_sdl_window, opacity);
         runtime_assert(result != 0, "failed to set window opacity");
-        return *this;
+        return result == 0;
     }
 
-    const window& window::set_title(std::string title)
+    bool window::set_title(std::string title)
     {
-        SDL3::SDL_SetWindowTitle(m_sdl_window, title.c_str());
-        return *this;
+        i32 result = SDL3::SDL_SetWindowTitle(m_sdl_window, title.c_str());
+        sdl_assert(result == 0, "failed to set title");
+        return result == 0;
     }
 
-    const window& window::set_position(ds::point<i32> pos)
+    bool window::set_position(ds::point<i32> pos)
     {
-        SDL3::SDL_SetWindowPosition(m_sdl_window, pos.x, pos.y);
-        return *this;
+        i32 result = SDL3::SDL_SetWindowPosition(m_sdl_window, pos.x, pos.y);
+        sdl_assert(result == 0, "failed to set position");
+        return result == 0;
     }
 
-    const window& window::set_size(ds::dimensions<i32> size)
+    bool window::set_size(ds::dimensions<i32> size)
     {
         i32 result{ SDL3::SDL_SetWindowSize(m_sdl_window, size.width, size.height) };
-        runtime_assert(result == 0, "failed to set window size");
-        return *this;
+        runtime_assert(result == 0, "failed to set size");
+        return result == 0;
     }
 
-    const window& window::set_min_size(ds::dimensions<i32> size)
+    bool window::set_min_size(ds::dimensions<i32> size)
     {
-        SDL3::SDL_SetWindowMinimumSize(m_sdl_window, size.width, size.height);
-        return *this;
+        i32 result = SDL3::SDL_SetWindowMinimumSize(m_sdl_window, size.width, size.height);
+        sdl_assert(result == 0, "failed to set min size");
+        return result == 0;
     }
 
-    const window& window::set_max_size(ds::dimensions<i32> size)
+    bool window::set_max_size(ds::dimensions<i32> size)
     {
-        SDL3::SDL_SetWindowMaximumSize(m_sdl_window, size.width, size.height);
-        return *this;
+        i32 result = SDL3::SDL_SetWindowMaximumSize(m_sdl_window, size.width, size.height);
+        sdl_assert(result == 0, "failed to set max size");
+        return result == 0;
     }
 
     SDL3::SDL_WindowFlags window::get_flags() const
     {
-        const u32 flags = SDL3::SDL_GetWindowFlags(m_sdl_window);
-        return static_cast<SDL3::SDL_WindowFlags>(flags);
+        return window::flag_t(SDL3::SDL_GetWindowFlags(m_sdl_window));
     }
 
     bool window::is_valid() const
@@ -187,14 +199,16 @@ namespace rl::sdl {
     ds::dimensions<i32> window::get_size() const
     {
         ds::dimensions<i32> size{ 0, 0 };
-        SDL3::SDL_GetWindowSize(m_sdl_window, &size.width, &size.height);
+        i32 result = SDL3::SDL_GetWindowSize(m_sdl_window, &size.width, &size.height);
+        sdl_assert(result == 0, "failed to set size");
         return size;
     }
 
     ds::dimensions<i32> window::get_render_size() const
     {
         ds::dimensions<i32> size{ 0, 0 };
-        SDL3::SDL_GetWindowSizeInPixels(m_sdl_window, &size.width, &size.height);
+        i32 result = SDL3::SDL_GetWindowSizeInPixels(m_sdl_window, &size.width, &size.height);
+        sdl_assert(result == 0, "failed to set render size");
         return size;
     }
 
@@ -206,28 +220,32 @@ namespace rl::sdl {
     ds::point<i32> window::get_position() const
     {
         ds::point<i32> pos{ 0, 0 };
-        SDL3::SDL_GetWindowPosition(m_sdl_window, &pos.x, &pos.y);
+        i32 result = SDL3::SDL_GetWindowPosition(m_sdl_window, &pos.x, &pos.y);
+        sdl_assert(result == 0, "failed to get pos");
         return pos;
     }
 
     ds::dimensions<i32> window::get_min_size() const
     {
         ds::dimensions<i32> size{ 0, 0 };
-        SDL3::SDL_GetWindowMinimumSize(m_sdl_window, &size.width, &size.height);
+        i32 result = SDL3::SDL_GetWindowMinimumSize(m_sdl_window, &size.width, &size.height);
+        sdl_assert(result == 0, "failed to get min size");
         return size;
     }
 
     ds::dimensions<i32> window::get_max_size() const
     {
         ds::dimensions<i32> size{ 0, 0 };
-        SDL3::SDL_GetWindowMaximumSize(m_sdl_window, &size.width, &size.height);
+        i32 result = SDL3::SDL_GetWindowMaximumSize(m_sdl_window, &size.width, &size.height);
+        sdl_assert(result == 0, "failed to get max size");
         return size;
     }
 
     bool window::get_grab() const
     {
-        auto grab{ SDL3::SDL_GetWindowGrab(m_sdl_window) == SDL3::SDL_TRUE };
-        return sdl::boolean(grab);
+        bool result = sdl::boolean(true) == SDL3::SDL_GetWindowGrab(m_sdl_window);
+        sdl_assert(result, "failed to get window grab");
+        return result;
     }
 
     SDL3::SDL_DisplayID window::get_display() const
@@ -254,5 +272,4 @@ namespace rl::sdl {
         runtime_assert(result == -1, "failed to get window opacity");
         return opacity;
     }
-
 }

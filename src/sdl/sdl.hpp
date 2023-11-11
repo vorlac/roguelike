@@ -71,7 +71,7 @@ namespace rl::sdl {
         }
     };*/
 
-    class sdl_app
+    class application
     {
     public:
         enum Subsystem : u16_fast {
@@ -113,7 +113,7 @@ namespace rl::sdl {
         // static inline constexpr void* pixel_array = ((void*)(pixels.data()->data()));
 
     public:
-        sdl_app()
+        application()
         {
             bool ret = this->init_subsystem(Subsystem::Video);
             runtime_assert(ret, "failed to init SDL subsystem");
@@ -134,7 +134,7 @@ namespace rl::sdl {
             // runtime_assert(ret, "failed to set_blend_mode on target2");
         }
 
-        ~sdl_app()
+        ~application()
         {
             SDL3::SDL_Quit();
         }
@@ -301,11 +301,11 @@ namespace rl::sdl {
         }
 
     private:
-        sdl_app(const sdl::sdl_app& other) = delete;
-        sdl_app(sdl::sdl_app&& other) = delete;
+        application(const sdl::application& other) = delete;
+        application(sdl::application&& other) = delete;
 
-        sdl_app& operator=(const sdl_app& other) = delete;
-        sdl_app& operator=(sdl_app&& other) = delete;
+        application& operator=(const application& other) = delete;
+        application& operator=(application&& other) = delete;
 
         void report_error()
         {

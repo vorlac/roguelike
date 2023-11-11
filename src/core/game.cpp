@@ -62,7 +62,7 @@ namespace rl {
         return true;
     }
 
-    sdl::sdl_app& Game::sdl()
+    sdl::application& Game::sdl()
     {
         return m_sdl;
     }

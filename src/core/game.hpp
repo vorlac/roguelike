@@ -17,10 +17,10 @@ namespace rl {
         bool process_inputs() const;
         void quit();
 
-        sdl::sdl_app& sdl();
+        sdl::application& sdl();
 
     protected:
         flecs::world m_world{};
-        sdl::sdl_app m_sdl{};
+        sdl::application m_sdl{};
     };
 }
