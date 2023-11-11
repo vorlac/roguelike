@@ -9,13 +9,11 @@
 #include "core/numeric_types.hpp"
 #include "core/utils/concepts.hpp"
 
-namespace SDL3
-{
+namespace SDL3 {
 #include <SDL3/SDL.h>
 }
 
-namespace rl::ds
-{
+namespace rl::ds {
     enum Side : i8_fast {
         Top = 1 << 0,
         Bottom = 1 << 1,
@@ -83,7 +81,7 @@ namespace rl::ds
         {
         }
 
-        inline static constexpr rect<T> null()
+        constexpr static inline rect<T> null()
         {
             return rect<T>{
                 point<T>::null(),
@@ -91,7 +89,7 @@ namespace rl::ds
             };
         }
 
-        inline static constexpr rect<T> zero()
+        constexpr static inline rect<T> zero()
         {
             return rect<T>{
                 point<T>::zero(),
@@ -202,7 +200,7 @@ namespace rl::ds
         /**
          * @brief Get rectangle's height
          * */
-        inline constexpr T height() const
+        constexpr inline T height() const
         {
             return size.height;
         }
@@ -210,7 +208,7 @@ namespace rl::ds
         /**
          * @brief Set rectangle's height
          * */
-        inline constexpr void set_height(const T height)
+        constexpr inline void set_height(const T height)
         {
             size.height = height;
         }
@@ -218,7 +216,7 @@ namespace rl::ds
         /**
          * @brief Get rectangle's width
          * */
-        inline constexpr T width() const
+        constexpr inline T width() const
         {
             return size.height;
         }
@@ -226,7 +224,7 @@ namespace rl::ds
         /**
          * @brief Set rectangle's width
          * */
-        inline constexpr void set_width(const T width)
+        constexpr inline void set_width(const T width)
         {
             size.width = width;
         }
@@ -234,7 +232,7 @@ namespace rl::ds
         /**
          * @brief Returns the rectangle's area
          * */
-        inline constexpr T area() const
+        constexpr inline T area() const
         {
             return size.area();
         }
@@ -242,7 +240,7 @@ namespace rl::ds
         /**
          * @brief Checks if the rectangle has no area
          * */
-        inline constexpr bool is_empty() const
+        constexpr inline bool is_empty() const
             requires rl::floating_point<T>
         {
             return std::abs(this->area()) <= std::numeric_limits<T>::epsilon();
@@ -251,7 +249,7 @@ namespace rl::ds
         /**
          * @brief Checks if the rectangle has no area
          * */
-        inline constexpr bool is_empty() const
+        constexpr inline bool is_empty() const
             requires rl::integer<T>
         {
             return this->area() == 0;
@@ -260,7 +258,7 @@ namespace rl::ds
         /**
          * @brief Checks if the rectangle has a negative width or height
          * */
-        inline constexpr bool is_invalid() const
+        constexpr inline bool is_invalid() const
         {
             return this->size.height < cast::to<T>(0) ||  //
                    this->width < cast::to<T>(0);
@@ -269,7 +267,7 @@ namespace rl::ds
         /**
          * @brief Checks if the rectangle has invalid coordinates and is empty
          * */
-        inline constexpr bool is_null() const
+        constexpr inline bool is_null() const
         {
             return this->is_empty() && pt == vector2<T>::zero();
         }
@@ -277,7 +275,7 @@ namespace rl::ds
         /**
          * @brief Gets the top left point of the rectangle
          * */
-        inline constexpr point<T> top_left() const
+        constexpr inline point<T> top_left() const
         {
             return {
                 pt.x,
@@ -288,7 +286,7 @@ namespace rl::ds
         /**
          * @brief Gets the top right point of the rectangle
          * */
-        inline constexpr point<T> top_right() const
+        constexpr inline point<T> top_right() const
         {
             return {
                 pt.x + size.width,
@@ -299,7 +297,7 @@ namespace rl::ds
         /**
          * @brief Gets the bottom left point of the rectangle
          * */
-        inline constexpr point<T> bot_left() const
+        constexpr inline point<T> bot_left() const
         {
             return {
                 pt.x,
@@ -310,7 +308,7 @@ namespace rl::ds
         /**
          * @brief Gets the bottom right point of the rectangle
          * */
-        inline constexpr point<T> bot_right() const
+        constexpr inline point<T> bot_right() const
         {
             return {
                 pt.x + size.width,
@@ -321,7 +319,7 @@ namespace rl::ds
         /**
          * @brief Gets the center point of the rectangle
          * */
-        inline constexpr point<T> centroid() const
+        constexpr inline point<T> centroid() const
         {
             return {
                 pt.x + (size.width / cast::to<T>(2)),
@@ -332,7 +330,7 @@ namespace rl::ds
         /**
          * @brief Checks if the rect shares any space with pt
          * */
-        inline constexpr bool overlaps(const ds::point<T>& pnt) const
+        constexpr inline bool overlaps(const ds::point<T>& pnt) const
         {
             return (pnt.x >= this->pt.x && pnt.x <= this->pt.x + this->size.width) &&
                    (pnt.y >= this->pt.y && pnt.y <= this->pt.y + this->size.height);
@@ -341,7 +339,7 @@ namespace rl::ds
         /**
          * @brief Checks if the rects share any space with each other
          * */
-        inline constexpr bool overlaps(const ds::rect<T>& other) const
+        constexpr inline bool overlaps(const ds::rect<T>& other) const
         {
             // TODO: optimize
             return this->overlaps(other.top_left()) || this->overlaps(other.top_right()) ||
@@ -352,7 +350,7 @@ namespace rl::ds
          * @brief Checks if the rect intersects with the point beyond
          *        just a single pixel touch/overlap.
          * */
-        inline constexpr bool intersects(const ds::point<T>& pnt) const
+        constexpr inline bool intersects(const ds::point<T>& pnt) const
         {
             return (pnt.x > this->pt.x && pnt.x < this->pt.x + this->size.width) &&
                    (pnt.y > this->pt.y && pnt.y < this->pt.y + this->size.height);
@@ -362,7 +360,7 @@ namespace rl::ds
          * @brief Checks if the rect intersects with the point beyond
          *        just a single pixel touch/overlap.
          * */
-        inline constexpr bool intersects(const ds::rect<T>& other) const
+        constexpr inline bool intersects(const ds::rect<T>& other) const
         {
             return this->contains(other.top_left()) || this->contains(other.top_right()) ||
                    this->contains(other.bot_left()) || this->contains(other.bot_right());
@@ -371,7 +369,7 @@ namespace rl::ds
         /**
          * @brief Checks if the rect fully contains the point
          * */
-        inline constexpr bool contains(const ds::point<T>& pnt) const
+        constexpr inline bool contains(const ds::point<T>& pnt) const
         {
             return (this->pt.x < pnt.x && pnt.x > this->pt.x + this->size.width) &&
                    (this->pt.y < pnt.y && pnt.y > this->pt.y + this->size.height);
@@ -380,7 +378,7 @@ namespace rl::ds
         /**
          * @brief Checks if the rect fully contains the other
          * */
-        inline constexpr bool contains(const ds::rect<T>& other) const
+        constexpr inline bool contains(const ds::rect<T>& other) const
         {
             return this->contains(other.top_left()) &&  //
                    this->contains(other.top_right());
@@ -389,7 +387,7 @@ namespace rl::ds
         /**
          * @brief Checks if the rect fully contains the other
          * */
-        inline constexpr bool contained_by(const ds::rect<T>& other) const
+        constexpr inline bool contained_by(const ds::rect<T>& other) const
         {
             return other.contains(this->top_left()) &&  //
                    other.contains(this->top_right());
@@ -398,7 +396,7 @@ namespace rl::ds
         /*
          * @brief Checks if the point perfeclty falls somewhere on the rect's bounds
          * */
-        inline constexpr bool touches(const ds::point<T>& pnt) const
+        constexpr inline bool touches(const ds::point<T>& pnt) const
         {
             return (pnt.x == this->pt.x && this->pt.y <= pnt.y &&
                     pnt.y <= this->pt.y + this->size.width) ||  //
@@ -409,7 +407,7 @@ namespace rl::ds
         /*
          * @brief Checks if the this rect externally touches the other rect
          * */
-        inline constexpr bool touches(const ds::rect<T>& other) const
+        constexpr inline bool touches(const ds::rect<T>& other) const
         {
             return this->overlaps(other) && not this->intersects(other);
         }
@@ -418,7 +416,7 @@ namespace rl::ds
          * @brief Returns a quadrant of the rectangle
          * @param quad The quadrant to return
          * */
-        inline constexpr rect<T> quad(Quad quad) const
+        constexpr inline rect<T> quad(Quad quad) const
         {
             constexpr point<T> center{ this->centroid() };
             const dimensions<T> quad_size{
@@ -454,7 +452,7 @@ namespace rl::ds
         /**
          * returns an array of the 4 quadrants of this rectangle
          * */
-        inline constexpr rect<T> quads() const
+        constexpr inline rect<T> quads() const
         {
             std::array<rect<T>, 4> quadrants{
                 this->quad(Quad::TopLeft),
@@ -468,7 +466,7 @@ namespace rl::ds
         /**
          * @ Returns a new rect scaled by the ratio, expanded/shrunk from the centroid
          * */
-        inline constexpr rect<T> scaled(ds::vector2<f32> ratio) const
+        constexpr inline rect<T> scaled(ds::vector2<f32> ratio) const
         {
             ds::dimensions<T> scaled_size{
                 cast::to<T>(cast::to<f32>(this->size.width) * ratio.x),
@@ -484,7 +482,7 @@ namespace rl::ds
          * returns two halves of a rectange,
          * split either horizontally or vertically
          * */
-        inline constexpr std::array<rect<T>, 2> split(ds::Axis axis) const
+        constexpr inline std::array<rect<T>, 2> split(ds::Axis axis) const
         {
             if (axis == ds::Axis::Horizontal)
             {

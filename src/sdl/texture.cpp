@@ -3,13 +3,11 @@
 #include "sdl/surface.hpp"
 #include "sdl/texture.hpp"
 
-namespace SDL3
-{
+namespace SDL3 {
 #include <SDL3/SDL_render.h>
 }
 
-namespace rl::sdl
-{
+namespace rl::sdl {
     texture::texture(SDL3::SDL_Texture*&& other)
         : m_sdl_texture(other)
     {

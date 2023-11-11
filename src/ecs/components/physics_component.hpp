@@ -1,7 +1,6 @@
 #pragma once
 
-namespace rl::component
-{
+namespace rl::component {
     struct static_body
     {
     };

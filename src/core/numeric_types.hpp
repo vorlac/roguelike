@@ -2,8 +2,7 @@
 
 #include <cstdint>
 
-namespace rl
-{
+namespace rl {
     using f32 = float;
     using f64 = double;
     using lf64 = long double;

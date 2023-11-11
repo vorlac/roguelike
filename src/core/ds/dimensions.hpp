@@ -7,8 +7,7 @@
 #include "core/utils/conversions.hpp"
 #include "core/utils/memory.hpp"
 
-namespace rl::ds
-{
+namespace rl::ds {
     template <rl::numeric T>
     struct dimensions
     {
@@ -39,7 +38,7 @@ namespace rl::ds
         {
         }
 
-        inline static constexpr dimensions<T> null()
+        constexpr static inline dimensions<T> null()
         {
             return {
                 cast::to<T>(0),
@@ -47,7 +46,7 @@ namespace rl::ds
             };
         }
 
-        inline static constexpr dimensions<T> zero()
+        constexpr static inline dimensions<T> zero()
         {
             return {
                 cast::to<T>(0),
@@ -60,24 +59,24 @@ namespace rl::ds
             return width * height;
         }
 
-        inline constexpr dimensions& operator=(const dimensions<T>& other)
+        constexpr inline dimensions& operator=(const dimensions<T>& other)
         {
             this->height = other.height;
             this->width = other.width;
             return *this;
         }
 
-        inline constexpr dimensions& operator=(dimensions<T>&& other)
+        constexpr inline dimensions& operator=(dimensions<T>&& other)
         {
             return this->operator=(other);
         }
 
-        inline constexpr bool operator==(const dimensions<T>& other) const
+        constexpr inline bool operator==(const dimensions<T>& other) const
         {
             return 0 == rl::memory::static_memcmp<sizeof(*this)>(this, &other);
         }
 
-        inline constexpr bool operator!=(const dimensions<T>& other) const
+        constexpr inline bool operator!=(const dimensions<T>& other) const
         {
             return !this->operator==(other);
         }

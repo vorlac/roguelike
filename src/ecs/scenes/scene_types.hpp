@@ -2,8 +2,7 @@
 
 #include <flecs.h>
 
-namespace rl::scene
-{
+namespace rl::scene {
     using pipeline = flecs::entity;
 
     struct active

@@ -20,8 +20,7 @@
 #include "core/utils/assert.hpp"
 #include "core/utils/concepts.hpp"
 
-namespace rl::ds
-{
+namespace rl::ds {
     using namespace std::chrono_literals;
 
     enum class BufferItemStatus : uint_fast8_t {

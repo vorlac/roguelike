@@ -36,7 +36,7 @@ BraceWrapping:
   AfterControlStatement: Always
   AfterEnum: false
   AfterFunction: true
-  AfterNamespace: true
+  AfterNamespace: false
   AfterObjCDeclaration: true
   AfterStruct: true
   AfterUnion: true
@@ -132,7 +132,7 @@ PenaltyIndentedWhitespace: 0
 PointerAlignment: Left
 PPIndentWidth: 2
 QualifierAlignment: Custom
-QualifierOrder: ['inline', 'static', 'constexpr', 'const', 'volatile', 'type']
+QualifierOrder: ['constexpr', 'const', 'static', 'inline', 'volatile', 'type']
 ReferenceAlignment: Pointer
 ReflowComments: true
 RemoveBracesLLVM: true

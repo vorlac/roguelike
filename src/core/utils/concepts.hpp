@@ -6,8 +6,7 @@
 
 #include "core/numeric_types.hpp"
 
-namespace rl::inline constraint
-{
+namespace rl::inline constraint {
     template <typename T, typename... TOther>
     concept any_of = (std::same_as<T, TOther> || ...);
 

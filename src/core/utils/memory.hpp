@@ -4,11 +4,10 @@
 
 #include "core/numeric_types.hpp"
 
-namespace rl::memory
-{
+namespace rl::memory {
     template <std::size_t SIZE>
         requires(SIZE < 32)
-    inline constexpr i32 static_memcmp(const void* a, const void* b)
+    constexpr inline i32 static_memcmp(const void* a, const void* b)
     {
         const auto s1 = static_cast<const i8*>(a);
         const auto s2 = static_cast<const i8*>(b);
@@ -17,7 +16,7 @@ namespace rl::memory
     }
 
     template <>
-    inline constexpr i32 static_memcmp<0>(const void*, const void*)
+    constexpr inline i32 static_memcmp<0>(const void*, const void*)
     {
         return 0;
     }

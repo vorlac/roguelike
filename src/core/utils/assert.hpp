@@ -6,8 +6,7 @@
 
 #include "core/utils/conversions.hpp"
 
-namespace SDL3
-{
+namespace SDL3 {
 #include <SDL3/SDL_error.h>
 }
 

@@ -21,13 +21,11 @@
 #include "core/numeric_types.hpp"
 #include "core/utils/assert.hpp"
 
-namespace rl::io
-{
-    static const std::locale locale{ "en_US.UTF-8" };
+namespace rl::io {
+    const static std::locale locale{ "en_US.UTF-8" };
 }
 
-namespace flecs
-{
+namespace flecs {
     constexpr auto format_as(const flecs::string& str)
     {
         return fmt::string_view{ str.c_str() };
@@ -44,8 +42,7 @@ namespace flecs
     }
 }
 
-namespace rl::ds
-{
+namespace rl::ds {
     template <typename T>
     constexpr auto format_as(const ds::vector2<T>& vec)
     {
@@ -60,8 +57,7 @@ namespace rl::ds
 //     return rl::ds::format_as(tmp);
 // }
 
-namespace rl::input
-{
+namespace rl::input {
     // constexpr auto format_as(GameplayAction val)
     //{
     //     // clang-format off
@@ -111,12 +107,11 @@ namespace rl::input
     //}
 }
 
-namespace rl::log
-{
+namespace rl::log {
     using namespace std::chrono_literals;
 
     template <auto log_level, typename... TArgs>
-    inline constexpr void log(fmt::format_string<TArgs...> format_str, TArgs&&... args)
+    constexpr inline void log(fmt::format_string<TArgs...> format_str, TArgs&&... args)
     {
         fmt::text_style style;
 
@@ -137,7 +132,7 @@ namespace rl::log
     }
 
     template <typename... TArgs>
-    inline constexpr void info(fmt::format_string<TArgs...> format_str, TArgs&&... args)
+    constexpr inline void info(fmt::format_string<TArgs...> format_str, TArgs&&... args)
     {
         log<1>(format_str, std::forward<TArgs>(args)...);
     }

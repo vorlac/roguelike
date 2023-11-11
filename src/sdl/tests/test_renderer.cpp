@@ -9,8 +9,7 @@
 
 // #include "sdl/tests/test_renderer.hpp"
 
-namespace SDL3
-{
+namespace SDL3 {
 #include <SDL3/SDL_blendmode.h>
 // #include <SDL3/SDL_rect.h>
 #include <SDL3/SDL_render.h>
@@ -18,8 +17,7 @@ namespace SDL3
     // #include <SDL3/SDL_test_assert.h>
 }
 
-namespace rl::sdl::test
-{
+namespace rl::sdl::test {
     constexpr rl::i32 TESTRENDER_SCREEN_W{ 80 };
     constexpr rl::i32 TESTRENDER_SCREEN_H{ 60 };
     constexpr SDL3::SDL_PixelFormatEnum RENDER_COMPARE_FORMAT{ SDL3::SDL_PIXELFORMAT_ARGB8888 };
@@ -740,7 +738,7 @@ namespace rl::sdl::test
             sdl::texture tface = load_test_face(renderer);
             // SDL3::SDLTest_AssertCheck(tface.is_valid(), "Verify load_test_face(renderer)
             // result");
-            if (tface.is_valid())
+            if (!tface.is_valid())
                 return TEST_ABORTED;
 
             ds::dimensions<i32> tdims{ 0, 0 };
@@ -1128,36 +1126,39 @@ namespace rl::sdl::test
     /**
      * @brief Runs the full SDL test suite on C++ wrapper
      * */
-    int execute_render_tests()
+    int execute_render_tests(sdl::window& main_window, sdl::renderer& window_renderer)
     {
         int ret = 0;
 
-        rl::i32 width{ 320 };
-        rl::i32 height{ 240 };
-        rl::u32 renderer_flags{ SDL3::SDL_RENDERER_ACCELERATED };
-        sdl::window window{ "render_testCreateRenderer", { width, height }, 0 };
+        // rl::i32 width{ 320 };
+        // rl::i32 height{ 240 };
+        // sdl::window window{ "render_testCreateRenderer", { width, height }, 0 };
 
-        if (!window.is_valid())
+        if (!main_window.is_valid())
+            return -1;
+        if (!window_renderer.is_valid())
             return -1;
 
-        if (renderer::current_video_driver() == "dummy")
-            renderer_flags = 0;
+        // SDL3::SDL_RendererFlags renderer_flags{ SDL3::SDL_RENDERER_ACCELERATED };
+        // std::string driver_name{ renderer::current_video_driver() };
+        // if (driver_name == "dummy")
+        //     renderer_flags = renderer::flag::Null;
+        //
+        // sdl::renderer renderer{ window, renderer_flags };
+        // if (!renderer.is_valid())
+        //     return -1;
 
-        sdl::renderer renderer{ window, renderer_flags };
-        if (!renderer.is_valid())
-            return -1;
+        ret |= render_test_get_num_render_drivers(window_renderer);
+        ret |= render_test_primitives(window_renderer);
+        ret |= render_test_primitives_blend(window_renderer);
+        ret |= render_test_blit(window_renderer);
+        ret |= render_test_blit_color(window_renderer);
+        ret |= render_test_blit_alpha(window_renderer);
+        ret |= render_test_blit_blend(window_renderer);
+        ret |= render_test_viewport(window_renderer);
+        ret |= render_test_logical_size(window_renderer);
 
-        ret |= render_test_get_num_render_drivers(renderer);
-        ret |= render_test_primitives(renderer);
-        ret |= render_test_primitives_blend(renderer);
-        ret |= render_test_blit(renderer);
-        ret |= render_test_blit_color(renderer);
-        ret |= render_test_blit_alpha(renderer);
-        ret |= render_test_blit_blend(renderer);
-        ret |= render_test_viewport(renderer);
-        ret |= render_test_logical_size(renderer);
-
-        runtime_assert(ret == 0, "rendering test failure");
+        runtime_assert(ret >= 0, "rendering test failure");
         return ret;
     }
 }

@@ -11,37 +11,41 @@
 #include "sdl/renderer.hpp"
 #include "sdl/utils.hpp"
 
-namespace SDL3
-{
+namespace SDL3 {
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_surface.h>
 #include <SDL3/SDL_video.h>
 }
 
-namespace rl::sdl
-{
-    window::window(SDL3::SDL_Window*&& other)
+namespace rl::sdl {
+    window::window(SDL3::SDL_Window*&& other) noexcept
         : m_sdl_window{ other }
     {
         sdl_assert(other != nullptr, "constructed window from null SDL_Window");
         other = nullptr;
     }
 
-    window::window(sdl::window&& other)
+    window::window(sdl::window&& other) noexcept
         : m_sdl_window{ other.m_sdl_window }
     {
+        sdl_assert(m_sdl_window != nullptr, "constructed window from null SDL_Window");
         other.m_sdl_window = nullptr;
     }
 
-    window::window(std::string title, ds::rect<i32> bounds, u32 flags)
-        : m_sdl_window{ SDL3::SDL_CreateWindowWithPosition(
-              title.data(), bounds.pt.x, bounds.pt.y, bounds.size.width, bounds.size.height, flags) }
+    window::window(const std::string& title, const ds::rect<i32>& bounds,
+                   SDL3::SDL_WindowFlags flags)
+        : m_sdl_window{ SDL3::SDL_CreateWindowWithPosition(title.c_str(), bounds.pt.x, bounds.pt.y,
+                                                           bounds.size.width, bounds.size.height,
+                                                           flags) }
     {
+        sdl_assert(m_sdl_window != nullptr, "constructed window from null SDL_Window");
     }
 
-    window::window(std::string title, ds::dimensions<i32> dims, u32 flags)
-        : m_sdl_window{ SDL3::SDL_CreateWindow(title.data(), dims.width, dims.height, flags) }
+    window::window(const std::string& title, const ds::dimensions<i32>& dims,
+                   SDL3::SDL_WindowFlags flags)
+        : m_sdl_window{ SDL3::SDL_CreateWindow(title.c_str(), dims.width, dims.height, flags) }
     {
+        sdl_assert(m_sdl_window != nullptr, "constructed window from null SDL_Window");
     }
 
     window::~window()
@@ -53,7 +57,7 @@ namespace rl::sdl
         }
     }
 
-    const window& window::operator=(sdl::window&& other)
+    const window& window::operator=(sdl::window&& other) noexcept
     {
         if (m_sdl_window != nullptr)
         {

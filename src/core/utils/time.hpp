@@ -21,8 +21,7 @@
   #endif
 #endif
 
-namespace rl::perf
-{
+namespace rl::perf {
     // https://blog.bearcats.nl/perfect-sleep-function/
     // struct sleep
     // {
@@ -59,83 +58,9 @@ namespace rl::perf
     //    }
     // };
 
-    // struct timer
-    // {
-    // private:
-    //     uint64_t m_tick_frequency{ 0 };
-    //     uint64_t m_start_hpc_tick{ 0 };
-    //     uint64_t m_start_microsec{ 0 };
-    //     uint64_t m_last_timestamp{ 0 };
-
-    // public:
-    //     timer()
-    //     {
-    //         LARGE_INTEGER tick_frequency{ 0 };
-    //         BOOL ret = QueryPerformanceFrequency(&tick_frequency);
-    //         if (ret == 0)
-    //             fmt::print("QueryPerformanceFrequency failed\n");
-
-    //         LARGE_INTEGER start_hpc_tick{ 0 };
-    //         ret = QueryPerformanceCounter(&start_hpc_tick);
-    //         if (ret == 0)
-    //             fmt::print("QueryPerformanceCounter failed\n");
-
-    //         LARGE_INTEGER current_tick{ 0 };
-    //         ret = QueryPerformanceCounter(&current_tick);
-    //         if (ret == 0)
-    //             fmt::print("QueryPerformanceCounter failed\n");
-
-    //         m_tick_frequency = tick_frequency.QuadPart;
-    //         m_start_hpc_tick = start_hpc_tick.QuadPart;
-    //         m_start_microsec = ((current_tick.QuadPart - m_start_hpc_tick) * 1000000) /
-    //                            m_tick_frequency;
-    //         m_last_timestamp = m_start_microsec;
-    //     }
-
-    //     [[nodiscard]]
-    //     inline uint64_t now()
-    //     {
-    //         LARGE_INTEGER current_tick{ 0 };
-    //         QueryPerformanceCounter(&current_tick);
-    //         m_last_timestamp = current_tick.QuadPart;
-    //         return m_last_timestamp;
-    //     }
-
-    //     /**
-    //      * @brief get elapsed microseconds
-    //      * */
-    //     [[nodiscard]]
-    //     inline uint64_t elapsed_mu()
-    //     {
-    //         uint64_t curr_timestamp = timer::now();
-    //         m_last_timestamp = ((curr_timestamp - m_start_hpc_tick) * 1000000) /
-    //         m_tick_frequency; return m_last_timestamp;
-    //     }
-
-    //     /**
-    //      * @brief get elapsed milliseconds
-    //      * */
-    //     [[nodiscard]]
-    //     inline double elapsed_ms()
-    //     {
-    //         uint64_t microseconds = elapsed_mu();
-    //         return static_cast<double>(microseconds) / 1000.0;
-    //     }
-
-    //     /**
-    //      * @brief get elapsed seconds
-    //      * */
-    //     [[nodiscard]]
-    //     inline double elapsed_sec()
-    //     {
-    //         double milliseconds = elapsed_ms();
-    //         return milliseconds / 1000.0;
-    //     }
-    // };
 }
 
-namespace rl
-{
+namespace rl {
     using namespace std::chrono_literals;
 
     template <class... Durations, class DurationIn>
@@ -203,7 +128,7 @@ namespace rl
         }
 
         template <typename TOut>
-        inline static constexpr auto convert(const duration_t& duration)
+        constexpr static inline auto convert(const duration_t& duration)
         {
             if constexpr (std::is_same_v<TOut, duration_t>)
                 return duration;

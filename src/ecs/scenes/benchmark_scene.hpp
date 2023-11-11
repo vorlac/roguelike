@@ -20,8 +20,7 @@
 #include "ecs/scenes/scene_types.hpp"
 #include "thirdparty/raylib.hpp"
 
-namespace rl::scene
-{
+namespace rl::scene {
     struct benchmark
     {
         struct observer
@@ -78,7 +77,7 @@ namespace rl::scene
         {
             static void define_rect_movement(flecs::world& world, ds::dimensions<i32> window_rect)
             {
-                static const ds::dimensions<i32> window_size{ window_rect };
+                const static ds::dimensions<i32> window_size{ window_rect };
 
                 static auto top_bottom_collision = [](const component::position& pos) {
                     bool top_collision = pos.y - (rect_size.height / 2.0f) <= 0.0f;
@@ -260,9 +259,9 @@ namespace rl::scene
     public:
         scene::pipeline pipeline{};
 
-        inline static rl::Input m_input{};
-        inline static thread_local f32 m_delta_time{ 0.0f };
-        inline static thread_local i64 m_update_calls{ 0 };
-        inline static constexpr ds::dimensions<i32> rect_size{ 10, 10 };
+        static inline rl::Input m_input{};
+        static inline thread_local f32 m_delta_time{ 0.0f };
+        static inline thread_local i64 m_update_calls{ 0 };
+        constexpr static inline ds::dimensions<i32> rect_size{ 10, 10 };
     };
 }

@@ -8,16 +8,14 @@
 #include "core/numeric_types.hpp"
 #include "sdl/color.hpp"
 
-namespace SDL3
-{
+namespace SDL3 {
     struct SDL_Surface;
 
 #include <SDL3/SDL_blendmode.h>
 #include <SDL3/SDL_pixels.h>
 }
 
-namespace rl::sdl
-{
+namespace rl::sdl {
     template <typename T>
     class scoped_lock;
 

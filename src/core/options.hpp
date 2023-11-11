@@ -6,8 +6,7 @@
 
 #include <argparse/argparse.hpp>
 
-namespace rl
-{
+namespace rl {
     bool parse_args(int argc, char** argv)
     {
         auto args = argparse::ArgumentParser{

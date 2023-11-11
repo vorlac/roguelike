@@ -41,7 +41,7 @@ set(SDL_STATIC ON)
 set(SDL_SHARED OFF)
 set(FORCE_STATIC_VCRT OFF)
 set(SDL_VULKAN ON)
-set(SDL_TESTS OFF)
+set(SDL_TESTS ON)
 set(SDL_TEST_LIBRARY ON)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl)
 
@@ -74,6 +74,7 @@ target_compile_features(${PROJECT_NAME} PRIVATE
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
   NOMINMAX
+  ROGUELIKE_TESTS_ENABLED
 
   $<$<CONFIG:Debug>:
     DEBUG_HEAP=0
@@ -91,15 +92,6 @@ target_compile_options(${PROJECT_NAME} PRIVATE
     /utf-8
     /EHsc
     /nologo
-
-    #$<$<CONFIG:Debug>:
-    #  /MDd
-    #>
-
-    #$<$<CONFIG:Release>:
-    #  /MD
-    #  /Ox
-    #>
   >
 )
 

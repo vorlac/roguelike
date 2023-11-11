@@ -2,8 +2,7 @@
 
 #include <string>
 
-namespace rl::component
-{
+namespace rl::component {
     struct button
     {
         std::string text{};

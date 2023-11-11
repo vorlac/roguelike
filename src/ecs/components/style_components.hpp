@@ -2,8 +2,7 @@
 
 #include "core/ds/color.hpp"
 
-namespace rl::component
-{
+namespace rl::component {
     struct style
     {
         rl::color color{ rl::color::lime };

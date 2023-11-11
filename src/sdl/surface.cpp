@@ -6,16 +6,14 @@
 #include "sdl/texture.hpp"
 #include "sdl/utils.hpp"
 
-namespace SDL3
-{
+namespace SDL3 {
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_pixels.h>
 #include <SDL3/SDL_surface.h>
 #include <SDL3/SDL_video.h>
 }
 
-namespace rl::sdl
-{
+namespace rl::sdl {
     surface::surface(SDL3::SDL_Surface* surface)
         : m_sdl_surface{ surface }
     {

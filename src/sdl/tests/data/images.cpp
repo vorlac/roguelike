@@ -3,14 +3,12 @@
 #include "sdl/surface.hpp"
 #include "sdl/tests/data/images.hpp"
 
-namespace SDL3
-{
+namespace SDL3 {
 #include <SDL3/SDL_pixels.h>
 }
 
-namespace rl::sdl::test::image
-{
-    static const SurfaceImage Blit = {
+namespace rl::sdl::test::image {
+    const static SurfaceImage Blit = {
         .width = 80,
         .height = 60,
         .bytes_per_pixel = 3,
@@ -524,7 +522,7 @@ namespace rl::sdl::test::image
             "\0\0",
     };
 
-    static const SurfaceImage BlitColor = {
+    const static SurfaceImage BlitColor = {
         .width = 80,
         .height = 60,
         .bytes_per_pixel = 3,
@@ -984,7 +982,7 @@ namespace rl::sdl::test::image
             "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0",
     };
 
-    static const SurfaceImage BlitAlpha = {
+    const static SurfaceImage BlitAlpha = {
         .width = 80,
         .height = 60,
         .bytes_per_pixel = 3,
@@ -1608,7 +1606,7 @@ namespace rl::sdl::test::image
     };
 
     /* GIMP RGB C-Source image dump (alpha.c) */
-    static const SurfaceImage BlitBlendAdd = {
+    const static SurfaceImage BlitBlendAdd = {
         .width = 80,
         .height = 60,
         .bytes_per_pixel = 3,
@@ -2162,7 +2160,7 @@ namespace rl::sdl::test::image
             "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0",
     };
 
-    static const SurfaceImage BlitBlend = {
+    const static SurfaceImage BlitBlend = {
         .width = 80,
         .height = 60,
         .bytes_per_pixel = 3,
@@ -2739,7 +2737,7 @@ namespace rl::sdl::test::image
             "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0",
     };
 
-    static const SurfaceImage BlitBlendMod = {
+    const static SurfaceImage BlitBlendMod = {
         .width = 80,
         .height = 60,
         .bytes_per_pixel = 3,
@@ -3146,7 +3144,7 @@ namespace rl::sdl::test::image
             "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0",
     };
 
-    static const SurfaceImage BlitBlendNone = {
+    const static SurfaceImage BlitBlendNone = {
         .width = 80,
         .height = 60,
         .bytes_per_pixel = 3,
@@ -3936,7 +3934,7 @@ namespace rl::sdl::test::image
             "\377\377\377\377\377\377\377\377",
     };
 
-    static const SurfaceImage BlitBlendAll = {
+    const static SurfaceImage BlitBlendAll = {
         .width = 80,
         .height = 60,
         .bytes_per_pixel = 3,
@@ -4459,7 +4457,7 @@ namespace rl::sdl::test::image
     };
 
     /* GIMP RGBA C-Source image dump (face.c) */
-    static const SurfaceImage Face = {
+    const static SurfaceImage Face = {
         .width = 32,
         .height = 32,
         .bytes_per_pixel = 4,
@@ -4657,7 +4655,7 @@ namespace rl::sdl::test::image
     };
 
     /* GIMP RGB C-Source image dump (primitives.c) */
-    static const SurfaceImage Primitives = {
+    const static SurfaceImage Primitives = {
         .width = 80,
         .height = 60,
         .bytes_per_pixel = 3,

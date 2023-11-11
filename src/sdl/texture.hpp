@@ -12,8 +12,7 @@
 #include "sdl/color.hpp"
 #include "sdl/window.hpp"
 
-namespace rl::sdl
-{
+namespace rl::sdl {
     template <typename T>
     class scoped_lock;
     class renderer;

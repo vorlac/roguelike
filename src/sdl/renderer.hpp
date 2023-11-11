@@ -20,16 +20,14 @@
 #include "sdl/texture.hpp"
 #include "sdl/window.hpp"
 
-namespace SDL3
-{
+namespace SDL3 {
 #include <SDL3/SDL_blendmode.h>
 #include <SDL3/SDL_rect.h>
 #include <SDL3/SDL_render.h>
 }
 
-namespace SDL3
-{
-    inline static auto format_as(const SDL_RendererInfo& ri)
+namespace SDL3 {
+    static inline auto format_as(const SDL_RendererInfo& ri)
     {
         bool hw_accel = 0 != (ri.flags & SDL_RENDERER_ACCELERATED);
         bool software = 0 != (ri.flags & SDL_RENDERER_SOFTWARE);
@@ -58,16 +56,39 @@ namespace SDL3
     }
 }
 
-namespace rl::sdl
-{
+namespace rl::sdl {
     class texture;
     class window;
 
     class renderer
     {
     public:
+        using flag_t = SDL3::SDL_RendererFlags;
+
+        struct flag
+        {
+            constexpr static inline auto Null{ flag_t(0) };
+            constexpr static inline auto Software{ SDL3::SDL_RENDERER_SOFTWARE };
+            constexpr static inline auto HWAccelerated{ SDL3::SDL_RENDERER_ACCELERATED };
+            constexpr static inline auto VSync{ SDL3::SDL_RENDERER_PRESENTVSYNC };
+            constexpr static inline auto Defaults{ flag::HWAccelerated };
+        };
+
+        struct driver
+        {
+            constexpr static inline auto DirectX{ "direct3d" };
+            constexpr static inline auto DirectX11{ "direct3d11" };
+            constexpr static inline auto DirectX12{ "direct3d12" };
+            constexpr static inline auto OpenGL{ "opengl" };
+            constexpr static inline auto OpenGLES2{ "opengles2" };
+            constexpr static inline auto OpenGLES{ "opengles" };
+            constexpr static inline auto Metal{ "metal" };
+            constexpr static inline auto Software{ "software" };
+        };
+
         renderer() = delete;
         renderer(const renderer& other) = delete;
+        renderer(renderer& other) = delete;
 
         renderer(renderer&& other)
             : m_sdl_renderer{ other.m_sdl_renderer }
@@ -76,17 +97,24 @@ namespace rl::sdl
             this->print_render_info();
         }
 
-        renderer(const sdl::window& window, u32 flags)
-            : m_sdl_renderer{ SDL3::SDL_CreateRenderer(window.sdl_handle(), nullptr, flags) }
+        renderer(sdl::window& window, renderer::flag_t properties = renderer::flag::Defaults)
+            : m_sdl_renderer{ SDL3::SDL_CreateRenderer(window.sdl_handle(), driver::OpenGL,
+                                                       properties) }
         {
             sdl_assert(m_sdl_renderer != nullptr, "failed to create renderer");
             this->print_render_info();
         }
 
-        renderer(const sdl::window& window, const std::string& name, u32 flags)
-            : m_sdl_renderer{ SDL3::SDL_CreateRenderer(window.sdl_handle(), name.c_str(), flags) }
+        renderer(sdl::window& window, const std::string& driver_name = driver::OpenGL,
+                 renderer::flag_t properties = renderer::flag::Defaults)
+            : m_sdl_renderer{ SDL3::SDL_CreateRenderer(window.sdl_handle(), driver_name.c_str(),
+                                                       properties) }
         {
             sdl_assert(m_sdl_renderer != nullptr, "failed to create renderer");
+            std::string err = SDL3::SDL_GetError();
+            std::string err2{};
+            err2.reserve(256);
+            SDL3::SDL_GetErrorMsg(err2.data(), cast::to<i32>(err2.capacity()));
             this->print_render_info();
         }
 
@@ -556,12 +584,12 @@ namespace rl::sdl
             return c;
         }
 
-    protected:
-        renderer(SDL3::SDL_Renderer* sdl_renderer)
-            : m_sdl_renderer{ sdl_renderer }
-        {
-            sdl_renderer = nullptr;
-        }
+        // protected:
+        //     renderer(SDL3::SDL_Renderer* sdl_renderer)
+        //         : m_sdl_renderer{ sdl_renderer }
+        //     {
+        //         sdl_renderer = nullptr;
+        //     }
 
     private:
         SDL3::SDL_Renderer* m_sdl_renderer{ nullptr };

@@ -2,8 +2,7 @@
 
 #include <cstdint>
 
-namespace rl::component
-{
+namespace rl::component {
     struct character
     {
         bool alive{ true };

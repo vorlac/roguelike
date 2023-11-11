@@ -10,8 +10,7 @@
 #include "core/numeric_types.hpp"
 #include "core/utils/assert.hpp"
 
-namespace rl
-{
+namespace rl {
     struct ButtonInfo
     {
         u32 id{ 0 };
@@ -106,12 +105,12 @@ namespace rl
             return m_active_ui_actions;
         }
 
-        inline constexpr auto mouse_button_states() const
+        constexpr inline auto mouse_button_states() const
         {
             return mouse.get_button_states();
         }
 
-        inline constexpr auto mouse_cursor_states() const
+        constexpr inline auto mouse_cursor_states() const
         {
             return mouse.get_cursor_states();
         }

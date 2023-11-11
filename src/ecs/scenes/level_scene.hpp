@@ -7,8 +7,7 @@
 #include "ecs/components/transform_components.hpp"
 #include "ecs/scenes/scene.hpp"
 
-namespace rl::scene
-{
+namespace rl::scene {
     struct level1
     {
         scene::pipeline pipeline;

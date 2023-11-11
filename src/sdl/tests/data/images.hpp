@@ -2,18 +2,15 @@
 
 #include "core/numeric_types.hpp"
 
-namespace SDL3
-{
+namespace SDL3 {
 #include <SDL3/SDL_pixels.h>
 }
 
-namespace rl::sdl
-{
+namespace rl::sdl {
     class surface;
 }
 
-namespace rl::sdl::test::image
-{
+namespace rl::sdl::test::image {
     struct SurfaceImage
     {
         rl::i32 width{ 0 };

@@ -1,7 +1,6 @@
 #pragma once
 
-namespace rl::component
-{
+namespace rl::component {
     struct position
     {
         float x{ 0.0 };

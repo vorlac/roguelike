@@ -7,14 +7,12 @@
 #include "sdl/surface.hpp"
 #include "sdl/texture.hpp"
 
-namespace SDL3
-{
+namespace SDL3 {
 #include <SDL3/SDL_render.h>
 #include <SDL3/SDL_surface.h>
 }
 
-namespace rl::sdl
-{
+namespace rl::sdl {
     template <typename T>
     class scoped_lock
     {
