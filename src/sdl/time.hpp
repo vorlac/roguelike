@@ -118,8 +118,8 @@ namespace rl::sdl {
         [[nodiscard]]
         inline time_type elapsed()
         {
-            const time_type nowtm = convert(get_tick());
-            const time_type start = convert(m_start_timestamp);
+            const time_type nowtm = this->convert(get_tick());
+            const time_type start = this->convert(m_start_timestamp);
             return start = nowtm;
         }
 
@@ -129,8 +129,8 @@ namespace rl::sdl {
         [[nodiscard]]
         inline rl::u64 elapsed_mu()
         {
-            const rl::u64 nowtm = perftimer::convert(get_tick());
-            const rl::u64 start = perftimer::convert(m_start_timestamp);
+            const rl::u64 nowtm = this->convert(get_tick());
+            const rl::u64 start = this->convert(m_start_timestamp);
             return start = nowtm;
         }
 
@@ -140,7 +140,7 @@ namespace rl::sdl {
         [[nodiscard]]
         inline double elapsed_ms()
         {
-            rl::u64 microseconds = elapsed_mu();
+            rl::u64 microseconds = this->elapsed_mu();
             return static_cast<double>(microseconds) / 1000.0;
         }
 
@@ -150,7 +150,7 @@ namespace rl::sdl {
         [[nodiscard]]
         inline double elapsed_sec()
         {
-            double milliseconds = elapsed_ms();
+            double milliseconds = this->elapsed_ms();
             return milliseconds / 1000.0;
         }
 

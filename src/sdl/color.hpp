@@ -16,15 +16,37 @@ namespace SDL3 {
 }
 
 namespace rl::sdl {
+    namespace internal {
+        // style = fmt::fg(fmt::color::burly_wood);
+        // fmt::print(style, fmt::format("color = dark_cyan\n"));
+        //
+        // fmt::fg(fmt::color::burly_wood)
+        // fmt::fg(fmt::color::cornflower_blue);
+        // fmt::fg(fmt::color::crimson);
+        // fmt::fg(fmt::color::rosy_brown);
+        // fmt::fg(fmt::color::gainsboro);
+        // fmt::fg(fmt::color::tan);
+        // fmt::fg(fmt::color::dark_golden_rod);
+        // fmt::fg(fmt::color::dark_green);
+        // fmt::fg(fmt::color::dark_olive_green);
+        // fmt::fg(fmt::color::dark_sea_green);
+        // fmt::fg(fmt::color::teal);
+        // fmt::fg(fmt::color::light_gray);
+        // fmt::fg(fmt::color::light_slate_gray);
+        // fmt::fg(fmt::color::light_steel_blue);
+        // fmt::fg(fmt::color::midnight_blue);
+        // fmt::fg(fmt::color::silver);
+        // fmt::fg(fmt::color::steel_blue);
+        // fmt::fg(fmt::color::thistle);
+        // fmt::fg(fmt::color::lavender);
+    }
+
     struct color
     {
         enum Alpha : u8 {
             Transparent = 0,
             Opaque = 255,
         };
-
-        constexpr static inline u8 ALPHA_OPAQUE = 255;
-        constexpr static inline u8 ALPHA_TRANSPARENT = 0;
 
         constexpr inline color() = default;
 

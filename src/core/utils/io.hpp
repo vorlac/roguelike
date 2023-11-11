@@ -113,21 +113,7 @@ namespace rl::log {
     template <auto log_level, typename... TArgs>
     constexpr inline void log(fmt::format_string<TArgs...> format_str, TArgs&&... args)
     {
-        fmt::text_style style;
-
-        // if constexpr (log_level == raylib::LOG_TRACE)
-        //     style = fmt::emphasis::faint | fmt::fg(fmt::color::red);
-        // else if constexpr (log_level == raylib::LOG_DEBUG)
-        //     style = fmt::fg(fmt::color::green);
-        // else if constexpr (log_level == raylib::LOG_INFO)
-
-        style = fmt::emphasis::bold | fmt::fg(fmt::color::beige);
-
-        // else if constexpr (log_level == raylib::LOG_WARNING)
-        //     style = fmt::emphasis::bold | fmt::fg(fmt::color::yellow);
-        // else if constexpr (log_level >= raylib::LOG_ERROR)
-        //     style = fmt::emphasis::bold | fmt::fg(fmt::color::red);
-
+        fmt::text_style style = fmt::fg(fmt::color::rosy_brown);
         fmt::print(style, fmt::format(format_str, std::forward<TArgs>(args)...) + "\n");
     }
 
