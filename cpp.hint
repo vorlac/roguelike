@@ -8,3 +8,6 @@
 #define SDL_MUSTLOCK(S) (((S)->flags & SDL_RLEACCEL) != 0)
 #define runtime_assert(condition, message) static_cast<void>(0)
 #define runtime_assert(condition, message) do { if (!(condition)) [[unlikely]] { std::cerr << "Assertion failed: (" << #condition << ")" << std::endl << "  Function = " << __FUNCTION__ << std::endl << "  File     = " << __FILE__ << std::endl << "  Line     = " << __LINE__ << std::endl << "  Message  = " << message << std::endl, __debugbreak(), 0; } } while (0)
+#define SDL_PRINTF_VARARG_FUNC(fmtargnumber)
+#define SDL_PRINTF_VARARG_FUNC(fmtargnumber) __attribute__ (( format( __printf__, fmtargnumber, fmtargnumber+1 )))
+#define FMT_CONSTEXPR

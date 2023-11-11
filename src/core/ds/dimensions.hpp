@@ -1,12 +1,11 @@
 #pragma once
 
-// #include <imgui.h>
 #include <memory>
 #include <utility>
 
-#include <memory.h>
-
+#include "core/utils/concepts.hpp"
 #include "core/utils/conversions.hpp"
+#include "core/utils/memory.hpp"
 
 namespace rl::ds
 {
@@ -16,7 +15,7 @@ namespace rl::ds
         T width{ cast::to<T>(0) };
         T height{ cast::to<T>(0) };
 
-        inline constexpr dimensions()
+        constexpr dimensions()
             : width{ cast::to<T>(0) }
             , height{ cast::to<T>(0) }
         {
@@ -35,18 +34,12 @@ namespace rl::ds
         }
 
         constexpr dimensions(dimensions<T>&& other)
-            : width{ std::forward<T>(other.width) }
-            , height{ std::forward<T>(other.height) }
+            : width{ std::move(other.width) }
+            , height{ std::move(other.height) }
         {
         }
 
-        constexpr dimensions(dimensions<T>& other)
-            : width{ other.width }
-            , height{ other.height }
-        {
-        }
-
-        static constexpr inline dimensions<T> null()
+        inline static constexpr dimensions<T> null()
         {
             return {
                 cast::to<T>(0),
@@ -54,7 +47,7 @@ namespace rl::ds
             };
         }
 
-        static constexpr inline dimensions<T> zero()
+        inline static constexpr dimensions<T> zero()
         {
             return {
                 cast::to<T>(0),
@@ -65,6 +58,28 @@ namespace rl::ds
         constexpr auto area() const -> decltype(width * height)
         {
             return width * height;
+        }
+
+        inline constexpr dimensions& operator=(const dimensions<T>& other)
+        {
+            this->height = other.height;
+            this->width = other.width;
+            return *this;
+        }
+
+        inline constexpr dimensions& operator=(dimensions<T>&& other)
+        {
+            return this->operator=(other);
+        }
+
+        inline constexpr bool operator==(const dimensions<T>& other) const
+        {
+            return 0 == rl::memory::static_memcmp<sizeof(*this)>(this, &other);
+        }
+
+        inline constexpr bool operator!=(const dimensions<T>& other) const
+        {
+            return !this->operator==(other);
         }
 
         constexpr dimensions<T> operator/=(auto div)

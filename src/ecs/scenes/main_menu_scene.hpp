@@ -14,7 +14,7 @@ namespace rl::scene
     {
         struct observer
         {
-            static inline auto main_menu_scene_onadd(flecs::iter& it, size_t, scene::active)
+            inline static auto main_menu_scene_onadd(flecs::iter& it, size_t, scene::active)
             {
                 log::info("=== scene::active has changed to scene::main_menu ===");
 
@@ -32,7 +32,7 @@ namespace rl::scene
             }
         };
 
-        static inline auto init(flecs::world& world)
+        inline static auto init(flecs::world& world)
         {
             world.set<main_menu_scene>({
                 world.pipeline()

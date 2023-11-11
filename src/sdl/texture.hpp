@@ -22,7 +22,9 @@ namespace rl::sdl
     class texture
     {
     public:
-        texture(SDL3::SDL_Texture* other);
+        texture(const sdl::texture& other) = delete;
+
+        texture(SDL3::SDL_Texture*&& other);
         texture(sdl::texture&& other);
         texture(sdl::renderer& renderer, const sdl::surface& surface);
         texture(sdl::renderer& renderer, u32 format = SDL3::SDL_PIXELFORMAT_RGBA8888,
@@ -30,27 +32,30 @@ namespace rl::sdl
 
         ~texture();
 
-        SDL3::SDL_Texture* sdl_handle();
+        bool is_valid() const;
+        SDL3::SDL_Texture* sdl_handle() const;
+        i32 query_texture(SDL3::SDL_PixelFormatEnum& format, SDL3::SDL_TextureAccess& access,
+                          ds::dimensions<i32>& dims);
 
         texture& operator=(texture&& other);
-        texture& update(const void* pixels, i32 pitch,
+        texture& operator=(SDL3::SDL_Texture*&& other) &&;
+
+        bool update(const void* pixels, i32 pitch,
+                    const ds::rect<i32>& rect = ds::rect<i32>::null());
+        bool update(sdl::surface& surface, const ds::rect<i32>& rect = ds::rect<i32>::null());
+        bool update(sdl::surface&& surface, const ds::rect<i32>& rect = ds::rect<i32>::null());
+        bool update_yuv(const u8* yplane, i32 ypitch, const u8* uplane, i32 upitch,
+                        const u8* vplane, i32 vpitch,
                         const ds::rect<i32>& rect = ds::rect<i32>::null());
-        texture& update(sdl::surface& surface, const ds::rect<i32>& rect = ds::rect<i32>::null());
-        texture& update(sdl::surface&& surface, const ds::rect<i32>& rect = ds::rect<i32>::null());
-        texture& update_yuv(const u8* yplane, i32 ypitch, const u8* uplane, i32 upitch,
-                            const u8* vplane, i32 vpitch,
-                            const ds::rect<i32>& rect = ds::rect<i32>::null());
-        texture& set_blend_mode(SDL3::SDL_BlendMode blend_mode);
-        texture& set_alpha_mod(u8 alpha);
-        texture& set_color_mod(u8 r, u8 g, u8 b);
-        texture& set_color_mod_alpha(const sdl::color& c);
+        bool set_blend_mode(SDL3::SDL_BlendMode blend_mode);
+        bool set_alpha_mod(u8 alpha);
+        bool set_color_mod(sdl::color c);
         SDL3::SDL_PixelFormatEnum get_format() const;
         SDL3::SDL_TextureAccess get_access() const;
         ds::dimensions<i32> size();
         u8 get_alpha_mod() const;
         SDL3::SDL_BlendMode get_blend_mode() const;
-        sdl::color get_color_mod_rgb() const;
-        sdl::color get_color_mod_alpha() const;
+        sdl::color get_color_mod() const;
 
     private:
         template <typename T>

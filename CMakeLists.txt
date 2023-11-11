@@ -41,13 +41,14 @@ set(SDL_STATIC ON)
 set(SDL_SHARED OFF)
 set(FORCE_STATIC_VCRT OFF)
 set(SDL_VULKAN ON)
-set(SDL_TESTS ON)
+set(SDL_TESTS OFF)
 set(SDL_TEST_LIBRARY ON)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl)
 
-find_package(argparse CONFIG REQUIRED)
-find_package(flecs CONFIG REQUIRED)
 find_package(fmt CONFIG REQUIRED)
+find_package(argparse CONFIG REQUIRED)
+find_package(FFMPEG REQUIRED)
+find_package(flecs CONFIG REQUIRED)
 find_package(OpenGL REQUIRED COMPONENTS OpenGL)
 find_package(Vulkan REQUIRED)
 find_package(simdjson CONFIG REQUIRED)
@@ -91,23 +92,29 @@ target_compile_options(${PROJECT_NAME} PRIVATE
     /EHsc
     /nologo
 
-    $<$<CONFIG:Debug>:
-      /MDd
-    >
+    #$<$<CONFIG:Debug>:
+    #  /MDd
+    #>
 
-    $<$<CONFIG:Release>:
-      /MD
-      /Ox
-    >
+    #$<$<CONFIG:Release>:
+    #  /MD
+    #  /Ox
+    #>
   >
 )
 
 target_include_directories(${PROJECT_NAME}
-  PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src"
-  ${OPENGL_INCLUDE_DIR}
+  PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src"
+  PRIVATE ${OPENGL_INCLUDE_DIR}
+  PRIVATE ${FFMPEG_INCLUDE_DIRS}
+)
+
+target_link_directories(${PROJECT_NAME}
+  PRIVATE ${FFMPEG_LIBRARY_DIRS}
 )
 
 target_link_libraries(${PROJECT_NAME}
+  PRIVATE ${FFMPEG_LIBRARIES}
   PRIVATE argparse::argparse
   PRIVATE flecs::flecs_static
   PRIVATE imgui::imgui

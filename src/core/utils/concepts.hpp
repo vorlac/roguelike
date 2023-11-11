@@ -8,8 +8,8 @@
 
 namespace rl::inline constraint
 {
-    template <typename T, typename... TArgs>
-    concept any_of = std::disjunction<std::is_same<std::remove_cv_t<T>, TArgs>...>::value;
+    template <typename T, typename... TOther>
+    concept any_of = (std::same_as<T, TOther> || ...);
 
     template <typename T>
     concept floating_point = constraint::any_of<T, f32, f64, lf64>;

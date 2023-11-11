@@ -9,6 +9,7 @@
 
 #include "core/numeric_types.hpp"
 #include "sdl/renderer.hpp"
+#include "sdl/tests/test_renderer.hpp"
 #include "sdl/window.hpp"
 
 namespace SDL3
@@ -77,14 +78,14 @@ namespace rl::sdl
     {
     public:
         enum Subsystem : u16_fast {
-            Timer    = SDL3::SDL_INIT_TIMER,
-            Audio    = SDL3::SDL_INIT_AUDIO,
-            Video    = SDL3::SDL_INIT_VIDEO,
+            Timer = SDL3::SDL_INIT_TIMER,
+            Audio = SDL3::SDL_INIT_AUDIO,
+            Video = SDL3::SDL_INIT_VIDEO,
             Joystick = SDL3::SDL_INIT_JOYSTICK,
-            Haptic   = SDL3::SDL_INIT_HAPTIC,
-            Gamepad  = SDL3::SDL_INIT_GAMEPAD,
-            Events   = SDL3::SDL_INIT_EVENTS,
-            Sensor   = SDL3::SDL_INIT_SENSOR,
+            Haptic = SDL3::SDL_INIT_HAPTIC,
+            Gamepad = SDL3::SDL_INIT_GAMEPAD,
+            Events = SDL3::SDL_INIT_EVENTS,
+            Sensor = SDL3::SDL_INIT_SENSOR,
 
             Count = Sensor,
 
@@ -103,12 +104,12 @@ namespace rl::sdl
 
         // #define RGBA(r, g, b, a) r, g, b, a
 
-        static constexpr inline u8 pixel_array[] = {
+        inline static constexpr u8 pixel_array[] = {
             0xff, 0x00, 0x00, 0xff, 0xff, 0x80, 0x00, 0xff, 0xff, 0xff, 0x00, 0xff, 0x80,
             0xff, 0x00, 0xff, 0xff, 0x00, 0x80, 0xff, 0xff, 0xff, 0xff, 0xff, 0x00, 0x00,
             0x00, 0x00, 0x00, 0xff, 0x00, 0xff, 0xff, 0x00, 0xff, 0xff, 0x00, 0x00, 0x00,
             0x00, 0x00, 0x00, 0x00, 0xff, 0x00, 0xff, 0x80, 0xff, 0x80, 0x00, 0xff, 0xff,
-            0x00, 0x00, 0xff, 0xff, 0x00, 0x80, 0xff, 0xff, 0x00, 0xff, 0xff, 0xff,
+            0x00, 0x00, 0xff, 0xff, 0x00, 0x80, 0xff, 0xff, 0x00, 0xff, 0xff, 0xff
         };
         // static inline constexpr void* pixel_array = ((void*)(pixels.data()->data()));
 
@@ -129,13 +130,25 @@ namespace rl::sdl
             SDL3::SDL_Quit();
         }
 
+        bool run_sdl_tests()
+        {
+            i32 ret = sdl::test::execute_render_tests();
+            return ret == 0;
+        }
+
+        static std::string current_video_driver()
+        {
+            return std::string{ SDL3::SDL_GetCurrentVideoDriver() };
+        }
+
         bool loop()
         {
             SDL3::SDL_Event event;
             while (SDL3::SDL_PollEvent(&event))
-                if (event.type == SDL3::SDL_EVENT_QUIT || (event.type == SDL3::SDL_EVENT_KEY_DOWN &&
-                                                           (event.key.keysym.sym == SDL3::SDLK_ESCAPE ||
-                                                            event.key.keysym.sym == SDL3::SDLK_q)))
+                if (event.type == SDL3::SDL_EVENT_QUIT ||
+                    (event.type == SDL3::SDL_EVENT_KEY_DOWN &&
+                     (event.key.keysym.sym == SDL3::SDLK_ESCAPE ||
+                      event.key.keysym.sym == SDL3::SDLK_q)))
                     return 0;
 
             // Note we fill with transparent color, not black
@@ -276,10 +289,10 @@ namespace rl::sdl
 
     private:
         sdl_app(const sdl::sdl_app& other) = delete;
-        sdl_app(sdl::sdl_app&& other)      = delete;
+        sdl_app(sdl::sdl_app&& other) = delete;
 
         sdl_app& operator=(const sdl_app& other) = delete;
-        sdl_app& operator=(sdl_app&& other)      = delete;
+        sdl_app& operator=(sdl_app&& other) = delete;
 
         void report_error()
         {
@@ -297,6 +310,6 @@ namespace rl::sdl
                                 SDL3::SDL_TEXTUREACCESS_TARGET, 512, 512 };
 
         std::once_flag init_flag{};
-        static inline std::atomic<bool> m_initialized{ false };
+        inline static std::atomic<bool> m_initialized{ false };
     };
 }

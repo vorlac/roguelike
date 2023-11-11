@@ -1,14 +1,14 @@
 ---
 Language: Cpp
 AccessModifierOffset: -4
-AlignAfterOpenBracket: Align # [BlockIndent, Align]
+AlignAfterOpenBracket: Align # [AlwaysBreak, DontAlign, BlockIndent, Align]
 AlignArrayOfStructures: None # [None, Left, Right]
 AlignConsecutiveMacros: AcrossComments
-AlignConsecutiveAssignments: Consecutive #None
+AlignConsecutiveAssignments: None # [Consecutive, None]
 AlignConsecutiveBitFields: Consecutive
 AlignConsecutiveDeclarations: None
 AlignEscapedNewlines: Left
-AlignOperands: Align
+AlignOperands: Align # AlignAfterOperator # Align
 AlignTrailingComments: true
 AllowAllArgumentsOnNextLine: false
 AllowAllParametersOfDeclarationOnNextLine: false
@@ -49,18 +49,16 @@ BraceWrapping:
   SplitEmptyFunction: true
   SplitEmptyRecord: true
   SplitEmptyNamespace: true
-BreakBeforeBinaryOperators: None # true
+BreakBeforeBinaryOperators: None
 BreakBeforeConceptDeclarations: true
 BreakBeforeInheritanceComma: true
 BreakInheritanceList: AfterComma
 BreakBeforeTernaryOperators: true # false
 BreakConstructorInitializersBeforeComma: true
 BreakConstructorInitializers: BeforeColon
-BreakAfterJavaFieldAnnotations: false
 BreakStringLiterals: false
 ColumnLimit: 100
 CommentPragmas: '^ IWYU pragma:'
-QualifierAlignment: Leave
 CompactNamespaces: false
 ConstructorInitializerIndentWidth: 4
 ContinuationIndentWidth: 4
@@ -70,7 +68,7 @@ DerivePointerAlignment: false
 DisableFormat: false
 EmptyLineAfterAccessModifier: Never
 EmptyLineBeforeAccessModifier: LogicalBlock
-ExperimentalAutoDetectBinPacking: true # false
+ExperimentalAutoDetectBinPacking: false
 PackConstructorInitializers: Never
 ConstructorInitializerAllOnOneLineOrOnePerLine: false
 AllowAllConstructorInitializersOnNextLine: true
@@ -121,23 +119,24 @@ MacroBlockBegin: ''
 MacroBlockEnd: ''
 MaxEmptyLinesToKeep: 1
 NamespaceIndentation: All
-PenaltyBreakAssignment: 50
-PenaltyBreakBeforeFirstCallParameter: 10
-PenaltyBreakComment: 50
-PenaltyBreakFirstLessLess: 120
-PenaltyBreakOpenParenthesis: 10
+PenaltyBreakAssignment: 1000
+PenaltyBreakBeforeFirstCallParameter: 5
+PenaltyBreakComment: 10
+PenaltyBreakFirstLessLess: 10
+PenaltyBreakOpenParenthesis: 5
 PenaltyBreakString: 1000
-PenaltyBreakTemplateDeclaration: 1000
-PenaltyExcessCharacter: 10
-PenaltyReturnTypeOnItsOwnLine: 100
+PenaltyBreakTemplateDeclaration: 25
+PenaltyExcessCharacter: 50
+PenaltyReturnTypeOnItsOwnLine: 1000
 PenaltyIndentedWhitespace: 0
 PointerAlignment: Left
 PPIndentWidth: 2
-# QualifierOrder: ['static', 'inline', 'constexpr', 'const', 'type']
+QualifierAlignment: Custom
+QualifierOrder: ['inline', 'static', 'constexpr', 'const', 'volatile', 'type']
 ReferenceAlignment: Pointer
 ReflowComments: true
 RemoveBracesLLVM: true
-# RemoveParentheses: true ## clang v17 only
+RemoveParentheses: ReturnStatement ## clang v17 only
 RequiresClausePosition: OwnLine
 SeparateDefinitionBlocks: Always # Leave
 ShortNamespaceLines: 1

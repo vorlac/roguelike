@@ -30,7 +30,10 @@ target_compile_options(${PROJECT_NAME}
 
             # coming from argparse...
             /wd5045 # compiler will insert Spectre mitigation for memory load if /Qspectre switch specified
-        >
+            # sdl/tests/data/images.hpp
+			/wd4125 # decimal digit terminates octal escape sequence
+			/wd4100 # formal parameter unused
+		>
 
         # Clang and GNU
         $<$<OR:${compiler_is_clang},${compiler_is_gnu}>:
@@ -72,6 +75,8 @@ target_compile_options(${PROJECT_NAME}
 			-Wno-sign-conversion
 			-Wno-switch-enum
 			-Wno-nonportable-system-include-path # #include <windows.h> in SDL3 (SDL_syswm.h)
+			-Wno-unused-but-set-variable # test_renderer.hpp
+			-Wno-unused-function # test_renderer.hpp
         >
 
         # Clang only

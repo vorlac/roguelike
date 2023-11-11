@@ -23,7 +23,7 @@
 
 namespace rl::io
 {
-    const static std::locale locale{ "en_US.UTF-8" };
+    static const std::locale locale{ "en_US.UTF-8" };
 }
 
 namespace flecs

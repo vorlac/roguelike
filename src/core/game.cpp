@@ -1,9 +1,12 @@
 #include <chrono>
 #include <memory>
+#include <random>
 #include <string>
+#include <thread>
 
 #include "core/game.hpp"
 #include "core/numeric_types.hpp"
+#include "sdl/tests/test_renderer.hpp"
 
 namespace rl
 {
@@ -26,7 +29,8 @@ namespace rl
         u64 i = 0;
         while (!quit_requested())
         {
-            m_sdl.loop2();
+            m_sdl.run_sdl_tests();
+            // m_sdl.loop2();
             fmt::print("{}\n", ++i);
             using namespace std::literals;
             std::this_thread::sleep_for(0.1s);

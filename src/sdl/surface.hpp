@@ -1,16 +1,19 @@
 #pragma once
 
+#include <vector>
+
 #include "core/ds/point.hpp"
 #include "core/ds/rect.hpp"
 #include "core/ds/vector2d.hpp"
 #include "core/numeric_types.hpp"
+#include "sdl/color.hpp"
 
 namespace SDL3
 {
+    struct SDL_Surface;
+
 #include <SDL3/SDL_blendmode.h>
 #include <SDL3/SDL_pixels.h>
-    // #include <SDL3/SDL_surface.h>
-    struct SDL_Surface;
 }
 
 namespace rl::sdl
@@ -20,16 +23,25 @@ namespace rl::sdl
 
     class surface
     {
+        surface(const surface& other) = delete;
+
     public:
-        explicit surface(SDL3::SDL_Surface* surface);
+        surface(SDL3::SDL_Surface* surface);
         explicit surface(surface&& other);
+
         surface(i32 width, i32 height,
                 SDL3::SDL_PixelFormatEnum format = SDL3::SDL_PIXELFORMAT_UNKNOWN);
         surface(void* pixels, i32 width, i32 height, i32 pitch,
                 SDL3::SDL_PixelFormatEnum format = SDL3::SDL_PIXELFORMAT_UNKNOWN);
+
         ~surface();
 
         surface& operator=(surface&& other);
+        surface& operator=(surface other);
+
+        i32 read_pixel(const ds::point<i32>& pt, sdl::color& color);
+        i32 compare(sdl::surface& other, int allowable_error = 0);
+        bool is_valid() const;
         SDL3::SDL_Surface* sdl_handle() const;
         void* const& get_pixels() const&;
         i32& get_pitch();
@@ -49,22 +61,21 @@ namespace rl::sdl
         SDL3::SDL_BlendMode get_blend_mode() const;
         sdl::color get_color_mod() const;
         void get_color_mod(u8& r, u8& g, u8& b) const;
-        surface& set_clip_rect(const ds::rect<i32>& rect);
-        surface& set_color_key(bool flag, u32 key);
-        surface& set_alpha_mod(u8 alpha);
-        surface& set_blend_mode(SDL3::SDL_BlendMode blendMode);
-        surface& set_color_mod(u8 r, u8 g, u8 b);
-        surface& set_color_mod(const sdl::color& c);
-
-        /**
-         * @brief Sets RLE (Run Length Encoding) acceleration for the surface.
-         * */
-        surface& set_rle_acceleration(bool flag);
-        surface& fill(u32 color);
-        surface& fill_rect(const ds::rect<i32>& rect, u32 color);
-        surface& fill_rects(const ds::rect<i32>* rects, i32 count, u32 color);
+        bool set_clip_rect(const ds::rect<i32>& rect);
+        bool set_color_key(bool flag, u32 key);
+        bool set_alpha_mod(u8 alpha);
+        bool set_blend_mode(SDL3::SDL_BlendMode blend_mode);
+        bool set_color_mod(sdl::color c);
+        bool set_rle_acceleration(bool flag);
+        bool fill(u32 color);
+        bool fill(const sdl::color& color);
+        bool fill_rect(u32 color, const ds::rect<i32>& rect);
+        bool fill_rect(const sdl::color& color, const ds::rect<i32>& rect);
+        bool fill_rects(u32 color, const std::vector<ds::rect<i32>>& rects);
+        bool fill_rects(const sdl::color& color, const std::vector<ds::rect<i32>>& rects);
         ds::dimensions<i32> size() const;
         SDL3::SDL_PixelFormatEnum get_format() const;
+        const SDL3::SDL_PixelFormat* get_format_full() const;
 
     private:
         template <typename T>

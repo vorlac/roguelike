@@ -30,7 +30,7 @@ namespace rl::scene
             {
                 log::info("=== scene::active has changed to scene::demo_level ===");
 
-                flecs::world world  = it.world();
+                flecs::world world = it.world();
                 flecs::entity scene = world.component<scene::root>();
 
                 scene::reset(world);
@@ -78,17 +78,17 @@ namespace rl::scene
         {
             static void define_rect_movement(flecs::world& world, ds::dimensions<i32> window_rect)
             {
-                const static ds::dimensions<i32> window_size{ window_rect };
+                static const ds::dimensions<i32> window_size{ window_rect };
 
                 static auto top_bottom_collision = [](const component::position& pos) {
-                    bool top_collision    = pos.y - (rect_size.height / 2.0f) <= 0.0f;
+                    bool top_collision = pos.y - (rect_size.height / 2.0f) <= 0.0f;
                     bool bottom_collision = pos.y + (rect_size.height / 2.0f) >=
                                             cast::to<float>(window_size.height);
                     return top_collision || bottom_collision;
                 };
 
                 static auto left_right_collision = [](const component::position& pos) {
-                    bool left_collision  = pos.x - (rect_size.width / 2.0f) <= 0.0f;
+                    bool left_collision = pos.x - (rect_size.width / 2.0f) <= 0.0f;
                     bool right_collision = pos.x + (rect_size.width / 2.0f) >=
                                            cast::to<float>(window_size.width);
                     return left_collision || right_collision;
@@ -125,7 +125,7 @@ namespace rl::scene
                 world.system<component::character, component::velocity>("Player Movement")
                     .kind(flecs::OnUpdate)
                     .run([](flecs::iter_t* it) {
-                        delta_time    = it->delta_system_time;
+                        delta_time = it->delta_system_time;
                         input_actions = m_input.active_game_actions();
                         while (ecs_iter_next(it))
                             it->callback(it);
@@ -183,11 +183,10 @@ namespace rl::scene
                     });
             }
 
-            static void define_entity_rendering(flecs::world& world)
+            static void define_entity_rendering(flecs::world& ecs)
             {
-                world
-                    .system<const component::position, const component::style, const component::scale>(
-                        "Render Rects")
+                ecs.system<const rl::position, const component::style, const component::scale>(
+                       "Render Rects")
                     .kind(flecs::PostUpdate)
                     .run([](flecs::iter_t* it) {
                         raylib::BeginDrawing();
@@ -261,9 +260,9 @@ namespace rl::scene
     public:
         scene::pipeline pipeline{};
 
-        static inline rl::Input m_input{};
-        static inline thread_local f32 m_delta_time{ 0.0f };
-        static inline thread_local i64 m_update_calls{ 0 };
-        static constexpr inline ds::dimensions<i32> rect_size{ 10, 10 };
+        inline static rl::Input m_input{};
+        inline static thread_local f32 m_delta_time{ 0.0f };
+        inline static thread_local i64 m_update_calls{ 0 };
+        inline static constexpr ds::dimensions<i32> rect_size{ 10, 10 };
     };
 }
