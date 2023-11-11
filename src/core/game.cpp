@@ -4,6 +4,8 @@
 #include <string>
 #include <thread>
 
+#include <fmt/format.h>
+
 #include "core/game.hpp"
 #include "core/numeric_types.hpp"
 #include "core/utils/io.hpp"

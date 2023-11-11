@@ -298,8 +298,8 @@ namespace rl::ds {
 
             f32 vd_len = vec_delta.length();
             return vd_len <= delta || vd_len < std::numeric_limits<f32>::epsilon()
-                       ? target
-                       : (*this + vec_delta) / (vd_len * delta);
+                     ? target
+                     : (*this + vec_delta) / (vd_len * delta);
         }
 
         constexpr inline vector2<T> slide(const vector2<T>& normal) const

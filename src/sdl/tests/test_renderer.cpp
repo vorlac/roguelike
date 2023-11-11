@@ -309,12 +309,12 @@ namespace rl::sdl::test {
         rl::i32 check_fail_count_3{ 0 };
         for (i32 i = 0; i < sdl::test::TESTRENDER_SCREEN_W; i += 2)
         {
-            auto blend_mode = (((i / 2) % 3) == 0)   ? SDL3::SDL_BLENDMODE_BLEND
-                              : (((i / 2) % 3) == 1) ? SDL3::SDL_BLENDMODE_ADD
-                                                     : SDL3::SDL_BLENDMODE_NONE;
+            auto blend_mode = (((i / 2) % 3) == 0) ? SDL3::SDL_BLENDMODE_BLEND
+                            : (((i / 2) % 3) == 1) ? SDL3::SDL_BLENDMODE_ADD
+                                                   : SDL3::SDL_BLENDMODE_NONE;
 
             if (!renderer.set_draw_color(
-                    { abs((60 + 2 * i) % 255), abs((240 - 2 * i) % 255), abs((50, 3 * i) % 255) }))
+                    { abs((60 + 2 * i) % 255), abs((240 - 2 * i) % 255), abs((3 * i) % 255) }))
                 ++check_fail_count_1;
             if (!renderer.set_draw_blend_mode(blend_mode))
                 check_fail_count_2++;
@@ -331,11 +331,11 @@ namespace rl::sdl::test {
         check_fail_count_3 = 0;
         for (rl::i32 i = 0; i < sdl::test::TESTRENDER_SCREEN_H; i += 2)
         {
-            auto blend_mode = (((i / 2) % 3) == 0)   ? SDL3::SDL_BLENDMODE_BLEND
-                              : (((i / 2) % 3) == 1) ? SDL3::SDL_BLENDMODE_ADD
-                                                     : SDL3::SDL_BLENDMODE_NONE;
+            auto blend_mode = (((i / 2) % 3) == 0) ? SDL3::SDL_BLENDMODE_BLEND
+                            : (((i / 2) % 3) == 1) ? SDL3::SDL_BLENDMODE_ADD
+                                                   : SDL3::SDL_BLENDMODE_NONE;
             if (!renderer.set_draw_color(
-                    { abs((60 + 2 * i) % 255), abs((240 - 2 * i) % 255), abs((50, 3 * i) % 255) }))
+                    { abs((60 + 2 * i) % 255), abs((240 - 2 * i) % 255), abs((3 * i) % 255) }))
                 ++check_fail_count_1;
 
             if (!renderer.set_draw_blend_mode(blend_mode))
@@ -357,9 +357,9 @@ namespace rl::sdl::test {
         {
             for (i32 i = 0; i < sdl::test::TESTRENDER_SCREEN_W; i += 3)
             {
-                auto blend_mode = ((((i + j) / 3) % 3) == 0)   ? SDL3::SDL_BLENDMODE_BLEND
-                                  : ((((i + j) / 3) % 3) == 1) ? SDL3::SDL_BLENDMODE_ADD
-                                                               : SDL3::SDL_BLENDMODE_NONE;
+                auto blend_mode = ((((i + j) / 3) % 3) == 0) ? SDL3::SDL_BLENDMODE_BLEND
+                                : ((((i + j) / 3) % 3) == 1) ? SDL3::SDL_BLENDMODE_ADD
+                                                             : SDL3::SDL_BLENDMODE_NONE;
 
                 if (!renderer.set_draw_color({ abs((j * 4) % 255), abs((i * 3) % 255),
                                                abs((j * 4) % 255), abs((i * 3) % 255) }))

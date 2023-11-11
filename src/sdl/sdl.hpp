@@ -8,6 +8,7 @@
 #include <utility>
 
 #include "core/numeric_types.hpp"
+#include "sdl/events.hpp"
 #include "sdl/renderer.hpp"
 #include "sdl/time.hpp"
 #include "sdl/window.hpp"

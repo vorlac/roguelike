@@ -1,3 +1,5 @@
+#include <fmt/format.h>
+
 #include "core/game.hpp"
 #include "core/options.hpp"
 
