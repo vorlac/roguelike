@@ -22,8 +22,9 @@ namespace rl::sdl {
         other.m_sdl_texture = nullptr;
     }
 
-    texture::texture(sdl::renderer& renderer, u32 format, i32 accesss, i32 width, i32 height)
-        : m_sdl_texture{ SDL3::SDL_CreateTexture(renderer.sdl_handle(), format, accesss, width,
+    texture::texture(std::shared_ptr<sdl::renderer> renderer, u32 format, i32 accesss, i32 width,
+                     i32 height)
+        : m_sdl_texture{ SDL3::SDL_CreateTexture(renderer->sdl_handle(), format, accesss, width,
                                                  height) }
     {
         sdl_assert(m_sdl_texture != nullptr, "failed to create texture");
@@ -31,6 +32,12 @@ namespace rl::sdl {
 
     texture::texture(sdl::renderer& renderer, const sdl::surface& surface)
         : m_sdl_texture{ SDL3::SDL_CreateTextureFromSurface(renderer.sdl_handle(),
+                                                            surface.sdl_handle()) }
+    {
+    }
+
+    texture::texture(std::shared_ptr<sdl::renderer> renderer, const sdl::surface& surface)
+        : m_sdl_texture{ SDL3::SDL_CreateTextureFromSurface(renderer->sdl_handle(),
                                                             surface.sdl_handle()) }
     {
         sdl_assert(m_sdl_texture != nullptr, "failed to create texture");

@@ -20,6 +20,7 @@ namespace SDL3 {
 namespace rl::sdl {
     window::window(SDL3::SDL_Window*&& other) noexcept
         : m_sdl_window{ other }
+        , m_renderer{ new sdl::renderer(*this, renderer::defaults::Driver) }
     {
         sdl_assert(other != nullptr, "constructed window from null SDL_Window");
         other = nullptr;
@@ -27,6 +28,7 @@ namespace rl::sdl {
 
     window::window(sdl::window&& other) noexcept
         : m_sdl_window{ other.m_sdl_window }
+        , m_renderer{ new sdl::renderer(*this, renderer::defaults::Driver) }
     {
         sdl_assert(m_sdl_window != nullptr, "constructed window from null SDL_Window");
         other.m_sdl_window = nullptr;
@@ -37,6 +39,7 @@ namespace rl::sdl {
         : m_sdl_window{ SDL3::SDL_CreateWindowWithPosition(title.c_str(), bounds.pt.x, bounds.pt.y,
                                                            bounds.size.width, bounds.size.height,
                                                            flags) }
+        , m_renderer{ new sdl::renderer(*this, renderer::defaults::Driver) }
     {
         sdl_assert(m_sdl_window != nullptr, "constructed window from null SDL_Window");
     }
@@ -44,6 +47,7 @@ namespace rl::sdl {
     window::window(const std::string& title, const ds::dimensions<i32>& dims,
                    SDL3::SDL_WindowFlags flags)
         : m_sdl_window{ SDL3::SDL_CreateWindow(title.c_str(), dims.width, dims.height, flags) }
+        , m_renderer{ new sdl::renderer(*this, renderer::defaults::Driver) }
     {
         sdl_assert(m_sdl_window != nullptr, "constructed window from null SDL_Window");
     }
@@ -189,6 +193,11 @@ namespace rl::sdl {
     bool window::is_valid() const
     {
         return this->sdl_handle() != nullptr;
+    }
+
+    std::shared_ptr<sdl::renderer> window::renderer() const
+    {
+        return m_renderer;
     }
 
     SDL3::SDL_Window* window::sdl_handle() const

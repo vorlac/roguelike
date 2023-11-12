@@ -291,11 +291,6 @@ namespace rl::sdl {
             return m_window;
         }
 
-        sdl::renderer& renderer()
-        {
-            return m_renderer;
-        }
-
         timer_t& timer()
         {
             return m_timer;
@@ -308,11 +303,6 @@ namespace rl::sdl {
         application& operator=(const application& other) = delete;
         application& operator=(application&& other) = delete;
 
-        void report_error()
-        {
-            // SDL3::SDL_GetErrBuf();
-        }
-
     private:
         // TODO: implement single instance enforcement
         std::once_flag init_flag{};
@@ -321,12 +311,12 @@ namespace rl::sdl {
 
         sdl::window m_window{ "Roguelite" };
         // #ifndef ROGUELIKE_TESTS_ENABLED
-        sdl::renderer m_renderer{ m_window, renderer::driver::DirectX12 };
-        sdl::texture m_sprite{ m_renderer, SDL3::SDL_PIXELFORMAT_ARGB8888,
+        // sdl::renderer m_renderer{ m_window, renderer::driver::DirectX12 };
+        sdl::texture m_sprite{ m_window.renderer(), SDL3::SDL_PIXELFORMAT_ARGB8888,
                                SDL3::SDL_TEXTUREACCESS_STATIC, 4, 4 };
-        sdl::texture m_target1{ m_renderer, SDL3::SDL_PIXELFORMAT_ARGB8888,
+        sdl::texture m_target1{ m_window.renderer(), SDL3::SDL_PIXELFORMAT_ARGB8888,
                                 SDL3::SDL_TEXTUREACCESS_TARGET, 512, 512 };
-        sdl::texture m_target2{ m_renderer, SDL3::SDL_PIXELFORMAT_ARGB8888,
+        sdl::texture m_target2{ m_window.renderer(), SDL3::SDL_PIXELFORMAT_ARGB8888,
                                 SDL3::SDL_TEXTUREACCESS_TARGET, 512, 512 };
         // #endif
         static inline std::atomic<bool> m_initialized{ false };

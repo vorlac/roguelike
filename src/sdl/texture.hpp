@@ -15,6 +15,7 @@
 namespace rl::sdl {
     template <typename T>
     class scoped_lock;
+
     class renderer;
     class surface;
 
@@ -26,7 +27,9 @@ namespace rl::sdl {
         texture(SDL3::SDL_Texture*&& other);
         texture(sdl::texture&& other);
         texture(sdl::renderer& renderer, const sdl::surface& surface);
-        texture(sdl::renderer& renderer, u32 format = SDL3::SDL_PIXELFORMAT_RGBA8888,
+        texture(std::shared_ptr<sdl::renderer> renderer, const sdl::surface& surface);
+        texture(std::shared_ptr<sdl::renderer> renderer,
+                u32 format = SDL3::SDL_PIXELFORMAT_RGBA8888,
                 i32 access = SDL3::SDL_TEXTUREACCESS_TARGET, i32 width = 1024, i32 height = 768);
 
         ~texture();

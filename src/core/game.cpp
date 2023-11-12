@@ -38,7 +38,7 @@ namespace rl {
         while (count++ < iterations)
         {
             log::info("Running rendering tests [{}/{}]", count, iterations);
-            ret |= sdl::test::execute_render_tests(m_sdl.window(), m_sdl.renderer());
+            ret |= sdl::test::execute_render_tests(m_sdl.window());
         }
         return ret == 0;
     }

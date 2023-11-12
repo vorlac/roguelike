@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 
 #include "core/ds/dimensions.hpp"
@@ -7,7 +8,7 @@
 #include "core/ds/rect.hpp"
 #include "core/ds/vector2d.hpp"
 #include "core/utils/assert.hpp"
-#include "sdl/renderer.hpp"
+// #include "sdl/renderer.hpp"
 #include "sdl/utils.hpp"
 
 namespace SDL3 {
@@ -15,6 +16,8 @@ namespace SDL3 {
 }
 
 namespace rl::sdl {
+    class renderer;
+
     class window
     {
         window() = delete;
@@ -62,6 +65,7 @@ namespace rl::sdl {
         ds::dimensions<i32> get_max_size() const;
         ds::point<i32> get_position() const;
 
+        std::shared_ptr<sdl::renderer> renderer() const;
         const window& operator=(sdl::window&& other) noexcept;
         SDL3::SDL_Window* sdl_handle() const;
         bool is_valid() const;
@@ -121,5 +125,6 @@ namespace rl::sdl {
 
     private:
         SDL3::SDL_Window* m_sdl_window{ nullptr };
+        std::shared_ptr<sdl::renderer> m_renderer{ nullptr };
     };
 }

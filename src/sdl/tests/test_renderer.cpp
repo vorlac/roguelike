@@ -933,24 +933,25 @@ namespace rl::sdl::test {
     /**
      * @brief Runs the full SDL test suite on C++ wrapper
      * */
-    int execute_render_tests(sdl::window& main_window, sdl::renderer& window_renderer)
+    int execute_render_tests(sdl::window& main_window)
     {
         int ret = 0;
 
         if (!main_window.is_valid())
             return -1;
-        if (!window_renderer.is_valid())
+        if (!main_window.renderer()->is_valid())
             return -1;
 
-        ret |= render_test_get_num_render_drivers(window_renderer);
-        ret |= render_test_primitives(window_renderer);
-        ret |= render_test_primitives_blend(window_renderer);
-        ret |= render_test_blit(window_renderer);
-        ret |= render_test_blit_color(window_renderer);
-        ret |= render_test_blit_alpha(window_renderer);
-        ret |= render_test_blit_blend(window_renderer);
-        ret |= render_test_viewport(window_renderer);
-        ret |= render_test_logical_size(window_renderer);
+        std::shared_ptr<sdl::renderer> window_renderer = main_window.renderer();
+        ret |= render_test_get_num_render_drivers(*window_renderer);
+        ret |= render_test_primitives(*window_renderer);
+        ret |= render_test_primitives_blend(*window_renderer);
+        ret |= render_test_blit(*window_renderer);
+        ret |= render_test_blit_color(*window_renderer);
+        ret |= render_test_blit_alpha(*window_renderer);
+        ret |= render_test_blit_blend(*window_renderer);
+        ret |= render_test_viewport(*window_renderer);
+        ret |= render_test_logical_size(*window_renderer);
 
         runtime_assert(ret >= 0, "rendering test failure");
         return ret;

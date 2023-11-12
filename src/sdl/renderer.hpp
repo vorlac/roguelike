@@ -86,6 +86,11 @@ namespace rl::sdl {
             constexpr static inline auto Software{ "software" };
         };
 
+        struct defaults
+        {
+            constexpr static inline auto Driver = driver::DirectX12;
+        };
+
         renderer() = delete;
         renderer(const renderer& other) = delete;
         renderer(renderer& other) = delete;
@@ -583,13 +588,6 @@ namespace rl::sdl {
             sdl_assert(result == 0, "failed to get draw color");
             return c;
         }
-
-        // protected:
-        //     renderer(SDL3::SDL_Renderer* sdl_renderer)
-        //         : m_sdl_renderer{ sdl_renderer }
-        //     {
-        //         sdl_renderer = nullptr;
-        //     }
 
     private:
         SDL3::SDL_Renderer* m_sdl_renderer{ nullptr };
