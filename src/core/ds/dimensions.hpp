@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cmath>
 #include <memory>
 #include <utility>
 
@@ -41,20 +42,31 @@ namespace rl::ds {
         constexpr static inline dimensions<T> null()
         {
             return {
-                cast::to<T>(0),
-                cast::to<T>(0),
+                cast::to<T>(0.0),
+                cast::to<T>(0.0),
             };
         }
 
         constexpr static inline dimensions<T> zero()
         {
             return {
-                cast::to<T>(0),
-                cast::to<T>(0),
+                cast::to<T>(0.0),
+                cast::to<T>(0.0),
             };
         }
 
-        constexpr auto area() const -> decltype(width * height)
+        constexpr T area() const
+            requires rl::floating_point<T>
+        {
+            const T area = width * height;
+            constexpr T epsilon = std::numeric_limits<T>::epsilon();
+            if (std::abs(area) <= epsilon)
+                return cast::to<T>(0.0);
+            return area;
+        }
+
+        constexpr T area() const
+            requires rl::integer<T>
         {
             return width * height;
         }

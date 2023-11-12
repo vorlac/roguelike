@@ -187,6 +187,7 @@ namespace rl::sdl {
         bool present()
         {
             i32 result = SDL3::SDL_RenderPresent(m_sdl_renderer);
+            sdl_assert(result == 0, "failed to present renderer");
             return result == 0;
         }
 

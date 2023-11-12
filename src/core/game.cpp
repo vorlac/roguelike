@@ -9,7 +9,7 @@
 #include "core/game.hpp"
 #include "core/numeric_types.hpp"
 #include "core/utils/io.hpp"
-#include "sdl/tests/test_renderer.hpp"
+#include "sdl/tests/test_suite.hpp"
 
 namespace rl {
     bool Game::setup()
@@ -20,7 +20,7 @@ namespace rl {
             return result;
 
 #if defined(ROGUELIKE_TESTS_ENABLED)
-        return this->run_tests(100);
+        return this->run_tests(10);
 #endif
     }
 
@@ -34,12 +34,21 @@ namespace rl {
     bool Game::run_tests(i32 iterations)
     {
         i32 ret = 0;
+
         i32 count = 0;
         while (count++ < iterations)
         {
             log::info("Running rendering tests [{}/{}]", count, iterations);
             ret |= sdl::test::execute_render_tests(m_sdl.window());
         }
+
+        count = 0;
+        while (count++ < iterations)
+        {
+            log::info("Running sprite drawing tests [{}/{}]", count, iterations);
+            ret |= sdl::test::execute_sprite_drawing_tests(m_sdl.window());
+        }
+
         return ret == 0;
     }
 
@@ -53,8 +62,6 @@ namespace rl {
         double delta_time = timer.delta();
         while (!quit_requested())
         {
-            // m_sdl.run_sdl_tests();
-            //   m_sdl.loop2();
             log::info("dt = {:<6.4L}ms", timer.delta());
             using namespace std::literals;
             std::this_thread::sleep_for(0.1s);

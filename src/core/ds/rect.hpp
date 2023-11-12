@@ -243,7 +243,8 @@ namespace rl::ds {
         constexpr inline bool is_empty() const
             requires rl::floating_point<T>
         {
-            return std::abs(this->area()) <= std::numeric_limits<T>::epsilon();
+            constexpr T epsilon = std::numeric_limits<T>::epsilon();
+            return std::abs(this->area()) <= epsilon;
         }
 
         /**
@@ -269,7 +270,7 @@ namespace rl::ds {
          * */
         constexpr inline bool is_null() const
         {
-            return this->is_empty() && pt == vector2<T>::zero();
+            return this->is_empty() && pt == vector2<T>::null();
         }
 
         /**

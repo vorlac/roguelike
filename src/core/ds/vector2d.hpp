@@ -125,20 +125,22 @@ namespace rl::ds {
         constexpr static inline vector2<T> zero()
         {
             return vector2<T>{
-                cast::to<T>(0),
-                cast::to<T>(0),
+                cast::to<T>(0.0),
+                cast::to<T>(0.0),
             };
         }
 
-        constexpr inline bool is_zero(bool exact = false) noexcept
+        constexpr inline bool is_zero() const
+            requires rl::integer<T>
         {
-            if (exact)
-                return this->operator==(vector2<T>::zero());
-            else
-            {
-                return std::abs(x) < std::numeric_limits<T>::epsilon() &&
-                       std::abs(y) < std::numeric_limits<T>::epsilon();
-            }
+            return this->operator==(vector2<T>::zero());
+        }
+
+        constexpr inline bool is_zero() const
+            requires rl::floating_point<T>
+        {
+            constexpr T epsilon = std::numeric_limits<T>::epsilon();
+            return std::abs(x - y) < epsilon;
         }
 
         constexpr inline f32 length() const
@@ -156,7 +158,7 @@ namespace rl::ds {
             vector2<T> ret{ *this };
 
             const f32 len = this->length();
-            if (len > 0 && maxlen < len)
+            if (len > cast::to<T>(0.0) && maxlen < len)
             {
                 ret /= len;
                 ret *= maxlen;
@@ -188,7 +190,7 @@ namespace rl::ds {
         constexpr const inline vector2<T>& normalize()
         {
             f32 len_sq = this->length_squared();
-            if (len_sq != 0.0f)
+            if (len_sq != cast::to<T>(0.0))
             {
                 f32 len = std::sqrtf(len_sq);
                 x /= len;
@@ -275,18 +277,18 @@ namespace rl::ds {
 
         constexpr inline vector2<T> slerp(const vector2<T>& to, const f32 weight) const
         {
-            f32 start_length_sq{ this->length_squared() };
-            f32 end_length_sq{ to.length_squared() };
+            f32 start_len_sq{ this->length_squared() };
+            f32 end_len_sq{ to.length_squared() };
 
-            if (start_length_sq == 0.0f || end_length_sq == 0.0f) [[unlikely]]
+            if (start_len_sq == cast::to<T>(0.0) || end_len_sq == cast::to<T>(0.0)) [[unlikely]]
             {
                 // Zero length vectors have no angle, so the best
                 // we can do is either lerp or throw an error.
                 return this->lerp(to, weight);
             }
 
-            f32 start_length{ std::sqrtf(start_length_sq) };
-            f32 result_length{ std::lerp(start_length, std::sqrtf(end_length_sq), weight) };
+            f32 start_length{ std::sqrtf(start_len_sq) };
+            f32 result_length{ std::lerp(start_length, std::sqrtf(end_len_sq), weight) };
             f32 angle = this->angle_to(to);
 
             return this->rotated(angle * weight) * (result_length / start_length);
@@ -309,7 +311,7 @@ namespace rl::ds {
 
         constexpr inline vector2<T> reflect(const vector2<T>& normal) const
         {
-            return { (2.0f * normal * this->dot_product(normal)) - *this };
+            return { (cast::to<T>(2.0) * normal * this->dot_product(normal)) - *this };
         }
 
         constexpr inline vector2<T> bounce(const vector2<T>& normal) const
@@ -414,7 +416,7 @@ namespace rl::ds {
             };
         }
 
-        T x{ 0 };
-        T y{ 0 };
+        T x{ cast::to<T>(0.0) };
+        T y{ cast::to<T>(0.0) };
     };
 }
