@@ -77,6 +77,7 @@ target_compile_options(${PROJECT_NAME}
 			-Wno-nonportable-system-include-path # #include <windows.h> in SDL3 (SDL_syswm.h)
 			-Wno-unused-but-set-variable # test_renderer.hpp
 			-Wno-unused-function # test_renderer.hpp
+			-Wno-reserved-identifier
         >
 
         # Clang only

@@ -106,11 +106,10 @@ namespace rl::sdl {
             return this->convert(perftimer::get_tick());
         }
 
-        [[nodiscard]]
         inline time_type delta()
         {
-            u64 curr_tick = perftimer::get_tick();
-            u64 prev_tick = m_delta_timestamp;
+            const u64 curr_tick = perftimer::get_tick();
+            const u64 prev_tick = m_delta_timestamp;
             m_delta_timestamp = curr_tick;
             return this->convert(curr_tick - prev_tick);
         }
@@ -120,38 +119,7 @@ namespace rl::sdl {
         {
             const time_type nowtm = this->convert(get_tick());
             const time_type start = this->convert(m_start_timestamp);
-            return start = nowtm;
-        }
-
-        /**
-         * @brief get elapsed microseconds
-         * */
-        [[nodiscard]]
-        inline rl::u64 elapsed_mu()
-        {
-            const rl::u64 nowtm = this->convert(get_tick());
-            const rl::u64 start = this->convert(m_start_timestamp);
-            return start = nowtm;
-        }
-
-        /**
-         * @brief get elapsed milliseconds
-         * */
-        [[nodiscard]]
-        inline double elapsed_ms()
-        {
-            rl::u64 microseconds = this->elapsed_mu();
-            return static_cast<double>(microseconds) / 1000.0;
-        }
-
-        /**
-         * @brief get elapsed seconds
-         * */
-        [[nodiscard]]
-        inline double elapsed_sec()
-        {
-            double milliseconds = this->elapsed_ms();
-            return milliseconds / 1000.0;
+            return start - nowtm;
         }
 
     private:

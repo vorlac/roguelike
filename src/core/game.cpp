@@ -10,18 +10,28 @@
 #include "core/numeric_types.hpp"
 #include "core/utils/io.hpp"
 #include "sdl/tests/test_suite.hpp"
+#include "sdl/time.hpp"
+
+#undef ROGUELIKE_TESTS_ENABLED
+#ifdef ROGUELIKE_TESTS_ENABLED
+constexpr static bool EXECUTE_TESTS = true;
+#else
+constexpr static bool EXECUTE_TESTS = false;
+#endif
 
 namespace rl {
     bool Game::setup()
     {
-        bool result{ m_sdl.is_initialized() };
+        std::ios::ios_base::sync_with_stdio(false);
+        bool result = m_sdl.is_initialized();
         runtime_assert(result, "failed to initialize game");
-        if (!result)
-            return result;
+        if (result)
+        {
+            if constexpr (EXECUTE_TESTS)
+                result = this->run_tests(10);
+        }
 
-#if defined(ROGUELIKE_TESTS_ENABLED)
-        return this->run_tests(10);
-#endif
+        return result;
     }
 
     static bool quit_requested()
@@ -54,17 +64,42 @@ namespace rl {
 
     bool Game::run()
     {
-        auto&& timer = m_sdl.timer();
-
         this->setup();
 
-        u64 i = 0;
-        double delta_time = timer.delta();
-        while (!quit_requested())
+        double delta{ 0 };
+        u64 loop_count{ 0 };
+        srand((u32)time(nullptr));
+
+        auto& window{ m_sdl.window() };
+        auto renderer{ window.renderer() };
+        u8 a = 0;
+        sdl::color color{ 0, 0, 0, 0 };
+        sdl::application::timer_t timer{};
+        while (!quit_requested()) [[unlikely]]
         {
-            log::info("dt = {:<6.4L}ms", timer.delta());
-            using namespace std::literals;
-            std::this_thread::sleep_for(0.1s);
+            renderer->set_draw_color(color);
+
+            renderer->clear();
+            renderer->present();
+
+            if (++loop_count % 960 == 0) [[unlikely]]
+            {
+                const double elapsed_ms = timer.elapsed();
+                const double avg_dlt{ (elapsed_ms * 1000.0) / cast::to<f64>(loop_count) };
+                const double avg_ups{ loop_count / (elapsed_ms) };
+                printf(fmt::format("[prev_dt={:<6.4f}ms] [avg_dlt={:<6.4f}ms] [avg_ups={:<6.4f}]\n",
+                                   timer.delta(), avg_ups, avg_dlt)
+                           .data());
+                a += 1;
+                color = {
+                    rand() % 128,
+                    rand() % 128,
+                    rand() % 128,
+                    (a + 128) % 255,
+                };
+            }
+
+            timer.delta();
         }
 
         this->teardown();

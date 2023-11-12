@@ -92,7 +92,6 @@ namespace rl::sdl {
     private:
         // TODO: implement single instance enforcement
         std::once_flag init_flag{};
-        // microsecond resolution
         timer_t m_timer{};
 
         sdl::window m_window{ "Roguelite" };
