@@ -21,7 +21,6 @@ namespace rl::scene {
         flecs::entity scene = world.component<scene::root>();
 
         scene::reset(world);
-
         world.entity("Player")
             .set(component::character{})
             .set(component::health{ 2 })

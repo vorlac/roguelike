@@ -22,6 +22,7 @@ namespace rl::sdl {
     class texture
     {
     public:
+        texture() = default;
         texture(const sdl::texture& other) = delete;
 
         texture(SDL3::SDL_Texture*&& other);

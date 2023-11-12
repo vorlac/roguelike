@@ -8,6 +8,7 @@
 
 #include "core/ds/dimensions.hpp"
 #include "core/ds/point.hpp"
+#include "core/ds/rect.hpp"
 #include "core/ds/vector2d.hpp"
 #include "core/numeric_types.hpp"
 #include "core/utils/assert.hpp"
@@ -20,10 +21,19 @@
 #include "ecs/components/transform_components.hpp"
 #include "ecs/scenes/scene_types.hpp"
 #include "sdl/renderer.hpp"
+#include "sdl/surface.hpp"
+#include "sdl/tests/data/icon.hpp"
+#include "sdl/texture.hpp"
 #include "sdl/time.hpp"
 #include "sdl/window.hpp"
 
+namespace SDL3 {
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_rwops.h>
+}
+
 namespace rl::scene {
+
     struct benchmark
     {
         struct observer
@@ -36,10 +46,8 @@ namespace rl::scene {
                 flecs::entity scene = world.component<scene::root>();
                 scene::reset(world);
 
-                const ds::point<f32> centroid{
-                    render_size.width / 2.0f,
-                    render_size.height / 2.0f,
-                };
+                auto rect = m_render_ref->get_viewport();
+                const ds::point<f32> centroid = rect.centroid();
 
                 srand((u32)time(nullptr));
                 sdl::color rect_color = {
@@ -108,8 +116,8 @@ namespace rl::scene {
                     .kind(flecs::OnUpdate)
                     .interval(1.0f / 120.0f)
                     .run([](flecs::iter_t* it) {
-                        if (++m_update_calls % 120 == 0)
-                            rl::log::info("delta time: [{:>10.6f} ms]", m_delta_time);
+                        /*if (++m_update_calls % 120 == 0)
+                            rl::log::info("delta time: [{:>10.6f} ms]", m_delta_time);*/
 
                         m_delta_time = it->delta_system_time;
                         while (ecs_iter_next(it))
@@ -118,7 +126,6 @@ namespace rl::scene {
                     .each([](flecs::entity, component::position& pos, component::velocity& vel) {
                         pos.x += vel.x * static_cast<f32>(m_delta_time);
                         pos.y += vel.y * static_cast<f32>(m_delta_time);
-
                         if (left_right_collision(pos))
                             vel.x = -vel.x;
                         if (top_bottom_collision(pos))
@@ -197,18 +204,14 @@ namespace rl::scene {
                                                 std::shared_ptr<sdl::renderer> renderer)
             {
                 m_render_ref = std::shared_ptr(renderer);
-                m_render_ref->set_draw_blend_mode(SDL3::SDL_BLENDMODE_BLEND);
-
                 world
                     .system<const component::position, const component::style,
                             const component::scale>("Render Rects")
                     .multi_threaded(false)
                     .kind(flecs::PostUpdate)
                     .run([](flecs::iter_t* it) {
+                        m_render_ref->set_draw_color({ 0xA0, 0xA0, 0xA0, 0xFF });
                         m_render_ref->clear();
-                        m_render_ref->set_draw_color({ 175, 175, 175 });
-                        m_render_ref->present();
-
                         while (ecs_iter_next(it))
                             it->callback(it);
 
@@ -216,12 +219,8 @@ namespace rl::scene {
                     })
                     .each([&](const component::position& p, const component::style& c,
                               const component::scale& s) {
-                        m_render_ref->clear();
-                        m_render_ref->set_draw_color(c.color);
-                        m_render_ref->fill_rect({
-                            { p.x - rect_size.width / 2.0f, p.y - rect_size.height / 2.0f },
-                            { rect_size.width * s.factor, rect_size.height * s.factor },
-                        });
+                        m_render_ref->draw_texture(m_sprite, ds::rect<f32>::null(),
+                                                   ds::rect<f32>{ { p.x, p.y }, { 15, 15 } });
                     });
             }
 
@@ -239,10 +238,47 @@ namespace rl::scene {
                     });
             }
 
+            static sdl::texture create_texture(std::shared_ptr<sdl::renderer> renderer,
+                                               std::vector<u8>& data, ds::dimensions<i32>& size)
+            {
+                SDL3::SDL_RWops* src = SDL3::SDL_RWFromConstMem(data.data(), data.size());
+                if (src != nullptr)
+                {
+                    sdl::surface surface = SDL3::SDL_LoadBMP_RW(src, SDL3::SDL_TRUE);
+                    if (surface.is_valid())
+                    {
+                        /* Treat white as transparent */
+                        sdl::color c{ 255, 255, 255 };
+
+                        surface.set_color_key(true, c.rgb(surface.get_format_full()));
+                        sdl::texture texture{ renderer, surface };
+
+                        auto dims = surface.size();
+                        ds::dimensions<i32> dims2 = {
+                            surface.sdl_handle()->w,
+                            surface.sdl_handle()->h,
+                        };
+
+                        runtime_assert(dims == dims2, "??");
+
+                        size.width = surface.sdl_handle()->w;
+                        size.height = surface.sdl_handle()->h;
+
+                        return texture;
+                    }
+                }
+
+                runtime_assert(false, "failed to create texture");
+                return sdl::texture{ nullptr };
+            }
+
             static void init_systems(flecs::world& world, sdl::window& window)
             {
-                define_rect_movement(world, window.get_render_size());
-                // define_player_movement(world);
+                ds::dimensions<i32> sprite_size{ 0, 0 };
+                std::vector<u8> icon_data = { icon_bmp, icon_bmp + icon_bmp_len };
+                m_sprite = create_texture(window.renderer(), icon_data, sprite_size);
+                runtime_assert(m_sprite.is_valid(), "failed to load sprite");
+                define_rect_movement(world, window.get_size());
                 define_entity_rendering(world, window.renderer());
                 define_entity_timeout(world);
             }
@@ -283,5 +319,6 @@ namespace rl::scene {
         constexpr static inline ds::dimensions<i32> rect_size{ 10, 10 };
         static inline ds::dimensions<i32> render_size{ 0, 0 };
         static inline std::shared_ptr<sdl::renderer> m_render_ref{ nullptr };
+        static inline sdl::texture m_sprite{};
     };
 }
