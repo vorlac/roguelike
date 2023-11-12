@@ -13,7 +13,7 @@ namespace rl {
         bool run();
         bool teardown();
         bool run_tests(i32 iterations = 25);
-
+        bool quit_requested() const;
         bool process_inputs() const;
         void quit();
 

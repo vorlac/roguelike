@@ -1,24 +1,27 @@
 #pragma once
 
+#include <memory>
 #include <vector>
 
 #include <flecs.h>
+#include <fmt/format.h>
 
 #include "core/ds/dimensions.hpp"
 #include "core/ds/point.hpp"
-#include "core/input.hpp"
-#include "core/input/keymap.hpp"
+#include "core/ds/vector2d.hpp"
 #include "core/numeric_types.hpp"
 #include "core/utils/assert.hpp"
+#include "core/utils/conversions.hpp"
 #include "core/utils/io.hpp"
-#include "core/utils/time.hpp"
 #include "ecs/components/character_components.hpp"
 #include "ecs/components/kinematic_components.hpp"
 #include "ecs/components/projectile_components.hpp"
 #include "ecs/components/style_components.hpp"
 #include "ecs/components/transform_components.hpp"
 #include "ecs/scenes/scene_types.hpp"
-#include "thirdparty/raylib.hpp"
+#include "sdl/renderer.hpp"
+#include "sdl/time.hpp"
+#include "sdl/window.hpp"
 
 namespace rl::scene {
     struct benchmark
@@ -31,42 +34,49 @@ namespace rl::scene {
 
                 flecs::world world = it.world();
                 flecs::entity scene = world.component<scene::root>();
-
                 scene::reset(world);
 
-                raylib::SetRandomSeed(2147483647);
-
                 const ds::point<f32> centroid{
-                    cast::to<f32>(raylib::GetScreenWidth()) / 2.0f,
-                    cast::to<f32>(raylib::GetScreenHeight()) / 2.0f,
+                    render_size.width / 2.0f,
+                    render_size.height / 2.0f,
+                };
+
+                srand((u32)time(nullptr));
+                sdl::color rect_color = {
+                    rand() % 128,
+                    rand() % 128,
+                    rand() % 128,
                 };
 
                 constexpr size_t count = 25000;
                 for (size_t i = 0; i < count; ++i)
                 {
-                    color rect_color{
-                        rand_color(raylib::GetRandomValue(0, 100)),
-                    };
+                    u32 xv = rand() % 2000;
+                    u32 yv = rand() % 2000;
 
                     ds::vector2<f32> velocity{
-                        cast::to<f32>(raylib::GetRandomValue(-1000, 1000) / 10.0),
-                        cast::to<f32>(raylib::GetRandomValue(-1000, 1000) / 10.0),
+                        static_cast<f32>((xv - 1000.0) / 10.0),
+                        static_cast<f32>((yv - 1000.0) / 10.0),
                     };
-
+                    rect_color = {
+                        rand() % 128,
+                        rand() % 128,
+                        rand() % 128,
+                    };
                     world.entity(fmt::format("Rect {}", i).data())
-                        .set<component::position>({ .x = centroid.x, .y = centroid.y })
-                        .set<component::velocity>({ .x = velocity.x, .y = velocity.y })
-                        .set<component::style>({ .color = rect_color })
-                        .set<component::scale>({ .factor = 1.0f })
+                        .set<component::position>({ centroid.x, centroid.y })
+                        .set<component::velocity>({ velocity.x, velocity.y })
+                        .set<component::style>({ rect_color })
+                        .set<component::scale>({ 1.0f })
                         .child_of(scene);
                 }
 
                 world.entity("Player")
-                    .set<component::position>({ .x = centroid.x, .y = centroid.y })
-                    .set<component::velocity>({ .x = 0.0f, .y = 0.0f })
-                    .set<component::style>({ .color = color::orange })
-                    .set<component::character>({ .alive = true })
-                    .set<component::scale>({ .factor = 5.0f })
+                    .set<component::position>({ centroid.x, centroid.y })
+                    .set<component::velocity>({ 0.0f, 0.0f })
+                    .set<component::style>({ rect_color })
+                    .set<component::character>({ true })
+                    .set<component::scale>({ 5.0f })
                     .child_of(scene);
 
                 world.set_pipeline(world.get<benchmark_scene>()->pipeline);
@@ -75,18 +85,19 @@ namespace rl::scene {
 
         struct system
         {
-            static void define_rect_movement(flecs::world& world, ds::dimensions<i32> window_rect)
+            static void define_rect_movement(flecs::world& world,
+                                             const ds::dimensions<i32>& window_rect)
             {
-                const static ds::dimensions<i32> window_size{ window_rect };
+                const static auto window_size = window_rect;
 
-                static auto top_bottom_collision = [](const component::position& pos) {
+                static auto top_bottom_collision = [&](const component::position& pos) {
                     bool top_collision = pos.y - (rect_size.height / 2.0f) <= 0.0f;
                     bool bottom_collision = pos.y + (rect_size.height / 2.0f) >=
                                             cast::to<float>(window_size.height);
                     return top_collision || bottom_collision;
                 };
 
-                static auto left_right_collision = [](const component::position& pos) {
+                static auto left_right_collision = [&](const component::position& pos) {
                     bool left_collision = pos.x - (rect_size.width / 2.0f) <= 0.0f;
                     bool right_collision = pos.x + (rect_size.width / 2.0f) >=
                                            cast::to<float>(window_size.width);
@@ -105,8 +116,8 @@ namespace rl::scene {
                             it->callback(it);
                     })
                     .each([](flecs::entity, component::position& pos, component::velocity& vel) {
-                        pos.x += vel.x * m_delta_time;
-                        pos.y += vel.y * m_delta_time;
+                        pos.x += vel.x * static_cast<f32>(m_delta_time);
+                        pos.y += vel.y * static_cast<f32>(m_delta_time);
 
                         if (left_right_collision(pos))
                             vel.x = -vel.x;
@@ -115,7 +126,7 @@ namespace rl::scene {
                     });
             }
 
-            static void define_player_movement(flecs::world& world)
+            /*static void define_player_movement(flecs::world& world)
             {
                 static float delta_time{ 0.0f };
                 constexpr float target_speed{ 100.0f };
@@ -180,31 +191,37 @@ namespace rl::scene {
                             }
                         }
                     });
-            }
+            }*/
 
-            static void define_entity_rendering(flecs::world& ecs)
+            static void define_entity_rendering(flecs::world& world,
+                                                std::shared_ptr<sdl::renderer> renderer)
             {
-                ecs.system<const rl::position, const component::style, const component::scale>(
-                       "Render Rects")
+                m_render_ref = std::shared_ptr(renderer);
+                m_render_ref->set_draw_blend_mode(SDL3::SDL_BLENDMODE_BLEND);
+
+                world
+                    .system<const component::position, const component::style,
+                            const component::scale>("Render Rects")
+                    .multi_threaded(false)
                     .kind(flecs::PostUpdate)
                     .run([](flecs::iter_t* it) {
-                        raylib::BeginDrawing();
-                        raylib::ClearBackground(color::lightgray);
+                        m_render_ref->clear();
+                        m_render_ref->set_draw_color({ 175, 175, 175 });
+                        m_render_ref->present();
 
                         while (ecs_iter_next(it))
                             it->callback(it);
 
-                        raylib::DrawRectangle(0, 0, 95, 40, color::black);
-                        raylib::DrawFPS(10, 10);
-                        raylib::EndDrawing();
+                        m_render_ref->present();
                     })
                     .each([&](const component::position& p, const component::style& c,
                               const component::scale& s) {
-                        raylib::DrawRectangle(
-                            cast::to<i32>(p.x) - cast::to<i32>(rect_size.width / 2.0f),
-                            cast::to<i32>(p.y) - cast::to<i32>(rect_size.height / 2.0f),
-                            cast::to<i32>(rect_size.width * s.factor),
-                            cast::to<i32>(rect_size.height * s.factor), c.color);
+                        m_render_ref->clear();
+                        m_render_ref->set_draw_color(c.color);
+                        m_render_ref->fill_rect({
+                            { p.x - rect_size.width / 2.0f, p.y - rect_size.height / 2.0f },
+                            { rect_size.width * s.factor, rect_size.height * s.factor },
+                        });
                     });
             }
 
@@ -222,17 +239,17 @@ namespace rl::scene {
                     });
             }
 
-            static void init_systems(flecs::world& world, ds::dimensions<i32> window_rect)
+            static void init_systems(flecs::world& world, sdl::window& window)
             {
-                define_rect_movement(world, window_rect);
-                define_player_movement(world);
-                define_entity_rendering(world);
+                define_rect_movement(world, window.get_render_size());
+                // define_player_movement(world);
+                define_entity_rendering(world, window.renderer());
                 define_entity_timeout(world);
             }
         };
 
     public:
-        static auto init(flecs::world& world, ds::dimensions<i32> window_rect)
+        static auto init(flecs::world& world, sdl::window& window)
         {
             world.set<benchmark_scene>({
                 world.pipeline()
@@ -241,7 +258,8 @@ namespace rl::scene {
                     .build()                     //
             });
 
-            system::init_systems(world, window_rect);
+            // render_size = window.get_render_size();
+            system::init_systems(world, window);
 
             world.observer<scene::active>("active scene changed to scene::benchmark")
                 .second<benchmark_scene>()
@@ -259,9 +277,11 @@ namespace rl::scene {
     public:
         scene::pipeline pipeline{};
 
-        static inline rl::Input m_input{};
-        static inline thread_local f32 m_delta_time{ 0.0f };
+        // static inline rl::Input m_input{};
+        static inline thread_local f64 m_delta_time{ 0.0f };
         static inline thread_local i64 m_update_calls{ 0 };
         constexpr static inline ds::dimensions<i32> rect_size{ 10, 10 };
+        static inline ds::dimensions<i32> render_size{ 0, 0 };
+        static inline std::shared_ptr<sdl::renderer> m_render_ref{ nullptr };
     };
 }

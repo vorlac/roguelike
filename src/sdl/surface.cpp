@@ -70,7 +70,7 @@ namespace rl::sdl {
         return *this;
     }
 
-    surface& surface::operator=(surface&& other)
+    surface& surface::operator=(surface&& other) noexcept
     {
 #ifndef NDEBUG
         runtime_assert(this != &other, "assigning a surface to itself");

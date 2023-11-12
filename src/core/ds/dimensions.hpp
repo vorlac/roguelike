@@ -100,7 +100,7 @@ namespace rl::ds {
             return *this;
         }
 
-        constexpr dimensions<T>&& operator/(auto div)
+        constexpr dimensions<T> operator/(auto div)
         {
             return {
                 this->width / cast::to<T>(div),

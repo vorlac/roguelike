@@ -89,7 +89,8 @@ namespace rl::sdl {
         static inline std::atomic<bool> m_initialized{ false };
         std::once_flag init_flag{};
 
-        sdl::window m_window{ "Roguelite" };
+        sdl::window m_window = { "Roguelite" };
+
         sdl::texture m_sprite{ m_window.renderer(), SDL3::SDL_PIXELFORMAT_ARGB8888,
                                SDL3::SDL_TEXTUREACCESS_STATIC, 4, 4 };
         sdl::texture m_target1{ m_window.renderer(), SDL3::SDL_PIXELFORMAT_ARGB8888,

@@ -34,7 +34,7 @@ namespace rl::sdl {
 
         ~surface();
 
-        surface& operator=(surface&& other);
+        surface& operator=(surface&& other) noexcept;
         surface& operator=(surface other);
 
         i32 read_pixel(const ds::point<i32>& pt, sdl::color& color);

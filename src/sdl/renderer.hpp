@@ -63,15 +63,13 @@ namespace rl::sdl {
     class renderer
     {
     public:
-        using flag_t = SDL3::SDL_RendererFlags;
-
         struct flag
         {
-            constexpr static inline auto Null{ flag_t(0) };
-            constexpr static inline auto Software{ SDL3::SDL_RENDERER_SOFTWARE };
-            constexpr static inline auto HWAccelerated{ SDL3::SDL_RENDERER_ACCELERATED };
-            constexpr static inline auto VSync{ SDL3::SDL_RENDERER_PRESENTVSYNC };
-            constexpr static inline auto Defaults{ flag::HWAccelerated };
+            using type = SDL3::SDL_RendererFlags;
+            constexpr static inline type Software{ SDL3::SDL_RENDERER_SOFTWARE };
+            constexpr static inline type HWAccelerated{ SDL3::SDL_RENDERER_ACCELERATED };
+            constexpr static inline type VSync{ SDL3::SDL_RENDERER_PRESENTVSYNC };
+            constexpr static inline type Defaults{ flag::HWAccelerated };
         };
 
         struct driver
@@ -102,24 +100,20 @@ namespace rl::sdl {
             this->print_render_info();
         }
 
-        renderer(sdl::window& window, renderer::flag_t properties = renderer::flag::Defaults)
-            : m_sdl_renderer{ SDL3::SDL_CreateRenderer(window.sdl_handle(), driver::OpenGL,
+        renderer(sdl::window& window, renderer::flag::type properties = renderer::flag::Defaults)
+            : m_sdl_renderer{ SDL3::SDL_CreateRenderer(window.sdl_handle(), defaults::Driver,
                                                        properties) }
         {
             sdl_assert(m_sdl_renderer != nullptr, "failed to create renderer");
             this->print_render_info();
         }
 
-        renderer(sdl::window& window, const std::string& driver_name = driver::OpenGL,
-                 renderer::flag_t properties = renderer::flag::Defaults)
+        renderer(sdl::window& window, const std::string& driver_name = defaults::Driver,
+                 renderer::flag::type properties = renderer::flag::Defaults)
             : m_sdl_renderer{ SDL3::SDL_CreateRenderer(window.sdl_handle(), driver_name.c_str(),
                                                        properties) }
         {
             sdl_assert(m_sdl_renderer != nullptr, "failed to create renderer");
-            std::string err = SDL3::SDL_GetError();
-            std::string err2{};
-            err2.reserve(256);
-            SDL3::SDL_GetErrorMsg(err2.data(), cast::to<i32>(err2.capacity()));
             this->print_render_info();
         }
 
@@ -452,7 +446,7 @@ namespace rl::sdl {
             return result == 0;
         }
 
-        bool draw_rect(ds::rect<f32>& rect)
+        bool draw_rect(ds::rect<f32>&& rect)
         {
             i32 result = SDL3::SDL_RenderRect(m_sdl_renderer, rect);
             sdl_assert(result == 0, "failed to draw rect");

@@ -1,10 +1,10 @@
 #pragma once
 
-#include "core/ds/color.hpp"
+#include "sdl/color.hpp"
 
 namespace rl::component {
     struct style
     {
-        rl::color color{ rl::color::lime };
+        sdl::color color{ 128, 255, 0, 255 };
     };
 }

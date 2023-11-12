@@ -12,7 +12,6 @@
 #include "sdl/utils.hpp"
 
 namespace SDL3 {
-#include <SDL3/SDL.h>
 #include <SDL3/SDL_surface.h>
 #include <SDL3/SDL_video.h>
 }
@@ -187,7 +186,7 @@ namespace rl::sdl {
 
     SDL3::SDL_WindowFlags window::get_flags() const
     {
-        return window::flag_t(SDL3::SDL_GetWindowFlags(m_sdl_window));
+        return window::flag::type(SDL3::SDL_GetWindowFlags(m_sdl_window));
     }
 
     bool window::is_valid() const

@@ -78,6 +78,7 @@ target_compile_options(${PROJECT_NAME}
 			-Wno-unused-but-set-variable # test_renderer.hpp
 			-Wno-unused-function # test_renderer.hpp
 			-Wno-reserved-identifier
+			-Wno-implicit-float-conversion
         >
 
         # Clang only

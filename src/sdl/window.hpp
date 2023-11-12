@@ -8,7 +8,6 @@
 #include "core/ds/rect.hpp"
 #include "core/ds/vector2d.hpp"
 #include "core/utils/assert.hpp"
-// #include "sdl/renderer.hpp"
 #include "sdl/utils.hpp"
 
 namespace SDL3 {
@@ -27,11 +26,11 @@ namespace rl::sdl {
     public:
         explicit window(SDL3::SDL_Window*&& other) noexcept;
         explicit window(sdl::window&& other) noexcept;
-        explicit window(const std::string& title = window::defaults::Title,
-                        const ds::rect<i32>& bounds = window::defaults::Rect,
-                        SDL3::SDL_WindowFlags flags = window::defaults::Properties);
-        explicit window(const std::string& title, const ds::dimensions<i32>& dims,
-                        SDL3::SDL_WindowFlags flags = window::defaults::Properties);
+
+        window(const std::string& title, const ds::rect<i32>& bounds, SDL3::SDL_WindowFlags flags);
+
+        window(const std::string& title, const ds::dimensions<i32>& dims = window::defaults::Size,
+               SDL3::SDL_WindowFlags flags = (SDL3::SDL_WindowFlags)window::defaults::Properties);
         ~window();
 
     public:
@@ -71,39 +70,40 @@ namespace rl::sdl {
         bool is_valid() const;
 
     public:
-        using flag_t = SDL3::SDL_WindowFlags;
-
         struct flag
         {
-            constexpr static inline flag_t Fullscreen = SDL3::SDL_WINDOW_FULLSCREEN;
-            constexpr static inline flag_t OpenGL = SDL3::SDL_WINDOW_OPENGL;
-            constexpr static inline flag_t Occluded = SDL3::SDL_WINDOW_OCCLUDED;
-            constexpr static inline flag_t Hidden = SDL3::SDL_WINDOW_HIDDEN;
-            constexpr static inline flag_t Borderless = SDL3::SDL_WINDOW_BORDERLESS;
-            constexpr static inline flag_t Resizable = SDL3::SDL_WINDOW_RESIZABLE;
-            constexpr static inline flag_t Minimized = SDL3::SDL_WINDOW_MINIMIZED;
-            constexpr static inline flag_t Maximized = SDL3::SDL_WINDOW_MAXIMIZED;
-            constexpr static inline flag_t MouseGrabbed = SDL3::SDL_WINDOW_MOUSE_GRABBED;
-            constexpr static inline flag_t InputFocus = SDL3::SDL_WINDOW_INPUT_FOCUS;
-            constexpr static inline flag_t MouseFocus = SDL3::SDL_WINDOW_MOUSE_FOCUS;
-            constexpr static inline flag_t Foreign = SDL3::SDL_WINDOW_FOREIGN;
-            constexpr static inline flag_t HighDPI = SDL3::SDL_WINDOW_HIGH_PIXEL_DENSITY;
-            constexpr static inline flag_t MouseCapture = SDL3::SDL_WINDOW_MOUSE_CAPTURE;
-            constexpr static inline flag_t AlwaysOnTop = SDL3::SDL_WINDOW_ALWAYS_ON_TOP;
-            constexpr static inline flag_t Utility = SDL3::SDL_WINDOW_UTILITY;
-            constexpr static inline flag_t Tooltip = SDL3::SDL_WINDOW_TOOLTIP;
-            constexpr static inline flag_t PopupMenu = SDL3::SDL_WINDOW_POPUP_MENU;
-            constexpr static inline flag_t KeyboardGrabbed = SDL3::SDL_WINDOW_KEYBOARD_GRABBED;
-            constexpr static inline flag_t Vulkan = SDL3::SDL_WINDOW_VULKAN;
-            constexpr static inline flag_t Metal = SDL3::SDL_WINDOW_METAL;
-            constexpr static inline flag_t Transparent = SDL3::SDL_WINDOW_TRANSPARENT;
-            constexpr static inline flag_t NotFocusable = SDL3::SDL_WINDOW_NOT_FOCUSABLE;
+            using type = SDL3::SDL_WindowFlags;
+
+            constexpr static type Fullscreen = SDL3::SDL_WINDOW_FULLSCREEN;
+            constexpr static type OpenGL = SDL3::SDL_WINDOW_OPENGL;
+            constexpr static type Occluded = SDL3::SDL_WINDOW_OCCLUDED;
+            constexpr static type Hidden = SDL3::SDL_WINDOW_HIDDEN;
+            constexpr static type Borderless = SDL3::SDL_WINDOW_BORDERLESS;
+            constexpr static type Resizable = SDL3::SDL_WINDOW_RESIZABLE;
+            constexpr static type Minimized = SDL3::SDL_WINDOW_MINIMIZED;
+            constexpr static type Maximized = SDL3::SDL_WINDOW_MAXIMIZED;
+            constexpr static type MouseGrabbed = SDL3::SDL_WINDOW_MOUSE_GRABBED;
+            constexpr static type InputFocus = SDL3::SDL_WINDOW_INPUT_FOCUS;
+            constexpr static type MouseFocus = SDL3::SDL_WINDOW_MOUSE_FOCUS;
+            constexpr static type Foreign = SDL3::SDL_WINDOW_FOREIGN;
+            constexpr static type HighDPI = SDL3::SDL_WINDOW_HIGH_PIXEL_DENSITY;
+            constexpr static type MouseCapture = SDL3::SDL_WINDOW_MOUSE_CAPTURE;
+            constexpr static type AlwaysOnTop = SDL3::SDL_WINDOW_ALWAYS_ON_TOP;
+            constexpr static type Utility = SDL3::SDL_WINDOW_UTILITY;
+            constexpr static type Tooltip = SDL3::SDL_WINDOW_TOOLTIP;
+            constexpr static type PopupMenu = SDL3::SDL_WINDOW_POPUP_MENU;
+            constexpr static type KeyboardGrabbed = SDL3::SDL_WINDOW_KEYBOARD_GRABBED;
+            constexpr static type Vulkan = SDL3::SDL_WINDOW_VULKAN;
+            constexpr static type Metal = SDL3::SDL_WINDOW_METAL;
+            constexpr static type Transparent = SDL3::SDL_WINDOW_TRANSPARENT;
+            constexpr static type NotFocusable = SDL3::SDL_WINDOW_NOT_FOCUSABLE;
         };
 
         struct defaults
         {
-            constexpr static inline auto Properties = window::flag_t(
-                flag::HighDPI | flag::MouseFocus | flag::Vulkan | flag::Resizable);
+            constexpr static window::flag::type Properties = sdl::window::flag::type(
+                // window::flag::HighDPI | window::flag::MouseFocus | window::flag::InputFocus |
+                window::flag::Vulkan | window::flag::Resizable);
 
             constexpr static inline ds::point<i32> Position = {
                 SDL_WINDOWPOS_CENTERED_MASK,
