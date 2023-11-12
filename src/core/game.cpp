@@ -66,40 +66,35 @@ namespace rl {
     {
         this->setup();
 
-        double delta{ 0 };
+        double elapsed{ 0 };
         u64 loop_count{ 0 };
-        srand((u32)time(nullptr));
 
+        srand((u32)time(nullptr));
         auto& window{ m_sdl.window() };
         auto renderer{ window.renderer() };
-        u8 a = 0;
-        sdl::color color{ 0, 0, 0, 0 };
+        sdl::color color{ 0, 0, 0 };
         sdl::application::timer_t timer{};
-        while (!quit_requested()) [[unlikely]]
+        while (elapsed < 60000) [[unlikely]]
         {
-            renderer->set_draw_color(color);
+            elapsed = timer.elapsed();
 
             renderer->clear();
+            renderer->set_draw_color(color);
             renderer->present();
 
-            if (++loop_count % 960 == 0) [[unlikely]]
+            if (loop_count++ % 960 == 0)
             {
-                const double elapsed_ms = timer.elapsed();
-                const double avg_dlt{ (elapsed_ms * 1000.0) / cast::to<f64>(loop_count) };
-                const double avg_ups{ loop_count / (elapsed_ms) };
-                printf(fmt::format("[prev_dt={:<6.4f}ms] [avg_dlt={:<6.4f}ms] [avg_ups={:<6.4f}]\n",
-                                   timer.delta(), avg_ups, avg_dlt)
-                           .data());
-                a += 1;
+                double dt = timer.elapsed() - elapsed;
+                // const double avg_dlt{ ((elapsed_ms * 1000.0) / cast::to<f64>(loop_count)) };
+                // const double avg_ups{ (cast::to<f64>(loop_count) / elapsed_ms) };
+                fmt::print("[prev_dt={:<6.4f}ms] [avg_dlt={:<6.4f}ms] [avg_ups={:<6.4f}]\n", dt,
+                           ((f64)loop_count / elapsed), (elapsed * 1000.0) / (f64)loop_count);
                 color = {
                     rand() % 128,
                     rand() % 128,
                     rand() % 128,
-                    (a + 128) % 255,
                 };
             }
-
-            timer.delta();
         }
 
         this->teardown();

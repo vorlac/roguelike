@@ -111,8 +111,8 @@ namespace rl::sdl {
             };
 
             constexpr static inline ds::dimensions<i32> Size = {
-                1024,
-                768,
+                1920,
+                1080,
             };
 
             constexpr static inline ds::rect<i32> Rect = {

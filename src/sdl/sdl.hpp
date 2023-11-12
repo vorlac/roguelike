@@ -77,11 +77,6 @@ namespace rl::sdl {
             return m_window;
         }
 
-        timer_t& timer()
-        {
-            return m_timer;
-        }
-
     private:
         application(const sdl::application& other) = delete;
         application(sdl::application&& other) = delete;
@@ -91,19 +86,15 @@ namespace rl::sdl {
 
     private:
         // TODO: implement single instance enforcement
+        static inline std::atomic<bool> m_initialized{ false };
         std::once_flag init_flag{};
-        timer_t m_timer{};
 
         sdl::window m_window{ "Roguelite" };
-        // #ifndef ROGUELIKE_TESTS_ENABLED
-        // sdl::renderer m_renderer{ m_window, renderer::driver::DirectX12 };
         sdl::texture m_sprite{ m_window.renderer(), SDL3::SDL_PIXELFORMAT_ARGB8888,
                                SDL3::SDL_TEXTUREACCESS_STATIC, 4, 4 };
         sdl::texture m_target1{ m_window.renderer(), SDL3::SDL_PIXELFORMAT_ARGB8888,
                                 SDL3::SDL_TEXTUREACCESS_TARGET, 512, 512 };
         sdl::texture m_target2{ m_window.renderer(), SDL3::SDL_PIXELFORMAT_ARGB8888,
                                 SDL3::SDL_TEXTUREACCESS_TARGET, 512, 512 };
-        // #endif
-        static inline std::atomic<bool> m_initialized{ false };
     };
 }

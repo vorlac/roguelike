@@ -15,10 +15,9 @@ namespace rl {
             argparse::default_arguments::help,
         };
 
-        // clang-format off
-
         args.add_argument("-v", "--verbose")
             .help("enables verbose output")
+            .default_value(true)
             .implicit_value(true);
 
         args.add_argument("-c", "--console")
@@ -29,14 +28,9 @@ namespace rl {
             .default_value("error")
             .help("specifies logfile message level");
 
-        // clang-format on
-
         try
         {
             args.parse_args(argc, argv);
-
-            // get arg example
-            auto console_verbosity = args.get<std::string>("--console");
             return true;
         }
         catch (const std::runtime_error& err)
