@@ -3,7 +3,7 @@
 #include <flecs.h>
 
 #include "core/ds/dimensions.hpp"
-#include "sdl/sdl.hpp"
+#include "sdl/application.hpp"
 
 namespace rl {
     class Game
@@ -14,7 +14,7 @@ namespace rl {
         bool teardown();
         bool run_tests(i32 iterations = 25);
         bool quit_requested() const;
-        bool process_inputs() const;
+        bool handle_events();
         void quit();
 
         sdl::application& sdl();

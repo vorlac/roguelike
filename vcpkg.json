@@ -8,7 +8,6 @@
     "simdjson",
     "opengl",
     "vulkan",
-    "ffmpeg",
     "imgui",
     "flecs",
     "fmt"

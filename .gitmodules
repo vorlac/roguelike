@@ -4,3 +4,12 @@
 [submodule "sdl"]
 	path = extern/sdl
 	url = https://github.com/libsdl-org/SDL.git
+[submodule "sdl_image"]
+	path = extern/sdl_image
+	url = https://github.com/libsdl-org/SDL_image.git
+[submodule "sdl_ttf"]
+	path = extern/sdl_ttf
+	url = https://github.com/libsdl-org/SDL_ttf.git
+[submodule "sdl_mixer"]
+	path = extern/sdl_mixer
+	url = https://github.com/libsdl-org/SDL_mixer.git

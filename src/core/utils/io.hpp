@@ -17,9 +17,9 @@
 
 #include "core/ds/point.hpp"
 #include "core/ds/vector2d.hpp"
-// #include "core/input/keymap.hpp"
 #include "core/numeric_types.hpp"
 #include "core/utils/assert.hpp"
+#include "sdl/mouse.hpp"
 
 namespace rl::io {
     const static std::locale locale{ "en_US.UTF-8" };
@@ -41,21 +41,6 @@ namespace flecs {
         return fmt::string_view{ e.name().c_str() };
     }
 }
-
-namespace rl::ds {
-    template <typename T>
-    constexpr auto format_as(const ds::vector2<T>& vec)
-    {
-        return fmt::format("({},{})", vec.x, vec.y);
-    }
-
-}
-
-// constexpr inline auto format_as(const ImVec2& vec)
-//{
-//     rl::ds::vector2<rl::f32> tmp{ vec };
-//     return rl::ds::format_as(tmp);
-// }
 
 namespace rl::input {
     // constexpr auto format_as(GameplayAction val)

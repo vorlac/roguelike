@@ -1,5 +1,9 @@
 #pragma once
 
+#include "core/utils/io.hpp"
+#include "sdl/keyboard.hpp"
+#include "sdl/mouse.hpp"
+
 namespace SDL3 {
 #include <SDL3/SDL_events.h>
 }
@@ -14,21 +18,52 @@ namespace rl::sdl {
         };
 
     public:
-        auto handle_inputs()
+        bool handle_events()
         {
             SDL3::SDL_Event e{};
 
             // Handle any queued events
             while (SDL3::SDL_PollEvent(&e) != 0)
             {
-                // User requests quit
-                if (e.type == EventID::Quit)
-                    m_quit = true;
+                switch (e.type)
+                {
+                    // User requests quit
+                    case Event::Quit:
+                        m_quit = true;
+                    case Mouse::Event::MouseWheel:
+                        m_mouse.process_wheel(e.wheel);
+                        break;
+                    case Mouse::Event::MouseMotion:
+                        m_mouse.process_motion(e.motion);
+                        break;
+                    case Mouse::Event::MouseButtonDown:
+                        m_mouse.process_button_down(e.button.button);
+                        break;
+                    case Mouse::Event::MouseButtonUp:
+                        m_mouse.process_button_up(e.button.button);
+                        break;
+                    case Keyboard::Event::KeyDown:
+                        m_keyboard.process_key_down(e.button.button);
+                        break;
+                    case Keyboard::Event::KeyUp:
+                        m_keyboard.process_key_up(e.button.button);
+                        break;
+                    case Keyboard::Event::KeymapChanged:
+                        m_keyboard.process_key_down(e.button.button);
+                        break;
+                    case Keyboard::Event::TextEditing:
+                    case Keyboard::Event::TextInput:
+                        break;
+                }
+                log::info("{}", m_mouse);
             }
+            return true;
         }
 
     private:
         bool m_quit = false;
+        Mouse m_mouse{};
+        Keyboard m_keyboard{};
 
     public:
         // clang-format off
@@ -40,7 +75,7 @@ namespace rl::sdl {
             static inline constexpr type Get = SDL3::SDL_GETEVENT;
         };
 
-        struct EventID
+        struct Event
         {
             using type = SDL3::SDL_EventType;
             static inline constexpr type First = SDL3::SDL_EVENT_FIRST;
@@ -53,6 +88,7 @@ namespace rl::sdl {
             static inline constexpr type DidEnterForeground = SDL3::SDL_EVENT_DID_ENTER_FOREGROUND;
             static inline constexpr type LocaleChanged = SDL3::SDL_EVENT_LOCALE_CHANGED;
             static inline constexpr type SystemThemeChanged = SDL3::SDL_EVENT_SYSTEM_THEME_CHANGED;
+
             static inline constexpr type DisplayOrientation = SDL3::SDL_EVENT_DISPLAY_ORIENTATION;
             static inline constexpr type DisplayAdded = SDL3::SDL_EVENT_DISPLAY_ADDED;
             static inline constexpr type DisplayRemoved = SDL3::SDL_EVENT_DISPLAY_REMOVED;
@@ -67,6 +103,7 @@ namespace rl::sdl {
             static inline constexpr type WindowMoved = SDL3::SDL_EVENT_WINDOW_MOVED;
             static inline constexpr type WindowResized = SDL3::SDL_EVENT_WINDOW_RESIZED;
             static inline constexpr type WindowPixelSizeChanged = SDL3::SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED;
+            static inline constexpr type WindowFirst = SDL3::SDL_EVENT_WINDOW_FIRST;
             static inline constexpr type WindowMinimized = SDL3::SDL_EVENT_WINDOW_MINIMIZED;
             static inline constexpr type WindowMaximized = SDL3::SDL_EVENT_WINDOW_MAXIMIZED;
             static inline constexpr type WindowRestored = SDL3::SDL_EVENT_WINDOW_RESTORED;
@@ -82,8 +119,8 @@ namespace rl::sdl {
             static inline constexpr type WindowDispScaleChanged = SDL3::SDL_EVENT_WINDOW_DISPLAY_SCALE_CHANGED;
             static inline constexpr type WindowOccluded = SDL3::SDL_EVENT_WINDOW_OCCLUDED;
             static inline constexpr type WindowDestroyed = SDL3::SDL_EVENT_WINDOW_DESTROYED;
-            static inline constexpr type WindowFirst = SDL3::SDL_EVENT_WINDOW_FIRST;
             static inline constexpr type WindowLast = SDL3::SDL_EVENT_WINDOW_LAST;
+
             static inline constexpr type KeyDown = SDL3::SDL_EVENT_KEY_DOWN;
             static inline constexpr type KeyUp = SDL3::SDL_EVENT_KEY_UP;
             static inline constexpr type TextEditing = SDL3::SDL_EVENT_TEXT_EDITING;
@@ -94,6 +131,7 @@ namespace rl::sdl {
             static inline constexpr type MouseButtonDown = SDL3::SDL_EVENT_MOUSE_BUTTON_DOWN;
             static inline constexpr type MouseButtonUp = SDL3::SDL_EVENT_MOUSE_BUTTON_UP;
             static inline constexpr type MouseWheel = SDL3::SDL_EVENT_MOUSE_WHEEL;
+
             static inline constexpr type JoystickAxisMotion = SDL3::SDL_EVENT_JOYSTICK_AXIS_MOTION;
             static inline constexpr type JoystickHatMotion = SDL3::SDL_EVENT_JOYSTICK_HAT_MOTION;
             static inline constexpr type JoystickButtonDown = SDL3::SDL_EVENT_JOYSTICK_BUTTON_DOWN;
@@ -102,6 +140,7 @@ namespace rl::sdl {
             static inline constexpr type JoystickRemoved = SDL3::SDL_EVENT_JOYSTICK_REMOVED;
             static inline constexpr type JoystickBatteryUpdated = SDL3::SDL_EVENT_JOYSTICK_BATTERY_UPDATED;
             static inline constexpr type JoystickUpdateComplete = SDL3::SDL_EVENT_JOYSTICK_UPDATE_COMPLETE;
+
             static inline constexpr type GamepadAxisMotion = SDL3::SDL_EVENT_GAMEPAD_AXIS_MOTION;
             static inline constexpr type GamepadButtonDown = SDL3::SDL_EVENT_GAMEPAD_BUTTON_DOWN;
             static inline constexpr type GamepadButtonUp = SDL3::SDL_EVENT_GAMEPAD_BUTTON_UP;
@@ -113,23 +152,28 @@ namespace rl::sdl {
             static inline constexpr type GamepadTouchpadUp = SDL3::SDL_EVENT_GAMEPAD_TOUCHPAD_UP;
             static inline constexpr type GamepadSensorUpdate = SDL3::SDL_EVENT_GAMEPAD_SENSOR_UPDATE;
             static inline constexpr type GamepadUpdateComplete = SDL3::SDL_EVENT_GAMEPAD_UPDATE_COMPLETE;
+
             static inline constexpr type FingerDown = SDL3::SDL_EVENT_FINGER_DOWN;
             static inline constexpr type FingerUp = SDL3::SDL_EVENT_FINGER_UP;
             static inline constexpr type FingerMotion = SDL3::SDL_EVENT_FINGER_MOTION;
+
             static inline constexpr type ClipboardUpdate = SDL3::SDL_EVENT_CLIPBOARD_UPDATE;
             static inline constexpr type DropFile = SDL3::SDL_EVENT_DROP_FILE;
             static inline constexpr type DropText = SDL3::SDL_EVENT_DROP_TEXT;
             static inline constexpr type DropBegin = SDL3::SDL_EVENT_DROP_BEGIN;
             static inline constexpr type DropComplete = SDL3::SDL_EVENT_DROP_COMPLETE;
             static inline constexpr type DropPosition = SDL3::SDL_EVENT_DROP_POSITION;
+            
             static inline constexpr type AudioDeviceAdded = SDL3::SDL_EVENT_AUDIO_DEVICE_ADDED;
             static inline constexpr type AudioDeviceRemoved = SDL3::SDL_EVENT_AUDIO_DEVICE_REMOVED;
             static inline constexpr type AudioDeviceFormatChanged = SDL3::SDL_EVENT_AUDIO_DEVICE_FORMAT_CHANGED;
+            
             static inline constexpr type SensorUpdate = SDL3::SDL_EVENT_SENSOR_UPDATE;
             static inline constexpr type RenderTargetsReset = SDL3::SDL_EVENT_RENDER_TARGETS_RESET;
             static inline constexpr type RenderDeviceReset = SDL3::SDL_EVENT_RENDER_DEVICE_RESET;
             static inline constexpr type PollSentinel = SDL3::SDL_EVENT_POLL_SENTINEL;
             static inline constexpr type User = SDL3::SDL_EVENT_USER;
+            
             static inline constexpr type Last = SDL3::SDL_EVENT_LAST;
         };
 

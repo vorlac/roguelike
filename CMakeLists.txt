@@ -8,6 +8,7 @@ list(APPEND CMAKE_MODULE_PATH
 include(vcpkg-init)
 
 set(CMAKE_CXX_STANDARD 23)
+#set(CMAKE_C_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
 set(EXPORT_COMPILE_COMMANDS ON)
@@ -26,6 +27,8 @@ option(
       ON
 )
 
+include(CPack)
+
 string(TOLOWER "${CMAKE_SYSTEM_NAME}" host_os)
 string(TOLOWER "${CMAKE_BUILD_TYPE}" build_type)
 string(TOLOWER "${CMAKE_CXX_COMPILER_ARCHITECTURE_ID}" architecture)
@@ -43,11 +46,28 @@ set(FORCE_STATIC_VCRT OFF)
 set(SDL_VULKAN ON)
 set(SDL_TESTS ON)
 set(SDL_TEST_LIBRARY ON)
+set(SDL3IMAGE_VENDORED OFF)
+
+#set(SDL3_PATH "${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl")
+#set(SDL3_Image_DIR "${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl_image/cmake")
+set(SDL3_DIR "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl)
+install(
+	TARGETS SDL3-static
+)
+find_package(SDL3 CONFIG REQUIRED)
+
+set(SDL3_Image_DIR "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl_image)
+#find_package(SDL3_Image CONFIG REQUIRED)
+
+#add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl_ttf)
+#add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl_mixer)
+
 
 find_package(fmt CONFIG REQUIRED)
 find_package(argparse CONFIG REQUIRED)
-find_package(FFMPEG REQUIRED)
+#find_package(FFMPEG REQUIRED)
 find_package(flecs CONFIG REQUIRED)
 find_package(OpenGL REQUIRED COMPONENTS OpenGL)
 find_package(Vulkan REQUIRED)
@@ -98,21 +118,22 @@ target_compile_options(${PROJECT_NAME} PRIVATE
 target_include_directories(${PROJECT_NAME}
   PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src"
   PRIVATE ${OPENGL_INCLUDE_DIR}
-  PRIVATE ${FFMPEG_INCLUDE_DIRS}
+  # PRIVATE ${FFMPEG_INCLUDE_DIRS}
 )
 
-target_link_directories(${PROJECT_NAME}
-  PRIVATE ${FFMPEG_LIBRARY_DIRS}
-)
+# target_link_directories(${PROJECT_NAME}
+#   PRIVATE ${FFMPEG_LIBRARY_DIRS}
+# )
 
 target_link_libraries(${PROJECT_NAME}
-  PRIVATE ${FFMPEG_LIBRARIES}
+  # PRIVATE ${FFMPEG_LIBRARIES}
   PRIVATE argparse::argparse
   PRIVATE flecs::flecs_static
   PRIVATE imgui::imgui
   PRIVATE Vulkan::Vulkan
   PRIVATE OpenGL::GL
-  PRIVATE SDL3::SDL3
+  PUBLIC SDL3::SDL3 
+  PRIVATE SDL3_image::SDL3_image
   PRIVATE simdjson::simdjson
   PRIVATE fmt::fmt
 )

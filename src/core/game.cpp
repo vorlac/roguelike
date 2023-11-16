@@ -59,6 +59,11 @@ namespace rl {
         //                             SDL3::SDL_EVENT_QUIT) > 0;
     }
 
+    bool Game::handle_events()
+    {
+        return m_sdl.handle_events();
+    }
+
     bool Game::run_tests(i32 iterations)
     {
         i32 ret = 0;
@@ -78,6 +83,43 @@ namespace rl {
         }
 
         return ret == 0;
+    }
+
+    bool Game::run()
+    {
+        this->setup();
+
+        u32 loop_count = 0;
+        sdl::hrtimer timer{};
+        while (m_world.progress())
+        {
+            this->handle_events();
+            if (++loop_count % 120 == 0)
+            {
+                printf(fmt::format(io::locale,
+                                   " {:>14.6f} s || {:>10L} u ][ {:>10.4f} ms ][ {:>10.4f} ups ]\n",
+                                   timer.elapsed_sec(), loop_count, m_world.delta_time(),
+                                   loop_count / timer.elapsed_sec())
+                           .c_str());
+            }
+        }
+        return this->teardown();
+    }
+
+    sdl::application& Game::sdl()
+    {
+        return m_sdl;
+    }
+
+    void Game::quit()
+    {
+        m_world.quit();
+        this->teardown();
+    }
+
+    bool Game::teardown()
+    {
+        return true;
     }
 
     // static bool benchmark()
@@ -115,117 +157,4 @@ namespace rl {
 
     //    return true;
     //}
-    namespace sdl {
-        struct hrtimer
-        {
-        private:
-            uint64_t m_tick_frequency{ 0 };
-            uint64_t m_start_hpc_tick{ 0 };
-            uint64_t m_start_microsec{ 0 };
-            uint64_t m_last_timestamp{ 0 };
-
-        public:
-            hrtimer()
-            {
-                LARGE_INTEGER tick_frequency{ 0 };
-                BOOL ret = QueryPerformanceFrequency(&tick_frequency);
-                if (ret == 0)
-                    fmt::print("QueryPerformanceFrequency failed\n");
-
-                LARGE_INTEGER start_hpc_tick{ 0 };
-                ret = QueryPerformanceCounter(&start_hpc_tick);
-                if (ret == 0)
-                    fmt::print("QueryPerformanceCounter failed\n");
-
-                LARGE_INTEGER current_tick{ 0 };
-                ret = QueryPerformanceCounter(&current_tick);
-                if (ret == 0)
-                    fmt::print("QueryPerformanceCounter failed\n");
-
-                m_tick_frequency = tick_frequency.QuadPart;
-                m_start_hpc_tick = start_hpc_tick.QuadPart;
-                m_start_microsec = ((current_tick.QuadPart - m_start_hpc_tick) * 1000000) /
-                                   m_tick_frequency;
-                m_last_timestamp = m_start_microsec;
-            }
-
-            [[nodiscard]]
-            inline uint64_t now()
-            {
-                LARGE_INTEGER current_tick{ 0 };
-                QueryPerformanceCounter(&current_tick);
-                m_last_timestamp = current_tick.QuadPart;
-                return m_last_timestamp;
-            }
-
-            /**
-             * @brief get elapsed microseconds
-             * */
-            [[nodiscard]]
-            inline uint64_t elapsed_mu()
-            {
-                uint64_t curr_timestamp = hrtimer::now();
-                m_last_timestamp = ((curr_timestamp - m_start_hpc_tick) * 1000000) /
-                                   m_tick_frequency;
-                return m_last_timestamp;
-            }
-
-            /**
-             * @brief get elapsed milliseconds
-             * */
-            [[nodiscard]]
-            inline double elapsed_ms()
-            {
-                uint64_t microseconds = elapsed_mu();
-                return static_cast<double>(microseconds) / 1000.0;
-            }
-
-            /**
-             * @brief get elapsed seconds
-             * */
-            [[nodiscard]]
-            inline double elapsed_sec()
-            {
-                double milliseconds = elapsed_ms();
-                return milliseconds / 1000.0;
-            }
-        };
-    }
-
-    bool Game::run()
-    {
-        this->setup();
-
-        u32 loop_count = 0;
-        sdl::hrtimer timer{};
-        while (m_world.progress())
-        {
-            if (++loop_count % 120 == 0)
-            {
-                // double seconds = timer.elapsed() * 1000.0;
-                printf(fmt::format(io::locale,
-                                   " {:>14.6f} s || {:>10L} u ][ {:>10.4f} ms ][ {:>10.4f} ups ]\n",
-                                   timer.elapsed_sec(), loop_count, m_world.delta_time(),
-                                   loop_count / timer.elapsed_sec())
-                           .c_str());
-            }
-        }
-        return this->teardown();
-    }
-
-    sdl::application& Game::sdl()
-    {
-        return m_sdl;
-    }
-
-    void Game::quit()
-    {
-        m_world.quit();
-        this->teardown();
-    }
-
-    bool Game::teardown()
-    {
-        return true;
-    }
 }

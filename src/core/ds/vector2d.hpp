@@ -8,6 +8,8 @@
 #include <memory>
 #include <type_traits>
 
+#include <fmt/format.h>
+
 #include "core/ds/dimensions.hpp"
 #include "core/ds/vector2d.hpp"
 #include "core/numeric_types.hpp"
@@ -38,20 +40,20 @@ namespace rl::ds {
         template <rl::integer I>
         constexpr vector2(const vector2<I>& other)
             requires rl::floating_point<T>
-            : x(cast::to<T>(other.x))
-            , y(cast::to<T>(other.y))
+            : x{ cast::to<T>(other.x) }
+            , y{ cast::to<T>(other.y) }
         {
         }
 
         constexpr vector2(const vector2<T>& other)
-            : x(other.x)
-            , y(other.y)
+            : x{ other.x }
+            , y{ other.y }
         {
         }
 
         constexpr vector2(vector2<T>&& other) noexcept
-            : x(std::forward<T>(other.x))
-            , y(std::forward<T>(other.y))
+            : x{ std::forward<T>(other.x) }
+            , y{ std::forward<T>(other.y) }
         {
         }
 
@@ -319,6 +321,13 @@ namespace rl::ds {
             return -this->reflect(normal);
         }
 
+        constexpr inline vector2<T>& operator=(const vector2<T>& other)
+        {
+            x = other.x;
+            y = other.y;
+            return *this;
+        }
+
         constexpr inline vector2<T> operator+(const vector2<T>& other) const
         {
             return {
@@ -419,4 +428,10 @@ namespace rl::ds {
         T x{ cast::to<T>(0.0) };
         T y{ cast::to<T>(0.0) };
     };
+
+    template <rl::numeric T>
+    constexpr auto format_as(const ds::vector2<T>& vec)
+    {
+        return fmt::format("({},{})", vec.x, vec.y);
+    }
 }

@@ -53,9 +53,20 @@ namespace rl::sdl {
             runtime_assert(ret, "failed to init SDL subsystem");
         }
 
+        application(const sdl::application& other) = delete;
+        application(sdl::application&& other) = delete;
+
         ~application()
         {
             SDL3::SDL_Quit();
+        }
+
+        application& operator=(const application& other) = delete;
+        application& operator=(application&& other) = delete;
+
+        bool handle_events()
+        {
+            return m_event_handler.handle_events();
         }
 
         bool is_initialized() const
@@ -78,24 +89,11 @@ namespace rl::sdl {
         }
 
     private:
-        application(const sdl::application& other) = delete;
-        application(sdl::application&& other) = delete;
-
-        application& operator=(const application& other) = delete;
-        application& operator=(application&& other) = delete;
-
-    private:
         // TODO: implement single instance enforcement
         static inline std::atomic<bool> m_initialized{ false };
         std::once_flag init_flag{};
 
-        sdl::window m_window = { "Roguelite" };
-
-        sdl::texture m_sprite{ m_window.renderer(), SDL3::SDL_PIXELFORMAT_ARGB8888,
-                               SDL3::SDL_TEXTUREACCESS_STATIC, 4, 4 };
-        sdl::texture m_target1{ m_window.renderer(), SDL3::SDL_PIXELFORMAT_ARGB8888,
-                                SDL3::SDL_TEXTUREACCESS_TARGET, 512, 512 };
-        sdl::texture m_target2{ m_window.renderer(), SDL3::SDL_PIXELFORMAT_ARGB8888,
-                                SDL3::SDL_TEXTUREACCESS_TARGET, 512, 512 };
+        sdl::window m_window{ "Roguelite" };
+        sdl::event_handler m_event_handler{};
     };
 }
