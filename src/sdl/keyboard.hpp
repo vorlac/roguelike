@@ -1,5 +1,9 @@
 #pragma once
 
+#include <bitset>
+
+#include <fmt/format.h>
+
 namespace SDL3 {
 #include <SDL3/SDL_events.h>
 #include <SDL3/SDL_keyboard.h>
@@ -532,49 +536,48 @@ namespace rl::sdl {
         };
 
     public:
-        void process_button_down(Keyboard::Button::type kb_button)
+        inline void process_button_down(Keyboard::Button::type kb_button)
         {
-            switch (kb_button)
-            {
-                case Keyboard::Button::A:
-                case Keyboard::Button::A:
-                case Keyboard::Button::A:
-                case Keyboard::Button::A:
-                    [[fallthrough]];
-
-                case Keyboard::Button::Middle:
-                    [[fallthrough]];
-
-                case Keyboard::Button::Right:
-                    [[fallthrough]];
-
-                case Keyboard::Button::X1:
-                    [[fallthrough]];
-
-                case Keyboard::Button::X2:
-                    m_button_states |= SDL_BUTTON(kb_button);
-                    break;
-            }
+            if (this->is_button_down(kb_button))
+                m_buttons_held[kb_button] = 1;
+            else
+                m_buttons_pressed[kb_button] = 1;
         }
 
-        void process_button_up(Keyboard::Button::type kb_button)
+        inline void process_button_up(Keyboard::Button::type kb_button)
         {
-            switch (kb_button)
-            {
-                case Keyboard::Button::Left:
-                    [[fallthrough]];
-                case Keyboard::Button::Middle:
-                    [[fallthrough]];
-                case Keyboard::Button::Right:
-                    [[fallthrough]];
-                case Keyboard::Button::X1:
-                    [[fallthrough]];
-                case Keyboard::Button::X2:
-                    m_button_states &= ~SDL_BUTTON(mouse_button);
-                    break;
-            }
+            m_buttons_pressed[kb_button] = 0;
+            m_buttons_held[kb_button] = 0;
+        }
+
+        inline bool is_button_down(const Keyboard::Button::type kb_button) const
+        {
+            return m_buttons_pressed[kb_button] != 0;
+        }
+
+        inline bool is_button_held(const Keyboard::Button::type kb_button) const
+        {
+            return m_buttons_pressed[kb_button] != 0;
+        }
+
+        inline std::string get_key_state(const Keyboard::Button::type kb_button) const
+        {
+            return this->is_button_held(kb_button) ? "Held"
+                 : this->is_button_down(kb_button) ? "Pressed"
+                 : this->is_button_down(kb_button) ? "Released"
+                                                   : "None";
         }
 
     private:
+        std::bitset<Button::ScancodeCount> m_buttons_pressed{ 0 };
+        std::bitset<Button::ScancodeCount> m_buttons_held{ 0 };
     };
+
+    inline auto format_as(const Keyboard& kb)
+    {
+        return fmt::format("KB[W={} A={}, S={}, D={}]", kb.get_key_state(Keyboard::Button::W),
+                           kb.get_key_state(Keyboard::Button::A),
+                           kb.get_key_state(Keyboard::Button::S),
+                           kb.get_key_state(Keyboard::Button::D));
+    }
 }

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <fmt/format.h>
+
 #include "core/utils/io.hpp"
 #include "sdl/keyboard.hpp"
 #include "sdl/mouse.hpp"
@@ -32,30 +34,29 @@ namespace rl::sdl {
                         m_quit = true;
                     case Mouse::Event::MouseWheel:
                         m_mouse.process_wheel(e.wheel);
+                        log::info("{}", m_mouse);
                         break;
                     case Mouse::Event::MouseMotion:
                         m_mouse.process_motion(e.motion);
+                        log::info("{}", m_mouse);
                         break;
                     case Mouse::Event::MouseButtonDown:
                         m_mouse.process_button_down(e.button.button);
+                        log::info("{}", m_mouse);
                         break;
                     case Mouse::Event::MouseButtonUp:
                         m_mouse.process_button_up(e.button.button);
+                        log::info("{}", m_mouse);
                         break;
                     case Keyboard::Event::KeyDown:
-                        m_keyboard.process_key_down(e.button.button);
+                        m_keyboard.process_button_down(e.key.keysym.scancode);
+                        log::info("{}", m_keyboard);
                         break;
                     case Keyboard::Event::KeyUp:
-                        m_keyboard.process_key_up(e.button.button);
-                        break;
-                    case Keyboard::Event::KeymapChanged:
-                        m_keyboard.process_key_down(e.button.button);
-                        break;
-                    case Keyboard::Event::TextEditing:
-                    case Keyboard::Event::TextInput:
+                        m_keyboard.process_button_up(e.key.keysym.scancode);
+                        log::info("{}", m_keyboard);
                         break;
                 }
-                log::info("{}", m_mouse);
             }
             return true;
         }
@@ -96,7 +97,7 @@ namespace rl::sdl {
             static inline constexpr type DispContentScaleChanged = SDL3::SDL_EVENT_DISPLAY_CONTENT_SCALE_CHANGED;
             static inline constexpr type DisplayFirst = SDL3::SDL_EVENT_DISPLAY_FIRST;
             static inline constexpr type DisplayLast = SDL3::SDL_EVENT_DISPLAY_LAST;
-           
+
             static inline constexpr type WindowShown = SDL3::SDL_EVENT_WINDOW_SHOWN;
             static inline constexpr type WindowHidden = SDL3::SDL_EVENT_WINDOW_HIDDEN;
             static inline constexpr type WindowExposed = SDL3::SDL_EVENT_WINDOW_EXPOSED;
@@ -163,17 +164,17 @@ namespace rl::sdl {
             static inline constexpr type DropBegin = SDL3::SDL_EVENT_DROP_BEGIN;
             static inline constexpr type DropComplete = SDL3::SDL_EVENT_DROP_COMPLETE;
             static inline constexpr type DropPosition = SDL3::SDL_EVENT_DROP_POSITION;
-            
+
             static inline constexpr type AudioDeviceAdded = SDL3::SDL_EVENT_AUDIO_DEVICE_ADDED;
             static inline constexpr type AudioDeviceRemoved = SDL3::SDL_EVENT_AUDIO_DEVICE_REMOVED;
             static inline constexpr type AudioDeviceFormatChanged = SDL3::SDL_EVENT_AUDIO_DEVICE_FORMAT_CHANGED;
-            
+
             static inline constexpr type SensorUpdate = SDL3::SDL_EVENT_SENSOR_UPDATE;
             static inline constexpr type RenderTargetsReset = SDL3::SDL_EVENT_RENDER_TARGETS_RESET;
             static inline constexpr type RenderDeviceReset = SDL3::SDL_EVENT_RENDER_DEVICE_RESET;
             static inline constexpr type PollSentinel = SDL3::SDL_EVENT_POLL_SENTINEL;
             static inline constexpr type User = SDL3::SDL_EVENT_USER;
-            
+
             static inline constexpr type Last = SDL3::SDL_EVENT_LAST;
         };
 

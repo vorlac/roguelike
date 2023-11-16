@@ -35,6 +35,7 @@ namespace rl::sdl {
             constexpr static inline type Right = SDL_BUTTON_RIGHT;
             constexpr static inline type X1 = SDL_BUTTON_X1;
             constexpr static inline type X2 = SDL_BUTTON_X2;
+            constexpr static inline type Count = Button::X2;
         };
 
         enum ButtonMask : rl::u8 {
@@ -73,6 +74,7 @@ namespace rl::sdl {
     public:
         void process_button_down(Mouse::Button::type mouse_button)
         {
+            runtime_assert(mouse_button - 1 < Mouse::Button::Count, "invalid mouse button");
             switch (mouse_button)
             {
                 case Mouse::Button::Left:
@@ -84,27 +86,15 @@ namespace rl::sdl {
                 case Mouse::Button::X1:
                     [[fallthrough]];
                 case Mouse::Button::X2:
-                    m_button_states |= SDL_BUTTON(Mouse::ButtonMask::X2);
+                    m_button_states |= (1 << (mouse_button - 1));
                     break;
             }
         }
 
         void process_button_up(Mouse::Button::type mouse_button)
         {
-            switch (mouse_button)
-            {
-                case Mouse::Button::Left:
-                    [[fallthrough]];
-                case Mouse::Button::Middle:
-                    [[fallthrough]];
-                case Mouse::Button::Right:
-                    [[fallthrough]];
-                case Mouse::Button::X1:
-                    [[fallthrough]];
-                case Mouse::Button::X2:
-                    m_button_states &= ~SDL_BUTTON(mouse_button);
-                    break;
-            }
+            runtime_assert(mouse_button - 1 < Mouse::Button::Count, "invalid mouse button");
+            m_button_states &= ~(1 << (mouse_button - 1));
         }
 
         void process_motion(Mouse::MotionEvent& motion)
