@@ -47,17 +47,10 @@ set(SDL_VULKAN ON)
 set(SDL_TESTS ON)
 set(SDL_TEST_LIBRARY ON)
 set(SDL3IMAGE_VENDORED OFF)
+set(BUILD_SHARED_LIBS OFF)
 
-#set(SDL3_PATH "${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl")
-set(SDL3_DIR "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl)
-find_package(SDL3 CONFIG REQUIRED)
-
-# works only when SDL_SHARED is set to ON
-#set(SDL3_Image_DIR "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
-#add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl_image)
-#find_package(SDL3_Image CONFIG REQUIRED)
-
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl_image)
 #add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl_ttf)
 #add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl_mixer)
 
@@ -129,6 +122,7 @@ target_link_libraries(${PROJECT_NAME}
   PRIVATE Vulkan::Vulkan
   PRIVATE OpenGL::GL
   PRIVATE SDL3::SDL3
+  PRIVATE SDL3_image::SDL3_image
   PRIVATE simdjson::simdjson
   PRIVATE fmt::fmt
 )
