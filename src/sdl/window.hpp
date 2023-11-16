@@ -26,9 +26,6 @@ namespace rl::sdl {
     public:
         explicit window(SDL3::SDL_Window*&& other) noexcept;
         explicit window(sdl::window&& other) noexcept;
-
-        window(const std::string& title, const ds::rect<i32>& bounds, SDL3::SDL_WindowFlags flags);
-
         window(const std::string& title, const ds::dimensions<i32>& dims = window::defaults::Size,
                SDL3::SDL_WindowFlags flags = (SDL3::SDL_WindowFlags)window::defaults::Properties);
         ~window();
@@ -85,7 +82,7 @@ namespace rl::sdl {
             constexpr static type MouseGrabbed = SDL3::SDL_WINDOW_MOUSE_GRABBED;
             constexpr static type InputFocus = SDL3::SDL_WINDOW_INPUT_FOCUS;
             constexpr static type MouseFocus = SDL3::SDL_WINDOW_MOUSE_FOCUS;
-            constexpr static type Foreign = SDL3::SDL_WINDOW_FOREIGN;
+            constexpr static type External = SDL3::SDL_WINDOW_EXTERNAL;
             constexpr static type HighDPI = SDL3::SDL_WINDOW_HIGH_PIXEL_DENSITY;
             constexpr static type MouseCapture = SDL3::SDL_WINDOW_MOUSE_CAPTURE;
             constexpr static type AlwaysOnTop = SDL3::SDL_WINDOW_ALWAYS_ON_TOP;

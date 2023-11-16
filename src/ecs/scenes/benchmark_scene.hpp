@@ -244,7 +244,7 @@ namespace rl::scene {
                 SDL3::SDL_RWops* src = SDL3::SDL_RWFromConstMem(data.data(), data.size());
                 if (src != nullptr)
                 {
-                    sdl::surface surface = SDL3::SDL_LoadBMP_RW(src, SDL3::SDL_TRUE);
+                    sdl::surface surface = SDL3::SDL_LoadBMP_RW(src, SDL_TRUE);
                     if (surface.is_valid())
                     {
                         /* Treat white as transparent */

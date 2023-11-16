@@ -60,7 +60,7 @@ namespace rl::sdl {
             static inline constexpr type DispContentScaleChanged = SDL3::SDL_EVENT_DISPLAY_CONTENT_SCALE_CHANGED;
             static inline constexpr type DisplayFirst = SDL3::SDL_EVENT_DISPLAY_FIRST;
             static inline constexpr type DisplayLast = SDL3::SDL_EVENT_DISPLAY_LAST;
-            static inline constexpr type SysWM = SDL3::SDL_EVENT_SYSWM;
+           
             static inline constexpr type WindowShown = SDL3::SDL_EVENT_WINDOW_SHOWN;
             static inline constexpr type WindowHidden = SDL3::SDL_EVENT_WINDOW_HIDDEN;
             static inline constexpr type WindowExposed = SDL3::SDL_EVENT_WINDOW_EXPOSED;
@@ -89,7 +89,7 @@ namespace rl::sdl {
             static inline constexpr type TextEditing = SDL3::SDL_EVENT_TEXT_EDITING;
             static inline constexpr type TextInput = SDL3::SDL_EVENT_TEXT_INPUT;
             static inline constexpr type KeymapChanged = SDL3::SDL_EVENT_KEYMAP_CHANGED;
-            static inline constexpr type TextEditingExt = SDL3::SDL_EVENT_TEXT_EDITING_EXT;
+
             static inline constexpr type MouseMotion = SDL3::SDL_EVENT_MOUSE_MOTION;
             static inline constexpr type MouseButtonDown = SDL3::SDL_EVENT_MOUSE_BUTTON_DOWN;
             static inline constexpr type MouseButtonUp = SDL3::SDL_EVENT_MOUSE_BUTTON_UP;
