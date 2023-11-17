@@ -58,7 +58,6 @@ namespace rl::sdl {
 
         ~application()
         {
-            SDL3::SDL_Quit();
         }
 
         application& operator=(const application& other) = delete;
@@ -67,6 +66,11 @@ namespace rl::sdl {
         bool handle_events()
         {
             return m_event_handler.handle_events();
+        }
+
+        bool quit_triggered() const
+        {
+            return m_event_handler.quit_triggered();
         }
 
         bool is_initialized() const

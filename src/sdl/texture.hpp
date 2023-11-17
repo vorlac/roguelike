@@ -25,7 +25,7 @@ namespace rl::sdl {
         texture() = default;
         texture(const sdl::texture& other) = delete;
 
-        texture(SDL3::SDL_Texture*&& other);
+        texture(SDL3::SDL_Texture* other);
         texture(sdl::texture&& other);
         texture(sdl::renderer& renderer, const sdl::surface& surface);
         texture(std::shared_ptr<sdl::renderer> renderer, const sdl::surface& surface);
@@ -41,7 +41,7 @@ namespace rl::sdl {
                           ds::dimensions<i32>& dims);
 
         texture& operator=(texture&& other);
-        texture& operator=(SDL3::SDL_Texture*&& other) &&;
+        texture& operator=(SDL3::SDL_Texture* other);
 
         bool update(const void* pixels, i32 pitch,
                     const ds::rect<i32>& rect = ds::rect<i32>::null());

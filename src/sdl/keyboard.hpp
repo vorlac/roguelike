@@ -1,6 +1,7 @@
 #pragma once
 
 #include <bitset>
+#include <string>
 
 #include <fmt/format.h>
 
@@ -11,6 +12,8 @@ namespace SDL3 {
 }
 
 namespace rl::sdl {
+    class event_handler;
+
     class Keyboard
     {
     public:
@@ -536,48 +539,69 @@ namespace rl::sdl {
         };
 
     public:
-        inline void process_button_down(Keyboard::Button::type kb_button)
+        constexpr Keyboard() = default;
+        constexpr ~Keyboard() = default;
+
+        constexpr inline bool is_button_pressed(const Keyboard::Button::type key) const
         {
-            if (this->is_button_down(kb_button))
-                m_buttons_held[kb_button] = 1;
-            else
-                m_buttons_pressed[kb_button] = 1;
+            return m_pressed[key];
         }
 
-        inline void process_button_up(Keyboard::Button::type kb_button)
+        constexpr inline bool is_button_released(const Keyboard::Button::type key)
         {
-            m_buttons_pressed[kb_button] = 0;
-            m_buttons_held[kb_button] = 0;
+            const bool ret = m_released[key];
+            m_released[key] = false;
+            return ret;
         }
 
-        inline bool is_button_down(const Keyboard::Button::type kb_button) const
+        constexpr inline bool is_button_held(const Keyboard::Button::type key) const
         {
-            return m_buttons_pressed[kb_button] != 0;
+            return m_held[key];
         }
 
-        inline bool is_button_held(const Keyboard::Button::type kb_button) const
+        constexpr inline auto get_key_state(const Keyboard::Button::type kb_button)
         {
-            return m_buttons_pressed[kb_button] != 0;
-        }
-
-        inline std::string get_key_state(const Keyboard::Button::type kb_button) const
-        {
-            return this->is_button_held(kb_button) ? "Held"
-                 : this->is_button_down(kb_button) ? "Pressed"
-                 : this->is_button_down(kb_button) ? "Released"
-                                                   : "None";
+            return this->is_button_held(kb_button)     ? "Holding"
+                 : this->is_button_pressed(kb_button)  ? "Pressed"
+                 : this->is_button_released(kb_button) ? "Released"
+                                                       : "None";
         }
 
     private:
-        std::bitset<Button::ScancodeCount> m_buttons_pressed{ 0 };
-        std::bitset<Button::ScancodeCount> m_buttons_held{ 0 };
+        friend class rl::sdl::event_handler;
+
+        constexpr inline void process_button_down(Keyboard::Button::type key)
+        {
+            m_released[key] = false;
+            auto& keystates = this->is_button_pressed(key)  //
+                                ? m_held                    //
+                                : m_pressed;                //
+            keystates[key] = 1;
+        }
+
+        constexpr inline void process_button_up(Keyboard::Button::type key)
+        {
+            m_held[key] = false;
+            m_pressed[key] = false;
+            m_released[key] = true;
+        }
+
+    private:
+        std::bitset<Button::ScancodeCount> m_held{ 0 };
+        std::bitset<Button::ScancodeCount> m_pressed{ 0 };
+        std::bitset<Button::ScancodeCount> m_released{ 0 };
     };
 
-    inline auto format_as(const Keyboard& kb)
+}
+
+namespace rl::sdl {
+    constexpr inline std::string format_as(Keyboard kb)
     {
-        return fmt::format("KB[W={} A={}, S={}, D={}]", kb.get_key_state(Keyboard::Button::W),
-                           kb.get_key_state(Keyboard::Button::A),
-                           kb.get_key_state(Keyboard::Button::S),
-                           kb.get_key_state(Keyboard::Button::D));
+        return fmt::format("KB[W={} A={}, S={}, D={}]",
+                           kb.get_key_state(Keyboard::Button::W),  //
+                           kb.get_key_state(Keyboard::Button::A),  //
+                           kb.get_key_state(Keyboard::Button::S),  //
+                           kb.get_key_state(Keyboard::Button::D))
+            .data();
     }
 }

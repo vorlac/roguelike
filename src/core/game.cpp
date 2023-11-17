@@ -5,6 +5,7 @@
 #include <thread>
 
 #include <flecs.h>
+#include <fmt/core.h>
 #include <fmt/format.h>
 
 #include "core/game.hpp"
@@ -38,7 +39,6 @@ namespace rl {
         // restrict to one active scene at a time
         m_world.component<scene::active>().add(flecs::Exclusive);
         scene::set_active<scene::benchmark_scene>(m_world);
-
         runtime_assert(result, "failed to initialize game");
         if (result)
         {
@@ -51,12 +51,8 @@ namespace rl {
 
     inline bool Game::quit_requested() const
     {
-        return false;
-        // return m_world.should_quit();
-
-        // SDL3::SDL_PumpEvents();
-        // return SDL3::SDL_PeepEvents(nullptr, 0, SDL3::SDL_PEEKEVENT, SDL3::SDL_EVENT_QUIT,
-        //                             SDL3::SDL_EVENT_QUIT) > 0;
+        return m_sdl.quit_triggered() ||  //
+               m_world.should_quit();
     }
 
     bool Game::handle_events()
@@ -91,16 +87,17 @@ namespace rl {
 
         u32 loop_count = 0;
         sdl::hrtimer timer{};
-        while (m_world.progress())
+        while (this->handle_events())
         {
-            this->handle_events();
-            if (++loop_count % 120 == 0)
+            if (this->quit_requested()) [[unlikely]]
+                break;
+
+            m_world.progress();
+            if (++loop_count % 60 == 0)
             {
-                printf(fmt::format(io::locale,
-                                   " {:>14.6f} s || {:>10L} u ][ {:>10.4f} ms ][ {:>10.4f} ups ]\n",
-                                   timer.elapsed_sec(), loop_count, m_world.delta_time(),
-                                   loop_count / timer.elapsed_sec())
-                           .c_str());
+                fmt::println(" {:>14.6f} s || {:>10L} u ][ {:>10.4f} ms ][ {:>10.4f} ups ]",
+                             timer.elapsed_sec(), loop_count, m_world.delta_time() * 1000.0,
+                             loop_count / timer.elapsed_sec());
             }
         }
         return this->teardown();
@@ -113,12 +110,12 @@ namespace rl {
 
     void Game::quit()
     {
-        m_world.quit();
         this->teardown();
     }
 
     bool Game::teardown()
     {
+        scene::benchmark::deinit();
         return true;
     }
 

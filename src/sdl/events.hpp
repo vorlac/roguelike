@@ -1,7 +1,5 @@
 #pragma once
 
-#include <fmt/format.h>
-
 #include "core/utils/io.hpp"
 #include "sdl/keyboard.hpp"
 #include "sdl/mouse.hpp"
@@ -14,17 +12,9 @@ namespace rl::sdl {
     class event_handler
     {
     public:
-        enum ButtonState {
-            Pressed = 0,
-            Released = 1,
-        };
-
-    public:
         bool handle_events()
         {
             SDL3::SDL_Event e{};
-
-            // Handle any queued events
             while (SDL3::SDL_PollEvent(&e) != 0)
             {
                 switch (e.type)
@@ -61,6 +51,11 @@ namespace rl::sdl {
             return true;
         }
 
+        inline bool quit_triggered() const
+        {
+            return m_quit;
+        }
+
     private:
         bool m_quit = false;
         Mouse m_mouse{};
@@ -68,16 +63,19 @@ namespace rl::sdl {
 
     public:
         // clang-format off
-        struct EventAction
-        {
+        enum ButtonState {
+            Pressed = 0,
+            Released = 1,
+        };
+
+        struct EventAction {
             using type = SDL3::SDL_eventaction;
             static inline constexpr type Add = SDL3::SDL_ADDEVENT;
             static inline constexpr type Peek = SDL3::SDL_PEEKEVENT;
             static inline constexpr type Get = SDL3::SDL_GETEVENT;
         };
 
-        struct Event
-        {
+        struct Event {
             using type = SDL3::SDL_EventType;
             static inline constexpr type First = SDL3::SDL_EVENT_FIRST;
             static inline constexpr type Quit = SDL3::SDL_EVENT_QUIT;
@@ -180,5 +178,4 @@ namespace rl::sdl {
 
         // clang-format on
     };
-
 }

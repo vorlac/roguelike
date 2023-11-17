@@ -133,85 +133,86 @@ namespace rl::scene {
                     });
             }
 
-            /*static void define_player_movement(flecs::world& world)
+            // static void define_player_movement(flecs::world& world)
+            // {
+            //     static float delta_time{ 0.0f };
+            //     constexpr float target_speed{ 100.0f };
+            //     static std::vector<input::GameplayAction> input_actions{};
+
+            //     world.system<component::character, component::velocity>("Player Movement")
+            //         .kind(flecs::OnUpdate)
+            //         .run([](flecs::iter_t* it) {
+            //             delta_time = it->delta_system_time;
+            //             input_actions = m_input.active_game_actions();
+            //             while (ecs_iter_next(it))
+            //                 it->callback(it);
+            //         })
+            //         .interval(1.0f / 120.0f)
+            //         .each([](flecs::entity, component::character&, component::velocity& vel) {
+            //             std::vector<input::GameplayAction> inputs{
+            //                 m_input.active_game_actions(),
+            //             };
+
+            //             if (inputs.empty())
+            //                 return;
+
+            //             for (const auto action : inputs)
+            //             {
+            //                 switch (action)
+            //                 {
+            //                     case input::GameplayAction::None:
+            //                         [[fallthrough]];
+            //                     case input::GameplayAction::Dash:
+            //                         [[fallthrough]];
+            //                     case input::GameplayAction::Shoot:
+            //                         [[fallthrough]];
+            //                     case input::GameplayAction::UseItem:
+            //                         [[fallthrough]];
+            //                     case input::GameplayAction::NextWeapon:
+            //                         [[fallthrough]];
+            //                     case input::GameplayAction::PrevWeapon:
+            //                         [[fallthrough]];
+            //                     case input::GameplayAction::ToggleDebugInfo:
+            //                         [[fallthrough]];
+            //                     case input::GameplayAction::RotateUp:
+            //                         [[fallthrough]];
+            //                     case input::GameplayAction::RotateDown:
+            //                         [[fallthrough]];
+            //                     case input::GameplayAction::RotateLeft:
+            //                         [[fallthrough]];
+            //                     case input::GameplayAction::RotateRight:
+            //                         break;
+
+            //                     case input::GameplayAction::MoveLeft:
+            //                         vel.x -= 1.0f * target_speed * delta_time;
+            //                         break;
+            //                     case input::GameplayAction::MoveRight:
+            //                         vel.x += 1.0f * target_speed * delta_time;
+            //                         break;
+            //                     case input::GameplayAction::MoveUp:
+            //                         vel.y -= 1.0f * target_speed * delta_time;
+            //                         break;
+            //                     case input::GameplayAction::MoveDown:
+            //                         vel.y += 1.0f * target_speed * delta_time;
+            //                         break;
+            //                 }
+            //             }
+            //         });
+            // }
+
+            static void define_entity_rendering(
+                flecs::world& world, std::shared_ptr<sdl::renderer> renderer, sdl::texture& sprite)
             {
-                static float delta_time{ 0.0f };
-                constexpr float target_speed{ 100.0f };
-                static std::vector<input::GameplayAction> input_actions{};
-
-                world.system<component::character, component::velocity>("Player Movement")
-                    .kind(flecs::OnUpdate)
-                    .run([](flecs::iter_t* it) {
-                        delta_time = it->delta_system_time;
-                        input_actions = m_input.active_game_actions();
-                        while (ecs_iter_next(it))
-                            it->callback(it);
-                    })
-                    .interval(1.0f / 120.0f)
-                    .each([](flecs::entity, component::character&, component::velocity& vel) {
-                        std::vector<input::GameplayAction> inputs{
-                            m_input.active_game_actions(),
-                        };
-
-                        if (inputs.empty())
-                            return;
-
-                        for (const auto action : inputs)
-                        {
-                            switch (action)
-                            {
-                                case input::GameplayAction::None:
-                                    [[fallthrough]];
-                                case input::GameplayAction::Dash:
-                                    [[fallthrough]];
-                                case input::GameplayAction::Shoot:
-                                    [[fallthrough]];
-                                case input::GameplayAction::UseItem:
-                                    [[fallthrough]];
-                                case input::GameplayAction::NextWeapon:
-                                    [[fallthrough]];
-                                case input::GameplayAction::PrevWeapon:
-                                    [[fallthrough]];
-                                case input::GameplayAction::ToggleDebugInfo:
-                                    [[fallthrough]];
-                                case input::GameplayAction::RotateUp:
-                                    [[fallthrough]];
-                                case input::GameplayAction::RotateDown:
-                                    [[fallthrough]];
-                                case input::GameplayAction::RotateLeft:
-                                    [[fallthrough]];
-                                case input::GameplayAction::RotateRight:
-                                    break;
-
-                                case input::GameplayAction::MoveLeft:
-                                    vel.x -= 1.0f * target_speed * delta_time;
-                                    break;
-                                case input::GameplayAction::MoveRight:
-                                    vel.x += 1.0f * target_speed * delta_time;
-                                    break;
-                                case input::GameplayAction::MoveUp:
-                                    vel.y -= 1.0f * target_speed * delta_time;
-                                    break;
-                                case input::GameplayAction::MoveDown:
-                                    vel.y += 1.0f * target_speed * delta_time;
-                                    break;
-                            }
-                        }
-                    });
-            }*/
-
-            static void define_entity_rendering(flecs::world& world,
-                                                std::shared_ptr<sdl::renderer> renderer)
-            {
-                m_render_ref = std::shared_ptr(renderer);
+                m_render_ref = renderer.get();
+                *m_sprite = std::move(sprite);
                 world
                     .system<const component::position, const component::style,
                             const component::scale>("Render Rects")
-                    .multi_threaded(false)
                     .kind(flecs::PostUpdate)
                     .run([](flecs::iter_t* it) {
                         m_render_ref->set_draw_color({ 0xA0, 0xA0, 0xA0, 0xFF });
                         m_render_ref->clear();
+
                         while (ecs_iter_next(it))
                             it->callback(it);
 
@@ -219,7 +220,7 @@ namespace rl::scene {
                     })
                     .each([&](const component::position& p, const component::style& c,
                               const component::scale& s) {
-                        m_render_ref->draw_texture(m_sprite, ds::rect<f32>::null(),
+                        m_render_ref->draw_texture(*m_sprite, ds::rect<f32>::null(),
                                                    ds::rect<f32>{ { p.x, p.y }, { 15, 15 } });
                     });
             }
@@ -244,27 +245,15 @@ namespace rl::scene {
                 SDL3::SDL_RWops* src = SDL3::SDL_RWFromConstMem(data.data(), data.size());
                 if (src != nullptr)
                 {
+                    /* Treat white as transparent */
+                    sdl::color c{ 255, 255, 255 };
                     sdl::surface surface = SDL3::SDL_LoadBMP_RW(src, SDL_TRUE);
                     if (surface.is_valid())
                     {
-                        /* Treat white as transparent */
-                        sdl::color c{ 255, 255, 255 };
-
                         surface.set_color_key(true, c.rgb(surface.get_format_full()));
-                        sdl::texture texture{ renderer, surface };
-
-                        auto dims = surface.size();
-                        ds::dimensions<i32> dims2 = {
-                            surface.sdl_handle()->w,
-                            surface.sdl_handle()->h,
-                        };
-
-                        runtime_assert(dims == dims2, "??");
-
-                        size.width = surface.sdl_handle()->w;
-                        size.height = surface.sdl_handle()->h;
-
-                        return texture;
+                        sdl::texture texture{ *renderer, surface };
+                        size = surface.size();
+                        return std::move(texture);
                     }
                 }
 
@@ -276,10 +265,10 @@ namespace rl::scene {
             {
                 ds::dimensions<i32> sprite_size{ 0, 0 };
                 std::vector<u8> icon_data = { icon_bmp, icon_bmp + icon_bmp_len };
-                m_sprite = create_texture(window.renderer(), icon_data, sprite_size);
-                runtime_assert(m_sprite.is_valid(), "failed to load sprite");
+                auto sprite = create_texture(window.renderer(), icon_data, sprite_size);
+                runtime_assert(sprite.is_valid(), "failed to load sprite");
                 define_rect_movement(world, window.get_size());
-                define_entity_rendering(world, window.renderer());
+                define_entity_rendering(world, window.renderer(), sprite);
                 define_entity_timeout(world);
             }
         };
@@ -310,6 +299,14 @@ namespace rl::scene {
                 });
         }
 
+        static bool deinit()
+        {
+            if (m_sprite != nullptr)
+                delete m_sprite;
+
+            return m_sprite == nullptr;
+        }
+
     public:
         scene::pipeline pipeline{};
 
@@ -318,7 +315,7 @@ namespace rl::scene {
         static inline thread_local i64 m_update_calls{ 0 };
         constexpr static inline ds::dimensions<i32> rect_size{ 10, 10 };
         static inline ds::dimensions<i32> render_size{ 0, 0 };
-        static inline std::shared_ptr<sdl::renderer> m_render_ref{ nullptr };
-        static inline sdl::texture m_sprite{};
+        static inline sdl::renderer* m_render_ref{ nullptr };
+        static inline sdl::texture* m_sprite{ new sdl::texture };
     };
 }

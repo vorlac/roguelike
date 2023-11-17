@@ -65,11 +65,11 @@ namespace rl::sdl {
     public:
         struct flag
         {
-            using type = SDL3::SDL_RendererFlags;
+            using type = std::underlying_type_t<SDL3::SDL_RendererFlags>;
             constexpr static inline type Software{ SDL3::SDL_RENDERER_SOFTWARE };
             constexpr static inline type HWAccelerated{ SDL3::SDL_RENDERER_ACCELERATED };
             constexpr static inline type VSync{ SDL3::SDL_RENDERER_PRESENTVSYNC };
-            constexpr static inline type Defaults{ flag::HWAccelerated };
+            constexpr static inline type Defaults = HWAccelerated | VSync;
         };
 
         struct driver
@@ -86,7 +86,7 @@ namespace rl::sdl {
 
         struct defaults
         {
-            constexpr static inline auto Driver = driver::DirectX12;
+            constexpr static inline auto Driver = driver::OpenGL;
         };
 
         renderer() = delete;

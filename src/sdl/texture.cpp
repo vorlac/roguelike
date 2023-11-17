@@ -8,7 +8,7 @@ namespace SDL3 {
 }
 
 namespace rl::sdl {
-    texture::texture(SDL3::SDL_Texture*&& other)
+    texture::texture(SDL3::SDL_Texture* other)
         : m_sdl_texture(other)
     {
         sdl_assert(m_sdl_texture != nullptr, "failed to create texture");
@@ -54,12 +54,14 @@ namespace rl::sdl {
                     return this->is_locked == false;
                 }))
             {
+                runtime_assert(!this->is_locked.load(std::memory_order_relaxed),
+                               "deleting locked texture");
                 SDL3::SDL_DestroyTexture(m_sdl_texture);
             }
         }
     }
 
-    texture& texture::operator=(SDL3::SDL_Texture*&& other) &&
+    texture& texture::operator=(SDL3::SDL_Texture* other)
     {
         if (m_sdl_texture != nullptr)
         {
