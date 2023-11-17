@@ -1,6 +1,8 @@
 #pragma once
 
 #include <memory>
+#include <tuple>
+#include <utility>
 #include <vector>
 
 #include <flecs.h>
@@ -36,6 +38,8 @@ SDL_C_LIB_END
 namespace rl::scene {
     struct benchmark
     {
+        constexpr static inline size_t ENTITY_COUNT = 50000;
+
         struct observer
         {
             static auto onadd_benchmark_scene(flecs::iter& it, size_t, scene::active)
@@ -46,7 +50,7 @@ namespace rl::scene {
                 flecs::entity scene = world.component<scene::root>();
                 scene::reset(world);
 
-                auto rect = m_render_ref->get_viewport();
+                auto rect = m_renderer->get_viewport();
                 const ds::point<f32> centroid = rect.centroid();
 
                 srand((u32)time(nullptr));
@@ -56,8 +60,7 @@ namespace rl::scene {
                     rand() % 128,
                 };
 
-                constexpr size_t count = 25000;
-                for (size_t i = 0; i < count; ++i)
+                for (size_t i = 0; i < benchmark::ENTITY_COUNT; ++i)
                 {
                     u32 xv = rand() % 2000;
                     u32 yv = rand() % 2000;
@@ -98,14 +101,14 @@ namespace rl::scene {
             {
                 const static auto window_size = window_rect;
 
-                static auto top_bottom_collision = [&](const component::position& pos) {
+                constexpr static auto top_bottom_collision = [&](const component::position& pos) {
                     bool top_collision = pos.y - (rect_size.height / 2.0f) <= 0.0f;
                     bool bottom_collision = pos.y + (rect_size.height / 2.0f) >=
                                             cast::to<float>(window_size.height);
                     return top_collision || bottom_collision;
                 };
 
-                static auto left_right_collision = [&](const component::position& pos) {
+                constexpr static auto left_right_collision = [&](const component::position& pos) {
                     bool left_collision = pos.x - (rect_size.width / 2.0f) <= 0.0f;
                     bool right_collision = pos.x + (rect_size.width / 2.0f) >=
                                            cast::to<float>(window_size.width);
@@ -114,11 +117,9 @@ namespace rl::scene {
 
                 world.system<component::position, component::velocity>("Rect Movement")
                     .kind(flecs::OnUpdate)
+                    .multi_threaded(true)
                     .interval(1.0f / 120.0f)
                     .run([](flecs::iter_t* it) {
-                        /*if (++m_update_calls % 120 == 0)
-                            rl::log::info("delta time: [{:>10.6f} ms]", m_delta_time);*/
-
                         m_delta_time = it->delta_system_time;
                         while (ecs_iter_next(it))
                             it->callback(it);
@@ -126,6 +127,7 @@ namespace rl::scene {
                     .each([](flecs::entity, component::position& pos, component::velocity& vel) {
                         pos.x += vel.x * static_cast<f32>(m_delta_time);
                         pos.y += vel.y * static_cast<f32>(m_delta_time);
+
                         if (left_right_collision(pos))
                             vel.x = -vel.x;
                         if (top_bottom_collision(pos))
@@ -200,29 +202,83 @@ namespace rl::scene {
             //         });
             // }
 
+            constexpr static inline bool USE_RANDOM_COLORS = false;
+            constexpr static inline ds::dimensions<f32> RECT_SIZE = {
+                USE_RANDOM_COLORS ? ds::dimensions<f32>{ 10.0f, 10.0f }
+                                  : ds::dimensions<f32>{ 20.0f, 20.0f }
+            };
+
             static void define_entity_rendering(
-                flecs::world& world, std::shared_ptr<sdl::renderer> renderer, sdl::texture& sprite)
+                flecs::world& ecs, std::shared_ptr<sdl::renderer> renderer, sdl::texture& sprite)
             {
-                m_render_ref = renderer.get();
                 *m_sprite = std::move(sprite);
-                world
-                    .system<const component::position, const component::style,
-                            const component::scale>("Render Rects")
+
+                m_renderer = renderer.get();
+                m_renderer->set_draw_blend_mode(USE_RANDOM_COLORS ? sdl::renderer::blend_mode::Blend
+                                                                  : sdl::renderer::blend_mode::Mod);
+
+                static u32 count = 0;
+                static sdl::color c = { 100, 200, 100, 75 };
+                static std::vector<ds::rect<f32>> rects = {};
+                if constexpr (!USE_RANDOM_COLORS)
+                    rects.reserve(benchmark::ENTITY_COUNT);
+
+                static std::vector<std::pair<ds::rect<f32>, sdl::color>> rect_colors = {};
+                if constexpr (USE_RANDOM_COLORS)
+                    rect_colors.reserve(benchmark::ENTITY_COUNT);
+
+                ecs.system<const component::position, const component::style, const component::scale>(
+                       "Render Rects")
                     .kind(flecs::PostUpdate)
+                    .multi_threaded(true)
                     .run([](flecs::iter_t* it) {
-                        m_render_ref->set_draw_color({ 0xA0, 0xA0, 0xA0, 0xFF });
-                        m_render_ref->clear();
+                        m_renderer->clear({ 100, 100, 100, 175 });
+                        USE_RANDOM_COLORS ? rect_colors.clear()  //
+                                          : rects.clear();
+
+                        static i16 ga = 1;
+                        static i16 ba = 1;
+
+                        if ((++count % 120) == 0)
+                        {
+                            if (c.g > 250 || c.g < 105)
+                                ga *= -1;
+                            if (c.b > 250 || c.b < 105)
+                                ba *= -1;
+
+                            c.g += cast::to<u8>(ga);
+                            c.b += cast::to<u8>(ba);
+
+                            // c = {
+                            //     (u8)c.r,
+                            //     (u8)(((c.g + 1) % 255) - 55),
+                            //     (u8)(((c.b - 1) % 255) - 55),
+                            //     50,
+                            // };
+                        }
 
                         while (ecs_iter_next(it))
                             it->callback(it);
 
-                        m_render_ref->present();
+                        USE_RANDOM_COLORS
+                        ? m_renderer->fill_rects(rect_colors)  //
+                        : m_renderer->fill_rects(rects, c);
+
+                        m_renderer->present();
                     })
-                    .each([&](const component::position& p, const component::style& c,
-                              const component::scale& s) {
-                        m_render_ref->draw_texture(*m_sprite, ds::rect<f32>::null(),
-                                                   ds::rect<f32>{ { p.x, p.y }, { 15, 15 } });
-                    });
+                    .each([&](const rl::component::position& position,
+                              const rl::component::style& rect_color,
+                              const rl::component::scale& size_scale)  //
+                          {
+                              if constexpr (USE_RANDOM_COLORS)
+                                  rect_colors.emplace_back(
+                                      std::forward<const ds::rect<f32>>(
+                                          { position, RECT_SIZE * size_scale }),
+                                      std::forward<const sdl::color>(rect_color.color));
+
+                              if constexpr (!USE_RANDOM_COLORS)
+                                  rects.emplace_back(position, RECT_SIZE * size_scale.factor);
+                          });
             }
 
             static void define_entity_timeout(flecs::world& world)
@@ -315,7 +371,7 @@ namespace rl::scene {
         static inline thread_local i64 m_update_calls{ 0 };
         constexpr static inline ds::dimensions<i32> rect_size{ 10, 10 };
         static inline ds::dimensions<i32> render_size{ 0, 0 };
-        static inline sdl::renderer* m_render_ref{ nullptr };
+        static inline sdl::renderer* m_renderer{ nullptr };
         static inline sdl::texture* m_sprite{ new sdl::texture };
     };
 }

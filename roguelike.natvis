@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+	<Type Name="::SDL_Color">
+		<DisplayString>
+			SDL_Color{{ .r={r,nvo}, .g={g,nvo}, .b={r,nvo} }}
+		</DisplayString>
+		<Expand>
+		    <Item Name="r">r,nvob</Item>
+		    <Item Name="g">g,nvo</Item>
+		    <Item Name="b">b,nvo</Item>
+		</Expand>
+	</Type>
+
+	<Type Name="rl::sdl::color">
+		<DisplayString>
+			R:({r,nvo}=&gt;{r,nvoX})  
+			G:({g,nvo}=&gt;{g,nvoX})  
+			B:({b,nvo}=&gt;{b,nvoX})  
+			A:({a,nvo}=&gt;{a,nvoX}) 
+		</DisplayString>
+		<Expand> 
+		    <Item Name="[RGBA hex]">
+				(uint32_t)(r &lt;&lt; 24)|(g &lt;&lt; 16)|(b &lt;&lt; 8 )|(a),nvoH
+			</Item>
+			<Item Name="[SDL_Color]">
+				((SDL_Color*)this),na
+			</Item>
+			<Item Name="* red">r,nvo</Item>
+			<Item Name="* green">g,nvo</Item>
+			<Item Name="* blue">b,nvo</Item>
+			<Item Name="* alpha">a,nvo</Item>
+		</Expand> 
+	</Type>
+</AutoVisualizer>

@@ -4,13 +4,14 @@
 #include <concepts>
 #include <tuple>
 
+#include <fmt/color.h>
+
 #include "core/numeric_types.hpp"
 #include "core/utils/assert.hpp"
 #include "core/utils/concepts.hpp"
 #include "core/utils/conversions.hpp"
 #include "core/utils/memory.hpp"
 #include "sdl/defs.hpp"
-
 SDL_C_LIB_BEGIN
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_pixels.h>
@@ -73,6 +74,24 @@ namespace rl::sdl {
         {
         }
 
+        // 0xRRGGBBAA
+        constexpr inline color(u32 rgba)
+            : r{ cast::to<u8>(0xff & (rgba >> (8 * 3))) }
+            , g{ cast::to<u8>(0xff & (rgba >> (8 * 2))) }
+            , b{ cast::to<u8>(0xff & (rgba >> (8 * 1))) }
+            , a{ cast::to<u8>(0xff & (rgba >> (8 * 0))) }
+        {
+        }
+
+        // 0x00RRGGBB
+        constexpr inline color(fmt::rgb rgb)
+            : r{ rgb.r }
+            , g{ rgb.g }
+            , b{ rgb.b }
+            , a{ Alpha::Opaque }
+        {
+        }
+
         constexpr inline color(const SDL3::SDL_Color& c)
             : r{ c.r }
             , g{ c.g }
@@ -81,12 +100,126 @@ namespace rl::sdl {
         {
         }
 
-        constexpr inline color(SDL3::SDL_Color c)
+        constexpr inline color(SDL3::SDL_Color&& c)
             : r{ c.r }
             , g{ c.g }
             , b{ c.b }
             , a{ c.a }
         {
+        }
+
+        constexpr inline sdl::color operator+(const sdl::color& other) const
+        {
+            return {
+                static_cast<u8>(r + other.r),
+                static_cast<u8>(g + other.g),
+                static_cast<u8>(b + other.b),
+                static_cast<u8>(a + other.a),
+            };
+        }
+
+        constexpr inline sdl::color operator-(const sdl::color& other) const
+        {
+            return {
+                static_cast<u8>(r - other.r),
+                static_cast<u8>(g - other.g),
+                static_cast<u8>(b - other.b),
+                static_cast<u8>(a - other.a),
+            };
+        }
+
+        constexpr inline sdl::color operator*(const sdl::color& other) const
+        {
+            return {
+                static_cast<u8>(r * other.r),
+                static_cast<u8>(g * other.g),
+                static_cast<u8>(b * other.b),
+                static_cast<u8>(a * other.a),
+            };
+        }
+
+        constexpr inline sdl::color operator/(const sdl::color& other) const
+        {
+            return {
+                static_cast<u8>(r / other.r),
+                static_cast<u8>(g / other.g),
+                static_cast<u8>(b / other.b),
+                static_cast<u8>(a / other.a),
+            };
+        }
+
+        template <rl::numeric T>
+        constexpr inline sdl::color operator+(const T val) const
+        {
+            return {
+                static_cast<u8>(r + val),
+                static_cast<u8>(g + val),
+                static_cast<u8>(b + val),
+                static_cast<u8>(a + val),
+            };
+        }
+
+        template <rl::numeric T>
+        constexpr inline sdl::color operator-(const T val) const
+        {
+            return {
+                static_cast<u8>(r - val),
+                static_cast<u8>(g - val),
+                static_cast<u8>(b - val),
+                static_cast<u8>(a - val),
+            };
+        }
+
+        template <rl::numeric T>
+        constexpr inline sdl::color operator*(const T val) const
+        {
+            return {
+                static_cast<u8>(r * val),
+                static_cast<u8>(g * val),
+                static_cast<u8>(b * val),
+                static_cast<u8>(a * val),
+            };
+        }
+
+        template <rl::numeric T>
+        constexpr inline sdl::color operator/(const T val) const
+        {
+            return {
+                static_cast<u8>(r / val),
+                static_cast<u8>(g / val),
+                static_cast<u8>(b / val),
+                static_cast<u8>(a / val),
+            };
+        }
+
+        constexpr inline color& operator+=(const sdl::color& other)
+        {
+            *this = (*this + other);
+            return *this;
+        }
+
+        constexpr inline color& operator-=(const sdl::color& other)
+        {
+            *this = (*this - other);
+            return *this;
+        }
+
+        constexpr inline color& operator*=(const sdl::color& other)
+        {
+            *this = (*this * other);
+            return *this;
+        }
+
+        constexpr inline color& operator/=(const sdl::color& other)
+        {
+            *this = (*this / other);
+            return *this;
+        }
+
+    public:
+        constexpr static inline color lerp(const color& s, const color& e, u8 w)
+        {
+            return color{ s + (e - s) * w };
         }
 
         inline u32 rgb(const SDL3::SDL_PixelFormat* format) const
@@ -99,27 +232,42 @@ namespace rl::sdl {
             return SDL3::SDL_MapRGBA(format, this->r, this->g, this->b, this->a);
         }
 
-        constexpr inline bool operator==(const sdl::color& other)
+        constexpr inline bool operator==(const color& other) const
         {
             return 0 == memory::static_memcmp<sizeof(*this)>(this, &other);
         }
 
-        constexpr inline bool operator!=(const sdl::color& other)
+        constexpr inline bool is_empty() const
+        {
+            return this->operator==({});
+        }
+
+        constexpr inline bool operator!=(const color& other) const
         {
             return !this->operator==(other);
         }
 
-        inline operator SDL3::SDL_Color()
+        constexpr inline operator SDL3::SDL_Color()
         {
-            return *reinterpret_cast<SDL3::SDL_Color*>(this);
+            return *((SDL3::SDL_Color*)this);
         }
 
-        constexpr inline operator std::array<u8, 4>()
+        constexpr inline operator fmt::rgb() const
+        {
+            return fmt::rgb{ r, g, b };
+        }
+
+        constexpr inline operator fmt::text_style() const
+        {
+            return fmt::fg(static_cast<fmt::rgb>(*this));
+        }
+
+        constexpr inline operator std::array<u8, 4>() const
         {
             return std::array<u8, 4>{ r, g, b, a };
         }
 
-        constexpr inline operator std::tuple<u8, u8, u8, u8>()
+        constexpr inline operator std::tuple<u8, u8, u8, u8>() const
         {
             return { r, g, b, a };
         }

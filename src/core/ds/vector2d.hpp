@@ -15,6 +15,7 @@
 #include "core/numeric_types.hpp"
 #include "core/utils/concepts.hpp"
 #include "core/utils/conversions.hpp"
+#include "ecs/components/transform_components.hpp"
 #include "sdl/defs.hpp"
 
 SDL_C_LIB_BEGIN
@@ -54,6 +55,13 @@ namespace rl::ds {
         constexpr vector2(vector2<T>&& other) noexcept
             : x{ std::forward<T>(other.x) }
             , y{ std::forward<T>(other.y) }
+        {
+        }
+
+        constexpr vector2(const rl::component::position& pos)
+            requires std::same_as<T, f32>
+            : x{ pos.x }
+            , y{ pos.y }
         {
         }
 
@@ -117,6 +125,18 @@ namespace rl::ds {
             requires std::same_as<T, f32>
         {
             return reinterpret_cast<const SDL3::SDL_FPoint*>(this);
+        }
+
+        constexpr operator rl::component::position()
+            requires std::same_as<T, f32>
+        {
+            return *static_cast<rl::component::position*>(this);
+        }
+
+        constexpr operator const rl::component::position() const
+            requires std::same_as<T, f32>
+        {
+            return *static_cast<const rl::component::position*>(this);
         }
 
         constexpr static inline vector2<T> null()

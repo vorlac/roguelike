@@ -40,11 +40,9 @@ namespace rl {
         m_world.component<scene::active>().add(flecs::Exclusive);
         scene::set_active<scene::benchmark_scene>(m_world);
         runtime_assert(result, "failed to initialize game");
-        if (result)
-        {
-            if constexpr (EXECUTE_TESTS)
-                result = this->run_tests(10);
-        }
+
+        if constexpr (EXECUTE_TESTS && result)
+            result = this->run_tests(10);
 
         return result;
     }
@@ -85,6 +83,17 @@ namespace rl {
     {
         this->setup();
 
+        // sdl::color start{ 128, 128, 128, 50 };
+        // sdl::color end{ 0, 0, 255, 50 };
+
+        // u8 val = 0;
+        // while (++val < 255)
+        // {
+        //     auto&& c = sdl::color::lerp(start, end, val);
+        //     fmt::print(c, "test\n");
+        //     val += 1;
+        // }
+
         u32 loop_count = 0;
         sdl::hrtimer timer{};
         while (this->handle_events())
@@ -95,11 +104,15 @@ namespace rl {
             m_world.progress();
             if (++loop_count % 60 == 0)
             {
-                fmt::println(" {:>14.6f} s || {:>10L} u ][ {:>10.4f} ms ][ {:>10.4f} ups ]",
-                             timer.elapsed_sec(), loop_count, m_world.delta_time() * 1000.0,
-                             loop_count / timer.elapsed_sec());
+                f32 delta_ms = m_world.delta_time() * 1000.0f;
+                f64 elapsed_s = timer.elapsed_sec();
+                fmt::println(
+                    " {:>14.6f} s || {:>10L} u ][ {:>10.4f} ms | {:>10.4f} fps ][ {:>10.4f} avg ups ]",
+                    timer.elapsed_sec(), loop_count, delta_ms, 1000.0f / delta_ms,
+                    loop_count / elapsed_s);
             }
         }
+
         return this->teardown();
     }
 

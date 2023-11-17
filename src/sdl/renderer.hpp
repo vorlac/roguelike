@@ -55,6 +55,17 @@ namespace rl::sdl {
             constexpr static inline auto Software{ "software" };
         };
 
+        struct blend_mode
+        {
+            using type = SDL3::SDL_BlendMode;
+            constexpr static inline auto None = SDL3::SDL_BLENDMODE_NONE;
+            constexpr static inline auto Blend = SDL3::SDL_BLENDMODE_BLEND;
+            constexpr static inline auto Add = SDL3::SDL_BLENDMODE_ADD;
+            constexpr static inline auto Mod = SDL3::SDL_BLENDMODE_MOD;
+            constexpr static inline auto Mul = SDL3::SDL_BLENDMODE_MUL;
+            constexpr static inline auto Invalid = SDL3::SDL_BLENDMODE_INVALID;
+        };
+
         struct defaults
         {
             constexpr static inline auto Driver = driver::OpenGL;
@@ -156,11 +167,12 @@ namespace rl::sdl {
             return result == 0;
         }
 
-        bool clear()
+        bool clear(const sdl::color& c = { 0, 0, 0 })
         {
-            const i32 result = SDL3::SDL_RenderClear(m_sdl_renderer);
-            sdl_assert(result == 0, "failed to clear renderer");
-            return result == 0;
+            bool ret = this->set_draw_color(c);
+            ret &= 0 == SDL3::SDL_RenderClear(m_sdl_renderer);
+            sdl_assert(ret, "failed to clear renderer");
+            return ret;
         }
 
         SDL3::SDL_RendererInfo get_info()
@@ -417,9 +429,13 @@ namespace rl::sdl {
             return result == 0;
         }
 
-        bool draw_rect(ds::rect<f32>&& rect)
+        bool draw_rect(ds::rect<f32>&& rect, const sdl::color& c = {})
         {
-            i32 result = SDL3::SDL_RenderRect(m_sdl_renderer, rect);
+            i32 result = 0;
+            if (!c.is_empty())
+                this->set_draw_color(c);
+
+            result |= SDL3::SDL_RenderRect(m_sdl_renderer, rect);
             sdl_assert(result == 0, "failed to draw rect");
             return result == 0;
         }
@@ -437,25 +453,42 @@ namespace rl::sdl {
             return result == 0;
         }
 
-        bool fill_rect(const ds::rect<f32>& rect = ds::rect<i32>::null())
+        bool fill_rect(const ds::rect<f32>& rect = ds::rect<i32>::null(), const sdl::color& c = {})
         {
-            i32 result = SDL3::SDL_RenderFillRect(m_sdl_renderer, rect);
+            i32 result = 0;
+            if (!c.is_empty())
+                this->set_draw_color(c);
+
+            result |= SDL3::SDL_RenderFillRect(m_sdl_renderer, rect);
             sdl_assert(result == 0, "failed to fill rect");
             return result == 0;
         }
 
-        bool fill_rects(const std::vector<ds::rect<f32>>& rects)
+        bool fill_rects(const std::vector<ds::rect<f32>>& rects, const sdl::color& c = {})
         {
             i32 result = 0;
 
             const i32 count{ cast::to<i32>(rects.size()) };
             if (count > 0) [[likely]]
             {
+                if (!c.is_empty())
+                    this->set_draw_color(c);
+
                 result = SDL3::SDL_RenderFillRects(m_sdl_renderer, rects.front(), count);
                 sdl_assert(result == 0, "failed to fill rects");
             }
 
             return result == 0;
+        }
+
+        bool fill_rects(const std::vector<std::pair<ds::rect<f32>, sdl::color>>& rects)
+        {
+            bool ret = true;
+
+            for (auto&& [r, c] : rects)
+                ret &= this->fill_rect(r, c);
+
+            return ret;
         }
 
         bool read_pixels(const ds::rect<i32>& rect, SDL3::SDL_PixelFormatEnum format, void* pixels,

@@ -15,6 +15,7 @@ namespace rl::sdl {
     public:
         bool handle_events()
         {
+            constexpr bool log_events = false;
             SDL3::SDL_Event e{};
             while (SDL3::SDL_PollEvent(&e) != 0)
             {
@@ -23,29 +24,36 @@ namespace rl::sdl {
                     // User requests quit
                     case Event::Quit:
                         m_quit = true;
+                        break;
                     case Mouse::Event::MouseWheel:
                         m_mouse.process_wheel(e.wheel);
-                        log::info("{}", m_mouse);
+                        if constexpr (log_events)
+                            log::info("{}", m_mouse);
                         break;
                     case Mouse::Event::MouseMotion:
                         m_mouse.process_motion(e.motion);
-                        log::info("{}", m_mouse);
+                        if constexpr (log_events)
+                            log::info("{}", m_mouse);
                         break;
                     case Mouse::Event::MouseButtonDown:
                         m_mouse.process_button_down(e.button.button);
-                        log::info("{}", m_mouse);
+                        if constexpr (log_events)
+                            log::info("{}", m_mouse);
                         break;
                     case Mouse::Event::MouseButtonUp:
                         m_mouse.process_button_up(e.button.button);
-                        log::info("{}", m_mouse);
+                        if constexpr (log_events)
+                            log::info("{}", m_mouse);
                         break;
                     case Keyboard::Event::KeyDown:
                         m_keyboard.process_button_down(e.key.keysym.scancode);
-                        log::info("{}", m_keyboard);
+                        if constexpr (log_events)
+                            log::info("{}", m_keyboard);
                         break;
                     case Keyboard::Event::KeyUp:
                         m_keyboard.process_button_up(e.key.keysym.scancode);
-                        log::info("{}", m_keyboard);
+                        if constexpr (log_events)
+                            log::info("{}", m_keyboard);
                         break;
                 }
             }
