@@ -1,3 +1,19 @@
+Natvis Resources
+-----------------
+https://code.visualstudio.com/docs/cpp/natvis
+
+
+Natvis file locations
+----------------------
+
+* You can add .natvis files to your user directory or to a system directory, if you want them to apply to multiple projects.
+* The .natvis files are evaluated in the following order:
+    1. Any .natvis files that are embedded in a .pdb you're debugging, unless a file of the same name exists in the loaded project.
+    2. Any .natvis files that are in a loaded C++ project or top-level solution. This group includes all    loaded C++ projects, including class libraries, but not projects in other languages.
+    3. Any .natvis files installed and registered via a VSIX package.
+    4. The user-specific Natvis directory (for example, `%USERPROFILE%\Documents\Visual Studio   2022\Visualizers`).
+    5. The system-wide Natvis directory (`<VS Installation Folder>\Common7\Packages\Debugger\Visualizers`). This directory has the .natvis files that are installed with Visual Studio. If you have administrator permissions, you can add files to this directory.
+
 Using Format Specifiers
 -----------------------
 
