@@ -1,11 +1,12 @@
 
 #include "core/numeric_types.hpp"
+#include "sdl/defs.hpp"
 #include "sdl/surface.hpp"
 #include "sdl/tests/data/images.hpp"
 
-namespace SDL3 {
+SDL_C_LIB_BEGIN
 #include <SDL3/SDL_pixels.h>
-}
+SDL_C_LIB_END
 
 namespace rl::sdl::test::image {
     const static SurfaceImage Blit = {

@@ -14,10 +14,11 @@
 #include "core/numeric_types.hpp"
 #include "core/utils/assert.hpp"
 #include "core/utils/concepts.hpp"
+#include "sdl/defs.hpp"
 
-namespace SDL3 {
+SDL_C_LIB_BEGIN
 #include <SDL3/SDL_timer.h>
-}
+SDL_C_LIB_END
 
 namespace rl::sdl {
     struct hrtimer

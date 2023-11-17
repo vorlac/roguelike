@@ -2,16 +2,17 @@
 
 #include "core/utils/conversions.hpp"
 #include "sdl/color.hpp"
+#include "sdl/defs.hpp"
 #include "sdl/renderer.hpp"
 #include "sdl/surface.hpp"
 #include "sdl/tests/data/images.hpp"
 #include "sdl/texture.hpp"
 
-namespace SDL3 {
+SDL_C_LIB_BEGIN
 #include <SDL3/SDL_blendmode.h>
 #include <SDL3/SDL_render.h>
 #include <SDL3/SDL_test.h>
-}
+SDL_C_LIB_END
 
 namespace rl::sdl::test {
     constexpr rl::i32 TESTRENDER_SCREEN_W{ 1024 };

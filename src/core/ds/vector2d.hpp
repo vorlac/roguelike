@@ -15,13 +15,13 @@
 #include "core/numeric_types.hpp"
 #include "core/utils/concepts.hpp"
 #include "core/utils/conversions.hpp"
+#include "sdl/defs.hpp"
 
-namespace SDL3 {
+SDL_C_LIB_BEGIN
 #include <SDL3/SDL_rect.h>
-}
+SDL_C_LIB_END
 
 namespace rl::ds {
-
     template <rl::numeric T>
     struct vector2
     {

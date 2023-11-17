@@ -5,11 +5,13 @@
 
 #include <fmt/format.h>
 
-namespace SDL3 {
+#include "sdl/defs.hpp"
+
+SDL_C_LIB_BEGIN
 #include <SDL3/SDL_events.h>
 #include <SDL3/SDL_keyboard.h>
 #include <SDL3/SDL_keycode.h>
-}
+SDL_C_LIB_END
 
 namespace rl::sdl {
     class event_handler;
@@ -591,7 +593,6 @@ namespace rl::sdl {
         std::bitset<Button::ScancodeCount> m_pressed{ 0 };
         std::bitset<Button::ScancodeCount> m_released{ 0 };
     };
-
 }
 
 namespace rl::sdl {

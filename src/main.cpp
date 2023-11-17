@@ -1,9 +1,10 @@
 #include "core/game.hpp"
 #include "core/options.hpp"
+#include "sdl/defs.hpp"
 
-namespace SDL3 {
+SDL_C_LIB_BEGIN
 #include <SDL3/SDL_main.h>
-}
+SDL_C_LIB_END
 
 int SDL3::main(int argc, char** argv)
 {

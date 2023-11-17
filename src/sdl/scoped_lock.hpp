@@ -4,13 +4,14 @@
 
 #include "core/numeric_types.hpp"
 #include "core/utils/assert.hpp"
+#include "sdl/defs.hpp"
 #include "sdl/surface.hpp"
 #include "sdl/texture.hpp"
 
-namespace SDL3 {
+SDL_C_LIB_BEGIN
 #include <SDL3/SDL_render.h>
 #include <SDL3/SDL_surface.h>
-}
+SDL_C_LIB_END
 
 namespace rl::sdl {
     template <typename T>
@@ -60,5 +61,4 @@ namespace rl::sdl {
     private:
         T& m_sdl_lockable{};
     };
-
 }

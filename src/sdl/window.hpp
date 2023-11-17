@@ -8,11 +8,12 @@
 #include "core/ds/rect.hpp"
 #include "core/ds/vector2d.hpp"
 #include "core/utils/assert.hpp"
+#include "sdl/defs.hpp"
 #include "sdl/utils.hpp"
 
-namespace SDL3 {
+SDL_C_LIB_BEGIN
 #include <SDL3/SDL_video.h>
-}
+SDL_C_LIB_END
 
 namespace rl::sdl {
     class renderer;
@@ -98,13 +99,11 @@ namespace rl::sdl {
 
         struct defaults
         {
-            constexpr static inline window::flag::type Properties = {
-                // flag::HighDPI |     //
-                // flag::MouseFocus |  //
-                // flag::InputFocus |  //
-                // flag::Vulkan | //
-                window::flag::Resizable
-            };
+            constexpr static inline window::flag::type Properties = flag::type(
+                flag::HighDPI | flag::Vulkan |         //
+                flag::InputFocus | flag::MouseFocus |  //
+                flag::Resizable | flag::Occluded       //
+            );
 
             constexpr static inline ds::point<i32> Position = {
                 SDL_WINDOWPOS_CENTERED_MASK,

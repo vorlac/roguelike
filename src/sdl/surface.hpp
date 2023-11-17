@@ -8,13 +8,13 @@
 #include "core/ds/vector2d.hpp"
 #include "core/numeric_types.hpp"
 #include "sdl/color.hpp"
+#include "sdl/defs.hpp"
 
-namespace SDL3 {
-    struct SDL_Surface;
-
+SDL_C_LIB_BEGIN
 #include <SDL3/SDL_blendmode.h>
 #include <SDL3/SDL_pixels.h>
-}
+struct SDL_Surface;
+SDL_C_LIB_END
 
 namespace rl::sdl {
     template <typename T>

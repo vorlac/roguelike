@@ -8,17 +8,17 @@
 #include <utility>
 
 #include "core/numeric_types.hpp"
+#include "sdl/defs.hpp"
 #include "sdl/events.hpp"
 #include "sdl/renderer.hpp"
 #include "sdl/time.hpp"
 #include "sdl/window.hpp"
 
-namespace SDL3 {
+SDL_C_LIB_BEGIN
 #include <SDL3/SDL_blendmode.h>
-}
+SDL_C_LIB_END
 
 namespace rl::sdl {
-
     class application
     {
     public:

@@ -1,11 +1,12 @@
+#include "sdl/defs.hpp"
 #include "sdl/renderer.hpp"
 #include "sdl/scoped_lock.hpp"
 #include "sdl/surface.hpp"
 #include "sdl/texture.hpp"
 
-namespace SDL3 {
+SDL_C_LIB_BEGIN
 #include <SDL3/SDL_render.h>
-}
+SDL_C_LIB_END
 
 namespace rl::sdl {
     texture::texture(SDL3::SDL_Texture* other)

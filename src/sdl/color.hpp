@@ -9,11 +9,12 @@
 #include "core/utils/concepts.hpp"
 #include "core/utils/conversions.hpp"
 #include "core/utils/memory.hpp"
+#include "sdl/defs.hpp"
 
-namespace SDL3 {
+SDL_C_LIB_BEGIN
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_pixels.h>
-}
+SDL_C_LIB_END
 
 namespace rl::sdl {
     namespace internal {

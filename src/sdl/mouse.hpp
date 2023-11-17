@@ -5,11 +5,12 @@
 #include "core/ds/point.hpp"
 #include "core/ds/vector2d.hpp"
 #include "core/numeric_types.hpp"
+#include "sdl/defs.hpp"
 
-namespace SDL3 {
+SDL_C_LIB_BEGIN
 #include <SDL3/SDL_events.h>
 #include <SDL3/SDL_mouse.h>
-}
+SDL_C_LIB_END
 
 namespace rl::sdl {
     class Mouse

@@ -1,12 +1,13 @@
 #pragma once
 
 #include "core/utils/io.hpp"
+#include "sdl/defs.hpp"
 #include "sdl/keyboard.hpp"
 #include "sdl/mouse.hpp"
 
-namespace SDL3 {
+SDL_C_LIB_BEGIN
 #include <SDL3/SDL_events.h>
-}
+SDL_C_LIB_END
 
 namespace rl::sdl {
     class event_handler

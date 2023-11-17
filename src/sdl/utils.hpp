@@ -1,8 +1,10 @@
 #pragma once
 
-namespace SDL3 {
+#include "sdl/defs.hpp"
+
+SDL_C_LIB_BEGIN
 #include <SDL3/SDL_stdinc.h>
-}
+SDL_C_LIB_END
 
 namespace rl::sdl {
     constexpr inline SDL3::SDL_bool boolean(const auto val)

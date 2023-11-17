@@ -5,10 +5,11 @@
 #include <string>
 
 #include "core/utils/conversions.hpp"
+#include "sdl/defs.hpp"
 
-namespace SDL3 {
+SDL_C_LIB_BEGIN
 #include <SDL3/SDL_error.h>
-}
+SDL_C_LIB_END
 
 #ifdef NDEBUG
   // In release mode the macro does nothing ((void)0), including

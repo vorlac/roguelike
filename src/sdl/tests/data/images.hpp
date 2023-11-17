@@ -1,16 +1,15 @@
 #pragma once
 
 #include "core/numeric_types.hpp"
+#include "sdl/defs.hpp"
 
-namespace SDL3 {
+SDL_C_LIB_BEGIN
 #include <SDL3/SDL_pixels.h>
-}
-
-namespace rl::sdl {
-    class surface;
-}
+SDL_C_LIB_END
 
 namespace rl::sdl::test::image {
+    class surface;
+
     struct SurfaceImage
     {
         rl::i32 width{ 0 };

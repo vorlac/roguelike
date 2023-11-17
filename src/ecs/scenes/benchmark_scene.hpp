@@ -20,6 +20,7 @@
 #include "ecs/components/style_components.hpp"
 #include "ecs/components/transform_components.hpp"
 #include "ecs/scenes/scene_types.hpp"
+#include "sdl/defs.hpp"
 #include "sdl/renderer.hpp"
 #include "sdl/surface.hpp"
 #include "sdl/tests/data/icon.hpp"
@@ -27,13 +28,12 @@
 #include "sdl/time.hpp"
 #include "sdl/window.hpp"
 
-namespace SDL3 {
+SDL_C_LIB_BEGIN
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_rwops.h>
-}
+SDL_C_LIB_END
 
 namespace rl::scene {
-
     struct benchmark
     {
         struct observer

@@ -8,13 +8,14 @@
 #include "core/ds/rect.hpp"
 #include "core/ds/vector2d.hpp"
 #include "core/utils/assert.hpp"
+#include "sdl/defs.hpp"
 #include "sdl/renderer.hpp"
 #include "sdl/utils.hpp"
 
-namespace SDL3 {
+SDL_C_LIB_BEGIN
 #include <SDL3/SDL_surface.h>
 #include <SDL3/SDL_video.h>
-}
+SDL_C_LIB_END
 
 namespace rl::sdl {
     window::window(SDL3::SDL_Window*&& other) noexcept

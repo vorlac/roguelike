@@ -8,10 +8,11 @@
 #include "core/ds/vector2d.hpp"
 #include "core/numeric_types.hpp"
 #include "core/utils/concepts.hpp"
+#include "sdl/defs.hpp"
 
-namespace SDL3 {
-#include <SDL3/SDL.h>
-}
+SDL_C_LIB_BEGIN
+#include <SDL3/SDL_rect.h>
+SDL_C_LIB_END
 
 namespace rl::ds {
     enum Side : i8_fast {

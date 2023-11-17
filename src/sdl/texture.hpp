@@ -10,7 +10,12 @@
 #include "core/numeric_types.hpp"
 #include "core/utils/assert.hpp"
 #include "sdl/color.hpp"
+#include "sdl/defs.hpp"
 #include "sdl/window.hpp"
+
+SDL_C_LIB_BEGIN
+#include <SDL3/SDL.h>
+SDL_C_LIB_END
 
 namespace rl::sdl {
     template <typename T>
@@ -50,15 +55,18 @@ namespace rl::sdl {
         bool update_yuv(const u8* yplane, i32 ypitch, const u8* uplane, i32 upitch,
                         const u8* vplane, i32 vpitch,
                         const ds::rect<i32>& rect = ds::rect<i32>::null());
+
         bool set_blend_mode(SDL3::SDL_BlendMode blend_mode);
         bool set_alpha_mod(u8 alpha);
         bool set_color_mod(sdl::color c);
+
         SDL3::SDL_PixelFormatEnum get_format() const;
         SDL3::SDL_TextureAccess get_access() const;
+        SDL3::SDL_BlendMode get_blend_mode() const;
+
+        sdl::color get_color_mod() const;
         ds::dimensions<i32> size();
         u8 get_alpha_mod() const;
-        SDL3::SDL_BlendMode get_blend_mode() const;
-        sdl::color get_color_mod() const;
 
     private:
         template <typename T>
