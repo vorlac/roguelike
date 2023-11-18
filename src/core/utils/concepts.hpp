@@ -11,7 +11,7 @@ namespace rl::inline constraint {
     concept any_of = (std::same_as<T, TOther> || ...);
 
     template <typename T>
-    concept floating_point = constraint::any_of<T, f32, f64, lf64>;
+    concept floating_point = constraint::any_of<T, f32, f64, lf64, double, float>;
 
     template <typename T>
     concept signed_integer = constraint::any_of<T, i8, i16, i32, i64>;

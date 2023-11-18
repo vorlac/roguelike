@@ -8,7 +8,11 @@
     "simdjson",
     "opengl",
     "vulkan",
+    "volk",
+    "enet",
     "imgui",
+    "nana",
+    "assimp",
     "flecs",
     "fmt"
   ]

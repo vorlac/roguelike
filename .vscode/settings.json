@@ -26,7 +26,7 @@
     "cmake.cmakeCommunicationMode": "fileApi",
     "cmake.configureOnOpen": true,
     "cmake.languageSupport.enableFileAPI": true,
-    "cmake.launchBehavior": "breakAndReuseTerminal",
+    "cmake.launchBehavior": "newTerminal",
     "cmake.outputLogEncoding": "utf-8",
     "cmake.parallelJobs": 0,
     "cmake.parseBuildDiagnostics": true,

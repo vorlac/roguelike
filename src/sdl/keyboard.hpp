@@ -541,9 +541,6 @@ namespace rl::sdl {
         };
 
     public:
-        constexpr Keyboard() = default;
-        constexpr ~Keyboard() = default;
-
         constexpr inline bool is_button_pressed(const Keyboard::Button::type key) const
         {
             return m_pressed[key];

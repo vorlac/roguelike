@@ -3,6 +3,7 @@
 #include <array>
 #include <concepts>
 #include <tuple>
+#include <vector>
 
 #include <fmt/color.h>
 
@@ -217,10 +218,21 @@ namespace rl::sdl {
         }
 
     public:
-        constexpr static inline color lerp(const color& s, const color& e, u8 w)
+        constexpr static inline color lerp(const color& s, const color& e, u8 step)
         {
-            return color{ s + (e - s) * w };
+            return color{ s + (e - s) * step };
         }
+
+        // constexpr static inline color gradient(const std::vector<sdl::color>& colors, u8 step)
+        // {
+        //     const auto stop_len = 1 / (colors.size() - 1);
+        //     const auto step_ratio = step / stop_len;
+        //     const auto stop_idx = std::floor(step_ratio);
+        //     if (stop_idx == (colors.size() - 1))
+        //         return colors[colors.size() - 1];
+        //     const auto end_step = step_ratio % 1;
+        //     return lerp(colors[stop_idx], colors[stop_idx + 1], end_step);
+        // }
 
         inline u32 rgb(const SDL3::SDL_PixelFormat* format) const
         {

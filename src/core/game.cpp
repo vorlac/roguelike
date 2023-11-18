@@ -1,4 +1,6 @@
 #include <chrono>
+#include <iostream>
+#include <locale>
 #include <memory>
 #include <random>
 #include <string>
@@ -7,6 +9,9 @@
 #include <flecs.h>
 #include <fmt/core.h>
 #include <fmt/format.h>
+#include <fmt/ostream.h>
+#include <fmt/printf.h>
+#include <fmt/std.h>
 
 #include "core/game.hpp"
 #include "core/numeric_types.hpp"
@@ -83,34 +88,47 @@ namespace rl {
     {
         this->setup();
 
-        // sdl::color start{ 128, 128, 128, 50 };
-        // sdl::color end{ 0, 0, 255, 50 };
+        sdl::color start{ 255, 0, 0, 50 };
+        sdl::color end{ 0, 0, 255, 50 };
 
-        // u8 val = 0;
-        // while (++val < 255)
-        // {
-        //     auto&& c = sdl::color::lerp(start, end, val);
-        //     fmt::print(c, "test\n");
-        //     val += 1;
-        // }
+        u8 val = 0;
+        while (++val < 255)
+        {
+            auto&& c = sdl::color::lerp(start, end, val);
+            fmt::print(c, "test\n");
+            val += 1;
+        }
+
+        sdl::color c_orange{ fmt::color::burly_wood };
+        sdl::perftimer<float, sdl::TimeDuration::Second> timer{};
 
         u32 loop_count = 0;
-        sdl::hrtimer timer{};
+        auto delta_time_s = timer.delta();
+        auto elapsed_time = timer.elapsed();
+
         while (this->handle_events())
         {
+            m_world.progress();
             if (this->quit_requested()) [[unlikely]]
                 break;
 
-            m_world.progress();
             if (++loop_count % 60 == 0)
             {
-                f32 delta_ms = m_world.delta_time() * 1000.0f;
-                f64 elapsed_s = timer.elapsed_sec();
-                fmt::println(
-                    " {:>14.6f} s || {:>10L} u ][ {:>10.4f} ms | {:>10.4f} fps ][ {:>10.4f} avg ups ]",
-                    timer.elapsed_sec(), loop_count, delta_ms, 1000.0f / delta_ms,
-                    loop_count / elapsed_s);
+                elapsed_time = timer.elapsed();
+
+                fmt::print(
+                    c_orange,
+                    fmt::format(
+                        io::locale,
+                        " {:>14.6f} s || {:>10L} u ][ {:>10.4f} ms | {:>10.4f} fps ][ {:>10.4f} avg fps ]\n",
+                        elapsed_time,                 // elapsed time (seconds)
+                        loop_count,                   // loop iterations
+                        delta_time_s * 1000.0f,       // delta time (ms)
+                        1.0f / delta_time_s,          // current fps
+                        loop_count / elapsed_time));  // avg fps
             }
+
+            delta_time_s = timer.delta();
         }
 
         return this->teardown();

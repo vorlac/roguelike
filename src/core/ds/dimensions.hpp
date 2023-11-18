@@ -117,9 +117,9 @@ namespace rl::ds {
 
         constexpr inline dimensions<T> operator*(auto mul) const
         {
-            return {
-                this->width * cast::to<T>(mul),
-                this->height * cast::to<T>(mul),
+            return dimensions<T>{
+                cast::to<T>(this->width * mul),
+                cast::to<T>(this->height * mul),
             };
         }
     };

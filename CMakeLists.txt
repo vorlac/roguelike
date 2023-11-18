@@ -48,9 +48,9 @@ set(FORCE_STATIC_VCRT OFF)
 set(BUILD_SHARED_LIBS OFF)
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl_ttf)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl_image)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl_mixer)
+# add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl_ttf)
+# add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl_image)
+# add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl_mixer)
 
 find_package(fmt CONFIG REQUIRED)
 find_package(argparse CONFIG REQUIRED)
@@ -114,9 +114,9 @@ target_link_libraries(${PROJECT_NAME}
   PRIVATE OpenGL::GL
   PRIVATE Vulkan::Vulkan
   PRIVATE SDL3::SDL3-static
-  PRIVATE SDL3_ttf::SDL3_ttf-static
-  PRIVATE SDL3_image::SDL3_image-static
-  PRIVATE SDL3_mixer::SDL3_mixer-static
+  # PRIVATE SDL3_ttf::SDL3_ttf-static
+  # PRIVATE SDL3_image::SDL3_image-static
+  # PRIVATE SDL3_mixer::SDL3_mixer-static
   PRIVATE simdjson::simdjson
   PRIVATE argparse::argparse
   PRIVATE flecs::flecs_static

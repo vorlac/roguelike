@@ -246,8 +246,8 @@ namespace rl::scene {
                             if (c.b > 250 || c.b < 105)
                                 ba *= -1;
 
-                            c.g += cast::to<u8>(ga);
-                            c.b += cast::to<u8>(ba);
+                            c.g += static_cast<u8>(ga);
+                            c.b += static_cast<u8>(ba);
 
                             // c = {
                             //     (u8)c.r,
@@ -266,19 +266,20 @@ namespace rl::scene {
 
                         m_renderer->present();
                     })
-                    .each([&](const rl::component::position& position,
-                              const rl::component::style& rect_color,
-                              const rl::component::scale& size_scale)  //
-                          {
-                              if constexpr (USE_RANDOM_COLORS)
-                                  rect_colors.emplace_back(
-                                      std::forward<const ds::rect<f32>>(
-                                          { position, RECT_SIZE * size_scale }),
-                                      std::forward<const sdl::color>(rect_color.color));
+                    .each(
+                        [&](const rl::component::position& position,
+                            const rl::component::style& rect_color,
+                            const rl::component::scale& size_scale)  //
+                        {
+                            if constexpr (USE_RANDOM_COLORS)
+                                rect_colors.emplace_back(
+                                    std::forward<const ds::rect<f32>>(
+                                        { position, system::RECT_SIZE * size_scale.factor }),
+                                    std::forward<const sdl::color>(rect_color.color));
 
-                              if constexpr (!USE_RANDOM_COLORS)
-                                  rects.emplace_back(position, RECT_SIZE * size_scale.factor);
-                          });
+                            if constexpr (!USE_RANDOM_COLORS)
+                                rects.emplace_back(position, system::RECT_SIZE * size_scale.factor);
+                        });
             }
 
             static void define_entity_timeout(flecs::world& world)
@@ -309,7 +310,7 @@ namespace rl::scene {
                         surface.set_color_key(true, c.rgb(surface.get_format_full()));
                         sdl::texture texture{ *renderer, surface };
                         size = surface.size();
-                        return std::move(texture);
+                        return texture;
                     }
                 }
 
