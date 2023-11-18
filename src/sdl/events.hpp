@@ -15,8 +15,9 @@ namespace rl::sdl {
     public:
         bool handle_events()
         {
-            constexpr bool log_events = false;
             SDL3::SDL_Event e{};
+
+            constexpr bool log_events = false;
             while (SDL3::SDL_PollEvent(&e) != 0)
             {
                 switch (e.type)

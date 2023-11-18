@@ -9,6 +9,7 @@
 #include "core/numeric_types.hpp"
 #include "sdl/color.hpp"
 #include "sdl/defs.hpp"
+#include "sdl/pixel_data.hpp"
 
 SDL_C_LIB_BEGIN
 #include <SDL3/SDL_blendmode.h>
@@ -22,16 +23,16 @@ namespace rl::sdl {
 
     class surface
     {
-        surface(const surface& other) = delete;
-
     public:
-        surface(SDL3::SDL_Surface* surface);
         explicit surface(surface&& other);
+        surface(SDL3::SDL_Surface* surface);
 
         surface(i32 width, i32 height,
                 SDL3::SDL_PixelFormatEnum format = SDL3::SDL_PIXELFORMAT_UNKNOWN);
         surface(void* pixels, i32 width, i32 height, i32 pitch,
                 SDL3::SDL_PixelFormatEnum format = SDL3::SDL_PIXELFORMAT_UNKNOWN);
+
+        surface(const surface& other) = delete;
 
         ~surface();
 
@@ -86,5 +87,6 @@ namespace rl::sdl {
 
     private:
         SDL3::SDL_Surface* m_sdl_surface{ nullptr };
+        sdl::pixel_data m_pixel_data{};
     };
 }

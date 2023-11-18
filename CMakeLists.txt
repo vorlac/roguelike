@@ -48,17 +48,32 @@ set(FORCE_STATIC_VCRT OFF)
 set(BUILD_SHARED_LIBS OFF)
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl)
-# add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl_ttf)
-# add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl_image)
-# add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl_mixer)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl_ttf)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl_image)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl_mixer)
 
 find_package(fmt CONFIG REQUIRED)
 find_package(argparse CONFIG REQUIRED)
 find_package(flecs CONFIG REQUIRED)
 find_package(OpenGL REQUIRED COMPONENTS OpenGL)
 find_package(Vulkan REQUIRED)
+find_package(volk CONFIG REQUIRED)
 find_package(simdjson CONFIG REQUIRED)
 find_package(imgui CONFIG REQUIRED)
+find_package(Eigen3 CONFIG REQUIRED)
+find_package(unofficial-enet CONFIG REQUIRED)
+find_package(unofficial-nana CONFIG REQUIRED)
+find_package(nanobench CONFIG REQUIRED)
+find_package(assimp CONFIG REQUIRED)
+find_package(Iconv)
+
+find_path(PLF_COLONY_INCLUDE_DIRS "plf_colony.h")
+find_path(PLF_HIVE_INCLUDE_DIRS "plf_hive.h")
+find_path(PLF_NANOTIMER_INCLUDE_DIRS "plf_nanotimer.h")
+find_path(PLF_STACK_INCLUDE_DIRS "plf_stack.h")
+find_path(D3DX12_INCLUDE_DIRS "d3dx12.h")
+find_path(MAGNUM_EXTRAS_INCLUDE_DIRS "Magnum/versionExtras.h")
+find_path(MAGNUM_INTEGRATION_INCLUDE_DIRS "Magnum/versionIntegration.h")
 
 file(GLOB_RECURSE
   roguelike_sources
@@ -106,22 +121,35 @@ target_compile_options(${PROJECT_NAME} PRIVATE
 )
 
 target_include_directories(${PROJECT_NAME}
-  PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src"
+  PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src
   PRIVATE ${OPENGL_INCLUDE_DIR}
+  PRIVATE ${D3DX12_INCLUDE_DIRS}
+  PRIVATE ${PLF_STACK_INCLUDE_DIRS}
+  PRIVATE ${PLF_NANOTIMER_INCLUDE_DIRS}
+  PRIVATE ${PLF_HIVE_INCLUDE_DIRS}
+  PRIVATE ${PLF_COLONY_INCLUDE_DIRS}
+  PRIVATE ${MAGNUM_EXTRAS_INCLUDE_DIRS}
+  PRIVATE ${MAGNUM_INTEGRATION_INCLUDE_DIRS}
+  PRIVATE ${LIBUSB_INCLUDE_DIRS}
 )
 
 target_link_libraries(${PROJECT_NAME}
   PRIVATE OpenGL::GL
   PRIVATE Vulkan::Vulkan
   PRIVATE SDL3::SDL3-static
-  # PRIVATE SDL3_ttf::SDL3_ttf-static
-  # PRIVATE SDL3_image::SDL3_image-static
-  # PRIVATE SDL3_mixer::SDL3_mixer-static
+  PRIVATE SDL3_ttf::SDL3_ttf-static
+  PRIVATE SDL3_image::SDL3_image-static
+  PRIVATE SDL3_mixer::SDL3_mixer-static
+  PRIVATE volk::volk volk::volk_headers
+  PRIVATE unofficial::nana::nana
   PRIVATE simdjson::simdjson
   PRIVATE argparse::argparse
   PRIVATE flecs::flecs_static
   PRIVATE imgui::imgui
   PRIVATE fmt::fmt
+  PRIVATE Iconv::Iconv
+  PRIVATE Eigen3::Eigen
+  PRIVATE ${LIBUSB_LIBRARIES}
 )
 
 include(clang-format)

@@ -23,6 +23,7 @@
 #include "ecs/components/transform_components.hpp"
 #include "ecs/scenes/scene_types.hpp"
 #include "sdl/defs.hpp"
+#include "sdl/pixel_data.hpp"
 #include "sdl/renderer.hpp"
 #include "sdl/surface.hpp"
 #include "sdl/tests/data/icon.hpp"
@@ -96,45 +97,6 @@ namespace rl::scene {
 
         struct system
         {
-            static void define_rect_movement(flecs::world& world,
-                                             const ds::dimensions<i32>& window_rect)
-            {
-                const static auto window_size = window_rect;
-
-                constexpr static auto top_bottom_collision = [&](const component::position& pos) {
-                    bool top_collision = pos.y - (rect_size.height / 2.0f) <= 0.0f;
-                    bool bottom_collision = pos.y + (rect_size.height / 2.0f) >=
-                                            cast::to<float>(window_size.height);
-                    return top_collision || bottom_collision;
-                };
-
-                constexpr static auto left_right_collision = [&](const component::position& pos) {
-                    bool left_collision = pos.x - (rect_size.width / 2.0f) <= 0.0f;
-                    bool right_collision = pos.x + (rect_size.width / 2.0f) >=
-                                           cast::to<float>(window_size.width);
-                    return left_collision || right_collision;
-                };
-
-                world.system<component::position, component::velocity>("Rect Movement")
-                    .kind(flecs::OnUpdate)
-                    .multi_threaded(true)
-                    .interval(1.0f / 120.0f)
-                    .run([](flecs::iter_t* it) {
-                        m_delta_time = it->delta_system_time;
-                        while (ecs_iter_next(it))
-                            it->callback(it);
-                    })
-                    .each([](flecs::entity, component::position& pos, component::velocity& vel) {
-                        pos.x += vel.x * static_cast<f32>(m_delta_time);
-                        pos.y += vel.y * static_cast<f32>(m_delta_time);
-
-                        if (left_right_collision(pos))
-                            vel.x = -vel.x;
-                        if (top_bottom_collision(pos))
-                            vel.y = -vel.y;
-                    });
-            }
-
             // static void define_player_movement(flecs::world& world)
             // {
             //     static float delta_time{ 0.0f };
@@ -202,18 +164,57 @@ namespace rl::scene {
             //         });
             // }
 
+            static void define_rect_movement(flecs::world& world,
+                                             const ds::dimensions<i32>& window_rect)
+            {
+                const static auto window_size = window_rect;
+
+                constexpr static auto top_bottom_collision = [&](const component::position& pos) {
+                    bool top_collision = pos.y - (rect_size.height / 2.0f) <= 0.0f;
+                    bool bottom_collision = pos.y + (rect_size.height / 2.0f) >=
+                                            cast::to<float>(window_size.height);
+                    return top_collision || bottom_collision;
+                };
+
+                constexpr static auto left_right_collision = [&](const component::position& pos) {
+                    bool left_collision = pos.x - (rect_size.width / 2.0f) <= 0.0f;
+                    bool right_collision = pos.x + (rect_size.width / 2.0f) >=
+                                           cast::to<float>(window_size.width);
+                    return left_collision || right_collision;
+                };
+
+                world.system<component::position, component::velocity>("Rect Movement")
+                    .kind(flecs::OnUpdate)
+                    .multi_threaded(true)
+                    .interval(1.0f / 120.0f)
+                    .run([](flecs::iter_t* it) {
+                        m_delta_time = it->delta_system_time;
+                        while (ecs_iter_next(it))
+                            it->callback(it);
+                    })
+                    .each([](flecs::entity, component::position& pos, component::velocity& vel) {
+                        pos.x += vel.x * static_cast<f32>(m_delta_time);
+                        pos.y += vel.y * static_cast<f32>(m_delta_time);
+
+                        if (left_right_collision(pos))
+                            vel.x = -vel.x;
+                        if (top_bottom_collision(pos))
+                            vel.y = -vel.y;
+                    });
+            }
+
             constexpr static inline bool USE_RANDOM_COLORS = false;
             constexpr static inline ds::dimensions<f32> RECT_SIZE = {
                 USE_RANDOM_COLORS ? ds::dimensions<f32>{ 10.0f, 10.0f }
                                   : ds::dimensions<f32>{ 20.0f, 20.0f }
             };
 
-            static void define_entity_rendering(
-                flecs::world& ecs, std::shared_ptr<sdl::renderer> renderer, sdl::texture& sprite)
+            static void define_entity_rendering(flecs::world& ecs, sdl::window& window,
+                                                sdl::texture& sprite)
             {
                 *m_sprite = std::move(sprite);
 
-                m_renderer = renderer.get();
+                m_renderer = window.renderer().get();
                 m_renderer->set_draw_blend_mode(USE_RANDOM_COLORS ? sdl::renderer::blend_mode::Blend
                                                                   : sdl::renderer::blend_mode::Mod);
 
@@ -226,6 +227,20 @@ namespace rl::scene {
                 static std::vector<std::pair<ds::rect<f32>, sdl::color>> rect_colors = {};
                 if constexpr (USE_RANDOM_COLORS)
                     rect_colors.reserve(benchmark::ENTITY_COUNT);
+
+                const auto l_render_size{ m_renderer->get_logical_size() };
+                const auto o_context_size{ m_renderer->get_output_size() };
+                runtime_assert(o_context_size == l_render_size,
+                               "size mismatch, probably not an actual error??");
+
+                sdl::surface surface{
+                    l_render_size.width,
+                    l_render_size.height,
+                    sdl::pixel_data::format::RGB24,
+                };
+
+                static sdl::texture texture1{ window.renderer(), surface };
+                static sdl::texture texture2{ window.renderer(), surface };
 
                 ecs.system<const component::position, const component::style, const component::scale>(
                        "Render Rects")
@@ -248,13 +263,6 @@ namespace rl::scene {
 
                             c.g += static_cast<u8>(ga);
                             c.b += static_cast<u8>(ba);
-
-                            // c = {
-                            //     (u8)c.r,
-                            //     (u8)(((c.g + 1) % 255) - 55),
-                            //     (u8)(((c.b - 1) % 255) - 55),
-                            //     50,
-                            // };
                         }
 
                         while (ecs_iter_next(it))
@@ -325,7 +333,7 @@ namespace rl::scene {
                 auto sprite = create_texture(window.renderer(), icon_data, sprite_size);
                 runtime_assert(sprite.is_valid(), "failed to load sprite");
                 define_rect_movement(world, window.get_size());
-                define_entity_rendering(world, window.renderer(), sprite);
+                define_entity_rendering(world, window, sprite);
                 define_entity_timeout(world);
             }
         };

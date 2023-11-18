@@ -105,4 +105,7 @@
     "workbench.list.smoothScrolling": true,
     "workbench.tree.renderIndentGuides": "always",
     "dotnet.defaultSolution": "disable",
+    "prettyxml.settings.formatOnSave": true,
+    "prettyxml.settings.preserveWhiteSpacesInComment": true,
+    "prettyxml.settings.addSpaceBeforeSelfClosingTag": false,
 }
