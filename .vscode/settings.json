@@ -115,8 +115,11 @@
     "workbench.list.smoothScrolling": true,
     "workbench.tree.renderIndentGuides": "always",
     "dotnet.defaultSolution": "disable",
-    "prettyxml.settings.formatOnSave": true,
+    "prettyxml.settings.formatOnSave": false,
     "prettyxml.settings.preserveWhiteSpacesInComment": true,
     "prettyxml.settings.addSpaceBeforeSelfClosingTag": false,
     "output.smartScroll.enabled": false,
+    "xml.format.maxLineWidth": 120,
+    "xml.format.enforceQuoteStyle": "preferred",
+    "xml.format.grammarAwareFormatting": true,
 }

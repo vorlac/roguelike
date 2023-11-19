@@ -18,28 +18,13 @@ SDL_C_LIB_BEGIN
 SDL_C_LIB_END
 
 namespace rl::sdl {
-    window::window(SDL3::SDL_Window*&& other) noexcept
-        : m_sdl_window{ other }
-        , m_renderer{ new sdl::renderer(*this, renderer::defaults::Driver) }
+    window::window(std::string title, const ds::dimensions<i32>& dims, window::Properties flags)
+        : m_properties{ flags }
+        , m_sdl_window{ SDL3::SDL_CreateWindow(title.data(), dims.width, dims.height, m_properties) }
+        , m_renderer{ new sdl::renderer(*this, renderer::DEFAULT_GRAPHICS_DRIVER,
+                                        renderer::DEFAULT_PROPERTY_FLAGS) }
     {
-        sdl_assert(other != nullptr, "constructed window from null SDL_Window");
-        other = nullptr;
-    }
-
-    window::window(sdl::window&& other) noexcept
-        : m_sdl_window{ other.m_sdl_window }
-        , m_renderer{ new sdl::renderer(*this, renderer::defaults::Driver) }
-    {
-        sdl_assert(m_sdl_window != nullptr, "constructed window from null SDL_Window");
-        other.m_sdl_window = nullptr;
-    }
-
-    window::window(const std::string& title, const ds::dimensions<i32>& dims,
-                   SDL3::SDL_WindowFlags flags)
-        : m_sdl_window{ SDL3::SDL_CreateWindow(title.c_str(), dims.width, dims.height, flags) }
-        , m_renderer{ new sdl::renderer(*this, renderer::defaults::Driver) }
-    {
-        sdl_assert(m_sdl_window != nullptr, "constructed window from null SDL_Window");
+        sdl_assert(m_sdl_window != nullptr, "failed to create SDL_Window");
     }
 
     window::~window()
@@ -177,7 +162,7 @@ namespace rl::sdl {
 
     SDL3::SDL_WindowFlags window::get_flags() const
     {
-        return window::flag::type(SDL3::SDL_GetWindowFlags(m_sdl_window));
+        return window::Properties(SDL3::SDL_GetWindowFlags(m_sdl_window));
     }
 
     bool window::is_valid() const

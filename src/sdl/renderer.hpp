@@ -1,7 +1,8 @@
 #pragma once
 
+#include <bitset>
 #include <memory>
-#include <string>
+#include <string_view>
 #include <type_traits>
 #include <utility>
 #include <vector>
@@ -34,25 +35,33 @@ namespace rl::sdl {
     class renderer
     {
     public:
-        struct flag
+        struct Properties : public std::bitset<32>
         {
-            using type = std::underlying_type_t<SDL3::SDL_RendererFlags>;
-            constexpr static inline type Software{ SDL3::SDL_RENDERER_SOFTWARE };
-            constexpr static inline type HWAccelerated{ SDL3::SDL_RENDERER_ACCELERATED };
-            constexpr static inline type VSync{ SDL3::SDL_RENDERER_PRESENTVSYNC };
-            constexpr static inline type Defaults = HWAccelerated | VSync;
+            using sdl_type = SDL3::SDL_RendererFlags;
+
+            enum Flag : std::underlying_type_t<sdl_type> {
+                None = 0,
+                Software = SDL3::SDL_RENDERER_SOFTWARE,
+                HWAccelerated = SDL3::SDL_RENDERER_ACCELERATED,
+                VSync = SDL3::SDL_RENDERER_PRESENTVSYNC,
+            };
+
+            constexpr inline operator sdl_type()
+            {
+                return static_cast<sdl_type>(this->to_ulong());
+            }
         };
 
         struct driver
         {
-            constexpr static inline auto DirectX{ "direct3d" };
-            constexpr static inline auto DirectX11{ "direct3d11" };
-            constexpr static inline auto DirectX12{ "direct3d12" };
-            constexpr static inline auto OpenGL{ "opengl" };
-            constexpr static inline auto OpenGLES2{ "opengles2" };
-            constexpr static inline auto OpenGLES{ "opengles" };
-            constexpr static inline auto Metal{ "metal" };
-            constexpr static inline auto Software{ "software" };
+            constexpr static inline std::string_view DirectX{ "direct3d" };
+            constexpr static inline std::string_view DirectX11{ "direct3d11" };
+            constexpr static inline std::string_view DirectX12{ "direct3d12" };
+            constexpr static inline std::string_view OpenGL{ "opengl" };
+            constexpr static inline std::string_view OpenGLES2{ "opengles2" };
+            constexpr static inline std::string_view OpenGLES{ "opengles" };
+            constexpr static inline std::string_view Metal{ "metal" };
+            constexpr static inline std::string_view Software{ "software" };
         };
 
         struct blend_mode
@@ -66,34 +75,20 @@ namespace rl::sdl {
             constexpr static inline auto Invalid = SDL3::SDL_BLENDMODE_INVALID;
         };
 
-        struct defaults
-        {
-            constexpr static inline auto Driver = driver::OpenGL;
+        constexpr static inline auto DEFAULT_GRAPHICS_DRIVER = driver::OpenGL;
+        constexpr static inline Properties DEFAULT_PROPERTY_FLAGS = {
+            Properties::HWAccelerated | Properties::VSync,
         };
 
         renderer() = delete;
-        renderer(const renderer& other) = delete;
         renderer(renderer& other) = delete;
+        renderer(const renderer& other) = delete;
 
-        renderer(renderer&& other)
-            : m_sdl_renderer{ other.m_sdl_renderer }
-        {
-            sdl_assert(m_sdl_renderer != nullptr, "failed to create renderer");
-            this->print_render_info();
-        }
-
-        renderer(sdl::window& window, renderer::flag::type properties = renderer::flag::Defaults)
-            : m_sdl_renderer{ SDL3::SDL_CreateRenderer(window.sdl_handle(), defaults::Driver,
-                                                       properties) }
-        {
-            sdl_assert(m_sdl_renderer != nullptr, "failed to create renderer");
-            this->print_render_info();
-        }
-
-        renderer(sdl::window& window, const std::string& driver_name = defaults::Driver,
-                 renderer::flag::type properties = renderer::flag::Defaults)
-            : m_sdl_renderer{ SDL3::SDL_CreateRenderer(window.sdl_handle(), driver_name.c_str(),
-                                                       properties) }
+        explicit renderer(const sdl::window& window, std::string_view driver,
+                          renderer::Properties flags)
+            : m_properties{ flags }
+            , m_sdl_renderer{ SDL3::SDL_CreateRenderer(window.sdl_handle(), driver.data(),
+                                                       m_properties) }
         {
             sdl_assert(m_sdl_renderer != nullptr, "failed to create renderer");
             this->print_render_info();
@@ -589,6 +584,7 @@ namespace rl::sdl {
         }
 
     private:
+        Properties m_properties{ Properties::None };
         SDL3::SDL_Renderer* m_sdl_renderer{ nullptr };
     };
 }
