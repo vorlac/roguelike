@@ -1,7 +1,5 @@
 #pragma once
 
-#include <glad/glad.h>
-
 #include "sdl/defs.hpp"
 
 SDL_C_LIB_BEGIN

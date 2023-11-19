@@ -7,6 +7,8 @@
 #include <tuple>
 #include <utility>
 
+#include <glad/gl.h>
+
 #include "core/numeric_types.hpp"
 #include "sdl/defs.hpp"
 #include "sdl/events.hpp"
@@ -16,6 +18,8 @@
 
 SDL_C_LIB_BEGIN
 #include <SDL3/SDL_blendmode.h>
+#include <SDL3/SDL_opengl.h>
+#include <SDL3/SDL_video.h>
 SDL_C_LIB_END
 
 namespace rl::sdl {
@@ -44,13 +48,26 @@ namespace rl::sdl {
                   SDL3::SDL_INIT_SENSOR
         };
 
-        using timer_t = sdl::Timer<double, sdl::TimeDuration::Millisecond>;
+        // using timer_t = sdl::Timer<double, sdl::TimeDuration::Millisecond>;
 
     public:
         Application()
         {
             bool ret = this->init_subsystem(Subsystem::Video);
+
+            SDL3::SDL_GL_SetAttribute(SDL3::SDL_GL_DOUBLEBUFFER, 1);
+            SDL3::SDL_GL_SetAttribute(SDL3::SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+            SDL3::SDL_GL_SetAttribute(SDL3::SDL_GL_CONTEXT_MINOR_VERSION, 2);
+            SDL3::SDL_GL_SetAttribute(SDL3::SDL_GL_CONTEXT_PROFILE_MASK,
+                                      SDL3::SDL_GL_CONTEXT_PROFILE_CORE);
+
+            m_window = sdl::Window{ "SDL3 OpenGL" };
             runtime_assert(ret, "failed to init SDL subsystem");
+
+            SDL3::SDL_GLContext context = SDL3::SDL_GL_CreateContext(m_window.sdl_handle());
+
+            int version = gladLoadGL((GLADloadfunc)SDL3::SDL_GL_GetProcAddress);
+            log::info("OpenGL: {}.{}\n", GLAD_VERSION_MAJOR(version), GLAD_VERSION_MINOR(version));
         }
 
         Application(const sdl::Application& other) = delete;

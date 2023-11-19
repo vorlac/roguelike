@@ -2,7 +2,6 @@
 #include <utility>
 
 #include <fmt/format.h>
-#include <glad/glad.h>
 
 #include "ds/dimensions.hpp"
 #include "ds/point.hpp"

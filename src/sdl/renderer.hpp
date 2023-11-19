@@ -24,6 +24,7 @@
 
 SDL_C_LIB_BEGIN
 #include <SDL3/SDL_blendmode.h>
+#include <SDL3/SDL_opengl.h>
 #include <SDL3/SDL_rect.h>
 #include <SDL3/SDL_render.h>
 SDL_C_LIB_END

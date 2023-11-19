@@ -1,3 +1,7 @@
+#define GLAD_GL_IMPLEMENTATION
+#include <glad/gl.h>
+#undef GLAD_GL_IMPLEMENTATION
+//
 #include "core/game.hpp"
 #include "core/options.hpp"
 #include "sdl/defs.hpp"

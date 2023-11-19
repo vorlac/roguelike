@@ -53,37 +53,11 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl)
 # add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl_image)
 # add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl_mixer)
 
-find_package(OpenGL REQUIRED)
-find_package(Vulkan REQUIRED)
-find_package(glad CONFIG REQUIRED)
 find_package(fmt CONFIG REQUIRED)
 find_package(flecs CONFIG REQUIRED)
 find_package(simdjson CONFIG REQUIRED)
 find_package(argparse CONFIG REQUIRED)
 find_package(imgui CONFIG REQUIRED)
-# find_package(volk CONFIG REQUIRED)
-# find_package(Eigen3 CONFIG REQUIRED)
-# find_package(unofficial-enet CONFIG REQUIRED)
-# find_package(unofficial-nana CONFIG REQUIRED)
-# find_package(nanobench CONFIG REQUIRED)
-# find_package(assimp CONFIG REQUIRED)
-# find_package(Iconv)
-
-find_path(D3DX12_INCLUDE_DIRS
-  "d3dx12.h"
-)
-
-# find_path(GLAD_INCLUDE_DIRS
-#   NAMES "gl.h" HINTS
-#   "${CMAKE_CURRENT_SOURCE_DIR}/extern/glad/"
-# )
-
-find_path(PLF_INCLUDE_DIRS
-  "plf_stack.h"
-  "plf_nanotimer.h"
-  "plf_hive.h"
-  "plf_colony.h"
-)
 
 file(GLOB_RECURSE
   roguelike_sources
@@ -132,27 +106,16 @@ target_compile_options(${PROJECT_NAME} PRIVATE
 
 target_include_directories(${PROJECT_NAME}
   PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src"
-  PRIVATE SYSTEM "${OPENGL_INCLUDE_DIR}"
-  PRIVATE SYSTEM "${D3DX12_INCLUDE_DIRS}"
+  PRIVATE SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/extern/glad/include"
 )
 
 target_link_libraries(${PROJECT_NAME}
-  PRIVATE OpenGL::GL
-  PRIVATE glad::glad
-  PRIVATE Vulkan::Vulkan
   PRIVATE SDL3::SDL3-static
-  #PRIVATE SDL3_ttf::SDL3_ttf-static
-  #PRIVATE SDL3_image::SDL3_image-static
-  #PRIVATE SDL3_mixer::SDL3_mixer-static
-  #PRIVATE volk::volk volk::volk_headers
-  #PRIVATE unofficial::nana::nana
   PRIVATE simdjson::simdjson
   PRIVATE argparse::argparse
   PRIVATE flecs::flecs_static
   PRIVATE imgui::imgui
   PRIVATE fmt::fmt
-  #PRIVATE Iconv::Iconv
-  #PRIVATE Eigen3::Eigen
 )
 
 include(clang-format)
