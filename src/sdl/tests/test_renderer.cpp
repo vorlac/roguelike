@@ -23,14 +23,14 @@ namespace rl::sdl::test {
     constexpr rl::i32 ALLOWABLE_ERROR_OPAQUE{ 0 };
     constexpr rl::i32 ALLOWABLE_ERROR_BLENDED{ 64 };
 
-    static bool has_draw_color(sdl::renderer& renderer)
+    static bool has_draw_color(sdl::Renderer& renderer)
     {
         /* Set color. */
-        rl::sdl::color set_clr{ 100, 100, 100, 100 };
+        rl::sdl::Color set_clr{ 100, 100, 100, 100 };
         if (!renderer.set_draw_color(set_clr))
             return false;
 
-        rl::sdl::color get_clr = renderer.get_draw_color();
+        rl::sdl::Color get_clr = renderer.get_draw_color();
         if (!renderer.set_draw_color({ 0, 0, 0 }))
             return false;
 
@@ -40,7 +40,7 @@ namespace rl::sdl::test {
         return true;
     }
 
-    static bool has_blend_modes(sdl::renderer& renderer)
+    static bool has_blend_modes(sdl::Renderer& renderer)
     {
         SDL3::SDL_BlendMode set_mode = SDL3::SDL_BLENDMODE_NONE;
         if (!renderer.set_draw_blend_mode(set_mode))
@@ -73,29 +73,29 @@ namespace rl::sdl::test {
         return true;
     }
 
-    static rl::sdl::texture load_test_face(sdl::renderer& renderer)
+    static rl::sdl::Texture load_test_face(sdl::Renderer& renderer)
     {
-        rl::sdl::surface face = sdl::test::image::ImageFace();
+        rl::sdl::Surface face = sdl::test::image::ImageFace();
         if (!face.is_valid())
             return nullptr;
 
-        rl::sdl::texture tface{ renderer, face };
+        rl::sdl::Texture tface{ renderer, face };
         if (!tface.is_valid())
             sdl_assert(tface.is_valid(), "failed to create texture");
 
         return tface;
     }
 
-    static bool has_tex_color(sdl::renderer& renderer)
+    static bool has_tex_color(sdl::Renderer& renderer)
     {
-        rl::sdl::texture tface = load_test_face(renderer);
+        rl::sdl::Texture tface = load_test_face(renderer);
         if (tface.is_valid())
         {
-            sdl::color set_clr{ 100, 100, 100 };
+            sdl::Color set_clr{ 100, 100, 100 };
             if (!tface.set_color_mod(set_clr))
                 return false;
 
-            sdl::color get_clr{ tface.get_color_mod() };
+            sdl::Color get_clr{ tface.get_color_mod() };
             if (get_clr != set_clr)
                 return false;
         }
@@ -103,9 +103,9 @@ namespace rl::sdl::test {
         return true;
     }
 
-    static bool has_tex_alpha(sdl::renderer& renderer)
+    static bool has_tex_alpha(sdl::Renderer& renderer)
     {
-        sdl::texture tface = load_test_face(renderer);
+        sdl::Texture tface = load_test_face(renderer);
         if (!tface.is_valid())
             return false;
         if (!tface.set_alpha_mod(100))
@@ -119,7 +119,7 @@ namespace rl::sdl::test {
     /**
      * @brief compares renderer's surface with a reference surface
      * */
-    static void compare(sdl::renderer& renderer, sdl::surface& reference_surface,
+    static void compare(sdl::Renderer& renderer, sdl::Surface& reference_surface,
                         int allowable_error)
     {
         rl::u8* pixels{ nullptr };
@@ -141,7 +141,7 @@ namespace rl::sdl::test {
         renderer.read_pixels(rect, sdl::test::RENDER_COMPARE_FORMAT, pixels, pitch);
 
         /* Create surface. */
-        sdl::surface test_surface{ pixels, rect.width(), rect.height(), pitch,
+        sdl::Surface test_surface{ pixels, rect.width(), rect.height(), pitch,
                                    sdl::test::RENDER_COMPARE_FORMAT };
 
         /* Compare surface. */
@@ -151,7 +151,7 @@ namespace rl::sdl::test {
     /**
      * @brief Clears the screen.
      * */
-    static int clear_screen(sdl::renderer& renderer)
+    static int clear_screen(sdl::Renderer& renderer)
     {
         /* Make current */
         renderer.present();
@@ -168,7 +168,7 @@ namespace rl::sdl::test {
     /**
      * @brief Tests call to SDL3::SDL_GetNumRenderDrivers
      * */
-    static int render_test_get_num_render_drivers(sdl::renderer& renderer)
+    static int render_test_get_num_render_drivers(sdl::Renderer& renderer)
     {
         auto drivers = renderer.get_render_drivers();
         sdl_assert(drivers.size() > 0, "no render drivers found");
@@ -178,7 +178,7 @@ namespace rl::sdl::test {
     /**
      * @brief Tests the SDL primitives for rendering.
      * */
-    static int render_test_primitives(sdl::renderer& renderer)
+    static int render_test_primitives(sdl::Renderer& renderer)
     {
         bool ret = true;
 
@@ -250,7 +250,7 @@ namespace rl::sdl::test {
         renderer.draw_line({ 79.0f, 59.0f }, { 50.0f, 30.0f });
 
         // compare to reference image to see if it's the same
-        sdl::surface reference_surface = sdl::test::image::ImagePrimitives();
+        sdl::Surface reference_surface = sdl::test::image::ImagePrimitives();
         compare(renderer, reference_surface, sdl::test::ALLOWABLE_ERROR_OPAQUE);
 
         renderer.present();
@@ -261,7 +261,7 @@ namespace rl::sdl::test {
     /**
      * @brief tests the SDL primitives with alpha for rendering
      * */
-    static int render_test_primitives_blend(sdl::renderer& renderer)
+    static int render_test_primitives_blend(sdl::Renderer& renderer)
     {
         // Clear surface.
         clear_screen(renderer);
@@ -377,7 +377,7 @@ namespace rl::sdl::test {
         sdl_assert(check_fail_count_3 == 0, "render test 3 failed");
 
         /* See if it's the same. */
-        sdl::surface reference_surface = sdl::test::image::ImagePrimitivesBlend();
+        sdl::Surface reference_surface = sdl::test::image::ImagePrimitivesBlend();
         compare(renderer, reference_surface, sdl::test::ALLOWABLE_ERROR_BLENDED);
 
         /* Make current */
@@ -389,7 +389,7 @@ namespace rl::sdl::test {
     /**
      * @brief tests some blitting routines.
      * */
-    static int render_test_blit(sdl::renderer& renderer)
+    static int render_test_blit(sdl::Renderer& renderer)
     {
         i32 ret = 0;
 
@@ -400,7 +400,7 @@ namespace rl::sdl::test {
         has_draw_color(renderer);
 
         /* Create face surface. */
-        sdl::texture tface = load_test_face(renderer);
+        sdl::Texture tface = load_test_face(renderer);
         if (!tface.is_valid())
             return TEST_ABORTED;
 
@@ -435,7 +435,7 @@ namespace rl::sdl::test {
         }
 
         /* See if it's the same */
-        sdl::surface reference_surface = sdl::test::image::ImageBlit();
+        sdl::Surface reference_surface = sdl::test::image::ImageBlit();
         compare(renderer, reference_surface, ALLOWABLE_ERROR_OPAQUE);
 
         /* Make current */
@@ -447,7 +447,7 @@ namespace rl::sdl::test {
     /**
      * @brief Blits doing color tests.
      * */
-    static int render_test_blit_color(sdl::renderer& renderer)
+    static int render_test_blit_color(sdl::Renderer& renderer)
     {
         int ret = 0;
 
@@ -455,7 +455,7 @@ namespace rl::sdl::test {
         clear_screen(renderer);
 
         /* Create face surface. */
-        sdl::texture tface = load_test_face(renderer);
+        sdl::Texture tface = load_test_face(renderer);
         if (!tface.is_valid())
             return TEST_ABORTED;
 
@@ -483,7 +483,7 @@ namespace rl::sdl::test {
             for (rl::i32 i = 0; i <= ni; i += 4)
             {
                 /* Set color mod. */
-                sdl::color color_mod{ (255 / nj) * j, (255 / ni) * i, (255 / nj) * j };
+                sdl::Color color_mod{ (255 / nj) * j, (255 / ni) * i, (255 / nj) * j };
                 if (!tface.set_color_mod(color_mod))
                     ++check_fail_count_1;
 
@@ -497,7 +497,7 @@ namespace rl::sdl::test {
         }
 
         /* See if it's the same. */
-        sdl::surface reference_surface = sdl::test::image::ImageBlitColor();
+        sdl::Surface reference_surface = sdl::test::image::ImageBlitColor();
         compare(renderer, reference_surface, ALLOWABLE_ERROR_OPAQUE);
 
         /* Make current */
@@ -509,7 +509,7 @@ namespace rl::sdl::test {
     /**
      * @brief tests blitting with alpha.
      * */
-    static int render_test_blit_alpha(sdl::renderer& renderer)
+    static int render_test_blit_alpha(sdl::Renderer& renderer)
     {
         int ret = 0;
 
@@ -522,7 +522,7 @@ namespace rl::sdl::test {
             return -1;
 
         /* Create face surface. */
-        sdl::texture tface = load_test_face(renderer);
+        sdl::Texture tface = load_test_face(renderer);
         if (!tface.is_valid())
             return TEST_ABORTED;
 
@@ -562,7 +562,7 @@ namespace rl::sdl::test {
         }
 
         /* See if it's the same. */
-        sdl::surface reference_surface = sdl::test::image::ImageBlitAlpha();
+        sdl::Surface reference_surface = sdl::test::image::ImageBlitAlpha();
         compare(renderer, reference_surface, ALLOWABLE_ERROR_BLENDED);
 
         /* Make current */
@@ -574,7 +574,7 @@ namespace rl::sdl::test {
     /**
      * @brief tests a blend mode.
      * */
-    static void test_blit_blend_mode(sdl::renderer& renderer, sdl::texture& tface, int mode)
+    static void test_blit_blend_mode(sdl::Renderer& renderer, sdl::Texture& tface, int mode)
     {
         /* Clear surface. */
         clear_screen(renderer);
@@ -620,7 +620,7 @@ namespace rl::sdl::test {
     /**
      * @brief _________
      * */
-    static int render_test_blit_blend(sdl::renderer& renderer)
+    static int render_test_blit_blend(sdl::Renderer& renderer)
     {
         int ret = 0;
 
@@ -630,7 +630,7 @@ namespace rl::sdl::test {
 
         {
             /* Create face surface. */
-            sdl::texture tface = load_test_face(renderer);
+            sdl::Texture tface = load_test_face(renderer);
             if (!tface.is_valid())
                 return TEST_ABORTED;
 
@@ -655,7 +655,7 @@ namespace rl::sdl::test {
                 {
                     /* Test None. */
                     test_blit_blend_mode(renderer, tface, SDL3::SDL_BLENDMODE_NONE);
-                    sdl::surface reference_surface = sdl::test::image::ImageBlitBlendNone();
+                    sdl::Surface reference_surface = sdl::test::image::ImageBlitBlendNone();
                     /* Compare, then Present */
                     compare(renderer, reference_surface, sdl::test::ALLOWABLE_ERROR_OPAQUE);
                     renderer.present();
@@ -664,7 +664,7 @@ namespace rl::sdl::test {
                 {
                     /* Test Blend. */
                     test_blit_blend_mode(renderer, tface, SDL3::SDL_BLENDMODE_BLEND);
-                    sdl::surface reference_surface = sdl::test::image::ImageBlitBlend();
+                    sdl::Surface reference_surface = sdl::test::image::ImageBlitBlend();
                     /* Compare, then Present */
                     compare(renderer, reference_surface, sdl::test::ALLOWABLE_ERROR_BLENDED);
                     renderer.present();
@@ -673,7 +673,7 @@ namespace rl::sdl::test {
                 {
                     /* Test Add. */
                     test_blit_blend_mode(renderer, tface, SDL3::SDL_BLENDMODE_ADD);
-                    sdl::surface reference_surface = sdl::test::image::ImageBlitBlendAdd();
+                    sdl::Surface reference_surface = sdl::test::image::ImageBlitBlendAdd();
                     /* Compare, then Present */
                     compare(renderer, reference_surface, sdl::test::ALLOWABLE_ERROR_BLENDED);
                     renderer.present();
@@ -682,7 +682,7 @@ namespace rl::sdl::test {
                 {
                     /* Test Mod. */
                     test_blit_blend_mode(renderer, tface, SDL3::SDL_BLENDMODE_MOD);
-                    sdl::surface reference_surface = sdl::test::image::ImageBlitBlendMod();
+                    sdl::Surface reference_surface = sdl::test::image::ImageBlitBlendMod();
                     /* Compare, then Present */
                     compare(renderer, reference_surface, sdl::test::ALLOWABLE_ERROR_BLENDED);
                     renderer.present();
@@ -732,7 +732,7 @@ namespace rl::sdl::test {
         }
 
         /* Check to see if final image matches. */
-        sdl::surface reference_surface = sdl::test::image::ImageBlitBlendAll();
+        sdl::Surface reference_surface = sdl::test::image::ImageBlitBlendAll();
         compare(renderer, reference_surface, ALLOWABLE_ERROR_BLENDED);
 
         /* Make current */
@@ -744,7 +744,7 @@ namespace rl::sdl::test {
     /**
      * \brief Test viewport
      */
-    static int render_test_viewport(sdl::renderer& renderer)
+    static int render_test_viewport(sdl::Renderer& renderer)
     {
         ds::rect<i32> viewport{
             TESTRENDER_SCREEN_W / 3,
@@ -753,14 +753,14 @@ namespace rl::sdl::test {
             TESTRENDER_SCREEN_H / 2,
         };
         /* Create expected result */
-        sdl::surface reference_surface{
+        sdl::Surface reference_surface{
             sdl::test::TESTRENDER_SCREEN_W,
             sdl::test::TESTRENDER_SCREEN_H,
             sdl::test::RENDER_COMPARE_FORMAT,
         };
 
         bool ret = true;
-        sdl::color fill_color{ 0, 0, 0 };
+        sdl::Color fill_color{ 0, 0, 0 };
         rl::u32 color_val = fill_color.rgba(reference_surface.get_format_full());
         runtime_assert(color_val == sdl::test::RENDER_COLOR_CLEAR, "color conversion mismatch");
         ret = reference_surface.fill(sdl::test::RENDER_COLOR_CLEAR);
@@ -811,7 +811,7 @@ namespace rl::sdl::test {
     /**
      * \brief Test logical size
      */
-    static int render_test_logical_size(sdl::renderer& renderer)
+    static int render_test_logical_size(sdl::Renderer& renderer)
     {
         const int factor = 2;
         ds::rect<i32> viewport = {
@@ -822,7 +822,7 @@ namespace rl::sdl::test {
         };
 
         /* Create expected result */
-        sdl::surface reference_surface = {
+        sdl::Surface reference_surface = {
             sdl::test::TESTRENDER_SCREEN_W,
             sdl::test::TESTRENDER_SCREEN_H,
             sdl::test::RENDER_COMPARE_FORMAT,
@@ -846,7 +846,7 @@ namespace rl::sdl::test {
             { out_size.width / factor, out_size.height / factor },
             SDL3::SDL_LOGICAL_PRESENTATION_LETTERBOX, SDL3::SDL_SCALEMODE_NEAREST);
 
-        renderer.set_draw_color({ 0, 255, 0, color::preset::alpha::Opaque });
+        renderer.set_draw_color({ 0, 255, 0, Color::Preset::Opaque });
 
         ds::rect<f32> rect = {
             (float)viewport.pt.x / factor,
@@ -914,7 +914,7 @@ namespace rl::sdl::test {
             { out_size.width - 2 * (TESTRENDER_SCREEN_W / 4), out_size.height },
             SDL3::SDL_LOGICAL_PRESENTATION_LETTERBOX, SDL3::SDL_SCALEMODE_LINEAR);
 
-        renderer.set_draw_color({ 0, 255, 0, color::preset::alpha::Opaque });
+        renderer.set_draw_color({ 0, 255, 0, Color::Preset::Opaque });
         renderer.fill_rect();
         renderer.set_logical_size({ 0, 0 }, SDL3::SDL_LOGICAL_PRESENTATION_DISABLED,
                                   SDL3::SDL_SCALEMODE_NEAREST);
@@ -934,7 +934,7 @@ namespace rl::sdl::test {
     /**
      * @brief Runs the full SDL test suite on C++ wrapper
      * */
-    int execute_render_tests(sdl::window& main_window)
+    int execute_render_tests(sdl::Window& main_window)
     {
         int ret = 0;
 
@@ -943,7 +943,7 @@ namespace rl::sdl::test {
         if (!main_window.renderer()->is_valid())
             return -1;
 
-        std::shared_ptr<sdl::renderer> window_renderer = main_window.renderer();
+        std::shared_ptr<sdl::Renderer> window_renderer = main_window.renderer();
         ret |= render_test_get_num_render_drivers(*window_renderer);
         ret |= render_test_primitives(*window_renderer);
         ret |= render_test_primitives_blend(*window_renderer);

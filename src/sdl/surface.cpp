@@ -15,33 +15,33 @@ SDL_C_LIB_BEGIN
 SDL_C_LIB_END
 
 namespace rl::sdl {
-    surface::surface(SDL3::SDL_Surface* surface)
+    Surface::Surface(SDL3::SDL_Surface* surface)
         : m_sdl_surface{ surface }
     {
         runtime_assert(m_sdl_surface != nullptr, "faied to construct surface");
         surface = nullptr;
     }
 
-    surface::surface(surface&& other)
+    Surface::Surface(Surface&& other)
         : m_sdl_surface{ other.m_sdl_surface }
     {
         other.m_sdl_surface = nullptr;
     }
 
-    surface::surface(i32 width, i32 height, SDL3::SDL_PixelFormatEnum format)
+    Surface::Surface(i32 width, i32 height, SDL3::SDL_PixelFormatEnum format)
         : m_sdl_surface{ SDL3::SDL_CreateSurface(width, height, format) }
     {
         runtime_assert(m_sdl_surface != nullptr, "faied to construct surface");
     }
 
-    surface::surface(void* pixels, i32 width, i32 height, i32 pitch,
+    Surface::Surface(void* pixels, i32 width, i32 height, i32 pitch,
                      SDL3::SDL_PixelFormatEnum format)
         : m_sdl_surface{ SDL3::SDL_CreateSurfaceFrom(pixels, width, height, pitch, format) }
     {
         runtime_assert(m_sdl_surface != nullptr, "faied to construct surface");
     }
 
-    surface::~surface()
+    Surface::~Surface()
     {
         if (m_sdl_surface != nullptr)
         {
@@ -56,7 +56,7 @@ namespace rl::sdl {
         }
     }
 
-    surface& surface::operator=(surface other)
+    Surface& Surface::operator=(Surface other)
     {
         runtime_assert(other.is_valid(), "assigning invalid surface");
         if (m_sdl_surface != nullptr)
@@ -71,7 +71,7 @@ namespace rl::sdl {
         return *this;
     }
 
-    surface& surface::operator=(surface&& other) noexcept
+    Surface& Surface::operator=(Surface&& other) noexcept
     {
 #ifndef NDEBUG
         runtime_assert(this != &other, "assigning a surface to itself");
@@ -89,24 +89,24 @@ namespace rl::sdl {
         return *this;
     }
 
-    SDL3::SDL_Surface* surface::sdl_handle() const
+    SDL3::SDL_Surface* Surface::sdl_handle() const
     {
         return m_sdl_surface;
     }
 
-    bool surface::is_valid() const
+    bool Surface::is_valid() const
     {
         return this->sdl_handle() != nullptr;
     }
 
-    void* const& surface::get_pixels() const&
+    void* const& Surface::get_pixels() const&
     {
         if (SDL_MUSTLOCK(m_sdl_surface))
             runtime_assert(this->is_locked, "unsafe surface pixels access, not locked");
         return m_sdl_surface->pixels;
     }
 
-    i32 surface::read_pixel(const ds::point<i32>& pt, sdl::color& color)
+    i32 Surface::read_pixel(const ds::point<i32>& pt, sdl::Color& color)
     {
         ds::rect<i32> surface_rect{ { 0, 0 }, this->size() };
         runtime_assert(this->is_valid(), "attempting to read pixel from invalid surface");
@@ -124,7 +124,7 @@ namespace rl::sdl {
             runtime_assert(bytes_per_pixel > sizeof(pixel), "surface->format->BytesPerPixel");
         else
         {
-            scoped_lock<sdl::surface> lock(*this);
+            scoped_lock<sdl::Surface> lock(*this);
             void* pixel_addr = static_cast<u8*>(m_sdl_surface->pixels) +
                                pt.y * m_sdl_surface->pitch + pt.x * bytes_per_pixel;
 
@@ -137,7 +137,7 @@ namespace rl::sdl {
         return 0;
     }
 
-    i32 surface::compare(sdl::surface& other, int allowable_error)
+    i32 Surface::compare(sdl::Surface& other, int allowable_error)
     {
         i32 failures = 0;
 
@@ -166,20 +166,20 @@ namespace rl::sdl {
         // i32 sample_error_x = 0;
         // i32 sample_error_y = 0;
         // i32 sample_dist = 0;
-        sdl::color sample_o_color{ 0, 0, 0, 0 };
-        sdl::color sample_t_color{ 0, 0, 0, 0 };
+        sdl::Color sample_o_color{ 0, 0, 0, 0 };
+        sdl::Color sample_t_color{ 0, 0, 0, 0 };
 
         {
-            sdl::scoped_lock<sdl::surface> this_lock(*this);
-            sdl::scoped_lock<sdl::surface> other_lock(other);
+            sdl::scoped_lock<sdl::Surface> this_lock(*this);
+            sdl::scoped_lock<sdl::Surface> other_lock(other);
 
             // SDL3::SDL_LockSurface(m_sdl_surface);
             // SDL3::SDL_LockSurface(other.m_sdl_surface);
 
             i32 temp{ 0 };
             i32 dist{ 0 };
-            sdl::color t_color{ 0, 0, 0, 0 };
-            sdl::color o_color{ 0, 0, 0, 0 };
+            sdl::Color t_color{ 0, 0, 0, 0 };
+            sdl::Color o_color{ 0, 0, 0, 0 };
 
             /* Compare image - should be same format. */
             for (i32 y = 0; y < t_size.height; y++)
@@ -241,35 +241,35 @@ namespace rl::sdl {
         return failures;
     }
 
-    i32& surface::get_pitch()
+    i32& Surface::get_pitch()
     {
         if (SDL_MUSTLOCK(m_sdl_surface))
             runtime_assert(this->is_locked, "unsafe surface pixels access, not locked");
         return m_sdl_surface->pitch;
     }
 
-    surface surface::convert(const SDL3::SDL_PixelFormat& format)
+    Surface Surface::convert(const SDL3::SDL_PixelFormat& format)
     {
         SDL3::SDL_Surface* sdl_surface{ SDL3::SDL_ConvertSurface(m_sdl_surface, &format) };
         runtime_assert(sdl_surface != nullptr, "failed to convert surface");
         return sdl_surface;
     }
 
-    surface surface::convert(u32 pixel_format)
+    Surface Surface::convert(u32 pixel_format)
     {
         SDL3::SDL_Surface* sdl_surface = SDL3::SDL_ConvertSurfaceFormat(m_sdl_surface, pixel_format);
         runtime_assert(sdl_surface != nullptr, "failed to convert surface");
         return sdl_surface;
     }
 
-    void surface::blit(surface& dst_surface, ds::rect<i32>& dst_rect)
+    void Surface::blit(Surface& dst_surface, ds::rect<i32>& dst_rect)
     {
         i32 result = SDL3::SDL_BlitSurface(m_sdl_surface, nullptr, dst_surface.sdl_handle(),
                                            dst_rect);
         runtime_assert(result == 0, "failed to blit surface");
     }
 
-    void surface::blit_rect(surface& dst_surface, ds::rect<i32>& dst_rect,
+    void Surface::blit_rect(Surface& dst_surface, ds::rect<i32>& dst_rect,
                             const ds::rect<i32>& src_rect)
     {
         i32 result = SDL3::SDL_BlitSurface(m_sdl_surface, src_rect, dst_surface.sdl_handle(),
@@ -277,7 +277,7 @@ namespace rl::sdl {
         runtime_assert(result == 0, "failed to blit surface");
     }
 
-    void surface::blit_scaled_rect(const ds::rect<i32>& src_rect, surface& dst_surface,
+    void Surface::blit_scaled_rect(const ds::rect<i32>& src_rect, Surface& dst_surface,
                                    ds::rect<i32>& dst_rect)
     {
         i32 result = SDL3::SDL_BlitSurfaceScaled(m_sdl_surface, src_rect, dst_surface.sdl_handle(),
@@ -285,21 +285,21 @@ namespace rl::sdl {
         runtime_assert(result == 0, "failed to blit (scaled) surface");
     }
 
-    void surface::blit_scaled(surface& dst_surface, ds::rect<i32>& dst_rect)
+    void Surface::blit_scaled(Surface& dst_surface, ds::rect<i32>& dst_rect)
     {
         i32 result = SDL3::SDL_BlitSurfaceScaled(m_sdl_surface, nullptr, dst_surface.sdl_handle(),
                                                  dst_rect);
         runtime_assert(result == 0, "failed to blit (scaled) surface");
     }
 
-    ds::rect<i32> surface::get_clip_rect() const
+    ds::rect<i32> Surface::get_clip_rect() const
     {
         SDL3::SDL_Rect sdl_rect{ 0, 0, 0, 0 };
         SDL3::SDL_GetSurfaceClipRect(m_sdl_surface, &sdl_rect);
         return sdl_rect;
     }
 
-    u32 surface::get_color_key() const
+    u32 Surface::get_color_key() const
     {
         u32 color_key{ 0 };
         i32 result = SDL3::SDL_GetSurfaceColorKey(m_sdl_surface, &color_key);
@@ -307,7 +307,7 @@ namespace rl::sdl {
         return color_key;
     }
 
-    u8 surface::get_alpha_mod() const
+    u8 Surface::get_alpha_mod() const
     {
         u8 alpha{ 0 };
         i32 result = SDL3::SDL_GetSurfaceAlphaMod(m_sdl_surface, &alpha);
@@ -315,7 +315,7 @@ namespace rl::sdl {
         return alpha;
     }
 
-    SDL3::SDL_BlendMode surface::get_blend_mode() const
+    SDL3::SDL_BlendMode Surface::get_blend_mode() const
     {
         SDL3::SDL_BlendMode blend_mode{ SDL3::SDL_BLENDMODE_NONE };
         i32 result = SDL3::SDL_GetSurfaceBlendMode(m_sdl_surface, &blend_mode);
@@ -323,49 +323,49 @@ namespace rl::sdl {
         return blend_mode;
     }
 
-    sdl::color surface::get_color_mod() const
+    sdl::Color Surface::get_color_mod() const
     {
-        sdl::color c{ 0, 0, 0, 0 };
+        sdl::Color c{ 0, 0, 0, 0 };
         this->get_color_mod(c.r, c.g, c.b);
         c.a = this->get_alpha_mod();
         return c;
     }
 
-    void surface::get_color_mod(u8& r, u8& g, u8& b) const
+    void Surface::get_color_mod(u8& r, u8& g, u8& b) const
     {
         i32 result = SDL3::SDL_GetSurfaceColorMod(m_sdl_surface, &r, &g, &b);
         runtime_assert(result == 0, "failed to get surface color mod");
     }
 
-    bool surface::set_clip_rect(const ds::rect<i32>& rect)
+    bool Surface::set_clip_rect(const ds::rect<i32>& rect)
     {
         SDL3::SDL_bool result = SDL3::SDL_SetSurfaceClipRect(m_sdl_surface, rect);
         runtime_assert(result == sdl::boolean(result), "failed to set clip rect");
         return result == sdl::boolean(result);
     }
 
-    bool surface::set_color_key(bool flag, u32 key)
+    bool Surface::set_color_key(bool flag, u32 key)
     {
         i32 result = SDL3::SDL_SetSurfaceColorKey(m_sdl_surface, flag, key);
         runtime_assert(result == 0, "failed to set color key");
         return result == 0;
     }
 
-    bool surface::set_alpha_mod(u8 alpha)
+    bool Surface::set_alpha_mod(u8 alpha)
     {
         i32 result = SDL3::SDL_SetSurfaceAlphaMod(m_sdl_surface, alpha);
         runtime_assert(result == 0, "failed to set alpha mod");
         return result == 0;
     }
 
-    bool surface::set_blend_mode(SDL3::SDL_BlendMode blend_mode)
+    bool Surface::set_blend_mode(SDL3::SDL_BlendMode blend_mode)
     {
         i32 result = SDL3::SDL_SetSurfaceBlendMode(m_sdl_surface, blend_mode);
         runtime_assert(result == 0, "failed to set blend mode");
         return result == 0;
     }
 
-    bool surface::set_color_mod(sdl::color c)
+    bool Surface::set_color_mod(sdl::Color c)
     {
         i32 result = 0;
         result |= SDL3::SDL_SetSurfaceColorMod(m_sdl_surface, c.r, c.g, c.b);
@@ -378,40 +378,40 @@ namespace rl::sdl {
     /**
      * @brief Sets RLE (Run Length Encoding) acceleration for the surface.
      * */
-    bool surface::set_rle_acceleration(bool flag)
+    bool Surface::set_rle_acceleration(bool flag)
     {
         i32 result = SDL3::SDL_SetSurfaceRLE(m_sdl_surface, flag ? 1 : 0);
         runtime_assert(result == 0, "failed to set rle accelleration");
         return result == 0;
     }
 
-    bool surface::fill(u32 color)
+    bool Surface::fill(u32 color)
     {
         i32 result = SDL3::SDL_FillSurfaceRect(m_sdl_surface, nullptr, color);
         runtime_assert(result == 0, "failed to fill surface");
         return result == 0;
     }
 
-    bool surface::fill(const sdl::color& color)
+    bool Surface::fill(const sdl::Color& color)
     {
         u32 color_val = color.rgba(m_sdl_surface->format);
         return this->fill(color_val);
     }
 
-    bool surface::fill_rect(u32 color, const ds::rect<i32>& rect)
+    bool Surface::fill_rect(u32 color, const ds::rect<i32>& rect)
     {
         i32 result = SDL3::SDL_FillSurfaceRect(m_sdl_surface, rect, color);
         runtime_assert(result == 0, "failed to fill rect");
         return result == 0;
     }
 
-    bool surface::fill_rect(const sdl::color& color, const ds::rect<i32>& rect)
+    bool Surface::fill_rect(const sdl::Color& color, const ds::rect<i32>& rect)
     {
         u32 color_val = color.rgba(m_sdl_surface->format);
         return this->fill_rect(color_val, rect);
     }
 
-    bool surface::fill_rects(u32 color, const std::vector<ds::rect<i32>>& rects)
+    bool Surface::fill_rects(u32 color, const std::vector<ds::rect<i32>>& rects)
     {
         bool ret = false;
 
@@ -426,13 +426,13 @@ namespace rl::sdl {
         return ret;
     }
 
-    bool surface::fill_rects(const sdl::color& color, const std::vector<ds::rect<i32>>& rects)
+    bool Surface::fill_rects(const sdl::Color& color, const std::vector<ds::rect<i32>>& rects)
     {
         u32 color_val = color.rgba(m_sdl_surface->format);
         return this->fill_rects(color_val, rects);
     }
 
-    ds::dimensions<i32> surface::size() const
+    ds::dimensions<i32> Surface::size() const
     {
         runtime_assert(this->is_valid(), "failed getting size of uninitialized surface");
         if (m_sdl_surface != nullptr) [[likely]]
@@ -446,12 +446,12 @@ namespace rl::sdl {
             return {};
     }
 
-    SDL3::SDL_PixelFormatEnum surface::get_format() const
+    SDL3::SDL_PixelFormatEnum Surface::get_format() const
     {
         return static_cast<SDL3::SDL_PixelFormatEnum>(m_sdl_surface->format->format);
     }
 
-    const SDL3::SDL_PixelFormat* surface::get_format_full() const
+    const SDL3::SDL_PixelFormat* Surface::get_format_full() const
     {
         return m_sdl_surface->format;
     }

@@ -11,7 +11,7 @@ SDL_C_LIB_BEGIN
 SDL_C_LIB_END
 
 namespace rl::sdl {
-    class event_handler
+    class EventHandler
     {
     public:
         bool handle_events()

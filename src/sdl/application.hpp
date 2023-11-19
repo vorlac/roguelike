@@ -19,7 +19,7 @@ SDL_C_LIB_BEGIN
 SDL_C_LIB_END
 
 namespace rl::sdl {
-    class application
+    class Application
     {
     public:
         enum Subsystem : u16_fast {
@@ -44,24 +44,24 @@ namespace rl::sdl {
                   SDL3::SDL_INIT_SENSOR
         };
 
-        using timer_t = sdl::perftimer<double, sdl::TimeDuration::Millisecond>;
+        using timer_t = sdl::Timer<double, sdl::TimeDuration::Millisecond>;
 
     public:
-        application()
+        Application()
         {
             bool ret = this->init_subsystem(Subsystem::Video);
             runtime_assert(ret, "failed to init SDL subsystem");
         }
 
-        application(const sdl::application& other) = delete;
-        application(sdl::application&& other) = delete;
+        Application(const sdl::Application& other) = delete;
+        Application(sdl::Application&& other) = delete;
 
-        ~application()
+        ~Application()
         {
         }
 
-        application& operator=(const application& other) = delete;
-        application& operator=(application&& other) = delete;
+        Application& operator=(const Application& other) = delete;
+        Application& operator=(Application&& other) = delete;
 
         bool handle_events()
         {
@@ -87,7 +87,7 @@ namespace rl::sdl {
             return m_initialized.load(std::memory_order_relaxed);
         }
 
-        sdl::window& window()
+        sdl::Window& window()
         {
             return m_window;
         }
@@ -97,7 +97,7 @@ namespace rl::sdl {
         static inline std::atomic<bool> m_initialized{ false };
         std::once_flag init_flag{};
 
-        sdl::window m_window{ "Roguelite" };
-        sdl::event_handler m_event_handler{};
+        sdl::Window m_window{ "Roguelite" };
+        sdl::EventHandler m_event_handler{};
     };
 }

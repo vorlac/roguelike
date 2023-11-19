@@ -5786,9 +5786,9 @@ namespace rl::sdl::test::image {
             "\377\377\377\377\377\377\377\377\324X2\377\377\377\333bB\377\377\377",
     };
 
-    rl::sdl::surface ImageBlit()
+    rl::sdl::Surface ImageBlit()
     {
-        return rl::sdl::surface{
+        return rl::sdl::Surface{
             (void*)Blit.pixel_data,
             Blit.width,
             Blit.height,
@@ -5798,9 +5798,9 @@ namespace rl::sdl::test::image {
         // return surface;
     }
 
-    rl::sdl::surface ImageBlitColor()
+    rl::sdl::Surface ImageBlitColor()
     {
-        return rl::sdl::surface{
+        return rl::sdl::Surface{
             (void*)BlitColor.pixel_data,
             BlitColor.width,
             BlitColor.height,
@@ -5810,9 +5810,9 @@ namespace rl::sdl::test::image {
         // return surface;
     }
 
-    rl::sdl::surface ImageBlitAlpha()
+    rl::sdl::Surface ImageBlitAlpha()
     {
-        return rl::sdl::surface{
+        return rl::sdl::Surface{
             (void*)BlitAlpha.pixel_data,
             BlitAlpha.width,
             BlitAlpha.height,
@@ -5822,9 +5822,9 @@ namespace rl::sdl::test::image {
         // return surface;
     }
 
-    rl::sdl::surface ImageBlitBlendAdd()
+    rl::sdl::Surface ImageBlitBlendAdd()
     {
-        return rl::sdl::surface{
+        return rl::sdl::Surface{
             (void*)BlitBlendAdd.pixel_data,
             BlitBlendAdd.width,
             BlitBlendAdd.height,
@@ -5834,9 +5834,9 @@ namespace rl::sdl::test::image {
         // return surface;
     }
 
-    rl::sdl::surface ImageBlitBlend()
+    rl::sdl::Surface ImageBlitBlend()
     {
-        return rl::sdl::surface{
+        return rl::sdl::Surface{
             (void*)BlitBlend.pixel_data,
             BlitBlend.width,
             BlitBlend.height,
@@ -5846,9 +5846,9 @@ namespace rl::sdl::test::image {
         // return surface;
     }
 
-    rl::sdl::surface ImageBlitBlendMod()
+    rl::sdl::Surface ImageBlitBlendMod()
     {
-        return rl::sdl::surface{
+        return rl::sdl::Surface{
             (void*)BlitBlendMod.pixel_data,
             BlitBlendMod.width,
             BlitBlendMod.height,
@@ -5858,9 +5858,9 @@ namespace rl::sdl::test::image {
         // return surface;
     }
 
-    rl::sdl::surface ImageBlitBlendNone()
+    rl::sdl::Surface ImageBlitBlendNone()
     {
-        return rl::sdl::surface{
+        return rl::sdl::Surface{
             (void*)BlitBlendNone.pixel_data,
             BlitBlendNone.width,
             BlitBlendNone.height,
@@ -5870,9 +5870,9 @@ namespace rl::sdl::test::image {
         // return surface;
     }
 
-    rl::sdl::surface ImageBlitBlendAll()
+    rl::sdl::Surface ImageBlitBlendAll()
     {
-        return rl::sdl::surface{
+        return rl::sdl::Surface{
             (void*)BlitBlendAll.pixel_data,
             BlitBlendAll.width,
             BlitBlendAll.height,
@@ -5882,9 +5882,9 @@ namespace rl::sdl::test::image {
         // return surface;
     }
 
-    rl::sdl::surface ImageFace()
+    rl::sdl::Surface ImageFace()
     {
-        return rl::sdl::surface{
+        return rl::sdl::Surface{
             (void*)Face.pixel_data,
             Face.width,
             Face.height,
@@ -5894,9 +5894,9 @@ namespace rl::sdl::test::image {
         // return surface;
     }
 
-    rl::sdl::surface ImagePrimitives()
+    rl::sdl::Surface ImagePrimitives()
     {
-        return rl::sdl::surface{
+        return rl::sdl::Surface{
             (void*)Primitives.pixel_data,
             Primitives.width,
             Primitives.height,
@@ -5906,9 +5906,9 @@ namespace rl::sdl::test::image {
         // return surface;
     }
 
-    rl::sdl::surface ImagePrimitivesBlend()
+    rl::sdl::Surface ImagePrimitivesBlend()
     {
-        return rl::sdl::surface{
+        return rl::sdl::Surface{
             (void*)PrimitivesBlend.pixel_data,
             PrimitivesBlend.width,
             PrimitivesBlend.height,
@@ -5918,9 +5918,9 @@ namespace rl::sdl::test::image {
         // return surface;
     }
 
-    rl::sdl::surface ImagePrimitivesBlendSurface()
+    rl::sdl::Surface ImagePrimitivesBlendSurface()
     {
-        return rl::sdl::surface{
+        return rl::sdl::Surface{
             (void*)PrimitivesBlend.pixel_data,
             PrimitivesBlend.width,
             PrimitivesBlend.height,

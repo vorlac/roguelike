@@ -17,9 +17,9 @@ SDL_C_LIB_BEGIN
 SDL_C_LIB_END
 
 namespace rl::sdl {
-    class renderer;
+    class Renderer;
 
-    class window
+    class Window
     {
     public:
         struct Properties : public std::bitset<sizeof(u32) * 8>
@@ -64,7 +64,7 @@ namespace rl::sdl {
             }
         };
 
-        constexpr static inline window::Properties DEFAULT_PROPERTY_FLAGS = {
+        constexpr static inline Window::Properties DEFAULT_PROPERTY_FLAGS = {
             Properties::Flag::HighDPI |     //
             Properties::Flag::InputFocus |  //
             Properties::Flag::MouseFocus |  //
@@ -85,15 +85,15 @@ namespace rl::sdl {
         };
 
     public:
-        explicit window() = delete;
-        explicit window(window&& window) = delete;
-        explicit window(const window& window) = delete;
-        explicit window(SDL3::SDL_Window* other) = delete;
+        explicit Window() = delete;
+        explicit Window(Window&& window) = delete;
+        explicit Window(const Window& window) = delete;
+        explicit Window(SDL3::SDL_Window* other) = delete;
 
-        explicit window(std::string title, const ds::dimensions<i32>& dims = DEFAULT_SIZE,
+        explicit Window(std::string title, const ds::dimensions<i32>& dims = DEFAULT_SIZE,
                         Properties flags = DEFAULT_PROPERTY_FLAGS);
 
-        ~window();
+        ~Window();
 
     public:
         bool maximize();
@@ -126,14 +126,14 @@ namespace rl::sdl {
         ds::dimensions<i32> get_max_size() const;
         ds::point<i32> get_position() const;
 
-        std::shared_ptr<sdl::renderer> renderer() const;
-        const window& operator=(sdl::window&& other) noexcept;
+        std::shared_ptr<sdl::Renderer> renderer() const;
+        const Window& operator=(sdl::Window&& other) noexcept;
         SDL3::SDL_Window* sdl_handle() const;
         bool is_valid() const;
 
     private:
         Properties m_properties{ Properties::Flag::None };
         SDL3::SDL_Window* m_sdl_window{ nullptr };
-        std::shared_ptr<sdl::renderer> m_renderer{ nullptr };
+        std::shared_ptr<sdl::Renderer> m_renderer{ nullptr };
     };
 }

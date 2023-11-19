@@ -17,10 +17,10 @@ namespace rl {
         bool handle_events();
         void quit();
 
-        sdl::application& sdl();
+        sdl::Application& sdl();
 
     protected:
         flecs::world m_world{};
-        sdl::application m_sdl{};
+        sdl::Application m_sdl{};
     };
 }

@@ -88,19 +88,19 @@ namespace rl {
     {
         this->setup();
 
-        sdl::color start{ 255, 0, 0, 50 };
-        sdl::color end{ 0, 0, 255, 50 };
+        sdl::Color start{ 255, 0, 0, 50 };
+        sdl::Color end{ 0, 0, 255, 50 };
 
         u8 val = 0;
         while (++val < 255)
         {
-            auto&& c = sdl::color::lerp(start, end, val);
+            auto&& c = sdl::Color::lerp(start, end, val);
             fmt::print(c, "test\n");
             val += 1;
         }
 
-        sdl::color c_orange{ fmt::color::burly_wood };
-        sdl::perftimer<float, sdl::TimeDuration::Second> timer{};
+        sdl::Color c_orange{ fmt::color::burly_wood };
+        sdl::Timer<float, sdl::TimeDuration::Second> timer{};
 
         u32 loop_count = 0;
         auto delta_time_s = timer.delta();
@@ -134,7 +134,7 @@ namespace rl {
         return this->teardown();
     }
 
-    sdl::application& Game::sdl()
+    sdl::Application& Game::sdl()
     {
         return m_sdl;
     }

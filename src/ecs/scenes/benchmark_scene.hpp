@@ -55,7 +55,7 @@ namespace rl::scene {
                 const ds::point<f32> centroid = rect.centroid();
 
                 srand((u32)time(nullptr));
-                sdl::color rect_color = {
+                sdl::Color rect_color = {
                     rand() % 128,
                     rand() % 128,
                     rand() % 128,
@@ -209,35 +209,35 @@ namespace rl::scene {
                                   : ds::dimensions<f32>{ 20.0f, 20.0f }
             };
 
-            static void define_entity_rendering(flecs::world& ecs, sdl::window& window,
-                                                sdl::texture& sprite)
+            static void define_entity_rendering(flecs::world& ecs, sdl::Window& window,
+                                                sdl::Texture& sprite)
             {
                 *m_sprite = std::move(sprite);
 
                 m_renderer = window.renderer().get();
-                m_renderer->set_draw_blend_mode(USE_RANDOM_COLORS ? sdl::renderer::blend_mode::Blend
-                                                                  : sdl::renderer::blend_mode::Mod);
+                m_renderer->set_draw_blend_mode(USE_RANDOM_COLORS ? sdl::Renderer::blend_mode::Blend
+                                                                  : sdl::Renderer::blend_mode::Mod);
 
                 static u32 count = 0;
-                static sdl::color c = { 100, 200, 100, 75 };
+                static sdl::Color c = { 100, 200, 100, 75 };
                 static std::vector<ds::rect<f32>> rects = {};
                 if constexpr (!USE_RANDOM_COLORS)
                     rects.reserve(benchmark::ENTITY_COUNT);
 
-                static std::vector<std::pair<ds::rect<f32>, sdl::color>> rect_colors = {};
+                static std::vector<std::pair<ds::rect<f32>, sdl::Color>> rect_colors = {};
                 if constexpr (USE_RANDOM_COLORS)
                     rect_colors.reserve(benchmark::ENTITY_COUNT);
 
                 const auto window_context_size{ m_renderer->get_output_size() };
 
-                sdl::surface surface{
+                sdl::Surface surface{
                     window_context_size.width,
                     window_context_size.height,
-                    sdl::pixel_data::format::RGB24,
+                    sdl::PixelData::format::RGB24,
                 };
 
-                static sdl::texture texture1{ window.renderer(), surface };
-                static sdl::texture texture2{ window.renderer(), surface };
+                static sdl::Texture texture1{ window.renderer(), surface };
+                static sdl::Texture texture2{ window.renderer(), surface };
 
                 ecs.system<const component::position, const component::style, const component::scale>(
                        "Render Rects")
@@ -280,7 +280,7 @@ namespace rl::scene {
                                 rect_colors.emplace_back(
                                     std::forward<const ds::rect<f32>>(
                                         { position, system::RECT_SIZE * size_scale.factor }),
-                                    std::forward<const sdl::color>(rect_color.color));
+                                    std::forward<const sdl::Color>(rect_color.color));
 
                             if constexpr (!USE_RANDOM_COLORS)
                                 rects.emplace_back(position, system::RECT_SIZE * size_scale.factor);
@@ -301,29 +301,29 @@ namespace rl::scene {
                     });
             }
 
-            static sdl::texture create_texture(std::shared_ptr<sdl::renderer> renderer,
+            static sdl::Texture create_texture(std::shared_ptr<sdl::Renderer> renderer,
                                                std::vector<u8>& data, ds::dimensions<i32>& size)
             {
                 SDL3::SDL_RWops* src = SDL3::SDL_RWFromConstMem(data.data(), data.size());
                 if (src != nullptr)
                 {
                     /* Treat white as transparent */
-                    sdl::color c{ 255, 255, 255 };
-                    sdl::surface surface = SDL3::SDL_LoadBMP_RW(src, SDL_TRUE);
+                    sdl::Color c{ 255, 255, 255 };
+                    sdl::Surface surface = SDL3::SDL_LoadBMP_RW(src, SDL_TRUE);
                     if (surface.is_valid())
                     {
                         surface.set_color_key(true, c.rgb(surface.get_format_full()));
-                        sdl::texture texture{ *renderer, surface };
+                        sdl::Texture texture{ *renderer, surface };
                         size = surface.size();
                         return texture;
                     }
                 }
 
                 runtime_assert(false, "failed to create texture");
-                return sdl::texture{ nullptr };
+                return sdl::Texture{ nullptr };
             }
 
-            static void init_systems(flecs::world& world, sdl::window& window)
+            static void init_systems(flecs::world& world, sdl::Window& window)
             {
                 ds::dimensions<i32> sprite_size{ 0, 0 };
                 std::vector<u8> icon_data = { icon_bmp, icon_bmp + icon_bmp_len };
@@ -336,7 +336,7 @@ namespace rl::scene {
         };
 
     public:
-        static auto init(flecs::world& world, sdl::window& window)
+        static auto init(flecs::world& world, sdl::Window& window)
         {
             world.set<benchmark_scene>({
                 world.pipeline()
@@ -377,7 +377,7 @@ namespace rl::scene {
         static inline thread_local i64 m_update_calls{ 0 };
         constexpr static inline ds::dimensions<i32> rect_size{ 10, 10 };
         static inline ds::dimensions<i32> render_size{ 0, 0 };
-        static inline sdl::renderer* m_renderer{ nullptr };
-        static inline sdl::texture* m_sprite{ new sdl::texture };
+        static inline sdl::Renderer* m_renderer{ nullptr };
+        static inline sdl::Texture* m_sprite{ new sdl::Texture };
     };
 }

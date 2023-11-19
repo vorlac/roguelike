@@ -29,10 +29,10 @@ SDL_C_LIB_BEGIN
 SDL_C_LIB_END
 
 namespace rl::sdl {
-    class texture;
-    class window;
+    class Texture;
+    class Window;
 
-    class renderer
+    class Renderer
     {
     public:
         struct Properties : public std::bitset<32>
@@ -80,12 +80,12 @@ namespace rl::sdl {
             Properties::HWAccelerated | Properties::VSync,
         };
 
-        renderer() = delete;
-        renderer(renderer& other) = delete;
-        renderer(const renderer& other) = delete;
+        Renderer() = delete;
+        Renderer(Renderer& other) = delete;
+        Renderer(const Renderer& other) = delete;
 
-        explicit renderer(const sdl::window& window, std::string_view driver,
-                          renderer::Properties flags)
+        explicit Renderer(const sdl::Window& window, std::string_view driver,
+                          Renderer::Properties flags)
             : m_properties{ flags }
             , m_sdl_renderer{ SDL3::SDL_CreateRenderer(window.sdl_handle(), driver.data(),
                                                        m_properties) }
@@ -94,7 +94,7 @@ namespace rl::sdl {
             this->print_render_info();
         }
 
-        ~renderer()
+        ~Renderer()
         {
             if (m_sdl_renderer != nullptr)
                 SDL3::SDL_DestroyRenderer(m_sdl_renderer);
@@ -143,7 +143,7 @@ namespace rl::sdl {
             return render_drivers;
         }
 
-        renderer& operator=(renderer&& other) noexcept
+        Renderer& operator=(Renderer&& other) noexcept
         {
             if (m_sdl_renderer != nullptr)
             {
@@ -162,7 +162,7 @@ namespace rl::sdl {
             return result == 0;
         }
 
-        bool clear(const sdl::color& c = { 0, 0, 0 })
+        bool clear(const sdl::Color& c = { 0, 0, 0 })
         {
             bool ret = this->set_draw_color(c);
             ret &= 0 == SDL3::SDL_RenderClear(m_sdl_renderer);
@@ -189,7 +189,7 @@ namespace rl::sdl {
             return s;
         }
 
-        bool copy(sdl::texture& tex, const ds::rect<i32>& src_rect = ds::rect<i32>::null(),
+        bool copy(sdl::Texture& tex, const ds::rect<i32>& src_rect = ds::rect<i32>::null(),
                   const ds::rect<i32>& dst_rect = ds::rect<i32>::null())
         {
             const ds::rect<f32>& src_frect{ src_rect };
@@ -200,7 +200,7 @@ namespace rl::sdl {
             return result == 0;
         }
 
-        bool copy(texture& tex, const ds::rect<i32>& src_rect, const ds::point<i32>& dst_pnt)
+        bool copy(Texture& tex, const ds::rect<i32>& src_rect, const ds::point<i32>& dst_pnt)
         {
             const auto&& tsize{ tex.size() };
             ds::rect<i32> dst_rect(dst_pnt.x, dst_pnt.y,
@@ -209,7 +209,7 @@ namespace rl::sdl {
             return this->copy(tex, src_rect, dst_rect);
         }
 
-        bool copy(texture& tex, const ds::rect<i32>& src_rect, const ds::rect<i32>& dst_rect,
+        bool copy(Texture& tex, const ds::rect<i32>& src_rect, const ds::rect<i32>& dst_rect,
                   f64 angle, const ds::point<i32>& center_pt = ds::point<i32>{},
                   SDL3::SDL_RendererFlip flip = SDL3::SDL_RendererFlip::SDL_FLIP_NONE)
         {
@@ -223,7 +223,7 @@ namespace rl::sdl {
             return result == 0;
         }
 
-        bool copy(texture& tex, const ds::rect<i32>& src_rect, const ds::point<i32>& dst_point,
+        bool copy(Texture& tex, const ds::rect<i32>& src_rect, const ds::point<i32>& dst_point,
                   f64 angle, const ds::point<i32>& center_pt = ds::point<i32>::null(),
                   SDL3::SDL_RendererFlip flip = SDL3::SDL_RendererFlip::SDL_FLIP_NONE)
         {
@@ -243,7 +243,7 @@ namespace rl::sdl {
                               std::forward<const ds::point<i32>&>(center_pt), flip);
         }
 
-        bool fill_copy(texture& tex, const ds::rect<i32>& src_rect, const ds::rect<i32>& dst_rect,
+        bool fill_copy(Texture& tex, const ds::rect<i32>& src_rect, const ds::rect<i32>& dst_rect,
                        const ds::vector2<i32>& offset, SDL3::SDL_RendererFlip flip)
         {
             bool ret = true;
@@ -344,14 +344,14 @@ namespace rl::sdl {
             return ret;
         }
 
-        bool set_draw_color(const sdl::color& c)
+        bool set_draw_color(const sdl::Color& c)
         {
             i32 result = SDL3::SDL_SetRenderDrawColor(m_sdl_renderer, c.r, c.g, c.b, c.a);
             sdl_assert(result == 0, "failed to set draw color");
             return result == 0;
         }
 
-        bool draw_texture(sdl::texture& texture,
+        bool draw_texture(sdl::Texture& texture,
                           const ds::rect<f32>& src_rect = ds::rect<f32>::null(),
                           const ds::rect<f32>& dst_rect = ds::rect<f32>::null())
         {
@@ -368,7 +368,7 @@ namespace rl::sdl {
             return result == 0;
         }
 
-        bool set_target(sdl::texture& tex)
+        bool set_target(sdl::Texture& tex)
         {
             i32 result = SDL3::SDL_SetRenderTarget(m_sdl_renderer, tex.sdl_handle());
             sdl_assert(result == 0, "failed to set render target");
@@ -424,7 +424,7 @@ namespace rl::sdl {
             return result == 0;
         }
 
-        bool draw_rect(ds::rect<f32>&& rect, const sdl::color& c = {})
+        bool draw_rect(ds::rect<f32>&& rect, const sdl::Color& c = {})
         {
             i32 result = 0;
             if (!c.is_empty())
@@ -448,7 +448,7 @@ namespace rl::sdl {
             return result == 0;
         }
 
-        bool fill_rect(const ds::rect<f32>& rect = ds::rect<i32>::null(), const sdl::color& c = {})
+        bool fill_rect(const ds::rect<f32>& rect = ds::rect<i32>::null(), const sdl::Color& c = {})
         {
             i32 result = 0;
             if (!c.is_empty())
@@ -459,7 +459,7 @@ namespace rl::sdl {
             return result == 0;
         }
 
-        bool fill_rects(const std::vector<ds::rect<f32>>& rects, const sdl::color& c = {})
+        bool fill_rects(const std::vector<ds::rect<f32>>& rects, const sdl::Color& c = {})
         {
             i32 result = 0;
 
@@ -476,7 +476,7 @@ namespace rl::sdl {
             return result == 0;
         }
 
-        bool fill_rects(const std::vector<std::pair<ds::rect<f32>, sdl::color>>& rects)
+        bool fill_rects(const std::vector<std::pair<ds::rect<f32>, sdl::Color>>& rects)
         {
             bool ret = true;
 
@@ -575,9 +575,9 @@ namespace rl::sdl {
             return mode;
         }
 
-        sdl::color get_draw_color() const
+        sdl::Color get_draw_color() const
         {
-            sdl::color c{};
+            sdl::Color c{};
             i32 result = SDL3::SDL_GetRenderDrawColor(m_sdl_renderer, &c.r, &c.g, &c.b, &c.a);
             sdl_assert(result == 0, "failed to get draw color");
             return c;

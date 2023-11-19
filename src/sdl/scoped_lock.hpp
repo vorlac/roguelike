@@ -18,8 +18,8 @@ namespace rl::sdl {
     class scoped_lock
     {
     public:
-        scoped_lock(sdl::surface& sur)
-            requires std::same_as<T, sdl::surface>
+        scoped_lock(sdl::Surface& sur)
+            requires std::same_as<T, sdl::Surface>
             : m_sdl_lockable{ sur }
         {
             if (SDL_MUSTLOCK(m_sdl_lockable.sdl_handle()))
@@ -30,8 +30,8 @@ namespace rl::sdl {
             m_sdl_lockable.is_locked = true;
         }
 
-        scoped_lock(sdl::texture& tex)
-            requires std::same_as<T, sdl::texture>
+        scoped_lock(sdl::Texture& tex)
+            requires std::same_as<T, sdl::Texture>
             : m_sdl_lockable{ tex }
         {
             SDL3::SDL_Texture* sdl_texture{ m_sdl_lockable.sdl_handle() };
@@ -46,7 +46,7 @@ namespace rl::sdl {
         }
 
         ~scoped_lock()
-            requires std::same_as<T, sdl::surface>
+            requires std::same_as<T, sdl::Surface>
         {
             SDL3::SDL_UnlockSurface(m_sdl_lockable.sdl_handle());
             m_sdl_lockable.is_locked = false;

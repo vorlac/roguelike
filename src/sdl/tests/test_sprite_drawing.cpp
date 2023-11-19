@@ -24,20 +24,20 @@ SDL_C_LIB_BEGIN
 SDL_C_LIB_END
 
 namespace rl::sdl::test {
-    static sdl::texture create_texture(std::shared_ptr<sdl::renderer> renderer,
+    static sdl::Texture create_texture(std::shared_ptr<sdl::Renderer> renderer,
                                        std::vector<u8>& data, ds::dimensions<i32>& size)
     {
         SDL3::SDL_RWops* src = SDL3::SDL_RWFromConstMem(data.data(), data.size());
         if (src != nullptr)
         {
-            sdl::surface surface = SDL3::SDL_LoadBMP_RW(src, SDL_TRUE);
+            sdl::Surface surface = SDL3::SDL_LoadBMP_RW(src, SDL_TRUE);
             if (surface.is_valid())
             {
                 /* Treat white as transparent */
-                sdl::color c{ 255, 255, 255 };
+                sdl::Color c{ 255, 255, 255 };
 
                 surface.set_color_key(true, c.rgb(surface.get_format_full()));
-                sdl::texture texture{ renderer, surface };
+                sdl::Texture texture{ renderer, surface };
 
                 auto dims = surface.size();
                 ds::dimensions<i32> dims2 = {
@@ -55,10 +55,10 @@ namespace rl::sdl::test {
         }
 
         runtime_assert(false, "failed to create texture");
-        return sdl::texture{ nullptr };
+        return sdl::Texture{ nullptr };
     }
 
-    static void move_sprites(sdl::window& window, sdl::texture& sprite, auto&& sprites,
+    static void move_sprites(sdl::Window& window, sdl::Texture& sprite, auto&& sprites,
                              auto& sprite_size)
     {
         ds::dimensions<i32> window_size = window.get_render_size();
@@ -96,7 +96,7 @@ namespace rl::sdl::test {
         renderer->present();
     }
 
-    int execute_sprite_drawing_tests(sdl::window& window)
+    int execute_sprite_drawing_tests(sdl::Window& window)
     {
         i32 return_code = -1;
 
@@ -105,7 +105,7 @@ namespace rl::sdl::test {
 
         std::vector<u8> icon_data = { icon_bmp, icon_bmp + icon_bmp_len };
 
-        sdl::texture sprite = create_texture(window.renderer(), icon_data, sprite_size);
+        sdl::Texture sprite = create_texture(window.renderer(), icon_data, sprite_size);
         if (!sprite.is_valid())
             return false;
 

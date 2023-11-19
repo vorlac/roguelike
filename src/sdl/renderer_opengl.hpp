@@ -10,11 +10,11 @@ SDL_C_LIB_BEGIN
 #include <SDL3/SDL_video.h>
 SDL_C_LIB_END
 
-namespace sdl {
-    class renderer_gl
+namespace rl::sdl {
+    class RendererGL
     {
     public:
-        renderer_gl()
+        RendererGL()
         {
             SDL3::SDL_GL_LoadLibrary();
         }

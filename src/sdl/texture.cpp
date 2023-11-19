@@ -9,21 +9,21 @@ SDL_C_LIB_BEGIN
 SDL_C_LIB_END
 
 namespace rl::sdl {
-    texture::texture(SDL3::SDL_Texture* other)
+    Texture::Texture(SDL3::SDL_Texture* other)
         : m_sdl_texture(other)
     {
         sdl_assert(m_sdl_texture != nullptr, "failed to create texture");
         other = nullptr;
     }
 
-    texture::texture(texture&& other)
+    Texture::Texture(Texture&& other)
         : m_sdl_texture(other.m_sdl_texture)
     {
         sdl_assert(m_sdl_texture != nullptr, "failed to create texture");
         other.m_sdl_texture = nullptr;
     }
 
-    texture::texture(std::shared_ptr<sdl::renderer> renderer, u32 format, i32 accesss, i32 width,
+    Texture::Texture(std::shared_ptr<sdl::Renderer> renderer, u32 format, i32 accesss, i32 width,
                      i32 height)
         : m_sdl_texture{ SDL3::SDL_CreateTexture(renderer->sdl_handle(), format, accesss, width,
                                                  height) }
@@ -31,20 +31,20 @@ namespace rl::sdl {
         sdl_assert(m_sdl_texture != nullptr, "failed to create texture");
     }
 
-    texture::texture(sdl::renderer& renderer, const sdl::surface& surface)
+    Texture::Texture(sdl::Renderer& renderer, const sdl::Surface& surface)
         : m_sdl_texture{ SDL3::SDL_CreateTextureFromSurface(renderer.sdl_handle(),
                                                             surface.sdl_handle()) }
     {
     }
 
-    texture::texture(std::shared_ptr<sdl::renderer> renderer, const sdl::surface& surface)
+    Texture::Texture(std::shared_ptr<sdl::Renderer> renderer, const sdl::Surface& surface)
         : m_sdl_texture{ SDL3::SDL_CreateTextureFromSurface(renderer->sdl_handle(),
                                                             surface.sdl_handle()) }
     {
         sdl_assert(m_sdl_texture != nullptr, "failed to create texture");
     }
 
-    texture::~texture()
+    Texture::~Texture()
     {
         if (m_sdl_texture != nullptr)
         {
@@ -62,7 +62,7 @@ namespace rl::sdl {
         }
     }
 
-    texture& texture::operator=(SDL3::SDL_Texture* other)
+    Texture& Texture::operator=(SDL3::SDL_Texture* other)
     {
         if (m_sdl_texture != nullptr)
         {
@@ -80,7 +80,7 @@ namespace rl::sdl {
         return *this;
     }
 
-    texture& texture::operator=(texture&& other)
+    Texture& Texture::operator=(Texture&& other)
     {
 #ifndef NDEBUG
         sdl_assert(this != &other, "texture assigned to itself");
@@ -98,17 +98,17 @@ namespace rl::sdl {
         return *this;
     }
 
-    bool texture::is_valid() const
+    bool Texture::is_valid() const
     {
         return this->sdl_handle() != nullptr;
     }
 
-    SDL3::SDL_Texture* texture::sdl_handle() const
+    SDL3::SDL_Texture* Texture::sdl_handle() const
     {
         return m_sdl_texture;
     }
 
-    i32 texture::query_texture(SDL3::SDL_PixelFormatEnum& format, SDL3::SDL_TextureAccess& access,
+    i32 Texture::query_texture(SDL3::SDL_PixelFormatEnum& format, SDL3::SDL_TextureAccess& access,
                                ds::dimensions<i32>& dims)
     {
         i32 result = SDL3::SDL_QueryTexture(m_sdl_texture, reinterpret_cast<u32*>(&format),
@@ -119,14 +119,14 @@ namespace rl::sdl {
         return result == 0;
     }
 
-    bool texture::update(const void* pixels, i32 pitch, const ds::rect<i32>& rect /*= {}*/)
+    bool Texture::update(const void* pixels, i32 pitch, const ds::rect<i32>& rect /*= {}*/)
     {
         i32 result = SDL3::SDL_UpdateTexture(m_sdl_texture, rect, pixels, pitch);
         sdl_assert(result == 0, "failed to update texture");
         return result == 0;
     }
 
-    bool texture::update(sdl::surface& surf, const ds::rect<i32>& rect /*= {}*/)
+    bool Texture::update(sdl::Surface& surf, const ds::rect<i32>& rect /*= {}*/)
     {
         const auto&& this_size{ this->size() };
         ds::rect<i32> real_rect{
@@ -139,22 +139,22 @@ namespace rl::sdl {
 
         if (this->get_format() == surf.get_format())
         {
-            sdl::scoped_lock<sdl::surface>{ surf };
+            sdl::scoped_lock<sdl::Surface>{ surf };
             i32& pitch = surf.get_pitch();
             void* const& pixels{ surf.get_pixels() };
             return this->update(pixels, pitch, real_rect);
         }
         else
         {
-            sdl::surface converted{ surf.convert(this->get_format()) };
-            sdl::scoped_lock<sdl::surface>{ converted };
+            sdl::Surface converted{ surf.convert(this->get_format()) };
+            sdl::scoped_lock<sdl::Surface>{ converted };
             i32& pitch = converted.get_pitch();
             void* const& pixels{ converted.get_pixels() };
             return this->update(pixels, pitch, real_rect);
         }
     }
 
-    bool texture::update(sdl::surface&& surf, const ds::rect<i32>& rect /*= {}*/)
+    bool Texture::update(sdl::Surface&& surf, const ds::rect<i32>& rect /*= {}*/)
     {
         const auto&& this_size{ this->size() };
         ds::rect<i32> real_rect{
@@ -167,22 +167,22 @@ namespace rl::sdl {
 
         if (this->get_format() == surf.get_format())
         {
-            sdl::scoped_lock<sdl::surface>{ surf };
+            sdl::scoped_lock<sdl::Surface>{ surf };
             i32 pitch{ surf.get_pitch() };
             void* const& pixels{ surf.get_pixels() };
             return this->update(pixels, pitch, real_rect);
         }
         else
         {
-            sdl::surface converted{ surf.convert(this->get_format()) };
-            sdl::scoped_lock<sdl::surface>{ converted };
+            sdl::Surface converted{ surf.convert(this->get_format()) };
+            sdl::scoped_lock<sdl::Surface>{ converted };
             i32 pitch{ converted.get_pitch() };
             void* const& pixels{ converted.get_pixels() };
             return this->update(pixels, pitch, real_rect);
         }
     }
 
-    bool texture::update_yuv(const u8* y_plane, int y_pitch, const u8* u_plane, i32 u_pitch,
+    bool Texture::update_yuv(const u8* y_plane, int y_pitch, const u8* u_plane, i32 u_pitch,
                              const u8* v_plane, int v_pitch, const ds::rect<i32>& rect)
     {
         i32 result = SDL3::SDL_UpdateYUVTexture(m_sdl_texture, rect, y_plane, y_pitch, u_plane,
@@ -191,21 +191,21 @@ namespace rl::sdl {
         return result == 0;
     }
 
-    bool texture::set_blend_mode(SDL3::SDL_BlendMode blend_mode)
+    bool Texture::set_blend_mode(SDL3::SDL_BlendMode blend_mode)
     {
         i32 result = SDL3::SDL_SetTextureBlendMode(m_sdl_texture, blend_mode);
         sdl_assert(result == 0, "failed to set blend mode");
         return result == 0;
     }
 
-    bool texture::set_alpha_mod(u8 a)
+    bool Texture::set_alpha_mod(u8 a)
     {
         i32 result = SDL3::SDL_SetTextureAlphaMod(m_sdl_texture, a);
         sdl_assert(result == 0, "failed to set alpha mod");
         return result == 0;
     }
 
-    bool texture::set_color_mod(sdl::color c)
+    bool Texture::set_color_mod(sdl::Color c)
     {
         i32 result = 0;
         result |= SDL3::SDL_SetTextureColorMod(m_sdl_texture, c.r, c.g, c.b);
@@ -215,7 +215,7 @@ namespace rl::sdl {
         return result == 0;
     }
 
-    SDL3::SDL_PixelFormatEnum texture::get_format() const
+    SDL3::SDL_PixelFormatEnum Texture::get_format() const
     {
         SDL3::SDL_PixelFormatEnum format{ SDL3::SDL_PIXELFORMAT_UNKNOWN };
         i32 result = SDL3::SDL_QueryTexture(m_sdl_texture, reinterpret_cast<u32*>(&format), nullptr,
@@ -224,7 +224,7 @@ namespace rl::sdl {
         return format;
     }
 
-    SDL3::SDL_TextureAccess texture::get_access() const
+    SDL3::SDL_TextureAccess Texture::get_access() const
     {
         SDL3::SDL_TextureAccess access{ SDL3::SDL_TEXTUREACCESS_STATIC };
         i32 result = SDL3::SDL_QueryTexture(m_sdl_texture, nullptr, reinterpret_cast<i32*>(&access),
@@ -233,7 +233,7 @@ namespace rl::sdl {
         return static_cast<SDL3::SDL_TextureAccess>(access);
     }
 
-    ds::dimensions<i32> texture::size()
+    ds::dimensions<i32> Texture::size()
     {
         ds::dimensions<i32> size{ 0, 0 };
         i32 result = SDL3::SDL_QueryTexture(m_sdl_texture, nullptr, nullptr, &size.width,
@@ -242,7 +242,7 @@ namespace rl::sdl {
         return size;
     }
 
-    u8 texture::get_alpha_mod() const
+    u8 Texture::get_alpha_mod() const
     {
         u8 alpha = 0;
         i32 result = SDL3::SDL_GetTextureAlphaMod(m_sdl_texture, &alpha);
@@ -250,7 +250,7 @@ namespace rl::sdl {
         return alpha;
     }
 
-    SDL3::SDL_BlendMode texture::get_blend_mode() const
+    SDL3::SDL_BlendMode Texture::get_blend_mode() const
     {
         SDL3::SDL_BlendMode mode;
         i32 result = SDL3::SDL_GetTextureBlendMode(m_sdl_texture, &mode);
@@ -259,10 +259,10 @@ namespace rl::sdl {
         return mode;
     }
 
-    sdl::color texture::get_color_mod() const
+    sdl::Color Texture::get_color_mod() const
     {
         i32 result = 0;
-        sdl::color c{ 0, 0, 0 };
+        sdl::Color c{ 0, 0, 0 };
         result |= SDL3::SDL_GetTextureColorMod(m_sdl_texture, &c.r, &c.g, &c.b);
         sdl_assert(result == 0, "failed to get color mod");
         result |= SDL3::SDL_GetTextureAlphaMod(m_sdl_texture, &c.a);

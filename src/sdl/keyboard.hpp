@@ -14,7 +14,7 @@ SDL_C_LIB_BEGIN
 SDL_C_LIB_END
 
 namespace rl::sdl {
-    class event_handler;
+    class EventHandler;
 
     class Keyboard
     {
@@ -577,7 +577,7 @@ namespace rl::sdl {
         }
 
     private:
-        friend class rl::sdl::event_handler;
+        friend class rl::sdl::EventHandler;
 
         constexpr inline void process_button_down(Keyboard::Button::type key)
         {

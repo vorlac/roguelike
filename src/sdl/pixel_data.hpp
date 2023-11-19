@@ -15,7 +15,7 @@ SDL_C_LIB_END
 
 namespace rl::sdl {
 
-    class pixel_data
+    class PixelData
     {
     public:
         struct format
@@ -43,19 +43,19 @@ namespace rl::sdl {
         };
 
     public:
-        constexpr pixel_data()
+        constexpr PixelData()
         {
         }
 
-        constexpr pixel_data(const ds::dimensions<i32>& dims,
-                             pixel_data::format::type pixel_format = pixel_data::format::RGB24)
+        constexpr PixelData(const ds::dimensions<i32>& dims,
+                            PixelData::format::type pixel_format = PixelData::format::RGB24)
             : m_format{ pixel_format }
             , m_structure{ structure::Packed32 }
         {
             u8 pixel_byte_size = 0;
             switch (m_format)
             {
-                case pixel_data::format::RGB24:
+                case PixelData::format::RGB24:
                     m_structure = structure::Packed32;
                     pixel_byte_size = 3;  // R,G,B - each 1 byte
                     break;
@@ -103,8 +103,8 @@ namespace rl::sdl {
     private:
         u32 m_buffer_size{ 0 };
         ds::rect<i32> m_bounds{ 0, 0, 0, 0 };
-        pixel_data::format::type m_format{ pixel_data::format::Unknown };
-        pixel_data::structure::type m_structure{ structure::Unknown };
+        PixelData::format::type m_format{ PixelData::format::Unknown };
+        PixelData::structure::type m_structure{ structure::Unknown };
         std::vector<u8> m_data{};
     };
 };

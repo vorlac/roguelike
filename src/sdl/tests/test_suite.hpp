@@ -2,8 +2,8 @@
 
 namespace rl::sdl::test {
     class window;
-    class renderer;
+    class Renderer;
 
-    int execute_render_tests(sdl::window& main_window);
-    int execute_sprite_drawing_tests(sdl::window& window);
+    int execute_render_tests(sdl::Window& main_window);
+    int execute_sprite_drawing_tests(sdl::Window& window);
 }

@@ -19,87 +19,6 @@ SDL_C_LIB_BEGIN
 #include <SDL3/SDL_timer.h>
 SDL_C_LIB_END
 
-#ifdef WIN32
-  #define LEAN_AND_MEAN
-  #include <Windows.h>
-#endif
-
-namespace rl::sdl {
-    struct hrtimer
-    {
-    private:
-        uint64_t m_tick_frequency{ 0 };
-        uint64_t m_start_hpc_tick{ 0 };
-        uint64_t m_start_microsec{ 0 };
-        uint64_t m_last_timestamp{ 0 };
-
-    public:
-        hrtimer()
-        {
-            LARGE_INTEGER tick_frequency{};
-            BOOL ret = QueryPerformanceFrequency(&tick_frequency);
-            if (ret == 0)
-                fmt::print("QueryPerformanceFrequency failed\n");
-
-            LARGE_INTEGER start_hpc_tick{};
-            ret = QueryPerformanceCounter(&start_hpc_tick);
-            if (ret == 0)
-                fmt::print("QueryPerformanceCounter failed\n");
-
-            LARGE_INTEGER current_tick{};
-            ret = QueryPerformanceCounter(&current_tick);
-            if (ret == 0)
-                fmt::print("QueryPerformanceCounter failed\n");
-
-            m_tick_frequency = tick_frequency.QuadPart;
-            m_start_hpc_tick = start_hpc_tick.QuadPart;
-            m_start_microsec = ((current_tick.QuadPart - m_start_hpc_tick) * 1000000) /
-                               m_tick_frequency;
-            m_last_timestamp = m_start_microsec;
-        }
-
-        [[nodiscard]]
-        inline uint64_t now()
-        {
-            LARGE_INTEGER current_tick{};
-            QueryPerformanceCounter(&current_tick);
-            m_last_timestamp = current_tick.QuadPart;
-            return m_last_timestamp;
-        }
-
-        /**
-         * @brief get elapsed microseconds
-         * */
-        [[nodiscard]]
-        inline uint64_t elapsed_mu()
-        {
-            uint64_t curr_timestamp = hrtimer::now();
-            m_last_timestamp = ((curr_timestamp - m_start_hpc_tick) * 1000000) / m_tick_frequency;
-            return m_last_timestamp;
-        }
-
-        /**
-         * @brief get elapsed milliseconds
-         * */
-        [[nodiscard]]
-        inline double elapsed_ms()
-        {
-            uint64_t microseconds = elapsed_mu();
-            return static_cast<double>(microseconds) / 1000.0;
-        }
-
-        /**
-         * @brief get elapsed seconds
-         * */
-        [[nodiscard]]
-        inline double elapsed_sec()
-        {
-            double milliseconds = elapsed_ms();
-            return milliseconds / 1000.0;
-        }
-    };
-}
-
 namespace rl::sdl {
     // time duration units used to interpret
     // as well as convert between timer values
@@ -119,7 +38,7 @@ namespace rl::sdl {
 
     template <rl::numeric T = double, auto Duration = TimeDuration::Second>
         requires std::same_as<decltype(Duration), TimeDuration>
-    struct perftimer
+    struct Timer
     {
         // gets time unit of a single tick
         static inline TimeDuration unit()
@@ -154,12 +73,12 @@ namespace rl::sdl {
         constexpr static inline TimeDuration time_unit{ Duration };
         // the timer internally always stores the
         // highest resolution of time point units
-        const static inline TimeDuration tick_unit{ perftimer::unit() };
+        const static inline TimeDuration tick_unit{ Timer::unit() };
 
     public:
-        constexpr inline perftimer()
-            : m_start_timestamp{ perftimer::get_tick() }
-            , m_delta_timestamp{ perftimer::get_tick() }
+        constexpr inline Timer()
+            : m_start_timestamp{ Timer::get_tick() }
+            , m_delta_timestamp{ Timer::get_tick() }
         {
         }
 
@@ -189,13 +108,13 @@ namespace rl::sdl {
         [[nodiscard]]
         constexpr inline time_type now()
         {
-            return this->convert(perftimer::get_tick());
+            return this->convert(Timer::get_tick());
         }
 
         [[nodiscard]]
         inline time_type delta()
         {
-            const u64 curr_tick = perftimer::get_tick();
+            const u64 curr_tick = Timer::get_tick();
             const u64 prev_tick = m_delta_timestamp;
             m_delta_timestamp = curr_tick;
             return this->convert(curr_tick - prev_tick);
@@ -204,7 +123,7 @@ namespace rl::sdl {
         [[nodiscard]]
         inline time_type elapsed()
         {
-            const u64 curr_tick = perftimer::get_tick();
+            const u64 curr_tick = Timer::get_tick();
             const u64 prev_tick = m_start_timestamp;
             return this->convert(curr_tick - prev_tick);
         }

@@ -18,16 +18,16 @@ namespace rl::sdl::test::image {
         const char* pixel_data{ nullptr };
     };
 
-    rl::sdl::surface ImageBlit();
-    rl::sdl::surface ImageBlitColor();
-    rl::sdl::surface ImageBlitAlpha();
-    rl::sdl::surface ImageBlitBlendAdd();
-    rl::sdl::surface ImageBlitBlend();
-    rl::sdl::surface ImageBlitBlendMod();
-    rl::sdl::surface ImageBlitBlendNone();
-    rl::sdl::surface ImageBlitBlendAll();
-    rl::sdl::surface ImageFace();
-    rl::sdl::surface ImagePrimitives();
-    rl::sdl::surface ImagePrimitivesBlend();
-    rl::sdl::surface ImagePrimitivesBlendSurface();
+    rl::sdl::Surface ImageBlit();
+    rl::sdl::Surface ImageBlitColor();
+    rl::sdl::Surface ImageBlitAlpha();
+    rl::sdl::Surface ImageBlitBlendAdd();
+    rl::sdl::Surface ImageBlitBlend();
+    rl::sdl::Surface ImageBlitBlendMod();
+    rl::sdl::Surface ImageBlitBlendNone();
+    rl::sdl::Surface ImageBlitBlendAll();
+    rl::sdl::Surface ImageFace();
+    rl::sdl::Surface ImagePrimitives();
+    rl::sdl::Surface ImagePrimitivesBlend();
+    rl::sdl::Surface ImagePrimitivesBlendSurface();
 }
