@@ -468,7 +468,7 @@ namespace rl::sdl {
         {
             i32 result = 0;
 
-            const i32 count{ cast::to<i32>(rects.size()) };
+            i32 count = cast::to<i32>(rects.size());
             if (count > 0) [[likely]]
             {
                 if (!c.is_empty())

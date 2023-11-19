@@ -8,10 +8,10 @@
 
 namespace rl::inline constraint {
     template <typename T, typename... TOther>
-    concept any_of = (std::same_as<T, TOther> || ...);
+    concept any_of = (std::same_as<std::remove_cvref_t<std::type_identity_t<T>>, TOther> || ...);
 
     template <typename T>
-    concept floating_point = constraint::any_of<T, f32, f64, lf64, double, float>;
+    concept floating_point = constraint::any_of<T, f32, f64, lf64>;
 
     template <typename T>
     concept signed_integer = constraint::any_of<T, i8, i16, i32, i64>;
@@ -50,5 +50,8 @@ namespace rl::inline constraint {
 
     template <typename L, typename R>
     concept lower_min = std::numeric_limits<L>::min() < std::numeric_limits<R>::min();
+
+    template <typename T>
+    concept scoped_enum = std::is_scoped_enum_v<T>;
 
 }

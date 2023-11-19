@@ -1,5 +1,6 @@
 #pragma once
 
+#include "core/utils/conversions.hpp"
 #include "core/utils/io.hpp"
 #include "sdl/defs.hpp"
 #include "sdl/keyboard.hpp"

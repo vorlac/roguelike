@@ -1,10 +1,13 @@
 #pragma once
 
+#include <type_traits>
+
 #include <fmt/format.h>
 
 #include "core/ds/point.hpp"
 #include "core/ds/vector2d.hpp"
 #include "core/numeric_types.hpp"
+#include "core/utils/conversions.hpp"
 #include "sdl/defs.hpp"
 
 SDL_C_LIB_BEGIN
@@ -16,66 +19,74 @@ namespace rl::sdl {
     class Mouse
     {
     public:
-        using MotionEvent = SDL3::SDL_MouseMotionEvent;
-        using WheelEvent = SDL3::SDL_MouseWheelEvent;
-
         struct Event
         {
-            using type = SDL3::SDL_EventType;
-            constexpr static inline type MouseMotion = SDL3::SDL_EVENT_MOUSE_MOTION;
-            constexpr static inline type MouseButtonDown = SDL3::SDL_EVENT_MOUSE_BUTTON_DOWN;
-            constexpr static inline type MouseButtonUp = SDL3::SDL_EVENT_MOUSE_BUTTON_UP;
-            constexpr static inline type MouseWheel = SDL3::SDL_EVENT_MOUSE_WHEEL;
+            using type_t = SDL3::SDL_EventType;
+            using type = std::underlying_type_t<type_t>;
+
+            enum ID : type {
+                MouseMotion = SDL3::SDL_EVENT_MOUSE_MOTION,
+                MouseButtonDown = SDL3::SDL_EVENT_MOUSE_BUTTON_DOWN,
+                MouseButtonUp = SDL3::SDL_EVENT_MOUSE_BUTTON_UP,
+                MouseWheel = SDL3::SDL_EVENT_MOUSE_WHEEL,
+            };
+
+            struct Data
+            {
+                using Motion = SDL3::SDL_MouseMotionEvent;
+                using Wheel = SDL3::SDL_MouseWheelEvent;
+            };
         };
 
         struct Button
         {
-            using type = rl::u8;
-            constexpr static inline type Left = SDL_BUTTON_LEFT;
-            constexpr static inline type Middle = SDL_BUTTON_MIDDLE;
-            constexpr static inline type Right = SDL_BUTTON_RIGHT;
-            constexpr static inline type X1 = SDL_BUTTON_X1;
-            constexpr static inline type X2 = SDL_BUTTON_X2;
-            constexpr static inline type Count = Button::X2;
-        };
+            using type = u8;
 
-        enum ButtonMask : rl::u8 {
-            Left = SDL_BUTTON_LMASK,
-            Middle = SDL_BUTTON_MMASK,
-            Right = SDL_BUTTON_RMASK,
-            X1 = SDL_BUTTON_X1MASK,
-            X2 = SDL_BUTTON_X2MASK,
+            enum ID : type {
+                Left = SDL_BUTTON_LEFT,
+                Middle = SDL_BUTTON_MIDDLE,
+                Right = SDL_BUTTON_RIGHT,
+                X1 = SDL_BUTTON_X1,
+                X2 = SDL_BUTTON_X2,
+                Count = Button::X2,
+            };
         };
 
         struct Cursor
         {
             using type = SDL3::SDL_SystemCursor;
-            constexpr static inline type Arrow = SDL3::SDL_SYSTEM_CURSOR_ARROW;
-            constexpr static inline type IBeam = SDL3::SDL_SYSTEM_CURSOR_IBEAM;
-            constexpr static inline type Wait = SDL3::SDL_SYSTEM_CURSOR_WAIT;
-            constexpr static inline type Crosshair = SDL3::SDL_SYSTEM_CURSOR_CROSSHAIR;
-            constexpr static inline type WaitArrow = SDL3::SDL_SYSTEM_CURSOR_WAITARROW;
-            constexpr static inline type SizeNWSE = SDL3::SDL_SYSTEM_CURSOR_SIZENWSE;
-            constexpr static inline type SizeNESW = SDL3::SDL_SYSTEM_CURSOR_SIZENESW;
-            constexpr static inline type SizeWE = SDL3::SDL_SYSTEM_CURSOR_SIZEWE;
-            constexpr static inline type SizeNS = SDL3::SDL_SYSTEM_CURSOR_SIZENS;
-            constexpr static inline type SizeAll = SDL3::SDL_SYSTEM_CURSOR_SIZEALL;
-            constexpr static inline type No = SDL3::SDL_SYSTEM_CURSOR_NO;
-            constexpr static inline type Hand = SDL3::SDL_SYSTEM_CURSOR_HAND;
-            constexpr static inline type CursorCount = SDL3::SDL_NUM_SYSTEM_CURSORS;
+
+            enum ID : std::underlying_type_t<type> {
+                Arrow = SDL3::SDL_SYSTEM_CURSOR_ARROW,
+                IBeam = SDL3::SDL_SYSTEM_CURSOR_IBEAM,
+                Wait = SDL3::SDL_SYSTEM_CURSOR_WAIT,
+                Crosshair = SDL3::SDL_SYSTEM_CURSOR_CROSSHAIR,
+                WaitArrow = SDL3::SDL_SYSTEM_CURSOR_WAITARROW,
+                SizeNWSE = SDL3::SDL_SYSTEM_CURSOR_SIZENWSE,
+                SizeNESW = SDL3::SDL_SYSTEM_CURSOR_SIZENESW,
+                SizeWE = SDL3::SDL_SYSTEM_CURSOR_SIZEWE,
+                SizeNS = SDL3::SDL_SYSTEM_CURSOR_SIZENS,
+                SizeAll = SDL3::SDL_SYSTEM_CURSOR_SIZEALL,
+                No = SDL3::SDL_SYSTEM_CURSOR_NO,
+                Hand = SDL3::SDL_SYSTEM_CURSOR_HAND,
+                CursorCount = SDL3::SDL_NUM_SYSTEM_CURSORS,
+            };
         };
 
-        struct WheelDirection
+        struct Wheel
         {
-            using type = rl::u8;
-            constexpr static inline type Normal = SDL3::SDL_MOUSEWHEEL_NORMAL;
-            constexpr static inline type Flipped = SDL3::SDL_MOUSEWHEEL_FLIPPED;
+            using type = u8;
+
+            enum Direction : type {
+                Normal = SDL3::SDL_MOUSEWHEEL_NORMAL,
+                Flipped = SDL3::SDL_MOUSEWHEEL_FLIPPED,
+            };
         };
 
     public:
         void process_button_down(Mouse::Button::type mouse_button)
         {
-            runtime_assert(mouse_button - 1 < Mouse::Button::Count, "invalid mouse button");
+            runtime_assert((mouse_button - 1) < Mouse::Button::Count, "invalid mouse button");
             switch (mouse_button)
             {
                 case Mouse::Button::Left:
@@ -98,16 +109,16 @@ namespace rl::sdl {
             m_button_states &= ~(1 << (mouse_button - 1));
         }
 
-        void process_motion(Mouse::MotionEvent& motion)
+        void process_motion(Event::Data::Motion& motion)
         {
             m_prev_cursor_pos = m_cursor_position;
             m_cursor_position = { motion.x, motion.y };
         }
 
-        void process_wheel(Mouse::WheelEvent& wheel)
+        void process_wheel(Mouse::Event::Data::Wheel& wheel)
         {
             m_prev_wheel_pos = m_wheel_position;
-            if (wheel.direction == Mouse::WheelDirection::Flipped)
+            if (wheel.direction == Mouse::Wheel::Direction::Flipped)
             {
                 wheel.x *= -1;
                 wheel.y *= -1;
@@ -142,7 +153,7 @@ namespace rl::sdl {
             return m_prev_cursor_pos - m_cursor_position;
         }
 
-        bool is_button_down(Mouse::Button::type button) const
+        bool is_button_down(u32 button) const
         {
             return 0 != (m_button_states & SDL_BUTTON(button));
         }

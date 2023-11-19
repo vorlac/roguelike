@@ -6,6 +6,8 @@
 
 #include <argparse/argparse.hpp>
 
+#include "core/utils/io.hpp"
+
 namespace rl {
     bool parse_args(int argc, char** argv)
     {
@@ -35,8 +37,7 @@ namespace rl {
         }
         catch (const std::runtime_error& err)
         {
-            std::cerr << err.what() << std::endl;
-            std::cerr << args;
+            log::info("Failed to parse args: {}", err.what());
             return false;
         }
     }
