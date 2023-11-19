@@ -228,14 +228,11 @@ namespace rl::scene {
                 if constexpr (USE_RANDOM_COLORS)
                     rect_colors.reserve(benchmark::ENTITY_COUNT);
 
-                const auto l_render_size{ m_renderer->get_logical_size() };
-                const auto o_context_size{ m_renderer->get_output_size() };
-                runtime_assert(o_context_size == l_render_size,
-                               "size mismatch, probably not an actual error??");
+                const auto window_context_size{ m_renderer->get_output_size() };
 
                 sdl::surface surface{
-                    l_render_size.width,
-                    l_render_size.height,
+                    window_context_size.width,
+                    window_context_size.height,
                     sdl::pixel_data::format::RGB24,
                 };
 
