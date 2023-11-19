@@ -2,11 +2,11 @@
 
 #include <flecs.h>
 
-#include "core/utils/io.hpp"
-#include "core/utils/time.hpp"
 #include "ecs/components/transform_components.hpp"
 #include "ecs/components/ui_components.hpp"
 #include "ecs/scenes/scene_types.hpp"
+#include "utils/io.hpp"
+#include "utils/time.hpp"
 
 namespace rl::scene {
     struct main_menu

@@ -1,12 +1,12 @@
 #include <fmt/format.h>
 
-#include "core/utils/conversions.hpp"
 #include "sdl/color.hpp"
 #include "sdl/defs.hpp"
 #include "sdl/renderer.hpp"
 #include "sdl/surface.hpp"
 #include "sdl/tests/data/images.hpp"
 #include "sdl/texture.hpp"
+#include "utils/conversions.hpp"
 
 SDL_C_LIB_BEGIN
 #include <SDL3/SDL_blendmode.h>

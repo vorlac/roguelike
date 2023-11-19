@@ -1,10 +1,10 @@
 #pragma once
 
-#include "core/utils/conversions.hpp"
-#include "core/utils/io.hpp"
 #include "sdl/defs.hpp"
 #include "sdl/keyboard.hpp"
 #include "sdl/mouse.hpp"
+#include "utils/conversions.hpp"
+#include "utils/io.hpp"
 
 SDL_C_LIB_BEGIN
 #include <SDL3/SDL_events.h>

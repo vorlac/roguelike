@@ -2,12 +2,12 @@
 
 #include <vector>
 
-#include "core/ds/dimensions.hpp"
-#include "core/ds/point.hpp"
-#include "core/ds/rect.hpp"
 #include "core/numeric_types.hpp"
-#include "core/utils/assert.hpp"
+#include "ds/dimensions.hpp"
+#include "ds/point.hpp"
+#include "ds/rect.hpp"
 #include "sdl/defs.hpp"
+#include "utils/assert.hpp"
 
 SDL_C_LIB_BEGIN
 #include <SDL3/SDL_pixels.h>
@@ -21,8 +21,8 @@ namespace rl::sdl {
         struct format
         {
             using type = SDL3::SDL_PixelFormatEnum;
-            constexpr static inline type Unknown = SDL3::SDL_PIXELFORMAT_UNKNOWN;
-            constexpr static inline type RGB24 = SDL3::SDL_PIXELFORMAT_RGB24;
+            constexpr static inline auto Unknown = SDL3::SDL_PIXELFORMAT_UNKNOWN;
+            constexpr static inline auto RGB24 = SDL3::SDL_PIXELFORMAT_RGB24;
         };
 
         struct structure
@@ -49,12 +49,17 @@ namespace rl::sdl {
 
         constexpr pixel_data(const ds::dimensions<i32>& dims,
                              pixel_data::format::type pixel_format = pixel_data::format::RGB24)
+            : m_format{ pixel_format }
+            , m_structure{ structure::Packed32 }
         {
             u8 pixel_byte_size = 0;
-            switch (pixel_format)
+            switch (m_format)
             {
                 case pixel_data::format::RGB24:
+                    m_structure = structure::Packed32;
                     pixel_byte_size = 3;  // R,G,B - each 1 byte
+                    break;
+                default:
                     break;
             }
 
@@ -88,11 +93,12 @@ namespace rl::sdl {
         {
             u8* row_data{ this->get_row_data(y) };
             u8* col_data{ row_data + x };
+            return col_data;
         }
 
-        std::vector<u8> copy_pixels()
-        {
-        }
+        // std::vector<u8> copy_pixels()
+        //{
+        // }
 
     private:
         u32 m_buffer_size{ 0 };

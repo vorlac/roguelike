@@ -10,13 +10,13 @@
 
 #include <fmt/format.h>
 
-#include "core/ds/dimensions.hpp"
-#include "core/ds/vector2d.hpp"
 #include "core/numeric_types.hpp"
-#include "core/utils/concepts.hpp"
-#include "core/utils/conversions.hpp"
+#include "ds/dimensions.hpp"
+#include "ds/vector2d.hpp"
 #include "ecs/components/transform_components.hpp"
 #include "sdl/defs.hpp"
+#include "utils/concepts.hpp"
+#include "utils/conversions.hpp"
 
 SDL_C_LIB_BEGIN
 #include <SDL3/SDL_rect.h>

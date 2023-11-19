@@ -23,7 +23,7 @@
         "error"
       ],
       "cwd": "${workspaceFolder}",
-      "visualizerFile": "${workspaceFolder}/.out/build/msvc-debug/vcpkg_installed/x64-windows/share/entt/natvis/entt/*",
+      "visualizerFile": "${workspaceFolder}/roguelike.natvis",
       "internalConsoleOptions": "openOnSessionStart",
       "console": "integratedTerminal"
     },
@@ -38,7 +38,7 @@
       },
       "args": [],
       "cwd": "${workspaceFolder}",
-      "visualizerFile": "${workspaceFolder}/.out/build/msvc-debug/vcpkg_installed/x64-windows/share/entt/natvis/entt/*",
+      "visualizerFile": "${workspaceFolder}/roguelike.natvis",
       "internalConsoleOptions": "openOnSessionStart",
       "launchCompleteCommand": "exec-run",
       "targetArchitecture": "x64",

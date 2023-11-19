@@ -4,13 +4,13 @@
 #include <memory>
 #include <string>
 
-#include "core/ds/dimensions.hpp"
-#include "core/ds/point.hpp"
-#include "core/ds/rect.hpp"
-#include "core/ds/vector2d.hpp"
-#include "core/utils/assert.hpp"
+#include "ds/dimensions.hpp"
+#include "ds/point.hpp"
+#include "ds/rect.hpp"
+#include "ds/vector2d.hpp"
 #include "sdl/defs.hpp"
 #include "sdl/utils.hpp"
+#include "utils/assert.hpp"
 
 SDL_C_LIB_BEGIN
 #include <SDL3/SDL_video.h>
@@ -66,12 +66,12 @@ namespace rl::sdl {
 
         constexpr static inline window::Properties DEFAULT_PROPERTY_FLAGS = {
             Properties::Flag::HighDPI |     //
-            Properties::Flag::Vulkan |      //
             Properties::Flag::InputFocus |  //
             Properties::Flag::MouseFocus |  //
             Properties::Flag::Resizable |   //
             Properties::Flag::Occluded |    //
             Properties::Flag::OpenGL        //
+            // Properties::Flag::Vulkan
         };
 
         constexpr static inline ds::point<i32> DEFAULT_POSITION = {
@@ -132,8 +132,8 @@ namespace rl::sdl {
         bool is_valid() const;
 
     private:
-        SDL3::SDL_Window* m_sdl_window{ nullptr };
         Properties m_properties{ Properties::Flag::None };
+        SDL3::SDL_Window* m_sdl_window{ nullptr };
         std::shared_ptr<sdl::renderer> m_renderer{ nullptr };
     };
 }

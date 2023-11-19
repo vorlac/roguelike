@@ -3,15 +3,15 @@
 #include <condition_variable>
 #include <thread>
 
-#include "core/ds/dimensions.hpp"
-#include "core/ds/point.hpp"
-#include "core/ds/rect.hpp"
-#include "core/ds/vector2d.hpp"
 #include "core/numeric_types.hpp"
-#include "core/utils/assert.hpp"
+#include "ds/dimensions.hpp"
+#include "ds/point.hpp"
+#include "ds/rect.hpp"
+#include "ds/vector2d.hpp"
 #include "sdl/color.hpp"
 #include "sdl/defs.hpp"
 #include "sdl/window.hpp"
+#include "utils/assert.hpp"
 
 SDL_C_LIB_BEGIN
 #include <SDL3/SDL.h>

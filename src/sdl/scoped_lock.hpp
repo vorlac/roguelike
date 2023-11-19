@@ -3,10 +3,10 @@
 #include <concepts>
 
 #include "core/numeric_types.hpp"
-#include "core/utils/assert.hpp"
 #include "sdl/defs.hpp"
 #include "sdl/surface.hpp"
 #include "sdl/texture.hpp"
+#include "utils/assert.hpp"
 
 SDL_C_LIB_BEGIN
 #include <SDL3/SDL_render.h>

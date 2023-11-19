@@ -4,7 +4,6 @@
 #include <iostream>
 #include <string>
 
-#include "core/utils/conversions.hpp"
 #include "sdl/defs.hpp"
 
 SDL_C_LIB_BEGIN
@@ -34,8 +33,8 @@ SDL_C_LIB_END
                         << "  Function = " << __FUNCTION__ << std::endl            \
                         << "  File     = " << __FILE__ << std::endl                \
                         << "  Line     = " << __LINE__ << std::endl                \
-                        << "  Message  = " << message << std::endl,                \
-                  __debugbreak(), 0;                                               \
+                        << "  Message  = " << message << std::endl;                \
+              __debugbreak();                                                      \
           }                                                                        \
       }                                                                            \
       while (0)

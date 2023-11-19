@@ -4,9 +4,9 @@
 #include <memory>
 #include <utility>
 
-#include "core/utils/concepts.hpp"
-#include "core/utils/conversions.hpp"
-#include "core/utils/memory.hpp"
+#include "utils/concepts.hpp"
+#include "utils/conversions.hpp"
+#include "utils/memory.hpp"
 
 namespace rl::ds {
     template <rl::numeric T>

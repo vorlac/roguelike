@@ -4,11 +4,11 @@
 
 #include <fmt/format.h>
 
-#include "core/ds/point.hpp"
-#include "core/ds/vector2d.hpp"
 #include "core/numeric_types.hpp"
-#include "core/utils/conversions.hpp"
+#include "ds/point.hpp"
+#include "ds/vector2d.hpp"
 #include "sdl/defs.hpp"
+#include "utils/conversions.hpp"
 
 SDL_C_LIB_BEGIN
 #include <SDL3/SDL_events.h>

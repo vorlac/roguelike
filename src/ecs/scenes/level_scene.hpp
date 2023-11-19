@@ -2,10 +2,10 @@
 
 #include <flecs.h>
 
-#include "core/utils/io.hpp"
 #include "ecs/components/character_components.hpp"
 #include "ecs/components/transform_components.hpp"
-#include "ecs/scenes/scene.hpp"
+#include "ecs/scenes/scene_types.hpp"
+#include "utils/io.hpp"
 
 namespace rl::scene {
     struct level1
@@ -27,6 +27,6 @@ namespace rl::scene {
             .set(component::position{ 0, 0 })
             .child_of(scene);
 
-        world.set_pipeline(world.get<scene::demo_scene>()->pipeline);
+        world.set_pipeline(world.get<scene::benchmark_scene>()->pipeline);
     }
 }

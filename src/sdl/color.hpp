@@ -9,11 +9,12 @@
 #include <fmt/color.h>
 
 #include "core/numeric_types.hpp"
-#include "core/utils/assert.hpp"
-#include "core/utils/concepts.hpp"
-#include "core/utils/conversions.hpp"
-#include "core/utils/memory.hpp"
 #include "sdl/defs.hpp"
+#include "utils/assert.hpp"
+#include "utils/concepts.hpp"
+#include "utils/conversions.hpp"
+#include "utils/memory.hpp"
+
 SDL_C_LIB_BEGIN
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_pixels.h>

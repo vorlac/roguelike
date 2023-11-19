@@ -7,10 +7,10 @@
 #include <stdlib.h>
 #include <fmt/format.h>
 
-#include "core/ds/dimensions.hpp"
-#include "core/ds/point.hpp"
-#include "core/ds/rect.hpp"
 #include "core/numeric_types.hpp"
+#include "ds/dimensions.hpp"
+#include "ds/point.hpp"
+#include "ds/rect.hpp"
 #include "sdl/color.hpp"
 #include "sdl/defs.hpp"
 #include "sdl/renderer.hpp"

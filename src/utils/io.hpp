@@ -15,11 +15,11 @@
 #include <fmt/core.h>
 #include <fmt/format.h>
 
-#include "core/ds/point.hpp"
-#include "core/ds/vector2d.hpp"
 #include "core/numeric_types.hpp"
-#include "core/utils/assert.hpp"
+#include "ds/point.hpp"
+#include "ds/vector2d.hpp"
 #include "sdl/mouse.hpp"
+#include "utils/assert.hpp"
 
 namespace rl::io {
     const static std::locale locale{ "en_US.UTF-8" };

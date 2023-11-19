@@ -3,10 +3,10 @@
 #include <mutex>
 #include <vector>
 
-#include "core/ds/point.hpp"
-#include "core/ds/rect.hpp"
-#include "core/ds/vector2d.hpp"
 #include "core/numeric_types.hpp"
+#include "ds/point.hpp"
+#include "ds/rect.hpp"
+#include "ds/vector2d.hpp"
 #include "sdl/color.hpp"
 #include "sdl/defs.hpp"
 #include "sdl/pixel_data.hpp"

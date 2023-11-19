@@ -13,6 +13,7 @@
             <Item Name="b">b,nvo</Item>
         </Expand>
     </Type>
+
     <!-- - - - - - - - - - -->
     <!-- rl::sdl::color- - -->
     <!-- - - - - - - - - - -->
@@ -36,14 +37,14 @@
             <Item Name="* alpha">a,nvo</Item>
         </Expand>
     </Type>
+
     <!-- - - - - - - - - - - - -->
     <!-- renderer::Properties- -->
-    <!-- SDL_RendererFlags - - -->
     <!-- - - - - - - - - - - - -->
     <Type Name="rl::sdl::renderer::Properties">
         <DisplayString Condition="0 == _Array[0]">{{}}</DisplayString>
         <DisplayString Condition="0 != _Array[0]">
-            {{ {(rl::sdl::renderer::Properties::Flag)_Array[0],en} }}
+            {(rl::sdl::renderer::Properties::Flag)_Array[0],en}
         </DisplayString>
         <Expand>
             <CustomListItems MaxItemsPerView="32">
@@ -60,14 +61,14 @@
                     </If>
                 </Loop>
             </CustomListItems>
-            <Synthetic Name="[flags]">
-                <DisplayString>{_Array[0],h}</DisplayString>
+            <Synthetic Name="[render properties]">
+                <DisplayString>{_Array[0],H}</DisplayString>
                 <Expand>
                     <CustomListItems MaxItemsPerView="32">
                         <Variable Name="shift" InitialValue="0" />
                         <Loop>
                             <If Condition="(0x1 &lt;&lt; shift) &amp; _Array[0]">
-                                <Item Name="">(rl::sdl::renderer::Properties::Flag)(shift),h</Item>
+                                <Item Name="">(rl::sdl::renderer::Properties::Flag)(1 &lt;&lt; shift),H</Item>
                             </If>
                             <Exec>shift++</Exec>
                             <Break Condition="shift &gt;= 32" />
@@ -75,14 +76,70 @@
                     </CustomListItems>
                 </Expand>
             </Synthetic>
-            <Synthetic Name="[sdl3]">
+            <Synthetic Name="[sdl flags]">
                 <DisplayString>{_Array[0],b}</DisplayString>
                 <Expand>
                     <CustomListItems MaxItemsPerView="32">
                         <Variable Name="shift" InitialValue="0" />
                         <Loop>
                             <If Condition="(0x1 &lt;&lt; shift) &amp; _Array[0]">
-                                <Item Name="">((SDL_RendererFlags)shift),h</Item>
+                                <Item Name="">((SDL_RendererFlags)(1 &lt;&lt; shift)),H</Item>
+                            </If>
+                            <Exec>shift++</Exec>
+                            <Break Condition="shift &gt;= 32" />
+                        </Loop>
+                    </CustomListItems>
+                </Expand>
+            </Synthetic>
+        </Expand>
+    </Type>
+
+    <!-- - - - - - - - - - - - -->
+    <!-- renderer::Properties- -->
+    <!-- - - - - - - - - - - - -->
+    <Type Name="rl::sdl::window::Properties">
+        <DisplayString Condition="0 == _Array[0]">{{}}</DisplayString>
+        <DisplayString Condition="0 != _Array[0]">
+            {(rl::sdl::window::Properties::Flag)_Array[0],en}
+        </DisplayString>
+        <Expand>
+            <CustomListItems MaxItemsPerView="32">
+                <Variable Name="flags_set" InitialValue="0" />
+                <Variable Name="shift" InitialValue="0" />
+                <Loop>
+                    <If Condition="(0x1 &lt;&lt; shift) &amp; _Array[0]">
+                        <Exec>flags_set++</Exec>
+                    </If>
+                    <Exec>shift++</Exec>
+                    <If Condition="shift &gt;= 32">
+                        <Item Name="[count]">flags_set</Item>
+                        <Break Condition="true" />
+                    </If>
+                </Loop>
+            </CustomListItems>
+            <Synthetic Name="[window properties]">
+                <DisplayString>{_Array[0],H}</DisplayString>
+                <Expand>
+                    <CustomListItems MaxItemsPerView="32">
+                        <Variable Name="shift" InitialValue="0" />
+                        <Loop>
+                            <If Condition="(0x1 &lt;&lt; shift) &amp; _Array[0]">
+                                <Item Name="">(sdl::window::Properties::Flag)(1 &lt;&lt; shift),H</Item>
+                            </If>
+                            <Exec>shift++</Exec>
+                            <Break Condition="shift &gt;= 32" />
+                        </Loop>
+                    </CustomListItems>
+                </Expand>
+            </Synthetic>
+            <Synthetic Name="[sdl flags]">
+                <DisplayString>{_Array[0],b}</DisplayString>
+                <Expand>
+                    <CustomListItems MaxItemsPerView="32">
+                        <Variable Name="shift" InitialValue="0" />
+                        <Loop>
+                            <If Condition="(0x1 &lt;&lt; shift) &amp; _Array[0]">
+                                <Item Name="">((SDL_WindowFlags)(1 &lt;&lt; shift)),H</Item>
                             </If>
                             <Exec>shift++</Exec>
                             <Break Condition="shift &gt;= 32" />

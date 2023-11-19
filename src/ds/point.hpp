@@ -2,8 +2,8 @@
 
 #include <type_traits>
 
-#include "core/ds/vector2d.hpp"
-#include "core/utils/concepts.hpp"
+#include "ds/vector2d.hpp"
+#include "utils/concepts.hpp"
 
 namespace rl::ds {
     template <rl::numeric T>

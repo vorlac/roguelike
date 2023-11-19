@@ -3,12 +3,12 @@
 #include <memory>
 #include <type_traits>
 
-#include "core/ds/dimensions.hpp"
-#include "core/ds/point.hpp"
-#include "core/ds/vector2d.hpp"
 #include "core/numeric_types.hpp"
-#include "core/utils/concepts.hpp"
+#include "ds/dimensions.hpp"
+#include "ds/point.hpp"
+#include "ds/vector2d.hpp"
 #include "sdl/defs.hpp"
+#include "utils/concepts.hpp"
 
 SDL_C_LIB_BEGIN
 #include <SDL3/SDL_rect.h>

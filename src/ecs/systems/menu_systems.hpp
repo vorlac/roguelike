@@ -2,9 +2,9 @@
 
 #include <flecs.h>
 
-#include "core/utils/io.hpp"
 #include "ecs/components/ui_components.hpp"
 #include "ecs/scenes/scene_types.hpp"
+#include "utils/io.hpp"
 
 namespace rl::systems {
     auto init_main_menu_systems(flecs::world& world)

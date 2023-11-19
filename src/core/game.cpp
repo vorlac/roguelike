@@ -15,7 +15,6 @@
 
 #include "core/game.hpp"
 #include "core/numeric_types.hpp"
-#include "core/utils/io.hpp"
 #include "ecs/components/kinematic_components.hpp"
 #include "ecs/components/style_components.hpp"
 #include "ecs/components/transform_components.hpp"
@@ -24,6 +23,7 @@
 #include "ecs/scenes/scene_types.hpp"
 #include "sdl/tests/test_suite.hpp"
 #include "sdl/time.hpp"
+#include "utils/io.hpp"
 
 #undef ROGUELIKE_TESTS_ENABLED
 #ifdef ROGUELIKE_TESTS_ENABLED

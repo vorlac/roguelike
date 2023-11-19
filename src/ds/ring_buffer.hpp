@@ -17,8 +17,8 @@
 #include <utility>
 #include <vector>
 
-#include "core/utils/assert.hpp"
-#include "core/utils/concepts.hpp"
+#include "utils/assert.hpp"
+#include "utils/concepts.hpp"
 
 namespace rl::ds {
     using namespace std::chrono_literals;
@@ -32,7 +32,7 @@ namespace rl::ds {
     };
 
     template <std::movable TElem, auto BufferSize = 512U>
-        requires PositiveInteger<BufferSize>
+        requires positive_integer<BufferSize>
     class ring_buffer
     {
     public:
