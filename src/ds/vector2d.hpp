@@ -372,7 +372,7 @@ namespace rl::ds {
             };
         }
 
-        constexpr inline vector2<T> operator-(const dimensions<T>& other) const
+        constexpr inline vector2<T> operator-(const dims<T>& other) const
         {
             return {
                 x - other.width,
@@ -387,7 +387,7 @@ namespace rl::ds {
             return *this;
         }
 
-        constexpr inline vector2<T> operator-=(const dimensions<T>& other) const
+        constexpr inline vector2<T> operator-=(const dims<T>& other) const
         {
             x -= other.width;
             y -= other.height;

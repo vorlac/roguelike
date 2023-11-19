@@ -181,9 +181,9 @@ namespace rl::sdl {
         /**
          * @brief returns the size of the current rendering context
          * */
-        ds::dimensions<i32> get_output_size() const
+        ds::dims<i32> get_output_size() const
         {
-            ds::dimensions<i32> s{ 0, 0 };
+            ds::dims<i32> s{ 0, 0 };
             i32 result = SDL3::SDL_GetCurrentRenderOutputSize(m_sdl_renderer, &s.width, &s.height);
             sdl_assert(result == 0, "failed to get renderer output size");
             return s;
@@ -233,7 +233,7 @@ namespace rl::sdl {
                     dst_point.x,
                     dst_point.y,
                 },
-                ds::dimensions<i32>{
+                ds::dims<i32>{
                     src_rect ? src_rect.width() : tsize.width,
                     src_rect ? src_rect.height() : tsize.height,
                 },
@@ -249,8 +249,8 @@ namespace rl::sdl {
             bool ret = true;
 
             // resolve rectangles
-            ds::dimensions<i32> tsize{ tex.size() };
-            ds::dimensions<i32> rsize{ this->get_output_size() };
+            ds::dims<i32> tsize{ tex.size() };
+            ds::dims<i32> rsize{ this->get_output_size() };
             ds::rect<i32> src = { (
                 src_rect.is_null() ? src_rect : ds::rect<i32>{ 0, 0, tsize.width, tsize.height }) };
             ds::rect<i32> dst = { (
@@ -512,7 +512,7 @@ namespace rl::sdl {
             return result == 0;
         }
 
-        bool set_logical_size(const ds::dimensions<i32>& size,
+        bool set_logical_size(const ds::dims<i32>& size,
                               SDL3::SDL_RendererLogicalPresentation presentation =
                                   SDL3::SDL_LOGICAL_PRESENTATION_DISABLED,
                               SDL3::SDL_ScaleMode scale_mode = SDL3::SDL_SCALEMODE_NEAREST)
@@ -550,9 +550,9 @@ namespace rl::sdl {
         /**
          * @brief Returns rendering output size
          * */
-        ds::dimensions<i32> get_logical_size() const
+        ds::dims<i32> get_logical_size() const
         {
-            ds::dimensions<i32> size{ 0, 0 };
+            ds::dims<i32> size{ 0, 0 };
             i32 result = SDL3::SDL_GetRenderLogicalPresentation(m_sdl_renderer, &size.width,
                                                                 &size.height, nullptr, nullptr);
             sdl_assert(result == 0, "failed to get logical size");

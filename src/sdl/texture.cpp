@@ -109,7 +109,7 @@ namespace rl::sdl {
     }
 
     i32 Texture::query_texture(SDL3::SDL_PixelFormatEnum& format, SDL3::SDL_TextureAccess& access,
-                               ds::dimensions<i32>& dims)
+                               ds::dims<i32>& dims)
     {
         i32 result = SDL3::SDL_QueryTexture(m_sdl_texture, reinterpret_cast<u32*>(&format),
                                             reinterpret_cast<i32*>(&access), &dims.width,
@@ -233,9 +233,9 @@ namespace rl::sdl {
         return static_cast<SDL3::SDL_TextureAccess>(access);
     }
 
-    ds::dimensions<i32> Texture::size()
+    ds::dims<i32> Texture::size()
     {
-        ds::dimensions<i32> size{ 0, 0 };
+        ds::dims<i32> size{ 0, 0 };
         i32 result = SDL3::SDL_QueryTexture(m_sdl_texture, nullptr, nullptr, &size.width,
                                             &size.height);
         sdl_assert(result != 0, "reading from uninitialized texture");

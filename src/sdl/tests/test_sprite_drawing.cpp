@@ -25,7 +25,7 @@ SDL_C_LIB_END
 
 namespace rl::sdl::test {
     static sdl::Texture create_texture(std::shared_ptr<sdl::Renderer> renderer,
-                                       std::vector<u8>& data, ds::dimensions<i32>& size)
+                                       std::vector<u8>& data, ds::dims<i32>& size)
     {
         SDL3::SDL_RWops* src = SDL3::SDL_RWFromConstMem(data.data(), data.size());
         if (src != nullptr)
@@ -40,7 +40,7 @@ namespace rl::sdl::test {
                 sdl::Texture texture{ renderer, surface };
 
                 auto dims = surface.size();
-                ds::dimensions<i32> dims2 = {
+                ds::dims<i32> dims2 = {
                     surface.sdl_handle()->w,
                     surface.sdl_handle()->h,
                 };
@@ -61,7 +61,7 @@ namespace rl::sdl::test {
     static void move_sprites(sdl::Window& window, sdl::Texture& sprite, auto&& sprites,
                              auto& sprite_size)
     {
-        ds::dimensions<i32> window_size = window.get_render_size();
+        ds::dims<i32> window_size = window.get_render_size();
 
         auto renderer = window.renderer();
         /* Draw a gray background */
@@ -100,8 +100,8 @@ namespace rl::sdl::test {
     {
         i32 return_code = -1;
 
-        ds::dimensions<i32> window_size = window.get_render_size();
-        ds::dimensions<i32> sprite_size{ 0, 0 };
+        ds::dims<i32> window_size = window.get_render_size();
+        ds::dims<i32> sprite_size{ 0, 0 };
 
         std::vector<u8> icon_data = { icon_bmp, icon_bmp + icon_bmp_len };
 

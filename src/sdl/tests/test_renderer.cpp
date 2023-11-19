@@ -404,13 +404,13 @@ namespace rl::sdl::test {
         if (!tface.is_valid())
             return TEST_ABORTED;
 
-        ds::dimensions<i32> tdims{ 0, 0 };
+        ds::dims<i32> tdims{ 0, 0 };
         SDL3::SDL_TextureAccess taccess = SDL3::SDL_TextureAccess(0);
         SDL3::SDL_PixelFormatEnum tformat = SDL3::SDL_PixelFormatEnum(0);
         tface.query_texture(tformat, taccess, tdims);
         ds::rect<f32> rect{
             ds::point<f32>{ 0, 0 },
-            ds::dimensions<f32>{
+            ds::dims<f32>{
                 cast::to<float>(tdims.width),
                 cast::to<float>(tdims.height),
             },
@@ -460,7 +460,7 @@ namespace rl::sdl::test {
             return TEST_ABORTED;
 
         /* Constant values. */
-        ds::dimensions<i32> tdims{ 0, 0 };
+        ds::dims<i32> tdims{ 0, 0 };
         SDL3::SDL_TextureAccess taccess = SDL3::SDL_TextureAccess(0);
         SDL3::SDL_PixelFormatEnum tformat = SDL3::SDL_PixelFormatEnum(0);
         tface.query_texture(tformat, taccess, tdims);
@@ -527,7 +527,7 @@ namespace rl::sdl::test {
             return TEST_ABORTED;
 
         /* Constant values. */
-        ds::dimensions<i32> tdims{ 0, 0 };
+        ds::dims<i32> tdims{ 0, 0 };
         SDL3::SDL_TextureAccess taccess = SDL3::SDL_TextureAccess(0);
         SDL3::SDL_PixelFormatEnum tformat = SDL3::SDL_PixelFormatEnum(0);
         tface.query_texture(tformat, taccess, tdims);
@@ -580,7 +580,7 @@ namespace rl::sdl::test {
         clear_screen(renderer);
 
         /* Constant values. */
-        ds::dimensions<i32> tdims{ 0, 0 };
+        ds::dims<i32> tdims{ 0, 0 };
         SDL3::SDL_TextureAccess taccess = SDL3::SDL_TextureAccess(0);
         SDL3::SDL_PixelFormatEnum tformat = SDL3::SDL_PixelFormatEnum(0);
         tface.query_texture(tformat, taccess, tdims);
@@ -634,7 +634,7 @@ namespace rl::sdl::test {
             if (!tface.is_valid())
                 return TEST_ABORTED;
 
-            ds::dimensions<i32> tdims{ 0, 0 };
+            ds::dims<i32> tdims{ 0, 0 };
             SDL3::SDL_TextureAccess taccess = SDL3::SDL_TextureAccess(0);
             SDL3::SDL_PixelFormatEnum tformat = SDL3::SDL_PixelFormatEnum(0);
             tface.query_texture(tformat, taccess, tdims);
@@ -835,7 +835,7 @@ namespace rl::sdl::test {
         clear_screen(renderer);
 
         /* Set the logical size and do a fill operation */
-        ds::dimensions<rl::i32> out_size = renderer.get_output_size();
+        ds::dims<rl::i32> out_size = renderer.get_output_size();
         renderer.set_logical_size({ out_size.width / factor, out_size.height / factor },
                                   SDL3::SDL_LOGICAL_PRESENTATION_LETTERBOX,
                                   SDL3::SDL_SCALEMODE_NEAREST);

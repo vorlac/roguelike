@@ -40,7 +40,7 @@ namespace rl::ds {
     public:
         explicit constexpr rect()
             : pt{ point<T>::null() }
-            , size{ dimensions<T>::null() }
+            , size{ dims<T>::null() }
         {
         }
 
@@ -60,7 +60,7 @@ namespace rl::ds {
 
         constexpr rect(rect<T>&& other)
             : pt{ std::forward<point<T>>(other.pt) }
-            , size{ std::forward<dimensions<T>>(other.size) }
+            , size{ std::forward<dims<T>>(other.size) }
         {
         }
 
@@ -70,13 +70,13 @@ namespace rl::ds {
         {
         }
 
-        constexpr rect(point<T>&& pnt, dimensions<T>&& dims)
+        constexpr rect(point<T>&& pnt, dims<T>&& dims)
             : pt{ pnt }
             , size{ dims }
         {
         }
 
-        constexpr rect(const point<T>& pnt, const dimensions<T>& dims)
+        constexpr rect(const point<T>& pnt, const dims<T>& dims)
             : pt{ pnt }
             , size{ dims }
         {
@@ -86,7 +86,7 @@ namespace rl::ds {
         {
             return rect<T>{
                 point<T>::null(),
-                dimensions<T>::null(),
+                dims<T>::null(),
             };
         }
 
@@ -94,7 +94,7 @@ namespace rl::ds {
         {
             return rect<T>{
                 point<T>::zero(),
-                dimensions<T>::zero(),
+                dims<T>::zero(),
             };
         }
 
@@ -421,7 +421,7 @@ namespace rl::ds {
         constexpr inline rect<T> quad(Quad quad) const
         {
             constexpr point<T> center{ this->centroid() };
-            const dimensions<T> quad_size{
+            const dims<T> quad_size{
                 this->size.width / cast::to<T>(2),
                 this->size.height / cast::to<T>(2),
             };
@@ -470,7 +470,7 @@ namespace rl::ds {
          * */
         constexpr inline rect<T> scaled(ds::vector2<f32> ratio) const
         {
-            ds::dimensions<T> scaled_size{
+            ds::dims<T> scaled_size{
                 cast::to<T>(cast::to<f32>(this->size.width) * ratio.x),
                 cast::to<T>(cast::to<f32>(this->size.height) * ratio.y),
             };
@@ -490,18 +490,18 @@ namespace rl::ds {
             {
                 // split the rect in half using a
                 // horizontal line as the slice point
-                ds::dimensions<T> half_size{
+                ds::dims<T> half_size{
                     this->size.width,
                     this->size.height / cast::to<T>(2),
                 };
                 return std::array{
                     ds::rect<T>{
                         ds::point<T>(this->pt),
-                        ds::dimensions<T>(half_size),
+                        ds::dims<T>(half_size),
                     },
                     ds::rect<T>{
                         ds::point<T>(this->pt + cast::to<T>(0), this->size.height / cast::to<T>(2)),
-                        ds::dimensions<T>(half_size),
+                        ds::dims<T>(half_size),
                     },
                 };
             }
@@ -509,7 +509,7 @@ namespace rl::ds {
             {
                 // split the rect in half using a
                 // vertical line as the slice point
-                ds::dimensions<T> half_size{
+                ds::dims<T> half_size{
                     this->size.width / cast::to<T>(2),
                     this->size.height,
                 };
@@ -572,7 +572,7 @@ namespace rl::ds {
         };
 
         // 2D size of the rect, relative to pt
-        dimensions<T> size{
+        dims<T> size{
             cast::to<T>(0),  // width
             cast::to<T>(0),  // height
         };

@@ -164,8 +164,7 @@ namespace rl::scene {
             //         });
             // }
 
-            static void define_rect_movement(flecs::world& world,
-                                             const ds::dimensions<i32>& window_rect)
+            static void define_rect_movement(flecs::world& world, const ds::dims<i32>& window_rect)
             {
                 const static auto window_size = window_rect;
 
@@ -204,9 +203,8 @@ namespace rl::scene {
             }
 
             constexpr static inline bool USE_RANDOM_COLORS = false;
-            constexpr static inline ds::dimensions<f32> RECT_SIZE = {
-                USE_RANDOM_COLORS ? ds::dimensions<f32>{ 10.0f, 10.0f }
-                                  : ds::dimensions<f32>{ 20.0f, 20.0f }
+            constexpr static inline ds::dims<f32> RECT_SIZE = {
+                USE_RANDOM_COLORS ? ds::dims<f32>{ 10.0f, 10.0f } : ds::dims<f32>{ 20.0f, 20.0f }
             };
 
             static void define_entity_rendering(flecs::world& ecs, sdl::Window& window,
@@ -302,7 +300,7 @@ namespace rl::scene {
             }
 
             static sdl::Texture create_texture(std::shared_ptr<sdl::Renderer> renderer,
-                                               std::vector<u8>& data, ds::dimensions<i32>& size)
+                                               std::vector<u8>& data, ds::dims<i32>& size)
             {
                 SDL3::SDL_RWops* src = SDL3::SDL_RWFromConstMem(data.data(), data.size());
                 if (src != nullptr)
@@ -325,7 +323,7 @@ namespace rl::scene {
 
             static void init_systems(flecs::world& world, sdl::Window& window)
             {
-                ds::dimensions<i32> sprite_size{ 0, 0 };
+                ds::dims<i32> sprite_size{ 0, 0 };
                 std::vector<u8> icon_data = { icon_bmp, icon_bmp + icon_bmp_len };
                 auto sprite = create_texture(window.renderer(), icon_data, sprite_size);
                 runtime_assert(sprite.is_valid(), "failed to load sprite");
@@ -375,8 +373,8 @@ namespace rl::scene {
         // static inline rl::Input m_input{};
         static inline thread_local f64 m_delta_time{ 0.0f };
         static inline thread_local i64 m_update_calls{ 0 };
-        constexpr static inline ds::dimensions<i32> rect_size{ 10, 10 };
-        static inline ds::dimensions<i32> render_size{ 0, 0 };
+        constexpr static inline ds::dims<i32> rect_size{ 10, 10 };
+        static inline ds::dims<i32> render_size{ 0, 0 };
         static inline sdl::Renderer* m_renderer{ nullptr };
         static inline sdl::Texture* m_sprite{ new sdl::Texture };
     };

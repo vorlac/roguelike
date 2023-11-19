@@ -73,7 +73,7 @@ namespace rl::sdl {
         bool fill_rect(const sdl::Color& color, const ds::rect<i32>& rect);
         bool fill_rects(u32 color, const std::vector<ds::rect<i32>>& rects);
         bool fill_rects(const sdl::Color& color, const std::vector<ds::rect<i32>>& rects);
-        ds::dimensions<i32> size() const;
+        ds::dims<i32> size() const;
         SDL3::SDL_PixelFormatEnum get_format() const;
         const SDL3::SDL_PixelFormat* get_format_full() const;
 

@@ -79,7 +79,7 @@ namespace rl::sdl {
             SDL_WINDOWPOS_CENTERED_MASK,
         };
 
-        constexpr static inline ds::dimensions<i32> DEFAULT_SIZE = {
+        constexpr static inline ds::dims<i32> DEFAULT_SIZE = {
             1920,
             1080,
         };
@@ -90,7 +90,7 @@ namespace rl::sdl {
         explicit Window(const Window& window) = delete;
         explicit Window(SDL3::SDL_Window* other) = delete;
 
-        explicit Window(std::string title, const ds::dimensions<i32>& dims = DEFAULT_SIZE,
+        explicit Window(std::string title, const ds::dims<i32>& dims = DEFAULT_SIZE,
                         Properties flags = DEFAULT_PROPERTY_FLAGS);
 
         ~Window();
@@ -110,9 +110,9 @@ namespace rl::sdl {
         bool set_opacity(float opacity);
         bool set_title(std::string title);
         bool set_position(ds::point<i32> pos);
-        bool set_size(ds::dimensions<i32> size);
-        bool set_min_size(ds::dimensions<i32> size);
-        bool set_max_size(ds::dimensions<i32> size);
+        bool set_size(ds::dims<i32> size);
+        bool set_min_size(ds::dims<i32> size);
+        bool set_max_size(ds::dims<i32> size);
 
         bool get_grab() const;
         f32 get_opacity() const;
@@ -120,10 +120,10 @@ namespace rl::sdl {
         SDL3::SDL_DisplayID get_display() const;
         SDL3::SDL_WindowFlags get_flags() const;
         SDL3::SDL_DisplayMode get_display_mode() const;
-        ds::dimensions<i32> get_size() const;
-        ds::dimensions<i32> get_render_size() const;
-        ds::dimensions<i32> get_min_size() const;
-        ds::dimensions<i32> get_max_size() const;
+        ds::dims<i32> get_size() const;
+        ds::dims<i32> get_render_size() const;
+        ds::dims<i32> get_min_size() const;
+        ds::dims<i32> get_max_size() const;
         ds::point<i32> get_position() const;
 
         std::shared_ptr<sdl::Renderer> renderer() const;

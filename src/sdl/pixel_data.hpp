@@ -47,7 +47,7 @@ namespace rl::sdl {
         {
         }
 
-        constexpr PixelData(const ds::dimensions<i32>& dims,
+        constexpr PixelData(const ds::dims<i32>& dims,
                             PixelData::format::type pixel_format = PixelData::format::RGB24)
             : m_format{ pixel_format }
             , m_structure{ structure::Packed32 }

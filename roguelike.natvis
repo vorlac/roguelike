@@ -1,52 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
 <AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+    <!-- - - - - - - - - - - -->
+    <!-- rl::ds::vector2<T>  -->
+    <!-- rl::ds::point<T>    -->
+    <!-- - - - - - - - - - - -->
+    <Type Name="rl::ds::vector2&lt;*&gt;">
+        <AlternativeType Name="rl::ds::point&lt;*&gt;" />
+        <DisplayString>
+            x,y =&gt; ({x}, {y})
+        </DisplayString>
+        <Expand HideRawView="true">
+            <Item Name="[x]">x</Item>
+            <Item Name="[y]">y</Item>
+        </Expand>
+    </Type>
+
+    <!-- - - - - - - - - -->
+    <!-- rl::ds::dims<T> -->
+    <!-- - - - - - - - - -->
+    <Type Name="rl::ds::dims&lt;*&gt;">
+        <DisplayString>
+            WxH =&gt; [{width} x {height}]
+        </DisplayString>
+        <Expand HideRawView="true">
+            <Item Name="[width]">width</Item>
+            <Item Name="[height]">height</Item>
+            <Item Name="Area">width * height,f</Item>
+        </Expand>
+    </Type>
+
+    <!-- - - - - - - - - -->
+    <!-- rl::ds::rect<T> -->
+    <!-- - - - - - - - - -->
+    <Type Name="rl::ds::rect&lt;*&gt;">
+        <DisplayString>
+            pt:{{ {pt.x,nvo}, {pt.y,nvo} }} size:[ {size.width,nvo} x {size.height,nvo} ]
+        </DisplayString>
+        <Expand HideRawView="true">
+            <Item Name="[pt] ">pt</Item>
+            <Item Name="[size]">size</Item>
+        </Expand>
+    </Type>
+
     <!-- - - - - - - - -->
     <!-- SDL_Color -->
     <!-- - - - - - - - -->
-    <Type Name="::SDL_Color">
+    <Type Name="SDL_Color">
         <DisplayString>
-            SDL_Color{{ .r={r,nvo}, .g={g,nvo}, .b={r,nvo} }}
+            SDL_Color{{r={r,nvo}, g={g,nvo}, b={r,nvo}}}
         </DisplayString>
-        <Expand>
-            <Item Name="r">r,nvob</Item>
-            <Item Name="g">g,nvo</Item>
-            <Item Name="b">b,nvo</Item>
+        <Expand HideRawView="true">
+            <Item Name="[r]">r,nvo</Item>
+            <Item Name="[g]">g,nvo</Item>
+            <Item Name="[b]">b,nvo</Item>
         </Expand>
     </Type>
 
     <!-- - - - - - - - - - -->
-    <!-- rl::sdl::color- - -->
+    <!-- rl::sdl::Color- - -->
     <!-- - - - - - - - - - -->
-    <Type Name="rl::sdl::color">
+    <Type Name="rl::sdl::Color">
         <DisplayString>
-            R:({r,nvo}=&gt;{r,nvoX})
-            G:({g,nvo}=&gt;{g,nvoX})
-            B:({b,nvo}=&gt;{b,nvoX})
-            A:({a,nvo}=&gt;{a,nvoX})
+            rgb:[{r,nvo},{g,nvo},{b,nvo} =&gt; 0x{r,nvoHb}{g,nvoHb}{b,nvoHb}] a:({a,nvo} =&gt; {a,nvoH})
         </DisplayString>
-        <Expand>
-            <Item Name="[RGBA hex]">
+        <Expand HideRawView="true">
+            <Item Name="[red]">r,nvo</Item>
+            <Item Name="[green]">g,nvo</Item>
+            <Item Name="[blue]">b,nvo</Item>
+            <Item Name="[alpha]">a,nvo</Item>
+            <Item Name="RGBA Hex">
                 (uint32_t)(r &lt;&lt; 24)|(g &lt;&lt; 16)|(b &lt;&lt; 8 )|(a),nvoH
             </Item>
-            <Item Name="[SDL_Color]">
-                ((SDL_Color*)this),na
+            <Item Name="(SDL_Color*)this">
+                ((const SDL_Color&amp;)(*this))
             </Item>
-            <Item Name="* red">r,nvo</Item>
-            <Item Name="* green">g,nvo</Item>
-            <Item Name="* blue">b,nvo</Item>
-            <Item Name="* alpha">a,nvo</Item>
         </Expand>
     </Type>
 
-    <!-- - - - - - - - - - - - -->
-    <!-- renderer::Properties- -->
-    <!-- - - - - - - - - - - - -->
-    <Type Name="rl::sdl::renderer::Properties">
+    <!-- - - - - - - - - - - - - - - -  -->
+    <!-- rl::sdl::Renderer::Properties- -->
+    <!-- - - - - - - - - - - - - - - -  -->
+    <Type Name="rl::sdl::Renderer::Properties">
         <DisplayString Condition="0 == _Array[0]">{{}}</DisplayString>
         <DisplayString Condition="0 != _Array[0]">
-            {(rl::sdl::renderer::Properties::Flag)_Array[0],en}
+            {(rl::sdl::Renderer::Properties::Flag)_Array[0],en}
         </DisplayString>
-        <Expand>
+        <Expand HideRawView="true">
             <CustomListItems MaxItemsPerView="32">
                 <Variable Name="flags_set" InitialValue="0" />
                 <Variable Name="shift" InitialValue="0" />
@@ -68,7 +107,7 @@
                         <Variable Name="shift" InitialValue="0" />
                         <Loop>
                             <If Condition="(0x1 &lt;&lt; shift) &amp; _Array[0]">
-                                <Item Name="">(rl::sdl::renderer::Properties::Flag)(1 &lt;&lt; shift),H</Item>
+                                <Item Name="">(rl::sdl::Renderer::Properties::Flag)(1 &lt;&lt; shift),H</Item>
                             </If>
                             <Exec>shift++</Exec>
                             <Break Condition="shift &gt;= 32" />
@@ -94,15 +133,15 @@
         </Expand>
     </Type>
 
-    <!-- - - - - - - - - - - - -->
-    <!-- renderer::Properties- -->
-    <!-- - - - - - - - - - - - -->
-    <Type Name="rl::sdl::window::Properties">
+    <!-- - - - - - - - - - - - - - - -  -->
+    <!-- - rl::sdl::Window::Properties- -->
+    <!-- - - - - - - - - - - - - - - -  -->
+    <Type Name="rl::sdl::Window::Properties">
         <DisplayString Condition="0 == _Array[0]">{{}}</DisplayString>
         <DisplayString Condition="0 != _Array[0]">
-            {(rl::sdl::window::Properties::Flag)_Array[0],en}
+            {(rl::sdl::Window::Properties::Flag)_Array[0],en}
         </DisplayString>
-        <Expand>
+        <Expand HideRawView="true">
             <CustomListItems MaxItemsPerView="32">
                 <Variable Name="flags_set" InitialValue="0" />
                 <Variable Name="shift" InitialValue="0" />
@@ -124,7 +163,7 @@
                         <Variable Name="shift" InitialValue="0" />
                         <Loop>
                             <If Condition="(0x1 &lt;&lt; shift) &amp; _Array[0]">
-                                <Item Name="">(sdl::window::Properties::Flag)(1 &lt;&lt; shift),H</Item>
+                                <Item Name="">(sdl::Window::Properties::Flag)(1 &lt;&lt; shift),H</Item>
                             </If>
                             <Exec>shift++</Exec>
                             <Break Condition="shift &gt;= 32" />

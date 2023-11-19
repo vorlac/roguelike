@@ -43,7 +43,7 @@ namespace rl::sdl {
         bool is_valid() const;
         SDL3::SDL_Texture* sdl_handle() const;
         i32 query_texture(SDL3::SDL_PixelFormatEnum& format, SDL3::SDL_TextureAccess& access,
-                          ds::dimensions<i32>& dims);
+                          ds::dims<i32>& dims);
 
         Texture& operator=(Texture&& other);
         Texture& operator=(SDL3::SDL_Texture* other);
@@ -65,7 +65,7 @@ namespace rl::sdl {
         SDL3::SDL_BlendMode get_blend_mode() const;
 
         sdl::Color get_color_mod() const;
-        ds::dimensions<i32> size();
+        ds::dims<i32> size();
         u8 get_alpha_mod() const;
 
     private:

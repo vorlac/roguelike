@@ -432,7 +432,7 @@ namespace rl::sdl {
         return this->fill_rects(color_val, rects);
     }
 
-    ds::dimensions<i32> Surface::size() const
+    ds::dims<i32> Surface::size() const
     {
         runtime_assert(this->is_valid(), "failed getting size of uninitialized surface");
         if (m_sdl_surface != nullptr) [[likely]]

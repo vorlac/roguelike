@@ -19,7 +19,7 @@ SDL_C_LIB_BEGIN
 SDL_C_LIB_END
 
 namespace rl::sdl {
-    Window::Window(std::string title, const ds::dimensions<i32>& dims, Window::Properties flags)
+    Window::Window(std::string title, const ds::dims<i32>& dims, Window::Properties flags)
         : m_properties{ flags }
         , m_sdl_window{ SDL3::SDL_CreateWindow(title.data(), dims.width, dims.height, m_properties) }
         , m_renderer{ new sdl::Renderer(*this, Renderer::DEFAULT_GRAPHICS_DRIVER,
@@ -140,21 +140,21 @@ namespace rl::sdl {
         return result == 0;
     }
 
-    bool Window::set_size(ds::dimensions<i32> size)
+    bool Window::set_size(ds::dims<i32> size)
     {
         i32 result{ SDL3::SDL_SetWindowSize(m_sdl_window, size.width, size.height) };
         runtime_assert(result == 0, "failed to set size");
         return result == 0;
     }
 
-    bool Window::set_min_size(ds::dimensions<i32> size)
+    bool Window::set_min_size(ds::dims<i32> size)
     {
         i32 result = SDL3::SDL_SetWindowMinimumSize(m_sdl_window, size.width, size.height);
         sdl_assert(result == 0, "failed to set min size");
         return result == 0;
     }
 
-    bool Window::set_max_size(ds::dimensions<i32> size)
+    bool Window::set_max_size(ds::dims<i32> size)
     {
         i32 result = SDL3::SDL_SetWindowMaximumSize(m_sdl_window, size.width, size.height);
         sdl_assert(result == 0, "failed to set max size");
@@ -181,17 +181,17 @@ namespace rl::sdl {
         return m_sdl_window;
     }
 
-    ds::dimensions<i32> Window::get_size() const
+    ds::dims<i32> Window::get_size() const
     {
-        ds::dimensions<i32> size{ 0, 0 };
+        ds::dims<i32> size{ 0, 0 };
         i32 result = SDL3::SDL_GetWindowSize(m_sdl_window, &size.width, &size.height);
         sdl_assert(result == 0, "failed to set size");
         return size;
     }
 
-    ds::dimensions<i32> Window::get_render_size() const
+    ds::dims<i32> Window::get_render_size() const
     {
-        ds::dimensions<i32> size{ 0, 0 };
+        ds::dims<i32> size{ 0, 0 };
         i32 result = SDL3::SDL_GetWindowSizeInPixels(m_sdl_window, &size.width, &size.height);
         sdl_assert(result == 0, "failed to set render size");
         return size;
@@ -210,17 +210,17 @@ namespace rl::sdl {
         return pos;
     }
 
-    ds::dimensions<i32> Window::get_min_size() const
+    ds::dims<i32> Window::get_min_size() const
     {
-        ds::dimensions<i32> size{ 0, 0 };
+        ds::dims<i32> size{ 0, 0 };
         i32 result = SDL3::SDL_GetWindowMinimumSize(m_sdl_window, &size.width, &size.height);
         sdl_assert(result == 0, "failed to get min size");
         return size;
     }
 
-    ds::dimensions<i32> Window::get_max_size() const
+    ds::dims<i32> Window::get_max_size() const
     {
-        ds::dimensions<i32> size{ 0, 0 };
+        ds::dims<i32> size{ 0, 0 };
         i32 result = SDL3::SDL_GetWindowMaximumSize(m_sdl_window, &size.width, &size.height);
         sdl_assert(result == 0, "failed to get max size");
         return size;

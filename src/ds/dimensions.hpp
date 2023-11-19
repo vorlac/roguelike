@@ -10,36 +10,36 @@
 
 namespace rl::ds {
     template <rl::numeric T>
-    struct dimensions
+    struct dims
     {
         T width{ cast::to<T>(0) };
         T height{ cast::to<T>(0) };
 
-        constexpr inline dimensions()
+        constexpr inline dims()
             : width{ cast::to<T>(0) }
             , height{ cast::to<T>(0) }
         {
         }
 
-        constexpr inline dimensions(T w, T h)
+        constexpr inline dims(T w, T h)
             : width{ w }
             , height{ h }
         {
         }
 
-        constexpr inline dimensions(const dimensions<T>& other)
+        constexpr inline dims(const dims<T>& other)
             : width{ other.width }
             , height{ other.height }
         {
         }
 
-        constexpr inline dimensions(dimensions<T>&& other)
+        constexpr inline dims(dims<T>&& other)
             : width{ std::move(other.width) }
             , height{ std::move(other.height) }
         {
         }
 
-        constexpr static inline dimensions<T> null()
+        constexpr static inline dims<T> null()
         {
             return {
                 cast::to<T>(0.0),
@@ -47,7 +47,7 @@ namespace rl::ds {
             };
         }
 
-        constexpr static inline dimensions<T> zero()
+        constexpr static inline dims<T> zero()
         {
             return {
                 cast::to<T>(0.0),
@@ -71,36 +71,36 @@ namespace rl::ds {
             return width * height;
         }
 
-        constexpr inline dimensions<T>& operator=(const dimensions<T>& other)
+        constexpr inline dims<T>& operator=(const dims<T>& other)
         {
             this->height = other.height;
             this->width = other.width;
             return *this;
         }
 
-        constexpr inline dimensions<T>& operator=(dimensions<T>&& other)
+        constexpr inline dims<T>& operator=(dims<T>&& other)
         {
             return this->operator=(other);
         }
 
-        constexpr inline bool operator==(const dimensions<T>& other) const
+        constexpr inline bool operator==(const dims<T>& other) const
         {
             return 0 == rl::memory::static_memcmp<sizeof(*this)>(this, &other);
         }
 
-        constexpr inline bool operator!=(const dimensions<T>& other) const
+        constexpr inline bool operator!=(const dims<T>& other) const
         {
             return !this->operator==(other);
         }
 
-        constexpr inline dimensions<T>& operator/=(auto div)
+        constexpr inline dims<T>& operator/=(auto div)
         {
             this->width /= cast::to<T>(div);
             this->height /= cast::to<T>(div);
             return *this;
         }
 
-        constexpr inline dimensions<T> operator/(auto div) const
+        constexpr inline dims<T> operator/(auto div) const
         {
             return {
                 this->width / cast::to<T>(div),
@@ -108,16 +108,16 @@ namespace rl::ds {
             };
         }
 
-        constexpr inline dimensions<T>& operator*=(auto mul)
+        constexpr inline dims<T>& operator*=(auto mul)
         {
             this->width *= cast::to<T>(mul);
             this->height *= cast::to<T>(mul);
             return *this;
         }
 
-        constexpr inline dimensions<T> operator*(auto mul) const
+        constexpr inline dims<T> operator*(auto mul) const
         {
-            return dimensions<T>{
+            return dims<T>{
                 cast::to<T>(this->width * mul),
                 cast::to<T>(this->height * mul),
             };
