@@ -52,7 +52,7 @@ SDL_C_LIB_END
                         << "  File      = " << __FILE__ << std::endl               \
                         << "  Line      = " << __LINE__ << std::endl               \
                         << "  Message   = " << message << std::endl                \
-                        << "  SDL Error = " << sdl_error << std::endl;             \
+                        << "  SDL Error = " << sdl_error.c_str() << std::endl;     \
                                                                                    \
               __debugbreak();                                                      \
           }                                                                        \

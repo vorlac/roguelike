@@ -45,6 +45,9 @@ namespace rl::sdl {
         }
 
         std::swap(m_sdl_window, other.m_sdl_window);
+        m_renderer = std::move(other.m_renderer);
+        m_properties = std::move(other.m_properties);
+
         return *this;
     }
 
