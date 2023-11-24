@@ -4,6 +4,8 @@
 #include <memory>
 #include <utility>
 
+#include <fmt/format.h>
+
 #include "utils/concepts.hpp"
 #include "utils/conversions.hpp"
 #include "utils/memory.hpp"
@@ -123,4 +125,10 @@ namespace rl::ds {
             };
         }
     };
+
+    template <rl::numeric T>
+    constexpr auto format_as(const dims<T>& size)
+    {
+        return fmt::format("(w={}, h={})", size.width, size.height);
+    }
 }

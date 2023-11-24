@@ -22,6 +22,7 @@
 #include "sdl/defs.hpp"
 #include "sdl/pixel_data.hpp"
 #include "sdl/renderer.hpp"
+#include "sdl/renderer_opengl.hpp"
 #include "sdl/surface.hpp"
 #include "sdl/tests/data/icon.hpp"
 #include "sdl/texture.hpp"
@@ -207,10 +208,9 @@ namespace rl::scene {
                 USE_RANDOM_COLORS ? ds::dims<f32>{ 10.0f, 10.0f } : ds::dims<f32>{ 20.0f, 20.0f }
             };
 
-            static void define_entity_rendering(flecs::world& ecs, sdl::Window& window,
-                                                sdl::Texture& sprite)
+            static void define_entity_rendering(flecs::world& ecs, sdl::Window& window)
             {
-                *m_sprite = std::move(sprite);
+                //*m_sprite = std::move(sprite);
 
                 m_renderer = window.renderer().get();
                 m_renderer->set_draw_blend_mode(USE_RANDOM_COLORS ? sdl::Renderer::blend_mode::Blend
@@ -234,8 +234,8 @@ namespace rl::scene {
                     sdl::PixelData::format::RGB24,
                 };
 
-                static sdl::Texture texture1{ window.renderer(), surface };
-                static sdl::Texture texture2{ window.renderer(), surface };
+                // static sdl::Texture texture1{ window.renderer(), surface };
+                // static sdl::Texture texture2{ window.renderer(), surface };
 
                 ecs.system<const component::position, const component::style, const component::scale>(
                        "Render Rects")
@@ -325,10 +325,10 @@ namespace rl::scene {
             {
                 ds::dims<i32> sprite_size{ 0, 0 };
                 std::vector<u8> icon_data = { icon_bmp, icon_bmp + icon_bmp_len };
-                auto sprite = create_texture(window.renderer(), icon_data, sprite_size);
-                runtime_assert(sprite.is_valid(), "failed to load sprite");
+                // auto sprite = create_texture(window.renderer(), icon_data, sprite_size);
+                // runtime_assert(sprite.is_valid(), "failed to load sprite");
                 define_rect_movement(world, window.get_size());
-                define_entity_rendering(world, window, sprite);
+                define_entity_rendering(world, window);
                 define_entity_timeout(world);
             }
         };
@@ -375,7 +375,7 @@ namespace rl::scene {
         static inline thread_local i64 m_update_calls{ 0 };
         constexpr static inline ds::dims<i32> rect_size{ 10, 10 };
         static inline ds::dims<i32> render_size{ 0, 0 };
-        static inline sdl::Renderer* m_renderer{ nullptr };
+        static inline sdl::RendererGL* m_renderer{ nullptr };
         static inline sdl::Texture* m_sprite{ new sdl::Texture };
     };
 }

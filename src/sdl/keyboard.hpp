@@ -43,7 +43,7 @@ namespace rl::sdl {
             using type_t = SDL3::SDL_Scancode;
             using type = std::underlying_type_t<type_t>;
 
-            enum ID : type {
+            enum Scancode : type {
                 Unknown = SDL3::SDL_SCANCODE_UNKNOWN,
                 A = SDL3::SDL_SCANCODE_A,
                 B = SDL3::SDL_SCANCODE_B,
@@ -600,9 +600,7 @@ namespace rl::sdl {
         std::bitset<Button::ScancodeCount> m_pressed{ 0 };
         std::bitset<Button::ScancodeCount> m_released{ 0 };
     };
-}
 
-namespace rl::sdl {
     constexpr inline std::string format_as(Keyboard kb)
     {
         return fmt::format("KB[W={} A={}, S={}, D={}]",

@@ -7,11 +7,9 @@
 #include <tuple>
 #include <utility>
 
-#include <glad/gl.h>
-
 #include "core/numeric_types.hpp"
 #include "sdl/defs.hpp"
-#include "sdl/events.hpp"
+#include "sdl/event_handler.hpp"
 #include "sdl/renderer.hpp"
 #include "sdl/time.hpp"
 #include "sdl/window.hpp"
@@ -35,39 +33,13 @@ namespace rl::sdl {
             Gamepad = SDL3::SDL_INIT_GAMEPAD,
             Events = SDL3::SDL_INIT_EVENTS,
             Sensor = SDL3::SDL_INIT_SENSOR,
-
-            Count = Sensor,
-
-            All = SDL3::SDL_INIT_TIMER |     //
-                  SDL3::SDL_INIT_AUDIO |     //
-                  SDL3::SDL_INIT_VIDEO |     //
-                  SDL3::SDL_INIT_JOYSTICK |  //
-                  SDL3::SDL_INIT_HAPTIC |    //
-                  SDL3::SDL_INIT_GAMEPAD |   //
-                  SDL3::SDL_INIT_EVENTS |    //
-                  SDL3::SDL_INIT_SENSOR
+            All = Timer | Audio | Video | Joystick | Haptic | Gamepad | Events | Sensor
         };
-
-        // using timer_t = sdl::Timer<double, sdl::TimeDuration::Millisecond>;
 
     public:
         Application()
         {
-            bool ret = this->init_subsystem(Subsystem::Video);
-
-            SDL3::SDL_GL_SetAttribute(SDL3::SDL_GL_DOUBLEBUFFER, 1);
-            SDL3::SDL_GL_SetAttribute(SDL3::SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-            SDL3::SDL_GL_SetAttribute(SDL3::SDL_GL_CONTEXT_MINOR_VERSION, 2);
-            SDL3::SDL_GL_SetAttribute(SDL3::SDL_GL_CONTEXT_PROFILE_MASK,
-                                      SDL3::SDL_GL_CONTEXT_PROFILE_CORE);
-
-            m_window = sdl::Window{ "SDL3 OpenGL" };
-            runtime_assert(ret, "failed to init SDL subsystem");
-
-            SDL3::SDL_GLContext context = SDL3::SDL_GL_CreateContext(m_window.sdl_handle());
-
-            int version = gladLoadGL((GLADloadfunc)SDL3::SDL_GL_GetProcAddress);
-            log::info("OpenGL: {}.{}\n", GLAD_VERSION_MAJOR(version), GLAD_VERSION_MINOR(version));
+            bool ret = this->init_subsystem(Subsystem::All);
         }
 
         Application(const sdl::Application& other) = delete;
@@ -82,7 +54,7 @@ namespace rl::sdl {
 
         bool handle_events()
         {
-            return m_event_handler.handle_events();
+            return m_event_handler.handle_events(m_window);
         }
 
         bool quit_triggered() const

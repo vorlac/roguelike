@@ -13,15 +13,53 @@
 #include "utils/assert.hpp"
 
 SDL_C_LIB_BEGIN
+#include <SDL3/SDL_events.h>
 #include <SDL3/SDL_video.h>
 SDL_C_LIB_END
 
 namespace rl::sdl {
     class Renderer;
+    class RendererGL;
+    class EventHandler;
+
+    using WindowID = SDL3::SDL_WindowID;
 
     class Window
     {
     public:
+        struct Event
+        {
+            using Data = SDL3::SDL_WindowEvent;
+
+            enum ID : std::underlying_type_t<SDL3::SDL_EventType> {
+                WindowFirst = SDL3::SDL_EVENT_WINDOW_FIRST,
+                Shown = SDL3::SDL_EVENT_WINDOW_SHOWN,
+                Hidden = SDL3::SDL_EVENT_WINDOW_HIDDEN,
+                Exposed = SDL3::SDL_EVENT_WINDOW_EXPOSED,
+                Moved = SDL3::SDL_EVENT_WINDOW_MOVED,
+                Resized = SDL3::SDL_EVENT_WINDOW_RESIZED,
+                PixelSizeChanged = SDL3::SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED,
+                Minimized = SDL3::SDL_EVENT_WINDOW_MINIMIZED,
+                Maximized = SDL3::SDL_EVENT_WINDOW_MAXIMIZED,
+                Restored = SDL3::SDL_EVENT_WINDOW_RESTORED,
+                MouseEnter = SDL3::SDL_EVENT_WINDOW_MOUSE_ENTER,
+                MouseLeave = SDL3::SDL_EVENT_WINDOW_MOUSE_LEAVE,
+                FocusGained = SDL3::SDL_EVENT_WINDOW_FOCUS_GAINED,
+                FocusLost = SDL3::SDL_EVENT_WINDOW_FOCUS_LOST,
+                CloseRequested = SDL3::SDL_EVENT_WINDOW_CLOSE_REQUESTED,
+                TakeFocus = SDL3::SDL_EVENT_WINDOW_TAKE_FOCUS,
+                HitTest = SDL3::SDL_EVENT_WINDOW_HIT_TEST,
+                ICCProfChanged = SDL3::SDL_EVENT_WINDOW_ICCPROF_CHANGED,
+                DisplayChanged = SDL3::SDL_EVENT_WINDOW_DISPLAY_CHANGED,
+                DisplayScaleChanged = SDL3::SDL_EVENT_WINDOW_DISPLAY_SCALE_CHANGED,
+                Occluded = SDL3::SDL_EVENT_WINDOW_OCCLUDED,
+                Destroyed = SDL3::SDL_EVENT_WINDOW_DESTROYED,
+                PenEnter = SDL3::SDL_EVENT_WINDOW_PEN_ENTER,
+                PenLeave = SDL3::SDL_EVENT_WINDOW_PEN_LEAVE,
+                WindowLast = SDL3::SDL_EVENT_WINDOW_LAST,
+            };
+        };
+
         struct Properties : public std::bitset<sizeof(u32) * 8>
         {
             using sdl_type = SDL3::SDL_WindowFlags;
@@ -126,14 +164,40 @@ namespace rl::sdl {
         ds::dims<i32> get_max_size() const;
         ds::point<i32> get_position() const;
 
-        std::shared_ptr<sdl::Renderer> renderer() const;
+        std::shared_ptr<sdl::RendererGL> renderer() const;
         const Window& operator=(sdl::Window&& other) noexcept;
         SDL3::SDL_Window* sdl_handle() const;
         bool is_valid() const;
 
+    protected:
+        friend class EventHandler;
+
+        bool on_shown(const WindowID id);
+        bool on_hidden(const WindowID id);
+        bool on_exposed(const WindowID id);
+        bool on_moved(const WindowID id, ds::point<i32>&& pt);
+        bool on_resized(const WindowID id, ds::dims<i32>&& size);
+        bool on_pixel_size_changed(const WindowID id);
+        bool on_minimized(const WindowID id);
+        bool on_maximized(const WindowID id);
+        bool on_restored(const WindowID id);
+        bool on_mouse_enter(const WindowID id);
+        bool on_mouse_leave(const WindowID id);
+        bool on_kb_focus_gained(const WindowID id);
+        bool on_kb_focus_lost(const WindowID id);
+        bool on_close_requested(const WindowID id);
+        bool on_take_focus(const WindowID id);
+        bool on_hit_test(const WindowID id);
+        bool on_icc_profile_changed(const WindowID id);
+        bool on_display_changed(const WindowID id);
+        bool on_display_scale_changed(const WindowID id);
+        bool on_occluded(const WindowID id);
+        bool on_destroyed(const WindowID id);
+
     private:
         Properties m_properties{ Properties::Flag::None };
         SDL3::SDL_Window* m_sdl_window{ nullptr };
-        std::shared_ptr<sdl::Renderer> m_renderer{ nullptr };
+        std::shared_ptr<sdl::RendererGL> m_renderer{ nullptr };
+        ds::rect<i32> m_window_rect{ 0, 0, 0, 0 };
     };
 }

@@ -452,6 +452,6 @@ namespace rl::ds {
     template <rl::numeric T>
     constexpr auto format_as(const ds::vector2<T>& vec)
     {
-        return fmt::format("({},{})", vec.x, vec.y);
+        return fmt::format("(x={}, y={})", vec.x, vec.y);
     }
 }

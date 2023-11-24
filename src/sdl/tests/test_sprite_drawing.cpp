@@ -14,6 +14,7 @@
 #include "sdl/color.hpp"
 #include "sdl/defs.hpp"
 #include "sdl/renderer.hpp"
+#include "sdl/renderer_opengl.hpp"
 #include "sdl/surface.hpp"
 #include "sdl/tests/data/icon.hpp"
 #include "sdl/texture.hpp"
@@ -100,52 +101,52 @@ namespace rl::sdl::test {
     {
         i32 return_code = -1;
 
-        ds::dims<i32> window_size = window.get_render_size();
-        ds::dims<i32> sprite_size{ 0, 0 };
+        // ds::dims<i32> window_size = window.get_render_size();
+        // ds::dims<i32> sprite_size{ 0, 0 };
 
-        std::vector<u8> icon_data = { icon_bmp, icon_bmp + icon_bmp_len };
+        // std::vector<u8> icon_data = { icon_bmp, icon_bmp + icon_bmp_len };
 
-        sdl::Texture sprite = create_texture(window.renderer(), icon_data, sprite_size);
-        if (!sprite.is_valid())
-            return false;
+        // sdl::Texture sprite = create_texture(window.renderer(), icon_data, sprite_size);
+        // if (!sprite.is_valid())
+        //     return false;
 
-        /* Initialize the sprite positions */
-        constexpr static size_t SPRITE_COUNT = 100;
-        constexpr static size_t MAX_SPEED = 1;
-        std::vector<std::pair<ds::rect<f32>, ds::rect<f32>>> sprites(SPRITE_COUNT);
+        ///* Initialize the sprite positions */
+        // constexpr static size_t SPRITE_COUNT = 100;
+        // constexpr static size_t MAX_SPEED = 1;
+        // std::vector<std::pair<ds::rect<f32>, ds::rect<f32>>> sprites(SPRITE_COUNT);
 
-        srand((u32)time(nullptr));
-        for (auto& sprite_info : sprites)
-        {
-            auto& [velocity, position] = sprite_info;
+        // srand((u32)time(nullptr));
+        // for (auto& sprite_info : sprites)
+        //{
+        //     auto& [velocity, position] = sprite_info;
 
-            position.pt.x = rl::cast::to<f32>(rand() % (window_size.width - sprite_size.width));
-            position.pt.y = rl::cast::to<f32>(rand() % (window_size.height - sprite_size.height));
-            position.size.width = rl::cast::to<f32>(sprite_size.width);
-            position.size.height = rl::cast::to<f32>(sprite_size.height);
+        //    position.pt.x = rl::cast::to<f32>(rand() % (window_size.width - sprite_size.width));
+        //    position.pt.y = rl::cast::to<f32>(rand() % (window_size.height - sprite_size.height));
+        //    position.size.width = rl::cast::to<f32>(sprite_size.width);
+        //    position.size.height = rl::cast::to<f32>(sprite_size.height);
 
-            velocity.pt.x = 0.0f;
-            velocity.pt.y = 0.0f;
-            while (velocity.pt.is_zero())
-            {
-                velocity.pt.x = cast::to<f32>((rand() % (MAX_SPEED * 2 + 1)) - MAX_SPEED);
-                velocity.pt.y = cast::to<f32>((rand() % (MAX_SPEED * 2 + 1)) - MAX_SPEED);
-            }
-        }
+        //    velocity.pt.x = 0.0f;
+        //    velocity.pt.y = 0.0f;
+        //    while (velocity.pt.is_zero())
+        //    {
+        //        velocity.pt.x = cast::to<f32>((rand() % (MAX_SPEED * 2 + 1)) - MAX_SPEED);
+        //        velocity.pt.y = cast::to<f32>((rand() % (MAX_SPEED * 2 + 1)) - MAX_SPEED);
+        //    }
+        //}
 
-        bool done = false;
-        while (!done)
-        {
-            SDL3::SDL_Event e;
-            while (SDL3::SDL_PollEvent(&e))
-                if (e.type == SDL3::SDL_EVENT_QUIT || e.type == SDL3::SDL_EVENT_KEY_DOWN)
-                    done = true;
+        // bool done = false;
+        // while (!done)
+        //{
+        //     SDL3::SDL_Event e;
+        //     while (SDL3::SDL_PollEvent(&e))
+        //         if (e.type == SDL3::SDL_EVENT_QUIT || e.type == SDL3::SDL_EVENT_KEY_DOWN)
+        //             done = true;
 
-            move_sprites(window, sprite, sprites, sprite_size);
+        //    move_sprites(window, sprite, sprites, sprite_size);
 
-            if (done)
-                break;
-        }
+        //    if (done)
+        //        break;
+        //}
 
         return return_code;
     }

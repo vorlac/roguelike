@@ -16,6 +16,7 @@
 
 #include "core/game.hpp"
 #include "core/numeric_types.hpp"
+#include "core/options.hpp"
 #include "ecs/components/kinematic_components.hpp"
 #include "ecs/components/style_components.hpp"
 #include "ecs/components/transform_components.hpp"
@@ -89,17 +90,6 @@ namespace rl {
     {
         this->setup();
 
-        sdl::Color start{ 255, 0, 0, 50 };
-        sdl::Color end{ 0, 0, 255, 50 };
-
-        u8 val = 0;
-        while (++val < 255)
-        {
-            auto&& c = sdl::Color::lerp(start, end, val);
-            fmt::print(c, "test\n");
-            val += 1;
-        }
-
         sdl::Color c_orange{ fmt::color::burly_wood };
         sdl::Timer<float, sdl::TimeDuration::Second> timer{};
 
@@ -113,7 +103,7 @@ namespace rl {
             if (this->quit_requested()) [[unlikely]]
                 break;
 
-            if (++loop_count % 60 == 0)
+            if constexpr (options::log::main_loop && ++loop_count % 60 == 0)
             {
                 elapsed_time = timer.elapsed();
 

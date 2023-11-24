@@ -577,4 +577,10 @@ namespace rl::ds {
             cast::to<T>(0),  // height
         };
     };
+
+    template <rl::numeric T>
+    constexpr auto format_as(const rect<T>& r)
+    {
+        return fmt::format("[{} | {}]", r.pt, r.size);
+    }
 }

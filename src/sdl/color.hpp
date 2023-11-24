@@ -371,6 +371,20 @@ namespace rl::sdl {
             return Color{ s + (e - s) * step };
         }
 
+        void test_color_lerp()
+        {
+            sdl::Color start{ 255, 0, 0, 50 };
+            sdl::Color end{ 0, 0, 255, 50 };
+
+            u8 val = 0;
+            while (++val < 255)
+            {
+                auto&& c = sdl::Color::lerp(start, end, val);
+                fmt::print(c, "test\n");
+                val += 1;
+            }
+        }
+
         // constexpr static inline color gradient(const std::vector<sdl::color>& colors, u8 step)
         // {
         //     const auto stop_len = 1 / (colors.size() - 1);
