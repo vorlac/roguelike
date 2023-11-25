@@ -92,16 +92,23 @@ namespace rl {
 
         sdl::Color c_orange{ fmt::color::burly_wood };
         sdl::Timer<float, sdl::TimeDuration::Second> timer{};
-
+        sdl::Color clear_clr1{ 0.2f, 0.3f, 0.3f, 1.0f };
+        sdl::Color clear_clr2{ 0.7f, 0.4f, 0.4f, 1.0f };
         u32 loop_count = 0;
         auto delta_time_s = timer.delta();
         auto elapsed_time = timer.elapsed();
 
+        sdl::Window& window = m_sdl.window();
         while (this->handle_events())
         {
             m_world.progress();
             if (this->quit_requested()) [[unlikely]]
                 break;
+
+            window.swap_buffers();
+            window.renderer()->clear(clear_clr1);
+            window.swap_buffers();
+            window.renderer()->clear(clear_clr2);
 
             if constexpr (options::log::main_loop && ++loop_count % 60 == 0)
             {

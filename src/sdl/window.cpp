@@ -87,6 +87,7 @@ namespace rl::sdl {
                                           RendererGL::DEFAULT_PROPERTY_FLAGS) }
     {
         sdl_assert(m_sdl_window != nullptr, "failed to create SDL_Window");
+        sdl_assert(m_renderer != nullptr, "failed to create sdl::Renderer");
     }
 
     Window::~Window()
@@ -241,6 +242,11 @@ namespace rl::sdl {
     std::shared_ptr<sdl::RendererGL> Window::renderer() const
     {
         return m_renderer;
+    }
+
+    bool Window::swap_buffers()
+    {
+        return m_renderer->swap_buffers(*this);
     }
 
     SDL3::SDL_Window* Window::sdl_handle() const

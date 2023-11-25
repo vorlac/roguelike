@@ -1,10 +1,14 @@
+#include <memory>
 #include <string>
 #include <string_view>
+#include <tuple>
 
 #include <fmt/format.h>
 #include <glad/gl.h>
 
 #include "ds/dimensions.hpp"
+#include "gl/opengl.hpp"
+#include "sdl/color.hpp"
 #include "sdl/defs.hpp"
 #include "sdl/renderer_opengl.hpp"
 #include "sdl/window.hpp"
@@ -49,5 +53,134 @@ namespace rl::sdl {
             ds::dims<i32> viewport{ window.get_render_size() };
             glViewport(0, 0, viewport.width, viewport.height);
         }
+    }
+
+    bool RendererGL::present()
+    {
+        i32 result = 0;
+
+        return result == 0;
+    }
+
+    bool RendererGL::swap_buffers(sdl::Window& window)
+    {
+        i32 result = SDL3::SDL_GL_SwapWindow(window.sdl_handle());
+        sdl_assert(result == 0, "OpenGL renderer buffer swap failed");
+        return result == 0;
+    }
+
+    bool RendererGL::clear(const sdl::Color& c)
+    {
+        bool ret = true;
+        std::tuple<f32, f32, f32, f32> clr{ c };
+        glClearColor(std::get<0>(clr), std::get<1>(clr), std::get<2>(clr), std::get<3>(clr));
+        glClear(GL_COLOR_BUFFER_BIT);
+        return ret;
+    }
+
+    ds::dims<i32> RendererGL::get_output_size() const
+    {
+        ds::dims<i32> s{ 0, 0 };
+
+        return s;
+    }
+
+    bool RendererGL::set_draw_color(const sdl::Color& c)
+    {
+        i32 result = 0;
+        return result == 0;
+    }
+
+    bool RendererGL::draw_texture(sdl::Texture& texture, const ds::rect<f32>& src_rect,
+                                  const ds::rect<f32>& dst_rect)
+    {
+        i32 result = 0;
+        return result == 0;
+    }
+
+    bool RendererGL::set_target()
+    {
+        i32 result = 0;
+        return result == 0;
+    }
+
+    bool RendererGL::set_target(sdl::Texture& tex)
+    {
+        i32 result = 0;
+        return result == 0;
+    }
+
+    bool RendererGL::set_draw_blend_mode(const SDL3::SDL_BlendMode blend_mode)
+    {
+        i32 result = 0;
+        return result == 0;
+    }
+
+    bool RendererGL::draw_point(const ds::point<f32>& pt)
+    {
+        i32 result = 0;
+        return result == 0;
+    }
+
+    ds::rect<i32> RendererGL::get_viewport()
+    {
+        ds::rect<i32> rect{ 0, 0, 0, 0 };
+
+        return rect;
+    }
+
+    bool RendererGL::draw_points(const std::vector<ds::point<f32>>& points)
+    {
+        i32 result = 0;
+
+        return result == 0;
+    }
+
+    bool RendererGL::draw_line(const ds::point<f32>& pt1, const ds::point<f32>& pt2)
+    {
+        i32 result = 0;
+        return result == 0;
+    }
+
+    bool RendererGL::draw_lines(const std::vector<ds::point<f32>>& lines)
+    {
+        i32 result = 0;
+
+        return result == 0;
+    }
+
+    bool RendererGL::draw_rect(ds::rect<f32>&& rect, const sdl::Color& c)
+    {
+        i32 result = 0;
+
+        return result == 0;
+    }
+
+    bool RendererGL::draw_rects(const std::vector<ds::rect<f32>>& rects)
+    {
+        i32 result = 0;
+
+        return result == 0;
+    }
+
+    bool RendererGL::fill_rect(const ds::rect<f32>& rect, const sdl::Color& c)
+    {
+        i32 result = 0;
+
+        return result == 0;
+    }
+
+    bool RendererGL::fill_rects(const std::vector<ds::rect<f32>>& rects, const sdl::Color& c)
+    {
+        i32 result = 0;
+
+        return result == 0;
+    }
+
+    bool RendererGL::fill_rects(const std::vector<std::pair<ds::rect<f32>, sdl::Color>>& rects)
+    {
+        bool ret = true;
+
+        return ret;
     }
 }

@@ -1,13 +1,16 @@
 #pragma once
 
 #include <array>
+#include <cmath>
 #include <concepts>
 #include <tuple>
 #include <type_traits>
+#include <utility>
 #include <vector>
 
 #include <fmt/color.h>
 
+#include "core/math.hpp"
 #include "core/numeric_types.hpp"
 #include "sdl/defs.hpp"
 #include "utils/assert.hpp"
@@ -196,6 +199,21 @@ namespace rl::sdl {
                 (cr <= std::numeric_limits<u8>::max() && cg <= std::numeric_limits<u8>::max() &&
                  cb <= std::numeric_limits<u8>::max() && ca <= std::numeric_limits<u8>::max()),
                 "overflow representing r,g,b,a color components");
+        }
+
+        template <rl::floating_point T>
+            requires std::same_as<T, f32>
+        constexpr inline Color(T cr, T cg, T cb, T ca = 1.0f)
+            : r{ rl::math::clamp<u8>(cr * 255.0f, 0, 255) }
+            , g{ rl::math::clamp<u8>(cg * 255.0f, 0, 255) }
+            , b{ rl::math::clamp<u8>(cb * 255.0f, 0, 255) }
+            , a{ rl::math::clamp<u8>(ca * 255.0f, 0, 255) }
+        {
+            runtime_assert((cr * 255.0f <= std::numeric_limits<u8>::max() &&
+                            cg * 255.0f <= std::numeric_limits<u8>::max() &&
+                            cb * 255.0f <= std::numeric_limits<u8>::max() &&
+                            ca * 255.0f <= std::numeric_limits<u8>::max()),
+                           "overflow representing r,g,b,a color components");
         }
 
         constexpr inline Color(std::tuple<u8, u8, u8> tup)
@@ -444,6 +462,16 @@ namespace rl::sdl {
         constexpr inline operator std::tuple<u8, u8, u8, u8>() const
         {
             return { r, g, b, a };
+        }
+
+        constexpr inline operator std::tuple<f32, f32, f32, f32>() const
+        {
+            return std::tuple{ r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f };
+        }
+
+        constexpr inline operator std::array<f32, 4>() const
+        {
+            return std::array{ r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f };
         }
 
         constexpr inline operator std::tuple<u8, u8, u8>() const

@@ -168,6 +168,7 @@ namespace rl::sdl {
         const Window& operator=(sdl::Window&& other) noexcept;
         SDL3::SDL_Window* sdl_handle() const;
         bool is_valid() const;
+        bool swap_buffers();
 
     protected:
         friend class EventHandler;

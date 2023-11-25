@@ -65,125 +65,29 @@ namespace rl::sdl {
         explicit RendererGL(const sdl::Window& window, std::string_view driver,
                             RendererGL::Properties flags);
 
-        bool present()
-        {
-            i32 result = 0;
-            return result == 0;
-        }
+        ds::dims<i32> get_output_size() const;
+        ds::rect<i32> get_viewport();
 
-        bool clear(const sdl::Color& c = { 0, 0, 0 })
-        {
-            bool ret = true;
-
-            return ret;
-        }
-
-        ds::dims<i32> get_output_size() const
-        {
-            ds::dims<i32> s{ 0, 0 };
-
-            return s;
-        }
-
-        bool set_draw_color(const sdl::Color& c)
-        {
-            i32 result = 0;
-            return result == 0;
-        }
+        bool set_draw_color(const sdl::Color& c);
+        bool clear(const sdl::Color& c = { 0, 0, 0 });
+        bool present();
+        bool swap_buffers(sdl::Window& window);
+        bool set_target();
+        bool set_target(sdl::Texture& tex);
+        bool set_draw_blend_mode(const SDL3::SDL_BlendMode blend_mode);
+        bool draw_point(const ds::point<f32>& pt);
+        bool draw_points(const std::vector<ds::point<f32>>& points);
+        bool draw_line(const ds::point<f32>& pt1, const ds::point<f32>& pt2);
+        bool draw_lines(const std::vector<ds::point<f32>>& lines);
+        bool draw_rect(ds::rect<f32>&& rect, const sdl::Color& c = {});
+        bool draw_rects(const std::vector<ds::rect<f32>>& rects);
+        bool fill_rect(const ds::rect<f32>& rect = ds::rect<i32>::null(), const sdl::Color& c = {});
+        bool fill_rects(const std::vector<ds::rect<f32>>& rects, const sdl::Color& c = {});
+        bool fill_rects(const std::vector<std::pair<ds::rect<f32>, sdl::Color>>& rects);
 
         bool draw_texture(sdl::Texture& texture,
                           const ds::rect<f32>& src_rect = ds::rect<f32>::null(),
-                          const ds::rect<f32>& dst_rect = ds::rect<f32>::null())
-        {
-            i32 result = 0;
-            return result == 0;
-        }
-
-        bool set_target()
-        {
-            i32 result = 0;
-            return result == 0;
-        }
-
-        bool set_target(sdl::Texture& tex)
-        {
-            i32 result = 0;
-            return result == 0;
-        }
-
-        bool set_draw_blend_mode(const SDL3::SDL_BlendMode blend_mode)
-        {
-            i32 result = 0;
-            return result == 0;
-        }
-
-        bool draw_point(const ds::point<f32>& pt)
-        {
-            i32 result = 0;
-            return result == 0;
-        }
-
-        ds::rect<i32> get_viewport()
-        {
-            ds::rect<i32> rect{ 0, 0, 0, 0 };
-
-            return rect;
-        }
-
-        bool draw_points(const std::vector<ds::point<f32>>& points)
-        {
-            i32 result = 0;
-
-            return result == 0;
-        }
-
-        bool draw_line(const ds::point<f32>& pt1, const ds::point<f32>& pt2)
-        {
-            i32 result = 0;
-            return result == 0;
-        }
-
-        bool draw_lines(const std::vector<ds::point<f32>>& lines)
-        {
-            i32 result = 0;
-
-            return result == 0;
-        }
-
-        bool draw_rect(ds::rect<f32>&& rect, const sdl::Color& c = {})
-        {
-            i32 result = 0;
-
-            return result == 0;
-        }
-
-        bool draw_rects(const std::vector<ds::rect<f32>>& rects)
-        {
-            i32 result = 0;
-
-            return result == 0;
-        }
-
-        bool fill_rect(const ds::rect<f32>& rect = ds::rect<i32>::null(), const sdl::Color& c = {})
-        {
-            i32 result = 0;
-
-            return result == 0;
-        }
-
-        bool fill_rects(const std::vector<ds::rect<f32>>& rects, const sdl::Color& c = {})
-        {
-            i32 result = 0;
-
-            return result == 0;
-        }
-
-        bool fill_rects(const std::vector<std::pair<ds::rect<f32>, sdl::Color>>& rects)
-        {
-            bool ret = true;
-
-            return ret;
-        }
+                          const ds::rect<f32>& dst_rect = ds::rect<f32>::null());
 
     private:
         Properties m_properties{ Properties::None };
