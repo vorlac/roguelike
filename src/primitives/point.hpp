@@ -2,7 +2,7 @@
 
 #include <type_traits>
 
-#include "ds/vector2d.hpp"
+#include "primitives/vector2d.hpp"
 #include "utils/concepts.hpp"
 
 namespace rl::ds {

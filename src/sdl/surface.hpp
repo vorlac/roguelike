@@ -4,9 +4,9 @@
 #include <vector>
 
 #include "core/numeric_types.hpp"
-#include "ds/point.hpp"
-#include "ds/rect.hpp"
-#include "ds/vector2d.hpp"
+#include "primitives/point.hpp"
+#include "primitives/rect.hpp"
+#include "primitives/vector2d.hpp"
 #include "sdl/color.hpp"
 #include "sdl/defs.hpp"
 #include "sdl/pixel_data.hpp"

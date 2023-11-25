@@ -6,8 +6,8 @@
 #include <fmt/format.h>
 #include <glad/gl.h>
 
-#include "ds/dimensions.hpp"
 #include "gl/opengl.hpp"
+#include "primitives/dims.hpp"
 #include "sdl/color.hpp"
 #include "sdl/defs.hpp"
 #include "sdl/renderer_opengl.hpp"
@@ -146,6 +146,12 @@ namespace rl::sdl {
     {
         i32 result = 0;
 
+        return result == 0;
+    }
+
+    bool RendererGL::draw_triangle(const ds::triangle<f32>& triangle, const sdl::Color& color)
+    {
+        i32 result = 0;
         return result == 0;
     }
 

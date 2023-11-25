@@ -1,6 +1,7 @@
 #pragma once
 
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <concepts>
 #include <cstdint>
@@ -11,9 +12,9 @@
 #include <fmt/format.h>
 
 #include "core/numeric_types.hpp"
-#include "ds/dimensions.hpp"
-#include "ds/vector2d.hpp"
 #include "ecs/components/transform_components.hpp"
+#include "primitives/dims.hpp"
+#include "primitives/vector2d.hpp"
 #include "sdl/defs.hpp"
 #include "utils/concepts.hpp"
 #include "utils/conversions.hpp"
@@ -26,117 +27,119 @@ namespace rl::ds {
     template <rl::numeric T>
     struct vector2
     {
-        explicit constexpr vector2()
-            : x{ std::numeric_limits<T>::max() }
-            , y{ std::numeric_limits<T>::max() }
+        explicit inline constexpr vector2()
+            : m_coords{ std::numeric_limits<T>::max(), std::numeric_limits<T>::max(), 0 }
         {
         }
 
-        constexpr vector2(const T _x, const T _y)
-            : x{ _x }
-            , y{ _y }
+        constexpr inline vector2(const T x, const T y)
+            : m_coords{ x, y, 0 }
         {
         }
 
         template <rl::integer I>
-        constexpr vector2(const vector2<I>& other)
+        constexpr inline vector2(const vector2<I>& other)
             requires rl::floating_point<T>
-            : x{ cast::to<T>(other.x) }
-            , y{ cast::to<T>(other.y) }
+            : m_coords{ cast::to<T>(other.x), cast::to<T>(other.y), 0 }
         {
         }
 
-        constexpr vector2(const vector2<T>& other)
-            : x{ other.x }
-            , y{ other.y }
+        constexpr inline vector2(const vector2<T>& other)
+            : m_coords{ other.x, other.y, 0 }
         {
         }
 
-        constexpr vector2(vector2<T>&& other) noexcept
-            : x{ std::forward<T>(other.x) }
-            , y{ std::forward<T>(other.y) }
+        constexpr inline vector2(vector2<T>&& other) noexcept
+            : m_coords{ std::forward<std::array<T, 3>>(other.m_coords) }
         {
         }
 
-        constexpr vector2(const rl::component::position& pos)
+        constexpr inline vector2(const rl::component::position& pos)
             requires std::same_as<T, f32>
-            : x{ pos.x }
-            , y{ pos.y }
+            : m_coords{ pos.x, pos.y, 0 }
         {
         }
 
-        constexpr vector2(const SDL3::SDL_Point& pt)
+        constexpr inline vector2(const SDL3::SDL_Point& pt)
             requires std::same_as<T, i32>
-            : x{ pt.x }
-            , y{ pt.y }
+            : m_coords{ pt.x, pt.y, 0 }
         {
         }
 
-        constexpr vector2(SDL3::SDL_Point&& pt) noexcept
+        constexpr inline vector2(SDL3::SDL_Point&& pt) noexcept
             requires std::same_as<T, i32>
-            : x{ pt.x }
-            , y{ pt.y }
+            : m_coords{ pt.x, pt.y, 0 }
         {
         }
 
-        constexpr operator SDL3::SDL_Point()
-            requires std::same_as<T, i32>
+        constexpr inline operator std::array<T, 3>()
         {
-            return *reinterpret_cast<SDL3::SDL_Point*>(this);
+            return m_coords;
         }
 
-        constexpr operator SDL3::SDL_FPoint()
-            requires std::same_as<T, f32>
+        constexpr inline operator std::array<T, 3>*()
         {
-            return *reinterpret_cast<SDL3::SDL_FPoint*>(this);
+            return m_coords.data();
         }
 
-        constexpr operator SDL3::SDL_Point*()
+        constexpr inline operator SDL3::SDL_Point()
             requires std::same_as<T, i32>
         {
-            return reinterpret_cast<SDL3::SDL_Point*>(this);
+            return *reinterpret_cast<SDL3::SDL_Point*>(m_coords.data());
         }
 
-        constexpr operator SDL3::SDL_FPoint*()
+        constexpr inline operator SDL3::SDL_FPoint()
             requires std::same_as<T, f32>
         {
-            return reinterpret_cast<SDL3::SDL_FPoint*>(this);
+            return *reinterpret_cast<SDL3::SDL_FPoint*>(m_coords.data());
         }
 
-        constexpr operator const SDL3::SDL_Point() const
+        constexpr inline operator SDL3::SDL_Point*()
             requires std::same_as<T, i32>
         {
-            return *reinterpret_cast<const SDL3::SDL_Point*>(this);
+            return reinterpret_cast<SDL3::SDL_Point*>(m_coords.data());
         }
 
-        constexpr operator const SDL3::SDL_FPoint() const
+        constexpr inline operator SDL3::SDL_FPoint*()
             requires std::same_as<T, f32>
         {
-            return *reinterpret_cast<const SDL3::SDL_FPoint*>(this);
+            return reinterpret_cast<SDL3::SDL_FPoint*>(m_coords.data());
         }
 
-        constexpr operator const SDL3::SDL_Point*() const
+        constexpr inline operator const SDL3::SDL_Point() const
             requires std::same_as<T, i32>
         {
-            return reinterpret_cast<const SDL3::SDL_Point*>(this);
+            return *reinterpret_cast<const SDL3::SDL_Point*>(m_coords.data());
         }
 
-        constexpr operator const SDL3::SDL_FPoint*() const
+        constexpr inline operator const SDL3::SDL_FPoint() const
             requires std::same_as<T, f32>
         {
-            return reinterpret_cast<const SDL3::SDL_FPoint*>(this);
+            return *reinterpret_cast<const SDL3::SDL_FPoint*>(m_coords.data());
         }
 
-        constexpr operator rl::component::position()
-            requires std::same_as<T, f32>
+        constexpr inline operator const SDL3::SDL_Point*() const
+            requires std::same_as<T, i32>
         {
-            return *static_cast<rl::component::position*>(this);
+            return reinterpret_cast<const SDL3::SDL_Point*>(m_coords.data());
         }
 
-        constexpr operator const rl::component::position() const
+        constexpr inline operator const SDL3::SDL_FPoint*() const
             requires std::same_as<T, f32>
         {
-            return *static_cast<const rl::component::position*>(this);
+            return reinterpret_cast<const SDL3::SDL_FPoint*>(m_coords.data());
+        }
+
+        constexpr inline operator rl::component::position()
+            requires std::same_as<T, f32>
+        {
+            return *static_cast<rl::component::position*>(m_coords.data());
+        }
+
+        constexpr inline operator const rl::component::position() const
+            requires std::same_as<T, f32>
+        {
+            return *static_cast<const rl::component::position*>(m_coords.data());
         }
 
         constexpr static inline vector2<T> null()
@@ -146,10 +149,7 @@ namespace rl::ds {
 
         constexpr static inline vector2<T> zero()
         {
-            return vector2<T>{
-                cast::to<T>(0.0),
-                cast::to<T>(0.0),
-            };
+            return vector2<T>{ 0, 0 };
         }
 
         constexpr inline bool is_zero() const
@@ -180,7 +180,7 @@ namespace rl::ds {
             vector2<T> ret{ *this };
 
             const f32 len = this->length();
-            if (len > cast::to<T>(0.0) && maxlen < len)
+            if (len > 0.0f && maxlen < len)
             {
                 ret /= len;
                 ret *= maxlen;
@@ -212,7 +212,7 @@ namespace rl::ds {
         constexpr const inline vector2<T>& normalize()
         {
             f32 len_sq = this->length_squared();
-            if (len_sq != cast::to<T>(0.0))
+            if (len_sq != 0.0f)
             {
                 f32 len = std::sqrtf(len_sq);
                 x /= len;
@@ -445,12 +445,13 @@ namespace rl::ds {
             };
         }
 
-        T x{ cast::to<T>(0.0) };
-        T y{ cast::to<T>(0.0) };
+        std::array<T, 3> m_coords{ 0, 0, 0 };
+        T& x{ m_coords[0] };
+        T& y{ m_coords[1] };
     };
 
     template <rl::numeric T>
-    constexpr auto format_as(const ds::vector2<T>& vec)
+    constexpr inline auto format_as(const ds::vector2<T>& vec)
     {
         return fmt::format("(x={}, y={})", vec.x, vec.y);
     }

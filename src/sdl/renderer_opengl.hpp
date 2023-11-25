@@ -5,9 +5,10 @@
 #include <utility>
 #include <vector>
 
-#include "ds/dimensions.hpp"
-#include "ds/point.hpp"
-#include "ds/rect.hpp"
+#include "primitives/dims.hpp"
+#include "primitives/point.hpp"
+#include "primitives/rect.hpp"
+#include "primitives/triangle.hpp"
 #include "sdl/color.hpp"
 #include "sdl/defs.hpp"
 #include "sdl/texture.hpp"
@@ -78,6 +79,7 @@ namespace rl::sdl {
         bool draw_point(const ds::point<f32>& pt);
         bool draw_points(const std::vector<ds::point<f32>>& points);
         bool draw_line(const ds::point<f32>& pt1, const ds::point<f32>& pt2);
+        bool draw_triangle(const ds::triangle<f32>& triangle, const sdl::Color& color);
         bool draw_lines(const std::vector<ds::point<f32>>& lines);
         bool draw_rect(ds::rect<f32>&& rect, const sdl::Color& c = {});
         bool draw_rects(const std::vector<ds::rect<f32>>& rects);
