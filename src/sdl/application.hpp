@@ -10,14 +10,11 @@
 #include "core/numeric_types.hpp"
 #include "sdl/defs.hpp"
 #include "sdl/event_handler.hpp"
-#include "sdl/renderer.hpp"
 #include "sdl/time.hpp"
 #include "sdl/window.hpp"
 
 SDL_C_LIB_BEGIN
-#include <SDL3/SDL_blendmode.h>
-#include <SDL3/SDL_opengl.h>
-#include <SDL3/SDL_video.h>
+#include <SDL3/SDL_init.h>
 SDL_C_LIB_END
 
 namespace rl::sdl {

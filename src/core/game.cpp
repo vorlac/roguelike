@@ -12,7 +12,6 @@
 #include <fmt/ostream.h>
 #include <fmt/printf.h>
 #include <fmt/std.h>
-#include <glad/gl.h>
 
 #include "core/game.hpp"
 #include "core/numeric_types.hpp"

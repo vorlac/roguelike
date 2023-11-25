@@ -198,7 +198,7 @@ namespace rl::sdl {
     private:
         Properties m_properties{ Properties::Flag::None };
         SDL3::SDL_Window* m_sdl_window{ nullptr };
-        std::shared_ptr<sdl::RendererGL> m_renderer{ nullptr };
         ds::rect<i32> m_window_rect{ 0, 0, 0, 0 };
+        std::shared_ptr<sdl::RendererGL> m_renderer{ nullptr };
     };
 }

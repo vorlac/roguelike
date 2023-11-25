@@ -13,7 +13,6 @@
 #include "primitives/rect.hpp"
 #include "sdl/color.hpp"
 #include "sdl/defs.hpp"
-#include "sdl/renderer.hpp"
 #include "sdl/renderer_opengl.hpp"
 #include "sdl/surface.hpp"
 #include "sdl/tests/data/icon.hpp"
@@ -59,6 +58,7 @@ namespace rl::sdl::test {
         return sdl::Texture{ nullptr };
     }
 
+    [[maybe_unused]]
     static void move_sprites(sdl::Window& window, sdl::Texture& sprite, auto&& sprites,
                              auto& sprite_size)
     {

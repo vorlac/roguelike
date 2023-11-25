@@ -4,9 +4,7 @@
 #include <tuple>
 
 #include <fmt/format.h>
-#include <glad/gl.h>
 
-#include "gl/opengl.hpp"
 #include "primitives/dims.hpp"
 #include "sdl/color.hpp"
 #include "sdl/defs.hpp"
@@ -16,7 +14,6 @@
 #include "utils/io.hpp"
 
 SDL_C_LIB_BEGIN
-#include <SDL3/SDL_opengl.h>
 #include <SDL3/SDL_render.h>
 #include <SDL3/SDL_video.h>
 SDL_C_LIB_END
@@ -34,16 +31,15 @@ namespace rl::sdl {
         return fmt::format("{}.{}", GLAD_VERSION_MAJOR(version), GLAD_VERSION_MINOR(version));
     }
 
-    RendererGL::RendererGL(const sdl::Window& window, std::string_view driver,
-                           RendererGL::Properties flags)
+    RendererGL::RendererGL(const sdl::Window& window, RendererGL::Properties flags)
         : m_properties{ flags }
         , m_sdl_glcontext{ SDL3::SDL_GL_CreateContext(window.sdl_handle()) }
     {
         int result = m_sdl_glcontext != nullptr ? 0 : -1;
         sdl_assert(result == 0, "Failed to crete OpenGL context");
 
-        // result = SDL3::SDL_GL_LoadLibrary(nullptr);
-        // sdl_assert(result == 0, "Failed to load OpenGL library");
+        result = SDL3::SDL_GL_LoadLibrary(nullptr);
+        sdl_assert(result == 0, "Failed to load OpenGL library");
         if (result == 0)
         {
             sdl_assert(m_sdl_glcontext != nullptr, "failed to create renderer");

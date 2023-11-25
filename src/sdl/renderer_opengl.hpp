@@ -5,6 +5,8 @@
 #include <utility>
 #include <vector>
 
+#include "core/numeric_types.hpp"
+#include "gl/vertex_buffer.hpp"
 #include "primitives/dims.hpp"
 #include "primitives/point.hpp"
 #include "primitives/rect.hpp"
@@ -12,10 +14,10 @@
 #include "sdl/color.hpp"
 #include "sdl/defs.hpp"
 #include "sdl/texture.hpp"
+#include "sdl/window.hpp"
 #include "utils/io.hpp"
 
 SDL_C_LIB_BEGIN
-#include <SDL3/SDL_opengl.h>
 #include <SDL3/SDL_render.h>
 #include <SDL3/SDL_video.h>
 SDL_C_LIB_END
@@ -63,8 +65,7 @@ namespace rl::sdl {
         explicit RendererGL(const RendererGL& other) = delete;
 
     public:
-        explicit RendererGL(const sdl::Window& window, std::string_view driver,
-                            RendererGL::Properties flags);
+        explicit RendererGL(const sdl::Window& window, RendererGL::Properties flags);
 
         ds::dims<i32> get_output_size() const;
         ds::rect<i32> get_viewport();
@@ -92,6 +93,9 @@ namespace rl::sdl {
                           const ds::rect<f32>& dst_rect = ds::rect<f32>::null());
 
     private:
+        // todo: remove
+        ds::triangle<f32> m_temp{};
+        [[maybe_unused]] gl::vertex_buffer<>* m_vertex_buff{ nullptr };
         Properties m_properties{ Properties::None };
         SDL3::SDL_GLContext m_sdl_glcontext{ nullptr };
     };

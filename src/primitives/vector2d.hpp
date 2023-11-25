@@ -32,8 +32,8 @@ namespace rl::ds {
         {
         }
 
-        constexpr inline vector2(const T x, const T y)
-            : m_coords{ x, y, 0 }
+        constexpr inline vector2(const T _x, const T _y)
+            : m_coords{ _x, _y, 0 }
         {
         }
 

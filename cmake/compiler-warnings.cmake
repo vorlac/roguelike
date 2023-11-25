@@ -80,6 +80,10 @@ target_compile_options(${PROJECT_NAME}
 			-Wno-unused-function # test_renderer.hpp
 			-Wno-reserved-identifier
 			-Wno-implicit-float-conversion
+			-Wno-cast-function-type-strict
+			-Wno-strict-prototypes
+			-Wno-language-extension-token
+			-Wno-unused-macros
         >
 
         # Clang only

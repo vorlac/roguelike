@@ -10,7 +10,6 @@
 #include "primitives/rect.hpp"
 #include "primitives/vector2d.hpp"
 #include "sdl/defs.hpp"
-#include "sdl/renderer.hpp"
 #include "sdl/renderer_opengl.hpp"
 #include "sdl/utils.hpp"
 #include "utils/assert.hpp"
@@ -20,71 +19,12 @@ SDL_C_LIB_BEGIN
 #include <SDL3/SDL_video.h>
 SDL_C_LIB_END
 
-// struct SDL_Window
-// {
-//     const void* magic;
-//     SDL_WindowID id;
-//     char* title;
-//     SDL_Surface* icon;
-//     int x, y;
-//     int w, h;
-//     int min_w, min_h;
-//     int max_w, max_h;
-//     int last_pixel_w, last_pixel_h;
-//     Uint32 flags;
-//     Uint32 pending_flags;
-//     float display_scale;
-//     SDL_bool fullscreen_exclusive; /* The window is currently fullscreen exclusive */
-//     SDL_DisplayID last_fullscreen_exclusive_display; /* The last fullscreen_exclusive display */
-//     SDL_DisplayID last_displayID;
-//
-//     /* Stored position and size for windowed mode */
-//     SDL_Rect windowed;
-//
-//     /* Whether or not the initial position was defined */
-//     SDL_bool undefined_x;
-//     SDL_bool undefined_y;
-//
-//     SDL_DisplayMode requested_fullscreen_mode;
-//     SDL_DisplayMode current_fullscreen_mode;
-//
-//     float opacity;
-//
-//     SDL_Surface* surface;
-//     SDL_bool surface_valid;
-//
-//     SDL_bool is_hiding;
-//     SDL_bool restore_on_show; /* Child was hidden recursively by the parent, restore when shown.
-//     */ SDL_bool is_destroying; SDL_bool is_dropping; /* drag/drop in progress, expecting
-//     SDL_SendDropComplete(). */
-//
-//     SDL_Rect mouse_rect;
-//
-//     SDL_WindowShaper* shaper;
-//
-//     SDL_HitTest hit_test;
-//     void* hit_test_data;
-//
-//     SDL_PropertiesID props;
-//
-//     SDL_WindowData* driverdata;
-//
-//     SDL_Window* prev;
-//     SDL_Window* next;
-//
-//     SDL_Window* parent;
-//     SDL_Window* first_child;
-//     SDL_Window* prev_sibling;
-//     SDL_Window* next_sibling;
-// };
-
 namespace rl::sdl {
     Window::Window(std::string title, const ds::dims<i32>& dims, Window::Properties flags)
         : m_properties{ flags }
         , m_sdl_window{ SDL3::SDL_CreateWindow(title.data(), dims.width, dims.height, m_properties) }
         , m_window_rect{ m_sdl_window ? this->get_position() : ds::point<i32>::null(), dims }
-        , m_renderer{ new sdl::RendererGL(*this, Renderer::DEFAULT_GRAPHICS_DRIVER,
-                                          RendererGL::DEFAULT_PROPERTY_FLAGS) }
+        , m_renderer{ new sdl::RendererGL(*this, RendererGL::DEFAULT_PROPERTY_FLAGS) }
     {
         sdl_assert(m_sdl_window != nullptr, "failed to create SDL_Window");
         sdl_assert(m_renderer != nullptr, "failed to create sdl::Renderer");

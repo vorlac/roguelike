@@ -2,8 +2,6 @@
 
 #include <type_traits>
 
-#include <glad/gl.h>
-
 #include "core/numeric_types.hpp"
 #include "sdl/defs.hpp"
 

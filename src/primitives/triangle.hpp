@@ -8,10 +8,19 @@
 
 namespace rl::ds {
     template <rl::numeric T>
-    class triangle
+    struct triangle
     {
-    public:
-        constexpr inline triangle(const T a, const T b, const T c)
+        constexpr inline triangle()
+            : m_points{
+                ds::point<T>{},
+                ds::point<T>{},
+                ds::point<T>{},
+            }
+        {
+        }
+
+        constexpr inline triangle(const ds::point<T>& a, const ds::point<T>& b,
+                                  const ds::point<T>& c)
             : m_points{ a, b, c }
         {
         }
@@ -31,8 +40,19 @@ namespace rl::ds {
             return m_points[2];
         }
 
+        constexpr inline operator std::array<T, 9>*()
+        {
+            static_assert(sizeof(m_points) == (sizeof(T) * 9), "inconsistent vertex buffer size");
+            return m_points.data();
+        }
+
+        constexpr inline operator std::array<T, 9>()
+        {
+            static_assert(sizeof(m_points) == (sizeof(T) * 9), "inconsistent vertex buffer size");
+            return *m_points.data();
+        }
+
     private:
         std::array<ds::point<T>, 3> m_points{};
     };
-
 }
