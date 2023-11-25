@@ -81,25 +81,25 @@ IfMacros:
   - KJ_IF_MAYBE
 IncludeBlocks: Regroup
 IncludeCategories:
-  - Regex: '(<[0-9a-z_-]*>)'
+  - Regex: '(<glad[/0-9a-z_-]*\.h[p]?[p]?>)'
     Priority: 0
     SortPriority: 0
     CaseSensitive: false
-  - Regex: '(<[0-9a-z_-]*\.h[p]?[p]?>)'
+  - Regex: '(<[0-9a-z_-]*>)'
     Priority: 1
     SortPriority: 1
     CaseSensitive: false
   - Regex: '(<.+[/0-9a-z_]*\.h[p]?[p]?>)'
-    Priority: 1
-    SortPriority: 2
-    CaseSensitive: false
-  - Regex: '(".*\.h[p]?[p]?")'
     Priority: 2
     SortPriority: 3
     CaseSensitive: false
-  - Regex: '(".+[/0-9a-z_]*\.h[p]?[p]?")'
-    Priority: 2
+  - Regex: '(".*\.h[p]?[p]?")'
+    Priority: 3
     SortPriority: 4
+    CaseSensitive: false
+  - Regex: '(".+[/0-9a-z_]*\.h[p]?[p]?")'
+    Priority: 3
+    SortPriority: 5
     CaseSensitive: false
 IncludeIsMainRegex: '""'
 IncludeIsMainSourceRegex: '""'

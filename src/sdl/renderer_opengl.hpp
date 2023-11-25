@@ -66,6 +66,7 @@ namespace rl::sdl {
 
     public:
         explicit RendererGL(const sdl::Window& window, RendererGL::Properties flags);
+        ~RendererGL();
 
         ds::dims<i32> get_output_size() const;
         ds::rect<i32> get_viewport();

@@ -44,15 +44,14 @@ SDL_C_LIB_END
       {                                                                            \
           if (!(condition)) [[unlikely]]                                           \
           {                                                                        \
-              std::string sdl_error{};                                             \
-              sdl_error.reserve(256);                                              \
-              SDL3::SDL_GetErrorMsg(sdl_error.data(), 256);                        \
+              char sdl_error[256] = { 0 };                                         \
+              SDL3::SDL_GetErrorMsg(sdl_error, 255);                               \
               std::cerr << "Assertion failed: (" << #condition << ")" << std::endl \
                         << "  Function  = " << __FUNCTION__ << std::endl           \
                         << "  File      = " << __FILE__ << std::endl               \
                         << "  Line      = " << __LINE__ << std::endl               \
                         << "  Message   = " << message << std::endl                \
-                        << "  SDL Error = " << sdl_error.c_str() << std::endl;     \
+                        << "  SDL Error = " << sdl_error << std::endl;             \
                                                                                    \
               __debugbreak();                                                      \
           }                                                                        \

@@ -109,7 +109,7 @@ namespace rl {
             window.swap_buffers();
             window.renderer()->clear(clear_clr2);
 
-            if constexpr (options::log::main_loop && ++loop_count % 60 == 0)
+            if constexpr (io::logging::main_loop && ++loop_count % 60 == 0)
             {
                 elapsed_time = timer.elapsed();
 

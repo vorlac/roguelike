@@ -13,13 +13,11 @@
 #include "core/math.hpp"
 #include "core/numeric_types.hpp"
 #include "sdl/defs.hpp"
-#include "utils/assert.hpp"
 #include "utils/concepts.hpp"
 #include "utils/conversions.hpp"
 #include "utils/memory.hpp"
 
 SDL_C_LIB_BEGIN
-#include <SDL3/SDL.h>
 #include <SDL3/SDL_pixels.h>
 SDL_C_LIB_END
 
@@ -45,8 +43,8 @@ namespace rl::sdl {
             constexpr static inline std::tuple blanched_almond{ 0xFF, 0xEB, 0xCD };
             constexpr static inline std::tuple blue{ 0x00, 0x00, 0xFF };
             constexpr static inline std::tuple blue_violet{ 0x8A, 0x2B, 0xE2 };
-            constexpr static inline std::tuple Brown{ 0xA5, 0x2A, 0x2A };
-            constexpr static inline std::tuple burly_wood{ 0xDE, 0xB8, 0x87 };
+            constexpr static inline std::tuple brown{ 0xA5, 0x2A, 0x2A };
+            constexpr static inline std::tuple burly_wood{ (u8)0xDE, (u8)0xB8, (u8)0x87 };
             constexpr static inline std::tuple cadet_blue{ 0x5F, 0x9E, 0xA0 };
             constexpr static inline std::tuple chartreuse{ 0x7F, 0xFF, 0x00 };
             constexpr static inline std::tuple chocolate{ 0xD2, 0x69, 0x1E };
@@ -82,7 +80,7 @@ namespace rl::sdl {
             constexpr static inline std::tuple fire_brick{ 0xB2, 0x22, 0x22 };
             constexpr static inline std::tuple floral_white{ 0xFF, 0xFA, 0xF0 };
             constexpr static inline std::tuple forest_green{ 0x22, 0x8B, 0x22 };
-            constexpr static inline std::tuple Fuchsia{ 0xFF, 0x00, 0xFF };
+            constexpr static inline std::tuple fuchsia{ 0xFF, 0x00, 0xFF };
             constexpr static inline std::tuple gainsboro{ 0xDC, 0xDC, 0xDC };
             constexpr static inline std::tuple ghost_white{ 0xF8, 0xF8, 0xFF };
             constexpr static inline std::tuple gold{ 0xFF, 0xD7, 0x00 };
@@ -90,7 +88,7 @@ namespace rl::sdl {
             constexpr static inline std::tuple gray{ 0x80, 0x80, 0x80 };
             constexpr static inline std::tuple grey{ 0x80, 0x80, 0x80 };
             constexpr static inline std::tuple green{ 0x00, 0x80, 0x00 };
-            constexpr static inline std::tuple green_yellow{ 0xAD, 0xFF, 0x2F };
+            constexpr static inline std::tuple green_yellow{ (u8)0xAD, (u8)0xFF, (u8)0x2F };
             constexpr static inline std::tuple honey_dew{ 0xF0, 0xFF, 0xF0 };
             constexpr static inline std::tuple hot_pink{ 0xFF, 0x69, 0xB4 };
             constexpr static inline std::tuple indian_red{ 0xCD, 0x5C, 0x5C };
@@ -100,7 +98,7 @@ namespace rl::sdl {
             constexpr static inline std::tuple lavender{ 0xE6, 0xE6, 0xFA };
             constexpr static inline std::tuple lavender_blush{ 0xFF, 0xF0, 0xF5 };
             constexpr static inline std::tuple lawn_green{ 0x7C, 0xFC, 0x00 };
-            constexpr static inline std::tuple lemon_chiffon{ 0xFF, 0xFA, 0xCD };
+            constexpr static inline std::tuple lemon_chiffon{ (u8)0xFF, (u8)0xFA, (u8)0xCD };
             constexpr static inline std::tuple light_blue{ 0xAD, 0xD8, 0xE6 };
             constexpr static inline std::tuple light_coral{ 0xF0, 0x80, 0x80 };
             constexpr static inline std::tuple light_cyan{ 0xE0, 0xFF, 0xFF };
@@ -109,14 +107,14 @@ namespace rl::sdl {
             constexpr static inline std::tuple light_grey{ 0xD3, 0xD3, 0xD3 };
             constexpr static inline std::tuple light_green{ 0x90, 0xEE, 0x90 };
             constexpr static inline std::tuple light_pink{ 0xFF, 0xB6, 0xC1 };
-            constexpr static inline std::tuple light_salmon{ 0xFF, 0xA0, 0x7A };
+            constexpr static inline std::tuple light_salmon{ (u8)0xFF, (u8)0xA0, (u8)0x7A };
             constexpr static inline std::tuple light_sea_green{ 0x20, 0xB2, 0xAA };
             constexpr static inline std::tuple light_sky_blue{ 0x87, 0xCE, 0xFA };
-            constexpr static inline std::tuple light_slate_gray{ 0x77, 0x88, 0x99 };
-            constexpr static inline std::tuple light_slate_grey{ 0x77, 0x88, 0x99 };
-            constexpr static inline std::tuple light_steel_blue{ 0xB0, 0xC4, 0xDE };
+            constexpr static inline std::tuple light_slate_gray{ (u8)0x77, (u8)0x88, (u8)0x99 };
+            constexpr static inline std::tuple light_slate_grey{ (u8)0x77, (u8)0x88, (u8)0x99 };
+            constexpr static inline std::tuple light_steel_blue{ (u8)0xB0, (u8)0xC4, (u8)0xDE };
             constexpr static inline std::tuple light_yellow{ 0xFF, 0xFF, 0xE0 };
-            constexpr static inline std::tuple Lime{ 0x00, 0xFF, 0x00 };
+            constexpr static inline std::tuple lime{ 0x00, 0xFF, 0x00 };
             constexpr static inline std::tuple lime_green{ 0x32, 0xCD, 0x32 };
             constexpr static inline std::tuple linen{ 0xFA, 0xF0, 0xE6 };
             constexpr static inline std::tuple magenta{ 0xFF, 0x00, 0xFF };
@@ -137,9 +135,9 @@ namespace rl::sdl {
             constexpr static inline std::tuple navajo_white{ 0xFF, 0xDE, 0xAD };
             constexpr static inline std::tuple navy{ 0x00, 0x00, 0x80 };
             constexpr static inline std::tuple old_lace{ 0xFD, 0xF5, 0xE6 };
-            constexpr static inline std::tuple Olive{ 0x80, 0x80, 0x00 };
+            constexpr static inline std::tuple olive{ 0x80, 0x80, 0x00 };
             constexpr static inline std::tuple olive_drab{ 0x6B, 0x8E, 0x23 };
-            constexpr static inline std::tuple Orange{ 0xFF, 0xA5, 0x00 };
+            constexpr static inline std::tuple orange{ 0xFF, 0xA5, 0x00 };
             constexpr static inline std::tuple orange_red{ 0xFF, 0x45, 0x00 };
             constexpr static inline std::tuple orchid{ 0xDA, 0x70, 0xD6 };
             constexpr static inline std::tuple pale_golden_rod{ 0xEE, 0xE8, 0xAA };
@@ -174,7 +172,7 @@ namespace rl::sdl {
             constexpr static inline std::tuple tan{ 0xD2, 0xB4, 0x8C };
             constexpr static inline std::tuple teal{ 0x00, 0x80, 0x80 };
             constexpr static inline std::tuple thistle{ 0xD8, 0xBF, 0xD8 };
-            constexpr static inline std::tuple tomato{ 0xFF, 0x63, 0x47 };
+            constexpr static inline std::tuple tomato{ (u8)0xFF, (u8)0x63, (u8)0x47 };
             constexpr static inline std::tuple turquoise{ 0x40, 0xE0, 0xD0 };
             constexpr static inline std::tuple violet{ 0xEE, 0x82, 0xEE };
             constexpr static inline std::tuple wheat{ 0xF5, 0xDE, 0xB3 };
@@ -195,10 +193,6 @@ namespace rl::sdl {
             , b{ cast::to<u8>(cb) }
             , a{ cast::to<u8>(ca) }
         {
-            runtime_assert(
-                (cr <= std::numeric_limits<u8>::max() && cg <= std::numeric_limits<u8>::max() &&
-                 cb <= std::numeric_limits<u8>::max() && ca <= std::numeric_limits<u8>::max()),
-                "overflow representing r,g,b,a color components");
         }
 
         template <rl::floating_point T>
@@ -209,11 +203,6 @@ namespace rl::sdl {
             , b{ rl::math::clamp<u8>(cb * 255.0f, 0, 255) }
             , a{ rl::math::clamp<u8>(ca * 255.0f, 0, 255) }
         {
-            runtime_assert((cr * 255.0f <= std::numeric_limits<u8>::max() &&
-                            cg * 255.0f <= std::numeric_limits<u8>::max() &&
-                            cb * 255.0f <= std::numeric_limits<u8>::max() &&
-                            ca * 255.0f <= std::numeric_limits<u8>::max()),
-                           "overflow representing r,g,b,a color components");
         }
 
         constexpr inline Color(std::tuple<u8, u8, u8> tup)
@@ -227,9 +216,9 @@ namespace rl::sdl {
         template <rl::integer T>
         constexpr inline Color& operator=(std::tuple<T, T, T> tup)
         {
-            r = cast::to<u8>(std::get<0>());
-            g = cast::to<u8>(std::get<1>());
-            b = cast::to<u8>(std::get<2>());
+            r = cast::to<u8>(std::get<0>(tup));
+            g = cast::to<u8>(std::get<1>(tup));
+            b = cast::to<u8>(std::get<2>(tup));
             return *this;
         }
 

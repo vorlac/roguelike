@@ -29,22 +29,22 @@ namespace rl::sdl {
                      */
                     case Mouse::Event::MouseWheel:
                         m_mouse.process_wheel(e.wheel);
-                        if constexpr (options::log::mouse_events)
+                        if constexpr (io::logging::mouse_events)
                             log::info("{}", m_mouse);
                         break;
                     case Mouse::Event::MouseMotion:
                         m_mouse.process_motion(e.motion);
-                        if constexpr (options::log::mouse_events)
+                        if constexpr (io::logging::mouse_events)
                             log::info("{}", m_mouse);
                         break;
                     case Mouse::Event::MouseButtonDown:
                         m_mouse.process_button_down(e.button.button);
-                        if constexpr (options::log::mouse_events)
+                        if constexpr (io::logging::mouse_events)
                             log::info("{}", m_mouse);
                         break;
                     case Mouse::Event::MouseButtonUp:
                         m_mouse.process_button_up(e.button.button);
-                        if constexpr (options::log::mouse_events)
+                        if constexpr (io::logging::mouse_events)
                             log::info("{}", m_mouse);
                         break;
 
@@ -53,14 +53,14 @@ namespace rl::sdl {
                      */
                     case Keyboard::Event::KeyDown:
                         m_keyboard.process_button_down(e.key.keysym.scancode);
-                        if constexpr (options::log::kb_events)
+                        if constexpr (io::logging::kb_events)
                             log::info("{}", m_keyboard);
                         if (m_keyboard.is_button_pressed(Keyboard::Button::Escape)) [[unlikely]]
                             m_quit = true;
                         break;
                     case Keyboard::Event::KeyUp:
                         m_keyboard.process_button_up(e.key.keysym.scancode);
-                        if constexpr (options::log::kb_events)
+                        if constexpr (io::logging::kb_events)
                             log::info("{}", m_keyboard);
                         break;
 

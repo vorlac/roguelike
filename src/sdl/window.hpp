@@ -9,7 +9,6 @@
 #include "primitives/rect.hpp"
 #include "primitives/vector2d.hpp"
 #include "sdl/defs.hpp"
-#include "sdl/utils.hpp"
 #include "utils/assert.hpp"
 
 SDL_C_LIB_BEGIN
@@ -18,7 +17,6 @@ SDL_C_LIB_BEGIN
 SDL_C_LIB_END
 
 namespace rl::sdl {
-    class Renderer;
     class RendererGL;
     class EventHandler;
 

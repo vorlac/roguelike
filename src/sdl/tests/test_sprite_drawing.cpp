@@ -4,8 +4,8 @@
 #include <utility>
 #include <vector>
 
-#include <stdlib.h>
 #include <fmt/format.h>
+#include <stdlib.h>
 
 #include "core/numeric_types.hpp"
 #include "primitives/dims.hpp"

@@ -11,32 +11,7 @@
 namespace rl {
     struct options
     {
-        struct log
-        {
-            enum class Mode {
-                LogFile = 1 << 0,
-                StdOut = 1 << 1,
-                StdErr = 1 << 2,
-            };
-
-            enum class Level {
-                Trace,
-                Debug,
-                Info,
-                Warning,
-                Error,
-                Fatal
-            };
-
-            constexpr static inline Mode mode{ Mode::StdOut };
-            constexpr static inline Level level{ Level::Debug };
-
-            constexpr static inline bool kb_events{ false };
-            constexpr static inline bool mouse_events{ false };
-            constexpr static inline bool window_events{ true };
-            constexpr static inline bool main_loop{ false };
-            constexpr static inline bool rendering{ false };
-        };
+        //
     };
 
     static bool parse_args(int argc, char** argv)

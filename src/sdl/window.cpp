@@ -274,7 +274,7 @@ namespace rl::sdl {
     bool Window::on_shown(const WindowID id)
     {
         bool ret = true;
-        if constexpr (options::log::window_events)
+        if constexpr (io::logging::window_events)
             log::info("window::on_shown [id:{}]", id);
         return ret;
     }
@@ -282,7 +282,7 @@ namespace rl::sdl {
     bool Window::on_hidden(const WindowID id)
     {
         bool ret = true;
-        if constexpr (options::log::window_events)
+        if constexpr (io::logging::window_events)
             log::info("window::on_hidden [id:{}]", id);
         return ret;
     }
@@ -290,14 +290,14 @@ namespace rl::sdl {
     bool Window::on_exposed(const WindowID id)
     {
         bool ret = true;
-        if constexpr (options::log::window_events)
+        if constexpr (io::logging::window_events)
             log::info("window::on_exposed [id:{}]", id);
         return ret;
     }
 
     bool Window::on_moved(sdl::WindowID id, ds::point<i32>&& pt)
     {
-        if constexpr (options::log::window_events)
+        if constexpr (io::logging::window_events)
         {
             ds::rect<i32> prev_rect{ m_window_rect };
             ds::rect<i32> new_rect{ pt, prev_rect.size };
@@ -313,7 +313,7 @@ namespace rl::sdl {
 
     bool Window::on_resized(const WindowID id, ds::dims<i32>&& size)
     {
-        if constexpr (options::log::window_events)
+        if constexpr (io::logging::window_events)
         {
             ds::rect<i32> prev_rect{ m_window_rect };
             ds::rect<i32> new_rect{ prev_rect.pt, size };
@@ -330,7 +330,7 @@ namespace rl::sdl {
     bool Window::on_pixel_size_changed(const WindowID id)
     {
         bool ret = true;
-        if constexpr (options::log::window_events)
+        if constexpr (io::logging::window_events)
             log::info("window::on_pixel_size_changed [id:{}]", id);
         return ret;
     }
@@ -338,7 +338,7 @@ namespace rl::sdl {
     bool Window::on_minimized(const WindowID id)
     {
         bool ret = true;
-        if constexpr (options::log::window_events)
+        if constexpr (io::logging::window_events)
             log::info("window::on_minimized [id:{}]", id);
         return ret;
     }
@@ -346,7 +346,7 @@ namespace rl::sdl {
     bool Window::on_maximized(const WindowID id)
     {
         bool ret = true;
-        if constexpr (options::log::window_events)
+        if constexpr (io::logging::window_events)
             log::info("window::on_maximized [id:{}]", id);
         return ret;
     }
@@ -354,7 +354,7 @@ namespace rl::sdl {
     bool Window::on_restored(const WindowID id)
     {
         bool ret = true;
-        if constexpr (options::log::window_events)
+        if constexpr (io::logging::window_events)
             log::info("window::on_restored [id:{}]", id);
         return ret;
     }
@@ -362,7 +362,7 @@ namespace rl::sdl {
     bool Window::on_mouse_enter(const WindowID id)
     {
         bool ret = true;
-        if constexpr (options::log::window_events)
+        if constexpr (io::logging::window_events)
             log::info("window::on_mouse_enter [id:{}]", id);
         return ret;
     }
@@ -370,7 +370,7 @@ namespace rl::sdl {
     bool Window::on_mouse_leave(const WindowID id)
     {
         bool ret = true;
-        if constexpr (options::log::window_events)
+        if constexpr (io::logging::window_events)
             log::info("window::on_mouse_leave [id:{}]", id);
         return ret;
     }
@@ -378,7 +378,7 @@ namespace rl::sdl {
     bool Window::on_kb_focus_gained(const WindowID id)
     {
         bool ret = true;
-        if constexpr (options::log::window_events)
+        if constexpr (io::logging::window_events)
             log::info("window::on_kb_focus_gained [id:{}]", id);
         return ret;
     }
@@ -386,7 +386,7 @@ namespace rl::sdl {
     bool Window::on_kb_focus_lost(const WindowID id)
     {
         bool ret = true;
-        if constexpr (options::log::window_events)
+        if constexpr (io::logging::window_events)
             log::info("window::on_kb_focus_lost [id:{}]", id);
         return ret;
     }
@@ -394,7 +394,7 @@ namespace rl::sdl {
     bool Window::on_close_requested(const WindowID id)
     {
         bool ret = true;
-        if constexpr (options::log::window_events)
+        if constexpr (io::logging::window_events)
             log::info("window::on_close_requested [id:{}]", id);
         return ret;
     }
@@ -402,7 +402,7 @@ namespace rl::sdl {
     bool Window::on_take_focus(const WindowID id)
     {
         bool ret = true;
-        if constexpr (options::log::window_events)
+        if constexpr (io::logging::window_events)
             log::info("window::on_take_focus [id:{}]", id);
         return ret;
     }
@@ -410,7 +410,7 @@ namespace rl::sdl {
     bool Window::on_hit_test(const WindowID id)
     {
         bool ret = true;
-        if constexpr (options::log::window_events)
+        if constexpr (io::logging::window_events)
             log::info("window::on_hit_test [id:{}]", id);
         return ret;
     }
@@ -418,7 +418,7 @@ namespace rl::sdl {
     bool Window::on_icc_profile_changed(const WindowID id)
     {
         bool ret = true;
-        if constexpr (options::log::window_events)
+        if constexpr (io::logging::window_events)
             log::info("window::on_icc_profile_changed [id:{}]", id);
         return ret;
     }
@@ -426,7 +426,7 @@ namespace rl::sdl {
     bool Window::on_display_changed(const WindowID id)
     {
         bool ret = true;
-        if constexpr (options::log::window_events)
+        if constexpr (io::logging::window_events)
             log::info("window::on_display_changed [id:{}]", id);
         return ret;
     }
@@ -434,7 +434,7 @@ namespace rl::sdl {
     bool Window::on_display_scale_changed(const WindowID id)
     {
         bool ret = true;
-        if constexpr (options::log::window_events)
+        if constexpr (io::logging::window_events)
             log::info("window::on_display_scale_changed [id:{}]", id);
         return ret;
     }
@@ -442,7 +442,7 @@ namespace rl::sdl {
     bool Window::on_occluded(const WindowID id)
     {
         bool ret = true;
-        if constexpr (options::log::window_events)
+        if constexpr (io::logging::window_events)
             log::info("window::on_occluded [id:{}]", id);
         return ret;
     }
@@ -450,7 +450,7 @@ namespace rl::sdl {
     bool Window::on_destroyed(const WindowID id)
     {
         bool ret = true;
-        if constexpr (options::log::window_events)
+        if constexpr (io::logging::window_events)
             log::info("window::on_destroyed [id:{}]", id);
         return ret;
     }
