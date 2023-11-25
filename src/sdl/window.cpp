@@ -1,3 +1,5 @@
+#include <glad/gl.h>
+
 #include <memory>
 #include <utility>
 
@@ -5,10 +7,10 @@
 
 #include "core/numeric_types.hpp"
 #include "core/options.hpp"
-#include "primitives/dims.hpp"
-#include "primitives/point.hpp"
-#include "primitives/rect.hpp"
-#include "primitives/vector2d.hpp"
+#include "ds/dims.hpp"
+#include "ds/point.hpp"
+#include "ds/rect.hpp"
+#include "ds/vector2d.hpp"
 #include "sdl/defs.hpp"
 #include "sdl/renderer_opengl.hpp"
 #include "sdl/utils.hpp"
@@ -255,11 +257,11 @@ namespace rl::sdl {
 
     SDL3::SDL_DisplayMode Window::get_display_mode() const
     {
+        SDL3::SDL_DisplayMode ret{};
         const SDL3::SDL_DisplayMode* mode{ SDL3::SDL_GetWindowFullscreenMode(m_sdl_window) };
         runtime_assert(mode == nullptr, "failed to get window display mode");
-
-        SDL3::SDL_DisplayMode ret{};
-        SDL_memcpy(&ret, mode, sizeof(ret));
+        if (mode != nullptr)
+            SDL3::SDL_memcpy(&ret, mode, sizeof(ret));
         return ret;
     }
 
@@ -322,6 +324,7 @@ namespace rl::sdl {
 
         bool ret = m_window_rect.size != size;
         runtime_assert(ret, "window resized, but size unchanged");
+        glViewport(0, 0, size.width, size.height);
         m_window_rect.size = size;
 
         return ret;

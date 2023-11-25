@@ -15,13 +15,16 @@
 
 #include "core/game.hpp"
 #include "core/numeric_types.hpp"
-#include "core/options.hpp"
+#include "ds/packed_array.hpp"
 #include "ecs/components/kinematic_components.hpp"
 #include "ecs/components/style_components.hpp"
 #include "ecs/components/transform_components.hpp"
 #include "ecs/scenes/benchmark_scene.hpp"
 #include "ecs/scenes/main_menu_scene.hpp"
 #include "ecs/scenes/scene_types.hpp"
+#include "gl/shader.hpp"
+#include "gl/vertex_array.hpp"
+#include "gl/vertex_buffer.hpp"
 #include "sdl/tests/test_suite.hpp"
 #include "sdl/time.hpp"
 #include "utils/io.hpp"
@@ -89,25 +92,39 @@ namespace rl {
     {
         this->setup();
 
+        std::vector<ds::triangle<f32>> tris = {
+            {
+                { -0.5f, -0.5f },
+                { 0.5f, -0.5f },
+                { 0.0f, 0.5f },
+            },
+        };
+
+        gl::VertexBuffer vbo{};
+        vbo.bind_vbo(tris);
+
         sdl::Color c_orange{ fmt::color::burly_wood };
-        sdl::Timer<float, sdl::TimeDuration::Second> timer{};
         sdl::Color clear_clr1{ 0.2f, 0.3f, 0.3f, 1.0f };
         sdl::Color clear_clr2{ 0.7f, 0.4f, 0.4f, 1.0f };
+        sdl::Timer<float, sdl::TimeDuration::Second> timer{};
+
         u32 loop_count = 0;
         auto delta_time_s = timer.delta();
         auto elapsed_time = timer.elapsed();
 
-        sdl::Window& window = m_sdl.window();
+        sdl::Window& window{ m_sdl.window() };
+        std::shared_ptr<sdl::RendererGL> renderer{ window.renderer() };
         while (this->handle_events())
         {
             m_world.progress();
+
+            renderer->clear(clear_clr1);
             if (this->quit_requested()) [[unlikely]]
                 break;
 
+            vbo.draw(window);
+
             window.swap_buffers();
-            window.renderer()->clear(clear_clr1);
-            window.swap_buffers();
-            window.renderer()->clear(clear_clr2);
 
             if constexpr (io::logging::main_loop && ++loop_count % 60 == 0)
             {

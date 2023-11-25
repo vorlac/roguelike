@@ -4,9 +4,9 @@
 #include <type_traits>
 
 #include "core/numeric_types.hpp"
-#include "primitives/dims.hpp"
-#include "primitives/point.hpp"
-#include "primitives/vector2d.hpp"
+#include "ds/dims.hpp"
+#include "ds/point.hpp"
+#include "ds/vector2d.hpp"
 #include "sdl/defs.hpp"
 #include "utils/concepts.hpp"
 
@@ -39,8 +39,8 @@ namespace rl::ds {
     {
     public:
         explicit constexpr rect()
-            : pt{ point<T>::null() }
-            , size{ dims<T>::null() }
+            : pt{ ds::point<T>::null() }
+            , size{ ds::dims<T>::null() }
         {
         }
 
@@ -53,12 +53,12 @@ namespace rl::ds {
         template <rl::integer I>
         constexpr rect(const rect<I>& other)
             requires rl::floating_point<T>
-            : pt(cast::to<T>(pt.x), cast::to<T>(pt.y))
+            : pt(cast::to<T>(other.pt.x), cast::to<T>(other.pt.y))
             , size(cast::to<T>(other.size.width), cast::to<T>(other.size.height))
         {
         }
 
-        constexpr rect(rect<T>&& other)
+        constexpr rect(rect<T>&& other) noexcept
             : pt{ std::forward<point<T>>(other.pt) }
             , size{ std::forward<dims<T>>(other.size) }
         {
@@ -540,7 +540,7 @@ namespace rl::ds {
         /**
          * @brief Move assignment
          * */
-        constexpr rect<T>& operator=(rect<T>&& other)
+        constexpr rect<T>& operator=(rect<T>&& other) noexcept
         {
             std::memcpy(this, &other, sizeof(*this));
             return *this;

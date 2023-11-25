@@ -3,9 +3,9 @@
 #include <vector>
 
 #include "core/numeric_types.hpp"
-#include "primitives/dims.hpp"
-#include "primitives/point.hpp"
-#include "primitives/rect.hpp"
+#include "ds/dims.hpp"
+#include "ds/point.hpp"
+#include "ds/rect.hpp"
 #include "sdl/defs.hpp"
 #include "utils/assert.hpp"
 

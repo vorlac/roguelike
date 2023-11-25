@@ -1,19 +1,12 @@
 #pragma once
 
-#include <any>
 #include <array>
-#include <optional>
 
 #include <argparse/argparse.hpp>
 
 #include "utils/io.hpp"
 
 namespace rl {
-    struct options
-    {
-        //
-    };
-
     static bool parse_args(int argc, char** argv)
     {
         auto args = argparse::ArgumentParser{

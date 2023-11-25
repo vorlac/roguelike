@@ -16,8 +16,8 @@
 #include <imgui.h>
 
 #include "core/numeric_types.hpp"
-#include "primitives/point.hpp"
-#include "primitives/vector2d.hpp"
+#include "ds/point.hpp"
+#include "ds/vector2d.hpp"
 #include "sdl/color.hpp"
 #include "sdl/mouse.hpp"
 #include "utils/assert.hpp"

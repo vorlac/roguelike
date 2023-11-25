@@ -13,6 +13,6 @@ namespace rl::math {
     template <rl::numeric TOut, rl::numeric TIn>
     TOut clamp(TIn v, TOut low, TOut high)
     {
-        return rl::cast::to<TOut>(v < low ? low : v > high ? high : v);
+        return cast::to<TOut>(v < low ? low : v > high ? high : v);
     }
 }

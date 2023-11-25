@@ -1,11 +1,16 @@
 #pragma once
 
 #include <type_traits>
+#include <vector>
 
-#include "primitives/vector2d.hpp"
+#include "ds/vector2d.hpp"
 #include "utils/concepts.hpp"
 
 namespace rl::ds {
+#pragma pack(4)
+
     template <rl::numeric T>
     using point = vector2<T>;
+
+#pragma pack()
 }

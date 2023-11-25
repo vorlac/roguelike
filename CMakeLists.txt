@@ -7,7 +7,6 @@ list(APPEND CMAKE_MODULE_PATH
 
 include(vcpkg-init)
 
-set(CMAKE_C_STANDARD 23)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_EXTENSIONS ON)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -64,7 +63,7 @@ file(GLOB_RECURSE
     CONFIGURE_DEPENDS
       "${CMAKE_CURRENT_SOURCE_DIR}/src/*.[hc]"
       "${CMAKE_CURRENT_SOURCE_DIR}/src/*.[hc]pp"
-      "${CMAKE_CURRENT_SOURCE_DIR}/extern/glad/src/*.c"
+      "${CMAKE_CURRENT_SOURCE_DIR}/extern/glad/*.[hc]"
 )
 
 add_executable(${PROJECT_NAME}
@@ -80,21 +79,17 @@ target_compile_features(${PROJECT_NAME} PRIVATE
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
   NOMINMAX
-  # KHRONOS_STATIC
+  KHRONOS_STATIC
   ROGUELIKE_TESTS_ENABLED
 
   $<$<CONFIG:Debug>:
     DEBUG_HEAP=0
   >
-
-  $<${compiler_is_msvc}:
-    ECS_TARGET_MSVC
-    ECS_TARGET_WINDOWS
-  >
 )
 
 target_compile_options(${PROJECT_NAME} PRIVATE
   $<${compiler_is_msvc}:
+	  /std:c++latest
     /Zc:preprocessor
     /utf-8
     /EHsc

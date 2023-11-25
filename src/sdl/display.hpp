@@ -1,5 +1,9 @@
 #pragma once
 
+#include <type_traits>
+
+#include "sdl/defs.hpp"
+
 SDL_C_LIB_BEGIN
 #include <SDL3/SDL_events.h>
 #include <SDL3/SDL_video.h>

@@ -1,3 +1,5 @@
+#include <glad/gl.h>
+
 #include <memory>
 #include <string>
 #include <string_view>
@@ -5,8 +7,8 @@
 
 #include <fmt/format.h>
 
+#include "ds/dims.hpp"
 #include "gl/shader.hpp"
-#include "primitives/dims.hpp"
 #include "sdl/color.hpp"
 #include "sdl/defs.hpp"
 #include "sdl/renderer_opengl.hpp"
@@ -49,20 +51,6 @@ namespace rl::sdl {
 
             ds::dims<i32> viewport{ window.get_render_size() };
             glViewport(0, 0, viewport.width, viewport.height);
-
-            m_vertex_buff = new gl::vertex_buffer<>{};
-
-            bool shaders_built = gl::ShaderProgram::build();
-            runtime_assert(shaders_built, "failed to build shader program");
-        }
-    }
-
-    RendererGL::~RendererGL()
-    {
-        if (m_vertex_buff != nullptr)
-        {
-            delete m_vertex_buff;
-            m_vertex_buff = nullptr;
         }
     }
 
@@ -136,7 +124,6 @@ namespace rl::sdl {
     ds::rect<i32> RendererGL::get_viewport()
     {
         ds::rect<i32> rect{ 0, 0, 0, 0 };
-
         return rect;
     }
 

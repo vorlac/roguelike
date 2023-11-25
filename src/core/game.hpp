@@ -2,7 +2,7 @@
 
 #include <flecs.h>
 
-#include "primitives/dims.hpp"
+#include "ds/dims.hpp"
 #include "sdl/application.hpp"
 
 namespace rl {

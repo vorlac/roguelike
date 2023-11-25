@@ -26,7 +26,7 @@
       "hidden": true,
       "environment": {
         "VERBOSE": "true"
-      }
+      } 
     },
     {
       "name": "msvc",
@@ -36,6 +36,12 @@
         "CMAKE_C_COMPILER": "cl",
         "CMAKE_CXX_COMPILER": "cl",
         "VCPKG_TARGET_TRIPLET": "x64-windows-static-md"
+      },
+      "vendor": {
+        "microsoft.com/VisualStudioSettings/CMake/1.0": {
+          "enableMicrosoftCodeAnalysis": true,
+          "intelliSenseMode": "windows-msvc-x64"
+        }
       },
       "condition": {
         "type": "equals",
@@ -117,8 +123,8 @@
       },
       "vendor": {
         "microsoft.com/VisualStudioSettings/CMake/1.0": {
-          "intelliSenseMode": "windows-clang-x64",
-          "enableClangTidyCodeAnalysis": true
+          "enableMicrosoftCodeAnalysis": true,
+          "intelliSenseMode": "windows-clang-x64"
         }
       }
     },

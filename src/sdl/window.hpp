@@ -4,10 +4,10 @@
 #include <memory>
 #include <string>
 
-#include "primitives/dims.hpp"
-#include "primitives/point.hpp"
-#include "primitives/rect.hpp"
-#include "primitives/vector2d.hpp"
+#include "ds/dims.hpp"
+#include "ds/point.hpp"
+#include "ds/rect.hpp"
+#include "ds/vector2d.hpp"
 #include "sdl/defs.hpp"
 #include "utils/assert.hpp"
 
@@ -122,8 +122,8 @@ namespace rl::sdl {
 
     public:
         explicit Window() = delete;
-        explicit Window(Window&& window) = delete;
-        explicit Window(const Window& window) = delete;
+        explicit Window(sdl::Window&& window) noexcept = delete;
+        explicit Window(const sdl::Window& window) = delete;
         explicit Window(SDL3::SDL_Window* other) = delete;
 
         explicit Window(std::string title, const ds::dims<i32>& dims = DEFAULT_SIZE,

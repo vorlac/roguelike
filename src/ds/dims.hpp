@@ -35,7 +35,7 @@ namespace rl::ds {
         {
         }
 
-        constexpr inline dims(dims<T>&& other)
+        constexpr inline dims(dims<T>&& other) noexcept
             : width{ std::move(other.width) }
             , height{ std::move(other.height) }
         {
@@ -80,7 +80,7 @@ namespace rl::ds {
             return *this;
         }
 
-        constexpr inline dims<T>& operator=(dims<T>&& other)
+        constexpr inline dims<T>& operator=(dims<T>&& other) noexcept
         {
             return this->operator=(other);
         }

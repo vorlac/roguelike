@@ -375,22 +375,22 @@ namespace rl::sdl {
     public:
         constexpr static inline Color lerp(const Color& s, const Color& e, u8 step)
         {
-            return Color{ s + (e - s) * step };
+            return { s + (e - s) * step };
         }
 
-        void test_color_lerp()
-        {
-            sdl::Color start{ 255, 0, 0, 50 };
-            sdl::Color end{ 0, 0, 255, 50 };
+        // static void test_color_lerp()
+        // {
+        //     sdl::Color start{ 255, 0, 0, 50 };
+        //     sdl::Color end{ 0, 0, 255, 50 };
 
-            u8 val = 0;
-            while (++val < 255)
-            {
-                auto&& c = sdl::Color::lerp(start, end, val);
-                fmt::print(c, "test\n");
-                val += 1;
-            }
-        }
+        //     uint8_t val{ 0 };
+        //     while (++val < 255)
+        //     {
+        //         auto&& c = sdl::Color::lerp(start, end, val);
+        //         fmt::print(c, "||");
+        //     }
+        //     fmt::print("\n");
+        // }
 
         // constexpr static inline color gradient(const std::vector<sdl::color>& colors, u8 step)
         // {

@@ -1,5 +1,3 @@
-#include <glad/gl.h>
-
 #include "core/game.hpp"
 #include "core/options.hpp"
 #include "sdl/defs.hpp"

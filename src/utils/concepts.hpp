@@ -6,44 +6,42 @@
 
 #include "core/numeric_types.hpp"
 
-namespace rl::inline constraint {
+namespace rl {
     template <typename T, typename... TOther>
-    concept any_of = (std::same_as<std::remove_cvref_t<std::type_identity_t<T>>, TOther> || ...);
+    concept any_of = (std::same_as<T, TOther> || ...);
 
     template <typename T>
-    concept floating_point = constraint::any_of<T, f32, f64, lf64>;
+    concept floating_point = any_of<T, f32, f64, lf64>;
 
     template <typename T>
-    concept signed_integer = constraint::any_of<T, i8, i16, i32, i64>;
+    concept signed_integer = any_of<T, i8, i16, i32, i64>;
 
     template <typename T>
-    concept unsigned_integer = constraint::any_of<T, u8, u16, u32, u64, size_t>;
+    concept unsigned_integer = any_of<T, u8, u16, u32, u64, size_t>;
 
     template <typename T>
-    concept integer = constraint::unsigned_integer<T> || constraint::signed_integer<T>;
+    concept integer = (unsigned_integer<T> || signed_integer<T>);
 
     template <typename T>
-    concept numeric = constraint::floating_point<T> || constraint::integer<T>;
+    concept numeric = (floating_point<T> || integer<T>);
 
     template <auto N>
-    concept positive_numeric = constraint::numeric<decltype(N)> && N > 0;
+    concept positive_numeric = (numeric<decltype(N)> && N > 0);
 
     template <auto N>
-    concept negative_numeric = constraint::numeric<decltype(N)> && N < 0;
+    concept negative_numeric = (numeric<decltype(N)> && N < 0);
 
     template <auto N>
-    concept positive_floating_point = constraint::positive_numeric<N> &&
-                                      constraint::floating_point<decltype(N)>;
+    concept positive_floating_point = positive_numeric<N> && floating_point<decltype(N)>;
 
     template <auto N>
-    concept negative_floating_point = constraint::negative_numeric<N> &&
-                                      constraint::floating_point<decltype(N)>;
+    concept negative_floating_point = negative_numeric<N> && floating_point<decltype(N)>;
 
     template <auto N>
-    concept positive_integer = constraint::positive_numeric<N> && constraint::integer<decltype(N)>;
+    concept positive_integer = positive_numeric<N> && integer<decltype(N)>;
 
     template <auto N>
-    concept negative_integer = constraint::negative_numeric<N> && constraint::integer<decltype(N)>;
+    concept negative_integer = negative_numeric<N> && integer<decltype(N)>;
 
     template <typename L, typename R>
     concept higher_max = std::numeric_limits<L>::max() > std::numeric_limits<R>::max();
@@ -53,5 +51,4 @@ namespace rl::inline constraint {
 
     template <typename T>
     concept scoped_enum = std::is_scoped_enum_v<T>;
-
 }

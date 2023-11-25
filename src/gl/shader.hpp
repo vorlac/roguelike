@@ -69,7 +69,7 @@ namespace rl::gl {
             }
         };
 
-        static inline bool build()
+        inline u32 build()
         {
             u32 vert_shader_id = VertexShader::construct();
             u32 frag_shader_id = FragmentShader::construct();
@@ -95,7 +95,10 @@ namespace rl::gl {
             glDeleteShader(vert_shader_id);
             glDeleteShader(frag_shader_id);
 
-            return true;
+            m_shader_program_id = shader_id;
+            return m_shader_program_id;
         }
+
+        u32 m_shader_program_id{ 99999 };
     };
 }

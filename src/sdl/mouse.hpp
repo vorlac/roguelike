@@ -5,8 +5,8 @@
 #include <fmt/format.h>
 
 #include "core/numeric_types.hpp"
-#include "primitives/point.hpp"
-#include "primitives/vector2d.hpp"
+#include "ds/point.hpp"
+#include "ds/vector2d.hpp"
 #include "sdl/defs.hpp"
 #include "utils/conversions.hpp"
 

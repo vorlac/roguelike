@@ -16,7 +16,7 @@ namespace rl::sdl {
         other = nullptr;
     }
 
-    Texture::Texture(Texture&& other)
+    Texture::Texture(Texture&& other) noexcept
         : m_sdl_texture(other.m_sdl_texture)
     {
         sdl_assert(m_sdl_texture != nullptr, "failed to create texture");
@@ -80,7 +80,7 @@ namespace rl::sdl {
         return *this;
     }
 
-    Texture& Texture::operator=(Texture&& other)
+    Texture& Texture::operator=(Texture&& other) noexcept
     {
 #ifndef NDEBUG
         sdl_assert(this != &other, "texture assigned to itself");
@@ -139,7 +139,7 @@ namespace rl::sdl {
 
         if (this->get_format() == surf.get_format())
         {
-            sdl::scoped_lock<sdl::Surface>{ surf };
+            sdl::scoped_lock<sdl::Surface> lock{ surf };
             i32& pitch = surf.get_pitch();
             void* const& pixels{ surf.get_pixels() };
             return this->update(pixels, pitch, real_rect);
@@ -147,7 +147,7 @@ namespace rl::sdl {
         else
         {
             sdl::Surface converted{ surf.convert(this->get_format()) };
-            sdl::scoped_lock<sdl::Surface>{ converted };
+            sdl::scoped_lock<sdl::Surface> lock{ converted };
             i32& pitch = converted.get_pitch();
             void* const& pixels{ converted.get_pixels() };
             return this->update(pixels, pitch, real_rect);
@@ -167,7 +167,7 @@ namespace rl::sdl {
 
         if (this->get_format() == surf.get_format())
         {
-            sdl::scoped_lock<sdl::Surface>{ surf };
+            sdl::scoped_lock<sdl::Surface> lock{ surf };
             i32 pitch{ surf.get_pitch() };
             void* const& pixels{ surf.get_pixels() };
             return this->update(pixels, pitch, real_rect);
@@ -175,7 +175,7 @@ namespace rl::sdl {
         else
         {
             sdl::Surface converted{ surf.convert(this->get_format()) };
-            sdl::scoped_lock<sdl::Surface>{ converted };
+            sdl::scoped_lock<sdl::Surface> lock{ converted };
             i32 pitch{ converted.get_pitch() };
             void* const& pixels{ converted.get_pixels() };
             return this->update(pixels, pitch, real_rect);

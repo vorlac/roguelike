@@ -15,18 +15,18 @@
     "nana",
     "opengl",
     "vulkan",
-    "d3dx12"
+    "d3dx12",
+    "nanobench",
+    "libusb",
+    "pkgconf",
+    "libiconv"
   ],
   "documentation": "https://github.com/microsoft/vcpkg/blob/master/docs/users/manifests.md",
   "name": "roguelike",
   "version": "0.1.0",
   "dependencies": [
-    "libusb",
-    "pkgconf",
-    "libiconv",
     "simdjson",
     "flecs",
-    "nanobench",
     "argparse",
     "imgui",
     "fmt"

@@ -3,18 +3,17 @@
 #include <algorithm>
 #include <array>
 #include <cmath>
-#include <concepts>
-#include <cstdint>
+#include <initializer_list>
 #include <limits>
 #include <memory>
-#include <type_traits>
+#include <tuple>
+#include <utility>
 
 #include <fmt/format.h>
 
 #include "core/numeric_types.hpp"
+#include "ds/dims.hpp"
 #include "ecs/components/transform_components.hpp"
-#include "primitives/dims.hpp"
-#include "primitives/vector2d.hpp"
 #include "sdl/defs.hpp"
 #include "utils/concepts.hpp"
 #include "utils/conversions.hpp"
@@ -24,122 +23,140 @@ SDL_C_LIB_BEGIN
 SDL_C_LIB_END
 
 namespace rl::ds {
+#pragma pack(4)
+
     template <rl::numeric T>
-    struct vector2
+    struct alignas(T) vector2
     {
-        explicit inline constexpr vector2()
-            : m_coords{ std::numeric_limits<T>::max(), std::numeric_limits<T>::max(), 0 }
+        explicit constexpr vector2()
+            : x{ std::numeric_limits<T>::max() }
+            , y{ std::numeric_limits<T>::max() }
+            , z{ T(0) }
         {
         }
 
-        constexpr inline vector2(const T _x, const T _y)
-            : m_coords{ _x, _y, 0 }
+        constexpr inline vector2(const T& _x, const T& _y, const T& _z = 0)
+            : x{ _x }
+            , y{ _y }
+            , z{ _z }
         {
         }
 
         template <rl::integer I>
         constexpr inline vector2(const vector2<I>& other)
             requires rl::floating_point<T>
-            : m_coords{ cast::to<T>(other.x), cast::to<T>(other.y), 0 }
+            : x{ T(other.x) }
+            , y{ T(other.y) }
+            , z{ 0 }
         {
         }
 
         constexpr inline vector2(const vector2<T>& other)
-            : m_coords{ other.x, other.y, 0 }
+            : x{ other.x }
+            , y{ other.y }
+            , z{ 0 }
         {
         }
 
         constexpr inline vector2(vector2<T>&& other) noexcept
-            : m_coords{ std::forward<std::array<T, 3>>(other.m_coords) }
+            : x{ other.x }
+            , y{ other.y }
+            , z{ 0 }
         {
         }
 
         constexpr inline vector2(const rl::component::position& pos)
             requires std::same_as<T, f32>
-            : m_coords{ pos.x, pos.y, 0 }
+            : x{ pos.x }
+            , y{ pos.y }
+            , z{ T(0) }
         {
         }
 
         constexpr inline vector2(const SDL3::SDL_Point& pt)
             requires std::same_as<T, i32>
-            : m_coords{ pt.x, pt.y, 0 }
+            : x{ pt.x }
+            , y{ pt.y }
+            , z{ T(0) }
         {
         }
 
         constexpr inline vector2(SDL3::SDL_Point&& pt) noexcept
             requires std::same_as<T, i32>
-            : m_coords{ pt.x, pt.y, 0 }
+            : x{ pt.x }
+            , y{ pt.y }
+            , z{ T(0) }
         {
         }
 
-        constexpr inline operator std::array<T, 3>()
+        constexpr inline T* ptr()
         {
-            return m_coords;
+            return &x;
         }
 
-        constexpr inline operator std::array<T, 3>*()
+        constexpr inline operator const std::tuple<T, T, T>*() const
         {
-            return m_coords.data();
+            return this;
         }
 
         constexpr inline operator SDL3::SDL_Point()
             requires std::same_as<T, i32>
         {
-            return *reinterpret_cast<SDL3::SDL_Point*>(m_coords.data());
+            return *reinterpret_cast<SDL3::SDL_Point*>(this);
         }
 
         constexpr inline operator SDL3::SDL_FPoint()
             requires std::same_as<T, f32>
         {
-            return *reinterpret_cast<SDL3::SDL_FPoint*>(m_coords.data());
+            return *reinterpret_cast<SDL3::SDL_FPoint*>(this);
         }
 
         constexpr inline operator SDL3::SDL_Point*()
             requires std::same_as<T, i32>
         {
-            return reinterpret_cast<SDL3::SDL_Point*>(m_coords.data());
+            return reinterpret_cast<SDL3::SDL_Point*>(this);
         }
 
         constexpr inline operator SDL3::SDL_FPoint*()
             requires std::same_as<T, f32>
         {
-            return reinterpret_cast<SDL3::SDL_FPoint*>(m_coords.data());
+            return reinterpret_cast<SDL3::SDL_FPoint*>(this);
         }
 
         constexpr inline operator const SDL3::SDL_Point() const
             requires std::same_as<T, i32>
         {
-            return *reinterpret_cast<const SDL3::SDL_Point*>(m_coords.data());
+            return *reinterpret_cast<const SDL3::SDL_Point*>(this);
         }
 
         constexpr inline operator const SDL3::SDL_FPoint() const
             requires std::same_as<T, f32>
         {
-            return *reinterpret_cast<const SDL3::SDL_FPoint*>(m_coords.data());
+            return *reinterpret_cast<const SDL3::SDL_FPoint*>(this);
         }
 
         constexpr inline operator const SDL3::SDL_Point*() const
             requires std::same_as<T, i32>
         {
-            return reinterpret_cast<const SDL3::SDL_Point*>(m_coords.data());
+            return reinterpret_cast<const SDL3::SDL_Point*>(this);
         }
 
         constexpr inline operator const SDL3::SDL_FPoint*() const
             requires std::same_as<T, f32>
         {
-            return reinterpret_cast<const SDL3::SDL_FPoint*>(m_coords.data());
+            return reinterpret_cast<const SDL3::SDL_FPoint*>((const T*)this);
         }
 
         constexpr inline operator rl::component::position()
             requires std::same_as<T, f32>
         {
-            return *static_cast<rl::component::position*>(m_coords.data());
+            return *static_cast<rl::component::position*>(this);
         }
 
         constexpr inline operator const rl::component::position() const
             requires std::same_as<T, f32>
         {
-            return *static_cast<const rl::component::position*>(m_coords.data());
+            return *static_cast<const rl::component::position*>(this);
         }
 
         constexpr static inline vector2<T> null()
@@ -302,7 +319,7 @@ namespace rl::ds {
             f32 start_len_sq{ this->length_squared() };
             f32 end_len_sq{ to.length_squared() };
 
-            if (start_len_sq == cast::to<T>(0.0) || end_len_sq == cast::to<T>(0.0)) [[unlikely]]
+            if (start_len_sq == T(0) || end_len_sq == T(0)) [[unlikely]]
             {
                 // Zero length vectors have no angle, so the best
                 // we can do is either lerp or throw an error.
@@ -445,9 +462,30 @@ namespace rl::ds {
             };
         }
 
-        std::array<T, 3> m_coords{ 0, 0, 0 };
-        T& x{ m_coords[0] };
-        T& y{ m_coords[1] };
+        // constexpr const inline T& x() const
+        //{
+        //     return std::get<0>(m_coords);
+        // }
+
+        // constexpr inline T& x()
+        //{
+        //     return std::get<0>(m_coords);
+        // }
+
+        // constexpr const inline T& y() const
+        //{
+        //     return std::get<1>(m_coords);
+        // }
+
+        // constexpr inline T& y()
+        //{
+        //     return std::get<1>(m_coords);
+        // }
+
+        // std::array<T, 3> m_coords{};
+        T x{};
+        T y{};
+        T z{};
     };
 
     template <rl::numeric T>
@@ -456,3 +494,5 @@ namespace rl::ds {
         return fmt::format("(x={}, y={})", vec.x, vec.y);
     }
 }
+
+#pragma pack()

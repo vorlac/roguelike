@@ -4,10 +4,10 @@
 #include <thread>
 
 #include "core/numeric_types.hpp"
-#include "primitives/dims.hpp"
-#include "primitives/point.hpp"
-#include "primitives/rect.hpp"
-#include "primitives/vector2d.hpp"
+#include "ds/dims.hpp"
+#include "ds/point.hpp"
+#include "ds/rect.hpp"
+#include "ds/vector2d.hpp"
 #include "sdl/color.hpp"
 #include "sdl/defs.hpp"
 #include "sdl/window.hpp"
@@ -31,7 +31,7 @@ namespace rl::sdl {
         Texture(const sdl::Texture& other) = delete;
 
         Texture(SDL3::SDL_Texture* other);
-        Texture(sdl::Texture&& other);
+        Texture(sdl::Texture&& other) noexcept;
         Texture(sdl::Renderer& renderer, const sdl::Surface& surface);
         Texture(std::shared_ptr<sdl::Renderer> renderer, const sdl::Surface& surface);
         Texture(std::shared_ptr<sdl::Renderer> renderer,
@@ -45,7 +45,7 @@ namespace rl::sdl {
         i32 query_texture(SDL3::SDL_PixelFormatEnum& format, SDL3::SDL_TextureAccess& access,
                           ds::dims<i32>& dims);
 
-        Texture& operator=(Texture&& other);
+        Texture& operator=(Texture&& other) noexcept;
         Texture& operator=(SDL3::SDL_Texture* other);
 
         bool update(const void* pixels, i32 pitch,

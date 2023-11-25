@@ -9,16 +9,16 @@
 #include <fmt/format.h>
 
 #include "core/numeric_types.hpp"
+#include "ds/dims.hpp"
+#include "ds/point.hpp"
+#include "ds/rect.hpp"
+#include "ds/vector2d.hpp"
 #include "ecs/components/character_components.hpp"
 #include "ecs/components/kinematic_components.hpp"
 #include "ecs/components/projectile_components.hpp"
 #include "ecs/components/style_components.hpp"
 #include "ecs/components/transform_components.hpp"
 #include "ecs/scenes/scene_types.hpp"
-#include "primitives/dims.hpp"
-#include "primitives/point.hpp"
-#include "primitives/rect.hpp"
-#include "primitives/vector2d.hpp"
 #include "sdl/defs.hpp"
 #include "sdl/pixel_data.hpp"
 #include "sdl/renderer.hpp"
@@ -362,8 +362,10 @@ namespace rl::scene {
         static bool deinit()
         {
             if (m_sprite != nullptr)
+            {
                 delete m_sprite;
-
+                m_sprite = nullptr;
+            }
             return m_sprite == nullptr;
         }
 
@@ -376,6 +378,6 @@ namespace rl::scene {
         constexpr static inline ds::dims<i32> rect_size{ 10, 10 };
         static inline ds::dims<i32> render_size{ 0, 0 };
         static inline sdl::RendererGL* m_renderer{ nullptr };
-        static inline sdl::Texture* m_sprite{ new sdl::Texture };
+        static inline sdl::Texture* m_sprite{ new sdl::Texture{} };
     };
 }
