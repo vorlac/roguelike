@@ -23,13 +23,6 @@ namespace rl::gl {
             Wireframe,
         };
 
-        constexpr static inline unsigned int indices[] = {
-            // note that we start from 0!
-            0, 1, 3,  // first Triangle
-            1, 2, 3   // second Triangle
-        };
-        constexpr static inline int test = sizeof(indices);
-
     public:
         VertexBuffer();
         ~VertexBuffer();

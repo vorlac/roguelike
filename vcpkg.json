@@ -1,26 +1,5 @@
 {
   "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
-  "maintainers": [
-    "egl",
-    "eigen3",
-    "plf-colony",
-    "plf-hive",
-    "plf-stack",
-    "plf-nanotimer",
-    "plib",
-    "glad",
-    "volk",
-    "enet",
-    "assimp",
-    "nana",
-    "opengl",
-    "vulkan",
-    "d3dx12",
-    "nanobench",
-    "libusb",
-    "pkgconf",
-    "libiconv"
-  ],
   "documentation": "https://github.com/microsoft/vcpkg/blob/master/docs/users/manifests.md",
   "name": "roguelike",
   "version": "0.1.0",
@@ -29,6 +8,7 @@
     "flecs",
     "argparse",
     "imgui",
+    "glm",
     "fmt"
   ]
 }

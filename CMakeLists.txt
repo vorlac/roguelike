@@ -52,6 +52,7 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl)
 # add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl_image)
 # add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl_mixer)
 
+find_package(glm CONFIG REQUIRED)
 find_package(fmt CONFIG REQUIRED)
 find_package(flecs CONFIG REQUIRED)
 find_package(simdjson CONFIG REQUIRED)
@@ -89,15 +90,15 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
 
 target_compile_options(${PROJECT_NAME} PRIVATE
   $<${compiler_is_msvc}:
-	  /std:c++latest
-    /Zc:preprocessor
-    /utf-8
-    /EHsc
-    /nologo
+      /std:c++latest
+      /Zc:preprocessor
+      /utf-8
+      /EHsc
+      /nologo
   >
 
   $<$<CONFIG:Release>:
-    /Ox
+      /Ox
   >
 )
 
@@ -112,6 +113,7 @@ target_link_libraries(${PROJECT_NAME}
   PRIVATE argparse::argparse
   PRIVATE flecs::flecs_static
   PRIVATE imgui::imgui
+  PRIVATE glm::glm
   PRIVATE fmt::fmt
 )
 

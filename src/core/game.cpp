@@ -131,21 +131,22 @@ namespace rl {
 
             window.swap_buffers();
 
-            if constexpr (io::logging::main_loop && ++loop_count % 60 == 0)
-            {
-                elapsed_time = timer.elapsed();
+            if constexpr (io::logging::main_loop)
+                if (++loop_count % 60 == 0)
+                {
+                    elapsed_time = timer.elapsed();
 
-                fmt::print(
-                    c_orange,
-                    fmt::format(
-                        io::locale,
-                        " {:>14.6f} s || {:>10L} u ][ {:>10.4f} ms | {:>10.4f} fps ][ {:>10.4f} avg fps ]\n",
-                        elapsed_time,                 // elapsed time (seconds)
-                        loop_count,                   // loop iterations
-                        delta_time_s * 1000.0f,       // delta time (ms)
-                        1.0f / delta_time_s,          // current fps
-                        loop_count / elapsed_time));  // avg fps
-            }
+                    fmt::print(
+                        c_orange,
+                        fmt::format(
+                            io::locale,
+                            " {:>14.6f} s || {:>10L} u ][ {:>10.4f} ms | {:>10.4f} fps ][ {:>10.4f} avg fps ]\n",
+                            elapsed_time,                 // elapsed time (seconds)
+                            loop_count,                   // loop iterations
+                            delta_time_s * 1000.0f,       // delta time (ms)
+                            1.0f / delta_time_s,          // current fps
+                            loop_count / elapsed_time));  // avg fps
+                }
 
             delta_time_s = timer.delta();
         }
