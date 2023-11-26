@@ -23,7 +23,6 @@
 #include "ecs/scenes/main_menu_scene.hpp"
 #include "ecs/scenes/scene_types.hpp"
 #include "gl/shader.hpp"
-#include "gl/vertex_array.hpp"
 #include "gl/vertex_buffer.hpp"
 #include "sdl/tests/test_suite.hpp"
 #include "sdl/time.hpp"
@@ -92,16 +91,21 @@ namespace rl {
     {
         this->setup();
 
-        std::vector<ds::triangle<f32>> tris = {
-            {
-                { -0.5f, -0.5f },
-                { 0.5f, -0.5f },
-                { 0.0f, 0.5f },
-            },
+        std::vector<ds::triangle<f32>> tris = { {
+            { 0.5f, 0.5f },
+            { 0.5f, -0.5f },
+            { -0.5f, -0.5f },
+        } };
+
+        ds::rect<f32> rect = {
+            { -0.5f, -0.5f },
+            { 1.0f, 1.0f },
         };
 
+        auto [vbuf, ibuf] = rect.triangle_ebo();
+
         gl::VertexBuffer vbo{};
-        vbo.bind_vbo(tris);
+        vbo.bind_buffers(vbuf, ibuf);
 
         sdl::Color c_orange{ fmt::color::burly_wood };
         sdl::Color clear_clr1{ 0.2f, 0.3f, 0.3f, 1.0f };
@@ -122,7 +126,8 @@ namespace rl {
             if (this->quit_requested()) [[unlikely]]
                 break;
 
-            vbo.draw(window);
+            // vbo.draw_triangles(window);
+            vbo.draw_rectangles(window);
 
             window.swap_buffers();
 

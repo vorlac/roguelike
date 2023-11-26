@@ -134,8 +134,8 @@ namespace rl::sdl {
         };
 
         const auto&& surf_size{ surf.size() };
-        real_rect.size.width = std::min(real_rect.width(), surf_size.width);
-        real_rect.size.height = std::min(real_rect.height(), surf_size.height);
+        real_rect.size.width = std::min(real_rect.size.width, surf_size.width);
+        real_rect.size.height = std::min(real_rect.size.height, surf_size.height);
 
         if (this->get_format() == surf.get_format())
         {
@@ -162,8 +162,8 @@ namespace rl::sdl {
         };
 
         const auto&& surf_size{ surf.size() };
-        real_rect.size.width = std::min(real_rect.width(), surf_size.width);
-        real_rect.size.height = std::min(real_rect.height(), surf_size.height);
+        real_rect.size.width = std::min(real_rect.size.width, surf_size.width);
+        real_rect.size.height = std::min(real_rect.size.height, surf_size.height);
 
         if (this->get_format() == surf.get_format())
         {

@@ -6,6 +6,7 @@
 #include "core/numeric_types.hpp"
 #include "ds/dims.hpp"
 #include "ds/point.hpp"
+#include "ds/triangle.hpp"
 #include "ds/vector2d.hpp"
 #include "sdl/defs.hpp"
 #include "utils/concepts.hpp"
@@ -15,6 +16,8 @@ SDL_C_LIB_BEGIN
 SDL_C_LIB_END
 
 namespace rl::ds {
+#pragma pack(4)
+
     enum Side : i8_fast {
         Top = 1 << 0,
         Bottom = 1 << 1,
@@ -98,8 +101,6 @@ namespace rl::ds {
             };
         }
 
-        /// SDL_FRect conversions ///
-
         /**
          * @brief construct rect<f32> from SDL_FRect&&
          * */
@@ -160,8 +161,6 @@ namespace rl::ds {
             return reinterpret_cast<SDL3::SDL_FRect*>(this);
         }
 
-        /// SDL_Rect conversions
-
         constexpr rect(SDL3::SDL_Rect&& other)
             requires std::same_as<T, i32>
             : pt{ other.x, other.y }
@@ -198,41 +197,6 @@ namespace rl::ds {
             return reinterpret_cast<const SDL3::SDL_Rect*>(this);
         }
 
-        /**
-         * @brief Get rectangle's height
-         * */
-        constexpr inline T height() const
-        {
-            return size.height;
-        }
-
-        /**
-         * @brief Set rectangle's height
-         * */
-        constexpr inline void set_height(const T height)
-        {
-            size.height = height;
-        }
-
-        /**
-         * @brief Get rectangle's width
-         * */
-        constexpr inline T width() const
-        {
-            return size.height;
-        }
-
-        /**
-         * @brief Set rectangle's width
-         * */
-        constexpr inline void set_width(const T width)
-        {
-            size.width = width;
-        }
-
-        /**
-         * @brief Returns the rectangle's area
-         * */
         constexpr inline T area() const
         {
             return size.area();
@@ -263,7 +227,7 @@ namespace rl::ds {
         constexpr inline bool is_invalid() const
         {
             return this->size.height < cast::to<T>(0) ||  //
-                   this->width < cast::to<T>(0);
+                   this->width < cast::to<T>(0);          //
         }
 
         /**
@@ -274,15 +238,51 @@ namespace rl::ds {
             return this->is_empty() && pt == vector2<T>::null();
         }
 
+        constexpr inline std::pair<ds::triangle<T>, ds::triangle<T>> triangles() const
+        {
+            const ds::point<T>& tl = { this->pt.x, this->pt.y };
+            const ds::point<T>& tr = { tl.x + size.width };
+            const ds::point<T>& bl = { tl.y + size.height };
+            const ds::point<T>& br = { tl + size };
+
+            return std::pair{
+                ds::triangle{ bl, tl, br },
+                ds::triangle{ tl, br, tl },
+            };
+        }
+
+        /**
+         * @brief returns list of packed verices and indexes for each triangle
+         *        for both triangles to be used as Element Buffer Objects
+         * */
+        constexpr inline auto triangle_ebo() const
+        {
+            ds::point<T> tl{ pt.x, pt.y + size.height };
+            ds::point<T> bl{ pt.x, pt.y };
+            ds::point<T> tr{ tl.x + size.width, tl.y };
+            ds::point<T> br{ tl.x + size.width, tl.y - size.height };
+
+            // std::vector<ds::point<f32>> pts = { bl, tl, br, tl };
+            // std::vector<u32> idx = {
+            //     0, 1, 2,  // triangle 1 point indices
+            //     1, 2, 3,  // triangle 2 point indices
+            // };
+
+            std::vector<ds::point<f32>> pts = { tr, br, bl, tl };
+            std::vector<u32> idx = {
+                0, 1, 3,  // triangle 1 point indices
+                1, 2, 3   // triangle 2 point indices
+            };
+
+            return std::pair{ pts, idx };
+        }
+
         /**
          * @brief Gets the top left point of the rectangle
          * */
         constexpr inline point<T> top_left() const
         {
-            return {
-                pt.x,
-                pt.y,
-            };
+            return { pt.x, pt.y };
         }
 
         /**
@@ -290,10 +290,7 @@ namespace rl::ds {
          * */
         constexpr inline point<T> top_right() const
         {
-            return {
-                pt.x + size.width,
-                pt.y,
-            };
+            return { pt.x + size.width, pt.y };
         }
 
         /**
@@ -301,10 +298,7 @@ namespace rl::ds {
          * */
         constexpr inline point<T> bot_left() const
         {
-            return {
-                pt.x,
-                pt.y + size.height,
-            };
+            return { pt.x, pt.y + size.height };
         }
 
         /**
@@ -583,4 +577,6 @@ namespace rl::ds {
     {
         return fmt::format("[{} | {}]", r.pt, r.size);
     }
+
+#pragma pack()
 }

@@ -76,7 +76,7 @@ namespace rl::sdl {
 
         u8* get_col_data(const i32 x)
         {
-            runtime_assert(x > m_bounds.width(), "column lookup out of bounds");
+            runtime_assert(x > m_bounds.size.width, "column lookup out of bounds");
             const i32 buffer_offset{ x };
             u8* col_start_ptr{ m_data.data() + buffer_offset };
             return col_start_ptr;
@@ -84,7 +84,7 @@ namespace rl::sdl {
 
         u8* get_row_data(const i32 y)
         {
-            const i32 buffer_offset{ m_bounds.width() * y };
+            const i32 buffer_offset{ m_bounds.size.width * y };
             u8* row_start_ptr{ m_data.data() + buffer_offset };
             return row_start_ptr;
         }

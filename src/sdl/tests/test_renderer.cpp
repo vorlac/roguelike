@@ -141,7 +141,7 @@ namespace rl::sdl::test {
         renderer.read_pixels(rect, sdl::test::RENDER_COMPARE_FORMAT, pixels, pitch);
 
         /* Create surface. */
-        sdl::Surface test_surface{ pixels, rect.width(), rect.height(), pitch,
+        sdl::Surface test_surface{ pixels, rect.size.width, rect.size.height, pitch,
                                    sdl::test::RENDER_COMPARE_FORMAT };
 
         /* Compare surface. */
@@ -851,8 +851,8 @@ namespace rl::sdl::test {
         ds::rect<f32> rect = {
             (float)viewport.pt.x / factor,
             (float)viewport.pt.y / factor,
-            (float)viewport.width() / factor,
-            (float)viewport.height() / factor,
+            (float)viewport.size.width / factor,
+            (float)viewport.size.height / factor,
         };
 
         renderer.fill_rect(rect);

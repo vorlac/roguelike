@@ -204,8 +204,8 @@ namespace rl::sdl {
         {
             const auto&& tsize{ tex.size() };
             ds::rect<i32> dst_rect(dst_pnt.x, dst_pnt.y,
-                                   src_rect.is_null() ? src_rect.width() : tsize.width,
-                                   src_rect.is_null() ? src_rect.height() : tsize.height);
+                                   src_rect.is_null() ? src_rect.size.width : tsize.width,
+                                   src_rect.is_null() ? src_rect.size.height : tsize.height);
             return this->copy(tex, src_rect, dst_rect);
         }
 
@@ -234,8 +234,8 @@ namespace rl::sdl {
                     dst_point.y,
                 },
                 ds::dims<i32>{
-                    src_rect ? src_rect.width() : tsize.width,
-                    src_rect ? src_rect.height() : tsize.height,
+                    src_rect ? src_rect.size.width : tsize.width,
+                    src_rect ? src_rect.size.height : tsize.height,
                 },
             };
 
@@ -257,30 +257,32 @@ namespace rl::sdl {
                 dst_rect.is_null() ? dst_rect : ds::rect<i32>{ 0, 0, rsize.width, rsize.height }) };
 
             // rectangle for single tile
-            ds::rect<i32> start_tile{ offset.x, offset.y, src.width(), src.height() };
+            ds::rect<i32> start_tile{ offset.x, offset.y, src.size.width, src.size.height };
 
             // ensure tile is leftmost and topmost
-            if (start_tile.pt.x + start_tile.width() <= 0)
-                start_tile.pt.x += (-start_tile.pt.x) / (start_tile.width() * start_tile.width());
+            if (start_tile.pt.x + start_tile.size.width <= 0)
+                start_tile.pt.x += (-start_tile.pt.x) /
+                                   (start_tile.size.width * start_tile.size.width);
 
             if (start_tile.pt.x > 0)
-                start_tile.pt.x -= (start_tile.pt.x + start_tile.width() - 1) /
-                                   (start_tile.width() * start_tile.width());
+                start_tile.pt.x -= (start_tile.pt.x + start_tile.size.width - 1) /
+                                   (start_tile.size.width * start_tile.size.width);
 
-            if (start_tile.pt.y + start_tile.height() <= 0)
-                start_tile.pt.y += (-start_tile.pt.y) / (start_tile.height() * start_tile.height());
+            if (start_tile.pt.y + start_tile.size.height <= 0)
+                start_tile.pt.y += (-start_tile.pt.y) /
+                                   (start_tile.size.height * start_tile.size.height);
 
             if (start_tile.pt.y > 0)
-                start_tile.pt.y -= (start_tile.pt.y + start_tile.height() - 1) /
-                                   (start_tile.height() * start_tile.height());
+                start_tile.pt.y -= (start_tile.pt.y + start_tile.size.height - 1) /
+                                   (start_tile.size.height * start_tile.size.height);
 
             // paint tile array
-            for (i32 y = start_tile.pt.y; y < dst.height(); y += start_tile.height())
+            for (i32 y = start_tile.pt.y; y < dst.size.height; y += start_tile.size.height)
             {
-                for (i32 x = start_tile.pt.x; x < dst.width(); x += start_tile.width())
+                for (i32 x = start_tile.pt.x; x < dst.size.width; x += start_tile.size.width)
                 {
                     ds::rect<i32> tile_src{ src };
-                    ds::rect<i32> tile_dst{ x, y, start_tile.width(), start_tile.height() };
+                    ds::rect<i32> tile_dst{ x, y, start_tile.size.width, start_tile.size.height };
 
                     // clamp with dstrect
                     i32 xunderflow = -x;
@@ -301,14 +303,14 @@ namespace rl::sdl {
                         tile_dst.pt.y += yunderflow;
                     }
 
-                    i32 xoverflow = tile_dst.pt.x + tile_dst.width() - dst.width();
+                    i32 xoverflow = tile_dst.pt.x + tile_dst.size.width - dst.size.width;
                     if (xoverflow > 0)
                     {
                         tile_src.size.width -= xoverflow;
                         tile_dst.size.width -= xoverflow;
                     }
 
-                    i32 yoverflow = tile_dst.pt.y + tile_dst.height() - dst.height();
+                    i32 yoverflow = tile_dst.pt.y + tile_dst.size.height - dst.size.height;
                     if (yoverflow > 0)
                     {
                         tile_src.size.height -= yoverflow;
@@ -323,10 +325,10 @@ namespace rl::sdl {
                     {
                         // mirror tile_src inside src to take flipping into account
                         if (0 != (flip & SDL3::SDL_RendererFlip::SDL_FLIP_HORIZONTAL))
-                            tile_src.pt.x = src.width() - tile_src.pt.x - tile_src.width();
+                            tile_src.pt.x = src.size.width - tile_src.pt.x - tile_src.size.width;
 
                         if (0 != (flip & SDL3::SDL_RendererFlip::SDL_FLIP_VERTICAL))
-                            tile_src.pt.y = src.height() - tile_src.pt.y - tile_src.height();
+                            tile_src.pt.y = src.size.height - tile_src.pt.y - tile_src.size.height;
 
                         ret |= this->copy(tex, std::forward<ds::rect<i32>&>(tile_src),
                                           std::forward<ds::rect<i32>&>(tile_dst), 0.0,
