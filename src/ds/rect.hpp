@@ -262,12 +262,6 @@ namespace rl::ds {
             ds::point<T> tr{ tl.x + size.width, tl.y };
             ds::point<T> br{ tl.x + size.width, tl.y - size.height };
 
-            // std::vector<ds::point<f32>> pts = { bl, tl, br, tl };
-            // std::vector<u32> idx = {
-            //     0, 1, 2,  // triangle 1 point indices
-            //     1, 2, 3,  // triangle 2 point indices
-            // };
-
             std::vector<ds::point<f32>> pts = { tr, br, bl, tl };
             std::vector<u32> idx = {
                 0, 1, 3,  // triangle 1 point indices

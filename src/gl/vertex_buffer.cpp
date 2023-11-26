@@ -11,6 +11,7 @@
 namespace rl::gl {
     VertexBuffer::VertexBuffer()
     {
+        // glEnable(GL_DEBUG_OUTPUT);
         // bind vertex array object
         glGenVertexArrays(1, &m_vao_id);
         // create vertex buffer object
