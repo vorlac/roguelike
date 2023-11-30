@@ -246,8 +246,8 @@ namespace rl::ds {
             ds::point<T> br{ tl.x + size.width, tl.y - size.height };
 
             return std::vector{
-                ds::triangle{ bl, tl, br },
-                ds::triangle{ tl, br, tl },
+                ds::triangle{ tr, br, tl },
+                ds::triangle{ br, bl, tl },
             };
         }
 

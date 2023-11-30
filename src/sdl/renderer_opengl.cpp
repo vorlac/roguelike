@@ -22,19 +22,6 @@ SDL_C_LIB_BEGIN
 SDL_C_LIB_END
 
 namespace rl::sdl {
-
-    static std::string get_opengl_version()
-    {
-        SDL3::SDL_GL_SetAttribute(SDL3::SDL_GL_DOUBLEBUFFER, 1);
-        SDL3::SDL_GL_SetAttribute(SDL3::SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-        SDL3::SDL_GL_SetAttribute(SDL3::SDL_GL_CONTEXT_MINOR_VERSION, 6);
-        SDL3::SDL_GL_SetAttribute(SDL3::SDL_GL_SHARE_WITH_CURRENT_CONTEXT, 1);
-        SDL3::SDL_GL_SetAttribute(SDL3::SDL_GL_CONTEXT_PROFILE_MASK,
-                                  SDL3::SDL_GL_CONTEXT_PROFILE_CORE);
-        int version = gladLoadGL((GLADloadfunc)SDL3::SDL_GL_GetProcAddress);
-        return fmt::format("{}.{}", GLAD_VERSION_MAJOR(version), GLAD_VERSION_MINOR(version));
-    }
-
     RendererGL::RendererGL(const sdl::Window& window, RendererGL::Properties flags)
         : m_properties{ flags }
         , m_sdl_glcontext{ SDL3::SDL_GL_CreateContext(window.sdl_handle()) }
@@ -48,10 +35,27 @@ namespace rl::sdl {
         {
             sdl_assert(m_sdl_glcontext != nullptr, "failed to create renderer");
 
-            log::info("Successfully Loaded OpenGL {}", get_opengl_version());
+            SDL3::SDL_GL_SetAttribute(SDL3::SDL_GL_DOUBLEBUFFER, 1);
+            SDL3::SDL_GL_SetAttribute(SDL3::SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+            SDL3::SDL_GL_SetAttribute(SDL3::SDL_GL_CONTEXT_MINOR_VERSION, 6);
+            SDL3::SDL_GL_SetAttribute(SDL3::SDL_GL_SHARE_WITH_CURRENT_CONTEXT, 1);
+            SDL3::SDL_GL_SetAttribute(SDL3::SDL_GL_CONTEXT_PROFILE_MASK,
+                                      SDL3::SDL_GL_CONTEXT_PROFILE_CORE);
 
-            ds::dims<i32> viewport{ window.get_render_size() };
-            glViewport(0, 0, viewport.width, viewport.height);
+            i32 version = gladLoadGL(SDL3::SDL_GL_GetProcAddress);
+            i32 gl_major_ver{ GLAD_VERSION_MAJOR(version) };
+            i32 gl_minor_ver{ GLAD_VERSION_MINOR(version) };
+            log::warning("OpenGL [{}.{}] => Context Created Successfully", gl_major_ver,
+                         gl_minor_ver);
+
+            runtime_assert((gl_major_ver >= 3 && gl_minor_ver >= 3 || gl_major_ver > 3),
+                           "Deprecated OpenGL Version Loaded: {}.{}", gl_major_ver, gl_minor_ver);
+
+            if (gl_major_ver >= 3 && gl_minor_ver >= 3 || gl_major_ver > 3)
+            {
+                ds::dims<i32> viewport{ window.get_render_size() };
+                glViewport(0, 0, viewport.width, viewport.height);
+            }
         }
     }
 

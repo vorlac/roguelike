@@ -34,26 +34,19 @@ namespace rl::gl {
         /**
          * @brief Configure/define and bind all shared state between user app and openGL driver
          * */
-        void bind_buffers(auto& vbuff, auto& ibuff)
+        void bind_buffers(std::vector<ds::triangle<f32>>& vbuff)
         {
             // bind the VAO vertex array
             glBindVertexArray(m_vao_id);
 
             if (!vbuff.empty())
             {
+                // 3 points * 3 floats per point * triangle count
+                m_buffer_vertex_count = 3 * 3 * static_cast<i32>(vbuff.size());
                 // bind the VBO vertex buffer
                 glBindBuffer(GL_ARRAY_BUFFER, m_vbo_id);
                 // define info about the VBO vertex buffer, targeting GL_ARRAY_BUFFER
-                glBufferData(GL_ARRAY_BUFFER, sizeof(f32) * 3 * vbuff.size(), vbuff.data(),
-                             GL_STATIC_DRAW);
-            }
-
-            if (!ibuff.empty())
-            {
-                // bind the EBO index buffer using
-                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo_id);
-                // define info about the EBO index buffer, targeting GL_ELEMENT_ARRAY_BUFFER
-                glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(u32) * ibuff.size(), ibuff.data(),
+                glBufferData(GL_ARRAY_BUFFER, sizeof(f32) * m_buffer_vertex_count, vbuff.data(),
                              GL_STATIC_DRAW);
             }
 
@@ -72,10 +65,6 @@ namespace rl::gl {
             // safely unbind
             glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-            // // Do !NOT! unbind the EBO while a VAO is active as the bound element
-            // // buffer object IS stored in the VAO; keep the EBO bound.
-            // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
             // You can unbind the VAO afterwards so other VAO calls won't accidentally
             // modify this VAO, but this rarely happens. Modifying other VAOs requires a
             // call to glBindVertexArray anyways so we generally don't unbind VAOs (nor
@@ -86,6 +75,7 @@ namespace rl::gl {
         }
 
     private:
+        i32 m_buffer_vertex_count{ 0 };
         i32 m_shader_id{ std::numeric_limits<i32>::max() };
 
         /**

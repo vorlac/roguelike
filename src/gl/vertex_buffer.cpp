@@ -11,13 +11,11 @@
 namespace rl::gl {
     VertexBuffer::VertexBuffer()
     {
-        // glEnable(GL_DEBUG_OUTPUT);
+        glEnable(GL_DEBUG_OUTPUT);
         // bind vertex array object
         glGenVertexArrays(1, &m_vao_id);
         // create vertex buffer object
         glGenBuffers(1, &m_vbo_id);
-        // create element buffer object
-        glGenBuffers(1, &m_ebo_id);
 
         // compile shaders
         ShaderProgram m_shader{};
@@ -30,7 +28,6 @@ namespace rl::gl {
         // cleanup when everything leaves scope
         glDeleteVertexArrays(1, &m_vao_id);
         glDeleteBuffers(1, &m_vbo_id);
-        glDeleteBuffers(1, &m_ebo_id);
         glDeleteProgram(m_shader_id);
     }
 
@@ -56,25 +53,7 @@ namespace rl::gl {
         glBindVertexArray(m_vao_id);
 
         // Draw verices
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-
-        // Unbind the VAO buffer... not necessary yet
-        // glBindVertexArray(0);
-    }
-
-    void VertexBuffer::draw_rectangles(sdl::Window&)
-    {
-        // Set shader program to use
-        glUseProgram(m_shader_id);
-
-        // Bind VAO array
-        glBindVertexArray(m_vao_id);
-
-        // Draw rects
-        // Instead of calling draw arrays (like ni draw_triangles)
-        // this draws the vertices as objects from the buffer
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-        // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glDrawArrays(GL_TRIANGLES, 0, m_buffer_vertex_count);
 
         // Unbind the VAO buffer... not necessary yet
         // glBindVertexArray(0);

@@ -102,40 +102,32 @@ namespace rl {
     {
         this->setup();
 
-        std::vector tris = {
-            ds::triangle<f32>{
-                { 0.5f, 0.5f },
-                { 0.5f, -0.5f },
-                { -0.5f, -0.5f },
-            },
-            ds::triangle<f32>{
-                { 0.5f, 0.5f },
-                { 0.5f, -0.5f },
-                { -0.5f, -0.5f },
-            },
-        };
-
         std::vector rects = {
+            ds::rect<f32>{
+                ds::point<f32>{ -0.5f, 0.0f },
+                ds::dims<f32>{ 0.5f, 0.5f },
+            },
             ds::rect<f32>{
                 ds::point<f32>{ -0.5f, -0.5f },
                 ds::dims<f32>{ 0.5f, 0.5f },
             },
             ds::rect<f32>{
                 ds::point<f32>{ 0.0f, 0.0f },
-                ds::dims<f32>{ 1.0f, 1.0f },
+                ds::dims<f32>{ 0.5f, 0.5f },
+            },
+            ds::rect<f32>{
+                ds::point<f32>{ 0.0f, -0.5f },
+                ds::dims<f32>{ 0.5f, 0.5f },
             },
         };
 
-        std::vector<u32> indexes = {};
         std::vector<ds::triangle<f32>> triangles = {};
         std::ranges::for_each(rects, [&](ds::rect<f32>& r) {
-            return triangles.append_range(r.triangles());
+            return triangles.append_range(std::move(r.triangles()));
         });
 
-        // auto [vbuf, ibuf] = rect.triangle_ebo();
-
         gl::VertexBuffer vbo{};
-        vbo.bind_buffers(triangles, indexes);
+        vbo.bind_buffers(triangles);
 
         sdl::Color c_orange{ fmt::color::burly_wood };
         sdl::Color clear_clr1{ 0.2f, 0.3f, 0.3f, 1.0f };
@@ -151,14 +143,12 @@ namespace rl {
         while (this->handle_events())
         {
             m_world.progress();
-
             renderer->clear(clear_clr1);
+
             if (this->quit_requested()) [[unlikely]]
                 break;
 
-            // vbo.draw_triangles(window);
-            vbo.draw_rectangles(window);
-
+            vbo.draw_triangles(window);
             window.swap_buffers();
 
             if constexpr (io::logging::main_loop)

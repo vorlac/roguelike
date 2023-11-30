@@ -14,15 +14,15 @@
             "apiValidation": true,
             "captureAllCmdLists": true,
             "captureCallstacks": true,
-            "captureCallstacksOnlyDraws": false,
+            "captureCallstacksOnlyDraws": true,
             "debugOutputMute": true,
             "delayForDebugger": 0,
-            "hookIntoChildren": false,
+            "hookIntoChildren": true,
             "refAllResources": true,
-            "softMemoryLimit": 512,
+            "softMemoryLimit": 0,
             "verifyBufferAccess": true
         },
-        "queuedFrameCap": 0,
+        "queuedFrameCap": 10,
         "workingDir": ""
     }
 }
