@@ -70,8 +70,8 @@ namespace rl::sdl {
         ds::dims<i32> get_output_size() const;
         ds::rect<i32> get_viewport();
 
-        bool set_draw_color(const sdl::Color& c);
-        bool clear(const sdl::Color& c = { 0, 0, 0 });
+        bool set_draw_color(const sdl::Color<u8>& c);
+        bool clear(const sdl::Color<u8>& c = { 0, 0, 0 });
         bool present();
         bool swap_buffers(sdl::Window& window);
         bool set_target();
@@ -80,13 +80,14 @@ namespace rl::sdl {
         bool draw_point(const ds::point<f32>& pt);
         bool draw_points(const std::vector<ds::point<f32>>& points);
         bool draw_line(const ds::point<f32>& pt1, const ds::point<f32>& pt2);
-        bool draw_triangle(const ds::triangle<f32>& triangle, const sdl::Color& color);
+        bool draw_triangle(const ds::triangle<f32>& triangle, const sdl::Color<u8>& color);
         bool draw_lines(const std::vector<ds::point<f32>>& lines);
-        bool draw_rect(ds::rect<f32>&& rect, const sdl::Color& c = {});
+        bool draw_rect(ds::rect<f32>&& rect, const sdl::Color<u8>& c = {});
         bool draw_rects(const std::vector<ds::rect<f32>>& rects);
-        bool fill_rect(const ds::rect<f32>& rect = ds::rect<i32>::null(), const sdl::Color& c = {});
-        bool fill_rects(const std::vector<ds::rect<f32>>& rects, const sdl::Color& c = {});
-        bool fill_rects(const std::vector<std::pair<ds::rect<f32>, sdl::Color>>& rects);
+        bool fill_rect(const ds::rect<f32>& rect = ds::rect<i32>::null(),
+                       const sdl::Color<u8>& c = {});
+        bool fill_rects(const std::vector<ds::rect<f32>>& rects, const sdl::Color<u8>& c = {});
+        bool fill_rects(const std::vector<std::pair<ds::rect<f32>, sdl::Color<u8>>>& rects);
 
         bool draw_texture(sdl::Texture& texture,
                           const ds::rect<f32>& src_rect = ds::rect<f32>::null(),

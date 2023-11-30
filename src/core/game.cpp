@@ -102,37 +102,32 @@ namespace rl {
     {
         this->setup();
 
-        std::vector rects = {
-            ds::rect<f32>{
-                ds::point<f32>{ -0.5f, 0.0f },
-                ds::dims<f32>{ 0.5f, 0.5f },
-            },
-            ds::rect<f32>{
-                ds::point<f32>{ -0.5f, -0.5f },
-                ds::dims<f32>{ 0.5f, 0.5f },
-            },
-            ds::rect<f32>{
-                ds::point<f32>{ 0.0f, 0.0f },
-                ds::dims<f32>{ 0.5f, 0.5f },
-            },
-            ds::rect<f32>{
-                ds::point<f32>{ 0.0f, -0.5f },
-                ds::dims<f32>{ 0.5f, 0.5f },
-            },
+        std::vector<std::tuple<ds::rect<f32>, sdl::Color<f32>>> rects = {
+            std::tuple{ ds::rect<f32>{ { -0.5f, 0.0f }, ds::dims<f32>{ 0.5f, 0.5f } },
+                        sdl::Color<f32>{ 1.0f, 0.0f, 0.0f } },
+            std::tuple{ ds::rect<f32>{ { -0.5f, -0.5f }, ds::dims<f32>{ 0.5f, 0.5f } },
+                        sdl::Color<f32>{ 0.0f, 1.0f, 1.0f } },
+            std::tuple{ ds::rect<f32>{ { 0.0f, 0.0f }, ds::dims<f32>{ 0.5f, 0.5f } },
+                        sdl::Color<f32>{ 0.0f, 0.0f, 1.0f } },
+            std::tuple{ ds::rect<f32>{ { 0.0f, -0.5f }, ds::dims<f32>{ 0.5f, 0.5f } },
+                        sdl::Color<f32>{ 1.0f, 1.0f, 0.0f } },
         };
 
-        std::vector<ds::triangle<f32>> triangles = {};
-        std::ranges::for_each(rects, [&](ds::rect<f32>& r) {
-            return triangles.append_range(std::move(r.triangles()));
+        std::vector<std::tuple<ds::triangle<f32>, sdl::Color<f32>>> triangles = {};
+        std::ranges::for_each(rects, [&](std::tuple<ds::rect<f32>, sdl::Color<f32>>& t) {
+            auto&& tris = std::get<0>(t).triangles();
+            auto&& color = std::get<1>(t);
+            triangles.emplace_back(std::tuple{ tris[0], color });
+            triangles.emplace_back(std::tuple{ tris[1], color });
         });
 
         gl::VertexBuffer vbo{};
         vbo.bind_buffers(triangles);
 
-        sdl::Color c_orange{ fmt::color::burly_wood };
-        sdl::Color clear_clr1{ 0.2f, 0.3f, 0.3f, 1.0f };
-        sdl::Color clear_clr2{ 0.7f, 0.4f, 0.4f, 1.0f };
-        sdl::Timer<float, sdl::TimeDuration::Second> timer{};
+        sdl::Color<u8> c_orange{ fmt::color::burly_wood };
+        sdl::Color<u8> clear_clr1{ 0.2f, 0.3f, 0.3f, 1.0f };
+        sdl::Color<u8> clear_clr2{ 0.7f, 0.4f, 0.4f, 1.0f };
+        sdl::Timer<f32, sdl::TimeDuration::Second> timer{};
 
         u32 loop_count = 0;
         auto delta_time_s = timer.delta();

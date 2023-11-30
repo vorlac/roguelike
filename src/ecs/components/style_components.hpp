@@ -5,6 +5,6 @@
 namespace rl::component {
     struct style
     {
-        sdl::Color color{ 128, 255, 0, 255 };
+        sdl::Color<u8>color{ 128, 255, 0, 255 };
     };
 }

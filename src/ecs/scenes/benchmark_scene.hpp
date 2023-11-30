@@ -19,6 +19,7 @@
 #include "ecs/components/style_components.hpp"
 #include "ecs/components/transform_components.hpp"
 #include "ecs/scenes/scene_types.hpp"
+#include "sdl/color.hpp"
 #include "sdl/defs.hpp"
 #include "sdl/pixel_data.hpp"
 #include "sdl/renderer.hpp"
@@ -56,10 +57,10 @@ namespace rl::scene {
                 const ds::point<f32> centroid = rect.centroid();
 
                 srand((u32)time(nullptr));
-                sdl::Color rect_color = {
-                    rand() % 128,
-                    rand() % 128,
-                    rand() % 128,
+                auto rect_color = sdl::Color<u8>{
+                    static_cast<u8>(rand() % 128),
+                    static_cast<u8>(rand() % 128),
+                    static_cast<u8>(rand() % 128),
                 };
 
                 for (size_t i = 0; i < benchmark::ENTITY_COUNT; ++i)
@@ -71,10 +72,10 @@ namespace rl::scene {
                         static_cast<f32>((xv - 1000.0) / 10.0),
                         static_cast<f32>((yv - 1000.0) / 10.0),
                     };
-                    rect_color = {
-                        rand() % 128,
-                        rand() % 128,
-                        rand() % 128,
+                    rect_color = sdl::Color<u8>{
+                        static_cast<u8>(rand() % 128),
+                        static_cast<u8>(rand() % 128),
+                        static_cast<u8>(rand() % 128),
                     };
                     world.entity(fmt::format("Rect {}", i).data())
                         .set<component::position>({ centroid.x, centroid.y })
@@ -217,12 +218,12 @@ namespace rl::scene {
                                                                   : sdl::Renderer::blend_mode::Mod);
 
                 static u32 count = 0;
-                static sdl::Color c = { 100, 200, 100, 75 };
+                static sdl::Color<u8> c = { 100, 200, 100, 75 };
                 static std::vector<ds::rect<f32>> rects = {};
                 if constexpr (!USE_RANDOM_COLORS)
                     rects.reserve(benchmark::ENTITY_COUNT);
 
-                static std::vector<std::pair<ds::rect<f32>, sdl::Color>> rect_colors = {};
+                static std::vector<std::pair<ds::rect<f32>, sdl::Color<u8>>> rect_colors = {};
                 if constexpr (USE_RANDOM_COLORS)
                     rect_colors.reserve(benchmark::ENTITY_COUNT);
 
@@ -306,7 +307,7 @@ namespace rl::scene {
                 if (src != nullptr)
                 {
                     /* Treat white as transparent */
-                    sdl::Color c{ 255, 255, 255 };
+                    sdl::Color<u8> c{ 255, 255, 255 };
                     sdl::Surface surface = SDL3::SDL_LoadBMP_RW(src, SDL_TRUE);
                     if (surface.is_valid())
                     {

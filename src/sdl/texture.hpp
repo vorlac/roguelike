@@ -58,13 +58,13 @@ namespace rl::sdl {
 
         bool set_blend_mode(SDL3::SDL_BlendMode blend_mode);
         bool set_alpha_mod(u8 alpha);
-        bool set_color_mod(sdl::Color c);
+        bool set_color_mod(sdl::Color<u8> c);
 
         SDL3::SDL_PixelFormatEnum get_format() const;
         SDL3::SDL_TextureAccess get_access() const;
         SDL3::SDL_BlendMode get_blend_mode() const;
 
-        sdl::Color get_color_mod() const;
+        sdl::Color<u8> get_color_mod() const;
         ds::dims<i32> size();
         u8 get_alpha_mod() const;
 

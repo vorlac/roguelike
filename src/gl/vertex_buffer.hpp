@@ -8,6 +8,7 @@
 #include "ds/triangle.hpp"
 #include "ds/vector2d.hpp"
 #include "gl/shader.hpp"
+#include "sdl/color.hpp"
 #include "sdl/window.hpp"
 
 namespace rl::gl {
@@ -34,7 +35,7 @@ namespace rl::gl {
         /**
          * @brief Configure/define and bind all shared state between user app and openGL driver
          * */
-        void bind_buffers(std::vector<ds::triangle<f32>>& vbuff)
+        void bind_buffers(std::vector<std::tuple<ds::triangle<f32>, sdl::Color<f32>>>& vbuff)
         {
             // bind the VAO vertex array
             glBindVertexArray(m_vao_id);
@@ -54,11 +55,19 @@ namespace rl::gl {
                 0, 3,                  // index and count of vertices to configure
                 GL_FLOAT,              // data type of vertex data
                 GL_FALSE,              // should vertices be normalized (to 0 or -1 for signed)
-                3 * sizeof(f32),       // stride between each vertex record in the buffer
+                6 * sizeof(f32),       // stride between each vertex record in the buffer
                 static_cast<void*>(0)  // void* offset of where the position data starts
             );
-
             glEnableVertexAttribArray(0);
+
+            glVertexAttribPointer(                        //
+                1, 3,                                     //
+                GL_FLOAT,                                 //
+                GL_FALSE,                                 //
+                6 * sizeof(f32),                          //
+                reinterpret_cast<void*>(3 * sizeof(f32))  //
+            );
+            glEnableVertexAttribArray(1);
 
             // note that this is allowed, the call to glVertexAttribPointer registered VBO
             // as the vertex attribute's bound vertex buffer object so afterwards we can

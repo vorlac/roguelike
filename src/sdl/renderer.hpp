@@ -162,7 +162,7 @@ namespace rl::sdl {
             return result == 0;
         }
 
-        bool clear(const sdl::Color& c = { 0, 0, 0 })
+        bool clear(const sdl::Color<u8>& c = { 0, 0, 0 })
         {
             bool ret = this->set_draw_color(c);
             ret &= 0 == SDL3::SDL_RenderClear(m_sdl_renderer);
@@ -346,7 +346,7 @@ namespace rl::sdl {
             return ret;
         }
 
-        bool set_draw_color(const sdl::Color& c)
+        bool set_draw_color(const sdl::Color<u8>& c)
         {
             i32 result = SDL3::SDL_SetRenderDrawColor(m_sdl_renderer, c.r, c.g, c.b, c.a);
             sdl_assert(result == 0, "failed to set draw color");
@@ -426,7 +426,7 @@ namespace rl::sdl {
             return result == 0;
         }
 
-        bool draw_rect(ds::rect<f32>&& rect, const sdl::Color& c = {})
+        bool draw_rect(ds::rect<f32>&& rect, const sdl::Color<u8>& c = {})
         {
             i32 result = 0;
             if (!c.is_empty())
@@ -450,7 +450,7 @@ namespace rl::sdl {
             return result == 0;
         }
 
-        bool fill_rect(const ds::rect<f32>& rect = ds::rect<i32>::null(), const sdl::Color& c = {})
+        bool fill_rect(const ds::rect<f32>& rect = ds::rect<i32>::null(), const sdl::Color<u8>& c = {})
         {
             i32 result = 0;
             if (!c.is_empty())
@@ -461,7 +461,7 @@ namespace rl::sdl {
             return result == 0;
         }
 
-        bool fill_rects(const std::vector<ds::rect<f32>>& rects, const sdl::Color& c = {})
+        bool fill_rects(const std::vector<ds::rect<f32>>& rects, const sdl::Color<u8>& c = {})
         {
             i32 result = 0;
 
@@ -478,7 +478,7 @@ namespace rl::sdl {
             return result == 0;
         }
 
-        bool fill_rects(const std::vector<std::pair<ds::rect<f32>, sdl::Color>>& rects)
+        bool fill_rects(const std::vector<std::pair<ds::rect<f32>, sdl::Color<u8>>>& rects)
         {
             bool ret = true;
 
@@ -577,9 +577,9 @@ namespace rl::sdl {
             return mode;
         }
 
-        sdl::Color get_draw_color() const
+        sdl::Color<u8>get_draw_color() const
         {
-            sdl::Color c{};
+            sdl::Color<u8>c{};
             i32 result = SDL3::SDL_GetRenderDrawColor(m_sdl_renderer, &c.r, &c.g, &c.b, &c.a);
             sdl_assert(result == 0, "failed to get draw color");
             return c;

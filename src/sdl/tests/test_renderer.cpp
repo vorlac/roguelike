@@ -26,11 +26,11 @@ namespace rl::sdl::test {
     static bool has_draw_color(sdl::Renderer& renderer)
     {
         /* Set color. */
-        rl::sdl::Color set_clr{ 100, 100, 100, 100 };
+        rl::sdl::Color<u8> set_clr{ 100, 100, 100, 100 };
         if (!renderer.set_draw_color(set_clr))
             return false;
 
-        rl::sdl::Color get_clr = renderer.get_draw_color();
+        rl::sdl::Color<u8> get_clr = renderer.get_draw_color();
         if (!renderer.set_draw_color({ 0, 0, 0 }))
             return false;
 
@@ -91,11 +91,11 @@ namespace rl::sdl::test {
         rl::sdl::Texture tface = load_test_face(renderer);
         if (tface.is_valid())
         {
-            sdl::Color set_clr{ 100, 100, 100 };
+            sdl::Color<u8> set_clr{ 100, 100, 100 };
             if (!tface.set_color_mod(set_clr))
                 return false;
 
-            sdl::Color get_clr{ tface.get_color_mod() };
+            sdl::Color<u8> get_clr{ tface.get_color_mod() };
             if (get_clr != set_clr)
                 return false;
         }
@@ -313,9 +313,13 @@ namespace rl::sdl::test {
             auto blend_mode = (((i / 2) % 3) == 0) ? SDL3::SDL_BLENDMODE_BLEND
                             : (((i / 2) % 3) == 1) ? SDL3::SDL_BLENDMODE_ADD
                                                    : SDL3::SDL_BLENDMODE_NONE;
+            sdl::Color<u8> color = {
+                static_cast<u8>(abs((60 + 2 * i) % 255)),
+                static_cast<u8>(abs((240 - 2 * i) % 255)),
+                static_cast<u8>(abs((3 * i) % 255)),
+            };
 
-            if (!renderer.set_draw_color(
-                    { abs((60 + 2 * i) % 255), abs((240 - 2 * i) % 255), abs((3 * i) % 255) }))
+            if (!renderer.set_draw_color(color))
                 ++check_fail_count_1;
             if (!renderer.set_draw_blend_mode(blend_mode))
                 check_fail_count_2++;
@@ -335,13 +339,16 @@ namespace rl::sdl::test {
             auto blend_mode = (((i / 2) % 3) == 0) ? SDL3::SDL_BLENDMODE_BLEND
                             : (((i / 2) % 3) == 1) ? SDL3::SDL_BLENDMODE_ADD
                                                    : SDL3::SDL_BLENDMODE_NONE;
-            if (!renderer.set_draw_color(
-                    { abs((60 + 2 * i) % 255), abs((240 - 2 * i) % 255), abs((3 * i) % 255) }))
-                ++check_fail_count_1;
+            sdl::Color<u8> color = {
+                static_cast<u8>(abs((60 + 2 * i) % 255)),
+                static_cast<u8>(abs((240 - 2 * i) % 255)),
+                static_cast<u8>(abs((3 * i) % 255)),
+            };
 
+            if (!renderer.set_draw_color(color))
+                ++check_fail_count_1;
             if (!renderer.set_draw_blend_mode(blend_mode))
                 check_fail_count_2++;
-
             if (!renderer.draw_line({ 0.0f, 0.0f }, { 79.0f, (float)i }))
                 check_fail_count_3++;
         }
@@ -362,8 +369,14 @@ namespace rl::sdl::test {
                                 : ((((i + j) / 3) % 3) == 1) ? SDL3::SDL_BLENDMODE_ADD
                                                              : SDL3::SDL_BLENDMODE_NONE;
 
-                if (!renderer.set_draw_color({ abs((j * 4) % 255), abs((i * 3) % 255),
-                                               abs((j * 4) % 255), abs((i * 3) % 255) }))
+                sdl::Color<u8> color = {
+                    static_cast<u8>(abs((j * 4) % 255)),
+                    static_cast<u8>(abs((i * 3) % 255)),
+                    static_cast<u8>(abs((j * 4) % 255)),
+                    static_cast<u8>(abs((i * 3) % 255)),
+                };
+
+                if (!renderer.set_draw_color(color))
                     ++check_fail_count_1;
                 if (!renderer.set_draw_blend_mode(blend_mode))
                     check_fail_count_2++;
@@ -483,7 +496,12 @@ namespace rl::sdl::test {
             for (rl::i32 i = 0; i <= ni; i += 4)
             {
                 /* Set color mod. */
-                sdl::Color color_mod{ (255 / nj) * j, (255 / ni) * i, (255 / nj) * j };
+                sdl::Color<u8> color_mod{
+                    static_cast<u8>((255 / nj) * j),
+                    static_cast<u8>((255 / ni) * i),
+                    static_cast<u8>((255 / nj) * j),
+                };
+
                 if (!tface.set_color_mod(color_mod))
                     ++check_fail_count_1;
 
@@ -702,7 +720,13 @@ namespace rl::sdl::test {
             {
                 for (rl::i32 i = 0; i <= ni; i += 4)
                 {
-                    if (!tface.set_color_mod({ (255 / nj) * j, (255 / ni) * i, (255 / nj) * j }))
+                    sdl::Color<u8> color{
+                        static_cast<u8>((255 / nj) * j),
+                        static_cast<u8>((255 / ni) * i),
+                        static_cast<u8>((255 / nj) * j),
+                    };
+
+                    if (!tface.set_color_mod(color))
                         ++check_fail_count_1;
 
                     if (!tface.set_alpha_mod(cast::to<u8>((100 / ni) * i)))
@@ -760,7 +784,7 @@ namespace rl::sdl::test {
         };
 
         bool ret = true;
-        sdl::Color fill_color{ 0, 0, 0 };
+        sdl::Color<u8> fill_color{ 0, 0, 0 };
         rl::u32 color_val = fill_color.rgba(reference_surface.get_format_full());
         runtime_assert(color_val == sdl::test::RENDER_COLOR_CLEAR, "color conversion mismatch");
         ret = reference_surface.fill(sdl::test::RENDER_COLOR_CLEAR);
@@ -846,7 +870,7 @@ namespace rl::sdl::test {
             { out_size.width / factor, out_size.height / factor },
             SDL3::SDL_LOGICAL_PRESENTATION_LETTERBOX, SDL3::SDL_SCALEMODE_NEAREST);
 
-        renderer.set_draw_color({ 0, 255, 0, Color::Preset::Opaque });
+        renderer.set_draw_color({ 0, 255, 0, Color<u8>::Preset::Opaque });
 
         ds::rect<f32> rect = {
             (float)viewport.pt.x / factor,
@@ -914,7 +938,7 @@ namespace rl::sdl::test {
             { out_size.width - 2 * (TESTRENDER_SCREEN_W / 4), out_size.height },
             SDL3::SDL_LOGICAL_PRESENTATION_LETTERBOX, SDL3::SDL_SCALEMODE_LINEAR);
 
-        renderer.set_draw_color({ 0, 255, 0, Color::Preset::Opaque });
+        renderer.set_draw_color({ 0, 255, 0, Color<u8>::Preset::Opaque });
         renderer.fill_rect();
         renderer.set_logical_size({ 0, 0 }, SDL3::SDL_LOGICAL_PRESENTATION_DISABLED,
                                   SDL3::SDL_SCALEMODE_NEAREST);

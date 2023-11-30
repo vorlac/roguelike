@@ -34,7 +34,7 @@ namespace rl::sdl::test {
             if (surface.is_valid())
             {
                 /* Treat white as transparent */
-                sdl::Color c{ 255, 255, 255 };
+                sdl::Color<u8>c{ 255, 255, 255 };
 
                 surface.set_color_key(true, c.rgb(surface.get_format_full()));
                 sdl::Texture texture{ renderer, surface };
