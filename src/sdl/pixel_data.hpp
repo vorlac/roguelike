@@ -47,8 +47,8 @@ namespace rl::sdl {
         {
         }
 
-        constexpr PixelData(const ds::dims<i32>& dims,
-                            PixelData::format::type pixel_format = PixelData::format::RGB24)
+        PixelData(const ds::dims<i32>& dims,
+                  PixelData::format::type pixel_format = PixelData::format::RGB24)
             : m_format{ pixel_format }
             , m_structure{ structure::Packed32 }
         {
@@ -63,7 +63,7 @@ namespace rl::sdl {
                     break;
             }
 
-            runtime_assert(pixel_byte_size > 0, "undetermined pixel size");
+            runtime_assert(pixel_byte_size > 0, "undetermined pixel size: {}", pixel_byte_size);
             m_buffer_size = dims.area() * pixel_byte_size;
             m_data.reserve(m_buffer_size);
         }
@@ -76,7 +76,7 @@ namespace rl::sdl {
 
         u8* get_col_data(const i32 x)
         {
-            runtime_assert(x > m_bounds.size.width, "column lookup out of bounds");
+            runtime_assert(x > m_bounds.size.width, "column lookup out of bounds: {}", x);
             const i32 buffer_offset{ x };
             u8* col_start_ptr{ m_data.data() + buffer_offset };
             return col_start_ptr;

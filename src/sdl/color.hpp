@@ -1,7 +1,7 @@
 #pragma once
 
+#include <algorithm>
 #include <array>
-#include <cmath>
 #include <concepts>
 #include <tuple>
 #include <type_traits>
@@ -198,10 +198,10 @@ namespace rl::sdl {
         template <rl::floating_point T>
             requires std::same_as<T, f32>
         constexpr inline Color(T cr, T cg, T cb, T ca = 1.0f)
-            : r{ rl::math::clamp<u8>(cr * 255.0f, 0, 255) }
-            , g{ rl::math::clamp<u8>(cg * 255.0f, 0, 255) }
-            , b{ rl::math::clamp<u8>(cb * 255.0f, 0, 255) }
-            , a{ rl::math::clamp<u8>(ca * 255.0f, 0, 255) }
+            : r{ static_cast<u8>(std::clamp(cr * 255.0f, 0.0f, 255.0f)) }
+            , g{ static_cast<u8>(std::clamp(cg * 255.0f, 0.0f, 255.0f)) }
+            , b{ static_cast<u8>(std::clamp(cb * 255.0f, 0.0f, 255.0f)) }
+            , a{ static_cast<u8>(std::clamp(ca * 255.0f, 0.0f, 255.0f)) }
         {
         }
 

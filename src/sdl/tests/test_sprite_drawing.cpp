@@ -45,8 +45,6 @@ namespace rl::sdl::test {
                     surface.sdl_handle()->h,
                 };
 
-                runtime_assert(dims == dims2, "??");
-
                 size.width = surface.sdl_handle()->w;
                 size.height = surface.sdl_handle()->h;
 

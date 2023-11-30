@@ -56,9 +56,9 @@ namespace rl::inline cast {
     constexpr inline To to(const From in)
     {
         const bool value_in_bounds{ within_bounds<To, From>::value(in) };
-        runtime_assert(value_in_bounds, "narrowing integer numeric cast results in overflow"
-                                            << typeid(From).name() << "(" << in << ") -> "
-                                            << typeid(To).name());
+        runtime_assert(value_in_bounds,
+                       "narrowing integer numeric cast results in overflow {}  ({}) -> {}",
+                       typeid(From).name(), in, typeid(To).name());
 
         return static_cast<To>(in);
     }
@@ -69,105 +69,10 @@ namespace rl::inline cast {
     constexpr inline To to(const From in)
     {
         const bool value_in_bounds{ within_bounds<To, From>::value(in) };
-        runtime_assert(value_in_bounds, "narrowing floating point cast results in overflow: "
-                                            << typeid(From).name() << "(" << in << ") -> "
-                                            << typeid(To).name());
+        runtime_assert(value_in_bounds,
+                       "narrowing integer numeric cast results in overflow {}  ({}) -> {}",
+                       typeid(From).name(), in, typeid(To).name());
 
         return static_cast<To>(in);
     }
 }
-
-// template <rl::scoped_enum TEnum, rl::integer TInteger>
-// constexpr bool operator==(TEnum e, TInteger i)
-// {
-//     using underlying_type = std::underlying_type_t<TEnum>;
-//     return std::to_underlying(e) == rl::cast::to<underlying_type, TInteger>(i);
-// }
-
-// template <rl::scoped_enum TEnum, rl::integer TInteger>
-// constexpr bool operator!=(TEnum e, TInteger i)
-// {
-//     using underlying_type = std::underlying_type_t<TEnum>;
-//     return std::to_underlying(e) != rl::cast::to<underlying_type, TInteger>(i);
-// }
-
-// template <rl::scoped_enum TEnum, rl::integer TInteger>
-// constexpr bool operator>=(TEnum e, TInteger i)
-// {
-//     using underlying_type = std::underlying_type_t<TEnum>;
-//     return std::to_underlying(e) >= rl::cast::to<underlying_type, TInteger>(i);
-// }
-
-// template <rl::scoped_enum TEnum, rl::integer TInteger>
-// constexpr bool operator>(TEnum e, TInteger i)
-// {
-//     using underlying_type = std::underlying_type_t<TEnum>;
-//     return std::to_underlying(e) > rl::cast::to<underlying_type, TInteger>(i);
-// }
-
-// template <rl::scoped_enum TEnum, rl::integer TInteger>
-// constexpr bool operator<=(TEnum e, TInteger i)
-// {
-//     using underlying_type = std::underlying_type_t<TEnum>;
-//     return std::to_underlying(e) <= rl::cast::to<underlying_type, TInteger>(i);
-// }
-
-// template <rl::scoped_enum TEnum, rl::integer TInteger>
-// constexpr bool operator<(TEnum e, TInteger i)
-// {
-//     using underlying_type = std::underlying_type_t<TEnum>;
-//     return std::to_underlying(e) < rl::cast::to<underlying_type, TInteger>(i);
-// }
-
-// template <rl::scoped_enum TEnum, rl::integer TInteger>
-// constexpr auto operator+(TEnum e, TInteger i)
-// {
-//     using underlying_type = std::underlying_type_t<TEnum>;
-//     return std::to_underlying(e) + rl::cast::to<underlying_type, TInteger>(i);
-// }
-
-// template <rl::scoped_enum TEnum, rl::integer TInteger>
-// constexpr auto operator-(TEnum e, TInteger i)
-// {
-//     using underlying_type = std::underlying_type_t<TEnum>;
-//     return std::to_underlying(e) - rl::cast::to<underlying_type, TInteger>(i);
-// }
-
-// template <rl::scoped_enum TEnum, rl::integer TInteger>
-// constexpr TInteger operator<<(TEnum e, rl::i32 shift)
-// {
-//     return std::to_underlying(e) << shift;
-// }
-
-// template <rl::scoped_enum TEnum, rl::integer TInteger>
-// constexpr TInteger operator>>(TEnum e, rl::i32 shift)
-// {
-//     return std::to_underlying(e) >> shift;
-// }
-
-// template <rl::scoped_enum TEnum, rl::integer TInteger>
-// constexpr auto operator|(TEnum e, TInteger i)
-// {
-//     using underlying_type = std::underlying_type_t<TEnum>;
-//     return std::to_underlying(e) | rl::cast::to<underlying_type, TInteger>(i);
-// }
-
-// template <rl::scoped_enum TEnum, rl::integer TInteger>
-// constexpr auto operator&(TEnum e, TInteger i)
-// {
-//     using underlying_type = std::underlying_type_t<TEnum>;
-//     return std::to_underlying(e) & rl::cast::to<underlying_type, TInteger>(i);
-// }
-
-// template <rl::scoped_enum TEnum, rl::integer TInteger>
-// constexpr auto operator^(TEnum e, TInteger i)
-// {
-//     using underlying_type = std::underlying_type_t<TEnum>;
-//     return std::to_underlying(e) ^ rl::cast::to<underlying_type, TInteger>(i);
-// }
-
-// template <rl::scoped_enum TEnum>
-// constexpr auto operator~(TEnum e)
-// {
-//     return ~std::to_underlying(e);
-// }

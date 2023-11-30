@@ -21,7 +21,8 @@ namespace rl::gl {
 
         // compile shaders
         ShaderProgram m_shader{};
-        m_shader_id = m_shader.build();
+        if (m_shader.compile())
+            m_shader_id = m_shader.id();
     }
 
     VertexBuffer::~VertexBuffer()

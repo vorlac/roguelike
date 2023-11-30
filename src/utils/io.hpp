@@ -11,16 +11,11 @@
 #include <flecs.h>
 #include <fmt/chrono.h>
 #include <fmt/color.h>
+#include <fmt/compile.h>
 #include <fmt/core.h>
 #include <fmt/format.h>
-#include <imgui.h>
-
-#include "core/numeric_types.hpp"
-#include "ds/point.hpp"
-#include "ds/vector2d.hpp"
-#include "sdl/color.hpp"
-#include "sdl/mouse.hpp"
-#include "utils/assert.hpp"
+#include <fmt/printf.h>
+#include <fmt/std.h>
 
 namespace rl::io {
     const static std::locale locale{ "en_US.UTF-8" };
@@ -79,26 +74,26 @@ namespace rl::log {
     {
         if constexpr (io::logging::level >= log_level)
         {
-            sdl::Color c{ sdl::Color::Preset::light_slate_grey };
+            fmt::text_style c{ fmt::fg(fmt::color(0xC1C4CA)) };
             switch (log_level)
             {
                 case io::LogLevel::Trace:
-                    c = sdl::Color::Preset::light_slate_grey;
+                    c = fmt::fg(fmt::color(0xC1C4CA));
                     break;
                 case io::LogLevel::Info:
-                    c = sdl::Color::Preset::burly_wood;
+                    c = fmt::fg(fmt::color(0x83B2B6));
                     break;
                 case io::LogLevel::Debug:
-                    c = rl::sdl::Color::Preset::green_yellow;
+                    c = fmt::fg(fmt::color(0x9AAF8B));
                     break;
                 case io::LogLevel::Warning:
-                    c = sdl::Color::Preset::lemon_chiffon;
+                    c = fmt::fg(fmt::color(0xCAB880));
                     break;
                 case io::LogLevel::Error:
-                    c = sdl::Color::Preset::light_salmon;
+                    c = fmt::fg(fmt::color(0xD4A4A4));
                     break;
                 case io::LogLevel::Fatal:
-                    c = sdl::Color::Preset::tomato;
+                    c = fmt::fg(fmt::color(0xB6ADDB));
                     break;
             }
 
