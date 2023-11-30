@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core/numeric_types.hpp"
+#include "core/numeric.hpp"
 #include "utils/concepts.hpp"
 
 namespace rl::math {

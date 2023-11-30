@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include "core/numeric_types.hpp"
+#include "core/numeric.hpp"
 #include "ds/dims.hpp"
 #include "ds/point.hpp"
 #include "ds/rect.hpp"

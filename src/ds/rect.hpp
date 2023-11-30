@@ -3,7 +3,7 @@
 #include <memory>
 #include <type_traits>
 
-#include "core/numeric_types.hpp"
+#include "core/numeric.hpp"
 #include "ds/dims.hpp"
 #include "ds/point.hpp"
 #include "ds/triangle.hpp"

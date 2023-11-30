@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include "core/numeric_types.hpp"
+#include "core/numeric.hpp"
 
 namespace rl::ds {
     template <u64 Size, u32 ByteAlignment>

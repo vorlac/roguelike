@@ -3,7 +3,7 @@
 #include <cstring>
 #include <vector>
 
-#include "core/numeric_types.hpp"
+#include "core/numeric.hpp"
 #include "ds/triangle.hpp"
 #include "gl/vertex_buffer.hpp"
 #include "utils/assert.hpp"

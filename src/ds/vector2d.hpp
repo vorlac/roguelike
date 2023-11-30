@@ -11,7 +11,7 @@
 
 #include <fmt/format.h>
 
-#include "core/numeric_types.hpp"
+#include "core/numeric.hpp"
 #include "ds/dims.hpp"
 #include "ecs/components/transform_components.hpp"
 #include "sdl/defs.hpp"

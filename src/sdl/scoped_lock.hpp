@@ -2,7 +2,7 @@
 
 #include <concepts>
 
-#include "core/numeric_types.hpp"
+#include "core/numeric.hpp"
 #include "sdl/defs.hpp"
 #include "sdl/surface.hpp"
 #include "sdl/texture.hpp"

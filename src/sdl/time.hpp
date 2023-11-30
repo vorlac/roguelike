@@ -10,7 +10,7 @@
 #include <fmt/core.h>
 #include <fmt/format.h>
 
-#include "core/numeric_types.hpp"
+#include "core/numeric.hpp"
 #include "sdl/defs.hpp"
 #include "utils/assert.hpp"
 #include "utils/concepts.hpp"

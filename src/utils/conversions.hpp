@@ -5,7 +5,7 @@
 #include <string>
 #include <typeinfo>
 
-#include "core/numeric_types.hpp"
+#include "core/numeric.hpp"
 #include "utils/assert.hpp"
 #include "utils/concepts.hpp"
 

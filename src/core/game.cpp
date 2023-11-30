@@ -14,7 +14,7 @@
 #include <fmt/std.h>
 
 #include "core/game.hpp"
-#include "core/numeric_types.hpp"
+#include "core/numeric.hpp"
 #include "ds/packed_array.hpp"
 #include "ecs/components/kinematic_components.hpp"
 #include "ecs/components/style_components.hpp"
@@ -91,11 +91,13 @@ namespace rl {
     {
         this->setup();
 
-        std::vector<ds::triangle<f32>> tris = { {
-            { 0.5f, 0.5f },
-            { 0.5f, -0.5f },
-            { -0.5f, -0.5f },
-        } };
+        std::vector tris = {
+            ds::triangle<f32>{
+                { 0.5f, 0.5f },
+                { 0.5f, -0.5f },
+                { -0.5f, -0.5f },
+            },
+        };
 
         ds::rect<f32> rect = {
             { -0.5f, -0.5f },

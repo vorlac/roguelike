@@ -7,7 +7,7 @@
 // #include "core/input/keymap.hpp"
 // #include "core/input/mouse.hpp"
 // #include "core/math.hpp"
-// #include "core/numeric_types.hpp"
+// #include "core/numeric.hpp"
 // #include "utils/assert.hpp"
 //
 // namespace rl {

@@ -7,7 +7,7 @@
 #include <tuple>
 #include <utility>
 
-#include "core/numeric_types.hpp"
+#include "core/numeric.hpp"
 #include "sdl/defs.hpp"
 #include "sdl/event_handler.hpp"
 #include "sdl/time.hpp"

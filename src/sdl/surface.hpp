@@ -3,7 +3,7 @@
 #include <mutex>
 #include <vector>
 
-#include "core/numeric_types.hpp"
+#include "core/numeric.hpp"
 #include "ds/point.hpp"
 #include "ds/rect.hpp"
 #include "ds/vector2d.hpp"

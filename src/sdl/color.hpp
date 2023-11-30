@@ -11,7 +11,7 @@
 #include <fmt/color.h>
 
 #include "core/math.hpp"
-#include "core/numeric_types.hpp"
+#include "core/numeric.hpp"
 #include "sdl/defs.hpp"
 #include "utils/concepts.hpp"
 #include "utils/conversions.hpp"

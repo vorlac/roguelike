@@ -3,7 +3,7 @@
 #include <limits>
 #include <vector>
 
-#include "core/numeric_types.hpp"
+#include "core/numeric.hpp"
 #include "ds/point.hpp"
 #include "ds/triangle.hpp"
 #include "ds/vector2d.hpp"

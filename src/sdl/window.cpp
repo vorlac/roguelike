@@ -5,7 +5,7 @@
 
 #include <fmt/format.h>
 
-#include "core/numeric_types.hpp"
+#include "core/numeric.hpp"
 #include "core/options.hpp"
 #include "ds/dims.hpp"
 #include "ds/point.hpp"

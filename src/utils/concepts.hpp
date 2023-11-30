@@ -4,7 +4,7 @@
 #include <limits>
 #include <type_traits>
 
-#include "core/numeric_types.hpp"
+#include "core/numeric.hpp"
 
 namespace rl {
     template <typename T, typename... TOther>

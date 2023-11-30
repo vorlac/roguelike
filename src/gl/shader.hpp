@@ -9,8 +9,9 @@
 #include <string>
 #include <type_traits>
 
-#include "core/numeric_types.hpp"
+#include "core/numeric.hpp"
 #include "utils/assert.hpp"
+#include "utils/concepts.hpp"
 #include "utils/io.hpp"
 
 namespace rl::gl {
@@ -133,6 +134,25 @@ namespace rl::gl {
         u32 id()
         {
             return m_shader_id;
+        }
+
+        void set_active()
+        {
+            glUseProgram(m_shader_id);
+        }
+
+        template <typename T>
+            requires std::same_as<T, bool>
+        void set_value(auto&& name, T value) const
+        {
+            glUniform1i(glGetUniformLocation(m_shader_id, name.data()), value ? 1 : 0);
+        }
+
+        template <typename T>
+            requires rl::any_of<T, f32, i32, u32>
+        void set_value(auto&& name, T value) const
+        {
+            glUniform1i(glGetUniformLocation(m_shader_id, name.data()), value);
         }
 
     private:

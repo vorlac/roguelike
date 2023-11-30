@@ -8,7 +8,7 @@
 #include <flecs.h>
 #include <fmt/format.h>
 
-#include "core/numeric_types.hpp"
+#include "core/numeric.hpp"
 #include "ds/dims.hpp"
 #include "ds/point.hpp"
 #include "ds/rect.hpp"
