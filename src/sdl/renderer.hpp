@@ -450,7 +450,8 @@ namespace rl::sdl {
             return result == 0;
         }
 
-        bool fill_rect(const ds::rect<f32>& rect = ds::rect<i32>::null(), const sdl::Color<u8>& c = {})
+        bool fill_rect(const ds::rect<f32>& rect = ds::rect<i32>::null(),
+                       const sdl::Color<u8>& c = {})
         {
             i32 result = 0;
             if (!c.is_empty())
@@ -577,9 +578,9 @@ namespace rl::sdl {
             return mode;
         }
 
-        sdl::Color<u8>get_draw_color() const
+        sdl::Color<u8> get_draw_color() const
         {
-            sdl::Color<u8>c{};
+            sdl::Color<u8> c{};
             i32 result = SDL3::SDL_GetRenderDrawColor(m_sdl_renderer, &c.r, &c.g, &c.b, &c.a);
             sdl_assert(result == 0, "failed to get draw color");
             return c;

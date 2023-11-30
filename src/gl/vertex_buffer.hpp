@@ -47,7 +47,8 @@ namespace rl::gl {
                 // bind the VBO vertex buffer
                 glBindBuffer(GL_ARRAY_BUFFER, m_vbo_id);
                 // define info about the VBO vertex buffer, targeting GL_ARRAY_BUFFER
-                glBufferData(GL_ARRAY_BUFFER, sizeof(f32) * m_buffer_vertex_count, vbuff.data(),
+                glBufferData(GL_ARRAY_BUFFER,
+                             sizeof(f32) * m_buffer_vertex_count + (3 * sizeof(f32)), vbuff.data(),
                              GL_STATIC_DRAW);
             }
 

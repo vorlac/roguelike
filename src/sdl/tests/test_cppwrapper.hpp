@@ -146,7 +146,7 @@ namespace rl::sdl::test {
         auto& window{ m_sdl.window() };
         auto renderer{ window.renderer() };
         u8 a = 0;
-        sdl::Color<u8>color{ 0, 0, 0, 0 };
+        sdl::Color<u8> color{ 0, 0, 0, 0 };
         sdl::Application::timer_t timer{};
         while (!quit_requested()) [[unlikely]]
         {
