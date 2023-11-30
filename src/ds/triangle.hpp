@@ -39,7 +39,5 @@ namespace rl::ds {
         ds::point<T> c{};
     };
 
-    using trianglevec = std::vector<ds::triangle<f32>>;
-
 #pragma pack()
 }

@@ -238,14 +238,14 @@ namespace rl::ds {
             return this->is_empty() && pt == vector2<T>::null();
         }
 
-        constexpr inline std::pair<ds::triangle<T>, ds::triangle<T>> triangles() const
+        constexpr inline decltype(auto) triangles()
         {
-            const ds::point<T>& tl = { this->pt.x, this->pt.y };
-            const ds::point<T>& tr = { tl.x + size.width };
-            const ds::point<T>& bl = { tl.y + size.height };
-            const ds::point<T>& br = { tl + size };
+            ds::point<T> tl{ pt.x, pt.y + size.height };
+            ds::point<T> bl{ pt.x, pt.y };
+            ds::point<T> tr{ tl.x + size.width, tl.y };
+            ds::point<T> br{ tl.x + size.width, tl.y - size.height };
 
-            return std::pair{
+            return std::vector{
                 ds::triangle{ bl, tl, br },
                 ds::triangle{ tl, br, tl },
             };

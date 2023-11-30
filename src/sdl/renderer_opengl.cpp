@@ -26,8 +26,9 @@ namespace rl::sdl {
     static std::string get_opengl_version()
     {
         SDL3::SDL_GL_SetAttribute(SDL3::SDL_GL_DOUBLEBUFFER, 1);
-        SDL3::SDL_GL_SetAttribute(SDL3::SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-        SDL3::SDL_GL_SetAttribute(SDL3::SDL_GL_CONTEXT_MINOR_VERSION, 2);
+        SDL3::SDL_GL_SetAttribute(SDL3::SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+        SDL3::SDL_GL_SetAttribute(SDL3::SDL_GL_CONTEXT_MINOR_VERSION, 6);
+        SDL3::SDL_GL_SetAttribute(SDL3::SDL_GL_SHARE_WITH_CURRENT_CONTEXT, 1);
         SDL3::SDL_GL_SetAttribute(SDL3::SDL_GL_CONTEXT_PROFILE_MASK,
                                   SDL3::SDL_GL_CONTEXT_PROFILE_CORE);
         int version = gladLoadGL((GLADloadfunc)SDL3::SDL_GL_GetProcAddress);

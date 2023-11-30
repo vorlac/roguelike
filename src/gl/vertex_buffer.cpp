@@ -73,7 +73,8 @@ namespace rl::gl {
         // Draw rects
         // Instead of calling draw arrays (like ni draw_triangles)
         // this draws the vertices as objects from the buffer
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+        // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         // Unbind the VAO buffer... not necessary yet
         // glBindVertexArray(0);

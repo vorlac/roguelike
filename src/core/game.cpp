@@ -1,10 +1,18 @@
+#include <algorithm>
+#include <cctype>
 #include <chrono>
+#include <functional>
 #include <iostream>
+#include <iterator>
 #include <locale>
 #include <memory>
 #include <random>
+#include <ranges>
+#include <span>
 #include <string>
 #include <thread>
+#include <utility>
+#include <vector>
 
 #include <flecs.h>
 #include <fmt/core.h>
@@ -15,7 +23,10 @@
 
 #include "core/game.hpp"
 #include "core/numeric.hpp"
-#include "ds/packed_array.hpp"
+#include "ds/dims.hpp"
+#include "ds/point.hpp"
+#include "ds/rect.hpp"
+#include "ds/triangle.hpp"
 #include "ecs/components/kinematic_components.hpp"
 #include "ecs/components/style_components.hpp"
 #include "ecs/components/transform_components.hpp"
@@ -97,17 +108,34 @@ namespace rl {
                 { 0.5f, -0.5f },
                 { -0.5f, -0.5f },
             },
+            ds::triangle<f32>{
+                { 0.5f, 0.5f },
+                { 0.5f, -0.5f },
+                { -0.5f, -0.5f },
+            },
         };
 
-        ds::rect<f32> rect = {
-            { -0.5f, -0.5f },
-            { 1.0f, 1.0f },
+        std::vector rects = {
+            ds::rect<f32>{
+                ds::point<f32>{ -0.5f, -0.5f },
+                ds::dims<f32>{ 0.5f, 0.5f },
+            },
+            ds::rect<f32>{
+                ds::point<f32>{ 0.0f, 0.0f },
+                ds::dims<f32>{ 1.0f, 1.0f },
+            },
         };
 
-        auto [vbuf, ibuf] = rect.triangle_ebo();
+        std::vector<u32> indexes = {};
+        std::vector<ds::triangle<f32>> triangles = {};
+        std::ranges::for_each(rects, [&](ds::rect<f32>& r) {
+            return triangles.append_range(r.triangles());
+        });
+
+        // auto [vbuf, ibuf] = rect.triangle_ebo();
 
         gl::VertexBuffer vbo{};
-        vbo.bind_buffers(vbuf, ibuf);
+        vbo.bind_buffers(triangles, indexes);
 
         sdl::Color c_orange{ fmt::color::burly_wood };
         sdl::Color clear_clr1{ 0.2f, 0.3f, 0.3f, 1.0f };
