@@ -4,11 +4,11 @@
 #include <thread>
 
 #include "core/numeric.hpp"
+#include "ds/color.hpp"
 #include "ds/dims.hpp"
 #include "ds/point.hpp"
 #include "ds/rect.hpp"
 #include "ds/vector2d.hpp"
-#include "sdl/color.hpp"
 #include "sdl/defs.hpp"
 #include "sdl/window.hpp"
 #include "utils/assert.hpp"
@@ -58,13 +58,13 @@ namespace rl::sdl {
 
         bool set_blend_mode(SDL3::SDL_BlendMode blend_mode);
         bool set_alpha_mod(u8 alpha);
-        bool set_color_mod(sdl::Color<u8> c);
+        bool set_color_mod(ds::color<u8> c);
 
         SDL3::SDL_PixelFormatEnum get_format() const;
         SDL3::SDL_TextureAccess get_access() const;
         SDL3::SDL_BlendMode get_blend_mode() const;
 
-        sdl::Color<u8> get_color_mod() const;
+        ds::color<u8> get_color_mod() const;
         ds::dims<i32> size();
         u8 get_alpha_mod() const;
 

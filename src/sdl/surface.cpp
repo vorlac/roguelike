@@ -107,7 +107,7 @@ namespace rl::sdl {
         return m_sdl_surface->pixels;
     }
 
-    i32 Surface::read_pixel(const ds::point<i32>& pt, sdl::Color<u8>& color)
+    i32 Surface::read_pixel(const ds::point<i32>& pt, ds::color<u8>& color)
     {
         ds::rect<i32> surface_rect{ { 0, 0 }, this->size() };
         runtime_assert(this->is_valid(), "attempting to read pixel from invalid surface");
@@ -167,8 +167,8 @@ namespace rl::sdl {
         // i32 sample_error_x = 0;
         // i32 sample_error_y = 0;
         // i32 sample_dist = 0;
-        sdl::Color<u8> sample_o_color{ 0, 0, 0, 0 };
-        sdl::Color<u8> sample_t_color{ 0, 0, 0, 0 };
+        ds::color<u8> sample_o_color{ 0, 0, 0, 0 };
+        ds::color<u8> sample_t_color{ 0, 0, 0, 0 };
 
         {
             sdl::scoped_lock<sdl::Surface> this_lock(*this);
@@ -179,8 +179,8 @@ namespace rl::sdl {
 
             i32 temp{ 0 };
             i32 dist{ 0 };
-            sdl::Color<u8> t_color{ 0, 0, 0, 0 };
-            sdl::Color<u8> o_color{ 0, 0, 0, 0 };
+            ds::color<u8> t_color{ 0, 0, 0, 0 };
+            ds::color<u8> o_color{ 0, 0, 0, 0 };
 
             /* Compare image - should be same format. */
             for (i32 y = 0; y < t_size.height; y++)
@@ -324,9 +324,9 @@ namespace rl::sdl {
         return blend_mode;
     }
 
-    sdl::Color<u8> Surface::get_color_mod() const
+    ds::color<u8> Surface::get_color_mod() const
     {
-        sdl::Color<u8> c{ 0, 0, 0, 0 };
+        ds::color<u8> c{ 0, 0, 0, 0 };
         this->get_color_mod(c.r, c.g, c.b);
         c.a = this->get_alpha_mod();
         return c;
@@ -367,7 +367,7 @@ namespace rl::sdl {
         return result == 0;
     }
 
-    bool Surface::set_color_mod(sdl::Color<u8> c)
+    bool Surface::set_color_mod(ds::color<u8> c)
     {
         i32 result = 0;
         result |= SDL3::SDL_SetSurfaceColorMod(m_sdl_surface, c.r, c.g, c.b);
@@ -394,7 +394,7 @@ namespace rl::sdl {
         return result == 0;
     }
 
-    bool Surface::fill(const sdl::Color<u8>& color)
+    bool Surface::fill(const ds::color<u8>& color)
     {
         u32 color_val = color.rgba(m_sdl_surface->format);
         return this->fill(color_val);
@@ -407,7 +407,7 @@ namespace rl::sdl {
         return result == 0;
     }
 
-    bool Surface::fill_rect(const sdl::Color<u8>& color, const ds::rect<i32>& rect)
+    bool Surface::fill_rect(const ds::color<u8>& color, const ds::rect<i32>& rect)
     {
         u32 color_val = color.rgba(m_sdl_surface->format);
         return this->fill_rect(color_val, rect);
@@ -428,7 +428,7 @@ namespace rl::sdl {
         return ret;
     }
 
-    bool Surface::fill_rects(const sdl::Color<u8>& color, const std::vector<ds::rect<i32>>& rects)
+    bool Surface::fill_rects(const ds::color<u8>& color, const std::vector<ds::rect<i32>>& rects)
     {
         u32 color_val = color.rgba(m_sdl_surface->format);
         return this->fill_rects(color_val, rects);

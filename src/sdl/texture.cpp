@@ -205,7 +205,7 @@ namespace rl::sdl {
         return result == 0;
     }
 
-    bool Texture::set_color_mod(sdl::Color<u8> c)
+    bool Texture::set_color_mod(ds::color<u8> c)
     {
         i32 result = 0;
         result |= SDL3::SDL_SetTextureColorMod(m_sdl_texture, c.r, c.g, c.b);
@@ -259,10 +259,10 @@ namespace rl::sdl {
         return mode;
     }
 
-    sdl::Color<u8> Texture::get_color_mod() const
+    ds::color<u8> Texture::get_color_mod() const
     {
         i32 result = 0;
-        sdl::Color<u8> c{ 0, 0, 0 };
+        ds::color<u8> c{ 0, 0, 0 };
         result |= SDL3::SDL_GetTextureColorMod(m_sdl_texture, &c.r, &c.g, &c.b);
         sdl_assert(result == 0, "failed to get color mod");
         result |= SDL3::SDL_GetTextureAlphaMod(m_sdl_texture, &c.a);

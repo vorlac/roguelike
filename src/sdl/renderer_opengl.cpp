@@ -7,9 +7,9 @@
 
 #include <fmt/format.h>
 
+#include "ds/color.hpp"
 #include "ds/dims.hpp"
 #include "gl/shader.hpp"
-#include "sdl/color.hpp"
 #include "sdl/defs.hpp"
 #include "sdl/renderer_opengl.hpp"
 #include "sdl/window.hpp"
@@ -68,7 +68,7 @@ namespace rl::sdl {
         return result == 0;
     }
 
-    bool RendererGL::clear(const sdl::Color<u8>& c)
+    bool RendererGL::clear(const ds::color<u8>& c)
     {
         bool ret = true;
         std::tuple<f32, f32, f32, f32> clr{ c };
@@ -84,7 +84,7 @@ namespace rl::sdl {
         return s;
     }
 
-    bool RendererGL::set_draw_color(const sdl::Color<u8>& c)
+    bool RendererGL::set_draw_color(const ds::color<u8>& c)
     {
         i32 result = 0;
         return result == 0;
@@ -147,13 +147,13 @@ namespace rl::sdl {
         return result == 0;
     }
 
-    bool RendererGL::draw_triangle(const ds::triangle<f32>& triangle, const sdl::Color<u8>& color)
+    bool RendererGL::draw_triangle(const ds::triangle<f32>& triangle, const ds::color<u8>& color)
     {
         i32 result = 0;
         return result == 0;
     }
 
-    bool RendererGL::draw_rect(ds::rect<f32>&& rect, const sdl::Color<u8>& c)
+    bool RendererGL::draw_rect(ds::rect<f32>&& rect, const ds::color<u8>& c)
     {
         i32 result = 0;
 
@@ -167,21 +167,21 @@ namespace rl::sdl {
         return result == 0;
     }
 
-    bool RendererGL::fill_rect(const ds::rect<f32>& rect, const sdl::Color<u8>& c)
+    bool RendererGL::fill_rect(const ds::rect<f32>& rect, const ds::color<u8>& c)
     {
         i32 result = 0;
 
         return result == 0;
     }
 
-    bool RendererGL::fill_rects(const std::vector<ds::rect<f32>>& rects, const sdl::Color<u8>& c)
+    bool RendererGL::fill_rects(const std::vector<ds::rect<f32>>& rects, const ds::color<u8>& c)
     {
         i32 result = 0;
 
         return result == 0;
     }
 
-    bool RendererGL::fill_rects(const std::vector<std::pair<ds::rect<f32>, sdl::Color<u8>>>& rects)
+    bool RendererGL::fill_rects(const std::vector<std::pair<ds::rect<f32>, ds::color<u8>>>& rects)
     {
         bool ret = true;
 

@@ -6,11 +6,11 @@
 #include <vector>
 
 #include "core/numeric.hpp"
+#include "ds/color.hpp"
 #include "ds/dims.hpp"
 #include "ds/point.hpp"
 #include "ds/triangle.hpp"
 #include "ds/vector2d.hpp"
-#include "sdl/color.hpp"
 #include "sdl/defs.hpp"
 #include "utils/concepts.hpp"
 
@@ -241,8 +241,8 @@ namespace rl::ds {
             return this->is_empty() && pt == vector2<T>::null();
         }
 
-        constexpr inline auto triangles(sdl::Color<f32>& clr)
-            -> std::vector<std::pair<ds::point<f32>, sdl::Color<f32>>>
+        constexpr inline auto triangles(ds::color<f32>& clr)
+            -> std::vector<std::pair<ds::point<f32>, ds::color<f32>>>
         {
             ds::point<T> tl{ pt.x, pt.y + size.height };
             ds::point<T> bl{ pt.x, pt.y };

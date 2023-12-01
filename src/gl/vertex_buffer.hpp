@@ -4,11 +4,11 @@
 #include <vector>
 
 #include "core/numeric.hpp"
+#include "ds/color.hpp"
 #include "ds/point.hpp"
 #include "ds/triangle.hpp"
 #include "ds/vector2d.hpp"
 #include "gl/shader.hpp"
-#include "sdl/color.hpp"
 #include "sdl/window.hpp"
 
 namespace rl::gl {
@@ -35,7 +35,7 @@ namespace rl::gl {
         /**
          * @brief Configure/define and bind all shared state between user app and openGL driver
          * */
-        void bind_buffers(std::vector<std::pair<ds::point<f32>, sdl::Color<f32>>>& vbuff)
+        void bind_buffers(std::vector<std::pair<ds::point<f32>, ds::color<f32>>>& vbuff)
         {
             // bind the VAO vertex array
             glBindVertexArray(m_vao_id);

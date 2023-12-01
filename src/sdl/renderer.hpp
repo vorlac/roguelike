@@ -10,11 +10,11 @@
 #include <fmt/format.h>
 
 #include "core/numeric.hpp"
+#include "ds/color.hpp"
 #include "ds/dims.hpp"
 #include "ds/point.hpp"
 #include "ds/rect.hpp"
 #include "ds/vector2d.hpp"
-#include "sdl/color.hpp"
 #include "sdl/defs.hpp"
 #include "sdl/texture.hpp"
 #include "sdl/window.hpp"
@@ -162,7 +162,7 @@ namespace rl::sdl {
             return result == 0;
         }
 
-        bool clear(const sdl::Color<u8>& c = { 0, 0, 0 })
+        bool clear(const ds::color<u8>& c = { 0, 0, 0 })
         {
             bool ret = this->set_draw_color(c);
             ret &= 0 == SDL3::SDL_RenderClear(m_sdl_renderer);
@@ -346,7 +346,7 @@ namespace rl::sdl {
             return ret;
         }
 
-        bool set_draw_color(const sdl::Color<u8>& c)
+        bool set_draw_color(const ds::color<u8>& c)
         {
             i32 result = SDL3::SDL_SetRenderDrawColor(m_sdl_renderer, c.r, c.g, c.b, c.a);
             sdl_assert(result == 0, "failed to set draw color");
@@ -426,7 +426,7 @@ namespace rl::sdl {
             return result == 0;
         }
 
-        bool draw_rect(ds::rect<f32>&& rect, const sdl::Color<u8>& c = {})
+        bool draw_rect(ds::rect<f32>&& rect, const ds::color<u8>& c = {})
         {
             i32 result = 0;
             if (!c.is_empty())
@@ -451,7 +451,7 @@ namespace rl::sdl {
         }
 
         bool fill_rect(const ds::rect<f32>& rect = ds::rect<i32>::null(),
-                       const sdl::Color<u8>& c = {})
+                       const ds::color<u8>& c = {})
         {
             i32 result = 0;
             if (!c.is_empty())
@@ -462,7 +462,7 @@ namespace rl::sdl {
             return result == 0;
         }
 
-        bool fill_rects(const std::vector<ds::rect<f32>>& rects, const sdl::Color<u8>& c = {})
+        bool fill_rects(const std::vector<ds::rect<f32>>& rects, const ds::color<u8>& c = {})
         {
             i32 result = 0;
 
@@ -479,7 +479,7 @@ namespace rl::sdl {
             return result == 0;
         }
 
-        bool fill_rects(const std::vector<std::pair<ds::rect<f32>, sdl::Color<u8>>>& rects)
+        bool fill_rects(const std::vector<std::pair<ds::rect<f32>, ds::color<u8>>>& rects)
         {
             bool ret = true;
 
@@ -578,9 +578,9 @@ namespace rl::sdl {
             return mode;
         }
 
-        sdl::Color<u8> get_draw_color() const
+        ds::color<u8> get_draw_color() const
         {
-            sdl::Color<u8> c{};
+            ds::color<u8> c{};
             i32 result = SDL3::SDL_GetRenderDrawColor(m_sdl_renderer, &c.r, &c.g, &c.b, &c.a);
             sdl_assert(result == 0, "failed to get draw color");
             return c;

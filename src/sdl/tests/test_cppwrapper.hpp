@@ -83,16 +83,16 @@ namespace rl::sdl::test {
 
         {
             // Draw points
-            m_renderer.set_draw_color(sdl::Color{ 0, 0, 0 });
+            m_renderer.set_draw_color(ds::color{ 0, 0, 0 });
             m_renderer.clear();
 
-            m_renderer.set_draw_color(sdl::Color{ 255, 128, 0 });
+            m_renderer.set_draw_color(ds::color{ 255, 128, 0 });
             m_renderer.draw_point({ 10, 10 });
 
-            m_renderer.set_draw_color(sdl::Color{ 0, 255, 128 });
+            m_renderer.set_draw_color(ds::color{ 0, 255, 128 });
             m_renderer.draw_point(ds::point<i32>{ 20, 20 });
 
-            m_renderer.set_draw_color(sdl::Color{ 128, 0, 255 });
+            m_renderer.set_draw_color(ds::color{ 128, 0, 255 });
             std::vector<ds::point<f32>> points = { { 30, 30 } };
             m_renderer.draw_points(points);
             pixels.Retrieve(m_renderer);
@@ -110,16 +110,16 @@ namespace rl::sdl::test {
 
         {
             // Draw lines
-            m_renderer.set_draw_color(sdl::Color{ 0, 0, 0 });
+            m_renderer.set_draw_color(ds::color{ 0, 0, 0 });
             m_renderer.clear();
 
-            m_renderer.set_draw_color(sdl::Color{ 255, 128, 0 });
+            m_renderer.set_draw_color(ds::color{ 255, 128, 0 });
             m_renderer.draw_line({ 10, 10 }, { 10, 50 });
 
-            m_renderer.set_draw_color(sdl::Color{ 0, 255, 128 });
+            m_renderer.set_draw_color(ds::color{ 0, 255, 128 });
             m_renderer.draw_line(ds::point<i32>{ 20, 10 }, ds::point<i32>{ 20, 50 });
 
-            m_renderer.set_draw_color(sdl::Color{ 128, 0, 255 });
+            m_renderer.set_draw_color(ds::color{ 128, 0, 255 });
             std::vector<ds::point<f32>> points = { { 30, 10 }, { 30, 50 } };
             m_renderer.draw_lines(points);
 
@@ -146,7 +146,7 @@ namespace rl::sdl::test {
         auto& window{ m_sdl.window() };
         auto renderer{ window.renderer() };
         u8 a = 0;
-        sdl::Color<u8> color{ 0, 0, 0, 0 };
+        ds::color<u8> color{ 0, 0, 0, 0 };
         sdl::Application::timer_t timer{};
         while (!quit_requested()) [[unlikely]]
         {

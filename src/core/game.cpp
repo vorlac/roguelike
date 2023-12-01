@@ -102,35 +102,35 @@ namespace rl {
     {
         this->setup();
 
-        std::vector<std::pair<ds::rect<f32>, sdl::Color<f32>>> rects = {
+        std::vector<std::pair<ds::rect<f32>, ds::color<f32>>> rects = {
             std::pair{
                 ds::rect<f32>{ { -0.5f, 0.0f }, ds::dims<f32>{ 0.5f, 0.5f } },
-                sdl::Color<f32>{ rl::Colors::Red },
+                ds::color<f32>{ rl::Colors::Red },
             },
             std::pair{
                 ds::rect<f32>{ { -0.5f, -0.5f }, ds::dims<f32>{ 0.5f, 0.5f } },
-                sdl::Color<f32>{ rl::Colors::Blue },
+                ds::color<f32>{ rl::Colors::Blue },
             },
             std::pair{
                 ds::rect<f32>{ { 0.0f, 0.0f }, ds::dims<f32>{ 0.5f, 0.5f } },
-                sdl::Color<f32>{ rl::Colors::Purple },
+                ds::color<f32>{ rl::Colors::Purple },
             },
             std::pair{
                 ds::rect<f32>{ { 0.0f, -0.5f }, ds::dims<f32>{ 0.5f, 0.5f } },
-                sdl::Color<f32>{ rl::Colors::Green },
+                ds::color<f32>{ rl::Colors::Green },
             },
         };
 
-        std::vector<std::pair<ds::point<f32>, sdl::Color<f32>>> triangles = {};
-        std::ranges::for_each(rects, [&](std::pair<ds::rect<f32>, sdl::Color<f32>>& t) {
+        std::vector<std::pair<ds::point<f32>, ds::color<f32>>> triangles = {};
+        std::ranges::for_each(rects, [&](std::pair<ds::rect<f32>, ds::color<f32>>& t) {
             triangles.append_range(std::get<0>(t).triangles(std::get<1>(t)));
         });
 
         gl::VertexBuffer vbo{};
         vbo.bind_buffers(triangles);
 
-        sdl::Color<u8> c_orange{ fmt::color::burly_wood };
-        sdl::Color<u8> clear_clr1{ 29, 32, 39 };
+        ds::color<u8> c_orange{ fmt::color::burly_wood };
+        ds::color<u8> clear_clr1{ 29, 32, 39 };
         sdl::Timer<f32, sdl::TimeDuration::Second> timer{};
 
         u32 loop_count = 0;

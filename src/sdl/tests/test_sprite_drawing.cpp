@@ -8,10 +8,10 @@
 #include <stdlib.h>
 
 #include "core/numeric.hpp"
+#include "ds/color.hpp"
 #include "ds/dims.hpp"
 #include "ds/point.hpp"
 #include "ds/rect.hpp"
-#include "sdl/color.hpp"
 #include "sdl/defs.hpp"
 #include "sdl/renderer_opengl.hpp"
 #include "sdl/surface.hpp"
@@ -34,7 +34,7 @@ namespace rl::sdl::test {
             if (surface.is_valid())
             {
                 /* Treat white as transparent */
-                sdl::Color<u8> c{ 255, 255, 255 };
+                ds::color<u8> c{ 255, 255, 255 };
 
                 surface.set_color_key(true, c.rgb(surface.get_format_full()));
                 sdl::Texture texture{ renderer, surface };

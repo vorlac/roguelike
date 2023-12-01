@@ -21,21 +21,21 @@ SDL_C_LIB_BEGIN
 #include <SDL3/SDL_pixels.h>
 SDL_C_LIB_END
 
-namespace rl::sdl {
+namespace rl::ds {
     template <rl::numeric T = u8>
         requires rl::any_of<T, f32, u8>
-    struct Color
+    struct color
     {
     public:
         constexpr static inline T Transparent = T(0);
         constexpr static inline T Opaque = sizeof(T) == sizeof(u8) ? T(255) : T(1);
 
     public:
-        constexpr inline Color() = default;
+        constexpr inline color() = default;
 
         template <rl::integer I>
             requires(!std::same_as<T, I>)
-        constexpr inline Color(I cr, I cg, I cb, I ca = Opaque)
+        constexpr inline color(I cr, I cg, I cb, I ca = Opaque)
             : r{ cast::to<T>(cr) }
             , g{ cast::to<T>(cg) }
             , b{ cast::to<T>(cb) }
@@ -44,7 +44,7 @@ namespace rl::sdl {
         }
 
         template <rl::floating_point F>
-        constexpr inline Color(F cr, F cg, F cb, F ca = 1.0f)
+        constexpr inline color(F cr, F cg, F cb, F ca = 1.0f)
             requires std::same_as<T, u8>
             : r{ static_cast<T>(std::clamp(cr * 255.0f, 0.0f, 255.0f)) }
             , g{ static_cast<T>(std::clamp(cg * 255.0f, 0.0f, 255.0f)) }
@@ -53,7 +53,7 @@ namespace rl::sdl {
         {
         }
 
-        constexpr inline Color(std::tuple<T, T, T> tup)
+        constexpr inline color(std::tuple<T, T, T> tup)
             : r{ std::get<0>(tup) }
             , g{ std::get<1>(tup) }
             , b{ std::get<2>(tup) }
@@ -62,7 +62,7 @@ namespace rl::sdl {
         }
 
         template <rl::integer I>
-        constexpr inline Color& operator=(std::tuple<I, I, I> tup)
+        constexpr inline color& operator=(std::tuple<I, I, I> tup)
         {
             r = cast::to<I>(std::get<0>(tup));
             g = cast::to<I>(std::get<1>(tup));
@@ -70,7 +70,7 @@ namespace rl::sdl {
             return *this;
         }
 
-        constexpr inline Color(T cr, T cg, T cb, T ca = Opaque)
+        constexpr inline color(T cr, T cg, T cb, T ca = Opaque)
             : r{ cr }
             , g{ cg }
             , b{ cb }
@@ -79,7 +79,7 @@ namespace rl::sdl {
         }
 
         // 0xRRGGBBAA
-        explicit constexpr inline Color(u32 rgba)
+        explicit constexpr inline color(u32 rgba)
             requires std::same_as<T, u8>
             : r{ cast::to<u8>(0xff & (rgba >> (8 * 3))) }
             , g{ cast::to<u8>(0xff & (rgba >> (8 * 2))) }
@@ -89,7 +89,7 @@ namespace rl::sdl {
         }
 
         // 0xRRGGBBAA
-        explicit constexpr inline Color(u32 rgba)
+        explicit constexpr inline color(u32 rgba)
             requires std::same_as<T, f32>
             : r{ cast::to<f32>((0xff & (rgba >> (8 * 3))) / 255.0f) }
             , g{ cast::to<f32>((0xff & (rgba >> (8 * 2))) / 255.0f) }
@@ -99,7 +99,7 @@ namespace rl::sdl {
         }
 
         // 0x00RRGGBB
-        constexpr inline Color(fmt::rgb rgb)
+        constexpr inline color(fmt::rgb rgb)
             requires std::same_as<T, u8>
             : r{ rgb.r }
             , g{ rgb.g }
@@ -108,7 +108,7 @@ namespace rl::sdl {
         {
         }
 
-        constexpr inline Color(const SDL3::SDL_Color& c)
+        constexpr inline color(const SDL3::SDL_Color& c)
             requires std::same_as<T, u8>
             : r{ c.r }
             , g{ c.g }
@@ -117,7 +117,7 @@ namespace rl::sdl {
         {
         }
 
-        constexpr inline Color(SDL3::SDL_Color&& c)
+        constexpr inline color(SDL3::SDL_Color&& c)
             requires std::same_as<T, u8>
             : r{ c.r }
             , g{ c.g }
@@ -126,7 +126,7 @@ namespace rl::sdl {
         {
         }
 
-        constexpr inline sdl::Color<T> operator+(const sdl::Color<T>& other) const
+        constexpr inline color<T> operator+(const color<T>& other) const
         {
             return {
                 static_cast<T>(r + other.r),
@@ -136,7 +136,7 @@ namespace rl::sdl {
             };
         }
 
-        constexpr inline sdl::Color<T> operator-(const sdl::Color<T>& other) const
+        constexpr inline color<T> operator-(const color<T>& other) const
         {
             return {
                 static_cast<T>(r - other.r),
@@ -146,7 +146,7 @@ namespace rl::sdl {
             };
         }
 
-        constexpr inline sdl::Color<T> operator*(const sdl::Color<T>& other) const
+        constexpr inline color<T> operator*(const color<T>& other) const
         {
             return {
                 static_cast<T>(r * other.r),
@@ -156,7 +156,7 @@ namespace rl::sdl {
             };
         }
 
-        constexpr inline sdl::Color<T> operator/(const sdl::Color<T>& other) const
+        constexpr inline color<T> operator/(const color<T>& other) const
         {
             return {
                 static_cast<T>(r / other.r),
@@ -167,7 +167,7 @@ namespace rl::sdl {
         }
 
         template <rl::numeric N>
-        constexpr inline sdl::Color<T> operator+(const N val) const
+        constexpr inline color<T> operator+(const N val) const
         {
             return {
                 static_cast<T>(r + val),
@@ -178,7 +178,7 @@ namespace rl::sdl {
         }
 
         template <rl::numeric N>
-        constexpr inline sdl::Color<T> operator-(const N val) const
+        constexpr inline color<T> operator-(const N val) const
         {
             return {
                 static_cast<T>(r - val),
@@ -189,7 +189,7 @@ namespace rl::sdl {
         }
 
         template <rl::numeric N>
-        constexpr inline sdl::Color<T> operator*(const N val) const
+        constexpr inline color<T> operator*(const N val) const
         {
             return {
                 static_cast<T>(r * val),
@@ -200,7 +200,7 @@ namespace rl::sdl {
         }
 
         template <rl::numeric N>
-        constexpr inline sdl::Color<T> operator/(const N val) const
+        constexpr inline color<T> operator/(const N val) const
         {
             return {
                 static_cast<T>(r / val),
@@ -210,51 +210,51 @@ namespace rl::sdl {
             };
         }
 
-        constexpr inline Color<T>& operator+=(const sdl::Color<T>& other)
+        constexpr inline color<T>& operator+=(const color<T>& other)
         {
             *this = (*this + other);
             return *this;
         }
 
-        constexpr inline Color<T>& operator-=(const sdl::Color<T>& other)
+        constexpr inline color<T>& operator-=(const color<T>& other)
         {
             *this = (*this - other);
             return *this;
         }
 
-        constexpr inline Color<T>& operator*=(const sdl::Color<T>& other)
+        constexpr inline color<T>& operator*=(const color<T>& other)
         {
             *this = (*this * other);
             return *this;
         }
 
-        constexpr inline Color<T>& operator/=(const sdl::Color<T>& other)
+        constexpr inline color<T>& operator/=(const color<T>& other)
         {
             *this = (*this / other);
             return *this;
         }
 
     public:
-        constexpr static inline Color<T> lerp(const Color<T>& s, const Color<T>& e, T step)
+        constexpr static inline color<T> lerp(const color<T>& s, const color<T>& e, T step)
         {
             return { s + (e - s) * step };
         }
 
         // static void test_color_lerp()
         // {
-        //     sdl::Color<u8>start{ 255, 0, 0, 50 };
-        //     sdl::Color<u8>end{ 0, 0, 255, 50 };
+        //     color<u8>start{ 255, 0, 0, 50 };
+        //     color<u8>end{ 0, 0, 255, 50 };
 
         //     uint8_t val{ 0 };
         //     while (++val < 255)
         //     {
-        //         auto&& c = sdl::Color::lerp(start, end, val);
+        //         auto&& c = color::lerp(start, end, val);
         //         fmt::print(c, "||");
         //     }
         //     fmt::print("\n");
         // }
 
-        // constexpr static inline color gradient(const std::vector<sdl::color>& colors, T step)
+        // constexpr static inline color gradient(const std::vector<color>& colors, T step)
         // {
         //     const auto stop_len = 1 / (colors.size() - 1);
         //     const auto step_ratio = step / stop_len;
@@ -275,7 +275,7 @@ namespace rl::sdl {
             return SDL3::SDL_MapRGBA(format, this->r, this->g, this->b, this->a);
         }
 
-        constexpr inline bool operator==(const Color& other) const
+        constexpr inline bool operator==(const color& other) const
         {
             return 0 == memory::static_memcmp<sizeof(*this)>(this, &other);
         }
@@ -285,7 +285,7 @@ namespace rl::sdl {
             return this->operator==({});
         }
 
-        constexpr inline bool operator!=(const Color& other) const
+        constexpr inline bool operator!=(const color& other) const
         {
             return !this->operator==(other);
         }
@@ -305,7 +305,7 @@ namespace rl::sdl {
             return fmt::fg(static_cast<fmt::rgb>(*this));
         }
 
-        constexpr inline operator Color<f32>() const
+        constexpr inline operator color<f32>() const
             requires rl::integer<T>
         {
             return std::array<T, 4>{ r, g, b, a };
@@ -339,7 +339,7 @@ namespace rl::sdl {
         }
 
         constexpr static inline auto create(T r, T g, T b)
-            -> std::remove_reference_t<decltype(std::declval<Color>())>
+            -> std::remove_reference_t<decltype(std::declval<color>())>
         {
             return std::tuple<T, T, T>(r, g, b);
         }
@@ -355,18 +355,18 @@ namespace rl::sdl {
 namespace rl {
     struct Colors
     {
-        constexpr static inline sdl::Color<f32> White{ 0xFFFFFFFF };
-        constexpr static inline sdl::Color<f32> LightGrey{ 0xC1C4CAFF };
-        constexpr static inline sdl::Color<f32> Grey{ 0xA6A6A6FF };
-        constexpr static inline sdl::Color<f32> DarkGrey{ 0x262B33FF };
-        constexpr static inline sdl::Color<f32> DarkerGrey{ 0x333333FF };
-        constexpr static inline sdl::Color<f32> Black{ 0x000000FF };
+        constexpr static inline ds::color<f32> White{ 0xFFFFFFFF };
+        constexpr static inline ds::color<f32> LightGrey{ 0xC1C4CAFF };
+        constexpr static inline ds::color<f32> Grey{ 0xA6A6A6FF };
+        constexpr static inline ds::color<f32> DarkGrey{ 0x262B33FF };
+        constexpr static inline ds::color<f32> DarkerGrey{ 0x333333FF };
+        constexpr static inline ds::color<f32> Black{ 0x000000FF };
 
-        constexpr static inline sdl::Color<f32> Red{ 0xD4A4A4FF };
-        constexpr static inline sdl::Color<f32> Green{ 0x9AAF8BFF };
-        constexpr static inline sdl::Color<f32> Yellow{ 0xCAB880FF };
-        constexpr static inline sdl::Color<f32> Blue{ 0x779DC9FF };
-        constexpr static inline sdl::Color<f32> Purple{ 0xB6ADDBFF };
-        constexpr static inline sdl::Color<f32> Cyan{ 0x83B2B6FF };
+        constexpr static inline ds::color<f32> Red{ 0xD4A4A4FF };
+        constexpr static inline ds::color<f32> Green{ 0x9AAF8BFF };
+        constexpr static inline ds::color<f32> Yellow{ 0xCAB880FF };
+        constexpr static inline ds::color<f32> Blue{ 0x779DC9FF };
+        constexpr static inline ds::color<f32> Purple{ 0xB6ADDBFF };
+        constexpr static inline ds::color<f32> Cyan{ 0x83B2B6FF };
     };
 }
