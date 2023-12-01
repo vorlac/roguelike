@@ -218,11 +218,13 @@ namespace rl::sdl::test {
         {
             for (rl::i32 x = y % 2; x < sdl::test::TESTRENDER_SCREEN_W; x += 2)
             {
-                ret = renderer.set_draw_color({
+                ds::color<u8> color{
                     static_cast<u8>(x * y),
                     static_cast<u8>(x * y / 2),
                     static_cast<u8>(x * y / 3),
-                });
+                };
+                ret = renderer.set_draw_color(color);
+
                 if (!ret)
                     ++check_fail_count_1;
 
@@ -313,7 +315,7 @@ namespace rl::sdl::test {
             auto blend_mode = (((i / 2) % 3) == 0) ? SDL3::SDL_BLENDMODE_BLEND
                             : (((i / 2) % 3) == 1) ? SDL3::SDL_BLENDMODE_ADD
                                                    : SDL3::SDL_BLENDMODE_NONE;
-            ds::color<u8> color = {
+            ds::color<u8> color{
                 static_cast<u8>(abs((60 + 2 * i) % 255)),
                 static_cast<u8>(abs((240 - 2 * i) % 255)),
                 static_cast<u8>(abs((3 * i) % 255)),
@@ -339,7 +341,7 @@ namespace rl::sdl::test {
             auto blend_mode = (((i / 2) % 3) == 0) ? SDL3::SDL_BLENDMODE_BLEND
                             : (((i / 2) % 3) == 1) ? SDL3::SDL_BLENDMODE_ADD
                                                    : SDL3::SDL_BLENDMODE_NONE;
-            ds::color<u8> color = {
+            ds::color<u8> color{
                 static_cast<u8>(abs((60 + 2 * i) % 255)),
                 static_cast<u8>(abs((240 - 2 * i) % 255)),
                 static_cast<u8>(abs((3 * i) % 255)),
@@ -369,7 +371,7 @@ namespace rl::sdl::test {
                                 : ((((i + j) / 3) % 3) == 1) ? SDL3::SDL_BLENDMODE_ADD
                                                              : SDL3::SDL_BLENDMODE_NONE;
 
-                ds::color<u8> color = {
+                ds::color<u8> color{
                     static_cast<u8>(abs((j * 4) % 255)),
                     static_cast<u8>(abs((i * 3) % 255)),
                     static_cast<u8>(abs((j * 4) % 255)),
@@ -870,7 +872,7 @@ namespace rl::sdl::test {
             { out_size.width / factor, out_size.height / factor },
             SDL3::SDL_LOGICAL_PRESENTATION_LETTERBOX, SDL3::SDL_SCALEMODE_NEAREST);
 
-        renderer.set_draw_color({ 0, 255, 0, ds::color<u8>::Opaque });
+        renderer.set_draw_color({ 0, 255, 0 });
 
         ds::rect<f32> rect = {
             (float)viewport.pt.x / factor,
@@ -938,7 +940,7 @@ namespace rl::sdl::test {
             { out_size.width - 2 * (TESTRENDER_SCREEN_W / 4), out_size.height },
             SDL3::SDL_LOGICAL_PRESENTATION_LETTERBOX, SDL3::SDL_SCALEMODE_LINEAR);
 
-        renderer.set_draw_color({ 0, 255, 0, ds::color<u8>::Opaque });
+        renderer.set_draw_color({ 0, 255, 0 });
         renderer.fill_rect();
         renderer.set_logical_size({ 0, 0 }, SDL3::SDL_LOGICAL_PRESENTATION_DISABLED,
                                   SDL3::SDL_SCALEMODE_NEAREST);

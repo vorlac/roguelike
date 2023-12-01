@@ -72,7 +72,7 @@ namespace rl::sdl {
         ds::dims<i32> get_output_size() const;
         ds::rect<i32> get_viewport();
 
-        bool set_draw_color(const ds::color<u8>& c);
+        bool set_draw_color(ds::color<u8>& c);
         bool clear(const ds::color<u8>& c = { 29, 32, 39 });
         bool present();
         bool swap_buffers(sdl::Window& window);

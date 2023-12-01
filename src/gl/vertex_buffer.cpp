@@ -18,7 +18,7 @@ namespace rl::gl {
         glGenBuffers(1, &m_vbo_id);
 
         // compile shaders
-        ShaderProgram m_shader{};
+        Shader m_shader{};
         if (m_shader.compile())
             m_shader_id = m_shader.id();
     }

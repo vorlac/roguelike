@@ -9,35 +9,41 @@
 #include <string>
 #include <type_traits>
 
+#include <glm/ext/matrix_clip_space.hpp>
+#include <glm/ext/matrix_projection.hpp>
+#include <glm/ext/matrix_transform.hpp>
+#include <glm/fwd.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/matrix.hpp>
+
 #include "core/numeric.hpp"
 #include "utils/assert.hpp"
 #include "utils/concepts.hpp"
+#include "utils/fs.hpp"
 #include "utils/io.hpp"
 
 namespace rl::gl {
 
-    enum class ShaderType : u32 {
-        Vertex = GL_VERTEX_SHADER,
-        Fragment = GL_FRAGMENT_SHADER
-    };
-
-    struct ShaderProgram
+    struct Shader
     {
-    private:
-        template <auto T>
-            requires std::same_as<decltype(T), ShaderType>
-        struct Shader
+        enum class Program : u32 {
+            Vertex = GL_VERTEX_SHADER,
+            Fragment = GL_FRAGMENT_SHADER
+        };
+
+        template <auto VShaderType>
+            requires std::same_as<decltype(VShaderType), Program>
+        struct GLSL
         {
-            ShaderType shader_type = T;
-            using fspath = std::filesystem::path;
-            const static inline fspath shaders_path{ std::filesystem::absolute(
-                fspath("./data/shaders/").make_preferred()) };
+            constexpr static inline Program shader_type = VShaderType;
+            const static inline std::filesystem::path GLSL_SHADER_DIR = {
+                fs::absolute("data/shaders/"),
+            };
 
-            Shader() = default;
+            GLSL() = default;
 
-            Shader(std::filesystem::path glsl_path)
-                : m_path{ std::filesystem::path(
-                              shaders_path.generic_string() + glsl_path.generic_string())
+            GLSL(std::filesystem::path glsl_path)
+                : m_path{ fs::absolute(GLSL_SHADER_DIR.generic_string() + glsl_path.generic_string())
                               .make_preferred() }
             {
                 namespace fs = std::filesystem;
@@ -47,8 +53,8 @@ namespace rl::gl {
                 if (fs::exists(m_path))
                 {
                     std::ifstream glsl(m_path);
-                    m_glsl = { std::istreambuf_iterator<char>(glsl),
-                               std::istreambuf_iterator<char>() };
+                    m_glsl = std::string{ std::istreambuf_iterator<char>(glsl),
+                                          std::istreambuf_iterator<char>() };
                 }
             }
 
@@ -90,10 +96,10 @@ namespace rl::gl {
         };
 
     public:
-        ShaderProgram(std::filesystem::path vertex_glsl_path = "vertex_shader.glsl",
-                      std::filesystem::path fragment_glsl_path = "fragment_shader.glsl")
-            : m_fragment_shader(fragment_glsl_path.native())
-            , m_vertex_shader(vertex_glsl_path.native())
+        Shader(std::filesystem::path vert_glsl_file = "vertex_shader.glsl",
+               std::filesystem::path frag_glsl_file = "fragment_shader.glsl")
+            : m_fragment_shader(frag_glsl_file.native())
+            , m_vertex_shader(vert_glsl_file.native())
         {
         }
 
@@ -155,9 +161,32 @@ namespace rl::gl {
             glUniform1i(glGetUniformLocation(m_shader_id, name.data()), value);
         }
 
+        void setMat4(const std::string& name, const glm::mat4& value)
+        {
+            // create transformations
+            // make sure to initialize matrix to identity matrix first
+            glm::mat4 model = glm::identity<glm::mat4>();
+            glm::mat4 view = glm::identity<glm::mat4>();
+            glm::mat4 proj = glm::identity<glm::mat4>();
+
+            model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+            view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+            proj = glm::perspective(glm::radians(45.0f), 1920.0f / 1080.0f, 0.1f, 100.0f);
+
+            // retrieve the matrix uniform locations
+            u32 model_loc = glGetUniformLocation(m_shader_id, "model");
+            u32 view_loc = glGetUniformLocation(m_shader_id, "view");
+            u32 proj_loc = glGetUniformLocation(m_shader_id, "projection");
+
+            // pass them to the shaders (3 different ways)
+            glUniformMatrix4fv(model_loc, 1, GL_FALSE, glm::value_ptr(model));
+            glUniformMatrix4fv(view_loc, 1, GL_FALSE, glm::value_ptr(view));
+            glUniformMatrix4fv(proj_loc, 1, GL_FALSE, glm::value_ptr(proj));
+        }
+
     private:
         u32 m_shader_id{ std::numeric_limits<u32>::max() };
-        Shader<ShaderType::Fragment> m_fragment_shader{};
-        Shader<ShaderType::Vertex> m_vertex_shader{};
+        GLSL<Shader::Program::Fragment> m_fragment_shader{};
+        GLSL<Shader::Program::Vertex> m_vertex_shader{};
     };
 }

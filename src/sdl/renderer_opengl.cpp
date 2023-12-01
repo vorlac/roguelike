@@ -34,10 +34,10 @@ namespace rl::sdl {
         i32 gl_major_ver{ GLAD_VERSION_MAJOR(version) };
         i32 gl_minor_ver{ GLAD_VERSION_MINOR(version) };
 
-        runtime_assert((gl_major_ver >= 3 && gl_minor_ver >= 3 || gl_major_ver > 3),
+        runtime_assert((gl_major_ver >= 3 && gl_minor_ver >= 3) || gl_major_ver > 3,
                        "Deprecated OpenGL Version Loaded: {}.{}", gl_major_ver, gl_minor_ver);
 
-        if (gl_major_ver > 3 || gl_major_ver == 3 && gl_minor_ver >= 3)
+        if (gl_major_ver > 3 || (gl_major_ver == 3 && gl_minor_ver >= 3))
         {
             const GLubyte* const gl_ver_str = glGetString(GL_VERSION);
             const GLubyte* const renderer_str = glGetString(GL_RENDERER);
@@ -84,7 +84,7 @@ namespace rl::sdl {
         return s;
     }
 
-    bool RendererGL::set_draw_color(const ds::color<u8>& c)
+    bool RendererGL::set_draw_color(ds::color<u8>& c)
     {
         i32 result = 0;
         return result == 0;

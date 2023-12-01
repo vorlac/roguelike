@@ -121,33 +121,30 @@ namespace rl {
             },
         };
 
+        sdl::Timer<f32, sdl::TimeDuration::Second> timer{};
+        auto delta_time_s = timer.delta();
+        auto elapsed_time = timer.elapsed();
+
         std::vector<std::pair<ds::point<f32>, ds::color<f32>>> triangles = {};
         std::ranges::for_each(rects, [&](std::pair<ds::rect<f32>, ds::color<f32>>& t) {
             triangles.append_range(std::get<0>(t).triangles(std::get<1>(t)));
         });
 
-        gl::VertexBuffer vbo{};
-        vbo.bind_buffers(triangles);
-
-        ds::color<u8> c_orange{ fmt::color::burly_wood };
-        ds::color<u8> clear_clr1{ 29, 32, 39 };
-        sdl::Timer<f32, sdl::TimeDuration::Second> timer{};
+        // gl::VertexBuffer vbo{};
+        // vbo.bind_buffers(triangles);
 
         u32 loop_count = 0;
-        auto delta_time_s = timer.delta();
-        auto elapsed_time = timer.elapsed();
-
         sdl::Window& window{ m_sdl.window() };
         std::shared_ptr<sdl::RendererGL> renderer{ window.renderer() };
         while (this->handle_events())
         {
             m_world.progress();
-            renderer->clear(clear_clr1);
+            renderer->clear();
 
             if (this->quit_requested()) [[unlikely]]
                 break;
 
-            vbo.draw_triangles(window);
+            // vbo.draw_triangles(window);
             window.swap_buffers();
 
             if constexpr (io::logging::main_loop)

@@ -21,21 +21,21 @@ SDL_C_LIB_END
 namespace rl::ds {
 #pragma pack(4)
 
-    enum Side : i8_fast {
+    enum Side : rl::i8_fast {
         Top = 1 << 0,
         Bottom = 1 << 1,
         Left = 1 << 2,
         Right = 1 << 3,
     };
 
-    enum Quad : i8_fast {
+    enum Quad : rl::i8_fast {
         TopLeft = (Side::Top | Side::Left),
         BottomLeft = (Side::Bottom | Side::Left),
         TopRight = (Side::Top | Side::Right),
         BottomRight = (Side::Bottom | Side::Right),
     };
 
-    enum Axis : i8_fast {
+    enum Axis : rl::i8_fast {
         Horizontal = 1,  // x axis
         Vertical = 2,    // y axis
     };
@@ -76,27 +76,27 @@ namespace rl::ds {
         {
         }
 
-        constexpr rect(point<T>&& pnt, dims<T>&& dims)
+        constexpr rect(ds::point<T>&& pnt, ds::dims<T>&& dims)
             : pt{ pnt }
             , size{ dims }
         {
         }
 
-        constexpr rect(const point<T>& pnt, const dims<T>& dims)
+        constexpr rect(const ds::point<T>& pnt, const ds::dims<T>& dims)
             : pt{ pnt }
             , size{ dims }
         {
         }
 
-        constexpr static inline rect<T> null()
+        constexpr static inline ds::rect<T> null()
         {
-            return rect<T>{
-                point<T>::null(),
-                dims<T>::null(),
+            return ds::rect<T>{
+                ds::point<T>::null(),
+                ds::dims<T>::null(),
             };
         }
 
-        constexpr static inline rect<T> zero()
+        constexpr static inline ds::rect<T> zero()
         {
             return rect<T>{
                 point<T>::zero(),
@@ -221,7 +221,7 @@ namespace rl::ds {
         constexpr inline bool is_empty() const
             requires rl::integer<T>
         {
-            return this->area() == 0;
+            return this->area() == T(0);
         }
 
         /**
@@ -229,8 +229,8 @@ namespace rl::ds {
          * */
         constexpr inline bool is_invalid() const
         {
-            return this->size.height < cast::to<T>(0) ||  //
-                   this->width < cast::to<T>(0);          //
+            return this->size.height < T(0) ||  //
+                   this->width < T(0);          //
         }
 
         /**
@@ -238,11 +238,11 @@ namespace rl::ds {
          * */
         constexpr inline bool is_null() const
         {
-            return this->is_empty() && pt == vector2<T>::null();
+            return this->is_empty() && pt == ds::vector2<T>::null();
         }
 
-        constexpr inline auto triangles(ds::color<f32>& clr)
-            -> std::vector<std::pair<ds::point<f32>, ds::color<f32>>>
+        constexpr inline auto triangles(ds::color<f32> clr)
+            -> std::vector<std::pair<ds::point<rl::f32>, ds::color<rl::f32>>>
         {
             ds::point<T> tl{ pt.x, pt.y + size.height };
             ds::point<T> bl{ pt.x, pt.y };
@@ -250,12 +250,12 @@ namespace rl::ds {
             ds::point<T> br{ tl.x + size.width, tl.y - size.height };
 
             return {
-                { tr, clr },  // triangle 1, top right | color
-                { br, clr },  // triangle 1, top bottom right | color
-                { tl, clr },  // triangle 1, top left | color
-                { br, clr },  // triangle 2, bottom right | color
-                { bl, clr },  // triangle 2, bottom left | color
-                { tl, clr },  // triangle 2, top left | color
+                std::pair{ tr, clr },  // triangle 1, top right | color
+                std::pair{ br, clr },  // triangle 1, top bottom right | color
+                std::pair{ tl, clr },  // triangle 1, top left | color
+                std::pair{ br, clr },  // triangle 2, bottom right | color
+                std::pair{ bl, clr },  // triangle 2, bottom left | color
+                std::pair{ tl, clr },  // triangle 2, top left | color
             };
         }
 
@@ -562,16 +562,9 @@ namespace rl::ds {
         }
 
         // position of the rect's top left point
-        point<T> pt{
-            cast::to<T>(0),  // x
-            cast::to<T>(0),  // y
-        };
-
+        ds::point<T> pt{ T(0), T(0) };
         // 2D size of the rect, relative to pt
-        dims<T> size{
-            cast::to<T>(0),  // width
-            cast::to<T>(0),  // height
-        };
+        ds::dims<T> size{ T(0), T(0) };
     };
 
     template <rl::numeric T>

@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <array>
 #include <concepts>
+#include <memory>
 #include <tuple>
 #include <type_traits>
 #include <utility>
@@ -53,24 +54,24 @@ namespace rl::ds {
         {
         }
 
-        constexpr inline color(std::tuple<T, T, T> tup)
-            : r{ std::get<0>(tup) }
-            , g{ std::get<1>(tup) }
-            , b{ std::get<2>(tup) }
-            , a{ Opaque }
-        {
-        }
+        // constexpr inline color(std::tuple<T, T, T> tup)
+        //     : r{ std::get<0>(tup) }
+        //     , g{ std::get<1>(tup) }
+        //     , b{ std::get<2>(tup) }
+        //     , a{ Opaque }
+        //{
+        // }
 
-        template <rl::integer I>
-        constexpr inline color& operator=(std::tuple<I, I, I> tup)
-        {
-            r = cast::to<I>(std::get<0>(tup));
-            g = cast::to<I>(std::get<1>(tup));
-            b = cast::to<I>(std::get<2>(tup));
-            return *this;
-        }
+        // template <rl::integer I>
+        // constexpr inline color& operator=(std::tuple<I, I, I> tup)
+        //{
+        //     r = cast::to<I>(std::get<0>(tup));
+        //     g = cast::to<I>(std::get<1>(tup));
+        //     b = cast::to<I>(std::get<2>(tup));
+        //     return *this;
+        // }
 
-        constexpr inline color(T cr, T cg, T cb, T ca = Opaque)
+        constexpr inline explicit color(const T& cr, const T& cg, const T& cb, const T& ca = Opaque)
             : r{ cr }
             , g{ cg }
             , b{ cb }
