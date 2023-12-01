@@ -332,10 +332,11 @@ namespace rl::sdl {
         return c;
     }
 
-    void Surface::get_color_mod(u8& r, u8& g, u8& b) const
+    bool Surface::get_color_mod(u8& r, u8& g, u8& b) const
     {
         i32 result = SDL3::SDL_GetSurfaceColorMod(m_sdl_surface, &r, &g, &b);
         runtime_assert(result == 0, "failed to get surface color mod");
+        return result == 0;
     }
 
     bool Surface::set_clip_rect(const ds::rect<i32>& rect)

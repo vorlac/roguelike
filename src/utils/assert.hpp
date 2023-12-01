@@ -25,10 +25,10 @@ SDL_C_LIB_END
   // In release mode the macro does nothing ((void)0), including
   // the execution of the condition so don't define the expression
   // as anything that would be considered program logis.
-  #define runtime_assert(condition, message) static_cast<void>(0)
-  #define assert_cond(condition)             static_cast<void>(0)
-  #define assert_msg(message)                static_cast<void>(0)
-  #define sdl_assert(condition, message)     static_cast<void>(0)
+  #define runtime_assert(condition, fmtstr, ...) static_cast<void>(0)
+  #define assert_cond(condition)                 static_cast<void>(0)
+  #define assert_msg(message)                    static_cast<void>(0)
+  #define sdl_assert(condition, message)         static_cast<void>(0)
 
 #else
 
@@ -61,8 +61,8 @@ constexpr static fmt::text_style ASSERT_COLOR = fmt::fg(fmt::color(0xD4A4A4));
                              fmt::format(fmt::fg(fmt::color(0xCAB880)), "{}",                       \
                                          fmt::join(fmt::format(fmtstr __VA_OPT__(, ) __VA_ARGS__) | \
                                                        std::views::split('\n') |                    \
-                                                       std::views::transform([](auto r) {           \
-                                                         return std::string_view(r);                \
+                                                       std::views::transform([](auto r__) {         \
+                                                         return std::string_view(r__);              \
                                                        }),                                          \
                                                    "\n               "))));                         \
               __debugbreak();                                                                       \

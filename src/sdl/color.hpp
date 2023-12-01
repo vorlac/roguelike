@@ -185,9 +185,9 @@ namespace rl::sdl {
     public:
         constexpr inline Color() = default;
 
-        template <rl::integer T>
-            requires(!std::same_as<T, T>)
-        constexpr inline Color(T cr, T cg, T cb, T ca = Preset::Opaque)
+        template <rl::integer I>
+            requires(!std::same_as<T, I>)
+        constexpr inline Color(I cr, I cg, I cb, I ca = Preset::Opaque)
             : r{ cast::to<T>(cr) }
             , g{ cast::to<T>(cg) }
             , b{ cast::to<T>(cb) }
@@ -213,12 +213,12 @@ namespace rl::sdl {
         {
         }
 
-        template <rl::integer T>
-        constexpr inline Color& operator=(std::tuple<T, T, T> tup)
+        template <rl::integer I>
+        constexpr inline Color& operator=(std::tuple<I, I, I> tup)
         {
-            r = cast::to<T>(std::get<0>(tup));
-            g = cast::to<T>(std::get<1>(tup));
-            b = cast::to<T>(std::get<2>(tup));
+            r = cast::to<I>(std::get<0>(tup));
+            g = cast::to<I>(std::get<1>(tup));
+            b = cast::to<I>(std::get<2>(tup));
             return *this;
         }
 
@@ -308,8 +308,8 @@ namespace rl::sdl {
             };
         }
 
-        template <rl::numeric T>
-        constexpr inline sdl::Color<T> operator+(const T val) const
+        template <rl::numeric N>
+        constexpr inline sdl::Color<T> operator+(const N val) const
         {
             return {
                 static_cast<T>(r + val),
@@ -319,8 +319,8 @@ namespace rl::sdl {
             };
         }
 
-        template <rl::numeric T>
-        constexpr inline sdl::Color<T> operator-(const T val) const
+        template <rl::numeric N>
+        constexpr inline sdl::Color<T> operator-(const N val) const
         {
             return {
                 static_cast<T>(r - val),
@@ -330,8 +330,8 @@ namespace rl::sdl {
             };
         }
 
-        template <rl::numeric T>
-        constexpr inline sdl::Color<T> operator*(const T val) const
+        template <rl::numeric N>
+        constexpr inline sdl::Color<T> operator*(const N val) const
         {
             return {
                 static_cast<T>(r * val),
@@ -341,8 +341,8 @@ namespace rl::sdl {
             };
         }
 
-        template <rl::numeric T>
-        constexpr inline sdl::Color<T> operator/(const T val) const
+        template <rl::numeric N>
+        constexpr inline sdl::Color<T> operator/(const N val) const
         {
             return {
                 static_cast<T>(r / val),

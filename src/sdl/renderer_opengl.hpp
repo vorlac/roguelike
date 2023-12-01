@@ -57,15 +57,17 @@ namespace rl::sdl {
         };
 
         constexpr static inline Properties DEFAULT_PROPERTY_FLAGS = {
-            Properties::HWAccelerated | Properties::VSync,
+            Properties::HWAccelerated  // |
+            // Properties::VSync,
         };
 
+    private:
         explicit RendererGL() = delete;
-        explicit RendererGL(RendererGL& other) = delete;
         explicit RendererGL(const RendererGL& other) = delete;
+        explicit RendererGL(RendererGL& other) = delete;
 
     public:
-        explicit RendererGL(const sdl::Window& window, RendererGL::Properties flags);
+        explicit RendererGL(sdl::Window& window, RendererGL::Properties flags);
 
         ds::dims<i32> get_output_size() const;
         ds::rect<i32> get_viewport();

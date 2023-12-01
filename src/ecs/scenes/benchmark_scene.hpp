@@ -279,7 +279,7 @@ namespace rl::scene {
                                 rect_colors.emplace_back(
                                     std::forward<const ds::rect<f32>>(
                                         { position, system::RECT_SIZE * size_scale.factor }),
-                                    std::forward<const sdl::Color>(rect_color.color));
+                                    std::forward<const sdl::Color<u8>>(rect_color.color));
 
                             if constexpr (!USE_RANDOM_COLORS)
                                 rects.emplace_back(position, system::RECT_SIZE * size_scale.factor);

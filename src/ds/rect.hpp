@@ -2,12 +2,15 @@
 
 #include <memory>
 #include <type_traits>
+#include <utility>
+#include <vector>
 
 #include "core/numeric.hpp"
 #include "ds/dims.hpp"
 #include "ds/point.hpp"
 #include "ds/triangle.hpp"
 #include "ds/vector2d.hpp"
+#include "sdl/color.hpp"
 #include "sdl/defs.hpp"
 #include "utils/concepts.hpp"
 
@@ -238,16 +241,21 @@ namespace rl::ds {
             return this->is_empty() && pt == vector2<T>::null();
         }
 
-        constexpr inline decltype(auto) triangles()
+        constexpr inline auto triangles(sdl::Color<f32>& clr)
+            -> std::vector<std::pair<ds::point<f32>, sdl::Color<f32>>>
         {
             ds::point<T> tl{ pt.x, pt.y + size.height };
             ds::point<T> bl{ pt.x, pt.y };
             ds::point<T> tr{ tl.x + size.width, tl.y };
             ds::point<T> br{ tl.x + size.width, tl.y - size.height };
 
-            return std::vector{
-                ds::triangle{ tr, br, tl },
-                ds::triangle{ br, bl, tl },
+            return {
+                { tr, clr },  // triangle 1, top right | color
+                { br, clr },  // triangle 1, top bottom right | color
+                { tl, clr },  // triangle 1, top left | color
+                { br, clr },  // triangle 2, bottom right | color
+                { bl, clr },  // triangle 2, bottom left | color
+                { tl, clr },  // triangle 2, top left | color
             };
         }
 

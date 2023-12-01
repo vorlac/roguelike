@@ -60,7 +60,7 @@ namespace rl::sdl {
         u8 get_alpha_mod() const;
         SDL3::SDL_BlendMode get_blend_mode() const;
         sdl::Color<u8> get_color_mod() const;
-        void get_color_mod(u8& r, u8& g, u8& b) const;
+        bool get_color_mod(u8& r, u8& g, u8& b) const;
         bool set_clip_rect(const ds::rect<i32>& rect);
         bool set_color_key(bool flag, u32 key);
         bool set_alpha_mod(u8 alpha);

@@ -22,37 +22,32 @@ SDL_C_LIB_BEGIN
 SDL_C_LIB_END
 
 namespace rl::sdl {
-    RendererGL::RendererGL(const sdl::Window& window, RendererGL::Properties flags)
+
+    RendererGL::RendererGL(sdl::Window& window, RendererGL::Properties flags)
         : m_properties{ flags }
         , m_sdl_glcontext{ SDL3::SDL_GL_CreateContext(window.sdl_handle()) }
     {
         int result = m_sdl_glcontext != nullptr ? 0 : -1;
-        sdl_assert(result == 0, "Failed to crete OpenGL context");
+        sdl_assert(result == 0, "Failed to create OpenGL context");
 
-        result = SDL3::SDL_GL_LoadLibrary(nullptr);
-        sdl_assert(result == 0, "Failed to load OpenGL library");
-        if (result == 0)
+        i32 version = gladLoadGL((GLADloadfunc)SDL3::SDL_GL_GetProcAddress);
+        i32 gl_major_ver{ GLAD_VERSION_MAJOR(version) };
+        i32 gl_minor_ver{ GLAD_VERSION_MINOR(version) };
+
+        runtime_assert((gl_major_ver >= 3 && gl_minor_ver >= 3 || gl_major_ver > 3),
+                       "Deprecated OpenGL Version Loaded: {}.{}", gl_major_ver, gl_minor_ver);
+
+        if (gl_major_ver > 3 || gl_major_ver == 3 && gl_minor_ver >= 3)
         {
-            sdl_assert(m_sdl_glcontext != nullptr, "failed to create renderer");
+            const GLubyte* const gl_ver_str = glGetString(GL_VERSION);
+            const GLubyte* const renderer_str = glGetString(GL_RENDERER);
+            log::warning("GL_RENDERER = {}", reinterpret_cast<const char*>(renderer_str));
+            log::warning("GL_VERSION = {}", reinterpret_cast<const char*>(gl_ver_str));
+            log::warning("OpenGL [{}.{}] Context Created Successfully", gl_major_ver, gl_minor_ver);
 
-            SDL3::SDL_GL_SetAttribute(SDL3::SDL_GL_DOUBLEBUFFER, 1);
-            SDL3::SDL_GL_SetAttribute(SDL3::SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-            SDL3::SDL_GL_SetAttribute(SDL3::SDL_GL_CONTEXT_MINOR_VERSION, 6);
-            SDL3::SDL_GL_SetAttribute(SDL3::SDL_GL_SHARE_WITH_CURRENT_CONTEXT, 1);
-            SDL3::SDL_GL_SetAttribute(SDL3::SDL_GL_CONTEXT_PROFILE_MASK,
-                                      SDL3::SDL_GL_CONTEXT_PROFILE_CORE);
-
-            i32 version = gladLoadGL(SDL3::SDL_GL_GetProcAddress);
-            i32 gl_major_ver{ GLAD_VERSION_MAJOR(version) };
-            i32 gl_minor_ver{ GLAD_VERSION_MINOR(version) };
-            log::warning("OpenGL [{}.{}] => Context Created Successfully", gl_major_ver,
-                         gl_minor_ver);
-
-            runtime_assert((gl_major_ver >= 3 && gl_minor_ver >= 3 || gl_major_ver > 3),
-                           "Deprecated OpenGL Version Loaded: {}.{}", gl_major_ver, gl_minor_ver);
-
-            if (gl_major_ver >= 3 && gl_minor_ver >= 3 || gl_major_ver > 3)
+            if (result == 0)
             {
+                sdl_assert(m_sdl_glcontext != nullptr, "failed to create renderer");
                 ds::dims<i32> viewport{ window.get_render_size() };
                 glViewport(0, 0, viewport.width, viewport.height);
             }

@@ -35,20 +35,19 @@ namespace rl::gl {
         /**
          * @brief Configure/define and bind all shared state between user app and openGL driver
          * */
-        void bind_buffers(std::vector<std::tuple<ds::triangle<f32>, sdl::Color<f32>>>& vbuff)
+        void bind_buffers(std::vector<std::pair<ds::point<f32>, sdl::Color<f32>>>& vbuff)
         {
             // bind the VAO vertex array
             glBindVertexArray(m_vao_id);
 
             if (!vbuff.empty())
             {
-                // 3 points * 3 floats per point * triangle count
-                m_buffer_vertex_count = 3 * 3 * static_cast<i32>(vbuff.size());
+                // (3 floats per point + 4 floats per color) * vertex pair<point, color> count
+                m_buffer_vertex_count = (3 + 4) * static_cast<i32>(vbuff.size());
                 // bind the VBO vertex buffer
                 glBindBuffer(GL_ARRAY_BUFFER, m_vbo_id);
                 // define info about the VBO vertex buffer, targeting GL_ARRAY_BUFFER
-                glBufferData(GL_ARRAY_BUFFER,
-                             sizeof(f32) * m_buffer_vertex_count + (3 * sizeof(f32)), vbuff.data(),
+                glBufferData(GL_ARRAY_BUFFER, sizeof(f32) * m_buffer_vertex_count, vbuff.data(),
                              GL_STATIC_DRAW);
             }
 
@@ -56,17 +55,17 @@ namespace rl::gl {
                 0, 3,                  // index and count of vertices to configure
                 GL_FLOAT,              // data type of vertex data
                 GL_FALSE,              // should vertices be normalized (to 0 or -1 for signed)
-                6 * sizeof(f32),       // stride between each vertex record in the buffer
+                7 * sizeof(f32),       // stride between each vertex record in the buffer
                 static_cast<void*>(0)  // void* offset of where the position data starts
             );
             glEnableVertexAttribArray(0);
 
             glVertexAttribPointer(                        //
-                1, 3,                                     //
+                1, 4,                                     //
                 GL_FLOAT,                                 //
                 GL_FALSE,                                 //
-                6 * sizeof(f32),                          //
-                reinterpret_cast<void*>(3 * sizeof(f32))  //
+                7 * sizeof(f32),                          //
+                reinterpret_cast<void*>(4 * sizeof(f32))  //
             );
             glEnableVertexAttribArray(1);
 

@@ -101,12 +101,13 @@ namespace rl::sdl {
         };
 
         constexpr static inline Window::Properties DEFAULT_PROPERTY_FLAGS = {
-            Properties::Flag::HighDPI |     //
-            Properties::Flag::InputFocus |  //
-            Properties::Flag::MouseFocus |  //
-            Properties::Flag::Resizable |   //
-            Properties::Flag::Occluded |    //
-            Properties::Flag::OpenGL        //
+            // Properties::Flag::HighDPI |     //
+            // Properties::Flag::InputFocus |  //
+            // Properties::Flag::MouseFocus |  //
+            Properties::Flag::Resizable |
+            // Properties::Flag::Occluded |    //
+            Properties::Flag::OpenGL  //|  //
+            // Properties::Flag::Show
             // Properties::Flag::Vulkan
         };
 
@@ -121,7 +122,7 @@ namespace rl::sdl {
         };
 
     public:
-        explicit Window() = delete;
+        explicit Window();
         explicit Window(sdl::Window&& window) noexcept = delete;
         explicit Window(const sdl::Window& window) = delete;
         explicit Window(SDL3::SDL_Window* other) = delete;
