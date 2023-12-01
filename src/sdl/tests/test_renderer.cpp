@@ -870,7 +870,7 @@ namespace rl::sdl::test {
             { out_size.width / factor, out_size.height / factor },
             SDL3::SDL_LOGICAL_PRESENTATION_LETTERBOX, SDL3::SDL_SCALEMODE_NEAREST);
 
-        renderer.set_draw_color({ 0, 255, 0, Color<u8>::Preset::Opaque });
+        renderer.set_draw_color({ 0, 255, 0, Color<u8>::Opaque });
 
         ds::rect<f32> rect = {
             (float)viewport.pt.x / factor,
@@ -938,7 +938,7 @@ namespace rl::sdl::test {
             { out_size.width - 2 * (TESTRENDER_SCREEN_W / 4), out_size.height },
             SDL3::SDL_LOGICAL_PRESENTATION_LETTERBOX, SDL3::SDL_SCALEMODE_LINEAR);
 
-        renderer.set_draw_color({ 0, 255, 0, Color<u8>::Preset::Opaque });
+        renderer.set_draw_color({ 0, 255, 0, Color<u8>::Opaque });
         renderer.fill_rect();
         renderer.set_logical_size({ 0, 0 }, SDL3::SDL_LOGICAL_PRESENTATION_DISABLED,
                                   SDL3::SDL_SCALEMODE_NEAREST);

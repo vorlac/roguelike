@@ -105,19 +105,19 @@ namespace rl {
         std::vector<std::pair<ds::rect<f32>, sdl::Color<f32>>> rects = {
             std::pair{
                 ds::rect<f32>{ { -0.5f, 0.0f }, ds::dims<f32>{ 0.5f, 0.5f } },
-                sdl::Color<f32>{ 0.99f, 0.0f, 0.0f, 1.0f },
+                sdl::Color<f32>{ rl::Colors::Red },
             },
             std::pair{
                 ds::rect<f32>{ { -0.5f, -0.5f }, ds::dims<f32>{ 0.5f, 0.5f } },
-                sdl::Color<f32>{ 0.0f, 0.99f, 0.99f },
+                sdl::Color<f32>{ rl::Colors::Blue },
             },
             std::pair{
                 ds::rect<f32>{ { 0.0f, 0.0f }, ds::dims<f32>{ 0.5f, 0.5f } },
-                sdl::Color<f32>{ 0.0f, 0.0f, 0.99f },
+                sdl::Color<f32>{ rl::Colors::Purple },
             },
             std::pair{
                 ds::rect<f32>{ { 0.0f, -0.5f }, ds::dims<f32>{ 0.5f, 0.5f } },
-                sdl::Color<f32>{ 0.99f, 0.99f, 0.0f },
+                sdl::Color<f32>{ rl::Colors::Green },
             },
         };
 
@@ -130,8 +130,7 @@ namespace rl {
         vbo.bind_buffers(triangles);
 
         sdl::Color<u8> c_orange{ fmt::color::burly_wood };
-        sdl::Color<u8> clear_clr1{ 0.2f, 0.3f, 0.3f, 1.0f };
-        sdl::Color<u8> clear_clr2{ 0.7f, 0.4f, 0.4f, 1.0f };
+        sdl::Color<u8> clear_clr1{ 29, 32, 39 };
         sdl::Timer<f32, sdl::TimeDuration::Second> timer{};
 
         u32 loop_count = 0;

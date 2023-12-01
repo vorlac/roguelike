@@ -73,7 +73,7 @@ namespace rl::sdl {
         ds::rect<i32> get_viewport();
 
         bool set_draw_color(const sdl::Color<u8>& c);
-        bool clear(const sdl::Color<u8>& c = { 0, 0, 0 });
+        bool clear(const sdl::Color<u8>& c = { 29, 32, 39 });
         bool present();
         bool swap_buffers(sdl::Window& window);
         bool set_target();
