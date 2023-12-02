@@ -33,6 +33,7 @@
 #include "ecs/scenes/benchmark_scene.hpp"
 #include "ecs/scenes/main_menu_scene.hpp"
 #include "ecs/scenes/scene_types.hpp"
+#include "gl/instanced_buffer.hpp"
 #include "gl/shader.hpp"
 #include "gl/vertex_buffer.hpp"
 #include "sdl/tests/test_suite.hpp"
@@ -100,7 +101,7 @@ namespace rl {
 
     bool Game::run()
     {
-        this->setup();
+        // this->setup();
 
         std::vector<std::pair<ds::rect<f32>, ds::color<f32>>> rects = {
             std::pair{
@@ -129,23 +130,29 @@ namespace rl {
         // std::ranges::for_each(rects, [&](std::pair<ds::rect<f32>, ds::color<f32>>& t) {
         //     triangles.append_range(std::get<0>(t).triangles(std::get<1>(t)));
         // });
+        sdl::Window& window{ m_sdl.window() };
+        std::shared_ptr<sdl::RendererGL> renderer{ window.renderer() };
+        auto size = renderer->get_viewport();
+        ds::rect<f32> render_rect{ renderer->get_viewport() };
+        gl::InstancedVertexArray iva{ render_rect };
+        iva.bind_buffers();
 
         // gl::VertexBuffer vbo{};
         // vbo.bind_buffers(triangles);
 
         u32 loop_count = 0;
-        sdl::Window& window{ m_sdl.window() };
-        std::shared_ptr<sdl::RendererGL> renderer{ window.renderer() };
         while (this->handle_events())
         {
-            m_world.progress();
-            // renderer->clear();
+            // m_world.progress();
+            renderer->clear();
+            iva.update_buffers(renderer->get_viewport().size);
 
             if (this->quit_requested()) [[unlikely]]
                 break;
 
+            iva.render_buffers();
             // vbo.draw_triangles(window);
-            // window.swap_buffers();
+            window.swap_buffers();
 
             if constexpr (io::logging::main_loop)
                 if (++loop_count % 60 == 0)

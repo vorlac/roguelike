@@ -69,8 +69,9 @@ namespace rl::sdl {
     public:
         explicit RendererGL(sdl::Window& window, RendererGL::Properties flags);
 
-        ds::dims<i32> get_output_size() const;
-        ds::rect<i32> get_viewport();
+        // ds::dims<i32> get_output_size() const;
+        ds::rect<i32> get_viewport() const;
+        bool set_viewport(const ds::rect<i32>& rect);
 
         bool set_draw_color(const ds::color<u8>& c);
         bool clear(const ds::color<u8>& c = { 29, 32, 39 });
@@ -79,21 +80,6 @@ namespace rl::sdl {
         bool set_target();
         bool set_target(sdl::Texture& tex);
         bool set_draw_blend_mode(const SDL3::SDL_BlendMode blend_mode);
-        bool draw_point(const ds::point<f32>& pt);
-        bool draw_points(const std::vector<ds::point<f32>>& points);
-        bool draw_line(const ds::point<f32>& pt1, const ds::point<f32>& pt2);
-        bool draw_triangle(const ds::triangle<f32>& triangle, const ds::color<u8>& color);
-        bool draw_lines(const std::vector<ds::point<f32>>& lines);
-        bool draw_rect(ds::rect<f32>&& rect, const ds::color<u8>& c = {});
-        bool draw_rects(const std::vector<ds::rect<f32>>& rects);
-        bool fill_rect(const ds::rect<f32>& rect = ds::rect<i32>::null(),
-                       const ds::color<u8>& c = {});
-        bool fill_rects(const std::vector<ds::rect<f32>>& rects, const ds::color<u8>& c = {});
-        bool fill_rects(const std::vector<std::pair<ds::rect<f32>, ds::color<u8>>>& rects);
-
-        bool draw_texture(sdl::Texture& texture,
-                          const ds::rect<f32>& src_rect = ds::rect<f32>::null(),
-                          const ds::rect<f32>& dst_rect = ds::rect<f32>::null());
 
     private:
         RendererGL::Properties m_properties{ RendererGL::Properties::None };

@@ -134,6 +134,8 @@ namespace rl::gl {
             glDeleteShader(vert_shader_id);
             glDeleteShader(frag_shader_id);
 
+            this->set_transform();
+
             return true;
         }
 
@@ -163,15 +165,45 @@ namespace rl::gl {
 
         void set_transform()
         {
-            // create transformations
-            // make sure to initialize matrix to identity matrix first
-            glm::mat4 model = glm::identity<glm::mat4>();
-            glm::mat4 view = glm::identity<glm::mat4>();
-            glm::mat4 proj = glm::identity<glm::mat4>();
+            //// create transformations
+            //// make sure to initialize matrix to identity matrix first
+            // glm::mat4 model = glm::identity<glm::mat4>();
+            // glm::mat4 view = glm::identity<glm::mat4>();
+            // glm::mat4 proj = glm::identity<glm::mat4>();
+            // model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+            // view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+            // proj = glm::perspective(glm::radians(45.0f), 1920.0f / 1080.0f, 0.1f, 100.0f);
+            // for an ortho camera, in world coords:
+            // glm::mat4 projection_matrix = glm::ortho(-10.0f,10.0f,-10.0f,10.0f,0.0f,100.0f);
 
-            model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-            view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
-            proj = glm::perspective(glm::radians(45.0f), 1920.0f / 1080.0f, 0.1f, 100.0f);
+            // The vertical FoV (radians), amount of zoom
+            constexpr float fov = -55.0f;
+            // Camera is at (4,3,3), in world space
+            glm::vec3 camera_pos(0, 1, 0);
+            // wheree the camera should look (origin)
+            glm::vec3 camera_target(0, 0, 0);
+            // the vector pointing in the up direction in the world
+            glm::vec3 up_direction(0, 1, 0);
+
+            // origin / identity matrix
+            glm::mat4 model_matrix = glm::identity<glm::mat4>();
+
+            // where the view should be updated, 3 units to the right (world moves -3)
+            // ... glm::vec3(-3.0f, 0.0f, 0.0f), for now don't move the campera...
+            glm::mat4 view_matrix = glm::translate(glm::mat4(), glm::vec3(0.0f, 0.0f, 0.0f));
+
+            glm::mat4 camera_matrix = glm::lookAt(  //
+                camera_pos,                         // camera location in world space
+                camera_target,                      // where camera should be aiming in world space
+                up_direction                        // up, (0,-1,0) would make the view upside-down
+            );
+
+            glm::mat4 projection_matrix = glm::perspective(
+                glm::radians(fov),  // Think "camera lens", usually 90(wide) - 30(zoomed in)
+                1920.0f / 1080.0f,  // Aspect Ratio. Depends on window dimensions.
+                0.1f,   // Near clipping plane, keep as big as possible to avoid precision issues.
+                100.0f  // Far clipping plane. Keep as little as possible.
+            );
 
             // retrieve the matrix uniform locations
             u32 model_loc = glGetUniformLocation(m_shader_id, "model");
@@ -179,9 +211,9 @@ namespace rl::gl {
             u32 proj_loc = glGetUniformLocation(m_shader_id, "projection");
 
             // pass them to the shaders (3 different ways)
-            glUniformMatrix4fv(model_loc, 1, GL_FALSE, glm::value_ptr(model));
-            glUniformMatrix4fv(view_loc, 1, GL_FALSE, glm::value_ptr(view));
-            glUniformMatrix4fv(proj_loc, 1, GL_FALSE, glm::value_ptr(proj));
+            glUniformMatrix4fv(model_loc, 1, GL_FALSE, glm::value_ptr(model_matrix));
+            glUniformMatrix4fv(view_loc, 1, GL_FALSE, glm::value_ptr(camera_matrix));
+            glUniformMatrix4fv(proj_loc, 1, GL_FALSE, glm::value_ptr(projection_matrix));
         }
 
     private:

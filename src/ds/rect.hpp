@@ -205,6 +205,23 @@ namespace rl::ds {
             return size.area();
         }
 
+        rect<T>& gl_to_display()
+        {
+            // OpenGL uses the pt to represent the bottom
+            // left coordinate instead of the top left so
+            // just shift the rect towards the top of the
+            // screen by it's current height so BL->TL
+            pt.y -= size.height;
+            return *this;
+        }
+
+        rect<T>& display_to_gl()
+        {
+            // See above ^
+            pt.y += size.height;
+            return *this;
+        }
+
         /**
          * @brief Checks if the rectangle has no area
          * */

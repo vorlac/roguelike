@@ -249,7 +249,7 @@ namespace rl::scene {
             {
                 m_renderer = window.renderer().get();
 
-                const auto window_context_size{ m_renderer->get_output_size() };
+                const auto window_context_size{ m_renderer->get_viewport() };
 
                 static sdl::Window& window_ref = window;
                 static gl::VertexBuffer vbo{};

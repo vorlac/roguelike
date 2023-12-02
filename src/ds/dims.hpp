@@ -11,6 +11,8 @@
 #include "utils/memory.hpp"
 
 namespace rl::ds {
+#pragma pack(4)
+
     template <rl::numeric T>
     struct dims
     {
@@ -131,4 +133,6 @@ namespace rl::ds {
     {
         return fmt::format("(w={}, h={})", size.width, size.height);
     }
+
+#pragma pack()
 }

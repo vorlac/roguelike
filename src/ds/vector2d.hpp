@@ -462,27 +462,6 @@ namespace rl::ds {
             };
         }
 
-        // constexpr const inline T& x() const
-        //{
-        //     return std::get<0>(m_coords);
-        // }
-
-        // constexpr inline T& x()
-        //{
-        //     return std::get<0>(m_coords);
-        // }
-
-        // constexpr const inline T& y() const
-        //{
-        //     return std::get<1>(m_coords);
-        // }
-
-        // constexpr inline T& y()
-        //{
-        //     return std::get<1>(m_coords);
-        // }
-
-        // std::array<T, 3> m_coords{};
         T x{};
         T y{};
         T z{};

@@ -89,7 +89,7 @@ namespace rl::sdl::test {
             }
 
             /* Blit the sprite onto the screen */
-            renderer->draw_texture(sprite, ds::rect<f32>::null(), position);
+            // renderer->draw_texture(sprite, ds::rect<f32>::null(), position);
         }
         /* Update the screen! */
         renderer->present();

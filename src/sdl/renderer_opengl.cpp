@@ -41,6 +41,7 @@ namespace rl::sdl {
         {
             const GLubyte* const gl_ver_str = glGetString(GL_VERSION);
             const GLubyte* const renderer_str = glGetString(GL_RENDERER);
+
             log::warning("GL_RENDERER = {}", reinterpret_cast<const char*>(renderer_str));
             log::warning("GL_VERSION = {}", reinterpret_cast<const char*>(gl_ver_str));
             log::warning("OpenGL [{}.{}] Context Created Successfully", gl_major_ver, gl_minor_ver);
@@ -49,7 +50,7 @@ namespace rl::sdl {
             {
                 sdl_assert(m_sdl_glcontext != nullptr, "failed to create renderer");
                 ds::dims<i32> viewport{ window.get_render_size() };
-                glViewport(0, 0, viewport.width, viewport.height);
+                this->set_viewport({ { 0, 0 }, viewport });
             }
         }
     }
@@ -77,21 +78,7 @@ namespace rl::sdl {
         return ret;
     }
 
-    ds::dims<i32> RendererGL::get_output_size() const
-    {
-        ds::dims<i32> s{ 0, 0 };
-
-        return s;
-    }
-
     bool RendererGL::set_draw_color(const ds::color<u8>& c)
-    {
-        i32 result = 0;
-        return result == 0;
-    }
-
-    bool RendererGL::draw_texture(sdl::Texture& texture, const ds::rect<f32>& src_rect,
-                                  const ds::rect<f32>& dst_rect)
     {
         i32 result = 0;
         return result == 0;
@@ -115,76 +102,19 @@ namespace rl::sdl {
         return result == 0;
     }
 
-    bool RendererGL::draw_point(const ds::point<f32>& pt)
+    ds::rect<i32> RendererGL::get_viewport() const
     {
-        i32 result = 0;
-        return result == 0;
-    }
-
-    ds::rect<i32> RendererGL::get_viewport()
-    {
-        ds::rect<i32> rect{ 0, 0, 0, 0 };
+        std::array<i32, 4> buff{ 0, 0, 0, 0 };
+        glGetIntegerv(GL_VIEWPORT, reinterpret_cast<i32*>(buff.data()));
+        ds::rect<i32> rect{ { buff[0], buff[1] }, { buff[2], buff[3] } };
+        sdl_assert(!rect.is_empty(), "failed to get viewport");
         return rect;
     }
 
-    bool RendererGL::draw_points(const std::vector<ds::point<f32>>& points)
+    bool RendererGL::set_viewport(const ds::rect<i32>& rect)
     {
-        i32 result = 0;
-
-        return result == 0;
-    }
-
-    bool RendererGL::draw_line(const ds::point<f32>& pt1, const ds::point<f32>& pt2)
-    {
-        i32 result = 0;
-        return result == 0;
-    }
-
-    bool RendererGL::draw_lines(const std::vector<ds::point<f32>>& lines)
-    {
-        i32 result = 0;
-
-        return result == 0;
-    }
-
-    bool RendererGL::draw_triangle(const ds::triangle<f32>& triangle, const ds::color<u8>& color)
-    {
-        i32 result = 0;
-        return result == 0;
-    }
-
-    bool RendererGL::draw_rect(ds::rect<f32>&& rect, const ds::color<u8>& c)
-    {
-        i32 result = 0;
-
-        return result == 0;
-    }
-
-    bool RendererGL::draw_rects(const std::vector<ds::rect<f32>>& rects)
-    {
-        i32 result = 0;
-
-        return result == 0;
-    }
-
-    bool RendererGL::fill_rect(const ds::rect<f32>& rect, const ds::color<u8>& c)
-    {
-        i32 result = 0;
-
-        return result == 0;
-    }
-
-    bool RendererGL::fill_rects(const std::vector<ds::rect<f32>>& rects, const ds::color<u8>& c)
-    {
-        i32 result = 0;
-
-        return result == 0;
-    }
-
-    bool RendererGL::fill_rects(const std::vector<std::pair<ds::rect<f32>, ds::color<u8>>>& rects)
-    {
-        bool ret = true;
-
-        return ret;
+        runtime_assert(!rect.is_empty(), "invalid viewport rect being set");
+        glViewport(rect.pt.x, rect.pt.y, rect.size.width, rect.size.height);
+        return !rect.is_empty();
     }
 }

@@ -10,8 +10,9 @@
             x,y =&gt; ({x}, {y})
         </DisplayString>
         <Expand HideRawView="true">
-            <Item Name="[x]">x</Item>
-            <Item Name="[y]">y</Item>
+            <Item Name="x">x</Item>
+            <Item Name="y">y</Item>
+            <Item Name="z">z</Item>
         </Expand>
     </Type>
 
@@ -22,10 +23,10 @@
         <DisplayString>
             WxH =&gt; [{width} x {height}]
         </DisplayString>
-        <Expand HideRawView="true">
-            <Item Name="[width]">width</Item>
-            <Item Name="[height]">height</Item>
-            <Item Name="Area">width * height,f</Item>
+        <Expand HideRawView="false">
+            <Item Name="width">width</Item>
+            <Item Name="height">height</Item>
+            <Item Name="(area)">width * height,f</Item>
         </Expand>
     </Type>
 
