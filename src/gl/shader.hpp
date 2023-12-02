@@ -161,7 +161,7 @@ namespace rl::gl {
             glUniform1i(glGetUniformLocation(m_shader_id, name.data()), value);
         }
 
-        void setMat4(const std::string& name, const glm::mat4& value)
+        void set_transform()
         {
             // create transformations
             // make sure to initialize matrix to identity matrix first

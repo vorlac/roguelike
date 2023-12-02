@@ -20,6 +20,7 @@
 #include "ecs/components/style_components.hpp"
 #include "ecs/components/transform_components.hpp"
 #include "ecs/scenes/scene_types.hpp"
+#include "gl/vertex_buffer.hpp"
 #include "sdl/defs.hpp"
 #include "sdl/pixel_data.hpp"
 #include "sdl/renderer.hpp"
@@ -81,6 +82,7 @@ namespace rl::scene {
     struct benchmark
     {
         constexpr static inline size_t ENTITY_COUNT = 50000;
+        static inline std::vector<std::pair<ds::point<f32>, ds::color<f32>>> triangles{};
 
         struct observer
         {
@@ -243,86 +245,43 @@ namespace rl::scene {
                     });
             }
 
-            constexpr static inline bool USE_RANDOM_COLORS = false;
-            constexpr static inline ds::dims<f32> RECT_SIZE = {
-                USE_RANDOM_COLORS ? ds::dims<f32>{ 10.0f, 10.0f } : ds::dims<f32>{ 20.0f, 20.0f }
-            };
-
             static void define_entity_rendering(flecs::world& ecs, sdl::Window& window)
             {
-                //*m_sprite = std::move(sprite);
-
                 m_renderer = window.renderer().get();
-                m_renderer->set_draw_blend_mode(USE_RANDOM_COLORS ? sdl::Renderer::blend_mode::Blend
-                                                                  : sdl::Renderer::blend_mode::Mod);
-
-                static u32 count = 0;
-                static ds::color<u8> c = { 100, 200, 100, 75 };
-                static std::vector<ds::rect<f32>> rects = {};
-                if constexpr (!USE_RANDOM_COLORS)
-                    rects.reserve(benchmark::ENTITY_COUNT);
-
-                static std::vector<std::pair<ds::rect<f32>, ds::color<u8>>> rect_colors = {};
-                if constexpr (USE_RANDOM_COLORS)
-                    rect_colors.reserve(benchmark::ENTITY_COUNT);
 
                 const auto window_context_size{ m_renderer->get_output_size() };
 
-                sdl::Surface surface{
-                    window_context_size.width,
-                    window_context_size.height,
-                    sdl::PixelData::format::RGB24,
-                };
+                static sdl::Window& window_ref = window;
+                static gl::VertexBuffer vbo{};
 
-                // static sdl::Texture texture1{ window.renderer(), surface };
-                // static sdl::Texture texture2{ window.renderer(), surface };
+                triangles.reserve(              // Reserve buffer memory up front...
+                    ENTITY_COUNT *              // PER RECT:
+                    ((sizeof(float) * 6 * 3) +  //  6 vertices (3 floats each)
+                     (sizeof(float) * 6 * 4))   //  6 colors (one per vertex - 4 floats each)
+                );
+
+                vbo.bind_buffers(triangles);
 
                 ecs.system<const component::position, const component::style, const component::scale>(
                        "Render Rects")
                     .kind(flecs::PostUpdate)
-                    .multi_threaded(true)
                     .run([](flecs::iter_t* it) {
-                        m_renderer->clear({ 100, 100, 100, 175 });
-                        USE_RANDOM_COLORS ? rect_colors.clear()  //
-                                          : rects.clear();
-
-                        static i16 ga = 1;
-                        static i16 ba = 1;
-
-                        if ((++count % 120) == 0)
-                        {
-                            if (c.g > 250 || c.g < 105)
-                                ga *= -1;
-                            if (c.b > 250 || c.b < 105)
-                                ba *= -1;
-
-                            c.g += static_cast<u8>(ga);
-                            c.b += static_cast<u8>(ba);
-                        }
+                        triangles.clear();
+                        m_renderer->clear();
 
                         while (ecs_iter_next(it))
                             it->callback(it);
 
-                        USE_RANDOM_COLORS
-                        ? m_renderer->fill_rects(rect_colors)  //
-                        : m_renderer->fill_rects(rects, c);
-
-                        m_renderer->present();
+                        window_ref.swap_buffers();
                     })
-                    .each(
-                        [&](const rl::component::position& position,
-                            const rl::component::style& rect_color,
-                            const rl::component::scale& size_scale)  //
-                        {
-                            if constexpr (USE_RANDOM_COLORS)
-                                rect_colors.emplace_back(
-                                    std::forward<const ds::rect<f32>>(
-                                        { position, system::RECT_SIZE * size_scale.factor }),
-                                    std::forward<const ds::color<u8>>(rect_color.color));
-
-                            if constexpr (!USE_RANDOM_COLORS)
-                                rects.emplace_back(position, system::RECT_SIZE * size_scale.factor);
-                        });
+                    .each([&](const rl::component::position& position,
+                              const rl::component::style& rect_color,
+                              const rl::component::scale& size_scale) {
+                        triangles.append_range(ds::rect<f32>{
+                            ds::point<f32>{ position.x, position.y },
+                            ds::dims<f32>{
+                                15.0f, 15.0f } }.triangles(rect_color.color));
+                    });
             }
 
             static void define_entity_timeout(flecs::world& world)

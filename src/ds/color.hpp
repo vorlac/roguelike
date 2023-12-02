@@ -71,7 +71,7 @@ namespace rl::ds {
         //     return *this;
         // }
 
-        constexpr inline explicit color(const T& cr, const T& cg, const T& cb, const T& ca = Opaque)
+        constexpr inline color(const T& cr, const T& cg, const T& cb, const T& ca = Opaque)
             : r{ cr }
             , g{ cg }
             , b{ cb }
@@ -309,7 +309,7 @@ namespace rl::ds {
         constexpr inline operator color<f32>() const
             requires rl::integer<T>
         {
-            return std::array<T, 4>{ r, g, b, a };
+            return color<f32>{ r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f };
         }
 
         constexpr inline operator std::array<T, 4>() const

@@ -125,10 +125,10 @@ namespace rl {
         auto delta_time_s = timer.delta();
         auto elapsed_time = timer.elapsed();
 
-        std::vector<std::pair<ds::point<f32>, ds::color<f32>>> triangles = {};
-        std::ranges::for_each(rects, [&](std::pair<ds::rect<f32>, ds::color<f32>>& t) {
-            triangles.append_range(std::get<0>(t).triangles(std::get<1>(t)));
-        });
+        // std::vector<std::pair<ds::point<f32>, ds::color<f32>>> triangles = {};
+        // std::ranges::for_each(rects, [&](std::pair<ds::rect<f32>, ds::color<f32>>& t) {
+        //     triangles.append_range(std::get<0>(t).triangles(std::get<1>(t)));
+        // });
 
         // gl::VertexBuffer vbo{};
         // vbo.bind_buffers(triangles);
@@ -139,13 +139,13 @@ namespace rl {
         while (this->handle_events())
         {
             m_world.progress();
-            renderer->clear();
+            // renderer->clear();
 
             if (this->quit_requested()) [[unlikely]]
                 break;
 
             // vbo.draw_triangles(window);
-            window.swap_buffers();
+            // window.swap_buffers();
 
             if constexpr (io::logging::main_loop)
                 if (++loop_count % 60 == 0)

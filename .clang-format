@@ -58,7 +58,7 @@ BreakConstructorInitializersBeforeComma: true
 BreakConstructorInitializers: BeforeColon
 BreakStringLiterals: false
 ColumnLimit: 100
-CommentPragmas: '^ IWYU pragma:'
+CommentPragmas: "^ IWYU pragma:"
 CompactNamespaces: false
 ConstructorInitializerIndentWidth: 4
 ContinuationIndentWidth: 4
@@ -85,7 +85,7 @@ IncludeCategories:
     Priority: 0
     SortPriority: 0
     CaseSensitive: false
-  - Regex: '(<[0-9a-z_-]*>)'
+  - Regex: "(<[0-9a-z_-]*>)"
     Priority: 1
     SortPriority: 1
     CaseSensitive: false
@@ -115,8 +115,8 @@ IndentWrappedFunctionNames: false
 InsertTrailingCommas: None # [None, Wrapped] ==> trailing comma insertion cannot be used with bin packing
 KeepEmptyLinesAtTheStartOfBlocks: false
 LambdaBodyIndentation: Signature
-MacroBlockBegin: ''
-MacroBlockEnd: ''
+MacroBlockBegin: ""
+MacroBlockEnd: ""
 MaxEmptyLinesToKeep: 1
 NamespaceIndentation: All
 PenaltyBreakAssignment: 1000
@@ -132,7 +132,7 @@ PenaltyIndentedWhitespace: 0
 PointerAlignment: Left
 PPIndentWidth: 2
 QualifierAlignment: Custom
-QualifierOrder: ['constexpr', 'const', 'static', 'inline', 'volatile', 'type']
+QualifierOrder: ["constexpr", "const", "static", "inline", "volatile", "type"]
 ReferenceAlignment: Pointer
 ReflowComments: true
 RemoveBracesLLVM: true
@@ -186,4 +186,3 @@ WhitespaceSensitiveMacros:
   - NS_SWIFT_NAME
   - CF_SWIFT_NAME
   - R
-...

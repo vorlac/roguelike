@@ -84,7 +84,7 @@ namespace rl::sdl {
         return s;
     }
 
-    bool RendererGL::set_draw_color(ds::color<u8>& c)
+    bool RendererGL::set_draw_color(const ds::color<u8>& c)
     {
         i32 result = 0;
         return result == 0;

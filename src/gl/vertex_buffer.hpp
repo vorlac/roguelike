@@ -65,7 +65,7 @@ namespace rl::gl {
                 GL_FLOAT,                                 //
                 GL_FALSE,                                 //
                 7 * sizeof(f32),                          //
-                reinterpret_cast<void*>(3 * sizeof(f32))  //
+                reinterpret_cast<void*>(7 * sizeof(f32))  //
             );
             glEnableVertexAttribArray(1);
 

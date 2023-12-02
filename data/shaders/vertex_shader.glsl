@@ -1,14 +1,17 @@
 #version 330 core
 
-layout (location = 0) in vec3 pos;   
-layout (location = 1) in vec4 in_color; 
+layout(location = 0) in vec3 pos;
+layout(location = 1) in vec4 color;
 
-out vec4 primitive_color; 
-uniform mat4 transform;  
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
+
+out vec4 primitive_color;
 
 void main()
 {
-    gl_Position = transform * vec4(pos, 1.0f);
+    gl_Position = projection * view * model * vec4(pos, 1.0f);
     // set ourColor to the input color we got from the vertex data
-    primitive_color = in_color; 
+    primitive_color = color;
 }
