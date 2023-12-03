@@ -1,6 +1,9 @@
 #pragma once
 
+#include <iterator>
 #include <memory>
+#include <ranges>
+#include <span>
 #include <tuple>
 #include <utility>
 #include <vector>
@@ -13,6 +16,7 @@
 #include "ds/dims.hpp"
 #include "ds/point.hpp"
 #include "ds/rect.hpp"
+#include "ds/triangle.hpp"
 #include "ds/vector2d.hpp"
 #include "ecs/components/character_components.hpp"
 #include "ecs/components/kinematic_components.hpp"
@@ -58,13 +62,13 @@ SDL_C_LIB_END
 //     },
 // };
 //
-// std::vector<std::pair<ds::point<f32>, ds::color<f32>>> triangles = {};
+// std::vector<std::pair<ds::point<f32>, ds::color<f32>>> m_triangles = {};
 // std::ranges::for_each(rects, [&](std::pair<ds::rect<f32>, ds::color<f32>>& t) {
-//     triangles.append_range(std::get<0>(t).triangles(std::get<1>(t)));
+//     m_triangles.append_range(std::get<0>(t).m_triangles(std::get<1>(t)));
 // });
 //
 // gl::VertexBuffer vbo{};
-// vbo.bind_buffers(triangles);
+// vbo.bind_buffers(m_triangles);
 //
 // while(){
 //     m_world.progress();
@@ -73,7 +77,7 @@ SDL_C_LIB_END
 //     if (this->quit_requested()) [[unlikely]]
 //         break;
 //
-//     vbo.draw_triangles(window);
+//     vbo.draw_m_triangles(window);
 //     window.swap_buffers();
 //
 // }
@@ -82,7 +86,9 @@ namespace rl::scene {
     struct benchmark
     {
         constexpr static inline size_t ENTITY_COUNT = 50000;
-        static inline std::vector<std::pair<ds::point<f32>, ds::color<f32>>> triangles{};
+        static inline std::vector<std::pair<ds::point<f32>, ds::color<f32>>> m_triangles = {};
+
+        // static inline std::vector<std::pair<ds::point<f32>, ds::color<f32>>> m_triangles{};
 
         struct observer
         {
@@ -254,19 +260,19 @@ namespace rl::scene {
                 static sdl::Window& window_ref = window;
                 static gl::VertexBuffer vbo{};
 
-                triangles.reserve(              // Reserve buffer memory up front...
+                m_triangles.reserve(            // Reserve buffer memory up front...
                     ENTITY_COUNT *              // PER RECT:
                     ((sizeof(float) * 6 * 3) +  //  6 vertices (3 floats each)
                      (sizeof(float) * 6 * 4))   //  6 colors (one per vertex - 4 floats each)
                 );
 
-                vbo.bind_buffers(triangles);
+                vbo.bind_buffers(m_triangles);
 
-                ecs.system<const component::position, const component::style, const component::scale>(
-                       "Render Rects")
+                ecs.system<const component::position&, const component::style&,
+                           const component::scale&>("Render Rects")
                     .kind(flecs::PostUpdate)
                     .run([](flecs::iter_t* it) {
-                        triangles.clear();
+                        m_triangles.clear();
                         m_renderer->clear();
 
                         while (ecs_iter_next(it))
@@ -274,13 +280,16 @@ namespace rl::scene {
 
                         window_ref.swap_buffers();
                     })
-                    .each([&](const rl::component::position& position,
-                              const rl::component::style& rect_color,
-                              const rl::component::scale& size_scale) {
-                        triangles.append_range(ds::rect<f32>{
-                            ds::point<f32>{ position.x, position.y },
-                            ds::dims<f32>{
-                                15.0f, 15.0f } }.triangles(rect_color.color));
+                    .each([&](const component::position& pos, const component::style& rect_color,
+                              const component::scale&) {
+                        std::vector vec = {
+                            ds::rect<f32>{
+                                ds::point<f32>(pos.x, pos.y),
+                                ds::dims<f32>(15.0f, 15.0f),
+                            }
+                                .triangles(rect_color.color),
+                        };
+                        m_triangles.append_range(vec);
                     });
             }
 

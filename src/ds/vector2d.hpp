@@ -184,7 +184,7 @@ namespace rl::ds {
 
         constexpr inline f32 length() const
         {
-            return std::sqrtf(this->length_squared());
+            return std::sqrt(this->length_squared());
         }
 
         constexpr inline f32 length_squared() const
@@ -231,7 +231,7 @@ namespace rl::ds {
             f32 len_sq = this->length_squared();
             if (len_sq != 0.0f)
             {
-                f32 len = std::sqrtf(len_sq);
+                f32 len = std::sqrt(len_sq);
                 x /= len;
                 y /= len;
             }
@@ -245,14 +245,14 @@ namespace rl::ds {
 
         constexpr inline f32 angle() const
         {
-            return std::atan2f(y, x);
+            return std::atanhf(y, x);
         }
 
         constexpr static inline vector2<T> from_angle(const f32 angle)
         {
             return {
-                std::cosf(angle),
-                std::sinf(angle),
+                std::cosh(angle),
+                std::sinh(angle),
             };
         }
 
@@ -326,8 +326,8 @@ namespace rl::ds {
                 return this->lerp(to, weight);
             }
 
-            f32 start_length{ std::sqrtf(start_len_sq) };
-            f32 result_length{ std::lerp(start_length, std::sqrtf(end_len_sq), weight) };
+            f32 start_length{ std::sqrt(start_len_sq) };
+            f32 result_length{ std::lerp(start_length, std::sqrt(end_len_sq), weight) };
             f32 angle = this->angle_to(to);
 
             return this->rotated(angle * weight) * (result_length / start_length);

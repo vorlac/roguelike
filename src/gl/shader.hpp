@@ -134,8 +134,6 @@ namespace rl::gl {
             glDeleteShader(vert_shader_id);
             glDeleteShader(frag_shader_id);
 
-            this->set_transform();
-
             return true;
         }
 
@@ -163,23 +161,12 @@ namespace rl::gl {
             glUniform1i(glGetUniformLocation(m_shader_id, name.data()), value);
         }
 
-        void set_transform()
+        void set_transform(auto&& vert)
         {
-            //// create transformations
-            //// make sure to initialize matrix to identity matrix first
-            // glm::mat4 model = glm::identity<glm::mat4>();
-            // glm::mat4 view = glm::identity<glm::mat4>();
-            // glm::mat4 proj = glm::identity<glm::mat4>();
-            // model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-            // view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
-            // proj = glm::perspective(glm::radians(45.0f), 1920.0f / 1080.0f, 0.1f, 100.0f);
-            // for an ortho camera, in world coords:
-            // glm::mat4 projection_matrix = glm::ortho(-10.0f,10.0f,-10.0f,10.0f,0.0f,100.0f);
-
             // The vertical FoV (radians), amount of zoom
             constexpr float fov = -55.0f;
             // Camera is at (4,3,3), in world space
-            glm::vec3 camera_pos(0, 1, 0);
+            glm::vec3 camera_pos(0, 0, 0);
             // wheree the camera should look (origin)
             glm::vec3 camera_target(0, 0, 0);
             // the vector pointing in the up direction in the world
@@ -209,6 +196,17 @@ namespace rl::gl {
             u32 model_loc = glGetUniformLocation(m_shader_id, "model");
             u32 view_loc = glGetUniformLocation(m_shader_id, "view");
             u32 proj_loc = glGetUniformLocation(m_shader_id, "projection");
+
+            u32 vert_loc = glGetUniformLocation(m_shader_id, "velocity");
+
+            // Get a handle for our "MVP" uniform
+            // Only during the initialisation
+
+            // Send our transformation to the currently bound shader, in the "MVP" uniform
+            // This is done in the main loop since each model will have a different MVP matrix (At
+            // least for the M part)
+            glUniformMatrix4fv(vert_loc, 1, GL_FALSE,
+                               glm::value_ptr(glm::vec3(vert.x, vert.y, vert.z)));
 
             // pass them to the shaders (3 different ways)
             glUniformMatrix4fv(model_loc, 1, GL_FALSE, glm::value_ptr(model_matrix));

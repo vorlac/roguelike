@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <chrono>
 #include <iostream>
 #include <memory>
@@ -14,7 +15,7 @@
 
 #include "utils/io.hpp"
 
-#ifdef WIN32
+#ifdef _WIN32
   #ifndef LEAN_AND_MEAN
     #define LEAN_AND_MEAN
     #include <Windows.h>
@@ -67,11 +68,12 @@ namespace rl {
     std::tuple<Durations...> to_durations(DurationIn d)
     {
         std::tuple<Durations...> retval;
-        using discard = std::array;
-        discard{ 0,
-                 (void((std::get<Durations>(retval) = std::chrono::duration_cast<Durations>(d)),
-                       (d -= std::chrono::duration_cast<DurationIn>(std::get<Durations>(retval)))),
-                  0)... };
+        // using discard = std::tuple;
+        std::array{
+            0, (void((std::get<Durations>(retval) = std::chrono::duration_cast<Durations>(d)),
+                     (d -= std::chrono::duration_cast<DurationIn>(std::get<Durations>(retval)))),
+                0)...
+        };
         return retval;
     }
 

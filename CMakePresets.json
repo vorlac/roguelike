@@ -26,7 +26,7 @@
       "hidden": true,
       "environment": {
         "VERBOSE": "true"
-      } 
+      }
     },
     {
       "name": "msvc",
@@ -79,13 +79,14 @@
       "hidden": true,
       "cacheVariables": {
         "CMAKE_C_COMPILER": "gcc",
-        "CMAKE_CXX_COMPILER": "g++",
-        "VCPKG_TARGET_TRIPLET": "x64-linux"
+        "CMAKE_CXX_COMPILER": "g++"
       },
-      "condition": {
-        "type": "equals",
-        "lhs": "${hostSystemName}",
-        "rhs": "Linux"
+      "vendor": {
+        "microsoft.com/VisualStudioSettings/CMake/1.0": {
+          "enableClangTidyCodeAnalysis": true,
+          "intelliSenseMode": "windows-clang-x64",
+          "intelliSenseOptions": { "useCompilerDefaults": false }
+        }
       }
     },
     {
@@ -123,8 +124,10 @@
       },
       "vendor": {
         "microsoft.com/VisualStudioSettings/CMake/1.0": {
-          "enableMicrosoftCodeAnalysis": true,
-          "intelliSenseMode": "windows-clang-x64"
+          "enableMicrosoftCodeAnalysis": false,
+          "enableClangTidyCodeAnalysis": true,
+          "intelliSenseMode": "windows-clang-x64",
+          "intelliSenseOptions": { "useCompilerDefaults": false }
         }
       }
     },

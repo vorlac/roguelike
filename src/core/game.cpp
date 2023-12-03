@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <cctype>
 #include <chrono>
 #include <functional>
 #include <iostream>
@@ -134,11 +133,12 @@ namespace rl {
         std::shared_ptr<sdl::RendererGL> renderer{ window.renderer() };
         auto size = renderer->get_viewport();
         ds::rect<f32> render_rect{ renderer->get_viewport() };
-        gl::InstancedVertexArray iva{ render_rect };
-        iva.bind_buffers();
 
         // gl::VertexBuffer vbo{};
         // vbo.bind_buffers(triangles);
+
+        gl::InstancedVertexArray iva{ render_rect };
+        iva.bind_buffers();
 
         u32 loop_count = 0;
         while (this->handle_events())
@@ -151,7 +151,6 @@ namespace rl {
                 break;
 
             iva.render_buffers();
-            // vbo.draw_triangles(window);
             window.swap_buffers();
 
             if constexpr (io::logging::main_loop)

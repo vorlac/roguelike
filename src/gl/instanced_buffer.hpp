@@ -23,7 +23,7 @@ namespace rl::gl {
 
             // The VBO containing the positions and sizes of
             // the particles. Init with null buffer, it will
-            // be updated later, each frame.
+            // be updated later, once per frame.
             glGenBuffers(1, &m_posize_buffer);
             glBindBuffer(GL_ARRAY_BUFFER, m_posize_buffer);
             glBufferData(GL_ARRAY_BUFFER, m_rect_count * 4 * sizeof(f32), nullptr, GL_STREAM_DRAW);
@@ -72,7 +72,7 @@ namespace rl::gl {
             glEnableVertexAttribArray(0);
             glBindBuffer(GL_ARRAY_BUFFER, m_vertex_buffer);
             glVertexAttribPointer(     //
-                0,                     // attribute, must match the layout in the shader.
+                0,                     // attribute, layout = 0 in the shader
                 3,                     // size
                 GL_FLOAT,              // type
                 GL_FALSE,              // normalized?
@@ -85,7 +85,7 @@ namespace rl::gl {
             glEnableVertexAttribArray(1);
             glBindBuffer(GL_ARRAY_BUFFER, m_posize_buffer);
             glVertexAttribPointer(     //
-                1,                     // attribute, must match the layout in the shader.
+                1,                     // attribute,layout = 1 in the shader.
                 4,                     // size : x + y + z + size => 4
                 GL_FLOAT,              // type
                 GL_FALSE,              // normalized?
@@ -98,7 +98,7 @@ namespace rl::gl {
             glEnableVertexAttribArray(2);
             glBindBuffer(GL_ARRAY_BUFFER, m_colors_buffer);
             glVertexAttribPointer(     //
-                2,                     // attribute, must match the layout in the shader
+                2,                     // attribute, layout = 2 in the shader
                 4,                     // size : r + g + b + a => 4
                 GL_UNSIGNED_BYTE,      // type
                 GL_TRUE,               // normalized? yes, this means the u8[4] will be accessible
@@ -135,24 +135,25 @@ namespace rl::gl {
                     vel.x = -vel.x;
                 if (top_bottom_collision(pos))
                     vel.y = -vel.y;
+
+                // TODO: APPLY WORLD SPACE TRANSFORM WITH CONST RECT HERE???
+                m_shader.set_transform(pos);
             }
 
-            // Update the buffers that OpenGL uses for rendering.
-            // There are much more sophisticated means to stream data from the CPU to the GPU,
-            // but this is outside the scope of this tutorial.
             // http://www.opengl.org/wiki/Buffer_Object_Streaming
-
             glBindBuffer(GL_ARRAY_BUFFER, m_posize_buffer);
             glBufferData(GL_ARRAY_BUFFER, m_rect_count * 4 * sizeof(f32), nullptr, GL_STREAM_DRAW);
 
-            // Buffer orphaning, a common way to improve streaming perf
+            // todo: use for buffer orphaning later if/when the
+            // count isn't always going to be m_rect_count
             glBufferSubData(GL_ARRAY_BUFFER, 0, m_rect_count * sizeof(f32) * 4,
                             m_rect_pos_sizes_buffer_data.data());
 
             glBindBuffer(GL_ARRAY_BUFFER, m_colors_buffer);
             glBufferData(GL_ARRAY_BUFFER, m_rect_count * 4 * sizeof(u8), nullptr, GL_STREAM_DRAW);
 
-            // Buffer orphaning, a common way to improve streaming perf
+            // todo: use for buffer orphaning later if/when the
+            // count isn't always going to be m_rect_count
             glBufferSubData(GL_ARRAY_BUFFER, 0, m_rect_count * sizeof(u8) * 4,
                             m_rect_colors_buffer_data.data());
 
@@ -162,16 +163,13 @@ namespace rl::gl {
         bool render_buffers()
         {
             m_shader.set_active();
-            // These functions are specific to glDrawArrays*Instanced*.
-            // The first parameter is the attribute buffer we're talking about.
-            // The second parameter is the "rate at which generic vertex attributes advance when
-            // rendering multiple instances"
-            // http://www.opengl.org/sdk/docs/man/xhtml/glVertexAttribDivisor.xml
-            glVertexAttribDivisor(0, 0);  // rect vertices : always reuse the same 4 vertices -> 0
-            glVertexAttribDivisor(1, 1);  // rect positions : one per quad (its center) -> 1
-            glVertexAttribDivisor(2, 1);  // rect colors : one per quad -> 1
 
-            // Draw the rects, this draws many times a small triangle_strip / rect
+            // http://www.opengl.org/sdk/docs/man/xhtml/glVertexAttribDivisor.xml
+            glVertexAttribDivisor(0, 0);  // rect vertices: always reuse the same 4 vertices -> 0
+            glVertexAttribDivisor(1, 1);  // rect positions: one per quad (its center) -> 1
+            glVertexAttribDivisor(2, 1);  // rect colors: one per quad -> 1
+
+            // draw the vertices from m_rect_vertex_buffer_data, m_rect count time
             glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 4, m_rect_count);
 
             return true;
@@ -186,12 +184,10 @@ namespace rl::gl {
 
         constexpr static inline u32 m_rect_count{ 5 };
         constexpr static inline f32 m_rect_size{ 15.0f };
+
         // single rect's vertices that will be reused to draw all rects
-        constexpr static inline std::vector<ds::point<f32>> m_rect_vertex_buffer_data{
-            ds::point<f32>{ -0.5f, -0.5f },
-            ds::point<f32>{ 0.5f, -0.5f },
-            ds::point<f32>{ -0.5f, 0.5f },
-            ds::point<f32>{ 0.5f, 0.5f },
+        constexpr static inline std::array m_rect_vertex_buffer_data{
+            ds::triangle<f32>{ { -0.5f, -0.5f }, { 0.5f, -0.5 }, { 0.0f, 0.5f } }.points()
         };
 
         u32 m_vertex_buffer{ 999 };
@@ -201,5 +197,4 @@ namespace rl::gl {
         gl::Shader m_shader{};
         sdl::Timer<f32> m_timer{};
     };
-
 }

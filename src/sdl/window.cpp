@@ -267,7 +267,7 @@ namespace rl::sdl {
     SDL3::SDL_DisplayID Window::get_display() const
     {
         SDL3::SDL_DisplayID id{ SDL3::SDL_GetDisplayForWindow(m_sdl_window) };
-        runtime_assert(id < 0, "failed to set window display idx");
+        runtime_assert(id != 0, "failed to set window display idx");
         return id;
     }
 

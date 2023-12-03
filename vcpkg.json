@@ -9,6 +9,7 @@
     "argparse",
     "imgui",
     "glm",
-    "fmt"
+    "fmt",
+    "directxtk12"
   ]
 }

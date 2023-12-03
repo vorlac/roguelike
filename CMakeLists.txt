@@ -52,8 +52,10 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl)
 # add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl_image)
 # add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl_mixer)
 
-find_package(glm CONFIG REQUIRED)
+set(FMT_SHARED OFF)
 find_package(fmt CONFIG REQUIRED)
+
+find_package(glm CONFIG REQUIRED)
 find_package(flecs CONFIG REQUIRED)
 find_package(simdjson CONFIG REQUIRED)
 find_package(argparse CONFIG REQUIRED)
@@ -74,8 +76,8 @@ add_executable(${PROJECT_NAME}
 include(compiler-warnings)
 
 target_compile_features(${PROJECT_NAME} PRIVATE
-  PRIVATE
-    cxx_std_23
+ PRIVATE
+   cxx_std_23
 )
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
@@ -83,23 +85,37 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
   KHRONOS_STATIC
   ROGUELIKE_TESTS_ENABLED
 
-  $<$<CONFIG:Debug>:
-    DEBUG_HEAP=0
+  $<${compiler_is_msvc}:
+    $<$<CONFIG:Debug>:
+      DEBUG_HEAP=0
+    >
   >
 )
 
 target_compile_options(${PROJECT_NAME} PRIVATE
   $<${compiler_is_msvc}:
-      /std:c++latest
-      /Zc:preprocessor
-      /utf-8
-      /EHsc
-      /nologo
+    /std:c++latest
+    /Zc:preprocessor
+    /utf-8
+    /EHsc
+    /nologo
+
+    $<$<CONFIG:Release>:
+        /O2
+    >
   >
 
-  $<$<CONFIG:Release>:
-      /Ox
+  $<$<NOT:${compiler_is_msvc}>:
+    -std=c++23
   >
+)
+
+target_link_options(${PROJECT_NAME} PRIVATE
+    $<$<NOT:${compiler_is_msvc}>:
+        -static-libgcc
+        -static-libstdc++
+        -Wl,-R,'$$ORIGIN'
+    >
 )
 
 target_include_directories(${PROJECT_NAME}
@@ -117,6 +133,7 @@ target_link_libraries(${PROJECT_NAME}
   PRIVATE fmt::fmt
 )
 
+include(ccache)
 include(clang-format)
 
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}

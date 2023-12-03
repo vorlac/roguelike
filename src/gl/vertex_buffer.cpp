@@ -22,7 +22,7 @@ namespace rl::gl {
         if (m_shader.compile())
         {
             m_shader_id = m_shader.id();
-            m_shader.set_transform();
+            // m_shader.set_transform();
         }
     }
 

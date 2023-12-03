@@ -8675,6 +8675,94 @@ typedef khronos_ssize_t GLsizeiptrARB;
 #define glBindAttribLocationARB glad_debug_glBindAttribLocationARB
     GLAD_API_CALL PFNGLBINDBUFFERPROC glad_glBindBuffer;
     GLAD_API_CALL PFNGLBINDBUFFERPROC glad_debug_glBindBuffer;
+
+// ## Parameters
+//
+// #### target
+// Specifies the target to which the buffer object is bound,
+// which must be one of the buffer binding targets in the following table:
+//
+// - GL_ARRAY_BUFFER
+// attributes
+// - GL_ATOMIC_COUNTER_BUFFER
+// counter storage
+// - GL_COPY_READ_BUFFER
+// copy source
+// - GL_COPY_WRITE_BUFFER
+// copy destination
+// - GL_DISPATCH_INDIRECT_BUFFER
+// compute dispatch commands
+// - GL_DRAW_INDIRECT_BUFFER
+// command arguments
+// - GL_ELEMENT_ARRAY_BUFFER
+// array indices
+// - GL_PIXEL_PACK_BUFFER
+// read target
+// - GL_PIXEL_UNPACK_BUFFER
+// data source
+// - GL_QUERY_BUFFER
+// result buffer
+// - GL_SHADER_STORAGE_BUFFER
+// write storage for shaders
+// - GL_TEXTURE_BUFFER
+// data buffer
+// - GL_TRANSFORM_FEEDBACK_BUFFER
+// feedback buffer
+// - GL_UNIFORM_BUFFER
+// block storage
+//
+// #### buffer
+// Specifies the name of a buffer object.
+//
+// ## Description
+// glBindBuffer binds a buffer object to the specified buffer binding point. Calling glBindBuffer with target set to one of the accepted symbolic constants and buffer set to the name of a buffer object binds that buffer object name to the target. If no buffer object with name buffer exists, one is created with that name. When a buffer object is bound to a target, the previous binding for that target is automatically broken.
+//
+// Buffer object names are unsigned integers. The value zero is reserved, but there is no default buffer object for each buffer object target. Instead, buffer set to zero effectively unbinds any buffer object previously bound, and restores client memory usage for that buffer object target (if supported for that target). Buffer object names and the corresponding buffer object contents are local to the shared object space of the current GL rendering context; two rendering contexts share buffer object names only if they explicitly enable sharing between contexts through the appropriate GL windows interfaces functions.
+//
+// glGenBuffers must be used to generate a set of unused buffer object names.
+//
+// The state of a buffer object immediately after it is first bound is an unmapped zero-sized memory buffer with GL_READ_WRITE access and GL_STATIC_DRAW usage.
+//
+// While a non-zero buffer object name is bound, GL operations on the target to which it is bound affect the bound buffer object, and queries of the target to which it is bound return state from the bound buffer object. While buffer object name zero is bound, as in the initial state, attempts to modify or query state on the target to which it is bound generates an GL_INVALID_OPERATION error.
+//
+// When a non-zero buffer object is bound to the GL_ARRAY_BUFFER target, the vertex array pointer parameter is interpreted as an offset within the buffer object measured in basic machine units.
+//
+// When a non-zero buffer object is bound to the GL_DRAW_INDIRECT_BUFFER target, parameters for draws issued through glDrawArraysIndirect and glDrawElementsIndirect are sourced from the specified offset in that buffer object's data store.
+//
+// When a non-zero buffer object is bound to the GL_DISPATCH_INDIRECT_BUFFER target, the parameters for compute dispatches issued through glDispatchComputeIndirect are sourced from the specified offset in that buffer object's data store.
+//
+// While a non-zero buffer object is bound to the GL_ELEMENT_ARRAY_BUFFER target, the indices parameter of glDrawElements, glDrawElementsInstanced, glDrawElementsBaseVertex, glDrawRangeElements, glDrawRangeElementsBaseVertex, glMultiDrawElements, or glMultiDrawElementsBaseVertex is interpreted as an offset within the buffer object measured in basic machine units.
+//
+// While a non-zero buffer object is bound to the GL_PIXEL_PACK_BUFFER target, the following commands are affected: glGetCompressedTexImage, glGetTexImage, and glReadPixels. The pointer parameter is interpreted as an offset within the buffer object measured in basic machine units.
+//
+// While a non-zero buffer object is bound to the GL_PIXEL_UNPACK_BUFFER target, the following commands are affected: glCompressedTexImage1D, glCompressedTexImage2D, glCompressedTexImage3D, glCompressedTexSubImage1D, glCompressedTexSubImage2D, glCompressedTexSubImage3D, glTexImage1D, glTexImage2D, glTexImage3D, glTexSubImage1D, glTexSubImage2D, and glTexSubImage3D. The pointer parameter is interpreted as an offset within the buffer object measured in basic machine units.
+//
+// The buffer targets GL_COPY_READ_BUFFER and GL_COPY_WRITE_BUFFER are provided to allow glCopyBufferSubData to be used without disturbing the state of other bindings. However, glCopyBufferSubData may be used with any pair of buffer binding points.
+//
+// The GL_TRANSFORM_FEEDBACK_BUFFER buffer binding point may be passed to glBindBuffer, but will not directly affect transform feedback state. Instead, the indexed GL_TRANSFORM_FEEDBACK_BUFFER bindings must be used through a call to glBindBufferBase or glBindBufferRange. This will affect the generic GL_TRANSFORM_FEEDBACK_BUFFER binding.
+//
+// Likewise, the GL_UNIFORM_BUFFER, GL_ATOMIC_COUNTER_BUFFER and GL_SHADER_STORAGE_BUFFER buffer binding points may be used, but do not directly affect uniform buffer, atomic counter buffer or shader storage buffer state, respectively. glBindBufferBase or glBindBufferRange must be used to bind a buffer to an indexed uniform buffer, atomic counter buffer or shader storage buffer binding point.
+//
+// The GL_QUERY_BUFFER binding point is used to specify a buffer object that is to receive the results of query objects through calls to the glGetQueryObject family of commands.
+//
+// A buffer object binding created with glBindBuffer remains active until a different buffer object name is bound to the same target, or until the bound buffer object is deleted with glDeleteBuffers.
+//
+// Once created, a named buffer object may be re-bound to any target as often as needed. However, the GL implementation may make choices about how to optimize the storage of a buffer object based on its initial binding target.
+//
+// ## Notes
+//
+// - The GL_COPY_READ_BUFFER, GL_UNIFORM_BUFFER and GL_TEXTURE_BUFFER targets are available only if the GL version is 3.1 or greater.
+// - The GL_ATOMIC_COUNTER_BUFFER target is available only if the GL version is 4.2 or greater.
+// - The GL_DISPATCH_INDIRECT_BUFFER and GL_SHADER_STORAGE_BUFFER targets are available only if the GL version is 4.3 or greater.
+// - The GL_QUERY_BUFFER target is available only if the GL version is 4.4 or greater.
+//
+// ## Errors
+//
+// #### GL_INVALID_ENUM
+// generated if target is not one of the allowable values.
+//
+// #### GL_INVALID_VALUE
+// generated if buffer is not a name previously returned from a call to glGenBuffers.
 #define glBindBuffer glad_debug_glBindBuffer
     GLAD_API_CALL PFNGLBINDBUFFERARBPROC glad_glBindBufferARB;
     GLAD_API_CALL PFNGLBINDBUFFERARBPROC glad_debug_glBindBufferARB;
@@ -10329,6 +10417,24 @@ typedef khronos_ssize_t GLsizeiptrARB;
 #define glGenAsyncMarkersSGIX glad_debug_glGenAsyncMarkersSGIX
     GLAD_API_CALL PFNGLGENBUFFERSPROC glad_glGenBuffers;
     GLAD_API_CALL PFNGLGENBUFFERSPROC glad_debug_glGenBuffers;
+
+// ## Parameters
+// #### n
+// Specifies the number of buffer object names to be generated.
+//
+// #### buffers
+// Specifies an array in which the generated buffer object names are stored.
+//
+// ## Description
+// glGenBuffers returns n buffer object names in buffers. There is no guarantee that the names form
+// a contiguous set of integers; however, it is guaranteed that none of the returned names was in
+// use immediately before the call to glGenBuffers.
+//
+// Buffer object names returned by a call to glGenBuffers are not returned by subsequent calls,
+// unless they are first deleted with glDeleteBuffers.
+//
+// No buffer objects are associated with the returned buffer object names until they are first
+// bound by calling glBindBuffer.
 #define glGenBuffers glad_debug_glGenBuffers
     GLAD_API_CALL PFNGLGENBUFFERSARBPROC glad_glGenBuffersARB;
     GLAD_API_CALL PFNGLGENBUFFERSARBPROC glad_debug_glGenBuffersARB;

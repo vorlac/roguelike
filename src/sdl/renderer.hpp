@@ -2,11 +2,13 @@
 
 #include <bitset>
 #include <memory>
+#include <string>
 #include <string_view>
 #include <type_traits>
 #include <utility>
 #include <vector>
 
+#include <fmt/core.h>
 #include <fmt/format.h>
 
 #include "core/numeric.hpp"
@@ -26,6 +28,39 @@ SDL_C_LIB_BEGIN
 #include <SDL3/SDL_blendmode.h>
 #include <SDL3/SDL_rect.h>
 #include <SDL3/SDL_render.h>
+SDL_C_LIB_END
+
+SDL_C_LIB_BEGIN
+struct SDL_RendererInfo;
+
+static inline auto format_as(const SDL_RendererInfo& ri)
+{
+    bool hw_accel = 0 != (ri.flags & SDL_RENDERER_ACCELERATED);
+    bool software = 0 != (ri.flags & SDL_RENDERER_SOFTWARE);
+    bool en_vsync = 0 != (ri.flags & SDL_RENDERER_PRESENTVSYNC);
+
+    std::string buffer{};
+    buffer.reserve(512);
+    auto&& inserter = std::back_inserter(buffer);
+
+    fmt::format_to(inserter, "Renderer Info:      \n");
+    fmt::format_to(inserter, "  Name: {}          \n", ri.name);
+    fmt::format_to(inserter, "  Max Texture Size: \n");
+    fmt::format_to(inserter, "    Width:  {}      \n", ri.max_texture_width);
+    fmt::format_to(inserter, "    Height: {}      \n", ri.max_texture_height);
+    fmt::format_to(inserter, "  Context Flags:    \n");
+    fmt::format_to(inserter, "    [{}] SDL_RENDERER_ACCELERATED \n", hw_accel ? "✓" : " ");
+    fmt::format_to(inserter, "    [{}] SDL_RENDERER_SOFTWARE    \n", software ? "✓" : " ");
+    fmt::format_to(inserter, "    [{}] SDL_RENDERER_PRESENTVSYNC\n", hw_accel ? "✓" : " ");
+    fmt::format_to(inserter, "  Available Texture Formats: {}   \n", ri.num_texture_formats);
+    for (rl::u32 i = 0; i < ri.num_texture_formats; ++i)
+    {
+        auto format = SDL_GetPixelFormatName(ri.texture_formats[i]);
+        fmt::format_to(inserter, "    {} \n", format);
+    }
+    return buffer;
+}
+
 SDL_C_LIB_END
 
 namespace rl::sdl {
@@ -64,7 +99,7 @@ namespace rl::sdl {
             constexpr static inline std::string_view Software{ "software" };
         };
 
-        struct blend_mode
+        struct BlendMode
         {
             using type = SDL3::SDL_BlendMode;
             constexpr static inline auto None = SDL3::SDL_BLENDMODE_NONE;
@@ -80,14 +115,14 @@ namespace rl::sdl {
             Properties::HWAccelerated | Properties::VSync,
         };
 
-        Renderer() = delete;
-        Renderer(Renderer& other) = delete;
-        Renderer(const Renderer& other) = delete;
+        explicit Renderer() = delete;
+        explicit Renderer(sdl::Renderer& other) = delete;
+        explicit Renderer(const sdl::Renderer& other) = delete;
 
-        explicit Renderer(const sdl::Window& window, std::string_view driver,
+        explicit Renderer(const sdl::Window& window, std::string_view driver_name,
                           Renderer::Properties flags)
             : m_properties{ flags }
-            , m_sdl_renderer{ SDL3::SDL_CreateRenderer(window.sdl_handle(), driver.data(),
+            , m_sdl_renderer{ SDL3::SDL_CreateRenderer(window.sdl_handle(), driver_name.data(),
                                                        m_properties) }
         {
             sdl_assert(m_sdl_renderer != nullptr, "failed to create renderer");
@@ -104,14 +139,12 @@ namespace rl::sdl {
         {
             if (m_sdl_renderer == nullptr)
             {
-                auto style = fmt::emphasis::bold | fmt::fg(fmt::color::light_coral);
-                fmt::print(style, "Renderer Invalid\n");
+                log::error("Renderer Invalid\n");
                 return;
             }
 
             auto&& info{ this->get_info() };
-            auto&& style = fmt::fg(fmt::color::light_steel_blue);
-            fmt::print(style, "{}\n", info);
+            log::info("{}\n", info);
         }
 
         bool is_valid() const
@@ -591,35 +624,3 @@ namespace rl::sdl {
         SDL3::SDL_Renderer* m_sdl_renderer{ nullptr };
     };
 }
-
-SDL_C_LIB_BEGIN
-
-static inline auto format_as(const SDL_RendererInfo& ri)
-{
-    bool hw_accel = 0 != (ri.flags & SDL_RENDERER_ACCELERATED);
-    bool software = 0 != (ri.flags & SDL_RENDERER_SOFTWARE);
-    bool en_vsync = 0 != (ri.flags & SDL_RENDERER_PRESENTVSYNC);
-
-    std::string buffer{};
-    buffer.reserve(512);
-    auto&& inserter = std::back_inserter(buffer);
-
-    fmt::format_to(inserter, "Renderer Info:      \n");
-    fmt::format_to(inserter, "  Name: {}          \n", ri.name);
-    fmt::format_to(inserter, "  Max Texture Size: \n");
-    fmt::format_to(inserter, "    Width:  {}      \n", ri.max_texture_width);
-    fmt::format_to(inserter, "    Height: {}      \n", ri.max_texture_height);
-    fmt::format_to(inserter, "  Context Flags:    \n");
-    fmt::format_to(inserter, "    [{}] SDL_RENDERER_ACCELERATED \n", hw_accel ? "✓" : " ");
-    fmt::format_to(inserter, "    [{}] SDL_RENDERER_SOFTWARE    \n", software ? "✓" : " ");
-    fmt::format_to(inserter, "    [{}] SDL_RENDERER_PRESENTVSYNC\n", hw_accel ? "✓" : " ");
-    fmt::format_to(inserter, "  Available Texture Formats: {}   \n", ri.num_texture_formats);
-    for (rl::u32 i = 0; i < ri.num_texture_formats; ++i)
-    {
-        auto format = SDL3::SDL_GetPixelFormatName(ri.texture_formats[i]);
-        fmt::format_to(inserter, "    {} \n", format);
-    }
-    return buffer;
-}
-
-SDL_C_LIB_END

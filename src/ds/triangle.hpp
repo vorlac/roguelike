@@ -28,6 +28,11 @@ namespace rl::ds {
         {
         }
 
+        constexpr inline std::array<ds::point<T>, 3> points() const
+        {
+            return { a, b, c };
+        }
+
         constexpr inline T* data()
         {
             return &a;

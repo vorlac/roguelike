@@ -337,8 +337,8 @@ namespace rl::ds {
         constexpr inline point<T> centroid() const
         {
             return {
-                pt.x + (size.width / cast::to<T>(2)),
-                pt.y + (size.height / cast::to<T>(2)),
+                pt.x + (size.width / T(2)),
+                pt.y + (size.height / T(2)),
             };
         }
 
@@ -555,7 +555,8 @@ namespace rl::ds {
          * */
         constexpr rect<T>& operator=(rect<T>&& other) noexcept
         {
-            std::memcpy(this, &other, sizeof(*this));
+            this->pt = std::move(other.pt);
+            this->size = std::move(other.size);
             return *this;
         }
 

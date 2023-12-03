@@ -17,7 +17,7 @@ namespace rl {
     concept signed_integer = any_of<T, i8, i16, i32, i64>;
 
     template <typename T>
-    concept unsigned_integer = any_of<T, u8, u16, u32, u64, size_t>;
+    concept unsigned_integer = any_of<T, u8, u16, u32, u64, size_t, std::size_t>;
 
     template <typename T>
     concept integer = (unsigned_integer<T> || signed_integer<T>);

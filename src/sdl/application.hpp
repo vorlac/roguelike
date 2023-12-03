@@ -81,7 +81,6 @@ namespace rl::sdl {
     private:
         // TODO: implement single instance enforcement
         static inline std::atomic<bool> m_initialized{ false };
-        std::once_flag init_flag{};
 
         sdl::Window m_window{ "Roguelite" };
         sdl::EventHandler m_event_handler{};

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <condition_variable>
 #include <mutex>
 #include <vector>
 
@@ -36,8 +37,8 @@ namespace rl::sdl {
 
         ~Surface();
 
-        Surface& operator=(Surface&& other) noexcept;
-        Surface& operator=(Surface other);
+        Surface& operator=(sdl::Surface&& other) noexcept;
+        Surface& operator=(sdl::Surface other);
 
         i32 read_pixel(const ds::point<i32>& pt, ds::color<u8>& color);
         i32 compare(sdl::Surface& other, int allowable_error = 0);
