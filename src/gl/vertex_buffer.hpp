@@ -84,6 +84,8 @@ namespace rl::gl {
         }
 
     private:
+        Shader m_shader{ "vertex_shader.glsl", "fragment_shader.glsl" };
+
         i32 m_buffer_vertex_count{ 0 };
         i32 m_shader_id{ std::numeric_limits<i32>::max() };
 

@@ -102,21 +102,40 @@ namespace rl {
     {
         this->setup();
 
+        // std::vector<std::pair<ds::rect<f32>, ds::color<f32>>> rects = {
+        //     std::pair{
+        //         ds::rect<f32>{ { -0.5f, 0.0f }, ds::dims<f32>{ 0.5f, 0.5f } },
+        //         ds::color<f32>{ rl::Colors::Red },
+        //     },
+        //     std::pair{
+        //         ds::rect<f32>{ { -0.5f, -0.5f }, ds::dims<f32>{ 0.5f, 0.5f } },
+        //         ds::color<f32>{ rl::Colors::Blue },
+        //     },
+        //     std::pair{
+        //         ds::rect<f32>{ { 0.0f, 0.0f }, ds::dims<f32>{ 0.5f, 0.5f } },
+        //         ds::color<f32>{ rl::Colors::Purple },
+        //     },
+        //     std::pair{
+        //         ds::rect<f32>{ { 0.0f, -0.5f }, ds::dims<f32>{ 0.5f, 0.5f } },
+        //         ds::color<f32>{ rl::Colors::Green },
+        //     },
+        // };
+
         std::vector<std::pair<ds::rect<f32>, ds::color<f32>>> rects = {
             std::pair{
-                ds::rect<f32>{ { -0.5f, 0.0f }, ds::dims<f32>{ 0.5f, 0.5f } },
+                ds::rect<f32>{ { 10.0f, 10.0f }, ds::dims<f32>{ 15.0f, 15.0f } },
                 ds::color<f32>{ rl::Colors::Red },
             },
             std::pair{
-                ds::rect<f32>{ { -0.5f, -0.5f }, ds::dims<f32>{ 0.5f, 0.5f } },
+                ds::rect<f32>{ { 100.0f, 100.0f }, ds::dims<f32>{ 15.0f, 15.0f } },
                 ds::color<f32>{ rl::Colors::Blue },
             },
             std::pair{
-                ds::rect<f32>{ { 0.0f, 0.0f }, ds::dims<f32>{ 0.5f, 0.5f } },
+                ds::rect<f32>{ { 120.0f, 120.0f }, ds::dims<f32>{ 15.0f, 15.0f } },
                 ds::color<f32>{ rl::Colors::Purple },
             },
             std::pair{
-                ds::rect<f32>{ { 0.0f, -0.5f }, ds::dims<f32>{ 0.5f, 0.5f } },
+                ds::rect<f32>{ { 500.0f, 500.0f }, ds::dims<f32>{ 15.0f, 15.0f } },
                 ds::color<f32>{ rl::Colors::Green },
             },
         };

@@ -18,9 +18,7 @@ namespace rl::gl {
         glGenBuffers(1, &m_vbo_id);
 
         // compile shaders
-        ShaderProgram m_shader{};
-        if (m_shader.compile())
-            m_shader_id = m_shader.id();
+        m_shader.compile();
     }
 
     VertexBuffer::~VertexBuffer()
@@ -48,8 +46,9 @@ namespace rl::gl {
     void VertexBuffer::draw_triangles(sdl::Window&)
     {
         // Set shader program to use
-        glUseProgram(m_shader_id);
-        // Bind VAO array
+        m_shader.set_active();
+        // glUseProgram(m_shader_id);
+        //  Bind VAO array
         glBindVertexArray(m_vao_id);
 
         // Draw verices
