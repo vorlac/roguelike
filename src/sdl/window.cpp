@@ -41,7 +41,8 @@ namespace rl::sdl {
         m_properties = flags;
         m_sdl_window = SDL3::SDL_CreateWindow(title.data(), dims.width, dims.height, m_properties);
         m_window_rect = { m_sdl_window ? this->get_position() : ds::point<i32>::null(), dims };
-        m_renderer = std::make_shared<sdl::RendererGL>(*this, RendererGL::DEFAULT_PROPERTY_FLAGS);
+        m_renderer = std::shared_ptr<sdl::RendererGL>(
+            new sdl::RendererGL(*this, RendererGL::DEFAULT_PROPERTY_FLAGS));
         sdl_assert(m_sdl_window != nullptr, "failed to create SDL_Window");
         sdl_assert(m_renderer != nullptr, "failed to create sdl::Renderer");
     }
@@ -265,7 +266,7 @@ namespace rl::sdl {
     SDL3::SDL_DisplayID Window::get_display() const
     {
         SDL3::SDL_DisplayID id{ SDL3::SDL_GetDisplayForWindow(m_sdl_window) };
-        runtime_assert(id < 0, "failed to set window display idx");
+        runtime_assert(id != 0, "failed to set window display idx");
         return id;
     }
 

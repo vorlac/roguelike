@@ -896,12 +896,12 @@ namespace rl::sdl::test {
                                   SDL3::SDL_LOGICAL_PRESENTATION_LETTERBOX,
                                   SDL3::SDL_SCALEMODE_NEAREST);
 
-        viewport = {
-            {
+        viewport = ds::rect<i32>{
+            ds::point<i32>{
                 (sdl::test::TESTRENDER_SCREEN_W / 4) / factor,
                 (sdl::test::TESTRENDER_SCREEN_H / 4) / factor,
             },
-            {
+            ds::dims<i32>{
                 (sdl::test::TESTRENDER_SCREEN_W / 2) / factor,
                 (sdl::test::TESTRENDER_SCREEN_H / 2) / factor,
             },

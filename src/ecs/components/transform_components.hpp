@@ -1,19 +1,21 @@
 #pragma once
 
+#include "core/numeric.hpp"
+
 namespace rl::component {
     struct position
     {
-        float x{ 0.0 };
-        float y{ 0.0 };
+        f32 x{ 0.0f };
+        f32 y{ 0.0f };
     };
 
     struct rotation
     {
-        float angle{ 0.0 };
+        f32 angle{ 0.0f };
     };
 
     struct scale
     {
-        float factor{ 0.0 };
+        f32 factor{ 0.0f };
     };
 }

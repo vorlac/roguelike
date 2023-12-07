@@ -184,7 +184,7 @@ namespace rl::ds {
 
         constexpr inline f32 length() const
         {
-            return std::sqrtf(this->length_squared());
+            return std::sqrt(this->length_squared());
         }
 
         constexpr inline f32 length_squared() const
@@ -231,7 +231,7 @@ namespace rl::ds {
             f32 len_sq = this->length_squared();
             if (len_sq != 0.0f)
             {
-                f32 len = std::sqrtf(len_sq);
+                f32 len = std::sqrt(len_sq);
                 x /= len;
                 y /= len;
             }
@@ -326,8 +326,8 @@ namespace rl::ds {
                 return this->lerp(to, weight);
             }
 
-            f32 start_length{ std::sqrtf(start_len_sq) };
-            f32 result_length{ std::lerp(start_length, std::sqrtf(end_len_sq), weight) };
+            f32 start_length{ std::sqrt(start_len_sq) };
+            f32 result_length{ std::lerp(start_length, std::sqrt(end_len_sq), weight) };
             f32 angle = this->angle_to(to);
 
             return this->rotated(angle * weight) * (result_length / start_length);
@@ -365,11 +365,27 @@ namespace rl::ds {
             return *this;
         }
 
+        constexpr inline vector2<T> operator+(const T& other) const
+        {
+            return vector2<T>{
+                x + other,
+                y + other,
+            };
+        }
+
         constexpr inline vector2<T> operator+(const vector2<T>& other) const
         {
-            return {
+            return vector2<T>{
                 x + other.x,
                 y + other.y,
+            };
+        }
+
+        constexpr inline vector2<T> operator+(const dims<T>& other) const
+        {
+            return vector2<T>{
+                x + other.width,
+                y + other.height,
             };
         }
 
@@ -383,21 +399,36 @@ namespace rl::ds {
         template <typename V>
         constexpr inline vector2<T> operator-(const vector2<V>& other) const
         {
-            return {
+            return vector2<T>{
                 x - cast::to<T>(other.x),
                 y - cast::to<T>(other.y),
             };
         }
 
+        constexpr inline vector2<T> operator-(const T& other) const
+        {
+            return vector2<T>{
+                x - cast::to<T>(other),
+                y - cast::to<T>(other),
+            };
+        }
+
         constexpr inline vector2<T> operator-(const dims<T>& other) const
         {
-            return {
+            return vector2<T>{
                 x - other.width,
                 y - other.height,
             };
         }
 
-        constexpr inline vector2<T> operator-=(const vector2<T>& other)
+        constexpr inline vector2<T>& operator-=(const T& other)
+        {
+            x -= other;
+            y -= other;
+            return *this;
+        }
+
+        constexpr inline vector2<T>& operator-=(const vector2<T>& other)
         {
             x -= other.x;
             y -= other.y;
@@ -413,7 +444,7 @@ namespace rl::ds {
 
         constexpr inline vector2<T> operator*(const vector2<T>& other) const
         {
-            return {
+            return vector2<T>{
                 x * other.x,
                 y * other.y,
             };
@@ -421,7 +452,7 @@ namespace rl::ds {
 
         constexpr inline vector2<T> operator*(const f32 val) const
         {
-            return {
+            return vector2<T>{
                 x * val,
                 y * val,
             };
@@ -436,7 +467,7 @@ namespace rl::ds {
 
         constexpr inline vector2<T> operator/(const vector2<T>& other) const
         {
-            return {
+            return vector2<T>{
                 x / other.x,
                 y / other.y,
             };
@@ -444,7 +475,10 @@ namespace rl::ds {
 
         constexpr inline vector2<T> operator/(const f32& val) const
         {
-            return { x / val, y / val };
+            return vector2<T>{
+                x / val,
+                y / val,
+            };
         }
 
         constexpr inline vector2<T> operator/=(const f32& val)
@@ -456,33 +490,12 @@ namespace rl::ds {
 
         constexpr inline vector2<T> operator-() const
         {
-            return {
+            return vector2<T>{
                 -x,
                 -y,
             };
         }
 
-        // constexpr const inline T& x() const
-        //{
-        //     return std::get<0>(m_coords);
-        // }
-
-        // constexpr inline T& x()
-        //{
-        //     return std::get<0>(m_coords);
-        // }
-
-        // constexpr const inline T& y() const
-        //{
-        //     return std::get<1>(m_coords);
-        // }
-
-        // constexpr inline T& y()
-        //{
-        //     return std::get<1>(m_coords);
-        // }
-
-        // std::array<T, 3> m_coords{};
         T x{};
         T y{};
         T z{};

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <tuple>
+#include <array>
 #include <type_traits>
 #include <utility>
 #include <vector>
@@ -26,6 +26,11 @@ namespace rl::ds {
             , b{ _b }
             , c{ _c }
         {
+        }
+
+        constexpr inline std::array<ds::point<T>, 3> points() const
+        {
+            return { a, b, c };
         }
 
         constexpr inline T* data()

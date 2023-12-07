@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <memory>
 #include <type_traits>
 #include <utility>
@@ -59,8 +60,8 @@ namespace rl::ds {
         template <rl::integer I>
         constexpr rect(const rect<I>& other)
             requires rl::floating_point<T>
-            : pt(cast::to<T>(other.pt.x), cast::to<T>(other.pt.y))
-            , size(cast::to<T>(other.size.width), cast::to<T>(other.size.height))
+            : pt(T(other.pt.x), T(other.pt.y))
+            , size(T(other.size.width), T(other.size.height))
         {
         }
 
@@ -221,7 +222,7 @@ namespace rl::ds {
         constexpr inline bool is_empty() const
             requires rl::integer<T>
         {
-            return this->area() == 0;
+            return this->area() == T(0);
         }
 
         /**
@@ -229,8 +230,8 @@ namespace rl::ds {
          * */
         constexpr inline bool is_invalid() const
         {
-            return this->size.height < cast::to<T>(0) ||  //
-                   this->width < cast::to<T>(0);          //
+            return this->size.height < T(0) ||  //
+                   this->width < T(0);          //
         }
 
         /**
@@ -241,21 +242,46 @@ namespace rl::ds {
             return this->is_empty() && pt == vector2<T>::null();
         }
 
-        constexpr inline auto triangles(ds::color<f32>& clr)
-            -> std::vector<std::pair<ds::point<f32>, ds::color<f32>>>
+        /**
+         * @brief Generates an array of vertices representing the rect to be used in an OpenGL VBO
+         * */
+        constexpr inline auto triangles() -> std::array<ds::point<T>, 6>
         {
             ds::point<T> tl{ pt.x, pt.y + size.height };
             ds::point<T> bl{ pt.x, pt.y };
             ds::point<T> tr{ tl.x + size.width, tl.y };
             ds::point<T> br{ tl.x + size.width, tl.y - size.height };
 
-            return {
-                { tr, clr },  // triangle 1, top right | color
-                { br, clr },  // triangle 1, top bottom right | color
-                { tl, clr },  // triangle 1, top left | color
-                { br, clr },  // triangle 2, bottom right | color
-                { bl, clr },  // triangle 2, bottom left | color
-                { tl, clr },  // triangle 2, top left | color
+            return std::array{
+                tr,  // triangle 1, top right
+                br,  // triangle 1, top bottom right
+                tl,  // triangle 1, top left
+                br,  // triangle 2, bottom right
+                bl,  // triangle 2, bottom left
+                tl,  // triangle 2, top left
+            };
+        }
+
+        /**
+         * @brief Generates a packed array of vertex/color pairs to be used in an OpenGL VBO
+         * @param clr The color to pack into the return array for this rect.
+         * */
+        constexpr inline auto triangles(const ds::color<f32>& clr)
+            -> std::array<std::pair<ds::point<f32>, ds::color<f32>>, 6>
+
+        {
+            ds::point<T> tl{ pt.x, pt.y + size.height };
+            ds::point<T> bl{ pt.x, pt.y };
+            ds::point<T> tr{ tl.x + size.width, tl.y };
+            ds::point<T> br{ tl.x + size.width, tl.y - size.height };
+
+            return std::array{
+                std::pair{ tr, clr },  // triangle 1, TR | color
+                std::pair{ br, clr },  // triangle 1, BR | color
+                std::pair{ tl, clr },  // triangle 1, TL | color
+                std::pair{ br, clr },  // triangle 2, BR | color
+                std::pair{ bl, clr },  // triangle 2, BL | color
+                std::pair{ tl, clr },  // triangle 2, TL | color
             };
         }
 
@@ -276,7 +302,10 @@ namespace rl::ds {
                 1, 2, 3   // triangle 2 point indices
             };
 
-            return std::pair{ pts, idx };
+            return std::pair{
+                pts,
+                idx,
+            };
         }
 
         /**
@@ -284,7 +313,10 @@ namespace rl::ds {
          * */
         constexpr inline point<T> top_left() const
         {
-            return { pt.x, pt.y };
+            return point<T>{
+                pt.x,
+                pt.y,
+            };
         }
 
         /**
@@ -292,7 +324,10 @@ namespace rl::ds {
          * */
         constexpr inline point<T> top_right() const
         {
-            return { pt.x + size.width, pt.y };
+            return point<T>{
+                pt.x + size.width,
+                pt.y,
+            };
         }
 
         /**
@@ -300,7 +335,10 @@ namespace rl::ds {
          * */
         constexpr inline point<T> bot_left() const
         {
-            return { pt.x, pt.y + size.height };
+            return point<T>{
+                pt.x,
+                pt.y + size.height,
+            };
         }
 
         /**
@@ -308,7 +346,7 @@ namespace rl::ds {
          * */
         constexpr inline point<T> bot_right() const
         {
-            return {
+            return point<T>{
                 pt.x + size.width,
                 pt.y + size.height,
             };
@@ -319,9 +357,20 @@ namespace rl::ds {
          * */
         constexpr inline point<T> centroid() const
         {
-            return {
-                pt.x + (size.width / cast::to<T>(2)),
-                pt.y + (size.height / cast::to<T>(2)),
+            return point<T>{
+                pt.x + (size.width / static_cast<T>(2)),
+                pt.y + (size.height / static_cast<T>(2)),
+            };
+        }
+
+        /**
+         * @brief Gets the center point of the rectangle
+         * */
+        constexpr inline rect<T> inflate(const T amount) const
+        {
+            return rect<T>{
+                pt - (amount / static_cast<T>(2)),
+                size + amount,
             };
         }
 
@@ -416,31 +465,31 @@ namespace rl::ds {
          * */
         constexpr inline rect<T> quad(Quad quad) const
         {
-            constexpr point<T> center{ this->centroid() };
-            const dims<T> quad_size{
-                this->size.width / cast::to<T>(2),
-                this->size.height / cast::to<T>(2),
+            point<T> center{ this->centroid() };
+            dims<T> quad_size{
+                this->size.width / static_cast<T>(2),
+                this->size.height / static_cast<T>(2),
             };
 
             switch (quad)
             {
                 case Quad::TopLeft:
-                    return {
+                    return rect<T>{
                         { this->pt.x, this->pt.y },
                         { quad_size },
                     };
                 case Quad::BottomLeft:
-                    return {
+                    return rect<T>{
                         { this->pt.x, center.y },
                         { quad_size },
                     };
                 case Quad::TopRight:
-                    return {
+                    return rect<T>{
                         { center.x, this->pt.y },
                         { quad_size },
                     };
                 case Quad::BottomRight:
-                    return {
+                    return rect<T>{
                         { center.x, center.y },
                         { quad_size },
                     };
@@ -450,15 +499,14 @@ namespace rl::ds {
         /**
          * returns an array of the 4 quadrants of this rectangle
          * */
-        constexpr inline rect<T> quads() const
+        constexpr inline std::array<rect<T>, 4> quads() const
         {
-            std::array<rect<T>, 4> quadrants{
+            return std::array{
                 this->quad(Quad::TopLeft),
                 this->quad(Quad::BottomLeft),
                 this->quad(Quad::TopRight),
                 this->quad(Quad::BottomRight),
             };
-            return quadrants;
         }
 
         /**
@@ -467,8 +515,8 @@ namespace rl::ds {
         constexpr inline rect<T> scaled(ds::vector2<f32> ratio) const
         {
             ds::dims<T> scaled_size{
-                cast::to<T>(cast::to<f32>(this->size.width) * ratio.x),
-                cast::to<T>(cast::to<f32>(this->size.height) * ratio.y),
+                T(cast::to<f32>(this->size.width) * ratio.x),
+                T(cast::to<f32>(this->size.height) * ratio.y),
             };
             return rect<T>{
                 this->centroid() - (scaled_size / 2.0f),
@@ -488,7 +536,7 @@ namespace rl::ds {
                 // horizontal line as the slice point
                 ds::dims<T> half_size{
                     this->size.width,
-                    this->size.height / cast::to<T>(2),
+                    this->size.height / T(2),
                 };
                 return std::array{
                     ds::rect<T>{
@@ -496,7 +544,7 @@ namespace rl::ds {
                         ds::dims<T>(half_size),
                     },
                     ds::rect<T>{
-                        ds::point<T>(this->pt + cast::to<T>(0), this->size.height / cast::to<T>(2)),
+                        ds::point<T>(this->pt + T(0), this->size.height / T(2)),
                         ds::dims<T>(half_size),
                     },
                 };
@@ -506,15 +554,15 @@ namespace rl::ds {
                 // split the rect in half using a
                 // vertical line as the slice point
                 ds::dims<T> half_size{
-                    this->size.width / cast::to<T>(2),
+                    this->size.width / T(2),
                     this->size.height,
                 };
                 return std::array{
                     rect<T>{ this->pt, half_size },
                     rect<T>{
                         {
-                            this->pt + (this->size.height / cast::to<T>(2)),
-                            cast::to<T>(0),
+                            this->pt + (this->size.height / T(2)),
+                            T(0),
                         },
                         half_size,
                     },
@@ -563,14 +611,14 @@ namespace rl::ds {
 
         // position of the rect's top left point
         point<T> pt{
-            cast::to<T>(0),  // x
-            cast::to<T>(0),  // y
+            T(0),  // x
+            T(0),  // y
         };
 
         // 2D size of the rect, relative to pt
         dims<T> size{
-            cast::to<T>(0),  // width
-            cast::to<T>(0),  // height
+            T(0),  // width
+            T(0),  // height
         };
     };
 

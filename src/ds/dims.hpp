@@ -11,15 +11,17 @@
 #include "utils/memory.hpp"
 
 namespace rl::ds {
+#pragma pack(4)
+
     template <rl::numeric T>
     struct dims
     {
-        T width{ cast::to<T>(0) };
-        T height{ cast::to<T>(0) };
+        T width{ static_cast<T>(0) };
+        T height{ static_cast<T>(0) };
 
         constexpr inline dims()
-            : width{ cast::to<T>(0) }
-            , height{ cast::to<T>(0) }
+            : width{ static_cast<T>(0) }
+            , height{ static_cast<T>(0) }
         {
         }
 
@@ -44,16 +46,16 @@ namespace rl::ds {
         constexpr static inline dims<T> null()
         {
             return {
-                cast::to<T>(0.0),
-                cast::to<T>(0.0),
+                static_cast<T>(0),
+                static_cast<T>(0),
             };
         }
 
         constexpr static inline dims<T> zero()
         {
             return {
-                cast::to<T>(0.0),
-                cast::to<T>(0.0),
+                static_cast<T>(0),
+                static_cast<T>(0),
             };
         }
 
@@ -63,7 +65,7 @@ namespace rl::ds {
             const T area = width * height;
             constexpr T epsilon = std::numeric_limits<T>::epsilon();
             if (std::abs(area) <= epsilon)
-                return cast::to<T>(0.0);
+                return static_cast<T>(0);
             return area;
         }
 
@@ -95,34 +97,65 @@ namespace rl::ds {
             return !this->operator==(other);
         }
 
-        constexpr inline dims<T>& operator/=(auto div)
-        {
-            this->width /= cast::to<T>(div);
-            this->height /= cast::to<T>(div);
-            return *this;
-        }
-
-        constexpr inline dims<T> operator/(auto div) const
+        constexpr inline dims<T> operator+(const T& val) const
         {
             return {
-                this->width / cast::to<T>(div),
-                this->height / cast::to<T>(div),
+                cast::to<T>(this->width + val),
+                cast::to<T>(this->height + val),
             };
         }
 
-        constexpr inline dims<T>& operator*=(auto mul)
+        constexpr inline dims<T>& operator+=(const T& val)
         {
-            this->width *= cast::to<T>(mul);
-            this->height *= cast::to<T>(mul);
+            this->width += val;
+            this->height += val;
             return *this;
         }
 
-        constexpr inline dims<T> operator*(auto mul) const
+        template <rl::numeric V>
+        constexpr inline dims<T> operator-(const V& val) const
+        {
+            return {
+                this->width - cast::to<T>(val),
+                this->height - cast::to<T>(val),
+            };
+        }
+
+        constexpr inline dims<T>& operator-=(const T& val)
+        {
+            this->width -= val;
+            this->height -= val;
+            return *this;
+        }
+
+        constexpr inline dims<T> operator/(const T& val) const
+        {
+            return {
+                this->width / val,
+                this->height / val,
+            };
+        }
+
+        constexpr inline dims<T>& operator/=(const T& val)
+        {
+            this->width /= val;
+            this->height /= val;
+            return *this;
+        }
+
+        constexpr inline dims<T> operator*(const T& val) const
         {
             return dims<T>{
-                cast::to<T>(this->width * mul),
-                cast::to<T>(this->height * mul),
+                cast::to<T>(this->width * val),
+                cast::to<T>(this->height * val),
             };
+        }
+
+        constexpr inline dims<T>& operator*=(const T& val)
+        {
+            this->width *= cast::to<T>(val);
+            this->height *= cast::to<T>(val);
+            return *this;
         }
     };
 
@@ -131,4 +164,6 @@ namespace rl::ds {
     {
         return fmt::format("(w={}, h={})", size.width, size.height);
     }
+
+#pragma pack()
 }

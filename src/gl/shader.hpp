@@ -103,6 +103,11 @@ namespace rl::gl {
         {
         }
 
+        ~Shader()
+        {
+            glDeleteProgram(m_shader_id);
+        }
+
         inline bool compile()
         {
             u32 vert_shader_id = m_vertex_shader.compile();
@@ -170,10 +175,9 @@ namespace rl::gl {
             // The model matrix consists of translations, scaling and/or rotations we'd like to
             // apply to transform all object's vertices to the global world space.
             glm::mat4 model = glm::identity<glm::mat4>();
-            // scale by 2x
-            model = glm::scale(model, glm::vec3(2.0f, 2.0f, 0.0f));
-            // rotate clockwise 90 degrees
-            // model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+            // scale by 2x = glm::vec3(2.0f, 2.0f, 0.0f)
+            model = glm::scale(model, glm::vec3(1.0f));
+            // rotate clockwise 90 degrees = glm::radians(-90.0f)
             model = glm::rotate(model, glm::radians(0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 
             glm::vec4 world_pos = model * local_pos;

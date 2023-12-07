@@ -33,6 +33,7 @@
 #include "ecs/scenes/benchmark_scene.hpp"
 #include "ecs/scenes/main_menu_scene.hpp"
 #include "ecs/scenes/scene_types.hpp"
+#include "gl/instanced_buffer.hpp"
 #include "gl/shader.hpp"
 #include "gl/vertex_buffer.hpp"
 #include "sdl/tests/test_suite.hpp"
@@ -102,54 +103,6 @@ namespace rl {
     {
         this->setup();
 
-        // std::vector<std::pair<ds::rect<f32>, ds::color<f32>>> rects = {
-        //     std::pair{
-        //         ds::rect<f32>{ { -0.5f, 0.0f }, ds::dims<f32>{ 0.5f, 0.5f } },
-        //         ds::color<f32>{ rl::Colors::Red },
-        //     },
-        //     std::pair{
-        //         ds::rect<f32>{ { -0.5f, -0.5f }, ds::dims<f32>{ 0.5f, 0.5f } },
-        //         ds::color<f32>{ rl::Colors::Blue },
-        //     },
-        //     std::pair{
-        //         ds::rect<f32>{ { 0.0f, 0.0f }, ds::dims<f32>{ 0.5f, 0.5f } },
-        //         ds::color<f32>{ rl::Colors::Purple },
-        //     },
-        //     std::pair{
-        //         ds::rect<f32>{ { 0.0f, -0.5f }, ds::dims<f32>{ 0.5f, 0.5f } },
-        //         ds::color<f32>{ rl::Colors::Green },
-        //     },
-        // };
-
-        std::vector<std::pair<ds::rect<f32>, ds::color<f32>>> rects = {
-            std::pair{
-                ds::rect<f32>{ { 10.0f, 10.0f }, ds::dims<f32>{ 15.0f, 15.0f } },
-                ds::color<f32>{ rl::Colors::Red },
-            },
-            std::pair{
-                ds::rect<f32>{ { 100.0f, 100.0f }, ds::dims<f32>{ 15.0f, 15.0f } },
-                ds::color<f32>{ rl::Colors::Blue },
-            },
-            std::pair{
-                ds::rect<f32>{ { 120.0f, 120.0f }, ds::dims<f32>{ 15.0f, 15.0f } },
-                ds::color<f32>{ rl::Colors::Purple },
-            },
-            std::pair{
-                ds::rect<f32>{ { 500.0f, 500.0f }, ds::dims<f32>{ 15.0f, 15.0f } },
-                ds::color<f32>{ rl::Colors::Green },
-            },
-        };
-
-        std::vector<std::pair<ds::point<f32>, ds::color<f32>>> triangles = {};
-        std::ranges::for_each(rects, [&](std::pair<ds::rect<f32>, ds::color<f32>>& t) {
-            triangles.append_range(std::get<0>(t).triangles(std::get<1>(t)));
-        });
-
-        gl::VertexBuffer vbo{};
-        vbo.bind_buffers(triangles);
-
-        ds::color<u8> c_orange{ fmt::color::burly_wood };
-        ds::color<u8> clear_clr1{ 29, 32, 39 };
         sdl::Timer<f32, sdl::TimeDuration::Second> timer{};
 
         u32 loop_count = 0;
@@ -158,15 +111,23 @@ namespace rl {
 
         sdl::Window& window{ m_sdl.window() };
         std::shared_ptr<sdl::RendererGL> renderer{ window.renderer() };
+
+        gl::VertexBuffer vbo{ renderer->get_viewport() };
+
+        // gl::InstancedVertexBuffer vbo{ renderer->get_viewport() };
+        vbo.bind_buffers();
+
         while (this->handle_events())
         {
             m_world.progress();
-            renderer->clear(clear_clr1);
+            renderer->clear();
 
             if (this->quit_requested()) [[unlikely]]
                 break;
 
-            vbo.draw_triangles(window);
+            // vbo.update_buffers(renderer->get_viewport());
+            vbo.draw_triangles();
+
             window.swap_buffers();
 
             if constexpr (io::logging::main_loop)

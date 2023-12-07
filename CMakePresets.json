@@ -17,7 +17,8 @@
         "strategy": "external"
       },
       "environment": {
-        "NINJA_STATUS": "%p [%es] (%f/%t)  -"
+        "NINJA_STATUS": "%p [%es] (%f/%t)  -",
+        "CCACHE_DIR": "${sourceDir}/.out/build/${presetName}/yyyy"
       }
     },
     {
@@ -40,7 +41,8 @@
       "vendor": {
         "microsoft.com/VisualStudioSettings/CMake/1.0": {
           "enableMicrosoftCodeAnalysis": true,
-          "intelliSenseMode": "windows-msvc-x64"
+          "intelliSenseMode": "windows-msvc-x64",
+          "intelliSenseOptions": {"useCompilerDefaults": true}
         }
       },
       "condition": {
@@ -123,8 +125,9 @@
       },
       "vendor": {
         "microsoft.com/VisualStudioSettings/CMake/1.0": {
-          "enableMicrosoftCodeAnalysis": true,
-          "intelliSenseMode": "windows-clang-x64"
+          "enableClangTidyCodeAnalysis": true,
+          "intelliSenseMode": "windows-clang-x64",
+          "intelliSenseOptions": {"useCompilerDefaults": false}
         }
       }
     },

@@ -160,8 +160,8 @@ namespace rl::sdl {
 
     private:
         rl::u32 m_button_states{ 0 };
-        ds::point<f32> m_cursor_position{ 0, 0 };
-        ds::point<f32> m_prev_cursor_pos{ 0, 0 };
+        ds::point<f32> m_cursor_position{ 0.0f, 0.0f };
+        ds::point<f32> m_prev_cursor_pos{ 0.0f, 0.0f };
         ds::vector2<f32> m_wheel_position{ 0.0f, 0.0f };
         ds::vector2<f32> m_prev_wheel_pos{ 0.0f, 0.0f };
     };

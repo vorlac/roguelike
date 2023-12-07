@@ -264,9 +264,9 @@ namespace rl::scene {
                         while (ecs_iter_next(it))
                             it->callback(it);
 
-                        USE_RANDOM_COLORS
-                        ? m_renderer->fill_rects(rect_colors)  //
-                        : m_renderer->fill_rects(rects, c);
+                        // USE_RANDOM_COLORS
+                        //? m_renderer->fill_rects(rect_colors)  //
+                        //: m_renderer->fill_rects(rects, c);
 
                         m_renderer->present();
                     })

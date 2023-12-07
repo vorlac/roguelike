@@ -22,6 +22,8 @@ SDL_C_LIB_BEGIN
 SDL_C_LIB_END
 
 namespace rl::ds {
+#pragma pack(4)
+
     template <rl::numeric T = u8>
         requires rl::any_of<T, f32, u8>
     struct color
@@ -350,6 +352,8 @@ namespace rl::ds {
         T b{ 0 };
         T a{ Opaque };
     };
+
+#pragma pack()
 }
 
 namespace rl {

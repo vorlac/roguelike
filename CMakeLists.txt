@@ -95,11 +95,23 @@ target_compile_options(${PROJECT_NAME} PRIVATE
       /utf-8
       /EHsc
       /nologo
-  >
 
-  $<$<CONFIG:Release>:
-      /Ox
-  >
+      $<$<CONFIG:Release>:
+        /Ox
+      >
+    >
+
+    $<$<NOT:${compiler_is_msvc}>:
+      -std=c++23
+    >
+)
+
+target_link_options(${PROJECT_NAME} PRIVATE
+    $<$<NOT:${compiler_is_msvc}>:
+      -static-libgcc
+      -static-libstdc++
+      -Wl,-R,'$$ORIGIN'
+    >
 )
 
 target_include_directories(${PROJECT_NAME}
@@ -117,6 +129,7 @@ target_link_libraries(${PROJECT_NAME}
   PRIVATE fmt::fmt
 )
 
+include(ccache)
 include(clang-format)
 
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
@@ -129,9 +142,18 @@ set_property(TARGET ${PROJECT_NAME}
     "PATH=${CMAKE_CURRENT_INSTALL_DIR}/${PROJECT_NAME}${CMAKE_EXECUTABLE_SUFFIX}"
 )
 
+# permissions fix to allow this on windows:
+# 1. Open gpedit.msc
+# 2. Computer Configuration
+#      => Windows Settings 
+#      => Security Settings 
+#      => Local Policies 
+#      => User Rights Assignment 
+#      => Create symbolic links
+# 3. Add username, then reboot machine
 add_custom_command(TARGET ${PROJECT_NAME}
-  POST_BUILD COMMAND
-    ${CMAKE_COMMAND} -E copy_directory_if_different
+  PRE_BUILD COMMAND
+    ${CMAKE_COMMAND} -E create_symlink
       ${CMAKE_CURRENT_SOURCE_DIR}/data
       $<TARGET_FILE_DIR:${PROJECT_NAME}>/data
 )
