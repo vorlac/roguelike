@@ -1,6 +1,6 @@
 #include "core/game.hpp"
-#include "core/options.hpp"
 #include "sdl/defs.hpp"
+#include "utils/options.hpp"
 
 SDL_C_LIB_BEGIN
 #include <SDL3/SDL_main.h>

@@ -2,7 +2,7 @@
 
 #include <cstddef>
 
-#include "core/numeric.hpp"
+#include "utils/numeric.hpp"
 
 namespace rl::memory {
     template <std::size_t SIZE>

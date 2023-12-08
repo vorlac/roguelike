@@ -4,13 +4,13 @@
 #include <utility>
 #include <vector>
 
-#include "core/numeric.hpp"
 #include "ds/color.hpp"
 #include "ds/point.hpp"
 #include "ds/triangle.hpp"
 #include "ds/vector2d.hpp"
 #include "gl/shader.hpp"
 #include "sdl/window.hpp"
+#include "utils/numeric.hpp"
 
 namespace rl::gl {
     /**

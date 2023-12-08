@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core/numeric.hpp"
+#include "utils/numeric.hpp"
 
 namespace rl::component {
     struct position

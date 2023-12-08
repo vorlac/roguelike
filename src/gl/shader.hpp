@@ -17,11 +17,11 @@
 #include <glm/gtx/string_cast.hpp>
 #include <glm/matrix.hpp>
 
-#include "core/numeric.hpp"
 #include "utils/assert.hpp"
 #include "utils/concepts.hpp"
 #include "utils/fs.hpp"
 #include "utils/io.hpp"
+#include "utils/numeric.hpp"
 
 namespace rl::gl {
 

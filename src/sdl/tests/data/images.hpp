@@ -1,7 +1,7 @@
 #pragma once
 
-#include "core/numeric.hpp"
 #include "sdl/defs.hpp"
+#include "utils/numeric.hpp"
 
 SDL_C_LIB_BEGIN
 #include <SDL3/SDL_pixels.h>

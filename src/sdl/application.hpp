@@ -7,11 +7,11 @@
 #include <tuple>
 #include <utility>
 
-#include "core/numeric.hpp"
 #include "sdl/defs.hpp"
 #include "sdl/event_handler.hpp"
-#include "sdl/time.hpp"
 #include "sdl/window.hpp"
+#include "utils/numeric.hpp"
+#include "utils/time.hpp"
 
 SDL_C_LIB_BEGIN
 #include <SDL3/SDL_init.h>
@@ -20,17 +20,26 @@ SDL_C_LIB_END
 namespace rl::sdl {
     class Application
     {
+        Application(const sdl::Application& other) = delete;
+        Application(sdl::Application&& other) = delete;
+
+        Application& operator=(const Application& other) = delete;
+        Application& operator=(Application&& other) = delete;
+
     public:
-        enum Subsystem : u16_fast {
-            Timer = SDL3::SDL_INIT_TIMER,
-            Audio = SDL3::SDL_INIT_AUDIO,
-            Video = SDL3::SDL_INIT_VIDEO,
-            Joystick = SDL3::SDL_INIT_JOYSTICK,
-            Haptic = SDL3::SDL_INIT_HAPTIC,
-            Gamepad = SDL3::SDL_INIT_GAMEPAD,
-            Events = SDL3::SDL_INIT_EVENTS,
-            Sensor = SDL3::SDL_INIT_SENSOR,
-            All = Timer | Audio | Video | Joystick | Haptic | Gamepad | Events | Sensor
+        struct Subsystem
+        {
+            enum ID : u16_fast {
+                Timer = SDL3::SDL_INIT_TIMER,
+                Audio = SDL3::SDL_INIT_AUDIO,
+                Video = SDL3::SDL_INIT_VIDEO,
+                Joystick = SDL3::SDL_INIT_JOYSTICK,
+                Haptic = SDL3::SDL_INIT_HAPTIC,
+                Gamepad = SDL3::SDL_INIT_GAMEPAD,
+                Events = SDL3::SDL_INIT_EVENTS,
+                Sensor = SDL3::SDL_INIT_SENSOR,
+                All = Timer | Audio | Video | Joystick | Haptic | Gamepad | Events | Sensor
+            };
         };
 
     public:
@@ -40,15 +49,7 @@ namespace rl::sdl {
             m_window = std::make_unique<sdl::Window>("Roguelite OpenGL");
         }
 
-        Application(const sdl::Application& other) = delete;
-        Application(sdl::Application&& other) = delete;
-
-        ~Application()
-        {
-        }
-
-        Application& operator=(const Application& other) = delete;
-        Application& operator=(Application&& other) = delete;
+        ~Application() = default;
 
         bool handle_events()
         {
@@ -65,7 +66,7 @@ namespace rl::sdl {
             return m_initialized.load(std::memory_order_relaxed);
         }
 
-        bool init_subsystem(Subsystem flags)
+        bool init_subsystem(Subsystem::ID flags)
         {
             bool init{ m_initialized.load(std::memory_order_relaxed) };
             i32 result = SDL3::SDL_Init(flags);

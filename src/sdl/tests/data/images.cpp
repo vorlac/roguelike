@@ -1,8 +1,8 @@
 
-#include "core/numeric.hpp"
 #include "sdl/defs.hpp"
 #include "sdl/surface.hpp"
 #include "sdl/tests/data/images.hpp"
+#include "utils/numeric.hpp"
 
 SDL_C_LIB_BEGIN
 #include <SDL3/SDL_pixels.h>

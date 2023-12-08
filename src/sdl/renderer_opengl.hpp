@@ -5,7 +5,6 @@
 #include <utility>
 #include <vector>
 
-#include "core/numeric.hpp"
 #include "ds/color.hpp"
 #include "ds/dims.hpp"
 #include "ds/point.hpp"
@@ -15,6 +14,7 @@
 #include "sdl/texture.hpp"
 #include "sdl/window.hpp"
 #include "utils/io.hpp"
+#include "utils/numeric.hpp"
 
 SDL_C_LIB_BEGIN
 #include <SDL3/SDL_blendmode.h>

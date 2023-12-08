@@ -7,7 +7,6 @@
 #include <fmt/format.h>
 #include <stdlib.h>
 
-#include "core/numeric.hpp"
 #include "ds/color.hpp"
 #include "ds/dims.hpp"
 #include "ds/point.hpp"
@@ -18,6 +17,7 @@
 #include "sdl/tests/data/icon.hpp"
 #include "sdl/texture.hpp"
 #include "sdl/window.hpp"
+#include "utils/numeric.hpp"
 
 SDL_C_LIB_BEGIN
 #include <SDL3/SDL.h>

@@ -5,8 +5,6 @@
 
 #include <fmt/format.h>
 
-#include "core/numeric.hpp"
-#include "core/options.hpp"
 #include "ds/dims.hpp"
 #include "ds/point.hpp"
 #include "ds/rect.hpp"
@@ -15,6 +13,8 @@
 #include "sdl/renderer_opengl.hpp"
 #include "sdl/utils.hpp"
 #include "utils/assert.hpp"
+#include "utils/numeric.hpp"
+#include "utils/options.hpp"
 
 SDL_C_LIB_BEGIN
 #include <SDL3/SDL_surface.h>

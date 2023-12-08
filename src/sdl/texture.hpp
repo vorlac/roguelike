@@ -3,7 +3,6 @@
 #include <condition_variable>
 #include <thread>
 
-#include "core/numeric.hpp"
 #include "ds/color.hpp"
 #include "ds/dims.hpp"
 #include "ds/point.hpp"
@@ -12,6 +11,7 @@
 #include "sdl/defs.hpp"
 #include "sdl/window.hpp"
 #include "utils/assert.hpp"
+#include "utils/numeric.hpp"
 
 SDL_C_LIB_BEGIN
 #include <SDL3/SDL.h>

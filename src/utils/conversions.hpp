@@ -5,9 +5,9 @@
 #include <string>
 #include <typeinfo>
 
-#include "core/numeric.hpp"
 #include "utils/assert.hpp"
 #include "utils/concepts.hpp"
+#include "utils/numeric.hpp"
 
 namespace rl::inline cast {
     template <typename To, typename From>

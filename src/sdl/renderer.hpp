@@ -9,7 +9,6 @@
 
 #include <fmt/format.h>
 
-#include "core/numeric.hpp"
 #include "ds/color.hpp"
 #include "ds/dims.hpp"
 #include "ds/point.hpp"
@@ -21,6 +20,7 @@
 #include "utils/assert.hpp"
 #include "utils/conversions.hpp"
 #include "utils/io.hpp"
+#include "utils/numeric.hpp"
 
 SDL_C_LIB_BEGIN
 #include <SDL3/SDL_blendmode.h>

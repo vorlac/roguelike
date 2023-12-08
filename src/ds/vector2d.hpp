@@ -11,12 +11,12 @@
 
 #include <fmt/format.h>
 
-#include "core/numeric.hpp"
 #include "ds/dims.hpp"
 #include "ecs/components/transform_components.hpp"
 #include "sdl/defs.hpp"
 #include "utils/concepts.hpp"
 #include "utils/conversions.hpp"
+#include "utils/numeric.hpp"
 
 SDL_C_LIB_BEGIN
 #include <SDL3/SDL_rect.h>

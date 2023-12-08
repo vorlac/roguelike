@@ -8,7 +8,6 @@
 #include <flecs.h>
 #include <fmt/format.h>
 
-#include "core/numeric.hpp"
 #include "ds/color.hpp"
 #include "ds/dims.hpp"
 #include "ds/point.hpp"
@@ -27,11 +26,12 @@
 #include "sdl/surface.hpp"
 #include "sdl/tests/data/icon.hpp"
 #include "sdl/texture.hpp"
-#include "sdl/time.hpp"
 #include "sdl/window.hpp"
 #include "utils/assert.hpp"
 #include "utils/conversions.hpp"
 #include "utils/io.hpp"
+#include "utils/numeric.hpp"
+#include "utils/time.hpp"
 
 SDL_C_LIB_BEGIN
 #include <SDL3/SDL.h>

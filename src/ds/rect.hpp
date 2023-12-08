@@ -6,7 +6,6 @@
 #include <utility>
 #include <vector>
 
-#include "core/numeric.hpp"
 #include "ds/color.hpp"
 #include "ds/dims.hpp"
 #include "ds/point.hpp"
@@ -14,6 +13,7 @@
 #include "ds/vector2d.hpp"
 #include "sdl/defs.hpp"
 #include "utils/concepts.hpp"
+#include "utils/numeric.hpp"
 
 SDL_C_LIB_BEGIN
 #include <SDL3/SDL_rect.h>

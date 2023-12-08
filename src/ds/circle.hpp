@@ -3,10 +3,10 @@
 #include <memory>
 #include <utility>
 
-#include "core/numeric.hpp"
 #include "ds/point.hpp"
 #include "utils/concepts.hpp"
 #include "utils/memory.hpp"
+#include "utils/numeric.hpp"
 
 namespace rl::ds {
 #pragma pack(4)

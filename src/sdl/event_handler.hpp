@@ -1,12 +1,12 @@
 #pragma once
 
-#include "core/options.hpp"
 #include "sdl/defs.hpp"
 #include "sdl/keyboard.hpp"
 #include "sdl/mouse.hpp"
 #include "sdl/window.hpp"
 #include "utils/conversions.hpp"
 #include "utils/io.hpp"
+#include "utils/options.hpp"
 
 SDL_C_LIB_BEGIN
 #include <SDL3/SDL_events.h>

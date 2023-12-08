@@ -10,12 +10,12 @@
 
 #include <fmt/color.h>
 
-#include "core/math.hpp"
-#include "core/numeric.hpp"
 #include "sdl/defs.hpp"
 #include "utils/concepts.hpp"
 #include "utils/conversions.hpp"
+#include "utils/math.hpp"
 #include "utils/memory.hpp"
+#include "utils/numeric.hpp"
 
 SDL_C_LIB_BEGIN
 #include <SDL3/SDL_pixels.h>

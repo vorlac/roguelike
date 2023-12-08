@@ -1,7 +1,7 @@
 #pragma once
 
-#include "core/numeric.hpp"
 #include "utils/concepts.hpp"
+#include "utils/numeric.hpp"
 
 namespace rl::math {
     struct units

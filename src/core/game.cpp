@@ -22,7 +22,6 @@
 #include <fmt/std.h>
 
 #include "core/game.hpp"
-#include "core/numeric.hpp"
 #include "ds/dims.hpp"
 #include "ds/point.hpp"
 #include "ds/rect.hpp"
@@ -37,8 +36,9 @@
 #include "gl/shader.hpp"
 #include "gl/vertex_buffer.hpp"
 #include "sdl/tests/test_suite.hpp"
-#include "sdl/time.hpp"
 #include "utils/io.hpp"
+#include "utils/numeric.hpp"
+#include "utils/time.hpp"
 
 #undef ROGUELIKE_TESTS_ENABLED
 #ifdef ROGUELIKE_TESTS_ENABLED
@@ -103,7 +103,7 @@ namespace rl {
     {
         this->setup();
 
-        sdl::Timer<f32, sdl::TimeDuration::Second> timer{};
+        rl::Timer<f32, rl::TimeDuration::Second> timer{};
 
         u32 loop_count = 0;
         auto delta_time_s = timer.delta();

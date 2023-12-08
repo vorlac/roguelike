@@ -6,16 +6,16 @@
 
 #include <math.h>
 
-#include "core/math.hpp"
-#include "core/numeric.hpp"
 #include "ds/circle.hpp"
 #include "ds/color.hpp"
 #include "ds/point.hpp"
 #include "ds/triangle.hpp"
 #include "ds/vector2d.hpp"
 #include "gl/shader.hpp"
-#include "sdl/time.hpp"
 #include "sdl/window.hpp"
+#include "utils/math.hpp"
+#include "utils/numeric.hpp"
+#include "utils/time.hpp"
 
 namespace rl::gl {
     /**
@@ -232,7 +232,7 @@ namespace rl::gl {
         }
 
     private:
-        sdl::Timer<f32> m_timer{};
+        rl::Timer<f32> m_timer{};
         Shader m_shader{ "instanced_vertex_shader.glsl", "instanced_fragment_shader.glsl" };
 
         constexpr static inline u32 m_rect_count{ 750000 };
