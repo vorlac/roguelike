@@ -1,11 +1,7 @@
 #include <glad/gl.h>
 
 #include <memory>
-#include <string>
-#include <string_view>
 #include <tuple>
-
-#include <fmt/format.h>
 
 #include "core/renderer.hpp"
 #include "core/window.hpp"

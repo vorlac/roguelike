@@ -22,7 +22,7 @@
         "--log",
         "error"
       ],
-      "cwd": "${workspaceFolder}",
+      "cwd": "${command:cmake.getLaunchTargetDirectory}",
       "visualizerFile": "${workspaceFolder}/roguelike.natvis",
       "internalConsoleOptions": "openOnSessionStart",
       "console": "integratedTerminal"
@@ -37,7 +37,7 @@
         "miDebuggerPath": "/usr/bin/gdb"
       },
       "args": [],
-      "cwd": "${workspaceFolder}",
+      "cwd": "${command:cmake.getLaunchTargetDirectory}",
       "visualizerFile": "${workspaceFolder}/roguelike.natvis",
       "internalConsoleOptions": "openOnSessionStart",
       "launchCompleteCommand": "exec-run",

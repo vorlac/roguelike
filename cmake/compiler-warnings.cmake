@@ -21,7 +21,7 @@ target_compile_options(${PROJECT_NAME}
             /W4
 
             # Treat all warning as errors
-            /WX 
+            /WX
 
             # Disable warnings which bleed through from godot-cpp's macros.
             /wd4514 # unreferenced inline function has been removed

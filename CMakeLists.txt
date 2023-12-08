@@ -127,13 +127,29 @@ target_compile_options(${PROJECT_NAME} PUBLIC
       /EHsc
       /nologo
 
-	    $<$<CONFIG:Debug>:
+	  $<$<CONFIG:Debug>:
         # /Z7 # embed debug info into .o files instead of pdb (for ccache)
         # /ZI # enable edit and continue
       >
 
       $<$<CONFIG:Release>:
-        /Ox
+        /O2 # maximize speed
+        #/Ox # enable most speed optimizations
+        /Ot # favor fast code
+        /Ob2 # inline function expansion
+        /Oi # generate intrinsics
+        /Oy # frame pointer omission
+        /Gw # optimize global data
+        /GR- # disable RTTI
+        /EHa- # disable exception handling
+        /OPT # 
+        /ORDER # order functions for optimal paging
+        /GS- # disable buffer security checks
+        /GA # optimize for windows application
+        /GL # whole program optimization
+        /Gr # __vectorcall calling convention, Gr for __fastcall
+        /fp:fast # prefer fast over accurate floating point math
+        /favor:INTEL64
       >
     >
 
@@ -144,19 +160,36 @@ target_compile_options(${PROJECT_NAME} PUBLIC
 	>
 
     $<${compiler_is_gnu}:
-      -std=c++23
+        -std=c++23
     >
 )
 
 target_link_options(${PROJECT_NAME} PRIVATE
     $<${compiler_is_msvc}:
-		  /LTCG
-	  >
+        # /VERBOSE 
+
+        $<$<CONFIG:Release>:
+            /MACHINE:X64
+		    /LTCG # link time code gen
+            /OPT:REF # eliminate unreferenced functions/data
+            # /FASTGENPROFILE # generate optimization profile
+        >
+
+        $<$<CONFIG:Debug>:
+            # /NATVIS:<path> # link natvis into pdb
+            # /LIBPATH:dir # additional lib paths
+            # /WHOLEARCHIVE # include all library object files in binary
+        >
+	>
+
     $<$<NOT:${compiler_is_msvc}>:
-		  -fomit-frame-pointer
-      -static-libgcc
-      -static-libstdc++
-      -Wl,-R,'$$ORIGIN'
+        $<$<CONFIG:Release>:
+	        -fomit-frame-pointer
+        >
+
+        -static-libgcc
+        -static-libstdc++
+        -Wl,-R,'$$ORIGIN'
     >
 )
 
@@ -238,8 +271,8 @@ set_property(TARGET ${PROJECT_NAME}
 add_custom_command(TARGET ${PROJECT_NAME}
   PRE_BUILD COMMAND
     ${CMAKE_COMMAND} -E create_symlink
-      ${CMAKE_CURRENT_SOURCE_DIR}/data
-      $<TARGET_FILE_DIR:${PROJECT_NAME}>/data
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/gl/shaders
+      $<TARGET_FILE_DIR:${PROJECT_NAME}>/shaders
 )
 
 include(cmake-utils)
