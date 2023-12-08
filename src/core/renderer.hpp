@@ -5,6 +5,7 @@
 #include <utility>
 #include <vector>
 
+#include "core/renderer.hpp"
 #include "core/window.hpp"
 #include "ds/color.hpp"
 #include "ds/dims.hpp"
@@ -56,15 +57,17 @@ namespace rl {
             constexpr static inline auto Invalid = SDL3::SDL_BLENDMODE_INVALID;
         };
 
-        constexpr static inline Properties DEFAULT_PROPERTY_FLAGS = { Properties::HWAccelerated };
+        constexpr static inline Renderer::Properties DEFAULT_PROPERTY_FLAGS = {
+            Renderer::Properties::HWAccelerated
+        };
 
     private:
-        explicit rl::Renderer() = delete;
-        explicit rl::Renderer(const rl::Renderer& other) = delete;
-        explicit rl::Renderer(rl::Renderer& other) = delete;
+        explicit Renderer() = delete;
+        explicit Renderer(const rl::Renderer& other) = delete;
+        explicit Renderer(rl::Renderer& other) = delete;
 
     public:
-        explicit rl::Renderer(Window& window, rl::Renderer::Properties flags);
+        explicit Renderer(rl::Window& window, rl::Renderer::Properties flags);
 
         ds::dims<i32> get_output_size() const;
         ds::rect<i32> get_viewport() const;
@@ -73,7 +76,7 @@ namespace rl {
         bool set_draw_color(const ds::color<u8>& c);
         bool clear(const ds::color<u8>& c = { 29, 32, 39 });
         bool present();
-        bool swap_buffers(Window& window);
+        bool swap_buffers(rl::Window& window);
         bool set_target();
         bool set_target(sdl::Texture& tex);
         bool set_draw_blend_mode(const SDL3::SDL_BlendMode blend_mode);

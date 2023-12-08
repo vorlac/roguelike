@@ -8,6 +8,7 @@
 #include <flecs.h>
 #include <fmt/format.h>
 
+#include "core/renderer.hpp"
 #include "core/window.hpp"
 #include "ds/color.hpp"
 #include "ds/dims.hpp"
@@ -23,7 +24,6 @@
 #include "sdl/defs.hpp"
 #include "sdl/pixel_data.hpp"
 #include "sdl/renderer.hpp"
-#include "core/renderer.hpp"
 #include "sdl/surface.hpp"
 #include "sdl/tests/data/icon.hpp"
 #include "sdl/texture.hpp"
