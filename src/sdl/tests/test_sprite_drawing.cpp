@@ -95,7 +95,7 @@ namespace rl::sdl::test {
         renderer->present();
     }
 
-    int execute_sprite_drawing_tests(sdl::Window& window)
+    int execute_sprite_drawing_tests(std::unique_ptr<sdl::Window>& window)
     {
         i32 return_code = -1;
 

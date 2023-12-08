@@ -23,8 +23,8 @@ namespace rl::ds {
         }
 
         explicit constexpr circle(circle<T>&& other) noexcept
-            : centroid{ std::move(other.centroid) }
-            , radius{ std::move(other.radius) }
+            : centroid{ std::forward<ds::point<T>>(other.centroid) }
+            , radius{ std::forward<T>(other.radius) }
         {
         }
 

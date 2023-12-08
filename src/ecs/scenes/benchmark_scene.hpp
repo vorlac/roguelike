@@ -209,11 +209,12 @@ namespace rl::scene {
                 USE_RANDOM_COLORS ? ds::dims<f32>{ 10.0f, 10.0f } : ds::dims<f32>{ 20.0f, 20.0f }
             };
 
-            static void define_entity_rendering(flecs::world& ecs, sdl::Window& window)
+            static void define_entity_rendering(flecs::world& ecs,
+                                                std::unique_ptr<sdl::Window>& window)
             {
                 //*m_sprite = std::move(sprite);
 
-                m_renderer = window.renderer().get();
+                m_renderer = window->renderer().get();
                 m_renderer->set_draw_blend_mode(USE_RANDOM_COLORS ? sdl::Renderer::blend_mode::Blend
                                                                   : sdl::Renderer::blend_mode::Mod);
 
@@ -322,20 +323,20 @@ namespace rl::scene {
                 return sdl::Texture{ nullptr };
             }
 
-            static void init_systems(flecs::world& world, sdl::Window& window)
+            static void init_systems(flecs::world& world, std::unique_ptr<sdl::Window>& window)
             {
                 ds::dims<i32> sprite_size{ 0, 0 };
                 std::vector<u8> icon_data = { icon_bmp, icon_bmp + icon_bmp_len };
                 // auto sprite = create_texture(window.renderer(), icon_data, sprite_size);
                 // runtime_assert(sprite.is_valid(), "failed to load sprite");
-                define_rect_movement(world, window.get_size());
+                define_rect_movement(world, window->get_size());
                 define_entity_rendering(world, window);
                 define_entity_timeout(world);
             }
         };
 
     public:
-        static auto init(flecs::world& world, sdl::Window& window)
+        static auto init(flecs::world& world, std::unique_ptr<sdl::Window>& window)
         {
             world.set<benchmark_scene>({
                 world.pipeline()

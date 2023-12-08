@@ -16,7 +16,7 @@ namespace rl::sdl {
     class EventHandler
     {
     public:
-        bool handle_events(sdl::Window& window)
+        bool handle_events(std::unique_ptr<sdl::Window>& window)
         {
             SDL3::SDL_Event e{};
 
@@ -71,21 +71,21 @@ namespace rl::sdl {
                     {
                         const Window::Event::Data& window_event{ e.window };
                         const WindowID id{ window_event.windowID };
-                        window.on_shown(id);
+                        window->on_shown(id);
                         break;
                     }
                     case Window::Event::Hidden:
                     {
                         const Window::Event::Data& window_event{ e.window };
                         const WindowID id{ window_event.windowID };
-                        window.on_hidden(id);
+                        window->on_hidden(id);
                         break;
                     }
                     case Window::Event::Exposed:
                     {
                         const Window::Event::Data& window_event{ e.window };
                         const WindowID id{ window_event.windowID };
-                        window.on_exposed(id);
+                        window->on_exposed(id);
                         break;
                     }
                     case Window::Event::Moved:
@@ -94,7 +94,7 @@ namespace rl::sdl {
                         const WindowID id{ window_event.windowID };
                         const i32 x{ window_event.data1 };
                         const i32 y{ window_event.data2 };
-                        window.on_moved(id, { x, y });
+                        window->on_moved(id, { x, y });
                         break;
                     }
                     case Window::Event::Resized:
@@ -103,119 +103,119 @@ namespace rl::sdl {
                         const WindowID id{ window_event.windowID };
                         const i32 width{ window_event.data1 };
                         const i32 height{ window_event.data2 };
-                        window.on_resized(id, { width, height });
+                        window->on_resized(id, { width, height });
                         break;
                     }
                     case Window::Event::PixelSizeChanged:
                     {
                         const Window::Event::Data& window_event{ e.window };
                         const WindowID id{ window_event.windowID };
-                        window.on_pixel_size_changed(id);
+                        window->on_pixel_size_changed(id);
                         break;
                     }
                     case Window::Event::Minimized:
                     {
                         const Window::Event::Data& window_event{ e.window };
                         const WindowID id{ window_event.windowID };
-                        window.on_minimized(id);
+                        window->on_minimized(id);
                         break;
                     }
                     case Window::Event::Maximized:
                     {
                         const Window::Event::Data& window_event{ e.window };
                         const WindowID id{ window_event.windowID };
-                        window.on_maximized(id);
+                        window->on_maximized(id);
                         break;
                     }
                     case Window::Event::Restored:
                     {
                         const Window::Event::Data& window_event{ e.window };
                         const WindowID id{ window_event.windowID };
-                        window.on_restored(id);
+                        window->on_restored(id);
                         break;
                     }
                     case Window::Event::MouseEnter:
                     {
                         const Window::Event::Data& window_event{ e.window };
                         const WindowID id{ window_event.windowID };
-                        window.on_mouse_enter(id);
+                        window->on_mouse_enter(id);
                         break;
                     }
                     case Window::Event::MouseLeave:
                     {
                         const Window::Event::Data& window_event{ e.window };
                         const WindowID id{ window_event.windowID };
-                        window.on_mouse_leave(id);
+                        window->on_mouse_leave(id);
                         break;
                     }
                     case Window::Event::FocusGained:
                     {
                         const Window::Event::Data& window_event{ e.window };
                         const WindowID id{ window_event.windowID };
-                        window.on_kb_focus_gained(id);
+                        window->on_kb_focus_gained(id);
                         break;
                     }
                     case Window::Event::FocusLost:
                     {
                         const Window::Event::Data& window_event{ e.window };
                         const WindowID id{ window_event.windowID };
-                        window.on_kb_focus_lost(id);
+                        window->on_kb_focus_lost(id);
                         break;
                     }
                     case Window::Event::CloseRequested:
                     {
                         const Window::Event::Data& window_event{ e.window };
                         const WindowID id{ window_event.windowID };
-                        window.on_close_requested(id);
+                        window->on_close_requested(id);
                         break;
                     }
                     case Window::Event::TakeFocus:
                     {
                         const Window::Event::Data& window_event{ e.window };
                         const WindowID id{ window_event.windowID };
-                        window.on_take_focus(id);
+                        window->on_take_focus(id);
                         break;
                     }
                     case Window::Event::HitTest:
                     {
                         const Window::Event::Data& window_event{ e.window };
                         const WindowID id{ window_event.windowID };
-                        window.on_hit_test(id);
+                        window->on_hit_test(id);
                         break;
                     }
                     case Window::Event::ICCProfChanged:
                     {
                         const Window::Event::Data& window_event{ e.window };
                         const WindowID id{ window_event.windowID };
-                        window.on_icc_profile_changed(id);
+                        window->on_icc_profile_changed(id);
                         break;
                     }
                     case Window::Event::DisplayChanged:
                     {
                         const Window::Event::Data& window_event{ e.window };
                         const WindowID id{ window_event.windowID };
-                        window.on_display_changed(id);
+                        window->on_display_changed(id);
                         break;
                     }
                     case Window::Event::DisplayScaleChanged:
                     {
                         const Window::Event::Data& window_event{ e.window };
                         const WindowID id{ window_event.windowID };
-                        window.on_display_scale_changed(id);
+                        window->on_display_scale_changed(id);
                         break;
                     }
                     case Window::Event::Occluded:
                     {
                         const Window::Event::Data& window_event{ e.window };
                         const WindowID id{ window_event.windowID };
-                        window.on_occluded(id);
+                        window->on_occluded(id);
                         break;
                     }
                     case Window::Event::Destroyed:
                     {
                         const Window::Event::Data& window_event{ e.window };
                         const WindowID id{ window_event.windowID };
-                        window.on_destroyed(id);
+                        window->on_destroyed(id);
                         break;
                     }
 

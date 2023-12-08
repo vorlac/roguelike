@@ -37,6 +37,7 @@ namespace rl::sdl {
         Application()
         {
             bool ret = this->init_subsystem(Subsystem::All);
+            m_window = std::make_unique<sdl::Window>("Roguelite OpenGL");
         }
 
         Application(const sdl::Application& other) = delete;
@@ -73,7 +74,7 @@ namespace rl::sdl {
             return m_initialized.load(std::memory_order_relaxed);
         }
 
-        sdl::Window& window()
+        std::unique_ptr<sdl::Window>& window()
         {
             return m_window;
         }
@@ -83,7 +84,7 @@ namespace rl::sdl {
         static inline std::atomic<bool> m_initialized{ false };
         std::once_flag init_flag{};
 
-        sdl::Window m_window{ "Roguelite" };
+        std::unique_ptr<sdl::Window> m_window{};
         sdl::EventHandler m_event_handler{};
     };
 }

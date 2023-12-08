@@ -109,8 +109,8 @@ namespace rl {
         auto delta_time_s = timer.delta();
         auto elapsed_time = timer.elapsed();
 
-        sdl::Window& window{ m_sdl.window() };
-        std::shared_ptr<sdl::RendererGL> renderer{ window.renderer() };
+        std::unique_ptr<sdl::Window>& window{ m_sdl.window() };
+        std::shared_ptr<sdl::RendererGL> renderer{ window->renderer() };
 
         gl::InstancedVertexBuffer vbo{ renderer->get_viewport() };
         vbo.bind_buffers();
@@ -126,7 +126,7 @@ namespace rl {
             vbo.update_buffers(renderer->get_viewport());
             vbo.draw_triangles();
 
-            window.swap_buffers();
+            window->swap_buffers();
 
             if constexpr (io::logging::main_loop)
                 if (++loop_count % 60 == 0)

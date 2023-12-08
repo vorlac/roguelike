@@ -25,10 +25,9 @@ namespace rl::sdl {
     Window::Window()
     {
         SDL3::SDL_GL_SetAttribute(SDL3::SDL_GL_ACCELERATED_VISUAL, 1);
-        SDL3::SDL_GL_SetAttribute(SDL3::SDL_GL_SHARE_WITH_CURRENT_CONTEXT, 0);
-        SDL3::SDL_GL_SetAttribute(SDL3::SDL_GL_DOUBLEBUFFER, 0);
-        SDL3::SDL_GL_SetAttribute(SDL3::SDL_GL_CONTEXT_FLAGS,
-                                  SDL3::SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG);
+        SDL3::SDL_GL_SetAttribute(SDL3::SDL_GL_DOUBLEBUFFER, 1);
+        // SDL3::SDL_GL_SetAttribute(SDL3::SDL_GL_CONTEXT_FLAGS,
+        //                           SDL3::SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG);
         SDL3::SDL_GL_SetAttribute(SDL3::SDL_GL_CONTEXT_MAJOR_VERSION, 4);
         SDL3::SDL_GL_SetAttribute(SDL3::SDL_GL_CONTEXT_MINOR_VERSION, 6);
         SDL3::SDL_GL_SetAttribute(SDL3::SDL_GL_CONTEXT_PROFILE_MASK,
