@@ -135,10 +135,10 @@ namespace rl::gl {
             ds::rect<f32>{ 0.0f, 0.0f, 1920.0f, 1080.0f }.quads(),
         };
         constexpr static inline std::array m_rects = {
-            ds::rect<f32>{ quads[0].inflate(-50.0f) }.triangles(rl::Colors::Red),
-            ds::rect<f32>{ quads[1].inflate(-50.0f) }.triangles(rl::Colors::Blue),
-            ds::rect<f32>{ quads[2].inflate(-50.0f) }.triangles(rl::Colors::Purple),
-            ds::rect<f32>{ quads[3].inflate(-50.0f) }.triangles(rl::Colors::Green),
+            ds::rect<f32>{ quads[0].inflated(-50.0f) }.triangles(rl::Colors::Red),
+            ds::rect<f32>{ quads[1].inflated(-50.0f) }.triangles(rl::Colors::Blue),
+            ds::rect<f32>{ quads[2].inflated(-50.0f) }.triangles(rl::Colors::Purple),
+            ds::rect<f32>{ quads[3].inflated(-50.0f) }.triangles(rl::Colors::Green),
         };
 
         i32 m_buffer_vertex_count{ 0 };

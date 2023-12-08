@@ -366,10 +366,10 @@ namespace rl::ds {
         /**
          * @brief Gets the center point of the rectangle
          * */
-        constexpr inline rect<T> inflate(const T amount) const
+        constexpr inline rect<T> inflated(const T amount) const
         {
             return rect<T>{
-                pt - (amount / static_cast<T>(2)),
+                pt - T(amount / static_cast<T>(2)),
                 size + amount,
             };
         }

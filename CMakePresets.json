@@ -17,8 +17,7 @@
         "strategy": "external"
       },
       "environment": {
-        "NINJA_STATUS": "%p [%es] (%f/%t)  -",
-        "CCACHE_DIR": "${sourceDir}/.out/build/${presetName}/yyyy"
+        "NINJA_STATUS": "%p [%es] (%f/%t)  -"
       }
     },
     {

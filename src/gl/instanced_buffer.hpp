@@ -28,6 +28,8 @@ namespace rl::gl {
     public:
         InstancedVertexBuffer(const ds::rect<f32>& viewport_rect)
         {
+            auto&& window_rect{ viewport_rect.inflated(-250.0f) };
+
             // create vertex array object
             glGenVertexArrays(1, &m_vao_id);
 
@@ -64,23 +66,25 @@ namespace rl::gl {
                 m_rect_velocities_data.emplace_back((cast::to<f32>(xv) - 1000.0f) / 10.0f,
                                                     (cast::to<f32>(yv) - 1000.0f) / 10.0f);
 
-                m_rect_positions_data.push_back(centroid);
+                m_rect_positions_data.emplace_back(
+                    f32(rand() % static_cast<i32>(window_rect.size.width)),
+                    f32(rand() % static_cast<i32>(window_rect.size.height)));
             }
         }
 
         bool update_buffers(const ds::rect<f32>& viewport)
         {
             constexpr static auto top_bottom_collision = [](const ds::point<f32>& pos,
-                                                            const ds::rect<f32>& viewport) {
+                                                            const ds::rect<f32>& window_rect) {
                 const bool top_collision = pos.y <= 0.0f;
-                const bool bottom_collision = pos.y + m_rect_size.height >= viewport.size.height;
+                const bool bottom_collision = pos.y + m_rect_size.height >= window_rect.size.height;
                 return top_collision || bottom_collision;
             };
 
             constexpr static auto left_right_collision = [](const ds::point<f32>& pos,
-                                                            const ds::rect<f32>& viewport) {
+                                                            const ds::rect<f32>& window_rect) {
                 bool left_collision = pos.x <= 0.0f;
-                bool right_collision = pos.x + m_rect_size.width >= viewport.size.width;
+                bool right_collision = pos.x + m_rect_size.width >= window_rect.size.width;
                 return left_collision || right_collision;
             };
 
@@ -191,7 +195,7 @@ namespace rl::gl {
             // VBOs) when it's not directly necessary.
             // glBindVertexArray(0);
 
-            this->set_draw_mode(DrawMode::Wireframe);
+            this->set_draw_mode(DrawMode::Fill);
         }
 
         void draw_triangles()
@@ -227,7 +231,7 @@ namespace rl::gl {
         sdl::Timer<f32> m_timer{};
         Shader m_shader{ "instanced_vertex_shader.glsl", "instanced_fragment_shader.glsl" };
 
-        constexpr static inline u32 m_rect_count{ 6 };
+        constexpr static inline u32 m_rect_count{ 100000 };
         constexpr static inline ds::dims<f32> m_rect_size{ 15.0f, 15.0f };
         constexpr static inline std::array m_rect_vertex_buffer_data{
             ds::rect<f32>{ ds::point<f32>{ 0.0f, 0.0f }, ds::dims<f32>{ 15.0f, 15.0f } }.triangles(),
@@ -236,8 +240,6 @@ namespace rl::gl {
         std::vector<ds::color<f32>> m_rect_colors_data = {};
         std::vector<ds::point<f32>> m_rect_positions_data = {};
         std::vector<ds::vector2<f32>> m_rect_velocities_data = {};
-
-        i32 m_buffer_vertex_count{ 0 };
 
         /**
          * @brief VBO name of fuffer containing

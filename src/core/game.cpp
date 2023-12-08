@@ -112,9 +112,7 @@ namespace rl {
         sdl::Window& window{ m_sdl.window() };
         std::shared_ptr<sdl::RendererGL> renderer{ window.renderer() };
 
-        gl::VertexBuffer vbo{ renderer->get_viewport() };
-
-        // gl::InstancedVertexBuffer vbo{ renderer->get_viewport() };
+        gl::InstancedVertexBuffer vbo{ renderer->get_viewport() };
         vbo.bind_buffers();
 
         while (this->handle_events())
@@ -125,7 +123,7 @@ namespace rl {
             if (this->quit_requested()) [[unlikely]]
                 break;
 
-            // vbo.update_buffers(renderer->get_viewport());
+            vbo.update_buffers(renderer->get_viewport());
             vbo.draw_triangles();
 
             window.swap_buffers();

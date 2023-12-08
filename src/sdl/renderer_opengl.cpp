@@ -37,7 +37,7 @@ namespace rl::sdl {
         runtime_assert((gl_major_ver >= 3 && gl_minor_ver >= 3 || gl_major_ver > 3),
                        "Deprecated OpenGL Version Loaded: {}.{}", gl_major_ver, gl_minor_ver);
 
-        if (gl_major_ver > 3 || gl_major_ver == 3 && gl_minor_ver >= 3)
+        if (gl_major_ver > 3 || (gl_major_ver == 3 && gl_minor_ver >= 3))
         {
             const GLubyte* const gl_ver_str = glGetString(GL_VERSION);
             const GLubyte* const renderer_str = glGetString(GL_RENDERER);
