@@ -8,20 +8,19 @@ list(APPEND CMAKE_MODULE_PATH
 option(
   ENABLE_CCACHE
     "Enable build intermediate file caching"
-      OFF
+     OFF
 )
-
 
 option(
   AUTOFORMAT_SRC_ON_CONFIGURE
     "If enabled, clang-format will be used to format all sources in src/ during configuration"
-      ON
+     ON
 )
 
 option(
   ASAN_ENABLED
     "Enables address sanitizer"
-	  ON
+	   OFF
 )
 
 include(vcpkg-init)
@@ -64,12 +63,12 @@ add_executable(${PROJECT_NAME}
 include(compiler-warnings)
 
 if (ASAN_ENABLED MATCHES ON)
-	string(REGEX REPLACE "/RTC(su|[1su])" "" 
-		CMAKE_CXX_FLAGS 
+	string(REGEX REPLACE "/RTC(su|[1su])" ""
+		CMAKE_CXX_FLAGS
 	      "${CMAKE_CXX_FLAGS}"
 	)
 
-	target_compile_options(${PROJECT_NAME} PUBLIC 
+	target_compile_options(${PROJECT_NAME} PUBLIC
 		$<${compiler_is_msvc}:
 			/fsanitize=address
 		>
@@ -101,14 +100,6 @@ if (ASAN_ENABLED MATCHES ON)
 	target_link_libraries(${PROJECT_NAME} PUBLIC
 		"C:\\Program Files\\LLVM\\lib\\clang\\17\\lib\\windows\\clang_rt.asan_static-x86_64.lib"
 	)
-
-else()
-	set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT 
-		"$<IF:$<AND:$<C_COMPILER_ID:MSVC>,$<CXX_COMPILER_ID:MSVC>>,
-			$<$<CONFIG:Debug,RelWithDebInfo>:EditAndContinue>,
-			$<$<CONFIG:Debug,RelWithDebInfo>:ProgramDatabase>
-		>"
-	)
 endif()
 
 target_compile_features(${PROJECT_NAME}
@@ -117,7 +108,9 @@ target_compile_features(${PROJECT_NAME}
 )
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
+  _USE_MATH_DEFINES
   NOMINMAX
+
   KHRONOS_STATIC
   ROGUELIKE_TESTS_ENABLED
 
@@ -144,6 +137,12 @@ target_compile_options(${PROJECT_NAME} PUBLIC
       >
     >
 
+	$<${compiler_is_clang}:
+		-march=native
+		-flto
+		-DNDEBUG
+	>
+
     $<${compiler_is_gnu}:
       -std=c++23
     >
@@ -154,6 +153,7 @@ target_link_options(${PROJECT_NAME} PRIVATE
 		  /LTCG
 	  >
     $<$<NOT:${compiler_is_msvc}>:
+		  -fomit-frame-pointer
       -static-libgcc
       -static-libstdc++
       -Wl,-R,'$$ORIGIN'
@@ -229,10 +229,10 @@ set_property(TARGET ${PROJECT_NAME}
 # permissions fix to allow this on windows:
 # 1. Open gpedit.msc
 # 2. Computer Configuration
-#      => Windows Settings 
-#      => Security Settings 
-#      => Local Policies 
-#      => User Rights Assignment 
+#      => Windows Settings
+#      => Security Settings
+#      => Local Policies
+#      => User Rights Assignment
 #      => Create symbolic links
 # 3. Add username, then reboot machine
 add_custom_command(TARGET ${PROJECT_NAME}

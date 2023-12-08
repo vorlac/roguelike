@@ -1,9 +1,14 @@
 #pragma once
 
+#include <cmath>
 #include <limits>
 #include <vector>
 
+#include <math.h>
+
+#include "core/math.hpp"
 #include "core/numeric.hpp"
+#include "ds/circle.hpp"
 #include "ds/color.hpp"
 #include "ds/point.hpp"
 #include "ds/triangle.hpp"
@@ -28,7 +33,7 @@ namespace rl::gl {
     public:
         InstancedVertexBuffer(const ds::rect<f32>& viewport_rect)
         {
-            auto&& window_rect{ viewport_rect.inflated(-250.0f) };
+            auto&& window_rect{ viewport_rect.inflated(-450.0f) };
 
             // create vertex array object
             glGenVertexArrays(1, &m_vao_id);
@@ -43,6 +48,11 @@ namespace rl::gl {
             runtime_assert(shaders_valid, "Failed to compile shaders");
 
             ds::point<f32> centroid = viewport_rect.centroid();
+            auto colors_size_mb = math::to_bytes(sizeof(f32) * 4 * m_rect_count, math::units::byte,
+                                                 math::units::megabyte);
+            auto positions_size_mb = math::to_bytes(sizeof(f32) * 3 * m_rect_count,
+                                                    math::units::byte, math::units::megabyte);
+
             m_rect_colors_data.reserve(m_rect_count);
             m_rect_positions_data.reserve(m_rect_count);
             m_rect_velocities_data.reserve(m_rect_count);
@@ -54,21 +64,32 @@ namespace rl::gl {
                 static_cast<u8>(rand() % 128),
             };
 
+            log::info("InstancedVertexBuffer Spawning {} Rectangles (clr:{}MB, pos:{}MB)",
+                      m_rect_count, colors_size_mb, positions_size_mb);
+
             for (size_t i = 0; i < m_rect_count; ++i)
             {
                 u32 xv = rand() % 2000;
                 u32 yv = rand() % 2000;
 
-                m_rect_colors_data.emplace_back((f32(rand() % 250) + 250) / 1000.0f,
-                                                (f32(rand() % 250) + 250) / 1000.0f,
-                                                (f32(rand() % 250) + 250) / 1000.0f);
+                m_rect_colors_data.emplace_back((f32(rand() % 500) + 250) / 1000.0f,
+                                                (f32(rand() % 500) + 250) / 1000.0f,
+                                                (f32(rand() % 500) + 250) / 1000.0f);
 
                 m_rect_velocities_data.emplace_back((cast::to<f32>(xv) - 1000.0f) / 10.0f,
                                                     (cast::to<f32>(yv) - 1000.0f) / 10.0f);
 
-                m_rect_positions_data.emplace_back(
-                    f32(rand() % static_cast<i32>(window_rect.size.width)),
-                    f32(rand() % static_cast<i32>(window_rect.size.height)));
+                ds::circle<f32> spawn{ viewport_rect.centroid(), 500.0f };
+
+                const f32 outer{ 500.0f };
+                const f32 inner{ 250.0f };
+                const f32 rand1{ (rand() % 1000) / 1000.0f };
+                const f32 rand2{ (rand() % 1000) / 1000.0f };
+                const f32 rad{ std::sqrt(rand1 * (outer * outer - inner * inner) + inner * inner) };
+                const f32 theta{ f32(rand2 * 2.0f * M_PI) };
+
+                m_rect_positions_data.emplace_back(spawn.centroid.x + rad * std::cos(theta),
+                                                   spawn.centroid.y + rad * std::sin(theta));
             }
         }
 
@@ -154,7 +175,7 @@ namespace rl::gl {
                 glBindBuffer(GL_ARRAY_BUFFER, m_vbo_colors_id);
                 // define info about the VBO vertex buffer, targeting GL_ARRAY_BUFFER
                 glBufferData(GL_ARRAY_BUFFER, sizeof(f32) * 4 * m_rect_colors_data.size(),
-                             m_rect_colors_data.data(), GL_STREAM_DRAW);
+                             m_rect_colors_data.data(), GL_STATIC_DRAW);
 
                 glVertexAttribPointer(     //
                     1,                     //
@@ -171,7 +192,7 @@ namespace rl::gl {
                 glBindBuffer(GL_ARRAY_BUFFER, m_vbo_positions_id);
                 // define info about the VBO vertex buffer, targeting GL_ARRAY_BUFFER
                 glBufferData(GL_ARRAY_BUFFER, sizeof(f32) * 3 * m_rect_positions_data.size(),
-                             m_rect_positions_data.data(), GL_STREAM_DRAW);
+                             m_rect_positions_data.data(), GL_DYNAMIC_DRAW);
 
                 glVertexAttribPointer(     //
                     2,                     //
@@ -183,17 +204,6 @@ namespace rl::gl {
                 );
                 glEnableVertexAttribArray(2);
             }
-
-            // note that this is allowed, the call to glVertexAttribPointer registered VBO
-            // as the vertex attribute's bound vertex buffer object so afterwards we can
-            // safely unbind
-            // glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-            // You can unbind the VAO afterwards so other VAO calls won't accidentally
-            // modify this VAO, but this rarely happens. Modifying other VAOs requires a
-            // call to glBindVertexArray anyways so we generally don't unbind VAOs (nor
-            // VBOs) when it's not directly necessary.
-            // glBindVertexArray(0);
 
             this->set_draw_mode(DrawMode::Fill);
         }
@@ -212,18 +222,12 @@ namespace rl::gl {
             glVertexAttribDivisor(1, 1);  // rect colors: one per quad (its center) -> 1
             glVertexAttribDivisor(2, 1);  // rect positions: one per quad (its center) -> 1
 
-            // Set shader program to use
             m_shader.set_active();
-            // glUseProgram(m_shader_id);
-            //  Bind VAO array
-            glBindVertexArray(m_vao_id);
 
-            // Draw verices
-            // GL_QUADS, GL_TRIANGLE_STRIP
+            glBindVertexArray(m_vao_id);
             glDrawArraysInstanced(GL_TRIANGLES, 0,
                                   static_cast<i32>(m_rect_vertex_buffer_data.size()), m_rect_count);
 
-            // Unbind the VAO buffer... not necessary yet
             // glBindVertexArray(0);
         }
 
@@ -231,10 +235,10 @@ namespace rl::gl {
         sdl::Timer<f32> m_timer{};
         Shader m_shader{ "instanced_vertex_shader.glsl", "instanced_fragment_shader.glsl" };
 
-        constexpr static inline u32 m_rect_count{ 100000 };
-        constexpr static inline ds::dims<f32> m_rect_size{ 15.0f, 15.0f };
+        constexpr static inline u32 m_rect_count{ 750000 };
+        constexpr static inline ds::dims<f32> m_rect_size{ 5.0f, 5.0f };
         constexpr static inline std::array m_rect_vertex_buffer_data{
-            ds::rect<f32>{ ds::point<f32>{ 0.0f, 0.0f }, ds::dims<f32>{ 15.0f, 15.0f } }.triangles(),
+            ds::rect<f32>{ ds::point<f32>{ 0.0f, 0.0f }, ds::dims<f32>{ m_rect_size } }.triangles(),
         };
 
         std::vector<ds::color<f32>> m_rect_colors_data = {};

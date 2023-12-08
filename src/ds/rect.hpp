@@ -369,7 +369,7 @@ namespace rl::ds {
         constexpr inline rect<T> inflated(const T amount) const
         {
             return rect<T>{
-                pt - T(amount / static_cast<T>(2)),
+                pt - (amount / static_cast<T>(2)),
                 size + amount,
             };
         }

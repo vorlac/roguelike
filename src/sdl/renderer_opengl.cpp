@@ -19,14 +19,23 @@
 SDL_C_LIB_BEGIN
 #include <SDL3/SDL_render.h>
 #include <SDL3/SDL_video.h>
+struct SDL_VideoDevice;
+typedef struct SDL_VideoDevice SDL_VideoDevice;
 SDL_C_LIB_END
 
 namespace rl::sdl {
+    static inline SDL3::SDL_GLContext create_opengl_context(SDL3::SDL_Window* sdl_window)
+    {
+        sdl_assert(sdl_window != nullptr, "Creating OpenGL context from NULL window");
+        // SDL3::SDL_VideoDevice* device{ SDL3::SDL_GetVideoDevice() };
+        return SDL3::SDL_GL_CreateContext(sdl_window);
+    }
 
     RendererGL::RendererGL(sdl::Window& window, RendererGL::Properties flags)
         : m_properties{ flags }
-        , m_sdl_glcontext{ SDL3::SDL_GL_CreateContext(window.sdl_handle()) }
+        , m_sdl_glcontext{ create_opengl_context(window.sdl_handle()) }
     {
+        // wglCreateContext();
         int result = m_sdl_glcontext != nullptr ? 0 : -1;
         sdl_assert(result == 0, "Failed to create OpenGL context");
 

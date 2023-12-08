@@ -56,10 +56,7 @@ namespace rl::sdl {
             constexpr static inline auto Invalid = SDL3::SDL_BLENDMODE_INVALID;
         };
 
-        constexpr static inline Properties DEFAULT_PROPERTY_FLAGS = {
-            Properties::HWAccelerated  // |
-            // Properties::VSync,
-        };
+        constexpr static inline Properties DEFAULT_PROPERTY_FLAGS = { Properties::HWAccelerated };
 
     private:
         explicit RendererGL() = delete;
