@@ -5,12 +5,12 @@
 
 #include <fmt/format.h>
 
+#include "core/renderer.hpp"
 #include "ds/dims.hpp"
 #include "ds/point.hpp"
 #include "ds/rect.hpp"
 #include "ds/vector2d.hpp"
 #include "sdl/defs.hpp"
-#include "sdl/renderer_opengl.hpp"
 #include "sdl/utils.hpp"
 #include "utils/assert.hpp"
 #include "utils/numeric.hpp"
@@ -21,7 +21,7 @@ SDL_C_LIB_BEGIN
 #include <SDL3/SDL_video.h>
 SDL_C_LIB_END
 
-namespace rl::sdl {
+namespace rl {
     Window::Window()
     {
         SDL3::SDL_GL_SetAttribute(SDL3::SDL_GL_ACCELERATED_VISUAL, 1);
@@ -40,7 +40,7 @@ namespace rl::sdl {
         m_properties = flags;
         m_sdl_window = SDL3::SDL_CreateWindow(title.data(), dims.width, dims.height, m_properties);
         m_window_rect = { m_sdl_window ? this->get_position() : ds::point<i32>::null(), dims };
-        m_renderer = std::make_shared<sdl::RendererGL>(*this, RendererGL::DEFAULT_PROPERTY_FLAGS);
+        m_renderer = std::make_shared<rl::Renderer>(*this, rl::Renderer::DEFAULT_PROPERTY_FLAGS);
         sdl_assert(m_sdl_window != nullptr, "failed to create SDL_Window");
         sdl_assert(m_renderer != nullptr, "failed to create sdl::Renderer");
     }
@@ -54,7 +54,7 @@ namespace rl::sdl {
         }
     }
 
-    const Window& Window::operator=(sdl::Window&& other) noexcept
+    const Window& Window::operator=(Window&& other) noexcept
     {
         if (m_sdl_window != nullptr)
         {
@@ -194,7 +194,7 @@ namespace rl::sdl {
         return this->sdl_handle() != nullptr;
     }
 
-    std::shared_ptr<sdl::RendererGL> Window::renderer() const
+    std::shared_ptr<rl::Renderer> Window::renderer() const
     {
         return m_renderer;
     }
@@ -256,9 +256,9 @@ namespace rl::sdl {
 
     bool Window::get_grab() const
     {
-        bool result = sdl::boolean(true) == SDL3::SDL_GetWindowGrab(m_sdl_window);
-        sdl_assert(result, "failed to get window grab");
-        return result;
+        i32 result = SDL3::SDL_GetWindowGrab(m_sdl_window);
+        sdl_assert(result == 1, "failed to get window grab");
+        return result == 1;
     }
 
     SDL3::SDL_DisplayID Window::get_display() const
@@ -310,7 +310,7 @@ namespace rl::sdl {
         return ret;
     }
 
-    bool Window::on_moved(sdl::WindowID id, ds::point<i32>&& pt)
+    bool Window::on_moved(rl::WindowID id, ds::point<i32>&& pt)
     {
         if constexpr (io::logging::window_events)
         {

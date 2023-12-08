@@ -137,7 +137,7 @@ namespace rl::sdl::test {
         }
     }
 
-    int render_test_colors(sdl::Window& Window)
+    int render_test_colors(Window& Window)
     {
         double delta{ 0 };
         u64 loop_count{ 0 };

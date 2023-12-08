@@ -6,13 +6,13 @@
 
 #include <math.h>
 
+#include "core/window.hpp"
 #include "ds/circle.hpp"
 #include "ds/color.hpp"
 #include "ds/point.hpp"
 #include "ds/triangle.hpp"
 #include "ds/vector2d.hpp"
 #include "gl/shader.hpp"
-#include "sdl/window.hpp"
 #include "utils/math.hpp"
 #include "utils/numeric.hpp"
 #include "utils/time.hpp"

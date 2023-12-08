@@ -958,7 +958,7 @@ namespace rl::sdl::test {
     /**
      * @brief Runs the full SDL test suite on C++ wrapper
      * */
-    int execute_render_tests(std::unique_ptr<sdl::Window>& main_window)
+    int execute_render_tests(std::unique_ptr<Window>& main_window)
     {
         int ret = 0;
 

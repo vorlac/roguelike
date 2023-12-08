@@ -1,9 +1,9 @@
 #pragma once
 
+#include "core/keyboard.hpp"
+#include "core/mouse.hpp"
+#include "core/window.hpp"
 #include "sdl/defs.hpp"
-#include "sdl/keyboard.hpp"
-#include "sdl/mouse.hpp"
-#include "sdl/window.hpp"
 #include "utils/conversions.hpp"
 #include "utils/io.hpp"
 #include "utils/options.hpp"
@@ -12,11 +12,11 @@ SDL_C_LIB_BEGIN
 #include <SDL3/SDL_events.h>
 SDL_C_LIB_END
 
-namespace rl::sdl {
+namespace rl {
     class EventHandler
     {
     public:
-        bool handle_events(std::unique_ptr<sdl::Window>& window)
+        bool handle_events(std::unique_ptr<Window>& window)
         {
             SDL3::SDL_Event e{};
 
@@ -230,7 +230,7 @@ namespace rl::sdl {
             return true;
         }
 
-        inline bool quit_triggered() const
+        constexpr inline bool quit_triggered() const
         {
             return m_quit;
         }

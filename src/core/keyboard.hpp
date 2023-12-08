@@ -13,7 +13,7 @@ SDL_C_LIB_BEGIN
 #include <SDL3/SDL_keycode.h>
 SDL_C_LIB_END
 
-namespace rl::sdl {
+namespace rl {
     class EventHandler;
 
     class Keyboard
@@ -577,7 +577,7 @@ namespace rl::sdl {
         }
 
     private:
-        friend class rl::sdl::EventHandler;
+        friend class rl::EventHandler;
 
         constexpr inline void process_button_down(Keyboard::Button::type key)
         {

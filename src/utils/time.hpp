@@ -43,21 +43,19 @@ namespace rl::inline utils {
         // gets time unit of a single tick
         static inline TimeDuration unit()
         {
-            u64 freq = SDL3::SDL_GetPerformanceFrequency();
-
             constexpr static u64 pico = std::to_underlying(TimeDuration::Picosecond);
+            constexpr static u64 nano = std::to_underlying(TimeDuration::Nanosecond);
+            constexpr static u64 micr = std::to_underlying(TimeDuration::Microsecond);
+            constexpr static u64 mili = std::to_underlying(TimeDuration::Millisecond);
+
+            const u64 freq = SDL3::SDL_GetPerformanceFrequency();
+
             if (pico < freq)
                 return TimeDuration::Picosecond;
-
-            constexpr static u64 nano = std::to_underlying(TimeDuration::Nanosecond);
             if (nano < freq)
                 return TimeDuration::Nanosecond;
-
-            constexpr static u64 micr = std::to_underlying(TimeDuration::Microsecond);
             if (micr < freq)
                 return TimeDuration::Microsecond;
-
-            constexpr static u64 mili = std::to_underlying(TimeDuration::Millisecond);
             if (mili < freq)
                 return TimeDuration::Millisecond;
 
@@ -87,7 +85,7 @@ namespace rl::inline utils {
             const static TimeDuration td = this->unit();
             const static u64 freq = SDL3::SDL_GetPerformanceFrequency();
             constexpr u64 to_ratio = std::to_underlying(time_unit);
-            const double seconds{ ticks / static_cast<double>(freq) };
+            const f64 seconds{ ticks / static_cast<f64>(freq) };
             return static_cast<T>(seconds * to_ratio);
         }
 
@@ -101,7 +99,7 @@ namespace rl::inline utils {
         // get current tick/timestamp
         static inline u64 get_tick()
         {
-            u64 curr_tick = SDL3::SDL_GetPerformanceCounter();
+            const u64 curr_tick = SDL3::SDL_GetPerformanceCounter();
             return curr_tick;
         }
 
@@ -114,9 +112,13 @@ namespace rl::inline utils {
         [[nodiscard]]
         inline time_type delta()
         {
+            ++m_tick_count;
+
             const u64 curr_tick = Timer::get_tick();
             const u64 prev_tick = m_delta_timestamp;
+
             m_delta_timestamp = curr_tick;
+
             return this->convert(curr_tick - prev_tick);
         }
 
@@ -128,7 +130,14 @@ namespace rl::inline utils {
             return this->convert(curr_tick - prev_tick);
         }
 
+        [[nodiscard]]
+        inline u64 tick_count() const
+        {
+            return m_tick_count;
+        }
+
     private:
+        u64 m_tick_count{ 0 };
         // tick valye captured on init
         u64 m_start_timestamp{ 0 };
         // tick captured each time delta() is called

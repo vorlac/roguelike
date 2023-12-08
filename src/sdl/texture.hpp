@@ -3,13 +3,13 @@
 #include <condition_variable>
 #include <thread>
 
+#include "core/window.hpp"
 #include "ds/color.hpp"
 #include "ds/dims.hpp"
 #include "ds/point.hpp"
 #include "ds/rect.hpp"
 #include "ds/vector2d.hpp"
 #include "sdl/defs.hpp"
-#include "sdl/window.hpp"
 #include "utils/assert.hpp"
 #include "utils/numeric.hpp"
 

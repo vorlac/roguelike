@@ -15,7 +15,7 @@ SDL_C_LIB_BEGIN
 #include <SDL3/SDL_mouse.h>
 SDL_C_LIB_END
 
-namespace rl::sdl {
+namespace rl {
     class Mouse
     {
     public:
@@ -167,7 +167,7 @@ namespace rl::sdl {
     };
 }
 
-namespace rl::sdl {
+namespace rl {
     inline auto format_as(const Mouse& mouse)
     {
         return fmt::format("Mouse[pos={} l={}, m={}, r={}, wheel={}]", mouse.pos(),

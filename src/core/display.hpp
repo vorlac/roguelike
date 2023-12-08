@@ -9,8 +9,7 @@ SDL_C_LIB_BEGIN
 #include <SDL3/SDL_video.h>
 SDL_C_LIB_END
 
-namespace rl::sdl {
-
+namespace rl {
     class Display
     {
     public:

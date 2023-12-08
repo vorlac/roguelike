@@ -5,6 +5,7 @@
 #include <utility>
 #include <vector>
 
+#include "core/window.hpp"
 #include "ds/color.hpp"
 #include "ds/dims.hpp"
 #include "ds/point.hpp"
@@ -12,7 +13,6 @@
 #include "ds/triangle.hpp"
 #include "sdl/defs.hpp"
 #include "sdl/texture.hpp"
-#include "sdl/window.hpp"
 #include "utils/io.hpp"
 #include "utils/numeric.hpp"
 
@@ -22,10 +22,10 @@ SDL_C_LIB_BEGIN
 #include <SDL3/SDL_video.h>
 SDL_C_LIB_END
 
-namespace rl::sdl {
+namespace rl {
     class Window;
 
-    class RendererGL
+    class Renderer
     {
     public:
         struct Properties : public std::bitset<32>
@@ -59,12 +59,12 @@ namespace rl::sdl {
         constexpr static inline Properties DEFAULT_PROPERTY_FLAGS = { Properties::HWAccelerated };
 
     private:
-        explicit RendererGL() = delete;
-        explicit RendererGL(const RendererGL& other) = delete;
-        explicit RendererGL(RendererGL& other) = delete;
+        explicit rl::Renderer() = delete;
+        explicit rl::Renderer(const rl::Renderer& other) = delete;
+        explicit rl::Renderer(rl::Renderer& other) = delete;
 
     public:
-        explicit RendererGL(sdl::Window& window, RendererGL::Properties flags);
+        explicit rl::Renderer(Window& window, rl::Renderer::Properties flags);
 
         ds::dims<i32> get_output_size() const;
         ds::rect<i32> get_viewport() const;
@@ -73,13 +73,13 @@ namespace rl::sdl {
         bool set_draw_color(const ds::color<u8>& c);
         bool clear(const ds::color<u8>& c = { 29, 32, 39 });
         bool present();
-        bool swap_buffers(sdl::Window& window);
+        bool swap_buffers(Window& window);
         bool set_target();
         bool set_target(sdl::Texture& tex);
         bool set_draw_blend_mode(const SDL3::SDL_BlendMode blend_mode);
 
     private:
-        RendererGL::Properties m_properties{ RendererGL::Properties::None };
+        rl::Renderer::Properties m_properties{ Properties::None };
         SDL3::SDL_GLContext m_sdl_glcontext{ nullptr };
     };
 }

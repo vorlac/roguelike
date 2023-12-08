@@ -1,6 +1,4 @@
-#include "core/game.hpp"
-#include "sdl/defs.hpp"
-#include "utils/options.hpp"
+#include "core/application.hpp"
 
 SDL_C_LIB_BEGIN
 #include <SDL3/SDL_main.h>
@@ -13,7 +11,7 @@ int SDL3::main(int argc, char** argv)
         return 1;
     else
     {
-        rl::Game game{};
+        rl::Application game{};
         ret = game.run();
     }
 

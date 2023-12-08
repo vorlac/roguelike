@@ -8,6 +8,7 @@
 #include <flecs.h>
 #include <fmt/format.h>
 
+#include "core/window.hpp"
 #include "ds/color.hpp"
 #include "ds/dims.hpp"
 #include "ds/point.hpp"
@@ -22,11 +23,10 @@
 #include "sdl/defs.hpp"
 #include "sdl/pixel_data.hpp"
 #include "sdl/renderer.hpp"
-#include "sdl/renderer_opengl.hpp"
+#include "core/renderer.hpp"
 #include "sdl/surface.hpp"
 #include "sdl/tests/data/icon.hpp"
 #include "sdl/texture.hpp"
-#include "sdl/window.hpp"
 #include "utils/assert.hpp"
 #include "utils/conversions.hpp"
 #include "utils/io.hpp"
@@ -209,8 +209,7 @@ namespace rl::scene {
                 USE_RANDOM_COLORS ? ds::dims<f32>{ 10.0f, 10.0f } : ds::dims<f32>{ 20.0f, 20.0f }
             };
 
-            static void define_entity_rendering(flecs::world& ecs,
-                                                std::unique_ptr<sdl::Window>& window)
+            static void define_entity_rendering(flecs::world& ecs, std::unique_ptr<Window>& window)
             {
                 //*m_sprite = std::move(sprite);
 
@@ -323,7 +322,7 @@ namespace rl::scene {
                 return sdl::Texture{ nullptr };
             }
 
-            static void init_systems(flecs::world& world, std::unique_ptr<sdl::Window>& window)
+            static void init_systems(flecs::world& world, std::unique_ptr<Window>& window)
             {
                 ds::dims<i32> sprite_size{ 0, 0 };
                 std::vector<u8> icon_data = { icon_bmp, icon_bmp + icon_bmp_len };
@@ -336,7 +335,7 @@ namespace rl::scene {
         };
 
     public:
-        static auto init(flecs::world& world, std::unique_ptr<sdl::Window>& window)
+        static auto init(flecs::world& world, std::unique_ptr<Window>& window)
         {
             world.set<benchmark_scene>({
                 world.pipeline()
@@ -379,7 +378,7 @@ namespace rl::scene {
         static inline thread_local i64 m_update_calls{ 0 };
         constexpr static inline ds::dims<i32> rect_size{ 10, 10 };
         static inline ds::dims<i32> render_size{ 0, 0 };
-        static inline sdl::RendererGL* m_renderer{ nullptr };
+        static inline sdl::rl::Renderer* m_renderer{ nullptr };
         static inline sdl::Texture* m_sprite{ new sdl::Texture{} };
     };
 }

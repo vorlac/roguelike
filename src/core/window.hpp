@@ -16,8 +16,8 @@ SDL_C_LIB_BEGIN
 #include <SDL3/SDL_video.h>
 SDL_C_LIB_END
 
-namespace rl::sdl {
-    class RendererGL;
+namespace rl {
+    class Renderer;
     class EventHandler;
 
     using WindowID = SDL3::SDL_WindowID;
@@ -123,8 +123,8 @@ namespace rl::sdl {
 
     public:
         explicit Window();
-        explicit Window(sdl::Window&& window) noexcept = delete;
-        explicit Window(const sdl::Window& window) = delete;
+        explicit Window(Window&& window) noexcept = delete;
+        explicit Window(const Window& window) = delete;
         explicit Window(SDL3::SDL_Window* other) = delete;
 
         explicit Window(std::string title, const ds::dims<i32>& dims = DEFAULT_SIZE,
@@ -163,8 +163,8 @@ namespace rl::sdl {
         ds::dims<i32> get_max_size() const;
         ds::point<i32> get_position() const;
 
-        std::shared_ptr<sdl::RendererGL> renderer() const;
-        const Window& operator=(sdl::Window&& other) noexcept;
+        std::shared_ptr<rl::Renderer> renderer() const;
+        const Window& operator=(Window&& other) noexcept;
         SDL3::SDL_Window* sdl_handle() const;
         bool is_valid() const;
         bool swap_buffers();
@@ -198,6 +198,6 @@ namespace rl::sdl {
         Properties m_properties{ Properties::Flag::None };
         SDL3::SDL_Window* m_sdl_window{ nullptr };
         ds::rect<i32> m_window_rect{ 0, 0, 0, 0 };
-        std::shared_ptr<sdl::RendererGL> m_renderer{ nullptr };
+        std::shared_ptr<rl::Renderer> m_renderer{ nullptr };
     };
 }

@@ -9,6 +9,7 @@
 
 #include <fmt/format.h>
 
+#include "core/window.hpp"
 #include "ds/color.hpp"
 #include "ds/dims.hpp"
 #include "ds/point.hpp"
@@ -16,7 +17,6 @@
 #include "ds/vector2d.hpp"
 #include "sdl/defs.hpp"
 #include "sdl/texture.hpp"
-#include "sdl/window.hpp"
 #include "utils/assert.hpp"
 #include "utils/conversions.hpp"
 #include "utils/io.hpp"
@@ -84,8 +84,8 @@ namespace rl::sdl {
         Renderer(Renderer& other) = delete;
         Renderer(const Renderer& other) = delete;
 
-        explicit Renderer(const sdl::Window& window, std::string_view driver,
-                          Renderer::Properties flags)
+        explicit Renderer(const rl::Window& window, std::string_view driver,
+                          sdl::Renderer::Properties flags)
             : m_properties{ flags }
             , m_sdl_renderer{ SDL3::SDL_CreateRenderer(window.sdl_handle(), driver.data(),
                                                        m_properties) }

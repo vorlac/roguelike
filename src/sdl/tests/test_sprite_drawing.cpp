@@ -7,16 +7,16 @@
 #include <fmt/format.h>
 #include <stdlib.h>
 
+#include "core/renderer.hpp"
+#include "core/window.hpp"
 #include "ds/color.hpp"
 #include "ds/dims.hpp"
 #include "ds/point.hpp"
 #include "ds/rect.hpp"
 #include "sdl/defs.hpp"
-#include "sdl/renderer_opengl.hpp"
 #include "sdl/surface.hpp"
 #include "sdl/tests/data/icon.hpp"
 #include "sdl/texture.hpp"
-#include "sdl/window.hpp"
 #include "utils/numeric.hpp"
 
 SDL_C_LIB_BEGIN
@@ -57,7 +57,7 @@ namespace rl::sdl::test {
     }
 
     [[maybe_unused]]
-    static void move_sprites(sdl::Window& window, sdl::Texture& sprite, auto&& sprites,
+    static void move_sprites(rl::Window& window, sdl::Texture& sprite, auto&& sprites,
                              auto& sprite_size)
     {
         ds::dims<i32> window_size = window.get_render_size();
@@ -95,7 +95,7 @@ namespace rl::sdl::test {
         renderer->present();
     }
 
-    int execute_sprite_drawing_tests(std::unique_ptr<sdl::Window>& window)
+    int execute_sprite_drawing_tests(std::unique_ptr<rl::Window>& window)
     {
         i32 return_code = -1;
 
