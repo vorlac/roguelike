@@ -142,7 +142,7 @@ target_compile_options(${PROJECT_NAME} PUBLIC
         /Gw # optimize global data
         /GR- # disable RTTI
         /EHa- # disable exception handling
-        /OPT # 
+        /OPT #
         /ORDER # order functions for optimal paging
         /GS- # disable buffer security checks
         /GA # optimize for windows application
@@ -166,7 +166,7 @@ target_compile_options(${PROJECT_NAME} PUBLIC
 
 target_link_options(${PROJECT_NAME} PRIVATE
     $<${compiler_is_msvc}:
-        # /VERBOSE 
+        # /VERBOSE
 
         $<$<CONFIG:Release>:
             /MACHINE:X64

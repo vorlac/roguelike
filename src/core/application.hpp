@@ -2,16 +2,26 @@
 
 #include <array>
 #include <atomic>
+#include <concepts>
 #include <memory>
 #include <string>
+#include <string_view>
 #include <tuple>
+#include <type_traits>
 #include <utility>
+
+#include <fmt/core.h>
+#include <fmt/format.h>
 
 #include "core/event_handler.hpp"
 #include "core/renderer.hpp"
+#include "core/state/fsm.hpp"
+#include "core/state/gamestate.hpp"
+#include "core/state/states.hpp"
 #include "core/window.hpp"
 #include "gl/instanced_buffer.hpp"
 #include "sdl/defs.hpp"
+#include "utils/assert.hpp"
 #include "utils/numeric.hpp"
 #include "utils/time.hpp"
 
@@ -87,7 +97,8 @@ namespace rl {
     private:
         inline bool setup()
         {
-            return true;
+            m_fsm.push(rl::GameInitState());  // std::make_unique<rl::GameInitState>());
+            return m_fsm.size() == 1;
         }
 
         bool quit()
@@ -107,6 +118,7 @@ namespace rl {
 
         inline bool update()
         {
+            m_fsm.current().update_components();
             return true;
         }
 
@@ -153,5 +165,6 @@ namespace rl {
         rl::Timer<f32> m_timer{};
         std::unique_ptr<rl::Window> m_window{};
         rl::EventHandler m_event_handler{};
+        rl::StateMachine m_fsm{};
     };
 }

@@ -550,9 +550,6 @@ namespace rl::sdl {
             return rect;
         }
 
-        /**
-         * @brief Returns rendering output size
-         * */
         ds::dims<i32> get_logical_size() const
         {
             ds::dims<i32> size{ 0, 0 };
