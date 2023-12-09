@@ -1,141 +1,260 @@
 #pragma once
 
-#include "core/state/gamestate.hpp"
 #include "sdl/defs.hpp"
+#include "utils/io.hpp"
 
 SDL_C_LIB_BEGIN
 #include <SDL3/SDL_events.h>
 SDL_C_LIB_END
 
 namespace rl {
-    class TeardownState : public GameState
+    template <typename T>
+    concept GameStateFull = requires(T& s) {
+        s.enter();
+        s.handle_event();
+        s.update();
+        s.render();
+        s.exit();
+
+        s.debug();
+        s.log();
+    };
+
+    template <typename T>
+    concept GameStateMin = requires(T& s) {
+        s.enter();
+        s.handle_event();
+        s.update();
+        s.render();
+        s.exit();
+    };
+
+    template <typename T>
+    concept IGameState = (GameStateMin<T> || GameStateFull<T>);
+
+    template <typename TState>
+    struct GameState
     {
-        void enter()
+        auto enter_state() const noexcept
         {
-            log::info("TeardownState::enter()");
+            auto& self = *static_cast<const TState*>(this);
+            return self.enter();
         }
 
-        void process_event(SDL3::SDL_Event&& e)
+        auto process_events(auto&& e) const noexcept
         {
-            log::info("TeardownState::process_event()");
-            switch (e.type)
-            {
-                case 1025:
-                    break;
-            }
+            auto& self = *static_cast<const TState*>(this);
+            return self.handle_event();
         }
 
-        void exit()
+        auto update_state() const noexcept
         {
-            log::info("TeardownState::exit()");
+            auto& self = *static_cast<const TState*>(this);
+            if constexpr (GameStateFull<TState>)
+                self.log();
+            return self.update();
+        }
+
+        auto render_state() const noexcept
+        {
+            auto& self = *static_cast<const TState*>(this);
+            if constexpr (GameStateFull<TState>)
+                self.debug();
+            return self.render();
+        }
+
+        auto exit_state() const noexcept
+        {
+            auto& self = *static_cast<const TState*>(this);
+            return self.exit();
         }
     };
 
-    class PauseMenuState : public GameState
+    struct TeardownState : GameState<TeardownState>
     {
-        void enter()
+        auto enter() noexcept
         {
-            log::info("PauseMenuState::enter()");
+            return 0;
         }
 
-        void process_event(SDL3::SDL_Event&& e)
+        auto handle_event() noexcept
         {
-            switch (e.type)
-            {
-                case 1025:
-                    break;
-            }
+            return 0;
         }
 
-        void exit()
+        auto update() noexcept
         {
-            log::info("PauseMenuState::exit()");
+            return 0;
+        }
+
+        auto render() noexcept
+        {
+            return 0;
+        }
+
+        auto exit() noexcept
+        {
+            return 0;
         }
     };
 
-    class GameplayState : public GameState
+    struct PauseMenuState : GameState<PauseMenuState>
     {
-        void enter()
+        auto enter() noexcept
         {
-            log::info("GameplayState::enter()");
+            return 0;
         }
 
-        void process_event(SDL3::SDL_Event&& e)
+        auto handle_event() noexcept
         {
-            switch (e.type)
-            {
-                case 1025:
-                    break;
-            }
+            return 0;
         }
 
-        void exit()
+        auto update() noexcept
         {
-            log::info("GameplayState::exit()");
+            return 0;
+        }
+
+        auto render() noexcept
+        {
+            return 0;
+        }
+
+        auto exit() noexcept
+        {
+            return 0;
         }
     };
 
-    class LoadLevelState : public GameState
+    struct GameplayState : GameState<GameplayState>
     {
-        void enter()
+        auto enter() noexcept
         {
-            log::info("LoadLevelState::enter()");
+            return 0;
         }
 
-        void process_event(SDL3::SDL_Event&& e)
+        auto handle_event() noexcept
         {
-            log::info("LoadLevelState::process_event()");
-            switch (e.type)
-            {
-                case 1025:
-                    break;
-            }
+            return 0;
         }
 
-        void exit()
+        auto update() noexcept
         {
-            log::info("LoadLevelState::exit()");
+            return 0;
+        }
+
+        auto render() noexcept
+        {
+            return 0;
+        }
+
+        auto exit() noexcept
+        {
+            return 0;
         }
     };
 
-    class MainMenuState : public GameState
+    struct LoadLevelState : GameState<LoadLevelState>
     {
-        void enter()
+        auto enter() noexcept
         {
-            log::info("MainMenuState::enter()");
+            return 0;
         }
 
-        void process_event(SDL3::SDL_Event&& e)
+        auto handle_event() noexcept
         {
-            log::info("MainMenuState::process_event()");
-            switch (e.type)
-            {
-                case 1025:
-                    break;
-            }
+            return 0;
         }
 
-        void exit()
+        auto update() noexcept
         {
-            log::info("MainMenuState::exit()");
+            return 0;
+        }
+
+        auto render() noexcept
+        {
+            return 0;
+        }
+
+        auto exit() noexcept
+        {
+            return 0;
         }
     };
 
-    class GameInitState : public GameState
+    struct MainMenuState : GameState<MainMenuState>
     {
-        void enter()
+        auto enter() noexcept
         {
-            log::info("GameInitState::enter()");
+            return 0;
         }
 
-        void process_event(auto&&, StateMachine& fsm)
+        auto handle_event() noexcept
         {
-            fsm.push(std::make_unique<MainMenuState>());
+            return 0;
         }
 
-        void exit()
+        auto update() noexcept
         {
-            log::info("GameInitState::exit()");
+            return 0;
+        }
+
+        auto render() noexcept
+        {
+            return 0;
+        }
+
+        auto exit() noexcept
+        {
+            return 0;
+        }
+
+        auto debug() noexcept
+        {
+            return 0;
+        }
+
+        auto log() noexcept
+        {
+            return 0;
+        }
+    };
+
+    struct GameInitState : GameState<GameInitState>
+    {
+        auto enter() noexcept
+        {
+            return 0;
+        }
+
+        auto handle_event() noexcept
+        {
+            return 0;
+        }
+
+        auto update() noexcept
+        {
+            return 0;
+        }
+
+        auto render() noexcept
+        {
+            return 0;
+        }
+
+        auto exit() noexcept
+        {
+            return 0;
+        }
+
+        auto debug() noexcept
+        {
+            return 0;
+        }
+
+        auto log() noexcept
+        {
+            return 0;
         }
     };
 }

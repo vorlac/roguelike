@@ -16,7 +16,6 @@
 #include "core/event_handler.hpp"
 #include "core/renderer.hpp"
 #include "core/state/fsm.hpp"
-#include "core/state/gamestate.hpp"
 #include "core/state/states.hpp"
 #include "core/window.hpp"
 #include "gl/instanced_buffer.hpp"
@@ -97,7 +96,15 @@ namespace rl {
     private:
         inline bool setup()
         {
-            m_fsm.push(rl::GameInitState());  // std::make_unique<rl::GameInitState>());
+            rl::MainMenuState mm{};
+            int a = mm.enter();
+            a = mm.debug();
+
+            rl::TeardownState td{};
+            int b = td.enter();
+            b = td.handle_event();
+
+            m_fsm.push(rl::GameInitState());
             return m_fsm.size() == 1;
         }
 
@@ -118,7 +125,6 @@ namespace rl {
 
         inline bool update()
         {
-            m_fsm.current().update_components();
             return true;
         }
 
