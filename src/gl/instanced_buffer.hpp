@@ -2,9 +2,8 @@
 
 #include <cmath>
 #include <limits>
+#include <numbers>
 #include <vector>
-
-#include <math.h>
 
 #include "core/window.hpp"
 #include "ds/circle.hpp"
@@ -86,7 +85,8 @@ namespace rl::gl {
                 const f32 rand1{ (rand() % 1000) / 1000.0f };
                 const f32 rand2{ (rand() % 1000) / 1000.0f };
                 const f32 rad{ std::sqrt(rand1 * (outer * outer - inner * inner) + inner * inner) };
-                const f32 theta{ f32(rand2 * 2.0f * M_PI) };
+
+                const f32 theta{ f32(rand2 * 2.0f * std::numbers::pi) };
 
                 m_rect_positions_data.emplace_back(spawn.centroid.x + rad * std::cos(theta),
                                                    spawn.centroid.y + rad * std::sin(theta));

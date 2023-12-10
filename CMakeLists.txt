@@ -17,12 +17,6 @@ option(
      ON
 )
 
-option(
-  ASAN_ENABLED
-    "Enables address sanitizer"
-	   OFF
-)
-
 include(vcpkg-init)
 
 set(CMAKE_CXX_STANDARD 23)
@@ -42,11 +36,37 @@ project(roguelike
 string(TOLOWER "${CMAKE_SYSTEM_NAME}" host_os)
 string(TOLOWER "${CMAKE_BUILD_TYPE}" build_type)
 string(TOLOWER "${CMAKE_CXX_COMPILER_ARCHITECTURE_ID}" architecture)
-# set(CMAKE_DEBUG_POSTFIX ".${build_type}.${architecture}")
+set(CMAKE_DEBUG_POSTFIX ".${build_type}.${architecture}")
 
 set(compiler_is_msvc "$<CXX_COMPILER_ID:MSVC>")
 set(compiler_is_gnu "$<CXX_COMPILER_ID:GNU>")
 set(compiler_is_clang "$<OR:$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:Clang>>")
+
+set(SDL_TESTS OFF)
+set(SDL_TEST_LIBRARY OFF)
+
+set(SDL_LIBC OFF)
+set(SDL_VULKAN ON)
+
+set(SDL_STATIC ON)
+set(SDL_SHARED OFF)
+set(FORCE_STATIC_VCRT OFF)
+set(BUILD_SHARED_LIBS OFF)
+
+set(NANOGUI_BUILD_GLAD ON)
+set(NANOGUI_BUILD_PYTHON OFF)
+set(NANOGUI_BUILD_SHARED OFF)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/nanogui)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl)
+# add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl_ttf)
+# add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl_image)
+# add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl_mixer)
+
+find_package(glm CONFIG REQUIRED)
+find_package(fmt CONFIG REQUIRED)
+find_package(flecs CONFIG REQUIRED)
+find_package(simdjson CONFIG REQUIRED)
+find_package(argparse CONFIG REQUIRED)
 
 file(GLOB_RECURSE
   roguelike_sources
@@ -62,64 +82,22 @@ add_executable(${PROJECT_NAME}
 
 include(compiler-warnings)
 
-if (ASAN_ENABLED MATCHES ON)
-	string(REGEX REPLACE "/RTC(su|[1su])" ""
-		CMAKE_CXX_FLAGS
-	      "${CMAKE_CXX_FLAGS}"
-	)
-
-	target_compile_options(${PROJECT_NAME} PUBLIC
-		$<${compiler_is_msvc}:
-			/fsanitize=address
-		>
-		$<$<NOT:${compiler_is_msvc}>:
-			-fsanitize=address
-		>
-	)
-
-	target_compile_definitions(${PROJECT_NAME} PUBLIC
-		$<${compiler_is_msvc}:
-			_DISABLE_VECTOR_ANNOTATION
-			_DISABLE_STRING_ANNOTATION
-		>
-	)
-
-	target_link_options(${PROJECT_NAME} PUBLIC
-		$<${compiler_is_msvc}:
-			/INCREMENTAL:NO
-			/INFERASANLIBS
-			/MTD
-		>
-		$<$<NOT:${compiler_is_msvc}>:
-			-fsanitize=address
-			-fno-omit-frame-pointer
-			-incremental=no
-		>
-	)
-
-	target_link_libraries(${PROJECT_NAME} PUBLIC
-		"C:\\Program Files\\LLVM\\lib\\clang\\17\\lib\\windows\\clang_rt.asan_static-x86_64.lib"
-	)
-endif()
-
-target_compile_features(${PROJECT_NAME}
+target_compile_features(${PROJECT_NAME} PRIVATE
   PRIVATE
     cxx_std_23
 )
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
-  _USE_MATH_DEFINES
   NOMINMAX
-
   KHRONOS_STATIC
   ROGUELIKE_TESTS_ENABLED
 
   $<$<CONFIG:Debug>:
-    DEBUG_HEAP=0
+      DEBUG_HEAP=0
   >
 )
 
-target_compile_options(${PROJECT_NAME} PUBLIC
+target_compile_options(${PROJECT_NAME} PRIVATE
   $<${compiler_is_msvc}:
       /std:c++latest
       /Zc:preprocessor
@@ -127,37 +105,37 @@ target_compile_options(${PROJECT_NAME} PUBLIC
       /EHsc
       /nologo
 
-	  $<$<CONFIG:Debug>:
-        # /Z7 # embed debug info into .o files instead of pdb (for ccache)
-        # /ZI # enable edit and continue
+	    $<$<CONFIG:Debug>:
+          # /Z7 # embed debug info into .o files instead of pdb (for ccache)
+          # /ZI # enable edit and continue
       >
 
       $<$<CONFIG:Release>:
-        /O2 # maximize speed
-        #/Ox # enable most speed optimizations
-        /Ot # favor fast code
-        /Ob2 # inline function expansion
-        /Oi # generate intrinsics
-        /Oy # frame pointer omission
-        /Gw # optimize global data
-        /GR- # disable RTTI
-        /EHa- # disable exception handling
-        /OPT #
-        /ORDER # order functions for optimal paging
-        /GS- # disable buffer security checks
-        /GA # optimize for windows application
-        /GL # whole program optimization
-        /Gr # __vectorcall calling convention, Gr for __fastcall
-        /fp:fast # prefer fast over accurate floating point math
-        /favor:INTEL64
+          /O2 # maximize speed
+          #/Ox # enable most speed optimizations
+          /Ot # favor fast code
+          /Ob2 # inline function expansion
+          /Oi # generate intrinsics
+          /Oy # frame pointer omission
+          /Gw # optimize global data
+          /GR- # disable RTTI
+          /EHa- # disable exception handling
+          /OPT #
+          /ORDER # order functions for optimal paging
+          /GS- # disable buffer security checks
+          /GA # optimize for windows application
+          /GL # whole program optimization
+          /Gr # __vectorcall calling convention, Gr for __fastcall
+          /fp:fast # prefer fast over accurate floating point math
+          /favor:INTEL64
       >
     >
 
-	$<${compiler_is_clang}:
-		-march=native
-		-flto
-		-DNDEBUG
-	>
+	  $<${compiler_is_clang}:
+        -march=native
+        -flto
+        -DNDEBUG
+    >
 
     $<${compiler_is_gnu}:
         -std=c++23
@@ -166,87 +144,53 @@ target_compile_options(${PROJECT_NAME} PUBLIC
 
 target_link_options(${PROJECT_NAME} PRIVATE
     $<${compiler_is_msvc}:
-        # /VERBOSE
+        /verbose
 
         $<$<CONFIG:Release>:
-            /MACHINE:X64
-		    /LTCG # link time code gen
-            /OPT:REF # eliminate unreferenced functions/data
+            /machine:x64
+		        /ltcg # link time code gen
+            /opt:ref # eliminate unreferenced functions/data
             # /FASTGENPROFILE # generate optimization profile
         >
 
         $<$<CONFIG:Debug>:
-            # /NATVIS:<path> # link natvis into pdb
-            # /LIBPATH:dir # additional lib paths
-            # /WHOLEARCHIVE # include all library object files in binary
+            # /natvis:<path> # link natvis into pdb
+            # /libpath:dir # additional lib paths
+            # /wholearchive # include all library object files in binary
         >
-	>
+	  >
 
     $<$<NOT:${compiler_is_msvc}>:
         $<$<CONFIG:Release>:
 	        -fomit-frame-pointer
         >
 
-        -static-libgcc
-        -static-libstdc++
-        -Wl,-R,'$$ORIGIN'
+      -static-libgcc
+      -static-libstdc++
+      -Wl,-R,'$$ORIGIN'
     >
 )
-
-set(SDL_TESTS OFF)
-set(SDL_TEST_LIBRARY OFF)
-
-if (ASAN_ENABLED MATCHES ON)
-	set(SDL_LIBC OFF)
-	set(SDL_STATIC ON)
-	set(SDL_SHARED OFF)
-	set(FORCE_STATIC_VCRT OFF)
-	set(BUILD_SHARED_LIBS OFF)
-else()
-	set(SDL_LIBC OFF)
-	set(SDL_STATIC ON)
-	set(SDL_SHARED OFF)
-	set(FORCE_STATIC_VCRT OFF)
-	set(BUILD_SHARED_LIBS OFF)
-endif()
-
-
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl)
-# add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl_ttf)
-# add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl_image)
-# add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl_mixer)
-
-find_package(glm CONFIG REQUIRED)
-find_package(fmt CONFIG REQUIRED)
-find_package(flecs CONFIG REQUIRED)
-find_package(simdjson CONFIG REQUIRED)
-find_package(argparse CONFIG REQUIRED)
-find_package(imgui CONFIG REQUIRED)
-find_package(libusb CONFIG REQUIRED)
 
 target_include_directories(${PROJECT_NAME}
   PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src"
   SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/extern/glad/include"
-  SYSTEM "${LIBUSB_INCLUDE_DIRS}"
 )
 
 target_link_libraries(${PROJECT_NAME}
-  PRIVATE ${LIBUSB_LIBRARIES}
   PRIVATE SDL3::SDL3-static
   PRIVATE simdjson::simdjson
   PRIVATE argparse::argparse
   PRIVATE flecs::flecs_static
-  PRIVATE imgui::imgui
   PRIVATE glm::glm
   PRIVATE fmt::fmt
 )
 
 if (ENABLE_CCACHE MATCHES ON)
-	include(ccache)
+  include(ccache)
 endif()
 
 if (AUTOFORMAT_SRC_ON_CONFIGURE MATCHES ON)
-	include(clang-format)
+  include(clang-format)
 endif()
 
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}

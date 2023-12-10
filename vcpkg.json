@@ -9,7 +9,6 @@
     "libusb",
     "flecs",
     "argparse",
-    "imgui",
     "glm",
     "fmt"
   ]
