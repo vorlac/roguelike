@@ -235,7 +235,7 @@ namespace rl::gl {
         rl::Timer<f32> m_timer{};
         Shader m_shader{ "instanced_vertex_shader.glsl", "instanced_fragment_shader.glsl" };
 
-        constexpr static inline u32 m_rect_count{ 750000 };
+        constexpr static inline u32 m_rect_count{ 1000000 };
         constexpr static inline ds::dims<f32> m_rect_size{ 5.0f, 5.0f };
         constexpr static inline std::array m_rect_vertex_buffer_data{
             ds::rect<f32>{ ds::point<f32>{ 0.0f, 0.0f }, ds::dims<f32>{ m_rect_size } }.triangles(),

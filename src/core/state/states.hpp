@@ -152,6 +152,16 @@ namespace rl {
         {
             return 0;
         }
+
+        auto debug() noexcept
+        {
+            return 0;
+        }
+
+        auto log() noexcept
+        {
+            return 0;
+        }
     };
 
     struct LoadLevelState : GameState<LoadLevelState>

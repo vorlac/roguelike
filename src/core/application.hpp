@@ -21,6 +21,7 @@
 #include "gl/instanced_buffer.hpp"
 #include "sdl/defs.hpp"
 #include "utils/assert.hpp"
+#include "utils/crtp.hpp"
 #include "utils/numeric.hpp"
 #include "utils/time.hpp"
 
@@ -96,19 +97,38 @@ namespace rl {
     private:
         inline bool setup()
         {
-            rl::MainMenuState mm{};
-            int a = mm.enter();
-            a = mm.debug();
+            gamestate_vec states = {
+                GameInitState{},
+                PauseMenuState{},
+                GameplayState{},
+                PauseMenuState{},
+            };
 
-            rl::TeardownState td{};
-            int b = td.enter();
-            b = td.handle_event();
+            for (auto& state : states)
+            {
+                std::visit(  //
+                    variant_visitor{
+                        [](PauseMenuState& pause_state) {
+                            int a = 0;
+                            return a;
+                        },
+                        [](GameplayState& gameplay_state) {
+                            int a = 0;
+                            return a;
+                        },
+                        [](auto& other_state) {
+                            int a = 0;
+                            return a;
+                        },
+                    },
+                    state);
+            }
 
-            m_fsm.push(rl::GameInitState());
-            return m_fsm.size() == 1;
+            return states.size() > 0;
         }
 
         bool quit()
+
         {
             return this->teardown();
         }
