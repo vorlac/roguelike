@@ -1,5 +1,8 @@
 #pragma once
-
+#include <glad/gl.h>
+//
+#include <nanogui/nanogui.h>
+//
 #include <bitset>
 #include <memory>
 #include <string>
@@ -22,7 +25,7 @@ namespace rl {
 
     using WindowID = SDL3::SDL_WindowID;
 
-    class Window
+    class Window : public nanogui::Screen
     {
     public:
         struct Event

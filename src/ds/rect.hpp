@@ -416,10 +416,10 @@ namespace rl::ds {
         /**
          * @brief Checks if the rect fully contains the point
          * */
-        constexpr inline bool contains(const ds::point<T>& pnt) const
+        constexpr inline bool contains(const ds::point<T>& point) const
         {
-            return (this->pt.x < pnt.x && pnt.x > this->pt.x + this->size.width) &&
-                   (this->pt.y < pnt.y && pnt.y > this->pt.y + this->size.height);
+            return (pt.x < point.x && point.x > pt.x + size.width) &&
+                   (pt.y < point.y && point.y > pt.y + size.height);
         }
 
         /**

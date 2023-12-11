@@ -9,7 +9,9 @@
     "libusb",
     "flecs",
     "argparse",
+    "glfw3",
     "glm",
-    "fmt"
+    "fmt",
+    "eigen3"
   ]
 }

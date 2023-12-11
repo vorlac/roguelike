@@ -4,6 +4,7 @@
 #include <utility>
 
 #include <fmt/format.h>
+#include <nanogui/vector.h>
 
 #include "core/renderer.hpp"
 #include "ds/dims.hpp"
@@ -24,6 +25,11 @@ SDL_C_LIB_END
 namespace rl {
     Window::Window()
     {
+    }
+
+    Window::Window(std::string title, const ds::dims<i32>& dims, Window::Properties flags)
+        : nanogui::Screen(nanogui::Vector2i(1024, 768), "NanoGUI Test")
+    {
         SDL3::SDL_GL_SetAttribute(SDL3::SDL_GL_ACCELERATED_VISUAL, 1);
         SDL3::SDL_GL_SetAttribute(SDL3::SDL_GL_CONTEXT_FLAGS,
                                   SDL3::SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG);
@@ -31,11 +37,6 @@ namespace rl {
         SDL3::SDL_GL_SetAttribute(SDL3::SDL_GL_CONTEXT_MINOR_VERSION, 6);
         SDL3::SDL_GL_SetAttribute(SDL3::SDL_GL_CONTEXT_PROFILE_MASK,
                                   SDL3::SDL_GL_CONTEXT_PROFILE_CORE);
-    }
-
-    Window::Window(std::string title, const ds::dims<i32>& dims, Window::Properties flags)
-        : Window()
-    {
         m_properties = flags;
         m_sdl_window = SDL3::SDL_CreateWindow(title.data(), dims.width, dims.height, m_properties);
         m_window_rect = { m_sdl_window ? this->get_position() : ds::point<i32>::null(), dims };

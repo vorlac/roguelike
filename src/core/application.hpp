@@ -73,6 +73,12 @@ namespace rl {
             std::shared_ptr<rl::Renderer> renderer{ m_window->renderer() };
             gl::InstancedVertexBuffer vbo{ renderer->get_viewport() };
 
+            nanogui::Button* b = new nanogui::Button(static_cast<nanogui::Widget*>(m_window.get()),
+                                                     "Plain button");
+            b->set_callback([] {
+                log::info("pushed!");
+            });
+
             vbo.bind_buffers();
             while (!this->should_exit()) [[unlikely]]
             {
@@ -97,34 +103,7 @@ namespace rl {
     private:
         inline bool setup()
         {
-            gamestate_vec states = {
-                GameInitState{},
-                PauseMenuState{},
-                GameplayState{},
-                PauseMenuState{},
-            };
-
-            for (auto& state : states)
-            {
-                std::visit(  //
-                    variant_visitor{
-                        [](PauseMenuState& pause_state) {
-                            int a = 0;
-                            return a;
-                        },
-                        [](GameplayState& gameplay_state) {
-                            int a = 0;
-                            return a;
-                        },
-                        [](auto& other_state) {
-                            int a = 0;
-                            return a;
-                        },
-                    },
-                    state);
-            }
-
-            return states.size() > 0;
+            return true;
         }
 
         bool quit()

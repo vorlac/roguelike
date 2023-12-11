@@ -1,5 +1,5 @@
 ﻿cmake_minimum_required(VERSION 3.22)
-set(CMAKE_MESSAGE_LOG_LEVEL STATUS)
+set(CMAKE_MESSAGE_LOG_LEVEL DEBUG)
 
 list(APPEND CMAKE_MODULE_PATH
   "${CMAKE_CURRENT_SOURCE_DIR}/cmake"
@@ -42,6 +42,15 @@ set(compiler_is_msvc "$<CXX_COMPILER_ID:MSVC>")
 set(compiler_is_gnu "$<CXX_COMPILER_ID:GNU>")
 set(compiler_is_clang "$<OR:$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:Clang>>")
 
+set(GLFW_INSTALL OFF)
+find_package(Eigen3 CONFIG REQUIRED)
+find_package(glm CONFIG REQUIRED)
+find_package(glfw3 CONFIG REQUIRED)
+find_package(fmt CONFIG REQUIRED)
+find_package(flecs CONFIG REQUIRED)
+find_package(simdjson CONFIG REQUIRED)
+find_package(argparse CONFIG REQUIRED)
+
 set(SDL_TESTS OFF)
 set(SDL_TEST_LIBRARY OFF)
 
@@ -53,27 +62,25 @@ set(SDL_SHARED OFF)
 set(FORCE_STATIC_VCRT OFF)
 set(BUILD_SHARED_LIBS OFF)
 
-set(NANOGUI_BUILD_GLAD ON)
-set(NANOGUI_BUILD_PYTHON OFF)
-set(NANOGUI_BUILD_SHARED OFF)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/nanogui)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl)
 # add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl_ttf)
 # add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl_image)
 # add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl_mixer)
 
-find_package(glm CONFIG REQUIRED)
-find_package(fmt CONFIG REQUIRED)
-find_package(flecs CONFIG REQUIRED)
-find_package(simdjson CONFIG REQUIRED)
-find_package(argparse CONFIG REQUIRED)
+set(NANOGUI_BUILD_EXAMPLES OFF)
+set(NANOGUI_BUILD_GLAD OFF)
+set(NANOGUI_BUILD_GLFW OFF)
+set(NANOGUI_BUILD_PYTHON OFF)
+set(NANOGUI_BUILD_SHARED OFF)
+
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/nanogui)
 
 file(GLOB_RECURSE
   roguelike_sources
     CONFIGURE_DEPENDS
+      "${CMAKE_CURRENT_SOURCE_DIR}/extern/glad/*.[hc]"
       "${CMAKE_CURRENT_SOURCE_DIR}/src/*.[hc]"
       "${CMAKE_CURRENT_SOURCE_DIR}/src/*.[hc]pp"
-      "${CMAKE_CURRENT_SOURCE_DIR}/extern/glad/*.[hc]"
 )
 
 add_executable(${PROJECT_NAME}
@@ -88,10 +95,10 @@ target_compile_features(${PROJECT_NAME} PRIVATE
 )
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
+  #${NANOGUI_EXTRA_DEFS}
   NOMINMAX
   KHRONOS_STATIC
   ROGUELIKE_TESTS_ENABLED
-
   $<$<CONFIG:Debug>:
       DEBUG_HEAP=0
   >
@@ -105,7 +112,7 @@ target_compile_options(${PROJECT_NAME} PRIVATE
       /EHsc
       /nologo
 
-	    $<$<CONFIG:Debug>:
+      $<$<CONFIG:Debug>:
           # /Z7 # embed debug info into .o files instead of pdb (for ccache)
           # /ZI # enable edit and continue
       >
@@ -131,7 +138,7 @@ target_compile_options(${PROJECT_NAME} PRIVATE
       >
     >
 
-	  $<${compiler_is_clang}:
+    $<${compiler_is_clang}:
         -march=native
         -flto
         -DNDEBUG
@@ -144,11 +151,11 @@ target_compile_options(${PROJECT_NAME} PRIVATE
 
 target_link_options(${PROJECT_NAME} PRIVATE
     $<${compiler_is_msvc}:
-        /verbose
+        # /verbose
 
         $<$<CONFIG:Release>:
             /machine:x64
-		        /ltcg # link time code gen
+            /ltcg # link time code gen
             /opt:ref # eliminate unreferenced functions/data
             # /FASTGENPROFILE # generate optimization profile
         >
@@ -158,31 +165,45 @@ target_link_options(${PROJECT_NAME} PRIVATE
             # /libpath:dir # additional lib paths
             # /wholearchive # include all library object files in binary
         >
-	  >
+      >
 
     $<$<NOT:${compiler_is_msvc}>:
         $<$<CONFIG:Release>:
-	        -fomit-frame-pointer
+            -fomit-frame-pointer
         >
 
-      -static-libgcc
-      -static-libstdc++
-      -Wl,-R,'$$ORIGIN'
+        -static-libgcc
+        -static-libstdc++
+        -Wl,-R,'$$ORIGIN'
     >
 )
+
+
 
 target_include_directories(${PROJECT_NAME}
   PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src"
   SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/extern/glad/include"
+  #SYSTEM "${GLFW_SOURCE_DIR}/include"
+  #SYSTEM ${NANOGUI_EXTRA_INCS}
 )
+
+target_include_directories(nanogui PRIVATE
+  SYSTEM "${PACKAGE_PREFIX_DIR}/include"
+  SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/extern/glad/include"
+)
+
 
 target_link_libraries(${PROJECT_NAME}
   PRIVATE SDL3::SDL3-static
   PRIVATE simdjson::simdjson
   PRIVATE argparse::argparse
   PRIVATE flecs::flecs_static
+  PRIVATE Eigen3::Eigen
+  PRIVATE glfw
   PRIVATE glm::glm
   PRIVATE fmt::fmt
+  PRIVATE nanogui
+  # PRIVATE ${NANOGUI_EXTRA_LIBS}
 )
 
 if (ENABLE_CCACHE MATCHES ON)
@@ -198,9 +219,13 @@ set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     ${PROJECT_NAME}
 )
 
-set_property(TARGET ${PROJECT_NAME}
-  PROPERTY VS_DEBUGGER_ENVIRONMENT
-    "PATH=${CMAKE_CURRENT_INSTALL_DIR}/${PROJECT_NAME}${CMAKE_EXECUTABLE_SUFFIX}"
+set_property(
+  TARGET ${PROJECT_NAME}
+    PROPERTY VS_DEBUGGER_ENVIRONMENT
+      "PATH=${CMAKE_CURRENT_INSTALL_DIR}/${PROJECT_NAME}${CMAKE_EXECUTABLE_SUFFIX}"
+  TARGET nanogui glfw
+    PROPERTY FOLDER
+      "dependencies"
 )
 
 # permissions fix to allow this on windows:
@@ -217,6 +242,18 @@ add_custom_command(TARGET ${PROJECT_NAME}
     ${CMAKE_COMMAND} -E create_symlink
       ${CMAKE_CURRENT_SOURCE_DIR}/src/gl/shaders
       $<TARGET_FILE_DIR:${PROJECT_NAME}>/shaders
+   #PRE_BUILD COMMAND
+   # ${CMAKE_COMMAND} -E create_symlink
+   #   ${CMAKE_CURRENT_SOURCE_DIR}/extern/glad/include/glad/gl.h
+   #   ${CMAKE_BINARY_DIR}/include/glad.h
 )
+
+#add_custom_command(TARGET ${PROJECT_NAME}
+#  PRE_BUILD COMMAND
+#    ${CMAKE_COMMAND} -E copy_if_different
+#      ${CMAKE_SOURCE_DIR}/extern/glad/include/glad/gl.h
+#      $<TARGET_FILE_DIR:nanogui>/glad.h
+#)
+
 
 include(cmake-utils)
