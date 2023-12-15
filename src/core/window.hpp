@@ -1,8 +1,6 @@
 #pragma once
 #include <glad/gl.h>
-//
-#include <nanogui/nanogui.h>
-//
+
 #include <bitset>
 #include <memory>
 #include <string>
@@ -11,6 +9,7 @@
 #include "ds/point.hpp"
 #include "ds/rect.hpp"
 #include "ds/vector2d.hpp"
+#include "gui/screen.hpp"
 #include "sdl/defs.hpp"
 #include "utils/assert.hpp"
 
@@ -25,7 +24,7 @@ namespace rl {
 
     using WindowID = SDL3::SDL_WindowID;
 
-    class Window : public nanogui::Screen
+    class Window : public gui::Screen
     {
     public:
         struct Event
@@ -125,7 +124,7 @@ namespace rl {
         };
 
     public:
-        explicit Window();
+        // explicit Window();
         explicit Window(Window&& window) noexcept = delete;
         explicit Window(const Window& window) = delete;
         explicit Window(SDL3::SDL_Window* other) = delete;
@@ -133,7 +132,7 @@ namespace rl {
         explicit Window(std::string title, const ds::dims<i32>& dims = DEFAULT_SIZE,
                         Properties flags = DEFAULT_PROPERTY_FLAGS);
 
-        ~Window();
+        ~Window() override;
 
     public:
         bool maximize();

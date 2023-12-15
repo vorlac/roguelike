@@ -550,7 +550,6 @@ namespace rl {
             };
         };
 
-    public:
         constexpr inline bool is_button_pressed(const Keyboard::Button::type key) const
         {
             return m_pressed[key];

@@ -60,24 +60,50 @@ namespace rl::example {
             PauseMenuState{},
         };
 
-        for (auto& state : states)
+        struct A
+        {
+            int a{};
+        };
+
+        struct B
+        {
+            int b{};
+        };
+
+        struct C
+        {
+            int c{};
+        };
+
+        struct D
+        {
+            int d{};
+        };
+
+        std::vector<std::variant<A, B, C, D>> variants = {
+            A{ .a = 123 },
+            B{ .b = 234 },
+            D{ .d = 987 },
+        };
+
+        for (auto& var : variants)
         {
             std::visit(  //
                 variant_visitor{
-                    [](PauseMenuState& pause_state) {
-                        int a = 0;
-                        return a;
+                    [](A& a_variant) {
+                        std::cout << "A: " << a_variant.a << std::endl;
                     },
-                    [](GameplayState& gameplay_state) {
-                        int a = 0;
-                        return a;
+                    [](B& b_variant) {
+                        std::cout << "B: " << b_variant.b << std::endl;
                     },
-                    [](auto& other_state) {
-                        int a = 0;
-                        return a;
+                    [](auto& other) {
+                        if constexpr (std::same_as<decltype(other), C>)
+                            std::cout << "C: " << other.c << std::endl;
+                        if constexpr (std::same_as<decltype(other), D>)
+                            std::cout << "D: " << other.d << std::endl;
                     },
                 },
-                state);
+                var);
         }
     }
 }

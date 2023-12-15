@@ -11,3 +11,25 @@
 #define SDL_PRINTF_VARARG_FUNC(fmtargnumber)
 #define SDL_PRINTF_VARARG_FUNC(fmtargnumber) __attribute__ (( format( __printf__, fmtargnumber, fmtargnumber+1 )))
 #define FMT_CONSTEXPR
+#define SDL_C_LIB_BEGIN namespace SDL3 {
+#define SDL3 LITERAL(SDL3_NAMESPACE)
+#define _WIN32
+#define SDL_C_LIB_END }
+#define SDL_C_LIB_END }
+#define assert
+#define assert(x) if(!(x)) ABORT
+#define assert(x)
+#define assert(x) do { if (!(x)) __builtin_unreachable(); } while (0)
+#define assert(expression) ((void)0)
+#define assert(expression) (void)( (!!(expression)) || (_wassert(_CRT_WIDE(#expression), _CRT_WIDE(__FILE__), (unsigned)(__LINE__)), 0) )
+#define STBIDEF
+#define STBTT_DEF
+// Hint files help the Visual Studio IDE interpret Visual C++ identifiers
+// such as names of functions and macros.
+// For more information see https://go.microsoft.com/fwlink/?linkid=865984
+#define _EXPORT_STD
+// Hint files help the Visual Studio IDE interpret Visual C++ identifiers
+// such as names of functions and macros.
+// For more information see https://go.microsoft.com/fwlink/?linkid=865984
+#define _EXPORT_STD
+#define _MSC_VER

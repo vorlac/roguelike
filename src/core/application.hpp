@@ -19,6 +19,7 @@
 #include "core/state/states.hpp"
 #include "core/window.hpp"
 #include "gl/instanced_buffer.hpp"
+#include "gui/button.hpp"
 #include "sdl/defs.hpp"
 #include "utils/assert.hpp"
 #include "utils/crtp.hpp"
@@ -73,9 +74,9 @@ namespace rl {
             std::shared_ptr<rl::Renderer> renderer{ m_window->renderer() };
             gl::InstancedVertexBuffer vbo{ renderer->get_viewport() };
 
-            nanogui::Button* b = new nanogui::Button(static_cast<nanogui::Widget*>(m_window.get()),
-                                                     "Plain button");
-            b->set_callback([] {
+            gui::Button* b = new gui::Button(static_cast<gui::Widget*>(m_window.get()),
+                                             "Plain button");
+            b->setCallback([] {
                 log::info("pushed!");
             });
 

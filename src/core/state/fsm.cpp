@@ -1,5 +1,3 @@
-#pragma once
-
 #include <memory>
 #include <stack>
 #include <type_traits>

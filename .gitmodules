@@ -13,6 +13,6 @@
 [submodule "sdl_mixer"]
 	path = extern/sdl_mixer
 	url = https://github.com/libsdl-org/SDL_mixer.git
-[submodule "extern/nanogui"]
-	path = extern/nanogui
-	url = git@github.com:vorlac/nanogui.git
+[submodule "extern/nanogui-sdl"]
+	path = extern/nanogui-sdl
+	url = git@github.com:vorlac/nanogui-sdl.git
