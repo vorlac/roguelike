@@ -103,20 +103,20 @@ namespace rl::gui {
         {
             const Vector2i savepos = child->position();
             Vector2i npos = savepos;
-            mDOffset = -mScroll * (mChildPreferredHeight - mSize.y);
+            mDOffset = -mScroll * ((float)mChildPreferredHeight - (float)mSize.y);
             npos.y += mDOffset;
             child->setPosition(npos);
             child->draw(renderer);
             child->setPosition(savepos);
         }
 
-        SDL3::SDL_Color sc = mTheme->mBorderDark.toSdlColor();
+        SDL3::SDL_Color sc = m_theme->mBorderDark.toSdlColor();
         SDL3::SDL_FRect srect{ ap.x + mSize.x - 12.0f, ap.y + 4.0f, 8.0f, mSize.y - 8.0f };
 
         SDL3::SDL_SetRenderDrawColor(renderer, sc.r, sc.g, sc.b, sc.a);
         SDL3::SDL_RenderFillRect(renderer, &srect);
 
-        SDL3::SDL_Color ss = mTheme->mBorderLight.toSdlColor();
+        SDL3::SDL_Color ss = m_theme->mBorderLight.toSdlColor();
         SDL3::SDL_FRect drect{
             std::round(ap.x + mSize.x - 12.0f + 1.0f),
             std::round(ap.y + 4 + (mSize.y - 8.0f - scrollh) * mScroll + 1.0f),

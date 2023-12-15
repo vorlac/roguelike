@@ -28,9 +28,9 @@ namespace rl::gui {
          * Sets the callable objects which is invoked when a tab is changed.
          * The argument provided to the callback is the index of the new active tab.
          */
-        void setCallback(const std::function<void(int)>& callback)
+        void setCallback(std::function<void(int)>&& callback)
         {
-            mCallback = callback;
+            mCallback = std::move(callback);
         };
 
         const std::function<void(int)>& callback() const

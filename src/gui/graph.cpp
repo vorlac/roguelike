@@ -123,16 +123,16 @@ namespace rl::gui {
         }
 
         if (_captionTex.dirty)
-            mTheme->getTexAndRectUtf8(renderer, _captionTex, 0, 0, mCaption.c_str(), "sans", 14,
-                                      mTextColor);
+            m_theme->getTexAndRectUtf8(renderer, _captionTex, 0, 0, mCaption.c_str(), "sans", 14,
+                                       mTextColor);
 
         if (_headerTex.dirty)
-            mTheme->getTexAndRectUtf8(renderer, _headerTex, 0, 0, mHeader.c_str(), "sans", 18,
-                                      mTextColor);
+            m_theme->getTexAndRectUtf8(renderer, _headerTex, 0, 0, mHeader.c_str(), "sans", 18,
+                                       mTextColor);
 
         if (_footerTex.dirty)
-            mTheme->getTexAndRectUtf8(renderer, _footerTex, 0, 0, mFooter.c_str(), "sans", 15,
-                                      mTextColor);
+            m_theme->getTexAndRectUtf8(renderer, _footerTex, 0, 0, mFooter.c_str(), "sans", 15,
+                                       mTextColor);
 
         auto&& captionPos = ap + Vector2i(3, 1);
         SDL3::SDL_FRect posRectCaption{ captionPos.x, captionPos.y };

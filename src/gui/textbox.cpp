@@ -38,8 +38,8 @@ namespace rl::gui {
             TextBox* tbox = ptr;
             AsyncTexture* self = this;
             std::thread tgr([=]() {
-                Theme* mTheme = tbox->theme();
-                std::lock_guard<std::mutex> guard(mTheme->loadMutex);
+                Theme* m_theme = tbox->theme();
+                std::lock_guard<std::mutex> guard(m_theme->loadMutex);
 
                 int ww = tbox->width();
                 int hh = tbox->height();
@@ -139,8 +139,8 @@ namespace rl::gui {
         , mTextOffset(0)
         , mLastClick(0)
     {
-        if (mTheme)
-            mFontSize = mTheme->mTextBoxFontSize;
+        if (m_theme)
+            mFontSize = m_theme->mTextBoxFontSize;
         _captionTex.dirty = true;
         _unitsTex.dirty = true;
     }
@@ -155,8 +155,8 @@ namespace rl::gui {
     void TextBox::setTheme(Theme* theme)
     {
         Widget::setTheme(theme);
-        if (mTheme)
-            mFontSize = mTheme->mTextBoxFontSize;
+        if (m_theme)
+            mFontSize = m_theme->mTextBoxFontSize;
     }
 
     Vector2i TextBox::preferredSize(SDL3::SDL_Renderer* ctx) const
@@ -174,15 +174,15 @@ namespace rl::gui {
         }
         else if (!mUnits.empty())
         {
-            uw = const_cast<TextBox*>(this)->mTheme->getUtf8Width("sans", fontSize(),
-                                                                  mUnits.c_str());
+            uw = const_cast<TextBox*>(this)->m_theme->getUtf8Width("sans", fontSize(),
+                                                                   mUnits.c_str());
         }
         float sw = 0;
         if (mSpinnable)
             sw = 14.f;
 
-        float ts = const_cast<TextBox*>(this)->mTheme->getUtf8Width("sans", fontSize(),
-                                                                    mValue.c_str());
+        float ts = const_cast<TextBox*>(this)->m_theme->getUtf8Width("sans", fontSize(),
+                                                                     mValue.c_str());
         size.x = size.y + ts + uw + sw;
         return size;
     }
@@ -240,8 +240,8 @@ namespace rl::gui {
         else if (!mUnits.empty())
         {
             if (_unitsTex.dirty)
-                mTheme->getTexAndRectUtf8(renderer, _unitsTex, 0, 0, mUnits.c_str(), "sans",
-                                          fontSize(), Color(255, mEnabled ? 64 : 32));
+                m_theme->getTexAndRectUtf8(renderer, _unitsTex, 0, 0, mUnits.c_str(), "sans",
+                                           fontSize(), Color(255, mEnabled ? 64 : 32));
 
             unitWidth = _unitsTex.w() + 2;
             SDL_RenderCopy(renderer, _unitsTex,
@@ -257,21 +257,21 @@ namespace rl::gui {
             spinArrowsWidth = 14.f;
 
             nvgFontFace(ctx, "icons");
-            nvgFontSize(ctx, ((mFontSize < 0) ? mTheme->mButtonFontSize : mFontSize) * 1.2f);
+            nvgFontSize(ctx, ((mFontSize < 0) ? m_theme->mButtonFontSize : mFontSize) * 1.2f);
 
             bool spinning = mMouseDownPos.x() != -1;
             {
                 bool hover = mMouseFocus && spinArea(mMousePos) == SpinArea::Top;
-                nvgFillColor(ctx, (mEnabled && (hover || spinning)) ? mTheme->mTextColor :
-        mTheme->mDisabledTextColor); auto icon = utf8(ENTYPO_ICON_CHEVRON_UP); nvgTextAlign(ctx,
+                nvgFillColor(ctx, (mEnabled && (hover || spinning)) ? m_theme->mTextColor :
+        m_theme->mDisabledTextColor); auto icon = utf8(ENTYPO_ICON_CHEVRON_UP); nvgTextAlign(ctx,
         NVG_ALIGN_LEFT | NVG_ALIGN_MIDDLE); Vector2f iconPos(mPos.x() + 4.f, mPos.y() +
         mSize.y()/2.f - xSpacing/2.f); nvgText(ctx, iconPos.x(), iconPos.y(), icon.data(), nullptr);
             }
 
             {
                 bool hover = mMouseFocus && spinArea(mMousePos) == SpinArea::Bottom;
-                nvgFillColor(ctx, (mEnabled && (hover || spinning)) ? mTheme->mTextColor :
-        mTheme->mDisabledTextColor); auto icon = utf8(ENTYPO_ICON_CHEVRON_DOWN); nvgTextAlign(ctx,
+                nvgFillColor(ctx, (mEnabled && (hover || spinning)) ? m_theme->mTextColor :
+        m_theme->mDisabledTextColor); auto icon = utf8(ENTYPO_ICON_CHEVRON_DOWN); nvgTextAlign(ctx,
         NVG_ALIGN_LEFT | NVG_ALIGN_MIDDLE); Vector2f iconPos(mPos.x() + 4.f, mPos.y() +
         mSize.y()/2.f + xSpacing/2.f + 1.5f); nvgText(ctx, iconPos.x(), iconPos.y(), icon.data(),
         nullptr);
@@ -310,9 +310,9 @@ namespace rl::gui {
         drawPos.y += (mSize.y - _captionTex.h()) / 2;
 
         if (_captionTex.dirty)
-            mTheme->getTexAndRectUtf8(renderer, _captionTex, 0, 0, mValue.c_str(), "sans",
-                                      fontSize(),
-                                      mEnabled ? mTheme->mTextColor : mTheme->mDisabledTextColor);
+            m_theme->getTexAndRectUtf8(
+                renderer, _captionTex, 0, 0, mValue.c_str(), "sans", fontSize(),
+                mEnabled ? m_theme->mTextColor : m_theme->mDisabledTextColor);
 
         if (mCommitted)
         {
@@ -322,7 +322,7 @@ namespace rl::gui {
         else
         {
             int w, h;
-            mTheme->getUtf8Bounds("sans", fontSize(), mValueTemp.c_str(), &w, &h);
+            m_theme->getUtf8Bounds("sans", fontSize(), mValueTemp.c_str(), &w, &h);
             float textBound[4] = { (float)drawPos.x, (float)drawPos.y, (float)(drawPos.x + w),
                                    (float)(drawPos.y + h) };
             float lineh = textBound[3] - textBound[1];
@@ -345,8 +345,8 @@ namespace rl::gui {
             // drawPos.x() = oldDrawPos.x() + mTextOffset;
 
             if (_tempTex.dirty)
-                mTheme->getTexAndRectUtf8(renderer, _tempTex, 0, 0, mValueTemp.c_str(), "sans",
-                                          fontSize(), mTheme->mTextColor);
+                m_theme->getTexAndRectUtf8(renderer, _tempTex, 0, 0, mValueTemp.c_str(), "sans",
+                                           fontSize(), m_theme->mTextColor);
 
             // draw text with offset
             SDL3::SDL_FRect oldDrawRect{ static_cast<float>(drawPos.x),
@@ -788,7 +788,7 @@ namespace rl::gui {
         if (index >= str.size())
             pos = _tempTex.w();  // last character
         else
-            pos = mTheme->getUtf8Width("sans", fontSize(), str.substr(0, index).c_str());
+            pos = m_theme->getUtf8Width("sans", fontSize(), str.substr(0, index).c_str());
         ;
 
         return pos;
@@ -797,14 +797,14 @@ namespace rl::gui {
     int TextBox::position2CursorIndex(float posx, float lastx, const std::string& str)
     {
         int mCursorId = 0;
-        float caretx = mTheme->getUtf8Width("sans", fontSize(), str.substr(0, mCursorId).c_str());
+        float caretx = m_theme->getUtf8Width("sans", fontSize(), str.substr(0, mCursorId).c_str());
         for (int j = 1; j <= str.size(); j++)
         {
-            int glposx = mTheme->getUtf8Width("sans", fontSize(), str.substr(0, j).c_str());
+            int glposx = m_theme->getUtf8Width("sans", fontSize(), str.substr(0, j).c_str());
             if (std::abs(caretx - posx) > std::abs(glposx - posx))
             {
                 mCursorId = j;
-                caretx = mTheme->getUtf8Width("sans", fontSize(), str.substr(0, mCursorId).c_str());
+                caretx = m_theme->getUtf8Width("sans", fontSize(), str.substr(0, mCursorId).c_str());
             }
         }
         if (std::abs(caretx - posx) > std::abs(lastx - posx))

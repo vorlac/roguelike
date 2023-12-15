@@ -38,11 +38,11 @@ namespace rl::gui {
             Window* wnd = ptr;
             AsyncTexture* self = this;
             std::thread tgr([=]() {
-                Theme* mTheme = wnd->theme();
+                Theme* m_theme = wnd->theme();
 
                 int ww = wnd->width();
                 int hh = wnd->height();
-                int ds = mTheme->mWindowDropShadowSize;
+                int ds = m_theme->mWindowDropShadowSize;
 
                 Vector2i mPos(dx + ds, dy + ds);
 
@@ -53,8 +53,8 @@ namespace rl::gui {
                 float pxRatio = 1.0f;
                 nvgBeginFrame(ctx, realw, realh, pxRatio);
 
-                int cr = mTheme->mWindowCornerRadius;
-                int headerH = mTheme->mWindowHeaderHeight;
+                int cr = m_theme->mWindowCornerRadius;
+                int headerH = m_theme->mWindowHeaderHeight;
 
                 /* Draw window */
                 nvgSave(ctx);
@@ -62,7 +62,7 @@ namespace rl::gui {
                 nvgRoundedRect(ctx, mPos.x, mPos.y, ww, hh, cr);
 
                 nvgFillColor(
-                    ctx, (mouseFocus ? mTheme->mWindowFillFocused : mTheme->mWindowFillUnfocused)
+                    ctx, (mouseFocus ? m_theme->mWindowFillFocused : m_theme->mWindowFillUnfocused)
                              .toNvgColor());
                 nvgFill(ctx);
 
@@ -70,8 +70,8 @@ namespace rl::gui {
                 if (wnd->dropShadowEnabled())
                 {
                     NVGpaint shadowPaint = nvgBoxGradient(ctx, mPos.x, mPos.y, ww, hh, cr * 2,
-                                                          ds * 2, mTheme->mDropShadow.toNvgColor(),
-                                                          mTheme->mTransparent.toNvgColor());
+                                                          ds * 2, m_theme->mDropShadow.toNvgColor(),
+                                                          m_theme->mTransparent.toNvgColor());
 
                     nvgSave(ctx);
                     nvgResetScissor(ctx);
@@ -87,8 +87,8 @@ namespace rl::gui {
                 /* Draw header */
                 NVGpaint headerPaint = nvgLinearGradient(
                     ctx, mPos.x, mPos.y, mPos.x, mPos.y + headerH,
-                    mTheme->mWindowHeaderGradientTop.toNvgColor(),
-                    mTheme->mWindowHeaderGradientBot.toNvgColor());
+                    m_theme->mWindowHeaderGradientTop.toNvgColor(),
+                    m_theme->mWindowHeaderGradientBot.toNvgColor());
 
                 nvgBeginPath(ctx);
                 nvgRoundedRect(ctx, mPos.x, mPos.y, ww, headerH, cr);
@@ -98,7 +98,7 @@ namespace rl::gui {
 
                 nvgBeginPath(ctx);
                 nvgRoundedRect(ctx, mPos.x, mPos.y, ww, headerH, cr);
-                nvgStrokeColor(ctx, mTheme->mWindowHeaderSepTop.toNvgColor());
+                nvgStrokeColor(ctx, m_theme->mWindowHeaderSepTop.toNvgColor());
 
                 nvgSave(ctx);
                 nvgIntersectScissor(ctx, mPos.x, mPos.y, ww, 0.5f);
@@ -108,7 +108,7 @@ namespace rl::gui {
                 nvgBeginPath(ctx);
                 nvgMoveTo(ctx, mPos.x + 0.5f, mPos.y + headerH - 1.5f);
                 nvgLineTo(ctx, mPos.x + ww - 0.5f, mPos.y + headerH - 1.5);
-                nvgStrokeColor(ctx, mTheme->mWindowHeaderSepBot.toNvgColor());
+                nvgStrokeColor(ctx, m_theme->mWindowHeaderSepBot.toNvgColor());
                 nvgStroke(ctx);
 
                 nvgEndFrame(ctx);
@@ -161,7 +161,7 @@ namespace rl::gui {
             mButtonPanel->setVisible(true);
 
         int w, h;
-        const_cast<Window*>(this)->mTheme->getTextBounds("sans-bold", 18.0, mTitle.c_str(), &w, &h);
+        const_cast<Window*>(this)->m_theme->getTextBounds("sans-bold", 18.0, mTitle.c_str(), &w, &h);
 
         return result.cmax(Vector2i(w + 20, h));
     }
@@ -206,40 +206,40 @@ namespace rl::gui {
 
     void Window::drawBodyTemp(SDL3::SDL_Renderer* renderer)
     {
-        int ds = mTheme->mWindowDropShadowSize;
-        int cr = mTheme->mWindowCornerRadius;
-        int hh = mTheme->mWindowHeaderHeight;
+        int ds = m_theme->mWindowDropShadowSize;
+        int cr = m_theme->mWindowCornerRadius;
+        int hh = m_theme->mWindowHeaderHeight;
 
         Vector2i ap = absolutePosition();
         SDL3::SDL_FRect rect{ ap.x, ap.y, mSize.x, mSize.y };
 
         /* Draw a drop shadow */
         SDL3::SDL_FRect shadowRect{ ap.x - ds, ap.y - ds, mSize.x + 2.0f * ds, mSize.y + 2.0f * ds };
-        SDL3::SDL_Color shadowColor = mTheme->mDropShadow.toSdlColor();
+        SDL3::SDL_Color shadowColor = m_theme->mDropShadow.toSdlColor();
 
         SDL3::SDL_SetRenderDrawColor(renderer, shadowColor.r, shadowColor.g, shadowColor.b, 32);
         SDL3::SDL_RenderFillRect(renderer, &shadowRect);
 
         /* Draw window */
-        SDL3::SDL_Color color = (mMouseFocus ? mTheme->mWindowFillFocused
-                                             : mTheme->mWindowFillUnfocused)
+        SDL3::SDL_Color color = (mMouseFocus ? m_theme->mWindowFillFocused
+                                             : m_theme->mWindowFillUnfocused)
                                     .toSdlColor();
         SDL3::SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
         SDL3::SDL_RenderFillRect(renderer, &rect);
 
         SDL3::SDL_FRect wndBdRect{ ap.x - 2, ap.y - 2, width() + 4, height() + 4 };
-        SDL3::SDL_Color bd = mTheme->mBorderDark.toSdlColor();
+        SDL3::SDL_Color bd = m_theme->mBorderDark.toSdlColor();
         SDL3::SDL_SetRenderDrawColor(renderer, bd.r, bd.g, bd.b, bd.a);
         SDL3::SDL_RenderRect(renderer, &wndBdRect);
 
-        SDL3::SDL_Color headerColor = mTheme->mWindowHeaderGradientTop.toSdlColor();
+        SDL3::SDL_Color headerColor = m_theme->mWindowHeaderGradientTop.toSdlColor();
         SDL3::SDL_FRect headerRect{ ap.x, ap.y, mSize.x, hh };
 
         SDL3::SDL_SetRenderDrawColor(renderer, headerColor.r, headerColor.g, headerColor.b,
                                      headerColor.a);
         SDL3::SDL_RenderFillRect(renderer, &headerRect);
 
-        SDL3::SDL_Color headerBotColor = mTheme->mWindowHeaderSepBot.toSdlColor();
+        SDL3::SDL_Color headerBotColor = m_theme->mWindowHeaderSepBot.toSdlColor();
         SDL3::SDL_SetRenderDrawColor(renderer, headerBotColor.r, headerBotColor.g, headerBotColor.b,
                                      headerBotColor.a);
         SDL3::SDL_RenderLine(renderer, ap.x + 0.5f, ap.y + hh - 1.5f, ap.x + width() - 0.5f,
@@ -250,17 +250,18 @@ namespace rl::gui {
     {
         int id = (mMouseFocus ? 0x1 : 0);
 
-        auto atx = std::find_if(_txs.begin(), _txs.end(), [id](const AsyncTexturePtr& p) {
-            return p->id == id;
-        });
+        auto atx = std::find_if(m_window_txs.begin(), m_window_txs.end(),
+                                [id](const Window::AsyncTexturePtr& p) {
+                                    return p->id == id;
+                                });
 
-        if (atx != _txs.end())
+        if (atx != m_window_txs.end())
             drawTexture(*atx, renderer);
         else
         {
-            AsyncTexturePtr newtx = std::make_shared<AsyncTexture>(id);
+            Window::AsyncTexturePtr newtx = std::make_shared<Window::AsyncTexture>(id);
             newtx->load(this, 0, 0, mMouseFocus);
-            _txs.push_back(newtx);
+            m_window_txs.push_back(newtx);
 
             drawTexture(current_texture_, renderer);
         }
@@ -272,15 +273,15 @@ namespace rl::gui {
 
         if (_titleTex.dirty)
         {
-            Color titleTextColor = (mFocused ? mTheme->mWindowTitleFocused
-                                             : mTheme->mWindowTitleUnfocused);
-            mTheme->getTexAndRectUtf8(renderer, _titleTex, 0, 0, mTitle.c_str(), "sans-bold", 18,
-                                      titleTextColor);
+            Color titleTextColor = (mFocused ? m_theme->mWindowTitleFocused
+                                             : m_theme->mWindowTitleUnfocused);
+            m_theme->getTexAndRectUtf8(renderer, _titleTex, 0, 0, mTitle.c_str(), "sans-bold", 18,
+                                       titleTextColor);
         }
 
         if (!mTitle.empty() && _titleTex.tex)
         {
-            int headerH = mTheme->mWindowHeaderHeight;
+            int headerH = m_theme->mWindowHeaderHeight;
             SDL_RenderCopy(
                 renderer, _titleTex,
                 _pos + Vector2i((mSize.x - _titleTex.w()) / 2, (headerH - _titleTex.h()) / 2));
@@ -326,7 +327,7 @@ namespace rl::gui {
             return true;
         if (button == SDL_BUTTON_LEFT)
         {
-            mDrag = down && (p.y - _pos.y) < mTheme->mWindowHeaderHeight;
+            mDrag = down && (p.y - _pos.y) < m_theme->mWindowHeaderHeight;
             return true;
         }
         return false;

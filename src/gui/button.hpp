@@ -128,23 +128,23 @@ namespace rl::gui {
         /// Set the push callback (for any type of button)
         std::function<void()> callback() const
         {
-            return mCallback;
+            return m_pressed_callback;
         }
 
         void setCallback(const std::function<void()>& callback)
         {
-            mCallback = callback;
+            m_pressed_callback = callback;
         }
 
         /// Set the change callback (for toggle buttons)
         std::function<void(bool)> changeCallback() const
         {
-            return mChangeCallback;
+            return m_change_callback;
         }
 
         void setChangeCallback(const std::function<void(bool)>& callback)
         {
-            mChangeCallback = callback;
+            m_change_callback = callback;
         }
 
         /// Set the button group (for radio buttons)
@@ -211,8 +211,8 @@ namespace rl::gui {
         Texture _captionTex;
         Texture _iconTex;
 
-        std::function<void()> mCallback;
-        std::function<void(bool)> mChangeCallback;
+        std::function<void()> m_pressed_callback;
+        std::function<void(bool)> m_change_callback;
         std::vector<Button*> mButtonGroup;
 
         struct AsyncTexture;

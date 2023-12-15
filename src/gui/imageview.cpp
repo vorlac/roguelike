@@ -368,7 +368,7 @@ namespace rl::gui {
 
     void ImageView::drawWidgetBorder(SDL3::SDL_Renderer* renderer, const SDL3::SDL_Point& ap) const
     {
-        SDL3::SDL_Color lc = mTheme->mBorderLight.toSdlColor();
+        SDL3::SDL_Color lc = m_theme->mBorderLight.toSdlColor();
 
         SDL3::SDL_FRect lr{
             static_cast<float>(ap.x - 1),
@@ -380,7 +380,7 @@ namespace rl::gui {
         SDL3::SDL_SetRenderDrawColor(renderer, lc.r, lc.g, lc.b, lc.a);
         SDL3::SDL_RenderRect(renderer, &lr);
 
-        SDL3::SDL_Color dc = mTheme->mBorderDark.toSdlColor();
+        SDL3::SDL_Color dc = m_theme->mBorderDark.toSdlColor();
         SDL3::SDL_FRect dr{
             (float)ap.x - 1,
             (float)ap.y - 1,

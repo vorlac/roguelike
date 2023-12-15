@@ -8,10 +8,10 @@ namespace rl::gui {
         , mCaption(caption)
         , mFont(font)
     {
-        if (mTheme)
+        if (m_theme)
         {
-            mFontSize = mTheme->mStandardFontSize;
-            mColor = mTheme->mTextColor;
+            mFontSize = m_theme->mStandardFontSize;
+            mColor = m_theme->mTextColor;
         }
 
         if (fontSize >= 0)
@@ -23,10 +23,10 @@ namespace rl::gui {
     void Label::setTheme(Theme* theme)
     {
         Widget::setTheme(theme);
-        if (mTheme)
+        if (m_theme)
         {
-            mFontSize = mTheme->mStandardFontSize;
-            mColor = mTheme->mTextColor;
+            mFontSize = m_theme->mStandardFontSize;
+            mColor = m_theme->mTextColor;
         }
     }
 
@@ -38,16 +38,16 @@ namespace rl::gui {
         if (mFixedSize.x > 0)
         {
             int w, h;
-            const_cast<Label*>(this)->mTheme->getUtf8Bounds(mFont.c_str(), fontSize(),
-                                                            mCaption.c_str(), &w, &h);
+            const_cast<Label*>(this)->m_theme->getUtf8Bounds(mFont.c_str(), fontSize(),
+                                                             mCaption.c_str(), &w, &h);
             return Vector2i(mFixedSize.x, h);
         }
         else
         {
             int w, h;
-            const_cast<Label*>(this)->mTheme->getUtf8Bounds(mFont.c_str(), fontSize(),
-                                                            mCaption.c_str(), &w, &h);
-            return Vector2i(w, mTheme->mStandardFontSize);
+            const_cast<Label*>(this)->m_theme->getUtf8Bounds(mFont.c_str(), fontSize(),
+                                                             mCaption.c_str(), &w, &h);
+            return Vector2i(w, m_theme->mStandardFontSize);
         }
     }
 
@@ -62,8 +62,8 @@ namespace rl::gui {
         Widget::draw(renderer);
 
         if (_texture.dirty)
-            mTheme->getTexAndRectUtf8(renderer, _texture, 0, 0, mCaption.c_str(), mFont.c_str(),
-                                      fontSize(), mColor);
+            m_theme->getTexAndRectUtf8(renderer, _texture, 0, 0, mCaption.c_str(), mFont.c_str(),
+                                       fontSize(), mColor);
 
         if (mFixedSize.x > 0)
         {

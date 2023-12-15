@@ -1,6 +1,5 @@
 #pragma once
 
-#include "gui/widget.hpp"
 #include "gui/window.hpp"
 #include "sdl/defs.hpp"
 
@@ -14,10 +13,10 @@ namespace rl::gui {
      * @brief Represents a display surface (i.e. a full-screen or windowed GLFW window)
      * and forms the root element of a hierarchy of sdlgui widgets
      */
-    class Screen : public Widget
+    class Screen : public gui::Widget
     {
-        friend class Widget;
-        friend class Window;
+        friend class gui::Widget;
+        friend class gui::Window;
 
     public:
         // Used to initialize empty window, use initialize(SDL_Window* window) for deferred init
@@ -99,13 +98,13 @@ namespace rl::gui {
         // Return a pointer to the underlying GLFW window data structure
         SDL3::SDL_Window* window()
         {
-            return _window;
+            return m_sdl_window;
         }
 
         // Return a pointer to the underlying nanoVG draw context
         SDL3::SDL_Renderer* sdlRenderer()
         {
-            return mSDL_Renderer;
+            return m_sdl_renderer;
         }
 
         // Compute the layout of all widgets
@@ -141,20 +140,21 @@ namespace rl::gui {
         void performLayout(SDL3::SDL_Renderer* renderer) override;
 
     protected:
-        SDL3::SDL_Window* _window;
-        std::vector<Widget*> mFocusPath;
-        SDL3::SDL_Renderer* mSDL_Renderer;
-        Vector2i mFBSize;
-        float mPixelRatio;
-        int mMouseState, mModifiers;
-        Vector2i mMousePos;
-        bool mDragActive;
-        Widget* mDragWidget = nullptr;
-        uint64_t mLastInteraction;
-        bool mProcessEvents;
-        Color mBackground;
-        std::string mCaption;
-        std::string _lastTooltip;
-        Texture _tooltipTex;
+        SDL3::SDL_Window* m_sdl_window{ nullptr };
+        std::vector<gui::Widget*> mFocusPath{};
+        SDL3::SDL_Renderer* m_sdl_renderer{ nullptr };
+        gui::Vector2i mFBSize{ 0, 0 };
+        float mPixelRatio{ 0.0f };
+        int mMouseState{ 0 };
+        int mModifiers{ 0 };
+        gui::Vector2i mMousePos{ 0, 0 };
+        bool mDragActive{ false };
+        gui::Widget* mDragWidget{ nullptr };
+        uint64_t mLastInteraction{ 0 };
+        bool mProcessEvents{ false };
+        gui::Color mBackground{ 0, 0, 0, 0 };
+        std::string mCaption{};
+        std::string _lastTooltip{};
+        gui::Texture _tooltipTex{};
     };
 }

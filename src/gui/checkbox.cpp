@@ -136,8 +136,8 @@ namespace rl::gui {
             return mFixedSize;
 
         int w, h;
-        const_cast<CheckBox*>(this)->mTheme->getTextBounds("sans", fontSize(), mCaption.c_str(), &w,
-                                                           &h);
+        const_cast<CheckBox*>(this)->m_theme->getTextBounds("sans", fontSize(), mCaption.c_str(),
+                                                            &w, &h);
         return Vector2i(w + 1.7f * fontSize(), fontSize() * 1.3f);
     }
 
@@ -167,11 +167,11 @@ namespace rl::gui {
 
         if (_captionTex.dirty)
         {
-            Color tColor = (mEnabled ? mTheme->mTextColor : mTheme->mDisabledTextColor);
-            mTheme->getTexAndRectUtf8(renderer, _captionTex, 0, 0, mCaption.c_str(), "sans",
-                                      fontSize(), tColor);
-            mTheme->getTexAndRectUtf8(renderer, _pointTex, 0, 0, utf8(ENTYPO_ICON_CHECK).data(),
-                                      "icons", 1.8 * mSize.y, tColor);
+            Color tColor = (mEnabled ? m_theme->mTextColor : m_theme->mDisabledTextColor);
+            m_theme->getTexAndRectUtf8(renderer, _captionTex, 0, 0, mCaption.c_str(), "sans",
+                                       fontSize(), tColor);
+            m_theme->getTexAndRectUtf8(renderer, _pointTex, 0, 0, utf8(ENTYPO_ICON_CHECK).data(),
+                                       "icons", 1.8 * mSize.y, tColor);
         }
 
         auto ap = absolutePosition();

@@ -47,12 +47,12 @@ namespace rl::gui {
             if (_chevronTex.dirty)
             {
                 auto icon = utf8(mChevronIcon);
-                Color textColor = { (mTextColor.a() == 0.0f) ? mTheme->mTextColor : mTextColor };
+                Color textColor = { (mTextColor.a() == 0.0f) ? m_theme->mTextColor : mTextColor };
                 if (!mEnabled)
-                    textColor = mTheme->mDisabledTextColor;
-                int fntsize = (int)((mFontSize < 0 ? mTheme->mButtonFontSize : mFontSize) * 1.5f);
-                mTheme->getTexAndRectUtf8(renderer, _chevronTex, 0, 0, icon.data(), "icons",
-                                          fntsize, textColor);
+                    textColor = m_theme->mDisabledTextColor;
+                int fntsize = (int)((mFontSize < 0 ? m_theme->mButtonFontSize : mFontSize) * 1.5f);
+                m_theme->getTexAndRectUtf8(renderer, _chevronTex, 0, 0, icon.data(), "icons",
+                                           fntsize, textColor);
             }
 
             auto&& ap = absolutePosition();

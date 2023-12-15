@@ -45,7 +45,7 @@ namespace rl::gui {
 
         /// Draws this SwitchBox.
         virtual void draw(SDL3::SDL_Renderer* renderer) override;
-        virtual void drawBody(SDL3::SDL_Renderer* renderer);
+        virtual void drawBody(SDL3::SDL_Renderer* renderer) override;
         virtual void drawKnob(SDL3::SDL_Renderer* renderer);
 
         virtual void setAlignment(Alignment align)

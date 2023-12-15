@@ -13,11 +13,9 @@ SDL_C_LIB_END
 
 namespace rl::gui {
     Screen::Screen()
-        : Widget(nullptr)
-        , _window{ nullptr }
-        , mSDL_Renderer{ nullptr }
-        , mVisible{ true }
-        , mTheme{ new Theme(mSDL_Renderer) }
+        : gui::Widget{ nullptr }
+        , m_sdl_window{ nullptr }
+        , m_sdl_renderer{ nullptr }
         , mMouseState{ 0 }
         , mModifiers{ 0 }
         , mMousePos{ 0, 0 }
@@ -26,13 +24,15 @@ namespace rl::gui {
         , mProcessEvents{ true }
         , mBackground{ Color(0.3f, 0.3f, 0.32f, 1.0f) }
     {
+        m_visible = true;
+        m_theme = new gui::Theme(m_sdl_renderer);
     }
 
     Screen::Screen(SDL3::SDL_Window* window, const Vector2i& size, const std::string& caption,
                    bool resizable, bool fullscreen)
         : Widget(nullptr)
-        , _window(nullptr)
-        , mSDL_Renderer(nullptr)
+        , m_sdl_window(nullptr)
+        , m_sdl_renderer(nullptr)
         , mCaption(caption)
     {
         SDL_SetWindowTitle(window, caption.c_str());
@@ -95,16 +95,16 @@ namespace rl::gui {
 
     void Screen::initialize(SDL3::SDL_Window* window)
     {
-        _window = window;
+        m_sdl_window = window;
         SDL3::SDL_GetWindowSize(window, &mSize[0], &mSize[1]);
         SDL3::SDL_GetWindowSize(window, &mFBSize[0], &mFBSize[1]);
-        mSDL_Renderer = SDL3::SDL_GetRenderer(window);
+        m_sdl_renderer = SDL3::SDL_GetRenderer(window);
 
-        if (mSDL_Renderer == nullptr)
+        if (m_sdl_renderer == nullptr)
             throw std::runtime_error("Could not initialize NanoVG!");
 
-        mVisible = true;
-        mTheme = new Theme(mSDL_Renderer);
+        m_visible = true;
+        m_theme = new Theme(m_sdl_renderer);
         mMousePos = { 0, 0 };
         mMouseState = mModifiers = 0;
         mDragActive = false;
@@ -119,14 +119,14 @@ namespace rl::gui {
 
     void Screen::setVisible(bool visible)
     {
-        if (mVisible != visible)
+        if (m_visible != visible)
         {
-            mVisible = visible;
+            m_visible = visible;
 
             if (visible)
-                SDL3::SDL_ShowWindow(_window);
+                SDL3::SDL_ShowWindow(m_sdl_window);
             else
-                SDL3::SDL_HideWindow(_window);
+                SDL3::SDL_HideWindow(m_sdl_window);
         }
     }
 
@@ -134,7 +134,7 @@ namespace rl::gui {
     {
         if (caption != mCaption)
         {
-            SDL3::SDL_SetWindowTitle(_window, caption.c_str());
+            SDL3::SDL_SetWindowTitle(m_sdl_window, caption.c_str());
             mCaption = caption;
         }
     }
@@ -142,7 +142,7 @@ namespace rl::gui {
     void Screen::setSize(const Vector2i& size)
     {
         Widget::setSize(size);
-        SDL3::SDL_SetWindowSize(_window, size.x, size.y);
+        SDL3::SDL_SetWindowSize(m_sdl_window, size.x, size.y);
     }
 
     void Screen::drawAll()
@@ -153,13 +153,13 @@ namespace rl::gui {
 
     void Screen::drawWidgets()
     {
-        if (!mVisible)
+        if (!m_visible)
             return;
 
         /* Calculate pixel ratio for hi-dpi devices. */
         mPixelRatio = (float)mFBSize[0] / (float)mSize[0];
 
-        SDL3::SDL_Renderer* renderer = SDL3::SDL_GetRenderer(_window);
+        SDL3::SDL_Renderer* renderer = SDL3::SDL_GetRenderer(m_sdl_window);
         draw(renderer);
 
         float elapsed_sec = float(SDL3::SDL_GetTicks() - mLastInteraction) /
@@ -175,8 +175,8 @@ namespace rl::gui {
                 if (_lastTooltip != widget->tooltip())
                 {
                     _lastTooltip = widget->tooltip();
-                    mTheme->getTexAndRectUtf8(renderer, _tooltipTex, 0, 0, _lastTooltip.c_str(),
-                                              "sans", 15, Color(1.f, 1.f));
+                    m_theme->getTexAndRectUtf8(renderer, _tooltipTex, 0, 0, _lastTooltip.c_str(),
+                                               "sans", 15, Color(1.f, 1.f));
                 }
 
                 if (_tooltipTex.tex)
@@ -394,7 +394,7 @@ namespace rl::gui {
     {
         Vector2i fbSize, size;
         // glfwGetFramebufferSize(mGLFWWindow, &fbSize[0], &fbSize[1]);
-        SDL_GetWindowSize(_window, &size[0], &size[1]);
+        SDL_GetWindowSize(m_sdl_window, &size[0], &size[1]);
 
         if (mFBSize == Vector2i(0, 0) || size == Vector2i(0, 0))
             return false;
@@ -451,8 +451,8 @@ namespace rl::gui {
     {
         if (window->size() == Vector2i{ 0, 0 })
         {
-            window->setSize(window->preferredSize(mSDL_Renderer));
-            window->performLayout(mSDL_Renderer);
+            window->setSize(window->preferredSize(m_sdl_renderer));
+            window->performLayout(m_sdl_renderer);
         }
         window->setPosition((mSize - window->size()) / 2);
     }
@@ -491,7 +491,7 @@ namespace rl::gui {
 
     void Screen::performLayout()
     {
-        Widget::performLayout(mSDL_Renderer);
+        Widget::performLayout(m_sdl_renderer);
     }
 
 }

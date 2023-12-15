@@ -29,20 +29,20 @@ namespace rl::gui {
 
         PopupButton::setChangeCallback([&](bool) {
             setColor(backgroundColor());
-            mCallback(backgroundColor());
+            m_color_picker_callback(backgroundColor());
         });
 
         mColorWheel->setCallback([&](const Color& value) {
             mPickButton->setBackgroundColor(value);
             mPickButton->setTextColor(value.contrastingColor());
-            mCallback(value);
+            m_color_picker_callback(value);
         });
 
         mPickButton->setCallback([&]() {
             Color value = mColorWheel->color();
             setPushed(false);
             setColor(value);
-            mCallback(value);
+            m_color_picker_callback(value);
         });
     }
 

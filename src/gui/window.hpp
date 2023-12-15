@@ -118,11 +118,11 @@ namespace rl::gui {
 
         struct AsyncTexture;
         typedef std::shared_ptr<AsyncTexture> AsyncTexturePtr;
-        std::vector<AsyncTexturePtr> _txs;
+        std::vector<Window::AsyncTexturePtr> m_window_txs;
 
         AsyncTexturePtr current_texture_ = nullptr;
 
     private:
-        void drawTexture(AsyncTexturePtr& texture, SDL3::SDL_Renderer* renderer);
+        void drawTexture(Window::AsyncTexturePtr& texture, SDL3::SDL_Renderer* renderer);
     };
 }

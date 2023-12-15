@@ -138,7 +138,7 @@ namespace rl::gui {
     void TabWidget::performLayout(SDL3::SDL_Renderer* ctx)
     {
         int headerHeight = mHeader->preferredSize(ctx).y;
-        int margin = mTheme->mTabInnerMargin;
+        int margin = m_theme->mTabInnerMargin;
         mHeader->setPosition({ 0, 0 });
         mHeader->setSize({ mSize.x, headerHeight });
         mHeader->performLayout(ctx);
@@ -151,7 +151,7 @@ namespace rl::gui {
     {
         auto contentSize = mContent->preferredSize(ctx);
         auto headerSize = mHeader->preferredSize(ctx);
-        int margin = mTheme->mTabInnerMargin;
+        int margin = m_theme->mTabInnerMargin;
         auto borderSize = Vector2i{ 2 * margin, 2 * margin };
         Vector2i tabPreferredSize = contentSize + borderSize + Vector2i{ 0, headerSize.y };
         return tabPreferredSize;
@@ -166,7 +166,7 @@ namespace rl::gui {
         {
             int x = getAbsoluteLeft();
             int y = getAbsoluteTop();
-            SDL3::SDL_Color bl = mTheme->mBorderLight.toSdlColor();
+            SDL3::SDL_Color bl = m_theme->mBorderLight.toSdlColor();
             SDL3::SDL_Rect blr{ x + 1, y + tabHeight + 2, mSize.x - 2, mSize.y - tabHeight - 2 };
 
             SDL_SetRenderDrawColor(renderer, bl.r, bl.g, bl.b, bl.a);
@@ -176,7 +176,7 @@ namespace rl::gui {
             SDL_RenderLine(renderer, blr.x, blr.y, blr.x, blr.y + blr.h);
             SDL_RenderLine(renderer, blr.x, blr.y + blr.h, blr.x + blr.w, blr.y + blr.h);
 
-            SDL3::SDL_Color bd = mTheme->mBorderDark.toSdlColor();
+            SDL3::SDL_Color bd = m_theme->mBorderDark.toSdlColor();
             SDL3::SDL_Rect bdr{ x + 1, y + tabHeight + 1, mSize.x - 2, mSize.y - tabHeight - 2 };
 
             SDL_SetRenderDrawColor(renderer, bd.r, bd.g, bd.b, bd.a);

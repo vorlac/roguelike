@@ -40,6 +40,7 @@ namespace rl {
         m_sdl_window = SDL3::SDL_CreateWindow(title.data(), dims.width, dims.height, m_properties);
         m_window_rect = { m_sdl_window ? this->get_position() : ds::point<i32>::null(), dims };
         m_renderer = std::make_shared<rl::Renderer>(*this, rl::Renderer::DEFAULT_PROPERTY_FLAGS);
+
         sdl_assert(m_sdl_window != nullptr, "failed to create SDL_Window");
         sdl_assert(m_renderer != nullptr, "failed to create sdl::Renderer");
         SDL3::SDL_GL_SetAttribute(SDL3::SDL_GL_DOUBLEBUFFER, 0);

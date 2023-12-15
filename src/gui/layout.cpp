@@ -481,7 +481,7 @@ namespace rl::gui {
 
             int currentSize = std::accumulate(grid.begin(), grid.end(), 0);
             float totalStretch = std::accumulate(stretch.begin(), stretch.end(), 0.0f);
-            if (currentSize >= containerSize[axis] || totalStretch == 0)
+            if (currentSize >= containerSize[axis] || totalStretch == 0.0f)
                 continue;
             float amt = (containerSize[axis] - currentSize) / totalStretch;
             for (size_t i = 0; i < grid.size(); ++i)

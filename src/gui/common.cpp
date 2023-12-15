@@ -1,25 +1,3 @@
-/*
-    sdlgui/common.cpp -- Basic initialization and utility routines
-
-    Based on NanoGUI by Wenzel Jakob <wenzel@inf.ethz.ch>.
-    Adaptation for SDL by Dalerank <dalerankn8@gmail.com>
-
-    All rights reserved. Use of this source code is governed by a
-    BSD-style license that can be found in the LICENSE.txt file.
-*/
-
-#include "gui/screen.hpp"
-#include "sdl/defs.hpp"
-
-#if defined(_WIN32)
-  #include <windows.h>
-#endif
-
-SDL_C_LIB_BEGIN
-#include <SDL3/SDL.h>
-#include <SDL3_image/SDL_image.h>
-SDL_C_LIB_END
-
 #include <array>
 #include <chrono>
 #include <cmath>
@@ -28,6 +6,12 @@ SDL_C_LIB_END
 #include <thread>
 
 #include "gui/nanovg.h"
+#include "gui/screen.hpp"
+#include "sdl/defs.hpp"
+
+#if defined(_WIN32)
+  #include <windows.h>
+#endif
 
 #if !defined(_WIN32)
   #include <locale.h>
@@ -35,8 +19,14 @@ SDL_C_LIB_END
   #include <sys/dir.h>
 #endif
 
-namespace rl::gui {
+SDL_C_LIB_BEGIN
+#include <SDL3/SDL.h>
+#include <SDL3_image/SDL_image.h>
+SDL_C_LIB_END
 
+#pragma warning(disable : 4244)
+
+namespace rl::gui {
     NVGcolor Color::toNvgColor() const
     {
         return reinterpret_cast<const NVGcolor&>(this->_d);
@@ -44,9 +34,14 @@ namespace rl::gui {
 
     extern std::map<SDL3::SDL_Window*, Screen*> __sdlgui_screens;
 
-    PntRect srect2pntrect(const SDL3::SDL_Rect& srect)
+    PntRect srect2pntrect(const SDL3::SDL_FRect& srect)
     {
-        return { srect.x, srect.y, srect.x + srect.w, srect.y + srect.h };
+        return {
+            static_cast<int>(srect.x),
+            static_cast<int>(srect.y),
+            static_cast<int>(srect.x + srect.w),
+            static_cast<int>(srect.y + srect.h),
+        };
     }
 
     SDL3::SDL_FRect pntrect2srect(const PntRect& frect)
@@ -110,36 +105,40 @@ namespace rl::gui {
             n = 4;
         else if (c < 0x4000000)
             n = 5;
-        else if (c <= 0x7fffffff)
+        else
             n = 6;
+
         seq[n] = '\0';
+
         switch (n)
         {
             case 6:
                 seq[5] = 0x80 | (c & 0x3f);
                 c = c >> 6;
                 c |= 0x4000000;
+                [[fallthrough]];
             case 5:
                 seq[4] = 0x80 | (c & 0x3f);
                 c = c >> 6;
                 c |= 0x200000;
+                [[fallthrough]];
             case 4:
                 seq[3] = 0x80 | (c & 0x3f);
                 c = c >> 6;
                 c |= 0x10000;
+                [[fallthrough]];
             case 3:
                 seq[2] = 0x80 | (c & 0x3f);
                 c = c >> 6;
                 c |= 0x800;
+                [[fallthrough]];
             case 2:
                 seq[1] = 0x80 | (c & 0x3f);
                 c = c >> 6;
                 c |= 0xc0;
+                [[fallthrough]];
             case 1:
-#pragma warning(push)
-#pragma warning(disable : 4244)
-                seq[0] = c;
-#pragma warning(pop)
+                seq[0] = static_cast<char>(c);
         }
         return seq;
     }

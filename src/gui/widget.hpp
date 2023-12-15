@@ -80,13 +80,13 @@ namespace rl::gui {
         // Return the \ref Theme used to draw this widget
         Theme* theme()
         {
-            return mTheme;
+            return m_theme;
         }
 
         // Return the \ref Theme used to draw this widget
         const Theme* theme() const
         {
-            return mTheme.get();
+            return m_theme.get();
         }
 
         // Set the \ref Theme used to draw this widget
@@ -204,13 +204,13 @@ namespace rl::gui {
         // Return whether or not the widget is currently visible (assuming all parents are visible)
         bool visible() const
         {
-            return mVisible;
+            return m_visible;
         }
 
         // Set whether or not the widget is currently visible (assuming all parents are visible)
         void setVisible(bool visible)
         {
-            mVisible = visible;
+            m_visible = visible;
         }
 
         // Check if this widget is currently visible, taking parent widgets into account
@@ -577,20 +577,20 @@ namespace rl::gui {
         virtual ~Widget() override;
 
     protected:
-        Widget* mParent{ nullptr };
-        ref<Theme> mTheme{};
-        ref<Layout> mLayout{};
+        gui::Widget* mParent{ nullptr };
+        gui::ref<Theme> m_theme{};
+        gui::ref<Layout> mLayout{};
         std::string mId{};
-        Vector2i _pos{};
-        Vector2i mSize{};
-        Vector2i mFixedSize{};
-        std::vector<Widget*> mChildren{};
-        bool mVisible{ false };
+        gui::Vector2i _pos{};
+        gui::Vector2i mSize{};
+        gui::Vector2i mFixedSize{};
+        std::vector<gui::Widget*> mChildren = {};
+        bool m_visible{ false };
         bool mEnabled{ false };
         bool mFocused{ false };
         bool mMouseFocus{ false };
         std::string mTooltip{};
         int mFontSize{ 0 };
-        Cursor mCursor{};
+        gui::Cursor mCursor{};
     };
 }

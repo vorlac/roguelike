@@ -53,7 +53,7 @@ namespace rl::gui {
         std::string path;
     };
 
-    typedef std::vector<ImageInfo> ListImages;
+    using ListImages = std::vector<gui::ImageInfo>;
 
     // Load a directory of PNG images and upload them to the GPU (suitable for use with ImagePanel)
     ListImages loadImageDirectory(SDL3::SDL_Renderer* renderer, const std::string& path);
@@ -704,7 +704,7 @@ namespace rl::gui {
          **/
         bool IsEqual(const Vector2<T>& o, float tolerance) const
         {
-            return math::isEqual<T>(x, o.x, tolerance) && math::isEqual<T>(y, o.y, tolerance);
+            return math::isEqual<T>(x, o.x, (T)tolerance) && math::isEqual<T>(y, o.y, (T)tolerance);
         }
 
         Vector2<T>& set(T nx, T ny)

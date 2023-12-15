@@ -81,7 +81,7 @@ namespace rl::gui {
         int _anchorDx = 15;
 
         struct AsyncTexture;
-        typedef std::shared_ptr<AsyncTexture> AsyncTexturePtr;
-        // std::vector<AsyncTexturePtr> _txs;
+        typedef std::shared_ptr<Popup::AsyncTexture> AsyncTexturePtr;
+        std::vector<Popup::AsyncTexturePtr> m_popup_txs;
     };
 }

@@ -45,13 +45,13 @@ namespace rl::gui {
 
             if (!mInlist)
             {
-                Color gradTop = mTheme->mButtonGradientTopPushed;
-                Color gradBot = mTheme->mButtonGradientBotPushed;
+                Color gradTop = m_theme->mButtonGradientTopPushed;
+                Color gradBot = m_theme->mButtonGradientBotPushed;
 
                 nvgBeginPath(ctx);
 
                 nvgRoundedRect(ctx, 1.0f, 1.0f, ww - 2.0f, hh - 2.0f,
-                               mTheme->mButtonCornerRadius - 1.0f);
+                               m_theme->mButtonCornerRadius - 1.0f);
 
                 if (mBackgroundColor.a() != 0)
                 {
@@ -70,23 +70,23 @@ namespace rl::gui {
 
                 nvgBeginPath(ctx);
                 nvgStrokeWidth(ctx, 1.0f);
-                nvgRoundedRect(ctx, 0.5f, 0.5f, ww - 1, hh, mTheme->mButtonCornerRadius);
-                nvgStrokeColor(ctx, mTheme->mBorderLight.toNvgColor());
+                nvgRoundedRect(ctx, 0.5f, 0.5f, ww - 1, hh, m_theme->mButtonCornerRadius);
+                nvgStrokeColor(ctx, m_theme->mBorderLight.toNvgColor());
                 nvgStroke(ctx);
 
                 nvgBeginPath(ctx);
-                nvgRoundedRect(ctx, 0.5f, 0.5f, ww - 1, hh, mTheme->mButtonCornerRadius);
-                nvgStrokeColor(ctx, mTheme->mBorderDark.toNvgColor());
+                nvgRoundedRect(ctx, 0.5f, 0.5f, ww - 1, hh, m_theme->mButtonCornerRadius);
+                nvgStrokeColor(ctx, m_theme->mBorderDark.toNvgColor());
                 nvgStroke(ctx);
             }
             else if (mMouseFocus && mEnabled)
             {
-                Color gradTop = mTheme->mButtonGradientTopFocused;
-                Color gradBot = mTheme->mButtonGradientBotFocused;
+                Color gradTop = m_theme->mButtonGradientTopFocused;
+                Color gradBot = m_theme->mButtonGradientBotFocused;
 
                 nvgBeginPath(ctx);
 
-                nvgRoundedRect(ctx, 1, 1, ww - 2, hh - 2, mTheme->mButtonCornerRadius - 1);
+                nvgRoundedRect(ctx, 1, 1, ww - 2, hh - 2, m_theme->mButtonCornerRadius - 1);
 
                 if (mBackgroundColor.a() != 0)
                 {
@@ -112,7 +112,7 @@ namespace rl::gui {
 
             if (mPushed && mInlist)
             {
-                Color textColor = mTextColor.a() == 0 ? mTheme->mTextColor : mTextColor;
+                Color textColor = mTextColor.a() == 0 ? m_theme->mTextColor : mTextColor;
                 Vector2f center = mSize.cast<float>() * 0.5f;
 
                 nvgBeginPath(ctx);
@@ -158,7 +158,7 @@ namespace rl::gui {
         void refreshRelativePlacement() override
         {
             Popup::refreshRelativePlacement();
-            mVisible &= mParentWindow->visibleRecursive();
+            m_visible &= mParentWindow->visibleRecursive();
 
             Widget* widget = this;
             while (widget->parent() != nullptr)
@@ -196,7 +196,7 @@ namespace rl::gui {
                     path = 1.f;
             }
 
-            mVisible = path > 0;
+            m_visible = path > 0;
         }
 
         float path = 0.f;
@@ -208,7 +208,7 @@ namespace rl::gui {
 
         void rendereBodyTexture(NVGcontext*& ctx, int& realw, int& realh, int dx) override
         {
-            int ds = 1, cr = mTheme->mWindowCornerRadius;
+            int ds = 1, cr = m_theme->mWindowCornerRadius;
             int ww = mFixedSize.x > 0 ? mFixedSize.x : mSize.x;
             int hh = height();
             int dy = 0;
@@ -229,8 +229,8 @@ namespace rl::gui {
 
             // Draw a drop shadow
             NVGpaint shadowPaint = nvgBoxGradient(ctx, 0, 0, realw, realh, cr * 2, ds * 2,
-                                                  mTheme->mDropShadow.toNvgColor(),
-                                                  mTheme->mTransparent.toNvgColor());
+                                                  m_theme->mDropShadow.toNvgColor(),
+                                                  m_theme->mTransparent.toNvgColor());
 
             nvgBeginPath(ctx);
             nvgRect(ctx, 0, 0, ww + 2 * ds, hh + 2 * ds);
@@ -243,7 +243,7 @@ namespace rl::gui {
             nvgBeginPath(ctx);
             nvgRect(ctx, offset.x, offset.y, ww, hh);
 
-            nvgFillColor(ctx, mTheme->mWindowPopup.toNvgColor());
+            nvgFillColor(ctx, m_theme->mWindowPopup.toNvgColor());
             nvgFill(ctx);
 
             nvgEndFrame(ctx);
@@ -252,7 +252,7 @@ namespace rl::gui {
         Vector2i getOverrideBodyPos() override
         {
             Vector2i ap = absolutePosition();
-            int ds = 2;  // mTheme->mWindowDropShadowSize;
+            int ds = 2;  // m_theme->mWindowDropShadowSize;
             return ap - Vector2i(ds, ds);
         }
 
@@ -260,12 +260,12 @@ namespace rl::gui {
         {
             refreshRelativePlacement();
 
-            if (!mVisible || mChildren.empty())
+            if (!m_visible || mChildren.empty())
                 return;
 
             drawBody(renderer);
 
-            int ds = 1, cr = mTheme->mWindowCornerRadius;
+            int ds = 1, cr = m_theme->mWindowCornerRadius;
             int ww = mFixedSize.x > 0 ? mFixedSize.x : mSize.x;
 
             int headerH = mChildren[0]->height();
@@ -277,7 +277,7 @@ namespace rl::gui {
 
               Vector2i fp = mPos + mChildren[1]->position();
               NVGpaint bg = nvgLinearGradient(ctx, fp.x(), fp.y(), fp.x(), fp.y() + 12 ,
-                                              mTheme->mBorderMedium, mTheme->mTransparent);
+                                              m_theme->mBorderMedium, m_theme->mTransparent);
               nvgRect(ctx, fp.x(), fp.y(), ww, 12);
               nvgFillPaint(ctx, bg);
               nvgFill(ctx);
@@ -369,8 +369,8 @@ namespace rl::gui {
             button->setCallback([&, index] {
                 setSelectedIndex(index);
                 setPushed(false);
-                if (mCallback)
-                    mCallback(index);
+                if (m_popup_callback)
+                    m_popup_callback(index);
             });
             index++;
         }
@@ -397,15 +397,15 @@ namespace rl::gui {
         if (rel.y < 0)
         {
             setSelectedIndex(std::min(mSelectedIndex + 1, (int)(items().size() - 1)));
-            if (mCallback)
-                mCallback(mSelectedIndex);
+            if (m_popup_callback)
+                m_popup_callback(mSelectedIndex);
             return true;
         }
         else if (rel.y > 0)
         {
             setSelectedIndex(std::max(mSelectedIndex - 1, 0));
-            if (mCallback)
-                mCallback(mSelectedIndex);
+            if (m_popup_callback)
+                m_popup_callback(mSelectedIndex);
             return true;
         }
         return PopupButton::scrollEvent(p, rel);
@@ -424,11 +424,11 @@ namespace rl::gui {
         if (mChevronIcon)
         {
             auto icon = utf8(mChevronIcon);
-            Color textColor = mTextColor.a() == 0 ? mTheme->mTextColor : mTextColor;
+            Color textColor = mTextColor.a() == 0 ? m_theme->mTextColor : mTextColor;
 
-            /*  nvgFontSize(ctx, (mFontSize < 0 ? mTheme->mButtonFontSize : mFontSize) *
+            /*  nvgFontSize(ctx, (mFontSize < 0 ? m_theme->mButtonFontSize : mFontSize) *
               icon_scale()); nvgFontFace(ctx, "icons"); nvgFillColor(ctx, mEnabled ? textColor :
-              mTheme->mDisabledTextColor); nvgTextAlign(ctx, NVG_ALIGN_LEFT | NVG_ALIGN_MIDDLE);
+              m_theme->mDisabledTextColor); nvgTextAlign(ctx, NVG_ALIGN_LEFT | NVG_ALIGN_MIDDLE);
 
               float iw = nvgTextBounds(ctx, 0, 0, icon.data(), nullptr, nullptr);
               Vector2f iconPos(0, mPos.y() + mSize.y() * 0.5f - 1);

@@ -23,12 +23,12 @@ namespace rl::gui {
 
     Widget::Widget(Widget* parent)
         : mParent(nullptr)
-        , mTheme(nullptr)
+        , m_theme(nullptr)
         , mLayout(nullptr)
         , _pos(Vector2i::Zero())
         , mSize(Vector2i::Zero())
         , mFixedSize(Vector2i::Zero())
-        , mVisible(true)
+        , m_visible(true)
         , mEnabled(true)
         , mFocused(false)
         , mMouseFocus(false)
@@ -49,16 +49,16 @@ namespace rl::gui {
 
     void Widget::setTheme(Theme* theme)
     {
-        if (mTheme.get() == theme)
+        if (m_theme.get() == theme)
             return;
-        mTheme = theme;
+        m_theme = theme;
         for (auto child : mChildren)
             child->setTheme(theme);
     }
 
     int Widget::fontSize() const
     {
-        return (mFontSize < 0 && mTheme) ? mTheme->mStandardFontSize : mFontSize;
+        return (mFontSize < 0 && m_theme) ? m_theme->mStandardFontSize : mFontSize;
     }
 
     Vector2i Widget::preferredSize(SDL3::SDL_Renderer* ctx) const
@@ -194,7 +194,7 @@ namespace rl::gui {
         mChildren.insert(mChildren.begin() + index, widget);
         widget->incRef();
         widget->setParent(this);
-        widget->setTheme(mTheme);
+        widget->setTheme(m_theme);
     }
 
     void Widget::addChild(Widget* widget)

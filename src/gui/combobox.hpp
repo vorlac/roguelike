@@ -23,14 +23,14 @@ namespace rl::gui {
         ComboBox(Widget* parent, const std::vector<std::string>& items,
                  const std::vector<std::string>& itemsShort);
 
-        std::function<void(int)>& callback() const
+        const std::function<void(int)>& callback() const
         {
-            return mCallback;
+            return m_cb_pressed_callback;
         }
 
-        void setCallback(const std::function<void(int)>&& callback)
+        void setCallback(std::function<void(int)>&& callback)
         {
-            mCallback = std::move(callback);
+            m_cb_pressed_callback = std::move(callback);
         }
 
         int selectedIndex() const
@@ -64,11 +64,11 @@ namespace rl::gui {
             return *this;
         }
 
-        bool scrollEvent(const Vector2i& p, const Vector2f& rel);
+        bool scrollEvent(const Vector2i& p, const Vector2f& rel) override;
 
     protected:
         std::vector<std::string> mItems, mItemsShort;
-        // std::function<void(int)> mCallback;
+        std::function<void(int)> m_cb_pressed_callback;
         int mSelectedIndex;
     };
 }

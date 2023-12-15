@@ -80,9 +80,9 @@ namespace rl::gui {
 
     Vector2i Button::preferredSize(SDL3::SDL_Renderer* ctx) const
     {
-        int fontSize = mFontSize == -1 ? mTheme->mButtonFontSize : mFontSize;
-        float tw = const_cast<Button*>(this)->mTheme->getTextWidth("sans-bold", fontSize,
-                                                                   mCaption.c_str());
+        int fontSize = mFontSize == -1 ? m_theme->mButtonFontSize : mFontSize;
+        float tw = const_cast<Button*>(this)->m_theme->getTextWidth("sans-bold", fontSize,
+                                                                    mCaption.c_str());
         float iw = 0.0f, ih = fontSize;
 
         if (mIcon)
@@ -90,8 +90,8 @@ namespace rl::gui {
             if (nvgIsFontIcon(mIcon))
             {
                 ih *= 1.5f;
-                iw = const_cast<Button*>(this)->mTheme->getUtf8Width("icons", ih,
-                                                                     utf8(mIcon).data()) +
+                iw = const_cast<Button*>(this)->m_theme->getUtf8Width("icons", ih,
+                                                                      utf8(mIcon).data()) +
                      mSize.y * 0.15f;
             }
             else
@@ -127,8 +127,8 @@ namespace rl::gui {
                             if (b != this && b && (b->flags() & RadioButton) && b->mPushed)
                             {
                                 b->mPushed = false;
-                                if (b->mChangeCallback)
-                                    b->mChangeCallback(false);
+                                if (b->m_change_callback)
+                                    b->m_change_callback(false);
                             }
                         }
                     }
@@ -139,8 +139,8 @@ namespace rl::gui {
                             if (b != this && (b->flags() & RadioButton) && b->mPushed)
                             {
                                 b->mPushed = false;
-                                if (b->mChangeCallback)
-                                    b->mChangeCallback(false);
+                                if (b->m_change_callback)
+                                    b->m_change_callback(false);
                             }
                         }
                     }
@@ -154,8 +154,8 @@ namespace rl::gui {
                         if (b != this && b && (b->flags() & PopupButton) && b->mPushed)
                         {
                             b->mPushed = false;
-                            if (b->mChangeCallback)
-                                b->mChangeCallback(false);
+                            if (b->m_change_callback)
+                                b->m_change_callback(false);
                         }
                     }
                 }
@@ -167,13 +167,13 @@ namespace rl::gui {
             }
             else if (mPushed)
             {
-                if (contains(p) && mCallback)
-                    mCallback();
+                if (contains(p) && m_pressed_callback)
+                    m_pressed_callback();
                 if (mFlags & NormalButton)
                     mPushed = false;
             }
-            if (pushedBackup != mPushed && mChangeCallback)
-                mChangeCallback(mPushed);
+            if (pushedBackup != mPushed && m_change_callback)
+                m_change_callback(mPushed);
 
             if (pushedBackup != mPushed)
             {
@@ -194,7 +194,7 @@ namespace rl::gui {
 
     Color Button::bodyColor()
     {
-        Color result = mTheme->mButtonGradientTopUnfocused;
+        Color result = m_theme->mButtonGradientTopUnfocused;
         if (mBackgroundColor.a() != 0)
             result = mBackgroundColor;
 
@@ -207,7 +207,7 @@ namespace rl::gui {
                 result.r() *= 1.5;
             }
             else
-                result = mTheme->mButtonGradientTopPushed;
+                result = m_theme->mButtonGradientTopPushed;
         }
         else if (mMouseFocus && mEnabled)
         {
@@ -218,7 +218,7 @@ namespace rl::gui {
                 result.r() *= 0.5;
             }
             else
-                result = mTheme->mButtonGradientTopFocused;
+                result = m_theme->mButtonGradientTopFocused;
         }
 
         return result;
@@ -237,7 +237,7 @@ namespace rl::gui {
         SDL3::SDL_FRect btnRect{ static_cast<float>(ap.x - 1), static_cast<float>(ap.y - 1),
                                  static_cast<float>(width() + 2),
                                  static_cast<float>(height() + 1) };
-        SDL3::SDL_Color bl = (mPushed ? mTheme->mBorderDark : mTheme->mBorderLight).toSdlColor();
+        SDL3::SDL_Color bl = (mPushed ? m_theme->mBorderDark : m_theme->mBorderLight).toSdlColor();
         SDL3::SDL_SetRenderDrawColor(renderer, bl.r, bl.g, bl.b, bl.a);
         SDL3::SDL_FRect blr{ static_cast<float>(ap.x), static_cast<float>(ap.y + (mPushed ? 1 : 2)),
                              static_cast<float>(width() - 1),
@@ -245,14 +245,14 @@ namespace rl::gui {
         SDL3::SDL_RenderLine(renderer, blr.x, blr.y, blr.x + blr.w, blr.y);
         SDL3::SDL_RenderLine(renderer, blr.x, blr.y, blr.x, blr.y + blr.h - 1);
 
-        SDL3::SDL_Color bd = (mPushed ? mTheme->mBorderLight : mTheme->mBorderDark).toSdlColor();
+        SDL3::SDL_Color bd = (mPushed ? m_theme->mBorderLight : m_theme->mBorderDark).toSdlColor();
         SDL3::SDL_SetRenderDrawColor(renderer, bd.r, bd.g, bd.b, bd.a);
         SDL3::SDL_FRect bdr{ static_cast<float>(ap.x), static_cast<float>(ap.y + 1),
                              static_cast<float>(width() - 1), static_cast<float>(height() - 2) };
         SDL3::SDL_RenderLine(renderer, bdr.x, bdr.y + bdr.h, bdr.x + bdr.w, bdr.y + bdr.h);
         SDL3::SDL_RenderLine(renderer, bdr.x + bdr.w, bdr.y, bdr.x + bdr.w, bdr.y + bdr.h);
 
-        bd = mTheme->mBorderDark.toSdlColor();
+        bd = m_theme->mBorderDark.toSdlColor();
         SDL3::SDL_SetRenderDrawColor(renderer, bd.r, bd.g, bd.b, bd.a);
         SDL3::SDL_RenderRect(renderer, &btnRect);
     }
@@ -284,15 +284,15 @@ namespace rl::gui {
         Vector2i ap = absolutePosition();
         drawBody(renderer);
 
-        int fontSize = mFontSize == -1 ? mTheme->mButtonFontSize : mFontSize;
+        int fontSize = mFontSize == -1 ? m_theme->mButtonFontSize : mFontSize;
         if (_captionTex.dirty)
         {
-            Color sdlTextColor = (mTextColor.a() == 0 ? mTheme->mTextColor : mTextColor);
+            Color sdlTextColor = (mTextColor.a() == 0 ? m_theme->mTextColor : mTextColor);
             if (!mEnabled)
-                sdlTextColor = mTheme->mDisabledTextColor;
+                sdlTextColor = m_theme->mDisabledTextColor;
 
-            mTheme->getTexAndRectUtf8(renderer, _captionTex, 0, 0, mCaption.c_str(), "sans-bold",
-                                      fontSize, sdlTextColor);
+            m_theme->getTexAndRectUtf8(renderer, _captionTex, 0, 0, mCaption.c_str(), "sans-bold",
+                                       fontSize, sdlTextColor);
         }
 
         Vector2f center(ap.x + width() * 0.5f, ap.y + height() * 0.5f);
@@ -307,13 +307,13 @@ namespace rl::gui {
 
             if (_iconTex.dirty)
             {
-                Color sdlTextColor = (mTextColor.a() == 0 ? mTheme->mTextColor : mTextColor);
+                Color sdlTextColor = (mTextColor.a() == 0 ? m_theme->mTextColor : mTextColor);
 
                 if (nvgIsFontIcon(mIcon))
                 {
                     ih *= 1.5f;
-                    mTheme->getTexAndRectUtf8(renderer, _iconTex, 0, 0, icon.data(), "icons", ih,
-                                              sdlTextColor);
+                    m_theme->getTexAndRectUtf8(renderer, _iconTex, 0, 0, icon.data(), "icons", ih,
+                                               sdlTextColor);
                     iw = _iconTex.w();
                 }
                 else
@@ -377,23 +377,23 @@ namespace rl::gui {
         realh = hh + 2;
         nvgBeginFrame(ctx, realw, realh, pxRatio);
 
-        NVGcolor gradTop = mTheme->mButtonGradientTopUnfocused.toNvgColor();
-        NVGcolor gradBot = mTheme->mButtonGradientBotUnfocused.toNvgColor();
+        NVGcolor gradTop = m_theme->mButtonGradientTopUnfocused.toNvgColor();
+        NVGcolor gradBot = m_theme->mButtonGradientBotUnfocused.toNvgColor();
 
         if (mPushed)
         {
-            gradTop = mTheme->mButtonGradientTopPushed.toNvgColor();
-            gradBot = mTheme->mButtonGradientBotPushed.toNvgColor();
+            gradTop = m_theme->mButtonGradientTopPushed.toNvgColor();
+            gradBot = m_theme->mButtonGradientBotPushed.toNvgColor();
         }
         else if (mMouseFocus && mEnabled)
         {
-            gradTop = mTheme->mButtonGradientTopFocused.toNvgColor();
-            gradBot = mTheme->mButtonGradientBotFocused.toNvgColor();
+            gradTop = m_theme->mButtonGradientTopFocused.toNvgColor();
+            gradBot = m_theme->mButtonGradientBotFocused.toNvgColor();
         }
 
         nvgBeginPath(ctx);
 
-        nvgRoundedRect(ctx, 1, 1.0f, ww - 2, hh - 2, mTheme->mButtonCornerRadius - 1);
+        nvgRoundedRect(ctx, 1, 1.0f, ww - 2, hh - 2, m_theme->mButtonCornerRadius - 1);
 
         if (mBackgroundColor.a() != 0)
         {
@@ -420,13 +420,13 @@ namespace rl::gui {
         nvgBeginPath(ctx);
         nvgStrokeWidth(ctx, 1.0f);
         nvgRoundedRect(ctx, 0.5f, (mPushed ? 0.5f : 1.5f), ww - 1, hh - 1 - (mPushed ? 0.0f : 1.0f),
-                       mTheme->mButtonCornerRadius);
-        nvgStrokeColor(ctx, mTheme->mBorderLight.toNvgColor());
+                       m_theme->mButtonCornerRadius);
+        nvgStrokeColor(ctx, m_theme->mBorderLight.toNvgColor());
         nvgStroke(ctx);
 
         nvgBeginPath(ctx);
-        nvgRoundedRect(ctx, 0.5f, 0.5f, ww - 1, hh - 2, mTheme->mButtonCornerRadius);
-        nvgStrokeColor(ctx, mTheme->mBorderDark.toNvgColor());
+        nvgRoundedRect(ctx, 0.5f, 0.5f, ww - 1, hh - 2, m_theme->mButtonCornerRadius);
+        nvgStrokeColor(ctx, m_theme->mBorderDark.toNvgColor());
         nvgStroke(ctx);
 
         nvgEndFrame(ctx);

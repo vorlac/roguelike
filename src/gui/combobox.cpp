@@ -70,8 +70,8 @@ namespace rl::gui {
                 setPushed(false);
                 popup().setVisible(false);
 
-                if (mCallback)
-                    mCallback(index);
+                if (m_cb_pressed_callback)
+                    m_cb_pressed_callback(index);
             });
             index++;
         }
@@ -83,15 +83,15 @@ namespace rl::gui {
         if (rel.y < 0)
         {
             setSelectedIndex(std::min(mSelectedIndex + 1, (int)(items().size() - 1)));
-            if (mCallback)
-                mCallback(mSelectedIndex);
+            if (m_cb_pressed_callback)
+                m_cb_pressed_callback(mSelectedIndex);
             return true;
         }
         else if (rel.y > 0)
         {
             setSelectedIndex(std::max(mSelectedIndex - 1, 0));
-            if (mCallback)
-                mCallback(mSelectedIndex);
+            if (m_cb_pressed_callback)
+                m_cb_pressed_callback(mSelectedIndex);
             return true;
         }
         return Widget::scrollEvent(p, rel);

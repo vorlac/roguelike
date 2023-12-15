@@ -14,7 +14,7 @@ SDL_C_LIB_END
 namespace rl::gui {
 
     namespace internal {
-        std::map<std::string, SDL3::TTF_Font*> fonts;
+        std::map<std::string, SDL3::TTF_Font*> fonts{};
     }
 
     Theme::Theme(SDL3::SDL_Renderer* ctx)

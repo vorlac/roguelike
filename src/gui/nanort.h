@@ -437,7 +437,7 @@ namespace nanort {
     class BVHNode
     {
     public:
-        //BVHNode(){}
+        // BVHNode(){}
         //~BVHNode(){}
 
         float bmin[3];
@@ -728,9 +728,12 @@ namespace nanort {
     public:
         BVHAccel()
             : epsScale_(1.0f)
-        {}
+        {
+        }
 
-        ~BVHAccel(){}
+        ~BVHAccel()
+        {
+        }
 
         // Build BVH for input mesh.
         bool Build(const float* vertices, const unsigned int* faces, const unsigned int numFaces,

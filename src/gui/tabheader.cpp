@@ -94,7 +94,12 @@ namespace rl::gui {
 
             // Draw the background.
             // nvgBeginPath(ctx);
-            SDL3::SDL_FRect trect{ lx + xPos + 1, ly + yPos + 1, width - 1, height - 1 };
+            SDL3::SDL_FRect trect{
+                static_cast<float>(lx + xPos + 1),
+                static_cast<float>(ly + yPos + 1),
+                static_cast<float>(width - 1),
+                static_cast<float>(height - 1),
+            };
             SDL3::SDL_Color b = gradTop.toSdlColor();
             SDL3::SDL_Color bt = gradBot.toSdlColor();
 
@@ -105,7 +110,12 @@ namespace rl::gui {
         if (active)
         {
             SDL3::SDL_Color bl = theme->mBorderLight.toSdlColor();
-            SDL3::SDL_FRect blr{ lx + xPos + 1, ly + yPos + 2, width, height };
+            SDL3::SDL_FRect blr{
+                static_cast<float>(lx + xPos + 1),
+                static_cast<float>(ly + yPos + 2),
+                static_cast<float>(width),
+                static_cast<float>(height),
+            };
 
             SDL3::SDL_SetRenderDrawColor(renderer, bl.r, bl.g, bl.b, bl.a);
             SDL3::SDL_RenderLine(renderer, blr.x, blr.y, blr.x, blr.y + blr.h);
@@ -113,7 +123,12 @@ namespace rl::gui {
             SDL3::SDL_RenderLine(renderer, blr.x + blr.w, blr.y, blr.x + blr.w, blr.y + blr.h);
 
             SDL3::SDL_Color bd = theme->mBorderDark.toSdlColor();
-            SDL3::SDL_FRect bdr{ lx + xPos + 1, ly + yPos + 1, width, height };
+            SDL3::SDL_FRect bdr{
+                static_cast<float>(lx + xPos + 1),
+                static_cast<float>(ly + yPos + 1),
+                static_cast<float>(width),
+                static_cast<float>(height),
+            };
 
             SDL3::SDL_SetRenderDrawColor(renderer, bd.r, bd.g, bd.b, bd.a);
             SDL3::SDL_RenderLine(renderer, bdr.x, bdr.y, bdr.x, bdr.y + bdr.h);
@@ -123,7 +138,12 @@ namespace rl::gui {
         else
         {
             SDL3::SDL_Color bd = theme->mBorderDark.toSdlColor();
-            SDL3::SDL_FRect bdr{ lx + xPos + 1, ly + yPos + 2, width, height - 1 };
+            SDL3::SDL_FRect bdr{
+                static_cast<float>(lx + xPos + 1),
+                static_cast<float>(ly + yPos + 2),
+                static_cast<float>(width),
+                static_cast<float>(height - 1),
+            };
 
             SDL3::SDL_SetRenderDrawColor(renderer, bd.r, bd.g, bd.b, bd.a);
             SDL3::SDL_RenderLine(renderer, bdr.x, bdr.y, bdr.x, bdr.y + bdr.h);
@@ -182,8 +202,8 @@ namespace rl::gui {
 
         SDL3::SDL_Color c = color.toSdlColor();
         SDL3::SDL_SetRenderDrawColor(renderer, c.r, c.g, c.b, c.a);
-        SDL3::SDL_FRect r{ (int)std::round(xPos + offset), (int)std::round(yPos + offset),
-                           (int)std::round(width - offset), (int)std::round(height - offset) };
+        SDL3::SDL_FRect r{ std::round(xPos + offset), std::round(yPos + offset),
+                           std::round(width - offset), std::round(height - offset) };
         SDL3::SDL_RenderRect(renderer, &r);
     }
 
@@ -259,7 +279,7 @@ namespace rl::gui {
         });
         if (it == mTabButtons.end())
             return -1;
-        return it - mTabButtons.begin();
+        return static_cast<int>(it - mTabButtons.begin());
     }
 
     void TabHeader::ensureTabVisible(int index)
@@ -320,8 +340,8 @@ namespace rl::gui {
             ++last;
         }
 
-        mVisibleStart = std::distance(mTabButtons.begin(), first);
-        mVisibleEnd = std::distance(mTabButtons.begin(), last);
+        mVisibleStart = (int)std::distance(mTabButtons.begin(), first);
+        mVisibleEnd = (int)std::distance(mTabButtons.begin(), last);
     }
 
     std::pair<Vector2i, Vector2i> TabHeader::visibleButtonArea() const
@@ -422,7 +442,7 @@ namespace rl::gui {
                         return true;
 
                     // Update the active tab and invoke the callback.
-                    setActiveTab(std::distance(mTabButtons.begin(), firstInvisible));
+                    setActiveTab((int)std::distance(mTabButtons.begin(), firstInvisible));
                     return true;
             }
         }
@@ -476,7 +496,7 @@ namespace rl::gui {
                                                currentPosition += tb.size().x;
                                                return currentPosition > lastPosition;
                                            });
-        mVisibleEnd = std::distance(mTabButtons.begin(), firstInvisible);
+        mVisibleEnd = (int)std::distance(mTabButtons.begin(), firstInvisible);
     }
 
     void TabHeader::drawControls(SDL3::SDL_Renderer* renderer)
@@ -488,23 +508,23 @@ namespace rl::gui {
         // Draw the arrow.
         if (_lastLeftActive != lactive || _lastRightActive != ractive)
         {
-            int fontSize = mFontSize == -1 ? mTheme->mButtonFontSize : mFontSize;
+            int fontSize = mFontSize == -1 ? m_theme->mButtonFontSize : mFontSize;
             float ih = fontSize;
             ih *= 1.5f;
             if (_lastLeftActive != lactive)
             {
                 auto iconLeft = utf8(ENTYPO_ICON_LEFT_BOLD);
-                mTheme->getTexAndRectUtf8(renderer, _leftIcon, 0, 0, iconLeft.data(), "icons", ih,
-                                          lactive ? mTheme->mTextColor
-                                                  : mTheme->mButtonGradientBotPushed);
+                m_theme->getTexAndRectUtf8(
+                    renderer, _leftIcon, 0, 0, iconLeft.data(), "icons", (size_t)ih,
+                    lactive ? m_theme->mTextColor : m_theme->mButtonGradientBotPushed);
             }
 
             if (_lastRightActive != ractive)
             {
                 auto iconRight = utf8(ENTYPO_ICON_RIGHT_BOLD);
-                mTheme->getTexAndRectUtf8(renderer, _rightIcon, 0, 0, iconRight.data(), "icons", ih,
-                                          ractive ? mTheme->mTextColor
-                                                  : mTheme->mButtonGradientBotPushed);
+                m_theme->getTexAndRectUtf8(
+                    renderer, _rightIcon, 0, 0, iconRight.data(), "icons", (size_t)ih,
+                    ractive ? m_theme->mTextColor : m_theme->mButtonGradientBotPushed);
             }
 
             _lastLeftActive = lactive;

@@ -33,13 +33,13 @@ namespace rl::gui {
         /// The callback to execute for this widget.
         const std::function<void(int)>& callback() const
         {
-            return mCallback;
+            return m_popup_callback;
         }
 
         /// Sets the callback to execute for this widget.
         void setCallback(std::function<void(int)>&& callback)
         {
-            mCallback = std::move(callback);
+            m_popup_callback = std::move(callback);
         }
 
         /// The current index this dropdownbox has selected.
@@ -91,7 +91,7 @@ namespace rl::gui {
         std::vector<std::string> mItemsShort;
 
         /// The callback for this dropdownbox.
-        std::function<void(int)> mCallback;
+        std::function<void(int)> m_popup_callback;
 
         /// The current index this dropdownbox has selected.
         int mSelectedIndex;
