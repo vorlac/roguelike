@@ -8,7 +8,6 @@
 #include "gui/popupbutton.hpp"
 
 namespace rl::gui {
-
     /**
      * \class DropdownBox dropdownbox.h nanogui/dropdownbox.h
      *
@@ -43,12 +42,12 @@ namespace rl::gui {
         }
 
         /// The current index this dropdownbox has selected.
-        int selectedIndex() const
+        int selected_idx() const
         {
             return mSelectedIndex;
         }
 
-        void performLayout(SDL3::SDL_Renderer* renderer) override;
+        void perform_layout(SDL3::SDL_Renderer* renderer) override;
 
         /// Sets the current index this dropdownbox has selected.
         void setSelectedIndex(int idx);

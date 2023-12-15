@@ -1,13 +1,4 @@
-/*
-    sdlgui/widget.cpp -- Base class of all widgets
-
-    Based on NanoGUI by Wenzel Jakob <wenzel@inf.ethz.ch>.
-    Adaptation for SDL by Dalerank <dalerankn8@gmail.com>
-
-    All rights reserved. Use of this source code is governed by a
-    BSD-style license that can be found in the LICENSE.txt file.
-*/
-
+#include "core/assert.hpp"
 #include "gui/layout.hpp"
 #include "gui/screen.hpp"
 #include "gui/theme.hpp"
@@ -20,80 +11,79 @@ SDL_C_LIB_BEGIN
 SDL_C_LIB_END
 
 namespace rl::gui {
-
     Widget::Widget(Widget* parent)
-        : mParent(nullptr)
+        : m_parent(nullptr)
         , m_theme(nullptr)
-        , mLayout(nullptr)
-        , _pos(Vector2i::Zero())
-        , mSize(Vector2i::Zero())
-        , mFixedSize(Vector2i::Zero())
+        , m_layout(nullptr)
+        , m_pos(Vector2i::Zero())
+        , m_size(Vector2i::Zero())
+        , m_fixed_size(Vector2i::Zero())
         , m_visible(true)
-        , mEnabled(true)
-        , mFocused(false)
-        , mMouseFocus(false)
-        , mTooltip("")
-        , mFontSize(-1.0f)
-        , mCursor(Cursor::Arrow)
+        , m_enabled(true)
+        , m_focused(false)
+        , m_mouse_focus(false)
+        , m_tooltip("")
+        , m_font_size(-1.0f)
+        , m_cursor(Cursor::Arrow)
     {
         if (parent)
-            parent->addChild(this);
+            parent->add_child(this);
     }
 
     Widget::~Widget()
     {
-        for (auto child : mChildren)
+        for (auto child : m_children)
             if (child)
                 child->decRef();
     }
 
-    void Widget::setTheme(Theme* theme)
+    void Widget::set_theme(Theme* theme)
     {
         if (m_theme.get() == theme)
             return;
         m_theme = theme;
-        for (auto child : mChildren)
-            child->setTheme(theme);
+        for (auto child : m_children)
+            child->set_theme(theme);
     }
 
     int Widget::fontSize() const
     {
-        return (mFontSize < 0 && m_theme) ? m_theme->mStandardFontSize : mFontSize;
+        return (m_font_size < 0 && m_theme) ? m_theme->mStandardFontSize : m_font_size;
     }
 
     Vector2i Widget::preferredSize(SDL3::SDL_Renderer* ctx) const
     {
-        if (mLayout)
-            return mLayout->preferredSize(ctx, this);
+        if (m_layout)
+            return m_layout->preferredSize(ctx, this);
         else
-            return mSize;
+            return m_size;
     }
 
-    void Widget::performLayout(SDL3::SDL_Renderer* ctx)
+    void Widget::perform_layout(SDL3::SDL_Renderer* ctx)
     {
-        if (mLayout)
+        if (m_layout)
         {
-            mLayout->performLayout(ctx, this);
+            m_layout->perform_layout(ctx, this);
         }
         else
         {
-            for (auto c : mChildren)
+            for (auto c : m_children)
             {
-                Vector2i pref = c->preferredSize(ctx), fix = c->fixedSize();
-                c->setSize(Vector2i(fix[0] ? fix[0] : pref[0], fix[1] ? fix[1] : pref[1]));
-                c->performLayout(ctx);
+                Vector2i pref = c->preferredSize(ctx), fix = c->fixed_size();
+                c->set_size(Vector2i(fix[0] ? fix[0] : pref[0], fix[1] ? fix[1] : pref[1]));
+                c->perform_layout(ctx);
             }
         }
     }
 
     Widget* Widget::find(const std::string& id, bool inchildren)
     {
-        if (mId == id)
+        if (m_id == id)
             return this;
 
         if (inchildren)
         {
-            for (auto* child : mChildren)
+            for (auto* child : m_children)
             {
                 Widget* w = child->find(id, inchildren);
                 if (w)
@@ -106,43 +96,43 @@ namespace rl::gui {
 
     Widget* Widget::findWidget(const Vector2i& p)
     {
-        for (auto it = mChildren.rbegin(); it != mChildren.rend(); ++it)
+        for (auto it = m_children.rbegin(); it != m_children.rend(); ++it)
         {
             Widget* child = *it;
-            if (child->visible() && child->contains(p - _pos))
-                return child->findWidget(p - _pos);
+            if (child->visible() && child->contains(p - m_pos))
+                return child->findWidget(p - m_pos);
         }
         return contains(p) ? this : nullptr;
     }
 
     bool Widget::mouseButtonEvent(const Vector2i& p, int button, bool down, int modifiers)
     {
-        for (auto it = mChildren.rbegin(); it != mChildren.rend(); ++it)
+        for (auto it = m_children.rbegin(); it != m_children.rend(); ++it)
         {
             Widget* child = *it;
-            if (child->visible() && child->contains(p - _pos) &&
-                child->mouseButtonEvent(p - _pos, button, down, modifiers))
+            if (child->visible() && child->contains(p - m_pos) &&
+                child->mouseButtonEvent(p - m_pos, button, down, modifiers))
                 return true;
         }
 
-        if (button == SDL_BUTTON_LEFT && down && !mFocused)
+        if (button == SDL_BUTTON_LEFT && down && !m_focused)
             requestFocus();
         return false;
     }
 
     bool Widget::mouseMotionEvent(const Vector2i& p, const Vector2i& rel, int button, int modifiers)
     {
-        for (auto it = mChildren.rbegin(); it != mChildren.rend(); ++it)
+        for (auto it = m_children.rbegin(); it != m_children.rend(); ++it)
         {
             Widget* child = *it;
             if (!child->visible())
                 continue;
-            bool contained = child->contains(p - _pos);
-            bool prevContained = child->contains(p - _pos - rel);
+            bool contained = child->contains(p - m_pos);
+            bool prevContained = child->contains(p - m_pos - rel);
             if (contained != prevContained)
                 child->mouseEnterEvent(p, contained);
             if ((contained || prevContained) &&
-                child->mouseMotionEvent(p - _pos, rel, button, modifiers))
+                child->mouseMotionEvent(p - m_pos, rel, button, modifiers))
                 return true;
         }
         return false;
@@ -150,12 +140,12 @@ namespace rl::gui {
 
     bool Widget::scrollEvent(const Vector2i& p, const Vector2f& rel)
     {
-        for (auto it = mChildren.rbegin(); it != mChildren.rend(); ++it)
+        for (auto it = m_children.rbegin(); it != m_children.rend(); ++it)
         {
             Widget* child = *it;
             if (!child->visible())
                 continue;
-            if (child->contains(p - _pos) && child->scrollEvent(p - _pos, rel))
+            if (child->contains(p - m_pos) && child->scrollEvent(p - m_pos, rel))
                 return true;
         }
         return false;
@@ -168,59 +158,60 @@ namespace rl::gui {
 
     bool Widget::mouseEnterEvent(const Vector2i&, bool enter)
     {
-        mMouseFocus = enter;
+        m_mouse_focus = enter;
         return false;
     }
 
     bool Widget::focusEvent(bool focused)
     {
-        mFocused = focused;
+        m_focused = focused;
         return false;
     }
 
-    bool Widget::keyboardEvent(int, int, int, int)
+    bool Widget::kb_button_event(int, int, int, int)
     {
         return false;
     }
 
-    bool Widget::keyboardCharacterEvent(unsigned int)
+    bool Widget::kb_character_event(unsigned int)
     {
         return false;
     }
 
-    void Widget::addChild(int index, Widget* widget)
+    void Widget::add_child(size_t index, Widget* widget)
     {
-        assert(index <= childCount());
-        mChildren.insert(mChildren.begin() + index, widget);
+        runtime_assert(index <= child_count(), "widget index already occupied");
+        m_children.insert(m_children.begin() + index, widget);
         widget->incRef();
-        widget->setParent(this);
-        widget->setTheme(m_theme);
+        widget->set_parent(this);
+        widget->set_theme(m_theme);
     }
 
-    void Widget::addChild(Widget* widget)
+    void Widget::add_child(Widget* widget)
     {
-        addChild(childCount(), widget);
+        this->add_child(this->child_count(), widget);
     }
 
-    void Widget::removeChild(const Widget* widget)
+    void Widget::remove_child(const Widget* widget)
     {
-        mChildren.erase(std::remove(mChildren.begin(), mChildren.end(), widget), mChildren.end());
+        m_children.erase(std::remove(m_children.begin(), m_children.end(), widget),
+                         m_children.end());
         widget->decRef();
     }
 
-    void Widget::removeChild(int index)
+    void Widget::remove_child(size_t index)
     {
-        Widget* widget = mChildren[index];
-        mChildren.erase(mChildren.begin() + index);
+        Widget* widget = m_children[index];
+        m_children.erase(m_children.begin() + index);
         widget->decRef();
     }
 
-    int Widget::childIndex(Widget* widget) const
+    int Widget::get_child_index(Widget* widget) const
     {
-        auto it = std::find(mChildren.begin(), mChildren.end(), widget);
-        if (it == mChildren.end())
+        auto it = std::find(m_children.begin(), m_children.end(), widget);
+        if (it == m_children.end())
             return -1;
-        return it - mChildren.begin();
+        return it - m_children.begin();
     }
 
     Window* Widget::window()
@@ -228,8 +219,7 @@ namespace rl::gui {
         Widget* widget = this;
         while (true)
         {
-            if (!widget)
-                throw std::runtime_error("Widget:internal error (could not find parent window)");
+            runtime_assert(widget != nullptr, "widget has no parent window");
             Window* window = dynamic_cast<Window*>(widget);
             if (window)
                 return window;
@@ -237,28 +227,28 @@ namespace rl::gui {
         }
     }
 
-    int Widget::getAbsoluteLeft() const
+    int Widget::get_absolute_left() const
     {
-        return mParent ? mParent->getAbsoluteLeft() + _pos.x : _pos.x;
+        return m_parent ? m_parent->get_absolute_left() + m_pos.x : m_pos.x;
     }
 
-    SDL3::SDL_Point Widget::getAbsolutePos() const
+    SDL3::SDL_Point Widget::get_absolute_pos() const
     {
-        if (mParent)
-        {
-            SDL3::SDL_Point p = mParent->getAbsolutePos();
-            return SDL3::SDL_Point{ p.x + _pos.x, p.y + _pos.y };
-        }
+        if (m_parent == nullptr)
+            return SDL3::SDL_Point{ m_pos.x, m_pos.y };
         else
-            return SDL3::SDL_Point{ _pos.x, _pos.y };
+        {
+            SDL3::SDL_Point pt{ m_parent->get_absolute_pos() };
+            return SDL3::SDL_Point{ pt.x + m_pos.x, pt.y + m_pos.y };
+        }
     }
 
-    PntRect Widget::getAbsoluteCliprect() const
+    PntRect Widget::get_absolute_cliprect() const
     {
-        if (mParent)
+        if (m_parent)
         {
-            PntRect pclip = mParent->getAbsoluteCliprect();
-            SDL3::SDL_Point pp = getAbsolutePos();
+            PntRect pclip = m_parent->get_absolute_cliprect();
+            SDL3::SDL_Point pp = get_absolute_pos();
             PntRect mclip{ pp.x, pp.y, pp.x + width(), pp.y + height() };
             if (pclip.x1 < mclip.x1)
                 pclip.x1 = mclip.x1;
@@ -273,13 +263,13 @@ namespace rl::gui {
         }
         else
         {
-            return PntRect{ _pos.x, _pos.y, _pos.x + width(), _pos.y + height() };
+            return PntRect{ m_pos.x, m_pos.y, m_pos.x + width(), m_pos.y + height() };
         }
     }
 
-    int Widget::getAbsoluteTop() const
+    int Widget::get_absolute_top() const
     {
-        return mParent ? mParent->getAbsoluteTop() + _pos.y : _pos.y;
+        return m_parent ? m_parent->get_absolute_top() + m_pos.y : m_pos.y;
     }
 
     void Widget::requestFocus()
@@ -287,14 +277,13 @@ namespace rl::gui {
         Widget* widget = this;
         while (widget->parent())
             widget = widget->parent();
-        ((Screen*)widget)->updateFocus(this);
+        static_cast<Screen*>(widget)->update_focus(this);
     }
 
     void Widget::draw(SDL3::SDL_Renderer* renderer)
     {
-        for (auto child : mChildren)
+        for (auto&& child : m_children)
             if (child->visible())
                 child->draw(renderer);
     }
-
 }

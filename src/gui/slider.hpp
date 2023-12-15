@@ -5,7 +5,6 @@
 #include "gui/widget.hpp"
 
 namespace rl::gui {
-
     /**
      * \class Slider slider.h sdl_gui/slider.h
      *

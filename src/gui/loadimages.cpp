@@ -13,7 +13,6 @@ SDL_C_LIB_BEGIN
 SDL_C_LIB_END
 
 namespace rl::gui {
-
     ListImages loadImageDirectory(SDL3::SDL_Renderer* renderer, const std::string& path)
     {
         ListImages result;
@@ -57,5 +56,4 @@ namespace rl::gui {
 #endif
         return result;
     }
-
 }

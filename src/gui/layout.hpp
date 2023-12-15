@@ -5,10 +5,9 @@
 #include "gui/common.hpp"
 
 namespace rl::gui {
-
     class Widget;
 
-    /// The different kinds of alignments a layout can perform.
+    // The different kinds of alignments a layout can perform.
     enum class Alignment : uint8_t {
         Minimum = 0,
         Middle,
@@ -16,7 +15,7 @@ namespace rl::gui {
         Fill
     };
 
-    /// The direction of data flow for a layout.
+    // The direction of data flow for a layout.
     enum class Orientation {
         Horizontal = 0,
         Vertical
@@ -30,7 +29,7 @@ namespace rl::gui {
     class Layout : public Object
     {
     public:
-        virtual void performLayout(SDL3::SDL_Renderer* ctx, Widget* widget) const = 0;
+        virtual void perform_layout(SDL3::SDL_Renderer* ctx, Widget* widget) const = 0;
         virtual Vector2i preferredSize(SDL3::SDL_Renderer* ctx, const Widget* widget) const = 0;
 
     protected:
@@ -108,7 +107,7 @@ namespace rl::gui {
 
         /* Implementation of the layout interface */
         virtual Vector2i preferredSize(SDL3::SDL_Renderer* ctx, const Widget* widget) const override;
-        virtual void performLayout(SDL3::SDL_Renderer* ctx, Widget* widget) const override;
+        virtual void perform_layout(SDL3::SDL_Renderer* ctx, Widget* widget) const override;
 
     protected:
         Orientation mOrientation;
@@ -182,7 +181,7 @@ namespace rl::gui {
 
         /* Implementation of the layout interface */
         Vector2i preferredSize(SDL3::SDL_Renderer* ctx, const Widget* widget) const override;
-        void performLayout(SDL3::SDL_Renderer* ctx, Widget* widget) const override;
+        void perform_layout(SDL3::SDL_Renderer* ctx, Widget* widget) const override;
 
     protected:
         int mMargin;
@@ -291,7 +290,7 @@ namespace rl::gui {
 
         /* Implementation of the layout interface */
         virtual Vector2i preferredSize(SDL3::SDL_Renderer* ctx, const Widget* widget) const override;
-        virtual void performLayout(SDL3::SDL_Renderer* ctx, Widget* widget) const override;
+        virtual void perform_layout(SDL3::SDL_Renderer* ctx, Widget* widget) const override;
 
     protected:
         // Compute the maximum row and column sizes
@@ -456,7 +455,7 @@ namespace rl::gui {
 
         /* Implementation of the layout interface */
         virtual Vector2i preferredSize(SDL3::SDL_Renderer* ctx, const Widget* widget) const override;
-        virtual void performLayout(SDL3::SDL_Renderer* ctx, Widget* widget) const override;
+        virtual void perform_layout(SDL3::SDL_Renderer* ctx, Widget* widget) const override;
 
     protected:
         void computeLayout(SDL3::SDL_Renderer* ctx, const Widget* widget,
@@ -468,5 +467,4 @@ namespace rl::gui {
         std::unordered_map<const Widget*, Anchor> mAnchor;
         int mMargin;
     };
-
 }

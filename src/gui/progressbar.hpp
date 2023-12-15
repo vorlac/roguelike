@@ -5,7 +5,6 @@
 #include "gui/widget.hpp"
 
 namespace rl::gui {
-
     /**
      * \class ProgressBar progressbar.h sdl_gui/progressbar.h
      *

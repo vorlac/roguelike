@@ -19,7 +19,7 @@ namespace rl::gui {
         Window(Widget* parent, const std::string& title, const Vector2i& pos)
             : Window(parent, title)
         {
-            setPosition(pos);
+            set_relative_position(pos);
         }
 
         // Return the window title
@@ -94,15 +94,15 @@ namespace rl::gui {
         // Compute the preferred size of the widget
         Vector2i preferredSize(SDL3::SDL_Renderer* ctx) const override;
         // Invoke the associated layout generator to properly place child widgets, if any
-        void performLayout(SDL3::SDL_Renderer* ctx) override;
+        void perform_layout(SDL3::SDL_Renderer* ctx) override;
 
-        // Handle a focus change event (default implementation: record the focus status, but do
-        // nothing)
+        // Handle a focus change event.
+        // default implementation: record the focus status, but do nothing
         bool focusEvent(bool focused) override;
 
     protected:
-        // Internal helper function to maintain nested window position values; overridden in \ref
-        // Popup
+        // Internal helper function to maintain nested window position values.
+        // overridden in Popup
         void refreshRelativePlacement();
 
     protected:

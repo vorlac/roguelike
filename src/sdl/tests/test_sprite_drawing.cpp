@@ -4,9 +4,6 @@
 #include <utility>
 #include <vector>
 
-#include <fmt/format.h>
-#include <stdlib.h>
-
 #include "core/renderer.hpp"
 #include "core/window.hpp"
 #include "ds/color.hpp"

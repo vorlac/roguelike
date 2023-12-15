@@ -3,13 +3,12 @@
 #include "gui/widget.hpp"
 
 namespace rl::gui {
-
     /**
      * \class Label label.h sdl_gui/label.h
      *
      * \brief Text label widget.
      *
-     * The font and color can be customized. When \ref Widget::setFixedWidth()
+     * The font and color can be customized. When \ref Widget::set_fixed_width()
      * is used, the text is wrapped when it surpasses the specified width.
      */
     class Label : public Widget
@@ -21,13 +20,13 @@ namespace rl::gui {
         /// Get the label's text caption
         const std::string& caption() const
         {
-            return mCaption;
+            return m_caption;
         }
 
         /// Set the label's text caption
         void setCaption(const std::string& caption)
         {
-            mCaption = caption;
+            m_caption = caption;
             _texture.dirty = true;
         }
 
@@ -56,7 +55,7 @@ namespace rl::gui {
         }
 
         /// Set the \ref Theme used to draw this widget
-        virtual void setTheme(Theme* theme) override;
+        virtual void set_theme(Theme* theme) override;
 
         /// Compute the size needed to fully display the label
         virtual Vector2i preferredSize(SDL3::SDL_Renderer* ctx) const override;
@@ -66,10 +65,9 @@ namespace rl::gui {
         void setFontSize(int fontSize) override;
 
     protected:
-        std::string mCaption;
+        std::string m_caption;
         std::string mFont;
         Color mColor;
         Texture _texture;
     };
-
 }

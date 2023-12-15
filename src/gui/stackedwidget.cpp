@@ -1,64 +1,50 @@
-/*
-    sdlgui/stackedwidget.cpp -- Widget used to stack widgets on top
-    of each other. Only the active widget is visible.
-
-    The stacked widget was contributed by Stefan Ivanov.
-
-    Based on NanoGUI by Wenzel Jakob <wenzel@inf.ethz.ch>.
-    Adaptation for SDL by Dalerank <dalerankn8@gmail.com>
-
-    All rights reserved. Use of this source code is governed by a
-    BSD-style license that can be found in the LICENSE.txt file.
-*/
-
+#include "core/assert.hpp"
 #include "gui/stackedwidget.hpp"
 
 namespace rl::gui {
-
     StackedWidget::StackedWidget(Widget* parent)
         : Widget(parent)
     {
     }
 
-    void StackedWidget::setSelectedIndex(int index)
+    void StackedWidget::setSelectedIndex(size_t index)
     {
-        assert(index < childCount());
-        if (mSelectedIndex >= 0)
-            mChildren[mSelectedIndex]->setVisible(false);
-        mSelectedIndex = index;
-        mChildren[mSelectedIndex]->setVisible(true);
+        runtime_assert(index < this->child_count(), "child widget index out of bounds");
+        if (m_selected_idx >= 0)
+            m_children[m_selected_idx]->set_visible(false);
+        m_selected_idx = index;
+        m_children[m_selected_idx]->set_visible(true);
     }
 
-    int StackedWidget::selectedIndex() const
+    size_t StackedWidget::selected_idx() const
     {
-        return mSelectedIndex;
+        return m_selected_idx;
     }
 
-    void StackedWidget::performLayout(SDL3::SDL_Renderer* ctx)
+    void StackedWidget::perform_layout(SDL3::SDL_Renderer* ctx)
     {
-        for (auto child : mChildren)
+        for (auto child : m_children)
         {
-            child->setPosition({ 0, 0 });
-            child->setSize(mSize);
-            child->performLayout(ctx);
+            child->set_relative_position({ 0, 0 });
+            child->set_size(m_size);
+            child->perform_layout(ctx);
         }
     }
 
     Vector2i StackedWidget::preferredSize(SDL3::SDL_Renderer* ctx) const
     {
         Vector2i size{ 0, 0 };
-        for (auto child : mChildren)
+        for (auto child : m_children)
             size = size.cmax(child->preferredSize(ctx));
         return size;
     }
 
-    void StackedWidget::addChild(int index, Widget* widget)
+    void StackedWidget::add_child(size_t index, Widget* widget)
     {
-        if (mSelectedIndex >= 0)
-            mChildren[mSelectedIndex]->setVisible(false);
-        Widget::addChild(index, widget);
-        widget->setVisible(true);
+        if (m_selected_idx >= 0)
+            m_children[m_selected_idx]->set_visible(false);
+        Widget::add_child(index, widget);
+        widget->set_visible(true);
         setSelectedIndex(index);
     }
-
 }

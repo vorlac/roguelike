@@ -1,13 +1,3 @@
-/*
-    sdlgui/slider.cpp -- Fractional slider widget with mouse control
-
-    Based on NanoGUI by Wenzel Jakob <wenzel@inf.ethz.ch>.
-    Adaptation for SDL by Dalerank <dalerankn8@gmail.com>
-
-    All rights reserved. Use of this source code is governed by a
-    BSD-style license that can be found in the LICENSE.txt file.
-*/
-
 #include <array>
 #include <thread>
 
@@ -21,7 +11,6 @@
 #include "gui/nanovg_rt.h"
 
 namespace rl::gui {
-
     struct Slider::AsyncTexture
     {
         Texture tex;
@@ -196,9 +185,9 @@ namespace rl::gui {
     bool Slider::mouseDragEvent(const Vector2i& p, const Vector2i& /* rel */, int /* button */,
                                 int /* modifiers */)
     {
-        if (!mEnabled)
+        if (!m_enabled)
             return false;
-        mValue = std::min(std::max((p.x - _pos.x) / (float)mSize.x, (float)0.0f), (float)1.0f);
+        mValue = std::min(std::max((p.x - m_pos.x) / (float)m_size.x, (float)0.0f), (float)1.0f);
         if (mCallback)
             mCallback(mValue);
         if (mObjCallback)
@@ -209,9 +198,9 @@ namespace rl::gui {
     bool Slider::mouseButtonEvent(const Vector2i& p, int /* button */, bool down,
                                   int /* modifiers */)
     {
-        if (!mEnabled)
+        if (!m_enabled)
             return false;
-        mValue = std::min(std::max((p.x - _pos.x) / (float)mSize.x, (float)0.0f), (float)1.0f);
+        mValue = std::min(std::max((p.x - m_pos.x) / (float)m_size.x, (float)0.0f), (float)1.0f);
         if (mCallback)
             mCallback(mValue);
         if (mObjCallback)
@@ -226,12 +215,12 @@ namespace rl::gui {
         if (!_body)
             _body = std::make_shared<AsyncTexture>();
 
-        if (mEnabled != _lastEnabledState)
-            _body->load_body(this, mEnabled);
+        if (m_enabled != _lastEnabledState)
+            _body->load_body(this, m_enabled);
 
         if (_body)
         {
-            Vector2i ap = absolutePosition();
+            Vector2i ap = absolute_position();
             _body->perform(renderer);
             SDL_RenderCopy(renderer, _body->tex, ap);
         }
@@ -242,13 +231,13 @@ namespace rl::gui {
         if (!_knob)
             _knob = std::make_shared<AsyncTexture>();
 
-        if (mEnabled != _lastEnabledState)
-            _knob->load_knob(this, mEnabled);
+        if (m_enabled != _lastEnabledState)
+            _knob->load_knob(this, m_enabled);
 
         if (_body)
         {
-            Vector2i ap = absolutePosition();
-            Vector2i knobPos(ap.x + mValue * mSize.x, ap.y + height() * 0.5f);
+            Vector2i ap = absolute_position();
+            Vector2i knobPos(ap.x + mValue * m_size.x, ap.y + height() * 0.5f);
 
             _knob->perform(renderer);
             SDL_RenderCopy(renderer, _knob->tex,
@@ -261,22 +250,25 @@ namespace rl::gui {
         drawBody(renderer);
         drawKnob(renderer);
 
-        _lastEnabledState = mEnabled;
+        _lastEnabledState = m_enabled;
 
-        /*if (mHighlightedRange.second != mHighlightedRange.first)
-        {
-          SDL_Color hl = mHighlightColor.toSdlColor();
-          SDL_FRect hlRect{ ap.x + mHighlightedRange.first * width(), center.y - 3 + 1,
-                            width() * (mHighlightedRange.second - mHighlightedRange.first), 6 };
-
-          SDL_SetRenderDrawColor(renderer, hl.r, hl.g, hl.b, hl.a);
-          SDL_RenderFillRectF(renderer, &hlRect);
-        }
-
-        SDL_RenderCopy(renderer, _outerKnobTex, (knobPos + Vector2f( - _outerKnobTex.w() / 2.f, -
-        _outerKnobTex.h() / 2.f)).As<int>()); SDL_RenderCopy(renderer, _innerKnobTex, (knobPos +
-        Vector2f( - _innerKnobTex.w() / 2.f, - _innerKnobTex.h() / 2.f)).As<int>());
-        */
+        // if (mHighlightedRange.second != mHighlightedRange.first)
+        // {
+        //     SDL_Color hl = mHighlightColor.toSdlColor();
+        //     SDL_FRect hlRect{ ap.x + mHighlightedRange.first * width(), center.y - 3 + 1,
+        //                       width() * (mHighlightedRange.second - mHighlightedRange.first), 6
+        //                       };
+        //
+        //     SDL_SetRenderDrawColor(renderer, hl.r, hl.g, hl.b, hl.a);
+        //     SDL_RenderFillRectF(renderer, &hlRect);
+        // }
+        //
+        // SDL_RenderCopy(
+        //     renderer, _outerKnobTex,
+        //     (knobPos + Vector2f(-_outerKnobTex.w() / 2.f, -_outerKnobTex.h() / 2.f)).As<int>());
+        // SDL_RenderCopy(
+        //     renderer, _innerKnobTex,
+        //     (knobPos + Vector2f(-_innerKnobTex.w() / 2.f, -_innerKnobTex.h() / 2.f)).As<int>());
     }
 
 }

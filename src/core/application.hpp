@@ -10,9 +10,7 @@
 #include <type_traits>
 #include <utility>
 
-#include <fmt/core.h>
-#include <fmt/format.h>
-
+#include "core/assert.hpp"
 #include "core/event_handler.hpp"
 #include "core/renderer.hpp"
 #include "core/state/fsm.hpp"
@@ -21,7 +19,6 @@
 #include "gl/instanced_buffer.hpp"
 #include "gui/button.hpp"
 #include "sdl/defs.hpp"
-#include "utils/assert.hpp"
 #include "utils/crtp.hpp"
 #include "utils/numeric.hpp"
 #include "utils/time.hpp"

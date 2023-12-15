@@ -1,14 +1,3 @@
-/*
-    sdlgui/popup.cpp -- Simple popup widget which is attached to another given
-    window (can be nested)
-
-    Based on NanoGUI by Wenzel Jakob <wenzel@inf.ethz.ch>.
-    Adaptation for SDL by Dalerank <dalerankn8@gmail.com>
-
-    All rights reserved. Use of this source code is governed by a
-    BSD-style license that can be found in the LICENSE.txt file.
-*/
-
 #include <thread>
 
 #include "gui/popup.hpp"
@@ -20,7 +9,6 @@
 #include "nanovg_rt.h"
 
 namespace rl::gui {
-
     struct Popup::AsyncTexture
     {
         int id;
@@ -124,24 +112,24 @@ namespace rl::gui {
         nvgEndFrame(ctx);
     }
 
-    void Popup::performLayout(SDL3::SDL_Renderer* ctx)
+    void Popup::perform_layout(SDL3::SDL_Renderer* ctx)
     {
-        if (mLayout || mChildren.size() != 1)
+        if (m_layout || m_children.size() != 1)
         {
-            Widget::performLayout(ctx);
+            Widget::perform_layout(ctx);
         }
         else
         {
-            mChildren[0]->setPosition(Vector2i::Zero());
-            mChildren[0]->setSize(mSize);
-            mChildren[0]->performLayout(ctx);
+            m_children[0]->set_relative_position(Vector2i::Zero());
+            m_children[0]->set_size(m_size);
+            m_children[0]->perform_layout(ctx);
         }
     }
 
     void Popup::refreshRelativePlacement()
     {
         mParentWindow->refreshRelativePlacement();
-        m_visible &= mParentWindow->visibleRecursive();
+        m_visible &= mParentWindow->visible_recursive();
 
         Widget* widget = this;
         while (widget->parent() != nullptr)
@@ -149,8 +137,8 @@ namespace rl::gui {
         Screen* screen = (Screen*)widget;
         Vector2i screenSize = screen->size();
 
-        _pos = mParentWindow->position() + mAnchorPos - Vector2i(0, mAnchorHeight);
-        _pos = Vector2i(_pos.x, std::min(_pos.y, screen->size().y - mSize.y));
+        m_pos = mParentWindow->relative_position() + mAnchorPos - Vector2i(0, mAnchorHeight);
+        m_pos = Vector2i(m_pos.x, std::min(m_pos.y, screen->size().y - m_size.y));
     }
 
     void Popup::drawBodyTemp(SDL3::SDL_Renderer* renderer)
@@ -161,20 +149,20 @@ namespace rl::gui {
         /* Draw a drop shadow */
         SDL3::SDL_Color sh = m_theme->mDropShadow.toSdlColor();
         SDL3::SDL_FRect shRect{
-            static_cast<float>(_pos.x - ds),
-            static_cast<float>(_pos.y - ds),
-            static_cast<float>(mSize.x + 2 * ds),
-            static_cast<float>(mSize.y + 2 * ds),
+            static_cast<float>(m_pos.x - ds),
+            static_cast<float>(m_pos.y - ds),
+            static_cast<float>(m_size.x + 2 * ds),
+            static_cast<float>(m_size.y + 2 * ds),
         };
         SDL3::SDL_SetRenderDrawColor(renderer, sh.r, sh.g, sh.b, 64);
         SDL3::SDL_RenderFillRect(renderer, &shRect);
 
         SDL3::SDL_Color bg = m_theme->mWindowPopup.toSdlColor();
         SDL3::SDL_FRect bgRect{
-            static_cast<float>(_pos.x),
-            static_cast<float>(_pos.y),
-            static_cast<float>(mSize.x),
-            static_cast<float>(mSize.y),
+            static_cast<float>(m_pos.x),
+            static_cast<float>(m_pos.y),
+            static_cast<float>(m_size.x),
+            static_cast<float>(m_size.y),
         };
 
         SDL3::SDL_SetRenderDrawColor(renderer, bg.r, bg.g, bg.b, bg.a);
@@ -183,7 +171,7 @@ namespace rl::gui {
         SDL3::SDL_Color br = m_theme->mBorderDark.toSdlColor();
         SDL3::SDL_SetRenderDrawColor(renderer, br.r, br.g, br.b, br.a);
 
-        SDL3::SDL_Rect brr{ _pos.x - 1, _pos.y - 1, width() + 2, height() + 2 };
+        SDL3::SDL_Rect brr{ m_pos.x - 1, m_pos.y - 1, width() + 2, height() + 2 };
         SDL3::SDL_RenderLine(renderer, brr.x, brr.y, brr.x + brr.w, brr.y);
         SDL3::SDL_RenderLine(renderer, brr.x + brr.w, brr.y, brr.x + brr.w, brr.y + brr.h);
         SDL3::SDL_RenderLine(renderer, brr.x, brr.y + brr.h, brr.x + brr.w, brr.y + brr.h);
@@ -193,8 +181,8 @@ namespace rl::gui {
         SDL_SetRenderDrawColor(renderer, bg.r, bg.g, bg.b, bg.a);
         for (int i = 0; i < 15; i++)
         {
-            SDL3::SDL_RenderLine(renderer, _pos.x - 15 + i, _pos.y + mAnchorHeight - i,
-                                 _pos.x - 15 + i, _pos.y + mAnchorHeight + i);
+            SDL3::SDL_RenderLine(renderer, m_pos.x - 15 + i, m_pos.y + mAnchorHeight - i,
+                                 m_pos.x - 15 + i, m_pos.y + mAnchorHeight + i);
         }
     }
 
@@ -230,7 +218,7 @@ namespace rl::gui {
 
     Vector2i Popup::getOverrideBodyPos()
     {
-        Vector2i ap = absolutePosition();
+        Vector2i ap = absolute_position();
         int ds = m_theme->mWindowDropShadowSize;
         return ap - Vector2i(_anchorDx + ds, ds);
     }
@@ -246,5 +234,4 @@ namespace rl::gui {
 
         Widget::draw(renderer);
     }
-
 }

@@ -12,7 +12,6 @@ SDL_C_LIB_END
 #pragma warning(disable : 4838)
 
 namespace rl::gui {
-
     namespace internal {
         std::map<std::string, SDL3::TTF_Font*> fonts{};
     }
@@ -253,5 +252,4 @@ namespace rl::gui {
         SDL3::SDL_FRect rect{ pos.x, pos.y, tx.rrect.w, tx.rrect.h };
         SDL3::SDL_RenderTexture(renderer, tx.tex, nullptr, &rect);
     }
-
 }

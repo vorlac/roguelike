@@ -6,7 +6,6 @@
 #include "gui/widget.hpp"
 
 namespace rl::gui {
-
     class CheckBox : public Widget
     {
     public:
@@ -15,12 +14,12 @@ namespace rl::gui {
 
         const std::string& caption() const
         {
-            return mCaption;
+            return m_caption;
         }
 
         void setCaption(const std::string& caption)
         {
-            mCaption = caption;
+            m_caption = caption;
         }
 
         const bool& checked() const
@@ -66,7 +65,7 @@ namespace rl::gui {
         virtual void drawBody(SDL3::SDL_Renderer* renderer);
 
     protected:
-        std::string mCaption{};
+        std::string m_caption{};
         bool mPushed{};
         bool mChecked{};
 
@@ -84,5 +83,4 @@ namespace rl::gui {
     private:
         void drawTexture(AsyncTexturePtr& texture, SDL3::SDL_Renderer* renderer);
     };
-
 }

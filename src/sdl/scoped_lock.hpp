@@ -2,10 +2,10 @@
 
 #include <concepts>
 
+#include "core/assert.hpp"
 #include "sdl/defs.hpp"
 #include "sdl/surface.hpp"
 #include "sdl/texture.hpp"
-#include "utils/assert.hpp"
 #include "utils/numeric.hpp"
 
 SDL_C_LIB_BEGIN

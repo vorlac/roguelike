@@ -5,7 +5,6 @@
 #include "gui/widget.hpp"
 
 namespace rl::gui {
-
     class Graph : public Widget
     {
     public:
@@ -13,12 +12,12 @@ namespace rl::gui {
 
         const std::string& caption() const
         {
-            return mCaption;
+            return m_caption;
         }
 
         void setCaption(const std::string& caption)
         {
-            mCaption = caption;
+            m_caption = caption;
             _captionTex.dirty = true;
         }
 
@@ -93,7 +92,7 @@ namespace rl::gui {
         void draw(SDL3::SDL_Renderer* ctx) override;
 
     protected:
-        std::string mCaption, mHeader, mFooter;
+        std::string m_caption, mHeader, mFooter;
         Color mBackgroundColor, mForegroundColor, mTextColor;
         std::vector<float> mValues;
 
@@ -105,5 +104,4 @@ namespace rl::gui {
         typedef std::shared_ptr<AsyncTexture> AsyncTexturePtr;
         AsyncTexturePtr _atx;
     };
-
 }

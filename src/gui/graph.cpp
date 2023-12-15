@@ -11,7 +11,6 @@
 #pragma warning(disable : 4838)
 
 namespace rl::gui {
-
     struct Graph::AsyncTexture
     {
         Texture tex;
@@ -90,7 +89,7 @@ namespace rl::gui {
 
     Graph::Graph(Widget* parent, const std::string& caption)
         : Widget(parent)
-        , mCaption(caption)
+        , m_caption(caption)
     {
         mBackgroundColor = Color(20, 128);
         mForegroundColor = Color(255, 192, 0, 128);
@@ -108,7 +107,7 @@ namespace rl::gui {
     {
         Widget::draw(renderer);
 
-        auto&& ap = absolutePosition();
+        auto&& ap = absolute_position();
 
         if (_atx)
         {
@@ -123,7 +122,7 @@ namespace rl::gui {
         }
 
         if (_captionTex.dirty)
-            m_theme->getTexAndRectUtf8(renderer, _captionTex, 0, 0, mCaption.c_str(), "sans", 14,
+            m_theme->getTexAndRectUtf8(renderer, _captionTex, 0, 0, m_caption.c_str(), "sans", 14,
                                        mTextColor);
 
         if (_headerTex.dirty)
@@ -137,10 +136,11 @@ namespace rl::gui {
         auto&& captionPos = ap + Vector2i(3, 1);
         SDL3::SDL_FRect posRectCaption{ captionPos.x, captionPos.y };
 
-        auto&& headerPos = ap + Vector2i(mSize.x - 3 - _headerTex.w(), 1);
+        auto&& headerPos = ap + Vector2i(m_size.x - 3 - _headerTex.w(), 1);
         SDL3::SDL_FRect posRectHeader{ headerPos.x, headerPos.y };
 
-        auto&& footPos = ap + Vector2i(mSize.x - 3 - _footerTex.w(), mSize.y - 1 - _footerTex.h());
+        auto&& footPos = ap +
+                         Vector2i(m_size.x - 3 - _footerTex.w(), m_size.y - 1 - _footerTex.h());
         SDL3::SDL_FRect posRectFooter{ footPos.x, footPos.y };
 
         SDL3::SDL_RenderTexture(renderer, _captionTex.tex, &posRectCaption, nullptr);

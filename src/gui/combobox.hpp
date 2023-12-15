@@ -5,7 +5,6 @@
 #include "gui/popupbutton.hpp"
 
 namespace rl::gui {
-
     class ComboBox : public PopupButton
     {
     public:
@@ -33,7 +32,7 @@ namespace rl::gui {
             m_cb_pressed_callback = std::move(callback);
         }
 
-        int selectedIndex() const
+        int selected_idx() const
         {
             return mSelectedIndex;
         }

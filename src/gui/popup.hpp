@@ -6,7 +6,6 @@
 #include "gui/window.hpp"
 
 namespace rl::gui {
-
     /**
      * \class Popup popup.h sdl_gui/popup.h
      *
@@ -62,7 +61,7 @@ namespace rl::gui {
         }
 
         /// Invoke the associated layout generator to properly place child widgets, if any
-        void performLayout(SDL3::SDL_Renderer* ctx) override;
+        void perform_layout(SDL3::SDL_Renderer* ctx) override;
 
         /// Draw the popup window
         void draw(SDL3::SDL_Renderer* renderer) override;

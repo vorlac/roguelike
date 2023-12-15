@@ -6,8 +6,8 @@
 #include <vector>
 
 #include <flecs.h>
-#include <fmt/format.h>
 
+#include "core/assert.hpp"
 #include "core/renderer.hpp"
 #include "core/window.hpp"
 #include "ds/color.hpp"
@@ -27,7 +27,6 @@
 #include "sdl/surface.hpp"
 #include "sdl/tests/data/icon.hpp"
 #include "sdl/texture.hpp"
-#include "utils/assert.hpp"
 #include "utils/conversions.hpp"
 #include "utils/io.hpp"
 #include "utils/numeric.hpp"

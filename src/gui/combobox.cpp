@@ -14,7 +14,6 @@
 #include "gui/layout.hpp"
 
 namespace rl::gui {
-
     ComboBox::ComboBox(Widget* parent)
         : PopupButton(parent)
         , mSelectedIndex(0)
@@ -56,9 +55,9 @@ namespace rl::gui {
         mItemsShort = itemsShort;
         if (mSelectedIndex < 0 || mSelectedIndex >= (int)items.size())
             mSelectedIndex = 0;
-        while (mPopup->childCount() != 0)
-            mPopup->removeChild(mPopup->childCount() - 1);
-        mPopup->setLayout(new GroupLayout(10));
+        while (mPopup->child_count() != 0)
+            mPopup->remove_child(mPopup->child_count() - 1);
+        mPopup->set_layout(new GroupLayout(10));
         int index = 0;
         for (const auto& str : items)
         {
@@ -68,7 +67,7 @@ namespace rl::gui {
                 mSelectedIndex = index;
                 setCaption(mItemsShort[index]);
                 setPushed(false);
-                popup().setVisible(false);
+                popup().set_visible(false);
 
                 if (m_cb_pressed_callback)
                     m_cb_pressed_callback(index);
@@ -96,5 +95,4 @@ namespace rl::gui {
         }
         return Widget::scrollEvent(p, rel);
     }
-
 }

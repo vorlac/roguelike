@@ -1,13 +1,3 @@
-/*
-    src/checkbox.cpp -- Two-state check box widget
-
-    Based on NanoGUI by Wenzel Jakob <wenzel@inf.ethz.ch>.
-    Adaptation for SDL by Dalerank <dalerankn8@gmail.com>
-
-    All rights reserved. Use of this source code is governed by a
-    BSD-style license that can be found in the LICENSE.txt file.
-*/
-
 #include <thread>
 
 #include "gui/nanovg.h"
@@ -19,7 +9,6 @@
 #include "gui/nanovg_rt.h"
 
 namespace rl::gui {
-
     struct SwitchBox::AsyncTexture
     {
         int id;
@@ -173,11 +162,11 @@ namespace rl::gui {
 
     Vector2i SwitchBox::preferredSize(SDL3::SDL_Renderer* renderer) const
     {
-        if (mFixedSize != Vector2i::Zero())
-            return mFixedSize;
+        if (m_fixed_size != Vector2i::Zero())
+            return m_fixed_size;
 
         int w, h;
-        const_cast<SwitchBox*>(this)->theme()->getUtf8Bounds("sans", fontSize(), mCaption.c_str(),
+        const_cast<SwitchBox*>(this)->theme()->getUtf8Bounds("sans", fontSize(), m_caption.c_str(),
                                                              &w, &h);
         int knobW = 1.8f * fontSize();
         knobW = std::max<int>(knobW / 32, 1) * 32;
@@ -190,34 +179,34 @@ namespace rl::gui {
 
     void SwitchBox::drawBody(SDL3::SDL_Renderer* renderer)
     {
-        int id = (0x100) + (mEnabled ? 1 : 0);
+        int id = (0x100) + (m_enabled ? 1 : 0);
         auto atx = std::find_if(_txs.begin(), _txs.end(), [id](AsyncTexturePtr p) {
             return p->id == id;
         });
 
         if (atx != _txs.end())
         {
-            Vector2i ap = absolutePosition();
+            Vector2i ap = absolute_position();
             (*atx)->perform(renderer);
             SDL_RenderCopy(renderer, (*atx)->tex, ap);
         }
         else
         {
             AsyncTexturePtr newtx = std::make_shared<AsyncTexture>(id);
-            newtx->load_body(this, mEnabled);
+            newtx->load_body(this, m_enabled);
             _txs.push_back(newtx);
         }
     }
 
     void SwitchBox::drawKnob(SDL3::SDL_Renderer* renderer)
     {
-        int id = (0x200) + (mEnabled ? 1 : 0);
+        int id = (0x200) + (m_enabled ? 1 : 0);
         auto atx = std::find_if(_txs.begin(), _txs.end(), [id](AsyncTexturePtr p) {
             return p->id == id;
         });
 
-        Vector2i ap = absolutePosition();
-        Vector2f center = ap.As<float>() + mSize.As<float>() * 0.5f;
+        Vector2i ap = absolute_position();
+        Vector2f center = ap.As<float>() + m_size.As<float>() * 0.5f;
         Vector2i knobPos;
         float kr, startX, startY, widthX, heightY, hh;
         hh = height();
@@ -253,7 +242,7 @@ namespace rl::gui {
         else
         {
             AsyncTexturePtr newtx = std::make_shared<AsyncTexture>(id);
-            newtx->load_knob(this, mEnabled);
+            newtx->load_knob(this, m_enabled);
             _txs.push_back(newtx);
         }
     }
@@ -275,15 +264,15 @@ namespace rl::gui {
 
         drawBody(renderer);
         drawKnob(renderer);
-        /*
-          nvgFontSize(ctx, fontSize());
-          nvgFontFace(ctx, "sans");
-          nvgFillColor(ctx, mEnabled ? mTheme->mTextColor : mTheme->mDisabledTextColor);
-          nvgTextAlign(ctx, NVG_ALIGN_LEFT | NVG_ALIGN_MIDDLE);
-          nvgText(ctx, mPos.x() + 1.6f * fontSize(), mPos.y() + mSize.y() * 0.5f, mCaption.c_str(),
-          nullptr);
-        */
+
+        // nvgFontSize(ctx, fontSize());
+        // nvgFontFace(ctx, "sans");
+        // nvgFillColor(ctx, mEnabled ? mTheme->mTextColor : mTheme->mDisabledTextColor);
+        // nvgTextAlign(ctx, NVG_ALIGN_LEFT | NVG_ALIGN_MIDDLE);
+        // nvgText(ctx, mPos.x() + 1.6f * fontSize(), mPos.y() + mSize.y() * 0.5f,
+        // m_caption.c_str(),
+        //         nullptr);
+
         Widget::draw(renderer);
     }
-
 }

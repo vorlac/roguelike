@@ -5,6 +5,7 @@
 
 #include <fmt/format.h>
 
+#include "core/assert.hpp"
 #include "core/renderer.hpp"
 #include "ds/dims.hpp"
 #include "ds/point.hpp"
@@ -12,7 +13,6 @@
 #include "ds/vector2d.hpp"
 #include "sdl/defs.hpp"
 #include "sdl/utils.hpp"
-#include "utils/assert.hpp"
 #include "utils/numeric.hpp"
 #include "utils/options.hpp"
 
@@ -44,7 +44,7 @@ namespace rl {
         sdl_assert(m_sdl_window != nullptr, "failed to create SDL_Window");
         sdl_assert(m_renderer != nullptr, "failed to create sdl::Renderer");
         SDL3::SDL_GL_SetAttribute(SDL3::SDL_GL_DOUBLEBUFFER, 0);
-        this->initialize(m_sdl_window);
+        this->init(m_sdl_window);
     }
 
     Window::~Window()

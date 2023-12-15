@@ -10,7 +10,6 @@
 #include "gui/widget.hpp"
 
 namespace rl::gui {
-
     /**
      * \class TabHeader tabheader.h sdl_gui/tabheader.h
      *
@@ -40,30 +39,30 @@ namespace rl::gui {
          * Sets the callable objects which is invoked when a tab button is pressed.
          * The argument provided to the callback is the index of the tab.
          */
-        void setCallback(std::function<void(int)>&& callback)
+        void setCallback(std::function<void(size_t)>&& callback)
         {
-            mCallback = std::move(callback);
+            m_active_header_changed_callback = std::move(callback);
         };
 
-        const std::function<void(int)>& callback() const
+        const std::function<void(size_t)>& callback() const
         {
-            return mCallback;
+            return m_active_header_changed_callback;
         }
 
-        void setActiveTab(int tabIndex);
-        int activeTab() const;
-        bool isTabVisible(int index) const;
+        void setActiveTab(size_t tabIndex);
+        size_t activeTab() const;
+        bool isTabVisible(size_t index) const;
 
-        int tabCount() const
+        size_t tabCount() const
         {
-            return (int)mTabButtons.size();
+            return mTabButtons.size();
         }
 
         /// Inserts a tab at the end of the tabs collection.
         void addTab(const std::string& label);
 
         /// Inserts a tab into the tabs collection at the specified index.
-        void addTab(int index, const std::string& label);
+        void addTab(size_t index, const std::string& label);
 
         /**
          * Removes the tab with the specified label and returns the index of the label.
@@ -72,10 +71,10 @@ namespace rl::gui {
         int removeTab(const std::string& label);
 
         /// Removes the tab with the specified index.
-        void removeTab(int index);
+        void removeTab(size_t index);
 
         /// Retrieves the label of the tab at a specific index.
-        const std::string& tabLabelAt(int index) const;
+        const std::string& tabLabelAt(size_t index) const;
 
         /**
          * Retrieves the index of a specific tab label.
@@ -89,7 +88,7 @@ namespace rl::gui {
          * first or last visible one depending on the position relative to the
          * old visible range.
          */
-        void ensureTabVisible(int index);
+        void ensureTabVisible(size_t index);
 
         /**
          * Returns a pair of Vectors describing the top left (pair.first) and the
@@ -104,7 +103,7 @@ namespace rl::gui {
          */
         std::pair<Vector2i, Vector2i> activeButtonArea() const;
 
-        void performLayout(SDL3::SDL_Renderer* ctx) override;
+        void perform_layout(SDL3::SDL_Renderer* ctx) override;
         Vector2i preferredSize(SDL3::SDL_Renderer* ctx) const override;
         bool mouseButtonEvent(const Vector2i& p, int button, bool down, int modifiers) override;
 
@@ -112,9 +111,7 @@ namespace rl::gui {
 
     private:
         /**
-         * \class TabButton tabheader.h
-         *
-         * \brief Implementation class of the actual tab buttons.
+         * @brief Implementation class of the actual tab buttons.
          */
         class TabButton
         {
@@ -133,7 +130,7 @@ namespace rl::gui {
                 return mLabel;
             }
 
-            void setSize(const Vector2i& size)
+            void set_size(const Vector2i& size)
             {
                 mSize = size;
             }
@@ -157,9 +154,7 @@ namespace rl::gui {
             Vector2i mSize;
 
             /**
-             * \struct StringView tabheader.h sdl_gui/tabheader.h
-             *
-             * \brief Helper struct to represent the TabButton.
+             * @brief Represent a TabButton.
              */
             struct StringView
             {
@@ -176,7 +171,7 @@ namespace rl::gui {
         using TabIterator = std::vector<TabButton>::iterator;
         using ConstTabIterator = std::vector<TabButton>::const_iterator;
 
-        /// The location in which the Widget will be facing.
+        // The location in which the Widget will be facing.
         enum class ClickLocation {
             LeftControls,
             RightControls,
@@ -198,7 +193,7 @@ namespace rl::gui {
             return std::next(mTabButtons.begin(), mActiveTab);
         }
 
-        TabIterator tabIterator(int index)
+        TabIterator tabIterator(size_t index)
         {
             return std::next(mTabButtons.begin(), index);
         }
@@ -231,16 +226,17 @@ namespace rl::gui {
         void onArrowLeft();
         void onArrowRight();
 
-        std::function<void(int)> mCallback;
+        std::function<void(size_t)> m_active_header_changed_callback;
         std::vector<TabButton> mTabButtons;
         int mVisibleStart = 0;
         int mVisibleEnd = 0;
-        int mActiveTab = 0;
+        size_t mActiveTab = 0;
         bool mOverflowing = false;
 
         std::string mFont;
         Texture _leftIcon;
         Texture _rightIcon;
-        int _lastLeftActive = -1, _lastRightActive = -1;
+        size_t _lastLeftActive = std::numeric_limits<size_t>::max();
+        size_t _lastRightActive = std::numeric_limits<size_t>::max();
     };
 }

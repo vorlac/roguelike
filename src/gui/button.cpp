@@ -66,7 +66,7 @@ namespace rl::gui {
 
     Button::Button(Widget* parent, const std::string& caption, int icon)
         : Widget(parent)
-        , mCaption(caption)
+        , m_caption(caption)
         , mIcon(icon)
         , mIconPosition(IconPosition::LeftCentered)
         , mPushed(false)
@@ -80,9 +80,9 @@ namespace rl::gui {
 
     Vector2i Button::preferredSize(SDL3::SDL_Renderer* ctx) const
     {
-        int fontSize = mFontSize == -1 ? m_theme->mButtonFontSize : mFontSize;
+        int fontSize = m_font_size == -1 ? m_theme->mButtonFontSize : m_font_size;
         float tw = const_cast<Button*>(this)->m_theme->getTextWidth("sans-bold", fontSize,
-                                                                    mCaption.c_str());
+                                                                    m_caption.c_str());
         float iw = 0.0f, ih = fontSize;
 
         if (mIcon)
@@ -92,7 +92,7 @@ namespace rl::gui {
                 ih *= 1.5f;
                 iw = const_cast<Button*>(this)->m_theme->getUtf8Width("icons", ih,
                                                                       utf8(mIcon).data()) +
-                     mSize.y * 0.15f;
+                     m_size.y * 0.15f;
             }
             else
             {
@@ -112,7 +112,7 @@ namespace rl::gui {
            button causes the parent window to be destructed */
         ref<Button> self = this;
 
-        if (button == SDL_BUTTON_LEFT && mEnabled)
+        if (button == SDL_BUTTON_LEFT && m_enabled)
         {
             bool pushedBackup = mPushed;
             if (down)
@@ -209,7 +209,7 @@ namespace rl::gui {
             else
                 result = m_theme->mButtonGradientTopPushed;
         }
-        else if (mMouseFocus && mEnabled)
+        else if (m_mouse_focus && m_enabled)
         {
             if (mBackgroundColor.a() != 0)
             {
@@ -226,7 +226,7 @@ namespace rl::gui {
 
     void Button::drawBodyTemp(SDL3::SDL_Renderer* renderer)
     {
-        Vector2i ap = absolutePosition();
+        Vector2i ap = absolute_position();
         SDL3::SDL_Color bodyclr = bodyColor().toSdlColor();
 
         SDL3::SDL_FRect bodyRect{ float(ap.x + 1), float(ap.y + 1), float(width() - 2),
@@ -259,7 +259,7 @@ namespace rl::gui {
 
     void Button::drawBody(SDL3::SDL_Renderer* renderer)
     {
-        int id = (mPushed ? 0x1 : 0) + (mMouseFocus ? 0x2 : 0) + (mEnabled ? 0x4 : 0);
+        int id = (mPushed ? 0x1 : 0) + (m_mouse_focus ? 0x2 : 0) + (m_enabled ? 0x4 : 0);
 
         auto atx = std::find_if(_txs.begin(), _txs.end(), [id](const AsyncTexturePtr& p) {
             return p->id == id;
@@ -281,17 +281,17 @@ namespace rl::gui {
     {
         Widget::draw(renderer);
 
-        Vector2i ap = absolutePosition();
+        Vector2i ap = absolute_position();
         drawBody(renderer);
 
-        int fontSize = mFontSize == -1 ? m_theme->mButtonFontSize : mFontSize;
+        int fontSize = m_font_size == -1 ? m_theme->mButtonFontSize : m_font_size;
         if (_captionTex.dirty)
         {
             Color sdlTextColor = (mTextColor.a() == 0 ? m_theme->mTextColor : mTextColor);
-            if (!mEnabled)
+            if (!m_enabled)
                 sdlTextColor = m_theme->mDisabledTextColor;
 
-            m_theme->getTexAndRectUtf8(renderer, _captionTex, 0, 0, mCaption.c_str(), "sans-bold",
+            m_theme->getTexAndRectUtf8(renderer, _captionTex, 0, 0, m_caption.c_str(), "sans-bold",
                                        fontSize, sdlTextColor);
         }
 
@@ -324,8 +324,8 @@ namespace rl::gui {
                     iw = _iconTex.w() * ih / _iconTex.h();
                 }
             }
-            if (mCaption != "")
-                iw += _pos.y * 0.15f;
+            if (m_caption != "")
+                iw += m_pos.y * 0.15f;
 
             Vector2i iconPos = center.As<int>();
             iconPos.y -= 1;
@@ -343,11 +343,11 @@ namespace rl::gui {
             }
             else if (mIconPosition == IconPosition::Left)
             {
-                iconPos.x = getAbsoluteLeft() + 8;
+                iconPos.x = get_absolute_left() + 8;
             }
             else if (mIconPosition == IconPosition::Right)
             {
-                iconPos.x = getAbsoluteLeft() + width() - iw - 8;
+                iconPos.x = get_absolute_left() + width() - iw - 8;
             }
 
             if (nvgIsFontIcon(mIcon))
@@ -385,7 +385,7 @@ namespace rl::gui {
             gradTop = m_theme->mButtonGradientTopPushed.toNvgColor();
             gradBot = m_theme->mButtonGradientBotPushed.toNvgColor();
         }
-        else if (mMouseFocus && mEnabled)
+        else if (m_mouse_focus && m_enabled)
         {
             gradTop = m_theme->mButtonGradientTopFocused.toNvgColor();
             gradBot = m_theme->mButtonGradientBotFocused.toNvgColor();
@@ -408,7 +408,7 @@ namespace rl::gui {
             else
             {
                 float v = 1.0f - mBackgroundColor.a();
-                gradTop.a = gradBot.a = mEnabled ? v : v * .5f + .5f;
+                gradTop.a = gradBot.a = m_enabled ? v : v * .5f + .5f;
             }
         }
 
@@ -440,14 +440,14 @@ namespace rl::gui {
 
             if (texture->tex.tex)
             {
-                SDL_RenderCopy(renderer, texture->tex, absolutePosition());
+                SDL_RenderCopy(renderer, texture->tex, absolute_position());
 
                 if (!current_texture_ || texture->id != current_texture_->id)
                     current_texture_ = texture;
             }
             else if (current_texture_)
             {
-                SDL_RenderCopy(renderer, current_texture_->tex, absolutePosition());
+                SDL_RenderCopy(renderer, current_texture_->tex, absolute_position());
             }
             else
                 drawBodyTemp(renderer);
@@ -455,5 +455,4 @@ namespace rl::gui {
         else
             drawBodyTemp(renderer);
     }
-
 }

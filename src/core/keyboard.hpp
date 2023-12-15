@@ -3,8 +3,6 @@
 #include <bitset>
 #include <string>
 
-#include <fmt/format.h>
-
 #include "sdl/defs.hpp"
 
 SDL_C_LIB_BEGIN

@@ -3,7 +3,6 @@
 #include "gui/checkbox.hpp"
 
 namespace rl::gui {
-
     /**
      * \class SwitchBox checkbox.h sdlgui/checkbox.h
      *

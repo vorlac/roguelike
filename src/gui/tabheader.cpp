@@ -1,14 +1,3 @@
-/*
-    sdlgui/tabheader.cpp -- Widget used to control tabs.
-
-    The tab header widget was contributed by Stefan Ivanov.
-
-    Based on NanoGUI by Wenzel Jakob <wenzel@inf.ethz.ch>.
-    Adaptation for SDL by Dalerank <dalerankn8@gmail.com>
-
-    All rights reserved. Use of this source code is governed by a
-    BSD-style license that can be found in the LICENSE.txt file.
-*/
 #include <array>
 #include <cmath>
 #include <numeric>
@@ -25,7 +14,6 @@ SDL_C_LIB_END
 #pragma warning(disable : 4838)
 
 namespace rl::gui {
-
     TabHeader::TabButton::TabButton(TabHeader& header, const std::string& label)
         : mHeader(&header)
         , mLabel(label)
@@ -81,8 +69,8 @@ namespace rl::gui {
         int height = mSize.y;
         auto theme = mHeader->theme();
 
-        int lx = mHeader->getAbsoluteLeft();
-        int ly = mHeader->getAbsoluteTop();
+        int lx = mHeader->get_absolute_left();
+        int ly = mHeader->get_absolute_top();
 
         // nvgSave(ctx);
         // nvgIntersectScissor(ctx, xPos, yPos, width+1, height);
@@ -165,9 +153,9 @@ namespace rl::gui {
 
         if (_labelTex.tex)
         {
-            int textX = mHeader->getAbsoluteLeft() + xPos +
+            int textX = mHeader->get_absolute_left() + xPos +
                         mHeader->theme()->mTabButtonHorizontalPadding;
-            int textY = mHeader->getAbsoluteTop() + yPos +
+            int textY = mHeader->get_absolute_top() + yPos +
                         mHeader->theme()->mTabButtonVerticalPadding + (active ? 1 : -2);
 
             SDL_RenderCopy(renderer, _labelTex, Vector2i(textX, textY));
@@ -213,30 +201,30 @@ namespace rl::gui {
     {
     }
 
-    void TabHeader::setActiveTab(int tabIndex)
+    void TabHeader::setActiveTab(size_t tabIndex)
     {
-        assert(tabIndex < tabCount());
+        assert(tabIndex < this->tabCount());
         mActiveTab = tabIndex;
-        if (mCallback)
-            mCallback(tabIndex);
+        if (m_active_header_changed_callback)
+            m_active_header_changed_callback(tabIndex);
     }
 
-    int TabHeader::activeTab() const
+    size_t TabHeader::activeTab() const
     {
         return mActiveTab;
     }
 
-    bool TabHeader::isTabVisible(int index) const
+    bool TabHeader::isTabVisible(size_t index) const
     {
         return index >= mVisibleStart && index < mVisibleEnd;
     }
 
     void TabHeader::addTab(const std::string& label)
     {
-        addTab(tabCount(), label);
+        this->addTab(this->tabCount(), label);
     }
 
-    void TabHeader::addTab(int index, const std::string& label)
+    void TabHeader::addTab(size_t index, const std::string& label)
     {
         assert(index <= tabCount());
         mTabButtons.insert(std::next(mTabButtons.begin(), index), TabButton(*this, label));
@@ -258,17 +246,17 @@ namespace rl::gui {
         return index;
     }
 
-    void TabHeader::removeTab(int index)
+    void TabHeader::removeTab(size_t index)
     {
-        assert(index < tabCount());
+        assert(index < this->tabCount());
         mTabButtons.erase(std::next(mTabButtons.begin(), index));
         if (index == mActiveTab && index != 0)
             setActiveTab(index - 1);
     }
 
-    const std::string& TabHeader::tabLabelAt(int index) const
+    const std::string& TabHeader::tabLabelAt(size_t index) const
     {
-        assert(index < tabCount());
+        assert(index < this->tabCount());
         return mTabButtons[index].label();
     }
 
@@ -282,17 +270,17 @@ namespace rl::gui {
         return static_cast<int>(it - mTabButtons.begin());
     }
 
-    void TabHeader::ensureTabVisible(int index)
+    void TabHeader::ensureTabVisible(size_t index)
     {
-        auto visibleArea = visibleButtonArea();
+        auto visibleArea = this->visibleButtonArea();
         auto visibleWidth = visibleArea.second.x - visibleArea.first.x;
-        int allowedVisibleWidth = mSize.x - 2 * theme()->mTabControlWidth;
+        int allowedVisibleWidth = m_size.x - 2 * theme()->mTabControlWidth;
         assert(allowedVisibleWidth >= visibleWidth);
-        assert(index >= 0 && index < (int)mTabButtons.size());
+        assert(index >= 0 && index < mTabButtons.size());
 
-        auto first = visibleBegin();
-        auto last = visibleEnd();
-        auto goal = tabIterator(index);
+        auto first = this->visibleBegin();
+        auto last = this->visibleEnd();
+        auto goal = this->tabIterator(index);
 
         // Reach the goal tab with the visible range.
         if (goal < first)
@@ -348,12 +336,12 @@ namespace rl::gui {
     {
         if (mVisibleStart == mVisibleEnd)
             return { { 0, 0 }, { 0, 0 } };
-        auto topLeft = _pos + Vector2i(theme()->mTabControlWidth, 0);
+        auto topLeft = m_pos + Vector2i(theme()->mTabControlWidth, 0);
         auto width = std::accumulate(visibleBegin(), visibleEnd(), theme()->mTabControlWidth,
                                      [](int acc, const TabButton& tb) {
                                          return acc + tb.size().x;
                                      });
-        auto bottomRight = _pos + Vector2i{ width, mSize.y };
+        auto bottomRight = m_pos + Vector2i{ width, m_size.y };
         return { topLeft, bottomRight };
     }
 
@@ -366,14 +354,14 @@ namespace rl::gui {
                                      [](int acc, const TabButton& tb) {
                                          return acc + tb.size().x;
                                      });
-        auto topLeft = _pos + Vector2i{ width, 0 };
-        auto bottomRight = _pos + Vector2i{ width + activeIterator()->size().x, mSize.y };
+        auto topLeft = m_pos + Vector2i{ width, 0 };
+        auto bottomRight = m_pos + Vector2i{ width + activeIterator()->size().x, m_size.y };
         return { topLeft, bottomRight };
     }
 
-    void TabHeader::performLayout(SDL3::SDL_Renderer* ctx)
+    void TabHeader::perform_layout(SDL3::SDL_Renderer* ctx)
     {
-        Widget::performLayout(ctx);
+        Widget::perform_layout(ctx);
 
         Vector2i currentPosition(0, 0);
         // Place the tab buttons relative to the beginning of the tab header.
@@ -384,7 +372,7 @@ namespace rl::gui {
                 tabPreferred.x = theme()->mTabMinButtonWidth;
             else if (tabPreferred.x > theme()->mTabMaxButtonWidth)
                 tabPreferred.x = theme()->mTabMaxButtonWidth;
-            tab.setSize(tabPreferred);
+            tab.set_size(tabPreferred);
             tab.calculateVisibleString(nullptr);
             currentPosition.x += tabPreferred.x;
         }
@@ -459,7 +447,7 @@ namespace rl::gui {
         auto current = visibleBegin();
         auto last = visibleEnd();
         auto active = std::next(mTabButtons.begin(), mActiveTab);
-        Vector2i currentPosition = _pos + Vector2i(theme()->mTabControlWidth, 0);
+        Vector2i currentPosition = m_pos + Vector2i(theme()->mTabControlWidth, 0);
 
         // Flag to draw the active tab last. Looks a little bit better.
         bool drawActive = false;
@@ -490,7 +478,7 @@ namespace rl::gui {
         auto first = visibleBegin();
         auto last = mTabButtons.end();
         int currentPosition = theme()->mTabControlWidth;
-        int lastPosition = mSize.x - theme()->mTabControlWidth;
+        int lastPosition = m_size.x - theme()->mTabControlWidth;
         auto firstInvisible = std::find_if(first, last,
                                            [&currentPosition, lastPosition](const TabButton& tb) {
                                                currentPosition += tb.size().x;
@@ -508,7 +496,7 @@ namespace rl::gui {
         // Draw the arrow.
         if (_lastLeftActive != lactive || _lastRightActive != ractive)
         {
-            int fontSize = mFontSize == -1 ? m_theme->mButtonFontSize : mFontSize;
+            int fontSize = m_font_size == -1 ? m_theme->mButtonFontSize : m_font_size;
             float ih = fontSize;
             ih *= 1.5f;
             if (_lastLeftActive != lactive)
@@ -535,9 +523,9 @@ namespace rl::gui {
         float xScaleLeft = 0.2f;
         if (_leftIcon.tex)
         {
-            Vector2f leftIconPos = absolutePosition().tofloat();
-            leftIconPos += _pos.tofloat() +
-                           Vector2f{ xScaleLeft * theme()->mTabControlWidth, yScaleLeft * mSize.y };
+            Vector2f leftIconPos = absolute_position().tofloat();
+            leftIconPos += m_pos.tofloat() + Vector2f{ xScaleLeft * theme()->mTabControlWidth,
+                                                       yScaleLeft * m_size.y };
             SDL_RenderCopy(
                 renderer, _leftIcon,
                 Vector2i(leftIconPos.x - _leftIcon.w() / 2, leftIconPos.y - _leftIcon.h() / 2));
@@ -548,11 +536,11 @@ namespace rl::gui {
         {
             float yScaleRight = 0.5f;
             float xScaleRight = 1.0f - xScaleLeft - _rightIcon.w() / theme()->mTabControlWidth;
-            Vector2f leftControlsPos = absolutePosition().tofloat();
-            leftControlsPos += _pos.tofloat() + Vector2f(mSize.x - theme()->mTabControlWidth, 0);
+            Vector2f leftControlsPos = absolute_position().tofloat();
+            leftControlsPos += m_pos.tofloat() + Vector2f(m_size.x - theme()->mTabControlWidth, 0);
             Vector2f rightIconPos = leftControlsPos +
                                     Vector2f(xScaleRight * theme()->mTabControlWidth,
-                                             yScaleRight * mSize.tofloat().y);
+                                             yScaleRight * m_size.tofloat().y);
             SDL_RenderCopy(renderer, _rightIcon,
                            Vector2i(rightIconPos.x - _rightIcon.w() / 2,
                                     rightIconPos.y - _rightIcon.h() / 2 + 1));
@@ -561,14 +549,14 @@ namespace rl::gui {
 
     TabHeader::ClickLocation TabHeader::locateClick(const Vector2i& p)
     {
-        Vector2i leftDistance = p - _pos;
+        Vector2i leftDistance = p - m_pos;
         bool hitLeft = leftDistance.positive() &&
-                       leftDistance.lessOrEq({ theme()->mTabControlWidth, mSize.y });
+                       leftDistance.lessOrEq({ theme()->mTabControlWidth, m_size.y });
         if (hitLeft)
             return ClickLocation::LeftControls;
-        auto rightDistance = p - (_pos + Vector2i{ mSize.x - theme()->mTabControlWidth, 0 });
+        auto rightDistance = p - (m_pos + Vector2i{ m_size.x - theme()->mTabControlWidth, 0 });
         bool hitRight = rightDistance.positive() &&
-                        rightDistance.lessOrEq({ theme()->mTabControlWidth, mSize.y });
+                        rightDistance.lessOrEq({ theme()->mTabControlWidth, m_size.y });
         if (hitRight)
             return ClickLocation::RightControls;
         return ClickLocation::TabButtons;
@@ -589,5 +577,4 @@ namespace rl::gui {
         ++mVisibleStart;
         calculateVisibleEnd();
     }
-
 }

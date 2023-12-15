@@ -3,7 +3,6 @@
 #include "gui/widget.hpp"
 
 namespace rl::gui {
-
     /**
      * \class ImagePanel imagepanel.h sdl_gui/imagepanel.h
      *
@@ -64,5 +63,4 @@ namespace rl::gui {
         int mMargin;
         int mMouseIndex;
     };
-
 }

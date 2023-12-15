@@ -9,8 +9,8 @@
 #include <utility>
 #include <variant>
 
+#include "core/assert.hpp"
 #include "core/state/states.hpp"
-#include "utils/assert.hpp"
 #include "utils/concepts.hpp"
 #include "utils/numeric.hpp"
 

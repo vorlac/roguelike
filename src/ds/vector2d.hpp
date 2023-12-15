@@ -9,8 +9,6 @@
 #include <tuple>
 #include <utility>
 
-#include <fmt/format.h>
-
 #include "ds/dims.hpp"
 #include "ecs/components/transform_components.hpp"
 #include "sdl/defs.hpp"

@@ -11,7 +11,6 @@ SDL_C_LIB_BEGIN
 SDL_C_LIB_END
 
 namespace rl::gui {
-
     /**
      * \class ImageView imageview.h sdl_gui/imageview.h
      *
@@ -27,12 +26,12 @@ namespace rl::gui {
 
         Vector2f positionF() const
         {
-            return _pos.tofloat();
+            return m_pos.tofloat();
         }
 
         Vector2f sizeF() const
         {
-            return mSize.tofloat();
+            return m_size.tofloat();
         }
 
         const Vector2i& imageSize() const
@@ -183,8 +182,8 @@ namespace rl::gui {
          */
         void zoom(int amount, const Vector2f& focusPosition);
 
-        bool keyboardEvent(int key, int scancode, int action, int modifiers) override;
-        bool keyboardCharacterEvent(unsigned int codepoint) override;
+        bool kb_button_event(int key, int scancode, int action, int modifiers) override;
+        bool kb_character_event(unsigned int codepoint) override;
         bool mouseDragEvent(const Vector2i& p, const Vector2i& rel, int button,
                             int modifiers) override;
         bool scrollEvent(const Vector2i& p, const Vector2f& rel) override;
@@ -199,7 +198,7 @@ namespace rl::gui {
         bool helpersVisible() const;
 
         Vector2i preferredSize(SDL3::SDL_Renderer* ctx) const override;
-        void performLayout(SDL3::SDL_Renderer* ctx) override;
+        void perform_layout(SDL3::SDL_Renderer* ctx) override;
         void draw(SDL3::SDL_Renderer* renderer) override;
 
         ImageView& withImage(SDL3::SDL_Texture* texture)

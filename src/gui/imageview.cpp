@@ -12,11 +12,9 @@ SDL_C_LIB_END
 
 #include "gui/theme.hpp"
 
-#pragma warning(push)
 #pragma warning(disable : 4244)
 
 namespace rl::gui {
-
     namespace {
         std::vector<std::string> splitString(const std::string& text, const std::string& delimiter)
         {
@@ -164,11 +162,11 @@ namespace rl::gui {
         float v = rel.y;
         if (std::abs(v) < 1)
             v = std::copysign(1.0f, v);
-        zoom(static_cast<int>(v), (p - position()).tofloat());
+        zoom(static_cast<int>(v), (p - relative_position()).tofloat());
         return true;
     }
 
-    bool ImageView::keyboardEvent(int key, int /*scancode*/, int action, int modifiers)
+    bool ImageView::kb_button_event(int key, int /*scancode*/, int action, int modifiers)
     {
         if (action)
         {
@@ -219,7 +217,7 @@ namespace rl::gui {
         return false;
     }
 
-    bool ImageView::keyboardCharacterEvent(unsigned int codepoint)
+    bool ImageView::kb_character_event(unsigned int codepoint)
     {
         switch (codepoint)
         {
@@ -277,9 +275,9 @@ namespace rl::gui {
         return mImageSize;
     }
 
-    void ImageView::performLayout(SDL3::SDL_Renderer* ctx)
+    void ImageView::perform_layout(SDL3::SDL_Renderer* ctx)
     {
-        Widget::performLayout(ctx);
+        Widget::perform_layout(ctx);
         center();
     }
 
@@ -287,13 +285,13 @@ namespace rl::gui {
     {
         Widget::draw(renderer);
 
-        SDL3::SDL_Point ap = getAbsolutePos();
+        SDL3::SDL_Point ap = get_absolute_pos();
 
         const Screen* screen = dynamic_cast<const Screen*>(this->window()->parent());
         assert(screen);
         Vector2f screenSize = screen->size().tofloat();
         Vector2f scaleFactor = imageSizeF().cquotient(screenSize) * mScale;
-        Vector2f positionInScreen = absolutePosition().tofloat();
+        Vector2f positionInScreen = absolute_position().tofloat();
         Vector2f positionAfterOffset = positionInScreen + mOffset;
         Vector2f imagePosition = positionAfterOffset.cquotient(screenSize);
 
@@ -327,13 +325,13 @@ namespace rl::gui {
             {
                 ix = ap.x - static_cast<int>(positionAfterOffset.x);
                 iw = mImageSize.x - ix;
-                positionAfterOffset.x = absolutePosition().x;
+                positionAfterOffset.x = absolute_position().x;
             }
             if (positionAfterOffset.y <= ap.y)
             {
                 iy = ap.y - static_cast<int>(positionAfterOffset.y);
                 ih = mImageSize.y - iy;
-                positionAfterOffset.y = absolutePosition().y;
+                positionAfterOffset.y = absolute_position().y;
             }
             SDL3::SDL_FRect imgrect{
                 static_cast<float>(ix),
@@ -373,8 +371,8 @@ namespace rl::gui {
         SDL3::SDL_FRect lr{
             static_cast<float>(ap.x - 1),
             static_cast<float>(ap.y - 1),
-            static_cast<float>(mSize.x + 2),
-            static_cast<float>(mSize.y + 2),
+            static_cast<float>(m_size.x + 2),
+            static_cast<float>(m_size.y + 2),
         };
 
         SDL3::SDL_SetRenderDrawColor(renderer, lc.r, lc.g, lc.b, lc.a);
@@ -384,8 +382,8 @@ namespace rl::gui {
         SDL3::SDL_FRect dr{
             (float)ap.x - 1,
             (float)ap.y - 1,
-            (float)mSize.x + 2,
-            (float)mSize.y + 2,
+            (float)m_size.x + 2,
+            (float)m_size.y + 2,
         };
 
         SDL3::SDL_SetRenderDrawColor(renderer, dc.r, dc.g, dc.b, dc.a);
@@ -549,7 +547,4 @@ namespace rl::gui {
            }
        */
     }
-
 }
-
-#pragma warning(pop)

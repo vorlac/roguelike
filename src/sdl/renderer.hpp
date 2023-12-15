@@ -7,8 +7,7 @@
 #include <utility>
 #include <vector>
 
-#include <fmt/format.h>
-
+#include "core/assert.hpp"
 #include "core/window.hpp"
 #include "ds/color.hpp"
 #include "ds/dims.hpp"
@@ -17,7 +16,6 @@
 #include "ds/vector2d.hpp"
 #include "sdl/defs.hpp"
 #include "sdl/texture.hpp"
-#include "utils/assert.hpp"
 #include "utils/conversions.hpp"
 #include "utils/io.hpp"
 #include "utils/numeric.hpp"

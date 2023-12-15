@@ -1,18 +1,6 @@
-/*
-    sdl_gui/tabwidget.cpp -- A wrapper around the widgets TabHeader and StackedWidget
-    which hooks the two classes together.
-
-    The tab widget was contributed by Stefan Ivanov.
-
-    Based on NanoGUI by Wenzel Jakob <wenzel@inf.ethz.ch>.
-    Adaptation for SDL by Dalerank <dalerankn8@gmail.com>
-
-    All rights reserved. Use of this source code is governed by a
-    BSD-style license that can be found in the LICENSE.txt file.
-*/
-
 #include <algorithm>
 
+#include "core/assert.hpp"
 #include "gui/screen.hpp"
 #include "gui/stackedwidget.hpp"
 #include "gui/tabheader.hpp"
@@ -21,75 +9,86 @@
 #include "gui/window.hpp"
 
 namespace rl::gui {
-
     TabWidget::TabWidget(Widget* parent)
         : Widget(parent)
         , mHeader(new TabHeader(this))
         , mContent(new StackedWidget(this))
     {
-        mHeader->setCallback([this](int i) {
-            mContent->setSelectedIndex(i);
-            if (mCallback)
-                mCallback(i);
+        mHeader->setCallback([this](size_t idx) {
+            mContent->setSelectedIndex(idx);
+            if (m_active_tab_changed_callback)
+                m_active_tab_changed_callback(idx);
         });
     }
 
-    void TabWidget::setActiveTab(int tabIndex)
+    void TabWidget::setActiveTab(size_t idx)
     {
-        mHeader->setActiveTab(tabIndex);
-        mContent->setSelectedIndex(tabIndex);
+        mHeader->setActiveTab(idx);
+        mContent->setSelectedIndex(idx);
     }
 
-    int TabWidget::activeTab() const
+    size_t TabWidget::activeTab() const
     {
-        assert(mHeader->activeTab() == mContent->selectedIndex());
-        return mContent->selectedIndex();
+        runtime_assert(
+            mHeader->activeTab() == mContent->selected_idx(),
+            "TabWidget: selected header tab index inconsistent with selected content header: h:{} c:{}",
+            mHeader->activeTab(), mContent->selected_idx());
+        return mContent->selected_idx();
     }
 
-    int TabWidget::tabCount() const
+    size_t TabWidget::tabCount() const
     {
-        assert(mContent->childCount() == mHeader->tabCount());
+        runtime_assert(
+            mContent->child_count() == mHeader->tabCount(),
+            "TabWidget: content child count inconsistent with header tab count\n h:{} c:{}",
+            mContent->child_count(), mHeader->tabCount());
         return mHeader->tabCount();
     }
 
-    Widget* TabWidget::createTab(int index, const std::string& label)
+    Widget* TabWidget::createTab(size_t index, const std::string& label)
     {
         Widget* tab = new Widget(nullptr);
-        addTab(index, label, tab);
+        this->addTab(index, label, tab);
         return tab;
     }
 
     Widget* TabWidget::createTab(const std::string& label)
     {
-        return createTab(tabCount(), label);
+        return this->createTab(this->tabCount(), label);
     }
 
     void TabWidget::addTab(const std::string& name, Widget* tab)
     {
-        addTab(tabCount(), name, tab);
+        this->addTab(this->tabCount(), name, tab);
     }
 
-    void TabWidget::addTab(int index, const std::string& label, Widget* tab)
+    void TabWidget::addTab(size_t index, const std::string& label, Widget* tab)
     {
-        assert(index <= tabCount());
+        runtime_assert(index <= this->tabCount(),
+                       "TabWidget: tab index out of bounds (index:{}, count:{})", index,
+                       this->tabCount());
         // It is important to add the content first since the callback
         // of the header will automatically fire when a new tab is added.
-        mContent->addChild(index, tab);
+        mContent->add_child(index, tab);
         mHeader->addTab(index, label);
-        assert(mHeader->tabCount() == mContent->childCount());
+
+        runtime_assert(
+            mHeader->tabCount() == mContent->child_count(),
+            "TabWidget: header tab count inconsistent with content child count\n h:{} c:{}",
+            mHeader->tabCount(), mContent->child_count());
     }
 
-    int TabWidget::tabLabelIndex(const std::string& label)
+    size_t TabWidget::tabLabelIndex(const std::string& label)
     {
         return mHeader->tabIndex(label);
     }
 
-    int TabWidget::tabIndex(Widget* tab)
+    size_t TabWidget::tabIndex(Widget* tab)
     {
-        return mContent->childIndex(tab);
+        return mContent->get_child_index(tab);
     }
 
-    void TabWidget::ensureTabVisible(int index)
+    void TabWidget::ensureTabVisible(size_t index)
     {
         if (!mHeader->isTabVisible(index))
             mHeader->ensureTabVisible(index);
@@ -98,7 +97,7 @@ namespace rl::gui {
     const Widget* TabWidget::tab(const std::string& tabName) const
     {
         int index = mHeader->tabIndex(tabName);
-        if (index == mContent->childCount())
+        if (index == mContent->child_count())
             return nullptr;
         return mContent->children()[index];
     }
@@ -106,7 +105,7 @@ namespace rl::gui {
     Widget* TabWidget::tab(const std::string& tabName)
     {
         int index = mHeader->tabIndex(tabName);
-        if (index == mContent->childCount())
+        if (index == mContent->child_count())
             return nullptr;
         return mContent->children()[index];
     }
@@ -116,35 +115,35 @@ namespace rl::gui {
         int index = mHeader->removeTab(tabName);
         if (index == -1)
             return false;
-        mContent->removeChild(index);
+        mContent->remove_child(index);
         return true;
     }
 
-    void TabWidget::removeTab(int index)
+    void TabWidget::removeTab(size_t index)
     {
-        assert(mContent->childCount() < index);
+        assert(mContent->child_count() < index);
         mHeader->removeTab(index);
-        mContent->removeChild(index);
+        mContent->remove_child(index);
 
-        if (activeTab() == index)
-            setActiveTab(index == (index - 1) ? index - 1 : 0);
+        if (this->activeTab() == index)
+            this->setActiveTab(index == (index - 1) ? index - 1 : 0);
     }
 
-    const std::string& TabWidget::tabLabelAt(int index) const
+    const std::string& TabWidget::tabLabelAt(size_t index) const
     {
         return mHeader->tabLabelAt(index);
     }
 
-    void TabWidget::performLayout(SDL3::SDL_Renderer* ctx)
+    void TabWidget::perform_layout(SDL3::SDL_Renderer* ctx)
     {
         int headerHeight = mHeader->preferredSize(ctx).y;
         int margin = m_theme->mTabInnerMargin;
-        mHeader->setPosition({ 0, 0 });
-        mHeader->setSize({ mSize.x, headerHeight });
-        mHeader->performLayout(ctx);
-        mContent->setPosition({ margin, headerHeight + margin });
-        mContent->setSize({ mSize.x - 2 * margin, mSize.y - 2 * margin - headerHeight });
-        mContent->performLayout(ctx);
+        mHeader->set_relative_position({ 0, 0 });
+        mHeader->set_size({ m_size.x, headerHeight });
+        mHeader->perform_layout(ctx);
+        mContent->set_relative_position({ margin, headerHeight + margin });
+        mContent->set_size({ m_size.x - 2 * margin, m_size.y - 2 * margin - headerHeight });
+        mContent->perform_layout(ctx);
     }
 
     Vector2i TabWidget::preferredSize(SDL3::SDL_Renderer* ctx) const
@@ -164,10 +163,10 @@ namespace rl::gui {
 
         for (int i = 0; i < 3; ++i)
         {
-            int x = getAbsoluteLeft();
-            int y = getAbsoluteTop();
+            int x = get_absolute_left();
+            int y = get_absolute_top();
             SDL3::SDL_Color bl = m_theme->mBorderLight.toSdlColor();
-            SDL3::SDL_Rect blr{ x + 1, y + tabHeight + 2, mSize.x - 2, mSize.y - tabHeight - 2 };
+            SDL3::SDL_Rect blr{ x + 1, y + tabHeight + 2, m_size.x - 2, m_size.y - tabHeight - 2 };
 
             SDL_SetRenderDrawColor(renderer, bl.r, bl.g, bl.b, bl.a);
             SDL_RenderLine(renderer, blr.x, blr.y, x + activeArea.first.x, blr.y);
@@ -177,7 +176,7 @@ namespace rl::gui {
             SDL_RenderLine(renderer, blr.x, blr.y + blr.h, blr.x + blr.w, blr.y + blr.h);
 
             SDL3::SDL_Color bd = m_theme->mBorderDark.toSdlColor();
-            SDL3::SDL_Rect bdr{ x + 1, y + tabHeight + 1, mSize.x - 2, mSize.y - tabHeight - 2 };
+            SDL3::SDL_Rect bdr{ x + 1, y + tabHeight + 1, m_size.x - 2, m_size.y - tabHeight - 2 };
 
             SDL_SetRenderDrawColor(renderer, bd.r, bd.g, bd.b, bd.a);
             SDL_RenderLine(renderer, bdr.x, bdr.y, x + activeArea.first.x, bdr.y);
@@ -189,5 +188,4 @@ namespace rl::gui {
 
         Widget::draw(renderer);
     }
-
 }

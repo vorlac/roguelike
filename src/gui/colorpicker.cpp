@@ -1,31 +1,18 @@
-/*
-    sdlgui/colorpicker.cpp -- push button with a popup to tweak a color value
-
-    This widget was contributed by Christian Schueller.
-
-    Based on NanoGUI by Wenzel Jakob <wenzel@inf.ethz.ch>.
-    Adaptation for SDL by Dalerank <dalerankn8@gmail.com>
-
-    All rights reserved. Use of this source code is governed by a
-    BSD-style license that can be found in the LICENSE.txt file.
-*/
-
 #include "gui/colorpicker.hpp"
 #include "gui/colorwheel.hpp"
 #include "gui/layout.hpp"
 
 namespace rl::gui {
-
     ColorPicker::ColorPicker(Widget* parent, const Color& color)
         : PopupButton(parent, "")
     {
         setBackgroundColor(color);
         Popup& p = this->popup();
-        p.setLayout(new GroupLayout());
+        p.set_layout(new GroupLayout());
 
         mColorWheel = new ColorWheel(&p);
         mPickButton = new Button(&p, "Pick");
-        mPickButton->setFixedSize(Vector2i(100, 25));
+        mPickButton->set_fixed_size(Vector2i(100, 25));
 
         PopupButton::setChangeCallback([&](bool) {
             setColor(backgroundColor());
@@ -64,5 +51,4 @@ namespace rl::gui {
             mPickButton->setTextColor(fg);
         }
     }
-
 }

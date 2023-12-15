@@ -2,11 +2,11 @@
 
 #include <vector>
 
+#include "core/assert.hpp"
 #include "ds/dims.hpp"
 #include "ds/point.hpp"
 #include "ds/rect.hpp"
 #include "sdl/defs.hpp"
-#include "utils/assert.hpp"
 #include "utils/numeric.hpp"
 
 SDL_C_LIB_BEGIN

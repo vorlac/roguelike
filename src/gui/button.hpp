@@ -10,7 +10,6 @@
 #pragma warning(disable : 4244)
 
 namespace rl::gui {
-
     /**
      * \class Button button.h sdlgui/button.h
      *
@@ -59,12 +58,12 @@ namespace rl::gui {
 
         const std::string& caption() const
         {
-            return mCaption;
+            return m_caption;
         }
 
         void setCaption(const std::string& caption)
         {
-            mCaption = caption;
+            m_caption = caption;
             _captionTex.dirty = true;
         }
 
@@ -200,7 +199,7 @@ namespace rl::gui {
     protected:
         virtual void renderBodyTexture(NVGcontext*& ctx, int& realw, int& realh);
 
-        std::string mCaption;
+        std::string m_caption;
         intptr_t mIcon;
         IconPosition mIconPosition;
         bool mPushed;
@@ -224,5 +223,4 @@ namespace rl::gui {
     private:
         void drawTexture(AsyncTexturePtr& texture, SDL3::SDL_Renderer* renderer);
     };
-
 }

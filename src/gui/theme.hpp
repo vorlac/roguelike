@@ -12,7 +12,6 @@ struct SDL_Rect;
 SDL_C_LIB_END
 
 namespace rl::gui {
-
     struct Texture
     {
         SDL3::SDL_Texture* tex = nullptr;

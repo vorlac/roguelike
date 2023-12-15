@@ -3,7 +3,6 @@
 #include "gui/widget.hpp"
 
 namespace rl::gui {
-
     /**
      * \class StackedWidget stackedwidget.h sdl_gui/stackedwidget.h
      *
@@ -14,14 +13,14 @@ namespace rl::gui {
     public:
         StackedWidget(Widget* parent);
 
-        void setSelectedIndex(int index);
-        int selectedIndex() const;
+        void setSelectedIndex(size_t index);
+        size_t selected_idx() const;
 
-        void performLayout(SDL3::SDL_Renderer* ctx) override;
+        void perform_layout(SDL3::SDL_Renderer* ctx) override;
         Vector2i preferredSize(SDL3::SDL_Renderer* ctx) const override;
-        void addChild(int index, Widget* widget) override;
+        void add_child(size_t index, Widget* widget) override;
 
     private:
-        int mSelectedIndex = -1;
+        size_t m_selected_idx = std::numeric_limits<size_t>::max();
     };
 }

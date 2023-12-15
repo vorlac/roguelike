@@ -17,7 +17,7 @@
 #include <glm/gtx/string_cast.hpp>
 #include <glm/matrix.hpp>
 
-#include "utils/assert.hpp"
+#include "core/assert.hpp"
 #include "utils/concepts.hpp"
 #include "utils/fs.hpp"
 #include "utils/io.hpp"

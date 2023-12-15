@@ -6,12 +6,8 @@
 #include <type_traits>
 #include <utility>
 
-#include <fmt/chrono.h>
-#include <fmt/core.h>
-#include <fmt/format.h>
-
+#include "core/assert.hpp"
 #include "sdl/defs.hpp"
-#include "utils/assert.hpp"
 #include "utils/concepts.hpp"
 #include "utils/numeric.hpp"
 

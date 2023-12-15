@@ -6,7 +6,6 @@
 #include "gui/popup.hpp"
 
 namespace rl::gui {
-
     /**
      * \class PopupButton popupbutton.h sdl_gui/popupbutton.h
      *
@@ -30,7 +29,7 @@ namespace rl::gui {
 
         Popup& popup(const Vector2i& size)
         {
-            mPopup->setFixedSize(size);
+            mPopup->set_fixed_size(size);
             return *mPopup;
         }
 
@@ -46,7 +45,7 @@ namespace rl::gui {
 
         void draw(SDL3::SDL_Renderer* renderer) override;
         Vector2i preferredSize(SDL3::SDL_Renderer* ctx) const override;
-        void performLayout(SDL3::SDL_Renderer* ctx) override;
+        void perform_layout(SDL3::SDL_Renderer* ctx) override;
 
         PopupButton& withChevron(int icon)
         {

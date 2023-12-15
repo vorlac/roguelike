@@ -1,13 +1,3 @@
-/*
-    sdlgui/progressbar.cpp -- Standard widget for visualizing progress
-
-    Based on NanoGUI by Wenzel Jakob <wenzel@inf.ethz.ch>.
-    Adaptation for SDL by Dalerank <dalerankn8@gmail.com>
-
-    All rights reserved. Use of this source code is governed by a
-    BSD-style license that can be found in the LICENSE.txt file.
-*/
-
 #include <thread>
 
 #include "gui/nanovg.h"
@@ -19,7 +9,6 @@
 #include "gui/nanovg_rt.h"
 
 namespace rl::gui {
-
     struct ProgressBar::AsyncTexture
     {
         Texture tex;
@@ -158,7 +147,7 @@ namespace rl::gui {
 
         if (_body)
         {
-            Vector2i ap = absolutePosition();
+            Vector2i ap = absolute_position();
             _body->perform(renderer);
             SDL_RenderCopy(renderer, _body->tex, ap);
         }
@@ -174,7 +163,7 @@ namespace rl::gui {
 
         if (_bar)
         {
-            Vector2i ap = absolutePosition();
+            Vector2i ap = absolute_position();
             _bar->perform(renderer);
             SDL_RenderCopy(renderer, _bar->tex, ap);
         }
@@ -187,5 +176,4 @@ namespace rl::gui {
         drawBody(renderer);
         drawBar(renderer);
     }
-
 }

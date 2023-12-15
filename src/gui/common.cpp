@@ -247,5 +247,4 @@ namespace rl::gui {
     Object::~Object()
     {
     }
-
 }

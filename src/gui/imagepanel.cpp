@@ -2,11 +2,9 @@
 
 #include "gui/imagepanel.hpp"
 
-#pragma warning(push)
 #pragma warning(disable : 4244)
 
 namespace rl::gui {
-
     ImagePanel::ImagePanel(Widget* parent)
         : Widget(parent)
         , mThumbSize(64)
@@ -18,7 +16,7 @@ namespace rl::gui {
 
     Vector2i ImagePanel::gridSize() const
     {
-        int nCols = 1 + std::max(0, (int)((mSize.x - 2 * mMargin - mThumbSize) /
+        int nCols = 1 + std::max(0, (int)((m_size.x - 2 * mMargin - mThumbSize) /
                                           (float)(mThumbSize + mSpacing)));
         int nRows = ((int)mImages.size() + nCols - 1) / nCols;
         return Vector2i(nCols, nRows);
@@ -66,10 +64,10 @@ namespace rl::gui {
     {
         Vector2i grid = gridSize();
 
-        int ax = getAbsoluteLeft();
-        int ay = getAbsoluteTop();
+        int ax = get_absolute_left();
+        int ay = get_absolute_top();
 
-        PntRect clip = getAbsoluteCliprect();
+        PntRect clip = get_absolute_cliprect();
         SDL3::SDL_FRect clipRect = pntrect2srect(clip);
 
         for (size_t i = 0; i < mImages.size(); ++i)
@@ -160,7 +158,4 @@ namespace rl::gui {
 
         Widget::draw(renderer);
     }
-
 }
-
-#pragma warning(pop)

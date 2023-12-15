@@ -11,7 +11,7 @@ namespace rl::gui {
             : Button(parent, caption, icon)
         {
             setFlags(Flags::RadioButton | Flags::ToggleButton);
-            setFixedSize(Vector2i(25, 25));
+            set_fixed_size(Vector2i(25, 25));
         }
     };
 }

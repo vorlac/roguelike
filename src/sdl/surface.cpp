@@ -155,9 +155,8 @@ namespace rl::sdl {
         const auto o_size{ other.size() };
         if (t_size != o_size)
         {
-            sdl_assert(t_size == o_size, "Expected (" << t_size.width << "x" << t_size.height << ")"
-                                                      << ", got(" << o_size.width << "x"
-                                                      << o_size.height << ")");
+            sdl_assert(t_size == o_size, "Expected ({}x{}), got ({}x{})", t_size.width,
+                       t_size.height, o_size.width, o_size.height);
             return -2;
         }
         /* Sanitize input value */

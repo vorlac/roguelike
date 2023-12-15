@@ -155,10 +155,10 @@ namespace rl::gui {
     Vector2i Window::preferredSize(SDL3::SDL_Renderer* ctx) const
     {
         if (mButtonPanel)
-            mButtonPanel->setVisible(false);
+            mButtonPanel->set_visible(false);
         Vector2i result = Widget::preferredSize(ctx);
         if (mButtonPanel)
-            mButtonPanel->setVisible(true);
+            mButtonPanel->set_visible(true);
 
         int w, h;
         const_cast<Window*>(this)->m_theme->getTextBounds("sans-bold", 18.0, mTitle.c_str(), &w, &h);
@@ -171,36 +171,38 @@ namespace rl::gui {
         if (!mButtonPanel)
         {
             mButtonPanel = new Widget(this);
-            mButtonPanel->setLayout(new BoxLayout(Orientation::Horizontal, Alignment::Middle, 0, 4));
+            mButtonPanel->set_layout(
+                new BoxLayout(Orientation::Horizontal, Alignment::Middle, 0, 4));
         }
         return mButtonPanel;
     }
 
-    void Window::performLayout(SDL3::SDL_Renderer* ctx)
+    void Window::perform_layout(SDL3::SDL_Renderer* ctx)
     {
         if (!mButtonPanel)
         {
-            Widget::performLayout(ctx);
+            Widget::perform_layout(ctx);
         }
         else
         {
-            mButtonPanel->setVisible(false);
-            Widget::performLayout(ctx);
+            mButtonPanel->set_visible(false);
+            Widget::perform_layout(ctx);
             for (auto w : mButtonPanel->children())
             {
-                w->setFixedSize({ 22, 22 });
+                w->set_fixed_size({ 22, 22 });
                 w->setFontSize(15);
             }
-            mButtonPanel->setVisible(true);
-            mButtonPanel->setSize({ width(), 22 });
-            mButtonPanel->setPosition({ width() - (mButtonPanel->preferredSize(ctx).x + 5), 3 });
-            mButtonPanel->performLayout(ctx);
+            mButtonPanel->set_visible(true);
+            mButtonPanel->set_size({ width(), 22 });
+            mButtonPanel->set_relative_position(
+                { width() - (mButtonPanel->preferredSize(ctx).x + 5), 3 });
+            mButtonPanel->perform_layout(ctx);
         }
     }
 
     bool Window::focusEvent(bool focused)
     {
-        _titleTex.dirty = focused != mFocused;
+        _titleTex.dirty = focused != m_focused;
         return Widget::focusEvent(focused);
     }
 
@@ -210,19 +212,20 @@ namespace rl::gui {
         int cr = m_theme->mWindowCornerRadius;
         int hh = m_theme->mWindowHeaderHeight;
 
-        Vector2i ap = absolutePosition();
-        SDL3::SDL_FRect rect{ ap.x, ap.y, mSize.x, mSize.y };
+        Vector2i ap = absolute_position();
+        SDL3::SDL_FRect rect{ ap.x, ap.y, m_size.x, m_size.y };
 
         /* Draw a drop shadow */
-        SDL3::SDL_FRect shadowRect{ ap.x - ds, ap.y - ds, mSize.x + 2.0f * ds, mSize.y + 2.0f * ds };
+        SDL3::SDL_FRect shadowRect{ ap.x - ds, ap.y - ds, m_size.x + 2.0f * ds,
+                                    m_size.y + 2.0f * ds };
         SDL3::SDL_Color shadowColor = m_theme->mDropShadow.toSdlColor();
 
         SDL3::SDL_SetRenderDrawColor(renderer, shadowColor.r, shadowColor.g, shadowColor.b, 32);
         SDL3::SDL_RenderFillRect(renderer, &shadowRect);
 
         /* Draw window */
-        SDL3::SDL_Color color = (mMouseFocus ? m_theme->mWindowFillFocused
-                                             : m_theme->mWindowFillUnfocused)
+        SDL3::SDL_Color color = (m_mouse_focus ? m_theme->mWindowFillFocused
+                                               : m_theme->mWindowFillUnfocused)
                                     .toSdlColor();
         SDL3::SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
         SDL3::SDL_RenderFillRect(renderer, &rect);
@@ -233,7 +236,7 @@ namespace rl::gui {
         SDL3::SDL_RenderRect(renderer, &wndBdRect);
 
         SDL3::SDL_Color headerColor = m_theme->mWindowHeaderGradientTop.toSdlColor();
-        SDL3::SDL_FRect headerRect{ ap.x, ap.y, mSize.x, hh };
+        SDL3::SDL_FRect headerRect{ ap.x, ap.y, m_size.x, hh };
 
         SDL3::SDL_SetRenderDrawColor(renderer, headerColor.r, headerColor.g, headerColor.b,
                                      headerColor.a);
@@ -248,7 +251,7 @@ namespace rl::gui {
 
     void Window::drawBody(SDL3::SDL_Renderer* renderer)
     {
-        int id = (mMouseFocus ? 0x1 : 0);
+        int id = (m_mouse_focus ? 0x1 : 0);
 
         auto atx = std::find_if(m_window_txs.begin(), m_window_txs.end(),
                                 [id](const Window::AsyncTexturePtr& p) {
@@ -260,7 +263,7 @@ namespace rl::gui {
         else
         {
             Window::AsyncTexturePtr newtx = std::make_shared<Window::AsyncTexture>(id);
-            newtx->load(this, 0, 0, mMouseFocus);
+            newtx->load(this, 0, 0, m_mouse_focus);
             m_window_txs.push_back(newtx);
 
             drawTexture(current_texture_, renderer);
@@ -273,8 +276,8 @@ namespace rl::gui {
 
         if (_titleTex.dirty)
         {
-            Color titleTextColor = (mFocused ? m_theme->mWindowTitleFocused
-                                             : m_theme->mWindowTitleUnfocused);
+            Color titleTextColor = (m_focused ? m_theme->mWindowTitleFocused
+                                              : m_theme->mWindowTitleUnfocused);
             m_theme->getTexAndRectUtf8(renderer, _titleTex, 0, 0, mTitle.c_str(), "sans-bold", 18,
                                        titleTextColor);
         }
@@ -284,7 +287,7 @@ namespace rl::gui {
             int headerH = m_theme->mWindowHeaderHeight;
             SDL_RenderCopy(
                 renderer, _titleTex,
-                _pos + Vector2i((mSize.x - _titleTex.w()) / 2, (headerH - _titleTex.h()) / 2));
+                m_pos + Vector2i((m_size.x - _titleTex.w()) / 2, (headerH - _titleTex.h()) / 2));
         }
 
         Widget::draw(renderer);
@@ -295,7 +298,7 @@ namespace rl::gui {
         Widget* widget = this;
         while (widget->parent())
             widget = widget->parent();
-        ((Screen*)widget)->disposeWindow(this);
+        ((Screen*)widget)->dispose_window(this);
     }
 
     void Window::center()
@@ -303,7 +306,7 @@ namespace rl::gui {
         Widget* widget = this;
         while (widget->parent())
             widget = widget->parent();
-        ((Screen*)widget)->centerWindow(this);
+        ((Screen*)widget)->center_window(this);
     }
 
     bool Window::mouseDragEvent(const Vector2i&, const Vector2i& rel, int button,
@@ -313,9 +316,9 @@ namespace rl::gui {
             return false;
         if (mDrag && (button & (1 << SDL_BUTTON_LEFT)) != 0)
         {
-            _pos += rel;
-            _pos = _pos.cmax({ 0, 0 });
-            _pos = _pos.cmin(parent()->size() - mSize);
+            m_pos += rel;
+            m_pos = m_pos.cmax({ 0, 0 });
+            m_pos = m_pos.cmin(parent()->size() - m_size);
             return true;
         }
         return false;
@@ -327,7 +330,7 @@ namespace rl::gui {
             return true;
         if (button == SDL_BUTTON_LEFT)
         {
-            mDrag = down && (p.y - _pos.y) < m_theme->mWindowHeaderHeight;
+            mDrag = down && (p.y - m_pos.y) < m_theme->mWindowHeaderHeight;
             return true;
         }
         return false;
@@ -341,7 +344,7 @@ namespace rl::gui {
 
     void Window::refreshRelativePlacement()
     {
-        /* Overridden in \ref Popup */
+        // Overridden in Popup
     }
 
     void Window::drawTexture(AsyncTexturePtr& texture, SDL3::SDL_Renderer* renderer)
@@ -352,14 +355,14 @@ namespace rl::gui {
 
             if (texture->tex.tex)
             {
-                SDL_RenderCopy(renderer, texture->tex, absolutePosition());
+                SDL_RenderCopy(renderer, texture->tex, absolute_position());
 
                 if (!current_texture_ || texture->id != current_texture_->id)
                     current_texture_ = texture;
             }
             else if (current_texture_)
             {
-                SDL_RenderCopy(renderer, current_texture_->tex, absolutePosition());
+                SDL_RenderCopy(renderer, current_texture_->tex, absolute_position());
             }
             else
                 drawBodyTemp(renderer);

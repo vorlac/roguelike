@@ -2,8 +2,6 @@
 
 #include <type_traits>
 
-#include <fmt/format.h>
-
 #include "ds/point.hpp"
 #include "ds/vector2d.hpp"
 #include "sdl/defs.hpp"

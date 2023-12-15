@@ -8,9 +8,7 @@
 extern "C"
 {
 #endif
-
     // Create flags
-
     enum NVGcreateFlags {
         // Flag indicating if geometry based anti-aliasing is used (may not be needed
         // when using MSAA).

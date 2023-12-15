@@ -5,13 +5,13 @@
 #include <memory>
 #include <string>
 
+#include "core/assert.hpp"
 #include "ds/dims.hpp"
 #include "ds/point.hpp"
 #include "ds/rect.hpp"
 #include "ds/vector2d.hpp"
 #include "gui/screen.hpp"
 #include "sdl/defs.hpp"
-#include "utils/assert.hpp"
 
 SDL_C_LIB_BEGIN
 #include <SDL3/SDL_events.h>

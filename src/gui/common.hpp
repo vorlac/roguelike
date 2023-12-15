@@ -21,7 +21,6 @@ SDL_C_LIB_END
 #ifdef _MSC_VER
   #define SDLGUI_SNPRINTF _snprintf
 #else
-// Platform dependent snprintf (``_snprintf`` for MSVC, ``snprintf`` otherwise).
   #define SDLGUI_SNPRINTF snprintf
 #endif
 

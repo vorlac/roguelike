@@ -13,148 +13,191 @@ namespace rl::gui {
      * @brief Represents a display surface (i.e. a full-screen or windowed GLFW window)
      * and forms the root element of a hierarchy of sdlgui widgets
      */
-    class Screen : public gui::Widget
+    class Screen : public Widget
     {
-        friend class gui::Widget;
-        friend class gui::Window;
+        friend class Widget;
+        friend class Window;
 
     public:
-        // Used to initialize empty window, use initialize(SDL_Window* window) for deferred init
+        /**
+         * @brief  Used to init empty window, use init(SDL_Window* window) for deferred init
+         **/
         Screen();
 
-        // Create a new screen
+        /**
+         * @brief  Create a new screen
+         **/
         Screen(SDL3::SDL_Window* window, const Vector2i& size, const std::string& caption,
                bool resizable = true, bool fullscreen = false);
 
-        // Release all resources
+        /**
+         * @brief  Release all resources
+         **/
         virtual ~Screen() override;
 
-        // Get the window titlebar caption
+        /**
+         * @brief  Get the window titlebar caption
+         **/
         const std::string& caption() const
         {
-            return mCaption;
+            return m_caption;
         }
 
-        // Set the window titlebar caption
-        void setCaption(const std::string& caption);
+        /**
+         * @brief  Set the window titlebar caption
+         **/
+        void set_caption(const std::string& caption);
 
-        // Return the screen's background color
+        /**
+         * @brief  Return the screen's background color
+         **/
         const Color& background() const
         {
-            return mBackground;
+            return m_background;
         }
 
-        // Set the screen's background color
-        void setBackground(const Color& background)
+        /**
+         * @brief  Set the screen's background color
+         **/
+        void set_background(const Color& background)
         {
-            mBackground = background;
+            m_background = background;
         }
 
-        // Set the top-level window visibility (no effect on full-screen windows)
-        void setVisible(bool visible);
+        /**
+         * @brief  Set the top-level window visibility (no effect on full-screen windows)
+         **/
+        void set_visible(bool visible);
 
-        // Set window size
-        void setSize(const Vector2i& size);
+        /**
+         * @brief  Set window size
+         **/
+        void set_size(const Vector2i& size);
 
-        // Return the ratio between pixel and device coordinates (e.g. >= 2 on Mac Retina displays)
-        float pixelRatio() const
+        /**
+         * @brief  Return the ratio between pixel and device coordinates (e.g. >= 2 on Mac Retina
+         *displays)
+         **/
+        float pixel_ratio() const
         {
-            return mPixelRatio;
+            return m_pixel_ratio;
         }
 
-        virtual bool onEvent(SDL3::SDL_Event& event);
+        virtual bool on_event(SDL3::SDL_Event& event);
 
-        // Draw the window contents -- put your OpenGL draw calls here
-        virtual void drawContents()
-        { /* To be overridden */
-        }
-
-        // Handle a file drop event
-        virtual bool dropEvent(const std::vector<std::string>& /* filenames */)
+        /**
+         * @brief Draw the window contents
+         * */
+        virtual void draw_contents()
         {
-            return false; /* To be overridden */
+            // override
+            // TODO: OpenGL draw calls here
         }
 
-        // Default keyboard event handler
-        virtual bool keyboardEvent(int key, int scancode, int action, int modifiers) override;
+        /**
+         * @brief  Handle a file drop event
+         **/
+        virtual bool drop_event(const std::vector<std::string>& /* filenames */)
+        {
+            // override
+            return false;
+        }
 
-        // Text input event handler: codepoint is native endian UTF-32 format
-        virtual bool keyboardCharacterEvent(unsigned int codepoint) override;
+        /**
+         * @brief  Default keyboard event handler
+         **/
+        virtual bool kb_button_event(int key, int scancode, int action, int modifiers) override;
 
-        // Window resize event handler
-        virtual bool resizeEvent(const Vector2i&)
+        /**
+         * @brief  Text input event handler: codepoint is native endian UTF-32 format
+         **/
+        virtual bool kb_character_event(unsigned int codepoint) override;
+
+        /**
+         * @brief  Window resize event handler
+         **/
+        virtual bool resize_event(const Vector2i&)
         {
             return false;
         }
 
-        virtual void drawAll();
+        virtual void draw_all();
 
-        // Return the last observed mouse position value
-        Vector2i mousePos() const
+        /**
+         * @brief  Return the last observed mouse position value
+         **/
+        Vector2i mouse_pos() const
         {
-            return mMousePos;
+            return m_mouse_pos;
         }
 
-        // Return a pointer to the underlying GLFW window data structure
+        /**
+         * @brief  Return a pointer to the underlying GLFW window data structure
+         **/
         SDL3::SDL_Window* window()
         {
             return m_sdl_window;
         }
 
-        // Return a pointer to the underlying nanoVG draw context
-        SDL3::SDL_Renderer* sdlRenderer()
+        /**
+         * @brief  Return a pointer to the underlying nanoVG draw context
+         **/
+        SDL3::SDL_Renderer* sdl_renderer()
         {
             return m_sdl_renderer;
         }
 
-        // Compute the layout of all widgets
-        void performLayout();
+        /**
+         * @brief  Compute the layout of all widgets
+         **/
+        void perform_layout();
 
-        template <typename... Args>
-        Window& window(const Args&... args)
+        template <typename... TArgs>
+        Window& window(const TArgs&... args)
         {
             return wdg<Window>(args...);
         }
 
     public:
-        // Initialize the \ref Screen
-        void initialize();
-        void initialize(SDL3::SDL_Window* window);
+        /**
+         * @brief  Initialize the \ref Screen
+         **/
+        void init();
+        void init(SDL3::SDL_Window* window);
 
-        /* Event handlers */
-        bool cursorPosCallbackEvent(double x, double y);
-        bool mouseButtonCallbackEvent(int button, int action, int modifiers);
-        bool keyCallbackEvent(int key, int scancode, int action, int mods);
-        bool charCallbackEvent(unsigned int codepoint);
-        bool dropCallbackEvent(int count, const char** filenames);
-        bool scrollCallbackEvent(double x, double y);
-        bool resizeCallbackEvent(int width, int height);
+        // Event handlers
+        bool cursor_pos_event_callback(double x, double y);
+        bool mouse_button_event_callback(int button, int action, int modifiers);
+        bool keyboard_event_callback(int key, int scancode, int action, int mods);
+        bool character_event_callback(unsigned int codepoint);
+        bool drop_event_callback(int count, const char** filenames);
+        bool scroll_event_callback(double x, double y);
+        bool resize_event_callback(int width, int height);
 
-        /* Internal helper functions */
-        void updateFocus(Widget* widget);
-        void disposeWindow(Window* window);
-        void centerWindow(Window* window);
-        void moveWindowToFront(Window* window);
-        void drawWidgets();
-
-        void performLayout(SDL3::SDL_Renderer* renderer) override;
+        // Internal helper functions
+        void update_focus(Widget* widget);
+        void dispose_window(Window* window);
+        void center_window(Window* window);
+        void move_window_to_front(Window* window);
+        void perform_layout(SDL3::SDL_Renderer* renderer) override;
+        void draw_gui();
 
     protected:
         SDL3::SDL_Window* m_sdl_window{ nullptr };
         std::vector<gui::Widget*> mFocusPath{};
         SDL3::SDL_Renderer* m_sdl_renderer{ nullptr };
-        gui::Vector2i mFBSize{ 0, 0 };
-        float mPixelRatio{ 0.0f };
-        int mMouseState{ 0 };
-        int mModifiers{ 0 };
-        gui::Vector2i mMousePos{ 0, 0 };
-        bool mDragActive{ false };
-        gui::Widget* mDragWidget{ nullptr };
-        uint64_t mLastInteraction{ 0 };
-        bool mProcessEvents{ false };
-        gui::Color mBackground{ 0, 0, 0, 0 };
-        std::string mCaption{};
-        std::string _lastTooltip{};
-        gui::Texture _tooltipTex{};
+        gui::Vector2i m_framebuf_size{ 0, 0 };
+        float m_pixel_ratio{ 0.0f };
+        int m_mouse_state{ 0 };
+        int m_modifiers{ 0 };
+        gui::Vector2i m_mouse_pos{ 0, 0 };
+        bool m_drag_active{ false };
+        gui::Widget* m_drag_widget{ nullptr };
+        uint64_t m_last_interaction{ 0 };
+        bool m_process_events{ false };
+        gui::Color m_background{ 0, 0, 0, 0 };
+        std::string m_caption{};
+        std::string m_last_tooltip{};
+        gui::Texture m_tooltip_texture{};
     };
 }

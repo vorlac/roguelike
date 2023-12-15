@@ -17,7 +17,7 @@
 #include <utility>
 #include <vector>
 
-#include "utils/assert.hpp"
+#include "core/assert.hpp"
 #include "utils/concepts.hpp"
 
 namespace rl::ds {

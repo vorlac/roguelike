@@ -7,7 +7,6 @@
 #include "gui/widget.hpp"
 
 namespace rl::gui {
-
     /**
      * \class TextBox textbox.h sdl_gui/textbox.h
      *
@@ -113,7 +112,7 @@ namespace rl::gui {
         }
 
         /// Set the \ref Theme used to draw this widget
-        void setTheme(Theme* theme) override;
+        void set_theme(Theme* theme) override;
 
         /// Set the change callback
         std::function<bool(const std::string& str)> callback() const
@@ -132,8 +131,8 @@ namespace rl::gui {
         bool mouseDragEvent(const Vector2i& p, const Vector2i& rel, int button,
                             int modifiers) override;
         bool focusEvent(bool focused) override;
-        bool keyboardEvent(int key, int scancode, int action, int modifiers) override;
-        bool keyboardCharacterEvent(unsigned int codepoint) override;
+        bool kb_button_event(int key, int scancode, int action, int modifiers) override;
+        bool kb_character_event(unsigned int codepoint) override;
 
         Vector2i preferredSize(SDL3::SDL_Renderer* ctx) const override;
         void draw(SDL3::SDL_Renderer* renderer) override;
@@ -172,7 +171,7 @@ namespace rl::gui {
         std::string mValueTemp;
         int mCursorPos;
         int mSelectionPos;
-        Vector2i mMousePos;
+        Vector2i m_mouse_pos;
         Vector2i mMouseDownPos;
         Vector2i mMouseDragPos;
         int mMouseDownModifier;
@@ -470,5 +469,4 @@ namespace rl::gui {
         Scalar mValueIncrement;
         Scalar mMinValue, mMaxValue;
     };
-
 }

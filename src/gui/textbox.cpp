@@ -132,7 +132,7 @@ namespace rl::gui {
         , mValueTemp(value)
         , mCursorPos(-1)
         , mSelectionPos(-1)
-        , mMousePos(Vector2i(-1, -1))
+        , m_mouse_pos(Vector2i(-1, -1))
         , mMouseDownPos(Vector2i(-1, -1))
         , mMouseDragPos(Vector2i(-1, -1))
         , mMouseDownModifier(0)
@@ -140,7 +140,7 @@ namespace rl::gui {
         , mLastClick(0)
     {
         if (m_theme)
-            mFontSize = m_theme->mTextBoxFontSize;
+            m_font_size = m_theme->mTextBoxFontSize;
         _captionTex.dirty = true;
         _unitsTex.dirty = true;
     }
@@ -152,11 +152,11 @@ namespace rl::gui {
         setCursor(editable ? Cursor::IBeam : Cursor::Arrow);
     }
 
-    void TextBox::setTheme(Theme* theme)
+    void TextBox::set_theme(Theme* theme)
     {
-        Widget::setTheme(theme);
+        Widget::set_theme(theme);
         if (m_theme)
-            mFontSize = m_theme->mTextBoxFontSize;
+            m_font_size = m_theme->mTextBoxFontSize;
     }
 
     Vector2i TextBox::preferredSize(SDL3::SDL_Renderer* ctx) const
@@ -213,106 +213,109 @@ namespace rl::gui {
     {
         Widget::draw(renderer);
 
-        SDL3::SDL_Point ap = getAbsolutePos();
+        SDL3::SDL_Point ap = get_absolute_pos();
 
         drawBody(renderer);
 
-        Vector2i drawPos = absolutePosition();
+        Vector2i drawPos = absolute_position();
         float unitWidth = 0;
 
         if (mUnitsImage > 0)
         {
-            /*  int w, h;
-              nvgImageSize(ctx, mUnitsImage, &w, &h);
-              float unitHeight = mSize.y() * 0.4f;
-              unitWidth = w * unitHeight / h;
-              NVGpaint imgPaint = nvgImagePattern(
-                  ctx, mPos.x() + mSize.x() - xSpacing - unitWidth,
-                  drawPos.y() - unitHeight * 0.5f, unitWidth, unitHeight, 0,
-                  mUnitsImage, mEnabled ? 0.7f : 0.35f);
-              nvgBeginPath(ctx);
-              nvgRect(ctx, mPos.x() + mSize.x() - xSpacing - unitWidth,
-                      drawPos.y() - unitHeight * 0.5f, unitWidth, unitHeight);
-              nvgFillPaint(ctx, imgPaint);
-              nvgFill(ctx);
-              unitWidth += 2; */
+            // int w, h;
+            // nvgImageSize(ctx, mUnitsImage, &w, &h);
+            // float unitHeight = mSize.y() * 0.4f;
+            // unitWidth = w * unitHeight / h;
+            // NVGpaint imgPaint = nvgImagePattern(
+            //     ctx, mPos.x() + mSize.x() - xSpacing - unitWidth, drawPos.y() - unitHeight *
+            //     0.5f, unitWidth, unitHeight, 0, mUnitsImage, mEnabled ? 0.7f : 0.35f);
+            // nvgBeginPath(ctx);
+            // nvgRect(ctx, mPos.x() + mSize.x() - xSpacing - unitWidth,
+            //         drawPos.y() - unitHeight * 0.5f, unitWidth, unitHeight);
+            // nvgFillPaint(ctx, imgPaint);
+            // nvgFill(ctx);
+            // unitWidth += 2;
         }
         else if (!mUnits.empty())
         {
             if (_unitsTex.dirty)
                 m_theme->getTexAndRectUtf8(renderer, _unitsTex, 0, 0, mUnits.c_str(), "sans",
-                                           fontSize(), Color(255, mEnabled ? 64 : 32));
+                                           fontSize(), Color(255, m_enabled ? 64 : 32));
 
             unitWidth = _unitsTex.w() + 2;
             SDL_RenderCopy(renderer, _unitsTex,
-                           absolutePosition() +
-                               Vector2i(mSize.x - unitWidth, (mSize.y - _unitsTex.h()) * 0.5f));
+                           absolute_position() +
+                               Vector2i(m_size.x - unitWidth, (m_size.y - _unitsTex.h()) * 0.5f));
             unitWidth += (2 + 2);
         }
 
         float spinArrowsWidth = 0.f;
 
-        /*if (mSpinnable && !focused())
-        {
-            spinArrowsWidth = 14.f;
-
-            nvgFontFace(ctx, "icons");
-            nvgFontSize(ctx, ((mFontSize < 0) ? m_theme->mButtonFontSize : mFontSize) * 1.2f);
-
-            bool spinning = mMouseDownPos.x() != -1;
-            {
-                bool hover = mMouseFocus && spinArea(mMousePos) == SpinArea::Top;
-                nvgFillColor(ctx, (mEnabled && (hover || spinning)) ? m_theme->mTextColor :
-        m_theme->mDisabledTextColor); auto icon = utf8(ENTYPO_ICON_CHEVRON_UP); nvgTextAlign(ctx,
-        NVG_ALIGN_LEFT | NVG_ALIGN_MIDDLE); Vector2f iconPos(mPos.x() + 4.f, mPos.y() +
-        mSize.y()/2.f - xSpacing/2.f); nvgText(ctx, iconPos.x(), iconPos.y(), icon.data(), nullptr);
-            }
-
-            {
-                bool hover = mMouseFocus && spinArea(mMousePos) == SpinArea::Bottom;
-                nvgFillColor(ctx, (mEnabled && (hover || spinning)) ? m_theme->mTextColor :
-        m_theme->mDisabledTextColor); auto icon = utf8(ENTYPO_ICON_CHEVRON_DOWN); nvgTextAlign(ctx,
-        NVG_ALIGN_LEFT | NVG_ALIGN_MIDDLE); Vector2f iconPos(mPos.x() + 4.f, mPos.y() +
-        mSize.y()/2.f + xSpacing/2.f + 1.5f); nvgText(ctx, iconPos.x(), iconPos.y(), icon.data(),
-        nullptr);
-            }
-
-            nvgFontSize(ctx, fontSize());
-            nvgFontFace(ctx, "sans");
-        }
-        */
+        // if (mSpinnable && !focused())
+        // {
+        //     spinArrowsWidth = 14.f;
+        //
+        //     nvgFontFace(ctx, "icons");
+        //     nvgFontSize(ctx, ((mFontSize < 0) ? m_theme->mButtonFontSize : mFontSize) * 1.2f);
+        //
+        //     bool spinning = mMouseDownPos.x() != -1;
+        //     {
+        //         bool hover = mMouseFocus && spinArea(m_mouse_pos) == SpinArea::Top;
+        //         nvgFillColor(ctx, (mEnabled && (hover || spinning)) ? m_theme->mTextColor
+        //                                                             :
+        //                                                             m_theme->mDisabledTextColor);
+        //         auto icon = utf8(ENTYPO_ICON_CHEVRON_UP);
+        //         nvgTextAlign(ctx, NVG_ALIGN_LEFT | NVG_ALIGN_MIDDLE);
+        //         Vector2f iconPos(mPos.x() + 4.f, mPos.y() + mSize.y() / 2.f - xSpacing / 2.f);
+        //         nvgText(ctx, iconPos.x(), iconPos.y(), icon.data(), nullptr);
+        //     }
+        //
+        //     {
+        //         bool hover = mMouseFocus && spinArea(m_mouse_pos) == SpinArea::Bottom;
+        //         nvgFillColor(ctx, (mEnabled && (hover || spinning)) ? m_theme->mTextColor
+        //                                                             :
+        //                                                             m_theme->mDisabledTextColor);
+        //         auto icon = utf8(ENTYPO_ICON_CHEVRON_DOWN);
+        //         nvgTextAlign(ctx, NVG_ALIGN_LEFT | NVG_ALIGN_MIDDLE);
+        //         Vector2f iconPos(mPos.x() + 4.f, mPos.y() + mSize.y() / 2.f + xSpacing / 2.f
+        //         + 1.5f); nvgText(ctx, iconPos.x(), iconPos.y(), icon.data(), nullptr);
+        //     }
+        //
+        //     nvgFontSize(ctx, fontSize());
+        //     nvgFontFace(ctx, "sans");
+        // }
 
         float xSpacing = 3.f;
         switch (mAlignment)
         {
             case Alignment::Left:
-                drawPos.x = getAbsoluteLeft() + xSpacing + spinArrowsWidth;
+                drawPos.x = get_absolute_left() + xSpacing + spinArrowsWidth;
                 break;
             case Alignment::Right:
-                drawPos.x = getAbsoluteLeft() + mSize.x - _captionTex.w() - unitWidth - xSpacing;
+                drawPos.x = get_absolute_left() + m_size.x - _captionTex.w() - unitWidth - xSpacing;
                 break;
             case Alignment::Center:
                 if (mUnits.empty())
-                    drawPos.x = getAbsoluteLeft() + mSize.x * 0.5f;
+                    drawPos.x = get_absolute_left() + m_size.x * 0.5f;
                 else
-                    drawPos.x = getAbsoluteLeft() + mSize.x * 0.3f;
+                    drawPos.x = get_absolute_left() + m_size.x * 0.3f;
                 break;
         }
 
         // clip visible text area
-        float clipX = _pos.x + spinArrowsWidth - 1.0f;
-        float clipY = _pos.y + 1.0f;
-        float clipWidth = mSize.x - unitWidth - spinArrowsWidth + 2.0f;
-        float clipHeight = mSize.y - 3.0f;
+        float clipX = m_pos.x + spinArrowsWidth - 1.0f;
+        float clipY = m_pos.y + 1.0f;
+        float clipWidth = m_size.x - unitWidth - spinArrowsWidth + 2.0f;
+        float clipHeight = m_size.y - 3.0f;
 
         Vector2f oldDrawPos(drawPos.x, drawPos.y);
         drawPos.x += mTextOffset;
-        drawPos.y += (mSize.y - _captionTex.h()) / 2;
+        drawPos.y += (m_size.y - _captionTex.h()) / 2;
 
         if (_captionTex.dirty)
             m_theme->getTexAndRectUtf8(
                 renderer, _captionTex, 0, 0, mValue.c_str(), "sans", fontSize(),
-                mEnabled ? m_theme->mTextColor : m_theme->mDisabledTextColor);
+                m_enabled ? m_theme->mTextColor : m_theme->mDisabledTextColor);
 
         if (mCommitted)
         {
@@ -392,7 +395,7 @@ namespace rl::gui {
 
     bool TextBox::mouseButtonEvent(const Vector2i& p, int button, bool down, int modifiers)
     {
-        if (button == SDL_BUTTON_LEFT && down && !mFocused)
+        if (button == SDL_BUTTON_LEFT && down && !m_focused)
         {
             if (!mSpinnable || spinArea(p) == SpinArea::None) /* not on scrolling arrows */
                 requestFocus();
@@ -463,13 +466,13 @@ namespace rl::gui {
     bool TextBox::mouseMotionEvent(const Vector2i& p, const Vector2i& /* rel */, int /* button */,
                                    int /* modifiers */)
     {
-        mMousePos = p;
+        m_mouse_pos = p;
 
         if (!mEditable)
             setCursor(Cursor::Arrow);
-        else if (mSpinnable && !focused() && spinArea(mMousePos) != SpinArea::None) /* scrolling
-                                                                                     * arrows
-                                                                                     */
+        else if (mSpinnable && !focused() && spinArea(m_mouse_pos) != SpinArea::None) /* scrolling
+                                                                                       * arrows
+                                                                                       */
             setCursor(Cursor::Hand);
         else
             setCursor(Cursor::IBeam);
@@ -482,7 +485,7 @@ namespace rl::gui {
     bool TextBox::mouseDragEvent(const Vector2i& p, const Vector2i& /* rel */, int /* button */,
                                  int /* modifiers */)
     {
-        mMousePos = p;
+        m_mouse_pos = p;
         mMouseDragPos = p;
 
         if (mEditable && focused())
@@ -532,7 +535,7 @@ namespace rl::gui {
         return true;
     }
 
-    bool TextBox::keyboardEvent(int key, int /* scancode */, int action, int modifiers)
+    bool TextBox::kb_button_event(int key, int /* scancode */, int action, int modifiers)
     {
         if (mEditable && focused())
         {
@@ -650,7 +653,7 @@ namespace rl::gui {
         return false;
     }
 
-    bool TextBox::keyboardCharacterEvent(unsigned int codepoint)
+    bool TextBox::kb_character_event(unsigned int codepoint)
     {
         if (mEditable && focused())
         {
@@ -815,13 +818,13 @@ namespace rl::gui {
 
     TextBox::SpinArea TextBox::spinArea(const Vector2i& pos)
     {
-        if (0 <= pos.x - _pos.x && pos.x - _pos.x < 14.f)
+        if (0 <= pos.x - m_pos.x && pos.x - m_pos.x < 14.f)
         { /* on scrolling arrows */
-            if (mSize.y >= pos.y - _pos.y && pos.y - _pos.y <= mSize.y / 2.f)
+            if (m_size.y >= pos.y - m_pos.y && pos.y - m_pos.y <= m_size.y / 2.f)
             { /* top part */
                 return SpinArea::Top;
             }
-            else if (0.f <= pos.y - _pos.y && pos.y - _pos.y > mSize.y / 2.f)
+            else if (0.f <= pos.y - m_pos.y && pos.y - m_pos.y > m_size.y / 2.f)
             { /* bottom part */
                 return SpinArea::Bottom;
             }
@@ -837,7 +840,7 @@ namespace rl::gui {
 
             if (texture->tex.tex)
             {
-                auto&& pos = absolutePosition().tofloat();
+                auto&& pos = absolute_position().tofloat();
                 SDL3::SDL_FRect rect{ pos.x, pos.y };
                 SDL3::SDL_RenderTexture(renderer, texture->tex.tex, &rect, nullptr);
 
@@ -846,7 +849,7 @@ namespace rl::gui {
             }
             else if (current_texture_)
             {
-                auto&& pos = absolutePosition().tofloat();
+                auto&& pos = absolute_position().tofloat();
                 SDL3::SDL_FRect rect{ pos.x, pos.y };
                 SDL3::SDL_RenderTexture(renderer, current_texture_->tex.tex, &rect, nullptr);
             }

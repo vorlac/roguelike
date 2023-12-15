@@ -7,17 +7,16 @@
 #include "gui/messagedialog.hpp"
 
 namespace rl::gui {
-
     MessageDialog::MessageDialog(Widget* parent, Type type, const std::string& title,
                                  const std::string& message, const std::string& buttonText,
                                  const std::string& altButtonText, bool altButton)
         : Window(parent, title)
     {
-        setLayout(new BoxLayout(Orientation::Vertical, Alignment::Middle, 10, 10));
+        set_layout(new BoxLayout(Orientation::Vertical, Alignment::Middle, 10, 10));
         setModal(true);
 
         Widget* panel1 = new Widget(this);
-        panel1->setLayout(new BoxLayout(Orientation::Horizontal, Alignment::Middle, 10, 15));
+        panel1->set_layout(new BoxLayout(Orientation::Horizontal, Alignment::Middle, 10, 15));
         int icon = 0;
         switch (type)
         {
@@ -35,7 +34,7 @@ namespace rl::gui {
         iconLabel->setFontSize(50);
         mMessageLabel = new Label(panel1, message);
         Widget* panel2 = new Widget(this);
-        panel2->setLayout(new BoxLayout(Orientation::Horizontal, Alignment::Middle, 0, 15));
+        panel2->set_layout(new BoxLayout(Orientation::Horizontal, Alignment::Middle, 0, 15));
 
         if (altButton)
         {
@@ -55,5 +54,4 @@ namespace rl::gui {
         center();
         requestFocus();
     }
-
 }

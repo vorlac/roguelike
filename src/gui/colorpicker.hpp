@@ -6,7 +6,6 @@
 #include "gui/popupbutton.hpp"
 
 namespace rl::gui {
-
     class ColorWheel;
 
     class ColorPicker : public PopupButton

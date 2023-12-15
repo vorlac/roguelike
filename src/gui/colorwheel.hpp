@@ -3,7 +3,6 @@
 #include "gui/widget.hpp"
 
 namespace rl::gui {
-
     class ColorWheel : public Widget
     {
     public:

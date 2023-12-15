@@ -2,51 +2,50 @@
 #include "gui/theme.hpp"
 
 namespace rl::gui {
-
     Label::Label(Widget* parent, const std::string& caption, const std::string& font, int fontSize)
         : Widget(parent)
-        , mCaption(caption)
+        , m_caption(caption)
         , mFont(font)
     {
         if (m_theme)
         {
-            mFontSize = m_theme->mStandardFontSize;
+            m_font_size = m_theme->mStandardFontSize;
             mColor = m_theme->mTextColor;
         }
 
         if (fontSize >= 0)
-            mFontSize = fontSize;
+            m_font_size = fontSize;
 
         _texture.dirty = true;
     }
 
-    void Label::setTheme(Theme* theme)
+    void Label::set_theme(Theme* theme)
     {
-        Widget::setTheme(theme);
+        Widget::set_theme(theme);
         if (m_theme)
         {
-            mFontSize = m_theme->mStandardFontSize;
+            m_font_size = m_theme->mStandardFontSize;
             mColor = m_theme->mTextColor;
         }
     }
 
     Vector2i Label::preferredSize(SDL3::SDL_Renderer* ctx) const
     {
-        if (mCaption == "")
+        if (m_caption == "")
             return Vector2i::Zero();
 
-        if (mFixedSize.x > 0)
+        if (m_fixed_size.x > 0)
         {
             int w, h;
             const_cast<Label*>(this)->m_theme->getUtf8Bounds(mFont.c_str(), fontSize(),
-                                                             mCaption.c_str(), &w, &h);
-            return Vector2i(mFixedSize.x, h);
+                                                             m_caption.c_str(), &w, &h);
+            return Vector2i(m_fixed_size.x, h);
         }
         else
         {
             int w, h;
             const_cast<Label*>(this)->m_theme->getUtf8Bounds(mFont.c_str(), fontSize(),
-                                                             mCaption.c_str(), &w, &h);
+                                                             m_caption.c_str(), &w, &h);
             return Vector2i(w, m_theme->mStandardFontSize);
         }
     }
@@ -62,12 +61,12 @@ namespace rl::gui {
         Widget::draw(renderer);
 
         if (_texture.dirty)
-            m_theme->getTexAndRectUtf8(renderer, _texture, 0, 0, mCaption.c_str(), mFont.c_str(),
+            m_theme->getTexAndRectUtf8(renderer, _texture, 0, 0, m_caption.c_str(), mFont.c_str(),
                                        fontSize(), mColor);
 
-        if (mFixedSize.x > 0)
+        if (m_fixed_size.x > 0)
         {
-            auto&& pos = absolutePosition();
+            auto&& pos = absolute_position();
             SDL3::SDL_FRect rect{
                 static_cast<float>(pos.x),
                 static_cast<float>(pos.y),
@@ -78,7 +77,8 @@ namespace rl::gui {
         }
         else
         {
-            auto&& pos = absolutePosition() + Vector2i(0, int((mSize.y - _texture.rrect.h) * 0.5f));
+            auto&& pos = absolute_position() +
+                         Vector2i(0, int((m_size.y - _texture.rrect.h) * 0.5f));
             SDL3::SDL_FRect rect{
                 static_cast<float>(pos.x),
                 static_cast<float>(pos.y),

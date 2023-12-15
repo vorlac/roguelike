@@ -11,9 +11,7 @@
 #include "gui/textbox.hpp"
 
 namespace rl::gui {
-
     namespace detail {
-
         /**
          * @brief A template wrapper class for assisting in the creation of various form widgets.
          *
@@ -85,7 +83,7 @@ namespace rl::gui {
      * \rst
      * .. code-block:: cpp
      *
-     *    // [ ... initialize NanoGUI, construct screen ... ]
+     *    // [ ... init NanoGUI, construct screen ... ]
      *
      *    FormHelper* h = new FormHelper(screen);
      *
@@ -126,9 +124,9 @@ namespace rl::gui {
             mLayout = new AdvancedGridLayout({ 10, 0, 10, 0 }, {});
             mLayout->setMargin(10);
             mLayout->setColStretch(2, 1);
-            mWindow->setPosition(pos);
-            mWindow->setLayout(mLayout);
-            mWindow->setVisible(true);
+            mWindow->set_relative_position(pos);
+            mWindow->set_layout(mLayout);
+            mWindow->set_visible(true);
             return mWindow;
         }
 
@@ -194,7 +192,7 @@ namespace rl::gui {
         {
             Button* button = new Button(mWindow, label);
             button->setCallback(cb);
-            button->setFixedHeight(25);
+            button->set_fixed_height(25);
             if (mLayout->rowCount() > 0)
                 mLayout->appendRow(mVariableSpacing);
             mLayout->appendRow(0);
@@ -320,9 +318,6 @@ namespace rl::gui {
 
     namespace detail {
 
-// template specialization unsupported
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
         /* Various types of form widgets for different input types below */
         template <>
         class FormWidget<bool, std::true_type> : public CheckBox
@@ -331,7 +326,7 @@ namespace rl::gui {
             FormWidget(Widget* p)
                 : CheckBox(p, "")
             {
-                setFixedWidth(20);
+                set_fixed_width(20);
             }
 
             void setValue(bool v)
@@ -361,7 +356,7 @@ namespace rl::gui {
 
             T value() const
             {
-                return (T)selectedIndex();
+                return (T)selected_idx();
             }
 
             void setValue(T value)
@@ -448,8 +443,5 @@ namespace rl::gui {
                 return color();
             }
         };
-
-#endif  // DOXYGEN_SHOULD_SKIP_THIS
-
     }
 }

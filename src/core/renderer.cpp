@@ -3,13 +3,13 @@
 #include <memory>
 #include <tuple>
 
+#include "core/assert.hpp"
 #include "core/renderer.hpp"
 #include "core/window.hpp"
 #include "ds/color.hpp"
 #include "ds/dims.hpp"
 #include "gl/shader.hpp"
 #include "sdl/defs.hpp"
-#include "utils/assert.hpp"
 #include "utils/io.hpp"
 
 SDL_C_LIB_BEGIN

@@ -3,7 +3,6 @@
 #include "gui/window.hpp"
 
 namespace rl::gui {
-
     class Label;
 
     class MessageDialog : public Window
@@ -65,5 +64,4 @@ namespace rl::gui {
         std::function<void(int)> mCallback;
         Label* mMessageLabel;
     };
-
 }

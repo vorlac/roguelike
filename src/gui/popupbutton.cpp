@@ -1,13 +1,3 @@
-/*
-    sdlgui/popupbutton.cpp -- Button which launches a popup widget
-
-    Based on NanoGUI by Wenzel Jakob <wenzel@inf.ethz.ch>.
-    Adaptation for SDL by Dalerank <dalerankn8@gmail.com>
-
-    All rights reserved. Use of this source code is governed by a
-    BSD-style license that can be found in the LICENSE.txt file.
-*/
-
 #include <array>
 
 #include "gui/entypo.hpp"
@@ -15,7 +5,6 @@
 #include "gui/theme.hpp"
 
 namespace rl::gui {
-
     PopupButton::PopupButton(Widget* parent, const std::string& caption, int buttonIcon,
                              int chevronIcon)
         : Button(parent, caption, buttonIcon)
@@ -25,8 +14,8 @@ namespace rl::gui {
 
         Window* parentWindow = window();
         mPopup = new Popup(parentWindow->parent(), window());
-        mPopup->setSize(Vector2i(320, 250));
-        mPopup->setVisible(false);
+        mPopup->set_size(Vector2i(320, 250));
+        mPopup->set_visible(false);
     }
 
     Vector2i PopupButton::preferredSize(SDL3::SDL_Renderer* ctx) const
@@ -36,10 +25,10 @@ namespace rl::gui {
 
     void PopupButton::draw(SDL3::SDL_Renderer* renderer)
     {
-        if (!mEnabled && mPushed)
+        if (!m_enabled && mPushed)
             mPushed = false;
 
-        mPopup->setVisible(mPushed);
+        mPopup->set_visible(mPushed);
         Button::draw(renderer);
 
         if (mChevronIcon)
@@ -48,15 +37,16 @@ namespace rl::gui {
             {
                 auto icon = utf8(mChevronIcon);
                 Color textColor = { (mTextColor.a() == 0.0f) ? m_theme->mTextColor : mTextColor };
-                if (!mEnabled)
+                if (!m_enabled)
                     textColor = m_theme->mDisabledTextColor;
-                int fntsize = (int)((mFontSize < 0 ? m_theme->mButtonFontSize : mFontSize) * 1.5f);
+                int fntsize = (int)((m_font_size < 0 ? m_theme->mButtonFontSize : m_font_size) *
+                                    1.5f);
                 m_theme->getTexAndRectUtf8(renderer, _chevronTex, 0, 0, icon.data(), "icons",
                                            fntsize, textColor);
             }
 
-            auto&& ap = absolutePosition();
-            auto&& vec = ap + Vector2i(mSize.x - _chevronTex.w() - 8, int(mSize.y * 0.5f - 1.0f));
+            auto&& ap = absolute_position();
+            auto&& vec = ap + Vector2i(m_size.x - _chevronTex.w() - 8, int(m_size.y * 0.5f - 1.0f));
             SDL3::SDL_FRect rect{
                 static_cast<float>(vec.x),
                 static_cast<float>(vec.y),
@@ -67,15 +57,14 @@ namespace rl::gui {
         }
     }
 
-    void PopupButton::performLayout(SDL3::SDL_Renderer* ctx)
+    void PopupButton::perform_layout(SDL3::SDL_Renderer* ctx)
     {
-        Widget::performLayout(ctx);
+        Widget::perform_layout(ctx);
 
         const Window* parentWindow = window();
 
         mPopup->setAnchorPos(
             Vector2i(parentWindow->width() + 15,
-                     absolutePosition().y - parentWindow->position().y + mSize.y / 2));
+                     absolute_position().y - parentWindow->relative_position().y + m_size.y / 2));
     }
-
 }
