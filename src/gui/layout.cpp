@@ -9,13 +9,13 @@
 namespace rl::gui {
     BoxLayout::BoxLayout(Orientation orientation, Alignment alignment, int margin, int spacing)
         : mOrientation(orientation)
-        , mAlignment(alignment)
+        , m_alignment(alignment)
         , mMargin(margin)
         , mSpacing(spacing)
     {
     }
 
-    Vector2i BoxLayout::preferredSize(SDL3::SDL_Renderer* ctx, const Widget* widget) const
+    Vector2i BoxLayout::preferred_size(SDL3::SDL_Renderer* ctx, const Widget* widget) const
     {
         Vector2i size(2 * mMargin, 2 * mMargin);
 
@@ -24,9 +24,9 @@ namespace rl::gui {
         if (window && !window->title().empty())
         {
             if (mOrientation == Orientation::Vertical)
-                size[1] += widget->theme()->mWindowHeaderHeight - mMargin / 2;
+                size[1] += widget->theme()->m_window_header_height - mMargin / 2;
             else
-                yOffset = widget->theme()->mWindowHeaderHeight;
+                yOffset = widget->theme()->m_window_header_height;
         }
 
         bool first = true;
@@ -40,7 +40,7 @@ namespace rl::gui {
             else
                 size[axis1] += mSpacing;
 
-            Vector2i ps = w->preferredSize(ctx), fs = w->fixed_size();
+            Vector2i ps = w->preferred_size(ctx), fs = w->fixed_size();
             Vector2i targetSize(fs[0] ? fs[0] : ps[0], fs[1] ? fs[1] : ps[1]);
 
             size[axis1] += targetSize[axis1];
@@ -65,11 +65,11 @@ namespace rl::gui {
         {
             if (mOrientation == Orientation::Vertical)
             {
-                _position += widget->theme()->mWindowHeaderHeight - mMargin / 2;
+                _position += widget->theme()->m_window_header_height - mMargin / 2;
             }
             else
             {
-                yOffset = widget->theme()->mWindowHeaderHeight;
+                yOffset = widget->theme()->m_window_header_height;
                 containerSize[1] -= yOffset;
             }
         }
@@ -84,13 +84,13 @@ namespace rl::gui {
             else
                 _position += mSpacing;
 
-            Vector2i ps = w->preferredSize(ctx), fs = w->fixed_size();
+            Vector2i ps = w->preferred_size(ctx), fs = w->fixed_size();
             Vector2i targetSize(fs.x ? fs.x : ps.x, fs.y ? fs.y : ps.y);
             Vector2i pos(0, yOffset);
 
             pos[axis1] = _position;
 
-            switch (mAlignment)
+            switch (m_alignment)
             {
                 case Alignment::Minimum:
                     pos[axis2] += mMargin;
@@ -115,13 +115,13 @@ namespace rl::gui {
         }
     }
 
-    Vector2i GroupLayout::preferredSize(SDL3::SDL_Renderer* ctx, const Widget* widget) const
+    Vector2i GroupLayout::preferred_size(SDL3::SDL_Renderer* ctx, const Widget* widget) const
     {
         int hh = mMargin, ww = 2 * mMargin;
 
         const Window* window = dynamic_cast<const Window*>(widget);
         if (window && !window->title().empty())
-            hh += widget->theme()->mWindowHeaderHeight - mMargin / 2;
+            hh += widget->theme()->m_window_header_height - mMargin / 2;
 
         bool first = true, indent = false;
         for (auto c : widget->children())
@@ -133,7 +133,7 @@ namespace rl::gui {
                 hh += (label == nullptr) ? mSpacing : mGroupSpacing;
             first = false;
 
-            Vector2i ps = c->preferredSize(ctx), fs = c->fixed_size();
+            Vector2i ps = c->preferred_size(ctx), fs = c->fixed_size();
             Vector2i targetSize(fs.x ? fs.x : ps.x, fs.y ? fs.y : ps.y);
 
             bool indentCur = indent && label == nullptr;
@@ -155,7 +155,7 @@ namespace rl::gui {
 
         const Window* window = dynamic_cast<const Window*>(widget);
         if (window && !window->title().empty())
-            hh += widget->theme()->mWindowHeaderHeight - mMargin / 2;
+            hh += widget->theme()->m_window_header_height - mMargin / 2;
 
         bool first = true, indent = false;
         for (auto c : widget->children())
@@ -169,7 +169,7 @@ namespace rl::gui {
 
             bool indentCur = indent && label == nullptr;
             Vector2i ps = Vector2i{ availableWidth - (indentCur ? mGroupIndent : 0),
-                                    c->preferredSize(ctx).y };
+                                    c->preferred_size(ctx).y };
             Vector2i fs = c->fixed_size();
 
             Vector2i targetSize(fs.x ? fs.x : ps.x, fs.y ? fs.y : ps.y);
@@ -185,7 +185,7 @@ namespace rl::gui {
         }
     }
 
-    Vector2i GridLayout::preferredSize(SDL3::SDL_Renderer* ctx, const Widget* widget) const
+    Vector2i GridLayout::preferred_size(SDL3::SDL_Renderer* ctx, const Widget* widget) const
     {
         /* Compute minimum row / column sizes */
         std::vector<int> grid[2];
@@ -198,7 +198,7 @@ namespace rl::gui {
 
         const Window* window = dynamic_cast<const Window*>(widget);
         if (window && !window->title().empty())
-            size[1] += widget->theme()->mWindowHeaderHeight - mMargin / 2;
+            size[1] += widget->theme()->m_window_header_height - mMargin / 2;
 
         return size;
     }
@@ -234,7 +234,7 @@ namespace rl::gui {
                 }
                 while (!w->visible());
 
-                Vector2i ps = w->preferredSize(ctx);
+                Vector2i ps = w->preferred_size(ctx);
                 Vector2i fs = w->fixed_size();
                 Vector2i targetSize(fs.x ? fs.x : ps.x, fs.y ? fs.y : ps.y);
 
@@ -255,10 +255,10 @@ namespace rl::gui {
         computeLayout(ctx, widget, grid);
         int dim[2] = { (int)grid[0].size(), (int)grid[1].size() };
 
-        Vector2i extra = Vector2i::Zero();
+        Vector2i extra = Vector2i::zero();
         const Window* window = dynamic_cast<const Window*>(widget);
         if (window && !window->title().empty())
-            extra[1] += widget->theme()->mWindowHeaderHeight - mMargin / 2;
+            extra[1] += widget->theme()->m_window_header_height - mMargin / 2;
 
         /* Strech to size provided by \c widget */
         for (int i = 0; i < 2; i++)
@@ -285,7 +285,7 @@ namespace rl::gui {
         }
 
         int axis1 = (int)mOrientation, axis2 = (axis1 + 1) % 2;
-        Vector2i start = Vector2i::Constant(mMargin) + extra;
+        Vector2i start = Vector2i::constant(mMargin) + extra;
 
         size_t numChildren = widget->children().size();
         size_t child = 0;
@@ -305,7 +305,7 @@ namespace rl::gui {
                 }
                 while (!w->visible());
 
-                Vector2i ps = w->preferredSize(ctx);
+                Vector2i ps = w->preferred_size(ctx);
                 Vector2i fs = w->fixed_size();
                 Vector2i targetSize(fs[0] ? fs[0] : ps[0], fs[1] ? fs[1] : ps[1]);
 
@@ -350,7 +350,7 @@ namespace rl::gui {
         mRowStretch.resize(mRows.size(), 0);
     }
 
-    Vector2i AdvancedGridLayout::preferredSize(SDL3::SDL_Renderer* ctx, const Widget* widget) const
+    Vector2i AdvancedGridLayout::preferred_size(SDL3::SDL_Renderer* ctx, const Widget* widget) const
     {
         /* Compute minimum row / column sizes */
         std::vector<int> grid[2];
@@ -359,10 +359,10 @@ namespace rl::gui {
         Vector2i size(std::accumulate(grid[0].begin(), grid[0].end(), 0),
                       std::accumulate(grid[1].begin(), grid[1].end(), 0));
 
-        Vector2i extra = Vector2i::Constant(2 * mMargin);
+        Vector2i extra = Vector2i::constant(2 * mMargin);
         const Window* window = dynamic_cast<const Window*>(widget);
         if (window && !window->title().empty())
-            extra[1] += widget->theme()->mWindowHeaderHeight - mMargin / 2;
+            extra[1] += widget->theme()->m_window_header_height - mMargin / 2;
 
         return size + extra;
     }
@@ -375,7 +375,7 @@ namespace rl::gui {
         grid[0].insert(grid[0].begin(), mMargin);
         const Window* window = dynamic_cast<const Window*>(widget);
         if (window && !window->title().empty())
-            grid[1].insert(grid[1].begin(), widget->theme()->mWindowHeaderHeight + mMargin / 2);
+            grid[1].insert(grid[1].begin(), widget->theme()->m_window_header_height + mMargin / 2);
         else
             grid[1].insert(grid[1].begin(), mMargin);
 
@@ -392,7 +392,7 @@ namespace rl::gui {
 
                 int itemPos = grid[axis][anchor.pos[axis]];
                 int cellSize = grid[axis][anchor.pos[axis] + anchor.size[axis]] - itemPos;
-                int ps = w->preferredSize(ctx)[axis], fs = w->fixed_size()[axis];
+                int ps = w->preferred_size(ctx)[axis], fs = w->fixed_size()[axis];
                 int targetSize = fs ? fs : ps;
 
                 switch (anchor.align[axis])
@@ -430,7 +430,7 @@ namespace rl::gui {
         Vector2i extra(2 * mMargin, 2 * mMargin);
         const Window* window = dynamic_cast<const Window*>(widget);
         if (window && !window->title().empty())
-            extra[1] += widget->theme()->mWindowHeaderHeight - mMargin / 2;
+            extra[1] += widget->theme()->m_window_header_height - mMargin / 2;
 
         containerSize -= extra;
 
@@ -451,7 +451,7 @@ namespace rl::gui {
                     const Anchor& anchor = pair.second;
                     if ((anchor.size[axis] == 1) != (phase == 0))
                         continue;
-                    int ps = w->preferredSize(ctx)[axis], fs = w->fixed_size()[axis];
+                    int ps = w->preferred_size(ctx)[axis], fs = w->fixed_size()[axis];
                     int targetSize = fs ? fs : ps;
 
                     if (anchor.pos[axis] + anchor.size[axis] > (int)grid.size())

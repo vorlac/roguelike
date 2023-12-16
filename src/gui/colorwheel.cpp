@@ -11,10 +11,10 @@ namespace rl::gui {
         : Widget(parent)
         , mDragRegion(None)
     {
-        setColor(rgb);
+        set_color(rgb);
     }
 
-    Vector2i ColorWheel::preferredSize(SDL3::SDL_Renderer*) const
+    Vector2i ColorWheel::preferred_size(SDL3::SDL_Renderer*) const
     {
         return { 100, 100 };
     }
@@ -26,7 +26,7 @@ namespace rl::gui {
         // if (!mVisible)
         //     return;
         //
-        // float x = mPos.x(), y = mPos.y(), w = mSize.x(), h = mSize.y();
+        // float x = mPos.x(), y = mPos.y(), w = m_size.x(), h = m_size.y();
         //
         // SDL3::SDL_Renderer* vg = ctx;
         //
@@ -131,9 +131,9 @@ namespace rl::gui {
         // nvgRestore(vg);
     }
 
-    bool ColorWheel::mouseButtonEvent(const Vector2i& p, int button, bool down, int modifiers)
+    bool ColorWheel::mouse_button_event(const Vector2i& p, int button, bool down, int modifiers)
     {
-        Widget::mouseButtonEvent(p, button, down, modifiers);
+        Widget::mouse_button_event(p, button, down, modifiers);
         if (!m_enabled || button != SDL_BUTTON_LEFT)
             return false;
 
@@ -149,7 +149,7 @@ namespace rl::gui {
         }
     }
 
-    bool ColorWheel::mouseDragEvent(const Vector2i& p, const Vector2i&, int, int)
+    bool ColorWheel::mouse_drag_event(const Vector2i& p, const Vector2i&, int, int)
     {
         return adjustPosition(p, mDragRegion) != None;
     }
@@ -158,8 +158,8 @@ namespace rl::gui {
     {
         /*   float x = p.x - _pos.x,
                  y = p.y - _pos.y,
-                 w = mSize.x,
-                 h = mSize.y;
+                 w = m_size.x,
+                 h = m_size.y;
 
            float cx = w*0.5f;
            float cy = h*0.5f;
@@ -180,8 +180,8 @@ namespace rl::gui {
                    mHue += NVG_PI;
                mHue /= 2*NVG_PI;
 
-               if (mCallback)
-                   mCallback(color());
+               if (m_checkbox_callback)
+                   m_checkbox_callback(color());
 
                return OuterCircle;
            }
@@ -222,8 +222,8 @@ namespace rl::gui {
                l1 /= sum;
                mWhite = l0;
                mBlack = l1;
-               if (mCallback)
-                   mCallback(color());
+               if (m_checkbox_callback)
+                   m_checkbox_callback(color());
                return InnerTriangle;
            }
            */
@@ -289,7 +289,7 @@ namespace rl::gui {
         return rgb * (1 - mWhite - mBlack) + black * mBlack + white * mWhite;
     }
 
-    void ColorWheel::setColor(const Color& rgb)
+    void ColorWheel::set_color(const Color& rgb)
     {
         /*    float r = rgb[0], g = rgb[1], b = rgb[2];
 

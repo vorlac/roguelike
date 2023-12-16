@@ -13,13 +13,13 @@ namespace rl::gui {
         VScrollPanel(Widget* parent);
 
         void perform_layout(SDL3::SDL_Renderer* ctx) override;
-        Vector2i preferredSize(SDL3::SDL_Renderer* ctx) const override;
-        bool mouseDragEvent(const Vector2i& p, const Vector2i& rel, int button,
-                            int modifiers) override;
-        bool scrollEvent(const Vector2i& p, const Vector2f& rel) override;
-        bool mouseButtonEvent(const Vector2i& p, int button, bool down, int modifiers) override;
-        bool mouseMotionEvent(const Vector2i& p, const Vector2i& rel, int button,
+        Vector2i preferred_size(SDL3::SDL_Renderer* ctx) const override;
+        bool mouse_drag_event(const Vector2i& p, const Vector2i& rel, int button,
                               int modifiers) override;
+        bool scroll_event(const Vector2i& p, const Vector2f& rel) override;
+        bool mouse_button_event(const Vector2i& p, int button, bool down, int modifiers) override;
+        bool mouse_motion_event(const Vector2i& p, const Vector2i& rel, int button,
+                                int modifiers) override;
         void draw(SDL3::SDL_Renderer* render) override;
 
         SDL3::SDL_Point get_absolute_pos() const override;
@@ -27,8 +27,8 @@ namespace rl::gui {
         int get_absolute_top() const override;
 
     protected:
-        int mChildPreferredHeight;
-        float mScroll;
-        int mDOffset = 0;
+        int m_child_preferred_height;
+        float m_scroll;
+        int m_doffset = 0;
     };
 }

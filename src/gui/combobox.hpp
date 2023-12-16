@@ -27,7 +27,7 @@ namespace rl::gui {
             return m_cb_pressed_callback;
         }
 
-        void setCallback(std::function<void(int)>&& callback)
+        void set_callback(std::function<void(int)>&& callback)
         {
             m_cb_pressed_callback = std::move(callback);
         }
@@ -37,7 +37,7 @@ namespace rl::gui {
             return mSelectedIndex;
         }
 
-        void setSelectedIndex(int idx);
+        void set_selected_index(int idx);
 
         void setItems(const std::vector<std::string>& items,
                       const std::vector<std::string>& itemsShort);
@@ -63,7 +63,7 @@ namespace rl::gui {
             return *this;
         }
 
-        bool scrollEvent(const Vector2i& p, const Vector2f& rel) override;
+        bool scroll_event(const Vector2i& p, const Vector2f& rel) override;
 
     protected:
         std::vector<std::string> mItems, mItemsShort;

@@ -98,7 +98,7 @@ namespace rl::gui {
     {
         m_sdl_window = window;
         SDL3::SDL_GetWindowSize(window, &m_size[0], &m_size[1]);
-        SDL3::SDL_GetWindowSize(window, &m_framebuf_size[0], &m_framebuf_size[1]);
+        SDL3::SDL_GetWindowSize(window, &m_framebuf_size.width, &m_framebuf_size.height);
 
         SDL3::SDL_Surface* surface = SDL3::SDL_CreateSurface(m_size.x, m_size.y,
                                                              SDL3::SDL_PIXELFORMAT_RGBA8888);
@@ -165,7 +165,7 @@ namespace rl::gui {
             return;
 
         // Calculate pixel ratio for hi-dpi devices.
-        m_pixel_ratio = (float)m_framebuf_size[0] / (float)m_size[0];
+        m_pixel_ratio = static_cast<f32>(m_framebuf_size.width) / static_cast<f32>(m_size[0]);
 
         SDL3::SDL_Renderer* renderer = SDL3::SDL_GetRenderer(m_sdl_window);
         Widget::draw(renderer);
@@ -175,7 +175,7 @@ namespace rl::gui {
         if (elapsed_sec > 0.5f)
         {
             /* Draw tooltips */
-            const Widget* widget = findWidget(m_mouse_pos);
+            const Widget* widget = find_widget(m_mouse_pos);
             if (widget && !widget->tooltip().empty())
             {
                 int tooltipWidth = 150;
@@ -183,8 +183,9 @@ namespace rl::gui {
                 if (m_last_tooltip != widget->tooltip())
                 {
                     m_last_tooltip = widget->tooltip();
-                    m_theme->getTexAndRectUtf8(renderer, m_tooltip_texture, 0, 0,
-                                               m_last_tooltip.c_str(), "sans", 15, Color(1.f, 1.f));
+                    m_theme->get_texture_and_rect_utf8(renderer, m_tooltip_texture, 0, 0,
+                                                       m_last_tooltip.c_str(), "sans", 15,
+                                                       Color(1.f, 1.f));
                 }
 
                 if (m_tooltip_texture.tex)
@@ -225,9 +226,9 @@ namespace rl::gui {
 
     bool Screen::kb_button_event(int key, int scancode, int action, int modifiers)
     {
-        if (mFocusPath.size() > 0)
+        if (m_focus_path.size() > 0)
         {
-            for (auto it = mFocusPath.rbegin() + 1; it != mFocusPath.rend(); ++it)
+            for (auto it = m_focus_path.rbegin() + 1; it != m_focus_path.rend(); ++it)
                 if ((*it)->focused() && (*it)->kb_button_event(key, scancode, action, modifiers))
                     return true;
         }
@@ -237,9 +238,9 @@ namespace rl::gui {
 
     bool Screen::kb_character_event(unsigned int codepoint)
     {
-        if (mFocusPath.size() > 0)
+        if (m_focus_path.size() > 0)
         {
-            for (auto it = mFocusPath.rbegin() + 1; it != mFocusPath.rend(); ++it)
+            for (auto it = m_focus_path.rbegin() + 1; it != m_focus_path.rend(); ++it)
                 if ((*it)->focused() && (*it)->kb_character_event(codepoint))
                     return true;
         }
@@ -257,7 +258,7 @@ namespace rl::gui {
 
             if (!m_drag_active)
             {
-                Widget* widget = findWidget(p);
+                Widget* widget = find_widget(p);
                 /*if (widget != nullptr && widget->cursor() != mCursor) {
                     mCursor = widget->cursor();
                     glfwSetCursor(mGLFWWindow, mCursors[(int) mCursor]);
@@ -265,12 +266,13 @@ namespace rl::gui {
             }
             else
             {
-                ret = m_drag_widget->mouseDragEvent(p - m_drag_widget->parent()->absolute_position(),
-                                                    p - m_mouse_pos, m_mouse_state, m_modifiers);
+                ret = m_drag_widget->mouse_drag_event(
+                    p - m_drag_widget->parent()->absolute_position(), p - m_mouse_pos,
+                    m_mouse_state, m_modifiers);
             }
 
             if (!ret)
-                ret = mouseMotionEvent(p, p - m_mouse_pos, m_mouse_state, m_modifiers);
+                ret = mouse_motion_event(p, p - m_mouse_pos, m_mouse_state, m_modifiers);
 
             m_mouse_pos = p;
 
@@ -289,9 +291,9 @@ namespace rl::gui {
         m_last_interaction = SDL3::SDL_GetTicks();
         try
         {
-            if (mFocusPath.size() > 1)
+            if (m_focus_path.size() > 1)
             {
-                const Window* window = dynamic_cast<Window*>(mFocusPath[mFocusPath.size() - 2]);
+                const Window* window = dynamic_cast<Window*>(m_focus_path[m_focus_path.size() - 2]);
                 if (window && window->modal())
                 {
                     if (!window->contains(m_mouse_pos))
@@ -304,10 +306,10 @@ namespace rl::gui {
             else
                 m_mouse_state &= ~(1 << button);
 
-            auto dropWidget = findWidget(m_mouse_pos);
+            auto dropWidget = find_widget(m_mouse_pos);
             if (m_drag_active && action == SDL3::SDL_EVENT_MOUSE_BUTTON_UP &&
                 dropWidget != m_drag_widget)
-                m_drag_widget->mouseButtonEvent(
+                m_drag_widget->mouse_button_event(
                     m_mouse_pos - m_drag_widget->parent()->absolute_position(), button, false,
                     m_modifiers);
 
@@ -318,7 +320,7 @@ namespace rl::gui {
 
             if (action == SDL3::SDL_EVENT_MOUSE_BUTTON_DOWN && button == SDL_BUTTON_LEFT)
             {
-                m_drag_widget = findWidget(m_mouse_pos);
+                m_drag_widget = find_widget(m_mouse_pos);
                 if (m_drag_widget == this)
                     m_drag_widget = nullptr;
                 m_drag_active = m_drag_widget != nullptr;
@@ -331,8 +333,8 @@ namespace rl::gui {
                 m_drag_widget = nullptr;
             }
 
-            return mouseButtonEvent(m_mouse_pos, button,
-                                    action == SDL3::SDL_EVENT_MOUSE_BUTTON_DOWN, m_modifiers);
+            return mouse_button_event(m_mouse_pos, button,
+                                      action == SDL3::SDL_EVENT_MOUSE_BUTTON_DOWN, m_modifiers);
         }
         catch (const std::exception& e)
         {
@@ -382,16 +384,16 @@ namespace rl::gui {
         m_last_interaction = SDL3::SDL_GetTicks();
         try
         {
-            if (mFocusPath.size() > 1)
+            if (m_focus_path.size() > 1)
             {
-                const Window* window = dynamic_cast<Window*>(mFocusPath[mFocusPath.size() - 2]);
+                const Window* window = dynamic_cast<Window*>(m_focus_path[m_focus_path.size() - 2]);
                 if (window && window->modal())
                 {
                     if (!window->contains(m_mouse_pos))
                         return false;
                 }
             }
-            return scrollEvent(m_mouse_pos, Vector2f((float)x, (float)y));
+            return scroll_event(m_mouse_pos, Vector2f((float)x, (float)y));
         }
         catch (const std::exception& e)
         {
@@ -402,47 +404,39 @@ namespace rl::gui {
 
     bool Screen::resize_event_callback(int, int)
     {
-        Vector2i fbSize, size;
+        ds::dims<i32> fb_size{ 0, 0 };
+        Vector2i size{ 0, 0 };
         // glfwGetFramebufferSize(mGLFWWindow, &fbSize[0], &fbSize[1]);
         SDL_GetWindowSize(m_sdl_window, &size[0], &size[1]);
 
-        if (m_framebuf_size == Vector2i(0, 0) || size == Vector2i(0, 0))
+        if (m_framebuf_size.area() == 0 || size == Vector2i(0, 0))
             return false;
 
-        m_framebuf_size = fbSize;
         m_size = size;
+        m_framebuf_size = std::move(fb_size);
         m_last_interaction = SDL3::SDL_GetTicks();
-
-        try
-        {
-            return resize_event(m_size);
-        }
-        catch (const std::exception& e)
-        {
-            std::cerr << "Caught exception in event handler: " << e.what() << std::endl;
-            abort();
-        }
+        return this->resize_event(m_size);
     }
 
     void Screen::update_focus(Widget* widget)
     {
-        for (auto w : mFocusPath)
+        for (auto w : m_focus_path)
         {
             if (!w->focused())
                 continue;
-            w->focusEvent(false);
+            w->focus_event(false);
         }
-        mFocusPath.clear();
+        m_focus_path.clear();
         Widget* window = nullptr;
         while (widget)
         {
-            mFocusPath.push_back(widget);
+            m_focus_path.push_back(widget);
             if (dynamic_cast<Window*>(widget))
                 window = widget;
             widget = widget->parent();
         }
-        for (auto it = mFocusPath.rbegin(); it != mFocusPath.rend(); ++it)
-            (*it)->focusEvent(true);
+        for (auto it = m_focus_path.rbegin(); it != m_focus_path.rend(); ++it)
+            (*it)->focus_event(true);
 
         if (window)
             move_window_to_front((Window*)window);
@@ -450,8 +444,8 @@ namespace rl::gui {
 
     void Screen::dispose_window(Window* window)
     {
-        if (std::find(mFocusPath.begin(), mFocusPath.end(), window) != mFocusPath.end())
-            mFocusPath.clear();
+        if (std::find(m_focus_path.begin(), m_focus_path.end(), window) != m_focus_path.end())
+            m_focus_path.clear();
         if (m_drag_widget == window)
             m_drag_widget = nullptr;
         remove_child(window);
@@ -461,7 +455,7 @@ namespace rl::gui {
     {
         if (window->size() == Vector2i{ 0, 0 })
         {
-            window->set_size(window->preferredSize(m_sdl_renderer));
+            window->set_size(window->preferred_size(m_sdl_renderer));
             window->perform_layout(m_sdl_renderer);
         }
         window->set_relative_position((m_size - window->size()) / 2);

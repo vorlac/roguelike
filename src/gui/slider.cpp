@@ -22,7 +22,7 @@ namespace rl::gui {
             AsyncTexture* self = this;
             std::thread tgr([=]() {
                 Theme* mTheme = slider->theme();
-                std::lock_guard<std::mutex> guard(mTheme->loadMutex);
+                std::lock_guard<std::mutex> guard(mTheme->m_load_mutex);
 
                 int ww = slider->width();
                 int hh = slider->height();
@@ -42,8 +42,8 @@ namespace rl::gui {
                 float widthX = ww - 2 * (kr + kshadow);
 
                 NVGpaint bg = nvgBoxGradient(ctx, 0, center.y - rh / 2 + 1, ww, rh, 3, 3,
-                                             Color(0, enabled ? 32 : 10).toNvgColor(),
-                                             Color(0, enabled ? 128 : 210).toNvgColor());
+                                             Color(0, enabled ? 32 : 10).to_nvg_color(),
+                                             Color(0, enabled ? 128 : 210).to_nvg_color());
 
                 nvgBeginPath(ctx);
                 nvgRoundedRect(ctx, 0, center.y - rh / 2 + 1, ww, rh, 2);
@@ -57,7 +57,7 @@ namespace rl::gui {
                                    center.y - kshadow + 1,
                                    widthX * (mHighlightedRange.second - mHighlightedRange.first),
                                    kshadow * 2, 2);
-                    nvgFillColor(ctx, slider->highlightColor().toNvgColor());
+                    nvgFillColor(ctx, slider->highlightColor().to_nvg_color());
                     nvgFill(ctx);
                 }
 
@@ -76,13 +76,13 @@ namespace rl::gui {
 
             std::thread tgr([=]() {
                 Theme* mTheme = slider->theme();
-                std::lock_guard<std::mutex> guard(mTheme->loadMutex);
+                std::lock_guard<std::mutex> guard(mTheme->m_load_mutex);
 
                 int hh = slider->height();
                 int ww = hh;
 
                 auto mRange = slider->range();
-                float mValue = slider->value();
+                float m_value = slider->value();
 
                 NVGcontext* ctx = nvgCreateRT(NVG_DEBUG, ww, hh, 0);
 
@@ -98,8 +98,8 @@ namespace rl::gui {
                 Vector2f knobPos(startX, center.y + 0.5f);
 
                 NVGpaint knobShadow = nvgRadialGradient(ctx, knobPos.x, knobPos.y, kr - kshadow,
-                                                        kr + kshadow, Color(0, 64).toNvgColor(),
-                                                        mTheme->mTransparent.toNvgColor());
+                                                        kr + kshadow, Color(0, 64).to_nvg_color(),
+                                                        mTheme->m_transparent.to_nvg_color());
 
                 nvgBeginPath(ctx);
                 nvgRect(ctx, knobPos.x - kr - 5, knobPos.y - kr - 5, kr * 2 + 10,
@@ -110,21 +110,21 @@ namespace rl::gui {
                 nvgFill(ctx);
 
                 NVGpaint knob = nvgLinearGradient(ctx, 0, center.y - kr, 0, center.y + kr,
-                                                  mTheme->mBorderLight.toNvgColor(),
-                                                  mTheme->mBorderMedium.toNvgColor());
+                                                  mTheme->m_border_light.to_nvg_color(),
+                                                  mTheme->m_border_medium.to_nvg_color());
                 NVGpaint knobReverse = nvgLinearGradient(ctx, 0, center.y - kr, 0, center.y + kr,
-                                                         mTheme->mBorderMedium.toNvgColor(),
-                                                         mTheme->mBorderLight.toNvgColor());
+                                                         mTheme->m_border_medium.to_nvg_color(),
+                                                         mTheme->m_border_light.to_nvg_color());
 
                 nvgBeginPath(ctx);
                 nvgCircle(ctx, knobPos.x, knobPos.y, kr);
-                nvgStrokeColor(ctx, mTheme->mBorderDark.toNvgColor());
+                nvgStrokeColor(ctx, mTheme->m_border_dark.to_nvg_color());
                 nvgFillPaint(ctx, knob);
                 nvgStroke(ctx);
                 nvgFill(ctx);
                 nvgBeginPath(ctx);
                 nvgCircle(ctx, knobPos.x, knobPos.y, kr / 2);
-                nvgFillColor(ctx, Color(150, enabled ? 255 : 100).toNvgColor());
+                nvgFillColor(ctx, Color(150, enabled ? 255 : 100).to_nvg_color());
                 nvgStrokePaint(ctx, knobReverse);
                 nvgStroke(ctx);
                 nvgFill(ctx);
@@ -170,59 +170,59 @@ namespace rl::gui {
 
     Slider::Slider(Widget* parent, float value)
         : Widget(parent)
-        , mValue(value)
+        , m_value(value)
         , mRange(0.f, 1.f)
         , mHighlightedRange(0.f, 0.f)
     {
         mHighlightColor = Color(255, 80, 80, 70);
     }
 
-    Vector2i Slider::preferredSize(SDL3::SDL_Renderer*) const
+    Vector2i Slider::preferred_size(SDL3::SDL_Renderer*) const
     {
         return Vector2i(70, 20);
     }
 
-    bool Slider::mouseDragEvent(const Vector2i& p, const Vector2i& /* rel */, int /* button */,
-                                int /* modifiers */)
-    {
-        if (!m_enabled)
-            return false;
-        mValue = std::min(std::max((p.x - m_pos.x) / (float)m_size.x, (float)0.0f), (float)1.0f);
-        if (mCallback)
-            mCallback(mValue);
-        if (mObjCallback)
-            mObjCallback(this, mValue);
-        return true;
-    }
-
-    bool Slider::mouseButtonEvent(const Vector2i& p, int /* button */, bool down,
+    bool Slider::mouse_drag_event(const Vector2i& p, const Vector2i& /* rel */, int /* button */,
                                   int /* modifiers */)
     {
         if (!m_enabled)
             return false;
-        mValue = std::min(std::max((p.x - m_pos.x) / (float)m_size.x, (float)0.0f), (float)1.0f);
-        if (mCallback)
-            mCallback(mValue);
+        m_value = std::min(std::max((p.x - m_pos.x) / (float)m_size.x, (float)0.0f), (float)1.0f);
+        if (m_callback)
+            m_callback(m_value);
         if (mObjCallback)
-            mObjCallback(this, mValue);
-        if (mFinalCallback && !down)
-            mFinalCallback(mValue);
+            mObjCallback(this, m_value);
         return true;
     }
 
-    void Slider::drawBody(SDL3::SDL_Renderer* renderer)
+    bool Slider::mouse_button_event(const Vector2i& p, int /* button */, bool down,
+                                    int /* modifiers */)
     {
-        if (!_body)
-            _body = std::make_shared<AsyncTexture>();
+        if (!m_enabled)
+            return false;
+        m_value = std::min(std::max((p.x - m_pos.x) / (float)m_size.x, (float)0.0f), (float)1.0f);
+        if (m_callback)
+            m_callback(m_value);
+        if (mObjCallback)
+            mObjCallback(this, m_value);
+        if (mFinalCallback && !down)
+            mFinalCallback(m_value);
+        return true;
+    }
+
+    void Slider::draw_body(SDL3::SDL_Renderer* renderer)
+    {
+        if (!m_body)
+            m_body = std::make_shared<AsyncTexture>();
 
         if (m_enabled != _lastEnabledState)
-            _body->load_body(this, m_enabled);
+            m_body->load_body(this, m_enabled);
 
-        if (_body)
+        if (m_body)
         {
             Vector2i ap = absolute_position();
-            _body->perform(renderer);
-            SDL_RenderCopy(renderer, _body->tex, ap);
+            m_body->perform(renderer);
+            SDL_RenderCopy(renderer, m_body->tex, ap);
         }
     }
 
@@ -234,10 +234,10 @@ namespace rl::gui {
         if (m_enabled != _lastEnabledState)
             _knob->load_knob(this, m_enabled);
 
-        if (_body)
+        if (m_body)
         {
             Vector2i ap = absolute_position();
-            Vector2i knobPos(ap.x + mValue * m_size.x, ap.y + height() * 0.5f);
+            Vector2i knobPos(ap.x + m_value * m_size.x, ap.y + height() * 0.5f);
 
             _knob->perform(renderer);
             SDL_RenderCopy(renderer, _knob->tex,
@@ -247,14 +247,14 @@ namespace rl::gui {
 
     void Slider::draw(SDL3::SDL_Renderer* renderer)
     {
-        drawBody(renderer);
+        draw_body(renderer);
         drawKnob(renderer);
 
         _lastEnabledState = m_enabled;
 
         // if (mHighlightedRange.second != mHighlightedRange.first)
         // {
-        //     SDL_Color hl = mHighlightColor.toSdlColor();
+        //     SDL_Color hl = mHighlightColor.sdl_color();
         //     SDL_FRect hlRect{ ap.x + mHighlightedRange.first * width(), center.y - 3 + 1,
         //                       width() * (mHighlightedRange.second - mHighlightedRange.first), 6
         //                       };

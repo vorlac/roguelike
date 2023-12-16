@@ -36,7 +36,7 @@ namespace rl::gui {
         }
 
         /// Sets the callback to execute for this widget.
-        void setCallback(std::function<void(int)>&& callback)
+        void set_callback(std::function<void(int)>&& callback)
         {
             m_popup_callback = std::move(callback);
         }
@@ -50,7 +50,7 @@ namespace rl::gui {
         void perform_layout(SDL3::SDL_Renderer* renderer) override;
 
         /// Sets the current index this dropdownbox has selected.
-        void setSelectedIndex(int idx);
+        void set_selected_index(int idx);
 
         /// Sets the items for this dropdownbox, providing both short and long descriptive lables
         /// for each item.
@@ -76,11 +76,11 @@ namespace rl::gui {
         }
 
         /// Handles mouse scrolling events for this dropdownbox.
-        virtual bool scrollEvent(const Vector2i& p, const Vector2f& rel) override;
+        virtual bool scroll_event(const Vector2i& p, const Vector2f& rel) override;
 
         virtual void draw(SDL3::SDL_Renderer* renderer) override;
-        virtual bool mouseButtonEvent(const Vector2i& p, int button, bool down,
-                                      int modifiers) override;
+        virtual bool mouse_button_event(const Vector2i& p, int button, bool down,
+                                        int modifiers) override;
 
     protected:
         /// The items associated with this dropdownbox.

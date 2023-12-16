@@ -17,22 +17,22 @@ namespace rl::gui {
 
         float value() const
         {
-            return mValue;
+            return m_value;
         }
 
-        void setValue(float value);
+        void set_value(float value);
 
-        Vector2i preferredSize(SDL3::SDL_Renderer* ctx) const override;
+        Vector2i preferred_size(SDL3::SDL_Renderer* ctx) const override;
         void draw(SDL3::SDL_Renderer* renderer) override;
-        void drawBody(SDL3::SDL_Renderer* renderer);
+        void draw_body(SDL3::SDL_Renderer* renderer);
         void drawBar(SDL3::SDL_Renderer* renderer);
 
     protected:
-        float mValue;
-
         struct AsyncTexture;
-        typedef std::shared_ptr<AsyncTexture> AsyncTexturePtr;
-        AsyncTexturePtr _body;
-        AsyncTexturePtr _bar;
+        using AsyncTexturePtr = std::shared_ptr<ProgressBar::AsyncTexture>;
+
+        float m_value{ 0.0f };
+        ProgressBar::AsyncTexturePtr m_body;
+        ProgressBar::AsyncTexturePtr m_bar;
     };
 }

@@ -6,7 +6,7 @@ namespace rl::gui {
     ColorPicker::ColorPicker(Widget* parent, const Color& color)
         : PopupButton(parent, "")
     {
-        setBackgroundColor(color);
+        set_background_color(color);
         Popup& p = this->popup();
         p.set_layout(new GroupLayout());
 
@@ -14,41 +14,41 @@ namespace rl::gui {
         mPickButton = new Button(&p, "Pick");
         mPickButton->set_fixed_size(Vector2i(100, 25));
 
-        PopupButton::setChangeCallback([&](bool) {
-            setColor(backgroundColor());
-            m_color_picker_callback(backgroundColor());
+        PopupButton::set_changed_callback([&](bool) {
+            set_color(background_color());
+            m_color_picker_callback(background_color());
         });
 
-        mColorWheel->setCallback([&](const Color& value) {
-            mPickButton->setBackgroundColor(value);
-            mPickButton->setTextColor(value.contrastingColor());
+        mColorWheel->set_callback([&](const Color& value) {
+            mPickButton->set_background_color(value);
+            mPickButton->set_text_color(value.contrastingColor());
             m_color_picker_callback(value);
         });
 
-        mPickButton->setCallback([&]() {
+        mPickButton->set_callback([&]() {
             Color value = mColorWheel->color();
-            setPushed(false);
-            setColor(value);
+            set_pushed(false);
+            set_color(value);
             m_color_picker_callback(value);
         });
     }
 
     Color ColorPicker::color() const
     {
-        return backgroundColor();
+        return background_color();
     }
 
-    void ColorPicker::setColor(const Color& color)
+    void ColorPicker::set_color(const Color& color)
     {
-        /* Ignore setColor() calls when the user is currently editing */
-        if (!mPushed)
+        /* Ignore set_color() calls when the user is currently editing */
+        if (!m_pushed)
         {
             Color fg = color.contrastingColor();
-            setBackgroundColor(color);
-            setTextColor(fg);
-            mColorWheel->setColor(color);
-            mPickButton->setBackgroundColor(color);
-            mPickButton->setTextColor(fg);
+            set_background_color(color);
+            set_text_color(fg);
+            mColorWheel->set_color(color);
+            mPickButton->set_background_color(color);
+            mPickButton->set_text_color(fg);
         }
     }
 }

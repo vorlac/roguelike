@@ -319,7 +319,7 @@ namespace rl::ds {
 
             if (start_len_sq == T(0) || end_len_sq == T(0)) [[unlikely]]
             {
-                // Zero length vectors have no angle, so the best
+                // zero length vectors have no angle, so the best
                 // we can do is either lerp or throw an error.
                 return this->lerp(to, weight);
             }

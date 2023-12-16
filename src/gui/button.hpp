@@ -39,21 +39,21 @@ namespace rl::gui {
         Button(Widget* parent, const std::string& caption, const std::function<void()>& callback)
             : Button(parent, caption)
         {
-            setCallback(callback);
+            set_callback(callback);
         }
 
         Button(Widget* parent, const std::string& caption, int icon,
                const std::function<void()>& callback)
             : Button(parent, caption, icon)
         {
-            setCallback(callback);
+            set_callback(callback);
         }
 
         Button(Widget* parent, const std::string& caption,
                const std::function<void(bool state)>& callback)
             : Button(parent, caption)
         {
-            setChangeCallback(callback);
+            set_changed_callback(callback);
         }
 
         const std::string& caption() const
@@ -61,67 +61,67 @@ namespace rl::gui {
             return m_caption;
         }
 
-        void setCaption(const std::string& caption)
+        void set_caption(const std::string& caption)
         {
             m_caption = caption;
-            _captionTex.dirty = true;
+            m_caption_texture.dirty = true;
         }
 
-        const Color& backgroundColor() const
+        const Color& background_color() const
         {
-            return mBackgroundColor;
+            return m_background_color;
         }
 
-        void setBackgroundColor(const Color& backgroundColor)
+        void set_background_color(const Color& background_color)
         {
-            mBackgroundColor = backgroundColor;
+            m_background_color = background_color;
         }
 
-        const Color& textColor() const
+        const Color& text_color() const
         {
-            return mTextColor;
+            return m_text_color;
         }
 
-        void setTextColor(const Color& textColor);
+        void set_text_color(const Color& text_color);
 
         int icon() const
         {
-            return static_cast<int>(mIcon);
+            return static_cast<int>(m_icon);
         }
 
-        void setIcon(int icon)
+        void set_icon(int icon)
         {
-            mIcon = icon;
+            m_icon = icon;
         }
 
         int flags() const
         {
-            return mFlags;
+            return m_flags;
         }
 
-        void setFlags(int buttonFlags)
+        void set_flags(int buttonFlags)
         {
-            mFlags = buttonFlags;
+            m_flags = buttonFlags;
         }
 
         IconPosition iconPosition() const
         {
-            return mIconPosition;
+            return m_icon_position;
         }
 
-        void setIconPosition(IconPosition iconPosition)
+        void set_icon_position(IconPosition iconPosition)
         {
-            mIconPosition = iconPosition;
+            m_icon_position = iconPosition;
         }
 
         bool pushed() const
         {
-            return mPushed;
+            return m_pushed;
         }
 
-        void setPushed(bool pushed)
+        void set_pushed(bool pushed)
         {
-            mPushed = pushed;
+            m_pushed = pushed;
         }
 
         /// Set the push callback (for any type of button)
@@ -130,97 +130,97 @@ namespace rl::gui {
             return m_pressed_callback;
         }
 
-        void setCallback(const std::function<void()>& callback)
+        void set_callback(const std::function<void()>& callback)
         {
             m_pressed_callback = callback;
         }
 
         /// Set the change callback (for toggle buttons)
-        std::function<void(bool)> changeCallback() const
+        std::function<void(bool)> change_callback() const
         {
             return m_change_callback;
         }
 
-        void setChangeCallback(const std::function<void(bool)>& callback)
+        void set_changed_callback(const std::function<void(bool)>& callback)
         {
             m_change_callback = callback;
         }
 
         /// Set the button group (for radio buttons)
-        void setButtonGroup(const std::vector<Button*>& buttonGroup)
+        void set_button_group(const std::vector<Button*>& button_group)
         {
-            mButtonGroup = buttonGroup;
+            m_button_group = button_group;
         }
 
-        const std::vector<Button*>& buttonGroup() const
+        const std::vector<Button*>& button_group() const
         {
-            return mButtonGroup;
+            return m_button_group;
         }
 
-        virtual Vector2i preferredSize(SDL3::SDL_Renderer* ctx) const override;
-        virtual bool mouseButtonEvent(const Vector2i& p, int button, bool down,
-                                      int modifiers) override;
+        virtual Vector2i preferred_size(SDL3::SDL_Renderer* ctx) const override;
+        virtual bool mouse_button_event(const Vector2i& p, int button, bool down,
+                                        int modifiers) override;
         virtual void draw(SDL3::SDL_Renderer* renderer) override;
-        virtual void drawBody(SDL3::SDL_Renderer* renderer);
-        virtual void drawBodyTemp(SDL3::SDL_Renderer* renderer);
-        virtual Color bodyColor();
-        virtual Vector2i getTextOffset() const;
+        virtual void draw_body(SDL3::SDL_Renderer* renderer);
+        virtual void draw_body_temp(SDL3::SDL_Renderer* renderer);
+        virtual Color body_color();
+        virtual Vector2i get_text_offset() const;
 
-        Button& withCallback(const std::function<void()>& callback)
+        Button& with_callback(const std::function<void()>& callback)
         {
-            setCallback(callback);
+            set_callback(callback);
             return *this;
         }
 
-        Button& withFlags(int flags)
+        Button& with_flags(int flags)
         {
-            setFlags(flags);
+            set_flags(flags);
             return *this;
         }
 
-        Button& withChangeCallback(const std::function<void(bool)>& callback)
+        Button& with_change_callback(const std::function<void(bool)>& callback)
         {
-            setChangeCallback(callback);
+            set_changed_callback(callback);
             return *this;
         }
 
-        Button& withBackgroundColor(const Color& color)
+        Button& with_background_color(const Color& color)
         {
-            setBackgroundColor(color);
+            set_background_color(color);
             return *this;
         }
 
-        Button& withIcon(int icon)
+        Button& with_icon(int icon)
         {
-            setIcon(icon);
+            set_icon(icon);
             return *this;
         }
 
     protected:
-        virtual void renderBodyTexture(NVGcontext*& ctx, int& realw, int& realh);
+        virtual void render_body_texture(NVGcontext*& ctx, int& realw, int& realh);
 
-        std::string m_caption;
-        intptr_t mIcon;
-        IconPosition mIconPosition;
-        bool mPushed;
-        int mFlags;
-        Color mBackgroundColor;
-        Color mTextColor;
-
-        Texture _captionTex;
-        Texture _iconTex;
-
-        std::function<void()> m_pressed_callback;
-        std::function<void(bool)> m_change_callback;
-        std::vector<Button*> mButtonGroup;
-
+    protected:
         struct AsyncTexture;
-        typedef std::shared_ptr<AsyncTexture> AsyncTexturePtr;
-        std::vector<AsyncTexturePtr> _txs;
+        using AsyncTexturePtr = std::shared_ptr<Button::AsyncTexture>;
 
-        AsyncTexturePtr current_texture_ = nullptr;
+        int m_flags{ 0 };
+        bool m_pushed{ false };
+
+        Color m_text_color{};
+        Color m_background_color{};
+        Texture m_icon_texture{};
+        Texture m_caption_texture{};
+        IconPosition m_icon_position{};
+        std::string m_caption{};
+        intptr_t m_icon{};
+
+        std::function<void()> m_pressed_callback{};
+        std::function<void(bool)> m_change_callback{};
+        std::vector<Button*> m_button_group{};
+        std::vector<Button::AsyncTexturePtr> m_textures{};
+        Button::AsyncTexturePtr m_curr_texture{ nullptr };
 
     private:
-        void drawTexture(AsyncTexturePtr& texture, SDL3::SDL_Renderer* renderer);
+        void draw_texture(Button::AsyncTexturePtr& texture, SDL3::SDL_Renderer* renderer);
     };
 }

@@ -1,7 +1,9 @@
 #pragma once
 
+#include "ds/dims.hpp"
 #include "gui/window.hpp"
 #include "sdl/defs.hpp"
+#include "utils/numeric.hpp"
 
 SDL_C_LIB_BEGIN
 union SDL_Event;
@@ -184,9 +186,9 @@ namespace rl::gui {
 
     protected:
         SDL3::SDL_Window* m_sdl_window{ nullptr };
-        std::vector<gui::Widget*> mFocusPath{};
+        std::vector<gui::Widget*> m_focus_path{};
         SDL3::SDL_Renderer* m_sdl_renderer{ nullptr };
-        gui::Vector2i m_framebuf_size{ 0, 0 };
+        ds::dims<i32> m_framebuf_size{ 0, 0 };
         float m_pixel_ratio{ 0.0f };
         int m_mouse_state{ 0 };
         int m_modifiers{ 0 };

@@ -42,7 +42,7 @@ namespace rl::gui {
                 nvgBeginFrame(ctx, ww + 2, hh + 2, pxRatio);
 
                 NVGpaint bg = nvgBoxGradient(ctx, 1.5f, 1.5f, hh - 2.0f, hh - 2.0f, 3, 3,
-                                             c.toNvgColor(), b.toNvgColor());
+                                             c.to_nvg_color(), b.to_nvg_color());
 
                 nvgBeginPath(ctx);
                 nvgRoundedRect(ctx, 1.0f, 1.0f, hh - 2.0f, hh - 2.0f, 3);
@@ -84,17 +84,17 @@ namespace rl::gui {
                        const std::function<void(bool)>& callback)
         : Widget(parent)
         , m_caption(caption)
-        , mPushed(false)
-        , mChecked(false)
-        , mCallback(callback)
+        , m_pushed(false)
+        , m_checked(false)
+        , m_checkbox_callback(callback)
     {
-        _captionTex.dirty = true;
-        _pointTex.dirty = true;
+        m_caption_texture.dirty = true;
+        m_point_texture.dirty = true;
     }
 
-    bool CheckBox::mouseButtonEvent(const Vector2i& p, int button, bool down, int modifiers)
+    bool CheckBox::mouse_button_event(const Vector2i& p, int button, bool down, int modifiers)
     {
-        Widget::mouseButtonEvent(p, button, down, modifiers);
+        Widget::mouse_button_event(p, button, down, modifiers);
         if (!m_enabled)
             return false;
 
@@ -102,51 +102,52 @@ namespace rl::gui {
         {
             if (down)
             {
-                mPushed = true;
+                m_pushed = true;
             }
-            else if (mPushed)
+            else if (m_pushed)
             {
                 if (contains(p))
                 {
-                    mChecked = !mChecked;
-                    if (mCallback)
-                        mCallback(mChecked);
+                    m_checked = !m_checked;
+                    if (m_checkbox_callback)
+                        m_checkbox_callback(m_checked);
                 }
-                mPushed = false;
+                m_pushed = false;
             }
             return true;
         }
         return false;
     }
 
-    Vector2i CheckBox::preferredSize(SDL3::SDL_Renderer* ctx) const
+    Vector2i CheckBox::preferred_size(SDL3::SDL_Renderer* ctx) const
     {
-        if (m_fixed_size != Vector2i::Zero())
+        if (m_fixed_size != Vector2i::zero())
             return m_fixed_size;
 
         int w, h;
-        const_cast<CheckBox*>(this)->m_theme->getTextBounds("sans", fontSize(), m_caption.c_str(),
-                                                            &w, &h);
-        return Vector2i(w + 1.7f * fontSize(), fontSize() * 1.3f);
+        const_cast<CheckBox*>(this)->m_theme->get_text_bounds("sans", font_size(),
+                                                              m_caption.c_str(), &w, &h);
+        return Vector2i(w + 1.7f * font_size(), font_size() * 1.3f);
     }
 
-    void CheckBox::drawBody(SDL3::SDL_Renderer* renderer)
+    void CheckBox::draw_body(SDL3::SDL_Renderer* renderer)
     {
-        int id = (mPushed ? 0x1 : 0) + (m_mouse_focus ? 0x2 : 0) + (m_enabled ? 0x4 : 0);
+        int id = (m_pushed ? 0x1 : 0) + (m_mouse_focus ? 0x2 : 0) + (m_enabled ? 0x4 : 0);
 
-        auto atx = std::find_if(_txs.begin(), _txs.end(), [id](const AsyncTexturePtr& p) {
-            return p->id == id;
-        });
+        auto atx = std::find_if(m_textures.begin(), m_textures.end(),
+                                [id](const CheckBox::AsyncTexturePtr& p) {
+                                    return p->id == id;
+                                });
 
-        if (atx != _txs.end())
-            drawTexture(*atx, renderer);
+        if (atx != m_textures.end())
+            draw_texture(*atx, renderer);
         else
         {
-            AsyncTexturePtr newtx = std::make_shared<AsyncTexture>(id);
-            newtx->load(this, mPushed, m_mouse_focus, m_enabled);
-            _txs.push_back(newtx);
+            CheckBox::AsyncTexturePtr newtx = std::make_shared<CheckBox::AsyncTexture>(id);
+            newtx->load(this, m_pushed, m_mouse_focus, m_enabled);
+            m_textures.push_back(newtx);
 
-            drawTexture(current_texture_, renderer);
+            draw_texture(m_curr_texture, renderer);
         }
     }
 
@@ -154,28 +155,30 @@ namespace rl::gui {
     {
         Widget::draw(renderer);
 
-        if (_captionTex.dirty)
+        if (m_caption_texture.dirty)
         {
-            Color tColor = (m_enabled ? m_theme->mTextColor : m_theme->mDisabledTextColor);
-            m_theme->getTexAndRectUtf8(renderer, _captionTex, 0, 0, m_caption.c_str(), "sans",
-                                       fontSize(), tColor);
-            m_theme->getTexAndRectUtf8(renderer, _pointTex, 0, 0, utf8(ENTYPO_ICON_CHECK).data(),
-                                       "icons", 1.8 * m_size.y, tColor);
+            Color tColor = (m_enabled ? m_theme->m_text_color : m_theme->m_disabled_text_color);
+            m_theme->get_texture_and_rect_utf8(renderer, m_caption_texture, 0, 0, m_caption.c_str(),
+                                               "sans", font_size(), tColor);
+            m_theme->get_texture_and_rect_utf8(renderer, m_point_texture, 0, 0,
+                                               utf8(ENTYPO_ICON_CHECK).data(), "icons",
+                                               1.8 * m_size.y, tColor);
         }
 
         auto ap = absolute_position();
-        SDL_RenderCopy(renderer, _captionTex,
-                       ap + Vector2i(1.2f * m_size.y + 5, (m_size.y - _captionTex.h()) * 0.5f));
+        SDL_RenderCopy(
+            renderer, m_caption_texture,
+            ap + Vector2i(1.2f * m_size.y + 5, (m_size.y - m_caption_texture.h()) * 0.5f));
 
-        drawBody(renderer);
+        draw_body(renderer);
 
-        if (mChecked)
-            SDL_RenderCopy(renderer, _pointTex,
-                           ap + Vector2i((m_size.y - _pointTex.w()) * 0.5f + 1,
-                                         (m_size.y - _pointTex.h()) * 0.5f));
+        if (m_checked)
+            SDL_RenderCopy(renderer, m_point_texture,
+                           ap + Vector2i((m_size.y - m_point_texture.w()) * 0.5f + 1,
+                                         (m_size.y - m_point_texture.h()) * 0.5f));
     }
 
-    void CheckBox::drawTexture(AsyncTexturePtr& texture, SDL3::SDL_Renderer* renderer)
+    void CheckBox::draw_texture(AsyncTexturePtr& texture, SDL3::SDL_Renderer* renderer)
     {
         if (texture)
         {
@@ -185,12 +188,12 @@ namespace rl::gui {
             {
                 SDL_RenderCopy(renderer, texture->tex, absolute_position());
 
-                if (!current_texture_ || texture->id != current_texture_->id)
-                    current_texture_ = texture;
+                if (!m_curr_texture || texture->id != m_curr_texture->id)
+                    m_curr_texture = texture;
             }
-            else if (current_texture_)
+            else if (m_curr_texture)
             {
-                SDL_RenderCopy(renderer, current_texture_->tex, absolute_position());
+                SDL_RenderCopy(renderer, m_curr_texture->tex, absolute_position());
             }
         }
     }

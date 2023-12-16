@@ -1,5 +1,6 @@
 #pragma once
 
+#include "core/assert.hpp"
 #include "gui/button.hpp"
 #include "gui/common.hpp"
 #include "gui/entypo.hpp"
@@ -44,7 +45,7 @@ namespace rl::gui {
         }
 
         void draw(SDL3::SDL_Renderer* renderer) override;
-        Vector2i preferredSize(SDL3::SDL_Renderer* ctx) const override;
+        Vector2i preferred_size(SDL3::SDL_Renderer* ctx) const override;
         void perform_layout(SDL3::SDL_Renderer* ctx) override;
 
         PopupButton& withChevron(int icon)

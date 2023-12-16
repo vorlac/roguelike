@@ -15,8 +15,8 @@ namespace rl::gui {
         Texture tex;
         NVGcontext* ctx = nullptr;
 
-        AsyncTexture(int _id)
-            : id(_id)
+        AsyncTexture(int tex_id)
+            : id(tex_id)
         {
         }
 
@@ -36,7 +36,7 @@ namespace rl::gui {
 
                 Vector2f center = sb->size().cast<float>() * 0.5f;
                 float kr, startX, startY, widthX, heightY;
-                if (sb->mAlign == Alignment::Horizontal)
+                if (sb->m_align == Alignment::Horizontal)
                 {
                     kr = hh * 0.4f;
                     startX = hh * 0.1f;
@@ -56,8 +56,8 @@ namespace rl::gui {
                 }
 
                 NVGpaint bg = nvgBoxGradient(ctx, startX, startY, widthX, heightY, 3, 3,
-                                             Color(0, enabled ? 32 : 10).toNvgColor(),
-                                             Color(0, enabled ? 128 : 210).toNvgColor());
+                                             Color(0, enabled ? 32 : 10).to_nvg_color(),
+                                             Color(0, enabled ? 128 : 210).to_nvg_color());
 
                 nvgBeginPath(ctx);
                 nvgRoundedRect(ctx, startX, startY, widthX, heightY, kr);
@@ -66,13 +66,13 @@ namespace rl::gui {
                 nvgBeginPath(ctx);
                 nvgStrokeWidth(ctx, 1.0f);
                 nvgRoundedRect(ctx, startX + 0.5f, startY + 0.5f, widthX - 1, heightY - 1, kr);
-                nvgStrokeColor(ctx, theme->mBorderLight.toNvgColor());
+                nvgStrokeColor(ctx, theme->m_border_light.to_nvg_color());
                 nvgStroke(ctx);
                 nvgFill(ctx);
 
                 nvgBeginPath(ctx);
                 nvgRoundedRect(ctx, startX + 0.5f, startY + 0.5f, widthX - 1, heightY - 2, kr);
-                nvgStrokeColor(ctx, theme->mBorderDark.toNvgColor());
+                nvgStrokeColor(ctx, theme->m_border_dark.to_nvg_color());
                 nvgStroke(ctx);
 
                 nvgEndFrame(ctx);
@@ -103,21 +103,21 @@ namespace rl::gui {
                 nvgBeginFrame(ctx, ww, ww, pxRatio);
 
                 NVGpaint knob = nvgLinearGradient(ctx, 0, center.y - kr, 0, center.y + kr,
-                                                  theme->mBorderLight.toNvgColor(),
-                                                  theme->mBorderMedium.toNvgColor());
+                                                  theme->m_border_light.to_nvg_color(),
+                                                  theme->m_border_medium.to_nvg_color());
                 NVGpaint knobReverse = nvgLinearGradient(ctx, 0, center.y - kr, 0, center.y + kr,
-                                                         theme->mBorderMedium.toNvgColor(),
-                                                         theme->mBorderLight.toNvgColor());
+                                                         theme->m_border_medium.to_nvg_color(),
+                                                         theme->m_border_light.to_nvg_color());
 
                 nvgBeginPath(ctx);
                 nvgCircle(ctx, center.x, center.y, kr * 0.9);
-                nvgStrokeColor(ctx, Color(0, 200).toNvgColor());
+                nvgStrokeColor(ctx, Color(0, 200).to_nvg_color());
                 nvgFillPaint(ctx, knob);
                 nvgStroke(ctx);
                 nvgFill(ctx);
                 nvgBeginPath(ctx);
                 nvgCircle(ctx, center.x, center.y, kr * 0.7);
-                nvgFillColor(ctx, Color(120, enabled ? 255 : 100).toNvgColor());
+                nvgFillColor(ctx, Color(120, enabled ? 255 : 100).to_nvg_color());
                 nvgStrokePaint(ctx, knobReverse);
                 nvgStroke(ctx);
                 nvgFill(ctx);
@@ -156,35 +156,36 @@ namespace rl::gui {
     SwitchBox::SwitchBox(Widget* parent, Alignment align, const std::string& caption,
                          const std::function<void(bool)>& callback)
         : CheckBox(parent, caption, callback)
-        , mAlign(align)
+        , m_align(align)
     {
     }
 
-    Vector2i SwitchBox::preferredSize(SDL3::SDL_Renderer* renderer) const
+    Vector2i SwitchBox::preferred_size(SDL3::SDL_Renderer* renderer) const
     {
-        if (m_fixed_size != Vector2i::Zero())
+        if (m_fixed_size != Vector2i::zero())
             return m_fixed_size;
 
         int w, h;
-        const_cast<SwitchBox*>(this)->theme()->getUtf8Bounds("sans", fontSize(), m_caption.c_str(),
-                                                             &w, &h);
-        int knobW = 1.8f * fontSize();
+        const_cast<SwitchBox*>(this)->theme()->get_utf8_bounds("sans", font_size(),
+                                                               m_caption.c_str(), &w, &h);
+        int knobW = 1.8f * font_size();
         knobW = std::max<int>(knobW / 32, 1) * 32;
 
-        if (mAlign == Alignment::Horizontal)
+        if (m_align == Alignment::Horizontal)
             return Vector2i(w + knobW, knobW);
         else
             return Vector2i(w + knobW, 2 * knobW);
     }
 
-    void SwitchBox::drawBody(SDL3::SDL_Renderer* renderer)
+    void SwitchBox::draw_body(SDL3::SDL_Renderer* renderer)
     {
         int id = (0x100) + (m_enabled ? 1 : 0);
-        auto atx = std::find_if(_txs.begin(), _txs.end(), [id](AsyncTexturePtr p) {
-            return p->id == id;
-        });
+        auto atx = std::find_if(m_textures.begin(), m_textures.end(),
+                                [id](SwitchBox::AsyncTexturePtr p) {
+                                    return p->id == id;
+                                });
 
-        if (atx != _txs.end())
+        if (atx != m_textures.end())
         {
             Vector2i ap = absolute_position();
             (*atx)->perform(renderer);
@@ -192,25 +193,26 @@ namespace rl::gui {
         }
         else
         {
-            AsyncTexturePtr newtx = std::make_shared<AsyncTexture>(id);
+            SwitchBox::AsyncTexturePtr newtx = std::make_shared<SwitchBox::AsyncTexture>(id);
             newtx->load_body(this, m_enabled);
-            _txs.push_back(newtx);
+            m_textures.push_back(newtx);
         }
     }
 
     void SwitchBox::drawKnob(SDL3::SDL_Renderer* renderer)
     {
         int id = (0x200) + (m_enabled ? 1 : 0);
-        auto atx = std::find_if(_txs.begin(), _txs.end(), [id](AsyncTexturePtr p) {
-            return p->id == id;
-        });
+        auto atx = std::find_if(m_textures.begin(), m_textures.end(),
+                                [id](SwitchBox::AsyncTexturePtr p) {
+                                    return p->id == id;
+                                });
 
         Vector2i ap = absolute_position();
-        Vector2f center = ap.As<float>() + m_size.As<float>() * 0.5f;
+        Vector2f center = ap.as<float>() + m_size.as<float>() * 0.5f;
         Vector2i knobPos;
         float kr, startX, startY, widthX, heightY, hh;
         hh = height();
-        if (mAlign == Alignment::Horizontal)
+        if (m_align == Alignment::Horizontal)
         {
             kr = (hh * 0.4f);
             startX = ap.x + hh * 0.1f;
@@ -219,7 +221,7 @@ namespace rl::gui {
             startY = (ap.y + (hh - heightY) / 2) + 1;
             widthX = (hh * 1.5);
 
-            knobPos = Vector2i(startX + kr + path * (widthX - 2 * kr), center.y + 0.5f);
+            knobPos = Vector2i(startX + kr + m_path * (widthX - 2 * kr), center.y + 0.5f);
         }
         else
         {
@@ -230,10 +232,10 @@ namespace rl::gui {
             startY = (ap.y + (hh - heightY) / 2);
             widthX = (hh * 0.4f);
 
-            knobPos = Vector2i(startX + kr, startY + path * (heightY - 2 * kr) + kr);
+            knobPos = Vector2i(startX + kr, startY + m_path * (heightY - 2 * kr) + kr);
         }
 
-        if (atx != _txs.end())
+        if (atx != m_textures.end())
         {
             (*atx)->perform(renderer);
             SDL_RenderCopy(renderer, (*atx)->tex,
@@ -241,35 +243,35 @@ namespace rl::gui {
         }
         else
         {
-            AsyncTexturePtr newtx = std::make_shared<AsyncTexture>(id);
+            SwitchBox::AsyncTexturePtr newtx = std::make_shared<SwitchBox::AsyncTexture>(id);
             newtx->load_knob(this, m_enabled);
-            _txs.push_back(newtx);
+            m_textures.push_back(newtx);
         }
     }
 
     void SwitchBox::draw(SDL3::SDL_Renderer* renderer)
     {
-        if (mChecked)
+        if (m_checked)
         {
-            if (path < 1.0f)
-                path += 0.1f;
+            if (m_path < 1.0f)
+                m_path += 0.1f;
         }
         else
         {
-            if (path > 0)
-                path -= 0.1f;
-            if (path < 0)
-                path = 0;
+            if (m_path > 0)
+                m_path -= 0.1f;
+            if (m_path < 0)
+                m_path = 0;
         }
 
-        drawBody(renderer);
+        draw_body(renderer);
         drawKnob(renderer);
 
-        // nvgFontSize(ctx, fontSize());
+        // nvgFontSize(ctx, font_size());
         // nvgFontFace(ctx, "sans");
-        // nvgFillColor(ctx, mEnabled ? mTheme->mTextColor : mTheme->mDisabledTextColor);
+        // nvgFillColor(ctx, mEnabled ? mTheme->m_text_color : mTheme->m_disabled_text_color);
         // nvgTextAlign(ctx, NVG_ALIGN_LEFT | NVG_ALIGN_MIDDLE);
-        // nvgText(ctx, mPos.x() + 1.6f * fontSize(), mPos.y() + mSize.y() * 0.5f,
+        // nvgText(ctx, mPos.x() + 1.6f * font_size(), mPos.y() + m_size.y() * 0.5f,
         // m_caption.c_str(),
         //         nullptr);
 

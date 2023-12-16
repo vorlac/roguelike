@@ -31,12 +31,12 @@ namespace rl::gui {
 
         float value() const
         {
-            return mValue;
+            return m_value;
         }
 
-        void setValue(float value)
+        void set_value(float value)
         {
-            mValue = value;
+            m_value = value;
         }
 
         const Color& highlightColor() const
@@ -71,12 +71,12 @@ namespace rl::gui {
 
         std::function<void(float)> callback() const
         {
-            return mCallback;
+            return m_callback;
         }
 
-        void setCallback(const std::function<void(float)>& callback)
+        void set_callback(const std::function<void(float)>& callback)
         {
-            mCallback = callback;
+            m_callback = callback;
         }
 
         std::function<void(Slider*, float)> objcallback() const
@@ -99,13 +99,13 @@ namespace rl::gui {
             mFinalCallback = callback;
         }
 
-        Vector2i preferredSize(SDL3::SDL_Renderer* ctx) const override;
-        bool mouseDragEvent(const Vector2i& p, const Vector2i& rel, int button,
-                            int modifiers) override;
-        bool mouseButtonEvent(const Vector2i& p, int button, bool down, int modifiers) override;
+        Vector2i preferred_size(SDL3::SDL_Renderer* ctx) const override;
+        bool mouse_drag_event(const Vector2i& p, const Vector2i& rel, int button,
+                              int modifiers) override;
+        bool mouse_button_event(const Vector2i& p, int button, bool down, int modifiers) override;
         void draw(SDL3::SDL_Renderer* renderer) override;
 
-        virtual void drawBody(SDL3::SDL_Renderer* renderer);
+        virtual void draw_body(SDL3::SDL_Renderer* renderer);
         virtual void drawKnob(SDL3::SDL_Renderer* renderer);
 
         void setKnobOutterRadiusKoeff(float koeff)
@@ -119,7 +119,7 @@ namespace rl::gui {
         }
 
     protected:
-        float mValue;
+        float m_value;
         bool _lastEnabledState = false;
 
         struct
@@ -128,7 +128,7 @@ namespace rl::gui {
             float inner = 0.5f;
         } mKnobRadKoeff;
 
-        std::function<void(float)> mCallback;
+        std::function<void(float)> m_callback;
         std::function<void(Slider*, float)> mObjCallback;
         std::function<void(float)> mFinalCallback;
         std::pair<float, float> mRange;
@@ -137,7 +137,7 @@ namespace rl::gui {
 
         struct AsyncTexture;
         typedef std::shared_ptr<AsyncTexture> AsyncTexturePtr;
-        AsyncTexturePtr _body;
+        AsyncTexturePtr m_body;
         AsyncTexturePtr _knob;
     };
 }

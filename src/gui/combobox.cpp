@@ -35,16 +35,16 @@ namespace rl::gui {
         setItems(items, itemsShort);
     }
 
-    void ComboBox::setSelectedIndex(int idx)
+    void ComboBox::set_selected_index(int idx)
     {
         if (mItemsShort.empty())
             return;
 
         const std::vector<Widget*>& children = popup().children();
-        ((Button*)children[mSelectedIndex])->setPushed(false);
-        ((Button*)children[idx])->setPushed(true);
+        ((Button*)children[mSelectedIndex])->set_pushed(false);
+        ((Button*)children[idx])->set_pushed(true);
         mSelectedIndex = idx;
-        setCaption(mItemsShort[idx]);
+        set_caption(mItemsShort[idx]);
     }
 
     void ComboBox::setItems(const std::vector<std::string>& items,
@@ -62,11 +62,11 @@ namespace rl::gui {
         for (const auto& str : items)
         {
             Button* button = new Button(mPopup, str);
-            button->setFlags(Button::RadioButton);
-            button->setCallback([&, index] {
+            button->set_flags(Button::RadioButton);
+            button->set_callback([&, index] {
                 mSelectedIndex = index;
-                setCaption(mItemsShort[index]);
-                setPushed(false);
+                set_caption(mItemsShort[index]);
+                set_pushed(false);
                 popup().set_visible(false);
 
                 if (m_cb_pressed_callback)
@@ -74,25 +74,25 @@ namespace rl::gui {
             });
             index++;
         }
-        setSelectedIndex(mSelectedIndex);
+        set_selected_index(mSelectedIndex);
     }
 
-    bool ComboBox::scrollEvent(const Vector2i& p, const Vector2f& rel)
+    bool ComboBox::scroll_event(const Vector2i& p, const Vector2f& rel)
     {
         if (rel.y < 0)
         {
-            setSelectedIndex(std::min(mSelectedIndex + 1, (int)(items().size() - 1)));
+            set_selected_index(std::min(mSelectedIndex + 1, (int)(items().size() - 1)));
             if (m_cb_pressed_callback)
                 m_cb_pressed_callback(mSelectedIndex);
             return true;
         }
         else if (rel.y > 0)
         {
-            setSelectedIndex(std::max(mSelectedIndex - 1, 0));
+            set_selected_index(std::max(mSelectedIndex - 1, 0));
             if (m_cb_pressed_callback)
                 m_cb_pressed_callback(mSelectedIndex);
             return true;
         }
-        return Widget::scrollEvent(p, rel);
+        return Widget::scroll_event(p, rel);
     }
 }

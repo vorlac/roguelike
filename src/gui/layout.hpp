@@ -30,7 +30,7 @@ namespace rl::gui {
     {
     public:
         virtual void perform_layout(SDL3::SDL_Renderer* ctx, Widget* widget) const = 0;
-        virtual Vector2i preferredSize(SDL3::SDL_Renderer* ctx, const Widget* widget) const = 0;
+        virtual Vector2i preferred_size(SDL3::SDL_Renderer* ctx, const Widget* widget) const = 0;
 
     protected:
         virtual ~Layout() override
@@ -77,12 +77,12 @@ namespace rl::gui {
 
         Alignment alignment() const
         {
-            return mAlignment;
+            return m_alignment;
         }
 
-        void setAlignment(Alignment alignment)
+        void set_alignment(Alignment alignment)
         {
-            mAlignment = alignment;
+            m_alignment = alignment;
         }
 
         int margin() const
@@ -106,12 +106,13 @@ namespace rl::gui {
         }
 
         /* Implementation of the layout interface */
-        virtual Vector2i preferredSize(SDL3::SDL_Renderer* ctx, const Widget* widget) const override;
+        virtual Vector2i preferred_size(SDL3::SDL_Renderer* ctx,
+                                        const Widget* widget) const override;
         virtual void perform_layout(SDL3::SDL_Renderer* ctx, Widget* widget) const override;
 
     protected:
         Orientation mOrientation;
-        Alignment mAlignment;
+        Alignment m_alignment;
         int mMargin;
         int mSpacing;
     };
@@ -180,7 +181,7 @@ namespace rl::gui {
         }
 
         /* Implementation of the layout interface */
-        Vector2i preferredSize(SDL3::SDL_Renderer* ctx, const Widget* widget) const override;
+        Vector2i preferred_size(SDL3::SDL_Renderer* ctx, const Widget* widget) const override;
         void perform_layout(SDL3::SDL_Renderer* ctx, Widget* widget) const override;
 
     protected:
@@ -262,8 +263,8 @@ namespace rl::gui {
 
         Alignment alignment(int axis, int item) const
         {
-            if (item < (int)mAlignment[axis].size())
-                return mAlignment[axis][item];
+            if (item < (int)m_alignment[axis].size())
+                return m_alignment[axis][item];
             else
                 return mDefaultAlignment[axis];
         }
@@ -280,16 +281,17 @@ namespace rl::gui {
 
         void setColAlignment(const std::vector<Alignment>& value)
         {
-            mAlignment[0] = value;
+            m_alignment[0] = value;
         }
 
         void setRowAlignment(const std::vector<Alignment>& value)
         {
-            mAlignment[1] = value;
+            m_alignment[1] = value;
         }
 
         /* Implementation of the layout interface */
-        virtual Vector2i preferredSize(SDL3::SDL_Renderer* ctx, const Widget* widget) const override;
+        virtual Vector2i preferred_size(SDL3::SDL_Renderer* ctx,
+                                        const Widget* widget) const override;
         virtual void perform_layout(SDL3::SDL_Renderer* ctx, Widget* widget) const override;
 
     protected:
@@ -300,7 +302,7 @@ namespace rl::gui {
     protected:
         Orientation mOrientation;
         Alignment mDefaultAlignment[2];
-        std::vector<Alignment> mAlignment[2];
+        std::vector<Alignment> m_alignment[2];
         int mResolution;
         Vector2i mSpacing;
         int mMargin;
@@ -454,7 +456,8 @@ namespace rl::gui {
         }
 
         /* Implementation of the layout interface */
-        virtual Vector2i preferredSize(SDL3::SDL_Renderer* ctx, const Widget* widget) const override;
+        virtual Vector2i preferred_size(SDL3::SDL_Renderer* ctx,
+                                        const Widget* widget) const override;
         virtual void perform_layout(SDL3::SDL_Renderer* ctx, Widget* widget) const override;
 
     protected:

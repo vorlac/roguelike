@@ -15,20 +15,20 @@ namespace rl::gui {
             return m_caption;
         }
 
-        void setCaption(const std::string& caption)
+        void set_caption(const std::string& caption)
         {
             m_caption = caption;
-            _captionTex.dirty = true;
+            m_caption_texture.dirty = true;
         }
 
         const std::string& header() const
         {
-            return mHeader;
+            return m_tab_header;
         }
 
         void setHeader(const std::string& header)
         {
-            mHeader = header;
+            m_tab_header = header;
             _headerTex.dirty = true;
         }
 
@@ -43,14 +43,14 @@ namespace rl::gui {
             _footerTex.dirty = true;
         }
 
-        const Color& backgroundColor() const
+        const Color& background_color() const
         {
-            return mBackgroundColor;
+            return m_background_color;
         }
 
-        void setBackgroundColor(const Color& backgroundColor)
+        void set_background_color(const Color& background_color)
         {
-            mBackgroundColor = backgroundColor;
+            m_background_color = background_color;
         }
 
         const Color& foregroundColor() const
@@ -63,14 +63,14 @@ namespace rl::gui {
             mForegroundColor = foregroundColor;
         }
 
-        const Color& textColor() const
+        const Color& text_color() const
         {
-            return mTextColor;
+            return m_text_color;
         }
 
-        void setTextColor(const Color& textColor)
+        void set_text_color(const Color& text_color)
         {
-            mTextColor = textColor;
+            m_text_color = text_color;
         }
 
         const std::vector<float>& values() const
@@ -88,15 +88,15 @@ namespace rl::gui {
             mValues = values;
         }
 
-        Vector2i preferredSize(SDL3::SDL_Renderer* ctx) const override;
+        Vector2i preferred_size(SDL3::SDL_Renderer* ctx) const override;
         void draw(SDL3::SDL_Renderer* ctx) override;
 
     protected:
-        std::string m_caption, mHeader, mFooter;
-        Color mBackgroundColor, mForegroundColor, mTextColor;
+        std::string m_caption, m_tab_header, mFooter;
+        Color m_background_color, mForegroundColor, m_text_color;
         std::vector<float> mValues;
 
-        Texture _captionTex;
+        Texture m_caption_texture;
         Texture _headerTex;
         Texture _footerTex;
 

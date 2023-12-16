@@ -19,15 +19,15 @@ namespace rl::gui {
     public:
         TabWidget(Widget* parent);
 
-        void setActiveTab(size_t idx);
-        size_t activeTab() const;
-        size_t tabCount() const;
+        void set_active_tab(size_t idx);
+        size_t active_tab() const;
+        size_t tab_count() const;
 
         /**
          * Sets the callable objects which is invoked when a tab is changed.
          * The argument provided to the callback is the index of the new active tab.
          */
-        void setCallback(std::function<void(size_t)>&& callback)
+        void set_callback(std::function<void(size_t)>&& callback)
         {
             m_active_tab_changed_callback = std::move(callback);
         };
@@ -38,40 +38,40 @@ namespace rl::gui {
         }
 
         // Creates a new tab with the specified name and returns a pointer to the layer.
-        Widget* createTab(const std::string& label);
-        Widget* createTab(size_t index, const std::string& label);
+        Widget* create_tab(const std::string& label);
+        Widget* create_tab(size_t index, const std::string& label);
 
         // Inserts a tab at the end of the tabs collection and associates it with the provided
         // widget.
-        void addTab(const std::string& label, Widget* tab);
+        void add_tab(const std::string& label, Widget* tab);
 
         // Inserts a tab into the tabs collection at the specified index and associates it with the
         // provided widget.
-        void addTab(size_t index, const std::string& label, Widget* tab);
+        void add_tab(size_t index, const std::string& label, Widget* tab);
 
         /**
          * Removes the tab with the specified label and returns the index of the label.
          * Returns whether the removal was successful.
          */
-        bool removeTab(const std::string& label);
+        bool remove_tab(const std::string& label);
 
         // Removes the tab with the specified index.
-        void removeTab(size_t index);
+        void remove_tab(size_t index);
 
         // Retrieves the label of the tab at a specific index.
-        const std::string& tabLabelAt(size_t index) const;
+        const std::string& tab_label_at(size_t index) const;
 
         /**
          * Retrieves the index of a specific tab using its tab label.
          * Returns -1 if there is no such tab.
          */
-        size_t tabLabelIndex(const std::string& label);
+        size_t tab_label_index(const std::string& label);
 
         /**
          * Retrieves the index of a specific tab using a widget pointer.
          * Returns -1 if there is no such tab.
          */
-        size_t tabIndex(Widget* tab);
+        size_t tab_index(Widget* tab);
 
         /**
          * This function can be invoked to ensure that the tab with the provided
@@ -80,18 +80,18 @@ namespace rl::gui {
          * to make the tab header follow a newly added tab, as the content of the
          * new tab is made visible but the tab header does not track it by default.
          */
-        void ensureTabVisible(size_t index);
+        void ensure_tab_visible(size_t index);
 
         const Widget* tab(const std::string& label) const;
         Widget* tab(const std::string& label);
 
         void perform_layout(SDL3::SDL_Renderer* ctx) override;
-        Vector2i preferredSize(SDL3::SDL_Renderer* ctx) const override;
+        Vector2i preferred_size(SDL3::SDL_Renderer* ctx) const override;
         void draw(SDL3::SDL_Renderer* ctx) override;
 
     private:
-        TabHeader* mHeader;
-        StackedWidget* mContent;
+        TabHeader* m_tab_header;
+        StackedWidget* m_content;
         std::function<void(size_t)> m_active_tab_changed_callback;
     };
 }

@@ -27,7 +27,7 @@ SDL_C_LIB_END
 #pragma warning(disable : 4244)
 
 namespace rl::gui {
-    NVGcolor Color::toNvgColor() const
+    NVGcolor Color::to_nvg_color() const
     {
         return reinterpret_cast<const NVGcolor&>(this->_d);
     }
@@ -84,7 +84,7 @@ namespace rl::gui {
         return a;
     }
 
-    SDL3::SDL_Color Color::toSdlColor() const
+    SDL3::SDL_Color Color::sdl_color() const
     {
         SDL3::SDL_Color color{ (uint8_t)std::round(r() * 255), (uint8_t)std::round(g() * 255),
                                (uint8_t)std::round(b() * 255), (uint8_t)std::round(a() * 255) };

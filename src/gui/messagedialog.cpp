@@ -13,7 +13,7 @@ namespace rl::gui {
         : Window(parent, title)
     {
         set_layout(new BoxLayout(Orientation::Vertical, Alignment::Middle, 10, 10));
-        setModal(true);
+        set_modal(true);
 
         Widget* panel1 = new Widget(this);
         panel1->set_layout(new BoxLayout(Orientation::Horizontal, Alignment::Middle, 10, 15));
@@ -31,7 +31,7 @@ namespace rl::gui {
                 break;
         }
         Label* iconLabel = new Label(panel1, std::string(utf8(icon).data()), "icons");
-        iconLabel->setFontSize(50);
+        iconLabel->set_font_size(50);
         mMessageLabel = new Label(panel1, message);
         Widget* panel2 = new Widget(this);
         panel2->set_layout(new BoxLayout(Orientation::Horizontal, Alignment::Middle, 0, 15));
@@ -39,19 +39,19 @@ namespace rl::gui {
         if (altButton)
         {
             Button* button = new Button(panel2, altButtonText, ENTYPO_ICON_CIRCLED_CROSS);
-            button->setCallback([&] {
-                if (mCallback)
-                    mCallback(1);
+            button->set_callback([&] {
+                if (m_callback)
+                    m_callback(1);
                 dispose();
             });
         }
         Button* button = new Button(panel2, buttonText, ENTYPO_ICON_CHECK);
-        button->setCallback([&] {
-            if (mCallback)
-                mCallback(0);
+        button->set_callback([&] {
+            if (m_callback)
+                m_callback(0);
             dispose();
         });
         center();
-        requestFocus();
+        request_focus();
     }
 }

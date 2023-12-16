@@ -15,9 +15,9 @@ namespace rl::gui {
         : m_parent(nullptr)
         , m_theme(nullptr)
         , m_layout(nullptr)
-        , m_pos(Vector2i::Zero())
-        , m_size(Vector2i::Zero())
-        , m_fixed_size(Vector2i::Zero())
+        , m_pos(Vector2i::zero())
+        , m_size(Vector2i::zero())
+        , m_fixed_size(Vector2i::zero())
         , m_visible(true)
         , m_enabled(true)
         , m_focused(false)
@@ -46,15 +46,15 @@ namespace rl::gui {
             child->set_theme(theme);
     }
 
-    int Widget::fontSize() const
+    int Widget::font_size() const
     {
-        return (m_font_size < 0 && m_theme) ? m_theme->mStandardFontSize : m_font_size;
+        return (m_font_size < 0 && m_theme) ? m_theme->m_standard_font_size : m_font_size;
     }
 
-    Vector2i Widget::preferredSize(SDL3::SDL_Renderer* ctx) const
+    Vector2i Widget::preferred_size(SDL3::SDL_Renderer* ctx) const
     {
         if (m_layout)
-            return m_layout->preferredSize(ctx, this);
+            return m_layout->preferred_size(ctx, this);
         else
             return m_size;
     }
@@ -69,7 +69,7 @@ namespace rl::gui {
         {
             for (auto c : m_children)
             {
-                Vector2i pref = c->preferredSize(ctx), fix = c->fixed_size();
+                Vector2i pref = c->preferred_size(ctx), fix = c->fixed_size();
                 c->set_size(Vector2i(fix[0] ? fix[0] : pref[0], fix[1] ? fix[1] : pref[1]));
                 c->perform_layout(ctx);
             }
@@ -94,33 +94,34 @@ namespace rl::gui {
         return nullptr;
     }
 
-    Widget* Widget::findWidget(const Vector2i& p)
+    Widget* Widget::find_widget(const Vector2i& p)
     {
         for (auto it = m_children.rbegin(); it != m_children.rend(); ++it)
         {
             Widget* child = *it;
             if (child->visible() && child->contains(p - m_pos))
-                return child->findWidget(p - m_pos);
+                return child->find_widget(p - m_pos);
         }
         return contains(p) ? this : nullptr;
     }
 
-    bool Widget::mouseButtonEvent(const Vector2i& p, int button, bool down, int modifiers)
+    bool Widget::mouse_button_event(const Vector2i& p, int button, bool down, int modifiers)
     {
         for (auto it = m_children.rbegin(); it != m_children.rend(); ++it)
         {
             Widget* child = *it;
             if (child->visible() && child->contains(p - m_pos) &&
-                child->mouseButtonEvent(p - m_pos, button, down, modifiers))
+                child->mouse_button_event(p - m_pos, button, down, modifiers))
                 return true;
         }
 
         if (button == SDL_BUTTON_LEFT && down && !m_focused)
-            requestFocus();
+            request_focus();
         return false;
     }
 
-    bool Widget::mouseMotionEvent(const Vector2i& p, const Vector2i& rel, int button, int modifiers)
+    bool Widget::mouse_motion_event(const Vector2i& p, const Vector2i& rel, int button,
+                                    int modifiers)
     {
         for (auto it = m_children.rbegin(); it != m_children.rend(); ++it)
         {
@@ -132,26 +133,26 @@ namespace rl::gui {
             if (contained != prevContained)
                 child->mouseEnterEvent(p, contained);
             if ((contained || prevContained) &&
-                child->mouseMotionEvent(p - m_pos, rel, button, modifiers))
+                child->mouse_motion_event(p - m_pos, rel, button, modifiers))
                 return true;
         }
         return false;
     }
 
-    bool Widget::scrollEvent(const Vector2i& p, const Vector2f& rel)
+    bool Widget::scroll_event(const Vector2i& p, const Vector2f& rel)
     {
         for (auto it = m_children.rbegin(); it != m_children.rend(); ++it)
         {
             Widget* child = *it;
             if (!child->visible())
                 continue;
-            if (child->contains(p - m_pos) && child->scrollEvent(p - m_pos, rel))
+            if (child->contains(p - m_pos) && child->scroll_event(p - m_pos, rel))
                 return true;
         }
         return false;
     }
 
-    bool Widget::mouseDragEvent(const Vector2i&, const Vector2i&, int, int)
+    bool Widget::mouse_drag_event(const Vector2i&, const Vector2i&, int, int)
     {
         return false;
     }
@@ -162,7 +163,7 @@ namespace rl::gui {
         return false;
     }
 
-    bool Widget::focusEvent(bool focused)
+    bool Widget::focus_event(bool focused)
     {
         m_focused = focused;
         return false;
@@ -272,7 +273,7 @@ namespace rl::gui {
         return m_parent ? m_parent->get_absolute_top() + m_pos.y : m_pos.y;
     }
 
-    void Widget::requestFocus()
+    void Widget::request_focus()
     {
         Widget* widget = this;
         while (widget->parent())

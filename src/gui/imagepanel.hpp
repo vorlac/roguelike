@@ -31,18 +31,18 @@ namespace rl::gui {
 
         std::function<void(int)> callback() const
         {
-            return mCallback;
+            return m_callback;
         }
 
-        void setCallback(const std::function<void(int)>& callback)
+        void set_callback(const std::function<void(int)>& callback)
         {
-            mCallback = callback;
+            m_callback = callback;
         }
 
-        bool mouseMotionEvent(const Vector2i& p, const Vector2i& rel, int button,
-                              int modifiers) override;
-        bool mouseButtonEvent(const Vector2i& p, int button, bool down, int modifiers) override;
-        Vector2i preferredSize(SDL3::SDL_Renderer* ctx) const override;
+        bool mouse_motion_event(const Vector2i& p, const Vector2i& rel, int button,
+                                int modifiers) override;
+        bool mouse_button_event(const Vector2i& p, int button, bool down, int modifiers) override;
+        Vector2i preferred_size(SDL3::SDL_Renderer* ctx) const override;
         void draw(SDL3::SDL_Renderer* renderer) override;
 
         ImagePanel& withImages(const ListImages& data)
@@ -57,7 +57,7 @@ namespace rl::gui {
 
     protected:
         ListImages mImages;
-        std::function<void(int)> mCallback;
+        std::function<void(int)> m_callback;
         int mThumbSize;
         int mSpacing;
         int mMargin;

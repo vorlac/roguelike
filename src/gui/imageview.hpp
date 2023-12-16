@@ -2,6 +2,7 @@
 
 #include <functional>
 
+#include "core/assert.hpp"
 #include "gui/widget.hpp"
 #include "sdl/defs.hpp"
 
@@ -22,138 +23,139 @@ namespace rl::gui {
         ImageView(Widget* parent, SDL3::SDL_Texture* texture);
         ~ImageView() override;
 
-        void bindImage(SDL3::SDL_Texture* texture);
+        void bind_image(SDL3::SDL_Texture* texture);
 
         Vector2f positionF() const
         {
             return m_pos.tofloat();
         }
 
-        Vector2f sizeF() const
+        Vector2f size_flt() const
         {
             return m_size.tofloat();
         }
 
         const Vector2i& imageSize() const
         {
-            return mImageSize;
+            return m_image_size;
         }
 
-        Vector2i scaledImageSize() const
+        Vector2i scaled_image_size() const
         {
-            return (mImageSize.tofloat() * mScale).toint();
+            return (m_image_size.tofloat() * m_scale).toint();
         }
 
-        Vector2f imageSizeF() const
+        Vector2f image_size_flt() const
         {
-            return mImageSize.tofloat();
+            return m_image_size.tofloat();
         }
 
-        Vector2f scaledImageSizeF() const
+        Vector2f scaled_image_size_flt() const
         {
-            return mImageSize.tofloat() * mScale;
+            return m_image_size.tofloat() * m_scale;
         }
 
         const Vector2f& offset() const
         {
-            return mOffset;
+            return m_offset;
         }
 
-        void setOffset(const Vector2f& offset)
+        void set_offset(const Vector2f& offset)
         {
-            mOffset = offset;
+            m_offset = offset;
         }
 
         float scale() const
         {
-            return mScale;
+            return m_scale;
         }
 
-        void setScale(float scale)
+        void set_scale(float scale)
         {
-            mScale = scale > 0.01f ? scale : 0.01f;
+            m_scale = scale > 0.01f ? scale : 0.01f;
         }
 
-        bool fixedOffset() const
+        bool fixed_offset() const
         {
-            return mFixedOffset;
+            return m_fixed_offset;
         }
 
-        void setFixedOffset(bool fixedOffset)
+        void set_fixed_offset(bool fixed_offset)
         {
-            mFixedOffset = fixedOffset;
+            m_fixed_offset = fixed_offset;
         }
 
-        bool fixedScale() const
+        bool fixed_scale() const
         {
-            return mFixedScale;
+            return m_fixed_scale;
         }
 
-        void setFixedScale(bool fixedScale)
+        void set_fixed_scale(bool fixed_scale)
         {
-            mFixedScale = fixedScale;
+            m_fixed_scale = fixed_scale;
         }
 
-        float zoomSensitivity() const
+        float zoom_sensitivity() const
         {
-            return mZoomSensitivity;
+            return m_zoom_sensitivity;
         }
 
-        void setZoomSensitivity(float zoomSensitivity)
+        void set_zoom_sensitivity(float zoom_sensitivity)
         {
-            mZoomSensitivity = zoomSensitivity;
+            m_zoom_sensitivity = zoom_sensitivity;
         }
 
-        float gridThreshold() const
+        float grid_threshold() const
         {
-            return mGridThreshold;
+            return m_grid_threshold;
         }
 
-        void setGridThreshold(float gridThreshold)
+        void set_grid_threshold(float grid_threshold)
         {
-            mGridThreshold = gridThreshold;
+            m_grid_threshold = grid_threshold;
         }
 
-        float pixelInfoThreshold() const
+        float pixel_info_threshold() const
         {
-            return mPixelInfoThreshold;
+            return m_pixel_info_threshold;
         }
 
-        void setPixelInfoThreshold(float pixelInfoThreshold)
+        void set_pixel_info_threshold(float pixel_info_threshold)
         {
-            mPixelInfoThreshold = pixelInfoThreshold;
+            m_pixel_info_threshold = pixel_info_threshold;
         }
 
-        void setPixelInfoCallback(
+        void set_pixel_info_callback(
             const std::function<std::pair<std::string, Color>(const Vector2i&)>& callback)
         {
-            mPixelInfoCallback = callback;
+            m_pixel_info_callback = callback;
         }
 
-        const std::function<std::pair<std::string, Color>(const Vector2i&)>& pixelInfoCallback() const
+        const std::function<std::pair<std::string, Color>(const Vector2i&)>& pixel_info_callback()
+            const
         {
-            return mPixelInfoCallback;
+            return m_pixel_info_callback;
         }
 
-        void setFontScaleFactor(float fontScaleFactor)
+        void set_font_scale(float font_scale)
         {
-            mFontScaleFactor = fontScaleFactor;
+            m_fond_scale_factor = font_scale;
         }
 
-        float fontScaleFactor() const
+        float font_scale() const
         {
-            return mFontScaleFactor;
+            return m_fond_scale_factor;
         }
 
         // Image transformation functions.
 
         // Calculates the image coordinates of the given pixel position on the widget.
-        Vector2f imageCoordinateAt(const Vector2f& position) const;
+        Vector2f image_coord_at(const Vector2f& position) const;
 
         // Calculates the image coordinates of the given pixel position on the widget.
         // If the position provided corresponds to a coordinate outside the range of
         // the image, the coordinates are clamped to edges of the image.
-        Vector2f clampedImageCoordinateAt(const Vector2f& position) const;
+        Vector2f clamped_image_coord_at(const Vector2f& position) const;
 
         // Calculates the position inside the widget for the given image coordinate.
         Vector2f positionForCoordinate(const Vector2f& imageCoordinate) const;
@@ -161,7 +163,7 @@ namespace rl::gui {
         // Modifies the internal state of the image viewer widget so that the pixel at the provided
         // position on the widget has the specified image coordinate. Also clamps the values of
         // offset to the sides of the widget.
-        void setImageCoordinateAt(const Vector2f& position, const Vector2f& imageCoordinate);
+        void set_image_coord_at(const Vector2f& position, const Vector2f& imageCoordinate);
 
         // Centers the image without affecting the scaling factor.
         void center();
@@ -170,10 +172,10 @@ namespace rl::gui {
         void fit();
 
         // Set the scale while keeping the image centered
-        void setScaleCentered(float scale);
+        void set_scale_centered(float scale);
 
         // Moves the offset by the specified amount. Does bound checking.
-        void moveOffset(const Vector2f& delta);
+        void move_offset(const Vector2f& delta);
 
         /**
          * Changes the scale factor by the provided amount modified by the zoom sensitivity member
@@ -184,61 +186,61 @@ namespace rl::gui {
 
         bool kb_button_event(int key, int scancode, int action, int modifiers) override;
         bool kb_character_event(unsigned int codepoint) override;
-        bool mouseDragEvent(const Vector2i& p, const Vector2i& rel, int button,
-                            int modifiers) override;
-        bool scrollEvent(const Vector2i& p, const Vector2f& rel) override;
+        bool mouse_drag_event(const Vector2i& p, const Vector2i& rel, int button,
+                              int modifiers) override;
+        bool scroll_event(const Vector2i& p, const Vector2f& rel) override;
 
         // Function indicating whether the grid is currently visible.
-        bool gridVisible() const;
+        bool grid_visible() const;
 
         // Function indicating whether the pixel information is currently visible.
-        bool pixelInfoVisible() const;
+        bool pixel_info_visible() const;
 
         // Function indicating whether any of the overlays are visible.
-        bool helpersVisible() const;
+        bool debug_overlays_visible() const;
 
-        Vector2i preferredSize(SDL3::SDL_Renderer* ctx) const override;
+        Vector2i preferred_size(SDL3::SDL_Renderer* ctx) const override;
         void perform_layout(SDL3::SDL_Renderer* ctx) override;
         void draw(SDL3::SDL_Renderer* renderer) override;
 
-        ImageView& withImage(SDL3::SDL_Texture* texture)
+        ImageView& with_image(SDL3::SDL_Texture* texture)
         {
-            bindImage(texture);
+            bind_image(texture);
             return *this;
         }
 
     private:
         // Helper image methods.
-        void updateImageParameters();
+        void update_image_params();
 
         // Helper drawing methods.
-        void drawWidgetBorder(SDL3::SDL_Renderer* ctx, const SDL3::SDL_Point& ap) const;
-        void drawImageBorder(SDL3::SDL_Renderer* ctx, const SDL3::SDL_Point& ap) const;
-        void drawHelpers(SDL3::SDL_Renderer* ctx) const;
-        static void drawPixelGrid(SDL3::SDL_Renderer* ctx, const Vector2f& upperLeftCorner,
-                                  const Vector2f& lowerRightCorner, const float stride);
-        void drawPixelInfo(SDL3::SDL_Renderer* ctx, const float stride) const;
-        void writePixelInfo(SDL3::SDL_Renderer* ctx, const Vector2f& cellPosition,
-                            const Vector2i& pixel, const float stride) const;
+        void draw_widget_border(SDL3::SDL_Renderer* ctx, const SDL3::SDL_Point& ap) const;
+        void draw_image_border(SDL3::SDL_Renderer* ctx, const SDL3::SDL_Point& ap) const;
+        void draw_debug_overlays(SDL3::SDL_Renderer* ctx) const;
+        static void draw_pixel_grid(SDL3::SDL_Renderer* ctx, const Vector2f& upperLeftCorner,
+                                    const Vector2f& lowerRightCorner, const float stride);
+        void draw_pixel_info(SDL3::SDL_Renderer* ctx, const float stride) const;
+        void write_pixel_info(SDL3::SDL_Renderer* ctx, const Vector2f& cellPosition,
+                              const Vector2i& pixel, const float stride) const;
 
         SDL3::SDL_Texture* mTexture = nullptr;
-        Vector2i mImageSize;
+        Vector2i m_image_size;
 
         // Image display parameters.
-        float mScale;
-        Vector2f mOffset;
-        bool mFixedScale;
-        bool mFixedOffset;
+        float m_scale;
+        Vector2f m_offset;
+        bool m_fixed_scale;
+        bool m_fixed_offset;
 
         // Fine-tuning parameters.
-        float mZoomSensitivity = 1.1f;
+        float m_zoom_sensitivity = 1.1f;
 
         // Image info parameters.
-        float mGridThreshold = -1;
-        float mPixelInfoThreshold = -1;
+        float m_grid_threshold = -1;
+        float m_pixel_info_threshold = -1;
 
         // Image pixel data display members.
-        std::function<std::pair<std::string, Color>(const Vector2i&)> mPixelInfoCallback;
-        float mFontScaleFactor = 0.2f;
+        std::function<std::pair<std::string, Color>(const Vector2i&)> m_pixel_info_callback;
+        float m_fond_scale_factor = 0.2f;
     };
 }

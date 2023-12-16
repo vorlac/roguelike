@@ -15,7 +15,7 @@ namespace rl::gui {
     {
     public:
         Label(Widget* parent, const std::string& caption, const std::string& font = "sans",
-              int fontSize = -1);
+              int font_size = -1);
 
         /// Get the label's text caption
         const std::string& caption() const
@@ -24,50 +24,50 @@ namespace rl::gui {
         }
 
         /// Set the label's text caption
-        void setCaption(const std::string& caption)
+        void set_caption(const std::string& caption)
         {
             m_caption = caption;
-            _texture.dirty = true;
+            m_texture.dirty = true;
         }
 
         /// Set the currently active font (2 are available by default: 'sans' and 'sans-bold')
-        void setFont(const std::string& font)
+        void set_font(const std::string& font)
         {
-            mFont = font;
+            m_font = font;
         }
 
         /// Get the currently active font
         const std::string& font() const
         {
-            return mFont;
+            return m_font;
         }
 
         /// Get the label color
         Color color() const
         {
-            return mColor;
+            return m_color;
         }
 
         /// Set the label color
-        void setColor(const Color& color)
+        void set_color(const Color& color)
         {
-            mColor = color;
+            m_color = color;
         }
 
         /// Set the \ref Theme used to draw this widget
         virtual void set_theme(Theme* theme) override;
 
         /// Compute the size needed to fully display the label
-        virtual Vector2i preferredSize(SDL3::SDL_Renderer* ctx) const override;
+        virtual Vector2i preferred_size(SDL3::SDL_Renderer* ctx) const override;
 
         /// Draw the label
         void draw(SDL3::SDL_Renderer* renderer) override;
-        void setFontSize(int fontSize) override;
+        void set_font_size(int font_size) override;
 
     protected:
         std::string m_caption;
-        std::string mFont;
-        Color mColor;
-        Texture _texture;
+        std::string m_font;
+        Color m_color;
+        Texture m_texture;
     };
 }

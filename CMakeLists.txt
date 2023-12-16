@@ -95,12 +95,16 @@ target_compile_features(${PROJECT_NAME} PRIVATE
 )
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
-  NOMINMAX
-  KHRONOS_STATIC
   ROGUELIKE_TESTS_ENABLED
-  _CRT_SECURE_NO_WARNINGS
-  $<$<CONFIG:Debug>:
-      DEBUG_HEAP=0
+  KHRONOS_STATIC
+  NOMINMAX
+
+  $<${compiler_is_msvc}:
+      _CRT_SECURE_NO_WARNINGS
+
+      $<$<CONFIG:Debug>:
+        _NO_DEBUG_HEAP=1
+      >
   >
 )
 

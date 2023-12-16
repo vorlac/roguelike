@@ -32,7 +32,7 @@ namespace rl::gui {
          * \param callback
          *     If provided, the callback to execute when the SwitchBox is checked or
          *     unchecked.  Default parameter function does nothing.  See
-         *     \ref nanogui::SwitchBox::mPushed for the difference between "pushed"
+         *     \ref nanogui::SwitchBox::m_pushed for the difference between "pushed"
          *     and "checked".
          */
         SwitchBox(Widget* parent, Alignment align = Alignment::Horizontal,
@@ -40,24 +40,24 @@ namespace rl::gui {
                   const std::function<void(bool)>& callback = std::function<void(bool)>());
 
         /// The preferred size of this SwitchBox.
-        virtual Vector2i preferredSize(SDL3::SDL_Renderer* renderer) const override;
+        virtual Vector2i preferred_size(SDL3::SDL_Renderer* renderer) const override;
 
         /// Draws this SwitchBox.
         virtual void draw(SDL3::SDL_Renderer* renderer) override;
-        virtual void drawBody(SDL3::SDL_Renderer* renderer) override;
+        virtual void draw_body(SDL3::SDL_Renderer* renderer) override;
         virtual void drawKnob(SDL3::SDL_Renderer* renderer);
 
-        virtual void setAlignment(Alignment align)
+        virtual void set_alignment(Alignment align)
         {
-            mAlign = align;
+            m_align = align;
         }
 
     protected:
-        Alignment mAlign = Alignment::Horizontal;
-        float path = 0.f;
+        Alignment m_align = Alignment::Horizontal;
+        float m_path = 0.f;
 
         struct AsyncTexture;
-        typedef std::shared_ptr<AsyncTexture> AsyncTexturePtr;
-        std::vector<AsyncTexturePtr> _txs;
+        using AsyncTexturePtr = std::shared_ptr<SwitchBox::AsyncTexture>;
+        std::vector<SwitchBox::AsyncTexturePtr> m_textures;
     };
 }

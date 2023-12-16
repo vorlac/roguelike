@@ -35,23 +35,23 @@ namespace rl::gui {
         return overImage ? (gridPos.x + gridPos.y * grid.x) : -1;
     }
 
-    bool ImagePanel::mouseMotionEvent(const Vector2i& p, const Vector2i& /* rel */,
-                                      int /* button */, int /* modifiers */)
+    bool ImagePanel::mouse_motion_event(const Vector2i& p, const Vector2i& /* rel */,
+                                        int /* button */, int /* modifiers */)
     {
         mMouseIndex = indexForPosition(p);
         return true;
     }
 
-    bool ImagePanel::mouseButtonEvent(const Vector2i& p, int /* button */, bool down,
-                                      int /* modifiers */)
+    bool ImagePanel::mouse_button_event(const Vector2i& p, int /* button */, bool down,
+                                        int /* modifiers */)
     {
         int index = indexForPosition(p);
-        if (index >= 0 && mCallback && down)
-            mCallback(index);
+        if (index >= 0 && m_callback && down)
+            m_callback(index);
         return true;
     }
 
-    Vector2i ImagePanel::preferredSize(SDL3::SDL_Renderer*) const
+    Vector2i ImagePanel::preferred_size(SDL3::SDL_Renderer*) const
     {
         Vector2i grid = gridSize();
         return Vector2i{

@@ -22,7 +22,7 @@ namespace rl::gui {
             AsyncTexture* self = this;
             std::thread tgr([=]() {
                 Theme* mTheme = pbar->theme();
-                std::lock_guard<std::mutex> guard(mTheme->loadMutex);
+                std::lock_guard<std::mutex> guard(mTheme->m_load_mutex);
 
                 int ww = pbar->width();
                 int hh = pbar->height();
@@ -32,8 +32,8 @@ namespace rl::gui {
                 nvgBeginFrame(ctx, ww + 2, hh + 2, pxRatio);
 
                 NVGpaint paint = nvgBoxGradient(ctx, 1, 1, ww - 2, hh, 3, 4,
-                                                Color(0, 32).toNvgColor(),
-                                                Color(0, 92).toNvgColor());
+                                                Color(0, 32).to_nvg_color(),
+                                                Color(0, 92).to_nvg_color());
                 nvgBeginPath(ctx);
                 nvgRoundedRect(ctx, 0, 0, ww, hh, 3);
                 nvgFillPaint(ctx, paint);
@@ -50,7 +50,7 @@ namespace rl::gui {
         void load_bar(ProgressBar* ptr)
         {
             ProgressBar* pbar = ptr;
-            AsyncTexture* self = this;
+            ProgressBar::AsyncTexture* self{ this };
 
             if (busy)
                 return;
@@ -59,7 +59,7 @@ namespace rl::gui {
 
             std::thread tgr([=]() {
                 Theme* mTheme = pbar->theme();
-                std::lock_guard<std::mutex> guard(mTheme->loadMutex);
+                std::lock_guard<std::mutex> guard(mTheme->m_load_mutex);
 
                 int ww = pbar->width();
                 int hh = pbar->height();
@@ -72,8 +72,8 @@ namespace rl::gui {
                 int barPos = (int)std::round((ww - 2) * value);
 
                 NVGpaint paint = nvgBoxGradient(ctx, 0, 0, barPos + 1.5f, hh - 1, 3, 4,
-                                                Color(220, 100).toNvgColor(),
-                                                Color(128, 100).toNvgColor());
+                                                Color(220, 100).to_nvg_color(),
+                                                Color(128, 100).to_nvg_color());
 
                 nvgBeginPath(ctx);
                 nvgRoundedRect(ctx, 1, 1, barPos, hh - 2, 3);
@@ -98,9 +98,9 @@ namespace rl::gui {
             if (tex.tex)
             {
                 int w, h;
-                SDL_QueryTexture(tex.tex, nullptr, nullptr, &w, &h);
+                SDL3::SDL_QueryTexture(tex.tex, nullptr, nullptr, &w, &h);
                 if (w != tex.w() || h != tex.h())
-                    SDL_DestroyTexture(tex.tex);
+                    SDL3::SDL_DestroyTexture(tex.tex);
             }
 
             if (!tex.tex)
@@ -110,10 +110,10 @@ namespace rl::gui {
 
             int pitch;
             uint8_t* pixels;
-            int ok = SDL_LockTexture(tex.tex, nullptr, (void**)&pixels, &pitch);
+            int ok = SDL3::SDL_LockTexture(tex.tex, nullptr, (void**)&pixels, &pitch);
             memcpy(pixels, rgba, sizeof(uint32_t) * tex.w() * tex.h());
-            SDL_SetTextureBlendMode(tex.tex, SDL3::SDL_BLENDMODE_BLEND);
-            SDL_UnlockTexture(tex.tex);
+            SDL3::SDL_SetTextureBlendMode(tex.tex, SDL3::SDL_BLENDMODE_BLEND);
+            SDL3::SDL_UnlockTexture(tex.tex);
 
             nvgDeleteRT(ctx);
             ctx = nullptr;
@@ -123,57 +123,56 @@ namespace rl::gui {
 
     ProgressBar::ProgressBar(Widget* parent)
         : Widget(parent)
-        , mValue(0.0f)
+        , m_value(0.0f)
     {
     }
 
-    void ProgressBar::setValue(float value)
+    void ProgressBar::set_value(float value)
     {
-        mValue = value;
+        m_value = value;
     }
 
-    Vector2i ProgressBar::preferredSize(SDL3::SDL_Renderer*) const
+    Vector2i ProgressBar::preferred_size(SDL3::SDL_Renderer*) const
     {
         return Vector2i(70, 12);
     }
 
-    void ProgressBar::drawBody(SDL3::SDL_Renderer* renderer)
+    void ProgressBar::draw_body(SDL3::SDL_Renderer* renderer)
     {
-        if (!_body)
+        if (!m_body)
         {
-            _body = std::make_shared<AsyncTexture>();
-            _body->load_body(this);
+            m_body = std::make_shared<ProgressBar::AsyncTexture>();
+            m_body->load_body(this);
         }
 
-        if (_body)
+        if (m_body)
         {
             Vector2i ap = absolute_position();
-            _body->perform(renderer);
-            SDL_RenderCopy(renderer, _body->tex, ap);
+            m_body->perform(renderer);
+            SDL_RenderCopy(renderer, m_body->tex, ap);
         }
     }
 
     void ProgressBar::drawBar(SDL3::SDL_Renderer* renderer)
     {
-        if (!_bar)
-            _bar = std::make_shared<AsyncTexture>();
+        if (!m_bar)
+            m_bar = std::make_shared<ProgressBar::AsyncTexture>();
 
-        if (mValue != _bar->value)
-            _bar->load_bar(this);
+        if (m_value != m_bar->value)
+            m_bar->load_bar(this);
 
-        if (_bar)
+        if (m_bar)
         {
-            Vector2i ap = absolute_position();
-            _bar->perform(renderer);
-            SDL_RenderCopy(renderer, _bar->tex, ap);
+            Vector2i ap = this->absolute_position();
+            m_bar->perform(renderer);
+            SDL_RenderCopy(renderer, m_bar->tex, ap);
         }
     }
 
     void ProgressBar::draw(SDL3::SDL_Renderer* renderer)
     {
         Widget::draw(renderer);
-
-        drawBody(renderer);
-        drawBar(renderer);
+        this->draw_body(renderer);
+        this->drawBar(renderer);
     }
 }

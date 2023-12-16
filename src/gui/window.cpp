@@ -1,6 +1,7 @@
 #include <mutex>
 #include <thread>
 
+#include "core/assert.hpp"
 #include "gui/layout.hpp"
 #include "gui/nanovg.h"
 #include "gui/screen.hpp"
@@ -42,7 +43,7 @@ namespace rl::gui {
 
                 int ww = wnd->width();
                 int hh = wnd->height();
-                int ds = m_theme->mWindowDropShadowSize;
+                int ds = m_theme->m_window_drop_shadow_size;
 
                 Vector2i mPos(dx + ds, dy + ds);
 
@@ -53,25 +54,26 @@ namespace rl::gui {
                 float pxRatio = 1.0f;
                 nvgBeginFrame(ctx, realw, realh, pxRatio);
 
-                int cr = m_theme->mWindowCornerRadius;
-                int headerH = m_theme->mWindowHeaderHeight;
+                int cr = m_theme->m_window_corner_radius;
+                int headerH = m_theme->m_window_header_height;
 
                 /* Draw window */
                 nvgSave(ctx);
                 nvgBeginPath(ctx);
                 nvgRoundedRect(ctx, mPos.x, mPos.y, ww, hh, cr);
 
-                nvgFillColor(
-                    ctx, (mouseFocus ? m_theme->mWindowFillFocused : m_theme->mWindowFillUnfocused)
-                             .toNvgColor());
+                nvgFillColor(ctx, (mouseFocus ? m_theme->m_window_fill_focused
+                                              : m_theme->m_window_fill_unfocused)
+                                      .to_nvg_color());
                 nvgFill(ctx);
 
                 /* Draw a drop shadow */
-                if (wnd->dropShadowEnabled())
+                if (wnd->drop_shadow_enabled())
                 {
                     NVGpaint shadowPaint = nvgBoxGradient(ctx, mPos.x, mPos.y, ww, hh, cr * 2,
-                                                          ds * 2, m_theme->mDropShadow.toNvgColor(),
-                                                          m_theme->mTransparent.toNvgColor());
+                                                          ds * 2,
+                                                          m_theme->m_drop_shadow.to_nvg_color(),
+                                                          m_theme->m_transparent.to_nvg_color());
 
                     nvgSave(ctx);
                     nvgResetScissor(ctx);
@@ -87,8 +89,8 @@ namespace rl::gui {
                 /* Draw header */
                 NVGpaint headerPaint = nvgLinearGradient(
                     ctx, mPos.x, mPos.y, mPos.x, mPos.y + headerH,
-                    m_theme->mWindowHeaderGradientTop.toNvgColor(),
-                    m_theme->mWindowHeaderGradientBot.toNvgColor());
+                    m_theme->m_window_header_gradient_top.to_nvg_color(),
+                    m_theme->m_window_header_gradient_bot.to_nvg_color());
 
                 nvgBeginPath(ctx);
                 nvgRoundedRect(ctx, mPos.x, mPos.y, ww, headerH, cr);
@@ -98,7 +100,7 @@ namespace rl::gui {
 
                 nvgBeginPath(ctx);
                 nvgRoundedRect(ctx, mPos.x, mPos.y, ww, headerH, cr);
-                nvgStrokeColor(ctx, m_theme->mWindowHeaderSepTop.toNvgColor());
+                nvgStrokeColor(ctx, m_theme->m_window_header_sep_top.to_nvg_color());
 
                 nvgSave(ctx);
                 nvgIntersectScissor(ctx, mPos.x, mPos.y, ww, 0.5f);
@@ -108,7 +110,7 @@ namespace rl::gui {
                 nvgBeginPath(ctx);
                 nvgMoveTo(ctx, mPos.x + 0.5f, mPos.y + headerH - 1.5f);
                 nvgLineTo(ctx, mPos.x + ww - 0.5f, mPos.y + headerH - 1.5);
-                nvgStrokeColor(ctx, m_theme->mWindowHeaderSepBot.toNvgColor());
+                nvgStrokeColor(ctx, m_theme->m_window_header_sep_bot.to_nvg_color());
                 nvgStroke(ctx);
 
                 nvgEndFrame(ctx);
@@ -144,73 +146,74 @@ namespace rl::gui {
 
     Window::Window(Widget* parent, const std::string& title)
         : Widget(parent)
-        , mTitle(title)
-        , mButtonPanel(nullptr)
-        , mModal(false)
-        , mDrag(false)
+        , m_title(title)
+        , m_button_panel(nullptr)
+        , m_modal(false)
+        , m_drag(false)
     {
-        _titleTex.dirty = true;
+        m_title_texture.dirty = true;
     }
 
-    Vector2i Window::preferredSize(SDL3::SDL_Renderer* ctx) const
+    Vector2i Window::preferred_size(SDL3::SDL_Renderer* ctx) const
     {
-        if (mButtonPanel)
-            mButtonPanel->set_visible(false);
-        Vector2i result = Widget::preferredSize(ctx);
-        if (mButtonPanel)
-            mButtonPanel->set_visible(true);
+        if (m_button_panel)
+            m_button_panel->set_visible(false);
+        Vector2i result = Widget::preferred_size(ctx);
+        if (m_button_panel)
+            m_button_panel->set_visible(true);
 
         int w, h;
-        const_cast<Window*>(this)->m_theme->getTextBounds("sans-bold", 18.0, mTitle.c_str(), &w, &h);
+        const_cast<Window*>(this)->m_theme->get_text_bounds("sans-bold", 18.0, m_title.c_str(), &w,
+                                                            &h);
 
         return result.cmax(Vector2i(w + 20, h));
     }
 
     Widget* Window::buttonPanel()
     {
-        if (!mButtonPanel)
+        if (!m_button_panel)
         {
-            mButtonPanel = new Widget(this);
-            mButtonPanel->set_layout(
+            m_button_panel = new Widget(this);
+            m_button_panel->set_layout(
                 new BoxLayout(Orientation::Horizontal, Alignment::Middle, 0, 4));
         }
-        return mButtonPanel;
+        return m_button_panel;
     }
 
     void Window::perform_layout(SDL3::SDL_Renderer* ctx)
     {
-        if (!mButtonPanel)
+        if (!m_button_panel)
         {
             Widget::perform_layout(ctx);
         }
         else
         {
-            mButtonPanel->set_visible(false);
+            m_button_panel->set_visible(false);
             Widget::perform_layout(ctx);
-            for (auto w : mButtonPanel->children())
+            for (auto w : m_button_panel->children())
             {
                 w->set_fixed_size({ 22, 22 });
-                w->setFontSize(15);
+                w->set_font_size(15);
             }
-            mButtonPanel->set_visible(true);
-            mButtonPanel->set_size({ width(), 22 });
-            mButtonPanel->set_relative_position(
-                { width() - (mButtonPanel->preferredSize(ctx).x + 5), 3 });
-            mButtonPanel->perform_layout(ctx);
+            m_button_panel->set_visible(true);
+            m_button_panel->set_size({ this->width(), 22 });
+            m_button_panel->set_relative_position(
+                { this->width() - (m_button_panel->preferred_size(ctx).x + 5), 3 });
+            m_button_panel->perform_layout(ctx);
         }
     }
 
-    bool Window::focusEvent(bool focused)
+    bool Window::focus_event(bool focused)
     {
-        _titleTex.dirty = focused != m_focused;
-        return Widget::focusEvent(focused);
+        m_title_texture.dirty = focused != m_focused;
+        return Widget::focus_event(focused);
     }
 
-    void Window::drawBodyTemp(SDL3::SDL_Renderer* renderer)
+    void Window::draw_body_temp(SDL3::SDL_Renderer* renderer)
     {
-        int ds = m_theme->mWindowDropShadowSize;
-        int cr = m_theme->mWindowCornerRadius;
-        int hh = m_theme->mWindowHeaderHeight;
+        int ds = m_theme->m_window_drop_shadow_size;
+        int cr = m_theme->m_window_corner_radius;
+        int hh = m_theme->m_window_header_height;
 
         Vector2i ap = absolute_position();
         SDL3::SDL_FRect rect{ ap.x, ap.y, m_size.x, m_size.y };
@@ -218,103 +221,110 @@ namespace rl::gui {
         /* Draw a drop shadow */
         SDL3::SDL_FRect shadowRect{ ap.x - ds, ap.y - ds, m_size.x + 2.0f * ds,
                                     m_size.y + 2.0f * ds };
-        SDL3::SDL_Color shadowColor = m_theme->mDropShadow.toSdlColor();
+        SDL3::SDL_Color shadowColor = m_theme->m_drop_shadow.sdl_color();
 
         SDL3::SDL_SetRenderDrawColor(renderer, shadowColor.r, shadowColor.g, shadowColor.b, 32);
         SDL3::SDL_RenderFillRect(renderer, &shadowRect);
 
         /* Draw window */
-        SDL3::SDL_Color color = (m_mouse_focus ? m_theme->mWindowFillFocused
-                                               : m_theme->mWindowFillUnfocused)
-                                    .toSdlColor();
+        SDL3::SDL_Color color = (m_mouse_focus ? m_theme->m_window_fill_focused
+                                               : m_theme->m_window_fill_unfocused)
+                                    .sdl_color();
         SDL3::SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
         SDL3::SDL_RenderFillRect(renderer, &rect);
 
-        SDL3::SDL_FRect wndBdRect{ ap.x - 2, ap.y - 2, width() + 4, height() + 4 };
-        SDL3::SDL_Color bd = m_theme->mBorderDark.toSdlColor();
+        SDL3::SDL_FRect wndBdRect{ ap.x - 2, ap.y - 2, this->width() + 4, this->height() + 4 };
+        SDL3::SDL_Color bd = m_theme->m_border_dark.sdl_color();
         SDL3::SDL_SetRenderDrawColor(renderer, bd.r, bd.g, bd.b, bd.a);
         SDL3::SDL_RenderRect(renderer, &wndBdRect);
 
-        SDL3::SDL_Color headerColor = m_theme->mWindowHeaderGradientTop.toSdlColor();
+        SDL3::SDL_Color headerColor = m_theme->m_window_header_gradient_top.sdl_color();
         SDL3::SDL_FRect headerRect{ ap.x, ap.y, m_size.x, hh };
 
         SDL3::SDL_SetRenderDrawColor(renderer, headerColor.r, headerColor.g, headerColor.b,
                                      headerColor.a);
         SDL3::SDL_RenderFillRect(renderer, &headerRect);
 
-        SDL3::SDL_Color headerBotColor = m_theme->mWindowHeaderSepBot.toSdlColor();
+        SDL3::SDL_Color headerBotColor = m_theme->m_window_header_sep_bot.sdl_color();
         SDL3::SDL_SetRenderDrawColor(renderer, headerBotColor.r, headerBotColor.g, headerBotColor.b,
                                      headerBotColor.a);
-        SDL3::SDL_RenderLine(renderer, ap.x + 0.5f, ap.y + hh - 1.5f, ap.x + width() - 0.5f,
+        SDL3::SDL_RenderLine(renderer, ap.x + 0.5f, ap.y + hh - 1.5f, ap.x + this->width() - 0.5f,
                              ap.y + hh - 1.5);
     }
 
-    void Window::drawBody(SDL3::SDL_Renderer* renderer)
+    void Window::draw_body(SDL3::SDL_Renderer* renderer)
     {
         int id = (m_mouse_focus ? 0x1 : 0);
 
-        auto atx = std::find_if(m_window_txs.begin(), m_window_txs.end(),
+        auto atx = std::find_if(m_window_textures.begin(), m_window_textures.end(),
                                 [id](const Window::AsyncTexturePtr& p) {
                                     return p->id == id;
                                 });
 
-        if (atx != m_window_txs.end())
-            drawTexture(*atx, renderer);
+        if (atx != m_window_textures.end())
+            draw_texture(*atx, renderer);
         else
         {
             Window::AsyncTexturePtr newtx = std::make_shared<Window::AsyncTexture>(id);
             newtx->load(this, 0, 0, m_mouse_focus);
-            m_window_txs.push_back(newtx);
+            m_window_textures.push_back(newtx);
 
-            drawTexture(current_texture_, renderer);
+            draw_texture(m_curr_texture, renderer);
         }
     }
 
     void Window::draw(SDL3::SDL_Renderer* renderer)
     {
-        drawBody(renderer);
+        this->draw_body(renderer);
 
-        if (_titleTex.dirty)
+        if (m_title_texture.dirty)
         {
-            Color titleTextColor = (m_focused ? m_theme->mWindowTitleFocused
-                                              : m_theme->mWindowTitleUnfocused);
-            m_theme->getTexAndRectUtf8(renderer, _titleTex, 0, 0, mTitle.c_str(), "sans-bold", 18,
-                                       titleTextColor);
+            Color titleTextColor = (m_focused ? m_theme->m_window_title_focused
+                                              : m_theme->m_window_fill_unfocused);
+            m_theme->get_texture_and_rect_utf8(renderer, m_title_texture, 0, 0, m_title.c_str(),
+                                               "sans-bold", 18, titleTextColor);
         }
 
-        if (!mTitle.empty() && _titleTex.tex)
+        if (!m_title.empty() && m_title_texture.tex)
         {
-            int headerH = m_theme->mWindowHeaderHeight;
-            SDL_RenderCopy(
-                renderer, _titleTex,
-                m_pos + Vector2i((m_size.x - _titleTex.w()) / 2, (headerH - _titleTex.h()) / 2));
+            i32 header_h{ m_theme->m_window_header_height };
+            auto&& pos = m_pos + Vector2i((m_size.x - m_title_texture.w()) / 2,
+                                          (header_h - m_title_texture.h()) / 2);
+            SDL3::SDL_FRect rect{ pos.x, pos.y, 0.0f, 0.0f };
+            i32 result = SDL3::SDL_RenderTexture(renderer, m_title_texture, &rect, nullptr);
+            sdl_assert(result == 0, "Render texture failed: {}", result);
         }
 
-        Widget::draw(renderer);
+        this->draw(renderer);
     }
 
     void Window::dispose()
     {
-        Widget* widget = this;
-        while (widget->parent())
+        Widget* widget{ this };
+        while (widget->parent() != nullptr)
             widget = widget->parent();
-        ((Screen*)widget)->dispose_window(this);
+
+        Screen* screen{ static_cast<Screen*>(widget) };
+        runtime_assert(screen != nullptr, "Invalid screen widget");
+        screen->dispose_window(this);
     }
 
     void Window::center()
     {
-        Widget* widget = this;
-        while (widget->parent())
+        Widget* widget{ this };
+        while (widget->parent() != nullptr)
             widget = widget->parent();
-        ((Screen*)widget)->center_window(this);
+
+        static_cast<Screen*>(widget)->center_window(this);
     }
 
-    bool Window::mouseDragEvent(const Vector2i&, const Vector2i& rel, int button,
-                                int /* modifiers */)
+    bool Window::mouse_drag_event(const Vector2i&, const Vector2i& rel, i32 button,
+                                  i32 /* modifiers */)
     {
-        if (!mDraggable)
+        if (!m_draggable)
             return false;
-        if (mDrag && (button & (1 << SDL_BUTTON_LEFT)) != 0)
+
+        if (m_drag && (button & (1 << SDL_BUTTON_LEFT)) != 0)
         {
             m_pos += rel;
             m_pos = m_pos.cmax({ 0, 0 });
@@ -324,30 +334,31 @@ namespace rl::gui {
         return false;
     }
 
-    bool Window::mouseButtonEvent(const Vector2i& p, int button, bool down, int modifiers)
+    bool Window::mouse_button_event(const Vector2i& p, int button, bool down, int modifiers)
     {
-        if (Widget::mouseButtonEvent(p, button, down, modifiers))
+        if (Widget::mouse_button_event(p, button, down, modifiers))
             return true;
+
         if (button == SDL_BUTTON_LEFT)
         {
-            mDrag = down && (p.y - m_pos.y) < m_theme->mWindowHeaderHeight;
+            m_drag = down && (p.y - m_pos.y) < m_theme->m_window_header_height;
             return true;
         }
         return false;
     }
 
-    bool Window::scrollEvent(const Vector2i& p, const Vector2f& rel)
+    bool Window::scroll_event(const Vector2i& p, const Vector2f& rel)
     {
-        Widget::scrollEvent(p, rel);
+        Widget::scroll_event(p, rel);
         return true;
     }
 
-    void Window::refreshRelativePlacement()
+    void Window::refresh_relative_placement()
     {
         // Overridden in Popup
     }
 
-    void Window::drawTexture(AsyncTexturePtr& texture, SDL3::SDL_Renderer* renderer)
+    void Window::draw_texture(AsyncTexturePtr& texture, SDL3::SDL_Renderer* renderer)
     {
         if (texture)
         {
@@ -356,19 +367,18 @@ namespace rl::gui {
             if (texture->tex.tex)
             {
                 SDL_RenderCopy(renderer, texture->tex, absolute_position());
-
-                if (!current_texture_ || texture->id != current_texture_->id)
-                    current_texture_ = texture;
+                if (!m_curr_texture || texture->id != m_curr_texture->id)
+                    m_curr_texture = texture;
             }
-            else if (current_texture_)
+            else if (m_curr_texture)
             {
-                SDL_RenderCopy(renderer, current_texture_->tex, absolute_position());
+                SDL_RenderCopy(renderer, m_curr_texture->tex, absolute_position());
             }
             else
-                drawBodyTemp(renderer);
+                this->draw_body_temp(renderer);
         }
         else
-            drawBodyTemp(renderer);
+            this->draw_body_temp(renderer);
     }
 
 }

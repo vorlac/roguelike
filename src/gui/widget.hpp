@@ -376,7 +376,7 @@ namespace rl::gui {
         /**
          * @brief Associate this widget with an ID value (optional)
          **/
-        void setId(const std::string& id)
+        void set_id(const std::string& id)
         {
             m_id = id;
         }
@@ -400,7 +400,7 @@ namespace rl::gui {
         /**
          * @brief Set whether or not this widget is currently enabled
          **/
-        void setEnabled(bool enabled)
+        void set_enabled(bool enabled)
         {
             m_enabled = enabled;
         }
@@ -416,7 +416,7 @@ namespace rl::gui {
         /**
          * @brief Set whether or not this widget is currently focused
          **/
-        void setFocused(bool focused)
+        void set_focused(bool focused)
         {
             m_focused = focused;
         }
@@ -424,14 +424,14 @@ namespace rl::gui {
         /**
          * @brief Request the focus to be moved to this widget
          **/
-        void requestFocus();
+        void request_focus();
 
         const std::string& tooltip() const
         {
             return m_tooltip;
         }
 
-        void setTooltip(const std::string& tooltip)
+        void set_tooltip(const std::string& tooltip)
         {
             m_tooltip = tooltip;
         }
@@ -440,12 +440,12 @@ namespace rl::gui {
          * @brief Return current font size.
          *        If not set the default of the current theme will be returned.
          **/
-        int fontSize() const;
+        int font_size() const;
 
         /**
          * @brief Set the font size of this widget
          **/
-        virtual void setFontSize(int fontSize)
+        virtual void set_font_size(int fontSize)
         {
             m_font_size = fontSize;
         }
@@ -453,7 +453,7 @@ namespace rl::gui {
         /**
          * @brief Return whether the font size is explicitly specified for this widget
          **/
-        bool hasFontSize() const
+        bool has_font_size() const
         {
             return m_font_size > 0;
         }
@@ -469,7 +469,7 @@ namespace rl::gui {
         /**
          * @brief Set the cursor of the widget
          **/
-        void setCursor(Cursor cursor)
+        void set_cursor(Cursor cursor)
         {
             m_cursor = cursor;
         }
@@ -486,10 +486,10 @@ namespace rl::gui {
         /**
          * @brief Determine the widget located at the given position value (recursive)
          **/
-        Widget* findWidget(const Vector2i& p);
+        Widget* find_widget(const Vector2i& p);
         Widget* find(const std::string& id, bool inchildren = true);
 
-        Widget* gfind(const std::string& id)
+        Widget* find(const std::string& id)
         {
             Widget* parent = this;
             while (parent->parent())
@@ -499,28 +499,28 @@ namespace rl::gui {
         }
 
         template <typename RetClass>
-        RetClass* gfind(const std::string& id)
+        RetClass* find(const std::string& id)
         {
-            Widget* f = gfind(id);
+            Widget* f = find(id);
             return f ? f->cast<RetClass>() : nullptr;
         }
 
         /**
          * @brief Handle a mouse button event (default implementation: propagate to children)
          **/
-        virtual bool mouseButtonEvent(const Vector2i& p, int button, bool down, int modifiers);
+        virtual bool mouse_button_event(const Vector2i& p, int button, bool down, int modifiers);
 
         /**
          * @brief Handle a mouse motion event (default implementation: propagate to children)
          **/
-        virtual bool mouseMotionEvent(const Vector2i& p, const Vector2i& rel, int button,
-                                      int modifiers);
+        virtual bool mouse_motion_event(const Vector2i& p, const Vector2i& rel, int button,
+                                        int modifiers);
 
         /**
          * @brief Handle a mouse drag event (default implementation: do nothing)
          **/
-        virtual bool mouseDragEvent(const Vector2i& p, const Vector2i& rel, int button,
-                                    int modifiers);
+        virtual bool mouse_drag_event(const Vector2i& p, const Vector2i& rel, int button,
+                                      int modifiers);
 
         /**
          * @brief Handle a mouse enter/leave event (default implementation: record this fact, but do
@@ -531,13 +531,13 @@ namespace rl::gui {
         /**
          * @brief Handle a mouse scroll event (default implementation: propagate to children)
          **/
-        virtual bool scrollEvent(const Vector2i& p, const Vector2f& rel);
+        virtual bool scroll_event(const Vector2i& p, const Vector2f& rel);
 
         /**
          * @brief Handle a focus change event (default implementation: record the focus status, but
          * do nothing)
          **/
-        virtual bool focusEvent(bool focused);
+        virtual bool focus_event(bool focused);
 
         /**
          * @brief Handle a keyboard event (default implementation: do nothing)
@@ -552,7 +552,7 @@ namespace rl::gui {
         /**
          * @brief Compute the preferred size of the widget
          **/
-        virtual Vector2i preferredSize(SDL3::SDL_Renderer* ctx) const;
+        virtual Vector2i preferred_size(SDL3::SDL_Renderer* ctx) const;
 
         /**
          * @brief Invoke the associated layout generator to properly place child widgets, if any
@@ -571,36 +571,36 @@ namespace rl::gui {
 
         Widget& _and()
         {
-            return *parent();
+            return *this->parent();
         }
 
-        Widget& withId(const std::string& id)
+        Widget& with_id(const std::string& id)
         {
-            setId(id);
+            this->set_id(id);
             return *this;
         }
 
-        Widget& withPosition(const Vector2i& pos)
+        Widget& with_position(const Vector2i& pos)
         {
-            set_relative_position(pos);
+            this->set_relative_position(pos);
             return *this;
         }
 
-        Widget& withFontSize(int size)
+        Widget& with_font_size(int size)
         {
-            setFontSize(size);
+            this->set_font_size(size);
             return *this;
         }
 
-        Widget& withFixedSize(const Vector2i& size)
+        Widget& with_fixed_size(const Vector2i& size)
         {
-            set_fixed_size(size);
+            this->set_fixed_size(size);
             return *this;
         }
 
-        Widget& withTooltip(const std::string& text)
+        Widget& with_tooltip(const std::string& text)
         {
-            setTooltip(text);
+            this->set_tooltip(text);
             return *this;
         }
 
@@ -715,8 +715,8 @@ namespace rl::gui {
 
     protected:
         gui::Widget* m_parent{ nullptr };
-        gui::ref<Theme> m_theme{};
-        gui::ref<Layout> m_layout{};
+        gui::refcounted<Theme> m_theme{};
+        gui::refcounted<Layout> m_layout{};
         std::string m_id{};
         gui::Vector2i m_pos{};
         gui::Vector2i m_size{};

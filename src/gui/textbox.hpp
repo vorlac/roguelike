@@ -27,88 +27,88 @@ namespace rl::gui {
 
         bool editable() const
         {
-            return mEditable;
+            return m_editable;
         }
 
-        void setEditable(bool editable);
+        void set_editable(bool editable);
 
         bool spinnable() const
         {
-            return mSpinnable;
+            return m_spinnable;
         }
 
-        void setSpinnable(bool spinnable)
+        void set_spinnable(bool spinnable)
         {
-            mSpinnable = spinnable;
+            m_spinnable = spinnable;
         }
 
         const std::string& value() const
         {
-            return mValue;
+            return m_value;
         }
 
-        void setValue(const std::string& value)
+        void set_value(const std::string& value)
         {
-            mValue = value;
-            _captionTex.dirty = true;
+            m_value = value;
+            m_caption_texture.dirty = true;
         }
 
-        const std::string& defaultValue() const
+        const std::string& default_value() const
         {
-            return mDefaultValue;
+            return m_default_value;
         }
 
-        void setDefaultValue(const std::string& defaultValue)
+        void set_default_value(const std::string& default_value)
         {
-            mDefaultValue = defaultValue;
+            m_default_value = default_value;
         }
 
         Alignment alignment() const
         {
-            return mAlignment;
+            return m_alignment;
         }
 
-        void setAlignment(Alignment align)
+        void set_alignment(Alignment align)
         {
-            mAlignment = align;
+            m_alignment = align;
         }
 
-        TextBox& withAlignment(Alignment align)
+        TextBox& with_alignment(Alignment align)
         {
-            setAlignment(align);
+            set_alignment(align);
             return *this;
         }
 
         const std::string& units() const
         {
-            return mUnits;
+            return m_units;
         }
 
-        void setUnits(const std::string& units)
+        void set_units(const std::string& units)
         {
-            mUnits = units;
+            m_units = units;
         }
 
-        int unitsImage() const
+        int units_image() const
         {
-            return mUnitsImage;
+            return m_units_image;
         }
 
-        void setUnitsImage(int image)
+        void set_units_image(int image)
         {
-            mUnitsImage = image;
+            m_units_image = image;
         }
 
         /// Return the underlying regular expression specifying valid formats
         const std::string& format() const
         {
-            return mFormat;
+            return m_format;
         }
 
         /// Specify a regular expression specifying valid formats
-        void setFormat(const std::string& format)
+        void set_format(const std::string& format)
         {
-            mFormat = format;
+            m_format = format;
         }
 
         /// Set the \ref Theme used to draw this widget
@@ -117,36 +117,36 @@ namespace rl::gui {
         /// Set the change callback
         std::function<bool(const std::string& str)> callback() const
         {
-            return mCallback;
+            return m_callback;
         }
 
-        void setCallback(const std::function<bool(const std::string& str)>& callback)
+        void set_callback(const std::function<bool(const std::string& str)>& callback)
         {
-            mCallback = callback;
+            m_callback = callback;
         }
 
-        bool mouseButtonEvent(const Vector2i& p, int button, bool down, int modifiers) override;
-        bool mouseMotionEvent(const Vector2i& p, const Vector2i& rel, int button,
+        bool mouse_button_event(const Vector2i& p, int button, bool down, int modifiers) override;
+        bool mouse_motion_event(const Vector2i& p, const Vector2i& rel, int button,
+                                int modifiers) override;
+        bool mouse_drag_event(const Vector2i& p, const Vector2i& rel, int button,
                               int modifiers) override;
-        bool mouseDragEvent(const Vector2i& p, const Vector2i& rel, int button,
-                            int modifiers) override;
-        bool focusEvent(bool focused) override;
+        bool focus_event(bool focused) override;
         bool kb_button_event(int key, int scancode, int action, int modifiers) override;
         bool kb_character_event(unsigned int codepoint) override;
 
-        Vector2i preferredSize(SDL3::SDL_Renderer* ctx) const override;
+        Vector2i preferred_size(SDL3::SDL_Renderer* ctx) const override;
         void draw(SDL3::SDL_Renderer* renderer) override;
-        void drawBody(SDL3::SDL_Renderer* renderer);
+        void draw_body(SDL3::SDL_Renderer* renderer);
 
     protected:
-        bool checkFormat(const std::string& input, const std::string& format);
-        bool copySelection();
-        void pasteFromClipboard();
-        bool deleteSelection();
+        bool check_format(const std::string& input, const std::string& format);
+        bool copy_selection();
+        void paste_from_clipboard();
+        bool delete_selection();
 
-        void updateCursor(float lastx, const std::string& str);
-        float cursorIndex2Position(int index, float lastx, const std::string& str);
-        int position2CursorIndex(float posx, float lastx, const std::string& str);
+        void update_cursor(float lastx, const std::string& str);
+        float cursor_idx_to_position(int index, float lastx, const std::string& str);
+        int position_to_cursor_idx(float posx, float lastx, const std::string& str);
 
         /// The location (if any) for the spin area.
         enum class SpinArea {
@@ -154,43 +154,43 @@ namespace rl::gui {
             Top,
             Bottom
         };
-        SpinArea spinArea(const Vector2i& pos);
+        SpinArea spin_area(const Vector2i& pos);
 
     protected:
-        bool mEditable;
-        bool mSpinnable;
-        bool mCommitted;
-        std::string mValue;
-        std::string mDefaultValue;
-        Alignment mAlignment;
-        std::string mUnits;
-        std::string mFormat;
-        int mUnitsImage;
-        std::function<bool(const std::string& str)> mCallback;
-        bool mValidFormat;
-        std::string mValueTemp;
-        int mCursorPos;
-        int mSelectionPos;
+        bool m_editable;
+        bool m_spinnable;
+        bool m_committed;
+        std::string m_value;
+        std::string m_default_value;
+        Alignment m_alignment;
+        std::string m_units;
+        std::string m_format;
+        int m_units_image;
+        std::function<bool(const std::string& str)> m_callback;
+        bool m_valid_format;
+        std::string m_value_temp;
+        int m_cursor_pos;
+        int m_selection_pos;
         Vector2i m_mouse_pos;
-        Vector2i mMouseDownPos;
-        Vector2i mMouseDragPos;
-        int mMouseDownModifier;
-        float mTextOffset;
-        double mLastClick;
-        int caretLastTickCount = 0;
+        Vector2i m_mouse_down_pos;
+        Vector2i m_mouse_drag_pos;
+        int m_mouse_down_modifier;
+        float m_text_offset;
+        double m_last_click;
+        int caret_last_tick_count = 0;
 
-        Texture _captionTex;
-        Texture _unitsTex;
-        Texture _tempTex;
+        Texture m_caption_texture;
+        Texture m_units_texture;
+        Texture m_temp_texture;
 
         struct AsyncTexture;
-        typedef std::shared_ptr<AsyncTexture> AsyncTexturePtr;
-        std::vector<AsyncTexturePtr> _txs;
+        using AsyncTexturePtr = std::shared_ptr<TextBox::AsyncTexture>;
+        std::vector<TextBox::AsyncTexturePtr> m_textures;
 
-        AsyncTexturePtr current_texture_ = nullptr;
+        TextBox::AsyncTexturePtr m_curr_texture = nullptr;
 
     private:
-        void drawTexture(AsyncTexturePtr& texture, SDL3::SDL_Renderer* renderer);
+        void draw_texture(TextBox::AsyncTexturePtr& texture, SDL3::SDL_Renderer* renderer);
     };
 
     /**
@@ -206,13 +206,13 @@ namespace rl::gui {
         IntBox(Widget* parent, Scalar value = (Scalar)0)
             : TextBox(parent)
         {
-            setDefaultValue("0");
-            setFormat(std::is_signed<Scalar>::value ? "[-]?[0-9]*" : "[0-9]*");
-            setValueIncrement(1);
-            setMinMaxValues(std::numeric_limits<Scalar>::lowest(),
-                            std::numeric_limits<Scalar>::max());
-            setValue(value);
-            setSpinnable(false);
+            this->set_default_value("0");
+            this->set_format(std::is_signed<Scalar>::value ? "[-]?[0-9]*" : "[0-9]*");
+            this->set_value_increment(1);
+            this->set_min_max_value(std::numeric_limits<Scalar>::lowest(),
+                                    std::numeric_limits<Scalar>::max());
+            this->set_value(value);
+            this->set_spinnable(false);
         }
 
         Scalar value() const
@@ -223,108 +223,108 @@ namespace rl::gui {
             return value;
         }
 
-        void setValue(Scalar value)
+        void set_value(Scalar value)
         {
-            Scalar clampedValue = std::min(std::max(value, mMinValue), mMaxValue);
-            TextBox::setValue(std::to_string(clampedValue));
+            Scalar clamped_val = std::min(std::max(value, m_min_value), m_max_value);
+            TextBox::set_value(std::to_string(clamped_val));
         }
 
-        void setCallback(const std::function<void(Scalar)>& cb)
+        void set_callback(const std::function<void(Scalar)>& cb)
         {
-            TextBox::setCallback([cb, this](const std::string& str) {
+            TextBox::set_callback([cb, this](const std::string& str) {
                 std::istringstream iss(str);
                 Scalar value = 0;
                 iss >> value;
-                setValue(value);
+                this->set_value(value);
                 cb(value);
                 return true;
             });
         }
 
-        void setValueIncrement(Scalar incr)
+        void set_value_increment(Scalar incr)
         {
-            mValueIncrement = incr;
+            m_value_increment = incr;
         }
 
-        void setMinValue(Scalar minValue)
+        void set_min_value(Scalar minValue)
         {
-            mMinValue = minValue;
+            m_min_value = minValue;
         }
 
-        void setMaxValue(Scalar maxValue)
+        void set_max_value(Scalar maxValue)
         {
-            mMaxValue = maxValue;
+            m_max_value = maxValue;
         }
 
-        void setMinMaxValues(Scalar minValue, Scalar maxValue)
+        void set_min_max_value(Scalar minValue, Scalar maxValue)
         {
-            setMinValue(minValue);
-            setMaxValue(maxValue);
+            this->set_min_value(minValue);
+            this->set_max_value(maxValue);
         }
 
-        virtual bool mouseButtonEvent(const Vector2i& p, int button, bool down,
-                                      int modifiers) override
+        virtual bool mouse_button_event(const Vector2i& p, int button, bool down,
+                                        int modifiers) override
         {
-            if ((mEditable || mSpinnable) && down)
-                mMouseDownValue = value();
+            if ((m_editable || m_spinnable) && down)
+                m_mouse_down_value = value();
 
-            SpinArea area = spinArea(p);
-            if (mSpinnable && area != SpinArea::None && down && !focused())
+            SpinArea area = this->spin_area(p);
+            if (m_spinnable && area != SpinArea::None && down && !focused())
             {
                 if (area == SpinArea::Top)
                 {
-                    setValue(value() + mValueIncrement);
-                    if (mCallback)
-                        mCallback(mValue);
+                    this->set_value(value() + m_value_increment);
+                    if (m_callback)
+                        m_callback(m_value);
                 }
                 else if (area == SpinArea::Bottom)
                 {
-                    setValue(value() - mValueIncrement);
-                    if (mCallback)
-                        mCallback(mValue);
+                    this->set_value(value() - m_value_increment);
+                    if (m_callback)
+                        m_callback(m_value);
                 }
                 return true;
             }
 
-            return TextBox::mouseButtonEvent(p, button, down, modifiers);
+            return TextBox::mouse_button_event(p, button, down, modifiers);
         }
 
-        virtual bool mouseDragEvent(const Vector2i& p, const Vector2i& rel, int button,
-                                    int modifiers) override
+        virtual bool mouse_drag_event(const Vector2i& p, const Vector2i& rel, int button,
+                                      int modifiers) override
         {
-            if (TextBox::mouseDragEvent(p, rel, button, modifiers))
+            if (TextBox::mouse_drag_event(p, rel, button, modifiers))
                 return true;
-            if (mSpinnable && !focused() && button == 2 /* 1 << GLFW_MOUSE_BUTTON_2 */ &&
-                mMouseDownPos.x != -1)
+            if (m_spinnable && !this->focused() && button == 2 /* 1 << GLFW_MOUSE_BUTTON_2 */ &&
+                m_mouse_down_pos.x != -1)
             {
-                int valueDelta = static_cast<int>((p.x - mMouseDownPos.x) / float(10));
-                setValue(mMouseDownValue + valueDelta * mValueIncrement);
-                if (mCallback)
-                    mCallback(mValue);
+                int val_delta = static_cast<int>((p.x - m_mouse_down_pos.x) / float(10));
+                this->set_value(m_mouse_down_value + val_delta * m_value_increment);
+                if (m_callback)
+                    m_callback(m_value);
                 return true;
             }
             return false;
         }
 
-        virtual bool scrollEvent(const Vector2i& p, const Vector2f& rel) override
+        virtual bool scroll_event(const Vector2i& p, const Vector2f& rel) override
         {
-            if (Widget::scrollEvent(p, rel))
+            if (Widget::scroll_event(p, rel))
                 return true;
-            if (mSpinnable && !focused())
+            if (m_spinnable && !this->focused())
             {
-                int valueDelta = (rel.y > 0) ? 1 : -1;
-                setValue(value() + valueDelta * mValueIncrement);
-                if (mCallback)
-                    mCallback(mValue);
+                int val_delta = (rel.y > 0) ? 1 : -1;
+                this->set_value(this->value() + val_delta * m_value_increment);
+                if (m_callback)
+                    m_callback(m_value);
                 return true;
             }
             return false;
         }
 
     private:
-        Scalar mMouseDownValue;
-        Scalar mValueIncrement;
-        Scalar mMinValue, mMaxValue;
+        Scalar m_mouse_down_value;
+        Scalar m_value_increment;
+        Scalar m_min_value, m_max_value;
     };
 
     /**
@@ -340,24 +340,24 @@ namespace rl::gui {
         FloatBox(Widget* parent, Scalar value = (Scalar)0.f)
             : TextBox(parent)
         {
-            mNumberFormat = sizeof(Scalar) == sizeof(float) ? "%.4g" : "%.7g";
-            setDefaultValue("0");
-            setFormat("[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?");
-            setValueIncrement((Scalar)0.1);
-            setMinMaxValues(std::numeric_limits<Scalar>::lowest(),
-                            std::numeric_limits<Scalar>::max());
-            setValue(value);
-            setSpinnable(false);
+            m_number_format = sizeof(Scalar) == sizeof(float) ? "%.4g" : "%.7g";
+            set_default_value("0");
+            set_format("[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?");
+            set_value_increment((Scalar)0.1);
+            set_min_max_value(std::numeric_limits<Scalar>::lowest(),
+                              std::numeric_limits<Scalar>::max());
+            set_value(value);
+            set_spinnable(false);
         }
 
         std::string numberFormat() const
         {
-            return mNumberFormat;
+            return m_number_format;
         }
 
         void numberFormat(const std::string& format)
         {
-            mNumberFormat = format;
+            m_number_format = format;
         }
 
         Scalar value() const
@@ -365,108 +365,108 @@ namespace rl::gui {
             return (Scalar)std::stod(TextBox::value());
         }
 
-        void setValue(Scalar value)
+        void set_value(Scalar value)
         {
-            Scalar clampedValue = std::min(std::max(value, mMinValue), mMaxValue);
+            Scalar clamped_val = std::min(std::max(value, m_min_value), m_max_value);
             char buffer[50];
-            SDLGUI_SNPRINTF(buffer, 50, mNumberFormat.c_str(), clampedValue);
-            TextBox::setValue(buffer);
+            SDLGUI_SNPRINTF(buffer, 50, m_number_format.c_str(), clamped_val);
+            TextBox::set_value(buffer);
         }
 
-        void setCallback(const std::function<void(Scalar)>& cb)
+        void set_callback(const std::function<void(Scalar)>& cb)
         {
-            TextBox::setCallback([cb, this](const std::string& str) {
+            TextBox::set_callback([cb, this](const std::string& str) {
                 Scalar scalar = (Scalar)std::stod(str);
-                setValue(scalar);
+                set_value(scalar);
                 cb(scalar);
                 return true;
             });
         }
 
-        void setValueIncrement(Scalar incr)
+        void set_value_increment(Scalar incr)
         {
-            mValueIncrement = incr;
+            m_value_increment = incr;
         }
 
-        void setMinValue(Scalar minValue)
+        void set_min_value(Scalar minValue)
         {
-            mMinValue = minValue;
+            m_min_value = minValue;
         }
 
-        void setMaxValue(Scalar maxValue)
+        void set_max_value(Scalar maxValue)
         {
-            mMaxValue = maxValue;
+            m_max_value = maxValue;
         }
 
-        void setMinMaxValues(Scalar minValue, Scalar maxValue)
+        void set_min_max_value(Scalar minValue, Scalar maxValue)
         {
-            setMinValue(minValue);
-            setMaxValue(maxValue);
+            set_min_value(minValue);
+            set_max_value(maxValue);
         }
 
-        virtual bool mouseButtonEvent(const Vector2i& p, int button, bool down,
-                                      int modifiers) override
+        virtual bool mouse_button_event(const Vector2i& p, int button, bool down,
+                                        int modifiers) override
         {
-            if ((mEditable || mSpinnable) && down)
-                mMouseDownValue = value();
+            if ((m_editable || m_spinnable) && down)
+                m_mouse_down_value = value();
 
-            SpinArea area = spinArea(p);
-            if (mSpinnable && area != SpinArea::None && down && !focused())
+            SpinArea area = spin_area(p);
+            if (m_spinnable && area != SpinArea::None && down && !focused())
             {
                 if (area == SpinArea::Top)
                 {
-                    setValue(value() + mValueIncrement);
-                    if (mCallback)
-                        mCallback(mValue);
+                    set_value(value() + m_value_increment);
+                    if (m_callback)
+                        m_callback(m_value);
                 }
                 else if (area == SpinArea::Bottom)
                 {
-                    setValue(value() - mValueIncrement);
-                    if (mCallback)
-                        mCallback(mValue);
+                    set_value(value() - m_value_increment);
+                    if (m_callback)
+                        m_callback(m_value);
                 }
                 return true;
             }
 
-            return TextBox::mouseButtonEvent(p, button, down, modifiers);
+            return TextBox::mouse_button_event(p, button, down, modifiers);
         }
 
-        virtual bool mouseDragEvent(const Vector2i& p, const Vector2i& rel, int button,
-                                    int modifiers) override
+        virtual bool mouse_drag_event(const Vector2i& p, const Vector2i& rel, int button,
+                                      int modifiers) override
         {
-            if (TextBox::mouseDragEvent(p, rel, button, modifiers))
+            if (TextBox::mouse_drag_event(p, rel, button, modifiers))
                 return true;
-            if (mSpinnable && !focused() && button == 2 /* 1 << GLFW_MOUSE_BUTTON_2 */ &&
-                mMouseDownPos.x != -1)
+            if (m_spinnable && !focused() && button == 2 /* 1 << GLFW_MOUSE_BUTTON_2 */ &&
+                m_mouse_down_pos.x != -1)
             {
-                int valueDelta = static_cast<int>((p.x - mMouseDownPos.x) / float(10));
-                setValue(mMouseDownValue + valueDelta * mValueIncrement);
-                if (mCallback)
-                    mCallback(mValue);
+                int val_delta = static_cast<int>((p.x - m_mouse_down_pos.x) / float(10));
+                set_value(m_mouse_down_value + val_delta * m_value_increment);
+                if (m_callback)
+                    m_callback(m_value);
                 return true;
             }
             return false;
         }
 
-        virtual bool scrollEvent(const Vector2i& p, const Vector2f& rel) override
+        virtual bool scroll_event(const Vector2i& p, const Vector2f& rel) override
         {
-            if (Widget::scrollEvent(p, rel))
+            if (Widget::scroll_event(p, rel))
                 return true;
-            if (mSpinnable && !focused())
+            if (m_spinnable && !focused())
             {
-                int valueDelta = (rel.y > 0) ? 1 : -1;
-                setValue(value() + valueDelta * mValueIncrement);
-                if (mCallback)
-                    mCallback(mValue);
+                int val_delta = (rel.y > 0) ? 1 : -1;
+                set_value(value() + val_delta * m_value_increment);
+                if (m_callback)
+                    m_callback(m_value);
                 return true;
             }
             return false;
         }
 
     private:
-        std::string mNumberFormat;
-        Scalar mMouseDownValue;
-        Scalar mValueIncrement;
-        Scalar mMinValue, mMaxValue;
+        std::string m_number_format;
+        Scalar m_mouse_down_value;
+        Scalar m_value_increment;
+        Scalar m_min_value, m_max_value;
     };
 }

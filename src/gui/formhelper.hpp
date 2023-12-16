@@ -153,11 +153,11 @@ namespace rl::gui {
             auto refresh = [widget, getter] {
                 Type value = getter(), current = widget->value();
                 if (value != current)
-                    widget->setValue(value);
+                    widget->set_value(value);
             };
             refresh();
-            widget->setCallback(setter);
-            widget->setEditable(editable);
+            widget->set_callback(setter);
+            widget->set_editable(editable);
             widget->setFontSize(mWidgetFontSize);
             Vector2i fs = widget->fixedSize();
             widget->setFixedSize(
@@ -191,7 +191,7 @@ namespace rl::gui {
         Button* addButton(const std::string& label, const std::function<void()>& cb)
         {
             Button* button = new Button(mWindow, label);
-            button->setCallback(cb);
+            button->set_callback(cb);
             button->set_fixed_height(25);
             if (mLayout->rowCount() > 0)
                 mLayout->appendRow(mVariableSpacing);
@@ -301,9 +301,9 @@ namespace rl::gui {
         }
 
     protected:
-        ref<Screen> mScreen;
-        ref<Window> mWindow;
-        ref<AdvancedGridLayout> mLayout;
+        refcounted<Screen> mScreen;
+        refcounted<Window> mWindow;
+        refcounted<AdvancedGridLayout> mLayout;
         std::vector<std::function<void()>> mRefreshCallbacks;
         std::string mGroupFontName = "sans-bold";
         std::string mLabelFontName = "sans";
@@ -329,14 +329,14 @@ namespace rl::gui {
                 set_fixed_width(20);
             }
 
-            void setValue(bool v)
+            void set_value(bool v)
             {
-                setChecked(v);
+                set_checked(v);
             }
 
-            void setEditable(bool e)
+            void set_editable(bool e)
             {
-                setEnabled(e);
+                set_enabled(e);
             }
 
             bool value() const
@@ -359,22 +359,22 @@ namespace rl::gui {
                 return (T)selected_idx();
             }
 
-            void setValue(T value)
+            void set_value(T value)
             {
-                setSelectedIndex((int)value);
+                set_selected_index((int)value);
                 mSelectedIndex = (int)value;
             }
 
-            void setCallback(const std::function<void(T)>& cb)
+            void set_callback(const std::function<void(T)>& cb)
             {
-                ComboBox::setCallback([cb](int v) {
+                ComboBox::set_callback([cb](int v) {
                     cb((T)v);
                 });
             }
 
-            void setEditable(bool e)
+            void set_editable(bool e)
             {
-                setEnabled(e);
+                set_enabled(e);
             }
         };
 
@@ -385,7 +385,7 @@ namespace rl::gui {
             FormWidget(Widget* p)
                 : IntBox<T>(p)
             {
-                this->setAlignment(TextBox::Alignment::Right);
+                this->set_alignment(TextBox::Alignment::Right);
             }
         };
 
@@ -396,7 +396,7 @@ namespace rl::gui {
             FormWidget(Widget* p)
                 : FloatBox<T>(p)
             {
-                this->setAlignment(TextBox::Alignment::Right);
+                this->set_alignment(TextBox::Alignment::Right);
             }
         };
 
@@ -407,12 +407,12 @@ namespace rl::gui {
             FormWidget(Widget* p)
                 : TextBox(p)
             {
-                setAlignment(TextBox::Alignment::Left);
+                set_alignment(TextBox::Alignment::Left);
             }
 
-            void setCallback(const std::function<void(const std::string&)>& cb)
+            void set_callback(const std::function<void(const std::string&)>& cb)
             {
-                TextBox::setCallback([cb](const std::string& str) {
+                TextBox::set_callback([cb](const std::string& str) {
                     cb(str);
                     return true;
                 });
@@ -428,14 +428,14 @@ namespace rl::gui {
             {
             }
 
-            void setValue(const Color& c)
+            void set_value(const Color& c)
             {
-                setColor(c);
+                set_color(c);
             }
 
-            void setEditable(bool e)
+            void set_editable(bool e)
             {
-                setEnabled(e);
+                set_enabled(e);
             }
 
             Color value() const

@@ -7,7 +7,7 @@ namespace rl::gui {
     {
     }
 
-    void StackedWidget::setSelectedIndex(size_t index)
+    void StackedWidget::set_selected_index(size_t index)
     {
         runtime_assert(index < this->child_count(), "child widget index out of bounds");
         if (m_selected_idx >= 0)
@@ -31,11 +31,11 @@ namespace rl::gui {
         }
     }
 
-    Vector2i StackedWidget::preferredSize(SDL3::SDL_Renderer* ctx) const
+    Vector2i StackedWidget::preferred_size(SDL3::SDL_Renderer* ctx) const
     {
         Vector2i size{ 0, 0 };
         for (auto child : m_children)
-            size = size.cmax(child->preferredSize(ctx));
+            size = size.cmax(child->preferred_size(ctx));
         return size;
     }
 
@@ -45,6 +45,6 @@ namespace rl::gui {
             m_children[m_selected_idx]->set_visible(false);
         Widget::add_child(index, widget);
         widget->set_visible(true);
-        setSelectedIndex(index);
+        set_selected_index(index);
     }
 }

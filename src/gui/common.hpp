@@ -2,27 +2,26 @@
 
 #include <algorithm>
 #include <atomic>
+#include <cmath>
 #include <functional>
 #include <istream>
 #include <sstream>
 #include <unordered_map>
 #include <vector>
 
-#include <assert.h>
-#include <math.h>
-
+#include "core/assert.hpp"
 #include "sdl/defs.hpp"
-
-SDL_C_LIB_BEGIN
-#include <SDL3/SDL.h>
-#include <SDL3/SDL_render.h>
-SDL_C_LIB_END
 
 #ifdef _MSC_VER
   #define SDLGUI_SNPRINTF _snprintf
 #else
   #define SDLGUI_SNPRINTF snprintf
 #endif
+
+SDL_C_LIB_BEGIN
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_render.h>
+SDL_C_LIB_END
 
 #if defined(_WIN32)
   #pragma warning(disable : 4127)  // warning C4127: conditional expression is constant
@@ -119,16 +118,16 @@ namespace rl::gui {
      * itself.
      */
     template <typename T>
-    class ref
+    class refcounted
     {
     public:
         // Create a ``nullptr``-valued reference
-        ref()
+        refcounted()
         {
         }
 
         // Construct a reference from a pointer
-        ref(T* ptr)
+        refcounted(T* ptr)
             : m_ptr(ptr)
         {
             if (m_ptr)
@@ -136,7 +135,7 @@ namespace rl::gui {
         }
 
         // Copy constructor
-        ref(const ref& r)
+        refcounted(const refcounted& r)
             : m_ptr(r.m_ptr)
         {
             if (m_ptr)
@@ -144,21 +143,21 @@ namespace rl::gui {
         }
 
         // Move constructor
-        ref(ref&& r) noexcept
+        refcounted(refcounted&& r) noexcept
             : m_ptr(r.m_ptr)
         {
             r.m_ptr = nullptr;
         }
 
         // Destroy this reference
-        ~ref()
+        ~refcounted()
         {
             if (m_ptr)
                 ((Object*)m_ptr)->decRef();
         }
 
         // Move another reference into the current one
-        ref& operator=(ref&& r) noexcept
+        refcounted& operator=(refcounted&& r) noexcept
         {
             if (&r != this)
             {
@@ -171,7 +170,7 @@ namespace rl::gui {
         }
 
         // Overwrite this reference with another reference
-        ref& operator=(const ref& r) noexcept
+        refcounted& operator=(const refcounted& r) noexcept
         {
             if (m_ptr != r.m_ptr)
             {
@@ -185,7 +184,7 @@ namespace rl::gui {
         }
 
         // Overwrite this reference with a pointer to another object
-        ref& operator=(T* ptr) noexcept
+        refcounted& operator=(T* ptr) noexcept
         {
             if (m_ptr != ptr)
             {
@@ -199,13 +198,13 @@ namespace rl::gui {
         }
 
         // Compare this reference with another reference
-        bool operator==(const ref& r) const
+        bool operator==(const refcounted& r) const
         {
             return m_ptr == r.m_ptr;
         }
 
         // Compare this reference with another reference
-        bool operator!=(const ref& r) const
+        bool operator!=(const refcounted& r) const
         {
             return m_ptr != r.m_ptr;
         }
@@ -393,7 +392,7 @@ namespace rl::gui {
             return Color(_d.r, _d.g, _d.b, 0.f);
         }
 
-        void setAlpha(float a)
+        void set_alpha(float a)
         {
             _d.a = a;
         }
@@ -428,8 +427,8 @@ namespace rl::gui {
             return Color(r() + c.r(), g() + c.g(), b() + c.b(), a() + c.a());
         }
 
-        SDL3::SDL_Color toSdlColor() const;
-        NVGcolor toNvgColor() const;
+        SDL3::SDL_Color sdl_color() const;
+        NVGcolor to_nvg_color() const;
 
     private:
         struct _Data
@@ -474,13 +473,13 @@ namespace rl::gui {
         const double RADTODEG64 = 180.0 / PI64;
 
         template <class T>
-        inline bool isEqual(const T a, const T b)
+        inline bool is_equal(const T a, const T b)
         {
             return (a + ROUNDING_ERROR_f32 >= b) && (a - ROUNDING_ERROR_f32 <= b);
         }
 
         template <class T>
-        inline bool isEqual(const T a, const T b, const T tolerance)
+        inline bool is_equal(const T a, const T b, const T tolerance)
         {
             return (a + tolerance >= b) && (a - tolerance <= b);
         }
@@ -518,12 +517,12 @@ namespace rl::gui {
         {
         }
 
-        static Vector2 Constant(T v)
+        static Vector2 constant(T v)
         {
             return Vector2(v, v);
         }
 
-        static Vector2 Zero()
+        static Vector2 zero()
         {
             return Vector2(0, 0);
         }
@@ -640,8 +639,8 @@ namespace rl::gui {
         //! sort in order X, Y. Equality with rounding tolerance.
         bool operator<=(const Vector2<T>& o) const
         {
-            return (x < o.x || math::isEqual(x, o.x)) ||
-                   (math::isEqual(x, o.x) && (y < o.y || math::isEqual(y, o.y)));
+            return (x < o.x || math::is_equal(x, o.x)) ||
+                   (math::is_equal(x, o.x) && (y < o.y || math::is_equal(y, o.y)));
         }
 
         bool positive() const
@@ -651,38 +650,38 @@ namespace rl::gui {
 
         bool lessOrEq(const Vector2<T>& o) const
         {
-            return (x < o.x || math::isEqual(x, o.x)) && (y < o.y || math::isEqual(y, o.y));
+            return (x < o.x || math::is_equal(x, o.x)) && (y < o.y || math::is_equal(y, o.y));
         }
 
         //! sort in order X, Y. Equality with rounding tolerance.
         bool operator>=(const Vector2<T>& o) const
         {
-            return (x > o.x || math::isEqual(x, o.x)) ||
-                   (math::isEqual(x, o.x) && (y > o.Y || math::isEqual(y, o.y)));
+            return (x > o.x || math::is_equal(x, o.x)) ||
+                   (math::is_equal(x, o.x) && (y > o.Y || math::is_equal(y, o.y)));
         }
 
         //! sort in order X, Y. Difference must be above rounding tolerance.
         bool operator<(const Vector2<T>& o) const
         {
-            return (x < o.x && !math::isEqual(x, o.x)) ||
-                   (math::isEqual(x, o.x) && y < o.y && !math::isEqual(y, o.y));
+            return (x < o.x && !math::is_equal(x, o.x)) ||
+                   (math::is_equal(x, o.x) && y < o.y && !math::is_equal(y, o.y));
         }
 
         //! sort in order X, Y. Difference must be above rounding tolerance.
         bool operator>(const Vector2<T>& o) const
         {
-            return (x > o.x && !math::isEqual(x, o.x)) ||
-                   (math::isEqual(x, o.x) && y > o.y && !math::isEqual(y, o.y));
+            return (x > o.x && !math::is_equal(x, o.x)) ||
+                   (math::is_equal(x, o.x) && y > o.y && !math::is_equal(y, o.y));
         }
 
         bool operator==(const Vector2<T>& o) const
         {
-            return IsEqual(o, math::ROUNDING_ERROR_f32);
+            return is_equal(o, math::ROUNDING_ERROR_f32);
         }
 
         bool operator!=(const Vector2<T>& o) const
         {
-            return !IsEqual(o, math::ROUNDING_ERROR_f32);
+            return !is_equal(o, math::ROUNDING_ERROR_f32);
         }
 
         Vector2<T> cquotient(const Vector2<T>& o) const
@@ -690,7 +689,7 @@ namespace rl::gui {
             return Vector2<T>(x / (float)o.x, y / (float)o.y);
         }
 
-        T minCoeff() const
+        T min_coeff() const
         {
             return x > y ? y : x;
         }
@@ -701,9 +700,10 @@ namespace rl::gui {
          * @param o Vector to compare with.
          * @return True if the two vector are (almost) equal, else false.
          **/
-        bool IsEqual(const Vector2<T>& o, float tolerance) const
+        bool is_equal(const Vector2<T>& o, float tolerance) const
         {
-            return math::isEqual<T>(x, o.x, (T)tolerance) && math::isEqual<T>(y, o.y, (T)tolerance);
+            return math::is_equal<T>(x, o.x, static_cast<T>(tolerance)) &&
+                   math::is_equal<T>(y, o.y, static_cast<T>(tolerance));
         }
 
         Vector2<T>& set(T nx, T ny)
@@ -724,17 +724,17 @@ namespace rl::gui {
          * @brief Gets the length of the vector.
          * @return The length of the vector.
          **/
-        float getLength() const
+        float length() const
         {
-            return sqrt(x * x + y * y);
+            return std::sqrt(x * x + y * y);
         }
 
         /**
          * @brief Get the squared length of this vector
-         * This is useful because it is much faster than getLength().
+         * This is useful because it is much faster than length().
          * @return The squared length of the vector.
          **/
-        T getLengthSQ() const
+        T length_squared() const
         {
             return x * x + y * y;
         }
@@ -744,21 +744,27 @@ namespace rl::gui {
          * @param o o vector to take dot product with.
          * @return The dot product of the two vectors.
          **/
-        T dotProduct(const Vector2<T>& o) const
+        T dot_product(const Vector2<T>& o) const
         {
             return x * o.x + y * o.y;
         }
 
-        template <class A>
-        Vector2<A> As()
+        template <typename T>
+        Vector2<T> as()
         {
-            return Vector2<A>((A)x, (A)y);
+            return Vector2<T>{
+                static_cast<T>(x),
+                static_cast<T>(y),
+            };
         }
 
-        template <class A>
-        Vector2<A> As() const
+        template <typename T>
+        Vector2<T> as() const
         {
-            return Vector2<A>((A)x, (A)y);
+            return Vector2<T>{
+                static_cast<T>(x),
+                static_cast<T>(y),
+            };
         }
 
         /**
@@ -767,9 +773,9 @@ namespace rl::gui {
          * @param o o vector to measure from.
          * @return Distance from o point.
          **/
-        float getDistanceFrom(const Vector2<T>& o) const
+        float distance(const Vector2<T>& o) const
         {
-            return Vector2<T>(x - o.x, y - o.y).getLength();
+            return Vector2<T>(x - o.x, y - o.y).length();
         }
 
         /**
@@ -778,9 +784,9 @@ namespace rl::gui {
          * @param o o vector to measure from.
          * @return Squared distance from o point.
          **/
-        T getDistanceFromSQ(const Vector2<T>& o) const
+        T distance_squared(const Vector2<T>& o) const
         {
-            return Vector2<T>(x - o.x, y - o.y).getLengthSQ();
+            return Vector2<T>(x - o.x, y - o.y).length_squared();
         }
 
         /**
@@ -789,7 +795,7 @@ namespace rl::gui {
          * @param center Rotation center.
          * @return This vector after transformation.
          **/
-        Vector2<T>& rotateBy(float degrees, const Vector2<T>& center = Vector2<T>())
+        Vector2<T>& rotate_by(float degrees, const Vector2<T>& center = Vector2<T>())
         {
             degrees *= math::DEGTORAD64;
             const float cs = cos(degrees);
@@ -814,7 +820,7 @@ namespace rl::gui {
         {
             float length = (float)(x * x + y * y);
 
-            if (math::isEqual(length, 0.f))
+            if (math::is_equal(length, 0.f))
                 return *this;
             length = 1.f / sqrt(length);
             x = (T)(x * length);
@@ -828,7 +834,7 @@ namespace rl::gui {
          * This method has been suggested by Pr3t3nd3r.
          * @return Returns a value between 0 and 360.
          **/
-        float getAngleTrig() const
+        float get_angle_trig() const
         {
             if (y == 0)
                 return x < 0 ? 180 : 0;
@@ -851,14 +857,14 @@ namespace rl::gui {
          * 0 is to the right (3 o'clock), values increase clockwise.
          * @return Returns a value between 0 and 360.
          **/
-        inline float getAngle() const
+        inline float get_angle() const
         {
             if (y == 0)  // corrected thanks to a suggestion by Jox
                 return x < 0 ? 180 : 0;
             else if (x == 0)
                 return y < 0 ? 90 : 270;
 
-            // don't use getLength here to avoid precision loss with s32 vectors
+            // don't use length here to avoid precision loss with s32 vectors
             float tmp = y / sqrt((float)(x * x + y * y));
             tmp = atanf(sqrt(1.f - tmp * tmp) / tmp) * math::RADTODEG64;
 
@@ -879,7 +885,7 @@ namespace rl::gui {
          * @param b o vector to test with.
          * @return Returns a value between 0 and 90.
          **/
-        inline float getAngleWith(const Vector2<T>& b) const
+        inline float get_angle_from(const Vector2<T>& b) const
         {
             double tmp = x * b.x + y * b.y;
 
@@ -900,7 +906,7 @@ namespace rl::gui {
          * @param end Ending vector to compare between.
          * @return True if this vector is between begin and end, false if not.
          **/
-        bool isBetweenPoints(const Vector2<T>& begin, const Vector2<T>& end) const
+        bool is_between_pts(const Vector2<T>& begin, const Vector2<T>& end) const
         {
             if (begin.x != end.x)
                 return (begin.x <= x && x <= end.x) || (begin.x >= x && x >= end.x);
@@ -1016,14 +1022,18 @@ namespace rl::gui {
 
     std::array<char, 8> utf8(int c);
 
-    // Determine whether an icon ID is a texture loaded via nvgImageIcon
-    inline bool nvgIsImageIcon(int value)
+    /*
+     * @brief Determine whether an icon ID is a texture loaded via nvgImageIcon
+     * */
+    inline bool nvg_is_image_icon(int value)
     {
         return value < 1024;
     }
 
-    // Determine whether an icon ID is a font-based icon (e.g. from the entypo.ttf font)
-    inline bool nvgIsFontIcon(int value)
+    /*
+     * @brief Determine whether an icon ID is a font-based icon (e.g. from the entypo.ttf font)
+     * */
+    inline bool nvg_is_font_icon(int value)
     {
         return value >= 1024;
     }

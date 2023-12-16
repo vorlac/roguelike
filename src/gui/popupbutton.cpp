@@ -10,7 +10,7 @@ namespace rl::gui {
         : Button(parent, caption, buttonIcon)
         , mChevronIcon(chevronIcon)
     {
-        setFlags(Flags::ToggleButton | Flags::PopupButton);
+        set_flags(Flags::ToggleButton | Flags::PopupButton);
 
         Window* parentWindow = window();
         mPopup = new Popup(parentWindow->parent(), window());
@@ -18,17 +18,17 @@ namespace rl::gui {
         mPopup->set_visible(false);
     }
 
-    Vector2i PopupButton::preferredSize(SDL3::SDL_Renderer* ctx) const
+    Vector2i PopupButton::preferred_size(SDL3::SDL_Renderer* ctx) const
     {
-        return Button::preferredSize(ctx) + Vector2i(15, 0);
+        return Button::preferred_size(ctx) + Vector2i(15, 0);
     }
 
     void PopupButton::draw(SDL3::SDL_Renderer* renderer)
     {
-        if (!m_enabled && mPushed)
-            mPushed = false;
+        if (!m_enabled && m_pushed)
+            m_pushed = false;
 
-        mPopup->set_visible(mPushed);
+        mPopup->set_visible(m_pushed);
         Button::draw(renderer);
 
         if (mChevronIcon)
@@ -36,13 +36,14 @@ namespace rl::gui {
             if (_chevronTex.dirty)
             {
                 auto icon = utf8(mChevronIcon);
-                Color textColor = { (mTextColor.a() == 0.0f) ? m_theme->mTextColor : mTextColor };
+                Color text_color = { (m_text_color.a() == 0.0f) ? m_theme->m_text_color
+                                                                : m_text_color };
                 if (!m_enabled)
-                    textColor = m_theme->mDisabledTextColor;
-                int fntsize = (int)((m_font_size < 0 ? m_theme->mButtonFontSize : m_font_size) *
+                    text_color = m_theme->m_disabled_text_color;
+                int fntsize = (int)((m_font_size < 0 ? m_theme->m_button_font_size : m_font_size) *
                                     1.5f);
-                m_theme->getTexAndRectUtf8(renderer, _chevronTex, 0, 0, icon.data(), "icons",
-                                           fntsize, textColor);
+                m_theme->get_texture_and_rect_utf8(renderer, _chevronTex, 0, 0, icon.data(),
+                                                   "icons", fntsize, text_color);
             }
 
             auto&& ap = absolute_position();

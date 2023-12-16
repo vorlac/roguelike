@@ -13,9 +13,6 @@ SDL_C_LIB_BEGIN
 SDL_C_LIB_END
 
 #ifdef NDEBUG
-  // In release mode the macro does nothing ((void)0), including
-  // the execution of the condition so don't define the expression
-  // as anything that would be considered program logis.
   #define runtime_assert(condition, fmtstr, ...) static_cast<void>(0)
   #define sdl_assert(condition, fmtstr, ...)     static_cast<void>(0)
   #define assert_cond(condition)                 static_cast<void>(0)
@@ -23,9 +20,6 @@ SDL_C_LIB_END
 
 #else
 
-// In debug mode, checks the passed in condition and outputs
-// detailed information to stederr, including a custom error
-// message when the condition evaluates to false.
   #define runtime_assert(condition, fmtstr, ...)                                                    \
       do                                                                                            \
       {                                                                                             \

@@ -17,70 +17,70 @@ namespace rl::gui {
             return m_caption;
         }
 
-        void setCaption(const std::string& caption)
+        void set_caption(const std::string& caption)
         {
             m_caption = caption;
         }
 
         const bool& checked() const
         {
-            return mChecked;
+            return m_checked;
         }
 
-        void setChecked(const bool& checked)
+        void set_checked(const bool& checked)
         {
-            mChecked = checked;
+            m_checked = checked;
         }
 
-        CheckBox& withChecked(bool value)
+        CheckBox& with_checked(bool value)
         {
-            setChecked(value);
+            set_checked(value);
             return *this;
         }
 
         const bool& pushed() const
         {
-            return mPushed;
+            return m_pushed;
         }
 
-        void setPushed(const bool& pushed)
+        void set_pushed(const bool& pushed)
         {
-            mPushed = pushed;
+            m_pushed = pushed;
         }
 
         std::function<void(bool)> callback() const
         {
-            return mCallback;
+            return m_checkbox_callback;
         }
 
-        void setCallback(const std::function<void(bool)>& callback)
+        void set_callback(const std::function<void(bool)>& callback)
         {
-            mCallback = callback;
+            m_checkbox_callback = callback;
         }
 
-        virtual bool mouseButtonEvent(const Vector2i& p, int button, bool down,
-                                      int modifiers) override;
-        Vector2i preferredSize(SDL3::SDL_Renderer* ctx) const override;
+        virtual bool mouse_button_event(const Vector2i& p, int button, bool down,
+                                        int modifiers) override;
+        Vector2i preferred_size(SDL3::SDL_Renderer* ctx) const override;
         void draw(SDL3::SDL_Renderer* ctx) override;
-        virtual void drawBody(SDL3::SDL_Renderer* renderer);
+        virtual void draw_body(SDL3::SDL_Renderer* renderer);
 
     protected:
         std::string m_caption{};
-        bool mPushed{};
-        bool mChecked{};
+        bool m_pushed{};
+        bool m_checked{};
 
-        Texture _captionTex;
-        Texture _pointTex;
+        Texture m_caption_texture;
+        Texture m_point_texture;
 
-        std::function<void(bool)> mCallback;
+        std::function<void(bool)> m_checkbox_callback;
 
         struct AsyncTexture;
         typedef std::shared_ptr<AsyncTexture> AsyncTexturePtr;
-        std::vector<AsyncTexturePtr> _txs;
+        std::vector<AsyncTexturePtr> m_textures;
 
-        AsyncTexturePtr current_texture_ = nullptr;
+        AsyncTexturePtr m_curr_texture = nullptr;
 
     private:
-        void drawTexture(AsyncTexturePtr& texture, SDL3::SDL_Renderer* renderer);
+        void draw_texture(AsyncTexturePtr& texture, SDL3::SDL_Renderer* renderer);
     };
 }

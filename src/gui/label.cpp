@@ -2,21 +2,21 @@
 #include "gui/theme.hpp"
 
 namespace rl::gui {
-    Label::Label(Widget* parent, const std::string& caption, const std::string& font, int fontSize)
+    Label::Label(Widget* parent, const std::string& caption, const std::string& font, int font_size)
         : Widget(parent)
         , m_caption(caption)
-        , mFont(font)
+        , m_font(font)
     {
         if (m_theme)
         {
-            m_font_size = m_theme->mStandardFontSize;
-            mColor = m_theme->mTextColor;
+            m_font_size = m_theme->m_standard_font_size;
+            m_color = m_theme->m_text_color;
         }
 
-        if (fontSize >= 0)
-            m_font_size = fontSize;
+        if (font_size >= 0)
+            m_font_size = font_size;
 
-        _texture.dirty = true;
+        m_texture.dirty = true;
     }
 
     void Label::set_theme(Theme* theme)
@@ -24,45 +24,45 @@ namespace rl::gui {
         Widget::set_theme(theme);
         if (m_theme)
         {
-            m_font_size = m_theme->mStandardFontSize;
-            mColor = m_theme->mTextColor;
+            m_font_size = m_theme->m_standard_font_size;
+            m_color = m_theme->m_text_color;
         }
     }
 
-    Vector2i Label::preferredSize(SDL3::SDL_Renderer* ctx) const
+    Vector2i Label::preferred_size(SDL3::SDL_Renderer* ctx) const
     {
         if (m_caption == "")
-            return Vector2i::Zero();
+            return Vector2i::zero();
 
         if (m_fixed_size.x > 0)
         {
             int w, h;
-            const_cast<Label*>(this)->m_theme->getUtf8Bounds(mFont.c_str(), fontSize(),
-                                                             m_caption.c_str(), &w, &h);
+            const_cast<Label*>(this)->m_theme->get_utf8_bounds(m_font.c_str(), font_size(),
+                                                               m_caption.c_str(), &w, &h);
             return Vector2i(m_fixed_size.x, h);
         }
         else
         {
             int w, h;
-            const_cast<Label*>(this)->m_theme->getUtf8Bounds(mFont.c_str(), fontSize(),
-                                                             m_caption.c_str(), &w, &h);
-            return Vector2i(w, m_theme->mStandardFontSize);
+            const_cast<Label*>(this)->m_theme->get_utf8_bounds(m_font.c_str(), font_size(),
+                                                               m_caption.c_str(), &w, &h);
+            return Vector2i(w, m_theme->m_standard_font_size);
         }
     }
 
-    void Label::setFontSize(int fontSize)
+    void Label::set_font_size(int font_size)
     {
-        Widget::setFontSize(fontSize);
-        _texture.dirty = true;
+        Widget::set_font_size(font_size);
+        m_texture.dirty = true;
     }
 
     void Label::draw(SDL3::SDL_Renderer* renderer)
     {
         Widget::draw(renderer);
 
-        if (_texture.dirty)
-            m_theme->getTexAndRectUtf8(renderer, _texture, 0, 0, m_caption.c_str(), mFont.c_str(),
-                                       fontSize(), mColor);
+        if (m_texture.dirty)
+            m_theme->get_texture_and_rect_utf8(renderer, m_texture, 0, 0, m_caption.c_str(),
+                                               m_font.c_str(), font_size(), m_color);
 
         if (m_fixed_size.x > 0)
         {
@@ -73,19 +73,19 @@ namespace rl::gui {
                 0.0f,
                 0.0f,
             };
-            SDL3::SDL_RenderTexture(renderer, _texture.tex, &rect, nullptr);
+            SDL3::SDL_RenderTexture(renderer, m_texture.tex, &rect, nullptr);
         }
         else
         {
             auto&& pos = absolute_position() +
-                         Vector2i(0, int((m_size.y - _texture.rrect.h) * 0.5f));
+                         Vector2i(0, int((m_size.y - m_texture.rrect.h) * 0.5f));
             SDL3::SDL_FRect rect{
                 static_cast<float>(pos.x),
                 static_cast<float>(pos.y),
                 0.0f,
                 0.0f,
             };
-            SDL3::SDL_RenderTexture(renderer, _texture.tex, &rect, nullptr);
+            SDL3::SDL_RenderTexture(renderer, m_texture.tex, &rect, nullptr);
         }
     }
 }

@@ -19,7 +19,7 @@ namespace rl::gui {
             return m_color_picker_callback;
         }
 
-        void setCallback(const std::function<void(const Color&)>&& callback)
+        void set_callback(const std::function<void(const Color&)>&& callback)
         {
             m_color_picker_callback = std::move(callback);
         }
@@ -28,7 +28,7 @@ namespace rl::gui {
         Color color() const;
 
         /// Set the current color
-        void setColor(const Color& color);
+        void set_color(const Color& color);
 
     protected:
         std::function<void(const Color&)> m_color_picker_callback;

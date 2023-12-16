@@ -23,7 +23,7 @@ namespace rl::gui {
             Popup* pp = ptr;
             AsyncTexture* self = this;
             std::thread tgr([=]() {
-                std::lock_guard<std::mutex> guard(pp->theme()->loadMutex);
+                std::lock_guard<std::mutex> guard(pp->theme()->m_load_mutex);
 
                 NVGcontext* ctx = nullptr;
                 int realw, realh;
@@ -60,7 +60,7 @@ namespace rl::gui {
     Popup::Popup(Widget* parent, Window* parentWindow)
         : Window(parent, "")
         , mParentWindow(parentWindow)
-        , mAnchorPos(Vector2i::Zero())
+        , mAnchorPos(Vector2i::zero())
         , mAnchorHeight(30)
     {
     }
@@ -69,7 +69,7 @@ namespace rl::gui {
     {
         int ww = width();
         int hh = height();
-        int ds = m_theme->mWindowDropShadowSize;
+        int ds = m_theme->m_window_drop_shadow_size;
         int dy = 0;
 
         Vector2i offset(dx + ds, dy + ds);
@@ -82,12 +82,12 @@ namespace rl::gui {
         float pxRatio = 1.0f;
         nvgBeginFrame(ctx, realw, realh, pxRatio);
 
-        int cr = m_theme->mWindowCornerRadius;
+        int cr = m_theme->m_window_corner_radius;
 
         /* Draw a drop shadow */
         NVGpaint shadowPaint = nvgBoxGradient(ctx, offset.x, offset.y, ww, hh, cr * 2, ds * 2,
-                                              m_theme->mDropShadow.toNvgColor(),
-                                              m_theme->mTransparent.toNvgColor());
+                                              m_theme->m_drop_shadow.to_nvg_color(),
+                                              m_theme->m_transparent.to_nvg_color());
 
         nvgBeginPath(ctx);
         // nvgRect(ctx, offset.x - ds, offset.y - ds, ww + 2 * ds, hh + 2 * ds);
@@ -107,7 +107,7 @@ namespace rl::gui {
         nvgLineTo(ctx, base.x, base.y - 15);
         nvgLineTo(ctx, base.x, base.y + 15);
 
-        nvgFillColor(ctx, m_theme->mWindowPopup.toNvgColor());
+        nvgFillColor(ctx, m_theme->m_window_popup.to_nvg_color());
         nvgFill(ctx);
         nvgEndFrame(ctx);
     }
@@ -120,15 +120,15 @@ namespace rl::gui {
         }
         else
         {
-            m_children[0]->set_relative_position(Vector2i::Zero());
+            m_children[0]->set_relative_position(Vector2i::zero());
             m_children[0]->set_size(m_size);
             m_children[0]->perform_layout(ctx);
         }
     }
 
-    void Popup::refreshRelativePlacement()
+    void Popup::refresh_relative_placement()
     {
-        mParentWindow->refreshRelativePlacement();
+        mParentWindow->refresh_relative_placement();
         m_visible &= mParentWindow->visible_recursive();
 
         Widget* widget = this;
@@ -141,13 +141,13 @@ namespace rl::gui {
         m_pos = Vector2i(m_pos.x, std::min(m_pos.y, screen->size().y - m_size.y));
     }
 
-    void Popup::drawBodyTemp(SDL3::SDL_Renderer* renderer)
+    void Popup::draw_body_temp(SDL3::SDL_Renderer* renderer)
     {
-        int ds = m_theme->mWindowDropShadowSize;
-        int cr = m_theme->mWindowCornerRadius;
+        int ds = m_theme->m_window_drop_shadow_size;
+        int cr = m_theme->m_window_corner_radius;
 
         /* Draw a drop shadow */
-        SDL3::SDL_Color sh = m_theme->mDropShadow.toSdlColor();
+        SDL3::SDL_Color sh = m_theme->m_drop_shadow.sdl_color();
         SDL3::SDL_FRect shRect{
             static_cast<float>(m_pos.x - ds),
             static_cast<float>(m_pos.y - ds),
@@ -157,7 +157,7 @@ namespace rl::gui {
         SDL3::SDL_SetRenderDrawColor(renderer, sh.r, sh.g, sh.b, 64);
         SDL3::SDL_RenderFillRect(renderer, &shRect);
 
-        SDL3::SDL_Color bg = m_theme->mWindowPopup.toSdlColor();
+        SDL3::SDL_Color bg = m_theme->m_window_popup.sdl_color();
         SDL3::SDL_FRect bgRect{
             static_cast<float>(m_pos.x),
             static_cast<float>(m_pos.y),
@@ -168,7 +168,7 @@ namespace rl::gui {
         SDL3::SDL_SetRenderDrawColor(renderer, bg.r, bg.g, bg.b, bg.a);
         SDL3::SDL_RenderFillRect(renderer, &bgRect);
 
-        SDL3::SDL_Color br = m_theme->mBorderDark.toSdlColor();
+        SDL3::SDL_Color br = m_theme->m_border_dark.sdl_color();
         SDL3::SDL_SetRenderDrawColor(renderer, br.r, br.g, br.b, br.a);
 
         SDL3::SDL_Rect brr{ m_pos.x - 1, m_pos.y - 1, width() + 2, height() + 2 };
@@ -186,7 +186,7 @@ namespace rl::gui {
         }
     }
 
-    void Popup::drawBody(SDL3::SDL_Renderer* renderer)
+    void Popup::draw_body(SDL3::SDL_Renderer* renderer)
     {
         int id = 1;
 
@@ -206,7 +206,7 @@ namespace rl::gui {
                 SDL_RenderTexture(renderer, (*atx)->tex.tex, &rect, nullptr);
             }
             else
-                drawBodyTemp(renderer);
+                draw_body_temp(renderer);
         }
         else
         {
@@ -219,18 +219,18 @@ namespace rl::gui {
     Vector2i Popup::getOverrideBodyPos()
     {
         Vector2i ap = absolute_position();
-        int ds = m_theme->mWindowDropShadowSize;
+        int ds = m_theme->m_window_drop_shadow_size;
         return ap - Vector2i(_anchorDx + ds, ds);
     }
 
     void Popup::draw(SDL3::SDL_Renderer* renderer)
     {
-        refreshRelativePlacement();
+        refresh_relative_placement();
 
         if (!m_visible)
             return;
 
-        drawBody(renderer);
+        draw_body(renderer);
 
         Widget::draw(renderer);
     }

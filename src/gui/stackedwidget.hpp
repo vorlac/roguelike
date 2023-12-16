@@ -13,11 +13,11 @@ namespace rl::gui {
     public:
         StackedWidget(Widget* parent);
 
-        void setSelectedIndex(size_t index);
+        void set_selected_index(size_t index);
         size_t selected_idx() const;
 
         void perform_layout(SDL3::SDL_Renderer* ctx) override;
-        Vector2i preferredSize(SDL3::SDL_Renderer* ctx) const override;
+        Vector2i preferred_size(SDL3::SDL_Renderer* ctx) const override;
         void add_child(size_t index, Widget* widget) override;
 
     private:

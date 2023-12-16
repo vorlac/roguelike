@@ -33,7 +33,7 @@ namespace rl::gui {
 
                 nvgBeginPath(ctx);
                 nvgRect(ctx, 0, 0, ww, hh);
-                nvgFillColor(ctx, graph->backgroundColor().toNvgColor());
+                nvgFillColor(ctx, graph->background_color().to_nvg_color());
                 nvgFill(ctx);
 
                 if (graph->values().size() < 2)
@@ -51,9 +51,9 @@ namespace rl::gui {
                 }
 
                 nvgLineTo(ctx, 0 + ww, 0 + hh);
-                nvgStrokeColor(ctx, Color(100, 255).toNvgColor());
+                nvgStrokeColor(ctx, Color(100, 255).to_nvg_color());
                 nvgStroke(ctx);
-                nvgFillColor(ctx, graph->foregroundColor().toNvgColor());
+                nvgFillColor(ctx, graph->foregroundColor().to_nvg_color());
                 nvgFill(ctx);
 
                 nvgEndFrame(ctx);
@@ -91,14 +91,14 @@ namespace rl::gui {
         : Widget(parent)
         , m_caption(caption)
     {
-        mBackgroundColor = Color(20, 128);
+        m_background_color = Color(20, 128);
         mForegroundColor = Color(255, 192, 0, 128);
-        mTextColor = Color(240, 192);
-        _captionTex.dirty = true;
+        m_text_color = Color(240, 192);
+        m_caption_texture.dirty = true;
         _headerTex.dirty = true;
     }
 
-    Vector2i Graph::preferredSize(SDL3::SDL_Renderer*) const
+    Vector2i Graph::preferred_size(SDL3::SDL_Renderer*) const
     {
         return Vector2i(180, 45);
     }
@@ -121,17 +121,17 @@ namespace rl::gui {
             _atx->load(this);
         }
 
-        if (_captionTex.dirty)
-            m_theme->getTexAndRectUtf8(renderer, _captionTex, 0, 0, m_caption.c_str(), "sans", 14,
-                                       mTextColor);
+        if (m_caption_texture.dirty)
+            m_theme->get_texture_and_rect_utf8(renderer, m_caption_texture, 0, 0, m_caption.c_str(),
+                                               "sans", 14, m_text_color);
 
         if (_headerTex.dirty)
-            m_theme->getTexAndRectUtf8(renderer, _headerTex, 0, 0, mHeader.c_str(), "sans", 18,
-                                       mTextColor);
+            m_theme->get_texture_and_rect_utf8(renderer, _headerTex, 0, 0, m_tab_header.c_str(),
+                                               "sans", 18, m_text_color);
 
         if (_footerTex.dirty)
-            m_theme->getTexAndRectUtf8(renderer, _footerTex, 0, 0, mFooter.c_str(), "sans", 15,
-                                       mTextColor);
+            m_theme->get_texture_and_rect_utf8(renderer, _footerTex, 0, 0, mFooter.c_str(), "sans",
+                                               15, m_text_color);
 
         auto&& captionPos = ap + Vector2i(3, 1);
         SDL3::SDL_FRect posRectCaption{ captionPos.x, captionPos.y };
@@ -143,7 +143,7 @@ namespace rl::gui {
                          Vector2i(m_size.x - 3 - _footerTex.w(), m_size.y - 1 - _footerTex.h());
         SDL3::SDL_FRect posRectFooter{ footPos.x, footPos.y };
 
-        SDL3::SDL_RenderTexture(renderer, _captionTex.tex, &posRectCaption, nullptr);
+        SDL3::SDL_RenderTexture(renderer, m_caption_texture.tex, &posRectCaption, nullptr);
         SDL3::SDL_RenderTexture(renderer, _headerTex.tex, &posRectHeader, nullptr);
         SDL3::SDL_RenderTexture(renderer, _footerTex.tex, &posRectFooter, nullptr);
     }

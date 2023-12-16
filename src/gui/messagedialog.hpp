@@ -24,14 +24,14 @@ namespace rl::gui {
                       const std::function<void(int)>& callback)
             : MessageDialog(parent, type, title, message, buttonText, altButtonText, altButton)
         {
-            setCallback(callback);
+            set_callback(callback);
         }
 
         MessageDialog(Widget* parent, Type type, const std::string& title,
                       const std::string& message, const std::function<void(int)>& callback)
             : MessageDialog(parent, type, title, message)
         {
-            setCallback(callback);
+            set_callback(callback);
         }
 
         Label* messageLabel()
@@ -46,22 +46,22 @@ namespace rl::gui {
 
         std::function<void(int)> callback() const
         {
-            return mCallback;
+            return m_callback;
         }
 
-        void setCallback(const std::function<void(int)>& callback)
+        void set_callback(const std::function<void(int)>& callback)
         {
-            mCallback = callback;
+            m_callback = callback;
         }
 
-        MessageDialog& withCallback(const std::function<void(int)>& callback)
+        MessageDialog& with_callback(const std::function<void(int)>& callback)
         {
-            setCallback(callback);
+            set_callback(callback);
             return *this;
         }
 
     protected:
-        std::function<void(int)> mCallback;
+        std::function<void(int)> m_callback;
         Label* mMessageLabel;
     };
 }

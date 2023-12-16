@@ -28,8 +28,8 @@ namespace rl::gui {
         NVGcontext* ctx = nullptr;
         float value = -1;
 
-        AsyncTexture(int _id)
-            : id(_id)
+        AsyncTexture(int tex_id)
+            : id(tex_id)
         {
         }
 
@@ -39,7 +39,7 @@ namespace rl::gui {
             AsyncTexture* self = this;
             std::thread tgr([=]() {
                 Theme* m_theme = tbox->theme();
-                std::lock_guard<std::mutex> guard(m_theme->loadMutex);
+                std::lock_guard<std::mutex> guard(m_theme->m_load_mutex);
 
                 int ww = tbox->width();
                 int hh = tbox->height();
@@ -52,11 +52,11 @@ namespace rl::gui {
                 nvgBeginFrame(ctx, realw, realh, pxRatio);
 
                 NVGpaint bg = nvgBoxGradient(ctx, dx + 1, dy + 1 + 1.0f, ww - 2, hh - 2, 3, 4,
-                                             Color(255, 128).toNvgColor(),
-                                             Color(32, 32).toNvgColor());
+                                             Color(255, 128).to_nvg_color(),
+                                             Color(32, 32).to_nvg_color());
                 NVGpaint fg1 = nvgBoxGradient(ctx, dx + 1, dy + 1 + 1.0f, ww - 2, hh - 2, 3, 4,
-                                              Color(150, 32).toNvgColor(),
-                                              Color(32, 32).toNvgColor());
+                                              Color(150, 32).to_nvg_color(),
+                                              Color(32, 32).to_nvg_color());
                 NVGpaint fg2 = nvgBoxGradient(ctx, dx + 1, dy + 1 + 1.0f, ww - 2, hh - 2, 3, 4,
                                               nvgRGBA(255, 0, 0, 100), nvgRGBA(255, 0, 0, 50));
 
@@ -74,7 +74,7 @@ namespace rl::gui {
 
                 nvgBeginPath(ctx);
                 nvgRoundedRect(ctx, dx + 0.5f, dy + 0.5f, ww - 1, hh - 1, 2.5f);
-                nvgStrokeColor(ctx, Color(0, 48).toNvgColor());
+                nvgStrokeColor(ctx, Color(0, 48).to_nvg_color());
                 nvgStroke(ctx);
 
                 nvgEndFrame(ctx);
@@ -119,93 +119,94 @@ namespace rl::gui {
 
     TextBox::TextBox(Widget* parent, const std::string& value, const std::string& units)
         : Widget(parent)
-        , mEditable(false)
-        , mSpinnable(false)
-        , mCommitted(true)
-        , mValue(value)
-        , mDefaultValue("")
-        , mAlignment(Alignment::Center)
-        , mUnits(units)
-        , mFormat("")
-        , mUnitsImage(-1)
-        , mValidFormat(true)
-        , mValueTemp(value)
-        , mCursorPos(-1)
-        , mSelectionPos(-1)
+        , m_editable(false)
+        , m_spinnable(false)
+        , m_committed(true)
+        , m_value(value)
+        , m_default_value("")
+        , m_alignment(Alignment::Center)
+        , m_units(units)
+        , m_format("")
+        , m_units_image(-1)
+        , m_valid_format(true)
+        , m_value_temp(value)
+        , m_cursor_pos(-1)
+        , m_selection_pos(-1)
         , m_mouse_pos(Vector2i(-1, -1))
-        , mMouseDownPos(Vector2i(-1, -1))
-        , mMouseDragPos(Vector2i(-1, -1))
-        , mMouseDownModifier(0)
-        , mTextOffset(0)
-        , mLastClick(0)
+        , m_mouse_down_pos(Vector2i(-1, -1))
+        , m_mouse_drag_pos(Vector2i(-1, -1))
+        , m_mouse_down_modifier(0)
+        , m_text_offset(0)
+        , m_last_click(0)
     {
         if (m_theme)
-            m_font_size = m_theme->mTextBoxFontSize;
-        _captionTex.dirty = true;
-        _unitsTex.dirty = true;
+            m_font_size = m_theme->m_text_box_font_size;
+        m_caption_texture.dirty = true;
+        m_units_texture.dirty = true;
     }
 
-    void TextBox::setEditable(bool editable)
+    void TextBox::set_editable(bool editable)
     {
-        mEditable = editable;
-        _captionTex.dirty = true;
-        setCursor(editable ? Cursor::IBeam : Cursor::Arrow);
+        m_editable = editable;
+        m_caption_texture.dirty = true;
+        this->set_cursor(editable ? Cursor::IBeam : Cursor::Arrow);
     }
 
     void TextBox::set_theme(Theme* theme)
     {
         Widget::set_theme(theme);
         if (m_theme)
-            m_font_size = m_theme->mTextBoxFontSize;
+            m_font_size = m_theme->m_text_box_font_size;
     }
 
-    Vector2i TextBox::preferredSize(SDL3::SDL_Renderer* ctx) const
+    Vector2i TextBox::preferred_size(SDL3::SDL_Renderer* ctx) const
     {
-        Vector2i size(0, fontSize() * 1.4f);
+        Vector2i size(0, font_size() * 1.4f);
 
         float uw = 0;
-        if (mUnitsImage > 0)
+        if (m_units_image > 0)
         {
             /*  int w, h;
-              nvgImageSize(ctx, mUnitsImage, &w, &h);
+              nvgImageSize(ctx, m_units_image, &w, &h);
               float uh = size(1) * 0.4f;
               uw = w * uh / h;
               */
         }
-        else if (!mUnits.empty())
+        else if (!m_units.empty())
         {
-            uw = const_cast<TextBox*>(this)->m_theme->getUtf8Width("sans", fontSize(),
-                                                                   mUnits.c_str());
+            uw = const_cast<TextBox*>(this)->m_theme->get_utf8_width("sans", font_size(),
+                                                                     m_units.c_str());
         }
         float sw = 0;
-        if (mSpinnable)
+        if (m_spinnable)
             sw = 14.f;
 
-        float ts = const_cast<TextBox*>(this)->m_theme->getUtf8Width("sans", fontSize(),
-                                                                     mValue.c_str());
+        float ts = const_cast<TextBox*>(this)->m_theme->get_utf8_width("sans", font_size(),
+                                                                       m_value.c_str());
         size.x = size.y + ts + uw + sw;
         return size;
     }
 
-    void TextBox::drawBody(SDL3::SDL_Renderer* renderer)
+    void TextBox::draw_body(SDL3::SDL_Renderer* renderer)
     {
-        bool outside = mSpinnable && mMouseDownPos.x != -1;
-        int id = (mEditable ? 0x1 : 0) + (focused() ? 0x2 : 0) + (mValidFormat ? 0x4 : 0) +
+        bool outside = m_spinnable && m_mouse_down_pos.x != -1;
+        int id = (m_editable ? 0x1 : 0) + (focused() ? 0x2 : 0) + (m_valid_format ? 0x4 : 0) +
                  (outside ? 0x8 : 0);
 
-        auto atx = std::find_if(_txs.begin(), _txs.end(), [id](const AsyncTexturePtr& p) {
-            return p->id == id;
-        });
+        auto atx = std::find_if(m_textures.begin(), m_textures.end(),
+                                [id](const TextBox::AsyncTexturePtr& p) {
+                                    return p->id == id;
+                                });
 
-        if (atx != _txs.end())
-            drawTexture(*atx, renderer);
+        if (atx != m_textures.end())
+            draw_texture(*atx, renderer);
         else
         {
-            AsyncTexturePtr newtx = std::make_shared<AsyncTexture>(id);
-            newtx->load(this, mEditable, focused(), mValidFormat, outside);
-            _txs.push_back(newtx);
+            TextBox::AsyncTexturePtr newtx = std::make_shared<TextBox::AsyncTexture>(id);
+            newtx->load(this, m_editable, focused(), m_valid_format, outside);
+            m_textures.push_back(newtx);
 
-            drawTexture(current_texture_, renderer);
+            draw_texture(m_curr_texture, renderer);
         }
     }
 
@@ -215,37 +216,38 @@ namespace rl::gui {
 
         SDL3::SDL_Point ap = get_absolute_pos();
 
-        drawBody(renderer);
+        draw_body(renderer);
 
         Vector2i drawPos = absolute_position();
         float unitWidth = 0;
 
-        if (mUnitsImage > 0)
+        if (m_units_image > 0)
         {
             // int w, h;
-            // nvgImageSize(ctx, mUnitsImage, &w, &h);
-            // float unitHeight = mSize.y() * 0.4f;
+            // nvgImageSize(ctx, m_units_image, &w, &h);
+            // float unitHeight = m_size.y() * 0.4f;
             // unitWidth = w * unitHeight / h;
             // NVGpaint imgPaint = nvgImagePattern(
-            //     ctx, mPos.x() + mSize.x() - xSpacing - unitWidth, drawPos.y() - unitHeight *
-            //     0.5f, unitWidth, unitHeight, 0, mUnitsImage, mEnabled ? 0.7f : 0.35f);
+            //     ctx, mPos.x() + m_size.x() - xSpacing - unitWidth, drawPos.y() - unitHeight *
+            //     0.5f, unitWidth, unitHeight, 0, m_units_image, mEnabled ? 0.7f : 0.35f);
             // nvgBeginPath(ctx);
-            // nvgRect(ctx, mPos.x() + mSize.x() - xSpacing - unitWidth,
+            // nvgRect(ctx, mPos.x() + m_size.x() - xSpacing - unitWidth,
             //         drawPos.y() - unitHeight * 0.5f, unitWidth, unitHeight);
             // nvgFillPaint(ctx, imgPaint);
             // nvgFill(ctx);
             // unitWidth += 2;
         }
-        else if (!mUnits.empty())
+        else if (!m_units.empty())
         {
-            if (_unitsTex.dirty)
-                m_theme->getTexAndRectUtf8(renderer, _unitsTex, 0, 0, mUnits.c_str(), "sans",
-                                           fontSize(), Color(255, m_enabled ? 64 : 32));
+            if (m_units_texture.dirty)
+                m_theme->get_texture_and_rect_utf8(renderer, m_units_texture, 0, 0, m_units.c_str(),
+                                                   "sans", font_size(),
+                                                   Color(255, m_enabled ? 64 : 32));
 
-            unitWidth = _unitsTex.w() + 2;
-            SDL_RenderCopy(renderer, _unitsTex,
-                           absolute_position() +
-                               Vector2i(m_size.x - unitWidth, (m_size.y - _unitsTex.h()) * 0.5f));
+            unitWidth = m_units_texture.w() + 2;
+            SDL_RenderCopy(renderer, m_units_texture,
+                           absolute_position() + Vector2i(m_size.x - unitWidth,
+                                                          (m_size.y - m_units_texture.h()) * 0.5f));
             unitWidth += (2 + 2);
         }
 
@@ -256,46 +258,47 @@ namespace rl::gui {
         //     spinArrowsWidth = 14.f;
         //
         //     nvgFontFace(ctx, "icons");
-        //     nvgFontSize(ctx, ((mFontSize < 0) ? m_theme->mButtonFontSize : mFontSize) * 1.2f);
+        //     nvgFontSize(ctx, ((mFontSize < 0) ? m_theme->m_button_font_size : mFontSize) * 1.2f);
         //
-        //     bool spinning = mMouseDownPos.x() != -1;
+        //     bool spinning = m_mouse_down_pos.x() != -1;
         //     {
-        //         bool hover = mMouseFocus && spinArea(m_mouse_pos) == SpinArea::Top;
-        //         nvgFillColor(ctx, (mEnabled && (hover || spinning)) ? m_theme->mTextColor
+        //         bool hover = mMouseFocus && spin_area(m_mouse_pos) == SpinArea::Top;
+        //         nvgFillColor(ctx, (mEnabled && (hover || spinning)) ? m_theme->m_text_color
         //                                                             :
-        //                                                             m_theme->mDisabledTextColor);
+        //                                                             m_theme->m_disabled_text_color);
         //         auto icon = utf8(ENTYPO_ICON_CHEVRON_UP);
         //         nvgTextAlign(ctx, NVG_ALIGN_LEFT | NVG_ALIGN_MIDDLE);
-        //         Vector2f iconPos(mPos.x() + 4.f, mPos.y() + mSize.y() / 2.f - xSpacing / 2.f);
+        //         Vector2f iconPos(mPos.x() + 4.f, mPos.y() + m_size.y() / 2.f - xSpacing / 2.f);
         //         nvgText(ctx, iconPos.x(), iconPos.y(), icon.data(), nullptr);
         //     }
         //
         //     {
-        //         bool hover = mMouseFocus && spinArea(m_mouse_pos) == SpinArea::Bottom;
-        //         nvgFillColor(ctx, (mEnabled && (hover || spinning)) ? m_theme->mTextColor
+        //         bool hover = mMouseFocus && spin_area(m_mouse_pos) == SpinArea::Bottom;
+        //         nvgFillColor(ctx, (mEnabled && (hover || spinning)) ? m_theme->m_text_color
         //                                                             :
-        //                                                             m_theme->mDisabledTextColor);
+        //                                                             m_theme->m_disabled_text_color);
         //         auto icon = utf8(ENTYPO_ICON_CHEVRON_DOWN);
         //         nvgTextAlign(ctx, NVG_ALIGN_LEFT | NVG_ALIGN_MIDDLE);
-        //         Vector2f iconPos(mPos.x() + 4.f, mPos.y() + mSize.y() / 2.f + xSpacing / 2.f
+        //         Vector2f iconPos(mPos.x() + 4.f, mPos.y() + m_size.y() / 2.f + xSpacing / 2.f
         //         + 1.5f); nvgText(ctx, iconPos.x(), iconPos.y(), icon.data(), nullptr);
         //     }
         //
-        //     nvgFontSize(ctx, fontSize());
+        //     nvgFontSize(ctx, font_size());
         //     nvgFontFace(ctx, "sans");
         // }
 
         float xSpacing = 3.f;
-        switch (mAlignment)
+        switch (m_alignment)
         {
             case Alignment::Left:
                 drawPos.x = get_absolute_left() + xSpacing + spinArrowsWidth;
                 break;
             case Alignment::Right:
-                drawPos.x = get_absolute_left() + m_size.x - _captionTex.w() - unitWidth - xSpacing;
+                drawPos.x = get_absolute_left() + m_size.x - m_caption_texture.w() - unitWidth -
+                            xSpacing;
                 break;
             case Alignment::Center:
-                if (mUnits.empty())
+                if (m_units.empty())
                     drawPos.x = get_absolute_left() + m_size.x * 0.5f;
                 else
                     drawPos.x = get_absolute_left() + m_size.x * 0.3f;
@@ -309,65 +312,66 @@ namespace rl::gui {
         float clipHeight = m_size.y - 3.0f;
 
         Vector2f oldDrawPos(drawPos.x, drawPos.y);
-        drawPos.x += mTextOffset;
-        drawPos.y += (m_size.y - _captionTex.h()) / 2;
+        drawPos.x += m_text_offset;
+        drawPos.y += (m_size.y - m_caption_texture.h()) / 2;
 
-        if (_captionTex.dirty)
-            m_theme->getTexAndRectUtf8(
-                renderer, _captionTex, 0, 0, mValue.c_str(), "sans", fontSize(),
-                m_enabled ? m_theme->mTextColor : m_theme->mDisabledTextColor);
+        if (m_caption_texture.dirty)
+            m_theme->get_texture_and_rect_utf8(
+                renderer, m_caption_texture, 0, 0, m_value.c_str(), "sans", font_size(),
+                m_enabled ? m_theme->m_text_color : m_theme->m_disabled_text_color);
 
-        if (mCommitted)
+        if (m_committed)
         {
             SDL3::SDL_FRect drawRect{ static_cast<float>(drawPos.x), static_cast<float>(drawPos.y) };
-            SDL3::SDL_RenderTexture(renderer, _captionTex.tex, &drawRect, nullptr);
+            SDL3::SDL_RenderTexture(renderer, m_caption_texture.tex, &drawRect, nullptr);
         }
         else
         {
             int w, h;
-            m_theme->getUtf8Bounds("sans", fontSize(), mValueTemp.c_str(), &w, &h);
+            m_theme->get_utf8_bounds("sans", font_size(), m_value_temp.c_str(), &w, &h);
             float textBound[4] = { (float)drawPos.x, (float)drawPos.y, (float)(drawPos.x + w),
                                    (float)(drawPos.y + h) };
             float lineh = textBound[3] - textBound[1];
 
             // find cursor positions
-            updateCursor(textBound[2], mValueTemp);
+            update_cursor(textBound[2], m_value_temp);
 
             // compute text offset
-            int prevCPos = mCursorPos > 0 ? mCursorPos - 1 : 0;
-            int nextCPos = mCursorPos < (int)mValueTemp.size() ? mCursorPos + 1
-                                                               : (int)mValueTemp.size();
-            float prevCX = cursorIndex2Position(prevCPos, textBound[2], mValueTemp);
-            float nextCX = cursorIndex2Position(nextCPos, textBound[2], mValueTemp);
+            int prevCPos = m_cursor_pos > 0 ? m_cursor_pos - 1 : 0;
+            int nextCPos = m_cursor_pos < (int)m_value_temp.size() ? m_cursor_pos + 1
+                                                                   : (int)m_value_temp.size();
+            float prevCX = cursor_idx_to_position(prevCPos, textBound[2], m_value_temp);
+            float nextCX = cursor_idx_to_position(nextCPos, textBound[2], m_value_temp);
 
             if (nextCX > clipX + clipWidth)
-                mTextOffset -= nextCX - (clipX + clipWidth) + 1;
+                m_text_offset -= nextCX - (clipX + clipWidth) + 1;
             if (prevCX < clipX)
-                mTextOffset += clipX - prevCX + 1;
+                m_text_offset += clipX - prevCX + 1;
 
-            // drawPos.x() = oldDrawPos.x() + mTextOffset;
+            // drawPos.x() = oldDrawPos.x() + m_text_offset;
 
-            if (_tempTex.dirty)
-                m_theme->getTexAndRectUtf8(renderer, _tempTex, 0, 0, mValueTemp.c_str(), "sans",
-                                           fontSize(), m_theme->mTextColor);
+            if (m_temp_texture.dirty)
+                m_theme->get_texture_and_rect_utf8(renderer, m_temp_texture, 0, 0,
+                                                   m_value_temp.c_str(), "sans", font_size(),
+                                                   m_theme->m_text_color);
 
             // draw text with offset
             SDL3::SDL_FRect oldDrawRect{ static_cast<float>(drawPos.x),
                                          static_cast<float>(drawPos.y) };
-            SDL3::SDL_RenderTexture(renderer, _tempTex.tex, &oldDrawRect, nullptr);
+            SDL3::SDL_RenderTexture(renderer, m_temp_texture.tex, &oldDrawRect, nullptr);
 
-            if (mCursorPos > -1)
+            if (m_cursor_pos > -1)
             {
-                if (mSelectionPos > -1)
+                if (m_selection_pos > -1)
                 {
-                    float caretx = cursorIndex2Position(mCursorPos, textBound[2], mValueTemp);
-                    float selx = cursorIndex2Position(mSelectionPos, textBound[2], mValueTemp);
+                    float caretx = cursor_idx_to_position(m_cursor_pos, textBound[2], m_value_temp);
+                    float selx = cursor_idx_to_position(m_selection_pos, textBound[2], m_value_temp);
 
                     if (caretx > selx)
                         std::swap(caretx, selx);
 
                     // draw selection
-                    SDL3::SDL_Color c = Color(255, 255, 255, 80).toSdlColor();
+                    SDL3::SDL_Color c = Color(255, 255, 255, 80).sdl_color();
                     SDL3::SDL_FRect sr{
                         std::round(oldDrawPos.x + caretx),
                         oldDrawPos.y + 4.0f,
@@ -378,13 +382,13 @@ namespace rl::gui {
                     SDL3::SDL_RenderFillRect(renderer, &sr);
                 }
 
-                caretLastTickCount = SDL3::SDL_GetTicks();
+                caret_last_tick_count = SDL3::SDL_GetTicks();
                 // draw cursor
-                if (caretLastTickCount % 1000 < 500)
+                if (caret_last_tick_count % 1000 < 500)
                 {
-                    float caretx = cursorIndex2Position(mCursorPos, textBound[2], mValueTemp);
+                    float caretx = cursor_idx_to_position(m_cursor_pos, textBound[2], m_value_temp);
 
-                    SDL3::SDL_Color c = Color(255, 192, 0, 255).toSdlColor();
+                    SDL3::SDL_Color c = Color(255, 192, 0, 255).sdl_color();
                     SDL3::SDL_SetRenderDrawColor(renderer, c.r, c.g, c.b, c.a);
                     SDL3::SDL_RenderLine(renderer, oldDrawPos.x + caretx, oldDrawPos.y + 4,
                                          oldDrawPos.x + caretx, oldDrawPos.y + lineh - 3);
@@ -393,69 +397,69 @@ namespace rl::gui {
         }
     }
 
-    bool TextBox::mouseButtonEvent(const Vector2i& p, int button, bool down, int modifiers)
+    bool TextBox::mouse_button_event(const Vector2i& p, int button, bool down, int modifiers)
     {
         if (button == SDL_BUTTON_LEFT && down && !m_focused)
         {
-            if (!mSpinnable || spinArea(p) == SpinArea::None) /* not on scrolling arrows */
-                requestFocus();
+            if (!m_spinnable || spin_area(p) == SpinArea::None) /* not on scrolling arrows */
+                request_focus();
         }
 
-        if (mEditable && focused())
+        if (m_editable && focused())
         {
             if (down)
             {
-                mMouseDownPos = p;
-                mMouseDownModifier = modifiers;
+                m_mouse_down_pos = p;
+                m_mouse_down_modifier = modifiers;
 
                 double time = SDL3::SDL_GetTicks() / double(SDL_MS_PER_SECOND);
-                if (time - mLastClick < 0.25)
+                if (time - m_last_click < 0.25)
                 {
                     /* Double-click: select all text */
-                    mSelectionPos = 0;
-                    mCursorPos = (int)mValueTemp.size();
-                    mMouseDownPos = Vector2i{ -1, -1 };
+                    m_selection_pos = 0;
+                    m_cursor_pos = (int)m_value_temp.size();
+                    m_mouse_down_pos = Vector2i{ -1, -1 };
                 }
-                mLastClick = time;
+                m_last_click = time;
             }
             else
             {
-                mMouseDownPos = Vector2i{ -1, -1 };
-                mMouseDragPos = Vector2i{ -1, -1 };
+                m_mouse_down_pos = Vector2i{ -1, -1 };
+                m_mouse_drag_pos = Vector2i{ -1, -1 };
             }
             return true;
         }
-        else if (mSpinnable && !focused())
+        else if (m_spinnable && !focused())
         {
             if (down)
             {
-                if (spinArea(p) == SpinArea::None)
+                if (spin_area(p) == SpinArea::None)
                 {
-                    mMouseDownPos = p;
-                    mMouseDownModifier = modifiers;
+                    m_mouse_down_pos = p;
+                    m_mouse_down_modifier = modifiers;
 
                     double time = SDL3::SDL_GetTicks() / double(SDL_MS_PER_SECOND);
-                    if (time - mLastClick < 0.25)
+                    if (time - m_last_click < 0.25)
                     {
                         /* Double-click: reset to default value */
-                        mValue = mDefaultValue;
-                        if (mCallback)
-                            mCallback(mValue);
+                        m_value = m_default_value;
+                        if (m_callback)
+                            m_callback(m_value);
 
-                        mMouseDownPos = Vector2i{ -1, -1 };
+                        m_mouse_down_pos = Vector2i{ -1, -1 };
                     }
-                    mLastClick = time;
+                    m_last_click = time;
                 }
                 else
                 {
-                    mMouseDownPos = Vector2i{ -1, -1 };
-                    mMouseDragPos = Vector2i{ -1, -1 };
+                    m_mouse_down_pos = Vector2i{ -1, -1 };
+                    m_mouse_drag_pos = Vector2i{ -1, -1 };
                 }
             }
             else
             {
-                mMouseDownPos = Vector2i{ -1, -1 };
-                mMouseDragPos = Vector2i{ -1, -1 };
+                m_mouse_down_pos = Vector2i{ -1, -1 };
+                m_mouse_drag_pos = Vector2i{ -1, -1 };
             }
             return true;
         }
@@ -463,73 +467,73 @@ namespace rl::gui {
         return false;
     }
 
-    bool TextBox::mouseMotionEvent(const Vector2i& p, const Vector2i& /* rel */, int /* button */,
+    bool TextBox::mouse_motion_event(const Vector2i& p, const Vector2i& /* rel */, int /* button */,
+                                     int /* modifiers */)
+    {
+        m_mouse_pos = p;
+
+        if (!m_editable)
+            set_cursor(Cursor::Arrow);
+        else if (m_spinnable && !focused() && spin_area(m_mouse_pos) != SpinArea::None) /* scrolling
+                                                                                         * arrows
+                                                                                         */
+            set_cursor(Cursor::Hand);
+        else
+            set_cursor(Cursor::IBeam);
+
+        if (m_editable && focused())
+            return true;
+        return false;
+    }
+
+    bool TextBox::mouse_drag_event(const Vector2i& p, const Vector2i& /* rel */, int /* button */,
                                    int /* modifiers */)
     {
         m_mouse_pos = p;
+        m_mouse_drag_pos = p;
 
-        if (!mEditable)
-            setCursor(Cursor::Arrow);
-        else if (mSpinnable && !focused() && spinArea(m_mouse_pos) != SpinArea::None) /* scrolling
-                                                                                       * arrows
-                                                                                       */
-            setCursor(Cursor::Hand);
-        else
-            setCursor(Cursor::IBeam);
-
-        if (mEditable && focused())
+        if (m_editable && focused())
             return true;
         return false;
     }
 
-    bool TextBox::mouseDragEvent(const Vector2i& p, const Vector2i& /* rel */, int /* button */,
-                                 int /* modifiers */)
+    bool TextBox::focus_event(bool focused)
     {
-        m_mouse_pos = p;
-        mMouseDragPos = p;
+        Widget::focus_event(focused);
 
-        if (mEditable && focused())
-            return true;
-        return false;
-    }
+        std::string backup = m_value;
 
-    bool TextBox::focusEvent(bool focused)
-    {
-        Widget::focusEvent(focused);
-
-        std::string backup = mValue;
-
-        if (mEditable)
+        if (m_editable)
         {
             if (focused)
             {
-                mValueTemp = mValue;
-                _tempTex.dirty = true;
-                mCommitted = false;
-                mCursorPos = 0;
+                m_value_temp = m_value;
+                m_temp_texture.dirty = true;
+                m_committed = false;
+                m_cursor_pos = 0;
             }
             else
             {
-                if (mValidFormat)
+                if (m_valid_format)
                 {
-                    if (mValueTemp == "")
-                        mValue = mDefaultValue;
+                    if (m_value_temp == "")
+                        m_value = m_default_value;
                     else
-                        mValue = mValueTemp;
+                        m_value = m_value_temp;
                 }
 
-                if (mCallback && !mCallback(mValue))
-                    mValue = backup;
+                if (m_callback && !m_callback(m_value))
+                    m_value = backup;
 
-                mValidFormat = true;
-                _captionTex.dirty = true;
-                mCommitted = true;
-                mCursorPos = -1;
-                mSelectionPos = -1;
-                mTextOffset = 0;
+                m_valid_format = true;
+                m_caption_texture.dirty = true;
+                m_committed = true;
+                m_cursor_pos = -1;
+                m_selection_pos = -1;
+                m_text_offset = 0;
             }
 
-            mValidFormat = (mValueTemp == "") || checkFormat(mValueTemp, mFormat);
+            m_valid_format = (m_value_temp == "") || check_format(m_value_temp, m_format);
         }
 
         return true;
@@ -537,7 +541,7 @@ namespace rl::gui {
 
     bool TextBox::kb_button_event(int key, int /* scancode */, int action, int modifiers)
     {
-        if (mEditable && focused())
+        if (m_editable && focused())
         {
             if (action == SDL_PRESSED)
             {
@@ -545,107 +549,107 @@ namespace rl::gui {
                 {
                     if (modifiers & SDL3::SDL_KMOD_SHIFT)
                     {
-                        if (mSelectionPos == -1)
-                            mSelectionPos = mCursorPos;
+                        if (m_selection_pos == -1)
+                            m_selection_pos = m_cursor_pos;
                     }
                     else
                     {
-                        mSelectionPos = -1;
+                        m_selection_pos = -1;
                     }
 
-                    if (mCursorPos > 0)
-                        mCursorPos--;
+                    if (m_cursor_pos > 0)
+                        m_cursor_pos--;
                 }
                 else if (key == SDL3::SDLK_RIGHT)
                 {
                     if (modifiers & SDL3::SDL_KMOD_SHIFT)
                     {
-                        if (mSelectionPos == -1)
-                            mSelectionPos = mCursorPos;
+                        if (m_selection_pos == -1)
+                            m_selection_pos = m_cursor_pos;
                     }
                     else
                     {
-                        mSelectionPos = -1;
+                        m_selection_pos = -1;
                     }
 
-                    if (mCursorPos < (int)mValueTemp.length())
-                        mCursorPos++;
+                    if (m_cursor_pos < (int)m_value_temp.length())
+                        m_cursor_pos++;
                 }
                 else if (key == SDL3::SDLK_HOME)
                 {
                     if (modifiers & SDL3::SDL_KMOD_SHIFT)
                     {
-                        if (mSelectionPos == -1)
-                            mSelectionPos = mCursorPos;
+                        if (m_selection_pos == -1)
+                            m_selection_pos = m_cursor_pos;
                     }
                     else
                     {
-                        mSelectionPos = -1;
+                        m_selection_pos = -1;
                     }
 
-                    mCursorPos = 0;
+                    m_cursor_pos = 0;
                 }
                 else if (key == SDL3::SDLK_END)
                 {
                     if (modifiers & SDL3::SDL_KMOD_SHIFT)
                     {
-                        if (mSelectionPos == -1)
-                            mSelectionPos = mCursorPos;
+                        if (m_selection_pos == -1)
+                            m_selection_pos = m_cursor_pos;
                     }
                     else
                     {
-                        mSelectionPos = -1;
+                        m_selection_pos = -1;
                     }
 
-                    mCursorPos = (int)mValueTemp.size();
+                    m_cursor_pos = (int)m_value_temp.size();
                 }
                 else if (key == SDL3::SDLK_BACKSPACE)
                 {
-                    if (!deleteSelection())
+                    if (!delete_selection())
                     {
-                        if (mCursorPos > 0)
+                        if (m_cursor_pos > 0)
                         {
-                            mValueTemp.erase(mValueTemp.begin() + mCursorPos - 1);
-                            _tempTex.dirty = true;
-                            mCursorPos--;
+                            m_value_temp.erase(m_value_temp.begin() + m_cursor_pos - 1);
+                            m_temp_texture.dirty = true;
+                            m_cursor_pos--;
                         }
                     }
                 }
                 else if (key == SDL3::SDLK_DELETE)
                 {
-                    if (!deleteSelection())
+                    if (!delete_selection())
                     {
-                        if (mCursorPos < (int)mValueTemp.length())
-                            mValueTemp.erase(mValueTemp.begin() + mCursorPos);
-                        _tempTex.dirty = true;
+                        if (m_cursor_pos < (int)m_value_temp.length())
+                            m_value_temp.erase(m_value_temp.begin() + m_cursor_pos);
+                        m_temp_texture.dirty = true;
                     }
                 }
                 else if (key == SDL3::SDLK_RETURN)
                 {
-                    if (!mCommitted)
-                        focusEvent(false);
+                    if (!m_committed)
+                        focus_event(false);
                 }
                 else if (key == SDL3::SDLK_a && modifiers & SDL3::SDLK_LCTRL)
                 {
-                    mCursorPos = (int)mValueTemp.length();
-                    mSelectionPos = 0;
+                    m_cursor_pos = (int)m_value_temp.length();
+                    m_selection_pos = 0;
                 }
                 else if (key == SDL3::SDLK_x && modifiers & SDL3::SDLK_LCTRL)
                 {
-                    copySelection();
-                    deleteSelection();
+                    copy_selection();
+                    delete_selection();
                 }
                 else if (key == SDL3::SDLK_c && modifiers & SDL3::SDLK_LCTRL)
                 {
-                    copySelection();
+                    copy_selection();
                 }
                 else if (key == SDL3::SDLK_v && modifiers & SDL3::SDLK_LCTRL)
                 {
-                    deleteSelection();
-                    pasteFromClipboard();
+                    delete_selection();
+                    paste_from_clipboard();
                 }
 
-                mValidFormat = (mValueTemp == "") || checkFormat(mValueTemp, mFormat);
+                m_valid_format = (m_value_temp == "") || check_format(m_value_temp, m_format);
             }
             return true;
         }
@@ -655,17 +659,17 @@ namespace rl::gui {
 
     bool TextBox::kb_character_event(unsigned int codepoint)
     {
-        if (mEditable && focused())
+        if (m_editable && focused())
         {
             std::ostringstream convert;
             convert << (char)codepoint;
 
-            deleteSelection();
-            mValueTemp.insert(mCursorPos, convert.str());
-            mCursorPos++;
+            delete_selection();
+            m_value_temp.insert(m_cursor_pos, convert.str());
+            m_cursor_pos++;
 
-            mValidFormat = (mValueTemp == "") || checkFormat(mValueTemp, mFormat);
-            _tempTex.dirty = true;
+            m_valid_format = (m_value_temp == "") || check_format(m_value_temp, m_format);
+            m_temp_texture.dirty = true;
 
             return true;
         }
@@ -673,7 +677,7 @@ namespace rl::gui {
         return false;
     }
 
-    bool TextBox::checkFormat(const std::string& input, const std::string& format)
+    bool TextBox::check_format(const std::string& input, const std::string& format)
     {
         if (format.empty())
             return true;
@@ -695,54 +699,54 @@ namespace rl::gui {
         }
     }
 
-    bool TextBox::copySelection()
+    bool TextBox::copy_selection()
     {
-        if (mSelectionPos > -1)
+        if (m_selection_pos > -1)
         {
             Screen* sc = dynamic_cast<Screen*>(this->window()->parent());
 
-            int begin = mCursorPos;
-            int end = mSelectionPos;
+            int begin = m_cursor_pos;
+            int end = m_selection_pos;
 
             if (begin > end)
                 std::swap(begin, end);
 
-            SDL3::SDL_SetClipboardText(mValueTemp.substr(begin, end).c_str());
+            SDL3::SDL_SetClipboardText(m_value_temp.substr(begin, end).c_str());
             return true;
         }
 
         return false;
     }
 
-    void TextBox::pasteFromClipboard()
+    void TextBox::paste_from_clipboard()
     {
         Screen* sc = dynamic_cast<Screen*>(this->window()->parent());
         const char* cbstr = SDL3::SDL_GetClipboardText();
         if (cbstr)
         {
-            mValueTemp.insert(mCursorPos, std::string(cbstr));
-            _captionTex.dirty = true;
+            m_value_temp.insert(m_cursor_pos, std::string(cbstr));
+            m_caption_texture.dirty = true;
         }
     }
 
-    bool TextBox::deleteSelection()
+    bool TextBox::delete_selection()
     {
-        if (mSelectionPos > -1)
+        if (m_selection_pos > -1)
         {
-            int begin = mCursorPos;
-            int end = mSelectionPos;
+            int begin = m_cursor_pos;
+            int end = m_selection_pos;
 
             if (begin > end)
                 std::swap(begin, end);
 
             if (begin == end - 1)
-                mValueTemp.erase(mValueTemp.begin() + begin);
+                m_value_temp.erase(m_value_temp.begin() + begin);
             else
-                mValueTemp.erase(mValueTemp.begin() + begin, mValueTemp.begin() + end);
+                m_value_temp.erase(m_value_temp.begin() + begin, m_value_temp.begin() + end);
 
-            mCursorPos = begin;
-            mSelectionPos = -1;
-            _tempTex.dirty = true;
+            m_cursor_pos = begin;
+            m_selection_pos = -1;
+            m_temp_texture.dirty = true;
 
             return true;
         }
@@ -750,64 +754,66 @@ namespace rl::gui {
         return false;
     }
 
-    void TextBox::updateCursor(float lastx, const std::string& str)
+    void TextBox::update_cursor(float lastx, const std::string& str)
     {
         // handle mouse cursor events
-        if (mMouseDownPos.x != -1)
+        if (m_mouse_down_pos.x != -1)
         {
-            if (mMouseDownModifier == SDL3::SDL_KMOD_SHIFT)
+            if (m_mouse_down_modifier == SDL3::SDL_KMOD_SHIFT)
             {
-                if (mSelectionPos == -1)
-                    mSelectionPos = mCursorPos;
+                if (m_selection_pos == -1)
+                    m_selection_pos = m_cursor_pos;
             }
             else
-                mSelectionPos = -1;
+                m_selection_pos = -1;
 
-            mCursorPos = position2CursorIndex(mMouseDownPos.x, lastx, str);
+            m_cursor_pos = position_to_cursor_idx(m_mouse_down_pos.x, lastx, str);
 
-            mMouseDownPos = Vector2i{ -1, -1 };
+            m_mouse_down_pos = Vector2i{ -1, -1 };
         }
-        else if (mMouseDragPos.x != -1)
+        else if (m_mouse_drag_pos.x != -1)
         {
-            if (mSelectionPos == -1)
-                mSelectionPos = mCursorPos;
+            if (m_selection_pos == -1)
+                m_selection_pos = m_cursor_pos;
 
-            mCursorPos = position2CursorIndex(mMouseDragPos.x, lastx, str);
+            m_cursor_pos = position_to_cursor_idx(m_mouse_drag_pos.x, lastx, str);
         }
         else
         {
             // set cursor to last character
-            if (mCursorPos == -2)
-                mCursorPos = (int)str.size();
+            if (m_cursor_pos == -2)
+                m_cursor_pos = (int)str.size();
         }
 
-        if (mCursorPos == mSelectionPos)
-            mSelectionPos = -1;
+        if (m_cursor_pos == m_selection_pos)
+            m_selection_pos = -1;
     }
 
-    float TextBox::cursorIndex2Position(int index, float lastx, const std::string& str)
+    float TextBox::cursor_idx_to_position(int index, float lastx, const std::string& str)
     {
         float pos = 0;
         if (index >= str.size())
-            pos = _tempTex.w();  // last character
+            pos = m_temp_texture.w();  // last character
         else
-            pos = m_theme->getUtf8Width("sans", fontSize(), str.substr(0, index).c_str());
+            pos = m_theme->get_utf8_width("sans", font_size(), str.substr(0, index).c_str());
         ;
 
         return pos;
     }
 
-    int TextBox::position2CursorIndex(float posx, float lastx, const std::string& str)
+    int TextBox::position_to_cursor_idx(float posx, float lastx, const std::string& str)
     {
         int mCursorId = 0;
-        float caretx = m_theme->getUtf8Width("sans", fontSize(), str.substr(0, mCursorId).c_str());
+        float caretx = m_theme->get_utf8_width("sans", font_size(),
+                                               str.substr(0, mCursorId).c_str());
         for (int j = 1; j <= str.size(); j++)
         {
-            int glposx = m_theme->getUtf8Width("sans", fontSize(), str.substr(0, j).c_str());
+            int glposx = m_theme->get_utf8_width("sans", font_size(), str.substr(0, j).c_str());
             if (std::abs(caretx - posx) > std::abs(glposx - posx))
             {
                 mCursorId = j;
-                caretx = m_theme->getUtf8Width("sans", fontSize(), str.substr(0, mCursorId).c_str());
+                caretx = m_theme->get_utf8_width("sans", font_size(),
+                                                 str.substr(0, mCursorId).c_str());
             }
         }
         if (std::abs(caretx - posx) > std::abs(lastx - posx))
@@ -816,7 +822,7 @@ namespace rl::gui {
         return mCursorId;
     }
 
-    TextBox::SpinArea TextBox::spinArea(const Vector2i& pos)
+    TextBox::SpinArea TextBox::spin_area(const Vector2i& pos)
     {
         if (0 <= pos.x - m_pos.x && pos.x - m_pos.x < 14.f)
         { /* on scrolling arrows */
@@ -832,7 +838,7 @@ namespace rl::gui {
         return SpinArea::None;
     }
 
-    void TextBox::drawTexture(AsyncTexturePtr& texture, SDL3::SDL_Renderer* renderer)
+    void TextBox::draw_texture(TextBox::AsyncTexturePtr& texture, SDL3::SDL_Renderer* renderer)
     {
         if (texture)
         {
@@ -844,14 +850,14 @@ namespace rl::gui {
                 SDL3::SDL_FRect rect{ pos.x, pos.y };
                 SDL3::SDL_RenderTexture(renderer, texture->tex.tex, &rect, nullptr);
 
-                if (!current_texture_ || texture->id != current_texture_->id)
-                    current_texture_ = texture;
+                if (!m_curr_texture || texture->id != m_curr_texture->id)
+                    m_curr_texture = texture;
             }
-            else if (current_texture_)
+            else if (m_curr_texture)
             {
                 auto&& pos = absolute_position().tofloat();
                 SDL3::SDL_FRect rect{ pos.x, pos.y };
-                SDL3::SDL_RenderTexture(renderer, current_texture_->tex.tex, &rect, nullptr);
+                SDL3::SDL_RenderTexture(renderer, m_curr_texture->tex.tex, &rect, nullptr);
             }
         }
     }

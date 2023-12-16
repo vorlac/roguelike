@@ -73,7 +73,7 @@ namespace rl {
 
             gui::Button* b = new gui::Button(static_cast<gui::Widget*>(m_window.get()),
                                              "Plain button");
-            b->setCallback([] {
+            b->set_callback([] {
                 log::info("pushed!");
             });
 

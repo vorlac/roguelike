@@ -11,23 +11,23 @@ namespace rl::gui {
         /// Set the change callback
         std::function<void(const Color&)> callback() const
         {
-            return mCallback;
+            return m_callback;
         }
 
-        void setCallback(const std::function<void(const Color&)>& callback)
+        void set_callback(const std::function<void(const Color&)>& callback)
         {
-            mCallback = callback;
+            m_callback = callback;
         }
 
         /// Get the current color
         Color color() const;
         /// Set the current color
-        void setColor(const Color& color);
+        void set_color(const Color& color);
 
-        Vector2i preferredSize(SDL3::SDL_Renderer* ctx) const override;
+        Vector2i preferred_size(SDL3::SDL_Renderer* ctx) const override;
         void draw(SDL3::SDL_Renderer* renderer) override;
-        bool mouseButtonEvent(const Vector2i& p, int button, bool down, int modifiers);
-        bool mouseDragEvent(const Vector2i& p, const Vector2i& rel, int button, int modifiers);
+        bool mouse_button_event(const Vector2i& p, int button, bool down, int modifiers);
+        bool mouse_drag_event(const Vector2i& p, const Vector2i& rel, int button, int modifiers);
 
     private:
         enum Region {
@@ -45,6 +45,6 @@ namespace rl::gui {
         float mWhite;
         float mBlack;
         Region mDragRegion;
-        std::function<void(const Color&)> mCallback;
+        std::function<void(const Color&)> m_callback;
     };
 }
