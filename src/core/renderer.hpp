@@ -1,12 +1,11 @@
 ﻿#pragma once
 
 #include <bitset>
+#include <memory>
 #include <string_view>
 #include <utility>
 #include <vector>
 
-#include "core/renderer.hpp"
-#include "core/window.hpp"
 #include "ds/color.hpp"
 #include "ds/dims.hpp"
 #include "ds/point.hpp"
@@ -68,6 +67,7 @@ namespace rl {
 
     public:
         explicit Renderer(rl::Window& window, rl::Renderer::Properties flags);
+        ~Renderer() = default;
 
         ds::dims<i32> get_output_size() const;
         ds::rect<i32> get_viewport() const;

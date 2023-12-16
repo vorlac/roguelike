@@ -17,7 +17,7 @@
 #include "core/state/states.hpp"
 #include "core/window.hpp"
 #include "gl/instanced_buffer.hpp"
-#include "gui/button.hpp"
+#include "gui/gui.hpp"
 #include "sdl/defs.hpp"
 #include "utils/crtp.hpp"
 #include "utils/numeric.hpp"
@@ -68,14 +68,14 @@ namespace rl {
             bool ret{ this->setup() };
             f32 delta_time{ m_timer.delta() };
 
-            std::shared_ptr<rl::Renderer> renderer{ m_window->renderer() };
+            const std::unique_ptr<rl::Renderer>& renderer{ m_window->renderer() };
             gl::InstancedVertexBuffer vbo{ renderer->get_viewport() };
 
-            gui::Button* b = new gui::Button(static_cast<gui::Widget*>(m_window.get()),
-                                             "Plain button");
-            b->set_callback([] {
+            gui::Button* button = new gui::Button(nullptr, "Plain button");
+            button->set_callback([] {
                 log::info("pushed!");
             });
+            button->draw(renderer);
 
             vbo.bind_buffers();
             while (!this->should_exit()) [[unlikely]]

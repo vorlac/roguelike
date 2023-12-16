@@ -11,22 +11,20 @@
 
 namespace rl::gui {
     /**
-     * \class Button button.h sdlgui/button.h
-     *
-     * \brief [Normal/Toggle/Radio/Popup] Button widget.
+     * @brief [Normal/Toggle/Radio/Popup] Button widget.
      */
     class Button : public Widget
     {
     public:
-        /// Flags to specify the button behavior (can be combined with binary OR)
+        // Flags to specify the button behavior (can be combined with binary OR)
         enum Flags {
-            NormalButton = (1 << 0),  // 1
-            RadioButton = (1 << 1),   // 2
-            ToggleButton = (1 << 2),  // 4
-            PopupButton = (1 << 3)    // 8
+            NormalButton = (1 << 0),
+            RadioButton = (1 << 1),
+            ToggleButton = (1 << 2),
+            PopupButton = (1 << 3)
         };
 
-        /// The available icon positions.
+        // The available icon positions.
         enum class IconPosition {
             Left,
             LeftCentered,
@@ -36,21 +34,21 @@ namespace rl::gui {
 
         Button(Widget* parent, const std::string& caption = "Untitled", int icon = 0);
 
-        Button(Widget* parent, const std::string& caption, const std::function<void()>& callback)
+        Button(Widget* parent, const std::string& caption, std::function<void()>&& callback)
             : Button(parent, caption)
         {
-            set_callback(callback);
+            set_callback(std::forward<decltype(callback)>(callback));
         }
 
         Button(Widget* parent, const std::string& caption, int icon,
-               const std::function<void()>& callback)
+               std::function<void()>&& callback)
             : Button(parent, caption, icon)
         {
-            set_callback(callback);
+            set_callback(std::forward<decltype(callback)>(callback));
         }
 
         Button(Widget* parent, const std::string& caption,
-               const std::function<void(bool state)>& callback)
+               std::function<void(bool state)>&& callback)
             : Button(parent, caption)
         {
             set_changed_callback(callback);
@@ -124,18 +122,18 @@ namespace rl::gui {
             m_pushed = pushed;
         }
 
-        /// Set the push callback (for any type of button)
-        std::function<void()> callback() const
+        // Set the push callback (for any type of button)
+        const std::function<void()>& callback() const
         {
             return m_pressed_callback;
         }
 
-        void set_callback(const std::function<void()>& callback)
+        void set_callback(std::function<void()>&& callback)
         {
-            m_pressed_callback = callback;
+            m_pressed_callback = std::move(callback);
         }
 
-        /// Set the change callback (for toggle buttons)
+        // Set the change callback (for toggle buttons)
         std::function<void(bool)> change_callback() const
         {
             return m_change_callback;
@@ -146,7 +144,7 @@ namespace rl::gui {
             m_change_callback = callback;
         }
 
-        /// Set the button group (for radio buttons)
+        // Set the button group (for radio buttons)
         void set_button_group(const std::vector<Button*>& button_group)
         {
             m_button_group = button_group;
@@ -160,15 +158,19 @@ namespace rl::gui {
         virtual Vector2i preferred_size(SDL3::SDL_Renderer* ctx) const override;
         virtual bool mouse_button_event(const Vector2i& p, int button, bool down,
                                         int modifiers) override;
+
+        virtual void draw(const std::unique_ptr<rl::Renderer>& renderer) override;
         virtual void draw(SDL3::SDL_Renderer* renderer) override;
+
+        virtual void draw_body(const std::unique_ptr<rl::Renderer>& renderer);
         virtual void draw_body(SDL3::SDL_Renderer* renderer);
         virtual void draw_body_temp(SDL3::SDL_Renderer* renderer);
         virtual Color body_color();
         virtual Vector2i get_text_offset() const;
 
-        Button& with_callback(const std::function<void()>& callback)
+        Button& with_callback(std::function<void()>&& callback)
         {
-            set_callback(callback);
+            set_callback(std::forward<decltype(callback)>(callback));
             return *this;
         }
 
@@ -217,10 +219,13 @@ namespace rl::gui {
         std::function<void()> m_pressed_callback{};
         std::function<void(bool)> m_change_callback{};
         std::vector<Button*> m_button_group{};
-        std::vector<Button::AsyncTexturePtr> m_textures{};
-        Button::AsyncTexturePtr m_curr_texture{ nullptr };
+        std::vector<std::shared_ptr<Button::AsyncTexture>> m_textures{};
+        std::shared_ptr<Button::AsyncTexture> m_curr_texture{};
 
     private:
-        void draw_texture(Button::AsyncTexturePtr& texture, SDL3::SDL_Renderer* renderer);
+        void draw_texture(std::shared_ptr<Button::AsyncTexture>& texture,
+                          SDL3::SDL_Renderer* renderer);
+        void draw_texture(std::shared_ptr<Button::AsyncTexture>& texture,
+                          const std::unique_ptr<rl::Renderer>& renderer);
     };
 }

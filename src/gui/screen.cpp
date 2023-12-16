@@ -407,7 +407,7 @@ namespace rl::gui {
         ds::dims<i32> fb_size{ 0, 0 };
         Vector2i size{ 0, 0 };
         // glfwGetFramebufferSize(mGLFWWindow, &fbSize[0], &fbSize[1]);
-        SDL_GetWindowSize(m_sdl_window, &size[0], &size[1]);
+        SDL3::SDL_GetWindowSize(m_sdl_window, &size[0], &size[1]);
 
         if (m_framebuf_size.area() == 0 || size == Vector2i(0, 0))
             return false;

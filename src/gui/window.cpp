@@ -132,8 +132,8 @@ namespace rl::gui {
             tex.tex = SDL3::SDL_CreateTexture(renderer, SDL3::SDL_PIXELFORMAT_ABGR8888,
                                               SDL3::SDL_TEXTUREACCESS_STREAMING, tex.w(), tex.h());
 
-            int pitch;
-            uint8_t* pixels;
+            int pitch{ 0 };
+            uint8_t* pixels{ nullptr };
             int ok = SDL3::SDL_LockTexture(tex.tex, nullptr, (void**)&pixels, &pitch);
             memcpy(pixels, rgba, sizeof(uint32_t) * tex.w() * tex.h());
             SDL3::SDL_SetTextureBlendMode(tex.tex, SDL3::SDL_BLENDMODE_BLEND);
@@ -169,7 +169,7 @@ namespace rl::gui {
         return result.cmax(Vector2i(w + 20, h));
     }
 
-    Widget* Window::buttonPanel()
+    Widget* Window::button_panel()
     {
         if (!m_button_panel)
         {
@@ -380,5 +380,4 @@ namespace rl::gui {
         else
             this->draw_body_temp(renderer);
     }
-
 }

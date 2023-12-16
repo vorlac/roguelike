@@ -188,10 +188,10 @@ namespace rl::gui {
         }
 
         /// Add a button with a custom callback
-        Button* addButton(const std::string& label, const std::function<void()>& cb)
+        Button* addButton(const std::string& label, std::function<void()>&& callback)
         {
             Button* button = new Button(mWindow, label);
-            button->set_callback(cb);
+            button->set_callback(std::forward<decltype(callback)>(callback));
             button->set_fixed_height(25);
             if (mLayout->rowCount() > 0)
                 mLayout->appendRow(mVariableSpacing);

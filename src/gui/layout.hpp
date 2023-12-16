@@ -382,9 +382,10 @@ namespace rl::gui {
 
             operator std::string() const
             {
-                char buf[50];
+                char buf[128];
                 SDLGUI_SNPRINTF(buf, 50, "Format[pos=(%i, %i), size=(%i, %i), align=(%i, %i)]",
                                 pos[0], pos[1], size[0], size[1], (int)align[0], (int)align[1]);
+                buf[127] = '\0';
                 return buf;
             }
         };

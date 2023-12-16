@@ -34,7 +34,7 @@ namespace rl::gui {
     {
         for (auto child : m_children)
             if (child)
-                child->decRef();
+                child->release_ref();
     }
 
     void Widget::set_theme(Theme* theme)
@@ -183,7 +183,7 @@ namespace rl::gui {
     {
         runtime_assert(index <= child_count(), "widget index already occupied");
         m_children.insert(m_children.begin() + index, widget);
-        widget->incRef();
+        widget->aquire_ref();
         widget->set_parent(this);
         widget->set_theme(m_theme);
     }
@@ -197,14 +197,14 @@ namespace rl::gui {
     {
         m_children.erase(std::remove(m_children.begin(), m_children.end(), widget),
                          m_children.end());
-        widget->decRef();
+        widget->release_ref();
     }
 
     void Widget::remove_child(size_t index)
     {
         Widget* widget = m_children[index];
         m_children.erase(m_children.begin() + index);
-        widget->decRef();
+        widget->release_ref();
     }
 
     int Widget::get_child_index(Widget* widget) const
@@ -279,6 +279,13 @@ namespace rl::gui {
         while (widget->parent())
             widget = widget->parent();
         static_cast<Screen*>(widget)->update_focus(this);
+    }
+
+    void Widget::draw(const std::unique_ptr<rl::Renderer>& renderer)
+    {
+        for (auto&& child : m_children)
+            if (child->visible())
+                child->draw(renderer);
     }
 
     void Widget::draw(SDL3::SDL_Renderer* renderer)

@@ -60,7 +60,7 @@ namespace rl::gui {
         int m_tab_button_horizontal_padding;
         int m_tab_button_vertical_padding;
 
-        std::mutex m_load_mutex;
+        std::mutex m_load_mutex{};
 
         // Generic colors
         Color m_drop_shadow;
@@ -115,6 +115,7 @@ namespace rl::gui {
         int get_utf8_width(const char* fontname, size_t ptsize, const char* text);
         int get_text_bounds(const char* fontname, size_t ptsize, const char* text, int* w, int* h);
         int get_utf8_bounds(const char* fontname, size_t ptsize, const char* text, int* w, int* h);
+
         void get_texture_and_rect_utf8(SDL3::SDL_Renderer* renderer, Texture& tx, int x, int y,
                                        const char* text, const char* fontname, size_t ptsize,
                                        const Color& text_color);

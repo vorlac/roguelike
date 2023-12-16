@@ -103,6 +103,10 @@ namespace rl::gui {
         return Vector2i(180, 45);
     }
 
+    void Graph::draw(const std::unique_ptr<rl::Renderer>& renderer)
+    {
+    }
+
     void Graph::draw(SDL3::SDL_Renderer* renderer)
     {
         Widget::draw(renderer);
@@ -133,15 +137,14 @@ namespace rl::gui {
             m_theme->get_texture_and_rect_utf8(renderer, _footerTex, 0, 0, mFooter.c_str(), "sans",
                                                15, m_text_color);
 
-        auto&& captionPos = ap + Vector2i(3, 1);
-        SDL3::SDL_FRect posRectCaption{ captionPos.x, captionPos.y };
+        auto captionPos = ap + Vector2i(3, 1);
+        SDL3::SDL_FRect posRectCaption{ captionPos.x, captionPos.y, 0.0f, 0.0f };
 
-        auto&& headerPos = ap + Vector2i(m_size.x - 3 - _headerTex.w(), 1);
-        SDL3::SDL_FRect posRectHeader{ headerPos.x, headerPos.y };
+        auto headerPos = ap + Vector2i(m_size.x - 3 - _headerTex.w(), 1);
+        SDL3::SDL_FRect posRectHeader{ headerPos.x, headerPos.y, 0.0f, 0.0f };
 
-        auto&& footPos = ap +
-                         Vector2i(m_size.x - 3 - _footerTex.w(), m_size.y - 1 - _footerTex.h());
-        SDL3::SDL_FRect posRectFooter{ footPos.x, footPos.y };
+        auto footPos = ap + Vector2i(m_size.x - 3 - _footerTex.w(), m_size.y - 1 - _footerTex.h());
+        SDL3::SDL_FRect posRectFooter{ footPos.x, footPos.y, 0.0f, 0.0f };
 
         SDL3::SDL_RenderTexture(renderer, m_caption_texture.tex, &posRectCaption, nullptr);
         SDL3::SDL_RenderTexture(renderer, _headerTex.tex, &posRectHeader, nullptr);

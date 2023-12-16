@@ -142,7 +142,7 @@ namespace rl::gl {
             return true;
         }
 
-        u32 id()
+        u32 id() const
         {
             return m_shader_id;
         }
@@ -169,40 +169,17 @@ namespace rl::gl {
 
         void set_transform()
         {
-            // vertex at it's local origin
-            glm::vec4 local_pos(10.0f, 10.0f, 0.0f, 1.0f);
-
-            // The model matrix consists of translations, scaling and/or rotations we'd like to
-            // apply to transform all object's vertices to the global world space.
             glm::mat4 model = glm::identity<glm::mat4>();
-            // scale by 2x = glm::vec3(2.0f, 2.0f, 0.0f)
-            model = glm::scale(model, glm::vec3(1.0f));
-            // rotate clockwise 90 degrees = glm::radians(-90.0f)
-            model = glm::rotate(model, glm::radians(0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-
-            glm::vec4 world_pos = model * local_pos;
-
-            // note that we're translating the scene in the
-            // reverse direction of where we want to move
             glm::mat4 view = glm::identity<glm::mat4>();
-            // make view 3 units above point (push point away from camera -3 units)
-            view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
-
-            world_pos = view * model * local_pos;
-
             glm::mat4 projection = glm::ortho(0.0f, 1920.0f, 1080.0f, 0.0f, 0.1f, 100.0f);
 
-            world_pos = projection * view * model * local_pos;
+            model = glm::scale(model, glm::vec3(1.0f));
+            model = glm::rotate(model, glm::radians(0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+            view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
 
-            // retrieve the matrix uniform locations
-            u32 model_loc = glGetUniformLocation(m_shader_id, "model");
-            u32 view_loc = glGetUniformLocation(m_shader_id, "view");
-            u32 proj_loc = glGetUniformLocation(m_shader_id, "projection");
-
-            // pass them to the shaders (3 different ways)
-            glUniformMatrix4fv(model_loc, 1, GL_FALSE, glm::value_ptr(model));
-            glUniformMatrix4fv(view_loc, 1, GL_FALSE, glm::value_ptr(view));
-            glUniformMatrix4fv(proj_loc, 1, GL_FALSE, glm::value_ptr(projection));
+            auto mvp{ projection * view * model };
+            u32 mvp_loc = glGetUniformLocation(m_shader_id, "mvp");
+            glUniformMatrix4fv(mvp_loc, 1, GL_FALSE, glm::value_ptr(mvp));
         }
 
     private:

@@ -107,6 +107,7 @@ namespace rl::gui {
         Vector2i preferred_size(SDL3::SDL_Renderer* ctx) const override;
         bool mouse_button_event(const Vector2i& p, int button, bool down, int modifiers) override;
 
+        void draw(const std::unique_ptr<rl::Renderer>& renderer) override;
         void draw(SDL3::SDL_Renderer* renderer) override;
 
     private:

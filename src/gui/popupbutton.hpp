@@ -44,7 +44,9 @@ namespace rl::gui {
             return mPopup;
         }
 
+        void draw(const std::unique_ptr<rl::Renderer>& renderer) override;
         void draw(SDL3::SDL_Renderer* renderer) override;
+
         Vector2i preferred_size(SDL3::SDL_Renderer* ctx) const override;
         void perform_layout(SDL3::SDL_Renderer* ctx) override;
 

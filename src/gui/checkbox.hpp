@@ -61,6 +61,7 @@ namespace rl::gui {
         virtual bool mouse_button_event(const Vector2i& p, int button, bool down,
                                         int modifiers) override;
         Vector2i preferred_size(SDL3::SDL_Renderer* ctx) const override;
+        void draw(const std::unique_ptr<rl::Renderer>& renderer) override;
         void draw(SDL3::SDL_Renderer* ctx) override;
         virtual void draw_body(SDL3::SDL_Renderer* renderer);
 
@@ -75,12 +76,12 @@ namespace rl::gui {
         std::function<void(bool)> m_checkbox_callback;
 
         struct AsyncTexture;
-        typedef std::shared_ptr<AsyncTexture> AsyncTexturePtr;
-        std::vector<AsyncTexturePtr> m_textures;
+        std::vector<std::shared_ptr<CheckBox::AsyncTexture>> m_textures;
 
-        AsyncTexturePtr m_curr_texture = nullptr;
+        std::shared_ptr<CheckBox::AsyncTexture> m_curr_texture{};
 
     private:
-        void draw_texture(AsyncTexturePtr& texture, SDL3::SDL_Renderer* renderer);
+        void draw_texture(std::shared_ptr<CheckBox::AsyncTexture>& texture,
+                          SDL3::SDL_Renderer* renderer);
     };
 }

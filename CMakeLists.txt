@@ -14,7 +14,7 @@ option(
 option(
   AUTOFORMAT_SRC_ON_CONFIGURE
     "If enabled, clang-format will be used to format all sources in src/ during configuration"
-     ON
+     OFF
 )
 
 include(vcpkg-init)
@@ -122,23 +122,22 @@ target_compile_options(${PROJECT_NAME} PRIVATE
       >
 
       $<$<CONFIG:Release>:
-          /O2 # maximize speed
+          /O3 # maximize speed
           #/Ox # enable most speed optimizations
-          /Ot # favor fast code
-          /Ob2 # inline function expansion
+          #/Ot # favor fast code
+          #/Ob2 # inline function expansion
           /Oi # generate intrinsics
           /Oy # frame pointer omission
           /Gw # optimize global data
-          /GR- # disable RTTI
-          /EHa- # disable exception handling
-          /OPT #
-          /ORDER # order functions for optimal paging
+          #/GR- # disable RTTI
+          #/EHa- # disable exception handling
           /GS- # disable buffer security checks
           /GA # optimize for windows application
           /GL # whole program optimization
-          /Gr # __vectorcall calling convention, Gr for __fastcall
+          #/Gr # __vectorcall calling convention, Gr for __fastcall
           /fp:fast # prefer fast over accurate floating point math
           /favor:INTEL64
+          #/order # order functions for optimal paging
       >
     >
 

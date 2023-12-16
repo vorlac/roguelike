@@ -23,6 +23,10 @@ namespace rl::gui {
         return Button::preferred_size(ctx) + Vector2i(15, 0);
     }
 
+    void PopupButton::draw(const std::unique_ptr<rl::Renderer>& renderer)
+    {
+    }
+
     void PopupButton::draw(SDL3::SDL_Renderer* renderer)
     {
         if (!m_enabled && m_pushed)

@@ -1,7 +1,7 @@
+#include <memory>
 #include <type_traits>
 
 #include "sdl/defs.hpp"
-#include "sdl/renderer.hpp"
 #include "sdl/scoped_lock.hpp"
 #include "sdl/surface.hpp"
 #include "sdl/texture.hpp"
@@ -24,7 +24,7 @@ namespace rl::sdl {
     }
 
     Surface::Surface(Surface&& other)
-        : m_sdl_surface{ other.m_sdl_surface }
+        : m_sdl_surface{ std::move(other.m_sdl_surface) }
     {
         other.m_sdl_surface = nullptr;
     }

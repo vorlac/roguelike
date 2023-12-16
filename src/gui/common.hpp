@@ -46,9 +46,10 @@ namespace rl::gui {
 
     struct ImageInfo
     {
-        SDL3::SDL_Texture* tex = nullptr;
-        int w, h;
-        std::string path;
+        SDL3::SDL_Texture* tex{ nullptr };
+        int w{};
+        int h{};
+        std::string path{};
     };
 
     using ListImages = std::vector<gui::ImageInfo>;
@@ -80,7 +81,7 @@ namespace rl::gui {
         }
 
         // Increase the object's reference count by one
-        void incRef() const
+        void aquire_ref() const
         {
             ++m_refCount;
         }
@@ -92,7 +93,7 @@ namespace rl::gui {
          * The object will automatically be deallocated once
          * the reference count reaches zero.
          */
-        void decRef(bool dealloc = true) const noexcept;
+        void release_ref(bool dealloc = true) const noexcept;
 
     protected:
         /**
@@ -131,7 +132,7 @@ namespace rl::gui {
             : m_ptr(ptr)
         {
             if (m_ptr)
-                ((Object*)m_ptr)->incRef();
+                ((Object*)m_ptr)->aquire_ref();
         }
 
         // Copy constructor
@@ -139,7 +140,7 @@ namespace rl::gui {
             : m_ptr(r.m_ptr)
         {
             if (m_ptr)
-                ((Object*)m_ptr)->incRef();
+                ((Object*)m_ptr)->aquire_ref();
         }
 
         // Move constructor
@@ -153,7 +154,7 @@ namespace rl::gui {
         ~refcounted()
         {
             if (m_ptr)
-                ((Object*)m_ptr)->decRef();
+                ((Object*)m_ptr)->release_ref();
         }
 
         // Move another reference into the current one
@@ -162,7 +163,7 @@ namespace rl::gui {
             if (&r != this)
             {
                 if (m_ptr)
-                    ((Object*)m_ptr)->decRef();
+                    ((Object*)m_ptr)->release_ref();
                 m_ptr = r.m_ptr;
                 r.m_ptr = nullptr;
             }
@@ -175,9 +176,9 @@ namespace rl::gui {
             if (m_ptr != r.m_ptr)
             {
                 if (r.m_ptr)
-                    ((Object*)r.m_ptr)->incRef();
+                    ((Object*)r.m_ptr)->aquire_ref();
                 if (m_ptr)
-                    ((Object*)m_ptr)->decRef();
+                    ((Object*)m_ptr)->release_ref();
                 m_ptr = r.m_ptr;
             }
             return *this;
@@ -189,9 +190,9 @@ namespace rl::gui {
             if (m_ptr != ptr)
             {
                 if (ptr)
-                    ((Object*)ptr)->incRef();
+                    ((Object*)ptr)->aquire_ref();
                 if (m_ptr)
-                    ((Object*)m_ptr)->decRef();
+                    ((Object*)m_ptr)->release_ref();
                 m_ptr = ptr;
             }
             return *this;
@@ -325,7 +326,7 @@ namespace rl::gui {
             return *this;
         }
 
-        Color& operator=(Color&& other)
+        Color& operator=(Color&& other) noexcept
         {
             memcpy(this, &other, sizeof(*this));
             return *this;
@@ -435,10 +436,10 @@ namespace rl::gui {
         {
             float rgba[4];
 
-            float& r = rgba[0];
-            float& g = rgba[1];
-            float& b = rgba[2];
-            float& a = rgba[3];
+            struct
+            {
+                float r, g, b, a;
+            };
         };
 
         _Data _d;

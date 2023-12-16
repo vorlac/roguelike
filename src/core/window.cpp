@@ -1,12 +1,12 @@
 #include <glad/gl.h>
 
-#include <memory>
 #include <utility>
 
 #include <fmt/format.h>
 
 #include "core/assert.hpp"
 #include "core/renderer.hpp"
+#include "core/window.hpp"
 #include "ds/dims.hpp"
 #include "ds/point.hpp"
 #include "ds/rect.hpp"
@@ -22,12 +22,7 @@ SDL_C_LIB_BEGIN
 SDL_C_LIB_END
 
 namespace rl {
-    // Window::Window()
-    // {
-    // }
-
     Window::Window(std::string title, const ds::dims<i32>& dims, Window::Properties flags)
-        : gui::Screen()
     {
         SDL3::SDL_GL_SetAttribute(SDL3::SDL_GL_ACCELERATED_VISUAL, 1);
         SDL3::SDL_GL_SetAttribute(SDL3::SDL_GL_CONTEXT_FLAGS,
@@ -39,12 +34,11 @@ namespace rl {
         m_properties = flags;
         m_sdl_window = SDL3::SDL_CreateWindow(title.data(), dims.width, dims.height, m_properties);
         m_window_rect = { m_sdl_window ? this->get_position() : ds::point<i32>::null(), dims };
-        m_renderer = std::make_shared<rl::Renderer>(*this, rl::Renderer::DEFAULT_PROPERTY_FLAGS);
+        m_renderer = std::make_unique<rl::Renderer>(*this, rl::Renderer::DEFAULT_PROPERTY_FLAGS);
 
         sdl_assert(m_sdl_window != nullptr, "failed to create SDL_Window");
         sdl_assert(m_renderer != nullptr, "failed to create sdl::Renderer");
         SDL3::SDL_GL_SetAttribute(SDL3::SDL_GL_DOUBLEBUFFER, 0);
-        this->init(m_sdl_window);
     }
 
     Window::~Window()
@@ -196,7 +190,7 @@ namespace rl {
         return this->sdl_handle() != nullptr;
     }
 
-    std::shared_ptr<rl::Renderer> Window::renderer() const
+    const std::unique_ptr<Renderer>& Window::renderer() const
     {
         return m_renderer;
     }

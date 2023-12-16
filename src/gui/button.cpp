@@ -18,19 +18,23 @@ SDL_C_LIB_END
 namespace rl::gui {
     struct Button::AsyncTexture
     {
-        int id;
-        Texture tex;
-        NVGcontext* ctx = nullptr;
+        int id{};
+        Texture tex{};
+        NVGcontext* ctx{ nullptr };
 
-        AsyncTexture(int _id)
-            : id(_id){};
+        AsyncTexture(int tex_id)
+            : id(tex_id)
+        {
+        }
+
+        ~AsyncTexture() = default;
 
         void load(Button* ptr)
         {
-            Button* button = ptr;
-            AsyncTexture* self = this;
+            Button* button{ ptr };
+            AsyncTexture* self{ this };
             std::thread tgr([=]() {
-                std::lock_guard<std::mutex> guard(button->theme()->m_load_mutex);
+                std::lock_guard<std::mutex> lock(button->theme()->m_load_mutex);
 
                 NVGcontext* ctx = nullptr;
                 int realw, realh;
@@ -40,6 +44,15 @@ namespace rl::gui {
             });
 
             tgr.detach();
+        }
+
+        void perform(const std::unique_ptr<rl::Renderer>& renderer)
+        {
+            if (ctx == nullptr)
+                return;
+
+            u8* rgba = nvgReadPixelsRT(ctx);
+            // TODO
         }
 
         void perform(SDL3::SDL_Renderer* renderer)
@@ -267,6 +280,32 @@ namespace rl::gui {
         SDL3::SDL_RenderRect(renderer, &btnRect);
     }
 
+    void Button::draw_body(const std::unique_ptr<rl::Renderer>& renderer)
+    {
+        i32 id{ 0 };
+        id |= m_pushed ? 1 << 0 : 0;
+        id |= m_mouse_focus ? 1 << 1 : 0;
+        id |= m_enabled ? 1 << 2 : 0;
+
+        std::shared_ptr<Button::AsyncTexture> texture{};
+        for (auto&& tex : m_textures)
+            if (tex->id == id)
+            {
+                texture = tex;
+                break;
+            }
+
+        if (texture == nullptr)
+        {
+            texture = std::make_shared<Button::AsyncTexture>(id);
+            texture->load(this);
+            m_textures.push_back(texture);
+        }
+
+        runtime_assert(texture != nullptr, "Button: failed to create async texture");
+        this->draw_texture(texture, renderer);
+    }
+
     void Button::draw_body(SDL3::SDL_Renderer* renderer)
     {
         int id = (m_pushed ? 0x1 : 0) + (m_mouse_focus ? 0x2 : 0) + (m_enabled ? 0x4 : 0);
@@ -285,6 +324,13 @@ namespace rl::gui {
 
             this->draw_texture(m_curr_texture, renderer);
         }
+    }
+
+    void Button::draw(const std::unique_ptr<rl::Renderer>& renderer)
+    {
+        Widget::draw(renderer);
+        ds::point<f32> pos{ this->local_position() };
+        this->draw_body(renderer);
     }
 
     void Button::draw(SDL3::SDL_Renderer* renderer)
@@ -452,7 +498,15 @@ namespace rl::gui {
         nvgEndFrame(ctx);
     }
 
-    void Button::draw_texture(Button::AsyncTexturePtr& texture, SDL3::SDL_Renderer* renderer)
+    void Button::draw_texture(std::shared_ptr<Button::AsyncTexture>& texture,
+                              const std::unique_ptr<rl::Renderer>& renderer)
+    {
+        if (texture != nullptr)
+            texture->perform(renderer);
+    }
+
+    void Button::draw_texture(std::shared_ptr<Button::AsyncTexture>& texture,
+                              SDL3::SDL_Renderer* renderer)
     {
         if (texture)
         {

@@ -19,6 +19,10 @@ namespace rl::gui {
         return { 100, 100 };
     }
 
+    void ColorWheel::draw(const std::unique_ptr<rl::Renderer>& renderer)
+    {
+    }
+
     void ColorWheel::draw(SDL3::SDL_Renderer* renderer)
     {
         // Widget::draw(ctx);

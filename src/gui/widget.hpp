@@ -3,6 +3,7 @@
 #include <type_traits>
 #include <vector>
 
+#include "core/renderer.hpp"
 #include "gui/common.hpp"
 #include "gui/layout.hpp"
 #include "gui/theme.hpp"
@@ -134,6 +135,16 @@ namespace rl::gui {
         void set_relative_position(int x, int y)
         {
             m_pos = { x, y };
+        }
+
+        /**
+         * @brief Gets the absolute screen coordinates
+         **/
+        ds::point<f32> local_position() const
+        {
+            return m_parent != nullptr                          //
+                     ? m_parent->local_position() + m_position  //
+                     : m_position;
         }
 
         /**
@@ -563,6 +574,7 @@ namespace rl::gui {
          * @brief Draw the widget (and all child widgets)
          **/
         virtual void draw(SDL3::SDL_Renderer* renderer);
+        virtual void draw(const std::unique_ptr<rl::Renderer>& renderer);
 
         virtual int get_absolute_left() const;
         virtual SDL3::SDL_Point get_absolute_pos() const;
@@ -718,10 +730,11 @@ namespace rl::gui {
         gui::refcounted<Theme> m_theme{};
         gui::refcounted<Layout> m_layout{};
         std::string m_id{};
+        ds::point<f32> m_position{ 0.0f, 0.0f };
         gui::Vector2i m_pos{};
         gui::Vector2i m_size{};
         gui::Vector2i m_fixed_size{};
-        std::vector<gui::Widget*> m_children = {};
+        std::vector<gui::Widget*> m_children{};
         bool m_visible{ false };
         bool m_enabled{ false };
         bool m_focused{ false };

@@ -440,8 +440,8 @@ namespace nanort {
         // BVHNode(){}
         //~BVHNode(){}
 
-        float bmin[3];
-        float bmax[3];
+        float bmin[3] = {};
+        float bmax[3] = {};
 
         int flag{};  // 1 = leaf node, 0 = branch node
         int axis{};
@@ -453,7 +453,7 @@ namespace nanort {
         // branch
         //   data[0] = child[0]
         //   data[1] = child[1]
-        unsigned int data[2];
+        unsigned int data[2] = {};
     };
 
     namespace {

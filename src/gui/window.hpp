@@ -72,7 +72,7 @@ namespace rl::gui {
         }
 
         // Return the panel used to house window buttons
-        Widget* buttonPanel();
+        Widget* button_panel();
 
         // Dispose the window
         void dispose();

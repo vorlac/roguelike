@@ -10,7 +10,6 @@
 #include "ds/point.hpp"
 #include "ds/rect.hpp"
 #include "ds/vector2d.hpp"
-#include "gui/screen.hpp"
 #include "sdl/defs.hpp"
 
 SDL_C_LIB_BEGIN
@@ -19,12 +18,12 @@ SDL_C_LIB_BEGIN
 SDL_C_LIB_END
 
 namespace rl {
-    class Renderer;
     class EventHandler;
+    class Renderer;
 
     using WindowID = SDL3::SDL_WindowID;
 
-    class Window : public gui::Screen
+    class Window
     {
     public:
         struct Event
@@ -103,14 +102,7 @@ namespace rl {
         };
 
         constexpr static inline Window::Properties DEFAULT_PROPERTY_FLAGS = {
-            // Properties::Flag::HighDPI |     //
-            // Properties::Flag::InputFocus |  //
-            // Properties::Flag::MouseFocus |  //
-            Properties::Flag::Resizable |
-            // Properties::Flag::Occluded |    //
-            Properties::Flag::OpenGL  //|  //
-            // Properties::Flag::Show
-            // Properties::Flag::Vulkan
+            Properties::Flag::Resizable | Properties::Flag::OpenGL
         };
 
         constexpr static inline ds::point<i32> DEFAULT_POSITION = {
@@ -124,7 +116,6 @@ namespace rl {
         };
 
     public:
-        // explicit Window();
         explicit Window(Window&& window) noexcept = delete;
         explicit Window(const Window& window) = delete;
         explicit Window(SDL3::SDL_Window* other) = delete;
@@ -132,7 +123,7 @@ namespace rl {
         explicit Window(std::string title, const ds::dims<i32>& dims = DEFAULT_SIZE,
                         Properties flags = DEFAULT_PROPERTY_FLAGS);
 
-        ~Window() override;
+        ~Window();
 
     public:
         bool maximize();
@@ -165,7 +156,7 @@ namespace rl {
         ds::dims<i32> get_max_size() const;
         ds::point<i32> get_position() const;
 
-        std::shared_ptr<rl::Renderer> renderer() const;
+        const std::unique_ptr<Renderer>& renderer() const;
         const Window& operator=(Window&& other) noexcept;
         SDL3::SDL_Window* sdl_handle() const;
         bool is_valid() const;
@@ -200,6 +191,6 @@ namespace rl {
         Properties m_properties{ Properties::Flag::None };
         SDL3::SDL_Window* m_sdl_window{ nullptr };
         ds::rect<i32> m_window_rect{ 0, 0, 0, 0 };
-        std::shared_ptr<rl::Renderer> m_renderer{ nullptr };
+        std::unique_ptr<rl::Renderer> m_renderer;
     };
 }

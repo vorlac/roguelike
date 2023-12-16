@@ -135,7 +135,7 @@ namespace rl::gui {
         int id = (m_pushed ? 0x1 : 0) + (m_mouse_focus ? 0x2 : 0) + (m_enabled ? 0x4 : 0);
 
         auto atx = std::find_if(m_textures.begin(), m_textures.end(),
-                                [id](const CheckBox::AsyncTexturePtr& p) {
+                                [id](const std::shared_ptr<CheckBox::AsyncTexture>& p) {
                                     return p->id == id;
                                 });
 
@@ -143,12 +143,19 @@ namespace rl::gui {
             draw_texture(*atx, renderer);
         else
         {
-            CheckBox::AsyncTexturePtr newtx = std::make_shared<CheckBox::AsyncTexture>(id);
+            std::shared_ptr<CheckBox::AsyncTexture> newtx{
+                std::make_shared<CheckBox::AsyncTexture>(id),
+            };
+
             newtx->load(this, m_pushed, m_mouse_focus, m_enabled);
             m_textures.push_back(newtx);
 
             draw_texture(m_curr_texture, renderer);
         }
+    }
+
+    void CheckBox::draw(const std::unique_ptr<rl::Renderer>& renderer)
+    {
     }
 
     void CheckBox::draw(SDL3::SDL_Renderer* renderer)
@@ -178,7 +185,8 @@ namespace rl::gui {
                                          (m_size.y - m_point_texture.h()) * 0.5f));
     }
 
-    void CheckBox::draw_texture(AsyncTexturePtr& texture, SDL3::SDL_Renderer* renderer)
+    void CheckBox::draw_texture(std::shared_ptr<CheckBox::AsyncTexture>& texture,
+                                SDL3::SDL_Renderer* renderer)
     {
         if (texture)
         {

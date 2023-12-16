@@ -25,6 +25,7 @@ namespace rl::gui {
         void set_color(const Color& color);
 
         Vector2i preferred_size(SDL3::SDL_Renderer* ctx) const override;
+        void draw(const std::unique_ptr<rl::Renderer>& renderer) override;
         void draw(SDL3::SDL_Renderer* renderer) override;
         bool mouse_button_event(const Vector2i& p, int button, bool down, int modifiers);
         bool mouse_drag_event(const Vector2i& p, const Vector2i& rel, int button, int modifiers);

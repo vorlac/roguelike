@@ -448,6 +448,10 @@ namespace rl::gui {
         return false;
     }
 
+    void TabHeader::draw(const std::unique_ptr<rl::Renderer>& renderer)
+    {
+    }
+
     void TabHeader::draw(SDL3::SDL_Renderer* renderer)
     {
         // Draw controls.

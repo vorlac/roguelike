@@ -143,23 +143,20 @@ namespace rl::gui {
         return seq;
     }
 
-#if !defined(__APPLE__)
     std::string file_dialog(const std::vector<std::pair<std::string, std::string>>& filetypes,
                             bool save)
     {
-  #define FILE_DIALOG_MAX_BUFFER 1024
-  #if defined(_WIN32)
-        OPENFILENAME ofn;
+        constexpr static int FILE_DIALOG_MAX_BUFFER{ 1024 };
+        OPENFILENAME ofn{};
         ZeroMemory(&ofn, sizeof(OPENFILENAME));
         ofn.lStructSize = sizeof(OPENFILENAME);
-        char tmp[FILE_DIALOG_MAX_BUFFER];
+        char tmp[FILE_DIALOG_MAX_BUFFER] = { 0 };
         ofn.lpstrFile = tmp;
         ZeroMemory(tmp, FILE_DIALOG_MAX_BUFFER);
         ofn.nMaxFile = FILE_DIALOG_MAX_BUFFER;
         ofn.nFilterIndex = 1;
 
-        std::string filter;
-
+        std::string filter{};
         if (!save && filetypes.size() > 1)
         {
             filter.append("Supported file types (");
@@ -208,40 +205,14 @@ namespace rl::gui {
                 return "";
         }
         return std::string(ofn.lpstrFile);
-  #else
-        char buffer[FILE_DIALOG_MAX_BUFFER];
-        std::string cmd = "/usr/bin/zenity --file-selection ";
-        if (save)
-            cmd += "--save ";
-        cmd += "--file-filter=\"";
-        for (auto pair : filetypes)
-            cmd += "\"*." + pair.first + "\" ";
-        cmd += "\"";
-        FILE* output = popen(cmd.c_str(), "r");
-        if (output == nullptr)
-            throw std::runtime_error("popen() failed -- could not launch zenity!");
-        while (fgets(buffer, FILE_DIALOG_MAX_BUFFER, output) != NULL)
-            ;
-        pclose(output);
-        std::string result(buffer);
-        result.erase(std::remove(result.begin(), result.end(), '\n'), result.end());
-        return result;
-  #endif
     }
-#endif
 
-    void Object::decRef(bool dealloc) const noexcept
+    void Object::release_ref(bool dealloc) const noexcept
     {
-        --m_refCount;
-        if (m_refCount == 0 && dealloc)
-        {
+        if (--m_refCount == 0 && dealloc)
             delete this;
-        }
-        else if (m_refCount < 0)
-        {
-            fprintf(stderr, "Internal error: Object reference count < 0!\n");
-            abort();
-        }
+
+        runtime_assert(m_refCount < 0, "negative refcount");
     }
 
     Object::~Object()
