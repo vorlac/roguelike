@@ -5,7 +5,6 @@
 #include <memory>
 #include <string>
 
-#include "core/assert.hpp"
 #include "ds/dims.hpp"
 #include "ds/point.hpp"
 #include "ds/rect.hpp"

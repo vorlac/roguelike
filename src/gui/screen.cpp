@@ -50,7 +50,6 @@ namespace rl::gui {
                     return false;
                 return scroll_event_callback(event.wheel.x, event.wheel.y);
             }
-            break;
 
             case SDL3::SDL_EVENT_MOUSE_MOTION:
             {
@@ -58,9 +57,9 @@ namespace rl::gui {
                     return false;
                 return cursor_pos_event_callback(event.motion.x, event.motion.y);
             }
-            break;
 
             case SDL3::SDL_EVENT_MOUSE_BUTTON_DOWN:
+                [[fallthrough]];
             case SDL3::SDL_EVENT_MOUSE_BUTTON_UP:
             {
                 if (!m_process_events)
@@ -69,7 +68,6 @@ namespace rl::gui {
                 SDL3::SDL_Keymod mods = SDL3::SDL_GetModState();
                 return mouse_button_event_callback(event.button.button, event.button.type, mods);
             }
-            break;
 
             case SDL3::SDL_EVENT_KEY_DOWN:
             case SDL3::SDL_EVENT_KEY_UP:
@@ -81,7 +79,6 @@ namespace rl::gui {
                 return keyboard_event_callback(event.key.keysym.sym, event.key.keysym.scancode,
                                                event.key.state, mods);
             }
-            break;
 
             case SDL3::SDL_EVENT_TEXT_INPUT:
             {
@@ -89,7 +86,6 @@ namespace rl::gui {
                     return false;
                 return character_event_callback(event.text.text[0]);
             }
-            break;
         }
         return false;
     }

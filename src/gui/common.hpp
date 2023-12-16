@@ -750,21 +750,21 @@ namespace rl::gui {
             return x * o.x + y * o.y;
         }
 
-        template <typename T>
-        Vector2<T> as()
+        template <typename U>
+        Vector2<U> as()
         {
-            return Vector2<T>{
-                static_cast<T>(x),
-                static_cast<T>(y),
+            return Vector2<U>{
+                static_cast<U>(x),
+                static_cast<U>(y),
             };
         }
 
-        template <typename T>
-        Vector2<T> as() const
+        template <typename U>
+        Vector2<U> as() const
         {
-            return Vector2<T>{
-                static_cast<T>(x),
-                static_cast<T>(y),
+            return Vector2<U>{
+                static_cast<U>(x),
+                static_cast<U>(y),
             };
         }
 

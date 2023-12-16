@@ -789,7 +789,7 @@ namespace nanort {
         }
 
     private:
-#if NANORT_ENABLE_PARALLEL_BUILD or __INTELLISENSE__
+#ifdef NANORT_ENABLE_PARALLEL_BUILD
         typedef struct
         {
             unsigned int leftIdx;

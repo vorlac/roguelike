@@ -53,51 +53,49 @@ SDL_C_LIB_END
       }                                                                                             \
       while (0)
 
-  #define sdl_assert(condition, fmtstr, ...)                                                        \
-      do                                                                                            \
-      {                                                                                             \
-          if (!(condition)) [[unlikely]]                                                            \
-          {                                                                                         \
-              std::string sdl_error{};                                                              \
-              sdl_error.reserve(512);                                                               \
-              SDL3::SDL_GetErrorMsg(sdl_error.data(), 512);                                         \
-              fmt::print(fmt::fg(fmt::color(0xDCB4AA)),                                             \
-                         fmt::format("Assertion failed: ({}{}\n",                                   \
-                                     fmt::format(fmt::fg(fmt::color(0xC1C4CA)), #condition),        \
-                                     fmt::format(fmt::fg(fmt::color(0xD4A4A4)), ")")));             \
-              fmt::print(fmt::fg(fmt::color(0xDCB4AA)),                                             \
-                         fmt::format("  Function = {}\n",                                           \
-                                     fmt::format(fmt::fg(fmt::color(0xB6ADDB)), __FUNCTION__)));    \
-              fmt::print(fmt::fg(fmt::color(0xDCB4AA)),                                             \
-                         fmt::format("  File     = {}\n",                                           \
-                                     fmt::format(fmt::fg(fmt::color(0xC1C4CA)), __FILE__)));        \
-              fmt::print(fmt::fg(fmt::color(0xDCB4AA)),                                             \
-                         fmt::format("  Line     = {}\n",                                           \
-                                     fmt::format(fmt::fg(fmt::color(0xC1C4CA)), "{}", __LINE__)));  \
-              fmt::print(                                                                           \
-                  fmt::fg(fmt::color(0xDCB4AA)),                                                    \
-                  fmt::format("  Message  = {}",                                                    \
-                              fmt::format(fmt::fg(fmt::color(0xCAB880)), "{}",                      \
-                                          fmt::join(fmt::format(fmt::runtime(fmtstr)                \
-                                                                    __VA_OPT__(, ) __VA_ARGS__) |   \
-                                                        std::views::split('\n') |                   \
-                                                        std::views::transform([](auto r__) {        \
-                                                          return std::string_view(r__);             \
-                                                        }),                                         \
-                                                    "\n               "))));                        \
-              fmt::print(fmt::fg(fmt::color(0xDCB4AA)),                                             \
-                         fmt::format(" SDL Error = {}",                                             \
-                                     fmt::format(fmt::fg(fmt::color(0xCAB880)), "{}",               \
-                                                 fmt::join(fmt::format("{}", sdl_error) |           \
-                                                               std::views::split('\n') |            \
-                                                               std::views::transform([](auto r__) { \
-                                                                 return std::string_view(r__);      \
-                                                               }),                                  \
-                                                           "\n               ")))                   \
-                             .c_str());                                                             \
-              __debugbreak();                                                                       \
-          }                                                                                         \
-      }                                                                                             \
+  #define sdl_assert(condition, fmtstr, ...)                                                       \
+      do                                                                                           \
+      {                                                                                            \
+          if (!(condition)) [[unlikely]]                                                           \
+          {                                                                                        \
+              fmt::print(fmt::fg(fmt::color(0xDCB4AA)),                                            \
+                         fmt::format("Assertion failed: ({}{}\n",                                  \
+                                     fmt::format(fmt::fg(fmt::color(0xC1C4CA)), #condition),       \
+                                     fmt::format(fmt::fg(fmt::color(0xD4A4A4)), ")")));            \
+              fmt::print(fmt::fg(fmt::color(0xDCB4AA)),                                            \
+                         fmt::format("  Function = {}\n",                                          \
+                                     fmt::format(fmt::fg(fmt::color(0xB6ADDB)), __FUNCTION__)));   \
+              fmt::print(fmt::fg(fmt::color(0xDCB4AA)),                                            \
+                         fmt::format("  File     = {}\n",                                          \
+                                     fmt::format(fmt::fg(fmt::color(0xC1C4CA)), __FILE__)));       \
+              fmt::print(fmt::fg(fmt::color(0xDCB4AA)),                                            \
+                         fmt::format("  Line     = {}\n",                                          \
+                                     fmt::format(fmt::fg(fmt::color(0xC1C4CA)), "{}", __LINE__))); \
+              fmt::print(                                                                          \
+                  fmt::fg(fmt::color(0xDCB4AA)),                                                   \
+                  fmt::format("  Message  = {}",                                                   \
+                              fmt::format(fmt::fg(fmt::color(0xCAB880)), "{}",                     \
+                                          fmt::join(fmt::format(fmt::runtime(fmtstr)               \
+                                                                    __VA_OPT__(, ) __VA_ARGS__) |  \
+                                                        std::views::split('\n') |                  \
+                                                        std::views::transform([](auto r__) {       \
+                                                          return std::string_view(r__);            \
+                                                        }),                                        \
+                                                    "\n               "))));                       \
+              fmt::print(                                                                          \
+                  fmt::fg(fmt::color(0xDCB4AA)),                                                   \
+                  fmt::format(" SDL Error = {}",                                                   \
+                              fmt::format(fmt::fg(fmt::color(0xCAB880)), "{}",                     \
+                                          fmt::join(fmt::format("{}", SDL3::SDL_GetError()) |      \
+                                                        std::views::split('\n') |                  \
+                                                        std::views::transform([](auto r__) {       \
+                                                          return std::string_view(r__);            \
+                                                        }),                                        \
+                                                    "\n               ")))                         \
+                      .c_str());                                                                   \
+              __debugbreak();                                                                      \
+          }                                                                                        \
+      }                                                                                            \
       while (0)
 
   #define assert_msg(message) runtime_assert(false, message)

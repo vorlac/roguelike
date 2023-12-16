@@ -65,8 +65,8 @@ namespace rl::gui {
 
         /// Draw the popup window
         void draw(SDL3::SDL_Renderer* renderer) override;
-        virtual void draw_body(SDL3::SDL_Renderer* renderer);
-        virtual void draw_body_temp(SDL3::SDL_Renderer* renderer);
+        virtual void draw_body(SDL3::SDL_Renderer* renderer) override;
+        virtual void draw_body_temp(SDL3::SDL_Renderer* renderer) override;
 
     protected:
         /// Internal helper function to maintain nested window position values

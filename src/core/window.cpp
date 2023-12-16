@@ -2,8 +2,6 @@
 
 #include <utility>
 
-#include <fmt/format.h>
-
 #include "core/assert.hpp"
 #include "core/renderer.hpp"
 #include "core/window.hpp"
