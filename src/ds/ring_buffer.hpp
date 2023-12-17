@@ -32,7 +32,6 @@ namespace rl::ds {
     };
 
     template <std::movable TElem, auto BufferSize = 512U>
-        requires positive_integer<BufferSize>
     class ring_buffer
     {
     public:
@@ -130,9 +129,6 @@ namespace rl::ds {
         std::mutex m_taskinfo_lock{ std::mutex{} };
         std::condition_variable m_buffer_not_full_cv{};
         std::condition_variable m_buffer_not_empty_cv{};
-
-        std::vector<std::string> m_registered_writers = {};
-        std::vector<std::string> m_registered_readers = {};
     };
 
     template <typename T>

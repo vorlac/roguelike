@@ -33,8 +33,8 @@ namespace rl::gui {
         {
             Button* button{ ptr };
             AsyncTexture* self{ this };
-            std::thread tgr([=]() {
-                std::lock_guard<std::mutex> lock(button->theme()->m_load_mutex);
+            std::thread tgr([&]() {
+                std::scoped_lock<std::mutex> lock(button->theme()->m_load_mutex);
 
                 NVGcontext* ctx = nullptr;
                 int realw, realh;

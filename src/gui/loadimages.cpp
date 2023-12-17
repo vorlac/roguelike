@@ -37,7 +37,7 @@ namespace rl::gui {
             if (strstr(fname, "png") == nullptr)
                 continue;
             std::string fullName = path + "/" + std::string(fname);
-            SDL3::SDL_Texture* tex = IMG_LoadTexture(renderer, fullName.c_str());
+            SDL3::SDL_Texture* tex = SDL3::IMG_LoadTexture(renderer, fullName.c_str());
             if (tex == 0)
                 throw std::runtime_error("Could not open image data!");
             ImageInfo iminfo;

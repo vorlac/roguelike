@@ -14,7 +14,7 @@ option(
 option(
   AUTOFORMAT_SRC_ON_CONFIGURE
     "If enabled, clang-format will be used to format all sources in src/ during configuration"
-     OFF
+     On
 )
 
 include(vcpkg-init)
@@ -42,43 +42,60 @@ set(compiler_is_msvc "$<CXX_COMPILER_ID:MSVC>")
 set(compiler_is_gnu "$<CXX_COMPILER_ID:GNU>")
 set(compiler_is_clang "$<OR:$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:Clang>>")
 
-set(GLFW_INSTALL OFF)
-find_package(Eigen3 CONFIG REQUIRED)
+include(shaders)
+
+set(FORCE_STATIC_VCRT ON)
+set(BUILD_SHARED_LIBS OFF)
+
+# VCPKG libraries
 find_package(glm CONFIG REQUIRED)
-find_package(glfw3 CONFIG REQUIRED)
+#find_package(skity CONFIG REQUIRED)
 find_package(fmt CONFIG REQUIRED)
 find_package(flecs CONFIG REQUIRED)
 find_package(simdjson CONFIG REQUIRED)
 find_package(argparse CONFIG REQUIRED)
+find_package(glfw3 CONFIG REQUIRED)
+find_package(spdlog CONFIG REQUIRED)
+find_package(Freetype REQUIRED)
 
+# SDL3 build options
+set(SDL_LIBC OFF)
+set(SDL_VULKAN OFF)
+set(SDL_SHARED OFF)
+set(SDL_STATIC ON)
+
+# SDL3 test program targets
 set(SDL_TESTS OFF)
 set(SDL_TEST_LIBRARY OFF)
-
-set(SDL_LIBC OFF)
-set(SDL_VULKAN ON)
-
-set(SDL_STATIC ON)
-set(SDL_SHARED OFF)
-set(FORCE_STATIC_VCRT OFF)
-set(BUILD_SHARED_LIBS OFF)
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl_ttf)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl_image)
-# add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl_mixer)
 
-#set(NANOGUI_BUILD_GLAD OFF)
-#set(NANOGUI_BUILD_GLFW OFF)
-#set(NANOGUI_BUILD_PYTHON OFF)
-#set(NANOGUI_BUILD_SHARED OFF)
-#set(NANOGUI_BUILD_EXAMPLES OFF)
 
-#add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/nanogui-sdl)
+# skity build options
+# set(BUILD_EXAMPLE OFF)
+# set(BUILD_TEST OFF)
+# set(BUILD_SVG_MODULE OFF)
+# set(BUILD_CODEC_MODULE OFF)
+# set(ENABLE_LOG OFF)
+# set(CPU_BACKEND OFF)
+
+# set(ENABLE_HW_RENDER ON)
+# set(VULKAN_BACKEND OFF)
+# set(OPENGL_BACKEND ON)
+
+# set(GLFW_BUILD_TESTS OFF)
+# set(GLFW_BUILD_EXAMPLES OFF)
+# set(GLFW_BUILD_DOCS OFF)
+# set(GLFW_INSTALL OFF)
+
+#add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/skity)
 
 file(GLOB_RECURSE
   roguelike_sources
     CONFIGURE_DEPENDS
-      "${CMAKE_CURRENT_SOURCE_DIR}/extern/glad/*.[hc]"
+      "${CMAKE_CURRENT_SOURCE_DIR}/extern/glad/gl.[hc]"
       "${CMAKE_CURRENT_SOURCE_DIR}/src/*.[hc]"
       "${CMAKE_CURRENT_SOURCE_DIR}/src/*.[hc]pp"
 )
@@ -97,9 +114,15 @@ target_compile_features(${PROJECT_NAME} PRIVATE
 target_compile_definitions(${PROJECT_NAME} PRIVATE
   ROGUELIKE_TESTS_ENABLED
   KHRONOS_STATIC
+
+  SKITY_OPENGL
+  SKITY_CPU
+  SKITY_LOG
+
   NOMINMAX
 
   $<${compiler_is_msvc}:
+	  _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING
       _CRT_SECURE_NO_WARNINGS
 
       $<$<CONFIG:Debug>:
@@ -181,21 +204,11 @@ target_link_options(${PROJECT_NAME} PRIVATE
     >
 )
 
-
-
 target_include_directories(${PROJECT_NAME}
   PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src"
   SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/extern/glad/include"
+  "${CMAKE_CURRENT_BINARY_DIR}"
 )
-
-# TODO: figure out how to get rid of this
-#target_include_directories(nanogui PRIVATE
-#  # needed so nanogui can find GLFW headers
-#  SYSTEM "${PACKAGE_PREFIX_DIR}/include"
-#  # needed so nanogui can find glad/gl.h header
-#  SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/extern/glad/include"
-#)
-
 
 target_link_libraries(${PROJECT_NAME}
   PRIVATE SDL3::SDL3-static
@@ -204,10 +217,11 @@ target_link_libraries(${PROJECT_NAME}
   PRIVATE simdjson::simdjson
   PRIVATE argparse::argparse
   PRIVATE flecs::flecs_static
-  PRIVATE Eigen3::Eigen
-  PRIVATE glfw
+  PRIVATE Freetype::Freetype
+  PRIVATE spdlog::spdlog
   PRIVATE glm::glm
   PRIVATE fmt::fmt
+  PRIVATE glfw
 )
 
 if (ENABLE_CCACHE MATCHES ON)

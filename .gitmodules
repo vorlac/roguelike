@@ -16,3 +16,6 @@
 [submodule "extern/nanogui-sdl"]
 	path = extern/nanogui-sdl
 	url = git@github.com:vorlac/nanogui-sdl.git
+[submodule "extern/skity"]
+	path = extern/skity
+	url = git@github.com:vorlac/Skity.git

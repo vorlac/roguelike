@@ -71,14 +71,8 @@ namespace rl {
             const std::unique_ptr<rl::Renderer>& renderer{ m_window->renderer() };
             gl::InstancedVertexBuffer vbo{ renderer->get_viewport() };
 
-            gui::Button* button = new gui::Button(nullptr, "Plain button");
-            button->set_callback([] {
-                log::info("pushed!");
-            });
-            button->draw(renderer);
-
             vbo.bind_buffers();
-            while (!this->should_exit()) [[unlikely]]
+            while (!this->should_exit()) [[likely]]
             {
                 delta_time = m_timer.delta();
 

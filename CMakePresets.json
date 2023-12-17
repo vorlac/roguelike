@@ -26,7 +26,7 @@
       "hidden": true,
       "environment": {
         "VERBOSE": "true"
-      } 
+      }
     },
     {
       "name": "msvc",
@@ -41,7 +41,9 @@
         "microsoft.com/VisualStudioSettings/CMake/1.0": {
           "enableMicrosoftCodeAnalysis": true,
           "intelliSenseMode": "windows-msvc-x64",
-          "intelliSenseOptions": {"useCompilerDefaults": true}
+          "intelliSenseOptions": {
+            "useCompilerDefaults": true
+          }
         }
       },
       "condition": {
@@ -126,7 +128,9 @@
         "microsoft.com/VisualStudioSettings/CMake/1.0": {
           "enableClangTidyCodeAnalysis": true,
           "intelliSenseMode": "windows-clang-x64",
-          "intelliSenseOptions": {"useCompilerDefaults": false}
+          "intelliSenseOptions": {
+            "useCompilerDefaults": false
+          }
         }
       }
     },

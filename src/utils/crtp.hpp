@@ -13,22 +13,15 @@ namespace rl {
     template <typename... TVisitorFunction>
     struct variant_visitor : TVisitorFunction...
     {
-        // this ctor is needed so that the forward call allows it to handle
-        // callable types that are move-only or something like a std::function
-        // that's already been created or a function pointer, etc...
         template <typename... TCallable>
         variant_visitor(TCallable&&... vc)
             : TVisitorFunction{ std::forward<TCallable>(vc) }...
         {
         }
 
-        // define this struct so it uses the
-        // operator() of every template arg type.
-        // this way
         using TVisitorFunction::operator()...;
     };
 
-    //  type deduction for variant_visitor
     template <typename... TVisitorFunction>
     variant_visitor(TVisitorFunction...)
         -> variant_visitor<std::remove_reference_t<TVisitorFunction>...>;
