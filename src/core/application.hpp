@@ -17,7 +17,7 @@
 #include "core/state/states.hpp"
 #include "core/window.hpp"
 #include "gl/instanced_buffer.hpp"
-#include "gui/gui.hpp"
+#include "gui/nanogui.hpp"
 #include "sdl/defs.hpp"
 #include "utils/crtp.hpp"
 #include "utils/numeric.hpp"
@@ -70,6 +70,11 @@ namespace rl {
 
             const std::unique_ptr<rl::Renderer>& renderer{ m_window->renderer() };
             gl::InstancedVertexBuffer vbo{ renderer->get_viewport() };
+
+            gui::Button* button = new gui::Button(nullptr);
+            button->set_callback([] {
+                log::warning("Button Pressed");
+            });
 
             vbo.bind_buffers();
             while (!this->should_exit()) [[likely]]

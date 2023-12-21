@@ -1,13 +1,24 @@
+/*
+    nanogui/popup.h -- Simple popup widget which is attached to another given
+    window (can be nested)
+
+    NanoGUI was developed by Wenzel Jakob <wenzel.jakob@epfl.ch>.
+    The widget drawing code is based on the NanoVG demo application
+    by Mikko Mononen.
+
+    All rights reserved. Use of this source code is governed by a
+    BSD-style license that can be found in the LICENSE.txt file.
+*/
+/** \file */
+
 #pragma once
 
-#include <vector>
-
-#include "gui/screen.hpp"
 #include "gui/window.hpp"
 
 namespace rl::gui {
+
     /**
-     * \class Popup popup.h sdl_gui/popup.h
+     * \class Popup popup.h nanogui/popup.h
      *
      * \brief Popup window for combo boxes, popup buttons, nested dialogs etc.
      *
@@ -17,70 +28,94 @@ namespace rl::gui {
     class Popup : public Window
     {
     public:
-        /// Create a new popup parented to a screen (first argument) and a parent window
-        Popup(Widget* parent, Window* parentWindow);
+        enum Side {
+            Left = 0,
+            Right
+        };
+
+        /// Create a new popup parented to a screen (first argument) and a parent window (if
+        /// applicable)
+        Popup(Widget* parent, Window* parent_window = nullptr);
 
         /// Return the anchor position in the parent window; the placement of the popup is relative
         /// to it
-        void setAnchorPos(const Vector2i& anchorPos)
+        void set_anchor_pos(const Vector2i& anchor_pos)
         {
-            mAnchorPos = anchorPos;
+            m_anchor_pos = anchor_pos;
         }
 
         /// Set the anchor position in the parent window; the placement of the popup is relative to
         /// it
-        const Vector2i& anchorPos() const
+        const Vector2i& anchor_pos() const
         {
-            return mAnchorPos;
+            return m_anchor_pos;
         }
 
         /// Set the anchor height; this determines the vertical shift relative to the anchor
         /// position
-        void setAnchorHeight(int anchorHeight)
+        void set_anchor_offset(int anchor_offset)
         {
-            mAnchorHeight = anchorHeight;
+            m_anchor_offset = anchor_offset;
         }
 
         /// Return the anchor height; this determines the vertical shift relative to the anchor
         /// position
-        int anchorHeight() const
+        int anchor_offset() const
         {
-            return mAnchorHeight;
+            return m_anchor_offset;
+        }
+
+        /// Set the anchor width
+        void set_anchor_size(int anchor_size)
+        {
+            m_anchor_size = anchor_size;
+        }
+
+        /// Return the anchor width
+        int anchor_size() const
+        {
+            return m_anchor_size;
+        }
+
+        /// Set the side of the parent window at which popup will appear
+        void set_side(Side popup_side)
+        {
+            m_side = popup_side;
+        }
+
+        /// Return the side of the parent window at which popup will appear
+        Side side() const
+        {
+            return m_side;
         }
 
         /// Return the parent window of the popup
-        Window* parentWindow()
+        Window* parent_window()
         {
-            return mParentWindow;
+            return m_parent_window;
         }
 
         /// Return the parent window of the popup
-        const Window* parentWindow() const
+        const Window* parent_window() const
         {
-            return mParentWindow;
+            return m_parent_window;
         }
 
         /// Invoke the associated layout generator to properly place child widgets, if any
-        void perform_layout(SDL3::SDL_Renderer* ctx) override;
+        virtual void perform_layout(NVGcontext* ctx) override;
 
         /// Draw the popup window
-        void draw(SDL3::SDL_Renderer* renderer) override;
-        virtual void draw_body(SDL3::SDL_Renderer* renderer) override;
-        virtual void draw_body_temp(SDL3::SDL_Renderer* renderer) override;
+        virtual void draw(NVGcontext* ctx) override;
 
     protected:
         /// Internal helper function to maintain nested window position values
-        virtual void refresh_relative_placement();
-        virtual void rendereBodyTexture(NVGcontext*& ctx, int& ctxw, int& ctxh, int dx);
-        virtual Vector2i getOverrideBodyPos();
+        virtual void refresh_relative_placement() override;
 
-        Window* mParentWindow;
-        Vector2i mAnchorPos;
-        int mAnchorHeight;
-        int _anchorDx = 15;
-
-        struct AsyncTexture;
-        typedef std::shared_ptr<Popup::AsyncTexture> AsyncTexturePtr;
-        std::vector<Popup::AsyncTexturePtr> m_popup_txs;
+    protected:
+        Window* m_parent_window;
+        Vector2i m_anchor_pos;
+        int m_anchor_offset, m_anchor_size;
+        Side m_side;
     };
+
 }

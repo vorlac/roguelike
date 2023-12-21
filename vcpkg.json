@@ -9,8 +9,7 @@
     "libusb",
     "flecs",
     "argparse",
-    "freetype",
-    "spdlog",
+    "nanovg",
     "glfw3",
     "glm",
     "fmt"

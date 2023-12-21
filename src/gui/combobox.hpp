@@ -1,10 +1,28 @@
-#pragma once
+/*
+    NanoGUI was developed by Wenzel Jakob <wenzel.jakob@epfl.ch>.
+    The widget drawing code is based on the NanoVG demo application
+    by Mikko Mononen.
 
-#include <memory>
+    All rights reserved. Use of this source code is governed by a
+    BSD-style license that can be found in the LICENSE.txt file.
+*/
+/**
+ * \file nanogui/combobox.h
+ *
+ * \brief Simple combo box widget based on a popup button.
+ */
+
+#pragma once
 
 #include "gui/popupbutton.hpp"
 
 namespace rl::gui {
+
+    /**
+     * \class ComboBox combobox.h nanogui/combobox.h
+     *
+     * \brief Simple combo box widget based on a popup button.
+     */
     class ComboBox : public PopupButton
     {
     public:
@@ -12,7 +30,6 @@ namespace rl::gui {
         ComboBox(Widget* parent);
 
         /// Create a new combo box with the given items
-        // ComboBox(Widget *parent, const std::vector<std::string>& items={});
         ComboBox(Widget* parent, const std::vector<std::string>& items);
 
         /**
@@ -20,54 +37,73 @@ namespace rl::gui {
          * long descriptive labels for each item
          */
         ComboBox(Widget* parent, const std::vector<std::string>& items,
-                 const std::vector<std::string>& itemsShort);
+                 const std::vector<std::string>& items_short);
 
-        const std::function<void(int)>& callback() const
+        /// The current index this ComboBox has selected.
+        int selected_index() const
         {
-            return m_cb_pressed_callback;
+            return m_selected_index;
         }
 
-        void set_callback(std::function<void(int)>&& callback)
-        {
-            m_cb_pressed_callback = std::move(callback);
-        }
-
-        int selected_idx() const
-        {
-            return mSelectedIndex;
-        }
-
+        /// Sets the current index this ComboBox has selected.
         void set_selected_index(int idx);
 
-        void setItems(const std::vector<std::string>& items,
-                      const std::vector<std::string>& itemsShort);
-
-        void setItems(const std::vector<std::string>& items)
+        /// The callback to execute for this ComboBox.
+        const std::function<void(int)>& callback() const
         {
-            setItems(items, items);
+            return m_callback;
         }
 
+        /// Sets the callback to execute for this ComboBox.
+        void set_callback(const std::function<void(int)>& callback)
+        {
+            m_callback = callback;
+        }
+
+        /// Sets the items for this ComboBox, providing both short and long descriptive lables for
+        /// each item.
+        void set_items(const std::vector<std::string>& items,
+                       const std::vector<std::string>& items_short);
+
+        /// Sets the items for this ComboBox.
+        void set_items(const std::vector<std::string>& items)
+        {
+            set_items(items, items);
+        }
+
+        /// The items associated with this ComboBox.
         const std::vector<std::string>& items() const
         {
-            return mItems;
+            return m_items;
         }
 
-        const std::vector<std::string>& itemsShort() const
+        /// The short descriptions associated with this ComboBox.
+        const std::vector<std::string>& items_short() const
         {
-            return mItemsShort;
+            return m_items_short;
         }
 
-        ComboBox& withItems(const std::vector<std::string>& items)
-        {
-            setItems(items);
-            return *this;
-        }
-
-        bool scroll_event(const Vector2i& p, const Vector2f& rel) override;
+        /// Handles mouse scrolling events for this ComboBox.
+        virtual bool scroll_event(const Vector2i& p, const Vector2f& rel) override;
 
     protected:
-        std::vector<std::string> mItems, mItemsShort;
-        std::function<void(int)> m_cb_pressed_callback;
-        int mSelectedIndex;
+        /// Scroll panel used to store the combo box contents
+        VScrollPanel* m_scroll = nullptr;
+
+        /// Container containing the buttons
+        Widget* m_container = nullptr;
+
+        /// The items associated with this ComboBox.
+        std::vector<std::string> m_items;
+
+        /// The short descriptions of items associated with this ComboBox.
+        std::vector<std::string> m_items_short;
+
+        /// The callback for this ComboBox.
+        std::function<void(int)> m_callback;
+
+        /// The current index this ComboBox has selected.
+        int m_selected_index;
     };
+
 }

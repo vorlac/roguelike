@@ -1,35 +1,46 @@
+/*
+    nanogui/imagepanel.h -- Image panel widget which shows a number of
+    square-shaped icons
+
+    NanoGUI was developed by Wenzel Jakob <wenzel.jakob@epfl.ch>.
+    The widget drawing code is based on the NanoVG demo application
+    by Mikko Mononen.
+
+    All rights reserved. Use of this source code is governed by a
+    BSD-style license that can be found in the LICENSE.txt file.
+*/
+/** \file */
+
 #pragma once
 
 #include "gui/widget.hpp"
 
 namespace rl::gui {
+
     /**
-     * \class ImagePanel imagepanel.h sdl_gui/imagepanel.h
+     * \class ImagePanel imagepanel.h nanogui/imagepanel.h
      *
      * \brief Image panel widget which shows a number of square-shaped icons.
      */
     class ImagePanel : public Widget
     {
     public:
+        typedef std::vector<std::pair<int, std::string>> Images;
+
+    public:
         ImagePanel(Widget* parent);
 
-        ImagePanel(Widget* parent, const ListImages& data)
-            : ImagePanel(parent)
+        void set_images(const Images& data)
         {
-            setImages(data);
+            m_images = data;
         }
 
-        void setImages(const ListImages& data)
+        const Images& images() const
         {
-            mImages = data;
+            return m_images;
         }
 
-        const ListImages& images() const
-        {
-            return mImages;
-        }
-
-        std::function<void(int)> callback() const
+        const std::function<void(int)>& callback() const
         {
             return m_callback;
         }
@@ -39,28 +50,24 @@ namespace rl::gui {
             m_callback = callback;
         }
 
-        bool mouse_motion_event(const Vector2i& p, const Vector2i& rel, int button,
-                                int modifiers) override;
-        bool mouse_button_event(const Vector2i& p, int button, bool down, int modifiers) override;
-        Vector2i preferred_size(SDL3::SDL_Renderer* ctx) const override;
-        void draw(SDL3::SDL_Renderer* renderer) override;
-
-        ImagePanel& withImages(const ListImages& data)
-        {
-            setImages(data);
-            return *this;
-        }
+        virtual bool mouse_motion_event(const Vector2i& p, const Vector2i& rel, int button,
+                                        int modifiers) override;
+        virtual bool mouse_button_event(const Vector2i& p, int button, bool down,
+                                        int modifiers) override;
+        virtual Vector2i preferred_size(NVGcontext* ctx) const override;
+        virtual void draw(NVGcontext* ctx) override;
 
     protected:
-        Vector2i gridSize() const;
-        int indexForPosition(const Vector2i& p) const;
+        Vector2i grid_size() const;
+        int index_for_position(const Vector2i& p) const;
 
     protected:
-        ListImages mImages;
+        Images m_images;
         std::function<void(int)> m_callback;
-        int mThumbSize;
-        int mSpacing;
-        int mMargin;
-        int mMouseIndex;
+        int m_thumb_size;
+        int m_spacing;
+        int m_margin;
+        int m_mouse_index;
     };
+
 }

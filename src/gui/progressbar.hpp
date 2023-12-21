@@ -1,38 +1,46 @@
-#pragma once
+/*
+    nanogui/progressbar.h -- Standard widget for visualizing progress
 
-#include <memory>
+    NanoGUI was developed by Wenzel Jakob <wenzel.jakob@epfl.ch>.
+    The widget drawing code is based on the NanoVG demo application
+    by Mikko Mononen.
+
+    All rights reserved. Use of this source code is governed by a
+    BSD-style license that can be found in the LICENSE.txt file.
+*/
+/** \file */
+
+#pragma once
 
 #include "gui/widget.hpp"
 
 namespace rl::gui {
+
     /**
-     * \class ProgressBar progressbar.h sdl_gui/progressbar.h
+     * \class ProgressBar progressbar.h nanogui/progressbar.h
      *
      * \brief Standard widget for visualizing progress.
      */
     class ProgressBar : public Widget
     {
     public:
-        explicit ProgressBar(Widget* parent);
+        ProgressBar(Widget* parent);
 
-        float value() const
+        float value()
         {
             return m_value;
         }
 
-        void set_value(float value);
+        void set_value(float value)
+        {
+            m_value = value;
+        }
 
-        Vector2i preferred_size(SDL3::SDL_Renderer* ctx) const override;
-        void draw(SDL3::SDL_Renderer* renderer) override;
-        void draw_body(SDL3::SDL_Renderer* renderer);
-        void drawBar(SDL3::SDL_Renderer* renderer);
+        virtual Vector2i preferred_size(NVGcontext* ctx) const override;
+        virtual void draw(NVGcontext* ctx) override;
 
     protected:
-        struct AsyncTexture;
-        using AsyncTexturePtr = std::shared_ptr<ProgressBar::AsyncTexture>;
-
-        float m_value{ 0.0f };
-        ProgressBar::AsyncTexturePtr m_body;
-        ProgressBar::AsyncTexturePtr m_bar;
+        float m_value;
     };
+
 }

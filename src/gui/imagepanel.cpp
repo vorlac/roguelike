@@ -1,161 +1,129 @@
-#include <cmath>
+/*
+    src/imagepanel.cpp -- Image panel widget which shows a number of
+    square-shaped icons
+
+    NanoGUI was developed by Wenzel Jakob <wenzel.jakob@epfl.ch>.
+    The widget drawing code is based on the NanoVG demo application
+    by Mikko Mononen.
+
+    All rights reserved. Use of this source code is governed by a
+    BSD-style license that can be found in the LICENSE.txt file.
+*/
 
 #include "gui/imagepanel.hpp"
+#include "gui/opengl.hpp"
 
 #pragma warning(disable : 4244)
 
 namespace rl::gui {
+
     ImagePanel::ImagePanel(Widget* parent)
         : Widget(parent)
-        , mThumbSize(64)
-        , mSpacing(10)
-        , mMargin(10)
-        , mMouseIndex(-1)
+        , m_thumb_size(64)
+        , m_spacing(10)
+        , m_margin(10)
+        , m_mouse_index(-1)
     {
     }
 
-    Vector2i ImagePanel::gridSize() const
+    Vector2i ImagePanel::grid_size() const
     {
-        int nCols = 1 + std::max(0, (int)((m_size.x - 2 * mMargin - mThumbSize) /
-                                          (float)(mThumbSize + mSpacing)));
-        int nRows = ((int)mImages.size() + nCols - 1) / nCols;
-        return Vector2i(nCols, nRows);
+        int n_cols = 1 + std::max(0, (int)((m_size.x() - 2 * m_margin - m_thumb_size) /
+                                           (float)(m_thumb_size + m_spacing)));
+        int n_rows = ((int)m_images.size() + n_cols - 1) / n_cols;
+        return Vector2i(n_cols, n_rows);
     }
 
-    int ImagePanel::indexForPosition(const Vector2i& p) const
+    int ImagePanel::index_for_position(const Vector2i& p) const
     {
-        Vector2f pp = Vector2f(p.tofloat() - Vector2f((float)mMargin, (float)mMargin)) /
-                      ((float)mThumbSize + (float)mSpacing);
-        float iconRegion = mThumbSize / ((float)mThumbSize + (float)mSpacing);
-        bool overImage = pp.x - std::floor(pp.x) < iconRegion &&
-                         pp.y - std::floor(pp.y) < iconRegion;
-        Vector2i gridPos = pp.toint();
-        Vector2i grid = gridSize();
-        overImage &= gridPos.positive() && gridPos.lessOrEq(grid);
-        return overImage ? (gridPos.x + gridPos.y * grid.x) : -1;
+        Vector2f pp = (Vector2f(p - m_pos) - Vector2f(m_margin)) /
+                      (float)(m_thumb_size + m_spacing);
+        float icon_region = m_thumb_size / (float)(m_thumb_size + m_spacing);
+        bool over_image = pp.x() - std::floor(pp.x()) < icon_region &&
+                          pp.y() - std::floor(pp.y()) < icon_region;
+        Vector2i grid_pos(pp), grid = grid_size();
+        over_image &= grid_pos.x() >= 0 && grid_pos.y() >= 0 && pp.x() >= 0 && pp.y() >= 0 &&
+                      grid_pos.x() < grid.x() && grid_pos.y() < grid.y();
+        return over_image ? (grid_pos.x() + grid_pos.y() * grid.x()) : -1;
     }
 
     bool ImagePanel::mouse_motion_event(const Vector2i& p, const Vector2i& /* rel */,
                                         int /* button */, int /* modifiers */)
     {
-        mMouseIndex = indexForPosition(p);
+        m_mouse_index = index_for_position(p);
         return true;
     }
 
     bool ImagePanel::mouse_button_event(const Vector2i& p, int /* button */, bool down,
                                         int /* modifiers */)
     {
-        int index = indexForPosition(p);
-        if (index >= 0 && m_callback && down)
+        int index = index_for_position(p);
+        if (index >= 0 && index < (int)m_images.size() && m_callback && down)
             m_callback(index);
         return true;
     }
 
-    Vector2i ImagePanel::preferred_size(SDL3::SDL_Renderer*) const
+    Vector2i ImagePanel::preferred_size(NVGcontext*) const
     {
-        Vector2i grid = gridSize();
-        return Vector2i{
-            grid.x * mThumbSize + (grid.x - 1) * mSpacing + 2 * mMargin,
-            grid.y * mThumbSize + (grid.y - 1) * mSpacing + 2 * mMargin,
-        };
+        Vector2i grid = grid_size();
+        return Vector2i(grid.x() * m_thumb_size + (grid.x() - 1) * m_spacing + 2 * m_margin,
+                        grid.y() * m_thumb_size + (grid.y() - 1) * m_spacing + 2 * m_margin);
     }
 
-    void ImagePanel::draw(SDL3::SDL_Renderer* renderer)
+    void ImagePanel::draw(NVGcontext* ctx)
     {
-        Vector2i grid = gridSize();
+        Vector2i grid = grid_size();
 
-        int ax = get_absolute_left();
-        int ay = get_absolute_top();
-
-        PntRect clip = get_absolute_cliprect();
-        SDL3::SDL_FRect clipRect = pntrect2srect(clip);
-
-        for (size_t i = 0; i < mImages.size(); ++i)
+        for (size_t i = 0; i < m_images.size(); ++i)
         {
-            Vector2i p = Vector2i(mMargin, mMargin) +
-                         Vector2i((int)i % grid.x, (int)i / grid.x) * (mThumbSize + mSpacing);
-            p += Vector2i(ax, ay);
-            int imgw = mImages[i].w;
-            int imgh = mImages[i].h;
+            Vector2i p = m_pos + Vector2i(m_margin) +
+                         Vector2i((int)i % grid.x(), (int)i / grid.x()) *
+                             (m_thumb_size + m_spacing);
+            int imgw, imgh;
 
+            nvgImageSize(ctx, m_images[i].first, &imgw, &imgh);
             float iw, ih, ix, iy;
             if (imgw < imgh)
             {
-                iw = (float)mThumbSize;
+                iw = m_thumb_size;
                 ih = iw * (float)imgh / (float)imgw;
                 ix = 0;
-                iy = -(ih - mThumbSize) * 0.5f;
+                iy = -(ih - m_thumb_size) * 0.5f;
             }
             else
             {
-                ih = mThumbSize;
+                ih = m_thumb_size;
                 iw = ih * (float)imgw / (float)imgh;
-                ix = -(iw - mThumbSize) * 0.5f;
+                ix = -(iw - m_thumb_size) * 0.5f;
                 iy = 0;
             }
 
-            //, 0, mImages[i].first, mMouseIndex == (int)i ? 1.0 : 0.7);
+            NVGpaint img_paint = nvgImagePattern(ctx, p.x() + ix, p.y() + iy, iw, ih, 0,
+                                                 m_images[i].first,
+                                                 m_mouse_index == (int)i ? 1.0 : 0.7);
 
-            SDL3::SDL_Color c{ 0, 0, 0, 128 };
-            SDL3::SDL_FRect shadowPaintRect{
-                static_cast<float>(p.x - 1),
-                static_cast<float>(p.y),
-                static_cast<float>(mThumbSize + 2),
-                static_cast<float>(mThumbSize + 2),
-            };
+            nvgBeginPath(ctx);
+            nvgRoundedRect(ctx, p.x(), p.y(), m_thumb_size, m_thumb_size, 5);
+            nvgFillPaint(ctx, img_paint);
+            nvgFill(ctx);
 
-            shadowPaintRect = clip_rects(shadowPaintRect, clipRect);
+            NVGpaint shadow_paint = nvgBoxGradient(ctx, p.x() - 1, p.y(), m_thumb_size + 2,
+                                                   m_thumb_size + 2, 5, 3, nvgRGBA(0, 0, 0, 128),
+                                                   nvgRGBA(0, 0, 0, 0));
+            nvgBeginPath(ctx);
+            nvgRect(ctx, p.x() - 5, p.y() - 5, m_thumb_size + 10, m_thumb_size + 10);
+            nvgRoundedRect(ctx, p.x(), p.y(), m_thumb_size, m_thumb_size, 6);
+            nvgPathWinding(ctx, NVG_HOLE);
+            nvgFillPaint(ctx, shadow_paint);
+            nvgFill(ctx);
 
-            if (shadowPaintRect.w > 0 && shadowPaintRect.h > 0)
-            {
-                SDL_SetRenderDrawColor(renderer, c.r, c.g, c.b, c.a);
-                SDL_RenderFillRect(renderer, &shadowPaintRect);
-            }
-
-            SDL3::SDL_FRect imgPaintRect{
-                std::round(p.x + ix),
-                std::round(p.y + iy),
-                std::round(iw),
-                std::round(ih),
-            };
-
-            SDL3::SDL_FRect imgSrcRect{
-                0.0f,
-                0.0f,
-                static_cast<float>(imgw),
-                static_cast<float>(imgh),
-            };
-
-            PntRect imgrect = clip_rects(srect2pntrect(imgPaintRect), clip);
-            imgPaintRect.w = imgrect.x2 - imgrect.x1;
-            imgPaintRect.h = imgrect.y2 - imgrect.y1;
-            if (imgPaintRect.y < clip.y1)
-            {
-                imgPaintRect.y = clip.y1;
-                imgSrcRect.h = (imgPaintRect.h / (float)ih) * imgh;
-                imgSrcRect.y = (1 - (imgPaintRect.h / (float)ih)) * imgh;
-            }
-            else if (imgPaintRect.h < ih)
-            {
-                imgSrcRect.h = (imgPaintRect.h / (float)ih) * imgh;
-            }
-
-            SDL3::SDL_RenderTexture(renderer, mImages[i].tex, &imgSrcRect, &imgPaintRect);
-
-            SDL3::SDL_FRect brect{
-                (float)p.x + 1.0f,
-                (float)p.y + 1.0f,
-                (float)mThumbSize - 2.0f,
-                (float)mThumbSize - 2.0f,
-            };
-            brect = clip_rects(brect, clipRect);
-            if (brect.w > 0 && brect.h > 0)
-            {
-                SDL3::SDL_SetRenderDrawColor(renderer, 0xff, 0xff, 0xff, 80);
-                SDL3::SDL_RenderRect(renderer, &brect);
-            }
+            nvgBeginPath(ctx);
+            nvgRoundedRect(ctx, p.x() + 0.5f, p.y() + 0.5f, m_thumb_size - 1, m_thumb_size - 1,
+                           4 - 0.5f);
+            nvgStrokeWidth(ctx, 1.0f);
+            nvgStrokeColor(ctx, nvgRGBA(255, 255, 255, 80));
+            nvgStroke(ctx);
         }
-
-        Widget::draw(renderer);
     }
+
 }

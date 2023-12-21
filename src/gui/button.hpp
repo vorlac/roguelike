@@ -1,231 +1,233 @@
+/*
+    NanoGUI was developed by Wenzel Jakob <wenzel.jakob@epfl.ch>.
+    The widget drawing code is based on the NanoVG demo application
+    by Mikko Mononen.
+
+    All rights reserved. Use of this source code is governed by a
+    BSD-style license that can be found in the LICENSE.txt file.
+*/
+/**
+ * \file nanogui/button.h
+ *
+ * \brief Defines the [Normal/Toggle/Radio/Popup] \ref nanogui::Button widget.
+ */
+
 #pragma once
 
-#include <functional>
-#include <memory>
-#include <string>
-
-#include "gui/common.hpp"
 #include "gui/widget.hpp"
 
-#pragma warning(disable : 4244)
-
 namespace rl::gui {
+
     /**
-     * @brief [Normal/Toggle/Radio/Popup] Button widget.
+     * \class Button button.h nanogui/button.h
+     *
+     * \brief [Normal/Toggle/Radio/Popup] Button widget.
      */
     class Button : public Widget
     {
     public:
-        // Flags to specify the button behavior (can be combined with binary OR)
+        /// Flags to specify the button behavior (can be combined with binary OR)
         enum Flags {
-            NormalButton = (1 << 0),
-            RadioButton = (1 << 1),
-            ToggleButton = (1 << 2),
-            PopupButton = (1 << 3)
+            NormalButton = (1 << 0),  ///< A normal button.
+            RadioButton = (1 << 1),   ///< A radio button.
+            ToggleButton = (1 << 2),  ///< A toggle button.
+            PopupButton = (1 << 3),   ///< A popup button.
+            MenuButton = (1 << 4)     ///< A menu button.
         };
 
-        // The available icon positions.
+        /// The available icon positions.
         enum class IconPosition {
-            Left,
-            LeftCentered,
-            RightCentered,
-            Right
+            Left,           ///< Button icon on the far left.
+            LeftCentered,   ///< Button icon on the left, centered (depends on caption text length).
+            RightCentered,  ///< Button icon on the right, centered (depends on caption text
+                            ///< length).
+            Right           ///< Button icon on the far right.
         };
 
+        /**
+         * \brief Creates a button attached to the specified parent.
+         *
+         * \param parent
+         *     The \ref nanogui::Widget this Button will be attached to.
+         *
+         * \param caption
+         *     The name of the button (default ``"Untitled"``).
+         *
+         * \param icon
+         *     The icon to display with this Button.  See \ref nanogui::Button::mIcon.
+         */
         Button(Widget* parent, const std::string& caption = "Untitled", int icon = 0);
 
-        Button(Widget* parent, const std::string& caption, std::function<void()>&& callback)
-            : Button(parent, caption)
-        {
-            set_callback(std::forward<decltype(callback)>(callback));
-        }
-
-        Button(Widget* parent, const std::string& caption, int icon,
-               std::function<void()>&& callback)
-            : Button(parent, caption, icon)
-        {
-            set_callback(std::forward<decltype(callback)>(callback));
-        }
-
-        Button(Widget* parent, const std::string& caption,
-               std::function<void(bool state)>&& callback)
-            : Button(parent, caption)
-        {
-            set_changed_callback(callback);
-        }
-
+        /// Returns the caption of this Button.
         const std::string& caption() const
         {
             return m_caption;
         }
 
+        /// Sets the caption of this Button.
         void set_caption(const std::string& caption)
         {
             m_caption = caption;
-            m_caption_texture.dirty = true;
         }
 
+        /// Returns the background color of this Button.
         const Color& background_color() const
         {
             return m_background_color;
         }
 
+        /// Sets the background color of this Button.
         void set_background_color(const Color& background_color)
         {
             m_background_color = background_color;
         }
 
+        /// Returns the text color of the caption of this Button.
         const Color& text_color() const
         {
             return m_text_color;
         }
 
-        void set_text_color(const Color& text_color);
-
-        int icon() const
+        /// Sets the text color of the caption of this Button.
+        void set_text_color(const Color& text_color)
         {
-            return static_cast<int>(m_icon);
+            m_text_color = text_color;
         }
 
+        /// Returns the icon of this Button.  See \ref nanogui::Button::m_icon.
+        int icon() const
+        {
+            return m_icon;
+        }
+
+        /// Sets the icon of this Button.  See \ref nanogui::Button::m_icon.
         void set_icon(int icon)
         {
             m_icon = icon;
         }
 
+        /// The current flags of this Button (see \ref nanogui::Button::Flags for options).
         int flags() const
         {
             return m_flags;
         }
 
-        void set_flags(int buttonFlags)
+        /// Sets the flags of this Button (see \ref nanogui::Button::Flags for options).
+        void set_flags(int button_flags)
         {
-            m_flags = buttonFlags;
+            m_flags = button_flags;
         }
 
-        IconPosition iconPosition() const
+        /// The position of the icon for this Button.
+        IconPosition icon_position() const
         {
             return m_icon_position;
         }
 
-        void set_icon_position(IconPosition iconPosition)
+        /// Sets the position of the icon for this Button.
+        void set_icon_position(IconPosition icon_position)
         {
-            m_icon_position = iconPosition;
+            m_icon_position = icon_position;
         }
 
+        /// Whether or not this Button is currently pushed.
         bool pushed() const
         {
             return m_pushed;
         }
 
+        /// Sets whether or not this Button is currently pushed.
         void set_pushed(bool pushed)
         {
             m_pushed = pushed;
         }
 
-        // Set the push callback (for any type of button)
+        /// Return the push callback (for any type of button)
         const std::function<void()>& callback() const
         {
-            return m_pressed_callback;
+            return m_callback;
         }
 
-        void set_callback(std::function<void()>&& callback)
+        /// Set the push callback (for any type of button).
+        void set_callback(const std::function<void()>& callback)
         {
-            m_pressed_callback = std::move(callback);
+            m_callback = callback;
         }
 
-        // Set the change callback (for toggle buttons)
-        std::function<void(bool)> change_callback() const
+        /// Return the change callback (for toggle buttons)
+        const std::function<void(bool)>& change_callback() const
         {
             return m_change_callback;
         }
 
-        void set_changed_callback(const std::function<void(bool)>& callback)
+        /// Set the change callback (for toggle buttons).
+        void set_change_callback(const std::function<void(bool)>& callback)
         {
             m_change_callback = callback;
         }
 
-        // Set the button group (for radio buttons)
-        void set_button_group(const std::vector<Button*>& button_group)
-        {
-            m_button_group = button_group;
-        }
-
+        /// Return the button group (for radio buttons)
         const std::vector<Button*>& button_group() const
         {
             return m_button_group;
         }
 
-        virtual Vector2i preferred_size(SDL3::SDL_Renderer* ctx) const override;
+        /// Set the button group (for radio buttons)
+        void set_button_group(const std::vector<Button*>& button_group)
+        {
+            m_button_group = button_group;
+        }
+
+        /// The preferred size of this Button.
+        virtual Vector2i preferred_size(NVGcontext* ctx) const override;
+        /// The callback that is called when any type of mouse button event is issued to this
+        /// Button.
+        virtual bool mouse_enter_event(const Vector2i& p, bool enter) override;
         virtual bool mouse_button_event(const Vector2i& p, int button, bool down,
                                         int modifiers) override;
-
-        virtual void draw(const std::unique_ptr<rl::Renderer>& renderer) override;
-        virtual void draw(SDL3::SDL_Renderer* renderer) override;
-
-        virtual void draw_body(const std::unique_ptr<rl::Renderer>& renderer);
-        virtual void draw_body(SDL3::SDL_Renderer* renderer);
-        virtual void draw_body_temp(SDL3::SDL_Renderer* renderer);
-        virtual Color body_color();
-        virtual Vector2i get_text_offset() const;
-
-        Button& with_callback(std::function<void()>&& callback)
-        {
-            set_callback(std::forward<decltype(callback)>(callback));
-            return *this;
-        }
-
-        Button& with_flags(int flags)
-        {
-            set_flags(flags);
-            return *this;
-        }
-
-        Button& with_change_callback(const std::function<void(bool)>& callback)
-        {
-            set_changed_callback(callback);
-            return *this;
-        }
-
-        Button& with_background_color(const Color& color)
-        {
-            set_background_color(color);
-            return *this;
-        }
-
-        Button& with_icon(int icon)
-        {
-            set_icon(icon);
-            return *this;
-        }
+        /// Responsible for drawing the Button.
+        virtual void draw(NVGcontext* ctx) override;
 
     protected:
-        virtual void render_body_texture(NVGcontext*& ctx, int& realw, int& realh);
+        /// The caption of this Button.
+        std::string m_caption;
 
-    protected:
-        struct AsyncTexture;
-        using AsyncTexturePtr = std::shared_ptr<Button::AsyncTexture>;
+        /**
+         * \brief The icon of this Button (``0`` means no icon).
+         *
+         * \rst
+         * The icon to display with this Button.  If not ``0``, may either be a
+         * picture icon, or one of the icons enumerated in
+         * :ref:`file_nanogui_entypo.h`.  The kind of icon (image or Entypo)
+         * is determined by the functions :func:`nanogui::nvgIsImageIcon` and its
+         * reciprocal counterpart :func:`nanogui::nvgIsFontIcon`.
+         * \endrst
+         */
+        int m_icon;
 
-        int m_flags{ 0 };
-        bool m_pushed{ false };
+        /// The position to draw the icon at.
+        IconPosition m_icon_position;
 
-        Color m_text_color{};
-        Color m_background_color{};
-        Texture m_icon_texture{};
-        Texture m_caption_texture{};
-        IconPosition m_icon_position{};
-        std::string m_caption{};
-        intptr_t m_icon{};
+        /// Whether or not this Button is currently pushed.
+        bool m_pushed;
 
-        std::function<void()> m_pressed_callback{};
-        std::function<void(bool)> m_change_callback{};
-        std::vector<Button*> m_button_group{};
-        std::vector<std::shared_ptr<Button::AsyncTexture>> m_textures{};
-        std::shared_ptr<Button::AsyncTexture> m_curr_texture{};
+        /// The current flags of this button (see \ref nanogui::Button::Flags for options).
+        int m_flags;
 
-    private:
-        void draw_texture(std::shared_ptr<Button::AsyncTexture>& texture,
-                          SDL3::SDL_Renderer* renderer);
-        void draw_texture(std::shared_ptr<Button::AsyncTexture>& texture,
-                          const std::unique_ptr<rl::Renderer>& renderer);
+        /// The background color of this Button.
+        Color m_background_color;
+
+        /// The color of the caption text of this Button.
+        Color m_text_color;
+
+        /// The callback issued for all types of buttons.
+        std::function<void()> m_callback;
+
+        /// The callback issued for toggle buttons.
+        std::function<void(bool)> m_change_callback;
+
+        /// The button group for radio buttons.
+        std::vector<Button*> m_button_group;
     };
+
 }

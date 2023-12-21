@@ -1,19 +1,31 @@
+/*
+    nanogui/screen.h -- Top-level widget and interface between NanoGUI and GLFW
+
+    A significant redesign of this code was contributed by Christian Schueller.
+
+    NanoGUI was developed by Wenzel Jakob <wenzel.jakob@epfl.ch>.
+    The widget drawing code is based on the NanoVG demo application
+    by Mikko Mononen.
+
+    All rights reserved. Use of this source code is governed by a
+    BSD-style license that can be found in the LICENSE.txt file.
+*/
+/** \file */
+
 #pragma once
 
-#include "ds/dims.hpp"
-#include "gui/window.hpp"
-#include "sdl/defs.hpp"
-#include "utils/numeric.hpp"
-
-SDL_C_LIB_BEGIN
-union SDL_Event;
-struct SDL_Window;
-SDL_C_LIB_END
+#include "gui/texture.hpp"
+#include "gui/widget.hpp"
 
 namespace rl::gui {
+
+    class Texture;
+
     /**
-     * @brief Represents a display surface (i.e. a full-screen or windowed GLFW window)
-     * and forms the root element of a hierarchy of sdlgui widgets
+     * \class Screen screen.h nanogui/screen.h
+     *
+     * \brief Represents a display surface (i.e. a full-screen or windowed GLFW window)
+     * and forms the root element of a hierarchy of nanogui widgets.
      */
     class Screen : public Widget
     {
@@ -22,184 +34,316 @@ namespace rl::gui {
 
     public:
         /**
-         * @brief  Used to init empty window, use init(SDL_Window* window) for deferred init
-         **/
-        Screen();
+         * Create a new Screen instance
+         *
+         * \param size
+         *     Size in pixels at 96 dpi (on high-DPI screens, the actual resolution
+         *     in terms of hardware pixels may be larger by an integer factor)
+         *
+         * \param caption
+         *     Window title (in UTF-8 encoding)
+         *
+         * \param resizable
+         *     If creating a window, should it be resizable?
+         *
+         * \param fullscreen
+         *     Specifies whether to create a windowed or full-screen view
+         *
+         * \param stencil_buffer
+         *     Should an 8-bit stencil buffer be allocated? NanoVG requires this to
+         *     rasterize non-convex polygons. (NanoGUI does not render such
+         *     polygons, but your application might.)
+         *
+         * \param float_buffer
+         *     Should NanoGUI try to allocate a floating point framebuffer? This
+         *     is useful for HDR and wide-gamut displays.
+         *
+         * \param gl_major
+         *     The requested OpenGL Major version number.  The default is 3, if
+         *     changed the value must correspond to a forward compatible core
+         *     profile (for portability reasons).  For example, set this to 4 and
+         *     \ref gl_minor to 1 for a forward compatible core OpenGL 4.1 profile.
+         *     Requesting an invalid profile will result in no context (and
+         *     therefore no GUI) being created. This attribute is ignored when
+         *     targeting OpenGL ES 2 or Metal.
+         *
+         * \param gl_minor
+         *     The requested OpenGL Minor version number.  The default is 2, if
+         *     changed the value must correspond to a forward compatible core
+         *     profile (for portability reasons).  For example, set this to 1 and
+         *     \ref gl_major to 4 for a forward compatible core OpenGL 4.1 profile.
+         *     Requesting an invalid profile will result in no context (and
+         *     therefore no GUI) being created. This attribute is ignored when
+         *     targeting OpenGL ES 2 or Metal.
+         */
+        Screen(const Vector2i& size, const std::string& caption = "Unnamed", bool resizable = true,
+               bool fullscreen = false, bool depth_buffer = true, bool stencil_buffer = true,
+               bool float_buffer = false, unsigned int gl_major = 3, unsigned int gl_minor = 2);
 
-        /**
-         * @brief  Create a new screen
-         **/
-        Screen(SDL3::SDL_Window* window, const Vector2i& size, const std::string& caption,
-               bool resizable = true, bool fullscreen = false);
+        /// Release all resources
+        virtual ~Screen();
 
-        /**
-         * @brief  Release all resources
-         **/
-        virtual ~Screen() override;
-
-        /**
-         * @brief  Get the window titlebar caption
-         **/
+        /// Get the window title bar caption
         const std::string& caption() const
         {
             return m_caption;
         }
 
-        /**
-         * @brief  Set the window titlebar caption
-         **/
+        /// Set the window title bar caption
         void set_caption(const std::string& caption);
 
-        /**
-         * @brief  Return the screen's background color
-         **/
+        /// Return the screen's background color
         const Color& background() const
         {
             return m_background;
         }
 
-        /**
-         * @brief  Set the screen's background color
-         **/
+        /// Set the screen's background color
         void set_background(const Color& background)
         {
             m_background = background;
         }
 
-        /**
-         * @brief  Set the top-level window visibility (no effect on full-screen windows)
-         **/
+        /// Set the top-level window visibility (no effect on full-screen windows)
         void set_visible(bool visible);
 
-        /**
-         * @brief  Set window size
-         **/
+        /// Set window size
         void set_size(const Vector2i& size);
 
+        /// Return the framebuffer size (potentially larger than size() on high-DPI screens)
+        const Vector2i& framebuffer_size() const
+        {
+            return m_fbsize;
+        }
+
+        /// Send an event that will cause the screen to be redrawn at the next event loop iteration
+        void redraw();
+
         /**
-         * @brief  Return the ratio between pixel and device coordinates (e.g. >= 2 on Mac Retina
-         *displays)
-         **/
+         * \brief Redraw the screen if the redraw flag is set
+         *
+         * This function does everything -- it calls \ref draw_setup(), \ref
+         * draw_contents() (which also clears the screen by default), \ref draw(),
+         * and finally \ref draw_teardown().
+         *
+         * \sa redraw
+         */
+        virtual void draw_all();
+
+        /**
+         * \brief Clear the screen with the background color (glClearColor, glClear, etc.)
+         *
+         * You typically won't need to call this function yourself, as it is called by
+         * the default implementation of \ref draw_contents() (which is called by \ref draw_all())
+         */
+        virtual void clear();
+
+        /**
+         * \brief Prepare the graphics pipeline for the next frame
+         *
+         * This involves steps such as obtaining a drawable, querying the drawable
+         * resolution, setting the viewport used for drawing, etc..
+         *
+         * You typically won't need to call this function yourself, as it is called
+         * by \ref draw_all(), which is executed by the run loop.
+         */
+        virtual void draw_setup();
+
+        /// Calls clear() and draws the window contents --- put your rendering code here.
+        virtual void draw_contents();
+
+        /**
+         * \brief Wrap up drawing of the current frame
+         *
+         * This involves steps such as releasing the current drawable, swapping
+         * the framebuffer, etc.
+         *
+         * You typically won't need to call this function yourself, as it is called
+         * by \ref draw_all(), which is executed by the run loop.
+         */
+        virtual void draw_teardown();
+
+        /// Return the ratio between pixel and device coordinates (e.g. >= 2 on Mac Retina displays)
         float pixel_ratio() const
         {
             return m_pixel_ratio;
         }
 
-        virtual bool on_event(SDL3::SDL_Event& event);
-
-        /**
-         * @brief Draw the window contents
-         * */
-        virtual void draw_contents()
-        {
-            // override
-            // TODO: OpenGL draw calls here
-        }
-
-        /**
-         * @brief  Handle a file drop event
-         **/
+        /// Handle a file drop event
         virtual bool drop_event(const std::vector<std::string>& /* filenames */)
         {
-            // override
-            return false;
+            return false; /* To be overridden */
         }
 
-        /**
-         * @brief  Default keyboard event handler
-         **/
-        virtual bool kb_button_event(int key, int scancode, int action, int modifiers) override;
+        /// Default keyboard event handler
+        virtual bool keyboard_event(int key, int scancode, int action, int modifiers);
 
-        /**
-         * @brief  Text input event handler: codepoint is native endian UTF-32 format
-         **/
-        virtual bool kb_character_event(unsigned int codepoint) override;
+        /// Text input event handler: codepoint is native endian UTF-32 format
+        virtual bool keyboard_character_event(unsigned int codepoint);
 
-        /**
-         * @brief  Window resize event handler
-         **/
-        virtual bool resize_event(const Vector2i&)
+        /// Window resize event handler
+        virtual bool resize_event(const Vector2i& size);
+
+        /// Retrieve the resize callback
+        const std::function<void(Vector2i)>& resize_callback() const
         {
-            return false;
+            return m_resize_callback;
         }
 
-        virtual void draw_all();
+        /// Set the resize callback
+        void set_resize_callback(const std::function<void(Vector2i)>& callback)
+        {
+            m_resize_callback = callback;
+        }
 
-        /**
-         * @brief  Return the last observed mouse position value
-         **/
+        /// Return the last observed mouse position value
         Vector2i mouse_pos() const
         {
             return m_mouse_pos;
         }
 
-        /**
-         * @brief  Return a pointer to the underlying GLFW window data structure
-         **/
-        SDL3::SDL_Window* window()
+        /// Return a pointer to the underlying GLFW window data structure
+        GLFWwindow* glfw_window() const
         {
-            return m_sdl_window;
+            return m_glfw_window;
         }
 
-        /**
-         * @brief  Return a pointer to the underlying nanoVG draw context
-         **/
-        SDL3::SDL_Renderer* sdl_renderer()
+        /// Return a pointer to the underlying NanoVG draw context
+        NVGcontext* nvg_context() const
         {
-            return m_sdl_renderer;
+            return m_nvg_context;
         }
 
-        /**
-         * @brief  Compute the layout of all widgets
-         **/
-        void perform_layout();
+        /// Return the component format underlying the screen
+        Texture::ComponentFormat component_format() const;
 
-        template <typename... TArgs>
-        Window& window(const TArgs&... args)
+        /// Return the pixel format underlying the screen
+        Texture::PixelFormat pixel_format() const;
+
+        /// Does the framebuffer have a depth buffer
+        bool has_depth_buffer() const
         {
-            return wdg<Window>(args...);
+            return m_depth_buffer;
+        }
+
+        /// Does the framebuffer have a stencil buffer
+        bool has_stencil_buffer() const
+        {
+            return m_stencil_buffer;
+        }
+
+        /// Does the framebuffer use a floating point representation
+        bool has_float_buffer() const
+        {
+            return m_float_buffer;
+        }
+
+#if defined(NANOGUI_USE_METAL)
+        /// Return the associated CAMetalLayer object
+        void* metal_layer() const;
+
+        /// Return the texure of the currently active Metal drawable (or NULL)
+        void* metal_texture() const
+        {
+            return m_metal_texture;
+        }
+
+        /// Return the associated depth/stencil texture
+        Texture* depth_stencil_texture()
+        {
+            return m_depth_stencil_texture;
+        }
+#endif
+
+        /// Flush all queued up NanoVG rendering commands
+        void nvg_flush();
+
+        /// Shut down GLFW when the window is closed?
+        void set_shutdown_glfw(bool v)
+        {
+            m_shutdown_glfw = v;
+        }
+
+        bool shutdown_glfw()
+        {
+            return m_shutdown_glfw;
+        }
+
+        /// Is a tooltip currently fading in?
+        bool tooltip_fade_in_progress() const;
+
+        using Widget::perform_layout;
+
+        /// Compute the layout of all widgets
+        void perform_layout()
+        {
+            this->perform_layout(m_nvg_context);
         }
 
     public:
+        /********* API for applications which manage GLFW themselves *********/
+
         /**
-         * @brief  Initialize the \ref Screen
-         **/
-        void init();
-        void init(SDL3::SDL_Window* window);
+         * \brief Default constructor
+         *
+         * Performs no initialization at all. Use this if the application is
+         * responsible for setting up GLFW, OpenGL, etc.
+         *
+         * In this case, override \ref Screen and call \ref initalize() with a
+         * pointer to an existing \c GLFWwindow instance
+         *
+         * You will also be responsible in this case to deliver GLFW callbacks
+         * to the appropriate callback event handlers below
+         */
+        Screen();
 
-        // Event handlers
-        bool cursor_pos_event_callback(double x, double y);
-        bool mouse_button_event_callback(int button, int action, int modifiers);
-        bool keyboard_event_callback(int key, int scancode, int action, int mods);
-        bool character_event_callback(unsigned int codepoint);
-        bool drop_event_callback(int count, const char** filenames);
-        bool scroll_event_callback(double x, double y);
-        bool resize_event_callback(int width, int height);
+        /// Initialize the \ref Screen
+        void initialize(GLFWwindow* window, bool shutdown_glfw);
 
-        // Internal helper functions
+        /* Event handlers */
+        void cursor_pos_callback_event(double x, double y);
+        void mouse_button_callback_event(int button, int action, int modifiers);
+        void key_callback_event(int key, int scancode, int action, int mods);
+        void char_callback_event(unsigned int codepoint);
+        void drop_callback_event(int count, const char** filenames);
+        void scroll_callback_event(double x, double y);
+        void resize_callback_event(int width, int height);
+
+        /* Internal helper functions */
         void update_focus(Widget* widget);
         void dispose_window(Window* window);
         void center_window(Window* window);
         void move_window_to_front(Window* window);
-        void perform_layout(SDL3::SDL_Renderer* renderer) override;
-        void draw_gui();
+        void draw_widgets();
 
     protected:
-        SDL3::SDL_Window* m_sdl_window{ nullptr };
-        std::vector<gui::Widget*> m_focus_path{};
-        SDL3::SDL_Renderer* m_sdl_renderer{ nullptr };
-        ds::dims<i32> m_framebuf_size{ 0, 0 };
-        float m_pixel_ratio{ 0.0f };
-        int m_mouse_state{ 0 };
-        int m_modifiers{ 0 };
-        gui::Vector2i m_mouse_pos{ 0, 0 };
-        bool m_drag_active{ false };
-        gui::Widget* m_drag_widget{ nullptr };
-        uint64_t m_last_interaction{ 0 };
-        bool m_process_events{ false };
-        gui::Color m_background{ 0, 0, 0, 0 };
-        std::string m_caption{};
-        std::string m_last_tooltip{};
-        gui::Texture m_tooltip_texture{};
+        GLFWwindow* m_glfw_window = nullptr;
+        NVGcontext* m_nvg_context = nullptr;
+        GLFWcursor* m_cursors[(size_t)Cursor::CursorCount];
+        Cursor m_cursor;
+        std::vector<Widget*> m_focus_path;
+        Vector2i m_fbsize;
+        float m_pixel_ratio;
+        int m_mouse_state, m_modifiers;
+        Vector2i m_mouse_pos;
+        bool m_drag_active;
+        Widget* m_drag_widget = nullptr;
+        double m_last_interaction;
+        bool m_process_events = true;
+        Color m_background;
+        std::string m_caption;
+        bool m_shutdown_glfw;
+        bool m_fullscreen;
+        bool m_depth_buffer;
+        bool m_stencil_buffer;
+        bool m_float_buffer;
+        bool m_redraw;
+        std::function<void(Vector2i)> m_resize_callback;
+#if defined(NANOGUI_USE_METAL)
+        void* m_metal_texture = nullptr;
+        void* m_metal_drawable = nullptr;
+        ref<Texture> m_depth_stencil_texture;
+#endif
     };
+
 }

@@ -1,65 +1,71 @@
+/*
+    nanogui/popupbutton.h -- Button which launches a popup widget
+
+    NanoGUI was developed by Wenzel Jakob <wenzel.jakob@epfl.ch>.
+    The widget drawing code is based on the NanoVG demo application
+    by Mikko Mononen.
+
+    All rights reserved. Use of this source code is governed by a
+    BSD-style license that can be found in the LICENSE.txt file.
+*/
+/** \file */
+
 #pragma once
 
-#include "core/assert.hpp"
 #include "gui/button.hpp"
-#include "gui/common.hpp"
-#include "gui/entypo.hpp"
 #include "gui/popup.hpp"
 
 namespace rl::gui {
+
     /**
-     * \class PopupButton popupbutton.h sdl_gui/popupbutton.h
+     * \class PopupButton popupbutton.h nanogui/popupbutton.h
      *
      * \brief Button which launches a popup widget.
+     *
+     * \remark
+     *     This class overrides \ref nanogui::Widget::mIconExtraScale to be ``0.8f``,
+     *     which affects all subclasses of this Widget.  Subclasses must explicitly
+     *     set a different value if needed (e.g., in their constructor).
      */
     class PopupButton : public Button
     {
     public:
-        PopupButton(Widget* parent, const std::string& caption = "Untitled", int buttonIcon = 0,
-                    int chevronIcon = ENTYPO_ICON_CHEVRON_SMALL_RIGHT);
+        PopupButton(Widget* parent, const std::string& caption = "Untitled", int button_icon = 0);
 
-        void setChevronIcon(int icon)
+        void set_chevron_icon(int icon)
         {
-            mChevronIcon = icon;
+            m_chevron_icon = icon;
         }
 
-        int chevronIcon() const
+        int chevron_icon() const
         {
-            return mChevronIcon;
+            return m_chevron_icon;
         }
 
-        Popup& popup(const Vector2i& size)
+        void set_side(Popup::Side popup_side);
+
+        Popup::Side side() const
         {
-            mPopup->set_fixed_size(size);
-            return *mPopup;
+            return m_popup->side();
         }
 
-        Popup& popup()
+        Popup* popup()
         {
-            return *mPopup;
+            return m_popup;
         }
 
-        Popup* popupptr()
+        const Popup* popup() const
         {
-            return mPopup;
+            return m_popup;
         }
 
-        void draw(const std::unique_ptr<rl::Renderer>& renderer) override;
-        void draw(SDL3::SDL_Renderer* renderer) override;
-
-        Vector2i preferred_size(SDL3::SDL_Renderer* ctx) const override;
-        void perform_layout(SDL3::SDL_Renderer* ctx) override;
-
-        PopupButton& withChevron(int icon)
-        {
-            setChevronIcon(icon);
-            return *this;
-        }
+        virtual void draw(NVGcontext* ctx) override;
+        virtual Vector2i preferred_size(NVGcontext* ctx) const override;
+        virtual void perform_layout(NVGcontext* ctx) override;
 
     protected:
-        Popup* mPopup = nullptr;
-        int mChevronIcon;
-
-        Texture _chevronTex;
+        Popup* m_popup;
+        int m_chevron_icon;
     };
+
 }

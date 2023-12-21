@@ -1,33 +1,30 @@
-#pragma once
+/*
+    nanogui/slider.h -- Fractional slider widget with mouse control
 
-#include <memory>
+    NanoGUI was developed by Wenzel Jakob <wenzel.jakob@epfl.ch>.
+    The widget drawing code is based on the NanoVG demo application
+    by Mikko Mononen.
+
+    All rights reserved. Use of this source code is governed by a
+    BSD-style license that can be found in the LICENSE.txt file.
+*/
+/** \file */
+
+#pragma once
 
 #include "gui/widget.hpp"
 
 namespace rl::gui {
+
     /**
-     * \class Slider slider.h sdl_gui/slider.h
+     * \class Slider slider.h nanogui/slider.h
      *
      * \brief Fractional slider widget with mouse control.
      */
     class Slider : public Widget
     {
     public:
-        Slider(Widget* parent, float value = 0.f);
-
-        Slider(Widget* parent, float value, const std::function<void(Slider*, float)>& objcallback)
-            : Slider(parent, value)
-        {
-            setObjCallback(objcallback);
-        }
-
-        Slider(Widget* parent, float value, const std::function<void(Slider*, float)>& objcallback,
-               const std::function<void(float)>& fcallback)
-            : Slider(parent, value)
-        {
-            setObjCallback(objcallback);
-            setFinalCallback(fcallback);
-        }
+        Slider(Widget* parent);
 
         float value() const
         {
@@ -39,37 +36,37 @@ namespace rl::gui {
             m_value = value;
         }
 
-        const Color& highlightColor() const
+        const Color& highlight_color() const
         {
-            return mHighlightColor;
+            return m_highlight_color;
         }
 
-        void setHighlightColor(const Color& highlightColor)
+        void set_highlight_color(const Color& highlight_color)
         {
-            mHighlightColor = highlightColor;
-        }
-
-        std::pair<float, float> highlightedRange() const
-        {
-            return mHighlightedRange;
-        }
-
-        void setHighlightedRange(std::pair<float, float> highlightedRange)
-        {
-            mHighlightedRange = highlightedRange;
+            m_highlight_color = highlight_color;
         }
 
         std::pair<float, float> range() const
         {
-            return mRange;
+            return m_range;
         }
 
-        void setRange(std::pair<float, float> range)
+        void set_range(std::pair<float, float> range)
         {
-            mRange = range;
+            m_range = range;
         }
 
-        std::function<void(float)> callback() const
+        std::pair<float, float> highlighted_range() const
+        {
+            return m_highlighted_range;
+        }
+
+        void set_highlighted_range(std::pair<float, float> highlighted_range)
+        {
+            m_highlighted_range = highlighted_range;
+        }
+
+        const std::function<void(float)>& callback() const
         {
             return m_callback;
         }
@@ -79,65 +76,30 @@ namespace rl::gui {
             m_callback = callback;
         }
 
-        std::function<void(Slider*, float)> objcallback() const
+        const std::function<void(float)>& final_callback() const
         {
-            return mObjCallback;
+            return m_final_callback;
         }
 
-        void setObjCallback(const std::function<void(Slider*, float)>& callback)
+        void set_final_callback(const std::function<void(float)>& callback)
         {
-            mObjCallback = callback;
+            m_final_callback = callback;
         }
 
-        std::function<void(float)> finalCallback() const
-        {
-            return mFinalCallback;
-        }
-
-        void setFinalCallback(const std::function<void(float)>& callback)
-        {
-            mFinalCallback = callback;
-        }
-
-        Vector2i preferred_size(SDL3::SDL_Renderer* ctx) const override;
-        bool mouse_drag_event(const Vector2i& p, const Vector2i& rel, int button,
-                              int modifiers) override;
-        bool mouse_button_event(const Vector2i& p, int button, bool down, int modifiers) override;
-        void draw(SDL3::SDL_Renderer* renderer) override;
-
-        virtual void draw_body(SDL3::SDL_Renderer* renderer);
-        virtual void drawKnob(SDL3::SDL_Renderer* renderer);
-
-        void setKnobOutterRadiusKoeff(float koeff)
-        {
-            mKnobRadKoeff.outter = koeff;
-        }
-
-        void setKnobInnerRadiusKoeff(float koeff)
-        {
-            mKnobRadKoeff.inner = koeff;
-        }
+        virtual Vector2i preferred_size(NVGcontext* ctx) const override;
+        virtual bool mouse_drag_event(const Vector2i& p, const Vector2i& rel, int button,
+                                      int modifiers) override;
+        virtual bool mouse_button_event(const Vector2i& p, int button, bool down,
+                                        int modifiers) override;
+        virtual void draw(NVGcontext* ctx) override;
 
     protected:
         float m_value;
-        bool _lastEnabledState = false;
-
-        struct
-        {
-            float outter = 1.f;
-            float inner = 0.5f;
-        } mKnobRadKoeff;
-
         std::function<void(float)> m_callback;
-        std::function<void(Slider*, float)> mObjCallback;
-        std::function<void(float)> mFinalCallback;
-        std::pair<float, float> mRange;
-        std::pair<float, float> mHighlightedRange;
-        Color mHighlightColor;
-
-        struct AsyncTexture;
-        typedef std::shared_ptr<AsyncTexture> AsyncTexturePtr;
-        AsyncTexturePtr m_body;
-        AsyncTexturePtr _knob;
+        std::function<void(float)> m_final_callback;
+        std::pair<float, float> m_range;
+        std::pair<float, float> m_highlighted_range;
+        Color m_highlight_color;
     };
+
 }

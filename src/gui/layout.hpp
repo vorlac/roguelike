@@ -1,45 +1,79 @@
+/*
+    NanoGUI was developed by Wenzel Jakob <wenzel.jakob@epfl.ch>.
+    The widget drawing code is based on the NanoVG demo application
+    by Mikko Mononen.
+
+    All rights reserved. Use of this source code is governed by a
+    BSD-style license that can be found in the LICENSE.txt file.
+*/
+/**
+ * \file nanogui/layout.h
+ *
+ * \brief A collection of useful layout managers.  The \ref nanogui::GridLayout
+ *        was contributed by Christian Schueller.
+ */
+
 #pragma once
 
 #include <unordered_map>
+#include <vector>
 
-#include "gui/common.hpp"
+#include "gui/object.hpp"
+#include "gui/vector.hpp"
 
 namespace rl::gui {
-    class Widget;
 
-    // The different kinds of alignments a layout can perform.
+    /// The different kinds of alignments a layout can perform.
     enum class Alignment : uint8_t {
-        Minimum = 0,
-        Middle,
-        Maximum,
-        Fill
+        Minimum = 0,  ///< Take only as much space as is required.
+        Middle,       ///< Center align.
+        Maximum,      ///< Take as much space as is allowed.
+        Fill          ///< Fill according to preferred sizes.
     };
 
-    // The direction of data flow for a layout.
+    /// The direction of data flow for a layout.
     enum class Orientation {
-        Horizontal = 0,
-        Vertical
+        Horizontal = 0,  ///< Layout expands on horizontal axis.
+        Vertical         ///< Layout expands on vertical axis.
     };
 
     /**
-     * \class Layout layout.h sdl_gui/layout.h
+     * \class Layout layout.h nanogui/layout.h
      *
      * \brief Basic interface of a layout engine.
      */
     class Layout : public Object
     {
     public:
-        virtual void perform_layout(SDL3::SDL_Renderer* ctx, Widget* widget) const = 0;
-        virtual Vector2i preferred_size(SDL3::SDL_Renderer* ctx, const Widget* widget) const = 0;
+        /**
+         * Performs applies all layout computations for the given widget.
+         *
+         * \param ctx
+         *     The ``NanoVG`` context being used for drawing.
+         *
+         * \param widget
+         *     The Widget whose child widgets will be positioned by the layout class..
+         */
+        virtual void perform_layout(NVGcontext* ctx, Widget* widget) const = 0;
 
-    protected:
-        virtual ~Layout() override
-        {
-        }
+        /**
+         * Compute the preferred size for a given layout and widget
+         *
+         * \param ctx
+         *     The ``NanoVG`` context being used for drawing.
+         *
+         * \param widget
+         *     Widget, whose preferred size should be computed
+         *
+         * \return
+         *     The preferred size, accounting for things such as spacing, padding
+         *     for icons, etc.
+         */
+        virtual Vector2i preferred_size(NVGcontext* ctx, const Widget* widget) const = 0;
     };
 
     /**
-     * \class BoxLayout layout.h sdl_gui/layout.h
+     * \class BoxLayout layout.h nanogui/layout.h
      *
      * \brief Simple horizontal/vertical box layout
      *
@@ -53,6 +87,9 @@ namespace rl::gui {
         /**
          * \brief Construct a box layout which packs widgets in the given \c Orientation
          *
+         * \param orientation
+         *     The Orientation this BoxLayout expands along
+         *
          * \param alignment
          *     Widget alignment perpendicular to the chosen orientation
          *
@@ -65,60 +102,78 @@ namespace rl::gui {
         BoxLayout(Orientation orientation, Alignment alignment = Alignment::Middle, int margin = 0,
                   int spacing = 0);
 
+        /// The Orientation this BoxLayout is using.
         Orientation orientation() const
         {
-            return mOrientation;
+            return m_orientation;
         }
 
-        void setOrientation(Orientation orientation)
+        /// Sets the Orientation of this BoxLayout.
+        void set_orientation(Orientation orientation)
         {
-            mOrientation = orientation;
+            m_orientation = orientation;
         }
 
+        /// The Alignment of this BoxLayout.
         Alignment alignment() const
         {
             return m_alignment;
         }
 
+        /// Sets the Alignment of this BoxLayout.
         void set_alignment(Alignment alignment)
         {
             m_alignment = alignment;
         }
 
+        /// The margin of this BoxLayout.
         int margin() const
         {
-            return mMargin;
+            return m_margin;
         }
 
-        void setMargin(int margin)
+        /// Sets the margin of this BoxLayout.
+        void set_margin(int margin)
         {
-            mMargin = margin;
+            m_margin = margin;
         }
 
+        /// The spacing this BoxLayout is using to pad in between widgets.
         int spacing() const
         {
-            return mSpacing;
+            return m_spacing;
         }
 
-        void setSpacing(int spacing)
+        /// Sets the spacing of this BoxLayout.
+        void set_spacing(int spacing)
         {
-            mSpacing = spacing;
+            m_spacing = spacing;
         }
 
         /* Implementation of the layout interface */
-        virtual Vector2i preferred_size(SDL3::SDL_Renderer* ctx,
-                                        const Widget* widget) const override;
-        virtual void perform_layout(SDL3::SDL_Renderer* ctx, Widget* widget) const override;
+
+        /// See \ref Layout::preferred_size.
+        virtual Vector2i preferred_size(NVGcontext* ctx, const Widget* widget) const override;
+
+        /// See \ref Layout::perform_layout.
+        virtual void perform_layout(NVGcontext* ctx, Widget* widget) const override;
 
     protected:
-        Orientation mOrientation;
+        /// The Orientation of this BoxLayout.
+        Orientation m_orientation;
+
+        /// The Alignment of this BoxLayout.
         Alignment m_alignment;
-        int mMargin;
-        int mSpacing;
+
+        /// The margin padding of this BoxLayout.
+        int m_margin;
+
+        /// The spacing between widgets of this BoxLayout.
+        int m_spacing;
     };
 
     /**
-     * \class GroupLayout layout.h sdl_gui/layout.h
+     * \class GroupLayout layout.h nanogui/layout.h
      *
      * \brief Special layout for widgets grouped by labels.
      *
@@ -132,67 +187,101 @@ namespace rl::gui {
     class GroupLayout : public Layout
     {
     public:
-        GroupLayout(int margin = 15, int spacing = 6, int groupSpacing = 14, int groupIndent = 20)
-            : mMargin(margin)
-            , mSpacing(spacing)
-            , mGroupSpacing(groupSpacing)
-            , mGroupIndent(groupIndent)
+        /**
+         * Creates a GroupLayout.
+         *
+         * \param margin
+         *     The margin around the widgets added.
+         *
+         * \param spacing
+         *     The spacing between widgets added.
+         *
+         * \param group_spacing
+         *     The spacing between groups (groups are defined by each Label added).
+         *
+         * \param group_indent
+         *     The amount to indent widgets in a group (underneath a Label).
+         */
+        GroupLayout(int margin = 15, int spacing = 6, int group_spacing = 14, int group_indent = 20)
+            : m_margin(margin)
+            , m_spacing(spacing)
+            , m_group_spacing(group_spacing)
+            , m_group_indent(group_indent)
         {
         }
 
+        /// The margin of this GroupLayout.
         int margin() const
         {
-            return mMargin;
+            return m_margin;
         }
 
-        void setMargin(int margin)
+        /// Sets the margin of this GroupLayout.
+        void set_margin(int margin)
         {
-            mMargin = margin;
+            m_margin = margin;
         }
 
+        /// The spacing between widgets of this GroupLayout.
         int spacing() const
         {
-            return mSpacing;
+            return m_spacing;
         }
 
-        void setSpacing(int spacing)
+        /// Sets the spacing between widgets of this GroupLayout.
+        void set_spacing(int spacing)
         {
-            mSpacing = spacing;
+            m_spacing = spacing;
         }
 
-        int groupIndent() const
+        /// The indent of widgets in a group (underneath a Label) of this GroupLayout.
+        int group_indent() const
         {
-            return mGroupIndent;
+            return m_group_indent;
         }
 
-        void setGroupIndent(int groupIndent)
+        /// Sets the indent of widgets in a group (underneath a Label) of this GroupLayout.
+        void set_group_indent(int group_indent)
         {
-            mGroupIndent = groupIndent;
+            m_group_indent = group_indent;
         }
 
-        int groupSpacing() const
+        /// The spacing between groups of this GroupLayout.
+        int group_spacing() const
         {
-            return mGroupSpacing;
+            return m_group_spacing;
         }
 
-        void setGroupSpacing(int groupSpacing)
+        /// Sets the spacing between groups of this GroupLayout.
+        void set_group_spacing(int group_spacing)
         {
-            mGroupSpacing = groupSpacing;
+            m_group_spacing = group_spacing;
         }
 
         /* Implementation of the layout interface */
-        Vector2i preferred_size(SDL3::SDL_Renderer* ctx, const Widget* widget) const override;
-        void perform_layout(SDL3::SDL_Renderer* ctx, Widget* widget) const override;
+
+        /// See \ref Layout::preferred_size.
+        virtual Vector2i preferred_size(NVGcontext* ctx, const Widget* widget) const override;
+
+        /// See \ref Layout::perform_layout.
+        virtual void perform_layout(NVGcontext* ctx, Widget* widget) const override;
 
     protected:
-        int mMargin;
-        int mSpacing;
-        int mGroupSpacing;
-        int mGroupIndent;
+        /// The margin of this GroupLayout.
+        int m_margin;
+
+        /// The spacing between widgets of this GroupLayout.
+        int m_spacing;
+
+        /// The spacing between groups of this GroupLayout.
+        int m_group_spacing;
+
+        /// The indent amount of a group under its defining Label of this GroupLayout.
+        int m_group_indent;
     };
 
     /**
-     * \class GridLayout layout.h sdl_gui/layout.h
+     * \class GridLayout layout.h nanogui/layout.h
      *
      * \brief Grid layout.
      *
@@ -205,111 +294,152 @@ namespace rl::gui {
     class GridLayout : public Layout
     {
     public:
-        /// Create a 2-column grid layout by default
+        /**
+         * Create a 2-column grid layout by default.
+         *
+         * \param orientation
+         *     The fixed dimension of this GridLayout.
+         *
+         * \param resolution
+         *     The number of rows or columns in the grid (depending on the Orientation).
+         *
+         * \param alignment
+         *     How widgets should be aligned within each grid cell.
+         *
+         * \param margin
+         *     The amount of spacing to add around the border of the grid.
+         *
+         * \param spacing
+         *     The amount of spacing between widgets added to the grid.
+         */
         GridLayout(Orientation orientation = Orientation::Horizontal, int resolution = 2,
                    Alignment alignment = Alignment::Middle, int margin = 0, int spacing = 0)
-            : mOrientation(orientation)
-            , mResolution(resolution)
-            , mMargin(margin)
+            : m_orientation(orientation)
+            , m_resolution(resolution)
+            , m_margin(margin)
         {
-            mDefaultAlignment[0] = mDefaultAlignment[1] = alignment;
-            mSpacing = { spacing, spacing };
+            m_default_alignment[0] = m_default_alignment[1] = alignment;
+            m_spacing = Vector2i(spacing);
         }
 
+        /// The Orientation of this GridLayout.
         Orientation orientation() const
         {
-            return mOrientation;
+            return m_orientation;
         }
 
-        void setOrientation(Orientation orientation)
+        /// Sets the Orientation of this GridLayout.
+        void set_orientation(Orientation orientation)
         {
-            mOrientation = orientation;
+            m_orientation = orientation;
         }
 
+        /// The number of rows or columns (depending on the Orientation) of this GridLayout.
         int resolution() const
         {
-            return mResolution;
+            return m_resolution;
         }
 
-        void setResolution(int resolution)
+        /// Sets the number of rows or columns (depending on the Orientation) of this GridLayout.
+        void set_resolution(int resolution)
         {
-            mResolution = resolution;
+            m_resolution = resolution;
         }
 
+        /// The spacing at the specified axis (row or column number, depending on the Orientation).
         int spacing(int axis) const
         {
-            return mSpacing[axis];
+            return m_spacing[axis];
         }
 
-        void setSpacing(int axis, int spacing)
+        /// Sets the spacing for a specific axis.
+        void set_spacing(int axis, int spacing)
         {
-            mSpacing[axis] = spacing;
+            m_spacing[axis] = spacing;
         }
 
-        void setSpacing(int spacing)
+        /// Sets the spacing for all axes.
+        void set_spacing(int spacing)
         {
-            mSpacing[0] = mSpacing[1] = spacing;
+            m_spacing[0] = m_spacing[1] = spacing;
         }
 
+        /// The margin around this GridLayout.
         int margin() const
         {
-            return mMargin;
+            return m_margin;
         }
 
-        void setMargin(int margin)
+        /// Sets the margin of this GridLayout.
+        void set_margin(int margin)
         {
-            mMargin = margin;
+            m_margin = margin;
         }
 
+        /**
+         * The Alignment of the specified axis (row or column number, depending on
+         * the Orientation) at the specified index of that row or column.
+         */
         Alignment alignment(int axis, int item) const
         {
             if (item < (int)m_alignment[axis].size())
                 return m_alignment[axis][item];
             else
-                return mDefaultAlignment[axis];
+                return m_default_alignment[axis];
         }
 
-        void setColAlignment(Alignment value)
+        /// Sets the Alignment of the columns.
+        void set_col_alignment(Alignment value)
         {
-            mDefaultAlignment[0] = value;
+            m_default_alignment[0] = value;
         }
 
-        void setRowAlignment(Alignment value)
+        /// Sets the Alignment of the rows.
+        void set_row_alignment(Alignment value)
         {
-            mDefaultAlignment[1] = value;
+            m_default_alignment[1] = value;
         }
 
-        void setColAlignment(const std::vector<Alignment>& value)
+        /// Use this to set variable Alignment for columns.
+        void set_col_alignment(const std::vector<Alignment>& value)
         {
             m_alignment[0] = value;
         }
 
-        void setRowAlignment(const std::vector<Alignment>& value)
+        /// Use this to set variable Alignment for rows.
+        void set_row_alignment(const std::vector<Alignment>& value)
         {
             m_alignment[1] = value;
         }
 
         /* Implementation of the layout interface */
-        virtual Vector2i preferred_size(SDL3::SDL_Renderer* ctx,
-                                        const Widget* widget) const override;
-        virtual void perform_layout(SDL3::SDL_Renderer* ctx, Widget* widget) const override;
+        /// See \ref Layout::preferred_size.
+        virtual Vector2i preferred_size(NVGcontext* ctx, const Widget* widget) const override;
+
+        /// See \ref Layout::perform_layout.
+        virtual void perform_layout(NVGcontext* ctx, Widget* widget) const override;
 
     protected:
         // Compute the maximum row and column sizes
-        void computeLayout(SDL3::SDL_Renderer* ctx, const Widget* widget,
-                           std::vector<int>* grid) const;
+        void compute_layout(NVGcontext* ctx, const Widget* widget, std::vector<int>* grid) const;
 
     protected:
-        Orientation mOrientation;
-        Alignment mDefaultAlignment[2];
+        /// The Orientation of the GridLayout.
+        Orientation m_orientation;
+        /// The default Alignment of the GridLayout.
+        Alignment m_default_alignment[2];
+        /// The actual Alignment being used for each column/row
         std::vector<Alignment> m_alignment[2];
-        int mResolution;
-        Vector2i mSpacing;
-        int mMargin;
+        /// The number of rows or columns before starting a new one, depending on the Orientation.
+        int m_resolution;
+        /// The spacing used for each dimension.
+        Vector2i m_spacing;
+        /// The margin around this GridLayout.
+        int m_margin;
     };
 
     /**
-     * \class AdvancedGridLayout layout.h sdl_gui/layout.h
+     * \class AdvancedGridLayout layout.h nanogui/layout.h
      *
      * \brief Advanced Grid layout.
      *
@@ -324,10 +454,10 @@ namespace rl::gui {
      * \rst
      * .. code-block:: cpp
      *
-     *    using AdvancedGridLayout::Anchor;
+     *    using Anchor = AdvancedGridLayout::Anchor;
      *    Label *label = new Label(window, "A label");
      *    // Add a centered label at grid position (1, 5), which spans two horizontal cells
-     *    layout->setAnchor(label, Anchor(1, 5, 2, 1, Alignment::Middle, Alignment::Middle));
+     *    layout->set_anchor(label, Anchor(1, 5, 2, 1, Alignment::Middle, Alignment::Middle));
      *
      * \endrst
      *
@@ -346,20 +476,22 @@ namespace rl::gui {
     {
     public:
         /**
-         * \struct Anchor layout.h sdl_gui/layout.h
+         * \struct Anchor layout.h nanogui/layout.h
          *
          * \brief Helper struct to coordinate anchor points for the layout.
          */
         struct Anchor
         {
-            uint8_t pos[2] = {};
-            uint8_t size[2] = {};
-            Alignment align[2] = {};
+            uint8_t pos[2];      ///< The ``(x, y)`` position.
+            uint8_t size[2];     ///< The ``(x, y)`` size.
+            Alignment align[2];  ///< The ``(x, y)`` Alignment.
 
+            /// Creates a ``0`` Anchor.
             Anchor()
             {
             }
 
+            /// Create an Anchor at position ``(x, y)`` with specified Alignment.
             Anchor(int x, int y, Alignment horiz = Alignment::Fill, Alignment vert = Alignment::Fill)
             {
                 pos[0] = (uint8_t)x;
@@ -369,6 +501,8 @@ namespace rl::gui {
                 align[1] = vert;
             }
 
+            /// Create an Anchor at position ``(x, y)`` of size ``(w, h)`` with specified
+            /// alignments.
             Anchor(int x, int y, int w, int h, Alignment horiz = Alignment::Fill,
                    Alignment vert = Alignment::Fill)
             {
@@ -380,95 +514,115 @@ namespace rl::gui {
                 align[1] = vert;
             }
 
+            /// Allows for printing out Anchor position, size, and alignment.
             operator std::string() const
             {
-                char buf[128];
-                SDLGUI_SNPRINTF(buf, 50, "Format[pos=(%i, %i), size=(%i, %i), align=(%i, %i)]",
-                                pos[0], pos[1], size[0], size[1], (int)align[0], (int)align[1]);
-                buf[127] = '\0';
+                char buf[50];
+                snprintf(buf, 50, "Format[pos=(%i, %i), size=(%i, %i), align=(%i, %i)]", pos[0],
+                         pos[1], size[0], size[1], (int)align[0], (int)align[1]);
                 return buf;
             }
         };
 
+        /// Creates an AdvancedGridLayout with specified columns, rows, and margin.
         AdvancedGridLayout(const std::vector<int>& cols = {}, const std::vector<int>& rows = {},
                            int margin = 0);
 
+        /// The margin of this AdvancedGridLayout.
         int margin() const
         {
-            return mMargin;
+            return m_margin;
         }
 
-        void setMargin(int margin)
+        /// Sets the margin of this AdvancedGridLayout.
+        void set_margin(int margin)
         {
-            mMargin = margin;
+            m_margin = margin;
         }
 
         /// Return the number of cols
-        int colCount() const
+        int col_count() const
         {
-            return (int)mCols.size();
+            return (int)m_cols.size();
         }
 
         /// Return the number of rows
-        int rowCount() const
+        int row_count() const
         {
-            return (int)mRows.size();
+            return (int)m_rows.size();
         }
 
         /// Append a row of the given size (and stretch factor)
-        void appendRow(int size, float stretch = 0.f)
+        void append_row(int size, float stretch = 0.f)
         {
-            mRows.push_back(size);
-            mRowStretch.push_back(stretch);
-        }
+            m_rows.push_back(size);
+            m_row_stretch.push_back(stretch);
+        };
 
         /// Append a column of the given size (and stretch factor)
-        void appendCol(int size, float stretch = 0.f)
+        void append_col(int size, float stretch = 0.f)
         {
-            mCols.push_back(size);
-            mColStretch.push_back(stretch);
-        }
+            m_cols.push_back(size);
+            m_col_stretch.push_back(stretch);
+        };
 
         /// Set the stretch factor of a given row
-        void setRowStretch(int index, float stretch)
+        void set_row_stretch(int index, float stretch)
         {
-            mRowStretch.at(index) = stretch;
+            m_row_stretch.at(index) = stretch;
         }
 
         /// Set the stretch factor of a given column
-        void setColStretch(int index, float stretch)
+        void set_col_stretch(int index, float stretch)
         {
-            mColStretch.at(index) = stretch;
+            m_col_stretch.at(index) = stretch;
         }
 
         /// Specify the anchor data structure for a given widget
-        void setAnchor(const Widget* widget, const Anchor& anchor)
+        void set_anchor(const Widget* widget, const Anchor& anchor)
         {
-            mAnchor[widget] = anchor;
+            m_anchor[widget] = anchor;
         }
 
         /// Retrieve the anchor data structure for a given widget
         Anchor anchor(const Widget* widget) const
         {
-            auto it = mAnchor.find(widget);
-            if (it == mAnchor.end())
+            auto it = m_anchor.find(widget);
+            if (it == m_anchor.end())
                 throw std::runtime_error("Widget was not registered with the grid layout!");
             return it->second;
         }
 
         /* Implementation of the layout interface */
-        virtual Vector2i preferred_size(SDL3::SDL_Renderer* ctx,
-                                        const Widget* widget) const override;
-        virtual void perform_layout(SDL3::SDL_Renderer* ctx, Widget* widget) const override;
+
+        /// See \ref Layout::preferred_size.
+        virtual Vector2i preferred_size(NVGcontext* ctx, const Widget* widget) const override;
+
+        /// See \ref Layout::perform_layout.
+        virtual void perform_layout(NVGcontext* ctx, Widget* widget) const override;
 
     protected:
-        void computeLayout(SDL3::SDL_Renderer* ctx, const Widget* widget,
-                           std::vector<int>* grid) const;
+        // Compute the maximum row and column sizes
+        void compute_layout(NVGcontext* ctx, const Widget* widget, std::vector<int>* grid) const;
 
     protected:
-        std::vector<int> mCols, mRows;
-        std::vector<float> mColStretch, mRowStretch;
-        std::unordered_map<const Widget*, Anchor> mAnchor;
-        int mMargin;
+        /// The columns of this AdvancedGridLayout.
+        std::vector<int> m_cols;
+
+        /// The rows of this AdvancedGridLayout.
+        std::vector<int> m_rows;
+
+        /// The stretch for each column of this AdvancedGridLayout.
+        std::vector<float> m_col_stretch;
+
+        /// The stretch for each row of this AdvancedGridLayout.
+        std::vector<float> m_row_stretch;
+
+        /// The mapping of widgets to their specified anchor points.
+        std::unordered_map<const Widget*, Anchor> m_anchor;
+
+        /// The margin around this AdvancedGridLayout.
+        int m_margin;
     };
+
 }

@@ -1,10 +1,26 @@
-#pragma once
+/*
+    nanogui/graph.h -- Simple graph widget for showing a function plot
 
-#include <memory>
+    NanoGUI was developed by Wenzel Jakob <wenzel.jakob@epfl.ch>.
+    The widget drawing code is based on the NanoVG demo application
+    by Mikko Mononen.
+
+    All rights reserved. Use of this source code is governed by a
+    BSD-style license that can be found in the LICENSE.txt file.
+*/
+/** \file */
+
+#pragma once
 
 #include "gui/widget.hpp"
 
 namespace rl::gui {
+
+    /**
+     * \class Graph graph.h nanogui/graph.h
+     *
+     * \brief Simple graph widget for showing a function plot.
+     */
     class Graph : public Widget
     {
     public:
@@ -18,29 +34,26 @@ namespace rl::gui {
         void set_caption(const std::string& caption)
         {
             m_caption = caption;
-            m_caption_texture.dirty = true;
         }
 
         const std::string& header() const
         {
-            return m_tab_header;
+            return m_header;
         }
 
-        void setHeader(const std::string& header)
+        void set_header(const std::string& header)
         {
-            m_tab_header = header;
-            _headerTex.dirty = true;
+            m_header = header;
         }
 
         const std::string& footer() const
         {
-            return mFooter;
+            return m_footer;
         }
 
-        void setFooter(const std::string& footer)
+        void set_footer(const std::string& footer)
         {
-            mFooter = footer;
-            _footerTex.dirty = true;
+            m_footer = footer;
         }
 
         const Color& background_color() const
@@ -53,14 +66,24 @@ namespace rl::gui {
             m_background_color = background_color;
         }
 
-        const Color& foregroundColor() const
+        const Color& stroke_color() const
         {
-            return mForegroundColor;
+            return m_stroke_color;
         }
 
-        void setForegroundColor(const Color& foregroundColor)
+        void set_stroke_color(const Color& stroke_color)
         {
-            mForegroundColor = foregroundColor;
+            m_stroke_color = stroke_color;
+        }
+
+        const Color& fill_color() const
+        {
+            return m_fill_color;
+        }
+
+        void set_fill_color(const Color& fill_color)
+        {
+            m_fill_color = fill_color;
         }
 
         const Color& text_color() const
@@ -75,34 +98,26 @@ namespace rl::gui {
 
         const std::vector<float>& values() const
         {
-            return mValues;
+            return m_values;
         }
 
         std::vector<float>& values()
         {
-            return mValues;
+            return m_values;
         }
 
-        void setValues(const std::vector<float>& values)
+        void set_values(const std::vector<float>& values)
         {
-            mValues = values;
+            m_values = values;
         }
 
-        Vector2i preferred_size(SDL3::SDL_Renderer* ctx) const override;
-        void draw(const std::unique_ptr<rl::Renderer>& renderer) override;
-        void draw(SDL3::SDL_Renderer* ctx) override;
+        virtual Vector2i preferred_size(NVGcontext* ctx) const override;
+        virtual void draw(NVGcontext* ctx) override;
 
     protected:
-        std::string m_caption, m_tab_header, mFooter;
-        Color m_background_color, mForegroundColor, m_text_color;
-        std::vector<float> mValues;
-
-        Texture m_caption_texture;
-        Texture _headerTex;
-        Texture _footerTex;
-
-        struct AsyncTexture;
-        typedef std::shared_ptr<AsyncTexture> AsyncTexturePtr;
-        AsyncTexturePtr _atx;
+        std::string m_caption, m_header, m_footer;
+        Color m_background_color, m_fill_color, m_stroke_color, m_text_color;
+        std::vector<float> m_values;
     };
+
 }

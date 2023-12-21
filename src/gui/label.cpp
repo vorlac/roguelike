@@ -1,7 +1,22 @@
+/*
+    src/label.cpp -- Text label with an arbitrary font, color, and size
+
+    NanoGUI was developed by Wenzel Jakob <wenzel.jakob@epfl.ch>.
+    The widget drawing code is based on the NanoVG demo application
+    by Mikko Mononen.
+
+    All rights reserved. Use of this source code is governed by a
+    BSD-style license that can be found in the LICENSE.txt file.
+*/
+
 #include "gui/label.hpp"
+#include "gui/opengl.hpp"
 #include "gui/theme.hpp"
 
+#pragma warning(disable : 4244)
+
 namespace rl::gui {
+
     Label::Label(Widget* parent, const std::string& caption, const std::string& font, int font_size)
         : Widget(parent)
         , m_caption(caption)
@@ -12,11 +27,8 @@ namespace rl::gui {
             m_font_size = m_theme->m_standard_font_size;
             m_color = m_theme->m_text_color;
         }
-
         if (font_size >= 0)
             m_font_size = font_size;
-
-        m_texture.dirty = true;
     }
 
     void Label::set_theme(Theme* theme)
@@ -29,63 +41,44 @@ namespace rl::gui {
         }
     }
 
-    Vector2i Label::preferred_size(SDL3::SDL_Renderer* ctx) const
+    Vector2i Label::preferred_size(NVGcontext* ctx) const
     {
         if (m_caption == "")
-            return Vector2i::zero();
-
-        if (m_fixed_size.x > 0)
+            return Vector2i(0);
+        nvgFontFace(ctx, m_font.c_str());
+        nvgFontSize(ctx, font_size());
+        if (m_fixed_size.x() > 0)
         {
-            int w, h;
-            const_cast<Label*>(this)->m_theme->get_utf8_bounds(m_font.c_str(), font_size(),
-                                                               m_caption.c_str(), &w, &h);
-            return Vector2i(m_fixed_size.x, h);
+            float bounds[4];
+            nvgTextAlign(ctx, NVG_ALIGN_LEFT | NVG_ALIGN_TOP);
+            nvgTextBoxBounds(ctx, m_pos.x(), m_pos.y(), m_fixed_size.x(), m_caption.c_str(),
+                             nullptr, bounds);
+            return Vector2i(m_fixed_size.x(), bounds[3] - bounds[1]);
         }
         else
         {
-            int w, h;
-            const_cast<Label*>(this)->m_theme->get_utf8_bounds(m_font.c_str(), font_size(),
-                                                               m_caption.c_str(), &w, &h);
-            return Vector2i(w, m_theme->m_standard_font_size);
+            nvgTextAlign(ctx, NVG_ALIGN_LEFT | NVG_ALIGN_MIDDLE);
+            return Vector2i(nvgTextBounds(ctx, 0, 0, m_caption.c_str(), nullptr, nullptr) + 2,
+                            font_size());
         }
     }
 
-    void Label::set_font_size(int font_size)
+    void Label::draw(NVGcontext* ctx)
     {
-        Widget::set_font_size(font_size);
-        m_texture.dirty = true;
-    }
-
-    void Label::draw(SDL3::SDL_Renderer* renderer)
-    {
-        Widget::draw(renderer);
-
-        if (m_texture.dirty)
-            m_theme->get_texture_and_rect_utf8(renderer, m_texture, 0, 0, m_caption.c_str(),
-                                               m_font.c_str(), font_size(), m_color);
-
-        if (m_fixed_size.x > 0)
+        Widget::draw(ctx);
+        nvgFontFace(ctx, m_font.c_str());
+        nvgFontSize(ctx, font_size());
+        nvgFillColor(ctx, m_color);
+        if (m_fixed_size.x() > 0)
         {
-            auto&& pos = absolute_position();
-            SDL3::SDL_FRect rect{
-                static_cast<float>(pos.x),
-                static_cast<float>(pos.y),
-                0.0f,
-                0.0f,
-            };
-            SDL3::SDL_RenderTexture(renderer, m_texture.tex, &rect, nullptr);
+            nvgTextAlign(ctx, NVG_ALIGN_LEFT | NVG_ALIGN_TOP);
+            nvgTextBox(ctx, m_pos.x(), m_pos.y(), m_fixed_size.x(), m_caption.c_str(), nullptr);
         }
         else
         {
-            auto&& pos = absolute_position() +
-                         Vector2i(0, int((m_size.y - m_texture.rrect.h) * 0.5f));
-            SDL3::SDL_FRect rect{
-                static_cast<float>(pos.x),
-                static_cast<float>(pos.y),
-                0.0f,
-                0.0f,
-            };
-            SDL3::SDL_RenderTexture(renderer, m_texture.tex, &rect, nullptr);
+            nvgTextAlign(ctx, NVG_ALIGN_LEFT | NVG_ALIGN_MIDDLE);
+            nvgText(ctx, m_pos.x(), m_pos.y() + m_size.y() * 0.5f, m_caption.c_str(), nullptr);
         }
     }
+
 }
