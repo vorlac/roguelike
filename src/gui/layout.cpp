@@ -1,16 +1,3 @@
-/*
-    src/layout.cpp -- A collection of useful layout managers
-
-    The grid layout was contributed by Christian Schueller.
-
-    NanoGUI was developed by Wenzel Jakob <wenzel.jakob@epfl.ch>.
-    The widget drawing code is based on the NanoVG demo application
-    by Mikko Mononen.
-
-    All rights reserved. Use of this source code is governed by a
-    BSD-style license that can be found in the LICENSE.txt file.
-*/
-
 #include <numeric>
 
 #include "gui/label.hpp"
@@ -502,5 +489,4 @@ namespace rl::gui {
                 grid[i] += (int)std::round(amt * stretch[i]);
         }
     }
-
 }

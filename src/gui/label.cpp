@@ -1,19 +1,6 @@
-/*
-    src/label.cpp -- Text label with an arbitrary font, color, and size
-
-    NanoGUI was developed by Wenzel Jakob <wenzel.jakob@epfl.ch>.
-    The widget drawing code is based on the NanoVG demo application
-    by Mikko Mononen.
-
-    All rights reserved. Use of this source code is governed by a
-    BSD-style license that can be found in the LICENSE.txt file.
-*/
-
 #include "gui/label.hpp"
 #include "gui/opengl.hpp"
 #include "gui/theme.hpp"
-
-#pragma warning(disable : 4244)
 
 namespace rl::gui {
 
@@ -80,5 +67,4 @@ namespace rl::gui {
             nvgText(ctx, m_pos.x(), m_pos.y() + m_size.y() * 0.5f, m_caption.c_str(), nullptr);
         }
     }
-
 }

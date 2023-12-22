@@ -1,15 +1,3 @@
-/*
-    nanogui/widget.h -- Base class of all widgets
-
-    NanoGUI was developed by Wenzel Jakob <wenzel.jakob@epfl.ch>.
-    The widget drawing code is based on the NanoVG demo application
-    by Mikko Mononen.
-
-    All rights reserved. Use of this source code is governed by a
-    BSD-style license that can be found in the LICENSE.txt file.
-*/
-/** \file */
-
 #pragma once
 
 #include <algorithm>
@@ -331,7 +319,7 @@ namespace rl::gui {
 
         /**
          * The amount of extra scaling applied to *icon* fonts.
-         * See \ref nanogui::Widget::m_icon_extra_scale.
+         * See \ref Widget::m_icon_extra_scale.
          */
         float icon_extra_scale() const
         {
@@ -340,7 +328,7 @@ namespace rl::gui {
 
         /**
          * Sets the amount of extra scaling applied to *icon* fonts.
-         * See \ref nanogui::Widget::m_icon_extra_scale.
+         * See \ref Widget::m_icon_extra_scale.
          */
         void set_icon_extra_scale(float scale)
         {
@@ -414,8 +402,8 @@ namespace rl::gui {
          * ``m_theme->m_icon_scale * this->m_icon_extra_scale``.
          *
          * \remark
-         *     See also: \ref nanogui::Theme::m_icon_scale and
-         *     \ref nanogui::Widget::m_icon_extra_scale.  This tiered scaling
+         *     See also: \ref Theme::m_icon_scale and
+         *     \ref Widget::m_icon_extra_scale.  This tiered scaling
          *     strategy may not be appropriate with fonts other than ``entypo.ttf``.
          */
         float icon_scale() const
@@ -450,19 +438,19 @@ namespace rl::gui {
         /**
          * \brief The amount of extra icon scaling used in addition the the theme's
          *        default icon font scale.  Default value is ``1.0``, which implies
-         *        that \ref nanogui::Widget::icon_scale simply returns the value
-         *        of \ref nanogui::Theme::m_icon_scale.
+         *        that \ref Widget::icon_scale simply returns the value
+         *        of \ref Theme::m_icon_scale.
          *
          * Most widgets do not need extra scaling, but some (e.g., CheckBox, TextBox)
          * need to adjust the Theme's default icon scaling
-         * (\ref nanogui::Theme::m_icon_scale) to properly display icons within their
+         * (\ref Theme::m_icon_scale) to properly display icons within their
          * bounds (upscale, or downscale).
          *
          * \rst
          * .. note::
          *
          *    When using ``nvgFontSize`` for icons in subclasses, make sure to call
-         *    the :func:`nanogui::Widget::icon_scale` function.  Expected usage when
+         *    the :func:`Widget::icon_scale` function.  Expected usage when
          *    *drawing* icon fonts is something like:
          *
          *    .. code-block:: cpp

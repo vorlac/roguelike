@@ -1,14 +1,3 @@
-/*
-    src/combobox.cpp -- simple combo box widget based on a popup button
-
-    NanoGUI was developed by Wenzel Jakob <wenzel.jakob@epfl.ch>.
-    The widget drawing code is based on the NanoVG demo application
-    by Mikko Mononen.
-
-    All rights reserved. Use of this source code is governed by a
-    BSD-style license that can be found in the LICENSE.txt file.
-*/
-
 #include <cassert>
 
 #include "gui/combobox.hpp"
@@ -29,7 +18,7 @@ namespace rl::gui {
         , m_container(popup())
         , m_selected_index(0)
     {
-        set_items(items);
+        this->set_items(items);
     }
 
     ComboBox::ComboBox(Widget* parent, const std::vector<std::string>& items,
@@ -38,18 +27,20 @@ namespace rl::gui {
         , m_container(popup())
         , m_selected_index(0)
     {
-        set_items(items, items_short);
+        this->set_items(items, items_short);
     }
 
     void ComboBox::set_selected_index(int idx)
     {
         if (m_items_short.empty())
             return;
+
         const std::vector<Widget*>& children = m_container->children();
         ((Button*)children[m_selected_index])->set_pushed(false);
         ((Button*)children[idx])->set_pushed(true);
+
         m_selected_index = idx;
-        set_caption(m_items_short[idx]);
+        this->set_caption(m_items_short[idx]);
     }
 
     void ComboBox::set_items(const std::vector<std::string>& items,
@@ -81,31 +72,31 @@ namespace rl::gui {
             button->set_flags(Button::RadioButton);
             button->set_callback([&, index] {
                 m_selected_index = index;
-                set_caption(m_items_short[index]);
-                set_pushed(false);
-                popup()->set_visible(false);
+                this->set_caption(m_items_short[index]);
+                this->set_pushed(false);
+                this->popup()->set_visible(false);
                 if (m_callback)
                     m_callback(index);
             });
             index++;
         }
-        set_selected_index(m_selected_index);
+        this->set_selected_index(m_selected_index);
     }
 
     bool ComboBox::scroll_event(const Vector2i& p, const Vector2f& rel)
     {
-        set_pushed(false);
-        popup()->set_visible(false);
+        this->set_pushed(false);
+        this->popup()->set_visible(false);
         if (rel.y() < 0)
         {
-            set_selected_index(std::min(m_selected_index + 1, (int)(items().size() - 1)));
+            this->set_selected_index(std::min(m_selected_index + 1, (int)(items().size() - 1)));
             if (m_callback)
                 m_callback(m_selected_index);
             return true;
         }
         else if (rel.y() > 0)
         {
-            set_selected_index(std::max(m_selected_index - 1, 0));
+            this->set_selected_index(std::max(m_selected_index - 1, 0));
             if (m_callback)
                 m_callback(m_selected_index);
             return true;

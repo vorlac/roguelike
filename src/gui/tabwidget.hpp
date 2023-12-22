@@ -1,16 +1,3 @@
-/*
-    nanogui/tabwidget.h -- Widget for organizing multiple
-    sub-widgets into tabs
-
-    NanoGUI was developed by Wenzel Jakob <wenzel.jakob@epfl.ch>.
-    The widget drawing code is based on the NanoVG demo application
-    by Mikko Mononen.
-
-    All rights reserved. Use of this source code is governed by a
-    BSD-style license that can be found in the LICENSE.txt file.
-*/
-/** \file */
-
 #pragma once
 
 #include <functional>
@@ -233,7 +220,7 @@ namespace rl::gui {
      *
      *    .. code-block:: cpp
      *
-     *       // `this` might be say a nanogui::Screen instance
+     *       // `this` might be say a Screen instance
      *       Window *window = new Window(this, "Window Title");
      *       TabWidget *tab_widget = window->add<TabWidget>();
      *       // this label would be a direct child of tabWidget,
@@ -244,7 +231,7 @@ namespace rl::gui {
      *
      *    .. code-block:: cpp
      *
-     *       // `this` might e.g. be a nanogui::Screen instance
+     *       // `this` might e.g. be a Screen instance
      *       Window *window = new Window(this, "Window Title");
      *       TabWidget *tab_widget = window->add<TabWidget>();
      *       // Create a tab first

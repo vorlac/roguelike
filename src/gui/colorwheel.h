@@ -1,18 +1,3 @@
-/*
-    NanoGUI was developed by Wenzel Jakob <wenzel.jakob@epfl.ch>.
-    The widget drawing code is based on the NanoVG demo application
-    by Mikko Mononen.
-
-    All rights reserved. Use of this source code is governed by a
-    BSD-style license that can be found in the LICENSE.txt file.
-*/
-/**
- * \file nanogui/colorwheel.h
- *
- * \brief Fancy analog widget to select a color value.  This widget was
- *        contributed by Dmitriy Morozov.
- */
-
 #pragma once
 
 #include "gui/widget.hpp"
@@ -92,14 +77,14 @@ namespace rl::gui {
 
         /**
          * The 'V' (value) component of the HSV color model.  See implementation \ref
-         * nanogui::ColorWheel::color for its usage.  Valid values are in the range
+         * ColorWheel::color for its usage.  Valid values are in the range
          * ``[0, 1]``.
          */
         float m_white;
 
         /**
          * The 'S' (satration) component of the HSV color model.  See implementation
-         * \ref nanogui::ColorWheel::color for its usage.  Valid values are in the
+         * \ref ColorWheel::color for its usage.  Valid values are in the
          * range ``[0, 1]``.
          */
         float m_black;
@@ -110,5 +95,4 @@ namespace rl::gui {
         /// The current callback to execute when the color value has changed.
         std::function<void(const Color&)> m_callback;
     };
-
 }

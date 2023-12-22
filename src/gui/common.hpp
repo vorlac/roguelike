@@ -1,18 +1,3 @@
-/*
-    NanoGUI was developed by Wenzel Jakob <wenzel.jakob@epfl.ch>.
-    The widget drawing code is based on the NanoVG demo application
-    by Mikko Mononen.
-
-    All rights reserved. Use of this source code is governed by a
-    BSD-style license that can be found in the LICENSE.txt file.
-*/
-
-/**
- * \file nanogui/common.h
- *
- * \brief Common definitions used by NanoGUI.
- */
-
 #pragma once
 
 #include <functional>
@@ -102,15 +87,11 @@
 #endif
 
 #if defined(_MSC_VER)
-  #pragma warning(disable : 4127)  // warning C4127: conditional expression is constant
-  #pragma warning(disable : 4244)  // warning C4244: conversion from X to Y, possible loss of data
-  #pragma warning(disable : 4251)  // warning C4251: class X needs to have dll-interface to be used
-                                   // by clients of class Y
-  #pragma warning(disable : 4714)  // warning C4714: function X marked as __forceinline not inlined
+  #pragma warning(disable : 4127)  // conditional expression is constant
+  #pragma warning(disable : 4244)  // conversion from X to Y, possible loss of data
+  #pragma warning(disable : 4251)  // class X needs dll-interface to be used by clients of class Y
+  #pragma warning(disable : 4714)  // function X marked as __forceinline not inlined
 #endif
-
-// These will produce broken links in the docs build
-#if !defined(DOXYGEN_SHOULD_SKIP_THIS)
 
 extern "C"
 {
@@ -123,15 +104,8 @@ struct NVGcolor;
 struct NVGglyphPosition;
 struct GLFWcursor;
 
-#endif  // DOXYGEN_SHOULD_SKIP_THIS
-
 // Define command key for windows/mac/linux
-#if defined(__APPLE__) || defined(DOXYGEN_DOCUMENTATION_BUILD)
-  /// If on OSX, maps to ``GLFW_MOD_SUPER``.  Otherwise, maps to ``GLFW_MOD_CONTROL``.
-  #define SYSTEM_COMMAND_MOD GLFW_MOD_SUPER
-#else
-  #define SYSTEM_COMMAND_MOD GLFW_MOD_CONTROL
-#endif
+#define SYSTEM_COMMAND_MOD GLFW_MOD_CONTROL
 
 namespace rl::gui {
 
@@ -148,10 +122,6 @@ namespace rl::gui {
                      ///< types.
     };
 
-// skip the forward declarations for the docs
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
-    /* Forward declarations */
     template <typename T>
     class ref;
     class AdvancedGridLayout;
@@ -190,8 +160,6 @@ namespace rl::gui {
     class VScrollPanel;
     class Widget;
     class Window;
-
-#endif  // DOXYGEN_SHOULD_SKIP_THIS
 
     /**
      * Static initialization; should be called once before invoking **any** NanoGUI
@@ -309,16 +277,6 @@ namespace rl::gui {
     extern std::vector<std::string> file_dialog(
         const std::vector<std::pair<std::string, std::string>>& filetypes, bool save, bool multiple);
 
-#if defined(__APPLE__) || defined(DOXYGEN_DOCUMENTATION_BUILD)
-    /**
-     * \brief Move to the application bundle's parent directory
-     *
-     * This is function is convenient when deploying .app bundles on OSX. It
-     * adjusts the file path to the parent directory containing the bundle.
-     */
-    extern void chdir_to_bundle_parent();
-#endif
-
     /**
      * \brief Convert a single UTF32 character code to UTF8.
      *
@@ -337,16 +295,9 @@ namespace rl::gui {
                                                                          const std::string& path);
 
 /// Convenience function for instanting a PNG icon from the application's data segment (via bin2c)
-#define nvgImageIcon(ctx, name) \
-    nanogui::__nanogui_get_image(ctx, #name, name##_png, name##_png_size)
+#define nvgImageIcon(ctx, name) __nanogui_get_image(ctx, #name, name##_png, name##_png_size)
     /// Helper function used by nvg_image_icon
     extern int __nanogui_get_image(NVGcontext* ctx, const std::string& name, uint8_t* data,
                                    uint32_t size);
 
 }
-
-NAMESPACE_BEGIN(enoki)
-/// Base class of all Enoki arrays
-template <typename Value_, bool IsMask_, typename Derived_>
-struct ArrayBase;
-NAMESPACE_END(enoki)

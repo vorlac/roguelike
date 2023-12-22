@@ -1,19 +1,5 @@
-/*
-    src/imagepanel.cpp -- Image panel widget which shows a number of
-    square-shaped icons
-
-    NanoGUI was developed by Wenzel Jakob <wenzel.jakob@epfl.ch>.
-    The widget drawing code is based on the NanoVG demo application
-    by Mikko Mononen.
-
-    All rights reserved. Use of this source code is governed by a
-    BSD-style license that can be found in the LICENSE.txt file.
-*/
-
 #include "gui/imagepanel.hpp"
 #include "gui/opengl.hpp"
-
-#pragma warning(disable : 4244)
 
 namespace rl::gui {
 

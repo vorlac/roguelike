@@ -1,19 +1,3 @@
-/*
-    The text box widget was contributed by Christian Schueller.
-
-    NanoGUI was developed by Wenzel Jakob <wenzel.jakob@epfl.ch>.
-    The widget drawing code is based on the NanoVG demo application
-    by Mikko Mononen.
-
-    All rights reserved. Use of this source code is governed by a
-    BSD-style license that can be found in the LICENSE.txt file.
-*/
-/**
- * \file nanogui/theme.h
- *
- * \brief Storage class for basic theme-related properties.
- */
-
 #pragma once
 
 #include "gui/object.hpp"
@@ -81,124 +65,124 @@ namespace rl::gui {
         /* Generic colors */
         /**
          * The color of the drop shadow drawn behind widgets
-         * (default: intensity=``0``, alpha=``128``; see \ref nanogui::Color::Color(int,int)).
+         * (default: intensity=``0``, alpha=``128``; see \ref Color::Color(int,int)).
          */
         Color m_drop_shadow;
         /**
          * The transparency color
-         * (default: intensity=``0``, alpha=``0``; see \ref nanogui::Color::Color(int,int)).
+         * (default: intensity=``0``, alpha=``0``; see \ref Color::Color(int,int)).
          */
         Color m_transparent;
         /**
          * The dark border color
-         * (default: intensity=``29``, alpha=``255``; see \ref nanogui::Color::Color(int,int)).
+         * (default: intensity=``29``, alpha=``255``; see \ref Color::Color(int,int)).
          */
         Color m_border_dark;
         /**
          * The light border color
-         * (default: intensity=``92``, alpha=``255``; see \ref nanogui::Color::Color(int,int)).
+         * (default: intensity=``92``, alpha=``255``; see \ref Color::Color(int,int)).
          */
         Color m_border_light;
         /**
          * The medium border color
-         * (default: intensity=``35``, alpha=``255``; see \ref nanogui::Color::Color(int,int)).
+         * (default: intensity=``35``, alpha=``255``; see \ref Color::Color(int,int)).
          */
         Color m_border_medium;
         /**
          * The text color
-         * (default: intensity=``255``, alpha=``160``; see \ref nanogui::Color::Color(int,int)).
+         * (default: intensity=``255``, alpha=``160``; see \ref Color::Color(int,int)).
          */
         Color m_text_color;
         /**
          * The disable dtext color
-         * (default: intensity=``255``, alpha=``80``; see \ref nanogui::Color::Color(int,int)).
+         * (default: intensity=``255``, alpha=``80``; see \ref Color::Color(int,int)).
          */
         Color m_disabled_text_color;
         /**
          * The text shadow color
-         * (default: intensity=``0``, alpha=``160``; see \ref nanogui::Color::Color(int,int)).
+         * (default: intensity=``0``, alpha=``160``; see \ref Color::Color(int,int)).
          */
         Color m_text_color_shadow;
-        /// The icon color (default: \ref nanogui::Theme::m_text_color).
+        /// The icon color (default: \ref Theme::m_text_color).
         Color m_icon_color;
 
         /* Button colors */
         /**
          * The top gradient color for buttons in focus
-         * (default: intensity=``64``, alpha=``255``; see \ref nanogui::Color::Color(int,int)).
+         * (default: intensity=``64``, alpha=``255``; see \ref Color::Color(int,int)).
          */
         Color m_button_gradient_top_focused;
         /**
          * The bottom gradient color for buttons in focus
-         * (default: intensity=``48``, alpha=``255``; see \ref nanogui::Color::Color(int,int)).
+         * (default: intensity=``48``, alpha=``255``; see \ref Color::Color(int,int)).
          */
         Color m_button_gradient_bot_focused;
         /**
          * The top gradient color for buttons not in focus
-         * (default: intensity=``74``, alpha=``255``; see \ref nanogui::Color::Color(int,int)).
+         * (default: intensity=``74``, alpha=``255``; see \ref Color::Color(int,int)).
          */
         Color m_button_gradient_top_unfocused;
         /**
          * The bottom gradient color for buttons not in focus
-         * (default: intensity=``58``, alpha=``255``; see \ref nanogui::Color::Color(int,int)).
+         * (default: intensity=``58``, alpha=``255``; see \ref Color::Color(int,int)).
          */
         Color m_button_gradient_bot_unfocused;
         /**
          * The top gradient color for buttons currently pushed
-         * (default: intensity=``41``, alpha=``255``; see \ref nanogui::Color::Color(int,int)).
+         * (default: intensity=``41``, alpha=``255``; see \ref Color::Color(int,int)).
          */
         Color m_button_gradient_top_pushed;
         /**
          * The bottom gradient color for buttons currently pushed
-         * (default: intensity=``29``, alpha=``255``; see \ref nanogui::Color::Color(int,int)).
+         * (default: intensity=``29``, alpha=``255``; see \ref Color::Color(int,int)).
          */
         Color m_button_gradient_bot_pushed;
 
         /* Window colors */
         /**
          * The fill color for a Window that is not in focus
-         * (default: intensity=``43``, alpha=``230``; see \ref nanogui::Color::Color(int,int)).
+         * (default: intensity=``43``, alpha=``230``; see \ref Color::Color(int,int)).
          */
         Color m_window_fill_unfocused;
         /**
          * The fill color for a Window that is in focus
-         * (default: intensity=``45``, alpha=``230``; see \ref nanogui::Color::Color(int,int)).
+         * (default: intensity=``45``, alpha=``230``; see \ref Color::Color(int,int)).
          */
         Color m_window_fill_focused;
         /**
          * The title color for a Window that is not in focus
-         * (default: intensity=``220``, alpha=``160``; see \ref nanogui::Color::Color(int,int)).
+         * (default: intensity=``220``, alpha=``160``; see \ref Color::Color(int,int)).
          */
         Color m_window_title_unfocused;
         /**
          * The title color for a Window that is in focus
-         * (default: intensity=``255``, alpha=``190``; see \ref nanogui::Color::Color(int,int)).
+         * (default: intensity=``255``, alpha=``190``; see \ref Color::Color(int,int)).
          */
         Color m_window_title_focused;
 
         /**
          * The top gradient color for Window headings
-         * (default: \ref nanogui::Theme::m_button_gradient_top_unfocused).
+         * (default: \ref Theme::m_button_gradient_top_unfocused).
          */
         Color m_window_header_gradient_top;
         /**
          * The bottom gradient color for Window headings
-         * (default: \ref nanogui::Theme::m_button_gradient_bot_unfocused).
+         * (default: \ref Theme::m_button_gradient_bot_unfocused).
          */
         Color m_window_header_gradient_bot;
-        /// The Window header top separation color (default: \ref nanogui::Theme::m_border_light).
+        /// The Window header top separation color (default: \ref Theme::m_border_light).
         Color m_window_header_sep_top;
-        /// The Window header bottom separation color (default: \ref nanogui::Theme::m_border_dark).
+        /// The Window header bottom separation color (default: \ref Theme::m_border_dark).
         Color m_window_header_sep_bot;
 
         /**
          * The popup window color
-         * (default: intensity=``50``, alpha=``255``; see \ref nanogui::Color::Color(int,int))).
+         * (default: intensity=``50``, alpha=``255``; see \ref Color::Color(int,int))).
          */
         Color m_window_popup;
         /**
          * The transparent popup window color
-         * (default: intensity=``50``, alpha=``0``; see \ref nanogui::Color::Color(int,int))).
+         * (default: intensity=``50``, alpha=``0``; see \ref Color::Color(int,int))).
          */
         Color m_window_popup_transparent;
 

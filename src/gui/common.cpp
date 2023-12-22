@@ -1,14 +1,3 @@
-/*
-    nanogui/nanogui.cpp -- Basic initialization and utility routines
-
-    NanoGUI was developed by Wenzel Jakob <wenzel.jakob@epfl.ch>.
-    The widget drawing code is based on the NanoVG demo application
-    by Mikko Mononen.
-
-    All rights reserved. Use of this source code is governed by a
-    BSD-style license that can be found in the LICENSE.txt file.
-*/
-
 #include "gui/screen.hpp"
 
 #if defined(_WIN32)
@@ -27,7 +16,6 @@
 #include <mutex>
 #include <thread>
 
-#include "gui/metal.hpp"
 #include "gui/opengl.hpp"
 
 #if !defined(_WIN32)
@@ -36,28 +24,15 @@
   #include <signal.h>
 #endif
 
-#if defined(EMSCRIPTEN)
-  #include <emscripten/emscripten.h>
-#endif
-
 namespace rl::gui {
 
     extern std::map<GLFWwindow*, Screen*> __nanogui_screens;
-
-#if defined(__APPLE__)
-    extern void disable_saved_application_state_osx();
-#endif
 
     void init()
     {
 #if !defined(_WIN32)
         /* Avoid locale-related number parsing issues */
         setlocale(LC_NUMERIC, "C");
-#endif
-
-#if defined(__APPLE__)
-        disable_saved_application_state_osx();
-        glfwInitHint(GLFW_COCOA_CHDIR_RESOURCES, GLFW_FALSE);
 #endif
 
         glfwSetErrorCallback([](int error, const char* descr) {
@@ -69,19 +44,10 @@ namespace rl::gui {
         if (!glfwInit())
             throw std::runtime_error("Could not initialize GLFW!");
 
-#if defined(NANOGUI_USE_METAL)
-        metal_init();
-#endif
-
         glfwSetTime(0);
     }
 
     static bool mainloop_active = false;
-
-#if defined(EMSCRIPTEN)
-    static double emscripten_last = 0;
-    static float emscripten_refresh = 0;
-#endif
 
     std::mutex m_async_mutex;
     std::vector<std::function<void()>> m_async_functions;
@@ -94,17 +60,7 @@ namespace rl::gui {
         auto mainloop_iteration = []() {
             int num_screens = 0;
 
-#if defined(EMSCRIPTEN)
-            double emscripten_now = glfwGetTime();
-            bool emscripten_redraw = false;
-            if (float((emscripten_now - emscripten_last) * 1000) > emscripten_refresh)
             {
-                emscripten_redraw = true;
-                emscripten_last = emscripten_now;
-            }
-#endif
-
-            /* Run async functions */ {
                 std::lock_guard<std::mutex> guard(m_async_mutex);
                 for (auto& f : m_async_functions)
                     f();
@@ -123,34 +79,21 @@ namespace rl::gui {
                     screen->set_visible(false);
                     continue;
                 }
-#if defined(EMSCRIPTEN)
-                if (emscripten_redraw || screen->tooltip_fade_in_progress())
-                    screen->redraw();
-#endif
+
                 screen->draw_all();
                 num_screens++;
             }
 
             if (num_screens == 0)
             {
-                /* Give up if there was nothing to draw */
+                // Give up if there was nothing to draw
                 mainloop_active = false;
                 return;
             }
 
-#if !defined(EMSCRIPTEN)
-            /* Wait for mouse/keyboard or empty refresh events */
+            // Wait for mouse/keyboard or empty refresh events
             glfwWaitEvents();
-#endif
         };
-
-#if defined(EMSCRIPTEN)
-        emscripten_refresh = refresh;
-        /* The following will throw an exception and enter the main
-           loop within Emscripten. This means that none of the code below
-           (or in the caller, for that matter) will be executed */
-        emscripten_set_main_loop(mainloop_iteration, 0, 1);
-#endif
 
         mainloop_active = true;
 
@@ -172,10 +115,10 @@ namespace rl::gui {
             quantum_count = std::numeric_limits<size_t>::max();
         }
 
-        /* If there are no mouse/keyboard events, try to refresh the
-           view roughly every 50 ms (default); this is to support animations
-           such as progress bars while keeping the system load
-           reasonably low */
+        // If there are no mouse/keyboard events, try to refresh the
+        // view roughly every 50 ms (default); this is to support animations
+        // such as progress bars while keeping the system load
+        // reasonably low
         refresh_thread = std::thread([quantum, quantum_count]() {
             while (true)
             {
@@ -228,29 +171,13 @@ namespace rl::gui {
 
     std::pair<bool, bool> test_10bit_edr_support()
     {
-#if defined(NANOGUI_USE_METAL)
-        return metal_10bit_edr_support();
-#else
         return { false, false };
-#endif
     }
 
     void shutdown()
     {
         glfwTerminate();
-
-#if defined(NANOGUI_USE_METAL)
-        metal_shutdown();
-#endif
     }
-
-#if defined(__clang__)
-  #define NANOGUI_FALLTHROUGH [[clang::fallthrough]];
-#elif defined(__GNUG__)
-  #define NANOGUI_FALLTHROUGH __attribute__((fallthrough));
-#else
-  #define NANOGUI_FALLTHROUGH [[fallthrough]];
-#endif
 
     std::string utf8(uint32_t c)
     {
@@ -275,27 +202,27 @@ namespace rl::gui {
                 seq[5] = 0x80 | (c & 0x3f);
                 c = c >> 6;
                 c |= 0x4000000;
-                NANOGUI_FALLTHROUGH
+                [[fallthrough]];
             case 5:
                 seq[4] = 0x80 | (c & 0x3f);
                 c = c >> 6;
                 c |= 0x200000;
-                NANOGUI_FALLTHROUGH
+                [[fallthrough]];
             case 4:
                 seq[3] = 0x80 | (c & 0x3f);
                 c = c >> 6;
                 c |= 0x10000;
-                NANOGUI_FALLTHROUGH
+                [[fallthrough]];
             case 3:
                 seq[2] = 0x80 | (c & 0x3f);
                 c = c >> 6;
                 c |= 0x800;
-                NANOGUI_FALLTHROUGH
+                [[fallthrough]];
             case 2:
                 seq[1] = 0x80 | (c & 0x3f);
                 c = c >> 6;
                 c |= 0xc0;
-                NANOGUI_FALLTHROUGH
+                [[fallthrough]];
             case 1:
                 seq[0] = static_cast<char>(c);
         }
@@ -362,7 +289,6 @@ namespace rl::gui {
         return result.empty() ? "" : result.front();
     }
 
-#if !defined(__APPLE__)
     std::vector<std::string> file_dialog(
         const std::vector<std::pair<std::string, std::string>>& filetypes, bool save, bool multiple)
     {
@@ -370,10 +296,7 @@ namespace rl::gui {
         if (save && multiple)
             throw std::invalid_argument("save and multiple must not both be true.");
 
-  #if defined(EMSCRIPTEN)
-        throw std::runtime_error(
-            "Opening files is not supported when NanoGUI is compiled via Emscripten");
-  #elif defined(_WIN32)
+#if defined(_WIN32)
         OPENFILENAME ofn;
         ZeroMemory(&ofn, sizeof(OPENFILENAME));
         ofn.lStructSize = sizeof(OPENFILENAME);
@@ -467,7 +390,7 @@ namespace rl::gui {
         }
 
         return result;
-  #else
+#else
         char buffer[FILE_DIALOG_MAX_BUFFER];
         buffer[0] = '\0';
 
@@ -509,12 +432,8 @@ namespace rl::gui {
         }
 
         return result;
-  #endif
-    }
 #endif
-
-    static void (*object_inc_ref_py)(PyObject*) noexcept = nullptr;
-    static void (*object_dec_ref_py)(PyObject*) noexcept = nullptr;
+    }
 
     Object::~Object()
     {
@@ -526,17 +445,10 @@ namespace rl::gui {
 
         while (true)
         {
-            if (value & 1)
-            {
-                if (!m_state.compare_exchange_weak(value, value + 2, std::memory_order_relaxed,
-                                                   std::memory_order_relaxed))
-                    continue;
-            }
-            else
-            {
-                object_inc_ref_py((PyObject*)value);
-            }
-
+            assert((value & 1) != 0);
+            if (!m_state.compare_exchange_weak(value, value + 2, std::memory_order_relaxed,
+                                               std::memory_order_relaxed))
+                continue;
             break;
         }
     }
@@ -547,71 +459,24 @@ namespace rl::gui {
 
         while (true)
         {
-            if (value & 1)
+            assert((value & 1) != 0);
+
+            if (value == 1)
             {
-                if (value == 1)
-                {
-                    fprintf(stderr, "Object::dec_ref(%p): reference count underflow!", this);
-                    abort();
-                }
-                else if (value == 3)
-                {
-                    delete this;
-                }
-                else
-                {
-                    if (!m_state.compare_exchange_weak(value, value - 2, std::memory_order_relaxed,
-                                                       std::memory_order_relaxed))
-                        continue;
-                }
+                fprintf(stderr, "Object::dec_ref(%p): reference count underflow!", this);
+                abort();
+            }
+            else if (value == 3)
+            {
+                delete this;
             }
             else
             {
-                object_dec_ref_py((PyObject*)value);
+                if (!m_state.compare_exchange_weak(value, value - 2, std::memory_order_relaxed,
+                                                   std::memory_order_relaxed))
+                    continue;
             }
             break;
         }
     }
-
-    void Object::set_self_py(PyObject* o) noexcept
-    {
-        uintptr_t value = m_state.load(std::memory_order_relaxed);
-        if (value & 1)
-        {
-            value >>= 1;
-            for (uintptr_t i = 0; i < value; ++i)
-                object_inc_ref_py(o);
-
-            uintptr_t o_i = (uintptr_t)o;
-            if (o_i & 1)
-            {
-                fprintf(stderr, "Object::set_self_py(%p): invalid pointer alignment!", this);
-                abort();
-            }
-
-            m_state.store(o_i);
-        }
-        else
-        {
-            fprintf(stderr, "Object::set_self_py(%p): a Python object was already present!", this);
-            abort();
-        }
-    }
-
-    PyObject* Object::self_py() const noexcept
-    {
-        uintptr_t value = m_state.load(std::memory_order_relaxed);
-        if (value & 1)
-            return nullptr;
-        else
-            return (PyObject*)value;
-    }
-
-    void object_init_py(void (*object_inc_ref_py_)(PyObject*) noexcept,
-                        void (*object_dec_ref_py_)(PyObject*) noexcept)
-    {
-        object_inc_ref_py = object_inc_ref_py_;
-        object_dec_ref_py = object_dec_ref_py_;
-    }
-
 }

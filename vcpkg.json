@@ -5,11 +5,10 @@
   "version": "0.1.0",
   "dependencies": [
     "simdjson",
-    "pkgconf",
-    "libusb",
     "flecs",
     "argparse",
     "nanovg",
+    "eigen3",
     "glfw3",
     "glm",
     "fmt"

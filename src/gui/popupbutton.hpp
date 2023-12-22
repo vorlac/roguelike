@@ -1,15 +1,3 @@
-/*
-    nanogui/popupbutton.h -- Button which launches a popup widget
-
-    NanoGUI was developed by Wenzel Jakob <wenzel.jakob@epfl.ch>.
-    The widget drawing code is based on the NanoVG demo application
-    by Mikko Mononen.
-
-    All rights reserved. Use of this source code is governed by a
-    BSD-style license that can be found in the LICENSE.txt file.
-*/
-/** \file */
-
 #pragma once
 
 #include "gui/button.hpp"
@@ -23,7 +11,7 @@ namespace rl::gui {
      * \brief Button which launches a popup widget.
      *
      * \remark
-     *     This class overrides \ref nanogui::Widget::mIconExtraScale to be ``0.8f``,
+     *     This class overrides \ref Widget::mIconExtraScale to be ``0.8f``,
      *     which affects all subclasses of this Widget.  Subclasses must explicitly
      *     set a different value if needed (e.g., in their constructor).
      */

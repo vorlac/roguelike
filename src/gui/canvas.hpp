@@ -1,20 +1,7 @@
-/*
-    NanoGUI was developed by Wenzel Jakob <wenzel.jakob@epfl.ch>.
-    The widget drawing code is based on the NanoVG demo application
-    by Mikko Mononen.
-
-    All rights reserved. Use of this source code is governed by a
-    BSD-style license that can be found in the LICENSE.txt file.
-*/
-/**
- * \file nanogui/canvas.h
- *
- * \brief Canvas widget for rendering OpenGL content.  This widget was
- *        contributed by Jan Winkler.
- */
-
 #pragma once
+#include <cstdint>
 
+#include "gui/common.hpp"
 #include "gui/widget.hpp"
 
 namespace rl::gui {
@@ -31,7 +18,7 @@ namespace rl::gui {
      *
      * \rst
      * **Usage**
-     *     Override :func:`nanogui::GLCanvas::draw_contents` in subclasses to provide
+     *     Override :func:`GLCanvas::draw_contents` in subclasses to provide
      *     custom drawing code.  See :ref:`nanogui_example_4`.
      *
      * \endrst
@@ -106,12 +93,8 @@ namespace rl::gui {
 
     protected:
         ref<RenderPass> m_render_pass;
-#if defined(NANOGUI_USE_METAL)
-        ref<RenderPass> m_render_pass_resolved;
-#endif
         bool m_draw_border;
         Color m_border_color;
         bool m_render_to_texture;
     };
-
 }

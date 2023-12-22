@@ -1,17 +1,3 @@
-/*
-    NanoGUI was developed by Wenzel Jakob <wenzel.jakob@epfl.ch>.
-    The widget drawing code is based on the NanoVG demo application
-    by Mikko Mononen.
-
-    All rights reserved. Use of this source code is governed by a
-    BSD-style license that can be found in the LICENSE.txt file.
-*/
-/**
- * \file nanogui/checkbox.h
- *
- * \brief Two-state check box Widget.
- */
-
 #pragma once
 
 #include "gui/widget.hpp"
@@ -24,7 +10,7 @@ namespace rl::gui {
      * \brief Two-state check box widget.
      *
      * \remark
-     *     This class overrides \ref nanogui::Widget::mIconExtraScale to be ``1.2f``,
+     *     This class overrides \ref Widget::mIconExtraScale to be ``1.2f``,
      *     which affects all subclasses of this Widget.  Subclasses must explicitly
      *     set a different value if needed (e.g., in their constructor).
      */
@@ -43,7 +29,7 @@ namespace rl::gui {
          * \param callback
          *     If provided, the callback to execute when the CheckBox is checked or
          *     unchecked.  Default parameter function does nothing.  See
-         *     \ref nanogui::CheckBox::mPushed for the difference between "pushed"
+         *     \ref CheckBox::mPushed for the difference between "pushed"
          *     and "checked".
          */
         CheckBox(Widget* parent, const std::string& caption = "Untitled",
@@ -73,7 +59,7 @@ namespace rl::gui {
             m_checked = checked;
         }
 
-        /// Whether or not this CheckBox is currently pushed.  See \ref nanogui::CheckBox::m_pushed.
+        /// Whether or not this CheckBox is currently pushed.  See \ref CheckBox::m_pushed.
         const bool& pushed() const
         {
             return m_pushed;
@@ -111,15 +97,15 @@ namespace rl::gui {
         std::string m_caption;
         /**
          * Internal tracking variable to distinguish between mouse click and release.
-         * \ref nanogui::CheckBox::m_callback is only called upon release.  See
-         * \ref nanogui::CheckBox::mouse_button_event for specific conditions.
+         * \ref CheckBox::m_callback is only called upon release.  See
+         * \ref CheckBox::mouse_button_event for specific conditions.
          */
         bool m_pushed;
 
         /// Whether or not this CheckBox is currently checked or unchecked.
         bool m_checked;
 
-        /// The function to execute when \ref nanogui::CheckBox::m_checked is changed.
+        /// The function to execute when \ref CheckBox::m_checked is changed.
         std::function<void(bool)> m_callback;
     };
 

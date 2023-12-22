@@ -1,17 +1,3 @@
-/*
-    nanogui/screen.h -- Top-level widget and interface between NanoGUI and GLFW
-
-    A significant redesign of this code was contributed by Christian Schueller.
-
-    NanoGUI was developed by Wenzel Jakob <wenzel.jakob@epfl.ch>.
-    The widget drawing code is based on the NanoVG demo application
-    by Mikko Mononen.
-
-    All rights reserved. Use of this source code is governed by a
-    BSD-style license that can be found in the LICENSE.txt file.
-*/
-/** \file */
-
 #pragma once
 
 #include "gui/texture.hpp"
@@ -237,23 +223,6 @@ namespace rl::gui {
         {
             return m_float_buffer;
         }
-
-#if defined(NANOGUI_USE_METAL)
-        /// Return the associated CAMetalLayer object
-        void* metal_layer() const;
-
-        /// Return the texure of the currently active Metal drawable (or NULL)
-        void* metal_texture() const
-        {
-            return m_metal_texture;
-        }
-
-        /// Return the associated depth/stencil texture
-        Texture* depth_stencil_texture()
-        {
-            return m_depth_stencil_texture;
-        }
-#endif
 
         /// Flush all queued up NanoVG rendering commands
         void nvg_flush();

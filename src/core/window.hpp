@@ -9,6 +9,7 @@
 #include "ds/point.hpp"
 #include "ds/rect.hpp"
 #include "ds/vector2d.hpp"
+#include "gui/screen.hpp"
 #include "sdl/defs.hpp"
 
 SDL_C_LIB_BEGIN
@@ -22,7 +23,7 @@ namespace rl {
 
     using WindowID = SDL3::SDL_WindowID;
 
-    class Window
+    class Window : public gui::Screen
     {
     public:
         struct Event

@@ -16,7 +16,7 @@ set(AUTOFORMAT_SRC_ON_CONFIGURE
 )
 
 set(REBUILD_RESOURCES_ON_CONFIGURE 
-  OFF CACHE FORCE BOOL
+  ON CACHE FORCE BOOL
     "Enables shader (.glsl) and font (.ttf) hexdumps to be built into resource hpp/cpp files"
 )
 
@@ -49,7 +49,7 @@ set(compiler_is_msvc "$<CXX_COMPILER_ID:MSVC>")
 set(compiler_is_gnu "$<CXX_COMPILER_ID:GNU>")
 set(compiler_is_clang "$<OR:$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:Clang>>")
 
-set(FORCE_STATIC_VCRT ON)
+set(FORCE_STATIC_VCRT OFF)
 set(BUILD_SHARED_LIBS OFF)
 
 # VCPKG libraries
@@ -60,6 +60,7 @@ find_package(flecs CONFIG REQUIRED)
 find_package(simdjson CONFIG REQUIRED)
 find_package(argparse CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)
+find_package(Eigen3 CONFIG REQUIRED)
 
 # SDL3 build options
 set(SDL_LIBC OFF)
@@ -205,6 +206,7 @@ target_link_libraries(${PROJECT_NAME}
   PRIVATE simdjson::simdjson
   PRIVATE argparse::argparse
   PRIVATE flecs::flecs_static
+  PRIVATE Eigen3::Eigen
   PRIVATE nanovg::nanovg
   PRIVATE glm::glm
   PRIVATE fmt::fmt

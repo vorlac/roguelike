@@ -1,18 +1,3 @@
-/*
-    NanoGUI was developed by Wenzel Jakob <wenzel.jakob@epfl.ch>.
-    The widget drawing code is based on the NanoVG demo application
-    by Mikko Mononen.
-
-    All rights reserved. Use of this source code is governed by a
-    BSD-style license that can be found in the LICENSE.txt file.
-*/
-/**
- * \file nanogui/layout.h
- *
- * \brief A collection of useful layout managers.  The \ref nanogui::GridLayout
- *        was contributed by Christian Schueller.
- */
-
 #pragma once
 
 #include <unordered_map>
@@ -624,5 +609,4 @@ namespace rl::gui {
         /// The margin around this AdvancedGridLayout.
         int m_margin;
     };
-
 }

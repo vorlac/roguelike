@@ -71,7 +71,7 @@ namespace rl {
             const std::unique_ptr<rl::Renderer>& renderer{ m_window->renderer() };
             gl::InstancedVertexBuffer vbo{ renderer->get_viewport() };
 
-            gui::Button* button = new gui::Button(nullptr);
+            gui::Button* button = new gui::Button(dynamic_cast<gui::Screen*>(m_window.get()));
             button->set_callback([] {
                 log::warning("Button Pressed");
             });

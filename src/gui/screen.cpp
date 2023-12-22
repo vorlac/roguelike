@@ -1,27 +1,13 @@
-/*
-    src/screen.cpp -- Top-level widget and interface between NanoGUI and GLFW
-
-    A significant redesign of this code was contributed by Christian Schueller.
-
-    NanoGUI was developed by Wenzel Jakob <wenzel.jakob@epfl.ch>.
-    The widget drawing code is based on the NanoVG demo application
-    by Mikko Mononen.
-
-    All rights reserved. Use of this source code is governed by a
-    BSD-style license that can be found in the LICENSE.txt file.
-*/
-
 #include <iostream>
 #include <map>
 
-#include "gui/metal.hpp"
 #include "gui/opengl.hpp"
 #include "gui/popup.hpp"
 #include "gui/screen.hpp"
 #include "gui/theme.hpp"
 #include "gui/window.hpp"
 
-#pragma warning(disable : 4244)
+// #pragma warning(disable : 4244)
 
 #if defined(EMSCRIPTEN)
   #include <emscripten/emscripten.h>
@@ -162,28 +148,18 @@ namespace rl::gui {
     {
         memset(m_cursors, 0, sizeof(GLFWcursor*) * (int)Cursor::CursorCount);
 
-#if defined(NANOGUI_USE_OPENGL)
         glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
 
-        /* Request a forward compatible OpenGL gl_major.gl_minor core profile context.
-           Default value is an OpenGL 3.3 core profile context. */
+        // Request a forward compatible OpenGL gl_major.gl_minor core profile context.
+        // Default value is an OpenGL 3.3 core profile context.
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, gl_major);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, gl_minor);
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-#elif defined(NANOGUI_USE_GLES)
-        glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
-        glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_EGL_CONTEXT_API);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, NANOGUI_GLES_VERSION);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-#elif defined(NANOGUI_USE_METAL)
-        glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-        m_stencil_buffer = stencil_buffer = false;
-#else
-  #error Did not select a graphics API!
-#endif
 
-        int color_bits = 8, depth_bits = 0, stencil_bits = 0;
+        int color_bits = 8;
+        int depth_bits = 0;
+        int stencil_bits = 0;
 
         if (stencil_buffer && !depth_buffer)
             throw std::runtime_error(
@@ -205,7 +181,7 @@ namespace rl::gui {
         glfwWindowHint(GLFW_STENCIL_BITS, stencil_bits);
         glfwWindowHint(GLFW_DEPTH_BITS, depth_bits);
 
-#if (defined(NANOGUI_USE_OPENGL) || defined(NANOGUI_USE_METAL)) && defined(GLFW_FLOATBUFFER)
+#if defined(NANOGUI_USE_OPENGL) && defined(GLFW_FLOATBUFFER)
         glfwWindowHint(GLFW_FLOATBUFFER, m_float_buffer ? GL_TRUE : GL_FALSE);
 #else
         m_float_buffer = false;
@@ -245,24 +221,15 @@ namespace rl::gui {
             }
         }
 
-        if (!m_glfw_window)
+        if (m_glfw_window == nullptr)
         {
             (void)gl_major;
             (void)gl_minor;
-#if defined(NANOGUI_USE_OPENGL)
             throw std::runtime_error("Could not create an OpenGL " + std::to_string(gl_major) +
                                      "." + std::to_string(gl_minor) + " context!");
-#elif defined(NANOGUI_USE_GLES)
-            throw std::runtime_error("Could not create a GLES 2 context!");
-#elif defined(NANOGUI_USE_METAL)
-            throw std::runtime_error("Could not create a GLFW window for rendering using Metal!");
-#endif
         }
 
-#if defined(NANOGUI_USE_OPENGL) || defined(NANOGUI_USE_GLES)
         glfwMakeContextCurrent(m_glfw_window);
-#endif
-
         glfwSetInputMode(m_glfw_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
         // #if defined(NANOGUI_GLAD)
@@ -275,7 +242,6 @@ namespace rl::gui {
         //     }
         // #endif
 
-#if defined(NANOGUI_USE_OPENGL)
         if (m_float_buffer)
         {
             GLboolean float_mode;
@@ -286,27 +252,15 @@ namespace rl::gui {
                 m_float_buffer = false;
             }
         }
-#endif
 
         glfwGetFramebufferSize(m_glfw_window, &m_fbsize[0], &m_fbsize[1]);
 
-#if defined(NANOGUI_USE_OPENGL) || defined(NANOGUI_USE_GLES)
         CHK(glViewport(0, 0, m_fbsize[0], m_fbsize[1]));
         CHK(glClearColor(m_background[0], m_background[1], m_background[2], m_background[3]));
         CHK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
 
         glfwSwapInterval(0);
         glfwSwapBuffers(m_glfw_window);
-#endif
-
-#if defined(__APPLE__)
-        /* Poll for events once before starting a potentially
-           lengthy loading process. This is needed to be
-           classified as "interactive" by other software such
-           as iTerm2 */
-
-        glfwPollEvents();
-#endif
 
         /* Propagate GLFW events to the appropriate Screen instance */
         glfwSetCursorPosCallback(m_glfw_window, [](GLFWwindow* w, double x, double y) {
@@ -408,18 +362,7 @@ namespace rl::gui {
             s->resize_callback_event(s->m_size.x(), s->m_size.y());
         });
 
-        initialize(m_glfw_window, true);
-
-#if defined(NANOGUI_USE_METAL)
-        if (depth_buffer)
-        {
-            m_depth_stencil_texture = new Texture(
-                stencil_buffer ? Texture::PixelFormat::DepthStencil : Texture::PixelFormat::Depth,
-                Texture::ComponentFormat::Float32, framebuffer_size(),
-                Texture::InterpolationMode::Bilinear, Texture::InterpolationMode::Bilinear,
-                Texture::WrapMode::ClampToEdge, 1, Texture::TextureFlags::RenderTarget);
-        }
-#endif
+        this->initialize(m_glfw_window, true);
     }
 
     void Screen::initialize(GLFWwindow* window, bool shutdown_glfw)
@@ -430,32 +373,8 @@ namespace rl::gui {
         glfwGetFramebufferSize(m_glfw_window, &m_fbsize[0], &m_fbsize[1]);
 
         m_pixel_ratio = get_pixel_ratio(window);
-
-#if defined(EMSCRIPTEN)
-        double w, h;
-        emscripten_get_element_css_size("#canvas", &w, &h);
-        double ratio = emscripten_get_device_pixel_ratio(), w2 = w * ratio, h2 = h * ratio;
-
-        if (w != m_size[0] || h != m_size[1])
-        {
-            /* The canvas element is configured as width/height: auto, expand to
-               the available space instead of using the specified window resolution */
-            nanogui_emscripten_resize_callback(0, nullptr, nullptr);
-            emscripten_set_resize_callback(nullptr, nullptr, false,
-                                           nanogui_emscripten_resize_callback);
-        }
-        else if (w != w2 || h != h2)
-        {
-            /* Configure for rendering on a high-DPI display */
-            emscripten_set_canvas_element_size("#canvas", (int)w2, (int)h2);
-            emscripten_set_element_css_size("#canvas", w, h);
-        }
-        m_fbsize = Vector2i((int)w2, (int)h2);
-        m_size = Vector2i((int)w, (int)h);
-#elif defined(_WIN32) || defined(__linux__)
-        if (m_pixel_ratio != 1 && !m_fullscreen)
+        if (m_pixel_ratio != 1.0f && !m_fullscreen)
             glfwSetWindowSize(window, m_size.x() * m_pixel_ratio, m_size.y() * m_pixel_ratio);
-#endif
 
         // #if defined(NANOGUI_GLAD)
         //     if (!glad_initialized)
@@ -474,18 +393,7 @@ namespace rl::gui {
         flags |= NVG_DEBUG;
 #endif
 
-#if defined(NANOGUI_USE_OPENGL)
         m_nvg_context = nvgCreateGL3(flags);
-#elif defined(NANOGUI_USE_GLES)
-        m_nvg_context = nvgCreateGLES2(flags);
-#elif defined(NANOGUI_USE_METAL)
-        void* nswin = glfwGetCocoaWindow(window);
-        metal_window_init(nswin, m_float_buffer);
-        metal_window_set_size(nswin, m_fbsize);
-        m_nvg_context = nvgCreateMTL(metal_layer(), metal_command_queue(),
-                                     flags | NVG_TRIPLE_BUFFER);
-#endif
-
         if (!m_nvg_context)
             throw std::runtime_error("Could not initialize NanoVG!");
 
@@ -515,15 +423,7 @@ namespace rl::gui {
                 glfwDestroyCursor(m_cursors[i]);
 
         if (m_nvg_context)
-        {
-#if defined(NANOGUI_USE_OPENGL)
             nvgDeleteGL3(m_nvg_context);
-#elif defined(NANOGUI_USE_GLES)
-            nvgDeleteGLES2(m_nvg_context);
-#elif defined(NANOGUI_USE_METAL)
-            nvgDeleteMTL(m_nvg_context);
-#endif
-        }
 
         if (m_glfw_window && m_shutdown_glfw)
             glfwDestroyWindow(m_glfw_window);
@@ -555,70 +455,30 @@ namespace rl::gui {
     {
         Widget::set_size(size);
 
-#if defined(_WIN32) || defined(__linux__) || defined(EMSCRIPTEN)
         glfwSetWindowSize(m_glfw_window, size.x() * m_pixel_ratio, size.y() * m_pixel_ratio);
-#else
-        glfwSetWindowSize(m_glfw_window, size.x(), size.y());
-#endif
     }
 
     void Screen::clear()
     {
-#if defined(NANOGUI_USE_OPENGL) || defined(NANOGUI_USE_GLES)
         CHK(glClearColor(m_background[0], m_background[1], m_background[2], m_background[3]));
         CHK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
-#elif defined(NANOGUI_USE_METAL)
-        mnvgClearWithColor(m_nvg_context, m_background);
-#endif
     }
 
     void Screen::draw_setup()
     {
-#if defined(NANOGUI_USE_OPENGL) || defined(NANOGUI_USE_GLES)
         glfwMakeContextCurrent(m_glfw_window);
-#elif defined(NANOGUI_USE_METAL)
-        void* nswin = glfwGetCocoaWindow(m_glfw_window);
-        metal_window_set_size(nswin, m_fbsize);
-        m_metal_drawable = metal_window_next_drawable(nswin);
-        m_metal_texture = metal_drawable_texture(m_metal_drawable);
-        mnvgSetColorTexture(m_nvg_context, m_metal_texture);
-#endif
-
-#if !defined(EMSCRIPTEN)
         glfwGetFramebufferSize(m_glfw_window, &m_fbsize[0], &m_fbsize[1]);
         glfwGetWindowSize(m_glfw_window, &m_size[0], &m_size[1]);
-#else
-        emscripten_get_canvas_element_size("#canvas", &m_size[0], &m_size[1]);
-        m_fbsize = m_size;
-#endif
 
-#if defined(_WIN32) || defined(__linux__) || defined(EMSCRIPTEN)
         m_fbsize = m_size;
         m_size = Vector2i(Vector2f(m_size) / m_pixel_ratio);
-#else
-        /* Recompute pixel ratio on OSX */
-        if (m_size[0])
-            m_pixel_ratio = (float)m_fbsize[0] / (float)m_size[0];
-  #if defined(NANOGUI_USE_METAL)
-        metal_window_set_content_scale(nswin, m_pixel_ratio);
-  #endif
-#endif
 
-#if defined(NANOGUI_USE_OPENGL) || defined(NANOGUI_USE_GLES)
         CHK(glViewport(0, 0, m_fbsize[0], m_fbsize[1]));
-#endif
     }
 
     void Screen::draw_teardown()
     {
-#if defined(NANOGUI_USE_OPENGL) || defined(NANOGUI_USE_GLES)
         glfwSwapBuffers(m_glfw_window);
-#elif defined(NANOGUI_USE_METAL)
-        mnvgSetColorTexture(m_nvg_context, nullptr);
-        metal_present_and_release_drawable(m_metal_drawable);
-        m_metal_texture = nullptr;
-        m_metal_drawable = nullptr;
-#endif
     }
 
     void Screen::draw_all()
@@ -627,18 +487,10 @@ namespace rl::gui {
         {
             m_redraw = false;
 
-#if defined(NANOGUI_USE_METAL)
-            void* pool = autorelease_init();
-#endif
-
-            draw_setup();
-            draw_contents();
-            draw_widgets();
-            draw_teardown();
-
-#if defined(NANOGUI_USE_METAL)
-            autorelease_release(pool);
-#endif
+            this->draw_setup();
+            this->draw_contents();
+            this->draw_widgets();
+            this->draw_teardown();
         }
     }
 
@@ -762,21 +614,16 @@ namespace rl::gui {
         if (!m_redraw)
         {
             m_redraw = true;
-#if !defined(EMSCRIPTEN)
             glfwPostEmptyEvent();
-#endif
         }
     }
 
     void Screen::cursor_pos_callback_event(double x, double y)
     {
         Vector2i p((int)x, (int)y);
-
-#if defined(_WIN32) || defined(__linux__) || defined(EMSCRIPTEN)
         p = Vector2i(Vector2f(p) / m_pixel_ratio);
-#endif
-
         m_last_interaction = glfwGetTime();
+
         try
         {
             p -= Vector2i(1, 2);
@@ -814,11 +661,6 @@ namespace rl::gui {
     {
         m_modifiers = modifiers;
         m_last_interaction = glfwGetTime();
-
-#if defined(__APPLE__)
-        if (button == GLFW_MOUSE_BUTTON_1 && modifiers == GLFW_MOD_CONTROL)
-            button = GLFW_MOUSE_BUTTON_2;
-#endif
 
         try
         {
@@ -934,28 +776,18 @@ namespace rl::gui {
 
     void Screen::resize_callback_event(int, int)
     {
-#if defined(EMSCRIPTEN)
-        return;
-#endif
+        Vector2i fb_size{};
+        Vector2i size{};
 
-        Vector2i fb_size, size;
         glfwGetFramebufferSize(m_glfw_window, &fb_size[0], &fb_size[1]);
         glfwGetWindowSize(m_glfw_window, &size[0], &size[1]);
         if (fb_size == Vector2i(0, 0) || size == Vector2i(0, 0))
             return;
+
         m_fbsize = fb_size;
         m_size = size;
-
-#if defined(_WIN32) || defined(__linux__) || defined(EMSCRIPTEN)
         m_size = Vector2i(Vector2f(m_size) / m_pixel_ratio);
-#endif
-
         m_last_interaction = glfwGetTime();
-
-#if defined(NANOGUI_USE_METAL)
-        if (m_depth_stencil_texture)
-            m_depth_stencil_texture->resize(fb_size);
-#endif
 
         try
         {
@@ -965,6 +797,7 @@ namespace rl::gui {
         {
             std::cerr << "Caught exception in event handler: " << e.what() << std::endl;
         }
+
         redraw();
     }
 
@@ -976,15 +809,18 @@ namespace rl::gui {
                 continue;
             w->focus_event(false);
         }
+
         m_focus_path.clear();
+
         Widget* window = nullptr;
-        while (widget)
+        while (widget != nullptr)
         {
             m_focus_path.push_back(widget);
             if (dynamic_cast<Window*>(widget))
                 window = widget;
             widget = widget->parent();
         }
+
         for (auto it = m_focus_path.rbegin(); it != m_focus_path.rend(); ++it)
             (*it)->focus_event(true);
 
@@ -998,6 +834,7 @@ namespace rl::gui {
             m_focus_path.clear();
         if (m_drag_widget == window)
             m_drag_widget = nullptr;
+
         remove_child(window);
     }
 
@@ -1016,7 +853,8 @@ namespace rl::gui {
         m_children.erase(std::remove(m_children.begin(), m_children.end(), window),
                          m_children.end());
         m_children.push_back(window);
-        /* Brute force topological sort (no problem for a few windows..) */
+
+        // Brute force topological sort (no problem for a few windows..)
         bool changed = false;
         do
         {
@@ -1024,13 +862,14 @@ namespace rl::gui {
             for (size_t index = 0; index < m_children.size(); ++index)
                 if (m_children[index] == window)
                     base_index = index;
+
             changed = false;
             for (size_t index = 0; index < m_children.size(); ++index)
             {
-                Popup* pw = dynamic_cast<Popup*>(m_children[index]);
+                Popup* pw = dynamic_cast<gui::Popup*>(m_children[index]);
                 if (pw && pw->parent_window() == window && index < base_index)
                 {
-                    move_window_to_front(pw);
+                    this->move_window_to_front(pw);
                     changed = true;
                     break;
                 }
@@ -1044,33 +883,20 @@ namespace rl::gui {
         double elapsed = glfwGetTime() - m_last_interaction;
         if (elapsed < 0.25f || elapsed > 1.25f)
             return false;
-        /* Temporarily increase the frame rate to fade in the tooltip */
+
+        // Temporarily increase the frame rate to fade in the tooltip
         const Widget* widget = find_widget(m_mouse_pos);
         return widget && !widget->tooltip().empty();
     }
 
     Texture::PixelFormat Screen::pixel_format() const
     {
-#if defined(NANOGUI_USE_METAL)
-        if (!m_float_buffer)
-            return Texture::PixelFormat::BGRA;
-#endif
         return Texture::PixelFormat::RGBA;
     }
 
     Texture::ComponentFormat Screen::component_format() const
     {
-        if (m_float_buffer)
-            return Texture::ComponentFormat::Float16;
-        else
-            return Texture::ComponentFormat::UInt8;
+        return m_float_buffer ? Texture::ComponentFormat::Float16  //
+                              : Texture::ComponentFormat::UInt8;
     }
-
-#if defined(NANOGUI_USE_METAL)
-    void* Screen::metal_layer() const
-    {
-        return metal_window_layer(glfwGetCocoaWindow(m_glfw_window));
-    }
-#endif
-
 }

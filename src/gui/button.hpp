@@ -1,17 +1,3 @@
-/*
-    NanoGUI was developed by Wenzel Jakob <wenzel.jakob@epfl.ch>.
-    The widget drawing code is based on the NanoVG demo application
-    by Mikko Mononen.
-
-    All rights reserved. Use of this source code is governed by a
-    BSD-style license that can be found in the LICENSE.txt file.
-*/
-/**
- * \file nanogui/button.h
- *
- * \brief Defines the [Normal/Toggle/Radio/Popup] \ref nanogui::Button widget.
- */
-
 #pragma once
 
 #include "gui/widget.hpp"
@@ -48,13 +34,13 @@ namespace rl::gui {
          * \brief Creates a button attached to the specified parent.
          *
          * \param parent
-         *     The \ref nanogui::Widget this Button will be attached to.
+         *     The \ref Widget this Button will be attached to.
          *
          * \param caption
          *     The name of the button (default ``"Untitled"``).
          *
          * \param icon
-         *     The icon to display with this Button.  See \ref nanogui::Button::mIcon.
+         *     The icon to display with this Button.  See \ref Button::mIcon.
          */
         Button(Widget* parent, const std::string& caption = "Untitled", int icon = 0);
 
@@ -94,25 +80,25 @@ namespace rl::gui {
             m_text_color = text_color;
         }
 
-        /// Returns the icon of this Button.  See \ref nanogui::Button::m_icon.
+        /// Returns the icon of this Button.  See \ref Button::m_icon.
         int icon() const
         {
             return m_icon;
         }
 
-        /// Sets the icon of this Button.  See \ref nanogui::Button::m_icon.
+        /// Sets the icon of this Button.  See \ref Button::m_icon.
         void set_icon(int icon)
         {
             m_icon = icon;
         }
 
-        /// The current flags of this Button (see \ref nanogui::Button::Flags for options).
+        /// The current flags of this Button (see \ref Button::Flags for options).
         int flags() const
         {
             return m_flags;
         }
 
-        /// Sets the flags of this Button (see \ref nanogui::Button::Flags for options).
+        /// Sets the flags of this Button (see \ref Button::Flags for options).
         void set_flags(int button_flags)
         {
             m_flags = button_flags;
@@ -199,8 +185,8 @@ namespace rl::gui {
          * The icon to display with this Button.  If not ``0``, may either be a
          * picture icon, or one of the icons enumerated in
          * :ref:`file_nanogui_entypo.h`.  The kind of icon (image or Entypo)
-         * is determined by the functions :func:`nanogui::nvgIsImageIcon` and its
-         * reciprocal counterpart :func:`nanogui::nvgIsFontIcon`.
+         * is determined by the functions :func:`nvgIsImageIcon` and its
+         * reciprocal counterpart :func:`nvgIsFontIcon`.
          * \endrst
          */
         int m_icon;
@@ -211,7 +197,7 @@ namespace rl::gui {
         /// Whether or not this Button is currently pushed.
         bool m_pushed;
 
-        /// The current flags of this button (see \ref nanogui::Button::Flags for options).
+        /// The current flags of this button (see \ref Button::Flags for options).
         int m_flags;
 
         /// The background color of this Button.

@@ -1,19 +1,3 @@
-/*
-    NanoGUI was developed by Wenzel Jakob <wenzel.jakob@epfl.ch>.
-    The widget drawing code is based on the NanoVG demo application
-    by Mikko Mononen.
-
-    All rights reserved. Use of this source code is governed by a
-    BSD-style license that can be found in the LICENSE.txt file.
-*/
-
-/**
- * \file nanogui/texture.h
- *
- * \brief Defines an abstraction for textures that works with
- * OpenGL, OpenGL ES, and Metal.
- */
-
 #pragma once
 
 #include "gui/object.hpp"
@@ -29,25 +13,18 @@ namespace rl::gui {
         enum class PixelFormat : uint8_t {
             /// Single-channel bitmap
             R,
-
             /// Two-channel bitmap
             RA,
-
             /// RGB bitmap
             RGB,
-
             /// RGB bitmap + alpha channel
             RGBA,
-
             /// BGR bitmap
             BGR,
-
             /// BGR bitmap + alpha channel
             BGRA,
-
             /// Depth map
             Depth,
-
             /// Combined depth + stencil map
             DepthStencil
         };
@@ -71,10 +48,8 @@ namespace rl::gui {
         enum class InterpolationMode : uint8_t {
             /// Nearest neighbor interpolation
             Nearest,
-
             /// Bilinear ineterpolation
             Bilinear,
-
             /// Trilinear interpolation (using MIP mapping)
             Trilinear
         };
@@ -83,10 +58,8 @@ namespace rl::gui {
         enum class WrapMode : uint8_t {
             /// Clamp evaluations to the edge of the texture
             ClampToEdge,
-
             /// Repeat the texture
             Repeat,
-
             /// Repeat, but flip the texture after crossing the boundary
             MirrorRepeat,
         };
@@ -95,7 +68,6 @@ namespace rl::gui {
         enum TextureFlags {
             /// Texture to be read in shaders
             ShaderRead = 0x01,
-
             /// Target framebuffer for rendering
             RenderTarget = 0x02
         };
@@ -193,7 +165,6 @@ namespace rl::gui {
         /// Generates the mipmap. Done automatically upon upload if manual mipmapping is disabled.
         void generate_mipmap();
 
-#if defined(NANOGUI_USE_OPENGL) || defined(NANOGUI_USE_GLES)
         uint32_t texture_handle() const
         {
             return m_texture_handle;
@@ -203,17 +174,6 @@ namespace rl::gui {
         {
             return m_renderbuffer_handle;
         }
-#elif defined(NANOGUI_USE_METAL)
-        void* texture_handle() const
-        {
-            return m_texture_handle;
-        }
-
-        void* sampler_state_handle() const
-        {
-            return m_sampler_state_handle;
-        }
-#endif
 
         /// Release all resources
         virtual ~Texture();
@@ -233,13 +193,8 @@ namespace rl::gui {
         Vector2i m_size;
         bool m_mipmap_manual;
 
-#if defined(NANOGUI_USE_OPENGL) || defined(NANOGUI_USE_GLES)
         uint32_t m_texture_handle = 0;
         uint32_t m_renderbuffer_handle = 0;
-#elif defined(NANOGUI_USE_METAL)
-        void* m_texture_handle = nullptr;
-        void* m_sampler_state_handle = nullptr;
-#endif
     };
 
 }

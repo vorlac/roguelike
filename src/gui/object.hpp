@@ -1,29 +1,8 @@
-/*
-    nanogui/object.h -- Object base class with support for reference counting
-
-    NanoGUI was developed by Wenzel Jakob <wenzel.jakob@epfl.ch>.
-    The widget drawing code is based on the NanoVG demo application
-    by Mikko Mononen.
-
-    All rights reserved. Use of this source code is governed by a
-    BSD-style license that can be found in the LICENSE.txt file.
-*/
-/** \file */
-
 #pragma once
 
 #include <atomic>
 
 #include "gui/common.hpp"
-
-/* While the implementation does not directly depend on Python, the PyObject*
-   type occurs in a few function interfaces (in a fully opaque manner). We must
-   therefore forward-declare it. */
-extern "C"
-{
-    struct _object;
-    typedef _object PyObject;
-};
 
 namespace rl::gui {
 
@@ -49,10 +28,7 @@ namespace rl::gui {
      * `m_state` field to the Python reference count. In this mode, `inc_ref()` and
      * `dec_ref()` wrap Python reference counting primitives (`Py_INCREF()` /
      * `Py_DECREF()`) which must be made available by calling the function
-     * `object_init_py` once during module initialization. Note that the `m_state`
-     * field is also used to store a pointer to the `PyObject *`. Python instance
-     * pointers are always aligned (i.e. bit 1 is zero), which disambiguates
-     * between the two possible configurations.
+     * `object_init_py` once during module initialization.
      *
      * Within C++, the RAII helper class `ref` (defined below) can be used to keep
      * instances alive. This removes the need to call the `inc_ref()` / `dec_ref()`
@@ -106,12 +82,6 @@ namespace rl::gui {
 
         /// Decrease the object's reference count and potentially deallocate it
         void dec_ref() const noexcept;
-
-        /// Return the Python object associated with this instance (or NULL)
-        PyObject* self_py() const noexcept;
-
-        /// Set the Python object associated with this instance
-        void set_self_py(PyObject* self) noexcept;
 
     private:
         mutable std::atomic<uintptr_t> m_state{ 1 };
@@ -288,19 +258,4 @@ namespace rl::gui {
     private:
         T* m_ptr;
     };
-
-    /**
-     * \brief Install Python reference counting handlers
-     *
-     * The `Object` class is designed so that the dependency on Python is
-     * *optional*: the code compiles in ordinary C++ projects, in which case the
-     * Python reference counting functionality will simply not be used.
-     *
-     * Python binding code must invoke `object_init_py` and provide functions that
-     * can be used to increase/decrease the Python reference count of an instance
-     * (i.e., `Py_INCREF` / `Py_DECREF`).
-     */
-    extern void object_init_py(void (*object_inc_ref_py)(PyObject*) noexcept,
-                               void (*object_dec_ref_py)(PyObject*) noexcept);
-
 }

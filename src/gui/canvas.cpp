@@ -1,17 +1,3 @@
-/*
-    nanogui/canvas.cpp -- Canvas widget for rendering full-fledged
-    OpenGL content within its designated area. Very useful for
-    displaying and manipulating 3D objects or scenes. Subclass it and
-    overload `draw_contents` for rendering.
-
-    NanoGUI was developed by Wenzel Jakob <wenzel.jakob@epfl.ch>.
-    The widget drawing code is based on the NanoVG demo application
-    by Mikko Mononen.
-
-    All rights reserved. Use of this source code is governed by a
-    BSD-style license that can be found in the LICENSE.txt file.
-*/
-
 #include "gui/canvas.hpp"
 #include "gui/opengl.hpp"
 #include "gui/opengl_check.hpp"
@@ -51,13 +37,7 @@ namespace rl::gui {
             color_texture = scr;
 
             if (has_depth_buffer)
-            {
-#if defined(NANOGUI_USE_METAL)
-                depth_texture = scr->depth_stencil_texture();
-#else
                 depth_texture = scr;
-#endif
-            }
         }
         else
         {
@@ -65,20 +45,6 @@ namespace rl::gui {
                 scr->pixel_format(), scr->component_format(), m_size,
                 Texture::InterpolationMode::Bilinear, Texture::InterpolationMode::Bilinear,
                 Texture::WrapMode::ClampToEdge, samples, Texture::TextureFlags::RenderTarget);
-
-#if defined(NANOGUI_USE_METAL)
-            Texture* color_texture_resolved = nullptr;
-
-            if (samples > 1)
-            {
-                color_texture_resolved = new Texture(
-                    scr->pixel_format(), scr->component_format(), m_size,
-                    Texture::InterpolationMode::Bilinear, Texture::InterpolationMode::Bilinear,
-                    Texture::WrapMode::ClampToEdge, 1, Texture::TextureFlags::RenderTarget);
-
-                m_render_pass_resolved = new RenderPass({ color_texture_resolved });
-            }
-#endif
 
             depth_texture = new Texture(
                 has_stencil_buffer ? Texture::PixelFormat::DepthStencil
@@ -89,12 +55,7 @@ namespace rl::gui {
         }
 
         m_render_pass = new RenderPass({ color_texture }, depth_texture,
-                                       has_stencil_buffer ? depth_texture : nullptr,
-#if defined(NANOGUI_USE_METAL)
-                                       m_render_pass_resolved,
-#else
-                                       nullptr,
-#endif
+                                       has_stencil_buffer ? depth_texture : nullptr, nullptr,
                                        clear);
     }
 
@@ -178,5 +139,4 @@ namespace rl::gui {
             rp->blit_to(Vector2i(0, 0), fbsize, scr, offset);
         }
     }
-
 }
