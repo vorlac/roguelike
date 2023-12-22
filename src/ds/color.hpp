@@ -1,5 +1,4 @@
 #pragma once
-
 #include <algorithm>
 #include <array>
 #include <concepts>
@@ -9,6 +8,7 @@
 #include <vector>
 
 #include <fmt/color.h>
+#include <nanovg.h>
 
 #include "sdl/defs.hpp"
 #include "utils/concepts.hpp"
@@ -242,31 +242,6 @@ namespace rl::ds {
             return { s + (e - s) * step };
         }
 
-        // static void test_color_lerp()
-        // {
-        //     color<u8>start{ 255, 0, 0, 50 };
-        //     color<u8>end{ 0, 0, 255, 50 };
-
-        //     uint8_t val{ 0 };
-        //     while (++val < 255)
-        //     {
-        //         auto&& c = color::lerp(start, end, val);
-        //         fmt::print(c, "||");
-        //     }
-        //     fmt::print("\n");
-        // }
-
-        // constexpr static inline color gradient(const std::vector<color>& colors, T step)
-        // {
-        //     const auto stop_len = 1 / (colors.size() - 1);
-        //     const auto step_ratio = step / stop_len;
-        //     const auto stop_idx = std::floor(step_ratio);
-        //     if (stop_idx == (colors.size() - 1))
-        //         return colors[colors.size() - 1];
-        //     const auto end_step = step_ratio % 1;
-        //     return lerp(colors[stop_idx], colors[stop_idx + 1], end_step);
-        // }
-
         inline u32 rgb(const SDL3::SDL_PixelFormat* format) const
         {
             return SDL3::SDL_MapRGB(format, this->r, this->g, this->b);
@@ -297,6 +272,18 @@ namespace rl::ds {
             return *((SDL3::SDL_Color*)this);
         }
 
+        constexpr inline operator const NVGcolor&() const
+            requires std::same_as<T, f32>
+        {
+            return reinterpret_cast<const NVGcolor&>(this);
+        }
+
+        constexpr inline operator NVGcolor&()
+            requires std::same_as<T, f32>
+        {
+            return reinterpret_cast<NVGcolor&>(*this);
+        }
+
         constexpr inline operator fmt::rgb() const
         {
             return fmt::rgb{ r, g, b };
@@ -310,7 +297,12 @@ namespace rl::ds {
         constexpr inline operator color<f32>() const
             requires rl::integer<T>
         {
-            return std::array<T, 4>{ r, g, b, a };
+            return color<f32>{
+                r * 255.0f,
+                g * 255.0f,
+                b * 255.0f,
+                a * 255.0f,
+            };
         }
 
         constexpr inline operator std::array<T, 4>() const

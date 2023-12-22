@@ -21,7 +21,7 @@ SDL_C_LIB_END
 
 namespace rl {
     Window::Window(std::string title, const ds::dims<i32>& dims, Window::Properties flags)
-        : gui::Screen()
+        : ui::widget(nullptr)
     {
         SDL3::SDL_GL_SetAttribute(SDL3::SDL_GL_ACCELERATED_VISUAL, 1);
         SDL3::SDL_GL_SetAttribute(SDL3::SDL_GL_CONTEXT_FLAGS,
@@ -38,7 +38,6 @@ namespace rl {
         sdl_assert(m_sdl_window != nullptr, "failed to create SDL_Window");
         sdl_assert(m_renderer != nullptr, "failed to create sdl::Renderer");
         SDL3::SDL_GL_SetAttribute(SDL3::SDL_GL_DOUBLEBUFFER, 0);
-        // this->initialize();
     }
 
     Window::~Window()
@@ -385,6 +384,30 @@ namespace rl {
         if constexpr (io::logging::window_events)
             log::info("window::on_mouse_leave [id:{}]", id);
         return ret;
+    }
+
+    bool Window::on_mouse_click(const WindowID id)
+    {
+        runtime_assert(false, "implement");
+        return false;
+    }
+
+    bool Window::on_mouse_drag(const WindowID id)
+    {
+        runtime_assert(false, "implement");
+        return false;
+    }
+
+    bool Window::on_mouse_move(const WindowID id)
+    {
+        runtime_assert(false, "implement");
+        return false;
+    }
+
+    bool Window::on_mouse_scroll(const WindowID id)
+    {
+        runtime_assert(false, "implement");
+        return false;
     }
 
     bool Window::on_kb_focus_gained(const WindowID id)

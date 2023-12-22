@@ -4,12 +4,13 @@
 #include <bitset>
 #include <memory>
 #include <string>
+#include <vector>
 
+#include "core/ui/widget.hpp"
 #include "ds/dims.hpp"
 #include "ds/point.hpp"
 #include "ds/rect.hpp"
 #include "ds/vector2d.hpp"
-#include "gui/screen.hpp"
 #include "sdl/defs.hpp"
 
 SDL_C_LIB_BEGIN
@@ -23,7 +24,7 @@ namespace rl {
 
     using WindowID = SDL3::SDL_WindowID;
 
-    class Window : public gui::Screen
+    class Window : public ui::widget
     {
     public:
         struct Event
@@ -157,10 +158,110 @@ namespace rl {
         ds::point<i32> get_position() const;
 
         const std::unique_ptr<Renderer>& renderer() const;
-        const Window& operator=(Window&& other) noexcept;
+        const rl::Window& operator=(rl::Window&& other) noexcept;
         SDL3::SDL_Window* sdl_handle() const;
         bool is_valid() const;
         bool swap_buffers();
+
+    public:
+        virtual ds::dims<i32> preferred_size(NVGcontext* nvg_context) const
+        {
+            return ds::dims<i32>{ 0, 0 };
+        }
+
+        virtual void draw(NVGcontext* nvg_context)
+        {
+        }
+
+        virtual void perform_layout(NVGcontext* nvg_context)
+        {
+        }
+
+        void update_focus(ui::widget* widget)
+        {
+        }
+
+        void move_window_to_front(rl::Window* window)
+        {
+        }
+
+        void draw_widgets()
+        {
+        }
+
+        const std::string& title() const
+        {
+            return m_title;
+        }
+
+        void set_title(const std::string& title)
+        {
+            m_title = title;
+        }
+
+        bool modal() const
+        {
+            return m_modal;
+        }
+
+        void set_modal(bool modal)
+        {
+            m_modal = modal;
+        }
+
+        ui::widget* button_panel()
+        {
+        }
+
+        void dispose_window(rl::Window* window)
+        {
+            if (std::find(m_focus_path.begin(), m_focus_path.end(), window) != m_focus_path.end())
+                m_focus_path.clear();
+            if (m_drag_widget == window)
+                m_drag_widget = nullptr;
+
+            this->remove_child(window);
+        }
+
+        void dispose()
+        {
+            ui::widget* owner = this;
+            while (owner->parent() != nullptr)
+                owner = owner->parent();
+
+            rl::Window* window = static_cast<rl::Window*>(owner);
+            runtime_assert(window != nullptr, "Failed widget->window cast");
+            runtime_assert(window != this, "Failed dynamic cast");
+            window->dispose_window(this);
+        }
+
+        void center_window(rl::Window* window) const
+        {
+            if (window->size() == ds::dims<i32>{ 0, 0 })
+            {
+                auto&& pref_size{ window->preferred_size(m_nvg_context) };
+                window->set_size(pref_size);
+                window->perform_layout(m_nvg_context);
+            }
+
+            auto&& offset{ m_size - window->size() };
+            window->set_position({
+                offset.width / 2,
+                offset.height / 2,
+            });
+        }
+
+        void center()
+        {
+            ui::widget* owner = this;
+            while (owner->parent() != nullptr)
+                owner = owner->parent();
+
+            rl::Window* window{ static_cast<rl::Window*>(owner) };
+            runtime_assert(window != nullptr, "Failed widget->window cast");
+            runtime_assert(window != this, "window owns itself");
+            window->center_window(this);
+        }
 
     protected:
         friend class EventHandler;
@@ -176,6 +277,10 @@ namespace rl {
         bool on_restored(const WindowID id);
         bool on_mouse_enter(const WindowID id);
         bool on_mouse_leave(const WindowID id);
+        bool on_mouse_click(const WindowID id);
+        bool on_mouse_move(const WindowID id);
+        bool on_mouse_drag(const WindowID id);
+        bool on_mouse_scroll(const WindowID id);
         bool on_kb_focus_gained(const WindowID id);
         bool on_kb_focus_lost(const WindowID id);
         bool on_close_requested(const WindowID id);
@@ -186,6 +291,12 @@ namespace rl {
         bool on_display_scale_changed(const WindowID id);
         bool on_occluded(const WindowID id);
         bool on_destroyed(const WindowID id);
+
+    private:
+        std::string m_title{};
+        ui::widget* m_drag_widget{ nullptr };
+        std::vector<ui::widget*> m_focus_path;
+        bool m_modal{ false };
 
     private:
         Properties m_properties{ Properties::Flag::None };

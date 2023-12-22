@@ -7,6 +7,12 @@
 #include "utils/numeric.hpp"
 
 namespace rl {
+    template <typename T>
+    concept refcountable = requires(const T& t) {
+        t.acquire_ref();
+        t.release_ref();
+    };
+
     template <typename T, typename... TOther>
     concept any_of = (std::same_as<T, TOther> || ...);
 

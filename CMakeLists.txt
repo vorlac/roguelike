@@ -5,17 +5,17 @@ list(APPEND CMAKE_MODULE_PATH
   "${CMAKE_CURRENT_SOURCE_DIR}/cmake"
 )
 
-set(ENABLE_CCACHE 
+set(ENABLE_CCACHE
   OFF CACHE FORCE BOOL
     "Enables ccache"
 )
 
-set(AUTOFORMAT_SRC_ON_CONFIGURE 
+set(AUTOFORMAT_SRC_ON_CONFIGURE
   ON CACHE FORCE BOOL
     "Enables clang-format to autoformat all sources within src/"
 )
 
-set(REBUILD_RESOURCES_ON_CONFIGURE 
+set(REBUILD_RESOURCES_ON_CONFIGURE
   ON CACHE FORCE BOOL
     "Enables shader (.glsl) and font (.ttf) hexdumps to be built into resource hpp/cpp files"
 )
@@ -99,71 +99,71 @@ target_compile_features(${PROJECT_NAME}
     cxx_std_23
 )
 
-target_compile_definitions(${PROJECT_NAME} 
+target_compile_definitions(${PROJECT_NAME}
   PRIVATE
-	ROGUELIKE_TESTS_ENABLED
-	NANOGUI_USE_OPENGL
-	NANOGUI_GLAD
-	KHRONOS_STATIC
+    ROGUELIKE_TESTS_ENABLED
+    NANOGUI_USE_OPENGL
+    NANOGUI_GLAD
+    KHRONOS_STATIC
 
-	NOMINMAX
+    NOMINMAX
 
-	$<${compiler_is_msvc}:
-		_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING
-		_CRT_SECURE_NO_WARNINGS
+    $<${compiler_is_msvc}:
+        _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING
+        _CRT_SECURE_NO_WARNINGS
 
-		$<$<CONFIG:Debug>:
-		    _NO_DEBUG_HEAP=1
-		>
-	>
+        $<$<CONFIG:Debug>:
+            _NO_DEBUG_HEAP=1
+        >
+    >
 )
 
-target_compile_options(${PROJECT_NAME} 
+target_compile_options(${PROJECT_NAME}
   PRIVATE
-	$<${compiler_is_msvc}:
-		/std:c++latest
-		/Zc:preprocessor
-		/utf-8
-		/EHsc
-		/nologo
+    $<${compiler_is_msvc}:
+        /std:c++latest
+        /Zc:preprocessor
+        /utf-8
+        /EHsc
+        /nologo
 
-		$<$<CONFIG:Debug>:
-			# /Z7 # embed debug info into .o files instead of pdb (for ccache)
-			# /ZI # enable edit and continue
-		>
+        $<$<CONFIG:Debug>:
+            # /Z7 # embed debug info into .o files instead of pdb (for ccache)
+            # /ZI # enable edit and continue
+        >
 
-		$<$<CONFIG:Release>:
-			/O3 # maximize speed
-			/Oi # generate intrinsics
-			/Oy # frame pointer omission
-			/Gw # optimize global data
-			/GS- # disable buffer security checks
-			/GA # optimize for windows application
-			/GL # whole program optimization
-			/fp:fast # prefer fast over accurate floating point math
-			/favor:INTEL64
-			#/Ox # enable most speed optimizations
-			#/Ot # favor fast code
-			#/Ob2 # inline function expansion
-			#/GR- # disable RTTI
-			#/EHa- # disable exception handling
-			#/Gr # __vectorcall calling convention, Gr for __fastcall
-			#/order # order functions for optimal paging
-		>
-	>
+        $<$<CONFIG:Release>:
+            /O3 # maximize speed
+            /Oi # generate intrinsics
+            /Oy # frame pointer omission
+            /Gw # optimize global data
+            /GS- # disable buffer security checks
+            /GA # optimize for windows application
+            /GL # whole program optimization
+            /fp:fast # prefer fast over accurate floating point math
+            /favor:INTEL64
+            #/Ox # enable most speed optimizations
+            #/Ot # favor fast code
+            #/Ob2 # inline function expansion
+            #/GR- # disable RTTI
+            #/EHa- # disable exception handling
+            #/Gr # __vectorcall calling convention, Gr for __fastcall
+            #/order # order functions for optimal paging
+        >
+    >
 
-	$<${compiler_is_clang}:
-		-march=native
-		-flto
-		-DNDEBUG
-	>
+    $<${compiler_is_clang}:
+        -march=native
+        -flto
+        -DNDEBUG
+    >
 
-	$<${compiler_is_gnu}:
-		-std=c++23
-	>
+    $<${compiler_is_gnu}:
+        -std=c++23
+    >
 )
 
-target_link_options(${PROJECT_NAME} 
+target_link_options(${PROJECT_NAME}
   PRIVATE
     $<${compiler_is_msvc}:
         # /verbose
@@ -182,22 +182,22 @@ target_link_options(${PROJECT_NAME}
         >
     >
 
-	$<$<NOT:${compiler_is_msvc}>:
-		$<$<CONFIG:Release>:
-			-fomit-frame-pointer
-		>
+    $<$<NOT:${compiler_is_msvc}>:
+        $<$<CONFIG:Release>:
+            -fomit-frame-pointer
+        >
 
-		-static-libgcc
-		-static-libstdc++
-		-Wl,-R,'$$ORIGIN'
-	>
+        -static-libgcc
+        -static-libstdc++
+        -Wl,-R,'$$ORIGIN'
+    >
 )
 
-target_include_directories(${PROJECT_NAME} 
+target_include_directories(${PROJECT_NAME}
   PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/src"
     "${CMAKE_CURRENT_BINARY_DIR}"
-  SYSTEM 
+  SYSTEM
     "${CMAKE_CURRENT_SOURCE_DIR}/extern/glad/include"
 )
 
@@ -229,7 +229,7 @@ set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 set_property(
   TARGET ${PROJECT_NAME}
     PROPERTY VS_DEBUGGER_ENVIRONMENT
-      "PATH=${CMAKE_CURRENT_INSTALL_DIR}/${PROJECT_NAME}${CMAKE_EXECUTABLE_SUFFIX}"
+    "PATH=${CMAKE_CURRENT_INSTALL_DIR}/${PROJECT_NAME}${CMAKE_EXECUTABLE_SUFFIX}"
 )
 
 # permissions fix to allow this on windows:

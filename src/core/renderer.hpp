@@ -71,8 +71,13 @@ namespace rl {
 
         ds::dims<i32> get_output_size() const;
         ds::rect<i32> get_viewport() const;
-        bool set_viewport(const ds::rect<i32>& rect);
 
+        SDL3::SDL_GLContext gl_context() const
+        {
+            return m_sdl_glcontext;
+        }
+
+        bool set_viewport(const ds::rect<i32>& rect);
         bool set_draw_color(const ds::color<u8>& c);
         bool clear(const ds::color<u8>& c = { 29, 32, 39 });
         bool present();

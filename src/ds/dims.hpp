@@ -84,7 +84,9 @@ namespace rl::ds {
 
         constexpr inline dims<T>& operator=(dims<T>&& other) noexcept
         {
-            return this->operator=(other);
+            this->height = std::move(other.height);
+            this->width = std::move(other.width);
+            return *this;
         }
 
         constexpr inline bool operator==(const dims<T>& other) const
@@ -100,8 +102,16 @@ namespace rl::ds {
         constexpr inline dims<T> operator+(const T& val) const
         {
             return {
-                cast::to<T>(this->width + val),
-                cast::to<T>(this->height + val),
+                static_cast<T>(this->width + val),
+                static_cast<T>(this->height + val),
+            };
+        }
+
+        constexpr inline dims<T> operator+(const dims<T>& other) const
+        {
+            return {
+                static_cast<T>(this->width + other.width),
+                static_cast<T>(this->height + other.height),
             };
         }
 
@@ -110,6 +120,14 @@ namespace rl::ds {
             this->width += val;
             this->height += val;
             return *this;
+        }
+
+        constexpr inline dims<T> operator-(const dims<T>& other) const
+        {
+            return {
+                this->width - other.width,
+                this->height - other.height,
+            };
         }
 
         template <rl::numeric V>
