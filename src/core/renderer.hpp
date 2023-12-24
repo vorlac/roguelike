@@ -89,5 +89,11 @@ namespace rl {
     private:
         rl::Renderer::Properties m_properties{ Properties::None };
         SDL3::SDL_GLContext m_sdl_glcontext{ nullptr };
+
+        friend static NVGcontext* create_nanovg_context(rl::Renderer* renderer);
+        constexpr static inline bool GuiWidgetDiagnostics{ true };
+        constexpr static inline bool NanoVGDiagnostics{ true };
+        NVGcontext* m_nvg_context{ nullptr };
+        bool m_stencil_buffer{ false };
     };
 }

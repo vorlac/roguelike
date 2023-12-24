@@ -3,6 +3,9 @@
 #include <memory>
 #include <tuple>
 
+#include <nanovg.h>
+#include <nanovg_gl.h>
+
 #include "core/assert.hpp"
 #include "core/renderer.hpp"
 #include "core/window.hpp"
@@ -20,24 +23,16 @@ typedef struct SDL_VideoDevice SDL_VideoDevice;
 SDL_C_LIB_END
 
 namespace rl {
-    static inline SDL3::SDL_GLContext create_opengl_context(SDL3::SDL_Window* sdl_window)
-    {
-        sdl_assert(sdl_window != nullptr, "Creating OpenGL context from NULL window");
-        // SDL3::SDL_VideoDevice* device{ SDL3::SDL_GetVideoDevice() };
-        return SDL3::SDL_GL_CreateContext(sdl_window);
-    }
 
-    Renderer::Renderer(rl::Window& window, rl::Renderer::Properties flags)
-        : m_properties{ flags }
-        , m_sdl_glcontext{ create_opengl_context(window.sdl_handle()) }
+    static SDL3::SDL_GLContext create_opengl_context(SDL3::SDL_Window* sdl_window)
     {
-        // wglCreateContext();
-        int result = m_sdl_glcontext != nullptr ? 0 : -1;
-        sdl_assert(result == 0, "Failed to create OpenGL context");
+        sdl_assert(sdl_window != nullptr, "Attempting to create context from uninitialized window");
+        SDL3::SDL_GLContext gl_context{ SDL3::SDL_GL_CreateContext(sdl_window) };
+        runtime_assert(gl_context != nullptr, "Failed to create OpenGL context");
 
-        i32 version = gladLoadGL((GLADloadfunc)SDL3::SDL_GL_GetProcAddress);
-        i32 gl_major_ver{ GLAD_VERSION_MAJOR(version) };
-        i32 gl_minor_ver{ GLAD_VERSION_MINOR(version) };
+        i32 gl_version = gladLoadGL((GLADloadfunc)SDL3::SDL_GL_GetProcAddress);
+        i32 gl_major_ver{ GLAD_VERSION_MAJOR(gl_version) };
+        i32 gl_minor_ver{ GLAD_VERSION_MINOR(gl_version) };
 
         runtime_assert((gl_major_ver >= 3 && gl_minor_ver >= 3 || gl_major_ver > 3),
                        "Deprecated OpenGL Version Loaded: {}.{}", gl_major_ver, gl_minor_ver);
@@ -49,13 +44,36 @@ namespace rl {
             log::warning("GL_RENDERER = {}", reinterpret_cast<const char*>(renderer_str));
             log::warning("GL_VERSION = {}", reinterpret_cast<const char*>(gl_ver_str));
             log::warning("OpenGL [{}.{}] Context Created Successfully", gl_major_ver, gl_minor_ver);
+        }
 
-            if (result == 0)
-            {
-                sdl_assert(m_sdl_glcontext != nullptr, "failed to create renderer");
-                ds::dims<i32> viewport{ window.get_render_size() };
-                glViewport(0, 0, viewport.width, viewport.height);
-            }
+        return gl_context;
+    }
+
+    static NVGcontext* create_nanovg_context(Renderer* renderer)
+    {
+        runtime_assert(renderer != nullptr, "invalid renderer being used for nvg context");
+
+        i32 nvg_flags = NVG_ANTIALIAS;
+        if (renderer->m_stencil_buffer)
+            nvg_flags |= NVG_STENCIL_STROKES;
+        if constexpr (rl::Renderer::NanoVGDiagnostics)
+            nvg_flags |= NVG_DEBUG;
+
+        NVGcontext* nvg_context{ nvgCreateGL3(nvg_flags) };
+        runtime_assert(nvg_context != nullptr, "Failed to create NVG context");
+        return nvg_context;
+    };
+
+    Renderer::Renderer(rl::Window& window, rl::Renderer::Properties flags)
+        : m_properties{ flags }
+        , m_sdl_glcontext{ create_opengl_context(window.sdl_handle()) }
+        , m_nvg_context{ create_nanovg_context(this) }
+    {
+        if (m_sdl_glcontext != nullptr)
+        {
+            sdl_assert(m_sdl_glcontext != nullptr, "failed to create renderer");
+            ds::dims<i32> viewport{ window.get_render_size() };
+            glViewport(0, 0, viewport.width, viewport.height);
         }
     }
 

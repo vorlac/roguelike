@@ -15,9 +15,9 @@
 #include "core/renderer.hpp"
 #include "core/state/fsm.hpp"
 #include "core/state/states.hpp"
+#include "core/ui/label.hpp"
 #include "core/window.hpp"
 #include "gl/instanced_buffer.hpp"
-#include "gui/nanogui.hpp"
 #include "sdl/defs.hpp"
 #include "utils/crtp.hpp"
 #include "utils/numeric.hpp"
@@ -71,8 +71,8 @@ namespace rl {
             const std::unique_ptr<rl::Renderer>& renderer{ m_window->renderer() };
             gl::InstancedVertexBuffer vbo{ renderer->get_viewport() };
 
-            gui::Button* button = new gui::Button(dynamic_cast<gui::Screen*>(m_window.get()));
-            button->set_callback([] {
+            ui::label* label = new ui::label(m_window.get(), "TEST");
+            label->set_callback([] {
                 log::warning("Button Pressed");
             });
 

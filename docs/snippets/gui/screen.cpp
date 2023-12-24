@@ -34,7 +34,9 @@
 
 #if defined(NANOGUI_USE_OPENGL) || defined(NANOGUI_USE_GLES)
   #if defined(NANOGUI_USE_OPENGL)
-    #define NANOVG_GL3_IMPLEMENTATION
+    #ifndef NANOVG_GL3_IMPLEMENTATION
+      #define NANOVG_GL3_IMPLEMENTATION
+    #endif
   #elif defined(NANOGUI_USE_GLES)
     #define NANOVG_GLES2_IMPLEMENTATION
   #endif

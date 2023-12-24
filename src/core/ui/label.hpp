@@ -9,7 +9,6 @@
 #include "ds/shared.hpp"
 #include "ds/vector2d.hpp"
 
-
 namespace rl::ui {
 
     class label : public ui::widget

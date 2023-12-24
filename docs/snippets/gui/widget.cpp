@@ -1,6 +1,5 @@
 #include "gui/layout.hpp"
 #include "gui/opengl.hpp"
-#include "gui/screen.hpp"
 #include "gui/theme.hpp"
 #include "gui/widget.hpp"
 #include "gui/window.hpp"
@@ -249,7 +248,7 @@ namespace rl::gui {
         {
             if (!widget)
                 return nullptr;
-            Screen* screen = dynamic_cast<Screen*>(widget);
+            Screen* screen{ static_cast<Screen*>(widget) };
             if (screen)
                 return screen;
             widget = widget->parent();

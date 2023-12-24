@@ -13,6 +13,10 @@
 #include "ds/shared.hpp"
 #include "ds/vector2d.hpp"
 
+#if _MSC_VER
+  #pragma warning(disable : 4244)
+#endif
+
 namespace rl {
     class Mouse;
     class Window;
