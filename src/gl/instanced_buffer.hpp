@@ -137,6 +137,9 @@ namespace rl::gl {
 
         void set_draw_mode(DrawMode mode = DrawMode::Fill)
         {
+            if (mode == m_draw_mode)
+                return;
+
             switch (mode)
             {
                 case DrawMode::Wireframe:
@@ -228,11 +231,12 @@ namespace rl::gl {
             glDrawArraysInstanced(GL_TRIANGLES, 0,
                                   static_cast<i32>(m_rect_vertex_buffer_data.size()), m_rect_count);
 
-            // glBindVertexArray(0);
+            glBindVertexArray(0);
         }
 
     private:
         rl::Timer<f32> m_timer{};
+        DrawMode m_draw_mode{ DrawMode::Fill };
         Shader m_shader{ "instanced_vertex_shader.glsl", "instanced_fragment_shader.glsl" };
 
         constexpr static inline u32 m_rect_count{ 1000000 };

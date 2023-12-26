@@ -34,6 +34,7 @@ target_compile_options(${PROJECT_NAME}
 			/wd4125 # decimal digit terminates octal escape sequence
 			/wd4100 # formal parameter unused
 			/wd4505 # unreferenced function with internal linkage has been removed (temp - undo afteer RendererGL is working)
+			/wd4634 # invalid comment docstring
 		>
 
         # Clang and GNU

@@ -71,7 +71,10 @@ namespace rl {
             const std::unique_ptr<rl::Renderer>& renderer{ m_window->renderer() };
             gl::InstancedVertexBuffer vbo{ renderer->get_viewport() };
 
-            ui::label* label = new ui::label(m_window.get(), "TEST");
+            ui::label* label = new ui::label{ m_window.get(), "Test Label", ui::font::name::mono };
+            label->set_tooltip("Label Tooltip Test");
+            label->set_position({ 10, 10 });
+            label->set_size({ 100, 30 });
             label->set_callback([] {
                 log::warning("Button Pressed");
             });
@@ -84,9 +87,10 @@ namespace rl {
                 this->handle_events();
                 this->update();
 
-                renderer->clear();
-                vbo.update_buffers(renderer->get_viewport());
-                vbo.draw_triangles();
+                // vbo.update_buffers(renderer->get_viewport());
+                // vbo.draw_triangles();
+
+                m_window->draw_all();
                 m_window->swap_buffers();
 
                 if constexpr (io::logging::main_loop)
@@ -104,7 +108,6 @@ namespace rl {
         }
 
         bool quit()
-
         {
             return this->teardown();
         }

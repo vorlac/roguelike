@@ -6,6 +6,8 @@
 #include <utility>
 #include <vector>
 
+// #include <nanovg_gl_utils.h>
+
 #include "ds/color.hpp"
 #include "ds/dims.hpp"
 #include "ds/point.hpp"
@@ -21,6 +23,8 @@ SDL_C_LIB_BEGIN
 #include <SDL3/SDL_render.h>
 #include <SDL3/SDL_video.h>
 SDL_C_LIB_END
+
+struct NVGLUframebuffer;
 
 namespace rl {
     class Window;
@@ -77,6 +81,11 @@ namespace rl {
             return m_sdl_glcontext;
         }
 
+        NVGcontext* nvg_context()
+        {
+            return m_nvg_context;
+        }
+
         bool set_viewport(const ds::rect<i32>& rect);
         bool set_draw_color(const ds::color<u8>& c);
         bool clear(const ds::color<u8>& c = { 29, 32, 39 });
@@ -87,12 +96,12 @@ namespace rl {
         bool set_draw_blend_mode(const SDL3::SDL_BlendMode blend_mode);
 
     private:
-        rl::Renderer::Properties m_properties{ Properties::None };
-        SDL3::SDL_GLContext m_sdl_glcontext{ nullptr };
-
         friend static NVGcontext* create_nanovg_context(rl::Renderer* renderer);
         constexpr static inline bool GuiWidgetDiagnostics{ true };
         constexpr static inline bool NanoVGDiagnostics{ true };
+
+        rl::Renderer::Properties m_properties{ Properties::None };
+        SDL3::SDL_GLContext m_sdl_glcontext{ nullptr };
         NVGcontext* m_nvg_context{ nullptr };
         bool m_stencil_buffer{ false };
     };

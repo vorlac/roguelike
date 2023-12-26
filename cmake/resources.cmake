@@ -79,9 +79,9 @@ foreach(bin ${fonts_list})
   file(READ ${bin} filedata HEX)
   string(REGEX REPLACE "([0-9a-f][0-9a-f])" "0x\\1," filedata "${filedata}")
 
-  file(APPEND ${fonts_cpp} "extern const uint8_t ${filename}[] = {${filedata}0x00};\n")
+  file(APPEND ${fonts_cpp} "extern uint8_t ${filename}[] = {${filedata}0x00};\n")
   file(APPEND ${fonts_cpp} "uint32_t ${filename}_size = sizeof(${filename}) - 1;\n\n")
-  file(APPEND ${fonts_hpp} "extern const uint8_t ${filename}[];\n")
+  file(APPEND ${fonts_hpp} "extern uint8_t ${filename}[];\n")
   file(APPEND ${fonts_hpp} "extern uint32_t ${filename}_size;\n\n")
 endforeach()
 

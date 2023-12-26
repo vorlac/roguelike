@@ -55,6 +55,16 @@ namespace rl::ds {
         {
         }
 
+        template <rl::integer I>
+        constexpr inline color(I cr, I cg, I cb, I ca = 1.0f)
+            requires std::same_as<T, f32>
+            : r{ static_cast<T>(cr / 255.0f) }
+            , g{ static_cast<T>(cg / 255.0f) }
+            , b{ static_cast<T>(cb / 255.0f) }
+            , a{ static_cast<T>(ca / 255.0f) }
+        {
+        }
+
         constexpr inline color(std::tuple<T, T, T> tup)
             : r{ std::get<0>(tup) }
             , g{ std::get<1>(tup) }

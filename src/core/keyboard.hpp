@@ -3,6 +3,8 @@
 #include <bitset>
 #include <string>
 
+#include <fmt/format.h>
+
 #include "sdl/defs.hpp"
 
 SDL_C_LIB_BEGIN
@@ -17,7 +19,7 @@ namespace rl {
     class Keyboard
     {
     public:
-        /**
+        /* *
          * @brief Keyboard Specific Event Identifiers
          * */
         struct Event
@@ -33,7 +35,7 @@ namespace rl {
             };
         };
 
-        /**
+        /* *
          * @brief Keyboard Scancode Identifiers
          * */
         struct Button
@@ -293,7 +295,7 @@ namespace rl {
             };
         };
 
-        /**
+        /* *
          * @brief Keyboard Keycode Identifiers
          * */
         struct Key

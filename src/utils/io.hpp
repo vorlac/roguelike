@@ -39,8 +39,8 @@ namespace rl::io {
 
         constexpr static inline bool kb_events{ false };
         constexpr static inline bool mouse_events{ false };
-        constexpr static inline bool window_events{ false };
-        constexpr static inline bool main_loop{ true };
+        constexpr static inline bool window_events{ true };
+        constexpr static inline bool main_loop{ false };
         constexpr static inline bool rendering{ false };
     };
 }

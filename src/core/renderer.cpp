@@ -5,6 +5,7 @@
 
 #include <nanovg.h>
 #include <nanovg_gl.h>
+#include <nanovg_gl_utils.h>
 
 #include "core/assert.hpp"
 #include "core/renderer.hpp"
@@ -30,7 +31,7 @@ namespace rl {
         SDL3::SDL_GLContext gl_context{ SDL3::SDL_GL_CreateContext(sdl_window) };
         runtime_assert(gl_context != nullptr, "Failed to create OpenGL context");
 
-        i32 gl_version = gladLoadGL((GLADloadfunc)SDL3::SDL_GL_GetProcAddress);
+        i32 gl_version = gladLoadGL(SDL3::SDL_GL_GetProcAddress);
         i32 gl_major_ver{ GLAD_VERSION_MAJOR(gl_version) };
         i32 gl_minor_ver{ GLAD_VERSION_MINOR(gl_version) };
 
@@ -96,7 +97,7 @@ namespace rl {
         bool ret = true;
         std::tuple<f32, f32, f32, f32> clr{ c };
         glClearColor(std::get<0>(clr), std::get<1>(clr), std::get<2>(clr), std::get<3>(clr));
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         return ret;
     }
 

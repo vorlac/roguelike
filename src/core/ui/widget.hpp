@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <vector>
 
+#include "core/keyboard.hpp"
 #include "core/mouse.hpp"
 #include "core/ui/layout.hpp"
 #include "core/ui/theme.hpp"
@@ -18,9 +19,9 @@
 #endif
 
 namespace rl {
-    class Mouse;
     class Window;
     using WindowID = u32;
+    using DisplayID = u32;
 }
 
 namespace rl::ui {
@@ -186,19 +187,21 @@ namespace rl::ui {
 
         bool visible_recursive() const
         {
-            bool visible = true;
-            const widget* widget = this;
-            while (widget)
+            bool visible{ true };
+
+            const widget* widget{ this };
+            while (widget != nullptr)
             {
                 visible &= widget->visible();
                 widget = widget->parent();
             }
+
             return visible;
         }
 
         int child_count() const
         {
-            return (int)m_children.size();
+            return static_cast<i32>(m_children.size());
         }
 
         const std::vector<widget*>& children() const
@@ -311,13 +314,12 @@ namespace rl::ui {
         virtual void draw(NVGcontext* nvg_context);
 
         virtual bool on_kb_character_input(const WindowID id);
-        virtual bool on_kb_key_pressed(const WindowID id);
+        virtual bool on_kb_key_pressed(const Keyboard::Button::type key);
         virtual bool on_kb_focus_gained(const WindowID id);
         virtual bool on_kb_focus_lost(const WindowID id);
         virtual bool on_mouse_enter(const WindowID id);
         virtual bool on_mouse_leave(const WindowID id);
         virtual bool on_mouse_click(const WindowID id);
-        virtual bool on_mouse_move(const WindowID id);
         virtual bool on_mouse_drag(const WindowID id);
         virtual bool on_mouse_scroll(const WindowID id);
 
@@ -333,6 +335,7 @@ namespace rl::ui {
         ds::shared<ui::layout> m_layout{ nullptr };
         ds::point<i32> m_pos{ 0, 0 };
         ds::dims<i32> m_size{ 0, 0 };
+        ds::dims<i32> m_fb_size{ 0, 0 };
         ds::dims<i32> m_fixed_size{ 0, 0 };
         std::vector<widget*> m_children{};
         Mouse::Cursor::ID m_cursor{ Mouse::Cursor::ID::Arrow };
@@ -348,7 +351,7 @@ namespace rl::ui {
         NVGcontext* m_nvg_context{ nullptr };
 
         // Enables diagnostic rendering that displays widget bounds
-        constexpr static bool DiagnosticsEnabled = false;
+        constexpr static bool DiagnosticsEnabled{ true };
     };
 
 }

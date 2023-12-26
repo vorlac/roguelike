@@ -102,11 +102,10 @@ target_compile_features(${PROJECT_NAME}
 target_compile_definitions(${PROJECT_NAME}
   PRIVATE
     ROGUELIKE_TESTS_ENABLED
-	  NANOVG_GL3_IMPLEMENTATION
+    NANOVG_GL3_IMPLEMENTATION
     NANOGUI_USE_OPENGL
     NANOGUI_GLAD
     KHRONOS_STATIC
-
     NOMINMAX
 
     $<${compiler_is_msvc}:
@@ -127,6 +126,7 @@ target_compile_options(${PROJECT_NAME}
         /utf-8
         /EHsc
         /nologo
+		# /doc
 
         $<$<CONFIG:Debug>:
             # /Z7 # embed debug info into .o files instead of pdb (for ccache)

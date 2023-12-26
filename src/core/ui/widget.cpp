@@ -1,6 +1,6 @@
+#include "core/keyboard.hpp"
 #include "core/mouse.hpp"
 #include "core/ui/layout.hpp"
-#include "core/ui/opengl.hpp"
 #include "core/ui/theme.hpp"
 #include "core/ui/widget.hpp"
 #include "core/window.hpp"
@@ -47,18 +47,21 @@ namespace rl::ui {
 
     int widget::font_size() const
     {
-        return (m_font_size < 0 && m_theme != nullptr) ? m_theme->m_standard_font_size
-                                                       : m_font_size;
+        return (m_font_size < 0 && m_theme != nullptr)  //
+                 ? m_theme->m_standard_font_size        //
+                 : m_font_size;                         //
     }
 
     ds::dims<i32> widget::preferred_size(NVGcontext* nvg_context) const
     {
-        return m_layout == nullptr ? m_layout->preferred_size(nvg_context, this) : m_size;
+        return m_layout == nullptr                              //
+                 ? m_layout->preferred_size(nvg_context, this)  //
+                 : m_size;                                      //
     }
 
     void widget::perform_layout(NVGcontext* nvg_context)
     {
-        if (m_layout)
+        if (m_layout != nullptr)
             m_layout->perform_layout(nvg_context, this);
         else
         {
@@ -102,18 +105,20 @@ namespace rl::ui {
         return true;
     }
 
-    bool widget::on_kb_key_pressed(const WindowID id)
+    bool widget::on_kb_key_pressed(const Keyboard::Button::type key)
     {
         return true;
     }
 
     bool widget::on_kb_focus_gained(const WindowID id)
     {
+        m_focused = true;
         return true;
     }
 
     bool widget::on_kb_focus_lost(const WindowID id)
     {
+        m_focused = false;
         return true;
     }
 
@@ -132,11 +137,6 @@ namespace rl::ui {
         return true;
     }
 
-    bool widget::on_mouse_move(const WindowID id)
-    {
-        return true;
-    }
-
     bool widget::on_mouse_drag(const WindowID id)
     {
         return true;
@@ -146,87 +146,6 @@ namespace rl::ui {
     {
         return true;
     }
-
-    // bool widget::mouse_button_event(const ds::point<i32>& p, int button, bool down, int
-    // modifiers)
-    //{
-    //     for (auto it = m_children.rbegin(); it != m_children.rend(); ++it)
-    //     {
-    //         widget* child = *it;
-    //         if (child->visible() && child->contains(p - this->m_pos) &&
-    //             child->mouse_button_event(p - this->m_pos, button, down, modifiers))
-    //             return true;
-    //     }
-    //     if (button == GLFW_MOUSE_BUTTON_1 && down && !m_focused)
-    //         request_focus();
-    //     return false;
-    // }
-
-    // bool widget::mouse_motion_event(const ds::point<i32>& p, const ds::point<i32>& rel, int
-    // button,
-    //                                 int modifiers)
-    //{
-    //     bool handled = false;
-
-    //    for (auto it = m_children.rbegin(); it != m_children.rend(); ++it)
-    //    {
-    //        widget* child = *it;
-    //        if (!child->visible())
-    //            continue;
-
-    //        bool contained = child->contains(p - this->m_pos),
-    //             prev_contained = child->contains(p - this->m_pos - rel);
-
-    //        if (contained != prev_contained)
-    //            handled |= child->mouse_enter_event(p, contained);
-
-    //        if (contained || prev_contained)
-    //            handled |= child->mouse_motion_event(p - this->m_pos, rel, button, modifiers);
-    //    }
-
-    //    return handled;
-    //}
-
-    // bool widget::scroll_event(const ds::point<i32>& p, const ds::vector2<f32>& rel)
-    //{
-    //     for (auto it = m_children.rbegin(); it != m_children.rend(); ++it)
-    //     {
-    //         widget* child = *it;
-    //         if (!child->visible())
-    //             continue;
-    //         if (child->contains(p - this->m_pos) && child->scroll_event(p - this->m_pos, rel))
-    //             return true;
-    //     }
-    //     return false;
-    // }
-
-    // bool widget::mouse_drag_event(const ds::point<i32>& pt, const ds::vector2<i32>& relative, int
-    // button, int modifiers)
-    //{
-    //     return false;
-    // }
-
-    // bool widget::mouse_enter_event(const ds::point<i32>&, bool enter)
-    //{
-    //     m_mouse_focus = enter;
-    //     return false;
-    // }
-
-    // bool widget::focus_event(bool focused)
-    //{
-    //     m_focused = focused;
-    //     return false;
-    // }
-
-    // bool widget::keyboard_event(int, int, int, int)
-    //{
-    //     return false;
-    // }
-
-    // bool widget::keyboard_character_event(unsigned int)
-    //{
-    //     return false;
-    // }
 
     void widget::add_child(int index, widget* widget)
     {

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include <string>
 
 #include "core/ui/widget.hpp"
@@ -14,8 +15,8 @@ namespace rl::ui {
     class label : public ui::widget
     {
     public:
-        label(ui::widget* parent, const std::string& caption, const std::string& font = "sans",
-              i32 font_size = -1);
+        label(ui::widget* parent, const std::string& caption,
+              const std::string& font = font::name::mono, i32 font_size = -1);
 
         const std::string& caption() const
         {
@@ -47,13 +48,19 @@ namespace rl::ui {
             m_color = color;
         }
 
+        void set_callback(auto&& callable)
+        {
+            m_callback = std::move(callable);
+        }
+
         virtual ds::dims<i32> preferred_size(NVGcontext* nvg_context) const override;
         virtual void set_theme(ui::theme* theme) override;
-        virtual void draw(NVGcontext* ctx) override;
+        virtual void draw(NVGcontext* nvg_context) override;
 
     protected:
         std::string m_caption{};
         std::string m_font{};
-        ds::color<f32> m_color{};
+        ds::color<f32> m_color{ rl::Colors::Yellow };
+        std::function<void()> m_callback;
     };
 }

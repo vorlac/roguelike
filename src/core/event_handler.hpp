@@ -24,11 +24,10 @@ namespace rl {
             {
                 switch (e.type)
                 {
-                    /**
-                     * @brief Mouse input events
-                     */
+                    // Mouse input events
                     case Mouse::Event::MouseWheel:
                         m_mouse.process_wheel(e.wheel);
+                        window->on_mouse_scroll(e.wheel);
                         if constexpr (io::logging::mouse_events)
                             log::info("{}", m_mouse);
                         break;
@@ -39,20 +38,21 @@ namespace rl {
                         break;
                     case Mouse::Event::MouseButtonDown:
                         m_mouse.process_button_down(e.button.button);
+                        window->on_mouse_click(e.button.button);
                         if constexpr (io::logging::mouse_events)
                             log::info("{}", m_mouse);
                         break;
                     case Mouse::Event::MouseButtonUp:
                         m_mouse.process_button_up(e.button.button);
+                        window->on_mouse_click(e.button.button);
                         if constexpr (io::logging::mouse_events)
                             log::info("{}", m_mouse);
                         break;
 
-                    /**
-                     * @brief Keyboard input events
-                     */
+                    // Keyboard input events
                     case Keyboard::Event::KeyDown:
                         m_keyboard.process_button_down(e.key.keysym.scancode);
+                        window->on_kb_key_pressed(e.key.keysym.scancode);
                         if constexpr (io::logging::kb_events)
                             log::info("{}", m_keyboard);
                         if (m_keyboard.is_button_pressed(Keyboard::Button::Escape)) [[unlikely]]
@@ -60,13 +60,12 @@ namespace rl {
                         break;
                     case Keyboard::Event::KeyUp:
                         m_keyboard.process_button_up(e.key.keysym.scancode);
+                        window->on_kb_key_pressed(e.key.keysym.scancode);
                         if constexpr (io::logging::kb_events)
                             log::info("{}", m_keyboard);
                         break;
 
-                    /**
-                     * @brief Window events
-                     */
+                    // Window events
                     case Window::Event::Shown:
                     {
                         const Window::Event::Data& window_event{ e.window };
@@ -110,7 +109,9 @@ namespace rl {
                     {
                         const Window::Event::Data& window_event{ e.window };
                         const WindowID id{ window_event.windowID };
-                        window->on_pixel_size_changed(id);
+                        const i32 width{ window_event.data1 };
+                        const i32 height{ window_event.data2 };
+                        window->on_pixel_size_changed(id, { width, height });
                         break;
                     }
                     case Window::Event::Minimized:
@@ -219,9 +220,16 @@ namespace rl {
                         break;
                     }
 
-                    /**
-                     * @brief Quit request event
-                     */
+                    // Display events
+                    case Window::DisplayEvent::ContentScaleChanged:
+                    {
+                        const Window::DisplayEvent::Data& window_event{ e.display };
+                        const DisplayID id{ window_event.displayID };
+                        window->on_display_content_scale_changed(id);
+                        break;
+                    }
+
+                    // Quit request event
                     case Event::Quit:
                         m_quit = true;
                         break;

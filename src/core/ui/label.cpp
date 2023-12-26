@@ -1,7 +1,6 @@
 #include <nanovg.h>
 
 #include "core/ui/label.hpp"
-#include "core/ui/opengl.hpp"
 #include "core/ui/theme.hpp"
 #include "ds/dims.hpp"
 #include "ds/shared.hpp"

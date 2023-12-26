@@ -6,27 +6,54 @@
 #include "ds/color.hpp"
 #include "ds/refcounted.hpp"
 #include "ds/shared.hpp"
+#include "resources/fonts.hpp"
 #include "utils/numeric.hpp"
 
 namespace rl::ui {
+    namespace font {
+        constexpr i32 uninitialized{ -1 };
+
+        namespace name {
+            constexpr const char* const sans{ "sans" };
+            constexpr const char* const sans_bold{ "sans_bold" };
+            constexpr const char* const icons{ "icons" };
+            constexpr const char* const mono{ "mono" };
+        }
+    }
 
     class theme : public ds::refcounted
     {
     public:
         theme(NVGcontext* nvg_context)
+            : m_font_sans_regular{
+                nvgCreateFontMem(nvg_context, ui::font::name::sans,
+                                 roboto_regular_ttf, roboto_regular_ttf_size, 0),
+            }
+            , m_font_sans_bold{
+                nvgCreateFontMem(nvg_context, ui::font::name::sans_bold,
+                                 roboto_bold_ttf, roboto_bold_ttf_size, 0),
+            }
+            , m_font_icons{
+                nvgCreateFontMem(nvg_context, ui::font::name::icons,
+                                 fontawesome_solid_ttf, fontawesome_solid_ttf_size, 0),
+            }
+            , m_font_mono_regular{
+                nvgCreateFontMem(nvg_context, ui::font::name::mono, fira_code_regular_ttf,
+                                 fira_code_regular_ttf_size, 0),
+            }
         {
             bool font_load_success = true;
-            font_load_success &= m_font_sans_regular != -1;
-            font_load_success &= m_font_sans_bold != -1;
-            font_load_success &= m_font_icons != -1;
-            font_load_success &= m_font_mono_regular != -1;
+            font_load_success &= m_font_sans_regular != font::uninitialized;
+            font_load_success &= m_font_sans_bold != font::uninitialized;
+            font_load_success &= m_font_icons != font::uninitialized;
+            font_load_success &= m_font_mono_regular != font::uninitialized;
             runtime_assert(font_load_success, "Failed to load fonts");
         }
 
-        i32 m_font_sans_regular;
-        i32 m_font_sans_bold;
-        i32 m_font_icons;
-        i32 m_font_mono_regular;
+        i32 m_font_sans_regular{ font::uninitialized };
+        i32 m_font_sans_bold{ font::uninitialized };
+        i32 m_font_icons{ font::uninitialized };
+        i32 m_font_mono_regular{ font::uninitialized };
 
         f32 m_icon_scale{ 1.0f };
         f32 m_tab_border_width{ 0.75f };
@@ -84,5 +111,4 @@ namespace rl::ui {
         i32 m_text_box_up_icon{ FA_CHEVRON_UP };
         i32 m_text_box_down_icon{ FA_CHEVRON_DOWN };
     };
-
 }

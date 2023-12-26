@@ -2,8 +2,11 @@
 
 #include <utility>
 
+#include <nanovg.h>
+
 #include "core/assert.hpp"
 #include "core/renderer.hpp"
+#include "core/ui/layout.hpp"
 #include "core/window.hpp"
 #include "ds/dims.hpp"
 #include "ds/point.hpp"
@@ -23,21 +26,68 @@ namespace rl {
     Window::Window(std::string title, const ds::dims<i32>& dims, Window::Properties flags)
         : ui::widget(nullptr)
     {
-        SDL3::SDL_GL_SetAttribute(SDL3::SDL_GL_ACCELERATED_VISUAL, 1);
-        SDL3::SDL_GL_SetAttribute(SDL3::SDL_GL_CONTEXT_FLAGS,
-                                  SDL3::SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG);
-        SDL3::SDL_GL_SetAttribute(SDL3::SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-        SDL3::SDL_GL_SetAttribute(SDL3::SDL_GL_CONTEXT_MINOR_VERSION, 6);
-        SDL3::SDL_GL_SetAttribute(SDL3::SDL_GL_CONTEXT_PROFILE_MASK,
-                                  SDL3::SDL_GL_CONTEXT_PROFILE_CORE);
+        this->set_opengl_attribute(OpenGL::Attribute::AcceleratedVisual, 1);
+        this->set_opengl_attribute(OpenGL::Attribute::ContextMajorVersion, 4);
+        this->set_opengl_attribute(OpenGL::Attribute::ContextMinorVersion, 6);
+        this->set_opengl_attribute(OpenGL::Attribute::DepthSize, 24);
+        this->set_opengl_attribute(OpenGL::Attribute::StencilSize, 8);
+        this->set_opengl_attribute(OpenGL::Attribute::RetainedBacking, 0);
+        this->set_opengl_attribute(OpenGL::Attribute::RedSize, 8);
+        this->set_opengl_attribute(OpenGL::Attribute::GreenSize, 8);
+        this->set_opengl_attribute(OpenGL::Attribute::BlueSize, 8);
+        this->set_opengl_attribute(OpenGL::Attribute::AlphaSize, 8);
+        this->set_opengl_attribute(OpenGL::Attribute::Doublebuffer, 1);
+        this->set_opengl_attribute(OpenGL::Attribute::ContextProfileMask, OpenGL::Profile::Core);
+        this->set_opengl_attribute(OpenGL::Attribute::ContextFlags,
+                                   OpenGL::ContextFlag::ForwardCompatible);
+
         m_properties = flags;
         m_sdl_window = SDL3::SDL_CreateWindow(title.data(), dims.width, dims.height, m_properties);
         m_window_rect = { m_sdl_window ? this->get_position() : ds::point<i32>::null(), dims };
         m_renderer = std::make_unique<rl::Renderer>(*this, rl::Renderer::DEFAULT_PROPERTY_FLAGS);
-
+        m_nvg_context = m_renderer->nvg_context();
         sdl_assert(m_sdl_window != nullptr, "failed to create SDL_Window");
         sdl_assert(m_renderer != nullptr, "failed to create sdl::Renderer");
-        SDL3::SDL_GL_SetAttribute(SDL3::SDL_GL_DOUBLEBUFFER, 0);
+
+        this->init_gui();
+    }
+
+    bool Window::init_gui()
+    {
+        // Screen::Screen()
+        i32 depth_bits{ 0 };
+        glGetFramebufferAttachmentParameteriv(GL_DRAW_FRAMEBUFFER, GL_DEPTH,
+                                              GL_FRAMEBUFFER_ATTACHMENT_DEPTH_SIZE, &depth_bits);
+        m_depth_buffer = depth_bits > 0;
+
+        i32 stencil_bits{ 0 };
+        glGetFramebufferAttachmentParameteriv(
+            GL_DRAW_FRAMEBUFFER, GL_STENCIL, GL_FRAMEBUFFER_ATTACHMENT_STENCIL_SIZE, &stencil_bits);
+        m_stencil_buffer = stencil_bits > 0;
+
+        u8 float_mode{ 0 };
+        glGetBooleanv(GL_RGBA_FLOAT_MODE_ARB, &float_mode);
+        m_float_buffer = float_mode != 0;
+
+        ds::dims<i32> window_size{ this->get_size() };
+        ds::dims<i32> render_size{ this->get_render_size() };
+
+        m_pixel_ratio = 1.0f;
+
+        // Screen::initialize
+        this->get_display();
+        this->set_visible(true);
+        this->set_theme(new ui::theme(m_nvg_context));
+        this->on_mouse_move(m_display_id, ds::point{ 0, 0 });
+        m_last_interaction = m_timer.elapsed();
+        m_mouse_state = m_modifiers = 0;
+        m_process_events = true;
+        m_drag_active = false;
+        m_redraw = true;
+
+        SDL3::SDL_GL_SetSwapInterval(m_vsync);
+
+        return true;
     }
 
     Window::~Window()
@@ -63,6 +113,152 @@ namespace rl {
         m_window_rect = std::move(other.m_window_rect);
 
         return *this;
+    }
+
+    bool Window::set_opengl_attribute(OpenGL::Attribute attr, auto val)
+    {
+        i32 result = SDL3::SDL_GL_SetAttribute(OpenGL::sdl_type(attr), i32(val));
+        sdl_assert(result == 0, "failed to set OpenGL attribute");
+        return result == 0;
+    }
+
+    bool Window::clear()
+    {
+        return m_renderer->clear(m_background_color);
+    }
+
+    bool Window::draw_setup()
+    {
+        bool ret{ true };
+        int result = SDL3::SDL_GL_MakeCurrent(m_sdl_window, m_renderer->gl_context());
+        sdl_assert(result == 0, "failed to make context current");
+        this->get_size();
+        this->get_render_size();
+        ret &= m_renderer->set_viewport({ 0, 0, m_fb_size.width, m_fb_size.height });
+        ret &= this->swap_buffers();
+        return ret;
+    }
+
+    bool Window::draw_contents()
+    {
+        return this->clear();
+    }
+
+    bool Window::draw_widgets()
+    {
+        nvgBeginFrame(m_nvg_context, m_size.width, m_size.height, m_pixel_ratio);
+
+        this->draw(m_nvg_context);
+
+        float elapsed{ m_timer.elapsed() - m_last_interaction };
+        if (elapsed > 0.5f)
+        {
+            const ui::widget* widget{ find_widget(m_mouse_pos) };
+            if (widget && !widget->tooltip().empty())
+            {
+                i32 tooltip_width{ 150 };
+                f32 bounds[4] = { 0.0f };
+
+                nvgFontFace(m_nvg_context, "sans");
+                nvgFontSize(m_nvg_context, 15.0f);
+                nvgTextAlign(m_nvg_context, NVG_ALIGN_LEFT | NVG_ALIGN_TOP);
+                nvgTextLineHeight(m_nvg_context, 1.1f);
+
+                ds::point<i32> pos{
+                    widget->abs_position() +
+                        ds::point<i32>(widget->width() / 2, widget->height() + 10),
+                };
+
+                nvgTextBounds(m_nvg_context, pos.x, pos.y, widget->tooltip().c_str(), nullptr,
+                              bounds);
+
+                i32 height{ static_cast<i32>((bounds[2] - bounds[0]) / 2.0f) };
+                if (height > tooltip_width / 2)
+                {
+                    nvgTextAlign(m_nvg_context, NVG_ALIGN_CENTER | NVG_ALIGN_TOP);
+                    nvgTextBoxBounds(m_nvg_context, pos.x, pos.y, tooltip_width,
+                                     widget->tooltip().c_str(), nullptr, bounds);
+
+                    height = (bounds[2] - bounds[0]) / 2;
+                }
+
+                i32 shift{ 0 };
+                if (pos.x - height - 8 < 0)
+                {
+                    // Keep tooltips on screen
+                    shift = pos.x - height - 8;
+                    pos.x -= shift;
+                    bounds[0] -= shift;
+                    bounds[2] -= shift;
+                }
+
+                nvgGlobalAlpha(m_nvg_context, std::min(1.0f, 2.0f * (elapsed - 0.5f)) * 0.8f);
+
+                nvgBeginPath(m_nvg_context);
+                nvgFillColor(m_nvg_context, ds::color<f32>{ 0.0f, 0.0f, 0.0f, 1.0f });
+                nvgRoundedRect(m_nvg_context, bounds[0] - 4 - height, bounds[1] - 4,
+                               static_cast<i32>(bounds[2] - bounds[0]) + 8,
+                               static_cast<i32>(bounds[3] - bounds[1]) + 8, 3);
+
+                i32 px{ static_cast<i32>((bounds[2] + bounds[0]) / 2) - height + shift };
+
+                nvgMoveTo(m_nvg_context, px, bounds[1] - 10);
+                nvgLineTo(m_nvg_context, px + 7, bounds[1] + 1);
+                nvgLineTo(m_nvg_context, px - 7, bounds[1] + 1);
+                nvgFill(m_nvg_context);
+
+                nvgFillColor(m_nvg_context, ds::color<f32>{ 1.0f, 1.0f, 1.0f, 1.0f });
+                nvgFontBlur(m_nvg_context, 0.0f);
+                nvgTextBox(m_nvg_context, pos.x - height, pos.y, tooltip_width,
+                           widget->tooltip().c_str(), nullptr);
+            }
+        }
+
+        nvgEndFrame(m_nvg_context);
+
+        return true;
+    }
+
+    bool Window::redraw()
+    {
+        m_redraw |= true;
+        // if (!m_redraw)
+        // {
+        //     m_redraw = true;
+        //
+        //     // Posts an empty event to the event queue.
+        //     //
+        //     // This function posts an empty event from the current thread to the event
+        //     // queue, causing @ref glfwWaitEvents or @ref glfwWaitEventsTimeout to return.
+        //     //
+        //     // Possible errors include GLFW_NOT_INITIALIZED and GLFW_PLATFORM_ERROR.
+        //     //
+        //     // This function may be called from any thread.
+        //     //
+        //     // Related:
+        //     // - events
+        //     // - glfwWaitEvents
+        //     // - glfwWaitEventsTimeout
+        //     //
+        //     // glfwPostEmptyEvent();
+        // }
+
+        return true;
+    }
+
+    bool Window::draw_teardown()
+    {
+        return this->swap_buffers();
+    }
+
+    bool Window::draw_all()
+    {
+        bool ret = true;
+        ret &= this->draw_setup();
+        ret &= this->draw_contents();
+        ret &= this->draw_widgets();
+        ret &= this->draw_teardown();
+        return ret;
     }
 
     bool Window::maximize()
@@ -104,6 +300,14 @@ namespace rl {
     {
         i32 result = SDL3::SDL_ShowWindow(m_sdl_window);
         sdl_assert(result == 0, "failed to show");
+        return result == 0;
+    }
+
+    bool Window::set_vsync(bool enabled)
+    {
+        i32 result = SDL3::SDL_GL_SetSwapInterval(enabled ? 1 : 0);
+        sdl_assert(result == 0, "failed to set vsync (enabled:{})", enabled);
+        m_vsync = enabled;
         return result == 0;
     }
 
@@ -159,6 +363,7 @@ namespace rl {
 
     bool Window::set_size(ds::dims<i32> size)
     {
+        ui::widget::set_size(size);
         i32 result{ SDL3::SDL_SetWindowSize(m_sdl_window, size.width, size.height) };
         runtime_assert(result == 0, "failed to set size");
         m_window_rect.size = size;
@@ -204,25 +409,31 @@ namespace rl {
         return m_sdl_window;
     }
 
-    ds::dims<i32> Window::get_size() const
+    ds::dims<i32> Window::get_size()
     {
-        ds::dims<i32> size{ 0, 0 };
-        i32 result = SDL3::SDL_GetWindowSize(m_sdl_window, &size.width, &size.height);
+        i32 result = SDL3::SDL_GetWindowSize(m_sdl_window, &m_size.width, &m_size.height);
         sdl_assert(result == 0, "failed to set size");
-        return size;
+        return m_size;
     }
 
-    ds::dims<i32> Window::get_render_size() const
+    ds::dims<i32> Window::get_render_size()
     {
-        ds::dims<i32> size{ 0, 0 };
-        i32 result = SDL3::SDL_GetWindowSizeInPixels(m_sdl_window, &size.width, &size.height);
+        i32 result = SDL3::SDL_GetWindowSizeInPixels(m_sdl_window, &m_fb_size.width,
+                                                     &m_fb_size.height);
         sdl_assert(result == 0, "failed to set render size");
-        return size;
+
+        m_pixel_ratio = SDL3::SDL_GetWindowDisplayScale(m_sdl_window);
+        sdl_assert(m_pixel_ratio != 0.0f, "failed to get pixel ratio [window:{}]", m_window_id);
+        m_pixel_density = SDL3::SDL_GetWindowPixelDensity(m_sdl_window);
+        sdl_assert(m_pixel_density != 0.0f, "failed to get pixel density [window:{}]", m_window_id);
+
+        return m_fb_size;
     }
 
-    std::string Window::get_title() const
+    std::string Window::get_title()
     {
-        return std::string{ SDL3::SDL_GetWindowTitle(m_sdl_window) };
+        m_title = std::string{ SDL3::SDL_GetWindowTitle(m_sdl_window) };
+        return m_title;
     }
 
     ds::point<i32> Window::get_position() const
@@ -256,11 +467,11 @@ namespace rl {
         return result == 1;
     }
 
-    SDL3::SDL_DisplayID Window::get_display() const
+    DisplayID Window::get_display()
     {
-        SDL3::SDL_DisplayID id{ SDL3::SDL_GetDisplayForWindow(m_sdl_window) };
-        runtime_assert(id != 0, "failed to set window display idx");
-        return id;
+        m_display_id = SDL3::SDL_GetDisplayForWindow(m_sdl_window);
+        runtime_assert(m_display_id != 0, "failed to set window display idx");
+        return m_display_id;
     }
 
     SDL3::SDL_DisplayMode Window::get_display_mode() const
@@ -283,26 +494,29 @@ namespace rl {
 
     bool Window::on_shown(const WindowID id)
     {
-        bool ret = true;
+        this->set_visible(true);
         if constexpr (io::logging::window_events)
             log::info("window::on_shown [id:{}]", id);
-        return ret;
+
+        return true;
     }
 
     bool Window::on_hidden(const WindowID id)
     {
-        bool ret = true;
+        this->set_visible(false);
         if constexpr (io::logging::window_events)
             log::info("window::on_hidden [id:{}]", id);
-        return ret;
+
+        return true;
     }
 
     bool Window::on_exposed(const WindowID id)
     {
-        bool ret = true;
+        m_visible = true;
         if constexpr (io::logging::window_events)
             log::info("window::on_exposed [id:{}]", id);
-        return ret;
+
+        return true;
     }
 
     bool Window::on_moved(rl::WindowID id, ds::point<i32>&& pt)
@@ -333,25 +547,37 @@ namespace rl {
         bool ret = m_window_rect.size != size;
         runtime_assert(ret, "window resized, but size unchanged");
         glViewport(0, 0, size.width, size.height);
+
+        m_last_interaction = m_timer.elapsed();
         m_window_rect.size = size;
 
-        return ret;
+        if (m_resize_callback != nullptr)
+            m_resize_callback(size);
+
+        m_redraw = true;
+        return this->draw_all();
     }
 
-    bool Window::on_pixel_size_changed(const WindowID id)
+    bool Window::on_pixel_size_changed(const WindowID id, ds::dims<i32>&& pixel_size)
     {
         bool ret = true;
+
+        m_pixel_ratio = SDL3::SDL_GetWindowDisplayScale(m_sdl_window);
+        sdl_assert(m_pixel_ratio != 0.0f, "failed to get pixel ratio [window:{}]", m_window_id);
+        m_pixel_density = SDL3::SDL_GetWindowPixelDensity(m_sdl_window);
+        sdl_assert(m_pixel_density != 0.0f, "failed to get pixel density [window:{}]", m_window_id);
+
         if constexpr (io::logging::window_events)
-            log::info("window::on_pixel_size_changed [id:{}]", id);
+            log::info("window::on_pixel_size_changed [id:{}] => {}", id, pixel_size);
         return ret;
     }
 
     bool Window::on_minimized(const WindowID id)
     {
-        bool ret = true;
+        this->set_visible(false);
         if constexpr (io::logging::window_events)
             log::info("window::on_minimized [id:{}]", id);
-        return ret;
+        return true;
     }
 
     bool Window::on_maximized(const WindowID id)
@@ -372,58 +598,70 @@ namespace rl {
 
     bool Window::on_mouse_enter(const WindowID id)
     {
-        bool ret = true;
         if constexpr (io::logging::window_events)
             log::info("window::on_mouse_enter [id:{}]", id);
-        return ret;
+
+        return ui::widget::on_mouse_enter(id);
     }
 
     bool Window::on_mouse_leave(const WindowID id)
     {
-        bool ret = true;
         if constexpr (io::logging::window_events)
             log::info("window::on_mouse_leave [id:{}]", id);
-        return ret;
+
+        return ui::widget::on_mouse_leave(id);
     }
 
-    bool Window::on_mouse_click(const WindowID id)
+    bool Window::on_mouse_click(const Mouse::Button::type button)
     {
-        runtime_assert(false, "implement");
-        return false;
+        if constexpr (io::logging::window_events)
+            log::info("window::on_mouse_click [button:{}]", button);
+
+        return true;
     }
 
     bool Window::on_mouse_drag(const WindowID id)
     {
-        runtime_assert(false, "implement");
-        return false;
+        if constexpr (io::logging::window_events)
+            log::info("window::on_mouse_drag [id:{}]", id);
+
+        return ui::widget::on_mouse_drag(id);
     }
 
-    bool Window::on_mouse_move(const WindowID id)
+    bool Window::on_mouse_move(const WindowID id, ds::point<i32>&& pos)
     {
-        runtime_assert(false, "implement");
-        return false;
+        m_mouse_pos = pos;
+        if constexpr (io::logging::window_events)
+            log::info("window::on_mouse_move [id:{}, pos:{}]", id, m_mouse_pos);
+        return true;
     }
 
-    bool Window::on_mouse_scroll(const WindowID id)
+    bool Window::on_mouse_scroll(Mouse::Event::Data::Wheel& wheel)
     {
-        runtime_assert(false, "implement");
-        return false;
+        if constexpr (io::logging::window_events)
+            log::info("window::on_mouse_scroll [vert delta:{}]", wheel.y);
+
+        return true;
     }
 
     bool Window::on_kb_focus_gained(const WindowID id)
     {
-        bool ret = true;
+        this->set_focused(true);
+
         if constexpr (io::logging::window_events)
             log::info("window::on_kb_focus_gained [id:{}]", id);
-        return ret;
+
+        return true;
     }
 
     bool Window::on_kb_focus_lost(const WindowID id)
     {
-        bool ret = true;
+        this->set_focused(false);
+
         if constexpr (io::logging::window_events)
             log::info("window::on_kb_focus_lost [id:{}]", id);
-        return ret;
+
+        return true;
     }
 
     bool Window::on_close_requested(const WindowID id)
@@ -468,10 +706,32 @@ namespace rl {
 
     bool Window::on_display_scale_changed(const WindowID id)
     {
-        bool ret = true;
+        m_pixel_ratio = SDL3::SDL_GetWindowDisplayScale(m_sdl_window);
+        sdl_assert(m_pixel_ratio != 0.0f, "failed to get pixel ratio [window:{}]", m_window_id);
+
+        m_pixel_density = SDL3::SDL_GetWindowPixelDensity(m_sdl_window);
+        sdl_assert(m_pixel_density != 0.0f, "failed to get pixel density [window:{}]", m_window_id);
+
         if constexpr (io::logging::window_events)
-            log::info("window::on_display_scale_changed [id:{}]", id);
-        return ret;
+            log::info("window::on_display_scale_changed [id:{}, ratio:{}, density:{}]", id,
+                      m_pixel_ratio, m_pixel_density);
+
+        return m_pixel_ratio != 0.0f && m_pixel_density != 0.0f;
+    }
+
+    bool Window::on_display_content_scale_changed(const DisplayID id)
+    {
+        m_pixel_ratio = SDL3::SDL_GetWindowDisplayScale(m_sdl_window);
+        sdl_assert(m_pixel_ratio != 0.0f, "failed to get pixel ratio [window:{}]", m_window_id);
+
+        m_pixel_density = SDL3::SDL_GetWindowPixelDensity(m_sdl_window);
+        sdl_assert(m_pixel_density != 0.0f, "failed to get pixel density [window:{}]", m_window_id);
+
+        if constexpr (io::logging::window_events)
+            log::info("window::on_display_content_scale_changed [id:{}, ratio:{}, density:{}]", id,
+                      m_pixel_ratio, m_pixel_density);
+
+        return m_pixel_ratio != 0.0f && m_pixel_density != 0.0f;
     }
 
     bool Window::on_occluded(const WindowID id)
