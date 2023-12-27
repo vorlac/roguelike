@@ -99,7 +99,7 @@ namespace rl::ds {
             return !this->operator==(other);
         }
 
-        constexpr inline dims<T> operator+(const T& val) const
+        constexpr inline dims<T> operator+(const T val) const
         {
             return {
                 static_cast<T>(this->width + val),

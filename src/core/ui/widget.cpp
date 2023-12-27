@@ -45,6 +45,190 @@ namespace rl::ui {
                 child->release_ref();
     }
 
+    widget* widget::parent()
+    {
+        return m_parent;
+    }
+
+    const widget* widget::parent() const
+    {
+        return m_parent;
+    }
+
+    void widget::set_parent(widget* parent)
+    {
+        m_parent = parent;
+    }
+
+    ui::layout* widget::layout()
+    {
+        return m_layout;
+    }
+
+    const ui::layout* widget::layout() const
+    {
+        return m_layout.get();
+    }
+
+    void widget::set_layout(ui::layout* layout)
+    {
+        m_layout = layout;
+    }
+
+    ui::theme* widget::theme()
+    {
+        return m_theme;
+    }
+
+    const ui::theme* widget::theme() const
+    {
+        return m_theme.get();
+    }
+
+    void widget::set_theme(ui::theme* theme)
+    {
+        if (m_theme.get() == theme)
+            return;
+
+        m_theme = theme;
+        for (auto&& child : m_children)
+            child->set_theme(theme);
+    }
+
+    ds::point<i32> widget::position() const
+    {
+        return m_pos;
+    }
+
+    void widget::set_position(ds::point<i32> pos)
+    {
+        m_pos = pos;
+    }
+
+    ds::point<i32> widget::abs_position() const
+    {
+        // Return the position in absolute screen coords
+        return m_parent != nullptr                   //
+                 ? m_parent->abs_position() + m_pos  //
+                 : m_pos;                            //
+    }
+
+    ds::dims<i32> widget::size() const
+    {
+        return m_size;
+    }
+
+    void widget::set_size(const ds::dims<i32>& size)
+    {
+        m_size = size;
+    }
+
+    i32 widget::width() const
+    {
+        return m_size.width;
+    }
+
+    void widget::set_width(i32 width)
+    {
+        m_size.width = width;
+    }
+
+    i32 widget::height() const
+    {
+        return m_size.height;
+    }
+
+    void widget::set_height(i32 height)
+    {
+        m_size.height = height;
+    }
+
+    void widget::set_fixed_size(ds::dims<i32> fixed_size)
+    {
+        m_fixed_size = fixed_size;
+    }
+
+    ds::dims<i32> widget::fixed_size() const
+    {
+        return m_fixed_size;
+    }
+
+    i32 widget::fixed_width() const
+    {
+        return m_fixed_size.width;
+    }
+
+    i32 widget::fixed_height() const
+    {
+        return m_fixed_size.height;
+    }
+
+    void widget::set_fixed_width(i32 width)
+    {
+        m_fixed_size.width = width;
+    }
+
+    void widget::set_fixed_height(i32 height)
+    {
+        m_fixed_size.height = height;
+    }
+
+    bool widget::visible() const
+    {
+        return m_visible;
+    }
+
+    void widget::set_visible(bool visible)
+    {
+        m_visible = visible;
+    }
+
+    bool widget::show()
+    {
+        this->set_visible(true);
+        return true;
+    }
+
+    bool widget::hide()
+    {
+        this->set_visible(false);
+        return true;
+    }
+
+    bool widget::visible_recursive() const
+    {
+        bool visible{ true };
+
+        const widget* widget{ this };
+        while (widget != nullptr)
+        {
+            visible &= widget->visible();
+            widget = widget->parent();
+        }
+
+        return visible;
+    }
+
+    i32 widget::child_count() const
+    {
+        return static_cast<i32>(m_children.size());
+    }
+
+    const widget* widget::child_at(i32 index) const
+    {
+        return m_children[index];
+    }
+
+    widget* widget::child_at(i32 index)
+    {
+        return m_children[index];
+    }
+
+    const std::vector<widget*>& widget::children() const
+    {
+        return m_children;
+    }
+
     int widget::font_size() const
     {
         return (m_font_size < 0 && m_theme != nullptr)  //
@@ -188,6 +372,73 @@ namespace rl::ui {
         return (int)(it - m_children.begin());
     }
 
+    bool widget::enabled() const
+    {
+        return m_enabled;
+    }
+
+    void widget::set_enabled(bool enabled)
+    {
+        m_enabled = enabled;
+    }
+
+    bool widget::focused() const
+    {
+        return m_focused;
+    }
+
+    void widget::set_focused(bool focused)
+    {
+        m_focused = focused;
+    }
+
+    const std::string& widget::tooltip() const
+    {
+        return m_tooltip;
+    }
+
+    void widget::set_tooltip(const std::string& tooltip)
+    {
+        m_tooltip = tooltip;
+    }
+
+    void widget::set_font_size(int font_size)
+    {
+        m_font_size = font_size;
+    }
+
+    bool widget::has_font_size() const
+    {
+        return m_font_size > 0;
+    }
+
+    float widget::icon_extra_scale() const
+    {
+        return m_icon_extra_scale;
+    }
+
+    void widget::set_icon_extra_scale(float scale)
+    {
+        m_icon_extra_scale = scale;
+    }
+
+    Mouse::Cursor::ID widget::cursor() const
+    {
+        return m_cursor;
+    }
+
+    void widget::set_cursor(Mouse::Cursor::ID cursor)
+    {
+        m_cursor = cursor;
+    }
+
+    bool widget::contains(ds::point<i32> pt) const
+    {
+        // Check if the widget contains a certain position
+        const bool contains_pt{ ds::rect<i32>{ m_pos, m_size }.contains(pt) };
+        return contains_pt;
+    }
+
     rl::Window* widget::window()
     {
         widget* widget{ this };
@@ -256,6 +507,11 @@ namespace rl::ui {
                 nvgRestore(nvg_context);
         }
         nvgTranslate(nvg_context, -this->m_pos.x, -this->m_pos.y);
+    }
+
+    float widget::icon_scale() const
+    {
+        return m_theme->m_icon_scale * m_icon_extra_scale;
     }
 
 }
