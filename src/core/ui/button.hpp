@@ -19,30 +19,28 @@ namespace rl::ui {
     class Button : public ui::widget
     {
     public:
-        // Flags to specify the button behavior
         enum Flags {
-            NormalButton = 1 << 0,  // normal button
-            RadioButton = 1 << 1,   // radio button
-            ToggleButton = 1 << 2,  // toggle button
-            PopupButton = 1 << 3,   // popup button
-            MenuButton = 1 << 4     // menu button
+            NormalButton = 1 << 0,
+            RadioButton = 1 << 1,
+            ToggleButton = 1 << 2,
+            PopupButton = 1 << 3,
+            MenuButton = 1 << 4
         };
 
-        // The available icon positions.
         enum class IconPosition {
-            Left,           // far left.
-            LeftCentered,   // left, centered (depends on caption text length).
-            RightCentered,  // right, centered (depends on caption text length).
-            Right           // far right.
+            Left,           // far left
+            LeftCentered,   // left, centered (depends on caption text length)
+            RightCentered,  // right, centered (depends on caption text length)
+            Right           // far right
         };
 
+    public:
         Button(ui::widget* parent, const std::string& caption = "Untitled", i32 icon = 0);
 
         i32 icon() const;
         i32 flags() const;
         bool pressed() const;
         IconPosition icon_position() const;
-
         const std::string& caption() const;
         const ds::color<u8>& background_color() const;
         const ds::color<u8>& text_color() const;
@@ -80,9 +78,9 @@ namespace rl::ui {
         ///     (image or Entypo) is determined by the functions nvgIsImageIcon and
         ///     its reciprocal counterpart nvgIsFontIcon.
         i32 m_icon{};
-        Button::IconPosition m_icon_position{};
-        bool m_pressed{ false };
         Button::Flags m_flags{};
+        bool m_pressed{ false };
+        Button::IconPosition m_icon_position{};
         ds::color<u8> m_background_color{};
         ds::color<u8> m_text_color{};
         std::function<void()> m_callback;
