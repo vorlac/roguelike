@@ -8,7 +8,7 @@
     "flecs",
     "argparse",
     "nanovg",
-    "eigen3",
+    "nanobench",
     "glfw3",
     "glm",
     "fmt"

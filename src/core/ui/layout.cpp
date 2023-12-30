@@ -585,6 +585,9 @@ namespace rl::ui {
             case ui::axis::Vertical:
                 m_spacing.y = spacing;
                 break;
+            default:
+                runtime_assert(false, "invalid ui::axis value");
+                break;
         }
     }
 
@@ -633,157 +636,260 @@ namespace rl::ui {
 
     //=======================================================================
 
-    // advanced_grid_layout::advanced_grid_layout(const std::vector<i32>& cols,
-    //                                            const std::vector<i32>& rows, i32 margin)
-    //     : m_cols(cols)
-    //     , m_rows(rows)
-    //     , this->m_margin(margin)
-    //{
-    //     m_col_stretch.resize(m_cols.size(), 0);
-    //     m_row_stretch.resize(m_rows.size(), 0);
-    // }
+    advanced_grid_layout::advanced_grid_layout(const std::vector<i32>& cols,
+                                               const std::vector<i32>& rows, i32 margin)
+        : m_cols(cols)
+        , m_rows(rows)
+        , m_margin(margin)
+    {
+        m_col_stretch.resize(m_cols.size(), 0);
+        m_row_stretch.resize(m_rows.size(), 0);
+    }
 
-    // ds::dims<i32> advanced_grid_layout::preferred_size(NVGcontext* nvg_context,
-    //                                                    const ui::widget* ui::widget) const
-    //{
-    //     // Compute minimum row / column sizes
-    //     std::vector<i32> grid[2];
-    //     compute_layout(nvg_context, ui::widget, grid);
+    ds::dims<i32> advanced_grid_layout::preferred_size(NVGcontext* nvg_context,
+                                                       const ui::widget* widget) const
+    {
+        // Compute minimum row / column sizes
+        std::array<std::vector<i32>, 2> grid{ { {}, {} } };
+        this->compute_layout(nvg_context, widget, grid);
 
-    //    ds::dims<i32> size(std::accumulate(grid[0].begin(), grid[0].end(), 0),
-    //                       std::accumulate(grid[1].begin(), grid[1].end(), 0));
+        ds::dims<i32> size{
+            std::accumulate(grid[0].begin(), grid[0].end(), 0),
+            std::accumulate(grid[1].begin(), grid[1].end(), 0),
+        };
 
-    //    ds::dims<i32> extra(2 * this->m_margin);
-    //    const rl::Window* window = dynamic_cast<const rl::Window*>(ui::widget);
-    //    if (window && !window->title().empty())
-    //        extra[1] += ui::widget->theme()->m_window_header_height - this->m_margin / 2;
+        ds::dims<i32> extra{
+            2 * this->m_margin,
+            2 * this->m_margin,
+        };
 
-    //    return size + extra;
-    //}
+        const rl::Window* window{ static_cast<const rl::Window*>(widget) };
+        if (window != nullptr && !window->title().empty())
+            extra.height += widget->theme()->m_window_header_height - this->m_margin / 2;
 
-    // void advanced_grid_layout::perform_layout(NVGcontext* nvg_context, ui::widget* ui::widget)
-    // const
-    //{
-    //     std::vector<i32> grid[2];
-    //     compute_layout(nvg_context, ui::widget, grid);
+        return size + extra;
+    }
 
-    //    grid[0].insert(grid[0].begin(), this->m_margin);
-    //    const rl::Window* window = dynamic_cast<const rl::Window*>(ui::widget);
-    //    if (window && !window->title().empty())
-    //        grid[1].insert(grid[1].begin(),
-    //                       ui::widget->theme()->m_window_header_height + this->m_margin / 2);
-    //    else
-    //        grid[1].insert(grid[1].begin(), this->m_margin);
+    void advanced_grid_layout::perform_layout(NVGcontext* nvg_context, ui::widget* widget) const
+    {
+        std::array<std::vector<i32>, 2> grid{ { {}, {} } };
+        this->compute_layout(nvg_context, widget, grid);
 
-    //    for (i32 axis = 0; axis < 2; ++axis)
-    //    {
-    //        for (size_t i = 1; i < grid[axis].size(); ++i)
-    //            grid[axis][i] += grid[axis][i - 1];
+        grid[0].insert(grid[0].begin(), this->m_margin);
+        const rl::Window* window{ static_cast<const rl::Window*>(widget) };
+        if (window == nullptr || window->title().empty())
+            grid[1].insert(grid[1].begin(), this->m_margin);
+        else
+        {
+            grid[1].insert(grid[1].begin(),
+                           widget->theme()->m_window_header_height + this->m_margin / 2);
+        }
 
-    //        for (ui::widget* w : ui::widget->children())
-    //        {
-    //            if (!w->visible() || dynamic_cast<const rl::Window*>(w) != nullptr)
-    //                continue;
-    //            Anchor anchor = this->anchor(w);
+        for (ui::axis axis : { axis::Horizontal, axis::Vertical })
+        {
+            std::vector<i32>& axis_grids{ grid[std::to_underlying(axis)] };
+            for (size_t i = 1; i < axis_grids.size(); ++i)
+                axis_grids[i] += axis_grids[i - 1];
 
-    //            i32 item_pos = grid[axis][anchor.pos[axis]];
-    //            i32 cell_size = grid[axis][anchor.pos[axis] + anchor.size[axis]] - item_pos;
-    //            i32 ps = w->preferred_size(nvg_context)[axis], fs = w->fixed_size()[axis];
-    //            i32 target_size = fs ? fs : ps;
+            for (ui::widget* w : widget->children())
+            {
+                const rl::Window* child_window{ static_cast<const rl::Window*>(w) };
+                if (!w->visible() || child_window != nullptr)
+                    continue;
 
-    //            switch (anchor.align[axis])
-    //            {
-    //                case ui::alignment::Minimum:
-    //                    break;
-    //                case ui::alignment::Middle:
-    //                    item_pos += (cell_size - target_size) / 2;
-    //                    break;
-    //                case ui::alignment::Maximum:
-    //                    item_pos += cell_size - target_size;
-    //                    break;
-    //                case ui::alignment::Fill:
-    //                    target_size = fs ? fs : cell_size;
-    //                    break;
-    //            }
+                Anchor anchor{ this->anchor(w) };
+                i32 axis_anchor_pos{ anchor.pos[std::to_underlying(axis)] };
+                i32 axis_anchor_size{ anchor.size[std::to_underlying(axis)] };
 
-    //            ds::dims<i32> pos = w->position(), size = w->size();
-    //            pos[axis] = item_pos;
-    //            size[axis] = target_size;
-    //            w->set_position(pos);
-    //            w->set_size(size);
-    //            w->perform_layout(nvg_context);
-    //        }
-    //    }
-    //}
+                i32 item_pos{ axis_grids[axis_anchor_pos] };
+                i32 cell_size{ axis_grids[axis_anchor_pos + axis_anchor_size] - item_pos };
 
-    // void advanced_grid_layout::compute_layout(NVGcontext* nvg_context, const ui::widget*
-    // ui::widget,
-    //                                           std::vector<i32>* _grid) const
-    //{
-    //     ds::dims<i32> fs_w = ui::widget->fixed_size();
-    //     ds::dims<i32> container_size(fs_w[0] ? fs_w[0] : ui::widget->width(),
-    //                                  fs_w[1] ? fs_w[1] : ui::widget->height());
+                ds::dims<i32> widget_ps{ w->preferred_size(nvg_context) };
+                ds::dims<i32> widget_fs{ w->fixed_size() };
 
-    //    ds::dims<i32> extra(2 * this->m_margin);
-    //    const rl::Window* window = dynamic_cast<const rl::Window*>(ui::widget);
-    //    if (window && !window->title().empty())
-    //        extra[1] += ui::widget->theme()->m_window_header_height - this->m_margin / 2;
+                i32 ps{ axis == axis::Horizontal ? widget_ps.width : widget_ps.height };
+                i32 fs{ axis == axis::Horizontal ? widget_fs.width : widget_fs.height };
 
-    //    container_size -= extra;
+                i32 target_size{ fs ? fs : ps };
 
-    //    for (i32 axis = 0; axis < 2; ++axis)
-    //    {
-    //        std::vector<i32>& grid = _grid[axis];
-    //        const std::vector<i32>& sizes = axis == 0 ? m_cols : m_rows;
-    //        const std::vector<float>& stretch = axis == 0 ? m_col_stretch : m_row_stretch;
-    //        grid = sizes;
+                ui::alignment anchor_axis_alignment{ anchor.align[std::to_underlying(axis)] };
+                switch (anchor_axis_alignment)
+                {
+                    case ui::alignment::Minimum:
+                        break;
+                    case ui::alignment::Middle:
+                        item_pos += (cell_size - target_size) / 2;
+                        break;
+                    case ui::alignment::Maximum:
+                        item_pos += cell_size - target_size;
+                        break;
+                    case ui::alignment::Fill:
+                        target_size = fs ? fs : cell_size;
+                        break;
+                }
 
-    //        for (i32 phase = 0; phase < 2; ++phase)
-    //        {
-    //            for (auto pair : m_anchor)
-    //            {
-    //                const ui::widget* w = pair.first;
-    //                if (!w->visible() || dynamic_cast<const rl::Window*>(w) != nullptr)
-    //                    continue;
-    //                const Anchor& anchor = pair.second;
-    //                if ((anchor.size[axis] == 1) != (phase == 0))
-    //                    continue;
-    //                i32 ps = w->preferred_size(nvg_context)[axis], fs = w->fixed_size()[axis];
-    //                i32 target_size = fs ? fs : ps;
+                ds::point<i32> pos{ w->position() };
+                ds::dims<i32> size{ w->size() };
 
-    //                if (anchor.pos[axis] + anchor.size[axis] > (i32)grid.size())
-    //                    throw std::runtime_error(
-    //                        "Advanced grid layout: ui::widget is out of bounds: " +
-    //                        (std::string)anchor);
+                i32& item_axis_pos{ axis == axis::Horizontal ? pos.x : pos.y };
+                i32& item_axis_size{ axis == axis::Horizontal ? size.width : size.height };
 
-    //                i32 current_size = 0;
-    //                float total_stretch = 0;
-    //                for (i32 i = anchor.pos[axis]; i < anchor.pos[axis] + anchor.size[axis]; ++i)
-    //                {
-    //                    if (sizes[i] == 0 && anchor.size[axis] == 1)
-    //                        grid[i] = std::max(grid[i], target_size);
-    //                    current_size += grid[i];
-    //                    total_stretch += stretch[i];
-    //                }
-    //                if (target_size <= current_size)
-    //                    continue;
-    //                if (total_stretch == 0)
-    //                    throw std::runtime_error(
-    //                        "Advanced grid layout: no space to place ui::widget: " +
-    //                        (std::string)anchor);
-    //                float amt = (target_size - current_size) / total_stretch;
-    //                for (i32 i = anchor.pos[axis]; i < anchor.pos[axis] + anchor.size[axis]; ++i)
-    //                    grid[i] += (i32)std::round(amt * stretch[i]);
-    //            }
-    //        }
+                item_axis_pos = item_pos;
+                item_axis_size = target_size;
 
-    //        i32 current_size = std::accumulate(grid.begin(), grid.end(), 0);
-    //        float total_stretch = std::accumulate(stretch.begin(), stretch.end(), 0.0f);
-    //        if (current_size >= container_size[axis] || total_stretch == 0)
-    //            continue;
-    //        float amt = (container_size[axis] - current_size) / total_stretch;
-    //        for (size_t i = 0; i < grid.size(); ++i)
-    //            grid[i] += (i32)std::round(amt * stretch[i]);
-    //    }
-    //}
+                w->set_position(pos);
+                w->set_size(size);
+                w->perform_layout(nvg_context);
+            }
+        }
+    }
+
+    void advanced_grid_layout::compute_layout(NVGcontext* nvg_context, const ui::widget* widget,
+                                              std::array<std::vector<i32>, 2>& _grid) const
+    {
+        ds::dims<i32> fs_w{ widget->fixed_size() };
+
+        ds::dims<i32> container_size{
+            fs_w.width ? fs_w.width : widget->width(),
+            fs_w.height ? fs_w.height : widget->height(),
+        };
+
+        ds::dims<i32> extra{
+            2 * this->m_margin,
+            2 * this->m_margin,
+        };
+
+        const rl::Window* window{ static_cast<const rl::Window*>(widget) };
+        if (window != nullptr && !window->title().empty())
+            extra.height += widget->theme()->m_window_header_height - this->m_margin / 2;
+
+        container_size -= extra;
+
+        for (ui::axis axis : { axis::Horizontal, axis::Vertical })
+        {
+            std::vector<i32>& grid = _grid[std::to_underlying(axis)];
+            const std::vector<i32>& sizes{ axis == axis::Horizontal ? m_cols : m_rows };
+            const std::vector<f32>& stretch{ axis == axis::Horizontal ? m_col_stretch
+                                                                      : m_row_stretch };
+            grid = sizes;
+
+            for (i32 phase = 0; phase < 2; ++phase)
+            {
+                for (const auto& pair : m_anchor)
+                {
+                    const ui::widget* w{ pair.first };
+                    const rl::Window* anchor_window{ static_cast<const rl::Window*>(w) };
+                    if (!w->visible() || anchor_window != nullptr)
+                        continue;
+
+                    const Anchor& anchor{ pair.second };
+                    i32 axis_anchor_pos{ anchor.pos[std::to_underlying(axis)] };
+                    i32 axis_anchor_size{ anchor.size[std::to_underlying(axis)] };
+
+                    if ((axis_anchor_size == 1) != (phase == 0))
+                        continue;
+
+                    ds::dims<i32> widget_ps{ w->preferred_size(nvg_context) };
+                    ds::dims<i32> widget_fs{ w->fixed_size() };
+
+                    i32 ps{ axis == axis::Horizontal ? widget_ps.width : widget_ps.height };
+                    i32 fs{ axis == axis::Horizontal ? widget_fs.width : widget_fs.height };
+                    i32 target_size{ fs ? fs : ps };
+
+                    runtime_assert(axis_anchor_pos + axis_anchor_size <= grid.size(),
+                                   "Advanced grid layout: widget is out of bounds: {}",
+                                   static_cast<std::string>(anchor));
+
+                    i32 current_size{ 0 };
+                    f32 total_stretch{ 0.0f };
+
+                    for (i32 i = axis_anchor_pos; i < axis_anchor_pos + axis_anchor_size; ++i)
+                    {
+                        if (sizes[i] == 0 && axis_anchor_size == 1)
+                            grid[i] = std::max(grid[i], target_size);
+
+                        current_size += grid[i];
+                        total_stretch += stretch[i];
+                    }
+
+                    if (target_size <= current_size)
+                        continue;
+
+                    runtime_assert(total_stretch != 0,
+                                   "Advanced grid layout: no space to place widget: {}",
+                                   static_cast<std::string>(anchor));
+
+                    f32 amt{ (target_size - current_size) / total_stretch };
+                    for (i32 i = axis_anchor_pos; i < axis_anchor_pos + axis_anchor_size; ++i)
+                        grid[i] += static_cast<i32>(std::round(amt * stretch[i]));
+                }
+            }
+
+            i32 current_size{ std::accumulate(grid.begin(), grid.end(), 0) };
+            f32 total_stretch{ std::accumulate(stretch.begin(), stretch.end(), 0.0f) };
+            i32 axis_container_size{ axis == axis::Horizontal ? container_size.width
+                                                              : container_size.height };
+
+            if (current_size >= axis_container_size || total_stretch == 0)
+                continue;
+
+            f32 amt{ (axis_container_size - current_size) / total_stretch };
+            for (size_t i = 0; i < grid.size(); ++i)
+                grid[i] += static_cast<i32>(std::round(amt * stretch[i]));
+        }
+    }
+
+    i32 advanced_grid_layout::margin() const
+    {
+        return m_margin;
+    }
+
+    void advanced_grid_layout::set_margin(i32 margin)
+    {
+        m_margin = margin;
+    }
+
+    i32 advanced_grid_layout::col_count() const
+    {
+        return static_cast<i32>(m_cols.size());
+    }
+
+    i32 advanced_grid_layout::row_count() const
+    {
+        return static_cast<i32>(m_rows.size());
+    }
+
+    void advanced_grid_layout::append_row(i32 size, f32 stretch)
+    {
+        m_rows.push_back(size);
+        m_row_stretch.push_back(stretch);
+    }
+
+    void advanced_grid_layout::append_col(i32 size, f32 stretch)
+    {
+        m_cols.push_back(size);
+        m_col_stretch.push_back(stretch);
+    }
+
+    void advanced_grid_layout::set_row_stretch(i32 index, f32 stretch)
+    {
+        m_row_stretch.at(index) = stretch;
+    }
+
+    void advanced_grid_layout::set_col_stretch(i32 index, f32 stretch)
+    {
+        m_col_stretch.at(index) = stretch;
+    }
+
+    void advanced_grid_layout::set_anchor(const ui::widget* widget, const Anchor& anchor)
+    {
+        m_anchor[widget] = anchor;
+    }
+
+    advanced_grid_layout::Anchor advanced_grid_layout::anchor(const ui::widget* widget) const
+    {
+        auto it{ m_anchor.find(widget) };
+        runtime_assert(it != m_anchor.end(), "Widget was not registered with the grid layout!");
+        return it->second;
+    }
 }

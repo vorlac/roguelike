@@ -139,6 +139,13 @@ namespace rl::ds {
             };
         }
 
+        constexpr inline dims<T>& operator-=(const dims<T>& other)
+        {
+            this->width -= other.width;
+            this->height -= other.height;
+            return *this;
+        }
+
         constexpr inline dims<T>& operator-=(const T& val)
         {
             this->width -= val;

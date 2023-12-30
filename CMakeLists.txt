@@ -60,7 +60,7 @@ find_package(flecs CONFIG REQUIRED)
 find_package(simdjson CONFIG REQUIRED)
 find_package(argparse CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)
-find_package(Eigen3 CONFIG REQUIRED)
+find_package(nanobench CONFIG REQUIRED)
 
 # SDL3 build options
 set(SDL_LIBC OFF)
@@ -207,7 +207,7 @@ target_link_libraries(${PROJECT_NAME}
   PRIVATE simdjson::simdjson
   PRIVATE argparse::argparse
   PRIVATE flecs::flecs_static
-  PRIVATE Eigen3::Eigen
+  PRIVATE nanobench::nanobench
   PRIVATE nanovg::nanovg
   PRIVATE glm::glm
   PRIVATE fmt::fmt

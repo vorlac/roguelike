@@ -154,5 +154,4 @@ namespace rl::ui {
     private:
         constexpr static bool DiagnosticsEnabled{ true };
     };
-
 }
