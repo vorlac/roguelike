@@ -17,7 +17,7 @@ namespace rl {
     concept any_of = (std::same_as<T, TOther> || ...);
 
     template <typename T>
-    concept floating_point = any_of<T, f32, f64, lf64>;
+    concept floating_point = any_of<T, f32, f64>;
 
     template <typename T>
     concept signed_integer = any_of<T, i8, i16, i32, i64>;

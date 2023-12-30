@@ -288,6 +288,17 @@ namespace rl::ds {
             return reinterpret_cast<const NVGcolor&>(this);
         }
 
+        constexpr inline operator NVGcolor()
+            requires std::same_as<T, u8>
+        {
+            return NVGcolor{
+                this->r / 255.0f,
+                this->g / 255.0f,
+                this->b / 255.0f,
+                this->a / 255.0f,
+            };
+        }
+
         constexpr inline operator NVGcolor&()
             requires std::same_as<T, f32>
         {

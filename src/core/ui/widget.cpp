@@ -306,17 +306,17 @@ namespace rl::ui {
         return true;
     }
 
-    bool widget::on_mouse_enter(const WindowID id)
+    bool widget::on_mouse_enter(const ds::point<i32>& pt)
     {
         return true;
     }
 
-    bool widget::on_mouse_leave(const WindowID id)
+    bool widget::on_mouse_leave(const ds::point<i32>& pt)
     {
         return true;
     }
 
-    bool widget::on_mouse_click(const WindowID id)
+    bool widget::on_mouse_click(const ds::point<i32>& pt, i32 button, bool down, i32 modifiers)
     {
         return true;
     }
@@ -444,7 +444,7 @@ namespace rl::ui {
         widget* widget{ this };
         while (widget != nullptr)
         {
-            rl::Window* window = static_cast<rl::Window*>(widget);
+            rl::Window* window = dynamic_cast<rl::Window*>(widget);
             runtime_assert(window != nullptr, "failed widget cast to window");
             if (window != nullptr)
                 return window;
@@ -467,7 +467,7 @@ namespace rl::ui {
         while (widget->parent() != nullptr)
             widget = widget->parent();
 
-        rl::Window* window{ static_cast<rl::Window*>(widget) };
+        rl::Window* window{ dynamic_cast<rl::Window*>(widget) };
         runtime_assert(window != nullptr, "failed widget cast to window");
         window->update_focus(this);
     }

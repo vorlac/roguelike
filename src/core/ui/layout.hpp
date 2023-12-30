@@ -16,8 +16,6 @@
 namespace rl::ui {
     class widget;
 
-    /// @brief
-    ///     Values that represent layout alignments
     enum class alignment : i8_fast {
         Unknown = -1,  // Invalid / uninitialized alignment
         Minimum = 0,   // Take only as much space as is required.
@@ -26,17 +24,13 @@ namespace rl::ui {
         Fill           // Fill according to preferred sizes.
     };
 
-    /// @brief
-    ///     Values that represent layout orientations
     enum class orientation : i8_fast {
         Unknown = -1,    // Invalid / uninitialized orientation
         Horizontal = 0,  // Layout expands on horizontal axis.
         Vertical         // Layout expands on vertical axis.
     };
 
-    /// @brief
-    ///     Values that represent layout orientations
-    enum class axis : i8_fast {
+    enum axis : i8_fast {
         Horizontal = 0,  // Layout expands on horizontal axis.
         Vertical         // Layout expands on vertical axis.
     };
@@ -161,7 +155,7 @@ namespace rl::ui {
             , m_resolution{ resolution }
             , m_spacing{ spacing, spacing }
             , m_orientation{ orientation }
-            , m_default_alignment{ { alignment }, { alignment } }
+            , m_default_alignment{ alignment, alignment }
         {
         }
 
@@ -194,8 +188,8 @@ namespace rl::ui {
         i32 m_resolution{ 0 };
         ds::vector2<i32> m_spacing{ 0, 0 };
         ui::orientation m_orientation{ orientation::Unknown };
-        ui::alignment m_default_alignment[2] = { {}, {} };
-        std::vector<ui::alignment> m_alignment[2] = { {}, {} };
+        std::array<ui::alignment, 2> m_default_alignment{ { {}, {} } };
+        std::array<std::vector<ui::alignment>, 2> m_alignment{ { {}, {} } };
     };
 
     class advanced_grid_layout : public layout
@@ -271,6 +265,6 @@ namespace rl::ui {
         std::vector<f32> m_col_stretch{};
         std::vector<f32> m_row_stretch{};
         std::unordered_map<const ui::widget*, Anchor> m_anchor{};
-        i32 m_margin{};
+        i32 m_margin{ 0 };
     };
 }

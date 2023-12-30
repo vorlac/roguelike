@@ -15,6 +15,7 @@
 #include "core/renderer.hpp"
 #include "core/state/fsm.hpp"
 #include "core/state/states.hpp"
+#include "core/ui/button.hpp"
 #include "core/ui/label.hpp"
 #include "core/window.hpp"
 #include "gl/instanced_buffer.hpp"

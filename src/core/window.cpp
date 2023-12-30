@@ -23,8 +23,17 @@ SDL_C_LIB_BEGIN
 SDL_C_LIB_END
 
 namespace rl {
+    Window::Window(ui::widget* parent, const std::string& title)
+        : ui::widget{ parent }
+        , m_title{ title }
+        , m_button_panel{ nullptr }
+        , m_modal{ false }
+        , m_drag{ false }
+    {
+    }
+
     Window::Window(std::string title, const ds::dims<i32>& dims, Window::Properties flags)
-        : ui::widget(nullptr)
+        : ui::widget{ nullptr }
     {
         this->set_opengl_attribute(OpenGL::Attribute::AcceleratedVisual, 1);
         this->set_opengl_attribute(OpenGL::Attribute::ContextMajorVersion, 4);
@@ -601,7 +610,9 @@ namespace rl {
         if constexpr (io::logging::window_events)
             log::info("window::on_mouse_enter [id:{}]", id);
 
-        return ui::widget::on_mouse_enter(id);
+        // TODO: implement logic to get mouse pos
+        runtime_assert(false, "not implemented");
+        return ui::widget::on_mouse_enter(ds::point<i32>{ 0, 0 });
     }
 
     bool Window::on_mouse_leave(const WindowID id)
@@ -609,7 +620,9 @@ namespace rl {
         if constexpr (io::logging::window_events)
             log::info("window::on_mouse_leave [id:{}]", id);
 
-        return ui::widget::on_mouse_leave(id);
+        // TODO: implement logic to get mouse pos
+        runtime_assert(false, "not implemented");
+        return ui::widget::on_mouse_leave(ds::point<i32>{ 0, 0 });
     }
 
     bool Window::on_mouse_click(const Mouse::Button::type button)
@@ -625,6 +638,7 @@ namespace rl {
         if constexpr (io::logging::window_events)
             log::info("window::on_mouse_drag [id:{}]", id);
 
+        runtime_assert(false, "not implemented");
         return ui::widget::on_mouse_drag(id);
     }
 

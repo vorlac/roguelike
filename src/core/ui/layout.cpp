@@ -616,22 +616,22 @@ namespace rl::ui {
 
     void grid_layout::set_col_alignment(ui::alignment value)
     {
-        m_default_alignment[0] = value;
+        m_default_alignment[axis::Horizontal] = value;
     }
 
     void grid_layout::set_row_alignment(ui::alignment value)
     {
-        m_default_alignment[1] = value;
+        m_default_alignment[axis::Vertical] = value;
     }
 
     void grid_layout::set_col_alignment(const std::vector<ui::alignment>& value)
     {
-        m_alignment[0] = value;
+        m_alignment[axis::Horizontal] = value;
     }
 
     void grid_layout::set_row_alignment(const std::vector<ui::alignment>& value)
     {
-        m_alignment[1] = value;
+        m_alignment[axis::Vertical] = value;
     }
 
     //=======================================================================
@@ -654,8 +654,8 @@ namespace rl::ui {
         this->compute_layout(nvg_context, widget, grid);
 
         ds::dims<i32> size{
-            std::accumulate(grid[0].begin(), grid[0].end(), 0),
-            std::accumulate(grid[1].begin(), grid[1].end(), 0),
+            std::accumulate(grid[axis::Horizontal].begin(), grid[axis::Horizontal].end(), 0),
+            std::accumulate(grid[axis::Vertical].begin(), grid[axis::Vertical].end(), 0),
         };
 
         ds::dims<i32> extra{
@@ -675,19 +675,20 @@ namespace rl::ui {
         std::array<std::vector<i32>, 2> grid{ { {}, {} } };
         this->compute_layout(nvg_context, widget, grid);
 
-        grid[0].insert(grid[0].begin(), this->m_margin);
+        grid[axis::Horizontal].insert(grid[axis::Horizontal].begin(), this->m_margin);
         const rl::Window* window{ static_cast<const rl::Window*>(widget) };
         if (window == nullptr || window->title().empty())
-            grid[1].insert(grid[1].begin(), this->m_margin);
+            grid[axis::Vertical].insert(grid[axis::Vertical].begin(), this->m_margin);
         else
         {
-            grid[1].insert(grid[1].begin(),
-                           widget->theme()->m_window_header_height + this->m_margin / 2);
+            grid[axis::Vertical].insert(
+                grid[axis::Vertical].begin(),
+                widget->theme()->m_window_header_height + this->m_margin / 2);
         }
 
         for (ui::axis axis : { axis::Horizontal, axis::Vertical })
         {
-            std::vector<i32>& axis_grids{ grid[std::to_underlying(axis)] };
+            std::vector<i32>& axis_grids{ grid[axis] };
             for (size_t i = 1; i < axis_grids.size(); ++i)
                 axis_grids[i] += axis_grids[i - 1];
 
@@ -698,8 +699,8 @@ namespace rl::ui {
                     continue;
 
                 Anchor anchor{ this->anchor(w) };
-                i32 axis_anchor_pos{ anchor.pos[std::to_underlying(axis)] };
-                i32 axis_anchor_size{ anchor.size[std::to_underlying(axis)] };
+                i32 axis_anchor_pos{ anchor.pos[axis] };
+                i32 axis_anchor_size{ anchor.size[axis] };
 
                 i32 item_pos{ axis_grids[axis_anchor_pos] };
                 i32 cell_size{ axis_grids[axis_anchor_pos + axis_anchor_size] - item_pos };
@@ -712,7 +713,7 @@ namespace rl::ui {
 
                 i32 target_size{ fs ? fs : ps };
 
-                ui::alignment anchor_axis_alignment{ anchor.align[std::to_underlying(axis)] };
+                ui::alignment anchor_axis_alignment{ anchor.align[axis] };
                 switch (anchor_axis_alignment)
                 {
                     case ui::alignment::Minimum:
@@ -767,7 +768,7 @@ namespace rl::ui {
 
         for (ui::axis axis : { axis::Horizontal, axis::Vertical })
         {
-            std::vector<i32>& grid = _grid[std::to_underlying(axis)];
+            std::vector<i32>& grid{ _grid[axis] };
             const std::vector<i32>& sizes{ axis == axis::Horizontal ? m_cols : m_rows };
             const std::vector<f32>& stretch{ axis == axis::Horizontal ? m_col_stretch
                                                                       : m_row_stretch };
@@ -783,8 +784,8 @@ namespace rl::ui {
                         continue;
 
                     const Anchor& anchor{ pair.second };
-                    i32 axis_anchor_pos{ anchor.pos[std::to_underlying(axis)] };
-                    i32 axis_anchor_size{ anchor.size[std::to_underlying(axis)] };
+                    i32 axis_anchor_pos{ anchor.pos[axis] };
+                    i32 axis_anchor_size{ anchor.size[axis] };
 
                     if ((axis_anchor_size == 1) != (phase == 0))
                         continue;

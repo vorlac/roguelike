@@ -29,13 +29,8 @@ namespace rl::ui {
     class widget : public ds::refcounted
     {
     public:
-        /// @brief
-        ///     Create a new ui::widget.
-        /// @brief
-        ///     The parent should only ever be nullptr for the root widget
-        ///
-        /// @param  parent
-        ///     The parent of the widget being created
+        // TODO: remove! only placeholder for Popup
+        widget() = default;
         widget(widget* parent);
 
         /// @brief
@@ -120,9 +115,9 @@ namespace rl::ui {
         virtual bool on_kb_key_pressed(const Keyboard::Button::type key);
         virtual bool on_kb_focus_gained(const WindowID id);
         virtual bool on_kb_focus_lost(const WindowID id);
-        virtual bool on_mouse_enter(const WindowID id);
-        virtual bool on_mouse_leave(const WindowID id);
-        virtual bool on_mouse_click(const WindowID id);
+        virtual bool on_mouse_enter(const ds::point<i32>& pt);
+        virtual bool on_mouse_leave(const ds::point<i32>& pt);
+        virtual bool on_mouse_click(const ds::point<i32>& pt, i32 button, bool down, i32 modifiers);
         virtual bool on_mouse_drag(const WindowID id);
         virtual bool on_mouse_scroll(const WindowID id);
 

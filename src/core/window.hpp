@@ -29,6 +29,8 @@ namespace rl {
 
     class Window : public ui::widget
     {
+        friend class Popup;
+
     public:
         struct Event
         {
@@ -225,10 +227,13 @@ namespace rl {
         explicit Window(const Window& window) = delete;
         explicit Window(SDL3::SDL_Window* other) = delete;
 
+        // TODO: remove! placeholder for ui::Popup
+        Window() = default;
+        Window(ui::widget* parent, const std::string& title);
         explicit Window(std::string title, const ds::dims<i32>& dims = DEFAULT_SIZE,
                         Properties flags = DEFAULT_PROPERTY_FLAGS);
 
-        ~Window();
+        virtual ~Window();
 
     public:
         bool maximize();
@@ -286,6 +291,11 @@ namespace rl {
 
         virtual void perform_layout(NVGcontext* nvg_context)
         {
+        }
+
+        virtual void refresh_relative_placement()
+        {
+            // Overridden in ui::Popup
         }
 
         void update_focus(ui::widget* widget)
@@ -403,17 +413,18 @@ namespace rl {
     private:
         std::string m_title{};
         ui::widget* m_drag_widget{ nullptr };
+        ui::widget* m_button_panel{ nullptr };
         std::vector<ui::widget*> m_focus_path;
         ds::point<i32> m_mouse_pos{ 0, 0 };
         std::function<void(ds::dims<i32>)> m_resize_callback;
         ds::color<u8> m_background_color{ 29, 32, 39 };
         rl::Timer<float> m_timer{};
-
         i32 m_mouse_state{ 0 };
         i32 m_modifiers{ 0 };
 
-        bool m_vsync = false;
+        bool m_vsync{ false };
         bool m_modal{ false };
+        bool m_drag{ false };
         bool m_depth_buffer{ false };
         bool m_stencil_buffer{ false };
         bool m_float_buffer{ false };
