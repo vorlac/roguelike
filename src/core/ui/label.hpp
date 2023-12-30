@@ -18,48 +18,23 @@ namespace rl::ui {
         label(ui::widget* parent, const std::string& caption,
               const std::string& font = font::name::mono, i32 font_size = -1);
 
-        const std::string& caption() const
-        {
-            return m_caption;
-        }
+        std::string font() const;
+        std::string caption() const;
+        ds::color<f32> color() const;
 
-        const std::string& font() const
-        {
-            return m_font;
-        }
+        void set_caption(const std::string& caption);
+        void set_font(const std::string& font);
+        void set_color(ds::color<f32> color);
+        void set_callback(std::function<void()> callable);
 
-        ds::color<f32> color() const
-        {
-            return m_color;
-        }
-
-        void set_caption(const std::string& caption)
-        {
-            m_caption = caption;
-        }
-
-        void set_font(const std::string& font)
-        {
-            m_font = font;
-        }
-
-        void set_color(ds::color<f32> color)
-        {
-            m_color = color;
-        }
-
-        void set_callback(auto&& callable)
-        {
-            m_callback = std::move(callable);
-        }
-
+    public:
         virtual ds::dims<i32> preferred_size(NVGcontext* nvg_context) const override;
         virtual void set_theme(ui::theme* theme) override;
         virtual void draw(NVGcontext* nvg_context) override;
 
     protected:
-        std::string m_caption{};
         std::string m_font{};
+        std::string m_caption{};
         ds::color<f32> m_color{ rl::Colors::Yellow };
         std::function<void()> m_callback;
     };

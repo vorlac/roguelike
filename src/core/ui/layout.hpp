@@ -197,45 +197,42 @@ namespace rl::ui {
     public:
         struct Anchor
         {
-            // The (x, y) position.
-            u8 pos[2] = { 0 };
-            // The (x, y) size.
-            u8 size[2] = { 0 };
-            // The (x, y) alignment.
-            ui::alignment align[2] = {};
-
-            Anchor()
-            {
-            }
+        public:
+            Anchor() = default;
 
             Anchor(i32 x, i32 y, ui::alignment horiz = ui::alignment::Fill,
                    ui::alignment vert = ui::alignment::Fill)
+                : pos{ static_cast<u8>(x), static_cast<u8>(y) }
+                , size{ 1, 1 }
+                , align{ horiz, vert }
             {
-                pos[0] = (uint8_t)x;
-                pos[1] = (uint8_t)y;
-                size[0] = size[1] = 1;
-                align[0] = horiz;
-                align[1] = vert;
             }
 
             Anchor(i32 x, i32 y, i32 w, i32 h, ui::alignment horiz = ui::alignment::Fill,
                    ui::alignment vert = ui::alignment::Fill)
+                : pos{ static_cast<u8>(x), static_cast<u8>(y) }
+                , size{ static_cast<u8>(w), static_cast<u8>(h) }
+                , align{ horiz, vert }
             {
-                pos[0] = (u8)x;
-                pos[1] = (uint8_t)y;
-                size[0] = (uint8_t)w;
-                size[1] = (uint8_t)h;
-                align[0] = horiz;
-                align[1] = vert;
             }
 
             explicit operator std::string() const
             {
-                return fmt::format("Format[pos=({}, {}), size=({}, {}), align=({}, {})]", pos[0],
-                                   pos[1], size[0], size[1], (i32)align[0], (i32)align[1]);
+                return fmt::format("Format[pos=({}), size=({}), align=(h:{}, v:{})]", pos, size,
+                                   static_cast<i32>(align[axis::Horizontal]),
+                                   static_cast<i32>(align[axis::Vertical]));
             }
+
+        public:
+            /// The (x, y) position.
+            ds::point<u8> pos{ 0, 0 };
+            /// The (x, y) size.
+            ds::dims<u8> size{ 0, 0 };
+            /// The (x, y) alignment.
+            std::array<ui::alignment, 2> align{};
         };
 
+    public:
         advanced_grid_layout(const std::vector<i32>& cols = {}, const std::vector<i32>& rows = {},
                              i32 margin = 0);
 

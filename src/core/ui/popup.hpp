@@ -46,6 +46,6 @@ namespace rl::ui {
         ds::point<i32> m_anchor_pos{ 0, 0 };
         i32 m_anchor_offset{ 0 };
         i32 m_anchor_size{ 0 };
-        Side m_side;
+        Popup::Side m_side{};
     };
 }

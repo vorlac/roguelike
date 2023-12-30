@@ -64,7 +64,7 @@ namespace rl::ui {
                                  this->icon_scale());
             nvgFontFace(ctx, "icons");
             nvgFillColor(ctx, m_enabled ? text_color : m_theme->m_disabled_text_color);
-            nvgTextAlign(ctx, NVG_ALIGN_LEFT | NVG_ALIGN_MIDDLE);
+            nvgTextAlign(ctx, NVGalign::NVG_ALIGN_LEFT | NVGalign::NVG_ALIGN_MIDDLE);
 
             float iw = nvgTextBounds(ctx, 0, 0, icon.data(), nullptr, nullptr);
             ds::point<f32> icon_pos{
@@ -112,6 +112,7 @@ namespace rl::ui {
         else if (m_popup->side() == Popup::Left &&
                  m_chevron_icon == m_theme->m_popup_chevron_left_icon)
             set_chevron_icon(m_theme->m_popup_chevron_right_icon);
+
         m_popup->set_side(side);
     }
 }

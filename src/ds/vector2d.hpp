@@ -92,28 +92,11 @@ namespace rl::ds {
             return &x;
         }
 
-        constexpr inline operator const std::tuple<T, T, T>*() const
-        {
-            return this;
-        }
-
-        // constexpr inline operator SDL3::SDL_Point()
-        //     requires std::same_as<T, i32>
-        //{
-        //     return *reinterpret_cast<SDL3::SDL_Point*>(this);
-        // }
-
         constexpr inline operator SDL3::SDL_FPoint()
             requires std::same_as<T, f32>
         {
             return *reinterpret_cast<SDL3::SDL_FPoint*>(this);
         }
-
-        // constexpr inline operator SDL3::SDL_Point*()
-        //     requires std::same_as<T, i32>
-        //{
-        //     return reinterpret_cast<SDL3::SDL_Point*>(this);
-        // }
 
         constexpr inline operator SDL3::SDL_FPoint*()
             requires std::same_as<T, f32>
@@ -121,23 +104,11 @@ namespace rl::ds {
             return reinterpret_cast<SDL3::SDL_FPoint*>(this);
         }
 
-        // constexpr inline operator const SDL3::SDL_Point() const
-        //     requires std::same_as<T, i32>
-        //{
-        //     return *reinterpret_cast<const SDL3::SDL_Point*>(this);
-        // }
-
         constexpr inline operator const SDL3::SDL_FPoint() const
             requires std::same_as<T, f32>
         {
             return *reinterpret_cast<const SDL3::SDL_FPoint*>(this);
         }
-
-        // constexpr inline operator const SDL3::SDL_Point*() const
-        //     requires std::same_as<T, i32>
-        //{
-        //     return reinterpret_cast<const SDL3::SDL_Point*>(this);
-        // }
 
         constexpr inline operator const SDL3::SDL_FPoint*() const
             requires std::same_as<T, f32>

@@ -85,7 +85,7 @@ namespace rl::ui {
         i32 position{ this->m_margin };
         i32 y_offset{ 0 };
 
-        const rl::Window* window{ static_cast<const rl::Window*>(widget) };
+        const rl::Window* window{ dynamic_cast<const rl::Window*>(widget) };
         runtime_assert(window != nullptr, "failed ui::widget cast to rl::Window");
         if (window != nullptr && !window->title().empty())
         {
@@ -335,7 +335,7 @@ namespace rl::ui {
                 std::max(static_cast<i32>(grid[1].size()) - 1, 0) * m_spacing.y,
         };
 
-        const rl::Window* window{ static_cast<const rl::Window*>(widget) };
+        const rl::Window* window{ dynamic_cast<const rl::Window*>(widget) };
         if (window != nullptr && !window->title().empty())
             pref_size.height += widget->theme()->m_window_header_height - this->m_margin / 2;
 
@@ -420,7 +420,7 @@ namespace rl::ui {
         };
 
         ds::dims<i32> extra{ 0, 0 };
-        const rl::Window* window{ static_cast<const rl::Window*>(widget) };
+        const rl::Window* window{ dynamic_cast<const rl::Window*>(widget) };
         if (window != nullptr && !window->title().empty())
             extra.height += widget->theme()->m_window_header_height - this->m_margin / 2;
 
@@ -663,7 +663,7 @@ namespace rl::ui {
             2 * this->m_margin,
         };
 
-        const rl::Window* window{ static_cast<const rl::Window*>(widget) };
+        const rl::Window* window{ dynamic_cast<const rl::Window*>(widget) };
         if (window != nullptr && !window->title().empty())
             extra.height += widget->theme()->m_window_header_height - this->m_margin / 2;
 
@@ -676,7 +676,7 @@ namespace rl::ui {
         this->compute_layout(nvg_context, widget, grid);
 
         grid[axis::Horizontal].insert(grid[axis::Horizontal].begin(), this->m_margin);
-        const rl::Window* window{ static_cast<const rl::Window*>(widget) };
+        const rl::Window* window{ dynamic_cast<const rl::Window*>(widget) };
         if (window == nullptr || window->title().empty())
             grid[axis::Vertical].insert(grid[axis::Vertical].begin(), this->m_margin);
         else
@@ -694,13 +694,14 @@ namespace rl::ui {
 
             for (ui::widget* w : widget->children())
             {
-                const rl::Window* child_window{ static_cast<const rl::Window*>(w) };
+                const rl::Window* child_window{ dynamic_cast<const rl::Window*>(w) };
                 if (!w->visible() || child_window != nullptr)
                     continue;
 
                 Anchor anchor{ this->anchor(w) };
-                i32 axis_anchor_pos{ anchor.pos[axis] };
-                i32 axis_anchor_size{ anchor.size[axis] };
+                i32 axis_anchor_pos{ axis == axis::Horizontal ? anchor.pos.x : anchor.pos.y };
+                i32 axis_anchor_size{ axis == axis::Horizontal ? anchor.size.width
+                                                               : anchor.size.height };
 
                 i32 item_pos{ axis_grids[axis_anchor_pos] };
                 i32 cell_size{ axis_grids[axis_anchor_pos + axis_anchor_size] - item_pos };
@@ -760,7 +761,7 @@ namespace rl::ui {
             2 * this->m_margin,
         };
 
-        const rl::Window* window{ static_cast<const rl::Window*>(widget) };
+        const rl::Window* window{ dynamic_cast<const rl::Window*>(widget) };
         if (window != nullptr && !window->title().empty())
             extra.height += widget->theme()->m_window_header_height - this->m_margin / 2;
 
@@ -779,14 +780,14 @@ namespace rl::ui {
                 for (const auto& pair : m_anchor)
                 {
                     const ui::widget* w{ pair.first };
-                    const rl::Window* anchor_window{ static_cast<const rl::Window*>(w) };
+                    const rl::Window* anchor_window{ dynamic_cast<const rl::Window*>(w) };
                     if (!w->visible() || anchor_window != nullptr)
                         continue;
 
                     const Anchor& anchor{ pair.second };
-                    i32 axis_anchor_pos{ anchor.pos[axis] };
-                    i32 axis_anchor_size{ anchor.size[axis] };
-
+                    i32 axis_anchor_pos{ axis == axis::Horizontal ? anchor.pos.x : anchor.pos.y };
+                    i32 axis_anchor_size{ axis == axis::Horizontal ? anchor.size.width
+                                                                   : anchor.size.height };
                     if ((axis_anchor_size == 1) != (phase == 0))
                         continue;
 
