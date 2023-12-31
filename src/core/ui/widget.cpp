@@ -284,25 +284,21 @@ namespace rl::ui {
         return this->contains(pt) ? this : nullptr;
     }
 
-    bool widget::on_kb_character_input(const WindowID id)
+    bool widget::on_mouse_click(const ds::point<i32>& pt, Mouse::Button::type button, bool down,
+                                i32 modifiers)
     {
         return true;
     }
 
-    bool widget::on_kb_key_pressed(const Keyboard::Button::type key)
+    bool widget::on_mouse_move(const ds::point<i32>& pt, const ds::vector2<i32>& rel,
+                               Mouse::Button::type button, i32 modifiers)
     {
         return true;
     }
 
-    bool widget::on_kb_focus_gained(const WindowID id)
+    bool widget::on_mouse_drag(const ds::point<i32>& pt, const ds::vector2<i32>& rel,
+                               Mouse::Button::type button, i32 modifiers)
     {
-        m_focused = true;
-        return true;
-    }
-
-    bool widget::on_kb_focus_lost(const WindowID id)
-    {
-        m_focused = false;
         return true;
     }
 
@@ -311,22 +307,34 @@ namespace rl::ui {
         return true;
     }
 
-    bool widget::on_mouse_leave(const ds::point<i32>& pt)
+    bool widget::on_mouse_exit(const ds::point<i32>& pt)
     {
         return true;
     }
 
-    bool widget::on_mouse_click(const ds::point<i32>& pt, i32 button, bool down, i32 modifiers)
+    bool widget::on_mouse_scroll(const ds::point<i32> pt, const ds::vector2<i32>& rel)
     {
         return true;
     }
 
-    bool widget::on_mouse_drag(const WindowID id)
+    bool widget::on_kb_focus_gained()
+    {
+        m_focused = true;
+        return true;
+    }
+
+    bool widget::on_kb_focus_lost()
+    {
+        m_focused = false;
+        return true;
+    }
+
+    bool widget::on_kb_key_pressed(const Keyboard::Button::type key)
     {
         return true;
     }
 
-    bool widget::on_mouse_scroll(const WindowID id)
+    bool widget::on_kb_character_input(uint32_t codepoint)
     {
         return true;
     }

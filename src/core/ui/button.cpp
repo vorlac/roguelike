@@ -178,9 +178,9 @@ namespace rl::ui {
         return ui::widget::on_mouse_enter(pt);
     }
 
-    bool Button::on_mouse_leave(const ds::point<i32>& pt)
+    bool Button::on_mouse_exit(const ds::point<i32>& pt)
     {
-        return ui::widget::on_mouse_leave(pt);
+        return ui::widget::on_mouse_exit(pt);
     }
 
     bool Button::on_mouse_click(const ds::point<i32>& pt, rl::Mouse::Button::ID button, bool down,

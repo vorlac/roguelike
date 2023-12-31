@@ -84,10 +84,13 @@ namespace rl {
         m_pixel_ratio = 1.0f;
 
         // Screen::initialize
+        for (i32 i = Mouse::Cursor::Arrow; i < Mouse::Cursor::CursorCount; ++i)
+            m_cursors[i] = SDL3::SDL_CreateSystemCursor(Mouse::Cursor::type(i));
+
         this->get_display();
         this->set_visible(true);
         this->set_theme(new ui::theme(m_nvg_context));
-        this->on_mouse_move(m_display_id, ds::point{ 0, 0 });
+        this->on_mouse_move(ds::point{ 0, 0 }, ds::vector2{ 0, 0 }, 0, 0);
         m_last_interaction = m_timer.elapsed();
         m_mouse_state = m_modifiers = 0;
         m_process_events = true;
@@ -101,6 +104,10 @@ namespace rl {
 
     Window::~Window()
     {
+        for (i32 i = Mouse::Cursor::Arrow; i < Mouse::Cursor::CursorCount; ++i)
+            if (m_cursors[i] != nullptr)
+                SDL3::SDL_DestroyCursor(m_cursors[i]);
+
         if (m_sdl_window != nullptr)
         {
             SDL3::SDL_DestroyWindow(m_sdl_window);
@@ -357,6 +364,7 @@ namespace rl {
 
     bool Window::set_title(std::string title)
     {
+        m_title = title;
         i32 result = SDL3::SDL_SetWindowTitle(m_sdl_window, title.c_str());
         sdl_assert(result == 0, "failed to set title");
         return result == 0;
@@ -501,6 +509,391 @@ namespace rl {
         return opacity;
     }
 
+    const ds::color<u8>& Window::background() const
+    {
+        return m_background_color;
+    }
+
+    void Window::set_background(ds::color<u8> background)
+    {
+        m_background_color = background;
+    }
+
+    void Window::set_visible(bool visible)
+    {
+        if (m_visible != visible)
+        {
+            m_visible = visible;
+            if (visible)
+                this->show();
+            else
+                this->hide();
+        }
+    }
+
+    /* is ds::dims<i32> get_render_size() equivalent? */
+    /// Return the framebuffer size (potentially larger than size() on high-DPI screens)
+    // const ds::dims<i32>& Window::framebuffer_size() const
+    //{
+    //     return m_fb_size;
+    // }
+
+    // const std::function<void(ds::dims<i32>)>& Window::resize_callback() const
+    //{
+    //     return m_resize_callback;
+    // }
+
+    // void Window::set_resize_callback(const std::function<void(ds::dims<i32>)>& callback)
+    //{
+    //     m_resize_callback = callback;
+    // }
+
+    // ds::point<i32> Window::mouse_pos() const
+    //{
+    //     return m_mouse_pos;
+    // }
+
+    ///// Return a pointer to the underlying NanoVG draw context
+    // NVGcontext* Window::nvg_context() const
+    //{
+    //     return m_renderer->nvg_context();
+    // }
+
+    ///// Return the component format underlying the screen
+    // Texture::ComponentFormat Window::component_format() const
+    //{
+    // }
+
+    ///// Return the pixel format underlying the screen
+    // Texture::PixelFormat Window::pixel_format() const
+    //{
+    // }
+
+    ///// Does the framebuffer have a depth buffer
+    // bool Window::has_depth_buffer() const
+    //{
+    //     return m_depth_buffer;
+    // }
+
+    ///// Does the framebuffer have a stencil buffer
+    // bool Window::has_stencil_buffer() const
+    //{
+    //     return m_stencil_buffer;
+    // }
+
+    ///// Does the framebuffer use a floating point representation
+    // bool Window::has_float_buffer() const
+    //{
+    //     return m_float_buffer;
+    // }
+
+    ///// Flush all queued up NanoVG rendering commands
+    // void Window::nvg_flush()
+    //{
+    // }
+
+    ///// Is a tooltip currently fading in?
+    // bool Window::tooltip_fade_in_progress() const
+    //{
+    // }
+
+    ///// Compute the layout of all widgets
+    // void Window::perform_layout()
+    //{
+    //     // using ui::widget::perform_layout(ctx) here...
+    //     this->perform_layout(m_nvg_context);
+    // }
+
+    bool Window::drop_event(const std::vector<std::string>& /* filenames */)
+    {
+        return false; /* To be overridden */
+    }
+
+    ds::dims<i32> Window::preferred_size(NVGcontext* nvg_context) const
+    {
+        runtime_assert(false, "implement");
+        return { 0, 0 };
+    }
+
+    void Window::perform_layout(NVGcontext* nvg_context)
+    {
+        runtime_assert(false, "implement");
+    }
+
+    void Window::refresh_relative_placement()
+    {
+        // Overridden in ui::Popup
+        return;
+    }
+
+    void Window::update_focus(ui::widget* widget)
+    {
+        runtime_assert(false, "not implemented");
+    }
+
+    void Window::move_window_to_front(rl::Window* window)
+    {
+        runtime_assert(false, "not implemented");
+    }
+
+    const std::string& Window::title() const
+    {
+        return m_title;
+    }
+
+    bool Window::modal() const
+    {
+        return m_modal;
+    }
+
+    void Window::set_modal(bool modal)
+    {
+        m_modal = modal;
+    }
+
+    ui::widget* Window::button_panel()
+    {
+        runtime_assert(false, "not implemented");
+        return nullptr;
+    }
+
+    void Window::dispose_window(rl::Window* window)
+    {
+        if (std::find(m_focus_path.begin(), m_focus_path.end(), window) != m_focus_path.end())
+            m_focus_path.clear();
+        if (m_drag_widget == window)
+            m_drag_widget = nullptr;
+
+        this->remove_child(window);
+    }
+
+    void Window::dispose()
+    {
+        ui::widget* owner{ this };
+        while (owner->parent() != nullptr)
+            owner = owner->parent();
+
+        rl::Window* window{ static_cast<rl::Window*>(owner) };
+        runtime_assert(window != nullptr, "Failed widget->window cast");
+        runtime_assert(window != this, "Failed dynamic cast");
+        window->dispose_window(this);
+    }
+
+    void Window::center_window(rl::Window* window) const
+    {
+        if (window->size() == ds::dims<i32>{ 0, 0 })
+        {
+            auto&& pref_size{ window->preferred_size(m_nvg_context) };
+            window->set_size(pref_size);
+            window->perform_layout(m_nvg_context);
+        }
+
+        auto&& offset{ m_size - window->size() };
+        window->set_position({
+            offset.width / 2,
+            offset.height / 2,
+        });
+    }
+
+    void Window::center()
+    {
+        ui::widget* owner{ this };
+        while (owner->parent() != nullptr)
+            owner = owner->parent();
+
+        rl::Window* window{ static_cast<rl::Window*>(owner) };
+        runtime_assert(window != nullptr, "Failed widget->window cast");
+        runtime_assert(window != this, "window owns itself");
+        window->center_window(this);
+    }
+
+    // void cursor_pos_callback_event(double x, double y);
+    void Window::mouse_cursor_event_callback(f32 x, f32 y)
+    {
+        bool ret{ false };
+
+        ds::point<i32> pnt{
+            static_cast<i32>(std::round(x / m_pixel_ratio)),
+            static_cast<i32>(std::round(y / m_pixel_ratio)),
+        };
+
+        // TODO: figure out what thsi does...
+        pnt -= ds::vector2<i32>{ 1, 2 };
+
+        m_last_interaction = m_timer.elapsed();
+        if (!m_drag_active)
+        {
+            ui::widget* widget{ this->find_widget(pnt) };
+            if (widget != nullptr && widget->cursor() != m_cursor)
+            {
+                m_cursor = widget->cursor();
+                SDL3::SDL_Cursor* widget_cursor{ m_cursors[m_cursor] };
+                runtime_assert(widget_cursor != nullptr, "invalid cursor");
+                SDL3::SDL_SetCursor(widget_cursor);
+            }
+        }
+        else
+        {
+            ret = m_drag_widget->on_mouse_drag(pnt - m_drag_widget->parent()->abs_position(),
+                                               pnt - m_mouse_pos, m_mouse_state, m_modifiers);
+        }
+
+        if (!ret)
+            ret = this->on_mouse_move(pnt, pnt - m_mouse_pos, m_mouse_state, m_modifiers);
+
+        m_mouse_pos = pnt;
+        m_redraw |= ret;
+    }
+
+    // void mouse_button_callback_event(int button, int action, int modifiers);
+    void Window::mouse_button_event_callback(i32 button, i32 action, i32 modifiers)
+    {
+        // m_modifiers = modifiers;
+        // m_last_interaction = glfwGetTime();
+
+        // try
+        //{
+        //     if (m_focus_path.size() > 1)
+        //     {
+        //         const Window* window = dynamic_cast<Window*>(m_focus_path[m_focus_path.size() -
+        //         2]); if (window && window->modal())
+        //         {
+        //             if (!window->contains(m_mouse_pos))
+        //                 return;
+        //         }
+        //     }
+
+        //    if (action == GLFW_PRESS)
+        //        m_mouse_state |= 1 << button;
+        //    else
+        //        m_mouse_state &= ~(1 << button);
+
+        //    auto drop_widget = find_widget(m_mouse_pos);
+        //    if (m_drag_active && action == GLFW_RELEASE && drop_widget != m_drag_widget)
+        //    {
+        //        m_redraw |= m_drag_widget->mouse_button_event(
+        //            m_mouse_pos - m_drag_widget->parent()->absolute_position(), button, false,
+        //            m_modifiers);
+        //    }
+
+        //    if (drop_widget != nullptr && drop_widget->cursor() != m_cursor)
+        //    {
+        //        m_cursor = drop_widget->cursor();
+        //        glfwSetCursor(m_glfw_window, m_cursors[(int)m_cursor]);
+        //    }
+
+        //    bool btn12 = button == GLFW_MOUSE_BUTTON_1 || button == GLFW_MOUSE_BUTTON_2;
+
+        //    if (!m_drag_active && action == GLFW_PRESS && btn12)
+        //    {
+        //        m_drag_widget = find_widget(m_mouse_pos);
+        //        if (m_drag_widget == this)
+        //            m_drag_widget = nullptr;
+        //        m_drag_active = m_drag_widget != nullptr;
+        //        if (!m_drag_active)
+        //            update_focus(nullptr);
+        //    }
+        //    else if (m_drag_active && action == GLFW_RELEASE && btn12)
+        //    {
+        //        m_drag_active = false;
+        //        m_drag_widget = nullptr;
+        //    }
+
+        //    m_redraw |= mouse_button_event(m_mouse_pos, button, action == GLFW_PRESS,
+        //    m_modifiers);
+        //}
+        // catch (const std::exception& e)
+        //{
+        //    std::cerr << "Caught exception in event handler: " << e.what() << std::endl;
+        //}
+    }
+
+    // void key_callback_event(int key, int scancode, int action, int mods);
+    void Window::keyboard_key_event_callback(i32 key, i32 scancode, i32 action, i32 modifiers)
+    {
+        // m_last_interaction = glfwGetTime();
+        // try
+        //{
+        //     m_redraw |= keyboard_event(key, scancode, action, mods);
+        // }
+        // catch (const std::exception& e)
+        //{
+        //     std::cerr << "Caught exception in event handler: " << e.what() << std::endl;
+        // }
+    }
+
+    // void char_callback_event(unsigned int codepoint);
+    void Window::keyboard_char_event_callback(u32 codepoint)
+    {
+        // m_last_interaction = glfwGetTime();
+        // try
+        //{
+        //     m_redraw |= keyboard_character_event(codepoint);
+        // }
+        // catch (const std::exception& e)
+        //{
+        //     std::cerr << "Caught exception in event handler: " << e.what() << std::endl;
+        // }
+    }
+
+    // void drop_callback_event(int count, const char **filenames);
+    void Window::drop_callback_event(i32 count, const char** filenames)
+    {
+        // std::vector<std::string> arg(count);
+        // for (int i = 0; i < count; ++i)
+        //     arg[i] = filenames[i];
+        // m_redraw |= drop_event(arg);
+    }
+
+    // void scroll_callback_event(double x, double y);
+    void Window::mouse_wheel_event_callback(f32 x, f32 y)
+    {
+        // m_last_interaction = glfwGetTime();
+        // try
+        //{
+        //     if (m_focus_path.size() > 1)
+        //     {
+        //         const Window* window = dynamic_cast<Window*>(m_focus_path[m_focus_path.size() -
+        //         2]); if (window && window->modal())
+        //         {
+        //             if (!window->contains(m_mouse_pos))
+        //                 return;
+        //         }
+        //     }
+        //     m_redraw |= scroll_event(m_mouse_pos, Vector2f(x, y));
+        // }
+        // catch (const std::exception& e)
+        //{
+        //     std::cerr << "Caught exception in event handler: " << e.what() << std::endl;
+        // }
+    }
+
+    // void resize_callback_event(int width, int height);
+    void Window::window_resized_event_callback(i32 width, i32 height)
+    {
+        // Vector2i fb_size, size;
+        // glfwGetFramebufferSize(m_glfw_window, &fb_size[0], &fb_size[1]);
+        // glfwGetWindowSize(m_glfw_window, &size[0], &size[1]);
+        // if (fb_size == Vector2i(0, 0) || size == Vector2i(0, 0))
+        //     return;
+        // m_fbsize = fb_size;
+        // m_size = size;
+
+        // m_size = Vector2i(Vector2f(m_size) / m_pixel_ratio);
+
+        // m_last_interaction = glfwGetTime();
+
+        // try
+        //{
+        //     resize_event(m_size);
+        // }
+        // catch (const std::exception& e)
+        //{
+        //     std::cerr << "Caught exception in event handler: " << e.what() << std::endl;
+        // }
+        // redraw();
+    }
+
     bool Window::on_shown(const WindowID id)
     {
         this->set_visible(true);
@@ -605,77 +998,93 @@ namespace rl {
         return ret;
     }
 
-    bool Window::on_mouse_enter(const WindowID id)
+    bool Window::on_mouse_enter(const ds::point<i32>& pt)
     {
         if constexpr (io::logging::window_events)
-            log::info("window::on_mouse_enter [id:{}]", id);
+            log::info("window::on_mouse_enter [id:{}]", pt);
 
-        // TODO: implement logic to get mouse pos
-        runtime_assert(false, "not implemented");
-        return ui::widget::on_mouse_enter(ds::point<i32>{ 0, 0 });
+        return ui::widget::on_mouse_enter(pt);
     }
 
-    bool Window::on_mouse_leave(const WindowID id)
+    bool Window::on_mouse_exit(const ds::point<i32>& pt)
     {
         if constexpr (io::logging::window_events)
-            log::info("window::on_mouse_leave [id:{}]", id);
+            log::info("window::on_mouse_leave [pt:{}]", pt);
 
-        // TODO: implement logic to get mouse pos
-        runtime_assert(false, "not implemented");
-        return ui::widget::on_mouse_leave(ds::point<i32>{ 0, 0 });
+        return ui::widget::on_mouse_exit(pt);
     }
 
-    bool Window::on_mouse_click(const Mouse::Button::type button)
+    bool Window::on_mouse_click(const ds::point<i32>& pt, Mouse::Button::type button, bool down,
+                                i32 modifiers)
     {
         if constexpr (io::logging::window_events)
             log::info("window::on_mouse_click [button:{}]", button);
 
-        return true;
+        return ui::widget::on_mouse_click(pt, button, down, modifiers);
     }
 
-    bool Window::on_mouse_drag(const WindowID id)
+    bool Window::on_mouse_drag(const ds::point<i32>& pt, const ds::vector2<i32>& rel,
+                               Mouse::Button::type button, i32 modifiers)
     {
         if constexpr (io::logging::window_events)
-            log::info("window::on_mouse_drag [id:{}]", id);
+            log::info("window::on_mouse_drag [pt:{}, rel:{}, btn:{}, mod:{}]", pt, rel, button,
+                      modifiers);
 
         runtime_assert(false, "not implemented");
-        return ui::widget::on_mouse_drag(id);
+        return ui::widget::on_mouse_drag(pt, rel, button, modifiers);
     }
 
-    bool Window::on_mouse_move(const WindowID id, ds::point<i32>&& pos)
+    bool Window::on_mouse_move(const ds::point<i32>& pt, const ds::vector2<i32>& rel,
+                               Mouse::Button::type button, i32 modifiers)
     {
-        m_mouse_pos = pos;
+        // todo: swap out with m_mouse and pass in SDL event?
+        m_mouse_pos = pt;
+
         if constexpr (io::logging::window_events)
-            log::info("window::on_mouse_move [id:{}, pos:{}]", id, m_mouse_pos);
-        return true;
+            log::info("window::on_mouse_move [pt:{}, rel:{}, btn:{}, mod:{}]", pt, rel, button,
+                      modifiers);
+
+        return ui::widget::on_mouse_move(pt, rel, button, modifiers);
     }
 
-    bool Window::on_mouse_scroll(Mouse::Event::Data::Wheel& wheel)
+    bool Window::on_mouse_scroll(const ds::point<i32> pt, const ds::vector2<i32>& rel)
     {
         if constexpr (io::logging::window_events)
-            log::info("window::on_mouse_scroll [vert delta:{}]", wheel.y);
+            log::info("window::on_mouse_scroll [pt:{}, rel:{}]", pt, rel);
 
-        return true;
+        return ui::widget::on_mouse_scroll(pt, rel);
     }
 
-    bool Window::on_kb_focus_gained(const WindowID id)
+    bool Window::on_kb_focus_gained()
     {
-        this->set_focused(true);
-
         if constexpr (io::logging::window_events)
-            log::info("window::on_kb_focus_gained [id:{}]", id);
+            log::info("window::on_kb_focus_gained");
 
-        return true;
+        return ui::widget::on_kb_focus_gained();
     }
 
-    bool Window::on_kb_focus_lost(const WindowID id)
+    bool Window::on_kb_focus_lost()
     {
-        this->set_focused(false);
-
         if constexpr (io::logging::window_events)
-            log::info("window::on_kb_focus_lost [id:{}]", id);
+            log::info("window::on_kb_focus_lost");
 
-        return true;
+        return ui::widget::on_kb_focus_lost();
+    }
+
+    bool Window::on_kb_key_pressed(const Keyboard::Button::type key)
+    {
+        if constexpr (io::logging::window_events)
+            log::info("window::on_kb_focus_lost");
+
+        return ui::widget::on_kb_key_pressed(key);
+    }
+
+    bool Window::on_kb_character_input(uint32_t codepoint)
+    {
+        if constexpr (io::logging::window_events)
+            log::info("window::on_kb_focus_lost");
+
+        return ui::widget::on_kb_character_input(codepoint);
     }
 
     bool Window::on_close_requested(const WindowID id)

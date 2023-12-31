@@ -550,63 +550,32 @@ namespace rl {
             };
         };
 
-        constexpr inline bool is_button_pressed(const Keyboard::Button::type key) const
-        {
-            return m_pressed[key];
-        }
-
-        constexpr inline bool is_button_released(const Keyboard::Button::type key)
-        {
-            const bool ret = m_released[key];
-            m_released[key] = false;
-            return ret;
-        }
-
-        constexpr inline bool is_button_held(const Keyboard::Button::type key) const
-        {
-            return m_held[key];
-        }
-
-        constexpr inline auto get_key_state(const Keyboard::Button::type kb_button)
-        {
-            return this->is_button_held(kb_button)     ? "Holding"
-                 : this->is_button_pressed(kb_button)  ? "Pressed"
-                 : this->is_button_released(kb_button) ? "Released"
-                                                       : "None";
-        }
+    public:
+        bool is_button_pressed(const Keyboard::Button::type key) const;
+        bool is_button_released(const Keyboard::Button::type key) const;
+        bool is_button_held(const Keyboard::Button::type key) const;
+        std::string get_key_state(const Keyboard::Button::type kb_button) const;
 
     private:
         friend class rl::EventHandler;
 
-        constexpr inline void process_button_down(Keyboard::Button::type key)
-        {
-            m_released[key] = false;
-            auto& keystates = this->is_button_pressed(key)  //
-                                ? m_held                    //
-                                : m_pressed;                //
-            keystates[key] = 1;
-        }
-
-        constexpr inline void process_button_up(Keyboard::Button::type key)
-        {
-            m_held[key] = false;
-            m_pressed[key] = false;
-            m_released[key] = true;
-        }
+        void process_button_down(Keyboard::Button::type key);
+        void process_button_up(Keyboard::Button::type key);
 
     private:
         std::bitset<Button::ScancodeCount> m_held{ 0 };
         std::bitset<Button::ScancodeCount> m_pressed{ 0 };
-        std::bitset<Button::ScancodeCount> m_released{ 0 };
+        mutable std::bitset<Button::ScancodeCount> m_released{ 0 };
     };
+}
 
-    constexpr inline std::string format_as(Keyboard kb)
+namespace rl {
+    inline auto format_as(const Keyboard& kb)
     {
         return fmt::format("KB[W={} A={}, S={}, D={}]",
                            kb.get_key_state(Keyboard::Button::W),  //
                            kb.get_key_state(Keyboard::Button::A),  //
                            kb.get_key_state(Keyboard::Button::S),  //
-                           kb.get_key_state(Keyboard::Button::D))
-            .data();
+                           kb.get_key_state(Keyboard::Button::D));
     }
 }

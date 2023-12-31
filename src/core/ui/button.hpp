@@ -62,8 +62,9 @@ namespace rl::ui {
     public:
         virtual void draw(NVGcontext* ctx) override;
         virtual ds::dims<i32> preferred_size(NVGcontext* ctx) const override;
+
         virtual bool on_mouse_enter(const ds::point<i32>& pt) override;
-        virtual bool on_mouse_leave(const ds::point<i32>& pt) override;
+        virtual bool on_mouse_exit(const ds::point<i32>& pt) override;
         virtual bool on_mouse_click(const ds::point<i32>& pt, rl::Mouse::Button::ID button,
                                     bool down, i32 modifiers);
 

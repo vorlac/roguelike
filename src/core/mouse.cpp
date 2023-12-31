@@ -1,4 +1,6 @@
+#include "core/assert.hpp"
 #include "core/mouse.hpp"
+#include "utils/conversions.hpp"
 
 namespace rl {
     void Mouse::process_button_down(Mouse::Button::type mouse_button)
@@ -29,7 +31,11 @@ namespace rl {
     void Mouse::process_motion(Event::Data::Motion& motion)
     {
         m_prev_cursor_pos = m_cursor_position;
-        m_cursor_position = { motion.x, motion.y };
+        // TODO: round
+        m_cursor_position = {
+            static_cast<i32>(motion.x),
+            static_cast<i32>(motion.y),
+        };
     }
 
     void Mouse::process_wheel(Mouse::Event::Data::Wheel& wheel)
@@ -41,30 +47,30 @@ namespace rl {
             wheel.y *= -1;
         }
 
-        if (wheel.x != 0.0f)
+        if (wheel.x != 0)
         {
             // positive to the right and negative to the left
-            m_wheel_position.x += wheel.x * 10.0f;
+            m_wheel_position.x += static_cast<i32>(wheel.x * 10.0f);
         }
 
-        if (wheel.x != 0.0f)
+        if (wheel.y != 0)
         {
             // positive away from the user and negative towards the user
-            m_wheel_position.y -= wheel.x * 10.0f;
+            m_wheel_position.y -= static_cast<i32>(wheel.y * 10.0f);
         }
     }
 
-    ds::point<f32> Mouse::pos() const
+    ds::point<i32> Mouse::pos() const
     {
         return m_cursor_position;
     }
 
-    ds::vector2<f32> Mouse::wheel() const
+    ds::vector2<i32> Mouse::wheel() const
     {
         return m_wheel_position;
     }
 
-    ds::point<f32> Mouse::pos_delta() const
+    ds::vector2<i32> Mouse::pos_delta() const
     {
         return m_prev_cursor_pos - m_cursor_position;
     }

@@ -1,11 +1,8 @@
 #pragma once
 
-#include <type_traits>
-
 #include "ds/point.hpp"
 #include "ds/vector2d.hpp"
 #include "sdl/defs.hpp"
-#include "utils/conversions.hpp"
 #include "utils/numeric.hpp"
 
 SDL_C_LIB_BEGIN
@@ -67,6 +64,14 @@ namespace rl {
                 SizeAll = SDL3::SDL_SYSTEM_CURSOR_SIZEALL,
                 No = SDL3::SDL_SYSTEM_CURSOR_NO,
                 Hand = SDL3::SDL_SYSTEM_CURSOR_HAND,
+                WindowTopLeft = SDL3::SDL_SYSTEM_CURSOR_WINDOW_TOPLEFT,
+                WindowTop = SDL3::SDL_SYSTEM_CURSOR_WINDOW_TOP,
+                WindowTopRight = SDL3::SDL_SYSTEM_CURSOR_WINDOW_TOPRIGHT,
+                WindowRight = SDL3::SDL_SYSTEM_CURSOR_WINDOW_RIGHT,
+                WindowBotRight = SDL3::SDL_SYSTEM_CURSOR_WINDOW_BOTTOMRIGHT,
+                WindowBottom = SDL3::SDL_SYSTEM_CURSOR_WINDOW_BOTTOM,
+                WindowBotLeft = SDL3::SDL_SYSTEM_CURSOR_WINDOW_BOTTOMLEFT,
+                WindowLeft = SDL3::SDL_SYSTEM_CURSOR_WINDOW_LEFT,
                 CursorCount = SDL3::SDL_NUM_SYSTEM_CURSORS,
             };
         };
@@ -81,24 +86,25 @@ namespace rl {
             };
         };
 
-    public:
+    protected:
+        friend class EventHandler;
         void process_button_down(Mouse::Button::type mouse_button);
         void process_button_up(Mouse::Button::type mouse_button);
         void process_motion(Event::Data::Motion& motion);
         void process_wheel(Mouse::Event::Data::Wheel& wheel);
 
     public:
-        ds::point<f32> pos() const;
-        ds::vector2<f32> wheel() const;
-        ds::point<f32> pos_delta() const;
+        ds::point<i32> pos() const;
+        ds::vector2<i32> wheel() const;
+        ds::vector2<i32> pos_delta() const;
         bool is_button_down(u32 button) const;
 
     private:
         rl::u32 m_button_states{ 0 };
-        ds::point<f32> m_cursor_position{ 0.0f, 0.0f };
-        ds::point<f32> m_prev_cursor_pos{ 0.0f, 0.0f };
-        ds::vector2<f32> m_wheel_position{ 0.0f, 0.0f };
-        ds::vector2<f32> m_prev_wheel_pos{ 0.0f, 0.0f };
+        ds::point<i32> m_cursor_position{ 0, 0 };
+        ds::point<i32> m_prev_cursor_pos{ 0, 0 };
+        ds::vector2<i32> m_wheel_position{ 0, 0 };
+        ds::vector2<i32> m_prev_wheel_pos{ 0, 0 };
     };
 }
 

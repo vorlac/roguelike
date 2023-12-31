@@ -7,6 +7,8 @@
 #include <string>
 #include <vector>
 
+#include "core/keyboard.hpp"
+#include "core/mouse.hpp"
 #include "core/ui/widget.hpp"
 #include "ds/dims.hpp"
 #include "ds/point.hpp"
@@ -242,23 +244,13 @@ namespace rl {
         bool restore();
         bool raise();
         bool show();
-        bool clear();
-        bool redraw();
 
-        bool draw_setup();
-        bool draw_contents();
-        bool draw_widgets();
-        bool draw_teardown();
-        bool draw_all();
-
-        bool init_gui();
         bool set_vsync(bool enabled);
         bool set_grab(bool grabbed);
         bool set_bordered(bool bordered);
         bool set_resizable(bool resizable);
         bool set_fullscreen(bool fullscreen);
         bool set_opacity(float opacity);
-        bool set_title(std::string title);
         bool set_position(ds::point<i32> pos);
         bool set_size(ds::dims<i32> size);
         bool set_min_size(ds::dims<i32> size);
@@ -284,105 +276,123 @@ namespace rl {
         bool swap_buffers();
 
     public:
-        virtual ds::dims<i32> preferred_size(NVGcontext* nvg_context) const
-        {
-            return ds::dims<i32>{ 0, 0 };
-        }
+        //===================//
+        //= nanogui::screen =//
+        //===================//
 
-        virtual void perform_layout(NVGcontext* nvg_context)
-        {
-        }
+        /* replaced with title() / set_title()... */
 
-        virtual void refresh_relative_placement()
-        {
-            // Overridden in ui::Popup
-        }
+        // const std::string& caption() const;
+        // void set_caption(const std::string& caption);
 
-        void update_focus(ui::widget* widget)
-        {
-        }
+        const ds::color<u8>& background() const;
+        void set_background(ds::color<u8> background);
 
-        void move_window_to_front(rl::Window* window)
-        {
-        }
+        // intentionally doesn't use virtuals for this..?
+        void set_visible(bool visible);
 
-        const std::string& title() const
-        {
-            return m_title;
-        }
+        // IMPLEMENT THESE:
+        /*=================*/
 
-        void set_title(const std::string& title)
-        {
-            m_title = title;
-        }
+        /* is ds::dims<i32> get_render_size() equivalent? */
+        //  const Vector2i& framebuffer_size() const;
+        //  const std::function<void(Vector2i)>& resize_callback() const;
+        //  void set_resize_callback(const std::function<void(Vector2i)> &callback);
+        //  Vector2i mouse_pos() const;
+        //  NVGcontext *nvg_context() const;
+        //  Texture::ComponentFormat component_format() const;
+        //  Texture::PixelFormat pixel_format() const;
+        //  bool has_depth_buffer() const;
+        //  bool has_stencil_buffer() const;
+        //  bool has_float_buffer() const;
+        //  void nvg_flush();
+        //  bool tooltip_fade_in_progress() const;
+        //  void perform_layout();
 
-        bool modal() const
-        {
-            return m_modal;
-        }
+        /* EXTERNAL APIS */
+        // renamed from Screen::initialize
+        bool init_gui();
 
-        void set_modal(bool modal)
-        {
-            m_modal = modal;
-        }
+        bool redraw();
 
-        ui::widget* button_panel()
-        {
-        }
+        void dispose_window(rl::Window* window);
+        void update_focus(ui::widget* widget);
+        void move_window_to_front(rl::Window* window);
 
-        void dispose_window(rl::Window* window)
-        {
-            if (std::find(m_focus_path.begin(), m_focus_path.end(), window) != m_focus_path.end())
-                m_focus_path.clear();
-            if (m_drag_widget == window)
-                m_drag_widget = nullptr;
+        bool draw_widgets();
+        void center_window(rl::Window* window) const;
 
-            this->remove_child(window);
-        }
+        //==============================================================================
 
-        void dispose()
-        {
-            ui::widget* owner{ this };
-            while (owner->parent() != nullptr)
-                owner = owner->parent();
+        //===================//
+        //= nanogui::window =//
+        //===================//
+        bool set_title(std::string title);
+        const std::string& title() const;
 
-            rl::Window* window{ static_cast<rl::Window*>(owner) };
-            runtime_assert(window != nullptr, "Failed widget->window cast");
-            runtime_assert(window != this, "Failed dynamic cast");
-            window->dispose_window(this);
-        }
+        bool modal() const;
+        void set_modal(bool modal);
 
-        void center_window(rl::Window* window) const
-        {
-            if (window->size() == ds::dims<i32>{ 0, 0 })
-            {
-                auto&& pref_size{ window->preferred_size(m_nvg_context) };
-                window->set_size(pref_size);
-                window->perform_layout(m_nvg_context);
-            }
+        ui::widget* button_panel();
 
-            auto&& offset{ m_size - window->size() };
-            window->set_position({
-                offset.width / 2,
-                offset.height / 2,
-            });
-        }
+        void dispose();
+        void center();
 
-        void center()
-        {
-            ui::widget* owner{ this };
-            while (owner->parent() != nullptr)
-                owner = owner->parent();
+    public:
+        //===================//
+        //= nanogui::screen =//
+        //===================//
+        virtual bool draw_all();
+        virtual bool clear();
+        virtual bool draw_setup();
+        virtual bool draw_contents();
+        virtual bool draw_teardown();
+        virtual bool drop_event(const std::vector<std::string>& filenames);
 
-            rl::Window* window{ static_cast<rl::Window*>(owner) };
-            runtime_assert(window != nullptr, "Failed widget->window cast");
-            runtime_assert(window != this, "window owns itself");
-            window->center_window(this);
-        }
+        //===================//
+        //= nanogui::window =//
+        //===================//
+        virtual ds::dims<i32> preferred_size(NVGcontext* nvg_context) const;
+        virtual void perform_layout(NVGcontext* nvg_context);
+        virtual void refresh_relative_placement();
 
-    protected:
+    public:
         friend class EventHandler;
 
+        //===================//
+        //= nanogui::screen =//
+        //===================//
+
+        /* not needed since window owns context? */
+        // virtual void draw(NVGcontext* ctx) override;
+
+        void mouse_cursor_event_callback(f32 x, f32 y);
+        void mouse_button_event_callback(i32 button, i32 action, i32 modifiers);
+        void keyboard_key_event_callback(i32 key, i32 scancode, i32 action, i32 modifiers);
+        void keyboard_char_event_callback(u32 codepoint);
+        void drop_callback_event(i32 count, const char** filenames);
+        void mouse_wheel_event_callback(f32 x, f32 y);
+        void window_resized_event_callback(i32 width, i32 height);
+        //==============================================================================
+
+        //===================//
+        //= nanogui::window =//
+        //===================//
+        virtual bool on_mouse_click(const ds::point<i32>& pt, Mouse::Button::type button, bool down,
+                                    i32 modifiers) override;
+        virtual bool on_mouse_move(const ds::point<i32>& pt, const ds::vector2<i32>& rel,
+                                   Mouse::Button::type button, i32 modifiers) override;
+        virtual bool on_mouse_drag(const ds::point<i32>& pt, const ds::vector2<i32>& rel,
+                                   Mouse::Button::type button, i32 modifiers) override;
+        virtual bool on_mouse_enter(const ds::point<i32>& pt) override;
+        virtual bool on_mouse_exit(const ds::point<i32>& pt) override;
+        virtual bool on_mouse_scroll(const ds::point<i32> pt, const ds::vector2<i32>& rel) override;
+        virtual bool on_kb_focus_gained() override;
+        virtual bool on_kb_focus_lost() override;
+        virtual bool on_kb_key_pressed(const Keyboard::Button::type key) override;
+        virtual bool on_kb_character_input(uint32_t codepoint) override;
+
+    private:
         bool on_shown(const WindowID id);
         bool on_hidden(const WindowID id);
         bool on_exposed(const WindowID id);
@@ -392,14 +402,6 @@ namespace rl {
         bool on_minimized(const WindowID id);
         bool on_maximized(const WindowID id);
         bool on_restored(const WindowID id);
-        bool on_mouse_enter(const WindowID id);
-        bool on_mouse_leave(const WindowID id);
-        bool on_mouse_click(const Mouse::Button::type button);
-        bool on_mouse_move(const WindowID id, ds::point<i32>&& pos);
-        bool on_mouse_drag(const WindowID id);
-        bool on_mouse_scroll(Mouse::Event::Data::Wheel& wheel);
-        bool on_kb_focus_gained(const WindowID id);
-        bool on_kb_focus_lost(const WindowID id);
         bool on_close_requested(const WindowID id);
         bool on_take_focus(const WindowID id);
         bool on_hit_test(const WindowID id);
@@ -414,11 +416,13 @@ namespace rl {
         std::string m_title{};
         ui::widget* m_drag_widget{ nullptr };
         ui::widget* m_button_panel{ nullptr };
-        std::vector<ui::widget*> m_focus_path;
+        std::array<SDL3::SDL_Cursor*, Mouse::Cursor::CursorCount> m_cursors{ { 0 } };
+        std::vector<ui::widget*> m_focus_path{};
         ds::point<i32> m_mouse_pos{ 0, 0 };
         std::function<void(ds::dims<i32>)> m_resize_callback;
         ds::color<u8> m_background_color{ 29, 32, 39 };
         rl::Timer<float> m_timer{};
+
         i32 m_mouse_state{ 0 };
         i32 m_modifiers{ 0 };
 
@@ -435,7 +439,7 @@ namespace rl {
         // time in seconds recording the last interaction
         // with the current window widget, represented in
         // elapsed time since the window was created.
-        float m_last_interaction{ 0.0f };
+        f32 m_last_interaction{ 0.0f };
 
         /// <summary>
         ///   The content display scale relative to a window's pixel size.
@@ -449,7 +453,7 @@ namespace rl {
         ///     window moves to a display with a different scale setting.
         ///   </para>
         /// </summary>
-        float m_pixel_ratio = 0.0f;
+        f32 m_pixel_ratio{ 0.0f };
 
         /// <summary>
         ///   The pixel density of a window.
@@ -461,7 +465,7 @@ namespace rl {
         ///     3840x2160 pixels, it would have a pixel density of 2.0.
         ///   </para>
         /// </summary>
-        float m_pixel_density = 0.0f;
+        f32 m_pixel_density{ 0.0f };
 
     private:
         WindowID m_window_id{ 0 };
