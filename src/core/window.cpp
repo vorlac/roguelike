@@ -28,7 +28,6 @@ namespace rl {
         , m_title{ title }
         , m_button_panel{ nullptr }
         , m_modal{ false }
-        , m_drag{ false }
     {
     }
 
@@ -531,93 +530,120 @@ namespace rl {
         }
     }
 
-    /* is ds::dims<i32> get_render_size() equivalent? */
-    /// Return the framebuffer size (potentially larger than size() on high-DPI screens)
-    // const ds::dims<i32>& Window::framebuffer_size() const
-    //{
-    //     return m_fb_size;
-    // }
-
-    // const std::function<void(ds::dims<i32>)>& Window::resize_callback() const
-    //{
-    //     return m_resize_callback;
-    // }
-
-    // void Window::set_resize_callback(const std::function<void(ds::dims<i32>)>& callback)
-    //{
-    //     m_resize_callback = callback;
-    // }
-
-    // ds::point<i32> Window::mouse_pos() const
-    //{
-    //     return m_mouse_pos;
-    // }
-
-    ///// Return a pointer to the underlying NanoVG draw context
-    // NVGcontext* Window::nvg_context() const
-    //{
-    //     return m_renderer->nvg_context();
-    // }
-
-    ///// Return the component format underlying the screen
-    // Texture::ComponentFormat Window::component_format() const
-    //{
-    // }
-
-    ///// Return the pixel format underlying the screen
-    // Texture::PixelFormat Window::pixel_format() const
-    //{
-    // }
-
-    ///// Does the framebuffer have a depth buffer
-    // bool Window::has_depth_buffer() const
-    //{
-    //     return m_depth_buffer;
-    // }
-
-    ///// Does the framebuffer have a stencil buffer
-    // bool Window::has_stencil_buffer() const
-    //{
-    //     return m_stencil_buffer;
-    // }
-
-    ///// Does the framebuffer use a floating point representation
-    // bool Window::has_float_buffer() const
-    //{
-    //     return m_float_buffer;
-    // }
-
-    ///// Flush all queued up NanoVG rendering commands
-    // void Window::nvg_flush()
-    //{
-    // }
-
-    ///// Is a tooltip currently fading in?
-    // bool Window::tooltip_fade_in_progress() const
-    //{
-    // }
-
-    ///// Compute the layout of all widgets
-    // void Window::perform_layout()
-    //{
-    //     // using ui::widget::perform_layout(ctx) here...
-    //     this->perform_layout(m_nvg_context);
-    // }
-
-    bool Window::drop_event(const std::vector<std::string>& /* filenames */)
+    ds::dims<i32> Window::frame_buffer_size() const
     {
-        return false; /* To be overridden */
+        // Return the framebuffer size (potentially larger than size() on high-DPI screens)
+        // TODO: is ds::dims<i32> get_render_size() good equivalent?
+        return m_fb_size;
+    }
+
+    const std::function<void(ds::dims<i32>)>& Window::resize_callback() const
+    {
+        return m_resize_callback;
+    }
+
+    void Window::set_resize_callback(const std::function<void(ds::dims<i32>)>& callback)
+    {
+        m_resize_callback = callback;
+    }
+
+    ds::point<i32> Window::mouse_pos() const
+    {
+        return m_mouse_pos;
+    }
+
+    NVGcontext* Window::nvg_context() const
+    {
+        // Return a pointer to the window renderer's underlying NanoVG draw context
+        return m_renderer->nvg_context();
+    }
+
+    // Return the component format underlying the screen
+    ComponentFormat Window::component_format() const
+    {
+        // // Signed and unsigned integer formats
+        // UInt8  = (uint8_t) VariableType::UInt8,
+        // Int8   = (uint8_t) VariableType::Int8,
+        // UInt16 = (uint16_t) VariableType::UInt16,
+        // Int16  = (uint16_t) VariableType::Int16,
+        // UInt32 = (uint32_t) VariableType::UInt32,
+        // Int32  = (uint32_t) VariableType::Int32,
+        //
+        // // Floating point formats
+        // Float16  = (uint16_t) VariableType::Float16,
+        // Float32  = (uint32_t) VariableType::Float32
+        runtime_assert(false, "not implemented");
+        return 0;
+    }
+
+    // Return the pixel format underlying the screen
+    PixelFormat Window::pixel_format() const
+    {
+        // Single-channel bitmap
+        //   R,
+        // Two-channel bitmap
+        //   RA,
+        // RGB bitmap
+        //   RGB,
+        // RGB bitmap + alpha channel
+        //   RGBA,
+        // BGR bitmap
+        //   BGR,
+        // BGR bitmap + alpha channel
+        //   BGRA,
+        // Depth map
+        //   Depth,
+        // Combined depth + stencil map
+        //   DepthStencil
+        runtime_assert(false, "not implemented");
+        return 0;
+    }
+
+    bool Window::has_depth_buffer() const
+    {
+        // Does the framebuffer have a depth buffer
+        // TODO: call opengl to confirm for debug builds
+        return true;
+    }
+
+    bool Window::has_stencil_buffer() const
+    {
+        // Does the framebuffer have a stencil buffer
+        // TODO: call opengl to confirm for debug builds
+        return true;
+    }
+
+    bool Window::has_float_buffer() const
+    {
+        // Does the framebuffer use a floating point representation
+        // TODO: call opengl to confirm for debug builds
+        return true;
+    }
+
+    // Flush all queued up NanoVG rendering commands
+    // TODO: move into renderer
+    void Window::nvg_flush()
+    {
+    }
+
+    // Is a tooltip currently fading in?
+    bool Window::tooltip_fade_in_progress() const
+    {
+        runtime_assert(false, "not implemented");
+        return false;
+    }
+
+    // Compute the layout of all widgets
+    void Window::perform_layout()
+    {
+        // using ui::widget::perform_layout(ctx) here...
+        this->perform_layout(m_nvg_context);
     }
 
     ds::dims<i32> Window::preferred_size(NVGcontext* nvg_context) const
     {
-        runtime_assert(false, "implement");
+        runtime_assert(false, "not implemented");
         return { 0, 0 };
-    }
-
-    void Window::perform_layout(NVGcontext* nvg_context)
-    {
-        runtime_assert(false, "implement");
     }
 
     void Window::refresh_relative_placement()
@@ -679,6 +705,18 @@ namespace rl {
         window->dispose_window(this);
     }
 
+    void Window::center()
+    {
+        ui::widget* owner{ this };
+        while (owner->parent() != nullptr)
+            owner = owner->parent();
+
+        rl::Window* window{ static_cast<rl::Window*>(owner) };
+        runtime_assert(window != nullptr, "Failed widget->window cast");
+        runtime_assert(window != this, "window owns itself");
+        window->center_window(this);
+    }
+
     void Window::center_window(rl::Window* window) const
     {
         if (window->size() == ds::dims<i32>{ 0, 0 })
@@ -693,18 +731,6 @@ namespace rl {
             offset.width / 2,
             offset.height / 2,
         });
-    }
-
-    void Window::center()
-    {
-        ui::widget* owner{ this };
-        while (owner->parent() != nullptr)
-            owner = owner->parent();
-
-        rl::Window* window{ static_cast<rl::Window*>(owner) };
-        runtime_assert(window != nullptr, "Failed widget->window cast");
-        runtime_assert(window != this, "window owns itself");
-        window->center_window(this);
     }
 
     // void cursor_pos_callback_event(double x, double y);
@@ -836,13 +862,18 @@ namespace rl {
         // }
     }
 
-    // void drop_callback_event(int count, const char **filenames);
+    bool Window::drop_event(const std::vector<std::string>& filenames)
+    {
+        // To be overridden
+        return false;
+    }
+
     void Window::drop_callback_event(i32 count, const char** filenames)
     {
-        // std::vector<std::string> arg(count);
-        // for (int i = 0; i < count; ++i)
-        //     arg[i] = filenames[i];
-        // m_redraw |= drop_event(arg);
+        std::vector<std::string> arg(count);
+        for (int i = 0; i < count; ++i)
+            arg[i] = filenames[i];
+        m_redraw |= drop_event(arg);
     }
 
     // void scroll_callback_event(double x, double y);

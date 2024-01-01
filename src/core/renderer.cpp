@@ -78,20 +78,6 @@ namespace rl {
         }
     }
 
-    bool Renderer::present()
-    {
-        i32 result = 0;
-
-        return result == 0;
-    }
-
-    bool Renderer::swap_buffers(rl::Window& window)
-    {
-        i32 result = SDL3::SDL_GL_SwapWindow(window.sdl_handle());
-        sdl_assert(result == 0, "OpenGL renderer buffer swap failed");
-        return result == 0;
-    }
-
     bool Renderer::clear(const ds::color<u8>& c)
     {
         bool ret = true;
@@ -101,34 +87,48 @@ namespace rl {
         return ret;
     }
 
+    bool Renderer::swap_buffers(rl::Window& window)
+    {
+        i32 result = SDL3::SDL_GL_SwapWindow(window.sdl_handle());
+        sdl_assert(result == 0, "OpenGL renderer buffer swap failed");
+        return result == 0;
+    }
+
+    SDL3::SDL_GLContext Renderer::gl_context() const
+    {
+        return m_sdl_glcontext;
+    }
+
+    NVGcontext* Renderer::nvg_context()
+    {
+        return m_nvg_context;
+    }
+
     ds::dims<i32> Renderer::get_output_size() const
     {
         ds::dims<i32> s{ 0, 0 };
-
+        runtime_assert(false, "not implemented");
         return s;
     }
 
     bool Renderer::set_draw_color(const ds::color<u8>& c)
     {
         i32 result = 0;
+        runtime_assert(false, "not implemented");
         return result == 0;
     }
 
     bool Renderer::set_target()
     {
         i32 result = 0;
-        return result == 0;
-    }
-
-    bool Renderer::set_target(sdl::Texture& tex)
-    {
-        i32 result = 0;
+        runtime_assert(false, "not implemented");
         return result == 0;
     }
 
     bool Renderer::set_draw_blend_mode(const SDL3::SDL_BlendMode blend_mode)
     {
         i32 result = 0;
+        runtime_assert(false, "not implemented");
         return result == 0;
     }
 

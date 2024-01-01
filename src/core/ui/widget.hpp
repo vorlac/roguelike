@@ -143,6 +143,7 @@ namespace rl::ui {
         ds::dims<i32> m_size{ 0, 0 };
         ds::dims<i32> m_fb_size{ 0, 0 };
         ds::dims<i32> m_fixed_size{ 0, 0 };
+        ds::dims<i32> m_framebuf_size{ 0, 0 };
 
         i32 m_font_size{ 16 };
         f32 m_icon_extra_scale{ 1.0f };

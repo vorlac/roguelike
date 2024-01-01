@@ -29,6 +29,10 @@ namespace rl {
     using WindowID = SDL3::SDL_WindowID;
     using DisplayID = SDL3::SDL_DisplayID;
 
+    // temp placeholders
+    using PixelFormat = i32;
+    using ComponentFormat = i32;
+
     class Window : public ui::widget
     {
         friend class Popup;
@@ -281,38 +285,37 @@ namespace rl {
         //===================//
 
         /* replaced with title() / set_title()... */
-
         // const std::string& caption() const;
         // void set_caption(const std::string& caption);
 
         const ds::color<u8>& background() const;
         void set_background(ds::color<u8> background);
 
-        // intentionally doesn't use virtuals for this..?
+        // intentionally doesn't use virtual in base for this for this..?
         void set_visible(bool visible);
 
-        // IMPLEMENT THESE:
-        /*=================*/
+        ds::dims<i32> frame_buffer_size() const;
 
-        /* is ds::dims<i32> get_render_size() equivalent? */
-        //  const Vector2i& framebuffer_size() const;
-        //  const std::function<void(Vector2i)>& resize_callback() const;
-        //  void set_resize_callback(const std::function<void(Vector2i)> &callback);
-        //  Vector2i mouse_pos() const;
-        //  NVGcontext *nvg_context() const;
-        //  Texture::ComponentFormat component_format() const;
-        //  Texture::PixelFormat pixel_format() const;
-        //  bool has_depth_buffer() const;
-        //  bool has_stencil_buffer() const;
-        //  bool has_float_buffer() const;
-        //  void nvg_flush();
-        //  bool tooltip_fade_in_progress() const;
-        //  void perform_layout();
+        const std::function<void(ds::dims<i32>)>& resize_callback() const;
+        void set_resize_callback(const std::function<void(ds::dims<i32>)>& callback);
+        void drop_callback_event(i32 count, const char** filenames);
+        ds::point<i32> mouse_pos() const;
+        // TODO: move to renderer
+        NVGcontext* nvg_context() const;
+        void nvg_flush();
+        // placeholders, needed for platform independent impl only
+        bool has_depth_buffer() const;
+        bool has_stencil_buffer() const;
+        bool has_float_buffer() const;
+        bool tooltip_fade_in_progress() const;
+        void perform_layout();
+
+        ComponentFormat component_format() const;
+        PixelFormat pixel_format() const;
 
         /* EXTERNAL APIS */
         // renamed from Screen::initialize
         bool init_gui();
-
         bool redraw();
 
         void dispose_window(rl::Window* window);
@@ -352,8 +355,10 @@ namespace rl {
         //===================//
         //= nanogui::window =//
         //===================//
+
         virtual ds::dims<i32> preferred_size(NVGcontext* nvg_context) const;
-        virtual void perform_layout(NVGcontext* nvg_context);
+        using ui::widget::perform_layout;
+        // virtual void perform_layout(NVGcontext* nvg_context);
         virtual void refresh_relative_placement();
 
     public:
@@ -370,7 +375,6 @@ namespace rl {
         void mouse_button_event_callback(i32 button, i32 action, i32 modifiers);
         void keyboard_key_event_callback(i32 key, i32 scancode, i32 action, i32 modifiers);
         void keyboard_char_event_callback(u32 codepoint);
-        void drop_callback_event(i32 count, const char** filenames);
         void mouse_wheel_event_callback(f32 x, f32 y);
         void window_resized_event_callback(i32 width, i32 height);
         //==============================================================================
@@ -419,16 +423,15 @@ namespace rl {
         std::array<SDL3::SDL_Cursor*, Mouse::Cursor::CursorCount> m_cursors{ { 0 } };
         std::vector<ui::widget*> m_focus_path{};
         ds::point<i32> m_mouse_pos{ 0, 0 };
-        std::function<void(ds::dims<i32>)> m_resize_callback;
         ds::color<u8> m_background_color{ 29, 32, 39 };
         rl::Timer<float> m_timer{};
-
+        ds::dims<i32> m_framebuf_size{ 0, 0 };
+        std::function<void(ds::dims<i32>)> m_resize_callback;
         i32 m_mouse_state{ 0 };
         i32 m_modifiers{ 0 };
 
         bool m_vsync{ false };
         bool m_modal{ false };
-        bool m_drag{ false };
         bool m_depth_buffer{ false };
         bool m_stencil_buffer{ false };
         bool m_float_buffer{ false };

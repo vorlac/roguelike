@@ -64,36 +64,28 @@ namespace rl {
             Renderer::Properties::HWAccelerated
         };
 
-    private:
-        explicit Renderer() = delete;
-        explicit Renderer(const rl::Renderer& other) = delete;
-        explicit Renderer(rl::Renderer& other) = delete;
-
     public:
         explicit Renderer(rl::Window& window, rl::Renderer::Properties flags);
         ~Renderer() = default;
 
+        SDL3::SDL_GLContext gl_context() const;
+        NVGcontext* nvg_context();
+
+        bool clear(const ds::color<u8>& c = { 29, 32, 39 });
+        bool swap_buffers(rl::Window& window);
+
         ds::dims<i32> get_output_size() const;
         ds::rect<i32> get_viewport() const;
 
-        SDL3::SDL_GLContext gl_context() const
-        {
-            return m_sdl_glcontext;
-        }
-
-        NVGcontext* nvg_context()
-        {
-            return m_nvg_context;
-        }
-
         bool set_viewport(const ds::rect<i32>& rect);
         bool set_draw_color(const ds::color<u8>& c);
-        bool clear(const ds::color<u8>& c = { 29, 32, 39 });
-        bool present();
-        bool swap_buffers(rl::Window& window);
         bool set_target();
-        bool set_target(sdl::Texture& tex);
         bool set_draw_blend_mode(const SDL3::SDL_BlendMode blend_mode);
+
+    private:
+        explicit Renderer() = delete;
+        explicit Renderer(const rl::Renderer& other) = delete;
+        explicit Renderer(rl::Renderer& other) = delete;
 
     private:
         friend static NVGcontext* create_nanovg_context(rl::Renderer* renderer);
