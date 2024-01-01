@@ -284,62 +284,85 @@ namespace rl::ui {
         return this->contains(pt) ? this : nullptr;
     }
 
-    bool widget::on_mouse_click(const ds::point<i32>& pt, Mouse::Button::type button, bool down,
-                                i32 modifiers)
+    bool widget::on_mouse_entered(ds::point<i32> pos)
     {
-        return true;
+        m_mouse_focus = true;
+        return false;
     }
 
-    bool widget::on_mouse_move(const ds::point<i32>& pt, const ds::vector2<i32>& rel,
-                               Mouse::Button::type button, i32 modifiers)
+    bool widget::on_mouse_exited(ds::point<i32> pos)
     {
-        return true;
+        m_mouse_focus = false;
+        return false;
     }
 
-    bool widget::on_mouse_drag(const ds::point<i32>& pt, const ds::vector2<i32>& rel,
-                               Mouse::Button::type button, i32 modifiers)
-    {
-        return true;
-    }
-
-    bool widget::on_mouse_enter(const ds::point<i32>& pt)
-    {
-        return true;
-    }
-
-    bool widget::on_mouse_exit(const ds::point<i32>& pt)
-    {
-        return true;
-    }
-
-    bool widget::on_mouse_scroll(const ds::point<i32> pt, const ds::vector2<i32>& rel)
-    {
-        return true;
-    }
-
-    bool widget::on_kb_focus_gained()
+    bool widget::on_focus_gained()
     {
         m_focused = true;
         return true;
     }
 
-    bool widget::on_kb_focus_lost()
+    bool widget::on_focus_lost()
     {
         m_focused = false;
         return true;
     }
 
-    bool widget::on_kb_key_pressed(const Keyboard::Button::type key)
+    bool widget::on_mouse_button_pressed(ds::point<i32> pos, Mouse::Button::type btn, i32 modifiers)
     {
+        runtime_assert(false, "not implemented");
         return true;
     }
 
-    bool widget::on_kb_character_input(uint32_t codepoint)
+    bool widget::on_mouse_button_released(ds::point<i32> pos, Mouse::Button::type btn, i32 modifiers)
     {
+        runtime_assert(false, "not implemented");
         return true;
     }
 
-    void widget::add_child(int index, widget* widget)
+    bool widget::on_mouse_scroll(ds::point<i32> pos, ds::vector2<i32> wheel)
+    {
+        runtime_assert(false, "not implemented");
+        return true;
+    }
+
+    bool widget::on_mouse_move(ds::point<i32> pos, ds::vector2<i32> rel, Mouse::Button::type btn,
+                               i32 modifiers)
+    {
+        // runtime_assert(false, "not implemented");
+        return true;
+    }
+
+    bool widget::on_mouse_drag(ds::point<i32> pos, ds::vector2<i32> rel, Mouse::Button::type btn,
+                               i32 modifiers)
+    {
+        // do nothing,
+        // derived objects should implement
+        return false;
+    }
+
+    bool widget::on_key_pressed(const Keyboard::Button::type key)
+    {
+        // do nothing,
+        // derived objects should implement
+        return false;
+    }
+
+    bool widget::on_key_released(const Keyboard::Button::type key)
+    {
+        // do nothing,
+        // derived objects should implement
+        return false;
+    }
+
+    bool widget::on_character_input(uint32_t codepoint)
+    {
+        // do nothing,
+        // derived objects should implement
+        return false;
+    }
+
+    void widget::add_child(i32 index, widget* widget)
     {
         runtime_assert(index <= child_count(), "child widget index out of bounds");
         m_children.insert(m_children.begin() + index, widget);
@@ -521,5 +544,4 @@ namespace rl::ui {
     {
         return m_theme->m_icon_scale * m_icon_extra_scale;
     }
-
 }

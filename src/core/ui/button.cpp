@@ -173,20 +173,19 @@ namespace rl::ui {
         return ds::dims<i32>(static_cast<int>(tw + iw) + 20, font_size + 10);
     }
 
-    bool Button::on_mouse_enter(const ds::point<i32>& pt)
+    bool Button::on_mouse_entered(ds::point<i32> pos)
     {
-        return ui::widget::on_mouse_enter(pt);
+        return ui::widget::on_mouse_entered(pos);
     }
 
-    bool Button::on_mouse_exit(const ds::point<i32>& pt)
+    bool Button::on_mouse_exited(ds::point<i32> pos)
     {
-        return ui::widget::on_mouse_exit(pt);
+        return ui::widget::on_mouse_exited(pos);
     }
 
-    bool Button::on_mouse_click(const ds::point<i32>& pt, rl::Mouse::Button::ID button, bool down,
-                                i32 modifiers)
+    bool Button::handle_mouse_button_event(const ds::point<i32>& pt, rl::Mouse::Button::type button,
+                                           bool down, i32 modifiers)
     {
-        ui::widget::on_mouse_click(pt, button, down, modifiers);
         // Temporarily increase the reference count of the button in case the
         // button causes the parent window to be destructed
         ds::shared<Button> self{ this };
@@ -261,6 +260,18 @@ namespace rl::ui {
             return true;
         }
         return false;
+    }
+
+    bool Button::on_mouse_button_pressed(ds::point<i32> pos, Mouse::Button::type btn, i32 modifiers)
+    {
+        ui::widget::on_mouse_button_pressed(pos, btn, modifiers);
+        return handle_mouse_button_event(pos, btn, true, modifiers);
+    }
+
+    bool Button::on_mouse_button_released(ds::point<i32> pos, Mouse::Button::type btn, i32 modifiers)
+    {
+        ui::widget::on_mouse_button_released(pos, btn, modifiers);
+        return handle_mouse_button_event(pos, btn, false, modifiers);
     }
 
     void Button::draw(NVGcontext* ctx)

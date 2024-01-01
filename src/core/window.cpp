@@ -561,15 +561,17 @@ namespace rl {
     // Return the component format underlying the screen
     ComponentFormat Window::component_format() const
     {
-        // // Signed and unsigned integer formats
+        // Signed and unsigned integer formats
+        // ====================================
         // UInt8  = (uint8_t) VariableType::UInt8,
         // Int8   = (uint8_t) VariableType::Int8,
         // UInt16 = (uint16_t) VariableType::UInt16,
         // Int16  = (uint16_t) VariableType::Int16,
         // UInt32 = (uint32_t) VariableType::UInt32,
         // Int32  = (uint32_t) VariableType::Int32,
-        //
-        // // Floating point formats
+
+        // Floating point formats
+        // ====================================
         // Float16  = (uint16_t) VariableType::Float16,
         // Float32  = (uint32_t) VariableType::Float32
         runtime_assert(false, "not implemented");
@@ -672,12 +674,13 @@ namespace rl {
         return m_modal;
     }
 
-    void Window::set_modal(bool modal)
+    bool Window::set_modal(bool modal)
     {
         m_modal = modal;
+        return m_modal;
     }
 
-    ui::widget* Window::button_panel()
+    ui::widget* Window::button_panel() const
     {
         runtime_assert(false, "not implemented");
         return nullptr;
@@ -734,7 +737,7 @@ namespace rl {
     }
 
     // void cursor_pos_callback_event(double x, double y);
-    void Window::mouse_cursor_event_callback(f32 x, f32 y)
+    void Window::mouse_moved_event_callback(f32 x, f32 y)
     {
         bool ret{ false };
 
@@ -771,100 +774,131 @@ namespace rl {
         m_redraw |= ret;
     }
 
-    // void mouse_button_callback_event(int button, int action, int modifiers);
-    void Window::mouse_button_event_callback(i32 button, i32 action, i32 modifiers)
+    void Window::mouse_wheel_event_callback(f32 x, f32 y)
+    {
+        m_last_interaction = m_timer.elapsed();
+
+        if (m_focus_path.size() > 1)
+        {
+            const Window* window = dynamic_cast<Window*>(m_focus_path[m_focus_path.size() - 2]);
+            if (window && window->modal())
+            {
+                if (!window->contains(m_mouse_pos))
+                    return;
+            }
+        }
+
+        m_redraw |= this->on_mouse_scroll(
+            m_mouse_pos, ds::vector2<i32>{ static_cast<i32>(x), static_cast<i32>(y) });
+    }
+
+    void Window::mouse_button_released_event_callback(i32 button)
     {
         // m_modifiers = modifiers;
-        // m_last_interaction = glfwGetTime();
+        m_last_interaction = m_timer.elapsed();
 
-        // try
-        //{
-        //     if (m_focus_path.size() > 1)
-        //     {
-        //         const Window* window = dynamic_cast<Window*>(m_focus_path[m_focus_path.size() -
-        //         2]); if (window && window->modal())
-        //         {
-        //             if (!window->contains(m_mouse_pos))
-        //                 return;
-        //         }
-        //     }
+        if (m_focus_path.size() > 1)
+        {
+            const Window* window{ dynamic_cast<Window*>(m_focus_path[m_focus_path.size() - 2]) };
+            if (window != nullptr && window->modal())
+            {
+                if (!window->contains(m_mouse_pos))
+                    return;
+            }
+        }
 
-        //    if (action == GLFW_PRESS)
-        //        m_mouse_state |= 1 << button;
-        //    else
-        //        m_mouse_state &= ~(1 << button);
+        // unset button state
+        m_mouse_state &= ~(1 << button);
 
-        //    auto drop_widget = find_widget(m_mouse_pos);
-        //    if (m_drag_active && action == GLFW_RELEASE && drop_widget != m_drag_widget)
-        //    {
-        //        m_redraw |= m_drag_widget->mouse_button_event(
-        //            m_mouse_pos - m_drag_widget->parent()->absolute_position(), button, false,
-        //            m_modifiers);
-        //    }
+        auto drop_widget{ this->find_widget(m_mouse_pos) };
+        if (m_drag_active && drop_widget != m_drag_widget)
+        {
+            m_redraw |= m_drag_widget->on_mouse_button_released(
+                m_mouse_pos - m_drag_widget->parent()->abs_position(), button, m_modifiers);
+        }
 
-        //    if (drop_widget != nullptr && drop_widget->cursor() != m_cursor)
-        //    {
-        //        m_cursor = drop_widget->cursor();
-        //        glfwSetCursor(m_glfw_window, m_cursors[(int)m_cursor]);
-        //    }
+        if (drop_widget != nullptr && m_cursor != drop_widget->cursor())
+        {
+            m_cursor = drop_widget->cursor();
+            SDL3::SDL_Cursor* widget_cursor{ m_cursors[m_cursor] };
+            runtime_assert(widget_cursor != nullptr, "invalid cursor");
+            SDL3::SDL_SetCursor(widget_cursor);
+        }
 
-        //    bool btn12 = button == GLFW_MOUSE_BUTTON_1 || button == GLFW_MOUSE_BUTTON_2;
+        bool btnLorR{ button == Mouse::Button::Left || button == Mouse::Button::Right };
+        if (m_drag_active && btnLorR)
+        {
+            m_drag_active = false;
+            m_drag_widget = nullptr;
+        }
 
-        //    if (!m_drag_active && action == GLFW_PRESS && btn12)
-        //    {
-        //        m_drag_widget = find_widget(m_mouse_pos);
-        //        if (m_drag_widget == this)
-        //            m_drag_widget = nullptr;
-        //        m_drag_active = m_drag_widget != nullptr;
-        //        if (!m_drag_active)
-        //            update_focus(nullptr);
-        //    }
-        //    else if (m_drag_active && action == GLFW_RELEASE && btn12)
-        //    {
-        //        m_drag_active = false;
-        //        m_drag_widget = nullptr;
-        //    }
-
-        //    m_redraw |= mouse_button_event(m_mouse_pos, button, action == GLFW_PRESS,
-        //    m_modifiers);
-        //}
-        // catch (const std::exception& e)
-        //{
-        //    std::cerr << "Caught exception in event handler: " << e.what() << std::endl;
-        //}
+        m_redraw |= this->on_mouse_button_released(m_mouse_pos, button, m_modifiers);
     }
 
-    // void key_callback_event(int key, int scancode, int action, int mods);
-    void Window::keyboard_key_event_callback(i32 key, i32 scancode, i32 action, i32 modifiers)
+    void Window::mouse_button_pressed_event_callback(i32 button)
     {
-        // m_last_interaction = glfwGetTime();
-        // try
-        //{
-        //     m_redraw |= keyboard_event(key, scancode, action, mods);
-        // }
-        // catch (const std::exception& e)
-        //{
-        //     std::cerr << "Caught exception in event handler: " << e.what() << std::endl;
-        // }
+        // m_modifiers = modifiers;
+        m_last_interaction = m_timer.elapsed();
+
+        if (m_focus_path.size() > 1)
+        {
+            const Window* window{ dynamic_cast<Window*>(m_focus_path[m_focus_path.size() - 2]) };
+            if (window != nullptr && window->modal())
+            {
+                if (!window->contains(m_mouse_pos))
+                    return;
+            }
+        }
+
+        // set button state
+        m_mouse_state |= (1 << button);
+
+        auto drop_widget{ this->find_widget(m_mouse_pos) };
+        if (drop_widget != nullptr && m_cursor != drop_widget->cursor())
+        {
+            m_cursor = drop_widget->cursor();
+            SDL3::SDL_Cursor* widget_cursor{ m_cursors[m_cursor] };
+            runtime_assert(widget_cursor != nullptr, "invalid cursor");
+            SDL3::SDL_SetCursor(widget_cursor);
+        }
+
+        bool btnLorR{ button == Mouse::Button::Left || button == Mouse::Button::Right };
+        if (!m_drag_active && btnLorR)
+        {
+            m_drag_widget = this->find_widget(m_mouse_pos);
+            if (m_drag_widget == this)
+                m_drag_widget = nullptr;
+
+            m_drag_active = m_drag_widget != nullptr;
+            if (!m_drag_active)
+                this->update_focus(nullptr);
+        }
+
+        m_redraw |= this->on_mouse_button_pressed(m_mouse_pos, button, m_modifiers);
     }
 
-    // void char_callback_event(unsigned int codepoint);
+    void Window::keyboard_key_pressed_event_callback(i32 key, i32 scancode, i32 modifiers)
+    {
+        m_last_interaction = m_timer.elapsed();
+        m_redraw |= this->on_key_pressed(key);
+    }
+
+    void Window::keyboard_key_released_event_callback(i32 key, i32 scancode, i32 modifiers)
+    {
+        m_last_interaction = m_timer.elapsed();
+        m_redraw |= this->on_key_released(key);
+    }
+
     void Window::keyboard_char_event_callback(u32 codepoint)
     {
-        // m_last_interaction = glfwGetTime();
-        // try
-        //{
-        //     m_redraw |= keyboard_character_event(codepoint);
-        // }
-        // catch (const std::exception& e)
-        //{
-        //     std::cerr << "Caught exception in event handler: " << e.what() << std::endl;
-        // }
+        m_last_interaction = m_timer.elapsed();
+        m_redraw |= this->on_character_input(codepoint);
     }
 
     bool Window::drop_event(const std::vector<std::string>& filenames)
     {
-        // To be overridden
+        // do nothing,
+        // derived objects should define
         return false;
     }
 
@@ -876,53 +910,31 @@ namespace rl {
         m_redraw |= drop_event(arg);
     }
 
-    // void scroll_callback_event(double x, double y);
-    void Window::mouse_wheel_event_callback(f32 x, f32 y)
-    {
-        // m_last_interaction = glfwGetTime();
-        // try
-        //{
-        //     if (m_focus_path.size() > 1)
-        //     {
-        //         const Window* window = dynamic_cast<Window*>(m_focus_path[m_focus_path.size() -
-        //         2]); if (window && window->modal())
-        //         {
-        //             if (!window->contains(m_mouse_pos))
-        //                 return;
-        //         }
-        //     }
-        //     m_redraw |= scroll_event(m_mouse_pos, Vector2f(x, y));
-        // }
-        // catch (const std::exception& e)
-        //{
-        //     std::cerr << "Caught exception in event handler: " << e.what() << std::endl;
-        // }
-    }
-
     // void resize_callback_event(int width, int height);
     void Window::window_resized_event_callback(i32 width, i32 height)
     {
-        // Vector2i fb_size, size;
-        // glfwGetFramebufferSize(m_glfw_window, &fb_size[0], &fb_size[1]);
-        // glfwGetWindowSize(m_glfw_window, &size[0], &size[1]);
-        // if (fb_size == Vector2i(0, 0) || size == Vector2i(0, 0))
-        //     return;
-        // m_fbsize = fb_size;
-        // m_size = size;
+        // TODO: refactor size / render_size. i think two variants will be necessary. one that calls
+        // SDL, another than just gets cached variables (m_size and m_renderer->framebuf_size())
+        ds::dims<i32> window_size{ this->get_size() };
+        ds::dims<i32> framebuf_size{ this->get_render_size() };
+        if (framebuf_size.area() == 0 || window_size.area() == 0)
+            return;
 
-        // m_size = Vector2i(Vector2f(m_size) / m_pixel_ratio);
+        m_framebuf_size = framebuf_size;
+        m_window_rect.size = ds::dims<i32>{
+            static_cast<i32>(width / m_pixel_ratio),
+            static_cast<i32>(height / m_pixel_ratio),
+        };
 
-        // m_last_interaction = glfwGetTime();
+        // TODO: seperate window / GUI viewport
+        // so this can be removed
+        //
+        // this is widget::m_size NOT window::m_size
+        m_size = m_window_rect.size;
 
-        // try
-        //{
-        //     resize_event(m_size);
-        // }
-        // catch (const std::exception& e)
-        //{
-        //     std::cerr << "Caught exception in event handler: " << e.what() << std::endl;
-        // }
-        // redraw();
+        m_last_interaction = m_timer.elapsed();
+        this->on_resized(m_size);
+        this->redraw();
     }
 
     bool Window::on_shown(const WindowID id)
@@ -952,7 +964,7 @@ namespace rl {
         return true;
     }
 
-    bool Window::on_moved(rl::WindowID id, ds::point<i32>&& pt)
+    bool Window::on_moved(rl::WindowID id, ds::point<i32> pt)
     {
         if constexpr (io::logging::window_events)
         {
@@ -968,17 +980,18 @@ namespace rl {
         return ret;
     }
 
-    bool Window::on_resized(const WindowID id, ds::dims<i32>&& size)
+    bool Window::on_resized(ds::dims<i32> size)
     {
         if constexpr (io::logging::window_events)
         {
             ds::rect<i32> prev_rect{ m_window_rect };
             ds::rect<i32> new_rect{ prev_rect.pt, size };
-            log::info("window::on_resized [id={}] : {} => {}", id, prev_rect, new_rect);
+            log::info("window::on_resized: {} => {}", prev_rect, new_rect);
         }
 
-        bool ret = m_window_rect.size != size;
+        bool ret{ m_window_rect.size != size };
         runtime_assert(ret, "window resized, but size unchanged");
+
         glViewport(0, 0, size.width, size.height);
 
         m_last_interaction = m_timer.elapsed();
@@ -991,7 +1004,7 @@ namespace rl {
         return this->draw_all();
     }
 
-    bool Window::on_pixel_size_changed(const WindowID id, ds::dims<i32>&& pixel_size)
+    bool Window::on_pixel_size_changed(const WindowID id, ds::dims<i32> pixel_size)
     {
         bool ret = true;
 
@@ -1029,93 +1042,108 @@ namespace rl {
         return ret;
     }
 
-    bool Window::on_mouse_enter(const ds::point<i32>& pt)
+    bool Window::on_mouse_entered(ds::point<i32> pos)
     {
         if constexpr (io::logging::window_events)
-            log::info("window::on_mouse_enter [id:{}]", pt);
+            log::info("window::on_mouse_entered [pos:{}]", pos);
 
-        return ui::widget::on_mouse_enter(pt);
+        return ui::widget::on_mouse_entered(pos);
     }
 
-    bool Window::on_mouse_exit(const ds::point<i32>& pt)
+    bool Window::on_mouse_exited(ds::point<i32> pos)
     {
         if constexpr (io::logging::window_events)
-            log::info("window::on_mouse_leave [pt:{}]", pt);
+            log::info("window::on_mouse_exited [pos:{}]", pos);
 
-        return ui::widget::on_mouse_exit(pt);
+        return ui::widget::on_mouse_exited(pos);
     }
 
-    bool Window::on_mouse_click(const ds::point<i32>& pt, Mouse::Button::type button, bool down,
-                                i32 modifiers)
+    bool Window::on_mouse_button_pressed(ds::point<i32> pos, Mouse::Button::type btn, i32 modifiers)
     {
         if constexpr (io::logging::window_events)
-            log::info("window::on_mouse_click [button:{}]", button);
+            log::info("window::on_mouse_button_pressed [button:{}]", btn);
 
-        return ui::widget::on_mouse_click(pt, button, down, modifiers);
+        return ui::widget::on_mouse_button_pressed(pos, btn, modifiers);
     }
 
-    bool Window::on_mouse_drag(const ds::point<i32>& pt, const ds::vector2<i32>& rel,
-                               Mouse::Button::type button, i32 modifiers)
+    bool Window::on_mouse_button_released(ds::point<i32> pos, Mouse::Button::type btn, i32 modifiers)
     {
         if constexpr (io::logging::window_events)
-            log::info("window::on_mouse_drag [pt:{}, rel:{}, btn:{}, mod:{}]", pt, rel, button,
+            log::info("window::on_mouse_button_released [button:{}]", btn);
+
+        return ui::widget::on_mouse_button_released(pos, btn, modifiers);
+    }
+
+    bool Window::on_mouse_drag(ds::point<i32> pos, ds::vector2<i32> rel, Mouse::Button::type btn,
+                               i32 modifiers)
+    {
+        if constexpr (io::logging::window_events)
+            log::info("window::on_mouse_drag [pt:{}, rel:{}, btn:{}, mod:{}]", pos, rel, btn,
                       modifiers);
 
         runtime_assert(false, "not implemented");
-        return ui::widget::on_mouse_drag(pt, rel, button, modifiers);
+        return ui::widget::on_mouse_drag(pos, rel, btn, modifiers);
     }
 
-    bool Window::on_mouse_move(const ds::point<i32>& pt, const ds::vector2<i32>& rel,
-                               Mouse::Button::type button, i32 modifiers)
+    bool Window::on_mouse_move(ds::point<i32> pos, ds::vector2<i32> rel, Mouse::Button::type btn,
+                               i32 modifiers)
     {
         // todo: swap out with m_mouse and pass in SDL event?
-        m_mouse_pos = pt;
+        m_mouse_pos = pos;
 
         if constexpr (io::logging::window_events)
-            log::info("window::on_mouse_move [pt:{}, rel:{}, btn:{}, mod:{}]", pt, rel, button,
+            log::info("window::on_mouse_move [pt:{}, rel:{}, btn:{}, mod:{}]", pos, rel, btn,
                       modifiers);
 
-        return ui::widget::on_mouse_move(pt, rel, button, modifiers);
+        return ui::widget::on_mouse_move(pos, rel, btn, modifiers);
     }
 
-    bool Window::on_mouse_scroll(const ds::point<i32> pt, const ds::vector2<i32>& rel)
+    bool Window::on_mouse_scroll(ds::point<i32> pos, ds::vector2<i32> rel)
     {
         if constexpr (io::logging::window_events)
-            log::info("window::on_mouse_scroll [pt:{}, rel:{}]", pt, rel);
+            log::info("window::on_mouse_scroll [pos:{}, rel:{}]", pos, rel);
 
-        return ui::widget::on_mouse_scroll(pt, rel);
+        return ui::widget::on_mouse_scroll(pos, rel);
     }
 
-    bool Window::on_kb_focus_gained()
+    bool Window::on_focus_gained()
     {
         if constexpr (io::logging::window_events)
-            log::info("window::on_kb_focus_gained");
+            log::info("window::on_focus_gained");
 
-        return ui::widget::on_kb_focus_gained();
+        return ui::widget::on_focus_gained();
     }
 
-    bool Window::on_kb_focus_lost()
+    bool Window::on_focus_lost()
     {
         if constexpr (io::logging::window_events)
-            log::info("window::on_kb_focus_lost");
+            log::info("window::on_focus_lost");
 
-        return ui::widget::on_kb_focus_lost();
+        return ui::widget::on_focus_lost();
     }
 
-    bool Window::on_kb_key_pressed(const Keyboard::Button::type key)
+    bool Window::on_key_pressed(Keyboard::Button::type key)
     {
         if constexpr (io::logging::window_events)
-            log::info("window::on_kb_focus_lost");
+            log::info("window::on_focus_lost");
 
-        return ui::widget::on_kb_key_pressed(key);
+        return ui::widget::on_key_pressed(key);
     }
 
-    bool Window::on_kb_character_input(uint32_t codepoint)
+    bool Window::on_key_released(Keyboard::Button::type key)
     {
         if constexpr (io::logging::window_events)
-            log::info("window::on_kb_focus_lost");
+            log::info("window::on_focus_lost");
 
-        return ui::widget::on_kb_character_input(codepoint);
+        return ui::widget::on_key_released(key);
+    }
+
+    bool Window::on_character_input(u32 codepoint)
+    {
+        if constexpr (io::logging::window_events)
+            log::info("window::on_focus_lost");
+
+        return ui::widget::on_character_input(codepoint);
     }
 
     bool Window::on_close_requested(const WindowID id)

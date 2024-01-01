@@ -105,24 +105,30 @@ namespace rl::ui {
         }
 
     public:
-        virtual void set_theme(ui::theme* theme);
-        virtual void add_child(i32 index, widget* widget);
+        virtual bool on_focus_gained();
+        virtual bool on_focus_lost();
 
-        virtual bool on_mouse_click(const ds::point<i32>& pt, Mouse::Button::type button, bool down,
-                                    i32 modifiers);
-        virtual bool on_mouse_move(const ds::point<i32>& pt, const ds::vector2<i32>& rel,
-                                   Mouse::Button::type button, i32 modifiers);
-        virtual bool on_mouse_drag(const ds::point<i32>& pt, const ds::vector2<i32>& rel,
-                                   Mouse::Button::type button, i32 modifiers);
-        virtual bool on_mouse_enter(const ds::point<i32>& pt);
-        virtual bool on_mouse_exit(const ds::point<i32>& pt);
-        virtual bool on_mouse_scroll(const ds::point<i32> pt, const ds::vector2<i32>& rel);
-        virtual bool on_kb_focus_gained();
-        virtual bool on_kb_focus_lost();
-        virtual bool on_kb_key_pressed(const Keyboard::Button::type key);
-        virtual bool on_kb_character_input(uint32_t codepoint);
+        virtual bool on_key_pressed(Keyboard::Button::type key);
+        virtual bool on_key_released(Keyboard::Button::type key);
+        virtual bool on_character_input(u32 codepoint);
+
+        virtual bool on_mouse_entered(ds::point<i32> pos);
+        virtual bool on_mouse_exited(ds::point<i32> pos);
+        virtual bool on_mouse_scroll(ds::point<i32> pos, ds::vector2<i32> wheel);
+
+        virtual bool on_mouse_button_pressed(ds::point<i32> pos, Mouse::Button::type btn,
+                                             i32 modifiers);
+        virtual bool on_mouse_button_released(ds::point<i32> pos, Mouse::Button::type btn,
+                                              i32 modifiers);
+
+        virtual bool on_mouse_move(ds::point<i32> pos, ds::vector2<i32> rel,
+                                   Mouse::Button::type btn, i32 modifiers);
+        virtual bool on_mouse_drag(ds::point<i32> pos, ds::vector2<i32> rel,
+                                   Mouse::Button::type btn, i32 modifiers);
 
     public:
+        virtual void set_theme(ui::theme* theme);
+        virtual void add_child(i32 index, widget* widget);
         virtual ds::dims<i32> preferred_size(NVGcontext* nvg_context) const;
         virtual void perform_layout(NVGcontext* nvg_context);
         virtual void draw(NVGcontext* nvg_context);

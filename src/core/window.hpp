@@ -279,130 +279,15 @@ namespace rl {
         bool is_valid() const;
         bool swap_buffers();
 
-    public:
-        //===================//
-        //= nanogui::screen =//
-        //===================//
-
-        /* replaced with title() / set_title()... */
-        // const std::string& caption() const;
-        // void set_caption(const std::string& caption);
-
-        const ds::color<u8>& background() const;
-        void set_background(ds::color<u8> background);
-
-        // intentionally doesn't use virtual in base for this for this..?
-        void set_visible(bool visible);
-
-        ds::dims<i32> frame_buffer_size() const;
-
-        const std::function<void(ds::dims<i32>)>& resize_callback() const;
-        void set_resize_callback(const std::function<void(ds::dims<i32>)>& callback);
-        void drop_callback_event(i32 count, const char** filenames);
-        ds::point<i32> mouse_pos() const;
-        // TODO: move to renderer
-        NVGcontext* nvg_context() const;
-        void nvg_flush();
-        // placeholders, needed for platform independent impl only
-        bool has_depth_buffer() const;
-        bool has_stencil_buffer() const;
-        bool has_float_buffer() const;
-        bool tooltip_fade_in_progress() const;
-        void perform_layout();
-
-        ComponentFormat component_format() const;
-        PixelFormat pixel_format() const;
-
-        /* EXTERNAL APIS */
-        // renamed from Screen::initialize
-        bool init_gui();
-        bool redraw();
-
-        void dispose_window(rl::Window* window);
-        void update_focus(ui::widget* widget);
-        void move_window_to_front(rl::Window* window);
-
-        bool draw_widgets();
-        void center_window(rl::Window* window) const;
-
-        //==============================================================================
-
-        //===================//
-        //= nanogui::window =//
-        //===================//
-        bool set_title(std::string title);
-        const std::string& title() const;
-
-        bool modal() const;
-        void set_modal(bool modal);
-
-        ui::widget* button_panel();
-
-        void dispose();
-        void center();
-
-    public:
-        //===================//
-        //= nanogui::screen =//
-        //===================//
-        virtual bool draw_all();
-        virtual bool clear();
-        virtual bool draw_setup();
-        virtual bool draw_contents();
-        virtual bool draw_teardown();
-        virtual bool drop_event(const std::vector<std::string>& filenames);
-
-        //===================//
-        //= nanogui::window =//
-        //===================//
-
-        virtual ds::dims<i32> preferred_size(NVGcontext* nvg_context) const;
-        using ui::widget::perform_layout;
-        // virtual void perform_layout(NVGcontext* nvg_context);
-        virtual void refresh_relative_placement();
-
-    public:
-        friend class EventHandler;
-
-        //===================//
-        //= nanogui::screen =//
-        //===================//
-
-        /* not needed since window owns context? */
-        // virtual void draw(NVGcontext* ctx) override;
-
-        void mouse_cursor_event_callback(f32 x, f32 y);
-        void mouse_button_event_callback(i32 button, i32 action, i32 modifiers);
-        void keyboard_key_event_callback(i32 key, i32 scancode, i32 action, i32 modifiers);
-        void keyboard_char_event_callback(u32 codepoint);
-        void mouse_wheel_event_callback(f32 x, f32 y);
-        void window_resized_event_callback(i32 width, i32 height);
-        //==============================================================================
-
-        //===================//
-        //= nanogui::window =//
-        //===================//
-        virtual bool on_mouse_click(const ds::point<i32>& pt, Mouse::Button::type button, bool down,
-                                    i32 modifiers) override;
-        virtual bool on_mouse_move(const ds::point<i32>& pt, const ds::vector2<i32>& rel,
-                                   Mouse::Button::type button, i32 modifiers) override;
-        virtual bool on_mouse_drag(const ds::point<i32>& pt, const ds::vector2<i32>& rel,
-                                   Mouse::Button::type button, i32 modifiers) override;
-        virtual bool on_mouse_enter(const ds::point<i32>& pt) override;
-        virtual bool on_mouse_exit(const ds::point<i32>& pt) override;
-        virtual bool on_mouse_scroll(const ds::point<i32> pt, const ds::vector2<i32>& rel) override;
-        virtual bool on_kb_focus_gained() override;
-        virtual bool on_kb_focus_lost() override;
-        virtual bool on_kb_key_pressed(const Keyboard::Button::type key) override;
-        virtual bool on_kb_character_input(uint32_t codepoint) override;
-
-    private:
+        //    //===============================
+    public:  //== screen public NON-virtuals ==
+        //  //=================================
         bool on_shown(const WindowID id);
         bool on_hidden(const WindowID id);
         bool on_exposed(const WindowID id);
-        bool on_moved(const WindowID id, ds::point<i32>&& pt);
-        bool on_resized(const WindowID id, ds::dims<i32>&& size);
-        bool on_pixel_size_changed(const WindowID id, ds::dims<i32>&& pixel_size);
+        bool on_moved(const WindowID id, ds::point<i32> pt);
+        bool on_resized(ds::dims<i32> size);
+        bool on_pixel_size_changed(const WindowID id, ds::dims<i32> pixel_size);
         bool on_minimized(const WindowID id);
         bool on_maximized(const WindowID id);
         bool on_restored(const WindowID id);
@@ -416,6 +301,112 @@ namespace rl {
         bool on_occluded(const WindowID id);
         bool on_destroyed(const WindowID id);
 
+        const ds::color<u8>& background() const;
+        void set_background(ds::color<u8> background);
+
+        void set_visible(bool visible);  // intentionally doesn't use virtual for this for this.
+        void set_resize_callback(const std::function<void(ds::dims<i32>)>& callback);
+        void drop_callback_event(i32 count, const char** filenames);
+        void nvg_flush();
+
+        ds::point<i32> mouse_pos() const;
+        ds::dims<i32> frame_buffer_size() const;
+        NVGcontext* nvg_context() const;  // TODO: move to renderer
+        const std::function<void(ds::dims<i32>)>& resize_callback() const;
+
+        // replaced with Window::title & Window::set_title, but may still need them
+        // ------------------------------------------------------------------------
+        // const std::string& caption() const;
+        // void set_caption(const std::string& caption);
+
+        // placeholders, needed for platform independent impl only
+        bool has_depth_buffer() const;
+        bool has_stencil_buffer() const;
+        bool has_float_buffer() const;
+        bool tooltip_fade_in_progress() const;
+        void perform_layout();
+
+        ComponentFormat component_format() const;
+        PixelFormat pixel_format() const;
+
+        // external api impl methods
+        //--------------------------
+        bool init_gui();
+        bool redraw();
+        bool draw_widgets();
+
+        void update_focus(ui::widget* widget);
+        void dispose_window(rl::Window* window);
+        void move_window_to_front(rl::Window* window);
+        void center_window(rl::Window* window) const;
+
+        //    //===========================
+    public:  //== screen public virtuals ==
+        //  //=============================
+        friend class EventHandler;
+
+        // screen base virtuals
+        virtual bool draw_all();
+        virtual bool draw_setup();
+        virtual bool draw_contents();
+        virtual bool draw_teardown();
+        virtual bool clear();
+        // not needed since window owns context??
+        // virtual void draw(NVGcontext* ctx) override;
+        virtual bool drop_event(const std::vector<std::string>& filenames);
+
+        /* ui::widget event callback overrides */
+        virtual bool on_focus_gained() override;
+        virtual bool on_focus_lost() override;
+
+        virtual bool on_key_pressed(Keyboard::Button::type key) override;
+        virtual bool on_key_released(Keyboard::Button::type key) override;
+        virtual bool on_character_input(u32 codepoint) override;
+
+        virtual bool on_mouse_entered(ds::point<i32> pos) override;
+        virtual bool on_mouse_exited(ds::point<i32> pos) override;
+
+        virtual bool on_mouse_scroll(ds::point<i32> pos, ds::vector2<i32> rel) override;
+        virtual bool on_mouse_button_pressed(ds::point<i32> pos, Mouse::Button::type btn,
+                                             i32 modifiers) override;
+        virtual bool on_mouse_button_released(ds::point<i32> pos, Mouse::Button::type btn,
+                                              i32 modifiers) override;
+
+        virtual bool on_mouse_move(ds::point<i32> pos, ds::vector2<i32> rel,
+                                   Mouse::Button::type btn, i32 modifiers) override;
+        virtual bool on_mouse_drag(ds::point<i32> pos, ds::vector2<i32> rel,
+                                   Mouse::Button::type btn, i32 modifiers) override;
+
+        //    //===============================
+    public:  //== window public NON-virtuals ==
+        //  //=================================
+
+        void dispose();
+        void center();
+
+        void mouse_moved_event_callback(f32 x, f32 y);
+        void mouse_wheel_event_callback(f32 x, f32 y);
+        void mouse_button_pressed_event_callback(i32 button);
+        void mouse_button_released_event_callback(i32 button);
+        void keyboard_key_pressed_event_callback(i32 key, i32 scancode, i32 modifiers);
+        void keyboard_key_released_event_callback(i32 key, i32 scancode, i32 modifiers);
+        void keyboard_char_event_callback(u32 codepoint);
+        void window_resized_event_callback(i32 width, i32 height);
+
+        bool set_title(std::string title);
+        bool set_modal(bool modal);
+
+        ui::widget* button_panel() const;
+        const std::string& title() const;
+        bool modal() const;
+
+        //    //===========================
+    public:  //== window public virtuals ==
+        //  //=============================
+        using ui::widget::perform_layout;
+        virtual void refresh_relative_placement();
+        virtual ds::dims<i32> preferred_size(NVGcontext* nvg_context) const;
+
     private:
         std::string m_title{};
         ui::widget* m_drag_widget{ nullptr };
@@ -427,6 +418,7 @@ namespace rl {
         rl::Timer<float> m_timer{};
         ds::dims<i32> m_framebuf_size{ 0, 0 };
         std::function<void(ds::dims<i32>)> m_resize_callback;
+        f32 m_last_interaction{ 0.0f };
         i32 m_mouse_state{ 0 };
         i32 m_modifiers{ 0 };
 
@@ -438,11 +430,6 @@ namespace rl {
         bool m_drag_active{ false };
         bool m_process_events{ true };
         bool m_redraw{ true };
-
-        // time in seconds recording the last interaction
-        // with the current window widget, represented in
-        // elapsed time since the window was created.
-        f32 m_last_interaction{ 0.0f };
 
         /// <summary>
         ///   The content display scale relative to a window's pixel size.

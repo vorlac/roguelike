@@ -26,35 +26,43 @@ namespace rl {
                 {
                     // Mouse input events
                     case Mouse::Event::MouseWheel:
+                    {
                         m_mouse.process_wheel(e.wheel);
-                        window->on_mouse_scroll(m_mouse.pos(), m_mouse.wheel());
+                        auto&& wheel_pos{ m_mouse.wheel() };
+                        window->mouse_wheel_event_callback(wheel_pos.x, wheel_pos.y);
                         if constexpr (io::logging::mouse_events)
                             log::info("{}", m_mouse);
                         break;
+                    }
                     case Mouse::Event::MouseMotion:
+                    {
                         m_mouse.process_motion(e.motion);
-                        // TODO: fill in button modifiers if it's needed...
-                        window->on_mouse_move(m_mouse.pos(), m_mouse.pos_delta(), 0, 0);
+                        window->mouse_moved_event_callback(e.motion.x, e.motion.y);
                         if constexpr (io::logging::mouse_events)
                             log::info("{}", m_mouse);
                         break;
+                    }
                     case Mouse::Event::MouseButtonDown:
+                    {
                         m_mouse.process_button_down(e.button.button);
-                        window->on_mouse_click(m_mouse.pos(), e.button.button, true, 0);
+                        window->mouse_button_pressed_event_callback(e.button.button);
                         if constexpr (io::logging::mouse_events)
                             log::info("{}", m_mouse);
                         break;
+                    }
                     case Mouse::Event::MouseButtonUp:
+                    {
                         m_mouse.process_button_up(e.button.button);
-                        window->on_mouse_click(m_mouse.pos(), e.button.button, false, 0);
+                        window->mouse_button_released_event_callback(e.button.button);
                         if constexpr (io::logging::mouse_events)
                             log::info("{}", m_mouse);
                         break;
+                    }
 
                     // Keyboard input events
                     case Keyboard::Event::KeyDown:
                         m_keyboard.process_button_down(e.key.keysym.scancode);
-                        window->on_kb_key_pressed(e.key.keysym.scancode);
+                        window->keyboard_key_pressed_event_callback(0, e.key.keysym.scancode, 0);
                         if constexpr (io::logging::kb_events)
                             log::info("{}", m_keyboard);
                         if (m_keyboard.is_button_pressed(Keyboard::Button::Escape)) [[unlikely]]
@@ -62,7 +70,7 @@ namespace rl {
                         break;
                     case Keyboard::Event::KeyUp:
                         m_keyboard.process_button_up(e.key.keysym.scancode);
-                        window->on_kb_key_pressed(e.key.keysym.scancode);
+                        window->keyboard_key_released_event_callback(0, e.key.keysym.scancode, 0);
                         if constexpr (io::logging::kb_events)
                             log::info("{}", m_keyboard);
                         break;
@@ -104,7 +112,7 @@ namespace rl {
                         const WindowID id{ window_event.windowID };
                         const i32 width{ window_event.data1 };
                         const i32 height{ window_event.data2 };
-                        window->on_resized(id, { width, height });
+                        window->window_resized_event_callback(width, height);
                         break;
                     }
                     case Window::Event::PixelSizeChanged:
@@ -141,28 +149,28 @@ namespace rl {
                     {
                         const Window::Event::Data& window_event{ e.window };
                         const WindowID id{ window_event.windowID };
-                        window->on_mouse_enter(m_mouse.pos());
+                        window->on_mouse_entered(m_mouse.pos());
                         break;
                     }
                     case Window::Event::MouseLeave:
                     {
                         const Window::Event::Data& window_event{ e.window };
                         const WindowID id{ window_event.windowID };
-                        window->on_mouse_exit(m_mouse.pos());
+                        window->on_mouse_exited(m_mouse.pos());
                         break;
                     }
                     case Window::Event::FocusGained:
                     {
                         const Window::Event::Data& window_event{ e.window };
                         const WindowID id{ window_event.windowID };
-                        window->on_kb_focus_gained();
+                        window->on_focus_gained();
                         break;
                     }
                     case Window::Event::FocusLost:
                     {
                         const Window::Event::Data& window_event{ e.window };
                         const WindowID id{ window_event.windowID };
-                        window->on_kb_focus_lost();
+                        window->on_focus_lost();
                         break;
                     }
                     case Window::Event::CloseRequested:
