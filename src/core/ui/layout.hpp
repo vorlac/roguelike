@@ -14,7 +14,6 @@
 #include "utils/numeric.hpp"
 
 namespace rl::ui {
-    class widget;
 
     enum class alignment : i8_fast {
         Unknown = -1,  // Invalid / uninitialized alignment
@@ -34,6 +33,44 @@ namespace rl::ui {
         Horizontal = 0,  // Layout expands on horizontal axis.
         Vertical         // Layout expands on vertical axis.
     };
+
+    struct Anchor
+    {
+    public:
+        Anchor() = default;
+
+        Anchor(i32 x, i32 y, ui::alignment horiz = ui::alignment::Fill,
+               ui::alignment vert = ui::alignment::Fill)
+            : pos{ static_cast<u8>(x), static_cast<u8>(y) }
+            , size{ 1, 1 }
+            , align{ horiz, vert }
+        {
+        }
+
+        Anchor(i32 x, i32 y, i32 w, i32 h, ui::alignment horiz = ui::alignment::Fill,
+               ui::alignment vert = ui::alignment::Fill)
+            : pos{ static_cast<u8>(x), static_cast<u8>(y) }
+            , size{ static_cast<u8>(w), static_cast<u8>(h) }
+            , align{ horiz, vert }
+        {
+        }
+
+        explicit operator std::string() const
+        {
+            return fmt::format("Format[pos=({}), size=({}), align=(h:{}, v:{})]", pos, size,
+                               static_cast<i32>(align[axis::Horizontal]),
+                               static_cast<i32>(align[axis::Vertical]));
+        }
+
+    public:
+        ds::point<u8> pos{ 0, 0 };
+        ds::dims<u8> size{ 0, 0 };
+        std::array<ui::alignment, 2> align{};
+    };
+}
+
+namespace rl::ui {
+    class widget;
 
     /// @brief
     ///     The common layout interface
@@ -194,44 +231,6 @@ namespace rl::ui {
 
     class advanced_grid_layout : public layout
     {
-    public:
-        struct Anchor
-        {
-        public:
-            Anchor() = default;
-
-            Anchor(i32 x, i32 y, ui::alignment horiz = ui::alignment::Fill,
-                   ui::alignment vert = ui::alignment::Fill)
-                : pos{ static_cast<u8>(x), static_cast<u8>(y) }
-                , size{ 1, 1 }
-                , align{ horiz, vert }
-            {
-            }
-
-            Anchor(i32 x, i32 y, i32 w, i32 h, ui::alignment horiz = ui::alignment::Fill,
-                   ui::alignment vert = ui::alignment::Fill)
-                : pos{ static_cast<u8>(x), static_cast<u8>(y) }
-                , size{ static_cast<u8>(w), static_cast<u8>(h) }
-                , align{ horiz, vert }
-            {
-            }
-
-            explicit operator std::string() const
-            {
-                return fmt::format("Format[pos=({}), size=({}), align=(h:{}, v:{})]", pos, size,
-                                   static_cast<i32>(align[axis::Horizontal]),
-                                   static_cast<i32>(align[axis::Vertical]));
-            }
-
-        public:
-            /// The (x, y) position.
-            ds::point<u8> pos{ 0, 0 };
-            /// The (x, y) size.
-            ds::dims<u8> size{ 0, 0 };
-            /// The (x, y) alignment.
-            std::array<ui::alignment, 2> align{};
-        };
-
     public:
         advanced_grid_layout(const std::vector<i32>& cols = {}, const std::vector<i32>& rows = {},
                              i32 margin = 0);

@@ -142,6 +142,14 @@ namespace rl {
         return m_renderer->clear(m_background_color);
     }
 
+    bool Window::refresh()
+    {
+        for (auto&& refresh_widget_func : m_refresh_callbacks)
+            refresh_widget_func();
+
+        return m_refresh_callbacks.size() > 0;
+    }
+
     bool Window::draw_setup()
     {
         bool ret{ true };
@@ -156,6 +164,8 @@ namespace rl {
 
     bool Window::draw_contents()
     {
+        this->refresh();
+        this->perform_layout();
         return this->clear();
     }
 
@@ -547,6 +557,11 @@ namespace rl {
         m_resize_callback = callback;
     }
 
+    void Window::set_refresh_callback(const std::function<void()>& refresh_func)
+    {
+        m_refresh_callbacks.push_back(refresh_func);
+    }
+
     ds::point<i32> Window::mouse_pos() const
     {
         return m_mouse_pos;
@@ -626,6 +641,7 @@ namespace rl {
     // TODO: move into renderer
     void Window::nvg_flush()
     {
+        runtime_assert(false, "not implemented");
     }
 
     // Is a tooltip currently fading in?
@@ -639,7 +655,7 @@ namespace rl {
     void Window::perform_layout()
     {
         // using ui::widget::perform_layout(ctx) here...
-        this->perform_layout(m_nvg_context);
+        ui::widget::perform_layout(m_nvg_context);
     }
 
     ds::dims<i32> Window::preferred_size(NVGcontext* nvg_context) const

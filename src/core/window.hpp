@@ -306,6 +306,7 @@ namespace rl {
 
         void set_visible(bool visible);  // intentionally doesn't use virtual for this for this.
         void set_resize_callback(const std::function<void(ds::dims<i32>)>& callback);
+        void set_refresh_callback(const std::function<void()>& refresh_func);
         void drop_callback_event(i32 count, const char** filenames);
         void nvg_flush();
 
@@ -351,6 +352,8 @@ namespace rl {
         virtual bool draw_contents();
         virtual bool draw_teardown();
         virtual bool clear();
+        virtual bool refresh();
+
         // not needed since window owns context??
         // virtual void draw(NVGcontext* ctx) override;
         virtual bool drop_event(const std::vector<std::string>& filenames);
@@ -456,6 +459,9 @@ namespace rl {
         ///   </para>
         /// </summary>
         f32 m_pixel_density{ 0.0f };
+
+    private:  // extension of window
+        std::vector<std::function<void()>> m_refresh_callbacks;
 
     private:
         WindowID m_window_id{ 0 };

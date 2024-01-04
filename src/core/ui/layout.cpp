@@ -888,7 +888,7 @@ namespace rl::ui {
         m_anchor[widget] = anchor;
     }
 
-    advanced_grid_layout::Anchor advanced_grid_layout::anchor(const ui::widget* widget) const
+    ui::Anchor advanced_grid_layout::anchor(const ui::widget* widget) const
     {
         auto it{ m_anchor.find(widget) };
         runtime_assert(it != m_anchor.end(), "Widget was not registered with the grid layout!");

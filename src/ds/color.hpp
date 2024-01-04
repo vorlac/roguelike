@@ -37,26 +37,26 @@ namespace rl::ds {
 
         template <rl::integer I>
             requires(!std::same_as<T, I>)
-        constexpr inline color(I cr, I cg, I cb, I ca = Opaque)
-            : r{ cast::to<T>(cr) }
-            , g{ cast::to<T>(cg) }
-            , b{ cast::to<T>(cb) }
-            , a{ cast::to<T>(ca) }
+        constexpr inline color(I ri, I gi, I bi, I ai = Opaque)
+            : r{ static_cast<T>(ri) }
+            , g{ static_cast<T>(gi) }
+            , b{ static_cast<T>(bi) }
+            , a{ static_cast<T>(ai) }
         {
         }
 
         template <rl::floating_point F>
-        constexpr inline color(F cr, F cg, F cb, F ca = 1.0f)
+        explicit constexpr inline color(F rf, F gf, F bf, F af = 1.0f)
             requires std::same_as<T, u8>
-            : r{ static_cast<T>(std::clamp(cr * 255.0f, 0.0f, 255.0f)) }
-            , g{ static_cast<T>(std::clamp(cg * 255.0f, 0.0f, 255.0f)) }
-            , b{ static_cast<T>(std::clamp(cb * 255.0f, 0.0f, 255.0f)) }
-            , a{ static_cast<T>(std::clamp(ca * 255.0f, 0.0f, 255.0f)) }
+            : r{ static_cast<T>(std::clamp(rf * 255.0f, 0.0f, 255.0f)) }
+            , g{ static_cast<T>(std::clamp(gf * 255.0f, 0.0f, 255.0f)) }
+            , b{ static_cast<T>(std::clamp(bf * 255.0f, 0.0f, 255.0f)) }
+            , a{ static_cast<T>(std::clamp(af * 255.0f, 0.0f, 255.0f)) }
         {
         }
 
         template <rl::integer I>
-        constexpr inline color(I cr, I cg, I cb, I ca = 1.0f)
+        explicit constexpr inline color(I cr, I cg, I cb, I ca = 1.0f)
             requires std::same_as<T, f32>
             : r{ static_cast<T>(cr / 255.0f) }
             , g{ static_cast<T>(cg / 255.0f) }

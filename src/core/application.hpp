@@ -17,6 +17,8 @@
 #include "core/state/states.hpp"
 #include "core/ui/button.hpp"
 #include "core/ui/label.hpp"
+#include "core/ui/layout.hpp"
+#include "core/ui/theme.hpp"
 #include "core/window.hpp"
 #include "gl/instanced_buffer.hpp"
 #include "sdl/defs.hpp"
@@ -72,13 +74,100 @@ namespace rl {
             const std::unique_ptr<rl::Renderer>& renderer{ m_window->renderer() };
             gl::InstancedVertexBuffer vbo{ renderer->get_viewport() };
 
-            ui::label* label = new ui::label{ m_window.get(), "Test Label", ui::font::name::mono };
-            label->set_tooltip("Label Tooltip Test");
-            label->set_position({ 10, 10 });
-            label->set_size({ 100, 30 });
-            label->set_callback([] {
-                log::warning("Button Pressed");
+            //===========================================
+            // setup base level container widgets
+            //===========================================
+
+            // define a base "canvas / viewport" that is the main child of the main window
+            // auto gui_canvas{ std::make_unique<ui::widget>(m_window.get()) };
+
+            // define the layout
+            // auto layout = std::make_unique<ui::box_layout>(ui::orientation::Horizontal,
+            //                                                ui::alignment::Maximum, 10, 25);
+            auto layout = new ui::advanced_grid_layout(std::vector{ 10, 0, 10, 0 },
+                                                       std::vector<i32>{}, 16);
+            layout->set_margin(10);
+            layout->set_col_stretch(2, 1);
+            m_window->set_layout(layout);
+            m_window->set_visible(true);
+
+            //===========================================
+            // setup layout / window
+            //===========================================
+
+            // space it out a bit with a vertical gap before the label
+            if (layout->row_count() > 0)
+                layout->append_row(15);
+
+            layout->append_row(0);
+
+            auto group = new ui::label{
+                m_window.get(),             // parent, all scaling will be relative to it
+                "Widget Group",             // label text
+                ui::font::name::sans_bold,  // font name/style
+                20,                         // font size
+            };
+
+            layout->append_row(0);
+
+            layout->set_anchor(
+                new ui::label{
+                    group,
+                    "Widget Group",
+                    ui::font::name::sans,
+                    18,
+                },
+                ui::Anchor{
+                    0,                        // x
+                    layout->row_count() - 1,  // y
+                    4,                        // width
+                    1,                        // height
+                });
+
+            layout->append_row(5);
+
+            //=============================================
+            // set up labels
+            //=============================================
+            auto desc_label = new ui::label{
+                m_window.get(),
+                "Elapsed Seconds: ",
+                ui::font::name::mono,
+                16,
+            };
+
+            auto value_label = new ui::label{
+                m_window.get(),
+                fmt::to_string(fmt::format("{:4.6f}", m_timer.elapsed())),
+                ui::font::name::mono,
+                16,
+            };
+
+            desc_label->set_tooltip("Descr Label Tooltip");
+            value_label->set_tooltip("Value Label Tooltip");
+
+            desc_label->set_callback([] {
+                log::warning("Label callback invoked");
             });
+
+            // width, 0 means not set in this context
+            //  height, force to 20 px
+            ds::dims<i32> fixed_size{ 0, 25 };
+            desc_label->set_fixed_size(fixed_size);
+            value_label->set_fixed_size(fixed_size);
+
+            // lambda used to update label text based on changing value
+            m_window->set_refresh_callback([&]() {
+                const f32 elapsed{ m_timer.elapsed() };
+                value_label->set_caption(fmt::to_string(fmt::format("{:4.6f}", m_timer.elapsed())));
+            });
+
+            if (layout->row_count() > 0)
+                layout->append_row(5);
+
+            layout->append_row(0);
+            layout->set_anchor(desc_label, ui::Anchor(1, layout->row_count() - 1));
+            layout->set_anchor(value_label, ui::Anchor(3, layout->row_count() - 1));
 
             vbo.bind_buffers();
             while (!this->should_exit()) [[likely]]
