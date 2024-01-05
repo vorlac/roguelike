@@ -84,8 +84,10 @@ namespace rl {
             //                                                ui::alignment::Maximum, 10, 25);
             auto layout = new ui::advanced_grid_layout(std::vector{ 10, 0, 10, 0 },
                                                        std::vector<i32>{}, 16);
+            // set layout margins to 10px
             layout->set_margin(10);
-            layout->set_col_stretch(2, 1);
+            // stretch column 2 to 1.0f
+            layout->set_col_stretch(2, 1.0f);
             m_window->set_layout(layout);
             m_window->set_visible(true);
 
@@ -108,19 +110,15 @@ namespace rl {
 
             layout->append_row(0);
 
-            layout->set_anchor(
-                new ui::label{
-                    group,
-                    "Widget Group",
-                    ui::font::name::sans,
-                    18,
-                },
-                ui::Anchor{
-                    0,                        // x
-                    layout->row_count() - 1,  // y
-                    4,                        // width
-                    1,                        // height
-                });
+            layout->set_anchor(group,
+                               ui::Anchor{
+                                   0,                        // x
+                                   layout->row_count() - 1,  // y
+                                   4,                        // width
+                                   1,                        // height
+                                   ui::alignment::Middle,
+                                   ui::alignment::Middle,
+                               });
 
             layout->append_row(5);
 

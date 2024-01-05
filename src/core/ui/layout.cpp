@@ -675,15 +675,14 @@ namespace rl::ui {
         std::array<std::vector<i32>, 2> grid{ { {}, {} } };
         this->compute_layout(nvg_context, widget, grid);
 
-        grid[axis::Horizontal].insert(grid[axis::Horizontal].begin(), this->m_margin);
+        grid[axis::Horizontal].insert(grid[axis::Horizontal].begin(), m_margin);
         const rl::Window* window{ dynamic_cast<const rl::Window*>(widget) };
         if (window == nullptr || window->title().empty())
-            grid[axis::Vertical].insert(grid[axis::Vertical].begin(), this->m_margin);
+            grid[axis::Vertical].insert(grid[axis::Vertical].begin(), m_margin);
         else
         {
-            grid[axis::Vertical].insert(
-                grid[axis::Vertical].begin(),
-                widget->theme()->m_window_header_height + this->m_margin / 2);
+            grid[axis::Vertical].insert(grid[axis::Vertical].begin(),
+                                        widget->theme()->m_window_header_height + m_margin / 2);
         }
 
         for (ui::axis axis : { axis::Horizontal, axis::Vertical })
@@ -697,11 +696,14 @@ namespace rl::ui {
                 const rl::Window* child_window{ dynamic_cast<const rl::Window*>(w) };
                 if (!w->visible() || child_window != nullptr)
                     continue;
+                if (w == nullptr)
+                    continue;
 
                 Anchor anchor{ this->anchor(w) };
-                i32 axis_anchor_pos{ axis == axis::Horizontal ? anchor.pos.x : anchor.pos.y };
-                i32 axis_anchor_size{ axis == axis::Horizontal ? anchor.size.width
-                                                               : anchor.size.height };
+                u32 axis_anchor_pos{ axis == axis::Horizontal ? anchor.grid_pos.x
+                                                              : anchor.grid_pos.y };
+                u32 axis_anchor_size{ axis == axis::Horizontal ? anchor.cell_size.width
+                                                               : anchor.cell_size.height };
 
                 i32 item_pos{ axis_grids[axis_anchor_pos] };
                 i32 cell_size{ axis_grids[axis_anchor_pos + axis_anchor_size] - item_pos };
@@ -747,10 +749,9 @@ namespace rl::ui {
     }
 
     void advanced_grid_layout::compute_layout(NVGcontext* nvg_context, const ui::widget* widget,
-                                              std::array<std::vector<i32>, 2>& _grid) const
+                                              std::array<std::vector<i32>, 2>& grid_cell_sizes) const
     {
         ds::dims<i32> fs_w{ widget->fixed_size() };
-
         ds::dims<i32> container_size{
             fs_w.width ? fs_w.width : widget->width(),
             fs_w.height ? fs_w.height : widget->height(),
@@ -762,20 +763,20 @@ namespace rl::ui {
         };
 
         const rl::Window* window{ dynamic_cast<const rl::Window*>(widget) };
-        if (window != nullptr && !window->title().empty())
+        if (window != nullptr && window->title().length() == 0)
             extra.height += widget->theme()->m_window_header_height - this->m_margin / 2;
 
         container_size -= extra;
 
         for (ui::axis axis : { axis::Horizontal, axis::Vertical })
         {
-            std::vector<i32>& grid{ _grid[axis] };
-            const std::vector<i32>& sizes{ axis == axis::Horizontal ? m_cols : m_rows };
-            const std::vector<f32>& stretch{ axis == axis::Horizontal ? m_col_stretch
-                                                                      : m_row_stretch };
+            std::vector<i32>& grid{ grid_cell_sizes[axis] };
+            const bool col_axis{ axis == axis::Horizontal };
+            const std::vector<i32>& sizes{ col_axis ? m_cols : m_rows };
+            const std::vector<f32>& stretch{ col_axis ? m_col_stretch : m_row_stretch };
             grid = sizes;
 
-            for (i32 phase = 0; phase < 2; ++phase)
+            for (auto phase : { ComputeCellSize, MulitCellMerge })
             {
                 for (const auto& pair : m_anchor)
                 {
@@ -785,17 +786,20 @@ namespace rl::ui {
                         continue;
 
                     const Anchor& anchor{ pair.second };
-                    i32 axis_anchor_pos{ axis == axis::Horizontal ? anchor.pos.x : anchor.pos.y };
-                    i32 axis_anchor_size{ axis == axis::Horizontal ? anchor.size.width
-                                                                   : anchor.size.height };
-                    if ((axis_anchor_size == 1) != (phase == 0))
+                    u32 axis_anchor_pos{ col_axis ? anchor.grid_pos.x : anchor.grid_pos.y };
+                    u32 axis_anchor_size{ col_axis ? anchor.cell_size.width
+                                                   : anchor.cell_size.height };
+
+                    const bool compute_single_cell_sizes{ phase == ComputeCellSize };
+                    const bool cell_is_single_grid_sized{ axis_anchor_size == 1 };
+                    if (cell_is_single_grid_sized != compute_single_cell_sizes)
                         continue;
 
                     ds::dims<i32> widget_ps{ w->preferred_size(nvg_context) };
                     ds::dims<i32> widget_fs{ w->fixed_size() };
 
-                    i32 ps{ axis == axis::Horizontal ? widget_ps.width : widget_ps.height };
-                    i32 fs{ axis == axis::Horizontal ? widget_fs.width : widget_fs.height };
+                    i32 ps{ col_axis ? widget_ps.width : widget_ps.height };
+                    i32 fs{ col_axis ? widget_fs.width : widget_fs.height };
                     i32 target_size{ fs ? fs : ps };
 
                     runtime_assert(axis_anchor_pos + axis_anchor_size <= grid.size(),
@@ -805,7 +809,7 @@ namespace rl::ui {
                     i32 current_size{ 0 };
                     f32 total_stretch{ 0.0f };
 
-                    for (i32 i = axis_anchor_pos; i < axis_anchor_pos + axis_anchor_size; ++i)
+                    for (u32 i = axis_anchor_pos; i < axis_anchor_pos + axis_anchor_size; ++i)
                     {
                         if (sizes[i] == 0 && axis_anchor_size == 1)
                             grid[i] = std::max(grid[i], target_size);
@@ -822,7 +826,7 @@ namespace rl::ui {
                                    static_cast<std::string>(anchor));
 
                     f32 amt{ (target_size - current_size) / total_stretch };
-                    for (i32 i = axis_anchor_pos; i < axis_anchor_pos + axis_anchor_size; ++i)
+                    for (u32 i = axis_anchor_pos; i < axis_anchor_pos + axis_anchor_size; ++i)
                         grid[i] += static_cast<i32>(std::round(amt * stretch[i]));
                 }
             }
@@ -851,14 +855,14 @@ namespace rl::ui {
         m_margin = margin;
     }
 
-    i32 advanced_grid_layout::col_count() const
+    u32 advanced_grid_layout::col_count() const
     {
-        return static_cast<i32>(m_cols.size());
+        return static_cast<u32>(m_cols.size());
     }
 
-    i32 advanced_grid_layout::row_count() const
+    u32 advanced_grid_layout::row_count() const
     {
-        return static_cast<i32>(m_rows.size());
+        return static_cast<u32>(m_rows.size());
     }
 
     void advanced_grid_layout::append_row(i32 size, f32 stretch)

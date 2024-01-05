@@ -7,6 +7,7 @@
 #include "core/assert.hpp"
 #include "core/renderer.hpp"
 #include "core/ui/layout.hpp"
+#include "core/ui/popup.hpp"
 #include "core/window.hpp"
 #include "ds/dims.hpp"
 #include "ds/point.hpp"
@@ -684,12 +685,63 @@ namespace rl {
 
     void Window::update_focus(ui::widget* widget)
     {
-        runtime_assert(false, "not implemented");
+        for (auto w : m_focus_path)
+        {
+            if (!w->focused())
+                continue;
+            w->on_focus_lost();
+        }
+
+        m_focus_path.clear();
+
+        Window* window{ nullptr };
+        while (widget != nullptr)
+        {
+            m_focus_path.push_back(widget);
+
+            Window* as_window{ dynamic_cast<Window*>(widget) };
+            if (as_window != nullptr)
+                window = as_window;
+
+            widget = widget->parent();
+        }
+
+        for (auto&& focus_widget : m_focus_path)
+            focus_widget->on_focus_gained();
+
+        if (window != nullptr)
+            this->move_window_to_front(window);
     }
 
     void Window::move_window_to_front(Window* window)
     {
-        runtime_assert(false, "not implemented");
+        m_children.erase(std::remove(m_children.begin(), m_children.end(), window),
+                         m_children.end());
+
+        bool changed{ false };
+        m_children.push_back(window);
+
+        do
+        {
+            // Brute force topological sort (no problem for a few windows..)
+            size_t base_idx{ 0 };
+            for (size_t idx = 0; idx < m_children.size(); ++idx)
+                if (m_children[idx] == window)
+                    base_idx = idx;
+
+            changed = false;
+            for (size_t idx = 0; idx < m_children.size(); ++idx)
+            {
+                ui::Popup* popup_wnd{ dynamic_cast<ui::Popup*>(m_children[idx]) };
+                if (popup_wnd != nullptr && popup_wnd->parent_window() == window && idx < base_idx)
+                {
+                    this->move_window_to_front(popup_wnd);
+                    changed = true;
+                    break;
+                }
+            }
+        }
+        while (changed);
     }
 
     const std::string& Window::title() const

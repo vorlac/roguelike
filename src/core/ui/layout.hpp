@@ -41,30 +41,31 @@ namespace rl::ui {
 
         Anchor(i32 x, i32 y, ui::alignment horiz = ui::alignment::Fill,
                ui::alignment vert = ui::alignment::Fill)
-            : pos{ static_cast<u8>(x), static_cast<u8>(y) }
-            , size{ 1, 1 }
+            : grid_pos{ static_cast<u8>(x), static_cast<u8>(y) }
+            , cell_size{ 1, 1 }
             , align{ horiz, vert }
         {
         }
 
-        Anchor(i32 x, i32 y, i32 w, i32 h, ui::alignment horiz = ui::alignment::Fill,
-               ui::alignment vert = ui::alignment::Fill)
-            : pos{ static_cast<u8>(x), static_cast<u8>(y) }
-            , size{ static_cast<u8>(w), static_cast<u8>(h) }
-            , align{ horiz, vert }
+        Anchor(u32 grid_x, u32 grid_y, u32 cell_span_width, u32 cell_span_height,
+               ui::alignment horizontal_alignment = ui::alignment::Fill,
+               ui::alignment vertical_alignment = ui::alignment::Fill)
+            : grid_pos{ grid_x, grid_y }
+            , cell_size{ cell_span_width, cell_span_height }
+            , align{ horizontal_alignment, vertical_alignment }
         {
         }
 
-        explicit operator std::string() const
+        operator std::string() const
         {
-            return fmt::format("Format[pos=({}), size=({}), align=(h:{}, v:{})]", pos, size,
-                               static_cast<i32>(align[axis::Horizontal]),
+            return fmt::format("Format[pos=({}), size=({}), align=(h:{}, v:{})]", grid_pos,
+                               cell_size, static_cast<i32>(align[axis::Horizontal]),
                                static_cast<i32>(align[axis::Vertical]));
         }
 
     public:
-        ds::point<u8> pos{ 0, 0 };
-        ds::dims<u8> size{ 0, 0 };
+        ds::point<u32> grid_pos{ 0, 0 };
+        ds::dims<u32> cell_size{ 0, 0 };
         std::array<ui::alignment, 2> align{};
     };
 }
@@ -236,8 +237,8 @@ namespace rl::ui {
                              i32 margin = 0);
 
         i32 margin() const;
-        i32 col_count() const;
-        i32 row_count() const;
+        u32 col_count() const;
+        u32 row_count() const;
         Anchor anchor(const ui::widget* widget) const;
 
         void set_margin(i32 margin);
@@ -262,5 +263,11 @@ namespace rl::ui {
         std::vector<f32> m_row_stretch{};
         std::unordered_map<const ui::widget*, Anchor> m_anchor{};
         i32 m_margin{ 0 };
+
+    private:
+        enum LayoutComputePhase {
+            ComputeCellSize = 0,
+            MulitCellMerge = 1,
+        };
     };
 }

@@ -238,7 +238,7 @@ namespace rl::ui {
 
     ds::dims<i32> widget::preferred_size(NVGcontext* nvg_context) const
     {
-        return m_layout == nullptr                              //
+        return m_layout != nullptr                              //
                  ? m_layout->preferred_size(nvg_context, this)  //
                  : m_size;                                      //
     }
@@ -310,14 +310,30 @@ namespace rl::ui {
 
     bool widget::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb)
     {
-        runtime_assert(false, "not implemented");
-        return true;
+        auto&& mouse_pos{ mouse.pos() };
+        for (auto&& child : m_children)
+            if (child->visible() && child->contains(mouse_pos - m_pos) &&
+                child->on_mouse_button_pressed(mouse, kb))
+                return true;
+
+        if (mouse.is_button_pressed(Mouse::Button::Left) && !m_focused)
+            this->request_focus();
+
+        return false;
     }
 
     bool widget::on_mouse_button_released(const Mouse& mouse, const Keyboard& kb)
     {
-        runtime_assert(false, "not implemented");
-        return true;
+        auto&& mouse_pos{ mouse.pos() };
+        for (auto&& child : m_children)
+        {
+            auto&& offset_pos{ mouse_pos - m_pos };
+            if (child->visible() &&
+                child->contains(std::forward<decltype(offset_pos)>(offset_pos)) &&
+                child->on_mouse_button_released(mouse, kb))
+                return true;
+        }
+        return false;
     }
 
     bool widget::on_mouse_scroll(const Mouse& mouse, const Keyboard& kb)
