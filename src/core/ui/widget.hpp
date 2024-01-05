@@ -13,6 +13,8 @@
 #include "ds/refcounted.hpp"
 #include "ds/shared.hpp"
 #include "ds/vector2d.hpp"
+#include "utils/numeric.hpp"
+#include "utils/time.hpp"
 
 #if _MSC_VER
   #pragma warning(disable : 4244)
@@ -55,7 +57,7 @@ namespace rl::ui {
         i32 child_index(ui::widget* widget) const;
         i32 child_count() const;
 
-        rl::Window* window();
+        Window* window();
         ui::widget* parent();
         ui::layout* layout();
         ui::theme* theme();
@@ -67,7 +69,7 @@ namespace rl::ui {
         ds::dims<i32> size() const;
         Mouse::Cursor::ID cursor() const;
 
-        const rl::Window* window() const;
+        const Window* window() const;
         const ui::widget* parent() const;
         const ui::layout* layout() const;
         const ui::theme* theme() const;
@@ -108,30 +110,27 @@ namespace rl::ui {
         virtual bool on_focus_gained();
         virtual bool on_focus_lost();
 
-        virtual bool on_key_pressed(Keyboard::Button::type key);
-        virtual bool on_key_released(Keyboard::Button::type key);
-        virtual bool on_character_input(u32 codepoint);
+        virtual bool on_key_pressed(const Keyboard& kb);
+        virtual bool on_key_released(const Keyboard& kb);
+        virtual bool on_character_input(const Keyboard& kb);
 
-        virtual bool on_mouse_entered(ds::point<i32> pos);
-        virtual bool on_mouse_exited(ds::point<i32> pos);
-        virtual bool on_mouse_scroll(ds::point<i32> pos, ds::vector2<i32> wheel);
+        virtual bool on_mouse_entered(const Mouse& mouse);
+        virtual bool on_mouse_exited(const Mouse& mouse);
+        virtual bool on_mouse_scroll(const Mouse& mouse, const Keyboard& kb);
 
-        virtual bool on_mouse_button_pressed(ds::point<i32> pos, Mouse::Button::type btn,
-                                             i32 modifiers);
-        virtual bool on_mouse_button_released(ds::point<i32> pos, Mouse::Button::type btn,
-                                              i32 modifiers);
+        virtual bool on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb);
+        virtual bool on_mouse_button_released(const Mouse& mouse, const Keyboard& kb);
 
-        virtual bool on_mouse_move(ds::point<i32> pos, ds::vector2<i32> rel,
-                                   Mouse::Button::type btn, i32 modifiers);
-        virtual bool on_mouse_drag(ds::point<i32> pos, ds::vector2<i32> rel,
-                                   Mouse::Button::type btn, i32 modifiers);
+        virtual bool on_mouse_move(const Mouse& mouse, const Keyboard& kb);
+        virtual bool on_mouse_drag(ds::point<i32> pnt, ds::vector2<i32> rel, const Mouse& mouse,
+                                   const Keyboard& kb);
 
     public:
+        virtual void draw(NVGcontext* nvg_context);
         virtual void set_theme(ui::theme* theme);
         virtual void add_child(i32 index, widget* widget);
-        virtual ds::dims<i32> preferred_size(NVGcontext* nvg_context) const;
         virtual void perform_layout(NVGcontext* nvg_context);
-        virtual void draw(NVGcontext* nvg_context);
+        virtual ds::dims<i32> preferred_size(NVGcontext* nvg_context) const;
 
     protected:
         f32 icon_scale() const;
@@ -141,9 +140,14 @@ namespace rl::ui {
         ds::shared<ui::theme> m_theme{ nullptr };
         ds::shared<ui::layout> m_layout{ nullptr };
         NVGcontext* m_nvg_context{ nullptr };
-        Mouse::Cursor::ID m_cursor{ Mouse::Cursor::Arrow };
-        std::vector<widget*> m_children{};
-        std::string m_tooltip{};
+
+        bool m_enabled{ true };
+        bool m_visible{ true };
+        bool m_focused{ false };
+        bool m_mouse_focus{ false };
+
+        i32 m_font_size{ 16 };
+        f32 m_icon_extra_scale{ 1.0f };
 
         ds::point<i32> m_pos{ 0, 0 };
         ds::dims<i32> m_size{ 0, 0 };
@@ -151,16 +155,12 @@ namespace rl::ui {
         ds::dims<i32> m_fixed_size{ 0, 0 };
         ds::dims<i32> m_framebuf_size{ 0, 0 };
 
-        i32 m_font_size{ 16 };
-        f32 m_icon_extra_scale{ 1.0f };
-
-        bool m_enabled{ true };
-        bool m_visible{ true };
-
-        bool m_focused{ false };
-        bool m_mouse_focus{ false };
-        rl::Keyboard m_keyboard{};
-        rl::Mouse m_mouse{};
+        Mouse::Cursor::ID m_cursor{ Mouse::Cursor::Arrow };
+        std::vector<widget*> m_children{};
+        std::string m_tooltip{};
+        Keyboard m_keyboard{};
+        Mouse m_mouse{};
+        Timer<float> m_timer{};
 
     private:
         constexpr static bool DiagnosticsEnabled{ true };

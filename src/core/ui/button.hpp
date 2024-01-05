@@ -60,12 +60,10 @@ namespace rl::ui {
         void set_button_group(const std::vector<Button*>& button_group);
 
     public:
-        virtual bool on_mouse_entered(ds::point<i32> pos) override;
-        virtual bool on_mouse_exited(ds::point<i32> pos) override;
-        virtual bool on_mouse_button_pressed(ds::point<i32> pos, Mouse::Button::type btn,
-                                             i32 modifiers) override;
-        virtual bool on_mouse_button_released(ds::point<i32> pos, Mouse::Button::type btn,
-                                              i32 modifiers) override;
+        virtual bool on_mouse_entered(const Mouse& mouse) override;
+        virtual bool on_mouse_exited(const Mouse& mouse) override;
+        virtual bool on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb) override;
+        virtual bool on_mouse_button_released(const Mouse& mouse, const Keyboard& kb) override;
 
     public:
         virtual void draw(NVGcontext* ctx) override;

@@ -75,7 +75,7 @@ namespace rl::ui {
             return ds::dims<i32>{ 0, 0 };
 
         nvgFontFace(nvg_context, m_font.c_str());
-        nvgFontSize(nvg_context, font_size());
+        nvgFontSize(nvg_context, this->font_size());
 
         if (m_fixed_size.width > 0)
         {

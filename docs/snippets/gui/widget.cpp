@@ -181,7 +181,7 @@ namespace rl::gui {
         return false;
     }
 
-    bool Widget::keyboard_character_event(unsigned int)
+    bool Widget::keyboard_character_event(const Keyboard& kb)
     {
         return false;
     }

@@ -69,8 +69,8 @@ namespace rl::gui {
         return m_children[0]->preferred_size(nvg_context) + ds::dims<i32>{ 12, 0 };
     }
 
-    bool VScrollPanel::on_mouse_drag(ds::point<i32> pos, ds::vector2<i32> rel,
-                                     Mouse::Button::type btn, i32 modifiers)
+    bool VScrollPanel::on_mouse_drag(ds::point<i32> pnt, ds::vector2<i32> rel, const Mouse& mouse,
+                                     const Keyboard& kb)
     {
         if (!m_children.empty() && m_child_preferred_height > m_size.height)
         {
@@ -78,31 +78,31 @@ namespace rl::gui {
                                                       static_cast<f32>(m_child_preferred_height)) };
             m_scroll = std::max(
                 0.0f, std::min(1.0f, m_scroll + rel.y / (m_size.height - 8.0f - scrollh)));
+
             m_update_layout = true;
             return true;
         }
         else
         {
-            return ui::widget::on_mouse_drag(pos, rel, btn, modifiers);
+            return ui::widget::on_mouse_drag(pnt, rel, mouse, kb);
         }
     }
 
-    bool VScrollPanel::on_mouse_button_released(ds::point<i32> pos, Mouse::Button::type btn,
-                                                i32 modifiers)
+    bool VScrollPanel::on_mouse_button_released(const Mouse& mouse, const Keyboard& kb)
     {
-        if (ui::widget::on_mouse_button_released(pos, btn, modifiers))
+        if (ui::widget::on_mouse_button_released(mouse, kb))
             return true;
 
         return false;
     }
 
-    bool VScrollPanel::on_mouse_button_pressed(ds::point<i32> pos, Mouse::Button::type btn,
-                                               i32 modifiers)
+    bool VScrollPanel::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb)
     {
-        if (ui::widget::on_mouse_button_pressed(pos, btn, modifiers))
+        if (ui::widget::on_mouse_button_pressed(mouse, kb))
             return true;
 
-        if (btn == Mouse::Button::Left && !m_children.empty() &&
+        const auto&& pos{ mouse.pos() };
+        if (mouse.is_button_down(Mouse::Button::Left) && !m_children.empty() &&
             m_child_preferred_height > m_size.height && pos.x > m_pos.x + m_size.width - 13 &&
             pos.x < m_pos.x + m_size.width - 4)
         {
@@ -132,12 +132,14 @@ namespace rl::gui {
         return false;
     }
 
-    bool VScrollPanel::on_mouse_scroll(ds::point<i32> pos, ds::vector2<i32> wheel)
+    bool VScrollPanel::on_mouse_scroll(const Mouse& mouse, const Keyboard& kb)
     {
-        if (!m_children.empty() && m_child_preferred_height > m_size.height)
+        if (m_children.empty() || m_child_preferred_height <= m_size.height)
+            return ui::widget::on_mouse_scroll(mouse, kb);
+        else
         {
             auto child{ m_children[0] };
-            f32 scroll_amount{ wheel.y * m_size.height * 0.25f };
+            f32 scroll_amount{ mouse.wheel().y * m_size.height * 0.25f };
 
             m_scroll = std::max(0.f,
                                 std::min(1.f, m_scroll - scroll_amount / m_child_preferred_height));
@@ -149,14 +151,9 @@ namespace rl::gui {
             });
             ds::point<i32> new_pos{ child->position() };
             m_update_layout = true;
-            child->on_mouse_move(pos - m_pos, old_pos - new_pos, 0, 0);
+            child->on_mouse_move(mouse, kb);
 
             return true;
-        }
-        else
-        {
-            return ui::widget::on_mouse_scroll(std::forward<ds::point<i32>>(pos),
-                                               std::forward<ds::vector2<i32>>(wheel));
         }
     }
 

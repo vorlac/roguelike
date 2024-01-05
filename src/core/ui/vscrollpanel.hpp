@@ -13,16 +13,16 @@ namespace rl::gui {
         void set_scroll(f32 scroll);
 
     public:
+        virtual bool on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb) override;
+        virtual bool on_mouse_button_released(const Mouse& mouse, const Keyboard& kb) override;
+        virtual bool on_mouse_scroll(const Mouse& mouse, const Keyboard& kb) override;
+        virtual bool on_mouse_drag(ds::point<i32> pnt, ds::vector2<i32> rel, const Mouse& mouse,
+                                   const Keyboard& kb) override;
+
+    public:
+        virtual void draw(NVGcontext* ctx) override;
         virtual void perform_layout(NVGcontext* ctx) override;
         virtual ds::dims<i32> preferred_size(NVGcontext* ctx) const override;
-        virtual bool on_mouse_button_pressed(ds::point<i32> pos, Mouse::Button::type btn,
-                                             i32 modifiers) override;
-        virtual bool on_mouse_button_released(ds::point<i32> pos, Mouse::Button::type btn,
-                                              i32 modifiers) override;
-        virtual bool on_mouse_drag(ds::point<i32> pos, ds::vector2<i32> rel,
-                                   Mouse::Button::type btn, i32 modifiers) override;
-        virtual bool on_mouse_scroll(ds::point<i32> pos, ds::vector2<i32> wheel) override;
-        virtual void draw(NVGcontext* ctx) override;
 
     protected:
         i32 m_child_preferred_height{ 0 };

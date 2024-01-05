@@ -6,7 +6,7 @@
 
 #include "utils/numeric.hpp"
 
-namespace rl {
+namespace rl::inline constraint {
     template <typename T>
     concept refcountable = requires(const T& t) {
         t.acquire_ref();

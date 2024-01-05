@@ -2,6 +2,7 @@
 
 #include "core/keyboard.hpp"
 #include "core/mouse.hpp"
+#include "core/system.hpp"
 #include "core/window.hpp"
 #include "sdl/defs.hpp"
 #include "utils/conversions.hpp"
@@ -26,53 +27,31 @@ namespace rl {
                 {
                     // Mouse input events
                     case Mouse::Event::MouseWheel:
-                    {
-                        m_mouse.process_wheel(e.wheel);
-                        auto&& wheel_pos{ m_mouse.wheel() };
-                        window->mouse_wheel_event_callback(wheel_pos.x, wheel_pos.y);
-                        if constexpr (io::logging::mouse_events)
-                            log::info("{}", m_mouse);
+                        window->mouse_wheel_event_callback(e);
                         break;
-                    }
                     case Mouse::Event::MouseMotion:
-                    {
-                        m_mouse.process_motion(e.motion);
-                        window->mouse_moved_event_callback(e.motion.x, e.motion.y);
-                        if constexpr (io::logging::mouse_events)
-                            log::info("{}", m_mouse);
+                        window->mouse_moved_event_callback(e);
                         break;
-                    }
                     case Mouse::Event::MouseButtonDown:
-                    {
-                        m_mouse.process_button_down(e.button.button);
-                        window->mouse_button_pressed_event_callback(e.button.button);
-                        if constexpr (io::logging::mouse_events)
-                            log::info("{}", m_mouse);
+                        window->mouse_button_pressed_event_callback(e);
                         break;
-                    }
                     case Mouse::Event::MouseButtonUp:
-                    {
-                        m_mouse.process_button_up(e.button.button);
-                        window->mouse_button_released_event_callback(e.button.button);
-                        if constexpr (io::logging::mouse_events)
-                            log::info("{}", m_mouse);
+                        window->mouse_button_released_event_callback(e);
                         break;
-                    }
 
                     // Keyboard input events
                     case Keyboard::Event::KeyDown:
-                        m_keyboard.process_button_down(e.key.keysym.scancode);
-                        window->keyboard_key_pressed_event_callback(0, e.key.keysym.scancode, 0);
-                        if constexpr (io::logging::kb_events)
-                            log::info("{}", m_keyboard);
-                        if (m_keyboard.is_button_pressed(Keyboard::Button::Escape)) [[unlikely]]
+                        window->keyboard_key_pressed_event_callback(e);
+                        if (e.key.keysym.scancode ==
+                            Keyboard::Button::type(Keyboard::Button::Escape)) [[unlikely]]
                             m_quit = true;
                         break;
                     case Keyboard::Event::KeyUp:
-                        m_keyboard.process_button_up(e.key.keysym.scancode);
-                        window->keyboard_key_released_event_callback(0, e.key.keysym.scancode, 0);
-                        if constexpr (io::logging::kb_events)
-                            log::info("{}", m_keyboard);
+                        window->keyboard_key_released_event_callback(e);
+                        break;
+                    case Keyboard::Event::TextEditing:
+                    case Keyboard::Event::TextInput:
+                        window->keyboard_char_event_callback(e);
                         break;
 
                     // Window events
@@ -112,7 +91,7 @@ namespace rl {
                         const WindowID id{ window_event.windowID };
                         const i32 width{ window_event.data1 };
                         const i32 height{ window_event.data2 };
-                        window->window_resized_event_callback(width, height);
+                        window->window_resized_event_callback(e);
                         break;
                     }
                     case Window::Event::PixelSizeChanged:
@@ -149,14 +128,14 @@ namespace rl {
                     {
                         const Window::Event::Data& window_event{ e.window };
                         const WindowID id{ window_event.windowID };
-                        window->on_mouse_entered(m_mouse.pos());
+                        window->mouse_entered_event_callback(e);
                         break;
                     }
                     case Window::Event::MouseLeave:
                     {
                         const Window::Event::Data& window_event{ e.window };
                         const WindowID id{ window_event.windowID };
-                        window->on_mouse_exited(m_mouse.pos());
+                        window->mouse_exited_event_callback(e);
                         break;
                     }
                     case Window::Event::FocusGained:
@@ -239,6 +218,10 @@ namespace rl {
                         break;
                     }
 
+                    // System events
+                    case System::Event::ClipboardUpdate:
+                        break;
+
                     // Quit request event
                     case Event::Quit:
                         m_quit = true;
@@ -255,8 +238,6 @@ namespace rl {
 
     private:
         bool m_quit{ false };
-        Mouse m_mouse{};
-        Keyboard m_keyboard{};
 
     public:
         // clang-format off

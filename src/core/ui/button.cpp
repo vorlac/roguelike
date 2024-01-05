@@ -173,30 +173,30 @@ namespace rl::ui {
         return ds::dims<i32>(static_cast<int>(tw + iw) + 20, font_size + 10);
     }
 
-    bool Button::on_mouse_entered(ds::point<i32> pos)
+    bool Button::on_mouse_entered(const Mouse& mouse)
     {
-        return ui::widget::on_mouse_entered(pos);
+        return ui::widget::on_mouse_entered(mouse);
     }
 
-    bool Button::on_mouse_exited(ds::point<i32> pos)
+    bool Button::on_mouse_exited(const Mouse& mouse)
     {
-        return ui::widget::on_mouse_exited(pos);
+        return ui::widget::on_mouse_exited(mouse);
     }
 
-    bool Button::handle_mouse_button_event(const ds::point<i32>& pt, rl::Mouse::Button::type button,
-                                           bool down, i32 modifiers)
+    bool Button::handle_mouse_button_event(const ds::point<i32>& pt, Mouse::Button::type button,
+                                           bool down, Keyboard::Button::type keys_down)
     {
         // Temporarily increase the reference count of the button in case the
         // button causes the parent window to be destructed
         ds::shared<Button> self{ this };
 
-        if (m_enabled == 1 && ((button == rl::Mouse::Button::Left && !(m_flags & MenuButton)) ||
-                               (button == rl::Mouse::Button::Right && (m_flags & MenuButton))))
+        if (m_enabled == 1 && ((button == Mouse::Button::Left && !(m_flags & MenuButton)) ||
+                               (button == Mouse::Button::Right && (m_flags & MenuButton))))
         {
             bool pushed_backup{ m_pressed };
             if (down)
             {
-                if (m_flags & RadioButton)
+                if (m_flags & Button::Flags::RadioButton)
                 {
                     if (m_button_group.empty())
                     {
@@ -262,16 +262,16 @@ namespace rl::ui {
         return false;
     }
 
-    bool Button::on_mouse_button_pressed(ds::point<i32> pos, Mouse::Button::type btn, i32 modifiers)
+    bool Button::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb)
     {
-        ui::widget::on_mouse_button_pressed(pos, btn, modifiers);
-        return handle_mouse_button_event(pos, btn, true, modifiers);
+        ui::widget::on_mouse_button_pressed(mouse, kb);
+        return handle_mouse_button_event(mouse.pos(), mouse.button_pressed(), true, kb.keys_down());
     }
 
-    bool Button::on_mouse_button_released(ds::point<i32> pos, Mouse::Button::type btn, i32 modifiers)
+    bool Button::on_mouse_button_released(const Mouse& mouse, const Keyboard& kb)
     {
-        ui::widget::on_mouse_button_released(pos, btn, modifiers);
-        return handle_mouse_button_event(pos, btn, false, modifiers);
+        ui::widget::on_mouse_button_released(mouse, kb);
+        return handle_mouse_button_event(mouse.pos(), mouse.button_pressed(), false, kb.keys_down());
     }
 
     void Button::draw(NVGcontext* ctx)

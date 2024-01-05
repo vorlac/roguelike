@@ -2,10 +2,12 @@
 
 #include <bitset>
 #include <string>
+#include <vector>
 
 #include <fmt/format.h>
 
 #include "sdl/defs.hpp"
+#include "utils/numeric.hpp"
 
 SDL_C_LIB_BEGIN
 #include <SDL3/SDL_events.h>
@@ -19,6 +21,8 @@ namespace rl {
     class Keyboard
     {
     public:
+        // clang-format off
+        
         /* *
          * @brief Keyboard Specific Event Identifiers
          * */
@@ -27,13 +31,15 @@ namespace rl {
             using type = SDL3::SDL_EventType;
 
             enum ID : std::underlying_type_t<type> {
-                KeyDown = SDL3::SDL_EVENT_KEY_DOWN,
-                KeyUp = SDL3::SDL_EVENT_KEY_UP,
-                TextEditing = SDL3::SDL_EVENT_TEXT_EDITING,
-                TextInput = SDL3::SDL_EVENT_TEXT_INPUT,
-                KeymapChanged = SDL3::SDL_EVENT_KEYMAP_CHANGED,
+                KeyDown       = SDL3::SDL_EVENT_KEY_DOWN,       // Key pressed
+                KeyUp         = SDL3::SDL_EVENT_KEY_UP,         // Key released
+                TextEditing   = SDL3::SDL_EVENT_TEXT_EDITING,   // Keyboard text editing (composition)
+                TextInput     = SDL3::SDL_EVENT_TEXT_INPUT,     // Keyboard text input
+                KeymapChanged = SDL3::SDL_EVENT_KEYMAP_CHANGED, // Keymap changed due to a system event such as an input language or keyboard layout change
             };
         };
+
+        // clang-format on
 
         /* *
          * @brief Keyboard Scancode Identifiers
@@ -292,6 +298,10 @@ namespace rl {
                 Call = SDL3::SDL_SCANCODE_CALL,
                 EndCall = SDL3::SDL_SCANCODE_ENDCALL,
                 ScancodeCount = SDL3::SDL_NUM_SCANCODES,
+
+                Ctrl = LCtrl | RCtrl,
+                Shift = LShift | RShift,
+                Modifiers = Ctrl | Shift,
             };
         };
 
@@ -551,18 +561,38 @@ namespace rl {
         };
 
     public:
-        bool is_button_pressed(const Keyboard::Button::type key) const;
-        bool is_button_released(const Keyboard::Button::type key) const;
-        bool is_button_held(const Keyboard::Button::type key) const;
-        std::string get_key_state(const Keyboard::Button::type kb_button) const;
+        // TODO: invoke the following
+        // to capture text input events:
+        // - SDL_StartTextInput()
+        // - SDL_TextInputActive()
+        // - SDL_StopTextInput()
+
+        [[nodiscard]] std::string get_inputted_text() const;
+        [[nodiscard]] std::string get_inputted_text_compisition() const;
+        [[nodiscard]] i32 get_inputted_text_cursor_loc() const;
+        [[nodiscard]] i32 get_inputted_text_length() const;
+        [[nodiscard]] Keyboard::Button::type keys_down() const;
+        [[nodiscard]] std::string get_key_state(const Keyboard::Button::type kb_button) const;
+
+        [[nodiscard]] bool is_button_pressed(const Keyboard::Button::type key) const;
+        [[nodiscard]] bool is_button_released(const Keyboard::Button::type key) const;
+        [[nodiscard]] bool is_button_held(const Keyboard::Button::type key) const;
+        [[nodiscard]] bool is_button_down(const Keyboard::Button::type key) const;
+        [[nodiscard]] bool all_buttons_down(std::vector<Keyboard::Button::type> keys) const;
+        [[nodiscard]] bool any_buttons_down(std::vector<Keyboard::Button::type> keys) const;
 
     private:
-        friend class rl::EventHandler;
-
+        friend class Window;
         void process_button_down(Keyboard::Button::type key);
         void process_button_up(Keyboard::Button::type key);
+        void process_text_input(const char* text);
+        void process_text_editing(const char* composition, i32 start, i32 length);
 
     private:
+        i32 m_cursor_pos{ 0 };
+        i32 m_text_length{ 0 };
+        std::string m_text{ "" };
+        std::string m_composition{ "" };
         std::bitset<Button::ScancodeCount> m_held{ 0 };
         std::bitset<Button::ScancodeCount> m_pressed{ 0 };
         mutable std::bitset<Button::ScancodeCount> m_released{ 0 };

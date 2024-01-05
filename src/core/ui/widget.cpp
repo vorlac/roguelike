@@ -40,7 +40,7 @@ namespace rl::ui {
             return;
         }
 
-        for (auto child : m_children)
+        for (auto&& child : m_children)
             if (child != nullptr)
                 child->release_ref();
     }
@@ -284,13 +284,13 @@ namespace rl::ui {
         return this->contains(pt) ? this : nullptr;
     }
 
-    bool widget::on_mouse_entered(ds::point<i32> pos)
+    bool widget::on_mouse_entered(const Mouse& mouse)
     {
         m_mouse_focus = true;
         return false;
     }
 
-    bool widget::on_mouse_exited(ds::point<i32> pos)
+    bool widget::on_mouse_exited(const Mouse& mouse)
     {
         m_mouse_focus = false;
         return false;
@@ -308,54 +308,53 @@ namespace rl::ui {
         return true;
     }
 
-    bool widget::on_mouse_button_pressed(ds::point<i32> pos, Mouse::Button::type btn, i32 modifiers)
+    bool widget::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb)
     {
         runtime_assert(false, "not implemented");
         return true;
     }
 
-    bool widget::on_mouse_button_released(ds::point<i32> pos, Mouse::Button::type btn, i32 modifiers)
+    bool widget::on_mouse_button_released(const Mouse& mouse, const Keyboard& kb)
     {
         runtime_assert(false, "not implemented");
         return true;
     }
 
-    bool widget::on_mouse_scroll(ds::point<i32> pos, ds::vector2<i32> wheel)
+    bool widget::on_mouse_scroll(const Mouse& mouse, const Keyboard& kb)
     {
         runtime_assert(false, "not implemented");
         return true;
     }
 
-    bool widget::on_mouse_move(ds::point<i32> pos, ds::vector2<i32> rel, Mouse::Button::type btn,
-                               i32 modifiers)
+    bool widget::on_mouse_move(const Mouse& mouse, const Keyboard& kb)
     {
         // runtime_assert(false, "not implemented");
         return true;
     }
 
-    bool widget::on_mouse_drag(ds::point<i32> pos, ds::vector2<i32> rel, Mouse::Button::type btn,
-                               i32 modifiers)
+    bool widget::on_mouse_drag(ds::point<i32> pnt, ds::vector2<i32> rel, const Mouse& mouse,
+                               const Keyboard& kb)
     {
         // do nothing,
         // derived objects should implement
         return false;
     }
 
-    bool widget::on_key_pressed(const Keyboard::Button::type key)
+    bool widget::on_key_pressed(const Keyboard& kb)
     {
         // do nothing,
         // derived objects should implement
         return false;
     }
 
-    bool widget::on_key_released(const Keyboard::Button::type key)
+    bool widget::on_key_released(const Keyboard& kb)
     {
         // do nothing,
         // derived objects should implement
         return false;
     }
 
-    bool widget::on_character_input(uint32_t codepoint)
+    bool widget::on_character_input(const Keyboard& kb)
     {
         // do nothing,
         // derived objects should implement
@@ -470,12 +469,12 @@ namespace rl::ui {
         return contains_pt;
     }
 
-    rl::Window* widget::window()
+    Window* widget::window()
     {
         widget* widget{ this };
         while (widget != nullptr)
         {
-            rl::Window* window = dynamic_cast<rl::Window*>(widget);
+            Window* window = dynamic_cast<Window*>(widget);
             runtime_assert(window != nullptr, "failed widget cast to window");
             if (window != nullptr)
                 return window;
@@ -498,7 +497,7 @@ namespace rl::ui {
         while (widget->parent() != nullptr)
             widget = widget->parent();
 
-        rl::Window* window{ dynamic_cast<rl::Window*>(widget) };
+        Window* window{ dynamic_cast<Window*>(widget) };
         runtime_assert(window != nullptr, "failed widget cast to window");
         window->update_focus(this);
     }

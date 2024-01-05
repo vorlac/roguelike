@@ -86,21 +86,32 @@ namespace rl {
             };
         };
 
-    protected:
-        friend class EventHandler;
-        void process_button_down(Mouse::Button::type mouse_button);
-        void process_button_up(Mouse::Button::type mouse_button);
-        void process_motion(Event::Data::Motion& motion);
-        void process_wheel(Mouse::Event::Data::Wheel& wheel);
-
     public:
-        ds::point<i32> pos() const;
-        ds::vector2<i32> wheel() const;
-        ds::vector2<i32> pos_delta() const;
-        bool is_button_down(u32 button) const;
+        [[nodiscard]] ds::point<i32> pos() const;
+        [[nodiscard]] ds::vector2<i32> wheel() const;
+        [[nodiscard]] ds::vector2<i32> pos_delta() const;
+        [[nodiscard]] Mouse::Button::type button_pressed() const;
+        [[nodiscard]] Mouse::Button::type button_released() const;
+
+        [[nodiscard]] bool is_button_pressed(Mouse::Button::type button) const;
+        [[nodiscard]] bool is_button_released(Mouse::Button::type button) const;
+        [[nodiscard]] bool is_button_held(Mouse::Button::type button) const;
+        [[nodiscard]] bool is_button_down(Mouse::Button::type button) const;
+        [[nodiscard]] bool all_buttons_down(std::vector<Mouse::Button::type> buttons) const;
+        [[nodiscard]] bool any_buttons_down(std::vector<Mouse::Button::type> buttons) const;
 
     private:
-        rl::u32 m_button_states{ 0 };
+        friend class Window;
+        void process_button_down(const Mouse::Button::type mouse_button);
+        void process_button_up(const Mouse::Button::type mouse_button);
+        void process_motion(const Event::Data::Motion& motion);
+        void process_wheel(const Mouse::Event::Data::Wheel& wheel);
+
+    private:
+        u32 m_button_states{ 0 };
+        u32 m_buttons_held{ 0 };
+        u32 m_buttons_pressed{ 0 };
+        u32 m_buttons_released{ 0 };
         ds::point<i32> m_cursor_position{ 0, 0 };
         ds::point<i32> m_prev_cursor_pos{ 0, 0 };
         ds::vector2<i32> m_wheel_position{ 0, 0 };
