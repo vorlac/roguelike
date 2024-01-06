@@ -158,9 +158,10 @@ namespace rl::ui {
         Mouse::Cursor::ID m_cursor{ Mouse::Cursor::Arrow };
         std::vector<widget*> m_children{};
         std::string m_tooltip{};
+
+        Timer<float> m_timer{};
         Keyboard m_keyboard{};
         Mouse m_mouse{};
-        Timer<float> m_timer{};
 
     private:
         constexpr static bool DiagnosticsEnabled{ true };

@@ -177,19 +177,19 @@ namespace rl {
             stats_desc_label->set_fixed_size(fixed_size);
             stats_value_label->set_fixed_size(fixed_size);
 
-            float fps{ 0 };
+            f32 fps{ 0 };
             u64 frame_count{ 0 };
             // lambda used to update fps / frame count
-            m_window->set_refresh_callback([&]() {
+            /*m_window->set_refresh_callback([&]() {
                 stats_value_label->set_caption(fmt::to_string(fmt::format("{:.2f}fps", fps)));
-            });
+            });*/
 
             // lambda used to update timer label
-            m_window->set_refresh_callback([&]() {
-                const f32 elapsed{ m_timer.elapsed() };
-                timer_value_label->set_caption(
-                    fmt::to_string(fmt::format("{:.2f}", m_timer.elapsed())));
-            });
+            // m_window->set_refresh_callback([&]() {
+            //    const f32 elapsed{ m_timer.elapsed() };
+            //    timer_value_label->set_caption(
+            //        fmt::to_string(fmt::format("{:.2f}", m_timer.elapsed())));
+            //});
 
             if (layout->row_count() > 0)
                 layout->append_row(5);
@@ -213,7 +213,7 @@ namespace rl {
                 // vbo.update_buffers(renderer->get_viewport());
                 // vbo.draw_triangles();
 
-                m_window->draw_all();
+                // m_window->draw_all();
                 m_window->swap_buffers();
 
                 fps = ++frame_count / m_timer.elapsed();

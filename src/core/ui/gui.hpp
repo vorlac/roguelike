@@ -5,6 +5,7 @@
 #include "core/ui/layout.hpp"
 #include "core/ui/popup.hpp"
 #include "core/ui/popupbutton.hpp"
+#include "core/ui/screen.hpp"
 #include "core/ui/textbox.hpp"
 #include "core/ui/theme.hpp"
 #include "core/ui/toolbutton.hpp"

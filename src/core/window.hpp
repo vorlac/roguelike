@@ -1,4 +1,5 @@
 #pragma once
+
 #include <glad/gl.h>
 
 #include <bitset>
@@ -29,9 +30,9 @@ namespace rl {
     using WindowID = SDL3::SDL_WindowID;
     using DisplayID = SDL3::SDL_DisplayID;
 
-    // temp placeholders
-    using PixelFormat = i32;
-    using ComponentFormat = i32;
+    namespace ui {
+        class Screen;
+    }
 
     class Window : public ui::widget
     {
@@ -210,12 +211,43 @@ namespace rl {
         virtual ~Window();
 
     public:
-        bool maximize();
-        bool minimize();
-        bool hide();
-        bool restore();
         bool raise();
+        bool restore();
+        bool minimize();
+        bool maximize();
+        bool hide();
         bool show();
+        bool swap_buffers();
+
+        bool clear();
+        bool render_start();
+        void render();
+        bool render_end();
+        void dispose();
+        void center();
+
+        std::string get_title();
+        DisplayID get_display();
+        ds::dims<i32> get_size();
+        ds::dims<i32> get_render_size();
+        ui::widget* button_panel();
+        const ds::color<u8>& background() const;
+        const std::string& title() const;
+        ds::dims<i32> get_min_size() const;
+        ds::dims<i32> get_max_size() const;
+        ds::point<i32> get_position() const;
+        SDL3::SDL_WindowFlags get_flags() const;
+        SDL3::SDL_DisplayMode get_display_mode() const;
+        const std::unique_ptr<Renderer>& renderer() const;
+        const Window& operator=(Window&& other) noexcept;
+        SDL3::SDL_Window* sdl_handle() const;
+        NVGcontext* nvg_context() const;
+
+        f32 get_opacity() const;
+
+        bool is_valid() const;
+        bool get_grab() const;
+        bool modal() const;
 
         bool set_vsync(bool enabled);
         bool set_grab(bool grabbed);
@@ -228,127 +260,11 @@ namespace rl {
         bool set_min_size(ds::dims<i32> size);
         bool set_max_size(ds::dims<i32> size);
         bool set_opengl_attribute(OpenGL::Attribute attr, auto val);
+        bool set_background(ds::color<u8> background);
 
-        bool get_grab() const;
-        f32 get_opacity() const;
-        std::string get_title();
-        DisplayID get_display();
-        SDL3::SDL_WindowFlags get_flags() const;
-        SDL3::SDL_DisplayMode get_display_mode() const;
-        ds::dims<i32> get_size();
-        ds::dims<i32> get_render_size();
-        ds::dims<i32> get_min_size() const;
-        ds::dims<i32> get_max_size() const;
-        ds::point<i32> get_position() const;
-
-        const std::unique_ptr<Renderer>& renderer() const;
-        const Window& operator=(Window&& other) noexcept;
-        SDL3::SDL_Window* sdl_handle() const;
-        bool is_valid() const;
-        bool swap_buffers();
-
-        //   //================================||
-    public:  //== screen public NON-virtuals ==||
-        //   //================================||
-        bool on_shown(const WindowID id);
-        bool on_hidden(const WindowID id);
-        bool on_exposed(const WindowID id);
-        bool on_moved(const WindowID id, ds::point<i32> pt);
-        bool on_resized(ds::dims<i32> size);
-        bool on_pixel_size_changed(const WindowID id, ds::dims<i32> pixel_size);
-        bool on_minimized(const WindowID id);
-        bool on_maximized(const WindowID id);
-        bool on_restored(const WindowID id);
-        bool on_close_requested(const WindowID id);
-        bool on_take_focus(const WindowID id);
-        bool on_hit_test(const WindowID id);
-        bool on_icc_profile_changed(const WindowID id);
-        bool on_display_changed(const WindowID id);
-        bool on_display_scale_changed(const WindowID id);
-        bool on_display_content_scale_changed(const DisplayID id);
         bool on_occluded(const WindowID id);
-        bool on_destroyed(const WindowID id);
 
-        const ds::color<u8>& background() const;
-        void set_background(ds::color<u8> background);
-
-        void set_visible(bool visible);  // intentionally doesn't use virtual for this for this.
-        void set_resize_callback(const std::function<void(ds::dims<i32>)>& callback);
-        void set_refresh_callback(const std::function<void()>& refresh_func);
-        void drop_callback_event(i32 count, const char** filenames);
-        void nvg_flush();
-
-        ds::point<i32> mouse_pos() const;
-        ds::dims<i32> frame_buffer_size() const;
-        NVGcontext* nvg_context() const;  // TODO: move to renderer
-        const std::function<void(ds::dims<i32>)>& resize_callback() const;
-
-        // replaced with Window::title & Window::set_title, but may still need them
-        // ------------------------------------------------------------------------
-        // const std::string& caption() const;
-        // void set_caption(const std::string& caption);
-
-        // placeholders, needed for platform independent impl only
-        bool has_depth_buffer() const;
-        bool has_stencil_buffer() const;
-        bool has_float_buffer() const;
-        bool tooltip_fade_in_progress() const;
-        void perform_layout();
-
-        ComponentFormat component_format() const;
-        PixelFormat pixel_format() const;
-
-        // external api impl methods
-        //--------------------------
-        bool init_gui();
-        bool redraw();
-        bool draw_widgets();
-
-        void update_focus(ui::widget* widget);
-        void dispose_window(Window* window);
-        void move_window_to_front(Window* window);
-        void center_window(Window* window) const;
-
-        //   //============================||
-    public:  //== screen public virtuals ==||
-        //   //============================||
-        friend class EventHandler;
-
-        virtual bool draw_all();
-        virtual bool draw_setup();
-        virtual bool draw_contents();
-        virtual bool draw_teardown();
-
-        virtual bool clear();
-        virtual bool refresh();
-
-        virtual bool drop_event(const std::vector<std::string>& filenames);
-
-        virtual bool on_focus_gained() override;
-        virtual bool on_focus_lost() override;
-
-        virtual bool on_key_pressed(const Keyboard& kb) override;
-        virtual bool on_key_released(const Keyboard& kb) override;
-        virtual bool on_character_input(const Keyboard& kb) override;
-
-        virtual bool on_mouse_entered(const Mouse& mouse) override;
-        virtual bool on_mouse_exited(const Mouse& mouse) override;
-
-        virtual bool on_mouse_scroll(const Mouse& mouse, const Keyboard& kb) override;
-        virtual bool on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb) override;
-        virtual bool on_mouse_button_released(const Mouse& mouse, const Keyboard& kb) override;
-
-        virtual bool on_mouse_move(const Mouse& mouse, const Keyboard& kb) override;
-        virtual bool on_mouse_drag(ds::point<i32> pnt, ds::vector2<i32> rel, const Mouse& mouse,
-                                   const Keyboard& kb) override;
-
-        //   //================================||
-    public:  //== window public NON-virtuals ==||
-        //   //================================||
-
-        void dispose();
-        void center();
-
+    public:
         void mouse_entered_event_callback(const SDL3::SDL_Event& e);
         void mouse_exited_event_callback(const SDL3::SDL_Event& e);
         void mouse_moved_event_callback(const SDL3::SDL_Event& e);
@@ -360,40 +276,34 @@ namespace rl {
         void keyboard_char_event_callback(const SDL3::SDL_Event& e);
         void window_resized_event_callback(const SDL3::SDL_Event& e);
 
+        bool on_pixel_size_changed(const WindowID id, ds::dims<i32> pixel_size);
         bool set_title(std::string title);
         bool set_modal(bool modal);
 
-        ui::widget* button_panel();
-        const std::string& title() const;
-        bool modal() const;
-
-        //   //============================||
-    public:  //== window public virtuals ==||
-        //   //============================||
+    public:
         using ui::widget::perform_layout;
         virtual void refresh_relative_placement();
         virtual ds::dims<i32> preferred_size(NVGcontext* nvg_context) const;
-        virtual void draw(NVGcontext* ctx) override;
 
     private:
+        bool m_drag{ false };
+        bool m_modal{ false };
+        bool m_vsync{ false };
+
         std::string m_title{};
-        ui::widget* m_drag_widget{ nullptr };
-        ui::widget* m_button_panel{ nullptr };
-        std::array<SDL3::SDL_Cursor*, Mouse::Cursor::CursorCount> m_cursors{};
-        std::vector<ui::widget*> m_focus_path{};
+        WindowID m_window_id{ 0 };
+        DisplayID m_display_id{ 0 };
+        Properties m_properties{ Properties::None };
+        ds::rect<i32> m_window_rect{ { 0, 0 }, { 0, 0 } };
         ds::color<u8> m_background_color{ 29, 32, 39 };
         ds::dims<i32> m_framebuf_size{ 0, 0 };
-        std::function<void(ds::dims<i32>)> m_resize_callback;
-        f32 m_last_interaction{ 0.0f };
 
-        bool m_vsync{ false };
-        bool m_modal{ false };
-        bool m_depth_buffer{ false };
-        bool m_stencil_buffer{ false };
-        bool m_float_buffer{ false };
-        bool m_drag_active{ false };
-        bool m_process_events{ true };
-        bool m_redraw{ true };
+        ui::Screen* m_screen{ nullptr };
+        ui::widget* m_button_panel{ nullptr };
+        SDL3::SDL_Window* m_sdl_window{ nullptr };
+        std::unique_ptr<Renderer> m_renderer;
+
+        std::array<SDL3::SDL_Cursor*, Mouse::Cursor::CursorCount> m_cursors{};
 
         // The content display scale relative to a window's pixel size.
         //
@@ -404,26 +314,103 @@ namespace rl {
         // a 1920x1080 window with a display scale of 1.0. Conceptually this value corresponds
         // to the scale display setting, and is updated when that setting is changed, or the
         // window moves to a display with a different scale setting.
-        f32 m_pixel_ratio{ 0.0f };
+        f32 m_pixel_ratio{ 1.0f };
 
         // The pixel density of a window.
         //
         // This is a ratio of pixel size to window size.
         // For example, if the window is 1920x1080 and it has a high density
         // back buffer of 3840x2160 pixels, it would have a pixel density of 2.0.
-        f32 m_pixel_density{ 0.0f };
-
-        //    //=========================||
-    private:  //== extension of window ==||
-        //    //=========================||
-        std::vector<std::function<void()>> m_refresh_callbacks;
-
-    private:
-        WindowID m_window_id{ 0 };
-        DisplayID m_display_id{ 0 };
-        Properties m_properties{ Properties::Flag::None };
-        SDL3::SDL_Window* m_sdl_window{ nullptr };
-        ds::rect<i32> m_window_rect{ 0, 0, 0, 0 };
-        std::unique_ptr<Renderer> m_renderer;
+        f32 m_pixel_density{ 1.0f };
     };
+
+    // bool Screen::on_shown(const WindowID id)
+    //{
+    //     this->set_visible(true);
+    //     if constexpr (io::logging::window_events)
+    //         log::info("window::on_shown [id:{}]", id);
+
+    //    return true;
+    //}
+
+    // bool Screen::on_hidden(const WindowID id)
+    //{
+    //     this->set_visible(false);
+    //     if constexpr (io::logging::window_events)
+    //         log::info("window::on_hidden [id:{}]", id);
+
+    //    return true;
+    //}
+
+    // bool Screen::on_exposed(const WindowID id)
+    //{
+    //     m_visible = true;
+    //     if constexpr (io::logging::window_events)
+    //         log::info("window::on_exposed [id:{}]", id);
+
+    //    return true;
+    //}
+    // bool Screen::on_minimized(const WindowID id)
+    //{
+    //     this->set_visible(false);
+    //     if constexpr (io::logging::window_events)
+    //         log::info("window::on_minimized [id:{}]", id);
+    //     return true;
+    // }
+
+    // bool Screen::on_maximized(const WindowID id)
+    //{
+    //     bool ret = true;
+    //     if constexpr (io::logging::window_events)
+    //         log::info("window::on_maximized [id:{}]", id);
+    //     return ret;
+    // }
+
+    // bool Screen::on_restored(const WindowID id)
+    //{
+    //     bool ret = true;
+    //     if constexpr (io::logging::window_events)
+    //         log::info("window::on_restored [id:{}]", id);
+    //     return ret;
+    // }
+
+    // bool Screen::on_close_requested(const WindowID id)
+    //{
+    //     bool ret = true;
+    //     if constexpr (io::logging::window_events)
+    //         log::info("window::on_close_requested [id:{}]", id);
+    //     return ret;
+    // }
+
+    // bool Screen::on_take_focus(const WindowID id)
+    //{
+    //     bool ret = true;
+    //     if constexpr (io::logging::window_events)
+    //         log::info("window::on_take_focus [id:{}]", id);
+    //     return ret;
+    // }
+
+    // bool Screen::on_hit_test(const WindowID id)
+    //{
+    //     bool ret = true;
+    //     if constexpr (io::logging::window_events)
+    //         log::info("window::on_hit_test [id:{}]", id);
+    //     return ret;
+    // }
+
+    // bool Screen::on_icc_profile_changed(const WindowID id)
+    //{
+    //     bool ret = true;
+    //     if constexpr (io::logging::window_events)
+    //         log::info("window::on_icc_profile_changed [id:{}]", id);
+    //     return ret;
+    // }
+
+    // bool Screen::on_display_changed(const WindowID id)
+    //{
+    //     bool ret = true;
+    //     if constexpr (io::logging::window_events)
+    //         log::info("window::on_display_changed [id:{}]", id);
+    //     return ret;
+    // }
 }

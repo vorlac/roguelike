@@ -1,6 +1,7 @@
 #include "core/keyboard.hpp"
 #include "core/mouse.hpp"
 #include "core/ui/layout.hpp"
+#include "core/ui/screen.hpp"
 #include "core/ui/theme.hpp"
 #include "core/ui/widget.hpp"
 #include "core/window.hpp"
@@ -545,10 +546,7 @@ namespace rl::ui {
         widget* widget{ this };
         while (widget->parent() != nullptr)
             widget = widget->parent();
-
-        Window* window{ dynamic_cast<Window*>(widget) };
-        runtime_assert(window != nullptr, "failed widget conversion to window");
-        window->update_focus(this);
+        ((ui::Screen*)widget)->update_focus(this);
     }
 
     void widget::draw(NVGcontext* nvg_context)
