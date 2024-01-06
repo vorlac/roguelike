@@ -314,19 +314,16 @@ namespace rl {
         //   //============================||
         friend class EventHandler;
 
-        // screen base virtuals
         virtual bool draw_all();
         virtual bool draw_setup();
         virtual bool draw_contents();
         virtual bool draw_teardown();
+
         virtual bool clear();
         virtual bool refresh();
 
-        // not needed since window owns context??
-        // virtual void draw(NVGcontext* ctx) override;
         virtual bool drop_event(const std::vector<std::string>& filenames);
 
-        /* ui::widget event callback overrides */
         virtual bool on_focus_gained() override;
         virtual bool on_focus_lost() override;
 
@@ -366,7 +363,7 @@ namespace rl {
         bool set_title(std::string title);
         bool set_modal(bool modal);
 
-        ui::widget* button_panel() const;
+        ui::widget* button_panel();
         const std::string& title() const;
         bool modal() const;
 
@@ -376,6 +373,7 @@ namespace rl {
         using ui::widget::perform_layout;
         virtual void refresh_relative_placement();
         virtual ds::dims<i32> preferred_size(NVGcontext* nvg_context) const;
+        virtual void draw(NVGcontext* ctx) override;
 
     private:
         std::string m_title{};

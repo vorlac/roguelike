@@ -39,7 +39,7 @@ namespace rl::ui {
         , m_text_offset{ 0 }
         , m_last_click{ 0 }
     {
-        if (m_theme)
+        if (m_theme != nullptr)
             m_font_size = m_theme->m_text_box_font_size;
 
         m_icon_extra_scale = .8f;

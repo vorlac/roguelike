@@ -266,7 +266,7 @@ namespace rl::ui {
     {
         for (auto it = m_children.rbegin(); it != m_children.rend(); ++it)
         {
-            widget* child{ *it };
+            ui::widget* child{ *it };
             if (child->visible() && child->contains(pt - this->m_pos))
                 return child->find_widget({ pt - this->m_pos });
         }
@@ -277,7 +277,7 @@ namespace rl::ui {
     {
         for (auto it = m_children.rbegin(); it != m_children.rend(); ++it)
         {
-            widget* child = *it;
+            ui::widget* child{ *it };
             if (child->visible() && child->contains(pt - this->m_pos))
                 return child->find_widget(pt - this->m_pos);
         }
@@ -311,10 +311,13 @@ namespace rl::ui {
     bool widget::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb)
     {
         auto&& mouse_pos{ mouse.pos() };
-        for (auto&& child : m_children)
-            if (child->visible() && child->contains(mouse_pos - m_pos) &&
+        for (auto it = m_children.rbegin(); it != m_children.rend(); it++)
+        {
+            ui::widget* child{ *it };
+            if (child->visible() && child->contains(mouse_pos) &&
                 child->on_mouse_button_pressed(mouse, kb))
                 return true;
+        }
 
         if (mouse.is_button_pressed(Mouse::Button::Left) && !m_focused)
             this->request_focus();
@@ -325,27 +328,57 @@ namespace rl::ui {
     bool widget::on_mouse_button_released(const Mouse& mouse, const Keyboard& kb)
     {
         auto&& mouse_pos{ mouse.pos() };
-        for (auto&& child : m_children)
+        for (auto it = m_children.rbegin(); it != m_children.rend(); ++it)
         {
+            ui::widget* child{ *it };
             auto&& offset_pos{ mouse_pos - m_pos };
-            if (child->visible() &&
-                child->contains(std::forward<decltype(offset_pos)>(offset_pos)) &&
+            if (child->visible() && child->contains(mouse_pos) &&
                 child->on_mouse_button_released(mouse, kb))
                 return true;
         }
+
         return false;
     }
 
     bool widget::on_mouse_scroll(const Mouse& mouse, const Keyboard& kb)
     {
-        runtime_assert(false, "not implemented");
-        return true;
+        for (auto it = m_children.rbegin(); it != m_children.rend(); ++it)
+        {
+            ui::widget* child{ *it };
+            if (!child->visible())
+                continue;
+
+            auto&& mouse_pos{ mouse.pos() };
+            auto&& offset_mouse_pos{ mouse_pos - m_pos };
+            if (child->contains(offset_mouse_pos) && child->on_mouse_scroll(mouse, kb))
+                return true;
+        }
+        return false;
     }
 
     bool widget::on_mouse_move(const Mouse& mouse, const Keyboard& kb)
     {
-        // runtime_assert(false, "not implemented");
-        return true;
+        bool handled{ false };
+
+        for (auto&& child : m_children)
+        {
+            if (!child->visible())
+                continue;
+
+            auto&& mouse_pos{ mouse.pos() };
+            auto&& mouse_delta_pos{ mouse.pos_delta() };
+
+            const bool contained{ child->contains(mouse_pos - m_pos) };
+            const bool prev_contained{ child->contains(mouse_pos - m_pos - mouse_delta_pos) };
+
+            if (contained != prev_contained)
+                handled |= child->on_mouse_entered(mouse);
+
+            if (contained || prev_contained)
+                handled |= child->on_mouse_move(mouse, kb);
+        }
+
+        return handled;
     }
 
     bool widget::on_mouse_drag(ds::point<i32> pnt, ds::vector2<i32> rel, const Mouse& mouse,
@@ -388,34 +421,36 @@ namespace rl::ui {
 
     void widget::add_child(widget* widget)
     {
-        add_child(child_count(), widget);
+        this->add_child(this->child_count(), widget);
     }
 
     void widget::remove_child(const widget* widget)
     {
-        size_t child_count = m_children.size();
+        size_t child_count{ m_children.size() };
         m_children.erase(std::remove(m_children.begin(), m_children.end(), widget),
                          m_children.end());
-        if (m_children.size() == child_count)
-            throw std::runtime_error("widget::remove_child(): widget not found!");
+
+        runtime_assert(m_children.size() != child_count, "didn't find widget to delete");
         widget->release_ref();
     }
 
-    void widget::remove_child_at(int index)
+    void widget::remove_child_at(i32 index)
     {
-        if (index < 0 || index >= (int)m_children.size())
-            throw std::runtime_error("widget::remove_child_at(): out of bounds!");
-        widget* widget = m_children[index];
+        runtime_assert(index > 0 && index < m_children.size(),
+                       "widget child remove idx out of bounds");
+
+        widget* widget{ m_children[index] };
         m_children.erase(m_children.begin() + index);
         widget->release_ref();
     }
 
-    int widget::child_index(widget* widget) const
+    i32 widget::child_index(widget* widget) const
     {
         auto it = std::find(m_children.begin(), m_children.end(), widget);
         if (it == m_children.end())
             return -1;
-        return (int)(it - m_children.begin());
+
+        return static_cast<i32>(it - m_children.begin());
     }
 
     bool widget::enabled() const
@@ -481,8 +516,8 @@ namespace rl::ui {
     bool widget::contains(ds::point<i32> pt) const
     {
         // Check if the widget contains a certain position
-        const bool contains_pt{ ds::rect<i32>{ m_pos, m_size }.contains(pt) };
-        return contains_pt;
+        ds::rect<i32> widget_rect{ this->abs_position(), m_size };
+        return widget_rect.contains(pt);
     }
 
     Window* widget::window()
@@ -490,7 +525,7 @@ namespace rl::ui {
         widget* widget{ this };
         while (widget != nullptr)
         {
-            Window* window = dynamic_cast<Window*>(widget);
+            Window* window{ dynamic_cast<Window*>(widget) };
             runtime_assert(window != nullptr, "failed widget cast to window");
             if (window != nullptr)
                 return window;
@@ -514,7 +549,7 @@ namespace rl::ui {
             widget = widget->parent();
 
         Window* window{ dynamic_cast<Window*>(widget) };
-        runtime_assert(window != nullptr, "failed widget cast to window");
+        runtime_assert(window != nullptr, "failed widget conversion to window");
         window->update_focus(this);
     }
 

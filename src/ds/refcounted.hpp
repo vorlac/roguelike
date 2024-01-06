@@ -9,25 +9,25 @@ namespace rl::ds {
     class refcounted
     {
     public:
-        refcounted() = default;
-        virtual ~refcounted() = default;
+        constexpr inline refcounted() = default;
+        constexpr inline virtual ~refcounted() = default;
 
-        refcounted(const refcounted&)
-            : refcounted{}
+        constexpr inline refcounted(const refcounted&) noexcept
+            : m_references{ 1 }
         {
         }
 
-        refcounted(refcounted&&)
-            : refcounted{}
+        constexpr inline refcounted(refcounted&&) noexcept
+            : m_references{ 1 }
         {
         }
 
-        refcounted& operator=(const refcounted&)
+        constexpr inline refcounted& operator=(const refcounted&) noexcept
         {
             return *this;
         }
 
-        refcounted& operator=(refcounted&&)
+        constexpr inline refcounted& operator=(refcounted&&) noexcept
         {
             return *this;
         }

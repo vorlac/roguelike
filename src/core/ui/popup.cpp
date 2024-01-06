@@ -67,7 +67,7 @@ namespace rl::ui {
 
     void Popup::perform_layout(NVGcontext* ctx)
     {
-        if (m_layout || m_children.size() != 1)
+        if (m_layout != nullptr || m_children.size() != 1)
             ui::widget::perform_layout(ctx);
         else
         {

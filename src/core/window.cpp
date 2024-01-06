@@ -288,6 +288,83 @@ namespace rl {
         return ret;
     }
 
+    void Window::draw(NVGcontext* ctx)
+    {
+        i32 ds = m_theme->m_window_drop_shadow_size, cr = m_theme->m_window_corner_radius;
+        i32 hh = m_theme->m_window_header_height;
+
+        // Draw window
+        nvgSave(ctx);
+        nvgBeginPath(ctx);
+        nvgRoundedRect(ctx, m_pos.x, m_pos.y, m_size.width, m_size.height, cr);
+        nvgFillColor(ctx, m_mouse_focus ? m_theme->m_window_fill_focused
+                                        : m_theme->m_window_fill_unfocused);
+        nvgFill(ctx);
+
+        // Draw a drop shadow
+        NVGpaint shadow_paint = nvgBoxGradient(ctx, m_pos.x, m_pos.y, m_size.width, m_size.height,
+                                               cr * 2, ds * 2, m_theme->m_drop_shadow,
+                                               m_theme->m_transparent);
+
+        nvgSave(ctx);
+        nvgResetScissor(ctx);
+        nvgBeginPath(ctx);
+        nvgRect(ctx, m_pos.x - ds, m_pos.y - ds, m_size.width + 2 * ds, m_size.height + 2 * ds);
+        nvgRoundedRect(ctx, m_pos.x, m_pos.y, m_size.width, m_size.height, cr);
+        nvgPathWinding(ctx, NVG_HOLE);
+        nvgFillPaint(ctx, shadow_paint);
+        nvgFill(ctx);
+        nvgRestore(ctx);
+
+        if (!m_title.empty())
+        {
+            /* Draw header */
+            NVGpaint header_paint{ nvgLinearGradient(ctx, m_pos.x, m_pos.y, m_pos.x, m_pos.y + hh,
+                                                     m_theme->m_window_header_gradient_top,
+                                                     m_theme->m_window_header_gradient_bot) };
+
+            nvgBeginPath(ctx);
+            nvgRoundedRect(ctx, m_pos.x, m_pos.y, m_size.width, hh, cr);
+
+            nvgFillPaint(ctx, header_paint);
+            nvgFill(ctx);
+
+            nvgBeginPath(ctx);
+            nvgRoundedRect(ctx, m_pos.x, m_pos.y, m_size.width, hh, cr);
+            nvgStrokeColor(ctx, m_theme->m_window_header_sep_top);
+
+            nvgSave(ctx);
+            nvgIntersectScissor(ctx, m_pos.x, m_pos.y, m_size.width, 0.5f);
+            nvgStroke(ctx);
+            nvgRestore(ctx);
+
+            nvgBeginPath(ctx);
+            nvgMoveTo(ctx, m_pos.x + 0.5f, m_pos.y + hh - 1.5f);
+            nvgLineTo(ctx, m_pos.x + m_size.width - 0.5f, m_pos.y + hh - 1.5f);
+            nvgStrokeColor(ctx, m_theme->m_window_header_sep_bot);
+            nvgStroke(ctx);
+
+            nvgFontSize(ctx, 18.0f);
+            nvgFontFace(ctx, ui::font::name::sans_bold);
+            nvgTextAlign(ctx, NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE);
+
+            nvgFontBlur(ctx, 2.0f);
+            nvgFillColor(ctx, m_theme->m_drop_shadow);
+            nvgText(ctx, m_pos.x + m_size.width / 2.0f, m_pos.y + hh / 2.0f, m_title.c_str(),
+                    nullptr);
+
+            nvgFontBlur(ctx, 0.0f);
+            nvgFillColor(ctx, m_focused ? m_theme->m_window_title_focused
+                                        : m_theme->m_window_title_unfocused);
+            nvgText(ctx, m_pos.x + m_size.width / 2.0f, m_pos.y + hh / 2.0f - 1, m_title.c_str(),
+                    nullptr);
+        }
+
+        nvgRestore(ctx);
+
+        ui::widget::draw(ctx);
+    }
+
     bool Window::maximize()
     {
         i32 result = SDL3::SDL_MaximizeWindow(m_sdl_window);
@@ -663,8 +740,22 @@ namespace rl {
 
     ds::dims<i32> Window::preferred_size(NVGcontext* nvg_context) const
     {
-        runtime_assert(false, "not implemented");
-        return { 0, 0 };
+        if (m_button_panel != nullptr)
+            m_button_panel->hide();
+
+        ds::dims<i32> result{ ui::widget::preferred_size(nvg_context) };
+
+        if (m_button_panel != nullptr)
+            m_button_panel->show();
+
+        nvgFontSize(nvg_context, 18.0f);
+        nvgFontFace(nvg_context, ui::font::name::sans_bold);
+
+        std::array<f32, 4> bounds = {};
+        nvgTextBounds(nvg_context, 0, 0, m_title.c_str(), nullptr, bounds.data());
+
+        return ds::dims<i32>(std::max(result.width, static_cast<i32>(bounds[2] - bounds[0] + 20)),
+                             std::max(result.height, static_cast<i32>(bounds[3] - bounds[1])));
     }
 
     void Window::refresh_relative_placement()
@@ -689,6 +780,7 @@ namespace rl {
         {
             if (!w->focused())
                 continue;
+
             w->on_focus_lost();
         }
 
@@ -706,11 +798,17 @@ namespace rl {
             widget = widget->parent();
         }
 
-        for (auto&& focus_widget : m_focus_path)
+        for (auto it = m_focus_path.rbegin(); it != m_focus_path.rend(); ++it)
+        {
+            ui::widget* focus_widget{ *it };
             focus_widget->on_focus_gained();
+        }
 
-        if (window != nullptr)
-            this->move_window_to_front(window);
+        // TODO: restructure rl::Window to avoid crash when this ends up
+        // invalidating iterator in on_mouse_click()...
+        //
+        // if (window != nullptr)
+        //     this->move_window_to_front(static_cast<Window*>(window));
     }
 
     void Window::move_window_to_front(Window* window)
@@ -760,16 +858,29 @@ namespace rl {
         return m_modal;
     }
 
-    ui::widget* Window::button_panel() const
+    ui::widget* Window::button_panel()
     {
-        runtime_assert(false, "not implemented");
-        return nullptr;
+        if (!m_button_panel)
+        {
+            m_button_panel = new ui::widget{ this };
+            m_button_panel->set_layout({
+                new ui::box_layout{
+                    ui::orientation::Horizontal,
+                    ui::alignment::Middle,
+                    0,
+                    4,
+                },
+            });
+        }
+
+        return m_button_panel;
     }
 
     void Window::dispose_window(Window* window)
     {
         if (std::find(m_focus_path.begin(), m_focus_path.end(), window) != m_focus_path.end())
             m_focus_path.clear();
+
         if (m_drag_widget == window)
             m_drag_widget = nullptr;
 
@@ -1050,8 +1161,8 @@ namespace rl {
         //
         // this is widget::m_size NOT window::m_size
         m_size = m_window_rect.size;
-
         m_last_interaction = m_timer.elapsed();
+
         this->on_resized(m_size);
         this->redraw();
     }
@@ -1107,14 +1218,6 @@ namespace rl {
             ds::rect<i32> new_rect{ prev_rect.pt, size };
             log::info("window::on_resized: {} => {}", prev_rect, new_rect);
         }
-
-        bool ret{ m_window_rect.size != size };
-        runtime_assert(ret, "window resized, but size unchanged");
-
-        glViewport(0, 0, size.width, size.height);
-
-        m_last_interaction = m_timer.elapsed();
-        m_window_rect.size = size;
 
         if (m_resize_callback != nullptr)
             m_resize_callback(size);
@@ -1182,7 +1285,17 @@ namespace rl {
         if constexpr (io::logging::window_events)
             log::info("window::on_mouse_button_pressed [button:{}]", mouse.button_pressed());
 
-        return ui::widget::on_mouse_button_pressed(m_mouse, m_keyboard);
+        if (ui::widget::on_mouse_button_pressed(mouse, kb))
+            return true;
+
+        else if (mouse.is_button_pressed(Mouse::Button::Left))
+        {
+            i32 offset_height{ mouse.pos().y - m_pos.y };
+            m_drag_active = offset_height < m_theme->m_window_header_height;
+            return true;
+        }
+
+        return false;
     }
 
     bool Window::on_mouse_button_released(const Mouse& mouse, const Keyboard& kb)
@@ -1190,7 +1303,16 @@ namespace rl {
         if constexpr (io::logging::window_events)
             log::info("window::on_mouse_button_released [button:{}]", mouse.button_released());
 
-        return ui::widget::on_mouse_button_released(m_mouse, m_keyboard);
+        if (ui::widget::on_mouse_button_released(mouse, kb))
+            return true;
+
+        if (mouse.is_button_released(Mouse::Button::Left))
+        {
+            m_drag_active = false;
+            return true;
+        }
+
+        return false;
     }
 
     bool Window::on_mouse_drag(ds::point<i32> pnt, ds::vector2<i32> rel, const Mouse& mouse,
@@ -1201,7 +1323,22 @@ namespace rl {
                       mouse.pos_delta(), mouse.button_pressed(),
                       kb.is_button_down(Keyboard::Button::Modifiers));
 
-        return ui::widget::on_mouse_drag(pnt, rel, mouse, kb);
+        if (m_drag_active && mouse.is_button_held(Mouse::Button::Left))
+        {
+            m_pos += rel;
+
+            m_pos.x = std::max(m_pos.x, 0);
+            m_pos.y = std::max(m_pos.y, 0);
+
+            auto relative_size{ this->parent()->size() - m_size };
+
+            m_pos.x = std::min(m_pos.x, relative_size.width);
+            m_pos.y = std::min(m_pos.y, relative_size.height);
+
+            return true;
+        }
+
+        return false;
     }
 
     bool Window::on_mouse_move(const Mouse& mouse, const Keyboard& kb)
