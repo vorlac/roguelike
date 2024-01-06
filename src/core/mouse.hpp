@@ -1,13 +1,12 @@
 #pragma once
 
-#include <array>
-#include <initializer_list>
 #include <vector>
 
 #include "ds/point.hpp"
 #include "ds/vector2d.hpp"
 #include "sdl/defs.hpp"
 #include "utils/numeric.hpp"
+
 SDL_C_LIB_BEGIN
 #include <SDL3/SDL_events.h>
 #include <SDL3/SDL_mouse.h>
@@ -103,8 +102,9 @@ namespace rl {
         [[nodiscard]] bool all_buttons_down(std::vector<Mouse::Button::type> buttons) const;
         [[nodiscard]] bool any_buttons_down(std::vector<Mouse::Button::type> buttons) const;
 
-    private:
+    protected:
         friend class Window;
+
         void process_button_down(const Mouse::Button::type mouse_button);
         void process_button_up(const Mouse::Button::type mouse_button);
         void process_motion(const Event::Data::Motion& motion);

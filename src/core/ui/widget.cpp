@@ -366,7 +366,7 @@ namespace rl::ui {
 
             const auto mouse_pos{ mouse.pos() };
             const bool contained{ child->contains(mouse_pos) };
-            const bool prev_contained{ child->contains(mouse_pos - m_mouse.pos_delta()) };
+            const bool prev_contained{ child->contains(mouse_pos - mouse.pos_delta()) };
 
             if (contained && !prev_contained)
                 handled |= child->on_mouse_entered(mouse);

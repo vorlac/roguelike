@@ -134,9 +134,9 @@ namespace rl {
 
         struct OpenGL
         {
-            using sdl_type = SDL3::SDL_GLattr;
-
-            enum Attribute : std::underlying_type_t<sdl_type> {
+            using type = SDL3::SDL_GLattr;
+             
+            enum Attribute : std::underlying_type_t<type> {
                 RedSize                  = SDL3::SDL_GL_RED_SIZE,
                 GreenSize                = SDL3::SDL_GL_GREEN_SIZE,
                 BlueSize                 = SDL3::SDL_GL_BLUE_SIZE,
@@ -198,11 +198,6 @@ namespace rl {
         };
 
     public:
-        explicit Window(Window&& window) noexcept = delete;
-        explicit Window(const Window& window) = delete;
-        explicit Window(SDL3::SDL_Window* other) = delete;
-
-        // TODO: remove! placeholder for ui::Popup
         Window() = default;
         Window(ui::widget* parent, const std::string& title);
         explicit Window(std::string title, const ds::dims<i32>& dims = DEFAULT_SIZE,
@@ -221,29 +216,35 @@ namespace rl {
 
         bool clear();
         bool render_start();
-        void render();
+        bool render();
         bool render_end();
         void dispose();
         void center();
 
         std::string get_title();
         DisplayID get_display();
+        ui::widget* button_panel();
         ds::dims<i32> get_size();
         ds::dims<i32> get_render_size();
-        ui::widget* button_panel();
-        const ds::color<u8>& background() const;
-        const std::string& title() const;
         ds::dims<i32> get_min_size() const;
         ds::dims<i32> get_max_size() const;
         ds::point<i32> get_position() const;
+        f32 get_opacity() const;
+
+        SDL3::SDL_Window* sdl_handle() const;
         SDL3::SDL_WindowFlags get_flags() const;
         SDL3::SDL_DisplayMode get_display_mode() const;
+
         const std::unique_ptr<Renderer>& renderer() const;
         const Window& operator=(Window&& other) noexcept;
-        SDL3::SDL_Window* sdl_handle() const;
+        const ds::color<u8>& background() const;
+        const std::string& title() const;
+
         NVGcontext* nvg_context() const;
 
-        f32 get_opacity() const;
+        const Keyboard& keyboard() const;
+        const Mouse& mouse() const;
+        ui::Screen* gui() const;
 
         bool is_valid() const;
         bool get_grab() const;
@@ -265,12 +266,13 @@ namespace rl {
         bool on_occluded(const WindowID id);
 
     public:
-        void mouse_entered_event_callback(const SDL3::SDL_Event& e);
-        void mouse_exited_event_callback(const SDL3::SDL_Event& e);
         void mouse_moved_event_callback(const SDL3::SDL_Event& e);
         void mouse_wheel_event_callback(const SDL3::SDL_Event& e);
         void mouse_button_pressed_event_callback(const SDL3::SDL_Event& e);
         void mouse_button_released_event_callback(const SDL3::SDL_Event& e);
+        void mouse_entered_event_callback(const SDL3::SDL_Event& e);
+        void mouse_exited_event_callback(const SDL3::SDL_Event& e);
+
         void keyboard_key_pressed_event_callback(const SDL3::SDL_Event& e);
         void keyboard_key_released_event_callback(const SDL3::SDL_Event& e);
         void keyboard_char_event_callback(const SDL3::SDL_Event& e);
@@ -284,6 +286,11 @@ namespace rl {
         using ui::widget::perform_layout;
         virtual void refresh_relative_placement();
         virtual ds::dims<i32> preferred_size(NVGcontext* nvg_context) const;
+
+    private:
+        Window(const Window& window) = delete;
+        Window(Window&& window) noexcept = delete;
+        Window(SDL3::SDL_Window* other) = delete;
 
     private:
         bool m_drag{ false };
@@ -302,6 +309,8 @@ namespace rl {
         ui::widget* m_button_panel{ nullptr };
         SDL3::SDL_Window* m_sdl_window{ nullptr };
         std::unique_ptr<Renderer> m_renderer;
+        Keyboard m_keyboard{};
+        Mouse m_mouse{};
 
         std::array<SDL3::SDL_Cursor*, Mouse::Cursor::CursorCount> m_cursors{};
 

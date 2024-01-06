@@ -41,18 +41,24 @@ namespace rl {
 
                     // Keyboard input events
                     case Keyboard::Event::KeyDown:
+                    {
                         window->keyboard_key_pressed_event_callback(e);
-                        if (e.key.keysym.scancode ==
-                            Keyboard::Button::type(Keyboard::Button::Escape)) [[unlikely]]
+                        Keyboard::Button::type key{ e.key.keysym.scancode };
+                        if (key == Keyboard::Button::Escape) [[unlikely]]
                             m_quit = true;
                         break;
+                    }
                     case Keyboard::Event::KeyUp:
+                    {
                         window->keyboard_key_released_event_callback(e);
                         break;
+                    }
                     case Keyboard::Event::TextEditing:
                     case Keyboard::Event::TextInput:
+                    {
                         window->keyboard_char_event_callback(e);
                         break;
+                    }
 
                     // Window events
                     case Window::Event::Shown:
@@ -128,7 +134,7 @@ namespace rl {
                     {
                         const Window::Event::Data& window_event{ e.window };
                         const WindowID id{ window_event.windowID };
-                        // window->mouse_entered_event_callback(e);
+                        window->mouse_entered_event_callback(e);
                         break;
                     }
                     case Window::Event::MouseLeave:

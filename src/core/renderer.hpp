@@ -71,14 +71,14 @@ namespace rl {
         SDL3::SDL_GLContext gl_context() const;
         NVGcontext* nvg_context();
 
-        bool clear(const ds::color<u8>& c = { 29, 32, 39 });
+        bool clear(ds::color<f32> c);
         bool swap_buffers(rl::Window& window);
 
         ds::dims<i32> get_output_size() const;
         ds::rect<i32> get_viewport() const;
 
         bool set_viewport(const ds::rect<i32>& rect);
-        bool set_draw_color(const ds::color<u8>& c);
+        bool set_draw_color(ds::color<f32> c);
         bool set_target();
         bool set_draw_blend_mode(const SDL3::SDL_BlendMode blend_mode);
 

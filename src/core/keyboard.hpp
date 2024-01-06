@@ -561,12 +561,6 @@ namespace rl {
         };
 
     public:
-        // TODO: invoke the following
-        // to capture text input events:
-        // - SDL_StartTextInput()
-        // - SDL_TextInputActive()
-        // - SDL_StopTextInput()
-
         [[nodiscard]] std::string get_inputted_text() const;
         [[nodiscard]] std::string get_inputted_text_compisition() const;
         [[nodiscard]] i32 get_inputted_text_cursor_loc() const;
@@ -581,8 +575,9 @@ namespace rl {
         [[nodiscard]] bool all_buttons_down(std::vector<Keyboard::Button::type> keys) const;
         [[nodiscard]] bool any_buttons_down(std::vector<Keyboard::Button::type> keys) const;
 
-    private:
+    protected:
         friend class Window;
+
         void process_button_down(Keyboard::Button::type key);
         void process_button_up(Keyboard::Button::type key);
         void process_text_input(const char* text);

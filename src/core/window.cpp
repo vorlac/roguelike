@@ -32,7 +32,7 @@ namespace rl {
         : ui::widget{ parent }
         , m_title{ title }
         , m_modal{ false }
-        , m_screen{ new ui::Screen(m_nvg_context) }
+        , m_screen{ new ui::Screen(m_nvg_context, ds::dims<i32>{ 0, 0 }) }
         , m_button_panel{ nullptr }
     {
     }
@@ -74,7 +74,7 @@ namespace rl {
         for (i32 i = Mouse::Cursor::Arrow; i < Mouse::Cursor::CursorCount; ++i)
             m_cursors[i] = SDL3::SDL_CreateSystemCursor(Mouse::Cursor::type(i));
 
-        m_screen = new ui::Screen(m_nvg_context);
+        m_screen = new ui::Screen(m_nvg_context, window_size);
     }
 
     Window::~Window()
@@ -256,6 +256,21 @@ namespace rl {
         return m_renderer->nvg_context();
     }
 
+    const Keyboard& Window::keyboard() const
+    {
+        return m_keyboard;
+    }
+
+    const Mouse& Window::mouse() const
+    {
+        return m_mouse;
+    }
+
+    ui::Screen* Window::gui() const
+    {
+        return m_screen;
+    }
+
     const ds::color<u8>& Window::background() const
     {
         return m_background_color;
@@ -338,21 +353,19 @@ namespace rl {
 
     ds::dims<i32> Window::get_render_size()
     {
-        i32 result = SDL3::SDL_GetWindowSizeInPixels(m_sdl_window, &m_fb_size.width,
-                                                     &m_fb_size.height);
+        i32 result{ SDL3::SDL_GetWindowSizeInPixels(m_sdl_window, &m_framebuf_size.width,
+                                                    &m_framebuf_size.height) };
         sdl_assert(result == 0, "failed to set render size");
-
         m_pixel_ratio = SDL3::SDL_GetWindowDisplayScale(m_sdl_window);
         sdl_assert(m_pixel_ratio != 0.0f, "failed to get pixel ratio [window:{}]", m_window_id);
         m_pixel_density = SDL3::SDL_GetWindowPixelDensity(m_sdl_window);
         sdl_assert(m_pixel_density != 0.0f, "failed to get pixel density [window:{}]", m_window_id);
-
-        return m_fb_size;
+        return m_framebuf_size;
     }
 
     bool Window::set_opengl_attribute(OpenGL::Attribute attr, auto val)
     {
-        i32 result = SDL3::SDL_GL_SetAttribute(OpenGL::sdl_type(attr), i32(val));
+        i32 result{ SDL3::SDL_GL_SetAttribute(Window::OpenGL::type(attr), val) };
         sdl_assert(result == 0, "failed to set OpenGL attribute");
         return result == 0;
     }
@@ -397,8 +410,8 @@ namespace rl {
         ret &= m_renderer->set_viewport({
             0,
             0,
-            m_fb_size.width,
-            m_fb_size.height,
+            m_framebuf_size.width,
+            m_framebuf_size.height,
         });
 
         ret &= this->swap_buffers();
@@ -417,12 +430,13 @@ namespace rl {
         return m_renderer->swap_buffers(*this);
     }
 
-    void Window::render()
+    bool Window::render()
     {
         m_screen->draw(m_nvg_context);
 
         // TODO: remove / move
         m_renderer->clear(m_background_color);
+        return true;
     }
 
     ds::dims<i32> Window::preferred_size(NVGcontext* nvg_context) const
@@ -529,7 +543,7 @@ namespace rl {
             static_cast<i32>(std::round(mouse_pos.y / m_pixel_ratio)),
         };
 
-        // TODO: figure out what thsi does...
+        // TODO: ????????
         pnt -= ds::vector2<i32>{ 1, 2 };
 
         m_screen->m_last_interaction = m_timer.elapsed();
@@ -599,7 +613,6 @@ namespace rl {
 
         Mouse::Button::type released_button{ e.button.button };
 
-        // unset button state
         m_mouse.process_button_up(released_button);
         if constexpr (io::logging::mouse_events)
             log::info("{}", m_mouse);
@@ -643,7 +656,6 @@ namespace rl {
             }
         }
 
-        // set button state
         const auto button_pressed{ e.button.button };
         m_mouse.process_button_down(button_pressed);
         if constexpr (io::logging::mouse_events)
@@ -714,11 +726,8 @@ namespace rl {
         m_screen->m_redraw |= this->on_character_input(m_keyboard);
     }
 
-    // void resize_callback_event(int width, int height);
     void Window::window_resized_event_callback(const SDL3::SDL_Event& e)
     {
-        // TODO: refactor size / render_size. i think two variants will be necessary. one that calls
-        // SDL, another than just gets cached variables (m_size and m_renderer->framebuf_size())
         ds::dims<i32> window_size{ this->get_size() };
         ds::dims<i32> framebuf_size{ this->get_render_size() };
         if (framebuf_size.area() == 0 || window_size.area() == 0)

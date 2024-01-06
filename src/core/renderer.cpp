@@ -78,13 +78,11 @@ namespace rl {
         }
     }
 
-    bool Renderer::clear(const ds::color<u8>& c)
+    bool Renderer::clear(ds::color<f32> c)
     {
-        bool ret = true;
-        std::tuple<f32, f32, f32, f32> clr{ c };
-        glClearColor(std::get<0>(clr), std::get<1>(clr), std::get<2>(clr), std::get<3>(clr));
+        glClearColor(c.r, c.g, c.b, c.a);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-        return ret;
+        return true;
     }
 
     bool Renderer::swap_buffers(rl::Window& window)
@@ -111,7 +109,7 @@ namespace rl {
         return s;
     }
 
-    bool Renderer::set_draw_color(const ds::color<u8>& c)
+    bool Renderer::set_draw_color(ds::color<f32> c)
     {
         i32 result = 0;
         runtime_assert(false, "not implemented");

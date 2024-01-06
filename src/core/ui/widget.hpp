@@ -31,12 +31,7 @@ namespace rl::ui {
     class widget : public ds::refcounted
     {
     public:
-        // TODO: remove! only placeholder for Popup
-        widget() = default;
         widget(widget* parent);
-
-        /// @brief
-        ///     Free all resources used by the widget and any children
         virtual ~widget();
 
         bool show();
@@ -137,9 +132,9 @@ namespace rl::ui {
 
     protected:
         ui::widget* m_parent{ nullptr };
+        NVGcontext* m_nvg_context{ nullptr };
         ds::shared<ui::theme> m_theme{ nullptr };
         ds::shared<ui::layout> m_layout{ nullptr };
-        NVGcontext* m_nvg_context{ nullptr };
 
         bool m_enabled{ true };
         bool m_visible{ true };
@@ -151,7 +146,6 @@ namespace rl::ui {
 
         ds::point<i32> m_pos{ 0, 0 };
         ds::dims<i32> m_size{ 0, 0 };
-        ds::dims<i32> m_fb_size{ 0, 0 };
         ds::dims<i32> m_fixed_size{ 0, 0 };
         ds::dims<i32> m_framebuf_size{ 0, 0 };
 
@@ -160,8 +154,6 @@ namespace rl::ui {
         std::string m_tooltip{};
 
         Timer<float> m_timer{};
-        Keyboard m_keyboard{};
-        Mouse m_mouse{};
 
     private:
         constexpr static bool DiagnosticsEnabled{ true };

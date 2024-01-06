@@ -17,10 +17,12 @@
 #include "utils/io.hpp"
 
 namespace rl::ui {
-    Screen::Screen(NVGcontext* nvg_context)
+    Screen::Screen(NVGcontext* nvg_context, ds::dims<i32> size)
         : ui::widget{ nullptr }
         , m_nvg_context{ nvg_context }
     {
+        m_size = size;
+
         i32 depth_bits{ 0 };
         glGetFramebufferAttachmentParameteriv(GL_DRAW_FRAMEBUFFER, GL_DEPTH,
                                               GL_FRAMEBUFFER_ATTACHMENT_DEPTH_SIZE, &depth_bits);
@@ -42,13 +44,12 @@ namespace rl::ui {
     {
         this->set_visible(true);
         this->set_theme(new ui::theme(m_nvg_context));
-        this->on_mouse_move(m_mouse, m_keyboard);
+        this->on_mouse_move({}, {});
 
         m_last_interaction = m_timer.elapsed();
         m_process_events = true;
         m_drag_active = false;
         m_redraw = true;
-
         return true;
     }
 
@@ -74,25 +75,25 @@ namespace rl::ui {
         return true;
     }
 
-    bool Screen::draw_widgets()
+    bool Screen::draw_widgets(const Mouse& mouse, const Keyboard& kb)
     {
         constexpr static f32 PIXEL_RATIO = 1.0f;
         nvgBeginFrame(m_nvg_context, m_size.width, m_size.height, PIXEL_RATIO);
 
         this->draw(m_nvg_context);
 
-        float elapsed{ m_timer.elapsed() - m_last_interaction };
-        if (elapsed > 0.5f)
+        f32 elapsed{ m_timer.elapsed() - m_last_interaction };
+        if (elapsed > m_tooltip_delay)
         {
-            const ui::widget* widget{ find_widget(m_mouse.pos()) };
+            const ui::widget* widget{ this->find_widget(mouse.pos()) };
             if (widget && !widget->tooltip().empty())
             {
                 i32 tooltip_width{ 150 };
-                f32 bounds[4] = { 0.0f };
+                std::array<f32, 4> bounds{};
 
-                nvgFontFace(m_nvg_context, "sans");
+                nvgFontFace(m_nvg_context, font::name::sans);
                 nvgFontSize(m_nvg_context, 15.0f);
-                nvgTextAlign(m_nvg_context, NVG_ALIGN_LEFT | NVG_ALIGN_TOP);
+                nvgTextAlign(m_nvg_context, NVGalign::NVG_ALIGN_LEFT | NVGalign::NVG_ALIGN_TOP);
                 nvgTextLineHeight(m_nvg_context, 1.1f);
 
                 ds::point<i32> pos{
@@ -101,14 +102,15 @@ namespace rl::ui {
                 };
 
                 nvgTextBounds(m_nvg_context, pos.x, pos.y, widget->tooltip().c_str(), nullptr,
-                              bounds);
+                              bounds.data());
 
                 i32 height{ static_cast<i32>((bounds[2] - bounds[0]) / 2.0f) };
                 if (height > tooltip_width / 2)
                 {
-                    nvgTextAlign(m_nvg_context, NVG_ALIGN_CENTER | NVG_ALIGN_TOP);
+                    nvgTextAlign(m_nvg_context,
+                                 NVGalign::NVG_ALIGN_CENTER | NVGalign::NVG_ALIGN_TOP);
                     nvgTextBoxBounds(m_nvg_context, pos.x, pos.y, tooltip_width,
-                                     widget->tooltip().c_str(), nullptr, bounds);
+                                     widget->tooltip().c_str(), nullptr, bounds.data());
 
                     height = (bounds[2] - bounds[0]) / 2;
                 }
@@ -162,12 +164,12 @@ namespace rl::ui {
         return true;
     }
 
-    bool Screen::draw_all()
+    bool Screen::draw_all(const Mouse& mouse, const Keyboard& kb)
     {
         bool ret = true;
         ret &= this->draw_setup();
         ret &= this->draw_contents();
-        ret &= this->draw_widgets();
+        ret &= this->draw_widgets(mouse, kb);
         ret &= this->draw_teardown();
         return ret;
     }
@@ -265,7 +267,7 @@ namespace rl::ui {
     {
         // Return the framebuffer size (potentially larger than size() on high-DPI screens)
         // TODO: is ds::dims<i32> get_render_size() good equivalent?
-        return m_fb_size;
+        return m_framebuf_size;
     }
 
     const std::function<void(ds::dims<i32>)>& Screen::resize_callback() const
@@ -281,12 +283,6 @@ namespace rl::ui {
     void Screen::add_refresh_callback(const std::function<void()>& refresh_func)
     {
         m_refresh_callbacks.push_back(refresh_func);
-    }
-
-    // TODO: check if unused
-    ds::point<i32> Screen::mouse_pos() const
-    {
-        return m_mouse.pos();
     }
 
     // Return the component format underlying the screen
