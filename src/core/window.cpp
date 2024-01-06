@@ -1,6 +1,8 @@
 #include <glad/gl.h>
 
+#include <array>
 #include <utility>
+#include <vector>
 
 #include <nanovg.h>
 
@@ -93,7 +95,6 @@ namespace rl {
         this->set_theme(new ui::theme(m_nvg_context));
         this->on_mouse_move(m_mouse, m_keyboard);
         m_last_interaction = m_timer.elapsed();
-        m_mouse_state = m_modifiers = 0;
         m_process_events = true;
         m_drag_active = false;
         m_redraw = true;
@@ -995,11 +996,7 @@ namespace rl {
 
     void Window::mouse_button_released_event_callback(const SDL3::SDL_Event& e)
     {
-        if constexpr (io::logging::mouse_events)
-            log::info("{}", m_mouse);
-
         m_last_interaction = m_timer.elapsed();
-        Mouse::Button::type released_button{ e.button.button };
         ds::point<i32> mouse_pos{ m_mouse.pos() };
 
         if (m_focus_path.size() > 1)
@@ -1012,14 +1009,18 @@ namespace rl {
             }
         }
 
+        Mouse::Button::type released_button{ e.button.button };
+
         // unset button state
         m_mouse.process_button_up(released_button);
+        if constexpr (io::logging::mouse_events)
+            log::info("{}", m_mouse);
 
         auto drop_widget{ this->find_widget(mouse_pos) };
         if (m_drag_active && drop_widget != m_drag_widget)
             m_redraw |= m_drag_widget->on_mouse_button_released(m_mouse, m_keyboard);
 
-        if (drop_widget != nullptr && m_cursor != drop_widget->cursor())
+        if (m_drag_active && drop_widget != nullptr && m_cursor != drop_widget->cursor())
         {
             m_cursor = drop_widget->cursor();
             SDL3::SDL_Cursor* widget_cursor{ m_cursors[m_cursor] };
@@ -1027,8 +1028,8 @@ namespace rl {
             SDL3::SDL_SetCursor(widget_cursor);
         }
 
-        bool btnLorR = m_mouse.any_buttons_down({ Mouse::Button::Left, Mouse::Button::Right });
-        if (m_drag_active && btnLorR)
+        const bool drag_btn_released{ m_mouse.is_button_released(Mouse::Button::Left) };
+        if (m_drag_active && drag_btn_released)
         {
             m_drag_active = false;
             m_drag_widget = nullptr;
@@ -1039,9 +1040,6 @@ namespace rl {
 
     void Window::mouse_button_pressed_event_callback(const SDL3::SDL_Event& e)
     {
-        if constexpr (io::logging::mouse_events)
-            log::info("{}", m_mouse);
-
         m_last_interaction = m_timer.elapsed();
         ds::point<i32> mouse_pos{ m_mouse.pos() };
 
@@ -1056,8 +1054,10 @@ namespace rl {
         }
 
         // set button state
-        Mouse::Button::type button_pressed(e.button.button);
+        const auto button_pressed{ e.button.button };
         m_mouse.process_button_down(button_pressed);
+        if constexpr (io::logging::mouse_events)
+            log::info("{}", m_mouse);
 
         auto drop_widget{ this->find_widget(mouse_pos) };
         if (drop_widget != nullptr && m_cursor != drop_widget->cursor())
@@ -1068,14 +1068,14 @@ namespace rl {
             SDL3::SDL_SetCursor(widget_cursor);
         }
 
-        bool btnLorR = m_mouse.any_buttons_down({ Mouse::Button::Left, Mouse::Button::Right });
-        if (!m_drag_active && btnLorR)
+        const bool drag_btn_pressed{ m_mouse.is_button_pressed(Mouse::Button::Left) };
+        if (!m_drag_active && drag_btn_pressed)
         {
             m_drag_widget = this->find_widget(mouse_pos);
             if (m_drag_widget == this)
                 m_drag_widget = nullptr;
 
-            m_drag_active = (m_drag_widget != nullptr);
+            m_drag_active = m_drag_widget != nullptr;
             if (!m_drag_active)
                 this->update_focus(nullptr);
         }

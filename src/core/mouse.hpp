@@ -1,10 +1,13 @@
 #pragma once
 
+#include <array>
+#include <initializer_list>
+#include <vector>
+
 #include "ds/point.hpp"
 #include "ds/vector2d.hpp"
 #include "sdl/defs.hpp"
 #include "utils/numeric.hpp"
-
 SDL_C_LIB_BEGIN
 #include <SDL3/SDL_events.h>
 #include <SDL3/SDL_mouse.h>

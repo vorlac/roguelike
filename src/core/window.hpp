@@ -379,14 +379,12 @@ namespace rl {
         std::string m_title{};
         ui::widget* m_drag_widget{ nullptr };
         ui::widget* m_button_panel{ nullptr };
-        std::array<SDL3::SDL_Cursor*, Mouse::Cursor::CursorCount> m_cursors{ { 0 } };
+        std::array<SDL3::SDL_Cursor*, Mouse::Cursor::CursorCount> m_cursors{};
         std::vector<ui::widget*> m_focus_path{};
         ds::color<u8> m_background_color{ 29, 32, 39 };
         ds::dims<i32> m_framebuf_size{ 0, 0 };
         std::function<void(ds::dims<i32>)> m_resize_callback;
         f32 m_last_interaction{ 0.0f };
-        i32 m_mouse_state{ 0 };
-        i32 m_modifiers{ 0 };
 
         bool m_vsync{ false };
         bool m_modal{ false };

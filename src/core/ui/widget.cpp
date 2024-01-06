@@ -267,8 +267,8 @@ namespace rl::ui {
         for (auto it = m_children.rbegin(); it != m_children.rend(); ++it)
         {
             ui::widget* child{ *it };
-            if (child->visible() && child->contains(pt - this->m_pos))
-                return child->find_widget({ pt - this->m_pos });
+            if (child->visible() && child->contains(pt))
+                return child->find_widget(pt);
         }
         return this->contains(pt) ? this : nullptr;
     }
@@ -278,8 +278,8 @@ namespace rl::ui {
         for (auto it = m_children.rbegin(); it != m_children.rend(); ++it)
         {
             ui::widget* child{ *it };
-            if (child->visible() && child->contains(pt - this->m_pos))
-                return child->find_widget(pt - this->m_pos);
+            if (child->visible() && child->contains(pt))
+                return child->find_widget(pt);
         }
         return this->contains(pt) ? this : nullptr;
     }
@@ -331,7 +331,6 @@ namespace rl::ui {
         for (auto it = m_children.rbegin(); it != m_children.rend(); ++it)
         {
             ui::widget* child{ *it };
-            auto&& offset_pos{ mouse_pos - m_pos };
             if (child->visible() && child->contains(mouse_pos) &&
                 child->on_mouse_button_released(mouse, kb))
                 return true;
@@ -348,9 +347,8 @@ namespace rl::ui {
             if (!child->visible())
                 continue;
 
-            auto&& mouse_pos{ mouse.pos() };
-            auto&& offset_mouse_pos{ mouse_pos - m_pos };
-            if (child->contains(offset_mouse_pos) && child->on_mouse_scroll(mouse, kb))
+            auto mouse_pos{ mouse.pos() };
+            if (child->contains(mouse_pos) && child->on_mouse_scroll(mouse, kb))
                 return true;
         }
         return false;
@@ -365,14 +363,14 @@ namespace rl::ui {
             if (!child->visible())
                 continue;
 
-            auto&& mouse_pos{ mouse.pos() };
-            auto&& mouse_delta_pos{ mouse.pos_delta() };
+            const auto mouse_pos{ mouse.pos() };
+            const bool contained{ child->contains(mouse_pos) };
+            const bool prev_contained{ child->contains(mouse_pos - m_mouse.pos_delta()) };
 
-            const bool contained{ child->contains(mouse_pos - m_pos) };
-            const bool prev_contained{ child->contains(mouse_pos - m_pos - mouse_delta_pos) };
-
-            if (contained != prev_contained)
+            if (contained && !prev_contained)
                 handled |= child->on_mouse_entered(mouse);
+            if (!contained && prev_contained)
+                handled |= child->on_mouse_exited(mouse);
 
             if (contained || prev_contained)
                 handled |= child->on_mouse_move(mouse, kb);
@@ -560,8 +558,8 @@ namespace rl::ui {
             // render red widget outlines
             nvgStrokeWidth(nvg_context, 1.0f);
             nvgBeginPath(nvg_context);
-            nvgRect(nvg_context, this->m_pos.x - 0.5f, this->m_pos.y - 0.5f, m_size.width + 1,
-                    m_size.height + 1);
+            nvgRect(nvg_context, m_pos.x - 0.5f, m_pos.y - 0.5f, m_size.width + 1.0f,
+                    m_size.height + 1.0f);
             nvgStrokeColor(nvg_context, nvgRGBA(255, 0, 0, 255));
             nvgStroke(nvg_context);
         }
@@ -569,7 +567,7 @@ namespace rl::ui {
         if (m_children.empty())
             return;
 
-        nvgTranslate(nvg_context, this->m_pos.x, this->m_pos.y);
+        nvgTranslate(nvg_context, m_pos.x, m_pos.y);
         for (auto child : m_children)
         {
             if (!child->visible())
@@ -587,6 +585,7 @@ namespace rl::ui {
             if constexpr (!widget::DiagnosticsEnabled)
                 nvgRestore(nvg_context);
         }
+
         nvgTranslate(nvg_context, -this->m_pos.x, -this->m_pos.y);
     }
 

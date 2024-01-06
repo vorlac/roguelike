@@ -1,3 +1,5 @@
+#include <array>
+
 #include "core/assert.hpp"
 #include "core/mouse.hpp"
 #include "utils/conversions.hpp"
@@ -5,39 +7,31 @@
 namespace rl {
     void Mouse::process_button_down(const Mouse::Button::type mouse_button)
     {
-        runtime_assert((mouse_button - 1) < Mouse::Button::Count, "invalid mouse button");
-        switch (mouse_button)
-        {
-            case Mouse::Button::Left:
-                [[fallthrough]];
-            case Mouse::Button::Middle:
-                [[fallthrough]];
-            case Mouse::Button::Right:
-                [[fallthrough]];
-            case Mouse::Button::X1:
-                [[fallthrough]];
-            case Mouse::Button::X2:
-                if (this->is_button_pressed(mouse_button))
-                    m_buttons_held |= m_buttons_pressed;
-                m_buttons_pressed = SDL_BUTTON(mouse_button);
-                break;
-            default:
-                m_buttons_pressed = 0;
-                assert_msg("unrecognized mouse button");
-                break;
-        }
+        runtime_assert(mouse_button - 1 < Mouse::Button::Count, "invalid mouse button");
+
+        // store it as held
+        m_buttons_held |= m_buttons_pressed;
+        // clear it from pressed
+        m_buttons_pressed |= SDL_BUTTON(mouse_button);
+        // clear it from released
+        m_buttons_released = 0;  //&= ~SDL_BUTTON(mouse_button);
     }
 
     void Mouse::process_button_up(const Mouse::Button::type mouse_button)
     {
         runtime_assert(mouse_button - 1 < Mouse::Button::Count, "invalid mouse button");
-        m_button_states &= ~(1 << (mouse_button - 1));
+
+        // set in released buttons
+        m_buttons_released |= SDL_BUTTON(mouse_button);
+        // clear from pressed buttons
+        m_buttons_pressed &= ~SDL_BUTTON(mouse_button);
+        // clear from held buttons
+        m_buttons_held &= ~SDL_BUTTON(mouse_button);
     }
 
     void Mouse::process_motion(const Event::Data::Motion& motion)
     {
         m_prev_cursor_pos = m_cursor_position;
-        // TODO: round
         m_cursor_position = {
             static_cast<i32>(motion.x),
             static_cast<i32>(motion.y),
@@ -79,7 +73,7 @@ namespace rl {
 
     ds::vector2<i32> Mouse::pos_delta() const
     {
-        return m_prev_cursor_pos - m_cursor_position;
+        return m_cursor_position - m_prev_cursor_pos;
     }
 
     Mouse::Button::type Mouse::button_pressed() const

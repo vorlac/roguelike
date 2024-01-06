@@ -80,14 +80,14 @@ namespace rl::ui {
         if (m_fixed_size.width > 0)
         {
             float bounds[4];
-            nvgTextAlign(nvg_context, NVG_ALIGN_LEFT | NVG_ALIGN_TOP);
+            nvgTextAlign(nvg_context, NVGalign::NVG_ALIGN_LEFT | NVGalign::NVG_ALIGN_TOP);
             nvgTextBoxBounds(nvg_context, m_pos.x, m_pos.y, m_fixed_size.width, m_caption.c_str(),
                              nullptr, bounds);
             return ds::dims<i32>(m_fixed_size.width, bounds[3] - bounds[1]);
         }
         else
         {
-            nvgTextAlign(nvg_context, NVG_ALIGN_LEFT | NVG_ALIGN_MIDDLE);
+            nvgTextAlign(nvg_context, NVGalign::NVG_ALIGN_LEFT | NVGalign::NVG_ALIGN_MIDDLE);
             return ds::dims<i32>(
                 nvgTextBounds(nvg_context, 0, 0, m_caption.c_str(), nullptr, nullptr) + 2,
                 font_size());

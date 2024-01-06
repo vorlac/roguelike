@@ -82,8 +82,19 @@ namespace rl {
             // define the layout
             // auto layout = std::make_unique<ui::box_layout>(ui::orientation::Horizontal,
             //                                                ui::alignment::Maximum, 10, 25);
-            auto layout = new ui::advanced_grid_layout(std::vector{ 10, 0, 10, 0 },
-                                                       std::vector<i32>{}, 16);
+            auto layout = new ui::advanced_grid_layout(
+                std::vector{
+                    // 4 columns
+                    175,  // col 1 - preferred size of 10px wide
+                    0,    // col 2 - no preferred size
+                    175,  // col 3 - preferred size of 10px wide
+                    0,    // col 4 - no preferred size
+                },
+                std::vector<i32>{
+                    // 0 rows
+                },  // no preferred sizes
+                15  // 25 px margin along borders
+            );
             // set layout margins to 10px
             layout->set_margin(10);
             // stretch column 2 to 1.0f
@@ -105,17 +116,16 @@ namespace rl {
                 m_window.get(),             // parent, all scaling will be relative to it
                 "Widget Group",             // label text
                 ui::font::name::sans_bold,  // font name/style
-                20,                         // font size
+                24,                         // font size
             };
-
             layout->append_row(0);
 
             layout->set_anchor(group,
                                ui::Anchor{
                                    0,                        // x
                                    layout->row_count() - 1,  // y
-                                   4,                        // width
-                                   1,                        // height
+                                   1,                        // width
+                                   4,                        // height
                                    ui::alignment::Middle,
                                    ui::alignment::Middle,
                                });
@@ -125,45 +135,72 @@ namespace rl {
             //=============================================
             // set up labels
             //=============================================
-            auto desc_label = new ui::label{
-                m_window.get(),
-                "Elapsed Seconds: ",
-                ui::font::name::mono,
-                16,
-            };
+            auto timer_desc_label = new ui::label{ m_window.get(),
+                                                   "Elapsed Seconds: ", ui::font::name::mono, 24 };
+            timer_desc_label->set_tooltip("Timer Label");
+            timer_desc_label->set_callback([] {
+                log::warning("Label callback invoked");
+            });
 
-            auto value_label = new ui::label{
+            auto timer_value_label = new ui::label{
                 m_window.get(),
                 fmt::to_string(fmt::format("{:4.6f}", m_timer.elapsed())),
                 ui::font::name::mono,
-                16,
+                24,
             };
+            timer_value_label->set_tooltip("Time");
 
-            desc_label->set_tooltip("Descr Label Tooltip");
-            value_label->set_tooltip("Value Label Tooltip");
-
-            desc_label->set_callback([] {
-                log::warning("Label callback invoked");
+            auto stats_desc_label = new ui::label{
+                m_window.get(),
+                "Stats: ",
+                ui::font::name::mono,
+                24,
+            };
+            stats_desc_label->set_tooltip("Stats Label");
+            stats_desc_label->set_callback([] {
+                log::warning("Stats callback invoked");
             });
+
+            auto stats_value_label = new ui::label{
+                m_window.get(),
+                fmt::to_string(fmt::format("0.0fps [0]")),
+                ui::font::name::mono,
+                24,
+            };
+            stats_value_label->set_tooltip("Stats");
 
             // width, 0 means not set in this context
             //  height, force to 20 px
             ds::dims<i32> fixed_size{ 0, 25 };
-            desc_label->set_fixed_size(fixed_size);
-            value_label->set_fixed_size(fixed_size);
+            timer_desc_label->set_fixed_size(fixed_size);
+            timer_value_label->set_fixed_size(fixed_size);
+            stats_desc_label->set_fixed_size(fixed_size);
+            stats_value_label->set_fixed_size(fixed_size);
 
-            // lambda used to update label text based on changing value
+            float fps{ 0 };
+            u64 frame_count{ 0 };
+            // lambda used to update fps / frame count
+            m_window->set_refresh_callback([&]() {
+                stats_value_label->set_caption(fmt::to_string(fmt::format("{:.2f}fps", fps)));
+            });
+
+            // lambda used to update timer label
             m_window->set_refresh_callback([&]() {
                 const f32 elapsed{ m_timer.elapsed() };
-                value_label->set_caption(fmt::to_string(fmt::format("{:4.6f}", m_timer.elapsed())));
+                timer_value_label->set_caption(
+                    fmt::to_string(fmt::format("{:.2f}", m_timer.elapsed())));
             });
 
             if (layout->row_count() > 0)
                 layout->append_row(5);
 
             layout->append_row(0);
-            layout->set_anchor(desc_label, ui::Anchor(1, layout->row_count() - 1));
-            layout->set_anchor(value_label, ui::Anchor(3, layout->row_count() - 1));
+            layout->set_anchor(timer_desc_label, ui::Anchor(1, layout->row_count() - 1));
+            layout->set_anchor(timer_value_label, ui::Anchor(3, layout->row_count() - 1));
+
+            layout->append_row(0);
+            layout->set_anchor(stats_desc_label, ui::Anchor(1, layout->row_count() - 1));
+            layout->set_anchor(stats_value_label, ui::Anchor(3, layout->row_count() - 1));
 
             vbo.bind_buffers();
             while (!this->should_exit()) [[likely]]
@@ -178,6 +215,8 @@ namespace rl {
 
                 m_window->draw_all();
                 m_window->swap_buffers();
+
+                fps = ++frame_count / m_timer.elapsed();
 
                 if constexpr (io::logging::main_loop)
                     this->print_loop_stats(delta_time);
