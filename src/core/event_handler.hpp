@@ -93,8 +93,6 @@ namespace rl {
                     {
                         const Window::Event::Data& window_event{ e.window };
                         const WindowID id{ window_event.windowID };
-                        const i32 width{ window_event.data1 };
-                        const i32 height{ window_event.data2 };
                         window->window_resized_event_callback(e);
                         break;
                     }

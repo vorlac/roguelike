@@ -83,7 +83,6 @@ namespace rl::ui {
     bool Screen::draw_contents()
     {
         this->refresh();
-        this->perform_layout();
         return true;
     }
 
@@ -441,13 +440,14 @@ namespace rl::ui {
         if (size.area() == 0)
             return false;
 
-        m_last_interaction = m_timer.elapsed();
         auto new_size = ds::dims<i32>{
-            static_cast<i32>(this->width() / m_pixel_ratio),
-            static_cast<i32>(this->height() / m_pixel_ratio),
+            static_cast<i32>(size.width / m_pixel_ratio),
+            static_cast<i32>(size.height / m_pixel_ratio),
         };
 
         this->set_size(new_size);
+        this->perform_layout();
+
         return this->redraw();
     }
 

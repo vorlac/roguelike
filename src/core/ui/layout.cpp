@@ -3,12 +3,12 @@
 
 #include <nanovg.h>
 
+#include "core/ui/dialog.hpp"
 #include "core/ui/label.hpp"
 #include "core/ui/layout.hpp"
 #include "core/ui/screen.hpp"
 #include "core/ui/theme.hpp"
 #include "core/ui/widget.hpp"
-#include "core/window.hpp"
 #include "ds/dims.hpp"
 #include "utils/numeric.hpp"
 
@@ -659,8 +659,8 @@ namespace rl::ui {
         };
 
         ds::dims<i32> extra{
-            2 * this->m_margin,
-            2 * this->m_margin,
+            2 * m_margin,
+            2 * m_margin,
         };
 
         const ui::Screen* screen{ dynamic_cast<const ui::Screen*>(widget) };
@@ -693,9 +693,10 @@ namespace rl::ui {
 
             for (ui::widget* w : widget->children())
             {
-                const rl::Window* child_window{ dynamic_cast<const rl::Window*>(w) };
+                const ui::Dialog* child_window{ dynamic_cast<ui::Dialog*>(w) };
                 if (!w->visible() || child_window != nullptr)
                     continue;
+
                 if (w == nullptr)
                     continue;
 
@@ -774,6 +775,7 @@ namespace rl::ui {
             const bool col_axis{ axis == axis::Horizontal };
             const std::vector<i32>& sizes{ col_axis ? m_cols : m_rows };
             const std::vector<f32>& stretch{ col_axis ? m_col_stretch : m_row_stretch };
+
             grid = sizes;
 
             for (auto phase : { ComputeCellSize, MulitCellMerge })
@@ -781,7 +783,7 @@ namespace rl::ui {
                 for (const auto& pair : m_anchor)
                 {
                     const ui::widget* w{ pair.first };
-                    const rl::Window* anchor_window{ dynamic_cast<const rl::Window*>(w) };
+                    const ui::Dialog* anchor_window{ dynamic_cast<const ui::Dialog*>(w) };
                     if (!w->visible() || anchor_window != nullptr)
                         continue;
 

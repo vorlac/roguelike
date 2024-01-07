@@ -85,20 +85,24 @@ namespace rl {
             auto layout = new ui::advanced_grid_layout(
                 std::vector{
                     // 4 columns
-                    175,  // col 1 - preferred size of 10px wide
-                    0,    // col 2 - no preferred size
-                    175,  // col 3 - preferred size of 10px wide
-                    0,    // col 4 - no preferred size
+                    0,  // col 1 - preferred size of 10px wide
+                    0,  // col 2 - no preferred size
+                    0,  // col 3 - preferred size of 10px wide
+                    0,  // col 4 - no preferred size
                 },
                 std::vector<i32>{
                     // 0 rows
                 },  // no preferred sizes
-                15  // 25 px margin along borders
+                30  // 25 px margin along borders
             );
+
+            // TODO: test margins
             // set layout margins to 10px
-            layout->set_margin(10);
+            // layout->set_margin(25);
+
             // stretch column 2 to 1.0f
             layout->set_col_stretch(2, 1.0f);
+
             gui->set_layout(layout);
             gui->set_visible(true);
 
@@ -107,16 +111,13 @@ namespace rl {
             //===========================================
 
             // space it out a bit with a vertical gap before the label
-            if (layout->row_count() > 0)
-                layout->append_row(15);
-
-            layout->append_row(0);
+            layout->append_row(15);
 
             auto group = new ui::label{
                 gui,                        // parent, all scaling will be relative to it
                 "Widget Group",             // label text
                 ui::font::name::sans_bold,  // font name/style
-                24,                         // font size
+                36,                         // font size
             };
             layout->append_row(0);
 
@@ -124,10 +125,10 @@ namespace rl {
                                ui::Anchor{
                                    0,                        // x
                                    layout->row_count() - 1,  // y
-                                   1,                        // width
-                                   4,                        // height
-                                   ui::alignment::Middle,
-                                   ui::alignment::Middle,
+                                   4,                        // width
+                                   1,                        // height
+                                   ui::alignment::Middle,    // horiz alignment
+                                   ui::alignment::Fill,      // vert alignment
                                });
 
             layout->append_row(5);
@@ -135,13 +136,11 @@ namespace rl {
             //=============================================
             // set up labels
             //=============================================
-            auto timer_desc_label{
-                new ui::label{
-                    gui,
-                    "Elapsed Seconds: ",
-                    ui::font::name::mono,
-                    24,
-                },
+            auto timer_desc_label = new ui::label{
+                gui,
+                "Elapsed Seconds: ",
+                ui::font::name::mono,
+                26,
             };
 
             timer_desc_label->set_tooltip("Timer Label");
@@ -153,7 +152,7 @@ namespace rl {
                 gui,
                 fmt::to_string(fmt::format("{:4.6f}", m_timer.elapsed())),
                 ui::font::name::mono,
-                24,
+                26,
             };
 
             timer_value_label->set_tooltip("Time");
@@ -162,7 +161,7 @@ namespace rl {
                 gui,
                 "Stats: ",
                 ui::font::name::mono,
-                24,
+                26,
             };
 
             stats_desc_label->set_tooltip("Stats Label");
@@ -174,43 +173,33 @@ namespace rl {
                 gui,
                 fmt::to_string(fmt::format("0.0fps [0]")),
                 ui::font::name::mono,
-                24,
+                26,
             };
 
             stats_value_label->set_tooltip("Stats");
-
-            // width, 0 means not set in this context
-            //  height, force to 20 px
-            ds::dims<i32> fixed_size{ 0, 25 };
-            timer_desc_label->set_fixed_size(fixed_size);
-            timer_value_label->set_fixed_size(fixed_size);
-            stats_desc_label->set_fixed_size(fixed_size);
-            stats_value_label->set_fixed_size(fixed_size);
 
             f32 fps{ 0 };
             u64 frame_count{ 0 };
             // lambda used to update fps / frame count
             gui->add_refresh_callback([&]() {
-                stats_value_label->set_caption(fmt::to_string(fmt::format("{:.2f}fps", fps)));
+                stats_value_label->set_caption(fmt::to_string(fmt::format("{:.1f} fps", fps)));
             });
 
             // lambda used to update timer label
             gui->add_refresh_callback([&]() {
                 const f32 elapsed{ m_timer.elapsed() };
                 timer_value_label->set_caption(
-                    fmt::to_string(fmt::format("{:.2f}", m_timer.elapsed())));
+                    fmt::to_string(fmt::format("{:.3f} sec", m_timer.elapsed())));
             });
-
-            if (layout->row_count() > 0)
-                layout->append_row(5);
 
             layout->append_row(0);
             layout->set_anchor(timer_desc_label, ui::Anchor(1, layout->row_count() - 1));
             layout->set_anchor(timer_value_label, ui::Anchor(3, layout->row_count() - 1));
-
             layout->append_row(0);
             layout->set_anchor(stats_desc_label, ui::Anchor(1, layout->row_count() - 1));
             layout->set_anchor(stats_value_label, ui::Anchor(3, layout->row_count() - 1));
+            layout->append_row(0);
+
             gui->perform_layout();
 
             vbo.bind_buffers();
@@ -223,7 +212,7 @@ namespace rl {
 
                 // vbo.update_buffers(renderer->get_viewport());
                 // vbo.draw_triangles();
-                //
+
                 m_window->clear();
                 gui->draw_all();
                 m_window->swap_buffers();

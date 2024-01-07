@@ -413,17 +413,18 @@ namespace rl::ui {
     {
         runtime_assert(index <= child_count(), "child widget index out of bounds");
         m_children.insert(m_children.begin() + index, widget);
+
         widget->acquire_ref();
         widget->set_parent(this);
         widget->set_theme(m_theme);
     }
 
-    void widget::add_child(widget* widget)
+    void widget::add_child(ui::widget* widget)
     {
         this->add_child(this->child_count(), widget);
     }
 
-    void widget::remove_child(const widget* widget)
+    void widget::remove_child(const ui::widget* widget)
     {
         size_t child_count{ m_children.size() };
         m_children.erase(std::remove(m_children.begin(), m_children.end(), widget),
@@ -438,12 +439,12 @@ namespace rl::ui {
         runtime_assert(index > 0 && index < m_children.size(),
                        "widget child remove idx out of bounds");
 
-        widget* widget{ m_children[index] };
+        ui::widget* widget{ m_children[index] };
         m_children.erase(m_children.begin() + index);
         widget->release_ref();
     }
 
-    i32 widget::child_index(widget* widget) const
+    i32 widget::child_index(ui::widget* widget) const
     {
         auto it = std::find(m_children.begin(), m_children.end(), widget);
         if (it == m_children.end())
@@ -482,7 +483,7 @@ namespace rl::ui {
         m_tooltip = tooltip;
     }
 
-    void widget::set_font_size(int font_size)
+    void widget::set_font_size(i32 font_size)
     {
         m_font_size = font_size;
     }
@@ -497,7 +498,7 @@ namespace rl::ui {
         return m_icon_extra_scale;
     }
 
-    void widget::set_icon_extra_scale(float scale)
+    void widget::set_icon_extra_scale(f32 scale)
     {
         m_icon_extra_scale = scale;
     }
@@ -544,7 +545,7 @@ namespace rl::ui {
 
     void widget::request_focus()
     {
-        widget* widget{ this };
+        ui::widget* widget{ this };
         while (widget->parent() != nullptr)
             widget = widget->parent();
 
@@ -555,7 +556,8 @@ namespace rl::ui {
     {
         if constexpr (widget::DiagnosticsEnabled)
         {
-            // render red widget outlines
+            // if (this->contains())
+            //  render red widget outlines
             nvgStrokeWidth(nvg_context, 1.0f);
             nvgBeginPath(nvg_context);
             nvgRect(nvg_context, m_pos.x - 0.5f, m_pos.y - 0.5f, m_size.width + 1.0f,
@@ -569,6 +571,7 @@ namespace rl::ui {
             return;
 
         nvgTranslate(nvg_context, m_pos.x, m_pos.y);
+
         for (auto child : m_children)
         {
             if (!child->visible())
@@ -587,11 +590,12 @@ namespace rl::ui {
                 nvgRestore(nvg_context);
         }
 
-        nvgTranslate(nvg_context, -this->m_pos.x, -this->m_pos.y);
+        nvgTranslate(nvg_context, -m_pos.x, -m_pos.y);
     }
 
     f32 widget::icon_scale() const
     {
+        runtime_assert(m_theme != nullptr, "theme not set");
         return m_theme->m_icon_scale * m_icon_extra_scale;
     }
 }

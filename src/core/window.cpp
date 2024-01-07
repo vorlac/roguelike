@@ -1,6 +1,7 @@
 #include <glad/gl.h>
 
 #include <array>
+#include <memory>
 #include <utility>
 #include <vector>
 
@@ -61,7 +62,7 @@ namespace rl {
         SDL3::SDL_GL_SetSwapInterval(m_vsync);
 
         NVGcontext* nvg_context{ m_renderer->nvg_context() };
-        m_screen = new ui::Screen(nvg_context, window_size, m_mouse, m_keyboard);
+        m_screen = new ui::Screen{ nvg_context, window_size, m_mouse, m_keyboard };
     }
 
     Window::~Window()
@@ -394,18 +395,7 @@ namespace rl {
         i32 result{ SDL3::SDL_GL_MakeCurrent(m_sdl_window, m_renderer->gl_context()) };
         sdl_assert(result == 0, "failed to make context current");
 
-        this->get_size();
-        this->get_render_size();
-
-        bool ret = m_renderer->set_viewport({
-            0,
-            0,
-            m_framebuf_size.width,
-            m_framebuf_size.height,
-        });
-
         m_screen->draw_all();
-
         // TODO: remove / move
         m_renderer->clear();
 
@@ -478,6 +468,27 @@ namespace rl {
 
     void Window::window_resized_event_callback(const SDL3::SDL_Event& e)
     {
+        // TODO: just use the values from the resize event struct
+        // and the existing m_pixel_ratio sizes instead of calling
+        // the SDL APIs for the dimensions instead?
+
+        ds::dims<i32> window_size{ this->get_size() };
+        ds::dims<i32> framebuf_size{ this->get_render_size() };
+        if (framebuf_size.area() == 0 || window_size.area() == 0)
+            return;
+
+        m_framebuf_size = framebuf_size;
+        m_window_rect.size = ds::dims<i32>{
+            static_cast<i32>(window_size.width / m_pixel_ratio),
+            static_cast<i32>(window_size.height / m_pixel_ratio),
+        };
+
+        m_renderer->set_viewport(std::forward<ds::rect<i32>>({
+            ds::point<i32>{ 0, 0 },
+            m_window_rect.size,
+        }));
+
+        m_screen->on_resized(std::forward<ds::dims<i32>>(m_window_rect.size));
     }
 
     void Window::window_focus_gained_event_callback(const SDL3::SDL_Event& e)
