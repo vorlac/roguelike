@@ -55,7 +55,7 @@ namespace rl::ui {
         return m_background_color;
     }
 
-    void Button::set_background_color(const ds::color<u8>& background_color)
+    void Button::set_background_color(ds::color<u8> background_color)
     {
         m_background_color = background_color;
     }
@@ -65,7 +65,7 @@ namespace rl::ui {
         return m_text_color;
     }
 
-    void Button::set_text_color(const ds::color<u8>& text_color)
+    void Button::set_text_color(ds::color<u8> text_color)
     {
         m_text_color = text_color;
     }

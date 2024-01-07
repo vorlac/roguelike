@@ -62,8 +62,7 @@ namespace rl::ui {
         virtual bool on_mouse_button_released(const Mouse& mouse, const Keyboard& kb) override;
 
         virtual bool on_mouse_move(const Mouse& mouse, const Keyboard& kb) override;
-        virtual bool on_mouse_drag(ds::point<i32> pnt, ds::vector2<i32> rel, const Mouse& mouse,
-                                   const Keyboard& kb) override;
+        virtual bool on_mouse_drag(const Mouse& mouse, const Keyboard& kb) override;
 
         virtual bool on_focus_gained() override;
         virtual bool on_focus_lost() override;

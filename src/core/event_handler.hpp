@@ -148,14 +148,14 @@ namespace rl {
                     {
                         const Window::Event::Data& window_event{ e.window };
                         const WindowID id{ window_event.windowID };
-                        window->on_focus_gained();
+                        window->window_focus_gained_event_callback(e);
                         break;
                     }
                     case Window::Event::FocusLost:
                     {
                         const Window::Event::Data& window_event{ e.window };
                         const WindowID id{ window_event.windowID };
-                        window->on_focus_lost();
+                        window->window_focus_lost_event_callback(e);
                         break;
                     }
                     case Window::Event::CloseRequested:

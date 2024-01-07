@@ -1,5 +1,6 @@
 #include "core/keyboard.hpp"
 #include "core/mouse.hpp"
+#include "core/ui/dialog.hpp"
 #include "core/ui/layout.hpp"
 #include "core/ui/screen.hpp"
 #include "core/ui/theme.hpp"
@@ -41,7 +42,7 @@ namespace rl::ui {
             return;
         }
 
-        for (auto&& child : m_children)
+        for (auto child : m_children)
             if (child != nullptr)
                 child->release_ref();
     }
@@ -119,7 +120,7 @@ namespace rl::ui {
         return m_size;
     }
 
-    void widget::set_size(const ds::dims<i32>& size)
+    void widget::set_size(ds::dims<i32> size)
     {
         m_size = size;
     }
@@ -380,8 +381,7 @@ namespace rl::ui {
         return handled;
     }
 
-    bool widget::on_mouse_drag(ds::point<i32> pnt, ds::vector2<i32> rel, const Mouse& mouse,
-                               const Keyboard& kb)
+    bool widget::on_mouse_drag(const Mouse& mouse, const Keyboard& kb)
     {
         // do nothing,
         // derived objects should implement
@@ -519,13 +519,14 @@ namespace rl::ui {
         return widget_rect.contains(pt);
     }
 
-    Window* widget::window()
+    ui::Dialog* widget::window()
     {
-        widget* widget{ this };
+        ui::widget* widget{ this };
         while (widget != nullptr)
         {
-            Window* window{ dynamic_cast<Window*>(widget) };
+            ui::Dialog* window{ dynamic_cast<ui::Dialog*>(widget) };
             runtime_assert(window != nullptr, "failed widget cast to window");
+
             if (window != nullptr)
                 return window;
 
@@ -536,9 +537,9 @@ namespace rl::ui {
         return nullptr;
     }
 
-    const Window* widget::window() const
+    const ui::Dialog* widget::window() const
     {
-        return const_cast<widget*>(this)->window();
+        return const_cast<ui::widget*>(this)->window();
     }
 
     void widget::request_focus()
@@ -546,7 +547,8 @@ namespace rl::ui {
         widget* widget{ this };
         while (widget->parent() != nullptr)
             widget = widget->parent();
-        ((ui::Screen*)widget)->update_focus(this);
+
+        static_cast<ui::Screen*>(widget)->update_focus(this);
     }
 
     void widget::draw(NVGcontext* nvg_context)
@@ -558,7 +560,8 @@ namespace rl::ui {
             nvgBeginPath(nvg_context);
             nvgRect(nvg_context, m_pos.x - 0.5f, m_pos.y - 0.5f, m_size.width + 1.0f,
                     m_size.height + 1.0f);
-            nvgStrokeColor(nvg_context, nvgRGBA(255, 0, 0, 255));
+
+            nvgStrokeColor(nvg_context, ds::color<u8>{ 255, 0, 0 });
             nvgStroke(nvg_context);
         }
 
@@ -587,7 +590,7 @@ namespace rl::ui {
         nvgTranslate(nvg_context, -this->m_pos.x, -this->m_pos.y);
     }
 
-    float widget::icon_scale() const
+    f32 widget::icon_scale() const
     {
         return m_theme->m_icon_scale * m_icon_extra_scale;
     }

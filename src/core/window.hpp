@@ -34,7 +34,7 @@ namespace rl {
         class Screen;
     }
 
-    class Window : public ui::widget
+    class Window
     {
         friend class Popup;
 
@@ -128,9 +128,7 @@ namespace rl {
             {
                 return static_cast<sdl_type>(this->to_ulong());
             }
-
         };
-
 
         struct OpenGL
         {
@@ -198,12 +196,12 @@ namespace rl {
         };
 
     public:
-        Window() = default;
-        Window(ui::widget* parent, const std::string& title);
         explicit Window(std::string title, const ds::dims<i32>& dims = DEFAULT_SIZE,
                         Properties flags = DEFAULT_PROPERTY_FLAGS);
 
         virtual ~Window();
+
+        const Window& operator=(Window&& other) noexcept;
 
     public:
         bool raise();
@@ -218,8 +216,6 @@ namespace rl {
         bool render_start();
         bool render();
         bool render_end();
-        void dispose();
-        void center();
 
         std::string get_title();
         DisplayID get_display();
@@ -236,10 +232,6 @@ namespace rl {
         SDL3::SDL_DisplayMode get_display_mode() const;
 
         const std::unique_ptr<Renderer>& renderer() const;
-        const Window& operator=(Window&& other) noexcept;
-        const ds::color<u8>& background() const;
-        const std::string& title() const;
-
         NVGcontext* nvg_context() const;
 
         const Keyboard& keyboard() const;
@@ -248,7 +240,6 @@ namespace rl {
 
         bool is_valid() const;
         bool get_grab() const;
-        bool modal() const;
 
         bool set_vsync(bool enabled);
         bool set_grab(bool grabbed);
@@ -262,7 +253,6 @@ namespace rl {
         bool set_max_size(ds::dims<i32> size);
         bool set_opengl_attribute(OpenGL::Attribute attr, auto val);
         bool set_background(ds::color<u8> background);
-
         bool on_occluded(const WindowID id);
 
     public:
@@ -277,15 +267,12 @@ namespace rl {
         void keyboard_key_released_event_callback(const SDL3::SDL_Event& e);
         void keyboard_char_event_callback(const SDL3::SDL_Event& e);
         void window_resized_event_callback(const SDL3::SDL_Event& e);
+        void window_focus_gained_event_callback(const SDL3::SDL_Event& e);
+        void window_focus_lost_event_callback(const SDL3::SDL_Event& e);
 
         bool on_pixel_size_changed(const WindowID id, ds::dims<i32> pixel_size);
         bool set_title(std::string title);
         bool set_modal(bool modal);
-
-    public:
-        using ui::widget::perform_layout;
-        virtual void refresh_relative_placement();
-        virtual ds::dims<i32> preferred_size(NVGcontext* nvg_context) const;
 
     private:
         Window(const Window& window) = delete;
@@ -293,26 +280,19 @@ namespace rl {
         Window(SDL3::SDL_Window* other) = delete;
 
     private:
-        bool m_drag{ false };
-        bool m_modal{ false };
         bool m_vsync{ false };
 
         std::string m_title{};
         WindowID m_window_id{ 0 };
         DisplayID m_display_id{ 0 };
         Properties m_properties{ Properties::None };
-        ds::rect<i32> m_window_rect{ { 0, 0 }, { 0, 0 } };
-        ds::color<u8> m_background_color{ 29, 32, 39 };
-        ds::dims<i32> m_framebuf_size{ 0, 0 };
-
+        ds::rect<i32> m_window_rect{ 0, 0, 0, 0 };
         ui::Screen* m_screen{ nullptr };
-        ui::widget* m_button_panel{ nullptr };
         SDL3::SDL_Window* m_sdl_window{ nullptr };
+        ds::dims<i32> m_framebuf_size{ 0, 0 };
         std::unique_ptr<Renderer> m_renderer;
         Keyboard m_keyboard{};
         Mouse m_mouse{};
-
-        std::array<SDL3::SDL_Cursor*, Mouse::Cursor::CursorCount> m_cursors{};
 
         // The content display scale relative to a window's pixel size.
         //

@@ -7,9 +7,11 @@
 #include "core/assert.hpp"
 #include "core/keyboard.hpp"
 #include "core/mouse.hpp"
+#include "core/ui/dialog.hpp"
 #include "core/ui/layout.hpp"
 #include "core/ui/popup.hpp"
 #include "core/ui/screen.hpp"
+#include "core/ui/theme.hpp"
 #include "ds/dims.hpp"
 #include "ds/point.hpp"
 #include "ds/rect.hpp"
@@ -17,31 +19,32 @@
 #include "utils/io.hpp"
 
 namespace rl::ui {
-    Screen::Screen(NVGcontext* nvg_context, ds::dims<i32> size)
+    Screen::Screen(NVGcontext* nvg_context, ds::dims<i32> size, const Mouse& mouse,
+                   const Keyboard& kb)
         : ui::widget{ nullptr }
         , m_nvg_context{ nvg_context }
+        , m_mouse_ref{ mouse }
+        , m_kb_ref{ kb }
     {
         m_size = size;
 
-        i32 depth_bits{ 0 };
-        glGetFramebufferAttachmentParameteriv(GL_DRAW_FRAMEBUFFER, GL_DEPTH,
-                                              GL_FRAMEBUFFER_ATTACHMENT_DEPTH_SIZE, &depth_bits);
-        m_depth_buffer = depth_bits > 0;
-
-        i32 stencil_bits{ 0 };
-        glGetFramebufferAttachmentParameteriv(
-            GL_DRAW_FRAMEBUFFER, GL_STENCIL, GL_FRAMEBUFFER_ATTACHMENT_STENCIL_SIZE, &stencil_bits);
-        m_stencil_buffer = stencil_bits > 0;
+        for (i32 i = Mouse::Cursor::Arrow; i < Mouse::Cursor::CursorCount; ++i)
+            m_cursors[i] = SDL3::SDL_CreateSystemCursor(Mouse::Cursor::type(i));
 
         u8 float_mode{ 0 };
+        i32 depth_bits{ 0 };
+        i32 stencil_bits{ 0 };
+
         glGetBooleanv(GL_RGBA_FLOAT_MODE_ARB, &float_mode);
+        glGetFramebufferAttachmentParameteriv(GL_DRAW_FRAMEBUFFER, GL_DEPTH,
+                                              GL_FRAMEBUFFER_ATTACHMENT_DEPTH_SIZE, &depth_bits);
+        glGetFramebufferAttachmentParameteriv(
+            GL_DRAW_FRAMEBUFFER, GL_STENCIL, GL_FRAMEBUFFER_ATTACHMENT_STENCIL_SIZE, &stencil_bits);
+
+        m_stencil_buffer = stencil_bits > 0;
+        m_depth_buffer = depth_bits > 0;
         m_float_buffer = float_mode != 0;
 
-        this->init();
-    }
-
-    bool Screen::init()
-    {
         this->set_visible(true);
         this->set_theme(new ui::theme(m_nvg_context));
         this->on_mouse_move({}, {});
@@ -50,7 +53,13 @@ namespace rl::ui {
         m_process_events = true;
         m_drag_active = false;
         m_redraw = true;
-        return true;
+    }
+
+    Screen::~Screen()
+    {
+        for (i32 i = Mouse::Cursor::Arrow; i < Mouse::Cursor::CursorCount; ++i)
+            if (m_cursors[i] != nullptr)
+                SDL3::SDL_DestroyCursor(m_cursors[i]);
     }
 
     bool Screen::refresh()
@@ -61,11 +70,14 @@ namespace rl::ui {
         return m_refresh_callbacks.size() > 0;
     }
 
+    void Screen::perform_layout()
+    {
+        this->perform_layout(m_nvg_context);
+    }
+
     bool Screen::draw_setup()
     {
-        bool ret{ true };
-        // moved into Window::render_start()
-        return ret;
+        return true;
     }
 
     bool Screen::draw_contents()
@@ -75,7 +87,7 @@ namespace rl::ui {
         return true;
     }
 
-    bool Screen::draw_widgets(const Mouse& mouse, const Keyboard& kb)
+    bool Screen::draw_widgets()
     {
         constexpr static f32 PIXEL_RATIO = 1.0f;
         nvgBeginFrame(m_nvg_context, m_size.width, m_size.height, PIXEL_RATIO);
@@ -85,7 +97,7 @@ namespace rl::ui {
         f32 elapsed{ m_timer.elapsed() - m_last_interaction };
         if (elapsed > m_tooltip_delay)
         {
-            const ui::widget* widget{ this->find_widget(mouse.pos()) };
+            const ui::widget* widget{ this->find_widget(m_mouse_ref.pos()) };
             if (widget && !widget->tooltip().empty())
             {
                 i32 tooltip_width{ 150 };
@@ -164,91 +176,14 @@ namespace rl::ui {
         return true;
     }
 
-    bool Screen::draw_all(const Mouse& mouse, const Keyboard& kb)
+    bool Screen::draw_all()
     {
         bool ret = true;
         ret &= this->draw_setup();
         ret &= this->draw_contents();
-        ret &= this->draw_widgets(mouse, kb);
+        ret &= this->draw_widgets();
         ret &= this->draw_teardown();
         return ret;
-    }
-
-    void Screen::draw(NVGcontext* ctx)
-    {
-        i32 ds = m_theme->m_window_drop_shadow_size, cr = m_theme->m_window_corner_radius;
-        i32 hh = m_theme->m_window_header_height;
-
-        // Draw window
-        nvgSave(ctx);
-        nvgBeginPath(ctx);
-        nvgRoundedRect(ctx, m_pos.x, m_pos.y, m_size.width, m_size.height, cr);
-        nvgFillColor(ctx, m_mouse_focus ? m_theme->m_window_fill_focused
-                                        : m_theme->m_window_fill_unfocused);
-        nvgFill(ctx);
-
-        // Draw a drop shadow
-        NVGpaint shadow_paint = nvgBoxGradient(ctx, m_pos.x, m_pos.y, m_size.width, m_size.height,
-                                               cr * 2, ds * 2, m_theme->m_drop_shadow,
-                                               m_theme->m_transparent);
-
-        nvgSave(ctx);
-        nvgResetScissor(ctx);
-        nvgBeginPath(ctx);
-        nvgRect(ctx, m_pos.x - ds, m_pos.y - ds, m_size.width + 2 * ds, m_size.height + 2 * ds);
-        nvgRoundedRect(ctx, m_pos.x, m_pos.y, m_size.width, m_size.height, cr);
-        nvgPathWinding(ctx, NVG_HOLE);
-        nvgFillPaint(ctx, shadow_paint);
-        nvgFill(ctx);
-        nvgRestore(ctx);
-
-        if (!m_title.empty())
-        {
-            /* Draw header */
-            NVGpaint header_paint{ nvgLinearGradient(ctx, m_pos.x, m_pos.y, m_pos.x, m_pos.y + hh,
-                                                     m_theme->m_window_header_gradient_top,
-                                                     m_theme->m_window_header_gradient_bot) };
-
-            nvgBeginPath(ctx);
-            nvgRoundedRect(ctx, m_pos.x, m_pos.y, m_size.width, hh, cr);
-
-            nvgFillPaint(ctx, header_paint);
-            nvgFill(ctx);
-
-            nvgBeginPath(ctx);
-            nvgRoundedRect(ctx, m_pos.x, m_pos.y, m_size.width, hh, cr);
-            nvgStrokeColor(ctx, m_theme->m_window_header_sep_top);
-
-            nvgSave(ctx);
-            nvgIntersectScissor(ctx, m_pos.x, m_pos.y, m_size.width, 0.5f);
-            nvgStroke(ctx);
-            nvgRestore(ctx);
-
-            nvgBeginPath(ctx);
-            nvgMoveTo(ctx, m_pos.x + 0.5f, m_pos.y + hh - 1.5f);
-            nvgLineTo(ctx, m_pos.x + m_size.width - 0.5f, m_pos.y + hh - 1.5f);
-            nvgStrokeColor(ctx, m_theme->m_window_header_sep_bot);
-            nvgStroke(ctx);
-
-            nvgFontSize(ctx, 18.0f);
-            nvgFontFace(ctx, ui::font::name::sans_bold);
-            nvgTextAlign(ctx, NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE);
-
-            nvgFontBlur(ctx, 2.0f);
-            nvgFillColor(ctx, m_theme->m_drop_shadow);
-            nvgText(ctx, m_pos.x + m_size.width / 2.0f, m_pos.y + hh / 2.0f, m_title.c_str(),
-                    nullptr);
-
-            nvgFontBlur(ctx, 0.0f);
-            nvgFillColor(ctx, m_focused ? m_theme->m_window_title_focused
-                                        : m_theme->m_window_title_unfocused);
-            nvgText(ctx, m_pos.x + m_size.width / 2.0f, m_pos.y + hh / 2.0f - 1, m_title.c_str(),
-                    nullptr);
-        }
-
-        nvgRestore(ctx);
-
-        ui::widget::draw(ctx);
     }
 
     void Screen::set_visible(bool visible)
@@ -353,21 +288,28 @@ namespace rl::ui {
     // TODO: move into renderer
     void Screen::nvg_flush()
     {
-        runtime_assert(false, "not implemented");
+        // TODO: reorganize
+        constexpr f32 PIXEL_RATIO = 1.0f;
+        NVGparams* params = nvgInternalParams(m_nvg_context);
+        params->renderFlush(params->userPtr);
+        params->renderViewport(params->userPtr, m_size.width, m_size.height, PIXEL_RATIO);
     }
 
-    // Is a tooltip currently fading in?
+    std::string Screen::title() const
+    {
+        return m_title;
+    }
+
     bool Screen::tooltip_fade_in_progress() const
     {
-        runtime_assert(false, "not implemented");
-        return false;
-    }
+        // Is a tooltip currently fading in?
+        f32 elapsed{ m_timer.elapsed() - m_last_interaction };
+        if (elapsed < 0.25f || elapsed > 1.25f)
+            return false;
 
-    // Compute the layout of all widgets
-    void Screen::perform_layout()
-    {
-        // using ui::widget::perform_layout(ctx) here...
-        ui::widget::perform_layout(m_nvg_context);
+        // Temporarily increase the frame rate to fade in the tooltip
+        const ui::widget* widget{ this->find_widget(m_mouse_ref.pos()) };
+        return widget != nullptr && !widget->tooltip().empty();
     }
 
     void Screen::update_focus(ui::widget* widget)
@@ -382,14 +324,14 @@ namespace rl::ui {
 
         m_focus_path.clear();
 
-        Window* window{ nullptr };
+        Screen* window{ nullptr };
         while (widget != nullptr)
         {
             m_focus_path.push_back(widget);
 
-            Window* as_window{ dynamic_cast<Window*>(widget) };
-            if (as_window != nullptr)
-                window = as_window;
+            Screen* as_screen{ dynamic_cast<Screen*>(widget) };
+            if (as_screen != nullptr)
+                window = as_screen;
 
             widget = widget->parent();
         }
@@ -407,29 +349,29 @@ namespace rl::ui {
         //     this->move_window_to_front(static_cast<Window*>(window));
     }
 
-    void Screen::move_window_to_front(Window* window)
+    void Screen::move_window_to_front(ui::Dialog* dialog)
     {
-        m_children.erase(std::remove(m_children.begin(), m_children.end(), window),
-                         m_children.end());
+        auto removal_iterator{ std::remove(m_children.begin(), m_children.end(), dialog) };
+        m_children.erase(removal_iterator, m_children.end());
 
         bool changed{ false };
-        m_children.push_back(window);
+        m_children.push_back(dialog);
 
         do
         {
             // Brute force topological sort (no problem for a few windows..)
             size_t base_idx{ 0 };
             for (size_t idx = 0; idx < m_children.size(); ++idx)
-                if (m_children[idx] == window)
+                if (m_children[idx] == dialog)
                     base_idx = idx;
 
             changed = false;
             for (size_t idx = 0; idx < m_children.size(); ++idx)
             {
                 ui::Popup* popup_wnd{ dynamic_cast<ui::Popup*>(m_children[idx]) };
-                if (popup_wnd != nullptr && popup_wnd->parent_window() == window && idx < base_idx)
+                if (popup_wnd != nullptr && popup_wnd->parent_window() == dialog && idx < base_idx)
                 {
-                    this->move_window_to_front(popup_wnd);
+                    this->move_window_to_front(dialog);
                     changed = true;
                     break;
                 }
@@ -438,7 +380,7 @@ namespace rl::ui {
         while (changed);
     }
 
-    void Screen::dispose_window(Window* window)
+    void Screen::dispose_window(Dialog* window)
     {
         if (std::find(m_focus_path.begin(), m_focus_path.end(), window) != m_focus_path.end())
             m_focus_path.clear();
@@ -449,7 +391,7 @@ namespace rl::ui {
         this->remove_child(window);
     }
 
-    void Screen::center_window(Window* window) const
+    void Screen::center_window(Dialog* window) const
     {
         if (window->size() == ds::dims<i32>{ 0, 0 })
         {
@@ -478,78 +420,122 @@ namespace rl::ui {
         for (int i = 0; i < count; ++i)
             arg[i] = filenames[i];
 
-        m_redraw |= drop_event(arg);
+        m_redraw |= this->drop_event(arg);
     }
 
-    // bool Screen::on_moved(WindowID id, ds::point<i32> pt)
-    //{
-    //     if constexpr (io::logging::window_events)
-    //     {
-    //         ds::rect<i32> prev_rect{ m_window_rect };
-    //         ds::rect<i32> new_rect{ pt, prev_rect.size };
-    //         rl::log::info("window::on_moved [id={}] : {} => {}", id, prev_rect, new_rect);
-    //     }
+    bool Screen::on_moved(WindowID id, ds::point<i32> pt)
+    {
+        if constexpr (io::logging::window_events)
+        {
+            ds::rect<i32> prev_rect{ m_pos, m_size };
+            ds::rect<i32> new_rect{ pt, prev_rect.size };
+            rl::log::info("window::on_moved [id={}] : {} => {}", id, prev_rect, new_rect);
+        }
 
-    //    bool ret = m_window_rect.pt != pt;
-    //    runtime_assert(ret, "window moved, but location unchanged");
-    //    m_window_rect.pt = pt;
+        m_pos = pt;
+        return true;
+    }
 
-    //    return ret;
-    //}
+    bool Screen::on_resized(ds::dims<i32> size)
+    {
+        if (size.area() == 0)
+            return false;
 
-    // bool Screen::on_resized(ds::dims<i32> size)
-    //{
-    //     if constexpr (io::logging::window_events)
-    //     {
-    //         ds::rect<i32> prev_rect{ m_window_rect };
-    //         ds::rect<i32> new_rect{ prev_rect.pt, size };
-    //         rl::log::info("window::on_resized: {} => {}", prev_rect, new_rect);
-    //     }
+        m_last_interaction = m_timer.elapsed();
+        auto new_size = ds::dims<i32>{
+            static_cast<i32>(this->width() / m_pixel_ratio),
+            static_cast<i32>(this->height() / m_pixel_ratio),
+        };
 
-    //    if (m_resize_callback != nullptr)
-    //        m_resize_callback(size);
-
-    //    m_redraw = true;
-    //    return this->draw_all();
-    //}
+        this->set_size(new_size);
+        return this->redraw();
+    }
 
     bool Screen::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb)
     {
-        if constexpr (io::logging::window_events)
-            rl::log::info("window::on_mouse_button_pressed [button:{}]", mouse.button_pressed());
+        m_last_interaction = m_timer.elapsed();
+        ds::point<i32> mouse_pos{ mouse.pos() };
+        if constexpr (io::logging::mouse_events)
+            log::info("{}", mouse);
 
-        if (ui::widget::on_mouse_button_pressed(mouse, kb))
-            return true;
-
-        else if (mouse.is_button_pressed(Mouse::Button::Left))
+        if (m_focus_path.size() > 1)
         {
-            i32 offset_height{ mouse.pos().y - m_pos.y };
-            m_drag_active = offset_height < m_theme->m_window_header_height;
-            return true;
+            const ui::widget* w{ m_focus_path[m_focus_path.size() - 2] };
+            const ui::Dialog* window{ dynamic_cast<const ui::Dialog*>(w) };
+            if (window != nullptr && window->modal())
+            {
+                if (!window->contains(mouse_pos))
+                    return true;
+            }
         }
 
-        return false;
+        const auto drop_widget{ this->find_widget(mouse_pos) };
+        if (drop_widget != nullptr && m_cursor != drop_widget->cursor())
+        {
+            m_cursor = drop_widget->cursor();
+            SDL3::SDL_Cursor* widget_cursor{ m_cursors[m_cursor] };
+            runtime_assert(widget_cursor != nullptr, "invalid cursor");
+            SDL3::SDL_SetCursor(widget_cursor);
+        }
+
+        const bool drag_btn_pressed{ mouse.is_button_pressed(Mouse::Button::Left) };
+        if (!m_drag_active && drag_btn_pressed)
+        {
+            m_drag_widget = this->find_widget(mouse_pos);
+            if (m_drag_widget == this)
+                m_drag_widget = nullptr;
+
+            m_drag_active = m_drag_widget != nullptr;
+            if (!m_drag_active)
+                update_focus(nullptr);
+        }
+
+        m_redraw |= this->on_mouse_button_pressed(mouse, kb);
+        return m_redraw;
     }
 
     bool Screen::on_mouse_button_released(const Mouse& mouse, const Keyboard& kb)
     {
-        if constexpr (io::logging::window_events)
-            rl::log::info("window::on_mouse_button_released [button:{}]", mouse.button_released());
+        m_last_interaction = m_timer.elapsed();
+        ds::point<i32> mouse_pos{ mouse.pos() };
+        if constexpr (io::logging::mouse_events)
+            log::info("{}", mouse);
 
-        if (ui::widget::on_mouse_button_released(mouse, kb))
-            return true;
-
-        if (mouse.is_button_released(Mouse::Button::Left))
+        if (m_focus_path.size() > 1)
         {
-            m_drag_active = false;
-            return true;
+            const ui::widget* w{ m_focus_path[m_focus_path.size() - 2] };
+            const ui::Dialog* window{ dynamic_cast<const ui::Dialog*>(w) };
+            if (window != nullptr && window->modal())
+            {
+                if (!window->contains(mouse_pos))
+                    return true;
+            }
         }
 
-        return false;
+        auto drop_widget{ this->find_widget(mouse_pos) };
+        if (m_drag_active && drop_widget != m_drag_widget)
+            m_redraw |= m_drag_widget->on_mouse_button_released(mouse, kb);
+
+        if (m_drag_active && drop_widget != nullptr && m_cursor != drop_widget->cursor())
+        {
+            m_cursor = drop_widget->cursor();
+            SDL3::SDL_Cursor* widget_cursor{ m_cursors[m_cursor] };
+            runtime_assert(widget_cursor != nullptr, "invalid cursor");
+            SDL3::SDL_SetCursor(widget_cursor);
+        }
+
+        const bool drag_btn_released{ mouse.is_button_released(Mouse::Button::Left) };
+        if (m_drag_active && drag_btn_released)
+        {
+            m_drag_active = false;
+            m_drag_widget = nullptr;
+        }
+
+        m_redraw |= this->on_mouse_button_released(mouse, kb);
+        return m_redraw;
     }
 
-    bool Screen::on_mouse_drag(ds::point<i32> pnt, ds::vector2<i32> rel, const Mouse& mouse,
-                               const Keyboard& kb)
+    bool Screen::on_mouse_drag(const Mouse& mouse, const Keyboard& kb)
     {
         if constexpr (io::logging::window_events)
             rl::log::info("window::on_mouse_drag [pt:{}, rel:{}, btn:{}, mod:{}]", mouse.pos(),
@@ -558,7 +544,7 @@ namespace rl::ui {
 
         if (m_drag_active && mouse.is_button_held(Mouse::Button::Left))
         {
-            m_pos += rel;
+            m_pos += mouse.pos_delta();
 
             m_pos.x = std::max(m_pos.x, 0);
             m_pos.y = std::max(m_pos.y, 0);
@@ -576,20 +562,63 @@ namespace rl::ui {
 
     bool Screen::on_mouse_move(const Mouse& mouse, const Keyboard& kb)
     {
-        if constexpr (io::logging::window_events)
-            rl::log::info("window::on_mouse_move [pt:{}, rel:{}, btn:{}, mod:{}]", mouse.pos(),
-                          mouse.pos_delta(), mouse.button_pressed(),
-                          kb.is_button_down(Keyboard::Button::Modifiers));
+        ds::point<i32> mouse_pos{ mouse.pos() };
+        if constexpr (io::logging::mouse_events)
+            log::info("{}", mouse);
 
-        return ui::widget::on_mouse_move(mouse, kb);
+        bool ret{ false };
+        ds::point<i32> pnt{
+            static_cast<i32>(std::round(mouse_pos.x / m_pixel_ratio)),
+            static_cast<i32>(std::round(mouse_pos.y / m_pixel_ratio)),
+        };
+
+        // TODO: ????????
+        pnt -= ds::vector2<i32>{ 1, 2 };
+
+        m_last_interaction = m_timer.elapsed();
+        if (!m_drag_active)
+        {
+            ui::widget* widget{ this->find_widget(pnt) };
+            if (widget != nullptr && widget->cursor() != m_cursor)
+            {
+                m_cursor = widget->cursor();
+                SDL3::SDL_Cursor* widget_cursor{ m_cursors[m_cursor] };
+                runtime_assert(widget_cursor != nullptr, "invalid cursor");
+                SDL3::SDL_SetCursor(widget_cursor);
+            }
+        }
+        else
+        {
+            auto&& pos{ mouse.pos() };
+            ret = m_drag_widget->on_mouse_drag(mouse, kb);
+        }
+
+        ret = ret || this->on_mouse_move(mouse, kb);
+        m_redraw |= ret;
+        return ret;
     }
 
     bool Screen::on_mouse_scroll(const Mouse& mouse, const Keyboard& kb)
     {
-        if constexpr (io::logging::window_events)
-            rl::log::info("window::on_mouse_scroll [pos:{}, rel:{}]", mouse.pos(), mouse.wheel());
+        if constexpr (io::logging::mouse_events)
+            log::info("{}", mouse);
 
-        return ui::widget::on_mouse_scroll(mouse, kb);
+        m_last_interaction = m_timer.elapsed();
+        ds::vector2<i32> wheel_pos{ mouse.wheel() };
+        ds::point<i32> mouse_pos{ mouse.pos() };
+
+        if (m_focus_path.size() > 1)
+        {
+            auto window{ dynamic_cast<ui::Dialog*>(m_focus_path[m_focus_path.size() - 2]) };
+            if (window != nullptr && window->modal())
+            {
+                if (!window->contains(mouse.pos()))
+                    return true;
+            }
+        }
+
+        m_redraw |= this->on_mouse_scroll(mouse, kb);
+        return m_redraw;
     }
 
     bool Screen::on_mouse_entered(const Mouse& mouse)
@@ -626,26 +655,32 @@ namespace rl::ui {
 
     bool Screen::on_key_pressed(const Keyboard& kb)
     {
-        if constexpr (io::logging::window_events)
-            rl::log::info("window::on_focus_lost");
+        if constexpr (io::logging::kb_events)
+            log::info("{}", kb);
 
-        return ui::widget::on_key_pressed(kb);
+        m_last_interaction = m_timer.elapsed();
+        m_redraw |= this->on_key_pressed(kb);
+        return m_redraw;
     }
 
     bool Screen::on_key_released(const Keyboard& kb)
     {
-        if constexpr (io::logging::window_events)
-            rl::log::info("window::on_focus_lost");
+        if constexpr (io::logging::kb_events)
+            log::info("{}", kb);
 
-        return ui::widget::on_key_released(kb);
+        m_last_interaction = m_timer.elapsed();
+        m_redraw |= this->on_key_pressed(kb);
+        return m_redraw;
     }
 
     bool Screen::on_character_input(const Keyboard& kb)
     {
-        if constexpr (io::logging::window_events)
-            rl::log::info("window::on_focus_lost");
+        if constexpr (io::logging::kb_events)
+            log::info("{}", kb);
 
-        return ui::widget::on_character_input(kb);
+        m_last_interaction = m_timer.elapsed();
+        m_redraw |= this->on_character_input(kb);
+        return m_redraw;
     }
 
     // bool Screen::on_display_scale_changed(const WindowID id)

@@ -21,12 +21,12 @@
 #endif
 
 namespace rl {
-    class Window;
     using WindowID = u32;
     using DisplayID = u32;
 }
 
 namespace rl::ui {
+    class Dialog;
 
     class widget : public ds::refcounted
     {
@@ -52,11 +52,11 @@ namespace rl::ui {
         i32 child_index(ui::widget* widget) const;
         i32 child_count() const;
 
-        Window* window();
+        ui::Dialog* window();
         ui::widget* parent();
         ui::layout* layout();
         ui::theme* theme();
-        ui::widget* child_at(int index);
+        ui::widget* child_at(i32 index);
         ui::widget* find_widget(ds::point<i32> pt);
         ds::point<i32> position() const;
         ds::point<i32> abs_position() const;
@@ -64,7 +64,7 @@ namespace rl::ui {
         ds::dims<i32> size() const;
         Mouse::Cursor::ID cursor() const;
 
-        const Window* window() const;
+        const ui::Dialog* window() const;
         const ui::widget* parent() const;
         const ui::layout* layout() const;
         const ui::theme* theme() const;
@@ -81,7 +81,7 @@ namespace rl::ui {
         void set_parent(ui::widget* parent);
         void set_layout(ui::layout* layout);
         void set_position(ds::point<i32> pos);
-        void set_size(const ds::dims<i32>& size);
+        void set_size(ds::dims<i32> size);
         void set_width(i32 width);
         void set_height(i32 height);
         void set_fixed_size(ds::dims<i32> fixed_size);
@@ -117,8 +117,7 @@ namespace rl::ui {
         virtual bool on_mouse_button_released(const Mouse& mouse, const Keyboard& kb);
 
         virtual bool on_mouse_move(const Mouse& mouse, const Keyboard& kb);
-        virtual bool on_mouse_drag(ds::point<i32> pnt, ds::vector2<i32> rel, const Mouse& mouse,
-                                   const Keyboard& kb);
+        virtual bool on_mouse_drag(const Mouse& mouse, const Keyboard& kb);
 
     public:
         virtual void draw(NVGcontext* nvg_context);
@@ -153,7 +152,7 @@ namespace rl::ui {
         std::vector<widget*> m_children{};
         std::string m_tooltip{};
 
-        Timer<float> m_timer{};
+        mutable Timer<float> m_timer{};
 
     private:
         constexpr static bool DiagnosticsEnabled{ true };

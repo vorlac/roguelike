@@ -49,8 +49,8 @@ namespace rl::ui {
         const std::vector<Button*>& button_group() const;
 
         void set_caption(const std::string& caption);
-        void set_background_color(const ds::color<u8>& background_color);
-        void set_text_color(const ds::color<u8>& text_color);
+        void set_background_color(ds::color<u8> background_color);
+        void set_text_color(ds::color<u8> text_color);
         void set_icon(i32 icon);
         void set_flags(Button::Flags button_flags);
         void set_icon_position(IconPosition icon_position);
@@ -88,7 +88,7 @@ namespace rl::ui {
         bool m_pressed{ false };
         Button::IconPosition m_icon_position{};
         ds::color<u8> m_background_color{};
-        ds::color<u8> m_text_color{};
+        ds::color<u8> m_text_color{ 255, 255, 255 };
         std::function<void()> m_callback;
         std::function<void(bool)> m_change_callback;
         std::vector<ui::Button*> m_button_group{};

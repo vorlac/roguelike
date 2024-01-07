@@ -1,6 +1,7 @@
 #pragma once
 
 #include "core/ui/button.hpp"
+#include "core/ui/dialog.hpp"
 #include "core/ui/label.hpp"
 #include "core/ui/layout.hpp"
 #include "core/ui/popup.hpp"

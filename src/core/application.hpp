@@ -82,27 +82,25 @@ namespace rl {
             // define the layout
             // auto layout = std::make_unique<ui::box_layout>(ui::orientation::Horizontal,
             //                                                ui::alignment::Maximum, 10, 25);
-            auto layout{
-                new ui::advanced_grid_layout(
-                    std::vector{
-                        // 4 columns
-                        175,  // col 1 - preferred size of 10px wide
-                        0,    // col 2 - no preferred size
-                        175,  // col 3 - preferred size of 10px wide
-                        0,    // col 4 - no preferred size
-                    },
-                    std::vector<i32>{
-                        // 0 rows
-                    },  // no preferred sizes
-                    15  // 25 px margin along borders
-                    ),
-            };
+            auto layout = new ui::advanced_grid_layout(
+                std::vector{
+                    // 4 columns
+                    175,  // col 1 - preferred size of 10px wide
+                    0,    // col 2 - no preferred size
+                    175,  // col 3 - preferred size of 10px wide
+                    0,    // col 4 - no preferred size
+                },
+                std::vector<i32>{
+                    // 0 rows
+                },  // no preferred sizes
+                15  // 25 px margin along borders
+            );
             // set layout margins to 10px
             layout->set_margin(10);
             // stretch column 2 to 1.0f
             layout->set_col_stretch(2, 1.0f);
-            m_window->set_layout(layout);
-            m_window->set_visible(true);
+            gui->set_layout(layout);
+            gui->set_visible(true);
 
             //===========================================
             // setup layout / window
@@ -151,24 +149,20 @@ namespace rl {
                 log::warning("Label callback invoked");
             });
 
-            auto timer_value_label{
-                new ui::label{
-                    gui,
-                    fmt::to_string(fmt::format("{:4.6f}", m_timer.elapsed())),
-                    ui::font::name::mono,
-                    24,
-                },
+            auto timer_value_label = new ui::label{
+                gui,
+                fmt::to_string(fmt::format("{:4.6f}", m_timer.elapsed())),
+                ui::font::name::mono,
+                24,
             };
 
             timer_value_label->set_tooltip("Time");
 
-            auto stats_desc_label{
-                new ui::label{
-                    gui,
-                    "Stats: ",
-                    ui::font::name::mono,
-                    24,
-                },
+            auto stats_desc_label = new ui::label{
+                gui,
+                "Stats: ",
+                ui::font::name::mono,
+                24,
             };
 
             stats_desc_label->set_tooltip("Stats Label");
@@ -217,6 +211,7 @@ namespace rl {
             layout->append_row(0);
             layout->set_anchor(stats_desc_label, ui::Anchor(1, layout->row_count() - 1));
             layout->set_anchor(stats_value_label, ui::Anchor(3, layout->row_count() - 1));
+            gui->perform_layout();
 
             vbo.bind_buffers();
             while (!this->should_exit()) [[likely]]

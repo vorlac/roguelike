@@ -88,19 +88,17 @@ namespace rl::inline utils {
         // get tick frequency
         static inline u64 tick_freq()
         {
-            const u64 freq = SDL3::SDL_GetPerformanceFrequency();
-            return freq;
+            return SDL3::SDL_GetPerformanceFrequency();
         }
 
         // get current tick/timestamp
         static inline u64 get_tick()
         {
-            const u64 curr_tick = SDL3::SDL_GetPerformanceCounter();
-            return curr_tick;
+            return SDL3::SDL_GetPerformanceCounter();
         }
 
         [[nodiscard]]
-        constexpr inline time_type now()
+        constexpr inline time_type now() const
         {
             return this->convert(Timer::get_tick());
         }

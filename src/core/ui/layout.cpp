@@ -5,6 +5,7 @@
 
 #include "core/ui/label.hpp"
 #include "core/ui/layout.hpp"
+#include "core/ui/screen.hpp"
 #include "core/ui/theme.hpp"
 #include "core/ui/widget.hpp"
 #include "core/window.hpp"
@@ -30,8 +31,8 @@ namespace rl::ui {
         };
 
         i32 y_offset{ 0 };
-        const rl::Window* window = dynamic_cast<const rl::Window*>(widget);
-        if (window != nullptr && !window->title().empty())
+        const ui::Screen* screen{ dynamic_cast<const ui::Screen*>(widget) };
+        if (screen != nullptr && !screen->title().empty())
         {
             if (m_orientation == ui::orientation::Vertical)
                 size.height += widget->theme()->m_window_header_height - this->m_margin / 2;
@@ -85,9 +86,8 @@ namespace rl::ui {
         i32 position{ this->m_margin };
         i32 y_offset{ 0 };
 
-        const rl::Window* window{ dynamic_cast<const rl::Window*>(widget) };
-        runtime_assert(window != nullptr, "failed ui::widget cast to rl::Window");
-        if (window != nullptr && !window->title().empty())
+        const ui::Screen* screen{ dynamic_cast<const ui::Screen*>(widget) };
+        if (screen != nullptr && !screen->title().empty())
         {
             if (m_orientation == ui::orientation::Vertical)
                 position += widget->theme()->m_window_header_height - this->m_margin / 2;
@@ -198,8 +198,8 @@ namespace rl::ui {
     {
         i32 height = this->m_margin, width = 2 * this->m_margin;
 
-        const rl::Window* window{ dynamic_cast<const rl::Window*>(widget) };
-        if (window != nullptr && !window->title().empty())
+        const ui::Screen* screen{ dynamic_cast<const ui::Screen*>(widget) };
+        if (screen != nullptr && !screen->title().empty())
             height += widget->theme()->m_window_header_height - this->m_margin / 2;
 
         bool first = true, indent = false;
@@ -237,8 +237,8 @@ namespace rl::ui {
         i32 available_width{ (widget->fixed_width() ? widget->fixed_width() : widget->width()) -
                              2 * this->m_margin };
 
-        const rl::Window* window = dynamic_cast<const rl::Window*>(widget);
-        if (window != nullptr && !window->title().empty())
+        const ui::Screen* screen{ dynamic_cast<const ui::Screen*>(widget) };
+        if (screen != nullptr && !screen->title().empty())
             height += widget->theme()->m_window_header_height - this->m_margin / 2;
 
         bool first{ true };
@@ -335,8 +335,8 @@ namespace rl::ui {
                 std::max(static_cast<i32>(grid[1].size()) - 1, 0) * m_spacing.y,
         };
 
-        const rl::Window* window{ dynamic_cast<const rl::Window*>(widget) };
-        if (window != nullptr && !window->title().empty())
+        const ui::Screen* screen{ dynamic_cast<const ui::Screen*>(widget) };
+        if (screen != nullptr && !screen->title().empty())
             pref_size.height += widget->theme()->m_window_header_height - this->m_margin / 2;
 
         return pref_size;
@@ -420,8 +420,8 @@ namespace rl::ui {
         };
 
         ds::dims<i32> extra{ 0, 0 };
-        const rl::Window* window{ dynamic_cast<const rl::Window*>(widget) };
-        if (window != nullptr && !window->title().empty())
+        const ui::Screen* screen{ dynamic_cast<const ui::Screen*>(widget) };
+        if (screen != nullptr && !screen->title().empty())
             extra.height += widget->theme()->m_window_header_height - this->m_margin / 2;
 
         // Strech to size provided by ui::widget
@@ -663,8 +663,8 @@ namespace rl::ui {
             2 * this->m_margin,
         };
 
-        const rl::Window* window{ dynamic_cast<const rl::Window*>(widget) };
-        if (window != nullptr && !window->title().empty())
+        const ui::Screen* screen{ dynamic_cast<const ui::Screen*>(widget) };
+        if (screen != nullptr && !screen->title().empty())
             extra.height += widget->theme()->m_window_header_height - this->m_margin / 2;
 
         return size + extra;
@@ -676,8 +676,8 @@ namespace rl::ui {
         this->compute_layout(nvg_context, widget, grid);
 
         grid[axis::Horizontal].insert(grid[axis::Horizontal].begin(), m_margin);
-        const rl::Window* window{ dynamic_cast<const rl::Window*>(widget) };
-        if (window == nullptr || window->title().empty())
+        const ui::Screen* screen{ dynamic_cast<const ui::Screen*>(widget) };
+        if (screen == nullptr || screen->title().empty())
             grid[axis::Vertical].insert(grid[axis::Vertical].begin(), m_margin);
         else
         {
@@ -762,8 +762,8 @@ namespace rl::ui {
             2 * this->m_margin,
         };
 
-        const rl::Window* window{ dynamic_cast<const rl::Window*>(widget) };
-        if (window != nullptr && window->title().length() == 0)
+        const ui::Screen* screen{ dynamic_cast<const ui::Screen*>(widget) };
+        if (screen != nullptr && screen->title().length() == 0)
             extra.height += widget->theme()->m_window_header_height - this->m_margin / 2;
 
         container_size -= extra;

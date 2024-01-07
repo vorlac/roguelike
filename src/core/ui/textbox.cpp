@@ -543,8 +543,7 @@ namespace rl::ui {
         return m_editable;
     }
 
-    bool TextBox::on_mouse_drag(ds::point<i32> pnt, ds::vector2<i32> rel, const Mouse& mouse,
-                                const Keyboard& kb)
+    bool TextBox::on_mouse_drag(const Mouse& mouse, const Keyboard& kb)
     {
         m_mouse_pos = mouse.pos();
         m_mouse_drag_pos = mouse.pos();
@@ -761,12 +760,12 @@ namespace rl::ui {
     {
         if (m_selection_pos > -1)
         {
-            Window* window = this->window();
+            ui::Dialog* window{ this->window() };
             if (window == nullptr)
                 return false;
 
-            i32 begin = m_cursor_pos;
-            i32 end = m_selection_pos;
+            i32 begin{ m_cursor_pos };
+            i32 end{ m_selection_pos };
 
             if (begin > end)
                 std::swap(begin, end);
@@ -780,7 +779,7 @@ namespace rl::ui {
 
     void TextBox::paste_from_clipboard()
     {
-        Window* window = this->window();
+        ui::Dialog* window{ this->window() };
         if (window == nullptr)
             return;
 
@@ -865,8 +864,8 @@ namespace rl::ui {
     int TextBox::position_to_cursor_index(f32 posx, f32 lastx, const NVGglyphPosition* glyphs,
                                           i32 size)
     {
-        i32 m_cursor_id = 0;
-        f32 caretx = glyphs[m_cursor_id].x;
+        i32 m_cursor_id{ 0 };
+        f32 caretx{ glyphs[m_cursor_id].x };
 
         for (i32 j = 1; j < size; j++)
         {

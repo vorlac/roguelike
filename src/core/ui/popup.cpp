@@ -5,8 +5,8 @@
 
 namespace rl::ui {
 
-    Popup::Popup(ui::widget* parent, rl::Window* parent_window)
-        : rl::Window{ parent, "" }
+    Popup::Popup(ui::widget* parent, ui::Dialog* parent_window)
+        : ui::Dialog{ parent, "" }
         , m_parent_window{ parent_window }
         , m_anchor_pos{ 0, 0 }
         , m_anchor_offset{ 30 }
@@ -20,7 +20,7 @@ namespace rl::ui {
         m_anchor_pos = anchor_pos;
     }
 
-    const ds::point<i32>& Popup::anchor_pos() const
+    const ds::point<i32> Popup::anchor_pos() const
     {
         return m_anchor_pos;
     }
@@ -55,12 +55,12 @@ namespace rl::ui {
         return m_side;
     }
 
-    rl::Window* Popup::parent_window()
+    ui::Dialog* Popup::parent_window()
     {
         return m_parent_window;
     }
 
-    const rl::Window* Popup::parent_window() const
+    const ui::Dialog* Popup::parent_window() const
     {
         return m_parent_window;
     }

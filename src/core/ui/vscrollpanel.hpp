@@ -16,8 +16,7 @@ namespace rl::gui {
         virtual bool on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb) override;
         virtual bool on_mouse_button_released(const Mouse& mouse, const Keyboard& kb) override;
         virtual bool on_mouse_scroll(const Mouse& mouse, const Keyboard& kb) override;
-        virtual bool on_mouse_drag(ds::point<i32> pnt, ds::vector2<i32> rel, const Mouse& mouse,
-                                   const Keyboard& kb) override;
+        virtual bool on_mouse_drag(const Mouse& mouse, const Keyboard& kb) override;
 
     public:
         virtual void draw(NVGcontext* ctx) override;

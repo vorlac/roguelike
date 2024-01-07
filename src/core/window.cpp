@@ -28,18 +28,8 @@ SDL_C_LIB_BEGIN
 SDL_C_LIB_END
 
 namespace rl {
-    Window::Window(ui::widget* parent, const std::string& title)
-        : ui::widget{ parent }
-        , m_title{ title }
-        , m_modal{ false }
-        , m_screen{ new ui::Screen(m_nvg_context, ds::dims<i32>{ 0, 0 }) }
-        , m_button_panel{ nullptr }
-    {
-    }
 
     Window::Window(std::string title, const ds::dims<i32>& dims, Window::Properties flags)
-        : ui::widget{ nullptr }
-        , m_button_panel{ nullptr }
     {
         this->set_opengl_attribute(OpenGL::Attribute::AcceleratedVisual, 1);
         this->set_opengl_attribute(OpenGL::Attribute::ContextMajorVersion, 4);
@@ -60,7 +50,6 @@ namespace rl {
         m_sdl_window = SDL3::SDL_CreateWindow(title.data(), dims.width, dims.height, m_properties);
         m_window_rect = { m_sdl_window ? this->get_position() : ds::point<i32>::null(), dims };
         m_renderer = std::make_unique<Renderer>(*this, Renderer::DEFAULT_PROPERTY_FLAGS);
-        m_nvg_context = m_renderer->nvg_context();
 
         sdl_assert(m_sdl_window != nullptr, "failed to create SDL_Window");
         sdl_assert(m_renderer != nullptr, "failed to create sdl::Renderer");
@@ -71,18 +60,12 @@ namespace rl {
 
         SDL3::SDL_GL_SetSwapInterval(m_vsync);
 
-        for (i32 i = Mouse::Cursor::Arrow; i < Mouse::Cursor::CursorCount; ++i)
-            m_cursors[i] = SDL3::SDL_CreateSystemCursor(Mouse::Cursor::type(i));
-
-        m_screen = new ui::Screen(m_nvg_context, window_size);
+        NVGcontext* nvg_context{ m_renderer->nvg_context() };
+        m_screen = new ui::Screen(nvg_context, window_size, m_mouse, m_keyboard);
     }
 
     Window::~Window()
     {
-        for (i32 i = Mouse::Cursor::Arrow; i < Mouse::Cursor::CursorCount; ++i)
-            if (m_cursors[i] != nullptr)
-                SDL3::SDL_DestroyCursor(m_cursors[i]);
-
         if (m_sdl_window != nullptr)
         {
             SDL3::SDL_DestroyWindow(m_sdl_window);
@@ -101,7 +84,6 @@ namespace rl {
         std::swap(m_sdl_window, other.m_sdl_window);
         m_renderer = std::move(other.m_renderer);
         m_properties = std::move(other.m_properties);
-        m_window_rect = std::move(other.m_window_rect);
 
         return *this;
     }
@@ -209,10 +191,10 @@ namespace rl {
 
     bool Window::set_size(ds::dims<i32> size)
     {
-        ui::widget::set_size(size);
-        i32 result{ SDL3::SDL_SetWindowSize(m_sdl_window, size.width, size.height) };
+        i32 result = SDL3::SDL_SetWindowSize(m_sdl_window, size.width, size.height);
         runtime_assert(result == 0, "failed to set size");
         m_window_rect.size = size;
+        m_screen->set_size(size);
         return result == 0;
     }
 
@@ -269,17 +251,6 @@ namespace rl {
     ui::Screen* Window::gui() const
     {
         return m_screen;
-    }
-
-    const ds::color<u8>& Window::background() const
-    {
-        return m_background_color;
-    }
-
-    bool Window::set_background(ds::color<u8> background)
-    {
-        m_background_color = background;
-        return true;
     }
 
     std::string Window::get_title()
@@ -346,9 +317,10 @@ namespace rl {
 
     ds::dims<i32> Window::get_size()
     {
-        i32 result = SDL3::SDL_GetWindowSize(m_sdl_window, &m_size.width, &m_size.height);
+        i32 result = SDL3::SDL_GetWindowSize(m_sdl_window, &m_window_rect.size.width,
+                                             &m_window_rect.size.height);
         sdl_assert(result == 0, "failed to set size");
-        return m_size;
+        return m_window_rect.size;
     }
 
     ds::dims<i32> Window::get_render_size()
@@ -372,7 +344,7 @@ namespace rl {
 
     bool Window::on_pixel_size_changed(const WindowID id, ds::dims<i32> pixel_size)
     {
-        bool ret = true;
+        bool ret{ true };
 
         m_pixel_ratio = SDL3::SDL_GetWindowDisplayScale(m_sdl_window);
         sdl_assert(m_pixel_ratio != 0.0f, "failed to get pixel ratio [window:{}]", m_window_id);
@@ -381,6 +353,7 @@ namespace rl {
 
         if constexpr (io::logging::window_events)
             log::info("window::on_pixel_size_changed [id:{}] => {}", id, pixel_size);
+
         return ret;
     }
 
@@ -394,26 +367,12 @@ namespace rl {
 
     bool Window::clear()
     {
-        return m_renderer->clear(m_background_color);
+        return m_renderer->clear();
     }
 
     bool Window::render_start()
     {
-        i32 result{ SDL3::SDL_GL_MakeCurrent(m_sdl_window, m_renderer->gl_context()) };
-        sdl_assert(result == 0, "failed to make context current");
-
-        this->get_size();
-        this->get_render_size();
-
-        bool ret{ result == 0 };
-
-        ret &= m_renderer->set_viewport({
-            0,
-            0,
-            m_framebuf_size.width,
-            m_framebuf_size.height,
-        });
-
+        bool ret{ true };
         ret &= this->swap_buffers();
         ret &= m_screen->draw_setup();
 
@@ -432,37 +391,25 @@ namespace rl {
 
     bool Window::render()
     {
-        m_screen->draw(m_nvg_context);
+        i32 result{ SDL3::SDL_GL_MakeCurrent(m_sdl_window, m_renderer->gl_context()) };
+        sdl_assert(result == 0, "failed to make context current");
+
+        this->get_size();
+        this->get_render_size();
+
+        bool ret = m_renderer->set_viewport({
+            0,
+            0,
+            m_framebuf_size.width,
+            m_framebuf_size.height,
+        });
+
+        m_screen->draw_all();
 
         // TODO: remove / move
-        m_renderer->clear(m_background_color);
-        return true;
-    }
+        m_renderer->clear();
 
-    ds::dims<i32> Window::preferred_size(NVGcontext* nvg_context) const
-    {
-        if (m_button_panel != nullptr)
-            m_button_panel->hide();
-
-        ds::dims<i32> result{ ui::widget::preferred_size(nvg_context) };
-
-        if (m_button_panel != nullptr)
-            m_button_panel->show();
-
-        nvgFontSize(nvg_context, 18.0f);
-        nvgFontFace(nvg_context, ui::font::name::sans_bold);
-
-        std::array<f32, 4> bounds = {};
-        nvgTextBounds(nvg_context, 0, 0, m_title.c_str(), nullptr, bounds.data());
-
-        return ds::dims<i32>(std::max(result.width, static_cast<i32>(bounds[2] - bounds[0] + 20)),
-                             std::max(result.height, static_cast<i32>(bounds[3] - bounds[1])));
-    }
-
-    void Window::refresh_relative_placement()
-    {
-        // Overridden in ui::Popup
-        return;
+        return result == 0;
     }
 
     void Window::mouse_entered_event_callback(const SDL3::SDL_Event& e)
@@ -475,244 +422,48 @@ namespace rl {
         m_screen->on_mouse_exited(m_mouse);
     }
 
-    const std::string& Window::title() const
-    {
-        return m_title;
-    }
-
-    bool Window::modal() const
-    {
-        return m_modal;
-    }
-
-    bool Window::set_modal(bool modal)
-    {
-        m_modal = modal;
-        return m_modal;
-    }
-
-    ui::widget* Window::button_panel()
-    {
-        if (!m_button_panel)
-        {
-            m_button_panel = new ui::widget{ this };
-            m_button_panel->set_layout({
-                new ui::box_layout{
-                    ui::orientation::Horizontal,
-                    ui::alignment::Middle,
-                    0,
-                    4,
-                },
-            });
-        }
-
-        return m_button_panel;
-    }
-
-    void Window::dispose()
-    {
-        ui::widget* owner{ this };
-        while (owner->parent() != nullptr)
-            owner = owner->parent();
-
-        ((ui::Screen*)owner)->dispose_window(this);
-    }
-
-    void Window::center()
-    {
-        ui::widget* owner{ this };
-        while (owner->parent() != nullptr)
-            owner = owner->parent();
-
-        ((ui::Screen*)owner)->center_window(this);
-    }
-
-    // void cursor_pos_callback_event(double x, double y);
     void Window::mouse_moved_event_callback(const SDL3::SDL_Event& e)
     {
-        if constexpr (io::logging::mouse_events)
-            log::info("{}", m_mouse);
-
         m_mouse.process_motion(e.motion);
-        ds::point<i32> mouse_pos{ m_mouse.pos() };
-
-        bool ret{ false };
-
-        ds::point<i32> pnt{
-            static_cast<i32>(std::round(mouse_pos.x / m_pixel_ratio)),
-            static_cast<i32>(std::round(mouse_pos.y / m_pixel_ratio)),
-        };
-
-        // TODO: ????????
-        pnt -= ds::vector2<i32>{ 1, 2 };
-
-        m_screen->m_last_interaction = m_timer.elapsed();
-        if (!m_screen->m_drag_active)
-        {
-            ui::widget* widget{ this->find_widget(pnt) };
-            if (widget != nullptr && widget->cursor() != m_cursor)
-            {
-                m_cursor = widget->cursor();
-                SDL3::SDL_Cursor* widget_cursor{ m_cursors[m_cursor] };
-                runtime_assert(widget_cursor != nullptr, "invalid cursor");
-                SDL3::SDL_SetCursor(widget_cursor);
-            }
-        }
-        else
-        {
-            auto&& pos{ m_mouse.pos() };
-            ret = m_screen->m_drag_widget->on_mouse_drag(
-                pnt - m_screen->m_drag_widget->parent()->abs_position(), pnt - mouse_pos, m_mouse,
-                m_keyboard);
-        }
-
-        ret = ret || this->on_mouse_move(m_mouse, m_keyboard);
-        m_screen->m_redraw |= ret;
+        m_screen->on_mouse_move(m_mouse, m_keyboard);
     }
 
     void Window::mouse_wheel_event_callback(const SDL3::SDL_Event& e)
     {
-        if constexpr (io::logging::mouse_events)
-            log::info("{}", m_mouse);
-
-        m_screen->m_last_interaction = m_timer.elapsed();
         m_mouse.process_wheel(e.wheel);
-
-        ds::vector2<i32> wheel_pos{ m_mouse.wheel() };
-        ds::point<i32> mouse_pos{ m_mouse.pos() };
-
-        if (m_screen->m_focus_path.size() > 1)
-        {
-            const Window* window = dynamic_cast<Window*>(
-                m_screen->m_focus_path[m_screen->m_focus_path.size() - 2]);
-            if (window && window->modal())
-            {
-                if (!window->contains(m_mouse.pos()))
-                    return;
-            }
-        }
-
-        m_screen->m_redraw |= this->on_mouse_scroll(m_mouse, m_keyboard);
-    }
-
-    void Window::mouse_button_released_event_callback(const SDL3::SDL_Event& e)
-    {
-        m_screen->m_last_interaction = m_timer.elapsed();
-        ds::point<i32> mouse_pos{ m_mouse.pos() };
-
-        if (m_screen->m_focus_path.size() > 1)
-        {
-            const Window* window{ dynamic_cast<Window*>(
-                m_screen->m_focus_path[m_screen->m_focus_path.size() - 2]) };
-            if (window != nullptr && window->modal())
-            {
-                if (!window->contains(mouse_pos))
-                    return;
-            }
-        }
-
-        Mouse::Button::type released_button{ e.button.button };
-
-        m_mouse.process_button_up(released_button);
-        if constexpr (io::logging::mouse_events)
-            log::info("{}", m_mouse);
-
-        auto drop_widget{ this->find_widget(mouse_pos) };
-        if (m_screen->m_drag_active && drop_widget != m_screen->m_drag_widget)
-            m_screen->m_redraw |= m_screen->m_drag_widget->on_mouse_button_released(m_mouse,
-                                                                                    m_keyboard);
-
-        if (m_screen->m_drag_active && drop_widget != nullptr && m_cursor != drop_widget->cursor())
-        {
-            m_cursor = drop_widget->cursor();
-            SDL3::SDL_Cursor* widget_cursor{ m_cursors[m_cursor] };
-            runtime_assert(widget_cursor != nullptr, "invalid cursor");
-            SDL3::SDL_SetCursor(widget_cursor);
-        }
-
-        const bool drag_btn_released{ m_mouse.is_button_released(Mouse::Button::Left) };
-        if (m_screen->m_drag_active && drag_btn_released)
-        {
-            m_screen->m_drag_active = false;
-            m_screen->m_drag_widget = nullptr;
-        }
-
-        m_screen->m_redraw |= this->on_mouse_button_released(m_mouse, m_keyboard);
+        m_screen->on_mouse_scroll(m_mouse, m_keyboard);
     }
 
     void Window::mouse_button_pressed_event_callback(const SDL3::SDL_Event& e)
     {
-        m_screen->m_last_interaction = m_timer.elapsed();
-        ds::point<i32> mouse_pos{ m_mouse.pos() };
-
-        if (m_screen->m_focus_path.size() > 1)
-        {
-            const Window* window{ dynamic_cast<Window*>(
-                m_screen->m_focus_path[m_screen->m_focus_path.size() - 2]) };
-            if (window != nullptr && window->modal())
-            {
-                if (!window->contains(mouse_pos))
-                    return;
-            }
-        }
-
         const auto button_pressed{ e.button.button };
         m_mouse.process_button_down(button_pressed);
-        if constexpr (io::logging::mouse_events)
-            log::info("{}", m_mouse);
+        m_screen->on_mouse_button_pressed(m_mouse, m_keyboard);
+    }
 
-        auto drop_widget{ this->find_widget(mouse_pos) };
-        if (drop_widget != nullptr && m_cursor != drop_widget->cursor())
-        {
-            m_cursor = drop_widget->cursor();
-            SDL3::SDL_Cursor* widget_cursor{ m_cursors[m_cursor] };
-            runtime_assert(widget_cursor != nullptr, "invalid cursor");
-            SDL3::SDL_SetCursor(widget_cursor);
-        }
-
-        const bool drag_btn_pressed{ m_mouse.is_button_pressed(Mouse::Button::Left) };
-        if (!m_screen->m_drag_active && drag_btn_pressed)
-        {
-            m_screen->m_drag_widget = this->find_widget(mouse_pos);
-            if (m_screen->m_drag_widget == this)
-                m_screen->m_drag_widget = nullptr;
-
-            m_screen->m_drag_active = m_screen->m_drag_widget != nullptr;
-            if (!m_screen->m_drag_active)
-                m_screen->update_focus(nullptr);
-        }
-
-        m_screen->m_redraw |= this->on_mouse_button_pressed(m_mouse, m_keyboard);
+    void Window::mouse_button_released_event_callback(const SDL3::SDL_Event& e)
+    {
+        const auto button_released{ e.button.button };
+        m_mouse.process_button_down(button_released);
+        m_screen->on_mouse_button_released(m_mouse, m_keyboard);
     }
 
     void Window::keyboard_key_pressed_event_callback(const SDL3::SDL_Event& e)
     {
-        if constexpr (io::logging::kb_events)
-            log::info("{}", m_keyboard);
-
-        m_screen->m_last_interaction = m_timer.elapsed();
-        Keyboard::Button::type pressed_button(e.key.keysym.scancode);
+        const auto pressed_button{ e.key.keysym.scancode };
         m_keyboard.process_button_down(pressed_button);
-        m_screen->m_redraw |= this->on_key_pressed(m_keyboard);
+        m_screen->on_key_pressed(m_keyboard);
     }
 
     void Window::keyboard_key_released_event_callback(const SDL3::SDL_Event& e)
     {
-        if constexpr (io::logging::kb_events)
-            log::info("{}", m_keyboard);
-
-        m_screen->m_last_interaction = m_timer.elapsed();
-        Keyboard::Button::type released_button(e.key.keysym.scancode);
+        const auto released_button(e.key.keysym.scancode);
         m_keyboard.process_button_up(released_button);
-        m_screen->m_redraw |= this->on_key_released(m_keyboard);
+        m_screen->on_key_pressed(m_keyboard);
     }
 
     void Window::keyboard_char_event_callback(const SDL3::SDL_Event& e)
     {
-        if constexpr (io::logging::kb_events)
-            log::info("{}", m_keyboard);
-
-        m_screen->m_last_interaction = m_timer.elapsed();
         switch (e.type)
         {
             case Keyboard::Event::TextInput:
@@ -722,31 +473,20 @@ namespace rl {
                 m_keyboard.process_text_editing(e.edit.text, e.edit.start, e.edit.length);
                 break;
         }
-
-        m_screen->m_redraw |= this->on_character_input(m_keyboard);
+        m_screen->on_character_input(m_keyboard);
     }
 
     void Window::window_resized_event_callback(const SDL3::SDL_Event& e)
     {
-        ds::dims<i32> window_size{ this->get_size() };
-        ds::dims<i32> framebuf_size{ this->get_render_size() };
-        if (framebuf_size.area() == 0 || window_size.area() == 0)
-            return;
+    }
 
-        m_framebuf_size = framebuf_size;
-        m_window_rect.size = ds::dims<i32>{
-            static_cast<i32>(this->width() / m_pixel_ratio),
-            static_cast<i32>(this->height() / m_pixel_ratio),
-        };
+    void Window::window_focus_gained_event_callback(const SDL3::SDL_Event& e)
+    {
+        m_screen->on_focus_gained();
+    }
 
-        // TODO: seperate window / GUI viewport
-        // so this can be removed
-        //
-        // this is widget::m_size NOT window::m_size
-        m_size = m_window_rect.size;
-        m_screen->m_last_interaction = m_timer.elapsed();
-
-        // m_screen->on_resized(m_size);
-        m_screen->redraw();
+    void Window::window_focus_lost_event_callback(const SDL3::SDL_Event& e)
+    {
+        m_screen->on_focus_lost();
     }
 }

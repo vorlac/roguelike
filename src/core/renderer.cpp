@@ -54,11 +54,11 @@ namespace rl {
     {
         runtime_assert(renderer != nullptr, "invalid renderer being used for nvg context");
 
-        i32 nvg_flags = NVG_ANTIALIAS;
+        i32 nvg_flags = NVGcreateFlags::NVG_ANTIALIAS;
         if (renderer->m_stencil_buffer)
-            nvg_flags |= NVG_STENCIL_STROKES;
+            nvg_flags |= NVGcreateFlags::NVG_STENCIL_STROKES;
         if constexpr (rl::Renderer::NanoVGDiagnostics)
-            nvg_flags |= NVG_DEBUG;
+            nvg_flags |= NVGcreateFlags::NVG_DEBUG;
 
         NVGcontext* nvg_context{ nvgCreateGL3(nvg_flags) };
         runtime_assert(nvg_context != nullptr, "Failed to create NVG context");
@@ -78,9 +78,10 @@ namespace rl {
         }
     }
 
-    bool Renderer::clear(ds::color<f32> c)
+    bool Renderer::clear()
     {
-        glClearColor(c.r, c.g, c.b, c.a);
+        glClearColor(m_background_color.r, m_background_color.g, m_background_color.b,
+                     m_background_color.a);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         return true;
     }
@@ -133,7 +134,7 @@ namespace rl {
     ds::rect<i32> Renderer::get_viewport() const
     {
         std::array<i32, 4> buff{ 0, 0, 0, 0 };
-        glGetIntegerv(GL_VIEWPORT, reinterpret_cast<i32*>(buff.data()));
+        glGetIntegerv(GL_VIEWPORT, static_cast<i32*>(buff.data()));
         ds::rect<i32> rect{ { buff[0], buff[1] }, { buff[2], buff[3] } };
         sdl_assert(!rect.is_empty(), "failed to get viewport");
         return rect;

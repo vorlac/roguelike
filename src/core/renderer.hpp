@@ -71,7 +71,7 @@ namespace rl {
         SDL3::SDL_GLContext gl_context() const;
         NVGcontext* nvg_context();
 
-        bool clear(ds::color<f32> c);
+        bool clear();
         bool swap_buffers(rl::Window& window);
 
         ds::dims<i32> get_output_size() const;
@@ -91,6 +91,7 @@ namespace rl {
         friend static NVGcontext* create_nanovg_context(rl::Renderer* renderer);
         constexpr static inline bool GuiWidgetDiagnostics{ true };
         constexpr static inline bool NanoVGDiagnostics{ true };
+        constexpr static inline ds::color<f32> m_background_color = ds::color<u8>{ 29, 32, 39 };
 
         rl::Renderer::Properties m_properties{ Properties::None };
         SDL3::SDL_GLContext m_sdl_glcontext{ nullptr };

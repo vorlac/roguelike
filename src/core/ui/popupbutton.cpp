@@ -5,12 +5,13 @@
 namespace rl::ui {
 
     PopupButton::PopupButton(ui::widget* parent, const std::string& caption, i32 button_icon)
-        : Button{ parent, caption, button_icon }
+        : ui::Button{ parent, caption, button_icon }
     {
         m_chevron_icon = m_theme->m_popup_chevron_right_icon;
-        this->set_flags(Button::Flags(Flags::ToggleButton | Flags::PopupButton));
+        auto popup_btn_flags{ Button::Flags(Flags::ToggleButton | Flags::PopupButton) };
+        this->set_flags(popup_btn_flags);
 
-        m_popup = new Popup{ this, this->window() };
+        m_popup = new ui::Popup{ this, this->window() };
         m_popup->set_size({ 320, 250 });
         m_popup->set_visible(false);
 
@@ -53,26 +54,27 @@ namespace rl::ui {
             m_pressed = false;
 
         m_popup->set_visible(m_pressed);
-        Button::draw(ctx);
+
+        ui::Button::draw(ctx);
 
         if (m_chevron_icon)
         {
             std::string icon{ utf8(m_chevron_icon) };
-            NVGcolor text_color = m_text_color.a == 0 ? m_theme->m_text_color : m_text_color;
+            ds::color<u8> text_color{ m_text_color.a == 0 ? m_theme->m_text_color : m_text_color };
+            i32 text_size{ m_font_size < 0 ? m_theme->m_button_font_size : m_font_size };
 
-            nvgFontSize(ctx, (m_font_size < 0 ? m_theme->m_button_font_size : m_font_size) *
-                                 this->icon_scale());
-            nvgFontFace(ctx, "icons");
+            nvgFontFace(ctx, font::name::icons);
+            nvgFontSize(ctx, text_size * this->icon_scale());
             nvgFillColor(ctx, m_enabled ? text_color : m_theme->m_disabled_text_color);
             nvgTextAlign(ctx, NVGalign::NVG_ALIGN_LEFT | NVGalign::NVG_ALIGN_MIDDLE);
 
-            float iw = nvgTextBounds(ctx, 0, 0, icon.data(), nullptr, nullptr);
+            f32 iw{ nvgTextBounds(ctx, 0.0f, 0.0f, icon.data(), nullptr, nullptr) };
             ds::point<f32> icon_pos{
                 0.0f,
                 m_pos.y + m_size.height * 0.5f - 1.0f,
             };
 
-            if (m_popup->side() == Popup::Right)
+            if (m_popup->side() == ui::Popup::Right)
                 icon_pos.x = m_pos.x + m_size.width - iw - 8;
             else
                 icon_pos.x = m_pos.x + 8;
@@ -86,7 +88,7 @@ namespace rl::ui {
         ui::widget::perform_layout(ctx);
         i32 anchor_size{ m_popup->anchor_size() };
 
-        const rl::Window* parent_window{ this->window() };
+        const ui::Dialog* parent_window{ this->window() };
         if (parent_window != nullptr)
         {
             i32 pos_y{ this->abs_position().y - parent_window->position().y + m_size.height / 2 };

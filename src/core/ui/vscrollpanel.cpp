@@ -69,22 +69,24 @@ namespace rl::gui {
         return m_children[0]->preferred_size(nvg_context) + ds::dims<i32>{ 12, 0 };
     }
 
-    bool VScrollPanel::on_mouse_drag(ds::point<i32> pnt, ds::vector2<i32> rel, const Mouse& mouse,
-                                     const Keyboard& kb)
+    bool VScrollPanel::on_mouse_drag(const Mouse& mouse, const Keyboard& kb)
     {
-        if (!m_children.empty() && m_child_preferred_height > m_size.height)
+        if (m_children.empty() || m_child_preferred_height <= m_size.height)
+            return ui::widget::on_mouse_drag(mouse, kb);
+        else
         {
-            f32 scrollh{ height() * std::min(1.f, this->height() /
-                                                      static_cast<f32>(m_child_preferred_height)) };
+            f32 scrollh{
+                this->height() *
+                    std::min(1.f, this->height() / static_cast<f32>(m_child_preferred_height)),
+            };
+
+            auto&& rel{ mouse.pos_delta() };
+
             m_scroll = std::max(
                 0.0f, std::min(1.0f, m_scroll + rel.y / (m_size.height - 8.0f - scrollh)));
 
             m_update_layout = true;
             return true;
-        }
-        else
-        {
-            return ui::widget::on_mouse_drag(pnt, rel, mouse, kb);
         }
     }
 
@@ -139,7 +141,9 @@ namespace rl::gui {
         else
         {
             auto child{ m_children[0] };
-            f32 scroll_amount{ mouse.wheel().y * m_size.height * 0.25f };
+            f32 scroll_amount{
+                mouse.wheel().y * m_size.height * 0.25f,
+            };
 
             m_scroll = std::max(0.f,
                                 std::min(1.f, m_scroll - scroll_amount / m_child_preferred_height));
@@ -149,8 +153,10 @@ namespace rl::gui {
                 0,
                 static_cast<i32>(-m_scroll * (m_child_preferred_height - m_size.height)),
             });
+
             ds::point<i32> new_pos{ child->position() };
             m_update_layout = true;
+
             child->on_mouse_move(mouse, kb);
 
             return true;
