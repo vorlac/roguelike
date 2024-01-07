@@ -282,10 +282,10 @@ namespace rl::ds {
             return *((SDL3::SDL_Color*)this);
         }
 
-        constexpr inline operator const NVGcolor&() const
+        constexpr inline operator const NVGcolor&() const&
             requires std::same_as<T, f32>
         {
-            return reinterpret_cast<const NVGcolor&>(this);
+            return reinterpret_cast<const NVGcolor&>(*this);
         }
 
         constexpr inline operator NVGcolor()

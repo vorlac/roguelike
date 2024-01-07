@@ -136,11 +136,10 @@ namespace rl {
             //=============================================
             // set up labels
             //=============================================
-            auto timer_desc_label = new ui::label{
+            auto timer_desc_label = new ui::Button{
                 gui,
                 "Elapsed Seconds: ",
-                ui::font::name::mono,
-                26,
+                FA_MICROSCOPE,
             };
 
             timer_desc_label->set_tooltip("Timer Label");

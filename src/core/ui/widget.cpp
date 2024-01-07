@@ -552,11 +552,28 @@ namespace rl::ui {
         static_cast<ui::Screen*>(widget)->update_focus(this);
     }
 
+    void widget::draw_mouse_intersection(NVGcontext* nvg_context, ds::point<i32> pt)
+    {
+        if constexpr (widget::DiagnosticsEnabled)
+        {
+            if (!this->contains(pt))
+                return;
+
+            //  render red widget outlines
+            nvgStrokeWidth(nvg_context, 2.0f);
+            nvgBeginPath(nvg_context);
+            nvgRect(nvg_context, m_pos.x - 1.0f, m_pos.y - 1.0f, m_size.width + 2.0f,
+                    m_size.height + 2.0f);
+
+            nvgStrokeColor(nvg_context, rl::Colors::Cyan);
+            nvgStroke(nvg_context);
+        }
+    }
+
     void widget::draw(NVGcontext* nvg_context)
     {
         if constexpr (widget::DiagnosticsEnabled)
         {
-            // if (this->contains())
             //  render red widget outlines
             nvgStrokeWidth(nvg_context, 1.0f);
             nvgBeginPath(nvg_context);

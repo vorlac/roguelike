@@ -126,6 +126,9 @@ namespace rl::ui {
         virtual void perform_layout(NVGcontext* nvg_context);
         virtual ds::dims<i32> preferred_size(NVGcontext* nvg_context) const;
 
+    public:
+        virtual void draw_mouse_intersection(NVGcontext* nvg_context, ds::point<i32> pt);
+
     protected:
         f32 icon_scale() const;
 
