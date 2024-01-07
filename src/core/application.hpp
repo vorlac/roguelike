@@ -223,10 +223,9 @@ namespace rl {
 
                 // vbo.update_buffers(renderer->get_viewport());
                 // vbo.draw_triangles();
-
-                m_window->render_start();
-                m_window->render();
-                m_window->render_end();
+                //
+                m_window->clear();
+                gui->draw_all();
                 m_window->swap_buffers();
 
                 fps = ++frame_count / m_timer.elapsed();

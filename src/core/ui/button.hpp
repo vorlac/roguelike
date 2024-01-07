@@ -14,8 +14,6 @@
 
 namespace rl::ui {
 
-    /// @brief
-    ///     [Normal/Toggle/Radio/Popup] Button ui::widget.
     class Button : public ui::widget
     {
     public:
@@ -83,7 +81,7 @@ namespace rl::ui {
         ///     picture icon, or one of the icons enumerated in. The kind of icon
         ///     (image or Entypo) is determined by the functions nvgIsImageIcon and
         ///     its reciprocal counterpart nvgIsFontIcon.
-        i32 m_icon{};
+        i32 m_icon{ 0 };
         Button::Flags m_flags{};
         bool m_pressed{ false };
         Button::IconPosition m_icon_position{};

@@ -490,7 +490,7 @@ namespace rl::ui {
                 update_focus(nullptr);
         }
 
-        m_redraw |= this->on_mouse_button_pressed(mouse, kb);
+        m_redraw |= ui::widget::on_mouse_button_pressed(mouse, kb);
         return m_redraw;
     }
 
@@ -531,7 +531,7 @@ namespace rl::ui {
             m_drag_widget = nullptr;
         }
 
-        m_redraw |= this->on_mouse_button_released(mouse, kb);
+        m_redraw |= ui::widget::on_mouse_button_released(mouse, kb);
         return m_redraw;
     }
 
@@ -562,6 +562,7 @@ namespace rl::ui {
 
     bool Screen::on_mouse_move(const Mouse& mouse, const Keyboard& kb)
     {
+        m_last_interaction = m_timer.elapsed();
         ds::point<i32> mouse_pos{ mouse.pos() };
         if constexpr (io::logging::mouse_events)
             log::info("{}", mouse);
@@ -575,7 +576,6 @@ namespace rl::ui {
         // TODO: ????????
         pnt -= ds::vector2<i32>{ 1, 2 };
 
-        m_last_interaction = m_timer.elapsed();
         if (!m_drag_active)
         {
             ui::widget* widget{ this->find_widget(pnt) };
@@ -593,9 +593,8 @@ namespace rl::ui {
             ret = m_drag_widget->on_mouse_drag(mouse, kb);
         }
 
-        ret = ret || this->on_mouse_move(mouse, kb);
-        m_redraw |= ret;
-        return ret;
+        m_redraw |= ui::widget::on_mouse_move(mouse, kb);
+        return m_redraw;
     }
 
     bool Screen::on_mouse_scroll(const Mouse& mouse, const Keyboard& kb)
@@ -617,7 +616,7 @@ namespace rl::ui {
             }
         }
 
-        m_redraw |= this->on_mouse_scroll(mouse, kb);
+        m_redraw |= ui::widget::on_mouse_scroll(mouse, kb);
         return m_redraw;
     }
 
@@ -659,7 +658,7 @@ namespace rl::ui {
             log::info("{}", kb);
 
         m_last_interaction = m_timer.elapsed();
-        m_redraw |= this->on_key_pressed(kb);
+        m_redraw |= ui::widget::on_key_pressed(kb);
         return m_redraw;
     }
 
@@ -669,7 +668,7 @@ namespace rl::ui {
             log::info("{}", kb);
 
         m_last_interaction = m_timer.elapsed();
-        m_redraw |= this->on_key_pressed(kb);
+        m_redraw |= ui::widget::on_key_released(kb);
         return m_redraw;
     }
 
@@ -679,7 +678,7 @@ namespace rl::ui {
             log::info("{}", kb);
 
         m_last_interaction = m_timer.elapsed();
-        m_redraw |= this->on_character_input(kb);
+        m_redraw |= ui::widget::on_character_input(kb);
         return m_redraw;
     }
 

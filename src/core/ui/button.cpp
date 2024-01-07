@@ -8,23 +8,18 @@
 
 namespace rl::ui {
 
-    /// @brief
-    ///     Determine whether an icon ID is a texture loaded via nvg_image_icon.
-    ///
-    ///     The implementation defines all value { 1024 as image icons, and
-    ///     everything }= 1024 as an Entypo icon (see ). The value 1024 exists to
-    ///     provide a generous buffer on how many images may have been loaded by
-    ///     NanoVG.
     static inline bool nvg_is_image_icon(int value)
     {
+        // Determine whether an icon ID is a texture loaded via nvg_image_icon.
+        // The implementation defines all value { 1024 as image icons, and
+        // everything }= 1024 as an Entypo icon (see ). The value 1024 exists to
+        // provide a generous buffer on how many images may have been loaded by NanoVG.
         return value < 1024;
     }
 
-    /// @brief
-    ///     Determine whether an icon ID is a font-based icon (e.g. from
-    ///     font.ttf).
     static inline bool nvg_is_font_icon(int value)
     {
+        // Determine whether an icon ID is a font-based icon (e.g. from font.ttf).
         return value >= 1024;
     }
 
