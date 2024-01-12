@@ -12,10 +12,10 @@
 
 namespace rl::ui {
 
-    class label : public ui::widget
+    class Label : public ui::Widget
     {
     public:
-        label(ui::widget* parent, const std::string& caption,
+        Label(ui::Widget* parent, const std::string& caption,
               const std::string& font = font::name::mono, i32 font_size = -1);
 
         std::string font() const;
@@ -29,7 +29,7 @@ namespace rl::ui {
 
     public:
         virtual ds::dims<i32> preferred_size(NVGcontext* nvg_context) const override;
-        virtual void set_theme(ui::theme* theme) override;
+        virtual void set_theme(ui::Theme* theme) override;
         virtual void draw(NVGcontext* nvg_context) override;
 
     protected:

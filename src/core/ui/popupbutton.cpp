@@ -4,7 +4,7 @@
 
 namespace rl::ui {
 
-    PopupButton::PopupButton(ui::widget* parent, const std::string& caption, ui::Icon button_icon)
+    PopupButton::PopupButton(ui::Widget* parent, const std::string& caption, ui::Icon button_icon)
         : ui::Button{ parent, caption, button_icon }
     {
         m_chevron_icon = m_theme->m_popup_chevron_right_icon;
@@ -85,7 +85,7 @@ namespace rl::ui {
 
     void PopupButton::perform_layout(NVGcontext* ctx)
     {
-        ui::widget::perform_layout(ctx);
+        ui::Widget::perform_layout(ctx);
         i32 anchor_size{ m_popup->anchor_size() };
 
         const ui::Dialog* parent_window{ this->window() };

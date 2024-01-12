@@ -21,7 +21,7 @@ namespace rl::ui {
     ///     This class overrides widget::m_icon_extra_scale to be 0.8f, which
     ///     affects all subclasses of this widget. Subclasses must explicitly set
     ///     a different value if needed (e.g., in their constructor).
-    class TextBox : public ui::widget
+    class TextBox : public ui::Widget
     {
     public:
         enum class Alignment {
@@ -30,7 +30,7 @@ namespace rl::ui {
             Right
         };
 
-        TextBox(ui::widget* parent, const std::string& value = "Untitled");
+        TextBox(ui::Widget* parent, const std::string& value = "Untitled");
 
         bool editable() const;
         bool spinnable() const;
@@ -72,7 +72,7 @@ namespace rl::ui {
         virtual bool on_character_input(const Keyboard& kb) override;
 
     public:
-        virtual void set_theme(ui::theme* theme) override;
+        virtual void set_theme(ui::Theme* theme) override;
         virtual ds::dims<i32> preferred_size(NVGcontext* nvg_context) const override;
         virtual void draw(NVGcontext* nvg_context) override;
 
@@ -139,7 +139,7 @@ namespace rl::ui {
     class IntBox : public ui::TextBox
     {
     public:
-        IntBox(ui::widget* parent, Scalar value = (Scalar)0)
+        IntBox(ui::Widget* parent, Scalar value = (Scalar)0)
             : TextBox(parent)
         {
             this->set_default_value("0");
@@ -254,7 +254,7 @@ namespace rl::ui {
 
         virtual bool on_mouse_scroll(ds::point<i32> pos, ds::vector2<i32> rel) override
         {
-            if (ui::widget::scroll_event(pos, rel))
+            if (ui::Widget::scroll_event(pos, rel))
                 return true;
 
             if (m_spinnable && !this->focused())
@@ -286,7 +286,7 @@ namespace rl::ui {
     class FloatBox : public ui::TextBox
     {
     public:
-        FloatBox(ui::widget* parent, Scalar value = (Scalar)0.f)
+        FloatBox(ui::Widget* parent, Scalar value = (Scalar)0.f)
             : ui::TextBox(parent)
         {
             m_number_format = sizeof(Scalar) == sizeof(float) ? "%.4g" : "%.7g";
@@ -410,7 +410,7 @@ namespace rl::ui {
 
         virtual bool on_mouse_scroll(ds::point<i32> pos, ds::vector2<i32> rel) override
         {
-            if (ui::widget::scroll_event(pos, rel))
+            if (ui::Widget::scroll_event(pos, rel))
                 return true;
 
             if (m_spinnable && !this->focused())

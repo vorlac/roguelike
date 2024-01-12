@@ -133,7 +133,7 @@ namespace rl {
         struct OpenGL
         {
             using type = SDL3::SDL_GLattr;
-             
+
             enum Attribute : std::underlying_type_t<type> {
                 RedSize                  = SDL3::SDL_GL_RED_SIZE,
                 GreenSize                = SDL3::SDL_GL_GREEN_SIZE,
@@ -219,7 +219,7 @@ namespace rl {
 
         std::string get_title();
         DisplayID get_display();
-        ui::widget* button_panel();
+        ui::Widget* button_panel();
         ds::dims<i32> get_size();
         ds::dims<i32> get_render_size();
         ds::dims<i32> get_min_size() const;

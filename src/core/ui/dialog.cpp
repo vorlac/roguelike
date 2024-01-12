@@ -12,8 +12,8 @@
 
 namespace rl::ui {
 
-    Dialog::Dialog(ui::widget* parent, const std::string& title)
-        : ui::widget{ parent }
+    Dialog::Dialog(ui::Widget* parent, const std::string& title)
+        : ui::Widget{ parent }
         , m_title{ title }
         , m_button_panel{ nullptr }
         , m_modal{ false }
@@ -41,20 +41,20 @@ namespace rl::ui {
         m_modal = modal;
     }
 
-    ui::widget* Dialog::button_panel()
+    ui::Widget* Dialog::button_panel()
     {
         if (!m_button_panel)
         {
-            m_button_panel = new ui::widget(this);
+            m_button_panel = new ui::Widget(this);
             m_button_panel->set_layout(
-                new ui::box_layout(orientation::Horizontal, alignment::Middle, 0, 4));
+                new ui::BoxLayout(orientation::Horizontal, alignment::Middle, 0, 4));
         }
         return m_button_panel;
     }
 
     void Dialog::dispose()
     {
-        ui::widget* owner{ this };
+        ui::Widget* owner{ this };
         while (owner->parent() != nullptr)
             owner = owner->parent();
 
@@ -63,7 +63,7 @@ namespace rl::ui {
 
     void Dialog::center()
     {
-        ui::widget* owner{ this };
+        ui::Widget* owner{ this };
         while (owner->parent() != nullptr)
             owner = owner->parent();
 
@@ -144,18 +144,18 @@ namespace rl::ui {
 
         nvgRestore(ctx);
 
-        ui::widget::draw(ctx);
+        ui::Widget::draw(ctx);
     }
 
     bool Dialog::on_mouse_entered(const Mouse& mouse)
     {
-        ui::widget::on_mouse_entered(mouse);
+        ui::Widget::on_mouse_entered(mouse);
         return true;
     }
 
     bool Dialog::on_mouse_exited(const Mouse& mouse)
     {
-        ui::widget::on_mouse_exited(mouse);
+        ui::Widget::on_mouse_exited(mouse);
         return true;
     }
 
@@ -189,7 +189,7 @@ namespace rl::ui {
         if constexpr (io::logging::window_events)
             rl::log::info("Dialog::on_mouse_button_pressed [button:{}]", mouse.button_pressed());
 
-        if (ui::widget::on_mouse_button_pressed(mouse, kb))
+        if (ui::Widget::on_mouse_button_pressed(mouse, kb))
             return true;
 
         if (mouse.is_button_pressed(Mouse::Button::Left))
@@ -207,7 +207,7 @@ namespace rl::ui {
         if constexpr (io::logging::window_events)
             rl::log::info("Dialog::on_mouse_button_released [button:{}]", mouse.button_released());
 
-        if (ui::widget::on_mouse_button_released(mouse, kb))
+        if (ui::Widget::on_mouse_button_released(mouse, kb))
             return true;
 
         if (mouse.is_button_released(Mouse::Button::Left))
@@ -224,7 +224,7 @@ namespace rl::ui {
         if constexpr (io::logging::window_events)
             rl::log::info("Dialog::on_mouse_scroll [pos:{}, rel:{}]", mouse.pos(), mouse.wheel());
 
-        return ui::widget::on_mouse_scroll(mouse, kb);
+        return ui::Widget::on_mouse_scroll(mouse, kb);
     }
 
     ds::dims<i32> Dialog::preferred_size(NVGcontext* nvg_context) const
@@ -232,7 +232,7 @@ namespace rl::ui {
         if (m_button_panel != nullptr)
             m_button_panel->hide();
 
-        ds::dims<i32> result{ ui::widget::preferred_size(nvg_context) };
+        ds::dims<i32> result{ ui::Widget::preferred_size(nvg_context) };
 
         if (m_button_panel != nullptr)
             m_button_panel->show();
@@ -250,11 +250,11 @@ namespace rl::ui {
     void Dialog::perform_layout(NVGcontext* ctx)
     {
         if (!m_button_panel)
-            ui::widget::perform_layout(ctx);
+            ui::Widget::perform_layout(ctx);
         else
         {
             m_button_panel->set_visible(false);
-            ui::widget::perform_layout(ctx);
+            ui::Widget::perform_layout(ctx);
 
             for (auto w : m_button_panel->children())
             {

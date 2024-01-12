@@ -8,9 +8,9 @@
 
 namespace rl::ui {
 
-    label::label(ui::widget* parent, const std::string& caption, const std::string& font,
+    Label::Label(ui::Widget* parent, const std::string& caption, const std::string& font,
                  i32 font_size)
-        : ui::widget{ parent }
+        : ui::Widget{ parent }
         , m_caption{ caption }
         , m_font{ font }
     {
@@ -24,44 +24,44 @@ namespace rl::ui {
             m_font_size = font_size;
     }
 
-    std::string label::caption() const
+    std::string Label::caption() const
     {
         return m_caption;
     }
 
-    std::string label::font() const
+    std::string Label::font() const
     {
         return m_font;
     }
 
-    ds::color<f32> label::color() const
+    ds::color<f32> Label::color() const
     {
         return m_color;
     }
 
-    void label::set_caption(const std::string& caption)
+    void Label::set_caption(const std::string& caption)
     {
         m_caption = caption;
     }
 
-    void label::set_font(const std::string& font)
+    void Label::set_font(const std::string& font)
     {
         m_font = font;
     }
 
-    void label::set_color(ds::color<u8> color)
+    void Label::set_color(ds::color<u8> color)
     {
         m_color = color;
     }
 
-    void label::set_callback(std::function<void()> callable)
+    void Label::set_callback(std::function<void()> callable)
     {
         m_callback = callable;
     }
 
-    void label::set_theme(ui::theme* theme)
+    void Label::set_theme(ui::Theme* theme)
     {
-        widget::set_theme(theme);
+        Widget::set_theme(theme);
         if (m_theme != nullptr)
         {
             m_font_size = m_theme->m_standard_font_size;
@@ -69,7 +69,7 @@ namespace rl::ui {
         }
     }
 
-    ds::dims<i32> label::preferred_size(NVGcontext* nvg_context) const
+    ds::dims<i32> Label::preferred_size(NVGcontext* nvg_context) const
     {
         if (m_caption.empty())
             return ds::dims<i32>{ 0, 0 };
@@ -94,9 +94,9 @@ namespace rl::ui {
         }
     }
 
-    void label::draw(NVGcontext* nvg_context)
+    void Label::draw(NVGcontext* nvg_context)
     {
-        ui::widget::draw(nvg_context);
+        ui::Widget::draw(nvg_context);
 
         nvgFontFace(nvg_context, m_font.c_str());
         nvgFontSize(nvg_context, font_size());

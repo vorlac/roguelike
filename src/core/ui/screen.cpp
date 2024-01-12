@@ -21,7 +21,7 @@
 namespace rl::ui {
     Screen::Screen(NVGcontext* nvg_context, ds::dims<i32> size, const Mouse& mouse,
                    const Keyboard& kb)
-        : ui::widget{ nullptr }
+        : ui::Widget{ nullptr }
         , m_nvg_context{ nvg_context }
         , m_mouse_ref{ mouse }
         , m_kb_ref{ kb }
@@ -46,7 +46,7 @@ namespace rl::ui {
         m_float_buffer = float_mode != 0;
 
         this->set_visible(true);
-        this->set_theme(new ui::theme(m_nvg_context));
+        this->set_theme(new ui::Theme(m_nvg_context));
         this->on_mouse_move({}, {});
 
         m_last_interaction = m_timer.elapsed();
@@ -108,7 +108,7 @@ namespace rl::ui {
         f32 elapsed{ m_timer.elapsed() - m_last_interaction };
         if (elapsed > m_tooltip_delay)
         {
-            const ui::widget* widget{ this->find_widget(m_mouse_ref.pos()) };
+            const ui::Widget* widget{ this->find_widget(m_mouse_ref.pos()) };
             if (widget && !widget->tooltip().empty())
             {
                 i32 tooltip_width{ 150 };
@@ -319,11 +319,11 @@ namespace rl::ui {
             return false;
 
         // Temporarily increase the frame rate to fade in the tooltip
-        const ui::widget* widget{ this->find_widget(m_mouse_ref.pos()) };
+        const ui::Widget* widget{ this->find_widget(m_mouse_ref.pos()) };
         return widget != nullptr && !widget->tooltip().empty();
     }
 
-    void Screen::update_focus(ui::widget* widget)
+    void Screen::update_focus(ui::Widget* widget)
     {
         for (auto w : m_focus_path)
         {
@@ -349,7 +349,7 @@ namespace rl::ui {
 
         for (auto it = m_focus_path.rbegin(); it != m_focus_path.rend(); ++it)
         {
-            ui::widget* focus_widget{ *it };
+            ui::Widget* focus_widget{ *it };
             focus_widget->on_focus_gained();
         }
 
@@ -472,7 +472,7 @@ namespace rl::ui {
 
         if (m_focus_path.size() > 1)
         {
-            const ui::widget* w{ m_focus_path[m_focus_path.size() - 2] };
+            const ui::Widget* w{ m_focus_path[m_focus_path.size() - 2] };
             const ui::Dialog* window{ dynamic_cast<const ui::Dialog*>(w) };
             if (window != nullptr && window->modal())
             {
@@ -502,7 +502,7 @@ namespace rl::ui {
                 update_focus(nullptr);
         }
 
-        m_redraw |= ui::widget::on_mouse_button_pressed(mouse, kb);
+        m_redraw |= ui::Widget::on_mouse_button_pressed(mouse, kb);
         return m_redraw;
     }
 
@@ -515,7 +515,7 @@ namespace rl::ui {
 
         if (m_focus_path.size() > 1)
         {
-            const ui::widget* w{ m_focus_path[m_focus_path.size() - 2] };
+            const ui::Widget* w{ m_focus_path[m_focus_path.size() - 2] };
             const ui::Dialog* window{ dynamic_cast<const ui::Dialog*>(w) };
             if (window != nullptr && window->modal())
             {
@@ -543,7 +543,7 @@ namespace rl::ui {
             m_drag_widget = nullptr;
         }
 
-        m_redraw |= ui::widget::on_mouse_button_released(mouse, kb);
+        m_redraw |= ui::Widget::on_mouse_button_released(mouse, kb);
         return m_redraw;
     }
 
@@ -590,7 +590,7 @@ namespace rl::ui {
 
         if (!m_drag_active)
         {
-            ui::widget* widget{ this->find_widget(pnt) };
+            ui::Widget* widget{ this->find_widget(pnt) };
             if (widget != nullptr && widget->cursor() != m_cursor)
             {
                 m_cursor = widget->cursor();
@@ -605,7 +605,7 @@ namespace rl::ui {
             ret = m_drag_widget->on_mouse_drag(mouse, kb);
         }
 
-        m_redraw |= ui::widget::on_mouse_move(mouse, kb);
+        m_redraw |= ui::Widget::on_mouse_move(mouse, kb);
         return m_redraw;
     }
 
@@ -628,7 +628,7 @@ namespace rl::ui {
             }
         }
 
-        m_redraw |= ui::widget::on_mouse_scroll(mouse, kb);
+        m_redraw |= ui::Widget::on_mouse_scroll(mouse, kb);
         return m_redraw;
     }
 
@@ -637,7 +637,7 @@ namespace rl::ui {
         if constexpr (io::logging::window_events)
             log::info("window::on_mouse_entered [pos:{}]", mouse.pos());
 
-        return ui::widget::on_mouse_entered(mouse);
+        return ui::Widget::on_mouse_entered(mouse);
     }
 
     bool Screen::on_mouse_exited(const Mouse& mouse)
@@ -645,7 +645,7 @@ namespace rl::ui {
         if constexpr (io::logging::window_events)
             log::info("window::on_mouse_exited [pos:{}]", mouse.pos());
 
-        return ui::widget::on_mouse_exited(mouse);
+        return ui::Widget::on_mouse_exited(mouse);
     }
 
     bool Screen::on_focus_gained()
@@ -653,7 +653,7 @@ namespace rl::ui {
         if constexpr (io::logging::window_events)
             rl::log::info("window::on_focus_gained");
 
-        return ui::widget::on_focus_gained();
+        return ui::Widget::on_focus_gained();
     }
 
     bool Screen::on_focus_lost()
@@ -661,7 +661,7 @@ namespace rl::ui {
         if constexpr (io::logging::window_events)
             rl::log::info("window::on_focus_lost");
 
-        return ui::widget::on_focus_lost();
+        return ui::Widget::on_focus_lost();
     }
 
     bool Screen::on_key_pressed(const Keyboard& kb)
@@ -670,7 +670,7 @@ namespace rl::ui {
             log::info("{}", kb);
 
         m_last_interaction = m_timer.elapsed();
-        m_redraw |= ui::widget::on_key_pressed(kb);
+        m_redraw |= ui::Widget::on_key_pressed(kb);
         return m_redraw;
     }
 
@@ -680,7 +680,7 @@ namespace rl::ui {
             log::info("{}", kb);
 
         m_last_interaction = m_timer.elapsed();
-        m_redraw |= ui::widget::on_key_released(kb);
+        m_redraw |= ui::Widget::on_key_released(kb);
         return m_redraw;
     }
 
@@ -690,7 +690,7 @@ namespace rl::ui {
             log::info("{}", kb);
 
         m_last_interaction = m_timer.elapsed();
-        m_redraw |= ui::widget::on_character_input(kb);
+        m_redraw |= ui::Widget::on_character_input(kb);
         return m_redraw;
     }
 

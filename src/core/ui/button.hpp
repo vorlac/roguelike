@@ -14,7 +14,7 @@
 
 namespace rl::ui {
 
-    class Button : public ui::widget
+    class Button : public ui::Widget
     {
     public:
         enum Flags {
@@ -33,7 +33,7 @@ namespace rl::ui {
         };
 
     public:
-        Button(ui::widget* parent, const std::string& caption = "Untitled",
+        Button(ui::Widget* parent, const std::string& caption = "Untitled",
                ui::Icon icon = ui::Icon::None);
 
         ui::Icon icon() const;

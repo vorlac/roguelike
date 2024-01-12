@@ -19,8 +19,8 @@ SDL_C_LIB_END
 
 namespace rl::ui {
 
-    TextBox::TextBox(ui::widget* parent, const std::string& value)
-        : ui::widget{ parent }
+    TextBox::TextBox(ui::Widget* parent, const std::string& value)
+        : ui::Widget{ parent }
         , m_editable{ false }
         , m_spinnable{ false }
         , m_committed{ true }
@@ -154,9 +154,9 @@ namespace rl::ui {
         this->set_cursor(editable ? Mouse::Cursor::IBeam : Mouse::Cursor::Arrow);
     }
 
-    void TextBox::set_theme(ui::theme* theme)
+    void TextBox::set_theme(ui::Theme* theme)
     {
-        ui::widget::set_theme(theme);
+        ui::Widget::set_theme(theme);
         if (m_theme != nullptr)
             m_font_size = m_theme->m_text_box_font_size;
     }
@@ -193,7 +193,7 @@ namespace rl::ui {
 
     void TextBox::draw(NVGcontext* ctx)
     {
-        ui::widget::draw(ctx);
+        ui::Widget::draw(ctx);
 
         NVGpaint bg{ nvgBoxGradient(ctx, m_pos.x + 1, m_pos.y + 1 + 1.0f, m_size.width - 2,
                                     m_size.height - 2, 3, 4, ds::color<u8>{ 255, 255, 255, 32 },
@@ -433,13 +433,13 @@ namespace rl::ui {
 
     bool TextBox::on_mouse_entered(const Mouse& mouse)
     {
-        ui::widget::on_mouse_entered(mouse);
+        ui::Widget::on_mouse_entered(mouse);
         return true;
     }
 
     bool TextBox::on_mouse_exited(const Mouse& mouse)
     {
-        ui::widget::on_mouse_exited(mouse);
+        ui::Widget::on_mouse_exited(mouse);
         return true;
     }
 
@@ -554,7 +554,7 @@ namespace rl::ui {
 
     bool TextBox::on_focus_gained()
     {
-        ui::widget::on_focus_gained();
+        ui::Widget::on_focus_gained();
         std::string backup{ m_value };
 
         if (m_editable)
@@ -570,7 +570,7 @@ namespace rl::ui {
 
     bool TextBox::on_focus_lost()
     {
-        ui::widget::on_focus_lost();
+        ui::Widget::on_focus_lost();
         std::string backup{ m_value };
 
         if (m_editable)

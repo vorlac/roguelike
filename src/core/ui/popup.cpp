@@ -5,7 +5,7 @@
 
 namespace rl::ui {
 
-    Popup::Popup(ui::widget* parent, ui::Dialog* parent_window)
+    Popup::Popup(ui::Widget* parent, ui::Dialog* parent_window)
         : ui::Dialog{ parent, "" }
         , m_parent_window{ parent_window }
         , m_anchor_pos{ 0, 0 }
@@ -68,7 +68,7 @@ namespace rl::ui {
     void Popup::perform_layout(NVGcontext* ctx)
     {
         if (m_layout != nullptr || m_children.size() != 1)
-            ui::widget::perform_layout(ctx);
+            ui::Widget::perform_layout(ctx);
         else
         {
             m_children[0]->set_position({ 0, 0 });
@@ -135,6 +135,6 @@ namespace rl::ui {
         nvgFill(ctx);
         nvgRestore(ctx);
 
-        ui::widget::draw(ctx);
+        ui::Widget::draw(ctx);
     }
 }

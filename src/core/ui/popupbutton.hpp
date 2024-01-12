@@ -14,7 +14,7 @@ namespace rl::ui {
     class PopupButton : public ui::Button
     {
     public:
-        PopupButton(ui::widget* parent, const std::string& caption = "Untitled",
+        PopupButton(ui::Widget* parent, const std::string& caption = "Untitled",
                     ui::Icon button_icon = ui::Icon::None);
 
         void set_chevron_icon(ui::Icon icon);

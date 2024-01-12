@@ -21,10 +21,10 @@ namespace rl::ui {
         }
     }
 
-    class theme : public ds::refcounted
+    class Theme : public ds::refcounted
     {
     public:
-        theme(NVGcontext* nvg_context)
+        Theme(NVGcontext* nvg_context)
             : m_font_sans_regular{
                 nvgCreateFontMem(nvg_context, ui::font::name::sans,
                                  roboto_regular_ttf, roboto_regular_ttf_size, 0),

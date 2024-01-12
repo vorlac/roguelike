@@ -26,7 +26,7 @@ namespace rl {
         using PixelFormat = i32;
         using ComponentFormat = i32;
 
-        class Screen : public ui::widget
+        class Screen : public ui::Widget
         {
         public:
             Screen(NVGcontext* nvg_context, ds::dims<i32> size, const Mouse& mouse,
@@ -38,7 +38,7 @@ namespace rl {
 
             void center_window(Dialog* dialog) const;
             void move_window_to_front(Dialog* dialog);
-            void update_focus(ui::widget* widget);
+            void update_focus(ui::Widget* widget);
             void dispose_window(Dialog* dialog);
 
             void set_visible(bool visible);  // intentionally doesn't use virtual for this for this.
@@ -59,7 +59,7 @@ namespace rl {
             bool has_float_buffer() const;
             bool tooltip_fade_in_progress() const;
 
-            using ui::widget::perform_layout;
+            using ui::Widget::perform_layout;
             void perform_layout();
 
             ComponentFormat component_format() const;
@@ -92,10 +92,10 @@ namespace rl {
             virtual bool drop_event(const std::vector<std::string>& filenames);
 
         protected:
-            ui::widget* m_drag_widget{ nullptr };
+            ui::Widget* m_drag_widget{ nullptr };
             NVGcontext* m_nvg_context{ nullptr };
 
-            std::vector<ui::widget*> m_focus_path{};
+            std::vector<ui::Widget*> m_focus_path{};
             std::function<void(ds::dims<i32>)> m_resize_callback;
             std::vector<std::function<void()>> m_refresh_callbacks;
             std::array<SDL3::SDL_Cursor*, Mouse::Cursor::CursorCount> m_cursors{};

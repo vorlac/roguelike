@@ -15,7 +15,7 @@ namespace rl::ui {
             Right
         };
 
-        Popup(ui::widget* parent, ui::Dialog* parent_window = nullptr);
+        Popup(ui::Widget* parent, ui::Dialog* parent_window = nullptr);
 
         i32 anchor_offset() const;
         i32 anchor_size() const;

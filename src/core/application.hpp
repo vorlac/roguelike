@@ -80,9 +80,9 @@ namespace rl {
             // auto gui_canvas{ std::make_unique<ui::widget>(m_window.get()) };
 
             // define the layout
-            // auto layout = std::make_unique<ui::box_layout>(ui::orientation::Horizontal,
+            // auto layout = std::make_unique<ui::BoxLayout>(ui::orientation::Horizontal,
             //                                                ui::alignment::Maximum, 10, 25);
-            auto layout = new ui::advanced_grid_layout(
+            auto layout = new ui::AdvancedGridLayout(
                 std::vector{
                     // 4 columns
                     0,  // col 1 - preferred size of 10px wide
@@ -113,7 +113,7 @@ namespace rl {
             // space it out a bit with a vertical gap before the label
             layout->append_row(15);
 
-            auto group = new ui::label{
+            auto group = new ui::Label{
                 gui,                        // parent, all scaling will be relative to it
                 "Widget Group",             // label text
                 ui::font::name::sans_bold,  // font name/style
@@ -147,7 +147,7 @@ namespace rl {
                 log::warning("Button Pressed Callback Invoked");
             });
 
-            auto timer_value_label = new ui::label{
+            auto timer_value_label = new ui::Label{
                 gui,
                 fmt::to_string(fmt::format("{:4.6f}", m_timer.elapsed())),
                 ui::font::name::mono,
@@ -156,7 +156,7 @@ namespace rl {
 
             timer_value_label->set_tooltip("Elapsed Time");
 
-            auto stats_desc_label = new ui::label{
+            auto stats_desc_label = new ui::Label{
                 gui,
                 "Stats: ",
                 ui::font::name::mono,
@@ -168,7 +168,7 @@ namespace rl {
                 log::warning("Stats callback invoked");
             });
 
-            auto stats_value_label = new ui::label{
+            auto stats_value_label = new ui::Label{
                 gui,
                 fmt::to_string(fmt::format("0.0fps [0]")),
                 ui::font::name::mono,

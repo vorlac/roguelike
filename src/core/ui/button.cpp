@@ -24,8 +24,8 @@ namespace rl::ui {
         return std::to_underlying(icon_id) >= 1024;
     }
 
-    Button::Button(ui::widget* parent, const std::string& caption, ui::Icon icon)
-        : ui::widget{ parent }
+    Button::Button(ui::Widget* parent, const std::string& caption, ui::Icon icon)
+        : ui::Widget{ parent }
         , m_caption{ caption }
         , m_icon{ icon }
         , m_icon_position{ IconPosition::LeftCentered }
@@ -172,12 +172,12 @@ namespace rl::ui {
 
     bool Button::on_mouse_entered(const Mouse& mouse)
     {
-        return ui::widget::on_mouse_entered(mouse);
+        return ui::Widget::on_mouse_entered(mouse);
     }
 
     bool Button::on_mouse_exited(const Mouse& mouse)
     {
-        return ui::widget::on_mouse_exited(mouse);
+        return ui::Widget::on_mouse_exited(mouse);
     }
 
     bool Button::handle_mouse_button_event(const ds::point<i32>& pt, Mouse::Button::type button,
@@ -261,19 +261,19 @@ namespace rl::ui {
 
     bool Button::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb)
     {
-        ui::widget::on_mouse_button_pressed(mouse, kb);
+        ui::Widget::on_mouse_button_pressed(mouse, kb);
         return handle_mouse_button_event(mouse.pos(), mouse.button_pressed(), true, kb.keys_down());
     }
 
     bool Button::on_mouse_button_released(const Mouse& mouse, const Keyboard& kb)
     {
-        ui::widget::on_mouse_button_released(mouse, kb);
+        ui::Widget::on_mouse_button_released(mouse, kb);
         return handle_mouse_button_event(mouse.pos(), mouse.button_pressed(), false, kb.keys_down());
     }
 
     void Button::draw(NVGcontext* ctx)
     {
-        ui::widget::draw(ctx);
+        ui::Widget::draw(ctx);
 
         NVGcolor grad_top = m_theme->m_button_gradient_top_unfocused;
         NVGcolor grad_bot = m_theme->m_button_gradient_bot_unfocused;

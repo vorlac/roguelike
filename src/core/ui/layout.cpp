@@ -14,8 +14,8 @@
 
 namespace rl::ui {
 
-    box_layout::box_layout(ui::orientation orientation, ui::alignment alignment, i32 margin,
-                           i32 spacing)
+    BoxLayout::BoxLayout(ui::orientation orientation, ui::alignment alignment, i32 margin,
+                         i32 spacing)
         : m_orientation{ orientation }
         , m_alignment{ alignment }
         , m_margin{ margin }
@@ -23,7 +23,7 @@ namespace rl::ui {
     {
     }
 
-    ds::dims<i32> box_layout::preferred_size(NVGcontext* nvg_context, const ui::widget* widget) const
+    ds::dims<i32> BoxLayout::preferred_size(NVGcontext* nvg_context, const ui::Widget* widget) const
     {
         ds::dims<i32> size{
             2 * this->m_margin,
@@ -75,7 +75,7 @@ namespace rl::ui {
         return size + ds::dims<i32>(0, y_offset);
     }
 
-    void box_layout::perform_layout(NVGcontext* nvg_context, ui::widget* widget) const
+    void BoxLayout::perform_layout(NVGcontext* nvg_context, ui::Widget* widget) const
     {
         ds::dims<i32> fs_w = widget->fixed_size();
         ds::dims<i32> container_size(fs_w.width ? fs_w.width : widget->width(),
@@ -151,50 +151,50 @@ namespace rl::ui {
         }
     }
 
-    ui::orientation box_layout::orientation() const
+    ui::orientation BoxLayout::orientation() const
     {
         return m_orientation;
     }
 
-    void box_layout::set_orientation(ui::orientation orientation)
+    void BoxLayout::set_orientation(ui::orientation orientation)
     {
         m_orientation = orientation;
     }
 
-    ui::alignment box_layout::alignment() const
+    ui::alignment BoxLayout::alignment() const
     {
         return m_alignment;
     }
 
-    void box_layout::set_alignment(ui::alignment alignment)
+    void BoxLayout::set_alignment(ui::alignment alignment)
     {
         m_alignment = alignment;
     }
 
-    i32 box_layout::margin() const
+    i32 BoxLayout::margin() const
     {
         return m_margin;
     }
 
-    void box_layout::set_margin(i32 margin)
+    void BoxLayout::set_margin(i32 margin)
     {
         m_margin = margin;
     }
 
-    i32 box_layout::spacing() const
+    i32 BoxLayout::spacing() const
     {
         return m_spacing;
     }
 
-    void box_layout::set_spacing(i32 spacing)
+    void BoxLayout::set_spacing(i32 spacing)
     {
         m_spacing = spacing;
     }
 
     //======================================================================
 
-    ds::dims<i32> group_layout::preferred_size(NVGcontext* nvg_context,
-                                               const ui::widget* widget) const
+    ds::dims<i32> GroupLayout::preferred_size(NVGcontext* nvg_context,
+                                              const ui::Widget* widget) const
     {
         i32 height = this->m_margin, width = 2 * this->m_margin;
 
@@ -207,7 +207,7 @@ namespace rl::ui {
         {
             if (!c->visible())
                 continue;
-            const ui::label* label = dynamic_cast<const ui::label*>(c);
+            const ui::Label* label = dynamic_cast<const ui::Label*>(c);
             if (!first)
                 height += (label == nullptr) ? this->m_spacing : m_group_spacing;
             first = false;
@@ -231,7 +231,7 @@ namespace rl::ui {
         return ds::dims<i32>(width, height);
     }
 
-    void group_layout::perform_layout(NVGcontext* nvg_context, ui::widget* widget) const
+    void GroupLayout::perform_layout(NVGcontext* nvg_context, ui::Widget* widget) const
     {
         i32 height{ this->m_margin };
         i32 available_width{ (widget->fixed_width() ? widget->fixed_width() : widget->width()) -
@@ -248,7 +248,7 @@ namespace rl::ui {
             if (!c->visible())
                 continue;
 
-            const ui::label* label = dynamic_cast<const ui::label*>(c);
+            const ui::Label* label = dynamic_cast<const ui::Label*>(c);
             if (!first)
                 height += (label == nullptr) ? this->m_spacing : m_group_spacing;
 
@@ -279,50 +279,49 @@ namespace rl::ui {
         }
     }
 
-    i32 group_layout::margin() const
+    i32 GroupLayout::margin() const
     {
         return m_margin;
     }
 
-    void group_layout::set_margin(i32 margin)
+    void GroupLayout::set_margin(i32 margin)
     {
         m_margin = margin;
     }
 
-    i32 group_layout::spacing() const
+    i32 GroupLayout::spacing() const
     {
         return m_spacing;
     }
 
-    void group_layout::set_spacing(i32 spacing)
+    void GroupLayout::set_spacing(i32 spacing)
     {
         m_spacing = spacing;
     }
 
-    i32 group_layout::group_indent() const
+    i32 GroupLayout::group_indent() const
     {
         return m_group_indent;
     }
 
-    void group_layout::set_group_indent(i32 group_indent)
+    void GroupLayout::set_group_indent(i32 group_indent)
     {
         m_group_indent = group_indent;
     }
 
-    i32 group_layout::group_spacing() const
+    i32 GroupLayout::group_spacing() const
     {
         return m_group_spacing;
     }
 
-    void group_layout::set_group_spacing(i32 group_spacing)
+    void GroupLayout::set_group_spacing(i32 group_spacing)
     {
         m_group_spacing = group_spacing;
     }
 
     //==================================================================
 
-    ds::dims<i32> grid_layout::preferred_size(NVGcontext* nvg_context,
-                                              const ui::widget* widget) const
+    ds::dims<i32> GridLayout::preferred_size(NVGcontext* nvg_context, const ui::Widget* widget) const
     {
         /* Compute minimum row / column sizes */
         std::array<std::vector<i32>, 2> grid{ { {}, {} } };
@@ -342,8 +341,8 @@ namespace rl::ui {
         return pref_size;
     }
 
-    void grid_layout::compute_layout(NVGcontext* nvg_context, const ui::widget* widget,
-                                     std::array<std::vector<i32>, 2>& grid) const
+    void GridLayout::compute_layout(NVGcontext* nvg_context, const ui::Widget* widget,
+                                    std::array<std::vector<i32>, 2>& grid) const
     {
         i32 axis1{ std::to_underlying(m_orientation) };
         i32 axis2{ (axis1 + 1) % 2 };
@@ -375,7 +374,7 @@ namespace rl::ui {
 
             for (i32 i1 = 0; i1 < dim_axis1; i1++)
             {
-                ui::widget* w = nullptr;
+                ui::Widget* w = nullptr;
                 do
                 {
                     if (child >= num_children)
@@ -403,7 +402,7 @@ namespace rl::ui {
         }
     }
 
-    void grid_layout::perform_layout(NVGcontext* nvg_context, ui::widget* widget) const
+    void GridLayout::perform_layout(NVGcontext* nvg_context, ui::Widget* widget) const
     {
         ds::dims<i32> fs_w{ widget->fixed_size() };
         ds::dims<i32> container_size{
@@ -475,7 +474,7 @@ namespace rl::ui {
 
             for (i32 i1 = 0; i1 < dim[axis1]; i1++)
             {
-                ui::widget* w{ nullptr };
+                ui::Widget* w{ nullptr };
 
                 do
                 {
@@ -541,27 +540,27 @@ namespace rl::ui {
         }
     }
 
-    ui::orientation grid_layout::orientation() const
+    ui::orientation GridLayout::orientation() const
     {
         return m_orientation;
     }
 
-    void grid_layout::set_orientation(ui::orientation orientation)
+    void GridLayout::set_orientation(ui::orientation orientation)
     {
         m_orientation = orientation;
     }
 
-    i32 grid_layout::resolution() const
+    i32 GridLayout::resolution() const
     {
         return m_resolution;
     }
 
-    void grid_layout::set_resolution(i32 resolution)
+    void GridLayout::set_resolution(i32 resolution)
     {
         m_resolution = resolution;
     }
 
-    i32 grid_layout::spacing(ui::axis axis) const
+    i32 GridLayout::spacing(ui::axis axis) const
     {
         switch (axis)
         {
@@ -575,7 +574,7 @@ namespace rl::ui {
         }
     }
 
-    void grid_layout::set_spacing(ui::axis axis, i32 spacing)
+    void GridLayout::set_spacing(ui::axis axis, i32 spacing)
     {
         switch (axis)
         {
@@ -591,22 +590,22 @@ namespace rl::ui {
         }
     }
 
-    void grid_layout::set_spacing(i32 spacing)
+    void GridLayout::set_spacing(i32 spacing)
     {
         m_spacing = { spacing, spacing };
     }
 
-    i32 grid_layout::margin() const
+    i32 GridLayout::margin() const
     {
         return m_margin;
     }
 
-    void grid_layout::set_margin(i32 margin)
+    void GridLayout::set_margin(i32 margin)
     {
         m_margin = margin;
     }
 
-    ui::alignment grid_layout::alignment(i32 axis, i32 item) const
+    ui::alignment GridLayout::alignment(i32 axis, i32 item) const
     {
         if (item < (i32)m_alignment[axis].size())
             return m_alignment[axis][item];
@@ -614,30 +613,30 @@ namespace rl::ui {
             return m_default_alignment[axis];
     }
 
-    void grid_layout::set_col_alignment(ui::alignment value)
+    void GridLayout::set_col_alignment(ui::alignment value)
     {
         m_default_alignment[axis::Horizontal] = value;
     }
 
-    void grid_layout::set_row_alignment(ui::alignment value)
+    void GridLayout::set_row_alignment(ui::alignment value)
     {
         m_default_alignment[axis::Vertical] = value;
     }
 
-    void grid_layout::set_col_alignment(const std::vector<ui::alignment>& value)
+    void GridLayout::set_col_alignment(const std::vector<ui::alignment>& value)
     {
         m_alignment[axis::Horizontal] = value;
     }
 
-    void grid_layout::set_row_alignment(const std::vector<ui::alignment>& value)
+    void GridLayout::set_row_alignment(const std::vector<ui::alignment>& value)
     {
         m_alignment[axis::Vertical] = value;
     }
 
     //=======================================================================
 
-    advanced_grid_layout::advanced_grid_layout(const std::vector<i32>& cols,
-                                               const std::vector<i32>& rows, i32 margin)
+    AdvancedGridLayout::AdvancedGridLayout(const std::vector<i32>& cols,
+                                           const std::vector<i32>& rows, i32 margin)
         : m_cols(cols)
         , m_rows(rows)
         , m_margin(margin)
@@ -646,8 +645,8 @@ namespace rl::ui {
         m_row_stretch.resize(m_rows.size(), 0);
     }
 
-    ds::dims<i32> advanced_grid_layout::preferred_size(NVGcontext* nvg_context,
-                                                       const ui::widget* widget) const
+    ds::dims<i32> AdvancedGridLayout::preferred_size(NVGcontext* nvg_context,
+                                                     const ui::Widget* widget) const
     {
         // Compute minimum row / column sizes
         std::array<std::vector<i32>, 2> grid{ { {}, {} } };
@@ -670,7 +669,7 @@ namespace rl::ui {
         return size + extra;
     }
 
-    void advanced_grid_layout::perform_layout(NVGcontext* nvg_context, ui::widget* widget) const
+    void AdvancedGridLayout::perform_layout(NVGcontext* nvg_context, ui::Widget* widget) const
     {
         std::array<std::vector<i32>, 2> grid{ { {}, {} } };
         this->compute_layout(nvg_context, widget, grid);
@@ -691,7 +690,7 @@ namespace rl::ui {
             for (size_t i = 1; i < axis_grids.size(); ++i)
                 axis_grids[i] += axis_grids[i - 1];
 
-            for (ui::widget* w : widget->children())
+            for (ui::Widget* w : widget->children())
             {
                 const ui::Dialog* child_window{ dynamic_cast<ui::Dialog*>(w) };
                 if (!w->visible() || child_window != nullptr)
@@ -749,8 +748,8 @@ namespace rl::ui {
         }
     }
 
-    void advanced_grid_layout::compute_layout(NVGcontext* nvg_context, const ui::widget* widget,
-                                              std::array<std::vector<i32>, 2>& grid_cell_sizes) const
+    void AdvancedGridLayout::compute_layout(NVGcontext* nvg_context, const ui::Widget* widget,
+                                            std::array<std::vector<i32>, 2>& grid_cell_sizes) const
     {
         ds::dims<i32> fs_w{ widget->fixed_size() };
         ds::dims<i32> container_size{
@@ -782,7 +781,7 @@ namespace rl::ui {
             {
                 for (const auto& pair : m_anchor)
                 {
-                    const ui::widget* w{ pair.first };
+                    const ui::Widget* w{ pair.first };
                     const ui::Dialog* anchor_window{ dynamic_cast<const ui::Dialog*>(w) };
                     if (!w->visible() || anchor_window != nullptr)
                         continue;
@@ -847,54 +846,54 @@ namespace rl::ui {
         }
     }
 
-    i32 advanced_grid_layout::margin() const
+    i32 AdvancedGridLayout::margin() const
     {
         return m_margin;
     }
 
-    void advanced_grid_layout::set_margin(i32 margin)
+    void AdvancedGridLayout::set_margin(i32 margin)
     {
         m_margin = margin;
     }
 
-    u32 advanced_grid_layout::col_count() const
+    u32 AdvancedGridLayout::col_count() const
     {
         return static_cast<u32>(m_cols.size());
     }
 
-    u32 advanced_grid_layout::row_count() const
+    u32 AdvancedGridLayout::row_count() const
     {
         return static_cast<u32>(m_rows.size());
     }
 
-    void advanced_grid_layout::append_row(i32 size, f32 stretch)
+    void AdvancedGridLayout::append_row(i32 size, f32 stretch)
     {
         m_rows.push_back(size);
         m_row_stretch.push_back(stretch);
     }
 
-    void advanced_grid_layout::append_col(i32 size, f32 stretch)
+    void AdvancedGridLayout::append_col(i32 size, f32 stretch)
     {
         m_cols.push_back(size);
         m_col_stretch.push_back(stretch);
     }
 
-    void advanced_grid_layout::set_row_stretch(i32 index, f32 stretch)
+    void AdvancedGridLayout::set_row_stretch(i32 index, f32 stretch)
     {
         m_row_stretch.at(index) = stretch;
     }
 
-    void advanced_grid_layout::set_col_stretch(i32 index, f32 stretch)
+    void AdvancedGridLayout::set_col_stretch(i32 index, f32 stretch)
     {
         m_col_stretch.at(index) = stretch;
     }
 
-    void advanced_grid_layout::set_anchor(const ui::widget* widget, const Anchor& anchor)
+    void AdvancedGridLayout::set_anchor(const ui::Widget* widget, const Anchor& anchor)
     {
         m_anchor[widget] = anchor;
     }
 
-    ui::Anchor advanced_grid_layout::anchor(const ui::widget* widget) const
+    ui::Anchor AdvancedGridLayout::anchor(const ui::Widget* widget) const
     {
         auto it{ m_anchor.find(widget) };
         runtime_assert(it != m_anchor.end(), "Widget was not registered with the grid layout!");

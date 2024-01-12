@@ -11,7 +11,7 @@ namespace rl::ui {
     class ToolButton : public ui::Button
     {
     public:
-        ToolButton(ui::widget* parent, ui::Icon icon, const std::string& caption = "")
+        ToolButton(ui::Widget* parent, ui::Icon icon, const std::string& caption = "")
             : ui::Button(parent, caption, icon)
         {
             this->set_flags(Button::Flags(Button::Flags::RadioButton | Button::Flags::ToggleButton));
