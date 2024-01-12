@@ -104,9 +104,6 @@ namespace rl::ui {
         f32 m_tooltip_delay{ 0.5f };
         f32 m_pixel_ratio{ 1.0f };
 
-        bool m_depth_buffer{ false };
-        bool m_stencil_buffer{ false };
-        bool m_float_buffer{ false };
         bool m_drag_active{ false };
         bool m_process_events{ true };
         bool m_redraw{ true };

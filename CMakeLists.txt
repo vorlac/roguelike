@@ -134,7 +134,7 @@ target_compile_options(${PROJECT_NAME}
         >
 
         $<$<CONFIG:Release>:
-            /O3 # maximize speed
+            /O2 # maximize speed
             /Oi # generate intrinsics
             /Oy # frame pointer omission
             /Gw # optimize global data

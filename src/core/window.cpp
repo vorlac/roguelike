@@ -56,13 +56,13 @@ namespace rl {
         m_renderer = std::make_unique<OpenGLRenderer>(*this, OpenGLRenderer::DEFAULT_PROPERTY_FLAGS);
 
         sdl_assert(m_sdl_window != nullptr, "failed to create SDL_Window");
-        sdl_assert(m_renderer != nullptr, "failed to create sdl::Renderer");
+        sdl_assert(m_renderer != nullptr, "failed to create rl::OpenGLRenderer");
 
         this->get_display();
         ds::dims<i32> window_size{ this->get_size() };
         ds::dims<i32> render_size{ this->get_render_size() };
 
-        SDL3::SDL_GL_SetSwapInterval(1);
+        SDL3::SDL_GL_SetSwapInterval(0);
 
         NVGcontext* nvg_context{ m_renderer->nvg_context() };
         m_screen = new ui::Screen{ nvg_context, window_size, m_mouse, m_keyboard,

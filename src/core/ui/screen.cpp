@@ -31,20 +31,6 @@ namespace rl::ui {
         for (i32 i = Mouse::Cursor::Arrow; i < Mouse::Cursor::CursorCount; ++i)
             m_cursors[i] = SDL3::SDL_CreateSystemCursor(Mouse::Cursor::type(i));
 
-        u8 float_mode{ 0 };
-        i32 depth_bits{ 0 };
-        i32 stencil_bits{ 0 };
-
-        glGetBooleanv(GL_RGBA_FLOAT_MODE_ARB, &float_mode);
-        glGetFramebufferAttachmentParameteriv(GL_DRAW_FRAMEBUFFER, GL_DEPTH,
-                                              GL_FRAMEBUFFER_ATTACHMENT_DEPTH_SIZE, &depth_bits);
-        glGetFramebufferAttachmentParameteriv(
-            GL_DRAW_FRAMEBUFFER, GL_STENCIL, GL_FRAMEBUFFER_ATTACHMENT_STENCIL_SIZE, &stencil_bits);
-
-        m_stencil_buffer = stencil_bits > 0;
-        m_depth_buffer = depth_bits > 0;
-        m_float_buffer = float_mode != 0;
-
         this->set_visible(true);
         this->set_theme(new ui::Theme(m_nvg_context));
         this->on_mouse_move({}, {});
@@ -109,13 +95,13 @@ namespace rl::ui {
         if (elapsed > m_tooltip_delay)
         {
             const ui::Widget* widget{ this->find_widget(m_mouse_ref.pos()) };
-            if (widget && !widget->tooltip().empty())
+            if (widget != nullptr && !widget->tooltip().empty())
             {
                 i32 tooltip_width{ 150 };
                 std::array<f32, 4> bounds{};
 
                 nvgFontFace(m_nvg_context, font::name::sans);
-                nvgFontSize(m_nvg_context, 26.0f);
+                nvgFontSize(m_nvg_context, 20.0f);
                 nvgTextAlign(m_nvg_context, NVGalign::NVG_ALIGN_LEFT | NVGalign::NVG_ALIGN_TOP);
                 nvgTextLineHeight(m_nvg_context, 1.125f);
 

@@ -79,118 +79,79 @@ namespace rl {
             // setup base level container widgets
             //===========================================
             auto gui{ m_window->gui() };
-            // define a base "canvas / viewport" that is the main child of the main window
 
-            // 4 columns - preferred layout/alignment sizes
-            // 0 rows, no preferred sizes
-            // 30 px margin along borders
-            auto layout = new ui::AdvancedGridLayout({ 0, 0, 0, 0 }, {}, 30);
-
-            // TODO: test margins
-            // set layout margins to 10px
-            // layout->set_margin(25);
-
-            // stretch column 2 to 1.0f
-            layout->set_col_stretch(2, 1.0f);
-
+            auto layout = new ui::AdvancedGridLayout({ 0, 0, 0 }, {}, 30);
             gui->set_layout(layout);
             gui->set_visible(true);
 
-            //===========================================
-            // setup layout / window
-            //===========================================
+            // TODO: test margins
+            // layout->set_margin(25);
 
-            // space it out a bit with a vertical gap before the label
+            // stretch column 2 to 1.0f
+            // layout->append_row(0);
+            layout->set_col_stretch(1, 1.0f);
+            auto title_label{ new ui::Label{ gui, "Widget Group", ui::font::name::sans_bold, 40 } };
+            layout->append_row(0);
+            auto push_button{ new ui::Button{ gui, "Push Button", ui::Icon::Microscope } };
+            layout->append_row(0);
+            auto timer_desc_label{ new ui::Label{ gui, "Timer: ", ui::font::name::sans, 32 } };
+            layout->append_row(0);
+            auto timer_value_label{ new ui::Label{ gui, "            ", ui::font::name::mono, 32 } };
+            layout->append_row(0);
+            auto stats_desc_label{ new ui::Label{ gui, "Stats: ", ui::font::name::sans, 32 } };
+            layout->append_row(0);
+            auto stats_value_label{ new ui::Label{ gui, "            ", ui::font::name::mono, 32 } };
             layout->append_row(0);
 
-            auto group = new ui::Label{
-                gui,             // parent, all scaling will be relative to it
-                "Widget Group",  // label text
-                ui::font::name::sans,
-                40,
-            };
+            layout->set_anchor(push_button, ui::Anchor(0, layout->row_count() - 1, 1, 1));
+            layout->set_anchor(title_label, ui::Anchor{
+                                                1,
+                                                layout->row_count() - 1,
+                                                2,
+                                                1,
+                                                ui::Alignment::Center,
+                                                ui::Alignment::Fill,
+                                            });
+
+            layout->append_row(20);
             layout->append_row(0);
+            layout->set_anchor(timer_desc_label, ui::Anchor(0, layout->row_count() - 1));
+            layout->set_anchor(timer_value_label, ui::Anchor(2, layout->row_count() - 1));
+            layout->append_row(10);
+            layout->append_row(0);
+            layout->set_anchor(stats_desc_label, ui::Anchor(0, layout->row_count() - 1));
+            layout->set_anchor(stats_value_label, ui::Anchor(2, layout->row_count() - 1));
+            layout->append_row(10);
             layout->append_row(0);
 
-            layout->set_anchor(group,
-                               ui::Anchor{
-                                   0,                        // x
-                                   layout->row_count() - 1,  // y
-                                   4,                        // width
-                                   1,                        // height
-                                   ui::Alignment::Fill,      // horiz alignment
-                                   ui::Alignment::Center,    // vert alignment
-                               });
+            timer_desc_label->set_tooltip("Timer Label");
+            timer_value_label->set_tooltip("Elapsed Time");
 
-            layout->append_row(25);
-
-            //=============================================
-            // set up labels
-            //=============================================
-            auto push_button = new ui::Button{
-                gui,
-                "Push Button",
-                ui::Icon::Microscope,
-            };
-            push_button->set_tooltip("This is a PushButton");
+            push_button->set_tooltip("Microscope Button");
             push_button->set_callback([] {
                 log::warning("Button Pressed Callback Invoked");
             });
 
-            auto timer_value_label = new ui::Label{
-                gui,
-                fmt::to_string(fmt::format("{:4.6f}", m_timer.elapsed())),
-                ui::font::name::mono,
-                32,
-            };
-
-            timer_value_label->set_tooltip("Elapsed Time");
-
-            auto stats_desc_label = new ui::Label{
-                gui,
-                "Stats: ",
-                ui::font::name::mono,
-                32,
-            };
-
             stats_desc_label->set_tooltip("Stats Label");
+            stats_value_label->set_tooltip("Average FPS");
             stats_desc_label->set_callback([] {
                 log::warning("Stats callback invoked");
             });
 
-            auto stats_value_label = new ui::Label{
-                gui,
-                fmt::to_string(fmt::format("0.0fps [0]")),
-                ui::font::name::mono,
-                32,
-            };
-
-            stats_value_label->set_tooltip("Average FPS");
-
-            // lambda used to update fps / frame count
             gui->add_refresh_callback([&]() {
-                stats_value_label->set_caption(fmt::to_string(fmt::format("{:.1f} fps", fps)));
+                auto&& elapsed_str{ fmt::format("{:.3f} sec", m_timer.elapsed()) };
+                timer_value_label->set_caption(std::move(elapsed_str));
             });
 
-            // lambda used to update timer label
             gui->add_refresh_callback([&]() {
-                timer_value_label->set_caption(
-                    fmt::to_string(fmt::format("{:.3f} sec", m_timer.elapsed())));
+                auto&& fps_str{ fmt::to_string(fmt::format("{:.1f} fps", fps)) };
+                stats_value_label->set_caption(std::move(fps_str));
             });
-
-            layout->append_row(0);
-            layout->set_anchor(push_button, ui::Anchor(1, layout->row_count() - 1));
-            layout->set_anchor(timer_value_label, ui::Anchor(3, layout->row_count() - 1));
-            layout->append_row(0);
-            layout->set_anchor(stats_desc_label, ui::Anchor(1, layout->row_count() - 1));
-            layout->set_anchor(stats_value_label, ui::Anchor(3, layout->row_count() - 1));
-            layout->append_row(0);
-
+            gui->refresh();
             gui->perform_layout();
 
-            vbo.bind_buffers();
-
             m_timer.reset();
+            // vbo.bind_buffers();
             while (!this->should_exit()) [[likely]]
             {
                 delta_time = m_timer.delta();

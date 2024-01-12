@@ -23,28 +23,61 @@ namespace rl {
         };
     };
 
-    static NVGcontext* create_nanovg_context()
+    static NVGcontext* create_nanovg_context(bool& stencil_buf, bool& depth_buf, bool& float_buf)
     {
+        u8 float_mode{ 0 };
+        i32 depth_bits{ 0 };
+        i32 stencil_bits{ 0 };
+
+        glGetBooleanv(GL_RGBA_FLOAT_MODE_ARB, &float_mode);
+        glGetFramebufferAttachmentParameteriv(GL_DRAW_FRAMEBUFFER, GL_DEPTH,
+                                              GL_FRAMEBUFFER_ATTACHMENT_DEPTH_SIZE, &depth_bits);
+        glGetFramebufferAttachmentParameteriv(
+            GL_DRAW_FRAMEBUFFER, GL_STENCIL, GL_FRAMEBUFFER_ATTACHMENT_STENCIL_SIZE, &stencil_bits);
+
+        stencil_buf = stencil_bits > 0;
+        depth_buf = depth_bits > 0;
+        float_buf = float_mode != 0;
+
         i32 nvg_flags{ Property::AntiAlias };
-        nvg_flags |= Property::Debug;
-        bool stencil_buffer = true;
-        if (stencil_buffer)
+        if (stencil_buf)
             nvg_flags |= Property::StencilStrokes;
 
+#ifndef NDEBUG
+        nvg_flags |= Property::Debug;
+#endif
         NVGcontext* nvg_context{ nvgCreateGL3(nvg_flags) };
         runtime_assert(nvg_context != nullptr, "Failed to create NVG context");
         return nvg_context;
     };
 
     VectorizedRenderer::VectorizedRenderer()
-        : m_nvg_context{ create_nanovg_context() }
+    //: m_nvg_context{ rl::create_nanovg_context(m_stencil_buffer, m_depth_buffer, m_float_buffer) }
     {
-    }
+        u8 float_mode{ 0 };
+        i32 depth_bits{ 0 };
+        i32 stencil_bits{ 0 };
 
-    VectorizedRenderer::VectorizedRenderer(NVGcontext* context)
-        : m_nvg_context{ context }
-    {
-        runtime_assert(context != nullptr, "VectorizedRenderer: invalid NV Context");
+        glGetFramebufferAttachmentParameteriv(
+            GL_DRAW_FRAMEBUFFER, GL_STENCIL, GL_FRAMEBUFFER_ATTACHMENT_STENCIL_SIZE, &stencil_bits);
+
+        i32 nvg_flags{ Property::AntiAlias };
+        if (m_stencil_buffer)
+            nvg_flags |= Property::StencilStrokes;
+
+#ifndef NDEBUG
+        nvg_flags |= Property::Debug;
+#endif
+        m_stencil_buffer = stencil_bits > 0;
+        m_nvg_context = nvgCreateGL3(nvg_flags);
+
+        // glGetBooleanv(GL_RGBA_FLOAT_MODE_ARB, &float_mode);
+        glGetFramebufferAttachmentParameteriv(GL_DRAW_FRAMEBUFFER, GL_DEPTH,
+                                              GL_FRAMEBUFFER_ATTACHMENT_DEPTH_SIZE, &depth_bits);
+        m_depth_buffer = depth_bits > 0;
+        m_float_buffer = float_mode != 0;
+
+        runtime_assert(m_nvg_context != nullptr, "Failed to create NVG context");
     }
 
     NVGcontext* VectorizedRenderer::nvg_context() const

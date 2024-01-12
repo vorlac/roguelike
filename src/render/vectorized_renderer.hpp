@@ -1,6 +1,7 @@
 #pragma once
 
 #include "core/assert.hpp"
+#include "core/ui/theme.hpp"
 #include "ds/color.hpp"
 #include "ds/dims.hpp"
 #include "ds/point.hpp"
@@ -13,7 +14,6 @@ namespace rl {
     {
     public:
         VectorizedRenderer();
-        VectorizedRenderer(NVGcontext* context);
 
         NVGcontext* nvg_context() const;
 
@@ -31,6 +31,9 @@ namespace rl {
                                ui::Outline type);
 
     private:
+        bool m_depth_buffer{ false };
+        bool m_stencil_buffer{ false };
+        bool m_float_buffer{ false };
         NVGcontext* m_nvg_context{ nullptr };
     };
 }
