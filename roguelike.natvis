@@ -42,48 +42,224 @@
         </Expand>
     </Type>
 
-    <!-- - - - - - - - -->
-    <!-- SDL_Color -->
-    <!-- - - - - - - - -->
-    <Type Name="SDL_Color">
-        <DisplayString>
-            SDL_Color{{r={r,nvo}, g={g,nvo}, b={r,nvo}}}
-        </DisplayString>
-        <Expand HideRawView="true">
-            <Item Name="[r]">r,nvo</Item>
-            <Item Name="[g]">g,nvo</Item>
-            <Item Name="[b]">b,nvo</Item>
-        </Expand>
+    <!-- - - - - - - - - - - -->
+    <!--  rl::ds::color<T> - -->
+    <!-- - - - - - - - - - - -->
+    <Type Name="rl::ds::color&lt;*&gt;">
+      <DisplayString>
+          rgb:[{r,nvo},{g,nvo},{b,nvo} =&gt; 0x{r,nvoHb}{g,nvoHb}{b,nvoHb}] a:({a,nvo} =&gt; {a,nvoH})
+      </DisplayString>
+      <Expand HideRawView="true">
+          <Item Name="[red]">r,nvo</Item>
+          <Item Name="[green]">g,nvo</Item>
+          <Item Name="[blue]">b,nvo</Item>
+          <Item Name="[alpha]">a,nvo</Item>
+          <Item Name="RGBA Hex">
+              (uint32_t)(r &lt;&lt; 24)|(g &lt;&lt; 16)|(b &lt;&lt; 8 )|(a),nvoH
+          </Item>
+          <Item Name="(SDL_Color*)">
+              ((const SDL_Color&amp;)(*this))
+          </Item>
+          <Item Name="(NVGcolor*)">
+              ((const NVGcolor&amp;)(*this))
+          </Item>
+      </Expand>
     </Type>
 
-    <!-- - - - - - - - - - -->
-    <!-- rl::sdl::Color- - -->
-    <!-- - - - - - - - - - -->
-    <Type Name="rl::sdl::Color">
+    <!-- - - - - - - -->
+    <!--  NVGcolor - -->
+    <!-- - - - - - - -->
+    <Type Name="NVGcolor">
         <DisplayString>
-            rgb:[{r,nvo},{g,nvo},{b,nvo} =&gt; 0x{r,nvoHb}{g,nvoHb}{b,nvoHb}] a:({a,nvo} =&gt; {a,nvoH})
+            NVGcolor{{r={r,nvo}, g={g,nvo}, b={r,nvo}}}
         </DisplayString>
         <Expand HideRawView="true">
             <Item Name="[red]">r,nvo</Item>
             <Item Name="[green]">g,nvo</Item>
             <Item Name="[blue]">b,nvo</Item>
             <Item Name="[alpha]">a,nvo</Item>
-            <Item Name="RGBA Hex">
-                (uint32_t)(r &lt;&lt; 24)|(g &lt;&lt; 16)|(b &lt;&lt; 8 )|(a),nvoH
-            </Item>
-            <Item Name="(SDL_Color*)this">
-                ((const SDL_Color&amp;)(*this))
-            </Item>
         </Expand>
     </Type>
 
+    <!-- - - - - - - - - - - - -->
+    <!-- rl::ds::refcounted- - -->
+    <!-- - - - - - - - - - - - -->
+    <Type Name="rl::ds::refcounted">
+        <DisplayString>
+            asdf asdf references:{m_references,na}
+        </DisplayString>
+    </Type>
+
+    <!-- - - - - - - - - - - -->
+    <!-- rl::ds::shared<T> - -->
+    <!-- - - - - - - - - - - -->
+    <Type Name="rl::ds::shared&lt;*&gt;">
+        <DisplayString>
+          data:{m_data}
+        </DisplayString>
+        <Expand HideRawView="true">
+            <Item Name="[object]">m_data</Item>
+        </Expand>
+    </Type>
+
+    <!-- - - - - - - - - -->
+    <!-- rl::ui::theme - -->
+    <!-- - - - - - - - - -->
+    <Type Name="rl::ui::theme">
+      <!--<DisplayString>
+          refcount:{m_references,na}
+      </DisplayString>-->
+      <Expand HideRawView="true">
+        <Item Name="refcount">m_references</Item>
+        <Synthetic Name="fonts">
+            <DisplayString>
+                Size:{m_standard_font_size}
+            </DisplayString>
+            <Expand>
+                <Item Name="Sans Regular">m_font_sans_regular</Item>
+                <Item Name="Sans Bold">m_font_sans_bold</Item>
+                <Item Name="Mono Regular">m_font_mono_regular</Item>
+                <Item Name="Icons Font">m_font_icons</Item>
+                <Item Name="Standard Font Size">m_standard_font_size</Item>
+            </Expand>
+        </Synthetic>
+
+        <Synthetic Name="colors">
+          <DisplayString>
+          </DisplayString>
+          <Expand>
+            <Item Name="Drop Shadow">m_drop_shadow</Item>
+            <Item Name="Transparent">m_transparent</Item>
+            <Item Name="Border: Dark">m_border_dark</Item>
+            <Item Name="Border: Light">m_border_light</Item>
+            <Item Name="Border: Medium">m_border_medium</Item>
+            <Item Name="Text Foreground">m_text_color</Item>
+            <Item Name="Disabled Text">m_disabled_text_color</Item>
+            <Item Name="Text Shadow">m_text_shadow_color</Item>
+            <Item Name="Icon Color">m_icon_color</Item>
+          </Expand>
+        </Synthetic>
+
+        <Synthetic Name="icons">
+          <DisplayString>
+              Scale:{m_icon_scale}
+          </DisplayString>
+          <Expand>
+              <Item Name="Scale">m_icon_scale</Item>
+          </Expand>
+        </Synthetic>
+
+        <Synthetic Name="[button]">
+          <DisplayString>
+          </DisplayString>
+          <Expand>
+            <Item Name="Font Size">m_button_font_size</Item>
+            <Item Name="Corner Radius">m_button_corner_radius</Item>
+            <Item Name="Drop Shadow Size">m_window_drop_shadow_size</Item>
+            <Synthetic Name="[button colors]">
+              <DisplayString>
+              </DisplayString>
+              <Expand>
+                <Item Name="Gradient Top: Focused">m_button_gradient_top_focused</Item>
+                <Item Name="Gradient Bop: Focused">m_button_gradient_bot_focused</Item>
+                <Item Name="Gradient Top: Unfocused">m_button_gradient_top_unfocused</Item>
+                <Item Name="Gradient Bop: Unfocused">m_button_gradient_bot_unfocused</Item>
+                <Item Name="Gradient Top: Pressed">m_button_gradient_top_pushed</Item>
+                <Item Name="Gradient Bop: Pressed">m_button_gradient_bot_pushed</Item>
+              </Expand>
+             </Synthetic>
+          </Expand>
+        </Synthetic>
+
+        <Synthetic Name="[text box]">
+          <DisplayString>
+          </DisplayString>
+          <Expand>
+            <Item Name="Font Size">m_text_box_font_size</Item>
+            <Item Name="Box Up Icon">m_text_box_up_icon</Item>
+            <Item Name="Box Down Icon">m_text_box_down_icon</Item>
+          </Expand>
+        </Synthetic>
+
+        <Synthetic Name="[tab]">
+            <DisplayString>
+            </DisplayString>
+            <Expand>
+              <Item Name="Border Width">m_tab_border_width</Item>
+              <Item Name="Inner Margin">m_tab_inner_margin</Item>
+              <Item Name="Min Button Width">m_tab_min_button_width</Item>
+              <Item Name="Max Button Width">m_tab_max_button_width</Item>
+              <Item Name="Control Width">m_tab_control_width</Item>
+              <Item Name="Button Horizontal Padding">m_tab_button_horizontal_padding</Item>
+              <Item Name="Button Vertical Padding">m_tab_button_vertical_padding</Item>
+            </Expand>
+        </Synthetic>
+
+        <Synthetic Name="[dialog]">
+          <DisplayString>
+          </DisplayString>
+          <Expand>
+            <Item Name="Corner Radius">m_window_corner_radius</Item>
+            <Item Name="Header Height">m_window_header_height</Item>
+            <Item Name="Drop Shadow Size">m_window_drop_shadow_size</Item>
+            <Synthetic Name="[colors]">
+              <DisplayString>
+              </DisplayString>
+              <Expand>
+                <Item Name="Fill: Unfocused">m_window_fill_unfocused</Item>
+                <Item Name="Fill: Focused">m_window_fill_focused</Item>
+                <Item Name="Title: Unfocused">m_window_title_unfocused</Item>
+                <Item Name="Title: Focused">m_window_title_focused</Item>
+                <Item Name="Header Gradient: Top">m_window_header_gradient_top</Item>
+                <Item Name="Header Gradient: Bot">m_window_header_gradient_bot</Item>
+                <Item Name="Header Gradient: Top">m_window_header_sep_top</Item>
+                <Item Name="Header Gradient: Bot">m_window_header_sep_bot</Item>
+                <Item Name="Popup">m_window_popup</Item>
+                <Item Name="Popup Transparent">m_window_popup_transparent</Item>
+              </Expand>
+            </Synthetic>
+          </Expand>
+        </Synthetic>
+
+        <Synthetic Name="[checkbox]">
+          <DisplayString>
+          </DisplayString>
+          <Expand>
+            <Item Name="Checkbox Icon">m_check_box_icon</Item>
+          </Expand>
+        </Synthetic>
+
+        <Synthetic Name="[message]">
+          <DisplayString>
+          </DisplayString>
+          <Expand>
+            <Item Name="Information Icon">m_message_information_icon</Item>
+            <Item Name="Question Icon">m_message_question_icon</Item>
+            <Item Name="Warning Icon">m_message_warning_icon</Item>
+            <Item Name="Alt Button Icon">m_message_alt_button_icon</Item>
+            <Item Name="Primary Button Icon">m_message_primary_button_icon</Item>
+          </Expand>
+        </Synthetic>
+
+        <Synthetic Name="[popup]">
+          <DisplayString>
+          </DisplayString>
+          <Expand>
+            <Item Name="Chevron Right Icon">m_popup_chevron_right_icon</Item>
+            <Item Name="Chevron Left Icon">m_popup_chevron_left_icon</Item>
+          </Expand>
+        </Synthetic>
+
+      </Expand>
+    </Type>
+
     <!-- - - - - - - - - - - - - - - -  -->
-    <!-- rl::sdl::Renderer::Properties- -->
+    <!-- rl::Renderer::Properties- -->
     <!-- - - - - - - - - - - - - - - -  -->
-    <Type Name="rl::sdl::Renderer::Properties">
+    <Type Name="rl::Renderer::Properties">
         <DisplayString Condition="0 == _Array[0]">{{}}</DisplayString>
         <DisplayString Condition="0 != _Array[0]">
-            {(rl::sdl::Renderer::Properties::Flag)_Array[0],en}
+            {(rl::Renderer::Properties::Flag)_Array[0],en}
         </DisplayString>
         <Expand HideRawView="true">
             <CustomListItems MaxItemsPerView="32">
@@ -107,7 +283,7 @@
                         <Variable Name="shift" InitialValue="0" />
                         <Loop>
                             <If Condition="(0x1 &lt;&lt; shift) &amp; _Array[0]">
-                                <Item Name="">(rl::sdl::Renderer::Properties::Flag)(1 &lt;&lt; shift),H</Item>
+                                <Item Name="">(rl::Renderer::Properties::Flag)(1 &lt;&lt; shift),H</Item>
                             </If>
                             <Exec>shift++</Exec>
                             <Break Condition="shift &gt;= 32" />
@@ -134,12 +310,12 @@
     </Type>
 
     <!-- - - - - - - - - - - - - - - -  -->
-    <!-- - rl::sdl::Window::Properties- -->
+    <!-- - rl::Window::Properties- -->
     <!-- - - - - - - - - - - - - - - -  -->
-    <Type Name="rl::sdl::Window::Properties">
+    <Type Name="rl::Window::Properties">
         <DisplayString Condition="0 == _Array[0]">{{}}</DisplayString>
         <DisplayString Condition="0 != _Array[0]">
-            {(rl::sdl::Window::Properties::Flag)_Array[0],en}
+            {(rl::Window::Properties::Flag)_Array[0],en}
         </DisplayString>
         <Expand HideRawView="true">
             <CustomListItems MaxItemsPerView="32">
@@ -163,7 +339,7 @@
                         <Variable Name="shift" InitialValue="0" />
                         <Loop>
                             <If Condition="(0x1 &lt;&lt; shift) &amp; _Array[0]">
-                                <Item Name="">(sdl::Window::Properties::Flag)(1 &lt;&lt; shift),H</Item>
+                                <Item Name="">(rl::Window::Properties::Flag)(1 &lt;&lt; shift),H</Item>
                             </If>
                             <Exec>shift++</Exec>
                             <Break Condition="shift &gt;= 32" />

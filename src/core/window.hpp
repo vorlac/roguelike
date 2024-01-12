@@ -280,7 +280,7 @@ namespace rl {
         Window(SDL3::SDL_Window* other) = delete;
 
     private:
-        bool m_vsync{ false };
+        bool m_vsync{ true };
 
         std::string m_title{};
         WindowID m_window_id{ 0 };

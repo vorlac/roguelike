@@ -517,7 +517,7 @@ namespace rl::ui {
     {
         // Check if the widget contains a certain position
         ds::rect<i32> widget_rect{ this->abs_position(), m_size };
-        return widget_rect.contains(pt);
+        return widget_rect.intersects(pt);
     }
 
     ui::Dialog* widget::window()
@@ -559,14 +559,23 @@ namespace rl::ui {
             if (!this->contains(pt))
                 return;
 
-            //  render red widget outlines
+            //  render green widget outlines
+            auto pos{ this->abs_position() };
             nvgStrokeWidth(nvg_context, 2.0f);
             nvgBeginPath(nvg_context);
-            nvgRect(nvg_context, m_pos.x - 1.0f, m_pos.y - 1.0f, m_size.width + 2.0f,
-                    m_size.height + 2.0f);
+            nvgRect(nvg_context, m_pos.x - 1.0f, m_pos.y - 1.0f, m_size.width + 1.0f,
+                    m_size.height + 1.0f);
 
             nvgStrokeColor(nvg_context, rl::Colors::Cyan);
             nvgStroke(nvg_context);
+
+            for (auto child : m_children)
+            {
+                if (!child->visible())
+                    continue;
+
+                child->draw_mouse_intersection(nvg_context, pt);
+            }
         }
     }
 
@@ -580,7 +589,7 @@ namespace rl::ui {
             nvgRect(nvg_context, m_pos.x - 0.5f, m_pos.y - 0.5f, m_size.width + 1.0f,
                     m_size.height + 1.0f);
 
-            nvgStrokeColor(nvg_context, ds::color<u8>{ 255, 0, 0 });
+            nvgStrokeColor(nvg_context, rl::Colors::Purple);
             nvgStroke(nvg_context);
         }
 

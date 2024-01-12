@@ -59,7 +59,7 @@ namespace rl {
         ds::dims<i32> window_size{ this->get_size() };
         ds::dims<i32> render_size{ this->get_render_size() };
 
-        SDL3::SDL_GL_SetSwapInterval(m_vsync);
+        SDL3::SDL_GL_SetSwapInterval(1);
 
         NVGcontext* nvg_context{ m_renderer->nvg_context() };
         m_screen = new ui::Screen{ nvg_context, window_size, m_mouse, m_keyboard };

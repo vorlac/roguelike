@@ -202,6 +202,8 @@ namespace rl {
             gui->perform_layout();
 
             vbo.bind_buffers();
+
+            Timer<float> debug_timer{};
             while (!this->should_exit()) [[likely]]
             {
                 delta_time = m_timer.delta();
@@ -216,7 +218,7 @@ namespace rl {
                 gui->draw_all();
                 m_window->swap_buffers();
 
-                fps = ++frame_count / m_timer.elapsed();
+                fps = ++frame_count / debug_timer.elapsed();
 
                 if constexpr (io::logging::main_loop)
                     this->print_loop_stats(delta_time);
