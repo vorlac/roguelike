@@ -113,13 +113,7 @@ namespace rl::ds {
         constexpr inline operator const SDL3::SDL_FPoint*() const
             requires std::same_as<T, f32>
         {
-            return reinterpret_cast<const SDL3::SDL_FPoint*>((const T*)this);
-        }
-
-        constexpr inline operator rl::component::position()
-            requires std::same_as<T, f32>
-        {
-            return *static_cast<rl::component::position*>(this);
+            return reinterpret_cast<const SDL3::SDL_FPoint*>(this);
         }
 
         constexpr inline operator const rl::component::position() const

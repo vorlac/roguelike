@@ -49,7 +49,7 @@ namespace rl::ui {
         m_font = font;
     }
 
-    void label::set_color(ds::color<f32> color)
+    void label::set_color(ds::color<u8> color)
     {
         m_color = color;
     }

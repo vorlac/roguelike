@@ -130,7 +130,9 @@ namespace rl::sdl {
     {
         const auto&& this_size{ this->size() };
         ds::rect<i32> real_rect{
-            rect.is_null() ? rect : ds::rect<i32>{ 0, 0, this_size.width, this_size.height },
+            rect.is_null()
+                ? rect
+                : std::forward<ds::rect<i32>>({ 0, 0, this_size.width, this_size.height }),
         };
 
         const auto&& surf_size{ surf.size() };
@@ -158,7 +160,9 @@ namespace rl::sdl {
     {
         const auto&& this_size{ this->size() };
         ds::rect<i32> real_rect{
-            rect.is_null() ? rect : ds::rect<i32>{ 0, 0, this_size.width, this_size.height },
+            rect.is_null()
+                ? rect
+                : std::forward<ds::rect<i32>>({ 0, 0, this_size.width, this_size.height }),
         };
 
         const auto&& surf_size{ surf.size() };
@@ -218,7 +222,7 @@ namespace rl::sdl {
     SDL3::SDL_PixelFormatEnum Texture::get_format() const
     {
         SDL3::SDL_PixelFormatEnum format{ SDL3::SDL_PIXELFORMAT_UNKNOWN };
-        i32 result = SDL3::SDL_QueryTexture(m_sdl_texture, reinterpret_cast<u32*>(&format), nullptr,
+        i32 result = SDL3::SDL_QueryTexture(m_sdl_texture, std::bit_cast<u32*>(&format), nullptr,
                                             nullptr, nullptr);
         sdl_assert(result == 0, "failed to get format");
         return format;
@@ -227,7 +231,7 @@ namespace rl::sdl {
     SDL3::SDL_TextureAccess Texture::get_access() const
     {
         SDL3::SDL_TextureAccess access{ SDL3::SDL_TEXTUREACCESS_STATIC };
-        i32 result = SDL3::SDL_QueryTexture(m_sdl_texture, nullptr, reinterpret_cast<i32*>(&access),
+        i32 result = SDL3::SDL_QueryTexture(m_sdl_texture, nullptr, std::bit_cast<i32*>(&access),
                                             nullptr, nullptr);
         sdl_assert(result == 0, "failed to get access");
         return static_cast<SDL3::SDL_TextureAccess>(access);

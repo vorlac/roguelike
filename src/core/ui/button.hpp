@@ -33,9 +33,10 @@ namespace rl::ui {
         };
 
     public:
-        Button(ui::widget* parent, const std::string& caption = "Untitled", i32 icon = 0);
+        Button(ui::widget* parent, const std::string& caption = "Untitled",
+               ui::Icon icon = ui::Icon::None);
 
-        i32 icon() const;
+        ui::Icon icon() const;
         i32 flags() const;
         bool pressed() const;
         IconPosition icon_position() const;
@@ -49,7 +50,7 @@ namespace rl::ui {
         void set_caption(const std::string& caption);
         void set_background_color(ds::color<u8> background_color);
         void set_text_color(ds::color<u8> text_color);
-        void set_icon(i32 icon);
+        void set_icon(ui::Icon icon);
         void set_flags(Button::Flags button_flags);
         void set_icon_position(IconPosition icon_position);
         void set_pressed(bool pressed);
@@ -81,7 +82,7 @@ namespace rl::ui {
         ///     picture icon, or one of the icons enumerated in. The kind of icon
         ///     (image or Entypo) is determined by the functions nvgIsImageIcon and
         ///     its reciprocal counterpart nvgIsFontIcon.
-        i32 m_icon{ 0 };
+        ui::Icon m_icon{ ui::Icon::None };
         Button::Flags m_flags{};
         bool m_pressed{ false };
         Button::IconPosition m_icon_position{};

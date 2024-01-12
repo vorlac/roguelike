@@ -15,13 +15,13 @@ namespace rl::ui {
     {
     public:
         PopupButton(ui::widget* parent, const std::string& caption = "Untitled",
-                    int button_icon = 0);
+                    ui::Icon button_icon = ui::Icon::None);
 
-        void set_chevron_icon(int icon);
+        void set_chevron_icon(ui::Icon icon);
         void set_side(Popup::Side popup_side);
 
         Popup* popup();
-        i32 chevron_icon() const;
+        ui::Icon chevron_icon() const;
         Popup::Side side() const;
         const ui::Popup* popup() const;
 
@@ -32,7 +32,7 @@ namespace rl::ui {
 
     protected:
         Popup* m_popup{};
-        i32 m_chevron_icon{};
+        ui::Icon m_chevron_icon{ ui::Icon::None };
     };
 
 }

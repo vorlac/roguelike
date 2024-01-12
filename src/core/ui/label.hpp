@@ -24,7 +24,7 @@ namespace rl::ui {
 
         void set_caption(const std::string& caption);
         void set_font(const std::string& font);
-        void set_color(ds::color<f32> color);
+        void set_color(ds::color<u8> color);
         void set_callback(std::function<void()> callable);
 
     public:
@@ -35,7 +35,7 @@ namespace rl::ui {
     protected:
         std::string m_font{};
         std::string m_caption{};
-        ds::color<f32> m_color{ rl::Colors::Yellow };
+        ds::color<u8> m_color{ rl::Colors::Yellow };
         std::function<void()> m_callback;
     };
 }

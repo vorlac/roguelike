@@ -199,7 +199,7 @@ namespace rl::sdl::test {
         ret = renderer.fill_rect(rect);
 
         /* Draw a rectangle. */
-        rect = {
+        rect = ds::rect{
             10.0f,
             10.0f,
             60.0f,
@@ -838,7 +838,7 @@ namespace rl::sdl::test {
     static int render_test_logical_size(sdl::Renderer& renderer)
     {
         const int factor = 2;
-        ds::rect<i32> viewport = {
+        ds::rect<i32> viewport{
             ((sdl::test::TESTRENDER_SCREEN_W / 4) / factor) * factor,
             ((sdl::test::TESTRENDER_SCREEN_H / 4) / factor) * factor,
             ((sdl::test::TESTRENDER_SCREEN_W / 2) / factor) * factor,
@@ -872,7 +872,7 @@ namespace rl::sdl::test {
 
         renderer.set_draw_color({ 0, 255, 0, ds::color<u8>::Opaque });
 
-        ds::rect<f32> rect = {
+        ds::rect<f32> rect{
             (float)viewport.pt.x / factor,
             (float)viewport.pt.y / factor,
             (float)viewport.size.width / factor,

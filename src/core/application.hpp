@@ -127,7 +127,7 @@ namespace rl {
                                    layout->row_count() - 1,  // y
                                    4,                        // width
                                    1,                        // height
-                                   ui::alignment::Middle,    // horiz alignment
+                                   ui::alignment::Fill,      // horiz alignment
                                    ui::alignment::Fill,      // vert alignment
                                });
 
@@ -136,15 +136,15 @@ namespace rl {
             //=============================================
             // set up labels
             //=============================================
-            auto timer_desc_label = new ui::Button{
+            auto push_button = new ui::Button{
                 gui,
-                "Elapsed Seconds: ",
-                FA_MICROSCOPE,
+                "Push Button",
+                ui::Icon::Microscope,
             };
 
-            timer_desc_label->set_tooltip("Timer Label");
-            timer_desc_label->set_callback([] {
-                log::warning("Label callback invoked");
+            push_button->set_tooltip("This is a PushButton");
+            push_button->set_callback([] {
+                log::warning("Button Pressed Callback Invoked");
             });
 
             auto timer_value_label = new ui::label{
@@ -154,7 +154,7 @@ namespace rl {
                 26,
             };
 
-            timer_value_label->set_tooltip("Time");
+            timer_value_label->set_tooltip("Elapsed Time");
 
             auto stats_desc_label = new ui::label{
                 gui,
@@ -175,7 +175,7 @@ namespace rl {
                 26,
             };
 
-            stats_value_label->set_tooltip("Stats");
+            stats_value_label->set_tooltip("Average FPS");
 
             f32 fps{ 0 };
             u64 frame_count{ 0 };
@@ -186,13 +186,12 @@ namespace rl {
 
             // lambda used to update timer label
             gui->add_refresh_callback([&]() {
-                const f32 elapsed{ m_timer.elapsed() };
                 timer_value_label->set_caption(
                     fmt::to_string(fmt::format("{:.3f} sec", m_timer.elapsed())));
             });
 
             layout->append_row(0);
-            layout->set_anchor(timer_desc_label, ui::Anchor(1, layout->row_count() - 1));
+            layout->set_anchor(push_button, ui::Anchor(1, layout->row_count() - 1));
             layout->set_anchor(timer_value_label, ui::Anchor(3, layout->row_count() - 1));
             layout->append_row(0);
             layout->set_anchor(stats_desc_label, ui::Anchor(1, layout->row_count() - 1));
@@ -203,7 +202,7 @@ namespace rl {
 
             vbo.bind_buffers();
 
-            Timer<float> debug_timer{};
+            m_timer.reset();
             while (!this->should_exit()) [[likely]]
             {
                 delta_time = m_timer.delta();
@@ -218,7 +217,7 @@ namespace rl {
                 gui->draw_all();
                 m_window->swap_buffers();
 
-                fps = ++frame_count / debug_timer.elapsed();
+                fps = ++frame_count / m_timer.elapsed();
 
                 if constexpr (io::logging::main_loop)
                     this->print_loop_stats(delta_time);

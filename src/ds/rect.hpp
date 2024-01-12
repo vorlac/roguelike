@@ -45,50 +45,69 @@ namespace rl::ds {
     class rect
     {
     public:
-        explicit constexpr rect()
+        // Default construct a 'null' rect
+        explicit constexpr inline rect()
             : pt{ ds::point<T>::null() }
             , size{ ds::dims<T>::null() }
         {
         }
 
-        constexpr rect(const rect<T>& other)
+        // copy construct rect<T> from 'other' l-value rect<T>
+        constexpr inline rect(const rect<T>& other)
             : pt{ other.pt }
             , size{ other.size }
         {
         }
 
+        // copy construct rect<floating_point>
+        // from l-value rect<integer>
         template <rl::integer I>
-        constexpr rect(const rect<I>& other)
+        constexpr inline rect(const rect<I>& other)
             requires rl::floating_point<T>
             : pt(T(other.pt.x), T(other.pt.y))
             , size(T(other.size.width), T(other.size.height))
         {
         }
 
-        constexpr rect(rect<T>&& other) noexcept
+        // construct rect<T> from other r-value rect<T>
+        constexpr inline rect(rect<T>&& other) noexcept
             : pt{ std::forward<point<T>>(other.pt) }
             , size{ std::forward<dims<T>>(other.size) }
         {
         }
 
-        constexpr rect(const T x, const T y, const T width, const T height)
+        // construct rect<T> from (top left point) x and y, and width and height
+        constexpr inline rect(const T x, const T y, const T width, const T height)
             : pt{ x, y }
             , size{ width, height }
         {
         }
 
-        constexpr rect(point<T>&& pnt, dims<T>&& dims)
+        // construct rect from r-value (top left) point<T> and dims<T> size
+        constexpr inline rect(point<T>&& pnt, dims<T>&& dims)
             : pt{ pnt }
             , size{ dims }
         {
         }
 
-        constexpr rect(const point<T>& pnt, const dims<T>& dims)
+        // construct rect from l-value (top left) point<T> and dims<T> size
+        constexpr inline rect(const point<T>& pnt, const dims<T>& dims)
             : pt{ pnt }
             , size{ dims }
         {
         }
 
+        // 'null' representation of a rect<T>
+        // Returns:
+        //   rect<T>{
+        //     point<T>{
+        //       .x = std::numeric_limits<T>::max()
+        //       .y = std::numeric_limits<T>::max() },
+        //     size<T>{
+        //       .width  = 0
+        //       .height = 0 } }
+        //
+        //   Initialized as: rect<T>{ point<T>::null(), dims<T>::null() }
         constexpr static inline rect<T> null()
         {
             return rect<T>{
@@ -97,6 +116,17 @@ namespace rl::ds {
             };
         }
 
+        // 'zero' representation of a rect<T>
+        // Returns:
+        //   rect<T>{
+        //     point<T>{
+        //       .x = 0
+        //       .y = 0 },
+        //     size<T>{
+        //       .width  = 0
+        //       .height = 0 } }
+        //
+        //   Initialized as: rect<T>{ point<T>::zero(), dims<T>::zero() }
         constexpr static inline rect<T> zero()
         {
             return rect<T>{
@@ -105,9 +135,7 @@ namespace rl::ds {
             };
         }
 
-        /*
-         * @brief construct rect<f32> from SDL_FRect&&
-         */
+        // construct rect<f32> from SDL_FRect&&
         constexpr rect(SDL3::SDL_FRect&& other)
             requires std::same_as<T, f32>
             : pt{ other.x, other.y }
@@ -115,9 +143,7 @@ namespace rl::ds {
         {
         }
 
-        /*
-         * @brief cast rect<f32> to SDL_FRect
-         */
+        // cast rect<f32> to SDL_FRect
         constexpr operator SDL3::SDL_FRect()
             requires std::same_as<T, f32>
         {
@@ -129,25 +155,10 @@ namespace rl::ds {
             };
         }
 
-        /*
-         * @brief  implicit cast from const rect&lt;f32&gt;& to const SDL_FRect&
-         */
-        constexpr operator const SDL3::SDL_FRect&() const&
-            requires std::same_as<T, f32>
-        {
-            return *reinterpret_cast<const SDL3::SDL_FRect*>(this);
-        }
-
-        /*
-         * @brief  construct rect&lt;f32&gt; from SDL_FRect
-         */
-        constexpr rect(const SDL3::SDL_FRect* other)
-            requires std::same_as<T, f32>
-            : pt{ other->x, other->y }
-            , size{ other->w, other->h }
-        {
-        }
-
+        // Implicit conversion from `const rect<T>` to `const SDL_FRect*`
+        // Returns:
+        //     `nullptr` if the `rect<T>` is equivalent to `rect<T>::null()`,
+        //     otherwise will return `const SDL_FRect*` equivalent to `this`
         constexpr operator const SDL3::SDL_FRect*() const
             requires std::same_as<T, f32>
         {
@@ -156,14 +167,7 @@ namespace rl::ds {
             return reinterpret_cast<const SDL3::SDL_FRect*>(this);
         }
 
-        constexpr operator SDL3::SDL_FRect*()
-            requires std::same_as<T, f32>
-        {
-            if (this->is_null())
-                return nullptr;
-            return reinterpret_cast<SDL3::SDL_FRect*>(this);
-        }
-
+        // Construct `rect<i32>` from r-value `SDL_Rect`
         constexpr rect(SDL3::SDL_Rect&& other)
             requires std::same_as<T, i32>
             : pt{ other.x, other.y }
@@ -171,19 +175,14 @@ namespace rl::ds {
         {
         }
 
-        constexpr rect(const SDL3::SDL_Rect& other)
-            requires std::same_as<T, i32>
-            : pt{ other.x, other.y }
-            , size{ other.w, other.h }
-        {
-        }
-
-        constexpr operator SDL3::SDL_Rect() const&
+        // Implicit conversion from `const rect<i32>&` to `SDL_Rect`
+        constexpr operator const SDL3::SDL_Rect&() const&
             requires std::same_as<T, i32>
         {
             return *reinterpret_cast<const SDL3::SDL_Rect*>(this);
         }
 
+        // Implicit conversion from `rect<i32>` to `SDL_Rect*`
         constexpr operator SDL3::SDL_Rect*()
             requires std::same_as<T, i32>
         {
@@ -192,58 +191,49 @@ namespace rl::ds {
             return reinterpret_cast<SDL3::SDL_Rect*>(this);
         }
 
+        // Implicit conversion from `const rect<i32>` to `const SDL_Rect*`
         constexpr operator const SDL3::SDL_Rect*() const&
             requires std::same_as<T, i32>
         {
             if (this->is_null())
                 return nullptr;
-            return reinterpret_cast<const SDL3::SDL_Rect*>(this);
+            return std::bit_cast<const SDL3::SDL_Rect*>(this);
         }
 
+        // Returns the area of the rect<T>
         constexpr inline T area() const
         {
             return size.area();
         }
 
-        /*
-         * @brief  Checks if the rectangle has no area
-         */
+        // Checks if the rectangle has no area
         constexpr inline bool is_empty() const
             requires rl::floating_point<T>
         {
-            constexpr T epsilon = std::numeric_limits<T>::epsilon();
+            constexpr T epsilon{ std::numeric_limits<T>::epsilon() };
             return std::abs(this->area()) <= epsilon;
         }
 
-        /*
-         * @brief  Checks if the rectangle has no area
-         */
+        // Checks if the rectangle has no area
         constexpr inline bool is_empty() const
             requires rl::integer<T>
         {
             return this->area() == T(0);
         }
 
-        /*
-         * @brief  Checks if the rectangle has a negative width or height
-         */
+        // Checks if the rectangle has a negative width or height
         constexpr inline bool is_invalid() const
         {
-            return this->size.height < T(0) ||  //
-                   this->width < T(0);          //
+            return this->size.height < T(0) || this->width < T(0);
         }
 
-        /* *
-         * @brief  Checks if the rectangle has invalid coordinates and is empty
-         * */
+        // Checks if the rectangle has invalid coordinates and is empty
         constexpr inline bool is_null() const
         {
             return this->is_empty() && pt == vector2<T>::null();
         }
 
-        /*
-         * @brief  Generates an array of vertices representing the rect to be used in an OpenGL VBO
-         */
+        // Generates an array of vertices representing the rect to be used in an OpenGL VBO
         constexpr inline auto triangles() -> std::array<ds::point<T>, 6>
         {
             ds::point<T> tl{ pt.x, pt.y + size.height };
@@ -261,10 +251,10 @@ namespace rl::ds {
             };
         }
 
-        /*
-         * @brief Generates a packed array of vertex/color pairs to be used in an OpenGL VBO
-         * @param clr The color to pack into the return array for this rect.
-         */
+        // Generates a packed array of vertex/color pairs to be used in an OpenGL VBO
+        //
+        // Parameters:
+        //     clr - The color to pack into the return array for this rect.
         constexpr inline auto triangles(const ds::color<f32>& clr)
             -> std::array<std::pair<ds::point<f32>, ds::color<f32>>, 6>
 
@@ -284,11 +274,9 @@ namespace rl::ds {
             };
         }
 
-        /*
-         * @brief returns list of packed verices and indexes for each triangle
-         *        for both triangles to be used as Element Buffer Objects
-         */
-        constexpr inline auto triangle_ebo() const
+        // returns list of packed verices and indexes for each triangle
+        //       for both triangles to be used as Element   constexpr inline Buffer     Objects
+        auto triangle_ebo() const
         {
             ds::point<T> tl{ pt.x, pt.y + size.height };
             ds::point<T> bl{ pt.x, pt.y };
@@ -307,9 +295,7 @@ namespace rl::ds {
             };
         }
 
-        /*
-         * @brief Gets the top left point of the rectangle
-         */
+        // Gets the top left point of the rectangle
         constexpr inline point<T> top_left() const
         {
             return point<T>{
@@ -318,9 +304,7 @@ namespace rl::ds {
             };
         }
 
-        /*
-         * @brief Gets the top right point of the rectangle
-         */
+        // Gets the top right point of the rectangle
         constexpr inline point<T> top_right() const
         {
             return point<T>{
@@ -329,9 +313,7 @@ namespace rl::ds {
             };
         }
 
-        /*
-         * @brief Gets the bottom left point of the rectangle
-         */
+        // Gets the bottom left point of the rectangle
         constexpr inline point<T> bot_left() const
         {
             return point<T>{
@@ -340,9 +322,7 @@ namespace rl::ds {
             };
         }
 
-        /*
-         * @brief Gets the bottom right point of the rectangle
-         */
+        // Gets the bottom right point of the rectangle
         constexpr inline point<T> bot_right() const
         {
             return point<T>{
@@ -351,9 +331,7 @@ namespace rl::ds {
             };
         }
 
-        /*
-         * @brief Gets the center point of the rectangle
-         */
+        // Gets the center point of the rectangle
         constexpr inline point<T> centroid() const
         {
             return point<T>{
@@ -362,9 +340,7 @@ namespace rl::ds {
             };
         }
 
-        /*
-         * @brief Gets the center point of the rectangle
-         */
+        // Gets the center point of the rectangle
         constexpr inline rect<T> inflated(const T amount) const
         {
             return rect<T>{
@@ -373,18 +349,14 @@ namespace rl::ds {
             };
         }
 
-        /*
-         * @brief Checks if the rect shares any space with pt
-         */
-        constexpr inline bool overlaps(const ds::point<T>& pnt) const
+        // Checks if the rect shares any space with pt
+        constexpr inline bool overlaps(const ds::point<T>& point) const
         {
-            return (pnt.x >= this->pt.x && pnt.x <= this->pt.x + this->size.width) &&
-                   (pnt.y >= this->pt.y && pnt.y <= this->pt.y + this->size.height);
+            return (point.x >= this->pt.x && point.x <= this->pt.x + this->size.width) &&
+                   (point.y >= this->pt.y && point.y <= this->pt.y + this->size.height);
         }
 
-        /*
-         * @brief Checks if the rects share any space with each other
-         */
+        // Checks if the rects share any space with each other
         constexpr inline bool overlaps(const ds::rect<T>& other) const
         {
             // TODO: optimize
@@ -392,56 +364,29 @@ namespace rl::ds {
                    this->overlaps(other.bot_left()) || this->overlaps(other.bot_right());
         }
 
-        /*
-         * @brief Checks if the rect intersects with the point beyond
-         *        just a single pixel touch/overlap.
-         */
-        constexpr inline bool intersects(const ds::point<T>& pnt) const
-        {
-            return (pnt.x > this->pt.x && pnt.x < this->pt.x + this->size.width) &&
-                   (pnt.y > this->pt.y && pnt.y < this->pt.y + this->size.height);
-        }
-
-        /*
-         * @brief Checks if the rect intersects with the point beyond
-         *        just a single pixel touch/overlap.
-         */
-        constexpr inline bool intersects(const ds::rect<T>& other) const
-        {
-            return this->contains(other.top_left()) || this->contains(other.top_right()) ||
-                   this->contains(other.bot_left()) || this->contains(other.bot_right());
-        }
-
-        /*
-         * @brief Checks if the rect fully contains the point
-         */
+        // Checks if the rect fully contains the point
         constexpr inline bool contains(const ds::point<T>& point) const
         {
-            return (pt.x < point.x && point.x > pt.x + size.width) &&
-                   (pt.y < point.y && point.y > pt.y + size.height);
+            return (point.x > this->pt.x && point.x < this->pt.x + this->size.width) &&
+                   (point.y > this->pt.y && point.y < this->pt.y + this->size.height);
         }
 
-        /*
-         * @brief Checks if the rect fully contains the other
-         */
+        // Checks if the rect fully contains the other
+
         constexpr inline bool contains(const ds::rect<T>& other) const
         {
             return this->contains(other.top_left()) &&  //
                    this->contains(other.top_right());
         }
 
-        /*
-         * @brief Checks if the rect fully contains the other
-         */
+        // Checks if the rect fully contains the other
         constexpr inline bool contained_by(const ds::rect<T>& other) const
         {
             return other.contains(this->top_left()) &&  //
                    other.contains(this->top_right());
         }
 
-        /*
-         * @brief Checks if the point perfeclty falls somewhere on the rect's bounds
-         */
+        // Checks if the point perfeclty falls somewhere on the rect's bounds.
         constexpr inline bool touches(const ds::point<T>& pnt) const
         {
             return (pnt.x == this->pt.x && this->pt.y <= pnt.y &&
@@ -450,18 +395,13 @@ namespace rl::ds {
                           pnt.x <= this->pt.x + this->size.height);
         }
 
-        /*
-         * @brief Checks if the this rect externally touches the other rect
-         */
+        // Checks if the this rect externally touches the other rect
         constexpr inline bool touches(const ds::rect<T>& other) const
         {
             return this->overlaps(other) && not this->intersects(other);
         }
 
-        /*
-         * @brief Returns a quadrant of the rectangle
-         * @param quad The quadrant to return
-         */
+        // Returns a quadrant of the rectangle
         constexpr inline rect<T> quad(Quad quad) const
         {
             point<T> center{ this->centroid() };
@@ -495,10 +435,8 @@ namespace rl::ds {
             }
         }
 
-        /*
-         * returns an array of the 4 quadrants of this rectangle
-         */
-        constexpr inline std::array<rect<T>, 4> quads() const
+        // returns an array of the 4 quadrants of this constexpr inline rectangle
+        std::array<rect<T>, 4> quads() const
         {
             return std::array{
                 this->quad(Quad::TopLeft),
@@ -508,9 +446,7 @@ namespace rl::ds {
             };
         }
 
-        /*
-         * @ Returns a new rect scaled by the ratio, expanded/shrunk from the centroid
-         */
+        // Returns a new rect scaled by the ratio, expanded / shrunk from the centroid
         constexpr inline rect<T> scaled(ds::vector2<f32> ratio) const
         {
             ds::dims<T> scaled_size{
@@ -523,10 +459,8 @@ namespace rl::ds {
             };
         }
 
-        /*
-         * returns two halves of a rectange,
-         * split either horizontally or vertically
-         */
+        // returns two halves of a rectange,
+        // split either horizontally or vertically
         constexpr inline std::array<rect<T>, 2> split(ds::Axis axis) const
         {
             if (axis == ds::Axis::Horizontal)
@@ -570,37 +504,28 @@ namespace rl::ds {
         }
 
     public:
-        /*
-         * @brief Copy assignment
-         */
+        // Copy assignment
         constexpr rect<T>& operator=(const rect<T>& other)
-
         {
             std::memcpy(this, &other, sizeof(*this));
             return *this;
         }
 
-        /*
-         * @brief Move assignment
-         */
+        // Move assignment
         constexpr rect<T>& operator=(rect<T>&& other) noexcept
         {
             std::memcpy(this, &other, sizeof(*this));
             return *this;
         }
 
-        /*
-         * @brief Moves the rectangle by the magnitude of the vector
-         */
+        // Moves the rectangle by the magnitude of the vector
         constexpr const rect<T>& operator+=(const vector2<T>& vec)
         {
             this->pt += vec;
             return *this;
         }
 
-        /*
-         * @brief Returns a rectangle that's been moved by the magnitude of the vector
-         */
+        // Returns a rectangle that's been moved by the magnitude of the vector
         constexpr rect<T> operator+(const vector2<T>& vec) const
         {
             rect<T> ret{ *this };

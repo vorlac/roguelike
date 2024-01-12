@@ -2,7 +2,7 @@
 
 #include <nanovg.h>
 
-#include "core/ui/ui_icons.hpp"
+#include "core/ui/icons.hpp"
 #include "ds/color.hpp"
 #include "ds/refcounted.hpp"
 #include "ds/shared.hpp"
@@ -100,15 +100,15 @@ namespace rl::ui {
         ds::color<u8> m_window_popup{ 50, 50, 50, 255 };
         ds::color<u8> m_window_popup_transparent{ 50, 50, 50, 0 };
 
-        i32 m_check_box_icon{ FA_CHECK };
-        i32 m_message_information_icon{ FA_INFO_CIRCLE };
-        i32 m_message_question_icon{ FA_QUESTION_CIRCLE };
-        i32 m_message_warning_icon{ FA_EXCLAMATION_TRIANGLE };
-        i32 m_message_alt_button_icon{ FA_PLUS_CIRCLE };
-        i32 m_message_primary_button_icon{ FA_CHECK };
-        i32 m_popup_chevron_right_icon{ FA_CHEVRON_RIGHT };
-        i32 m_popup_chevron_left_icon{ FA_CHEVRON_LEFT };
-        i32 m_text_box_up_icon{ FA_CHEVRON_UP };
-        i32 m_text_box_down_icon{ FA_CHEVRON_DOWN };
+        ui::Icon m_check_box_icon{ ui::Icon::Check };
+        ui::Icon m_message_information_icon{ ui::Icon::InfoCircle };
+        ui::Icon m_message_question_icon{ ui::Icon::QuestionCircle };
+        ui::Icon m_message_warning_icon{ ui::Icon::ExclamationTriangle };
+        ui::Icon m_message_alt_button_icon{ ui::Icon::PlusCircle };
+        ui::Icon m_message_primary_button_icon{ ui::Icon::Check };
+        ui::Icon m_popup_chevron_right_icon{ ui::Icon::ChevronRight };
+        ui::Icon m_popup_chevron_left_icon{ ui::Icon::ChevronLeft };
+        ui::Icon m_text_box_up_icon{ ui::Icon::ChevronUp };
+        ui::Icon m_text_box_down_icon{ ui::Icon::ChevronDown };
     };
 }

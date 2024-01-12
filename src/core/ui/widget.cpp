@@ -517,7 +517,7 @@ namespace rl::ui {
     {
         // Check if the widget contains a certain position
         ds::rect<i32> widget_rect{ this->abs_position(), m_size };
-        return widget_rect.intersects(pt);
+        return widget_rect.contains(pt);
     }
 
     ui::Dialog* widget::window()

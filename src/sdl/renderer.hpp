@@ -249,10 +249,24 @@ namespace rl::sdl {
             // resolve rectangles
             ds::dims<i32> tsize{ tex.size() };
             ds::dims<i32> rsize{ this->get_output_size() };
-            ds::rect<i32> src = { (
-                src_rect.is_null() ? src_rect : ds::rect<i32>{ 0, 0, tsize.width, tsize.height }) };
-            ds::rect<i32> dst = { (
-                dst_rect.is_null() ? dst_rect : ds::rect<i32>{ 0, 0, rsize.width, rsize.height }) };
+            ds::rect<i32> src{
+                src_rect.is_null() ? src_rect
+                                   : ds::rect<i32>{
+                                         0,
+                                         0,
+                                         tsize.width,
+                                         tsize.height,
+                                     },
+            };
+            ds::rect<i32> dst{
+                dst_rect.is_null() ? dst_rect
+                                   : ds::rect<i32>{
+                                         0,
+                                         0,
+                                         rsize.width,
+                                         rsize.height,
+                                     },
+            };
 
             // rectangle for single tile
             ds::rect<i32> start_tile{ offset.x, offset.y, src.size.width, src.size.height };

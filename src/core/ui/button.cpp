@@ -1,5 +1,6 @@
 #include <nanovg.h>
 
+#include "core/keyboard.hpp"
 #include "core/mouse.hpp"
 #include "core/ui/button.hpp"
 #include "core/ui/popupbutton.hpp"
@@ -8,30 +9,30 @@
 
 namespace rl::ui {
 
-    static inline bool nvg_is_image_icon(int value)
+    static inline bool nvg_is_image_icon(ui::Icon icon_id)
     {
         // Determine whether an icon ID is a texture loaded via nvg_image_icon.
         // The implementation defines all value { 1024 as image icons, and
-        // everything }= 1024 as an Entypo icon (see ). The value 1024 exists to
+        // everything }= 1024 as an Entypo icon. The value 1024 exists to
         // provide a generous buffer on how many images may have been loaded by NanoVG.
-        return value < 1024;
+        return std::to_underlying(icon_id) < 1024;
     }
 
-    static inline bool nvg_is_font_icon(int value)
+    static inline bool nvg_is_font_icon(ui::Icon icon_id)
     {
         // Determine whether an icon ID is a font-based icon (e.g. from font.ttf).
-        return value >= 1024;
+        return std::to_underlying(icon_id) >= 1024;
     }
 
-    Button::Button(ui::widget* parent, const std::string& caption, i32 icon)
+    Button::Button(ui::widget* parent, const std::string& caption, ui::Icon icon)
         : ui::widget{ parent }
         , m_caption{ caption }
         , m_icon{ icon }
         , m_icon_position{ IconPosition::LeftCentered }
         , m_pressed{ false }
-        , m_flags{ Flags::NormalButton }
-        , m_background_color{ 0, 0, 0 }
-        , m_text_color{ 0, 0, 0 }
+        , m_flags{ Button::Flags::NormalButton }
+        , m_background_color{ m_theme->m_button_gradient_bot_focused }
+        , m_text_color{ rl::Colors::White }
     {
     }
 
@@ -65,12 +66,12 @@ namespace rl::ui {
         m_text_color = text_color;
     }
 
-    i32 Button::icon() const
+    ui::Icon Button::icon() const
     {
         return m_icon;
     }
 
-    void Button::set_icon(i32 icon)
+    void Button::set_icon(ui::Icon icon)
     {
         m_icon = icon;
     }
@@ -146,14 +147,15 @@ namespace rl::ui {
         f32 iw{ 0.0f };
         f32 ih{ static_cast<f32>(font_size) };
 
-        if (m_icon != 0)
+        if (m_icon != ui::Icon::None)
         {
             if (nvg_is_font_icon(m_icon))
             {
                 ih *= icon_scale();
                 nvgFontFace(ctx, "icons");
                 nvgFontSize(ctx, ih);
-                iw = nvgTextBounds(ctx, 0, 0, utf8(m_icon).data(), nullptr, nullptr) +
+                iw = nvgTextBounds(ctx, 0, 0, utf8(std::to_underlying(m_icon)).data(), nullptr,
+                                   nullptr) +
                      m_size.height * 0.15f;
             }
             else
@@ -161,7 +163,7 @@ namespace rl::ui {
                 i32 w{ 0 };
                 i32 h{ 0 };
                 ih *= 0.9f;
-                nvgImageSize(ctx, m_icon, &w, &h);
+                nvgImageSize(ctx, std::to_underlying(m_icon), &w, &h);
                 iw = w * ih / h;
             }
         }
@@ -350,9 +352,9 @@ namespace rl::ui {
         if (!m_enabled)
             text_color = m_theme->m_disabled_text_color;
 
-        if (m_icon)
+        if (m_icon != ui::Icon::None)
         {
-            std::string icon{ utf8(m_icon) };
+            std::string icon{ utf8(std::to_underlying(m_icon)) };
             f32 iw{ static_cast<f32>(font_size) };
             f32 ih{ static_cast<f32>(font_size) };
 
@@ -368,7 +370,7 @@ namespace rl::ui {
                 i32 w{ 0 };
                 i32 h{ 0 };
                 ih *= 0.9f;
-                nvgImageSize(ctx, m_icon, &w, &h);
+                nvgImageSize(ctx, std::to_underlying(m_icon), &w, &h);
                 iw = w * ih / h;
             }
 
@@ -404,7 +406,8 @@ namespace rl::ui {
             else
             {
                 NVGpaint img_paint = nvgImagePattern(ctx, icon_pos.x, icon_pos.y - ih / 2, iw, ih,
-                                                     0, m_icon, m_enabled ? 0.5f : 0.25f);
+                                                     0, std::to_underlying(m_icon),
+                                                     m_enabled ? 0.5f : 0.25f);
 
                 nvgFillPaint(ctx, img_paint);
                 nvgFill(ctx);

@@ -130,6 +130,11 @@ namespace rl::inline utils {
             return m_tick_count;
         }
 
+        inline void reset()
+        {
+            m_start_timestamp = Timer::get_tick();
+        }
+
     private:
         u64 m_tick_count{ 0 };
         // tick valye captured on init

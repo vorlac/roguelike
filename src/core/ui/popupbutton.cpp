@@ -4,7 +4,7 @@
 
 namespace rl::ui {
 
-    PopupButton::PopupButton(ui::widget* parent, const std::string& caption, i32 button_icon)
+    PopupButton::PopupButton(ui::widget* parent, const std::string& caption, ui::Icon button_icon)
         : ui::Button{ parent, caption, button_icon }
     {
         m_chevron_icon = m_theme->m_popup_chevron_right_icon;
@@ -18,12 +18,12 @@ namespace rl::ui {
         m_icon_extra_scale = 0.8f;  // widget override
     }
 
-    void PopupButton::set_chevron_icon(i32 icon)
+    void PopupButton::set_chevron_icon(ui::Icon icon)
     {
         m_chevron_icon = icon;
     }
 
-    i32 PopupButton::chevron_icon() const
+    ui::Icon PopupButton::chevron_icon() const
     {
         return m_chevron_icon;
     }
@@ -57,9 +57,9 @@ namespace rl::ui {
 
         ui::Button::draw(ctx);
 
-        if (m_chevron_icon)
+        if (m_chevron_icon != ui::Icon::None)
         {
-            std::string icon{ utf8(m_chevron_icon) };
+            std::string icon{ utf8(std::to_underlying(m_chevron_icon)) };
             ds::color<u8> text_color{ m_text_color.a == 0 ? m_theme->m_text_color : m_text_color };
             i32 text_size{ m_font_size < 0 ? m_theme->m_button_font_size : m_font_size };
 

@@ -4,6 +4,8 @@
 
 #include <nanovg.h>
 
+#include "core/keyboard.hpp"
+#include "core/mouse.hpp"
 #include "core/ui/textbox.hpp"
 #include "core/ui/theme.hpp"
 #include "core/window.hpp"
@@ -284,7 +286,7 @@ namespace rl::ui {
                                       ? m_theme->m_text_color
                                       : m_theme->m_disabled_text_color);
 
-                auto icon{ utf8(m_theme->m_text_box_up_icon) };
+                auto icon{ utf8(std::to_underlying(m_theme->m_text_box_up_icon)) };
                 nvgTextAlign(ctx, NVG_ALIGN_LEFT | NVG_ALIGN_MIDDLE);
 
                 ds::point<i32> icon_pos{
@@ -302,7 +304,7 @@ namespace rl::ui {
                                       ? m_theme->m_text_color
                                       : m_theme->m_disabled_text_color);
 
-                auto icon{ utf8(m_theme->m_text_box_down_icon) };
+                auto icon{ utf8(std::to_underlying(m_theme->m_text_box_down_icon)) };
                 nvgTextAlign(ctx, NVG_ALIGN_LEFT | NVG_ALIGN_MIDDLE);
 
                 ds::point<i32> icon_pos{
