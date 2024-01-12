@@ -29,7 +29,8 @@ namespace rl {
         i32 depth_bits{ 0 };
         i32 stencil_bits{ 0 };
 
-        glGetBooleanv(GL_RGBA_FLOAT_MODE_ARB, &float_mode);
+        // TODO: look into why this returns an error code?..
+        // glGetBooleanv(GL_RGBA_FLOAT_MODE_ARB, &float_mode);
         glGetFramebufferAttachmentParameteriv(GL_DRAW_FRAMEBUFFER, GL_DEPTH,
                                               GL_FRAMEBUFFER_ATTACHMENT_DEPTH_SIZE, &depth_bits);
         glGetFramebufferAttachmentParameteriv(
@@ -52,32 +53,9 @@ namespace rl {
     };
 
     VectorizedRenderer::VectorizedRenderer()
-    //: m_nvg_context{ rl::create_nanovg_context(m_stencil_buffer, m_depth_buffer, m_float_buffer) }
+        : m_nvg_context{ rl::create_nanovg_context(m_stencil_buffer, m_depth_buffer,
+                                                   m_float_buffer) }
     {
-        u8 float_mode{ 0 };
-        i32 depth_bits{ 0 };
-        i32 stencil_bits{ 0 };
-
-        glGetFramebufferAttachmentParameteriv(
-            GL_DRAW_FRAMEBUFFER, GL_STENCIL, GL_FRAMEBUFFER_ATTACHMENT_STENCIL_SIZE, &stencil_bits);
-
-        i32 nvg_flags{ Property::AntiAlias };
-        if (m_stencil_buffer)
-            nvg_flags |= Property::StencilStrokes;
-
-#ifndef NDEBUG
-        nvg_flags |= Property::Debug;
-#endif
-        m_stencil_buffer = stencil_bits > 0;
-        m_nvg_context = nvgCreateGL3(nvg_flags);
-
-        // glGetBooleanv(GL_RGBA_FLOAT_MODE_ARB, &float_mode);
-        glGetFramebufferAttachmentParameteriv(GL_DRAW_FRAMEBUFFER, GL_DEPTH,
-                                              GL_FRAMEBUFFER_ATTACHMENT_DEPTH_SIZE, &depth_bits);
-        m_depth_buffer = depth_bits > 0;
-        m_float_buffer = float_mode != 0;
-
-        runtime_assert(m_nvg_context != nullptr, "Failed to create NVG context");
     }
 
     NVGcontext* VectorizedRenderer::nvg_context() const
