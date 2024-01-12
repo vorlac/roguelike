@@ -3,16 +3,13 @@
 #include <memory>
 #include <tuple>
 
-#include <nanovg.h>
-#include <nanovg_gl.h>
-#include <nanovg_gl_utils.h>
-
 #include "core/assert.hpp"
 #include "core/renderer.hpp"
 #include "core/window.hpp"
 #include "ds/color.hpp"
 #include "ds/dims.hpp"
 #include "gl/shader.hpp"
+#include "render/vectorized_renderer.hpp"
 #include "sdl/defs.hpp"
 #include "utils/io.hpp"
 
@@ -50,25 +47,10 @@ namespace rl {
         return gl_context;
     }
 
-    static NVGcontext* create_nanovg_context(Renderer* renderer)
-    {
-        runtime_assert(renderer != nullptr, "invalid renderer being used for nvg context");
-
-        i32 nvg_flags = NVGcreateFlags::NVG_ANTIALIAS;
-        if (renderer->m_stencil_buffer)
-            nvg_flags |= NVGcreateFlags::NVG_STENCIL_STROKES;
-        if constexpr (rl::Renderer::NanoVGDiagnostics)
-            nvg_flags |= NVGcreateFlags::NVG_DEBUG;
-
-        NVGcontext* nvg_context{ nvgCreateGL3(nvg_flags) };
-        runtime_assert(nvg_context != nullptr, "Failed to create NVG context");
-        return nvg_context;
-    };
-
-    Renderer::Renderer(rl::Window& window, rl::Renderer::Properties flags)
+    OpenGLRenderer::OpenGLRenderer(rl::Window& window, rl::OpenGLRenderer::Properties flags)
         : m_properties{ flags }
         , m_sdl_glcontext{ create_opengl_context(window.sdl_handle()) }
-        , m_nvg_context{ create_nanovg_context(this) }
+        , m_nvg_renderer{ std::make_unique<rl::VectorizedRenderer>() }
     {
         if (m_sdl_glcontext != nullptr)
         {
@@ -78,7 +60,7 @@ namespace rl {
         }
     }
 
-    bool Renderer::clear()
+    bool OpenGLRenderer::clear()
     {
         glClearColor(m_background_color.r, m_background_color.g, m_background_color.b,
                      m_background_color.a);
@@ -86,52 +68,52 @@ namespace rl {
         return true;
     }
 
-    bool Renderer::swap_buffers(rl::Window& window)
+    bool OpenGLRenderer::swap_buffers(rl::Window& window)
     {
         i32 result = SDL3::SDL_GL_SwapWindow(window.sdl_handle());
         sdl_assert(result == 0, "OpenGL renderer buffer swap failed");
         return result == 0;
     }
 
-    SDL3::SDL_GLContext Renderer::gl_context() const
+    SDL3::SDL_GLContext OpenGLRenderer::gl_context() const
     {
         return m_sdl_glcontext;
     }
 
-    NVGcontext* Renderer::nvg_context()
+    NVGcontext* OpenGLRenderer::nvg_context()
     {
-        return m_nvg_context;
+        return m_nvg_renderer->nvg_context();
     }
 
-    ds::dims<i32> Renderer::get_output_size() const
+    ds::dims<i32> OpenGLRenderer::get_output_size() const
     {
         ds::dims<i32> s{ 0, 0 };
         runtime_assert(false, "not implemented");
         return s;
     }
 
-    bool Renderer::set_draw_color(ds::color<f32> c)
+    bool OpenGLRenderer::set_draw_color(ds::color<f32> c)
     {
         i32 result = 0;
         runtime_assert(false, "not implemented");
         return result == 0;
     }
 
-    bool Renderer::set_target()
+    bool OpenGLRenderer::set_target()
     {
         i32 result = 0;
         runtime_assert(false, "not implemented");
         return result == 0;
     }
 
-    bool Renderer::set_draw_blend_mode(const SDL3::SDL_BlendMode blend_mode)
+    bool OpenGLRenderer::set_draw_blend_mode(const SDL3::SDL_BlendMode blend_mode)
     {
         i32 result = 0;
         runtime_assert(false, "not implemented");
         return result == 0;
     }
 
-    ds::rect<i32> Renderer::get_viewport() const
+    ds::rect<i32> OpenGLRenderer::get_viewport() const
     {
         std::array<i32, 4> buff{ 0, 0, 0, 0 };
         glGetIntegerv(GL_VIEWPORT, static_cast<i32*>(buff.data()));
@@ -140,7 +122,7 @@ namespace rl {
         return rect;
     }
 
-    bool Renderer::set_viewport(const ds::rect<i32>& rect)
+    bool OpenGLRenderer::set_viewport(const ds::rect<i32>& rect)
     {
         runtime_assert(!rect.is_empty(), "invalid viewport rect being set");
         glViewport(rect.pt.x, rect.pt.y, rect.size.width, rect.size.height);

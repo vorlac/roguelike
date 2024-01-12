@@ -5,9 +5,9 @@
 
 namespace rl::ui {
 
-    Popup::Popup(ui::Widget* parent, ui::Dialog* parent_window)
+    Popup::Popup(ui::Widget* parent, ui::Dialog* parent_dialog)
         : ui::Dialog{ parent, "" }
-        , m_parent_window{ parent_window }
+        , m_parent_dialog{ parent_dialog }
         , m_anchor_pos{ 0, 0 }
         , m_anchor_offset{ 30 }
         , m_anchor_size{ 15 }
@@ -57,12 +57,12 @@ namespace rl::ui {
 
     ui::Dialog* Popup::parent_window()
     {
-        return m_parent_window;
+        return m_parent_dialog;
     }
 
     const ui::Dialog* Popup::parent_window() const
     {
-        return m_parent_window;
+        return m_parent_dialog;
     }
 
     void Popup::perform_layout(NVGcontext* ctx)
@@ -82,12 +82,12 @@ namespace rl::ui {
 
     void Popup::refresh_relative_placement()
     {
-        if (!m_parent_window)
+        if (m_parent_dialog == nullptr)
             return;
 
-        m_parent_window->refresh_relative_placement();
-        m_visible &= m_parent_window->visible_recursive();
-        m_pos = m_parent_window->position() + m_anchor_pos - ds::point<i32>{ 0, m_anchor_offset };
+        m_parent_dialog->refresh_relative_placement();
+        m_visible &= m_parent_dialog->visible_recursive();
+        m_pos = m_parent_dialog->position() + m_anchor_pos - ds::point<i32>{ 0, m_anchor_offset };
     }
 
     void Popup::draw(NVGcontext* ctx)

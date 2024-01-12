@@ -10,6 +10,11 @@
 #include "utils/numeric.hpp"
 
 namespace rl::ui {
+    enum class Outline {
+        Inner,
+        Outer
+    };
+
     namespace font {
         constexpr i32 uninitialized{ -1 };
 
@@ -42,7 +47,7 @@ namespace rl::ui {
                                  fira_code_regular_ttf_size, 0),
             }
         {
-            bool font_load_success = true;
+            bool font_load_success{ true };
             font_load_success &= m_font_sans_regular != font::uninitialized;
             font_load_success &= m_font_sans_bold != font::uninitialized;
             font_load_success &= m_font_icons != font::uninitialized;
@@ -100,15 +105,15 @@ namespace rl::ui {
         ds::color<u8> m_window_popup{ 50, 50, 50, 255 };
         ds::color<u8> m_window_popup_transparent{ 50, 50, 50, 0 };
 
-        ui::Icon m_check_box_icon{ ui::Icon::Check };
-        ui::Icon m_message_information_icon{ ui::Icon::InfoCircle };
-        ui::Icon m_message_question_icon{ ui::Icon::QuestionCircle };
-        ui::Icon m_message_warning_icon{ ui::Icon::ExclamationTriangle };
-        ui::Icon m_message_alt_button_icon{ ui::Icon::PlusCircle };
-        ui::Icon m_message_primary_button_icon{ ui::Icon::Check };
-        ui::Icon m_popup_chevron_right_icon{ ui::Icon::ChevronRight };
-        ui::Icon m_popup_chevron_left_icon{ ui::Icon::ChevronLeft };
-        ui::Icon m_text_box_up_icon{ ui::Icon::ChevronUp };
-        ui::Icon m_text_box_down_icon{ ui::Icon::ChevronDown };
+        ui::Icon::ID m_check_box_icon{ ui::Icon::Check };
+        ui::Icon::ID m_message_information_icon{ ui::Icon::InfoCircle };
+        ui::Icon::ID m_message_question_icon{ ui::Icon::QuestionCircle };
+        ui::Icon::ID m_message_warning_icon{ ui::Icon::ExclamationTriangle };
+        ui::Icon::ID m_message_alt_button_icon{ ui::Icon::PlusCircle };
+        ui::Icon::ID m_message_primary_button_icon{ ui::Icon::Check };
+        ui::Icon::ID m_popup_chevron_right_icon{ ui::Icon::ChevronRight };
+        ui::Icon::ID m_popup_chevron_left_icon{ ui::Icon::ChevronLeft };
+        ui::Icon::ID m_text_box_up_icon{ ui::Icon::ChevronUp };
+        ui::Icon::ID m_text_box_down_icon{ ui::Icon::ChevronDown };
     };
 }

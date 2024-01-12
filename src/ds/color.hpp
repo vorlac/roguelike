@@ -277,9 +277,9 @@ namespace rl::ds {
             return !this->operator==(other);
         }
 
-        constexpr inline operator SDL3::SDL_Color()
+        constexpr inline operator SDL3::SDL_Color&()
         {
-            return *((SDL3::SDL_Color*)this);
+            return *reinterpret_cast<SDL3::SDL_Color*>(this);
         }
 
         constexpr inline operator const NVGcolor&() const&
@@ -317,13 +317,14 @@ namespace rl::ds {
         }
 
         constexpr inline operator fmt::rgb() const
+            requires rl::integer<T>
         {
             return fmt::rgb{ r, g, b };
         }
 
-        constexpr inline operator fmt::text_style() const
+        constexpr inline operator ::fmt::text_style() const
         {
-            return fmt::fg(static_cast<fmt::rgb>(*this));
+            return ::fmt::fg(static_cast<fmt::rgb>(*this));
         }
 
         constexpr inline operator color<f32>() const
@@ -383,18 +384,20 @@ namespace rl::ds {
 namespace rl {
     struct Colors
     {
-        constexpr static inline ds::color<u8> White{ 0xFFFFFFFF };
-        constexpr static inline ds::color<u8> LightGrey{ 0xC1C4CAFF };
-        constexpr static inline ds::color<u8> Grey{ 0xA6A6A6FF };
-        constexpr static inline ds::color<u8> DarkGrey{ 0x262B33FF };
-        constexpr static inline ds::color<u8> DarkerGrey{ 0x333333FF };
-        constexpr static inline ds::color<u8> Black{ 0x000000FF };
+        constexpr static inline ds::color<f32> White{ 0xFFFFFFFF };
+        constexpr static inline ds::color<f32> LightGrey{ 0xC1C4CAFF };
+        constexpr static inline ds::color<f32> Grey{ 0xA6A6A6FF };
+        constexpr static inline ds::color<f32> DarkGrey{ 0x262B33FF };
+        constexpr static inline ds::color<f32> DarkerGrey{ 0x333333FF };
+        constexpr static inline ds::color<f32> Black{ 0x000000FF };
 
-        constexpr static inline ds::color<u8> Red{ 0xD4A4A4FF };
-        constexpr static inline ds::color<u8> Green{ 0x9AAF8BFF };
-        constexpr static inline ds::color<u8> Yellow{ 0xCAB880FF };
-        constexpr static inline ds::color<u8> Blue{ 0x779DC9FF };
-        constexpr static inline ds::color<u8> Purple{ 0xB6ADDBFF };
-        constexpr static inline ds::color<u8> Cyan{ 0x83B2B6FF };
+        constexpr static inline ds::color<f32> Red{ 0xD4A4A4FF };
+        constexpr static inline ds::color<f32> Green{ 0x9AAF8BFF };
+        constexpr static inline ds::color<f32> Yellow{ 0xCAB880FF };
+        constexpr static inline ds::color<f32> Blue{ 0x779DC9FF };
+        constexpr static inline ds::color<f32> Purple{ 0xB6ADDBFF };
+        constexpr static inline ds::color<f32> Cyan{ 0x83B2B6FF };
+
+        constexpr static inline ds::color<f32> Background{ 0x282C34FF };
     };
 }

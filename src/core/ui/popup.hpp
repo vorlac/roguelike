@@ -3,19 +3,17 @@
 #include "core/ui/dialog.hpp"
 #include "utils/numeric.hpp"
 
-struct NVGcontext;
-
 namespace rl::ui {
 
     class Popup : public ui::Dialog
     {
     public:
-        enum Side {
+        enum class Side {
             Left = 0,
             Right
         };
 
-        Popup(ui::Widget* parent, ui::Dialog* parent_window = nullptr);
+        Popup(ui::Widget* parent, ui::Dialog* parent_dialog = nullptr);
 
         i32 anchor_offset() const;
         i32 anchor_size() const;
@@ -37,10 +35,10 @@ namespace rl::ui {
         virtual void refresh_relative_placement() override;
 
     protected:
-        ui::Dialog* m_parent_window{ nullptr };
+        ui::Dialog* m_parent_dialog{ nullptr };
         ds::point<i32> m_anchor_pos{ 0, 0 };
         i32 m_anchor_offset{ 0 };
         i32 m_anchor_size{ 0 };
-        Popup::Side m_side{};
+        ui::Popup::Side m_side{};
     };
 }

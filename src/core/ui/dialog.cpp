@@ -43,12 +43,13 @@ namespace rl::ui {
 
     ui::Widget* Dialog::button_panel()
     {
-        if (!m_button_panel)
+        if (m_button_panel == nullptr)
         {
             m_button_panel = new ui::Widget(this);
             m_button_panel->set_layout(
-                new ui::BoxLayout(orientation::Horizontal, alignment::Middle, 0, 4));
+                new ui::BoxLayout{ Orientation::Horizontal, Alignment::Center, 0, 4 });
         }
+
         return m_button_panel;
     }
 
@@ -58,7 +59,7 @@ namespace rl::ui {
         while (owner->parent() != nullptr)
             owner = owner->parent();
 
-        static_cast<ui::Screen*>(owner)->dispose_window(this);
+        static_cast<ui::Screen*>(owner)->dispose_dialog(this);
     }
 
     void Dialog::center()
@@ -67,13 +68,14 @@ namespace rl::ui {
         while (owner->parent() != nullptr)
             owner = owner->parent();
 
-        static_cast<ui::Screen*>(owner)->center_window(this);
+        static_cast<ui::Screen*>(owner)->center_dialog(this);
     }
 
     void Dialog::draw(NVGcontext* ctx)
     {
-        i32 ds = m_theme->m_window_drop_shadow_size, cr = m_theme->m_window_corner_radius;
-        i32 hh = m_theme->m_window_header_height;
+        const i32 ds{ m_theme->m_window_drop_shadow_size };
+        const i32 cr{ m_theme->m_window_corner_radius };
+        const i32 hh{ m_theme->m_window_header_height };
 
         // Draw window
         nvgSave(ctx);
@@ -84,9 +86,9 @@ namespace rl::ui {
         nvgFill(ctx);
 
         // Draw a drop shadow
-        NVGpaint shadow_paint = nvgBoxGradient(ctx, m_pos.x, m_pos.y, m_size.width, m_size.height,
-                                               cr * 2, ds * 2, m_theme->m_drop_shadow,
-                                               m_theme->m_transparent);
+        NVGpaint shadow_paint{ nvgBoxGradient(ctx, m_pos.x, m_pos.y, m_size.width, m_size.height,
+                                              cr * 2, ds * 2, m_theme->m_drop_shadow,
+                                              m_theme->m_transparent) };
 
         nvgSave(ctx);
         nvgResetScissor(ctx);
@@ -100,7 +102,7 @@ namespace rl::ui {
 
         if (!m_title.empty())
         {
-            /* Draw header */
+            // Draw header
             NVGpaint header_paint{ nvgLinearGradient(ctx, m_pos.x, m_pos.y, m_pos.x, m_pos.y + hh,
                                                      m_theme->m_window_header_gradient_top,
                                                      m_theme->m_window_header_gradient_bot) };
@@ -173,7 +175,7 @@ namespace rl::ui {
             m_pos.x = std::max(m_pos.x, 0);
             m_pos.y = std::max(m_pos.y, 0);
 
-            auto relative_size{ this->parent()->size() - m_size };
+            const ds::dims<i32> relative_size{ this->parent()->size() - m_size };
 
             m_pos.x = std::min(m_pos.x, relative_size.width);
             m_pos.y = std::min(m_pos.y, relative_size.height);
@@ -249,7 +251,7 @@ namespace rl::ui {
 
     void Dialog::perform_layout(NVGcontext* ctx)
     {
-        if (!m_button_panel)
+        if (m_button_panel == nullptr)
             ui::Widget::perform_layout(ctx);
         else
         {
@@ -268,13 +270,15 @@ namespace rl::ui {
                 this->width() - (m_button_panel->preferred_size(ctx).width + 5),
                 3,
             });
+
             m_button_panel->perform_layout(ctx);
         }
     }
 
     void Dialog::refresh_relative_placement()
     {
-        /// helper to maintain nested window position values, overridden in Popup
+        // helper to maintain nested window position values,
+        // overridden in ui::Popup
         return;
     }
 

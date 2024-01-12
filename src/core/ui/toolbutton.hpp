@@ -6,15 +6,14 @@
 
 namespace rl::ui {
 
-    /// @brief
-    ///     Simple radio+toggle button with an icon.
+    // Simple radio+toggle button with an icon.
     class ToolButton : public ui::Button
     {
     public:
-        ToolButton(ui::Widget* parent, ui::Icon icon, const std::string& caption = "")
+        ToolButton(ui::Widget* parent, ui::Icon::ID icon, const std::string& caption = "")
             : ui::Button(parent, caption, icon)
         {
-            this->set_flags(Button::Flags(Button::Flags::RadioButton | Button::Flags::ToggleButton));
+            this->set_flags(Button::Flags::ToolButton);
             this->set_fixed_size(ds::dims<i32>{ 25, 25 });
         }
     };

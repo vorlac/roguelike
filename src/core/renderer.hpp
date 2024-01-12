@@ -6,14 +6,11 @@
 #include <utility>
 #include <vector>
 
-// #include <nanovg_gl_utils.h>
-
 #include "ds/color.hpp"
 #include "ds/dims.hpp"
 #include "ds/point.hpp"
 #include "ds/rect.hpp"
 #include "ds/triangle.hpp"
-#include "sdl/defs.hpp"
 #include "sdl/texture.hpp"
 #include "utils/io.hpp"
 #include "utils/numeric.hpp"
@@ -28,8 +25,9 @@ struct NVGLUframebuffer;
 
 namespace rl {
     class Window;
+    class VectorizedRenderer;
 
-    class Renderer
+    class OpenGLRenderer
     {
     public:
         struct Properties : public std::bitset<32>
@@ -60,13 +58,13 @@ namespace rl {
             constexpr static inline auto Invalid = SDL3::SDL_BLENDMODE_INVALID;
         };
 
-        constexpr static inline Renderer::Properties DEFAULT_PROPERTY_FLAGS = {
-            Renderer::Properties::HWAccelerated
+        constexpr static inline OpenGLRenderer::Properties DEFAULT_PROPERTY_FLAGS = {
+            OpenGLRenderer::Properties::HWAccelerated
         };
 
     public:
-        explicit Renderer(rl::Window& window, rl::Renderer::Properties flags);
-        ~Renderer() = default;
+        explicit OpenGLRenderer(rl::Window& window, OpenGLRenderer::Properties flags);
+        ~OpenGLRenderer() = default;
 
         SDL3::SDL_GLContext gl_context() const;
         NVGcontext* nvg_context();
@@ -82,20 +80,33 @@ namespace rl {
         bool set_target();
         bool set_draw_blend_mode(const SDL3::SDL_BlendMode blend_mode);
 
-    private:
-        explicit Renderer() = delete;
-        explicit Renderer(const rl::Renderer& other) = delete;
-        explicit Renderer(rl::Renderer& other) = delete;
+    public:
+        const std::unique_ptr<VectorizedRenderer>& vectorized_renderer() const
+        {
+            return m_nvg_renderer;
+        }
+
+        void draw_rect_outline(ds::rect<i32> rect, f32 stroke_width, ds::color<f32> color,
+                               ui::Outline outline_type)
+        {
+            m_nvg_renderer->draw_rect_outline(
+                std::forward<ds::rect<i32>>(rect), std::forward<f32>(stroke_width),
+                std::forward<ds::color<f32>>(color), std::forward<ui::Outline>(outline_type));
+        }
 
     private:
-        friend static NVGcontext* create_nanovg_context(rl::Renderer* renderer);
+        explicit OpenGLRenderer() = delete;
+        explicit OpenGLRenderer(const OpenGLRenderer& other) = delete;
+        explicit OpenGLRenderer(OpenGLRenderer& other) = delete;
+
+    private:
         constexpr static inline bool GuiWidgetDiagnostics{ true };
         constexpr static inline bool NanoVGDiagnostics{ true };
-        constexpr static inline ds::color<f32> m_background_color = ds::color<u8>{ 29, 32, 39 };
+        constexpr static inline ds::color<f32> m_background_color{ rl::Colors::Background };
+        // constexpr static inline ds::color<f32> m_background_color{ 29, 32, 39 };
 
-        rl::Renderer::Properties m_properties{ Properties::None };
+        rl::OpenGLRenderer::Properties m_properties{ Properties::None };
         SDL3::SDL_GLContext m_sdl_glcontext{ nullptr };
-        NVGcontext* m_nvg_context{ nullptr };
-        bool m_stencil_buffer{ false };
+        std::unique_ptr<rl::VectorizedRenderer> m_nvg_renderer{ nullptr };
     };
 }

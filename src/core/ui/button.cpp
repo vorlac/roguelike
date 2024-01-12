@@ -9,30 +9,15 @@
 
 namespace rl::ui {
 
-    static inline bool nvg_is_image_icon(ui::Icon icon_id)
-    {
-        // Determine whether an icon ID is a texture loaded via nvg_image_icon.
-        // The implementation defines all value { 1024 as image icons, and
-        // everything }= 1024 as an Entypo icon. The value 1024 exists to
-        // provide a generous buffer on how many images may have been loaded by NanoVG.
-        return std::to_underlying(icon_id) < 1024;
-    }
-
-    static inline bool nvg_is_font_icon(ui::Icon icon_id)
-    {
-        // Determine whether an icon ID is a font-based icon (e.g. from font.ttf).
-        return std::to_underlying(icon_id) >= 1024;
-    }
-
-    Button::Button(ui::Widget* parent, const std::string& caption, ui::Icon icon)
+    Button::Button(ui::Widget* parent, const std::string& caption, ui::Icon::ID icon)
         : ui::Widget{ parent }
         , m_caption{ caption }
         , m_icon{ icon }
-        , m_icon_position{ IconPosition::LeftCentered }
+        , m_icon_position{ Icon::Position::LeftCentered }
         , m_pressed{ false }
         , m_flags{ Button::Flags::NormalButton }
-        , m_background_color{ m_theme->m_button_gradient_bot_focused }
-        , m_text_color{ rl::Colors::White }
+        , m_background_color{ m_theme ? m_theme->m_button_gradient_top_focused : Colors::Grey }
+        , m_text_color{ m_theme ? m_theme->m_text_color : Colors::White }
     {
     }
 
@@ -46,37 +31,37 @@ namespace rl::ui {
         m_caption = caption;
     }
 
-    const ds::color<u8>& Button::background_color() const
+    ds::color<f32> Button::background_color() const
     {
         return m_background_color;
     }
 
-    void Button::set_background_color(ds::color<u8> background_color)
+    void Button::set_background_color(ds::color<f32> background_color)
     {
         m_background_color = background_color;
     }
 
-    const ds::color<u8>& Button::text_color() const
+    ds::color<f32> Button::text_color() const
     {
         return m_text_color;
     }
 
-    void Button::set_text_color(ds::color<u8> text_color)
+    void Button::set_text_color(ds::color<f32> text_color)
     {
         m_text_color = text_color;
     }
 
-    ui::Icon Button::icon() const
+    ui::Icon::ID Button::icon() const
     {
         return m_icon;
     }
 
-    void Button::set_icon(ui::Icon icon)
+    void Button::set_icon(ui::Icon::ID icon)
     {
         m_icon = icon;
     }
 
-    i32 Button::flags() const
+    ui::Button::Flags Button::flags() const
     {
         return m_flags;
     }
@@ -86,12 +71,12 @@ namespace rl::ui {
         m_flags = button_flags;
     }
 
-    Button::IconPosition Button::icon_position() const
+    ui::Icon::Position Button::icon_position() const
     {
         return m_icon_position;
     }
 
-    void Button::set_icon_position(Button::IconPosition icon_position)
+    void Button::set_icon_position(ui::Icon::Position icon_position)
     {
         m_icon_position = icon_position;
     }
@@ -149,7 +134,7 @@ namespace rl::ui {
 
         if (m_icon != ui::Icon::None)
         {
-            if (nvg_is_font_icon(m_icon))
+            if (Icon::is_font(m_icon))
             {
                 ih *= icon_scale();
                 nvgFontFace(ctx, "icons");
@@ -295,12 +280,7 @@ namespace rl::ui {
 
         if (m_background_color.a != 0)
         {
-            nvgFillColor(ctx, NVGcolor{
-                                  m_background_color.r / 255.0f,
-                                  m_background_color.g / 255.0f,
-                                  m_background_color.b / 255.0f,
-                                  1.0f,
-                              });
+            nvgFillColor(ctx, m_background_color);
             nvgFill(ctx);
 
             if (m_pressed)
@@ -358,7 +338,7 @@ namespace rl::ui {
             f32 iw{ static_cast<f32>(font_size) };
             f32 ih{ static_cast<f32>(font_size) };
 
-            if (nvg_is_font_icon(m_icon))
+            if (Icon::is_font(m_icon))
             {
                 ih *= this->icon_scale();
                 nvgFontSize(ctx, ih);
@@ -382,32 +362,38 @@ namespace rl::ui {
             ds::point<f32> icon_pos = center;
             icon_pos.y -= 1;
 
-            if (m_icon_position == IconPosition::LeftCentered)
+            switch (m_icon_position)
             {
-                icon_pos.x -= (tw + iw) * 0.5f;
-                text_pos.x += iw * 0.5f;
-            }
-            else if (m_icon_position == IconPosition::RightCentered)
-            {
-                text_pos.x -= iw * 0.5f;
-                icon_pos.x += tw * 0.5f;
-            }
-            else if (m_icon_position == IconPosition::Left)
-            {
-                icon_pos.x = m_pos.x + 8;
-            }
-            else if (m_icon_position == IconPosition::Right)
-            {
-                icon_pos.x = m_pos.x + m_size.width - iw - 8;
+                case Icon::Position::LeftCentered:
+                {
+                    icon_pos.x -= (tw + iw) * 0.5f;
+                    text_pos.x += iw * 0.5f;
+                    break;
+                }
+                case Icon::Position::RightCentered:
+                {
+                    text_pos.x -= iw * 0.5f;
+                    icon_pos.x += tw * 0.5f;
+                    break;
+                }
+                case Icon::Position::Left:
+                {
+                    icon_pos.x = m_pos.x + 8;
+                    break;
+                }
+                case Icon::Position::Right:
+                {
+                    icon_pos.x = m_pos.x + m_size.width - iw - 8;
+                    break;
+                }
             }
 
-            if (nvg_is_font_icon(m_icon))
+            if (Icon::is_font(m_icon))
                 nvgText(ctx, icon_pos.x, icon_pos.y + 1, icon.data(), nullptr);
             else
             {
-                NVGpaint img_paint = nvgImagePattern(ctx, icon_pos.x, icon_pos.y - ih / 2, iw, ih,
-                                                     0, std::to_underlying(m_icon),
-                                                     m_enabled ? 0.5f : 0.25f);
+                NVGpaint img_paint{ nvgImagePattern(ctx, icon_pos.x, icon_pos.y - ih / 2, iw, ih, 0,
+                                                    m_icon, m_enabled ? 0.5f : 0.25f) };
 
                 nvgFillPaint(ctx, img_paint);
                 nvgFill(ctx);

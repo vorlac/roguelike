@@ -4,26 +4,27 @@
 
 namespace rl::ui {
 
-    PopupButton::PopupButton(ui::Widget* parent, const std::string& caption, ui::Icon button_icon)
+    PopupButton::PopupButton(ui::Widget* parent, const std::string& caption,
+                             ui::Icon::ID button_icon)
         : ui::Button{ parent, caption, button_icon }
     {
         m_chevron_icon = m_theme->m_popup_chevron_right_icon;
         auto popup_btn_flags{ Button::Flags(Flags::ToggleButton | Flags::PopupButton) };
         this->set_flags(popup_btn_flags);
 
-        m_popup = new ui::Popup{ this, this->window() };
+        m_popup = new ui::Popup{ this, this->dialog() };
         m_popup->set_size({ 320, 250 });
         m_popup->set_visible(false);
 
         m_icon_extra_scale = 0.8f;  // widget override
     }
 
-    void PopupButton::set_chevron_icon(ui::Icon icon)
+    void PopupButton::set_chevron_icon(ui::Icon::ID icon)
     {
         m_chevron_icon = icon;
     }
 
-    ui::Icon PopupButton::chevron_icon() const
+    ui::Icon::ID PopupButton::chevron_icon() const
     {
         return m_chevron_icon;
     }
@@ -57,7 +58,7 @@ namespace rl::ui {
 
         ui::Button::draw(ctx);
 
-        if (m_chevron_icon != ui::Icon::None)
+        if (m_chevron_icon != Icon::None)
         {
             std::string icon{ utf8(std::to_underlying(m_chevron_icon)) };
             ds::color<u8> text_color{ m_text_color.a == 0 ? m_theme->m_text_color : m_text_color };
@@ -74,7 +75,7 @@ namespace rl::ui {
                 m_pos.y + m_size.height * 0.5f - 1.0f,
             };
 
-            if (m_popup->side() == ui::Popup::Right)
+            if (m_popup->side() == Popup::Side::Right)
                 icon_pos.x = m_pos.x + m_size.width - iw - 8;
             else
                 icon_pos.x = m_pos.x + 8;
@@ -88,13 +89,13 @@ namespace rl::ui {
         ui::Widget::perform_layout(ctx);
         i32 anchor_size{ m_popup->anchor_size() };
 
-        const ui::Dialog* parent_window{ this->window() };
-        if (parent_window != nullptr)
+        const ui::Dialog* parent_dialog{ this->dialog() };
+        if (parent_dialog != nullptr)
         {
-            i32 pos_y{ this->abs_position().y - parent_window->position().y + m_size.height / 2 };
-            if (m_popup->side() == Popup::Right)
+            i32 pos_y{ this->abs_position().y - parent_dialog->position().y + m_size.height / 2 };
+            if (m_popup->side() == Popup::Side::Right)
                 m_popup->set_anchor_pos(
-                    ds::point<i32>{ parent_window->width() + anchor_size, pos_y });
+                    ds::point<i32>{ parent_dialog->width() + anchor_size, pos_y });
             else
                 m_popup->set_anchor_pos(ds::point<i32>{ -anchor_size, pos_y });
         }
@@ -109,9 +110,10 @@ namespace rl::ui {
 
     void PopupButton::set_side(Popup::Side side)
     {
-        if (m_popup->side() == Popup::Right && m_chevron_icon == m_theme->m_popup_chevron_right_icon)
+        if (m_popup->side() == Popup::Side::Right &&
+            m_chevron_icon == m_theme->m_popup_chevron_right_icon)
             set_chevron_icon(m_theme->m_popup_chevron_left_icon);
-        else if (m_popup->side() == Popup::Left &&
+        else if (m_popup->side() == Popup::Side::Left &&
                  m_chevron_icon == m_theme->m_popup_chevron_left_icon)
             set_chevron_icon(m_theme->m_popup_chevron_right_icon);
 

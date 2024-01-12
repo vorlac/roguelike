@@ -15,12 +15,10 @@
 
 namespace rl::ui {
 
-    /// @brief
-    ///     Fancy text box with builtin regular expression-based validation.
-    /// @brief
-    ///     This class overrides widget::m_icon_extra_scale to be 0.8f, which
-    ///     affects all subclasses of this widget. Subclasses must explicitly set
-    ///     a different value if needed (e.g., in their constructor).
+    // Fancy text box with builtin regular expression-based validation.
+    // This class overrides widget::m_icon_extra_scale to be 0.8f, which
+    // affects all subclasses of this widget. Subclasses must explicitly set
+    // a different value if needed (e.g., in their constructor).
     class TextBox : public ui::Widget
     {
     public:
@@ -89,7 +87,7 @@ namespace rl::ui {
         i32 position_to_cursor_index(f32 posx, float lastx, const NVGglyphPosition* glyphs,
                                      i32 size);
 
-        /// The location (if any) for the spin area.
+        // The location (if any) for the spin area.
         enum class SpinArea {
             None,
             Top,
@@ -127,14 +125,7 @@ namespace rl::ui {
         std::function<bool(const std::string& str)> m_callback;
     };
 
-    /// @brief
-    ///     A specialization of TextBox for representing integral values.
-    ///
-    /// @brief
-    ///     Template parameters should be integral types
-    ///
-    /// @tparam Scalar
-    ///     Type of the scalar.
+    // A specialization of TextBox for representing integral values.
     template <constraint::integer Scalar>
     class IntBox : public ui::TextBox
     {
@@ -226,23 +217,22 @@ namespace rl::ui {
             return TextBox::on_mouse_button_pressed(pos, btn, modifiers);
         }
 
-        virtual bool on_mouse_button_released(ds::point<i32> pos, Mouse::Button::type btn,
-                                              i32 modifiers) override
+        virtual bool on_mouse_button_released(const Mouse& mouse, const Keyboard& kb) override
         {
-            return TextBox::on_mouse_button_released(pos, btn, modifiers);
+            return TextBox::on_mouse_button_released(mouse, kb);
         }
 
-        virtual bool on_mouse_drag(ds::point<i32> pos, ds::vector2<i32> rel,
-                                   Mouse::Button::type btn, i32 modifiers) override
+        virtual bool on_mouse_drag(const Mouse& mouse, const Keyboard& kb) override
         {
-            if (TextBox::mouse_drag_event(pos, rel, btn, modifiers))
+            if (TextBox::on_mouse_drag(mouse, kb))
                 return true;
 
-            if (m_spinnable && !this->focused() && btn == Mouse::Button::Right &&
+            if (m_spinnable && !this->focused() && mouse.is_button_held(Mouse::Button::Right) &&
                 m_mouse_down_pos.x != -1)
             {
-                i32 value_delta{ static_cast<int>((pos.x - m_mouse_down_pos.x) / 10.0f) };
+                i32 value_delta{ static_cast<int>((mouse.pos().x - m_mouse_down_pos.x) / 10.0f) };
                 this->set_value(m_mouse_down_value + value_delta * m_value_increment);
+
                 if (m_callback != nullptr)
                     m_callback(m_value);
 
@@ -252,14 +242,14 @@ namespace rl::ui {
             return false;
         }
 
-        virtual bool on_mouse_scroll(ds::point<i32> pos, ds::vector2<i32> rel) override
+        virtual bool on_mouse_scroll(const Mouse& mouse, const Keyboard& kb) override
         {
-            if (ui::Widget::scroll_event(pos, rel))
+            if (ui::Widget::on_mouse_scroll(mouse, kb))
                 return true;
 
             if (m_spinnable && !this->focused())
             {
-                i32 value_delta{ (rel.y > 0) ? 1 : -1 };
+                i32 value_delta{ (mouse.wheel().y > 0) ? 1 : -1 };
                 this->set_value(this->value() + value_delta * m_value_increment);
 
                 if (m_callback != nullptr)
@@ -353,13 +343,12 @@ namespace rl::ui {
             set_max_value(max_value);
         }
 
-        virtual bool on_mouse_button_pressed(ds::point<i32> pos, Mouse::Button::type btn,
-                                             i32 modifiers) override
+        virtual bool on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb) override
         {
             if (m_editable || m_spinnable)
                 m_mouse_down_value = this->value();
 
-            SpinArea area{ this->spin_area(pos) };
+            SpinArea area{ this->spin_area(mouse.pos()) };
             if (m_spinnable && area != SpinArea::None && !this->focused())
             {
                 if (area == SpinArea::Top)
@@ -378,26 +367,24 @@ namespace rl::ui {
                 return true;
             }
 
-            return TextBox::on_mouse_button_pressed(pos, btn, modifiers);
+            return TextBox::on_mouse_button_pressed(mouse, kb);
         }
 
-        virtual bool on_mouse_button_released(ds::point<i32> pos, Mouse::Button::type btn,
-                                              i32 modifiers) override
+        virtual bool on_mouse_button_released(const Mouse& mouse, const Keyboard& kb) override
         {
-            SpinArea area{ this->spin_area(pos) };
-            return TextBox::on_mouse_button_released(pos, btn, modifiers);
+            SpinArea area{ this->spin_area(mouse.pos()) };
+            return TextBox::on_mouse_button_released(mouse, kb);
         }
 
-        virtual bool on_mouse_drag(ds::point<i32> pos, ds::vector2<i32> rel,
-                                   Mouse::Button::type btn, i32 modifiers) override
+        virtual bool on_mouse_drag(const Mouse& mouse, const Keyboard& kb) override
         {
-            if (TextBox::mouse_drag_event(pos, rel, btn, modifiers))
+            if (TextBox::mouse_drag_event(mouse, kb))
                 return true;
 
-            if (m_spinnable && !this->focused() && btn == Mouse::Button::Right &&
+            if (m_spinnable && !this->focused() && mouse.is_button_held(Mouse::Button::Right) &&
                 m_mouse_down_pos.x != -1)
             {
-                i32 value_delta{ static_cast<i32>((pos.x - m_mouse_down_pos.x) / 10.0f) };
+                i32 value_delta{ static_cast<i32>((mouse.pos().x - m_mouse_down_pos.x) / 10.0f) };
                 this->set_value(m_mouse_down_value + value_delta * m_value_increment);
 
                 if (m_callback != nullptr)
@@ -408,15 +395,15 @@ namespace rl::ui {
             return false;
         }
 
-        virtual bool on_mouse_scroll(ds::point<i32> pos, ds::vector2<i32> rel) override
+        virtual bool on_mouse_scroll(const Mouse& mouse, const Keyboard& kb) override
         {
-            if (ui::Widget::scroll_event(pos, rel))
+            if (ui::Widget::on_mouse_scroll(mouse, kb))
                 return true;
 
             if (m_spinnable && !this->focused())
             {
-                i32 value_delta{ (rel.y > 0) ? 1 : -1 };
-                this->set_value(value() + value_delta * m_value_increment);
+                i32 value_delta{ (mouse.wheel().y > 0) ? 1 : -1 };
+                this->set_value(this->value() + value_delta * m_value_increment);
 
                 if (m_callback != nullptr)
                     m_callback(m_value);

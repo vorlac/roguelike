@@ -1,3 +1,5 @@
+#include <ranges>
+
 #include "core/keyboard.hpp"
 #include "core/mouse.hpp"
 #include "core/ui/dialog.hpp"
@@ -8,40 +10,29 @@
 #include "core/window.hpp"
 #include "ds/refcounted.hpp"
 #include "ds/shared.hpp"
+#include "render/vectorized_renderer.hpp"
 
 namespace rl::ui {
-
     Widget::Widget(Widget* parent)
-        : m_parent{ nullptr }
-        , m_theme{ nullptr }
-        , m_layout{ nullptr }
-        , m_pos{ 0, 0 }
-        , m_size{ 0, 0 }
-        , m_fixed_size{ 0, 0 }
-        , m_visible{ true }
-        , m_enabled{ true }
-        , m_focused{ false }
-        , m_mouse_focus{ false }
-        , m_tooltip{}
-        , m_font_size{ 16 }
-        , m_icon_extra_scale{ 1.0f }
-        , m_cursor{ Mouse::Cursor::ID::Arrow }
+        : m_parent{ parent }
     {
+        if (parent != nullptr)
+            parent->add_child(this);
+    }
+
+    Widget::Widget(Widget* parent, const std::unique_ptr<VectorizedRenderer>& vec_renderer)
+        : m_parent{ parent }
+    {
+        runtime_assert(m_nvg_renderer == nullptr, "widget vectorized renderer already set");
+        if (m_nvg_renderer == nullptr)
+            m_nvg_renderer = vec_renderer.get();
+
         if (parent != nullptr)
             parent->add_child(this);
     }
 
     Widget::~Widget()
     {
-        if (std::uncaught_exceptions() > 0)
-        {
-            // If a widget constructor throws an exception, it is immediately
-            // dealloated but may still be referenced by a parent. Be conservative
-            // and don't decrease the reference count of children while dispatching
-            // exceptions.
-            return;
-        }
-
         for (auto child : m_children)
             if (child != nullptr)
                 child->release_ref();
@@ -93,7 +84,7 @@ namespace rl::ui {
             return;
 
         m_theme = theme;
-        for (auto&& child : m_children)
+        for (auto child : m_children)
             child->set_theme(theme);
     }
 
@@ -251,38 +242,34 @@ namespace rl::ui {
             m_layout->perform_layout(nvg_context, this);
         else
         {
-            for (auto&& c : m_children)
+            for (auto child : m_children)
             {
-                ds::dims<i32>&& pref{ c->preferred_size(nvg_context) };
-                ds::dims<i32>&& fix{ c->fixed_size() };
-                c->set_size(ds::dims<i32>{
+                ds::dims<i32>&& pref{ child->preferred_size(nvg_context) };
+                ds::dims<i32>&& fix{ child->fixed_size() };
+                child->set_size(ds::dims<i32>{
                     fix.width ? fix.width : pref.width,
                     fix.height ? fix.height : pref.height,
                 });
-                c->perform_layout(nvg_context);
+                child->perform_layout(nvg_context);
             }
         }
     }
 
     Widget* Widget::find_widget(ds::point<i32> pt)
     {
-        for (auto it = m_children.rbegin(); it != m_children.rend(); ++it)
-        {
-            ui::Widget* child{ *it };
+        for (auto child : std::ranges::reverse_view{ m_children })
             if (child->visible() && child->contains(pt))
                 return child->find_widget(pt);
-        }
+
         return this->contains(pt) ? this : nullptr;
     }
 
     const Widget* Widget::find_widget(ds::point<i32> pt) const
     {
-        for (auto it = m_children.rbegin(); it != m_children.rend(); ++it)
-        {
-            ui::Widget* child{ *it };
+        for (auto child : std::ranges::reverse_view{ m_children })
             if (child->visible() && child->contains(pt))
                 return child->find_widget(pt);
-        }
+
         return this->contains(pt) ? this : nullptr;
     }
 
@@ -313,13 +300,10 @@ namespace rl::ui {
     bool Widget::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb)
     {
         auto&& mouse_pos{ mouse.pos() };
-        for (auto it = m_children.rbegin(); it != m_children.rend(); it++)
-        {
-            ui::Widget* child{ *it };
+        for (auto child : std::ranges::reverse_view{ m_children })
             if (child->visible() && child->contains(mouse_pos) &&
                 child->on_mouse_button_pressed(mouse, kb))
                 return true;
-        }
 
         if (mouse.is_button_pressed(Mouse::Button::Left) && !m_focused)
             this->request_focus();
@@ -330,26 +314,22 @@ namespace rl::ui {
     bool Widget::on_mouse_button_released(const Mouse& mouse, const Keyboard& kb)
     {
         auto&& mouse_pos{ mouse.pos() };
-        for (auto it = m_children.rbegin(); it != m_children.rend(); ++it)
-        {
-            ui::Widget* child{ *it };
+        for (auto child : std::ranges::reverse_view{ m_children })
             if (child->visible() && child->contains(mouse_pos) &&
                 child->on_mouse_button_released(mouse, kb))
                 return true;
-        }
 
         return false;
     }
 
     bool Widget::on_mouse_scroll(const Mouse& mouse, const Keyboard& kb)
     {
-        for (auto it = m_children.rbegin(); it != m_children.rend(); ++it)
+        for (auto child : std::ranges::reverse_view{ m_children })
         {
-            ui::Widget* child{ *it };
             if (!child->visible())
                 continue;
 
-            auto mouse_pos{ mouse.pos() };
+            auto&& mouse_pos{ mouse.pos() };
             if (child->contains(mouse_pos) && child->on_mouse_scroll(mouse, kb))
                 return true;
         }
@@ -360,7 +340,7 @@ namespace rl::ui {
     {
         bool handled{ false };
 
-        for (auto&& child : m_children)
+        for (auto child : std::ranges::reverse_view{ m_children })
         {
             if (!child->visible())
                 continue;
@@ -371,7 +351,7 @@ namespace rl::ui {
 
             if (contained && !prev_contained)
                 handled |= child->on_mouse_entered(mouse);
-            if (!contained && prev_contained)
+            else if (!contained && prev_contained)
                 handled |= child->on_mouse_exited(mouse);
 
             if (contained || prev_contained)
@@ -493,7 +473,7 @@ namespace rl::ui {
         return m_font_size > 0;
     }
 
-    float Widget::icon_extra_scale() const
+    f32 Widget::icon_extra_scale() const
     {
         return m_icon_extra_scale;
     }
@@ -520,16 +500,16 @@ namespace rl::ui {
         return widget_rect.contains(pt);
     }
 
-    ui::Dialog* Widget::window()
+    ui::Dialog* Widget::dialog()
     {
         ui::Widget* widget{ this };
         while (widget != nullptr)
         {
-            ui::Dialog* window{ dynamic_cast<ui::Dialog*>(widget) };
-            runtime_assert(window != nullptr, "failed widget cast to window");
+            ui::Dialog* dialog{ dynamic_cast<ui::Dialog*>(widget) };
+            runtime_assert(dialog != nullptr, "failed widget cast to window");
 
-            if (window != nullptr)
-                return window;
+            if (dialog != nullptr)
+                return dialog;
 
             widget = widget->parent();
         }
@@ -538,9 +518,9 @@ namespace rl::ui {
         return nullptr;
     }
 
-    const ui::Dialog* Widget::window() const
+    const ui::Dialog* Widget::dialog() const
     {
-        return const_cast<ui::Widget*>(this)->window();
+        return const_cast<ui::Widget*>(this)->dialog();
     }
 
     void Widget::request_focus()
@@ -554,43 +534,32 @@ namespace rl::ui {
 
     void Widget::draw_mouse_intersection(NVGcontext* nvg_context, ds::point<i32> pt)
     {
-        if constexpr (Widget::DiagnosticsEnabled)
+        // if constexpr (Widget::DiagnosticsEnabled)
+        //{
+        if (!this->contains(pt))
+            return;
+
+        //  render green widget outlines
+        ds::rect<i32>{ this->abs_position(), m_size };
+        m_nvg_renderer->draw_rect_outline(ds::rect<i32>{ this->abs_position(), m_size }, 1.0f,
+                                          rl::Colors::Cyan, ui::Outline::Inner);
+
+        for (auto child : m_children)
         {
-            if (!this->contains(pt))
-                return;
+            if (!child->visible())
+                continue;
 
-            //  render green widget outlines
-            auto pos{ this->abs_position() };
-            nvgStrokeWidth(nvg_context, 2.0f);
-            nvgBeginPath(nvg_context);
-            nvgRect(nvg_context, m_pos.x - 1.0f, m_pos.y - 1.0f, m_size.width + 1.0f,
-                    m_size.height + 1.0f);
-
-            nvgStrokeColor(nvg_context, rl::Colors::Cyan);
-            nvgStroke(nvg_context);
-
-            for (auto child : m_children)
-            {
-                if (!child->visible())
-                    continue;
-
-                child->draw_mouse_intersection(nvg_context, pt);
-            }
+            child->draw_mouse_intersection(nvg_context, pt);
         }
+        //}
     }
 
     void Widget::draw(NVGcontext* nvg_context)
     {
         if constexpr (Widget::DiagnosticsEnabled)
         {
-            //  render red widget outlines
-            nvgStrokeWidth(nvg_context, 1.0f);
-            nvgBeginPath(nvg_context);
-            nvgRect(nvg_context, m_pos.x - 0.5f, m_pos.y - 0.5f, m_size.width + 1.0f,
-                    m_size.height + 1.0f);
-
-            nvgStrokeColor(nvg_context, rl::Colors::Purple);
-            nvgStroke(nvg_context);
+            m_nvg_renderer->draw_rect_outline(ds::rect<i32>{ this->abs_position(), m_size }, 1.0f,
+                                              rl::Colors::Grey, ui::Outline::Outer);
         }
 
         if (m_children.empty())
@@ -605,7 +574,7 @@ namespace rl::ui {
 
             if constexpr (!Widget::DiagnosticsEnabled)
             {
-                nvgSave(nvg_context);
+                m_nvg_renderer->push_render_state();
                 nvgIntersectScissor(nvg_context, child->m_pos.x, child->m_pos.y,
                                     child->m_size.width, child->m_size.height);
             }
@@ -613,7 +582,7 @@ namespace rl::ui {
             child->draw(nvg_context);
 
             if constexpr (!Widget::DiagnosticsEnabled)
-                nvgRestore(nvg_context);
+                m_nvg_renderer->pop_render_state();
         }
 
         nvgTranslate(nvg_context, -m_pos.x, -m_pos.y);

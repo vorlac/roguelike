@@ -25,7 +25,7 @@ SDL_C_LIB_END
 
 namespace rl {
     class EventHandler;
-    class Renderer;
+    class OpenGLRenderer;
 
     using WindowID = SDL3::SDL_WindowID;
     using DisplayID = SDL3::SDL_DisplayID;
@@ -231,7 +231,7 @@ namespace rl {
         SDL3::SDL_WindowFlags get_flags() const;
         SDL3::SDL_DisplayMode get_display_mode() const;
 
-        const std::unique_ptr<Renderer>& renderer() const;
+        const std::unique_ptr<OpenGLRenderer>& renderer() const;
         NVGcontext* nvg_context() const;
 
         const Keyboard& keyboard() const;
@@ -290,7 +290,7 @@ namespace rl {
         ui::Screen* m_screen{ nullptr };
         SDL3::SDL_Window* m_sdl_window{ nullptr };
         ds::dims<i32> m_framebuf_size{ 0, 0 };
-        std::unique_ptr<Renderer> m_renderer;
+        std::unique_ptr<rl::OpenGLRenderer> m_renderer;
         Keyboard m_keyboard{};
         Mouse m_mouse{};
 

@@ -13,19 +13,15 @@ namespace rl::gui {
 
     f32 VScrollPanel::scroll() const
     {
-        /**
-         * Return the current scroll amount as a value between 0 and 1. 0 means
-         * scrolled to the top and 1 to the bottom.
-         */
+        // Return the current scroll amount as a value between 0 and 1. 0 means
+        // scrolled to the top and 1 to the bottom.
         return m_scroll;
     }
 
     void VScrollPanel::set_scroll(f32 scroll)
     {
-        /**
-         * Set the scroll amount to a value between 0 and 1. 0 means scrolled to
-         * the top and 1 to the bottom.
-         */
+        // Set the scroll amount to a value between 0 and 1. 0 means scrolled to
+        // the top and 1 to the bottom.
         m_scroll = scroll;
     }
 
@@ -66,6 +62,7 @@ namespace rl::gui {
     {
         if (m_children.empty())
             return ds::dims<i32>{ 0, 0 };
+
         return m_children[0]->preferred_size(nvg_context) + ds::dims<i32>{ 12, 0 };
     }
 
@@ -112,7 +109,7 @@ namespace rl::gui {
                 this->height() *
                 std::min(1.0f, this->height() / static_cast<f32>(m_child_preferred_height))) };
 
-            i32 start{ static_cast<int>(
+            i32 start{ static_cast<i32>(
                 m_pos.y + 4 + 1 + (m_size.height - 8 - scrollh) * m_scroll) };
 
             f32 delta{ 0.0f };
@@ -122,11 +119,9 @@ namespace rl::gui {
                 delta = m_size.height / static_cast<f32>(m_child_preferred_height);
 
             m_scroll = std::max(0.0f, std::min(1.0f, m_scroll + delta * 0.98f));
-
             m_children[0]->set_position(ds::point<i32>{
-                0,
-                static_cast<i32>(-m_scroll * (m_child_preferred_height - m_size.height)),
-            });
+                0, static_cast<i32>(-m_scroll * (m_child_preferred_height - m_size.height)) });
+
             m_update_layout = true;
             return true;
         }
@@ -141,22 +136,19 @@ namespace rl::gui {
         else
         {
             auto child{ m_children[0] };
-            f32 scroll_amount{
-                mouse.wheel().y * m_size.height * 0.25f,
-            };
+            f32 scroll_amount{ mouse.wheel().y * m_size.height * 0.25f };
 
-            m_scroll = std::max(0.f,
+            m_scroll = std::max(0.0f,
                                 std::min(1.f, m_scroll - scroll_amount / m_child_preferred_height));
 
             ds::point<i32> old_pos{ child->position() };
-            child->set_position({
-                0,
-                static_cast<i32>(-m_scroll * (m_child_preferred_height - m_size.height)),
-            });
+
+            child->set_position(
+                { 0, static_cast<i32>(-m_scroll * (m_child_preferred_height - m_size.height)) });
 
             ds::point<i32> new_pos{ child->position() };
-            m_update_layout = true;
 
+            m_update_layout = true;
             child->on_mouse_move(mouse, kb);
 
             return true;

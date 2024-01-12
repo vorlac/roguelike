@@ -304,7 +304,7 @@ namespace rl::ui {
                                       ? m_theme->m_text_color
                                       : m_theme->m_disabled_text_color);
 
-                auto icon{ utf8(std::to_underlying(m_theme->m_text_box_down_icon)) };
+                auto icon{ utf8(m_theme->m_text_box_down_icon) };
                 nvgTextAlign(ctx, NVG_ALIGN_LEFT | NVG_ALIGN_MIDDLE);
 
                 ds::point<i32> icon_pos{
@@ -762,7 +762,7 @@ namespace rl::ui {
     {
         if (m_selection_pos > -1)
         {
-            ui::Dialog* window{ this->window() };
+            ui::Dialog* window{ this->dialog() };
             if (window == nullptr)
                 return false;
 
@@ -781,7 +781,7 @@ namespace rl::ui {
 
     void TextBox::paste_from_clipboard()
     {
-        ui::Dialog* window{ this->window() };
+        ui::Dialog* window{ this->dialog() };
         if (window == nullptr)
             return;
 

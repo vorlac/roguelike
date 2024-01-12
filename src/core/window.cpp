@@ -53,7 +53,7 @@ namespace rl {
             m_sdl_window ? this->get_position() : ds::point<i32>::null(),
             dims,
         };
-        m_renderer = std::make_unique<Renderer>(*this, Renderer::DEFAULT_PROPERTY_FLAGS);
+        m_renderer = std::make_unique<OpenGLRenderer>(*this, OpenGLRenderer::DEFAULT_PROPERTY_FLAGS);
 
         sdl_assert(m_sdl_window != nullptr, "failed to create SDL_Window");
         sdl_assert(m_renderer != nullptr, "failed to create sdl::Renderer");
@@ -65,7 +65,8 @@ namespace rl {
         SDL3::SDL_GL_SetSwapInterval(1);
 
         NVGcontext* nvg_context{ m_renderer->nvg_context() };
-        m_screen = new ui::Screen{ nvg_context, window_size, m_mouse, m_keyboard };
+        m_screen = new ui::Screen{ nvg_context, window_size, m_mouse, m_keyboard,
+                                   m_renderer->vectorized_renderer() };
     }
 
     Window::~Window()
@@ -226,7 +227,7 @@ namespace rl {
         return this->sdl_handle() != nullptr;
     }
 
-    const std::unique_ptr<Renderer>& Window::renderer() const
+    const std::unique_ptr<OpenGLRenderer>& Window::renderer() const
     {
         return m_renderer;
     }

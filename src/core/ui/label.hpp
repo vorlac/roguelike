@@ -35,7 +35,7 @@ namespace rl::ui {
     protected:
         std::string m_font{};
         std::string m_caption{};
-        ds::color<u8> m_color{ rl::Colors::Yellow };
+        ds::color<f32> m_color{ rl::Colors::Yellow };
         std::function<void()> m_callback;
     };
 }

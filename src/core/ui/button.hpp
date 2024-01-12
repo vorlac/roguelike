@@ -22,37 +22,32 @@ namespace rl::ui {
             RadioButton = 1 << 1,
             ToggleButton = 1 << 2,
             PopupButton = 1 << 3,
-            MenuButton = 1 << 4
-        };
+            MenuButton = 1 << 4,
 
-        enum class IconPosition {
-            Left,           // far left
-            LeftCentered,   // left, centered (depends on caption text length)
-            RightCentered,  // right, centered (depends on caption text length)
-            Right           // far right
+            ToolButton = RadioButton | ToggleButton,
         };
 
     public:
         Button(ui::Widget* parent, const std::string& caption = "Untitled",
-               ui::Icon icon = ui::Icon::None);
+               ui::Icon::ID icon = ui::Icon::None);
 
-        ui::Icon icon() const;
-        i32 flags() const;
         bool pressed() const;
-        IconPosition icon_position() const;
+        ui::Icon::ID icon() const;
+        ui::Button::Flags flags() const;
+        ui::Icon::Position icon_position() const;
+        ds::color<f32> background_color() const;
+        ds::color<f32> text_color() const;
         const std::string& caption() const;
-        const ds::color<u8>& background_color() const;
-        const ds::color<u8>& text_color() const;
         const std::function<void()>& callback() const;
         const std::function<void(bool)>& change_callback() const;
         const std::vector<Button*>& button_group() const;
 
         void set_caption(const std::string& caption);
-        void set_background_color(ds::color<u8> background_color);
-        void set_text_color(ds::color<u8> text_color);
-        void set_icon(ui::Icon icon);
+        void set_background_color(ds::color<f32> background_color);
+        void set_text_color(ds::color<f32> text_color);
+        void set_icon(ui::Icon::ID icon);
         void set_flags(Button::Flags button_flags);
-        void set_icon_position(IconPosition icon_position);
+        void set_icon_position(ui::Icon::Position icon_position);
         void set_pressed(bool pressed);
         void set_callback(const std::function<void()>& callback);
         void set_change_callback(const std::function<void(bool)>& callback);
@@ -75,19 +70,17 @@ namespace rl::ui {
     protected:
         std::string m_caption{};
 
-        /// @brief
-        ///     The icon of this Button (0 means no icon).
-        ///
-        ///     The icon to display with this Button. If not 0, may either be a
-        ///     picture icon, or one of the icons enumerated in. The kind of icon
-        ///     (image or Entypo) is determined by the functions nvgIsImageIcon and
-        ///     its reciprocal counterpart nvgIsFontIcon.
-        ui::Icon m_icon{ ui::Icon::None };
+        // The icon of this Button (0 means no icon).
+        // The icon to display with this Button (0 means no icons).
+        // If not 0, may either be a picture icon, or one of the icons enumerated in.
+        // The kind of icon (image or Entypo) is determined by the functions nvgIsImageIcon and
+        // its reciprocal counterpart nvgIsFontIcon.
+        ui::Icon::ID m_icon{ ui::Icon::None };
         Button::Flags m_flags{};
         bool m_pressed{ false };
-        Button::IconPosition m_icon_position{};
-        ds::color<u8> m_background_color{};
-        ds::color<u8> m_text_color{ 255, 255, 255 };
+        ui::Icon::Position m_icon_position{};
+        ds::color<f32> m_background_color{ rl::Colors::LightGrey };
+        ds::color<f32> m_text_color{ rl::Colors::White };
         std::function<void()> m_callback;
         std::function<void(bool)> m_change_callback;
         std::vector<ui::Button*> m_button_group{};

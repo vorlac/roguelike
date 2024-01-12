@@ -13,17 +13,13 @@
 #include "ds/refcounted.hpp"
 #include "ds/shared.hpp"
 #include "ds/vector2d.hpp"
+#include "render/vectorized_renderer.hpp"
 #include "utils/numeric.hpp"
 #include "utils/time.hpp"
 
 #if _MSC_VER
   #pragma warning(disable : 4244)
 #endif
-
-namespace rl {
-    using WindowID = u32;
-    using DisplayID = u32;
-}
 
 namespace rl::ui {
     class Dialog;
@@ -32,6 +28,8 @@ namespace rl::ui {
     {
     public:
         Widget(Widget* parent);
+        Widget(Widget* parent, const std::unique_ptr<VectorizedRenderer>& vec_renderer);
+
         virtual ~Widget();
 
         bool show();
@@ -52,7 +50,7 @@ namespace rl::ui {
         i32 child_index(ui::Widget* widget) const;
         i32 child_count() const;
 
-        ui::Dialog* window();
+        ui::Dialog* dialog();
         ui::Widget* parent();
         ui::layout* layout();
         ui::Theme* theme();
@@ -64,7 +62,7 @@ namespace rl::ui {
         ds::dims<i32> size() const;
         Mouse::Cursor::ID cursor() const;
 
-        const ui::Dialog* window() const;
+        const ui::Dialog* dialog() const;
         const ui::Widget* parent() const;
         const ui::layout* layout() const;
         const ui::Theme* theme() const;
@@ -137,6 +135,7 @@ namespace rl::ui {
         NVGcontext* m_nvg_context{ nullptr };
         ds::shared<ui::Theme> m_theme{ nullptr };
         ds::shared<ui::layout> m_layout{ nullptr };
+        static inline rl::VectorizedRenderer* m_nvg_renderer{ nullptr };
 
         bool m_enabled{ true };
         bool m_visible{ true };
@@ -153,11 +152,11 @@ namespace rl::ui {
 
         Mouse::Cursor::ID m_cursor{ Mouse::Cursor::Arrow };
         std::vector<Widget*> m_children{};
-        std::string m_tooltip{};
+        std::string m_tooltip{ "" };
 
         mutable Timer<float> m_timer{};
 
     private:
-        constexpr static bool DiagnosticsEnabled{ true };
+        constexpr static bool DiagnosticsEnabled{ false };
     };
 }

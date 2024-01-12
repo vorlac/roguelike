@@ -20,8 +20,8 @@
 
 namespace rl::ui {
     Screen::Screen(NVGcontext* nvg_context, ds::dims<i32> size, const Mouse& mouse,
-                   const Keyboard& kb)
-        : ui::Widget{ nullptr }
+                   const Keyboard& kb, const std::unique_ptr<VectorizedRenderer>& nvg_renderer)
+        : ui::Widget{ nullptr, nvg_renderer }
         , m_nvg_context{ nvg_context }
         , m_mouse_ref{ mouse }
         , m_kb_ref{ kb }
@@ -115,9 +115,9 @@ namespace rl::ui {
                 std::array<f32, 4> bounds{};
 
                 nvgFontFace(m_nvg_context, font::name::sans);
-                nvgFontSize(m_nvg_context, 15.0f);
+                nvgFontSize(m_nvg_context, 26.0f);
                 nvgTextAlign(m_nvg_context, NVGalign::NVG_ALIGN_LEFT | NVGalign::NVG_ALIGN_TOP);
-                nvgTextLineHeight(m_nvg_context, 1.1f);
+                nvgTextLineHeight(m_nvg_context, 1.125f);
 
                 ds::point<i32> pos{
                     widget->abs_position() +
@@ -295,13 +295,13 @@ namespace rl::ui {
         return true;
     }
 
-    // Flush all queued up NanoVG rendering commands
-    // TODO: move into renderer
     void Screen::nvg_flush()
     {
+        // Flush all queued up NanoVG rendering commands
+        // TODO: move into renderer
         // TODO: reorganize
         constexpr f32 PIXEL_RATIO = 1.0f;
-        NVGparams* params = nvgInternalParams(m_nvg_context);
+        NVGparams* params{ nvgInternalParams(m_nvg_context) };
         params->renderFlush(params->userPtr);
         params->renderViewport(params->userPtr, m_size.width, m_size.height, PIXEL_RATIO);
     }
@@ -357,10 +357,10 @@ namespace rl::ui {
         // invalidating iterator in on_mouse_click()...
         //
         // if (window != nullptr)
-        //     this->move_window_to_front(static_cast<Window*>(window));
+        //     this->move_dialog_to_front(static_cast<Window*>(window));
     }
 
-    void Screen::move_window_to_front(ui::Dialog* dialog)
+    void Screen::move_dialog_to_front(ui::Dialog* dialog)
     {
         auto removal_iterator{ std::remove(m_children.begin(), m_children.end(), dialog) };
         m_children.erase(removal_iterator, m_children.end());
@@ -382,7 +382,7 @@ namespace rl::ui {
                 ui::Popup* popup_wnd{ dynamic_cast<ui::Popup*>(m_children[idx]) };
                 if (popup_wnd != nullptr && popup_wnd->parent_window() == dialog && idx < base_idx)
                 {
-                    this->move_window_to_front(dialog);
+                    this->move_dialog_to_front(dialog);
                     changed = true;
                     break;
                 }
@@ -391,7 +391,7 @@ namespace rl::ui {
         while (changed);
     }
 
-    void Screen::dispose_window(Dialog* window)
+    void Screen::dispose_dialog(Dialog* window)
     {
         if (std::find(m_focus_path.begin(), m_focus_path.end(), window) != m_focus_path.end())
             m_focus_path.clear();
@@ -402,7 +402,7 @@ namespace rl::ui {
         this->remove_child(window);
     }
 
-    void Screen::center_window(Dialog* window) const
+    void Screen::center_dialog(Dialog* window) const
     {
         if (window->size() == ds::dims<i32>{ 0, 0 })
         {
@@ -434,13 +434,13 @@ namespace rl::ui {
         m_redraw |= this->drop_event(arg);
     }
 
-    bool Screen::on_moved(WindowID id, ds::point<i32> pt)
+    bool Screen::on_moved(ds::point<i32> pt)
     {
         if constexpr (io::logging::window_events)
         {
             ds::rect<i32> prev_rect{ m_pos, m_size };
             ds::rect<i32> new_rect{ pt, prev_rect.size };
-            rl::log::info("window::on_moved [id={}] : {} => {}", id, prev_rect, new_rect);
+            log::info("Screen::on_moved: {} => {}", prev_rect, new_rect);
         }
 
         m_pos = pt;
@@ -550,9 +550,9 @@ namespace rl::ui {
     bool Screen::on_mouse_drag(const Mouse& mouse, const Keyboard& kb)
     {
         if constexpr (io::logging::window_events)
-            rl::log::info("window::on_mouse_drag [pt:{}, rel:{}, btn:{}, mod:{}]", mouse.pos(),
-                          mouse.pos_delta(), mouse.button_pressed(),
-                          kb.is_button_down(Keyboard::Button::Modifiers));
+            log::info("window::on_mouse_drag [pt:{}, rel:{}, btn:{}, mod:{}]", mouse.pos(),
+                      mouse.pos_delta(), mouse.button_pressed(),
+                      kb.is_button_down(Keyboard::Button::Modifiers));
 
         if (m_drag_active && mouse.is_button_held(Mouse::Button::Left))
         {
@@ -651,7 +651,7 @@ namespace rl::ui {
     bool Screen::on_focus_gained()
     {
         if constexpr (io::logging::window_events)
-            rl::log::info("window::on_focus_gained");
+            log::info("window::on_focus_gained");
 
         return ui::Widget::on_focus_gained();
     }
@@ -659,7 +659,7 @@ namespace rl::ui {
     bool Screen::on_focus_lost()
     {
         if constexpr (io::logging::window_events)
-            rl::log::info("window::on_focus_lost");
+            log::info("window::on_focus_lost");
 
         return ui::Widget::on_focus_lost();
     }
@@ -704,7 +704,7 @@ namespace rl::ui {
     //    m_window_id);
 
     //    if constexpr (io::logging::window_events)
-    //        rl::log::info("window::on_display_scale_changed [id:{}, ratio:{}, density:{}]", id,
+    //        log::info("window::on_display_scale_changed [id:{}, ratio:{}, density:{}]", id,
     //                      m_pixel_ratio, m_pixel_density);
 
     //    return m_pixel_ratio != 0.0f && m_pixel_density != 0.0f;
@@ -720,7 +720,7 @@ namespace rl::ui {
     //    m_window_id);
 
     //    if constexpr (io::logging::window_events)
-    //        rl::log::info("window::on_display_content_scale_changed [id:{}, ratio:{},
+    //        log::info("window::on_display_content_scale_changed [id:{}, ratio:{},
     //        density:{}]",
     //                      id, m_pixel_ratio, m_pixel_density);
 
@@ -731,7 +731,7 @@ namespace rl::ui {
     //{
     //     bool ret = true;
     //     if constexpr (io::logging::window_events)
-    //         rl::log::info("window::on_destroyed [id:{}]", id);
+    //         log::info("window::on_destroyed [id:{}]", id);
     //     return ret;
     // }
 }

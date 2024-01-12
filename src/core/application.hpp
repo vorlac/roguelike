@@ -69,32 +69,22 @@ namespace rl {
             bool ret{ this->setup() };
             f32 delta_time{ m_timer.delta() };
 
-            const std::unique_ptr<rl::Renderer>& renderer{ m_window->renderer() };
+            const std::unique_ptr<rl::OpenGLRenderer>& renderer{ m_window->renderer() };
             gl::InstancedVertexBuffer vbo{ renderer->get_viewport() };
+
+            f32 fps{ 0 };
+            u64 frame_count{ 0 };
 
             //===========================================
             // setup base level container widgets
             //===========================================
             auto gui{ m_window->gui() };
             // define a base "canvas / viewport" that is the main child of the main window
-            // auto gui_canvas{ std::make_unique<ui::widget>(m_window.get()) };
 
-            // define the layout
-            // auto layout = std::make_unique<ui::BoxLayout>(ui::orientation::Horizontal,
-            //                                                ui::alignment::Maximum, 10, 25);
-            auto layout = new ui::AdvancedGridLayout(
-                std::vector{
-                    // 4 columns
-                    0,  // col 1 - preferred size of 10px wide
-                    0,  // col 2 - no preferred size
-                    0,  // col 3 - preferred size of 10px wide
-                    0,  // col 4 - no preferred size
-                },
-                std::vector<i32>{
-                    // 0 rows
-                },  // no preferred sizes
-                30  // 25 px margin along borders
-            );
+            // 4 columns - preferred layout/alignment sizes
+            // 0 rows, no preferred sizes
+            // 30 px margin along borders
+            auto layout = new ui::AdvancedGridLayout({ 0, 0, 0, 0 }, {}, 30);
 
             // TODO: test margins
             // set layout margins to 10px
@@ -111,14 +101,15 @@ namespace rl {
             //===========================================
 
             // space it out a bit with a vertical gap before the label
-            layout->append_row(15);
+            layout->append_row(0);
 
             auto group = new ui::Label{
-                gui,                        // parent, all scaling will be relative to it
-                "Widget Group",             // label text
-                ui::font::name::sans_bold,  // font name/style
-                36,                         // font size
+                gui,             // parent, all scaling will be relative to it
+                "Widget Group",  // label text
+                ui::font::name::sans,
+                40,
             };
+            layout->append_row(0);
             layout->append_row(0);
 
             layout->set_anchor(group,
@@ -127,11 +118,11 @@ namespace rl {
                                    layout->row_count() - 1,  // y
                                    4,                        // width
                                    1,                        // height
-                                   ui::alignment::Fill,      // horiz alignment
-                                   ui::alignment::Fill,      // vert alignment
+                                   ui::Alignment::Fill,      // horiz alignment
+                                   ui::Alignment::Center,    // vert alignment
                                });
 
-            layout->append_row(5);
+            layout->append_row(25);
 
             //=============================================
             // set up labels
@@ -141,7 +132,6 @@ namespace rl {
                 "Push Button",
                 ui::Icon::Microscope,
             };
-
             push_button->set_tooltip("This is a PushButton");
             push_button->set_callback([] {
                 log::warning("Button Pressed Callback Invoked");
@@ -151,7 +141,7 @@ namespace rl {
                 gui,
                 fmt::to_string(fmt::format("{:4.6f}", m_timer.elapsed())),
                 ui::font::name::mono,
-                26,
+                32,
             };
 
             timer_value_label->set_tooltip("Elapsed Time");
@@ -160,7 +150,7 @@ namespace rl {
                 gui,
                 "Stats: ",
                 ui::font::name::mono,
-                26,
+                32,
             };
 
             stats_desc_label->set_tooltip("Stats Label");
@@ -172,13 +162,11 @@ namespace rl {
                 gui,
                 fmt::to_string(fmt::format("0.0fps [0]")),
                 ui::font::name::mono,
-                26,
+                32,
             };
 
             stats_value_label->set_tooltip("Average FPS");
 
-            f32 fps{ 0 };
-            u64 frame_count{ 0 };
             // lambda used to update fps / frame count
             gui->add_refresh_callback([&]() {
                 stats_value_label->set_caption(fmt::to_string(fmt::format("{:.1f} fps", fps)));
