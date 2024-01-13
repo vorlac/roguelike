@@ -54,6 +54,7 @@ namespace rl::ui {
         ui::Widget* parent();
         ui::Layout* layout();
         ui::Theme* theme();
+        ui::Widget* child_at(i32 index);
         rl::Mouse::Cursor::ID cursor() const;
         ui::Widget* find_widget(ds::point<i32> pt);
         ds::point<i32> position() const;
@@ -91,6 +92,12 @@ namespace rl::ui {
         void set_font_size(i32 font_size);
         void set_icon_extra_scale(f32 scale);
         void set_cursor(Mouse::Cursor::ID cursor);
+
+        template <typename TWidget, typename... TArgs>
+        TWidget* add(const TArgs&... args)
+        {
+            return new TWidget{ this, args... };
+        }
 
     public:
         virtual bool on_focus_gained();

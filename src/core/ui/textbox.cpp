@@ -5,10 +5,10 @@
 #include <nanovg.h>
 
 #include "core/keyboard.hpp"
+#include "core/main_window.hpp"
 #include "core/mouse.hpp"
 #include "core/ui/textbox.hpp"
 #include "core/ui/theme.hpp"
-#include "core/window.hpp"
 #include "sdl/defs.hpp"
 #include "utils/numeric.hpp"
 #include "utils/unicode.hpp"

@@ -38,6 +38,7 @@ namespace rl::io {
 
         constexpr static inline bool kb_events{ false };
         constexpr static inline bool mouse_events{ false };
+        constexpr static inline bool mouse_move_events{ false };
         constexpr static inline bool window_events{ true };
         constexpr static inline bool gui_events{ true };
         constexpr static inline bool main_loop{ false };
@@ -80,6 +81,12 @@ namespace rl::log {
             fmt::text_style style = c;
             fmt::print(style, fmt::format(format_str, std::forward<TArgs>(args)...) + "\n");
         }
+    }
+
+    template <typename... TArgs>
+    constexpr inline void trace(fmt::format_string<TArgs...> format_str, TArgs&&... args)
+    {
+        log::print<io::LogLevel::Trace>(format_str, std::forward<TArgs>(args)...);
     }
 
     template <typename... TArgs>

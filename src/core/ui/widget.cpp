@@ -1,13 +1,13 @@
 #include <ranges>
 
 #include "core/keyboard.hpp"
+#include "core/main_window.hpp"
 #include "core/mouse.hpp"
 #include "core/ui/canvas.hpp"
 #include "core/ui/dialog.hpp"
 #include "core/ui/layout.hpp"
 #include "core/ui/theme.hpp"
 #include "core/ui/widget.hpp"
-#include "core/window.hpp"
 #include "ds/refcounted.hpp"
 #include "ds/shared.hpp"
 #include "render/vectorized_renderer.hpp"
@@ -207,7 +207,12 @@ namespace rl::ui {
         return static_cast<i32>(m_children.size());
     }
 
-    const Widget* Widget::child_at(i32 index) const
+    ui::Widget* Widget::child_at(i32 index)
+    {
+        return m_children[index];
+    }
+
+    const ui::Widget* Widget::child_at(i32 index) const
     {
         return m_children[index];
     }

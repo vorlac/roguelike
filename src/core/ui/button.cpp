@@ -166,17 +166,22 @@ namespace rl::ui {
     }
 
     bool Button::handle_mouse_button_event(const ds::point<i32>& pt, Mouse::Button::ID button,
-                                           bool down, Keyboard::Scancode::ID keys_down)
+                                           bool button_just_pressed,
+                                           Keyboard::Scancode::ID keys_down)
     {
-        // Temporarily increase the reference count of the button in case the
-        // button causes the parent window to be destructed
+        // Temporarily increase the reference count of the button in
+        // case the button causes the parent window to be destructed
         ds::shared<Button> self{ this };
 
-        if (m_enabled == 1 && ((button == Mouse::Button::Left && !(m_flags & MenuButton)) ||
-                               (button == Mouse::Button::Right && (m_flags & MenuButton))))
+        const bool isLMBandMenuButton{ button == Mouse::Button::Left &&
+                                       (m_flags & MenuButton) == 0 };
+        const bool isRMBandNotMenuBtn{ button == Mouse::Button::Right &&
+                                       (m_flags & MenuButton) != 0 };
+
+        if (m_enabled && (isLMBandMenuButton || isRMBandNotMenuBtn))
         {
             bool pushed_backup{ m_pressed };
-            if (down)
+            if (button_just_pressed)
             {
                 if (m_flags & Button::Flags::RadioButton)
                 {
@@ -253,7 +258,8 @@ namespace rl::ui {
     bool Button::on_mouse_button_released(const Mouse& mouse, const Keyboard& kb)
     {
         ui::Widget::on_mouse_button_released(mouse, kb);
-        return handle_mouse_button_event(mouse.pos(), mouse.button_pressed(), false, kb.keys_down());
+        return handle_mouse_button_event(mouse.pos(), mouse.button_released(), false,
+                                         kb.keys_down());
     }
 
     void Button::draw(NVGcontext* ctx)

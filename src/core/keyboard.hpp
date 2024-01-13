@@ -17,9 +17,12 @@ SDL_C_LIB_END
 
 namespace rl {
     class EventHandler;
+    class MainWindow;
 
     class Keyboard
     {
+        friend MainWindow;
+
     public:
         // clang-format off
         
@@ -569,8 +572,6 @@ namespace rl {
         [[nodiscard]] bool any_buttons_down(std::vector<Scancode::ID> keys) const;
 
     protected:
-        friend class MainWindow;
-
         void process_button_down(Scancode::ID key);
         void process_button_up(Scancode::ID key);
         void process_text_input(const char* text);

@@ -8,11 +8,11 @@
 #include <nanovg.h>
 
 #include "core/assert.hpp"
+#include "core/main_window.hpp"
 #include "core/renderer.hpp"
 #include "core/ui/canvas.hpp"
 #include "core/ui/layout.hpp"
 #include "core/ui/popup.hpp"
-#include "core/window.hpp"
 #include "ds/dims.hpp"
 #include "ds/point.hpp"
 #include "ds/rect.hpp"
@@ -50,11 +50,11 @@ namespace rl {
 
         m_properties = flags;
         m_sdl_window = SDL3::SDL_CreateWindow(title.data(), dims.width, dims.height, m_properties);
-        m_renderer = std::make_unique<OpenGLRenderer>(*this, OpenGLRenderer::DEFAULT_PROPERTY_FLAGS);
         m_window_rect = ds::rect<i32>{
             m_sdl_window ? this->get_position() : ds::point<i32>::null(),
             dims,
         };
+        m_renderer = std::make_unique<OpenGLRenderer>(*this, OpenGLRenderer::DEFAULT_PROPERTY_FLAGS);
 
         sdl_assert(m_sdl_window != nullptr, "failed to create SDL_Window");
         sdl_assert(m_renderer != nullptr, "failed to create rl::OpenGLRenderer");
@@ -388,6 +388,9 @@ namespace rl {
     void MainWindow::mouse_moved_event_callback(const SDL3::SDL_Event& e)
     {
         m_mouse.process_motion(e.motion);
+        if (m_mouse.is_button_pressed(Mouse::Button::Left))
+            this->mouse_button_pressed_event_callback(e);
+
         m_gui_canvas->on_mouse_move(m_mouse, m_keyboard);
     }
 
@@ -468,7 +471,7 @@ namespace rl {
     {
         ds::point<i32> window_pos{ this->get_position() };
         if constexpr (io::logging::window_events)
-            log::info("MainWindow::moved => {}", window_pos);
+            log::trace("MainWindow::moved => {}", window_pos);
 
         ds::dims<i32> window_size{ this->get_size() };
         ds::dims<i32> framebuf_size{ this->get_render_size() };
@@ -481,6 +484,8 @@ namespace rl {
             static_cast<i32>(window_size.width / m_pixel_ratio),
             static_cast<i32>(window_size.height / m_pixel_ratio),
         };
+
+        // m_gui_canvas->on_moved(this->get_position());
     }
 
     bool MainWindow::window_pixel_size_changed_event_callback(const SDL3::SDL_Event& e)
@@ -489,7 +494,7 @@ namespace rl {
         const WindowID id{ window_event.windowID };
         const ds::vector2<i32> pixel_size{ window_event.data1, window_event.data2 };
         if constexpr (io::logging::window_events)
-            log::info("MainWindow::pixel_size_changed [id:{}] => {}", id, pixel_size);
+            log::trace("MainWindow::pixel_size_changed [id:{}] => {}", id, pixel_size);
 
         m_pixel_ratio = SDL3::SDL_GetWindowDisplayScale(m_sdl_window);
         sdl_assert(m_pixel_ratio != 0.0f, "failed to get pixel ratio [window:{}]", m_window_id);
@@ -503,7 +508,7 @@ namespace rl {
         const MainWindow::Event::Data& window_event{ e.window };
         const WindowID id{ window_event.windowID };
         if constexpr (io::logging::window_events)
-            log::info("MainWindow::focus_gained [id:{}]", id);
+            log::trace("MainWindow::focus_gained [id:{}]", id);
 
         m_gui_canvas->on_focus_gained();
     }
@@ -513,7 +518,7 @@ namespace rl {
         const MainWindow::Event::Data& window_event{ e.window };
         const WindowID id{ window_event.windowID };
         if constexpr (io::logging::window_events)
-            log::info("MainWindow::focus_lost [id:{}]", id);
+            log::trace("MainWindow::focus_lost [id:{}]", id);
 
         m_gui_canvas->on_focus_lost();
     }
@@ -523,7 +528,7 @@ namespace rl {
         const MainWindow::Event::Data& window_event{ e.window };
         const WindowID id{ window_event.windowID };
         if constexpr (io::logging::window_events)
-            log::info("MainWindow::shown [id:{}]", id);
+            log::trace("MainWindow::shown [id:{}]", id);
 
         return true;
     }
@@ -533,7 +538,7 @@ namespace rl {
         const MainWindow::Event::Data& window_event{ e.window };
         const WindowID id{ window_event.windowID };
         if constexpr (io::logging::window_events)
-            rl::log::info("MainWindow::occluded [id:{}]", id);
+            rl::log::trace("MainWindow::occluded [id:{}]", id);
 
         return true;
     }
@@ -543,7 +548,7 @@ namespace rl {
         const MainWindow::Event::Data& window_event{ e.window };
         const WindowID id{ window_event.windowID };
         if constexpr (io::logging::window_events)
-            log::info("MainWindow::hidden [id:{}]", id);
+            log::trace("MainWindow::hidden [id:{}]", id);
 
         return true;
     }
@@ -553,7 +558,7 @@ namespace rl {
         const MainWindow::Event::Data& window_event{ e.window };
         const WindowID id{ window_event.windowID };
         if constexpr (io::logging::window_events)
-            log::info("MainWindow::exposed [id:{}]", id);
+            log::trace("MainWindow::exposed [id:{}]", id);
 
         return true;
     }
@@ -563,7 +568,7 @@ namespace rl {
         const MainWindow::Event::Data& window_event{ e.window };
         const WindowID id{ window_event.windowID };
         if constexpr (io::logging::window_events)
-            log::info("MainWindow::minimized [id:{}]", id);
+            log::trace("MainWindow::minimized [id:{}]", id);
 
         return true;
     }
@@ -573,7 +578,7 @@ namespace rl {
         const MainWindow::Event::Data& window_event{ e.window };
         const WindowID id{ window_event.windowID };
         if constexpr (io::logging::window_events)
-            log::info("MainWindow::maximized [id:{}]", id);
+            log::trace("MainWindow::maximized [id:{}]", id);
 
         return true;
     }
@@ -583,7 +588,7 @@ namespace rl {
         const MainWindow::Event::Data& window_event{ e.window };
         const WindowID id{ window_event.windowID };
         if constexpr (io::logging::window_events)
-            log::info("MainWindow::restored [id:{}]", id);
+            log::trace("MainWindow::restored [id:{}]", id);
 
         return true;
     }
@@ -593,7 +598,7 @@ namespace rl {
         const MainWindow::Event::Data& window_event{ e.window };
         const WindowID id{ window_event.windowID };
         if constexpr (io::logging::window_events)
-            log::info("MainWindow::close_requested [id:{}]", id);
+            log::trace("MainWindow::close_requested [id:{}]", id);
 
         return true;
     }
@@ -603,7 +608,7 @@ namespace rl {
         const MainWindow::Event::Data& window_event{ e.window };
         const WindowID id{ window_event.windowID };
         if constexpr (io::logging::window_events)
-            log::info("MainWindow::take_focus [id:{}]", id);
+            log::trace("MainWindow::take_focus [id:{}]", id);
 
         return true;
     }
@@ -613,7 +618,7 @@ namespace rl {
         const MainWindow::Event::Data& window_event{ e.window };
         const WindowID id{ window_event.windowID };
         if constexpr (io::logging::window_events)
-            log::info("MainWindow::hit_test [id:{}]", id);
+            log::trace("MainWindow::hit_test [id:{}]", id);
 
         return true;
     }
@@ -623,7 +628,7 @@ namespace rl {
         const MainWindow::Event::Data& window_event{ e.window };
         const WindowID id{ window_event.windowID };
         if constexpr (io::logging::window_events)
-            log::info("MainWindow::icc_profile_changed [id:{}]", id);
+            log::trace("MainWindow::icc_profile_changed [id:{}]", id);
 
         return true;
     }
@@ -633,7 +638,7 @@ namespace rl {
         const MainWindow::Event::Data& window_event{ e.window };
         const WindowID id{ window_event.windowID };
         if constexpr (io::logging::window_events)
-            log::info("MainWindow::display_changed [id:{}]", id);
+            log::trace("MainWindow::display_changed [id:{}]", id);
 
         return true;
     }
@@ -643,7 +648,7 @@ namespace rl {
         const MainWindow::Event::Data& window_event{ e.window };
         const WindowID id{ window_event.windowID };
         if constexpr (io::logging::window_events)
-            log::info("MainWindow::display_scale_changed [id:{}]", id);
+            log::trace("MainWindow::display_scale_changed [id:{}]", id);
 
         return true;
     }
@@ -653,7 +658,7 @@ namespace rl {
         const MainWindow::Event::Data& window_event{ e.window };
         const WindowID id{ window_event.windowID };
         if constexpr (io::logging::window_events)
-            log::info("MainWindow::destroyed [id:{}]", id);
+            log::trace("MainWindow::destroyed [id:{}]", id);
 
         return true;
     }

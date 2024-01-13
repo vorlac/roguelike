@@ -9,10 +9,12 @@ SDL_C_LIB_BEGIN
 SDL_C_LIB_END
 
 namespace rl {
+    class MainWindow;
+
     class Mouse
     {
     public:
-        friend class MainWindow;
+        friend MainWindow;
 
         struct Event
         {

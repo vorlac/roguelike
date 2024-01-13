@@ -171,6 +171,7 @@ namespace rl::ui {
     {
         if (visible != m_visible)
         {
+            m_visible = visible;
             visible ? this->show()   //
                     : this->hide();  //
         }
@@ -430,10 +431,10 @@ namespace rl::ui {
         if (m_focus_path.size() > 1)
         {
             const ui::Widget* w{ m_focus_path[m_focus_path.size() - 2] };
-            const ui::Dialog* window{ dynamic_cast<const ui::Dialog*>(w) };
-            if (window != nullptr && window->modal())
+            const ui::Dialog* dialog{ dynamic_cast<const ui::Dialog*>(w) };
+            if (dialog != nullptr && dialog->modal())
             {
-                if (!window->contains(mouse_pos))
+                if (!dialog->contains(mouse_pos))
                     return true;
             }
         }
@@ -483,7 +484,7 @@ namespace rl::ui {
             }
         }
 
-        const auto drop_widget{ this->find_widget(mouse_pos) };
+        auto drop_widget{ this->find_widget(mouse_pos) };
         if (m_drag_active && drop_widget != m_drag_widget)
             m_redraw |= m_drag_widget->on_mouse_button_released(mouse, kb);
 
@@ -534,7 +535,7 @@ namespace rl::ui {
     bool UICanvas::on_mouse_move(const Mouse& mouse, const Keyboard& kb)
     {
         bool ret{ false };
-        if constexpr (io::logging::gui_events)
+        if constexpr (io::logging::mouse_move_events)
             log::info("UICanvas::on_mouse_move => {}", mouse);
 
         ds::point<i32> mouse_pos{ mouse.pos() };
@@ -647,45 +648,4 @@ namespace rl::ui {
         m_redraw |= ui::Widget::on_character_input(kb);
         return m_redraw;
     }
-
-    // bool UICanvas::on_display_scale_changed(const WindowID id)
-    //{
-    //     m_pixel_ratio = SDL3::SDL_GetWindowDisplayScale(m_sdl_window);
-    //     sdl_assert(m_pixel_ratio != 0.0f, "failed to get pixel ratio [window:{}]", m_window_id);
-
-    //    m_pixel_density = SDL3::SDL_GetWindowPixelDensity(m_sdl_window);
-    //    sdl_assert(m_pixel_density != 0.0f, "failed to get pixel density [window:{}]",
-    //    m_window_id);
-
-    //    if constexpr (io::logging::gui_events)
-    //        log::info("window::on_display_scale_changed [id:{}, ratio:{}, density:{}]", id,
-    //                      m_pixel_ratio, m_pixel_density);
-
-    //    return m_pixel_ratio != 0.0f && m_pixel_density != 0.0f;
-    //}
-
-    // bool UICanvas::on_display_content_scale_changed(const DisplayID id)
-    //{
-    //     m_pixel_ratio = SDL3::SDL_GetWindowDisplayScale(m_sdl_window);
-    //     sdl_assert(m_pixel_ratio != 0.0f, "failed to get pixel ratio [window:{}]", m_window_id);
-
-    //    m_pixel_density = SDL3::SDL_GetWindowPixelDensity(m_sdl_window);
-    //    sdl_assert(m_pixel_density != 0.0f, "failed to get pixel density [window:{}]",
-    //    m_window_id);
-
-    //    if constexpr (io::logging::gui_events)
-    //        log::info("window::on_display_content_scale_changed [id:{}, ratio:{},
-    //        density:{}]",
-    //                      id, m_pixel_ratio, m_pixel_density);
-
-    //    return m_pixel_ratio != 0.0f && m_pixel_density != 0.0f;
-    //}
-
-    // bool UICanvas::on_destroyed(const WindowID id)
-    //{
-    //     bool ret = true;
-    //     if constexpr (io::logging::gui_events)
-    //         log::info("window::on_destroyed [id:{}]", id);
-    //     return ret;
-    // }
 }

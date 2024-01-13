@@ -5,10 +5,9 @@
 #include <numbers>
 #include <vector>
 
-#include "core/window.hpp"
 #include "ds/circle.hpp"
 #include "ds/color.hpp"
-#include "ds/point.hpp"
+#include "ds/rect.hpp"
 #include "ds/triangle.hpp"
 #include "ds/vector2d.hpp"
 #include "gl/shader.hpp"
@@ -17,10 +16,8 @@
 #include "utils/time.hpp"
 
 namespace rl::gl {
-    /**
-     * @brief OpenGL Vertex Buffer Object (VBO) representing a buffer of vertices
-     * that openGL can read from when executing shaders on the data being rendered
-     * */
+    // OpenGL Vertex Buffer Object (VBO) representing a buffer of vertices that
+    // openGL can read from when executing shaders on the data being rendered
     class InstancedVertexBuffer
     {
     public:

@@ -12,12 +12,12 @@
 
 #include "core/assert.hpp"
 #include "core/event_handler.hpp"
+#include "core/main_window.hpp"
 #include "core/renderer.hpp"
 #include "core/state/fsm.hpp"
 #include "core/state/states.hpp"
 #include "core/ui/button.hpp"
 #include "core/ui/gui.hpp"
-#include "core/window.hpp"
 #include "gl/instanced_buffer.hpp"
 #include "sdl/defs.hpp"
 #include "utils/crtp.hpp"
@@ -91,6 +91,11 @@ namespace rl {
             auto stats_value_label{ new ui::Label{ gui, "            ", ui::font::name::mono, 32 } };
             layout->append_row(0);
 
+            push_button->set_tooltip("Microscope Button");
+            push_button->set_callback([] {
+                log::warning("Button Pressed Callback Invoked");
+            });
+
             layout->set_anchor(push_button, ui::Anchor(0, layout->row_count() - 1, 1, 1));
             layout->set_anchor(title_label, ui::Anchor{
                                                 1,
@@ -114,11 +119,6 @@ namespace rl {
 
             timer_desc_label->set_tooltip("Timer Label");
             timer_value_label->set_tooltip("Elapsed Time");
-
-            push_button->set_tooltip("Microscope Button");
-            push_button->set_callback([] {
-                log::warning("Button Pressed Callback Invoked");
-            });
 
             stats_desc_label->set_tooltip("Stats Label");
             stats_value_label->set_tooltip("Average FPS");

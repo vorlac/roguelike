@@ -22,7 +22,7 @@ namespace rl {
         runtime_assert(mouse_button - 1 < Mouse::Button::Count, "invalid mouse button");
 
         // set in released buttons
-        m_buttons_released &= SDL_BUTTON(mouse_button);
+        m_buttons_released |= SDL_BUTTON(mouse_button);
         // clear from pressed buttons
         m_buttons_pressed &= ~SDL_BUTTON(mouse_button);
         // clear from held buttons

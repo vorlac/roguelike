@@ -1,9 +1,9 @@
 #pragma once
 
 #include "core/keyboard.hpp"
+#include "core/main_window.hpp"
 #include "core/mouse.hpp"
 #include "core/system.hpp"
-#include "core/window.hpp"
 #include "sdl/defs.hpp"
 #include "utils/conversions.hpp"
 #include "utils/io.hpp"

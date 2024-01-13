@@ -4,7 +4,7 @@
 #include <thread>
 
 #include "core/assert.hpp"
-#include "core/window.hpp"
+#include "core/main_window.hpp"
 #include "ds/color.hpp"
 #include "ds/dims.hpp"
 #include "ds/point.hpp"
