@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "core/ui/canvas.hpp"
+#include "core/ui/gui_canvas.hpp"
 #include "core/ui/widget.hpp"
 #include "ds/dims.hpp"
 

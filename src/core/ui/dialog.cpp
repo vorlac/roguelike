@@ -3,8 +3,8 @@
 
 #include <nanovg.h>
 
-#include "core/ui/canvas.hpp"
 #include "core/ui/dialog.hpp"
+#include "core/ui/gui_canvas.hpp"
 #include "ds/dims.hpp"
 #include "ds/point.hpp"
 #include "ds/vector2d.hpp"

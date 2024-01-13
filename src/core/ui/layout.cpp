@@ -3,8 +3,8 @@
 
 #include <nanovg.h>
 
-#include "core/ui/canvas.hpp"
 #include "core/ui/dialog.hpp"
+#include "core/ui/gui_canvas.hpp"
 #include "core/ui/label.hpp"
 #include "core/ui/layout.hpp"
 #include "core/ui/theme.hpp"

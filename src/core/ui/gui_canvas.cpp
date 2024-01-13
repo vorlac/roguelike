@@ -3,7 +3,7 @@
 #include "core/assert.hpp"
 #include "core/keyboard.hpp"
 #include "core/mouse.hpp"
-#include "core/ui/canvas.hpp"
+#include "core/ui/gui_canvas.hpp"
 #include "core/ui/popup.hpp"
 #include "utils/io.hpp"
 
@@ -292,7 +292,7 @@ namespace rl::ui {
 
         m_focus_path.clear();
 
-        ui::UICanvas* window{ nullptr };
+        ui::Widget* window{ nullptr };
         while (widget != nullptr)
         {
             m_focus_path.push_back(widget);
@@ -307,11 +307,8 @@ namespace rl::ui {
         for (auto focus_widget : std::ranges::reverse_view{ m_focus_path })
             focus_widget->on_focus_gained();
 
-        // TODO: restructure rl::Window to avoid crash when this ends up
-        // invalidating iterator in on_mouse_click()...
-        //
         // if (window != nullptr)
-        //     this->move_dialog_to_front(static_cast<Window*>(window));
+        //     this->move_dialog_to_front(static_cast<ui::Dialog*>(window));
     }
 
     void UICanvas::move_dialog_to_front(ui::Dialog* dialog)

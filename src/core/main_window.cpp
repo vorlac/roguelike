@@ -10,7 +10,7 @@
 #include "core/assert.hpp"
 #include "core/main_window.hpp"
 #include "core/renderer.hpp"
-#include "core/ui/canvas.hpp"
+#include "core/ui/gui_canvas.hpp"
 #include "core/ui/layout.hpp"
 #include "core/ui/popup.hpp"
 #include "ds/dims.hpp"
