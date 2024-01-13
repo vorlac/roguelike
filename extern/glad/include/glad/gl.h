@@ -21822,7 +21822,7 @@ typedef khronos_ssize_t GLsizeiptrARB;
 ///     width and height of the box. To enable and disable the scissor test, call glEnable and
 ///     glDisable with argument GL_SCISSOR_TEST. The test is initially disabled. While the test is
 ///     enabled, only pixels that lie within the scissor box can be modified by drawing commands.
-///     Window coordinates have integer values at the shared corners of frame buffer pixels.
+///     MainWindow coordinates have integer values at the shared corners of frame buffer pixels.
 ///     glScissor(0,0,1,1) allows modification of only the lower left pixel in the window, and
 ///     glScissor(0,0,0,0) doesn't allow modification of any pixels in the window. When the scissor
 ///     test is disabled, it is as though the scissor box includes the entire window.
@@ -21855,7 +21855,7 @@ typedef khronos_ssize_t GLsizeiptrARB;
 ///     and the width and height of the scissor box, in that order. To enable and disable the
 ///     scissor test, call glEnable and glDisable with argument GL_SCISSOR_TEST. The test is
 ///     initially disabled for all viewports. While the test is enabled, only pixels that lie within
-///     the scissor box can be modified by drawing commands. Window coordinates have integer values
+///     the scissor box can be modified by drawing commands. MainWindow coordinates have integer values
 ///     at the shared corners of frame buffer pixels. glScissor(0,0,1,1) allows modification of only
 ///     the lower left pixel in the window, and glScissor(0,0,0,0) doesn't allow modification of any
 ///     pixels in the window. When the scissor test is disabled, it is as though the scissor box

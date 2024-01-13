@@ -21,12 +21,12 @@ namespace rl::ui {
     using PixelFormat = i32;
     using ComponentFormat = i32;
 
-    class Screen : public ui::Widget
+    class UICanvas : public ui::Widget
     {
     public:
-        Screen(NVGcontext* nvg_context, ds::dims<i32> size, const Mouse& mouse, const Keyboard& kb,
-               const std::unique_ptr<VectorizedRenderer>& nvg_renderer);
-        ~Screen();
+        UICanvas(ds::dims<i32> size, const Mouse& mouse, const Keyboard& kb,
+                 const std::unique_ptr<VectorizedRenderer>& nvg_renderer);
+        ~UICanvas();
 
         bool redraw();
         bool draw_widgets();
@@ -38,9 +38,8 @@ namespace rl::ui {
 
         void set_visible(bool visible);
         void set_resize_callback(const std::function<void(ds::dims<i32>)>& callback);
-        void add_refresh_callback(const std::function<void()>& refresh_func);
+        void add_update_callback(const std::function<void()>& update_func);
         void drop_callback_event(i32 count, const char** filenames);
-        void nvg_flush();
 
         std::string title() const;
         ds::dims<i32> frame_buffer_size() const;
@@ -61,7 +60,7 @@ namespace rl::ui {
         ui::PixelFormat pixel_format() const;
 
     public:
-        virtual bool refresh();
+        virtual bool update();
 
         virtual bool draw_all();
         virtual bool draw_setup();
@@ -93,7 +92,7 @@ namespace rl::ui {
 
         std::vector<ui::Widget*> m_focus_path{};
         std::function<void(ds::dims<i32>)> m_resize_callback;
-        std::vector<std::function<void()>> m_refresh_callbacks;
+        std::vector<std::function<void()>> m_update_callbacks;
         std::array<SDL3::SDL_Cursor*, Mouse::Cursor::CursorCount> m_cursors{};
 
         std::string m_title{};

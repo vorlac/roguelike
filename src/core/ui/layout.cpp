@@ -3,10 +3,10 @@
 
 #include <nanovg.h>
 
+#include "core/ui/canvas.hpp"
 #include "core/ui/dialog.hpp"
 #include "core/ui/label.hpp"
 #include "core/ui/layout.hpp"
-#include "core/ui/screen.hpp"
 #include "core/ui/theme.hpp"
 #include "core/ui/widget.hpp"
 #include "ds/dims.hpp"
@@ -31,8 +31,8 @@ namespace rl::ui {
         };
 
         i32 y_offset{ 0 };
-        const ui::Screen* screen{ dynamic_cast<const ui::Screen*>(widget) };
-        if (screen != nullptr && !screen->title().empty())
+        const ui::UICanvas* gui_canvas{ dynamic_cast<const ui::UICanvas*>(widget) };
+        if (gui_canvas != nullptr && !gui_canvas->title().empty())
         {
             if (m_orientation == ui::Orientation::Vertical)
                 size.height += widget->theme()->m_window_header_height - this->m_margin / 2;
@@ -44,7 +44,7 @@ namespace rl::ui {
         i32 axis1{ std::to_underlying(m_orientation) };
         i32 axis2{ (std::to_underlying(m_orientation) + 1) % 2 };
 
-        for (auto& w : widget->children())
+        for (auto w : widget->children())
         {
             if (!w->visible())
                 continue;
@@ -52,12 +52,7 @@ namespace rl::ui {
             if (first)
                 first = false;
             else
-            {
-                // TODO: update width instead based
-                // on avis/orientation?
-                // size[axis1] += this->m_spacing;
-                size.height += this->m_spacing;
-            }
+                size.height += m_spacing;
 
             ds::dims<i32> ps{ w->preferred_size(nvg_context) };
             ds::dims<i32> fs{ w->fixed_size() };
@@ -66,13 +61,12 @@ namespace rl::ui {
                 fs.height ? fs.height : ps.height,
             };
 
-            // size[axis1] += target_size[axis1];
             size.width += target_size.width;
-            // size[axis2] = std::max(size[axis2], target_size[axis2] + 2 * this->m_margin);
-            size.height = std::max(size.height, target_size.height + (2 * this->m_margin));
+            size.height = std::max(size.height, target_size.height + (2 * m_margin));
             first = false;
         }
-        return size + ds::dims<i32>(0, y_offset);
+
+        return size + ds::dims<i32>{ 0, y_offset };
     }
 
     void BoxLayout::perform_layout(NVGcontext* nvg_context, ui::Widget* widget) const
@@ -86,8 +80,8 @@ namespace rl::ui {
         i32 position{ this->m_margin };
         i32 y_offset{ 0 };
 
-        const ui::Screen* screen{ dynamic_cast<const ui::Screen*>(widget) };
-        if (screen != nullptr && !screen->title().empty())
+        const ui::UICanvas* gui_canvas{ dynamic_cast<const ui::UICanvas*>(widget) };
+        if (gui_canvas != nullptr && !gui_canvas->title().empty())
         {
             if (m_orientation == ui::Orientation::Vertical)
                 position += widget->theme()->m_window_header_height - this->m_margin / 2;
@@ -198,8 +192,8 @@ namespace rl::ui {
     {
         i32 height = this->m_margin, width = 2 * this->m_margin;
 
-        const ui::Screen* screen{ dynamic_cast<const ui::Screen*>(widget) };
-        if (screen != nullptr && !screen->title().empty())
+        const ui::UICanvas* gui_canvas{ dynamic_cast<const ui::UICanvas*>(widget) };
+        if (gui_canvas != nullptr && !gui_canvas->title().empty())
             height += widget->theme()->m_window_header_height - this->m_margin / 2;
 
         bool first = true, indent = false;
@@ -237,8 +231,8 @@ namespace rl::ui {
         i32 available_width{ (widget->fixed_width() ? widget->fixed_width() : widget->width()) -
                              2 * this->m_margin };
 
-        const ui::Screen* screen{ dynamic_cast<const ui::Screen*>(widget) };
-        if (screen != nullptr && !screen->title().empty())
+        const ui::UICanvas* gui_canvas{ dynamic_cast<const ui::UICanvas*>(widget) };
+        if (gui_canvas != nullptr && !gui_canvas->title().empty())
             height += widget->theme()->m_window_header_height - this->m_margin / 2;
 
         bool first{ true };
@@ -334,8 +328,8 @@ namespace rl::ui {
                 std::max(static_cast<i32>(grid[1].size()) - 1, 0) * m_spacing.y,
         };
 
-        const ui::Screen* screen{ dynamic_cast<const ui::Screen*>(widget) };
-        if (screen != nullptr && !screen->title().empty())
+        const ui::UICanvas* gui_canvas{ dynamic_cast<const ui::UICanvas*>(widget) };
+        if (gui_canvas != nullptr && !gui_canvas->title().empty())
             pref_size.height += widget->theme()->m_window_header_height - this->m_margin / 2;
 
         return pref_size;
@@ -419,8 +413,8 @@ namespace rl::ui {
         };
 
         ds::dims<i32> extra{ 0, 0 };
-        const ui::Screen* screen{ dynamic_cast<const ui::Screen*>(widget) };
-        if (screen != nullptr && !screen->title().empty())
+        const ui::UICanvas* gui_canvas{ dynamic_cast<const ui::UICanvas*>(widget) };
+        if (gui_canvas != nullptr && !gui_canvas->title().empty())
             extra.height += widget->theme()->m_window_header_height - this->m_margin / 2;
 
         // Strech to size provided by ui::widget
@@ -656,8 +650,8 @@ namespace rl::ui {
             2 * m_margin,
         };
 
-        const ui::Screen* screen{ dynamic_cast<const ui::Screen*>(widget) };
-        if (screen != nullptr && !screen->title().empty())
+        const ui::UICanvas* gui_canvas{ dynamic_cast<const ui::UICanvas*>(widget) };
+        if (gui_canvas != nullptr && !gui_canvas->title().empty())
             extra.height += widget->theme()->m_window_header_height - this->m_margin / 2;
 
         return size + extra;
@@ -669,8 +663,8 @@ namespace rl::ui {
         this->compute_layout(nvg_context, widget, grid);
 
         grid[ui::Axis::Horizontal].insert(grid[ui::Axis::Horizontal].begin(), m_margin);
-        const ui::Screen* screen{ dynamic_cast<const ui::Screen*>(widget) };
-        if (screen == nullptr || screen->title().empty())
+        const ui::UICanvas* gui_canvas{ dynamic_cast<const ui::UICanvas*>(widget) };
+        if (gui_canvas == nullptr || gui_canvas->title().empty())
             grid[ui::Axis::Vertical].insert(grid[ui::Axis::Vertical].begin(), m_margin);
         else
         {
@@ -756,8 +750,8 @@ namespace rl::ui {
             2 * this->m_margin,
         };
 
-        const ui::Screen* screen{ dynamic_cast<const ui::Screen*>(widget) };
-        if (screen != nullptr && screen->title().length() == 0)
+        const ui::UICanvas* gui_canvas{ dynamic_cast<const ui::UICanvas*>(widget) };
+        if (gui_canvas != nullptr && gui_canvas->title().length() == 0)
             extra.height += widget->theme()->m_window_header_height - this->m_margin / 2;
 
         container_size -= extra;

@@ -63,6 +63,15 @@ namespace rl {
         return m_nvg_context;
     }
 
+    void VectorizedRenderer::flush(ds::dims<i32> viewport, f32 pixel_ratio)
+    {
+        // Flush all queued up NanoVG rendering commands
+        NVGparams* params{ nvgInternalParams(m_nvg_context) };
+        params->renderFlush(params->userPtr);
+        params->renderViewport(params->userPtr, static_cast<f32>(viewport.width),
+                               static_cast<f32>(viewport.height), pixel_ratio);
+    }
+
     void VectorizedRenderer::push_render_state()
     {
         nvgSave(m_nvg_context);

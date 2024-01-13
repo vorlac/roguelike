@@ -17,7 +17,7 @@ namespace rl {
     class EventHandler
     {
     public:
-        bool handle_events(std::unique_ptr<Window>& window)
+        bool handle_events(std::unique_ptr<MainWindow>& window)
         {
             SDL3::SDL_Event e{};
 
@@ -43,8 +43,8 @@ namespace rl {
                     case Keyboard::Event::KeyDown:
                     {
                         window->keyboard_key_pressed_event_callback(e);
-                        Keyboard::Button::type key{ e.key.keysym.scancode };
-                        if (key == Keyboard::Button::Escape) [[unlikely]]
+                        Keyboard::Scancode::ID key{ e.key.keysym.scancode };
+                        if (key == Keyboard::Scancode::Escape) [[unlikely]]
                             m_quit = true;
                         break;
                     }
@@ -58,163 +58,75 @@ namespace rl {
                         window->keyboard_char_event_callback(e);
                         break;
 
-                    // Window events
-                    case Window::Event::Shown:
-                    {
-                        const Window::Event::Data& window_event{ e.window };
-                        const WindowID id{ window_event.windowID };
-                        // window->on_shown(id);
+                    // MainWindow events
+                    case MainWindow::Event::Shown:
+                        window->window_shown_event_callback(e);
                         break;
-                    }
-                    case Window::Event::Hidden:
-                    {
-                        const Window::Event::Data& window_event{ e.window };
-                        const WindowID id{ window_event.windowID };
-                        // window->on_hidden(id);
+                    case MainWindow::Event::Hidden:
+                        window->window_hidden_event_callback(e);
                         break;
-                    }
-                    case Window::Event::Exposed:
-                    {
-                        const Window::Event::Data& window_event{ e.window };
-                        const WindowID id{ window_event.windowID };
-                        // window->on_exposed(id);
+                    case MainWindow::Event::Exposed:
+                        window->window_exposed_event_callback(e);
                         break;
-                    }
-                    case Window::Event::Moved:
-                    {
-                        const Window::Event::Data& window_event{ e.window };
-                        const WindowID id{ window_event.windowID };
-                        const i32 x{ window_event.data1 };
-                        const i32 y{ window_event.data2 };
-                        // window->on_moved(id, { x, y });
+                    case MainWindow::Event::Moved:
+                        window->window_moved_event_callback(e);
                         break;
-                    }
-                    case Window::Event::Resized:
-                    {
-                        const Window::Event::Data& window_event{ e.window };
-                        const WindowID id{ window_event.windowID };
+                    case MainWindow::Event::Resized:
                         window->window_resized_event_callback(e);
                         break;
-                    }
-                    case Window::Event::PixelSizeChanged:
-                    {
-                        const Window::Event::Data& window_event{ e.window };
-                        const WindowID id{ window_event.windowID };
-                        const i32 width{ window_event.data1 };
-                        const i32 height{ window_event.data2 };
-                        // window->on_pixel_size_changed(id, { width, height });
+                    case MainWindow::Event::PixelSizeChanged:
+                        window->window_pixel_size_changed_event_callback(e);
                         break;
-                    }
-                    case Window::Event::Minimized:
-                    {
-                        const Window::Event::Data& window_event{ e.window };
-                        const WindowID id{ window_event.windowID };
-                        // window->on_minimized(id);
+                    case MainWindow::Event::Minimized:
+                        window->window_minimized_event_callback(e);
                         break;
-                    }
-                    case Window::Event::Maximized:
-                    {
-                        const Window::Event::Data& window_event{ e.window };
-                        const WindowID id{ window_event.windowID };
-                        // window->on_maximized(id);
+                    case MainWindow::Event::Maximized:
+                        window->window_maximized_event_callback(e);
                         break;
-                    }
-                    case Window::Event::Restored:
-                    {
-                        const Window::Event::Data& window_event{ e.window };
-                        const WindowID id{ window_event.windowID };
-                        // window->on_restored(id);
+                    case MainWindow::Event::Restored:
+                        window->window_restored_event_callback(e);
                         break;
-                    }
-                    case Window::Event::MouseEnter:
-                    {
-                        const Window::Event::Data& window_event{ e.window };
-                        const WindowID id{ window_event.windowID };
+                    case MainWindow::Event::MouseEnter:
                         window->mouse_entered_event_callback(e);
                         break;
-                    }
-                    case Window::Event::MouseLeave:
-                    {
-                        const Window::Event::Data& window_event{ e.window };
-                        const WindowID id{ window_event.windowID };
+                    case MainWindow::Event::MouseLeave:
                         window->mouse_exited_event_callback(e);
                         break;
-                    }
-                    case Window::Event::FocusGained:
-                    {
-                        const Window::Event::Data& window_event{ e.window };
-                        const WindowID id{ window_event.windowID };
+                    case MainWindow::Event::FocusGained:
                         window->window_focus_gained_event_callback(e);
                         break;
-                    }
-                    case Window::Event::FocusLost:
-                    {
-                        const Window::Event::Data& window_event{ e.window };
-                        const WindowID id{ window_event.windowID };
+                    case MainWindow::Event::FocusLost:
                         window->window_focus_lost_event_callback(e);
                         break;
-                    }
-                    case Window::Event::CloseRequested:
-                    {
-                        const Window::Event::Data& window_event{ e.window };
-                        const WindowID id{ window_event.windowID };
-                        // window->on_close_requested(id);
+                    case MainWindow::Event::CloseRequested:
+                        window->window_close_requested_event_callback(e);
                         break;
-                    }
-                    case Window::Event::TakeFocus:
-                    {
-                        const Window::Event::Data& window_event{ e.window };
-                        const WindowID id{ window_event.windowID };
-                        // window->on_take_focus(id);
+                    case MainWindow::Event::TakeFocus:
+                        window->window_take_focus_event_callback(e);
                         break;
-                    }
-                    case Window::Event::HitTest:
-                    {
-                        const Window::Event::Data& window_event{ e.window };
-                        const WindowID id{ window_event.windowID };
-                        // window->on_hit_test(id);
+                    case MainWindow::Event::HitTest:
+                        window->window_hit_test_event_callback(e);
                         break;
-                    }
-                    case Window::Event::ICCProfChanged:
-                    {
-                        const Window::Event::Data& window_event{ e.window };
-                        const WindowID id{ window_event.windowID };
-                        // window->on_icc_profile_changed(id);
+                    case MainWindow::Event::ICCProfChanged:
+                        window->window_icc_profile_changed_callback(e);
                         break;
-                    }
-                    case Window::Event::DisplayChanged:
-                    {
-                        const Window::Event::Data& window_event{ e.window };
-                        const WindowID id{ window_event.windowID };
-                        // window->on_display_changed(id);
+                    case MainWindow::Event::DisplayChanged:
+                        window->window_display_changed_event_callback(e);
                         break;
-                    }
-                    case Window::Event::DisplayScaleChanged:
-                    {
-                        const Window::Event::Data& window_event{ e.window };
-                        const WindowID id{ window_event.windowID };
-                        // window->on_display_scale_changed(id);
+                    case MainWindow::Event::DisplayScaleChanged:
+                        window->window_display_scale_changed_event_callback(e);
                         break;
-                    }
-                    case Window::Event::Occluded:
-                    {
-                        const Window::Event::Data& window_event{ e.window };
-                        const WindowID id{ window_event.windowID };
-                        // window->on_occluded(id);
+                    case MainWindow::Event::Occluded:
+                        window->window_occluded_event_callback(e);
                         break;
-                    }
-                    case Window::Event::Destroyed:
-                    {
-                        const Window::Event::Data& window_event{ e.window };
-                        const WindowID id{ window_event.windowID };
-                        // window->on_destroyed(id);
+                    case MainWindow::Event::Destroyed:
+                        window->window_destroyed_event_callback(e);
                         break;
-                    }
 
                     // Display events
-                    case Window::DisplayEvent::ContentScaleChanged:
+                    case MainWindow::DisplayEvent::ContentScaleChanged:
                     {
-                        const Window::DisplayEvent::Data& window_event{ e.display };
+                        const MainWindow::DisplayEvent::Data& window_event{ e.display };
                         const DisplayID id{ window_event.displayID };
                         // window->on_display_content_scale_changed(id);
                         break;

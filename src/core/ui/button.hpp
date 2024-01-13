@@ -64,8 +64,8 @@ namespace rl::ui {
         virtual ds::dims<i32> preferred_size(NVGcontext* ctx) const override;
 
     private:
-        bool handle_mouse_button_event(const ds::point<i32>& pt, Mouse::Button::type button,
-                                       bool down, i32 modifiers);
+        bool handle_mouse_button_event(const ds::point<i32>& pt, Mouse::Button::ID button,
+                                       bool down, Keyboard::Scancode::ID modifiers);
 
     protected:
         std::string m_caption{};

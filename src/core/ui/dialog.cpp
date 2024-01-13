@@ -3,8 +3,8 @@
 
 #include <nanovg.h>
 
+#include "core/ui/canvas.hpp"
 #include "core/ui/dialog.hpp"
-#include "core/ui/screen.hpp"
 #include "ds/dims.hpp"
 #include "ds/point.hpp"
 #include "ds/vector2d.hpp"
@@ -59,7 +59,7 @@ namespace rl::ui {
         while (owner->parent() != nullptr)
             owner = owner->parent();
 
-        static_cast<ui::Screen*>(owner)->dispose_dialog(this);
+        static_cast<ui::UICanvas*>(owner)->dispose_dialog(this);
     }
 
     void Dialog::center()
@@ -68,7 +68,7 @@ namespace rl::ui {
         while (owner->parent() != nullptr)
             owner = owner->parent();
 
-        static_cast<ui::Screen*>(owner)->center_dialog(this);
+        static_cast<ui::UICanvas*>(owner)->center_dialog(this);
     }
 
     void Dialog::draw(NVGcontext* ctx)
@@ -164,9 +164,9 @@ namespace rl::ui {
     bool Dialog::on_mouse_drag(const Mouse& mouse, const Keyboard& kb)
     {
         if constexpr (io::logging::window_events)
-            rl::log::info("Dialog::on_mouse_drag [pt:{}, rel:{}, btn:{}, mod:{}]", mouse.pos(),
-                          mouse.pos_delta(), mouse.button_pressed(),
-                          kb.is_button_down(Keyboard::Button::Modifiers));
+            log::info("Dialog::on_mouse_drag [pt:{}, rel:{}, btn:{}, mod:{}]", mouse.pos(),
+                      mouse.pos_delta(), std::to_underlying(mouse.button_pressed()),
+                      kb.is_button_down(Keyboard::Scancode::Modifiers));
 
         if (m_drag && mouse.is_button_held(Mouse::Button::Left))
         {
@@ -189,7 +189,8 @@ namespace rl::ui {
     bool Dialog::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb)
     {
         if constexpr (io::logging::window_events)
-            rl::log::info("Dialog::on_mouse_button_pressed [button:{}]", mouse.button_pressed());
+            rl::log::info("Dialog::on_mouse_button_pressed [button:{}]",
+                          std::to_underlying(mouse.button_pressed()));
 
         if (ui::Widget::on_mouse_button_pressed(mouse, kb))
             return true;
@@ -207,7 +208,8 @@ namespace rl::ui {
     bool Dialog::on_mouse_button_released(const Mouse& mouse, const Keyboard& kb)
     {
         if constexpr (io::logging::window_events)
-            rl::log::info("Dialog::on_mouse_button_released [button:{}]", mouse.button_released());
+            rl::log::info("Dialog::on_mouse_button_released [button:{}]",
+                          std::to_underlying(mouse.button_released()));
 
         if (ui::Widget::on_mouse_button_released(mouse, kb))
             return true;

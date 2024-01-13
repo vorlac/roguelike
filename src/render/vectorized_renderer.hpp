@@ -17,6 +17,8 @@ namespace rl {
 
         NVGcontext* nvg_context() const;
 
+        void flush(ds::dims<i32> viewport, f32 pixel_ratio);
+
         // saves the current context render state to an internal
         // stack that tracks all theme, text, AA, etc settings
         void push_render_state();

@@ -5,10 +5,6 @@
 
 #include "core/assert.hpp"
 #include "core/renderer.hpp"
-#include "core/window.hpp"
-#include "ds/color.hpp"
-#include "ds/dims.hpp"
-#include "gl/shader.hpp"
 #include "render/vectorized_renderer.hpp"
 #include "sdl/defs.hpp"
 #include "utils/io.hpp"
@@ -47,7 +43,7 @@ namespace rl {
         return gl_context;
     }
 
-    OpenGLRenderer::OpenGLRenderer(rl::Window& window, rl::OpenGLRenderer::Properties flags)
+    OpenGLRenderer::OpenGLRenderer(rl::MainWindow& window, rl::OpenGLRenderer::Properties flags)
         : m_properties{ flags }
         , m_sdl_glcontext{ create_opengl_context(window.sdl_handle()) }
         , m_nvg_renderer{ std::make_unique<rl::VectorizedRenderer>() }
@@ -68,7 +64,7 @@ namespace rl {
         return true;
     }
 
-    bool OpenGLRenderer::swap_buffers(rl::Window& window)
+    bool OpenGLRenderer::swap_buffers(rl::MainWindow& window)
     {
         i32 result = SDL3::SDL_GL_SwapWindow(window.sdl_handle());
         sdl_assert(result == 0, "OpenGL renderer buffer swap failed");

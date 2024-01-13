@@ -8,7 +8,6 @@
 #include <type_traits>
 #include <utility>
 
-#include <flecs.h>
 #include <fmt/chrono.h>
 #include <fmt/color.h>
 #include <fmt/format.h>
@@ -40,26 +39,10 @@ namespace rl::io {
         constexpr static inline bool kb_events{ false };
         constexpr static inline bool mouse_events{ false };
         constexpr static inline bool window_events{ true };
+        constexpr static inline bool gui_events{ true };
         constexpr static inline bool main_loop{ false };
         constexpr static inline bool rendering{ false };
     };
-}
-
-namespace flecs {
-    constexpr auto format_as(const flecs::string& str)
-    {
-        return fmt::string_view{ str.c_str() };
-    }
-
-    constexpr auto format_as(const flecs::string_view& str)
-    {
-        return fmt::string_view{ str.c_str() };
-    }
-
-    constexpr auto format_as(const flecs::entity& e)
-    {
-        return fmt::string_view{ e.name().c_str() };
-    }
 }
 
 namespace rl::log {

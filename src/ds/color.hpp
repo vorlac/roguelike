@@ -389,6 +389,7 @@ namespace rl {
         constexpr static inline ds::color<f32> Grey{ 0xA6A6A6FF };
         constexpr static inline ds::color<f32> DarkGrey{ 0x262B33FF };
         constexpr static inline ds::color<f32> DarkerGrey{ 0x333333FF };
+        constexpr static inline ds::color<f32> DarkererGrey{ 0x111111FF };
         constexpr static inline ds::color<f32> Black{ 0x000000FF };
 
         constexpr static inline ds::color<f32> Red{ 0xD4A4A4FF };

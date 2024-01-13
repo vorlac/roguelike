@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "core/ui/screen.hpp"
+#include "core/ui/canvas.hpp"
 #include "core/ui/widget.hpp"
 #include "ds/dims.hpp"
 
@@ -23,8 +23,9 @@ namespace rl {
             void center();
 
             bool modal() const;
-            ui::Widget* button_panel();
             const std::string& title() const;
+
+            ui::Widget* button_panel();
 
             void set_title(const std::string& title);
             void set_modal(bool modal);

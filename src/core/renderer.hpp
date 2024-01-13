@@ -1,19 +1,6 @@
 ﻿#pragma once
 
-#include <bitset>
-#include <memory>
-#include <string_view>
-#include <utility>
-#include <vector>
-
-#include "ds/color.hpp"
-#include "ds/dims.hpp"
-#include "ds/point.hpp"
-#include "ds/rect.hpp"
-#include "ds/triangle.hpp"
 #include "sdl/texture.hpp"
-#include "utils/io.hpp"
-#include "utils/numeric.hpp"
 
 SDL_C_LIB_BEGIN
 #include <SDL3/SDL_blendmode.h>
@@ -24,7 +11,7 @@ SDL_C_LIB_END
 struct NVGLUframebuffer;
 
 namespace rl {
-    class Window;
+    class MainWindow;
     class VectorizedRenderer;
 
     class OpenGLRenderer
@@ -63,14 +50,14 @@ namespace rl {
         };
 
     public:
-        explicit OpenGLRenderer(rl::Window& window, OpenGLRenderer::Properties flags);
+        explicit OpenGLRenderer(rl::MainWindow& window, OpenGLRenderer::Properties flags);
         ~OpenGLRenderer() = default;
 
         SDL3::SDL_GLContext gl_context() const;
         NVGcontext* nvg_context();
 
         bool clear();
-        bool swap_buffers(rl::Window& window);
+        bool swap_buffers(rl::MainWindow& window);
 
         ds::dims<i32> get_output_size() const;
         ds::rect<i32> get_viewport() const;

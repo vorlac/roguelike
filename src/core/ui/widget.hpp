@@ -52,19 +52,18 @@ namespace rl::ui {
 
         ui::Dialog* dialog();
         ui::Widget* parent();
-        ui::layout* layout();
+        ui::Layout* layout();
         ui::Theme* theme();
-        ui::Widget* child_at(i32 index);
+        rl::Mouse::Cursor::ID cursor() const;
         ui::Widget* find_widget(ds::point<i32> pt);
         ds::point<i32> position() const;
         ds::point<i32> abs_position() const;
         ds::dims<i32> fixed_size() const;
         ds::dims<i32> size() const;
-        Mouse::Cursor::ID cursor() const;
 
         const ui::Dialog* dialog() const;
         const ui::Widget* parent() const;
-        const ui::layout* layout() const;
+        const ui::Layout* layout() const;
         const ui::Theme* theme() const;
         const ui::Widget* child_at(i32 index) const;
         const ui::Widget* find_widget(ds::point<i32> pt) const;
@@ -77,7 +76,7 @@ namespace rl::ui {
         void add_child(ui::Widget* widget);
 
         void set_parent(ui::Widget* parent);
-        void set_layout(ui::layout* layout);
+        void set_layout(ui::Layout* layout);
         void set_position(ds::point<i32> pos);
         void set_size(ds::dims<i32> size);
         void set_width(i32 width);
@@ -92,12 +91,6 @@ namespace rl::ui {
         void set_font_size(i32 font_size);
         void set_icon_extra_scale(f32 scale);
         void set_cursor(Mouse::Cursor::ID cursor);
-
-        template <typename TWidget, typename... TArgs>
-        TWidget* add(const TArgs&... args)
-        {
-            return new TWidget{ this, args... };
-        }
 
     public:
         virtual bool on_focus_gained();
@@ -134,7 +127,7 @@ namespace rl::ui {
         ui::Widget* m_parent{ nullptr };
         NVGcontext* m_nvg_context{ nullptr };
         ds::shared<ui::Theme> m_theme{ nullptr };
-        ds::shared<ui::layout> m_layout{ nullptr };
+        ds::shared<ui::Layout> m_layout{ nullptr };
         static inline rl::VectorizedRenderer* m_nvg_renderer{ nullptr };
 
         bool m_enabled{ true };

@@ -10,7 +10,6 @@
 #include <utility>
 
 #include "ds/dims.hpp"
-#include "ecs/components/transform_components.hpp"
 #include "sdl/defs.hpp"
 #include "utils/concepts.hpp"
 #include "utils/conversions.hpp"
@@ -63,14 +62,6 @@ namespace rl::ds {
         {
         }
 
-        constexpr inline vector2(const rl::component::position& pos)
-            requires std::same_as<T, f32>
-            : x{ pos.x }
-            , y{ pos.y }
-            , z{ T(0) }
-        {
-        }
-
         constexpr inline vector2(const SDL3::SDL_Point& pt)
             requires std::same_as<T, i32>
             : x{ pt.x }
@@ -114,12 +105,6 @@ namespace rl::ds {
             requires std::same_as<T, f32>
         {
             return reinterpret_cast<const SDL3::SDL_FPoint*>(this);
-        }
-
-        constexpr inline operator const rl::component::position() const
-            requires std::same_as<T, f32>
-        {
-            return *static_cast<const rl::component::position*>(this);
         }
 
         constexpr static inline vector2<T> null()

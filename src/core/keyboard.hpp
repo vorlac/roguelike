@@ -23,9 +23,7 @@ namespace rl {
     public:
         // clang-format off
         
-        /* *
-         * @brief Keyboard Specific Event Identifiers
-         * */
+        // Keyboard Specific Event Identifiers
         struct Event
         {
             using type = SDL3::SDL_EventType;
@@ -41,15 +39,12 @@ namespace rl {
 
         // clang-format on
 
-        /* *
-         * @brief Keyboard Scancode Identifiers
-         * */
-        struct Button
+        // Keyboard Scancode Identifiers
+        struct Scancode
         {
-            using type_t = SDL3::SDL_Scancode;
-            using type = std::underlying_type_t<type_t>;
+            using type = SDL3::SDL_Scancode;
 
-            enum Scancode : type {
+            enum ID : std::underlying_type_t<type> {
                 Unknown = SDL3::SDL_SCANCODE_UNKNOWN,
                 A = SDL3::SDL_SCANCODE_A,
                 B = SDL3::SDL_SCANCODE_B,
@@ -297,7 +292,7 @@ namespace rl {
                 SoftRight = SDL3::SDL_SCANCODE_SOFTRIGHT,
                 Call = SDL3::SDL_SCANCODE_CALL,
                 EndCall = SDL3::SDL_SCANCODE_ENDCALL,
-                ScancodeCount = SDL3::SDL_NUM_SCANCODES,
+                Count = SDL3::SDL_NUM_SCANCODES,
 
                 Ctrl = LCtrl | RCtrl,
                 Shift = LShift | RShift,
@@ -305,9 +300,7 @@ namespace rl {
             };
         };
 
-        /* *
-         * @brief Keyboard Keycode Identifiers
-         * */
+        // Keyboard Keycode Identifiers
         struct Key
         {
             using type = SDL3::SDL_KeyCode;
@@ -565,21 +558,21 @@ namespace rl {
         [[nodiscard]] std::string get_inputted_text_compisition() const;
         [[nodiscard]] i32 get_inputted_text_cursor_loc() const;
         [[nodiscard]] i32 get_inputted_text_length() const;
-        [[nodiscard]] Keyboard::Button::type keys_down() const;
-        [[nodiscard]] std::string get_key_state(const Keyboard::Button::type kb_button) const;
+        [[nodiscard]] Keyboard::Scancode::ID keys_down() const;
+        [[nodiscard]] std::string get_key_state(const Scancode::ID kb_button) const;
 
-        [[nodiscard]] bool is_button_pressed(const Keyboard::Button::type key) const;
-        [[nodiscard]] bool is_button_released(const Keyboard::Button::type key) const;
-        [[nodiscard]] bool is_button_held(const Keyboard::Button::type key) const;
-        [[nodiscard]] bool is_button_down(const Keyboard::Button::type key) const;
-        [[nodiscard]] bool all_buttons_down(std::vector<Keyboard::Button::type> keys) const;
-        [[nodiscard]] bool any_buttons_down(std::vector<Keyboard::Button::type> keys) const;
+        [[nodiscard]] bool is_button_pressed(const Scancode::ID key) const;
+        [[nodiscard]] bool is_button_released(const Scancode::ID key) const;
+        [[nodiscard]] bool is_button_held(const Scancode::ID key) const;
+        [[nodiscard]] bool is_button_down(const Scancode::ID key) const;
+        [[nodiscard]] bool all_buttons_down(std::vector<Scancode::ID> keys) const;
+        [[nodiscard]] bool any_buttons_down(std::vector<Scancode::ID> keys) const;
 
     protected:
-        friend class Window;
+        friend class MainWindow;
 
-        void process_button_down(Keyboard::Button::type key);
-        void process_button_up(Keyboard::Button::type key);
+        void process_button_down(Scancode::ID key);
+        void process_button_up(Scancode::ID key);
         void process_text_input(const char* text);
         void process_text_editing(const char* composition, i32 start, i32 length);
 
@@ -588,9 +581,9 @@ namespace rl {
         i32 m_text_length{ 0 };
         std::string m_text{ "" };
         std::string m_composition{ "" };
-        std::bitset<Button::ScancodeCount> m_held{ 0 };
-        std::bitset<Button::ScancodeCount> m_pressed{ 0 };
-        mutable std::bitset<Button::ScancodeCount> m_released{ 0 };
+        std::bitset<Scancode::Count> m_held{ 0 };
+        std::bitset<Scancode::Count> m_pressed{ 0 };
+        mutable std::bitset<Scancode::Count> m_released{ 0 };
     };
 }
 
@@ -598,9 +591,9 @@ namespace rl {
     inline auto format_as(const Keyboard& kb)
     {
         return fmt::format("KB[W={} A={}, S={}, D={}]",
-                           kb.get_key_state(Keyboard::Button::W),  //
-                           kb.get_key_state(Keyboard::Button::A),  //
-                           kb.get_key_state(Keyboard::Button::S),  //
-                           kb.get_key_state(Keyboard::Button::D));
+                           kb.get_key_state(Keyboard::Scancode::W),  //
+                           kb.get_key_state(Keyboard::Scancode::A),  //
+                           kb.get_key_state(Keyboard::Scancode::S),  //
+                           kb.get_key_state(Keyboard::Scancode::D));
     }
 }

@@ -74,8 +74,8 @@ namespace rl::ui {
     class Widget;
 
     /// @brief
-    ///     The common layout interface
-    class layout : public ds::refcounted
+    ///     The common Layout interface
+    class Layout : public ds::refcounted
     {
     public:
         template <typename T>
@@ -87,16 +87,16 @@ namespace rl::ui {
 
     public:
         /// @brief
-        ///     Performs applies all layout computations for the given widget.
+        ///     Performs applies all Layout computations for the given widget.
         ///
         /// @param  nvc
         ///     The NanoVG context being used for drawing.
         /// @param  w
-        ///     The Widget whose child widgets will be positioned by the layout class.
+        ///     The Widget whose child widgets will be positioned by the Layout class.
         virtual void perform_layout(NVGcontext* nvc, ui::Widget* w) const = 0;
 
         /// @brief
-        ///     Compute the preferred size for a given layout and widget
+        ///     Compute the preferred size for a given Layout and widget
         ///
         /// @param  nvc
         ///     The NanoVG context being used for drawing.
@@ -109,13 +109,13 @@ namespace rl::ui {
     };
 
     /// @brief
-    ///     Box Layout is a simple layout that supports horizontal and vertical
+    ///     Box Layout is a simple Layout that supports horizontal and vertical
     ///     orientation.
     ///
-    ///     Aside form defining the ui::layout interface for sizing and
-    ///     performing the layout, a box_layout only handles basic orientation,
+    ///     Aside form defining the ui::Layout interface for sizing and
+    ///     performing the Layout, a box_layout only handles basic orientation,
     ///     margins and spacing.
-    class BoxLayout : public layout
+    class BoxLayout : public Layout
     {
     public:
         BoxLayout(ui::Orientation orientation,                      // horizontal or vertical
@@ -147,9 +147,9 @@ namespace rl::ui {
     /// Group Layout
     ///
     /// @brief
-    ///     Aside form definint the ui::layout interface for sizing and performing the layout, a
+    ///     Aside form definint the ui::Layout interface for sizing and performing the Layout, a
     ///     box_layout only handles basic orientation, margins and spacing.
-    class GroupLayout : public layout
+    class GroupLayout : public Layout
     {
     public:
         GroupLayout(i32 margin = 15, i32 spacing = 6, i32 group_spacing = 14, i32 group_indent = 20)
@@ -181,7 +181,7 @@ namespace rl::ui {
         i32 m_group_indent{ 0 };
     };
 
-    class GridLayout : public layout
+    class GridLayout : public Layout
     {
     public:
         GridLayout(ui::Orientation orientation = ui::Orientation::Horizontal,  //
@@ -230,7 +230,7 @@ namespace rl::ui {
         std::array<std::vector<ui::Alignment>, 2> m_alignment{ { {}, {} } };
     };
 
-    class AdvancedGridLayout : public layout
+    class AdvancedGridLayout : public Layout
     {
     public:
         AdvancedGridLayout(const std::vector<i32>& cols = {}, const std::vector<i32>& rows = {},

@@ -2,9 +2,9 @@
 
 #include "core/keyboard.hpp"
 #include "core/mouse.hpp"
+#include "core/ui/canvas.hpp"
 #include "core/ui/dialog.hpp"
 #include "core/ui/layout.hpp"
-#include "core/ui/screen.hpp"
 #include "core/ui/theme.hpp"
 #include "core/ui/widget.hpp"
 #include "core/window.hpp"
@@ -13,14 +13,15 @@
 #include "render/vectorized_renderer.hpp"
 
 namespace rl::ui {
-    Widget::Widget(Widget* parent)
+
+    Widget::Widget(ui::Widget* parent)
         : m_parent{ parent }
     {
         if (parent != nullptr)
             parent->add_child(this);
     }
 
-    Widget::Widget(Widget* parent, const std::unique_ptr<VectorizedRenderer>& vec_renderer)
+    Widget::Widget(ui::Widget* parent, const std::unique_ptr<VectorizedRenderer>& vec_renderer)
         : m_parent{ parent }
     {
         runtime_assert(m_nvg_renderer == nullptr, "widget vectorized renderer already set");
@@ -38,32 +39,32 @@ namespace rl::ui {
                 child->release_ref();
     }
 
-    Widget* Widget::parent()
+    ui::Widget* Widget::parent()
     {
         return m_parent;
     }
 
-    const Widget* Widget::parent() const
+    const ui::Widget* Widget::parent() const
     {
         return m_parent;
     }
 
-    void Widget::set_parent(Widget* parent)
+    void Widget::set_parent(ui::Widget* parent)
     {
         m_parent = parent;
     }
 
-    ui::layout* Widget::layout()
+    ui::Layout* Widget::layout()
     {
         return m_layout;
     }
 
-    const ui::layout* Widget::layout() const
+    const ui::Layout* Widget::layout() const
     {
         return m_layout.get();
     }
 
-    void Widget::set_layout(ui::layout* layout)
+    void Widget::set_layout(ui::Layout* layout)
     {
         m_layout = layout;
     }
@@ -100,7 +101,6 @@ namespace rl::ui {
 
     ds::point<i32> Widget::abs_position() const
     {
-        // Return the position in absolute screen coords
         return m_parent != nullptr                   //
                  ? m_parent->abs_position() + m_pos  //
                  : m_pos;                            //
@@ -212,11 +212,6 @@ namespace rl::ui {
         return m_children[index];
     }
 
-    Widget* Widget::child_at(i32 index)
-    {
-        return m_children[index];
-    }
-
     const std::vector<Widget*>& Widget::children() const
     {
         return m_children;
@@ -244,12 +239,14 @@ namespace rl::ui {
         {
             for (auto child : m_children)
             {
-                ds::dims<i32>&& pref{ child->preferred_size(nvg_context) };
-                ds::dims<i32>&& fix{ child->fixed_size() };
+                auto&& pref{ child->preferred_size(nvg_context) };
+                auto&& fix{ child->fixed_size() };
+
                 child->set_size(ds::dims<i32>{
                     fix.width ? fix.width : pref.width,
                     fix.height ? fix.height : pref.height,
                 });
+
                 child->perform_layout(nvg_context);
             }
         }
@@ -529,20 +526,17 @@ namespace rl::ui {
         while (widget->parent() != nullptr)
             widget = widget->parent();
 
-        static_cast<ui::Screen*>(widget)->update_focus(this);
+        static_cast<ui::UICanvas*>(widget)->update_focus(this);
     }
 
     void Widget::draw_mouse_intersection(NVGcontext* nvg_context, ds::point<i32> pt)
     {
-        // if constexpr (Widget::DiagnosticsEnabled)
-        //{
         if (!this->contains(pt))
             return;
 
-        //  render green widget outlines
         ds::rect<i32>{ this->abs_position(), m_size };
         m_nvg_renderer->draw_rect_outline(ds::rect<i32>{ this->abs_position(), m_size }, 1.0f,
-                                          rl::Colors::Cyan, ui::Outline::Inner);
+                                          rl::Colors::Yellow, ui::Outline::Inner);
 
         for (auto child : m_children)
         {
@@ -551,7 +545,6 @@ namespace rl::ui {
 
             child->draw_mouse_intersection(nvg_context, pt);
         }
-        //}
     }
 
     void Widget::draw(NVGcontext* nvg_context)

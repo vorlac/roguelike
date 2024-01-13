@@ -459,10 +459,10 @@ namespace rl::ui {
             m_mouse_down_pos = mouse_pos;
 
             m_mouse_down_modifier = 0;
-            if (kb.is_button_down(Keyboard::Button::LCtrl))
-                m_mouse_down_modifier |= Keyboard::Button::LCtrl;
-            if (kb.is_button_down(Keyboard::Button::LShift))
-                m_mouse_down_modifier |= Keyboard::Button::LShift;
+            if (kb.is_button_down(Keyboard::Scancode::LCtrl))
+                m_mouse_down_modifier |= Keyboard::Scancode::LCtrl;
+            if (kb.is_button_down(Keyboard::Scancode::LShift))
+                m_mouse_down_modifier |= Keyboard::Scancode::LShift;
 
             f32 time{ m_timer.elapsed() };
             if (time - m_last_click < 0.25f)
@@ -482,10 +482,10 @@ namespace rl::ui {
             {
                 m_mouse_down_pos = mouse_pos;
                 m_mouse_down_modifier = 0;
-                if (kb.is_button_down(Keyboard::Button::LCtrl))
-                    m_mouse_down_modifier |= Keyboard::Button::LCtrl;
-                if (kb.is_button_down(Keyboard::Button::LShift))
-                    m_mouse_down_modifier |= Keyboard::Button::LShift;
+                if (kb.is_button_down(Keyboard::Scancode::LCtrl))
+                    m_mouse_down_modifier |= Keyboard::Scancode::LCtrl;
+                if (kb.is_button_down(Keyboard::Scancode::LShift))
+                    m_mouse_down_modifier |= Keyboard::Scancode::LShift;
 
                 f32 time{ m_timer.elapsed() };
                 if (time - m_last_click < 0.25f)
@@ -602,9 +602,9 @@ namespace rl::ui {
         if (m_editable && this->focused())
         {
             // TODO: make sure repeat/hold keys is handled
-            if (kb.is_button_pressed(Keyboard::Button::Left))
+            if (kb.is_button_pressed(Keyboard::Scancode::Left))
             {
-                if (kb.is_button_down(Keyboard::Button::LShift))
+                if (kb.is_button_down(Keyboard::Scancode::LShift))
                 {
                     if (m_selection_pos == -1)
                         m_selection_pos = m_cursor_pos;
@@ -617,9 +617,9 @@ namespace rl::ui {
                 if (m_cursor_pos > 0)
                     m_cursor_pos--;
             }
-            else if (kb.is_button_pressed(Keyboard::Button::Right))
+            else if (kb.is_button_pressed(Keyboard::Scancode::Right))
             {
-                if (kb.is_button_down(Keyboard::Button::Shift))
+                if (kb.is_button_down(Keyboard::Scancode::Shift))
                 {
                     if (m_selection_pos == -1)
                         m_selection_pos = m_cursor_pos;
@@ -632,9 +632,9 @@ namespace rl::ui {
                 if (m_cursor_pos < static_cast<int>(m_value_temp.length()))
                     m_cursor_pos++;
             }
-            else if (kb.is_button_pressed(Keyboard::Button::Home))
+            else if (kb.is_button_pressed(Keyboard::Scancode::Home))
             {
-                if (kb.is_button_down(Keyboard::Button::Shift))
+                if (kb.is_button_down(Keyboard::Scancode::Shift))
                 {
                     if (m_selection_pos == -1)
                         m_selection_pos = m_cursor_pos;
@@ -646,9 +646,9 @@ namespace rl::ui {
 
                 m_cursor_pos = 0;
             }
-            else if (kb.is_button_pressed(Keyboard::Button::End))
+            else if (kb.is_button_pressed(Keyboard::Scancode::End))
             {
-                if (kb.is_button_down(Keyboard::Button::Shift))
+                if (kb.is_button_down(Keyboard::Scancode::Shift))
                 {
                     if (m_selection_pos == -1)
                         m_selection_pos = m_cursor_pos;
@@ -660,7 +660,7 @@ namespace rl::ui {
 
                 m_cursor_pos = static_cast<i32>(m_value_temp.size());
             }
-            else if (kb.is_button_pressed(Keyboard::Button::Backspace))
+            else if (kb.is_button_pressed(Keyboard::Scancode::Backspace))
             {
                 if (!this->delete_selection())
                 {
@@ -671,7 +671,7 @@ namespace rl::ui {
                     }
                 }
             }
-            else if (kb.is_button_pressed(Keyboard::Button::Delete))
+            else if (kb.is_button_pressed(Keyboard::Scancode::Delete))
             {
                 if (!this->delete_selection())
                 {
@@ -679,30 +679,30 @@ namespace rl::ui {
                         m_value_temp.erase(m_value_temp.begin() + m_cursor_pos);
                 }
             }
-            else if (kb.is_button_pressed(Keyboard::Button::Return))
+            else if (kb.is_button_pressed(Keyboard::Scancode::Return))
             {
                 if (!m_committed)
                     this->on_focus_lost();
             }
-            else if (kb.is_button_pressed(Keyboard::Button::A) &&
-                     kb.is_button_down(Keyboard::Button::LCtrl))
+            else if (kb.is_button_pressed(Keyboard::Scancode::A) &&
+                     kb.is_button_down(Keyboard::Scancode::LCtrl))
             {
                 m_cursor_pos = static_cast<i32>(m_value_temp.length());
                 m_selection_pos = 0;
             }
-            else if (kb.is_button_pressed(Keyboard::Button::X) &&
-                     kb.is_button_down(Keyboard::Button::LCtrl))
+            else if (kb.is_button_pressed(Keyboard::Scancode::X) &&
+                     kb.is_button_down(Keyboard::Scancode::LCtrl))
             {
                 copy_selection();
                 delete_selection();
             }
-            else if (kb.is_button_pressed(Keyboard::Button::C) &&
-                     kb.is_button_down(Keyboard::Button::LCtrl))
+            else if (kb.is_button_pressed(Keyboard::Scancode::C) &&
+                     kb.is_button_down(Keyboard::Scancode::LCtrl))
             {
                 copy_selection();
             }
-            else if (kb.is_button_pressed(Keyboard::Button::V) &&
-                     kb.is_button_down(Keyboard::Button::LCtrl))
+            else if (kb.is_button_pressed(Keyboard::Scancode::V) &&
+                     kb.is_button_down(Keyboard::Scancode::LCtrl))
             {
                 this->delete_selection();
                 this->paste_from_clipboard();
@@ -821,7 +821,7 @@ namespace rl::ui {
         // handle mouse cursor events
         if (m_mouse_down_pos.x != -1)
         {
-            if ((m_mouse_down_modifier & Keyboard::Button::LShift) == 0)
+            if ((m_mouse_down_modifier & Keyboard::Scancode::LShift) == 0)
                 m_selection_pos = -1;
             else if (m_selection_pos == -1)
                 m_selection_pos = m_cursor_pos;

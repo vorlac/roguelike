@@ -1,11 +1,7 @@
 #pragma once
 
-#include <vector>
-
 #include "ds/point.hpp"
-#include "ds/vector2d.hpp"
 #include "sdl/defs.hpp"
-#include "utils/numeric.hpp"
 
 SDL_C_LIB_BEGIN
 #include <SDL3/SDL_events.h>
@@ -16,6 +12,8 @@ namespace rl {
     class Mouse
     {
     public:
+        friend class MainWindow;
+
         struct Event
         {
             using type_t = SDL3::SDL_EventType;
@@ -92,21 +90,21 @@ namespace rl {
         [[nodiscard]] ds::point<i32> pos() const;
         [[nodiscard]] ds::vector2<i32> wheel() const;
         [[nodiscard]] ds::vector2<i32> pos_delta() const;
-        [[nodiscard]] Mouse::Button::type button_pressed() const;
-        [[nodiscard]] Mouse::Button::type button_released() const;
+        [[nodiscard]] Mouse::Button::ID button_pressed() const;
+        [[nodiscard]] Mouse::Button::ID button_released() const;
 
-        [[nodiscard]] bool is_button_pressed(Mouse::Button::type button) const;
-        [[nodiscard]] bool is_button_released(Mouse::Button::type button) const;
-        [[nodiscard]] bool is_button_held(Mouse::Button::type button) const;
-        [[nodiscard]] bool is_button_down(Mouse::Button::type button) const;
-        [[nodiscard]] bool all_buttons_down(std::vector<Mouse::Button::type> buttons) const;
-        [[nodiscard]] bool any_buttons_down(std::vector<Mouse::Button::type> buttons) const;
+        [[nodiscard]] bool is_button_pressed(Mouse::Button::ID button) const;
+        [[nodiscard]] bool is_button_released(Mouse::Button::ID button) const;
+        [[nodiscard]] bool is_button_held(Mouse::Button::ID button) const;
+        [[nodiscard]] bool is_button_down(Mouse::Button::ID button) const;
+        [[nodiscard]] bool all_buttons_down(std::vector<Mouse::Button::ID> buttons) const;
+        [[nodiscard]] bool any_buttons_down(std::vector<Mouse::Button::ID> buttons) const;
+
+        [[nodiscard]] std::string get_button_state(Mouse::Button::ID button) const;
 
     protected:
-        friend class Window;
-
-        void process_button_down(const Mouse::Button::type mouse_button);
-        void process_button_up(const Mouse::Button::type mouse_button);
+        void process_button_down(Mouse::Button::ID mouse_button);
+        void process_button_up(Mouse::Button::ID mouse_button);
         void process_motion(const Event::Data::Motion& motion);
         void process_wheel(const Mouse::Event::Data::Wheel& wheel);
 
@@ -125,9 +123,9 @@ namespace rl {
 namespace rl {
     inline auto format_as(const Mouse& mouse)
     {
-        return fmt::format("Mouse[pos={} l={}, m={}, r={}, wheel={}]", mouse.pos(),
-                           mouse.is_button_down(Mouse::Button::Left),
-                           mouse.is_button_down(Mouse::Button::Middle),
-                           mouse.is_button_down(Mouse::Button::Right), mouse.wheel());
+        return fmt::format("pos={} lmb={}, rmb={}, wheel=[{} | {}]", mouse.pos(),
+                           mouse.get_button_state(Mouse::Button::Left),
+                           mouse.get_button_state(Mouse::Button::Right),
+                           mouse.get_button_state(Mouse::Button::Middle), mouse.wheel());
     }
 }

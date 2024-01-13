@@ -52,14 +52,9 @@ set(compiler_is_clang "$<OR:$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:Clan
 set(FORCE_STATIC_VCRT OFF)
 set(BUILD_SHARED_LIBS OFF)
 
-# VCPKG libraries
 find_package(glm CONFIG REQUIRED)
 find_package(nanovg CONFIG REQUIRED)
 find_package(fmt CONFIG REQUIRED)
-find_package(flecs CONFIG REQUIRED)
-find_package(simdjson CONFIG REQUIRED)
-find_package(argparse CONFIG REQUIRED)
-find_package(glfw3 CONFIG REQUIRED)
 find_package(nanobench CONFIG REQUIRED)
 
 # SDL3 build options
@@ -73,11 +68,6 @@ set(SDL_TESTS OFF)
 set(SDL_TEST_LIBRARY OFF)
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl)
-
-set(GLFW_BUILD_TESTS OFF)
-set(GLFW_BUILD_EXAMPLES OFF)
-set(GLFW_BUILD_DOCS OFF)
-set(GLFW_INSTALL OFF)
 
 file(GLOB_RECURSE
   roguelike_sources
@@ -126,7 +116,6 @@ target_compile_options(${PROJECT_NAME}
         /utf-8
         /EHsc
         /nologo
-		# /doc
 
         $<$<CONFIG:Debug>:
             # /Z7 # embed debug info into .o files instead of pdb (for ccache)
@@ -137,12 +126,13 @@ target_compile_options(${PROJECT_NAME}
             /O2 # maximize speed
             /Oi # generate intrinsics
             /Oy # frame pointer omission
-            /Gw # optimize global data
-            /GS- # disable buffer security checks
+            #/Gw # optimize global data
+            #/GS- # disable buffer security checks
             /GA # optimize for windows application
             /GL # whole program optimization
             /fp:fast # prefer fast over accurate floating point math
-            /favor:INTEL64
+            #/favor:INTEL64
+
             #/Ox # enable most speed optimizations
             #/Ot # favor fast code
             #/Ob2 # inline function expansion
@@ -204,14 +194,10 @@ target_include_directories(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME}
   PRIVATE SDL3::SDL3-static
-  PRIVATE simdjson::simdjson
-  PRIVATE argparse::argparse
-  PRIVATE flecs::flecs_static
   PRIVATE nanobench::nanobench
   PRIVATE nanovg::nanovg
   PRIVATE glm::glm
   PRIVATE fmt::fmt
-  PRIVATE glfw
 )
 
 if (ENABLE_CCACHE MATCHES ON)

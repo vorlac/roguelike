@@ -189,7 +189,7 @@ namespace rl::ui {
             set_max_value(max_value);
         }
 
-        virtual bool on_mouse_button_pressed(ds::point<i32> pos, Mouse::Button::type btn,
+        virtual bool on_mouse_button_pressed(ds::point<i32> pos, Mouse::Button::ID btn,
                                              i32 modifiers) override
         {
             if (m_editable || m_spinnable)

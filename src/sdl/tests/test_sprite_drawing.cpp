@@ -54,7 +54,7 @@
 //    }
 //
 //    [[maybe_unused]]
-//    static void move_sprites(rl::Window& window, sdl::Texture& sprite, auto&& sprites,
+//    static void move_sprites(rl::MainWindow& window, sdl::Texture& sprite, auto&& sprites,
 //                             auto& sprite_size)
 //    {
 //        ds::dims<i32> window_size = window.get_render_size();
@@ -92,7 +92,7 @@
 //        renderer->present();
 //    }
 //
-//    int execute_sprite_drawing_tests(std::unique_ptr<rl::Window>& window)
+//    int execute_sprite_drawing_tests(std::unique_ptr<rl::MainWindow>& window)
 //    {
 //        i32 return_code = -1;
 //

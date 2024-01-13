@@ -31,12 +31,6 @@ SDL_C_LIB_END
 namespace rl {
     class Application
     {
-    private:
-        Application(const rl::Application& other) = delete;
-        Application(rl::Application&& other) = delete;
-        Application& operator=(const rl::Application& other) = delete;
-        Application& operator=(rl::Application&& other) = delete;
-
     public:
         struct Subsystem
         {
@@ -57,7 +51,7 @@ namespace rl {
         Application()
         {
             this->init_subsystem(Subsystem::All);
-            m_window = std::make_unique<Window>("Roguelite OpenGL");
+            m_window = std::make_unique<MainWindow>("Roguelite OpenGL");
         }
 
         ~Application()
@@ -67,30 +61,24 @@ namespace rl {
         bool run()
         {
             bool ret{ this->setup() };
+
+            f32 fps{ 0 };
+            u64 frame_count{ 0 };
             f32 delta_time{ m_timer.delta() };
 
             const std::unique_ptr<rl::OpenGLRenderer>& renderer{ m_window->renderer() };
             gl::InstancedVertexBuffer vbo{ renderer->get_viewport() };
 
-            f32 fps{ 0 };
-            u64 frame_count{ 0 };
-
-            //===========================================
-            // setup base level container widgets
-            //===========================================
+            auto layout{ new ui::AdvancedGridLayout({ 0, 0, 0 }, {}, 30) };
             auto gui{ m_window->gui() };
 
-            auto layout = new ui::AdvancedGridLayout({ 0, 0, 0 }, {}, 30);
             gui->set_layout(layout);
             gui->set_visible(true);
 
-            // TODO: test margins
-            // layout->set_margin(25);
-
-            // stretch column 2 to 1.0f
-            // layout->append_row(0);
             layout->set_col_stretch(1, 1.0f);
-            auto title_label{ new ui::Label{ gui, "Widget Group", ui::font::name::sans_bold, 40 } };
+
+            auto title_label{ new ui::Label{ gui, "GUI Canvas Span Label",
+                                             ui::font::name::sans_bold, 40 } };
             layout->append_row(0);
             auto push_button{ new ui::Button{ gui, "Push Button", ui::Icon::Microscope } };
             layout->append_row(0);
@@ -138,20 +126,22 @@ namespace rl {
                 log::warning("Stats callback invoked");
             });
 
-            gui->add_refresh_callback([&]() {
+            gui->add_update_callback([&]() {
                 auto&& elapsed_str{ fmt::format("{:.3f} sec", m_timer.elapsed()) };
                 timer_value_label->set_caption(std::move(elapsed_str));
             });
 
-            gui->add_refresh_callback([&]() {
+            gui->add_update_callback([&]() {
                 auto&& fps_str{ fmt::to_string(fmt::format("{:.1f} fps", fps)) };
                 stats_value_label->set_caption(std::move(fps_str));
             });
-            gui->refresh();
+
+            gui->update();
             gui->perform_layout();
 
-            m_timer.reset();
             // vbo.bind_buffers();
+
+            m_timer.reset();
             while (!this->should_exit()) [[likely]]
             {
                 delta_time = m_timer.delta();
@@ -159,14 +149,14 @@ namespace rl {
                 this->handle_events();
                 this->update();
 
-                // vbo.update_buffers(renderer->get_viewport());
-                // vbo.draw_triangles();
-
                 m_window->clear();
                 gui->draw_all();
                 m_window->swap_buffers();
 
                 fps = ++frame_count / m_timer.elapsed();
+
+                // vbo.update_buffers(renderer->get_viewport());
+                // vbo.draw_triangles();
 
                 if constexpr (io::logging::main_loop)
                     this->print_loop_stats(delta_time);
@@ -214,7 +204,7 @@ namespace rl {
             return result == 0;
         }
 
-        std::unique_ptr<Window>& window()
+        std::unique_ptr<MainWindow>& window()
         {
             return m_window;
         }
@@ -225,6 +215,11 @@ namespace rl {
         }
 
     private:
+        Application(const rl::Application& other) = delete;
+        Application(rl::Application&& other) = delete;
+        Application& operator=(const rl::Application& other) = delete;
+        Application& operator=(rl::Application&& other) = delete;
+
         inline void print_loop_stats(f32 delta_time)
         {
             f32 elapsed_time{ m_timer.elapsed() };
@@ -243,7 +238,7 @@ namespace rl {
 
     private:
         rl::Timer<f32> m_timer{};
-        std::unique_ptr<rl::Window> m_window{};
+        std::unique_ptr<rl::MainWindow> m_window{};
         rl::EventHandler m_event_handler{};
         rl::StateMachine m_fsm{};
     };

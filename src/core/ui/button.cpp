@@ -165,8 +165,8 @@ namespace rl::ui {
         return ui::Widget::on_mouse_exited(mouse);
     }
 
-    bool Button::handle_mouse_button_event(const ds::point<i32>& pt, Mouse::Button::type button,
-                                           bool down, Keyboard::Button::type keys_down)
+    bool Button::handle_mouse_button_event(const ds::point<i32>& pt, Mouse::Button::ID button,
+                                           bool down, Keyboard::Scancode::ID keys_down)
     {
         // Temporarily increase the reference count of the button in case the
         // button causes the parent window to be destructed

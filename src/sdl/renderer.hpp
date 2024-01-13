@@ -82,7 +82,7 @@ namespace rl::sdl {
         Renderer(Renderer& other) = delete;
         Renderer(const Renderer& other) = delete;
 
-        explicit Renderer(const rl::Window& window, std::string_view driver,
+        explicit Renderer(const rl::MainWindow& window, std::string_view driver,
                           sdl::Renderer::Properties flags)
             : m_properties{ flags }
             , m_sdl_renderer{ SDL3::SDL_CreateRenderer(window.sdl_handle(), driver.data(),

@@ -2,34 +2,34 @@
 
 namespace rl {
 
-    Keyboard::Button::type Keyboard::keys_down() const
+    Keyboard::Scancode::ID Keyboard::keys_down() const
     {
-        return Keyboard::Button::type(m_pressed.all() | m_held.all());
+        return Scancode::ID(m_pressed.all() | m_held.all());
     }
 
-    bool Keyboard::is_button_pressed(const Keyboard::Button::type key) const
+    bool Keyboard::is_button_pressed(const Keyboard::Scancode::ID key) const
     {
         return m_pressed[key];
     }
 
-    bool Keyboard::is_button_released(const Keyboard::Button::type key) const
+    bool Keyboard::is_button_released(const Keyboard::Scancode::ID key) const
     {
         const bool ret = m_released[key];
         m_released[key] = false;
         return ret;
     }
 
-    bool Keyboard::is_button_held(const Keyboard::Button::type key) const
+    bool Keyboard::is_button_held(const Keyboard::Scancode::ID key) const
     {
         return m_held[key];
     }
 
-    bool Keyboard::is_button_down(const Keyboard::Button::type key) const
+    bool Keyboard::is_button_down(const Keyboard::Scancode::ID key) const
     {
         return m_held[key] || m_pressed[key];
     }
 
-    bool Keyboard::all_buttons_down(std::vector<Keyboard::Button::type> keys) const
+    bool Keyboard::all_buttons_down(std::vector<Keyboard::Scancode::ID> keys) const
     {
         bool ret{ true };
 
@@ -39,7 +39,7 @@ namespace rl {
         return ret;
     }
 
-    bool Keyboard::any_buttons_down(std::vector<Keyboard::Button::type> keys) const
+    bool Keyboard::any_buttons_down(std::vector<Keyboard::Scancode::ID> keys) const
     {
         for (auto&& key : keys)
             if (this->is_button_down(key))
@@ -48,12 +48,12 @@ namespace rl {
         return false;
     }
 
-    std::string Keyboard::get_key_state(const Keyboard::Button::type kb_button) const
+    std::string Keyboard::get_key_state(const Keyboard::Scancode::ID key) const
     {
-        return this->is_button_held(kb_button)     ? "Held"
-             : this->is_button_pressed(kb_button)  ? "Pressed"
-             : this->is_button_released(kb_button) ? "Released"
-                                                   : "None";
+        return this->is_button_held(key)     ? "Held"
+             : this->is_button_pressed(key)  ? "Pressed"
+             : this->is_button_released(key) ? "Released"
+                                             : "None";
     }
 
     std::string Keyboard::get_inputted_text() const
@@ -76,7 +76,7 @@ namespace rl {
         return m_text_length;
     }
 
-    void Keyboard::process_button_down(Keyboard::Button::type key)
+    void Keyboard::process_button_down(Scancode::ID key)
     {
         m_released[key] = false;
         auto& keystates = this->is_button_pressed(key)  //
@@ -85,7 +85,7 @@ namespace rl {
         keystates[key] = true;
     }
 
-    void Keyboard::process_button_up(Keyboard::Button::type key)
+    void Keyboard::process_button_up(Scancode::ID key)
     {
         m_held[key] = false;
         m_pressed[key] = false;

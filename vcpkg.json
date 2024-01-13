@@ -4,12 +4,8 @@
     "name": "roguelike",
     "version": "0.1.0",
     "dependencies": [
-        "simdjson",
-        "flecs",
-        "argparse",
         "nanovg",
         "nanobench",
-        "glfw3",
         "glm",
         "fmt"
     ]
