@@ -3,14 +3,13 @@
 #include <unordered_map>
 #include <vector>
 
-#include <nanovg.h>
-
 #include "ds/color.hpp"
 #include "ds/dims.hpp"
 #include "ds/point.hpp"
 #include "ds/rect.hpp"
 #include "ds/refcounted.hpp"
 #include "ds/vector2d.hpp"
+#include "graphics/vg/nanovg.hpp"
 #include "utils/numeric.hpp"
 
 namespace rl::ui {
@@ -93,7 +92,7 @@ namespace rl::ui {
         ///     The NanoVG context being used for drawing.
         /// @param  w
         ///     The Widget whose child widgets will be positioned by the Layout class.
-        virtual void perform_layout(NVGcontext* nvc, ui::Widget* w) const = 0;
+        virtual void perform_layout(vg::NVGcontext* nvc, ui::Widget* w) const = 0;
 
         /// @brief
         ///     Compute the preferred size for a given Layout and widget
@@ -105,7 +104,7 @@ namespace rl::ui {
         ///
         /// @returns
         ///     A ds::dims{i32}
-        virtual ds::dims<i32> preferred_size(NVGcontext* nvc, const ui::Widget* w) const = 0;
+        virtual ds::dims<i32> preferred_size(vg::NVGcontext* nvc, const ui::Widget* w) const = 0;
     };
 
     /// @brief
@@ -134,8 +133,9 @@ namespace rl::ui {
         void set_alignment(ui::Alignment alignment);
 
     public:
-        virtual ds::dims<i32> preferred_size(NVGcontext* nvc, const ui::Widget* w) const override;
-        virtual void perform_layout(NVGcontext* nvc, ui::Widget* w) const override;
+        virtual ds::dims<i32> preferred_size(vg::NVGcontext* nvc,
+                                             const ui::Widget* w) const override;
+        virtual void perform_layout(vg::NVGcontext* nvc, ui::Widget* w) const override;
 
     protected:
         i32 m_margin{ 0 };
@@ -171,8 +171,9 @@ namespace rl::ui {
         void set_group_spacing(i32 group_spacing);
 
     public:
-        virtual ds::dims<i32> preferred_size(NVGcontext* nvc, const ui::Widget* w) const override;
-        virtual void perform_layout(NVGcontext* nvc, ui::Widget* w) const override;
+        virtual ds::dims<i32> preferred_size(vg::NVGcontext* nvc,
+                                             const ui::Widget* w) const override;
+        virtual void perform_layout(vg::NVGcontext* nvc, ui::Widget* w) const override;
 
     protected:
         i32 m_margin{ 15 };
@@ -214,11 +215,12 @@ namespace rl::ui {
         void set_row_alignment(const std::vector<ui::Alignment>& value);
 
     public:
-        virtual ds::dims<i32> preferred_size(NVGcontext* nvc, const ui::Widget* w) const override;
-        virtual void perform_layout(NVGcontext* nvc, ui::Widget* w) const override;
+        virtual ds::dims<i32> preferred_size(vg::NVGcontext* nvc,
+                                             const ui::Widget* w) const override;
+        virtual void perform_layout(vg::NVGcontext* nvc, ui::Widget* w) const override;
 
     protected:
-        void compute_layout(NVGcontext* nvc, const ui::Widget* w,
+        void compute_layout(vg::NVGcontext* nvc, const ui::Widget* w,
                             std::array<std::vector<i32>, 2>& grid) const;
 
     protected:
@@ -249,11 +251,12 @@ namespace rl::ui {
         void set_anchor(const ui::Widget* widget, const Anchor& anchor);
 
     public:
-        virtual ds::dims<i32> preferred_size(NVGcontext* nvc, const ui::Widget* w) const override;
-        virtual void perform_layout(NVGcontext* nvc, ui::Widget* w) const override;
+        virtual ds::dims<i32> preferred_size(vg::NVGcontext* nvc,
+                                             const ui::Widget* w) const override;
+        virtual void perform_layout(vg::NVGcontext* nvc, ui::Widget* w) const override;
 
     protected:
-        void compute_layout(NVGcontext* nvg_context, const ui::Widget* widget,
+        void compute_layout(vg::NVGcontext* nvg_context, const ui::Widget* widget,
                             std::array<std::vector<i32>, 2>& grid) const;
 
     protected:

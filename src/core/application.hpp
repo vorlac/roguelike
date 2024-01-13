@@ -18,7 +18,7 @@
 #include "core/state/states.hpp"
 #include "core/ui/button.hpp"
 #include "core/ui/gui.hpp"
-#include "gl/instanced_buffer.hpp"
+#include "graphics/gl/instanced_buffer.hpp"
 #include "sdl/defs.hpp"
 #include "utils/crtp.hpp"
 #include "utils/numeric.hpp"

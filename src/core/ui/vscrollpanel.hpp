@@ -9,7 +9,7 @@ namespace rl::gui {
     public:
         VScrollPanel(ui::Widget* parent);
 
-        float scroll() const;
+        f32 scroll() const;
         void set_scroll(f32 scroll);
 
     public:
@@ -19,9 +19,9 @@ namespace rl::gui {
         virtual bool on_mouse_drag(const Mouse& mouse, const Keyboard& kb) override;
 
     public:
-        virtual void draw(NVGcontext* ctx) override;
-        virtual void perform_layout(NVGcontext* ctx) override;
-        virtual ds::dims<i32> preferred_size(NVGcontext* ctx) const override;
+        virtual void draw(vg::NVGcontext* ctx) override;
+        virtual void perform_layout(vg::NVGcontext* ctx) override;
+        virtual ds::dims<i32> preferred_size(vg::NVGcontext* ctx) const override;
 
     protected:
         i32 m_child_preferred_height{ 0 };

@@ -1,9 +1,9 @@
-#include <nanovg.h>
-
 #include "core/ui/popup.hpp"
 #include "core/ui/theme.hpp"
+#include "graphics/vg/nanovg.hpp"
 
 namespace rl::ui {
+    using namespace vg;
 
     Popup::Popup(ui::Widget* parent, ui::Dialog* parent_dialog)
         : ui::Dialog{ parent, "" }

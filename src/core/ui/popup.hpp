@@ -28,8 +28,8 @@ namespace rl::ui {
         void set_side(Side popup_side);
 
     public:
-        virtual void draw(NVGcontext* nvg_context) override;
-        virtual void perform_layout(NVGcontext* nvg_context) override;
+        virtual void draw(vg::NVGcontext* nvg_context) override;
+        virtual void perform_layout(vg::NVGcontext* nvg_context) override;
 
     protected:
         virtual void refresh_relative_placement() override;

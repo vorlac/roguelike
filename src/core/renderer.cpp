@@ -5,7 +5,7 @@
 
 #include "core/assert.hpp"
 #include "core/renderer.hpp"
-#include "render/vectorized_renderer.hpp"
+#include "graphics/nvg_renderer.hpp"
 #include "sdl/defs.hpp"
 #include "utils/io.hpp"
 
@@ -17,6 +17,7 @@ typedef struct SDL_VideoDevice SDL_VideoDevice;
 SDL_C_LIB_END
 
 namespace rl {
+    using namespace vg;
 
     static SDL3::SDL_GLContext create_opengl_context(SDL3::SDL_Window* sdl_window)
     {

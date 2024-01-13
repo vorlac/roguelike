@@ -53,7 +53,6 @@ set(FORCE_STATIC_VCRT OFF)
 set(BUILD_SHARED_LIBS OFF)
 
 find_package(glm CONFIG REQUIRED)
-find_package(nanovg CONFIG REQUIRED)
 find_package(fmt CONFIG REQUIRED)
 find_package(nanobench CONFIG REQUIRED)
 
@@ -92,10 +91,8 @@ target_compile_features(${PROJECT_NAME}
 target_compile_definitions(${PROJECT_NAME}
   PRIVATE
     ROGUELIKE_TESTS_ENABLED
-    NANOVG_GL3_IMPLEMENTATION
-    NANOGUI_USE_OPENGL
-    NANOGUI_GLAD
     KHRONOS_STATIC
+	NANOVG_GL3
     NOMINMAX
 
     $<${compiler_is_msvc}:
@@ -195,7 +192,6 @@ target_include_directories(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}
   PRIVATE SDL3::SDL3-static
   PRIVATE nanobench::nanobench
-  PRIVATE nanovg::nanovg
   PRIVATE glm::glm
   PRIVATE fmt::fmt
 )
@@ -231,9 +227,8 @@ set_property(
 add_custom_command(TARGET ${PROJECT_NAME}
   PRE_BUILD COMMAND
     ${CMAKE_COMMAND} -E create_symlink
-      ${CMAKE_CURRENT_SOURCE_DIR}/src/gl/shaders
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/graphics/gl/shaders
       $<TARGET_FILE_DIR:${PROJECT_NAME}>/shaders
 )
-
 
 include(cmake-utils)

@@ -1,12 +1,12 @@
-#include <nanovg.h>
-
 #include "core/ui/label.hpp"
 #include "core/ui/theme.hpp"
 #include "ds/dims.hpp"
 #include "ds/shared.hpp"
+#include "graphics/vg/nanovg.hpp"
 #include "resources/fonts.hpp"
 
 namespace rl::ui {
+    using namespace vg;
 
     Label::Label(ui::Widget* parent, const std::string& caption, const std::string& font,
                  i32 font_size)

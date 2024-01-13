@@ -1,13 +1,13 @@
-#include <nanovg.h>
-
 #include "core/keyboard.hpp"
 #include "core/mouse.hpp"
 #include "core/ui/button.hpp"
 #include "core/ui/popupbutton.hpp"
 #include "core/ui/theme.hpp"
+#include "graphics/vg/nanovg.hpp"
 #include "utils/unicode.hpp"
 
 namespace rl::ui {
+    using namespace vg;
 
     Button::Button(ui::Widget* parent, const std::string& caption, ui::Icon::ID icon)
         : ui::Widget{ parent }

@@ -13,7 +13,7 @@
 #include "ds/refcounted.hpp"
 #include "ds/shared.hpp"
 #include "ds/vector2d.hpp"
-#include "render/vectorized_renderer.hpp"
+#include "graphics/nvg_renderer.hpp"
 #include "utils/numeric.hpp"
 #include "utils/time.hpp"
 
@@ -118,21 +118,21 @@ namespace rl::ui {
         virtual bool on_mouse_drag(const Mouse& mouse, const Keyboard& kb);
 
     public:
-        virtual void draw(NVGcontext* nvg_context);
+        virtual void draw(vg::NVGcontext* nvg_context);
         virtual void set_theme(ui::Theme* theme);
         virtual void add_child(i32 index, Widget* widget);
-        virtual void perform_layout(NVGcontext* nvg_context);
-        virtual ds::dims<i32> preferred_size(NVGcontext* nvg_context) const;
+        virtual void perform_layout(vg::NVGcontext* nvg_context);
+        virtual ds::dims<i32> preferred_size(vg::NVGcontext* nvg_context) const;
 
     public:
-        virtual void draw_mouse_intersection(NVGcontext* nvg_context, ds::point<i32> pt);
+        virtual void draw_mouse_intersection(vg::NVGcontext* nvg_context, ds::point<i32> pt);
 
     protected:
         f32 icon_scale() const;
 
     protected:
         ui::Widget* m_parent{ nullptr };
-        NVGcontext* m_nvg_context{ nullptr };
+        vg::NVGcontext* m_nvg_context{ nullptr };
         ds::shared<ui::Theme> m_theme{ nullptr };
         ds::shared<ui::Layout> m_layout{ nullptr };
         static inline rl::VectorizedRenderer* m_nvg_renderer{ nullptr };

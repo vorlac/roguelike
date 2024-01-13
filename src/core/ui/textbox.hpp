@@ -71,8 +71,8 @@ namespace rl::ui {
 
     public:
         virtual void set_theme(ui::Theme* theme) override;
-        virtual ds::dims<i32> preferred_size(NVGcontext* nvg_context) const override;
-        virtual void draw(NVGcontext* nvg_context) override;
+        virtual ds::dims<i32> preferred_size(vg::NVGcontext* nvg_context) const override;
+        virtual void draw(vg::NVGcontext* nvg_context) override;
 
     protected:
         bool check_format(const std::string& input, const std::string& format);
@@ -80,11 +80,12 @@ namespace rl::ui {
         bool delete_selection();
 
         void paste_from_clipboard();
-        void update_cursor(NVGcontext* nvg_context, f32 lastx, const NVGglyphPosition* glyphs,
-                           int size);
+        void update_cursor(vg::NVGcontext* nvg_context, f32 lastx,
+                           const vg::NVGglyphPosition* glyphs, int size);
 
-        f32 cursor_index_to_position(i32 index, f32 lastx, const NVGglyphPosition* glyphs, i32 size);
-        i32 position_to_cursor_index(f32 posx, float lastx, const NVGglyphPosition* glyphs,
+        f32 cursor_index_to_position(i32 index, f32 lastx, const vg::NVGglyphPosition* glyphs,
+                                     i32 size);
+        i32 position_to_cursor_index(f32 posx, float lastx, const vg::NVGglyphPosition* glyphs,
                                      i32 size);
 
         // The location (if any) for the spin area.
@@ -268,10 +269,9 @@ namespace rl::ui {
         Scalar m_max_value{};
     };
 
-    /// @brief
-    ///     A specialization of TextBox representing floating point values. The
-    ///     emplate parametersshould a be floating point type, e.g. ``float`` or
-    ///     ``double``.
+    // A specialization of TextBox representing floating point values. The
+    // emplate parametersshould a be floating point type, e.g. `float` or
+    // `double`.
     template <constraint::floating_point Scalar>
     class FloatBox : public ui::TextBox
     {

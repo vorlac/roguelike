@@ -10,7 +10,7 @@
 #include "ds/rect.hpp"
 #include "ds/triangle.hpp"
 #include "ds/vector2d.hpp"
-#include "gl/shader.hpp"
+#include "graphics/gl/shader.hpp"
 #include "utils/math.hpp"
 #include "utils/numeric.hpp"
 #include "utils/time.hpp"

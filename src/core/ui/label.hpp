@@ -28,9 +28,9 @@ namespace rl::ui {
         void set_callback(std::function<void()> callable);
 
     public:
-        virtual ds::dims<i32> preferred_size(NVGcontext* nvg_context) const override;
+        virtual ds::dims<i32> preferred_size(vg::NVGcontext* nvg_context) const override;
         virtual void set_theme(ui::Theme* theme) override;
-        virtual void draw(NVGcontext* nvg_context) override;
+        virtual void draw(vg::NVGcontext* nvg_context) override;
 
     protected:
         std::string m_font{};

@@ -8,6 +8,7 @@
 #include "utils/io.hpp"
 
 namespace rl::ui {
+    using namespace vg;
 
     UICanvas::UICanvas(ds::dims<i32> size, const Mouse& mouse, const Keyboard& kb,
                        const std::unique_ptr<VectorizedRenderer>& nvg_renderer)

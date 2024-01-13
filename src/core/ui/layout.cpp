@@ -1,8 +1,6 @@
 #include <numeric>
 #include <utility>
 
-#include <nanovg.h>
-
 #include "core/ui/dialog.hpp"
 #include "core/ui/gui_canvas.hpp"
 #include "core/ui/label.hpp"
@@ -10,9 +8,11 @@
 #include "core/ui/theme.hpp"
 #include "core/ui/widget.hpp"
 #include "ds/dims.hpp"
+#include "graphics/vg/nanovg.hpp"
 #include "utils/numeric.hpp"
 
 namespace rl::ui {
+    using namespace vg;
 
     BoxLayout::BoxLayout(ui::Orientation orientation, ui::Alignment alignment, i32 margin,
                          i32 spacing)

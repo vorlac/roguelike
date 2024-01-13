@@ -5,8 +5,6 @@
 #include <utility>
 #include <vector>
 
-#include <nanovg.h>
-
 #include "core/assert.hpp"
 #include "core/main_window.hpp"
 #include "core/renderer.hpp"
@@ -17,6 +15,7 @@
 #include "ds/point.hpp"
 #include "ds/rect.hpp"
 #include "ds/vector2d.hpp"
+#include "graphics/vg/nanovg.hpp"
 #include "sdl/defs.hpp"
 #include "sdl/utils.hpp"
 #include "utils/io.hpp"
@@ -29,6 +28,7 @@ SDL_C_LIB_BEGIN
 SDL_C_LIB_END
 
 namespace rl {
+    using namespace vg;
 
     MainWindow::MainWindow(std::string title, const ds::dims<i32>& dims,
                            MainWindow::Properties flags)

@@ -43,7 +43,7 @@ namespace rl::ui {
 
         std::string title() const;
         ds::dims<i32> frame_buffer_size() const;
-        NVGcontext* nvg_context() const;
+        vg::NVGcontext* nvg_context() const;
         const ds::color<u8>& background() const;
         void set_background(ds::color<u8> background);
         const std::function<void(ds::dims<i32>)>& resize_callback() const;
@@ -88,7 +88,7 @@ namespace rl::ui {
 
     protected:
         ui::Widget* m_drag_widget{ nullptr };
-        NVGcontext* m_nvg_context{ nullptr };
+        vg::NVGcontext* m_nvg_context{ nullptr };
 
         std::vector<ui::Widget*> m_focus_path{};
         std::function<void(ds::dims<i32>)> m_resize_callback;

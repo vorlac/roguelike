@@ -8,8 +8,8 @@
 #include <vector>
 
 #include <fmt/color.h>
-#include <nanovg.h>
 
+#include "graphics/vg/nanovg.hpp"
 #include "sdl/defs.hpp"
 #include "utils/concepts.hpp"
 #include "utils/conversions.hpp"
@@ -282,16 +282,16 @@ namespace rl::ds {
             return *reinterpret_cast<SDL3::SDL_Color*>(this);
         }
 
-        constexpr inline operator const NVGcolor&() const&
+        constexpr inline operator const vg::NVGcolor&() const&
             requires std::same_as<T, f32>
         {
-            return *reinterpret_cast<const NVGcolor*>(this);
+            return *reinterpret_cast<const vg::NVGcolor*>(this);
         }
 
-        constexpr inline operator NVGcolor()
+        constexpr inline operator vg::NVGcolor()
             requires std::same_as<T, u8>
         {
-            return NVGcolor{
+            return vg::NVGcolor{
                 this->r / 255.0f,
                 this->g / 255.0f,
                 this->b / 255.0f,
@@ -299,16 +299,16 @@ namespace rl::ds {
             };
         }
 
-        constexpr inline operator NVGcolor&()
+        constexpr inline operator vg::NVGcolor&()
             requires rl::floating_point<T>
         {
-            return *reinterpret_cast<NVGcolor*>(this);
+            return *reinterpret_cast<vg::NVGcolor*>(this);
         }
 
-        constexpr inline operator NVGcolor() const
+        constexpr inline operator vg::NVGcolor() const
             requires rl::integer<T>
         {
-            return NVGcolor{
+            return vg::NVGcolor{
                 r / 255.0f,
                 g / 255.0f,
                 b / 255.0f,

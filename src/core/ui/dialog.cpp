@@ -1,16 +1,16 @@
 #include <string>
 #include <utility>
 
-#include <nanovg.h>
-
 #include "core/ui/dialog.hpp"
 #include "core/ui/gui_canvas.hpp"
 #include "ds/dims.hpp"
 #include "ds/point.hpp"
 #include "ds/vector2d.hpp"
+#include "graphics/vg/nanovg.hpp"
 #include "utils/io.hpp"
 
 namespace rl::ui {
+    using namespace vg;
 
     Dialog::Dialog(ui::Widget* parent, const std::string& title)
         : ui::Widget{ parent }

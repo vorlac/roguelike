@@ -16,13 +16,13 @@ file(GLOB
 file(GLOB
   roguelike_shader_resources
   CONFIGURE_DEPENDS
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/gl/shaders/*.glsl"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/graphics/gl/shaders/*.glsl"
 )
 
 # Concatenate resource files
 # into a comma separated string
 string(REGEX REPLACE
-  "([^\\]|^);" "\\1," 
+  "([^\\]|^);" "\\1,"
   font_resources_string
   "${roguelike_font_resources}"
 )

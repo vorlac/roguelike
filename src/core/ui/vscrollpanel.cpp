@@ -2,6 +2,7 @@
 #include "core/ui/vscrollpanel.hpp"
 
 namespace rl::gui {
+    using namespace rl::vg;
 
     VScrollPanel::VScrollPanel(ui::Widget* parent)
         : ui::Widget{ parent }

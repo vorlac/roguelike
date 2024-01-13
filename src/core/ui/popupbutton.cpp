@@ -3,6 +3,7 @@
 #include "utils/unicode.hpp"
 
 namespace rl::ui {
+    using namespace vg;
 
     PopupButton::PopupButton(ui::Widget* parent, const std::string& caption,
                              ui::Icon::ID button_icon)

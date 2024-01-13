@@ -10,9 +10,10 @@
 #include "core/ui/widget.hpp"
 #include "ds/refcounted.hpp"
 #include "ds/shared.hpp"
-#include "render/vectorized_renderer.hpp"
+#include "graphics/nvg_renderer.hpp"
 
 namespace rl::ui {
+    using namespace vg;
 
     Widget::Widget(ui::Widget* parent)
         : m_parent{ parent }

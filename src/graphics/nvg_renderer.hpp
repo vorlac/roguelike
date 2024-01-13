@@ -7,7 +7,9 @@
 #include "ds/point.hpp"
 #include "ds/rect.hpp"
 
-struct NVGcontext;
+namespace rl::vg {
+    struct NVGcontext;
+}
 
 namespace rl {
     class VectorizedRenderer
@@ -15,7 +17,7 @@ namespace rl {
     public:
         VectorizedRenderer();
 
-        NVGcontext* nvg_context() const;
+        vg::NVGcontext* nvg_context() const;
 
         void flush(ds::dims<i32> viewport, f32 pixel_ratio);
 
@@ -36,6 +38,6 @@ namespace rl {
         bool m_depth_buffer{ false };
         bool m_stencil_buffer{ false };
         bool m_float_buffer{ false };
-        NVGcontext* m_nvg_context{ nullptr };
+        vg::NVGcontext* m_nvg_context{ nullptr };
     };
 }

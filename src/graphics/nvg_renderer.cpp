@@ -1,13 +1,14 @@
 #include <glad/gl.h>
 
-#include <nanovg.h>
-#include <nanovg_gl.h>
-#include <nanovg_gl_utils.h>
-
 #include "core/ui/theme.hpp"
-#include "render/vectorized_renderer.hpp"
+#include "graphics/nvg_renderer.hpp"
+#include "graphics/vg/nanovg.hpp"
+#include "graphics/vg/nanovg_gl.hpp"
+#include "graphics/vg/nanovg_gl_utils.hpp"
 
 namespace rl {
+    using namespace vg;
+
     struct Property
     {
         enum Flags {

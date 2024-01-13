@@ -2,13 +2,12 @@
 #include <regex>
 #include <string>
 
-#include <nanovg.h>
-
 #include "core/keyboard.hpp"
 #include "core/main_window.hpp"
 #include "core/mouse.hpp"
 #include "core/ui/textbox.hpp"
 #include "core/ui/theme.hpp"
+#include "graphics/vg/nanovg.hpp"
 #include "sdl/defs.hpp"
 #include "utils/numeric.hpp"
 #include "utils/unicode.hpp"
@@ -18,6 +17,7 @@ SDL_C_LIB_BEGIN
 SDL_C_LIB_END
 
 namespace rl::ui {
+    using namespace vg;
 
     TextBox::TextBox(ui::Widget* parent, const std::string& value)
         : ui::Widget{ parent }
