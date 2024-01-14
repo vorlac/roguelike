@@ -6,7 +6,7 @@
 #include <variant>
 #include <vector>
 
-#include "core/ui/crtp_control.hpp"
+#include "core/ui/crtp/crtp_control.hpp"
 #include "utils/io.hpp"
 
 namespace rl::ui::crtp {

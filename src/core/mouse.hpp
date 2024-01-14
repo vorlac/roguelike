@@ -92,6 +92,7 @@ namespace rl {
         [[nodiscard]] ds::point<i32> pos() const;
         [[nodiscard]] ds::vector2<i32> wheel() const;
         [[nodiscard]] ds::vector2<i32> pos_delta() const;
+        [[nodiscard]] ds::vector2<i32> wheel_delta() const;
         [[nodiscard]] Mouse::Button::ID button_pressed() const;
         [[nodiscard]] Mouse::Button::ID button_released() const;
 

@@ -1,7 +1,9 @@
 #pragma once
 
 #include "core/ui/button.hpp"
+#include "core/ui/checkbox.hpp"
 #include "core/ui/dialog.hpp"
+#include "core/ui/form.hpp"
 #include "core/ui/gui_canvas.hpp"
 #include "core/ui/icons.hpp"
 #include "core/ui/label.hpp"

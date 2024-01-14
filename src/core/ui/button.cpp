@@ -66,7 +66,7 @@ namespace rl::ui {
         return m_flags;
     }
 
-    void Button::set_flags(Button::Flags button_flags)
+    void Button::set_flags(ui::Button::Flags button_flags)
     {
         m_flags = button_flags;
     }

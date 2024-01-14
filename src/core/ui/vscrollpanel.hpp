@@ -2,7 +2,7 @@
 
 #include "core/ui/widget.hpp"
 
-namespace rl::gui {
+namespace rl::ui {
 
     class VScrollPanel : public ui::Widget
     {

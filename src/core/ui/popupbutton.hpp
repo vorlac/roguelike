@@ -19,9 +19,9 @@ namespace rl::ui {
         void set_chevron_icon(ui::Icon::ID icon);
         void set_side(Popup::Side popup_side);
 
-        Popup* popup();
+        ui::Popup* popup();
         ui::Icon::ID chevron_icon() const;
-        Popup::Side side() const;
+        ui::Popup::Side side() const;
         const ui::Popup* popup() const;
 
     public:
@@ -30,7 +30,7 @@ namespace rl::ui {
         virtual void perform_layout(vg::NVGcontext* ctx) override;
 
     protected:
-        Popup* m_popup{};
+        ui::Popup* m_popup{};
         ui::Icon::ID m_chevron_icon{ ui::Icon::None };
     };
 

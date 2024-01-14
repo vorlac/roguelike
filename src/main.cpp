@@ -4,8 +4,8 @@
 #include <utility>
 
 #include "core/application.hpp"
-#include "core/ui/crtp_label.hpp"
-#include "core/ui/crtp_widget.hpp"
+#include "core/ui/crtp/crtp_label.hpp"
+#include "core/ui/crtp/crtp_widget.hpp"
 #include "graphics/vg/nanovg.hpp"
 
 SDL_C_LIB_BEGIN

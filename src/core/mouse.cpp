@@ -75,6 +75,11 @@ namespace rl {
         return m_cursor_position - m_prev_cursor_pos;
     }
 
+    ds::vector2<i32> Mouse::wheel_delta() const
+    {
+        return m_wheel_position - m_prev_wheel_pos;
+    }
+
     Mouse::Button::ID Mouse::button_pressed() const
     {
         return Mouse::Button::ID(m_buttons_pressed);

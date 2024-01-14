@@ -1,8 +1,8 @@
 #include "core/ui/theme.hpp"
 #include "core/ui/vscrollpanel.hpp"
 
-namespace rl::gui {
-    using namespace rl::vg;
+namespace rl::ui {
+    using namespace vg;
 
     VScrollPanel::VScrollPanel(ui::Widget* parent)
         : ui::Widget{ parent }
