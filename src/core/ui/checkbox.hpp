@@ -17,10 +17,10 @@ namespace rl {
 
 namespace rl::ui {
 
-    class Checkbox : public ui::Widget
+    class CheckBox : public ui::Widget
     {
     public:
-        Checkbox(ui::Widget* parent, const std::string& caption = "UntitledCB",
+        CheckBox(ui::Widget* parent, const std::string& caption = "UntitledCB",
                  const std::function<void(bool)>& callback = std::function<void(bool)>());
 
         const bool& checked() const;

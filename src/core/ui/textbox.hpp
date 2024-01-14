@@ -190,13 +190,12 @@ namespace rl::ui {
             set_max_value(max_value);
         }
 
-        virtual bool on_mouse_button_pressed(ds::point<i32> pos, Mouse::Button::ID btn,
-                                             i32 modifiers) override
+        virtual bool on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb) override
         {
             if (m_editable || m_spinnable)
                 m_mouse_down_value = this->value();
 
-            SpinArea area{ this->spin_area(pos) };
+            SpinArea area{ this->spin_area(mouse.pos()) };
             if (m_spinnable && area != SpinArea::None && !this->focused())
             {
                 if (area == SpinArea::Top)
@@ -215,7 +214,7 @@ namespace rl::ui {
                 return true;
             }
 
-            return TextBox::on_mouse_button_pressed(pos, btn, modifiers);
+            return TextBox::on_mouse_button_pressed(mouse, kb);
         }
 
         virtual bool on_mouse_button_released(const Mouse& mouse, const Keyboard& kb) override
@@ -378,7 +377,7 @@ namespace rl::ui {
 
         virtual bool on_mouse_drag(const Mouse& mouse, const Keyboard& kb) override
         {
-            if (TextBox::mouse_drag_event(mouse, kb))
+            if (TextBox::on_mouse_drag(mouse, kb))
                 return true;
 
             if (m_spinnable && !this->focused() && mouse.is_button_held(Mouse::Button::Right) &&

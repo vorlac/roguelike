@@ -13,6 +13,8 @@ namespace rl::ds {
     class shared final
     {
     public:
+        constexpr inline shared() = default;
+
         constexpr inline shared(T* data)
             : m_data{ data }
         {

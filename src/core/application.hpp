@@ -58,6 +58,105 @@ namespace rl {
         {
         }
 
+        void old_gui()
+        {
+            // auto layout{ new ui::AdvancedGridLayout({ 0, 0, 0 }, {}, 30) };
+            // auto gui{ m_window->gui() };
+            //
+            // gui->set_layout(layout);
+            // gui->set_visible(true);
+            //
+            // layout->set_col_stretch(1, 1.0f);
+            //
+            // auto title_label{ new ui::Label{ gui, "GUI Canvas Span Label",
+            //                                  ui::font::name::sans_bold, 40 } };
+            // layout->append_row(0);
+            // auto push_button{ new ui::Button{ gui, "Push Button", ui::Icon::Microscope } };
+            // layout->append_row(0);
+            // auto timer_desc_label{ new ui::Label{ gui, "Timer: ", ui::font::name::sans, 32 } };
+            // layout->append_row(0);
+            // auto timer_value_label{ new ui::Label{ gui, "            ", ui::font::name::mono, 32
+            // } }; layout->append_row(0); auto stats_desc_label{ new ui::Label{ gui, "Stats: ",
+            // ui::font::name::sans, 32 } }; layout->append_row(0); auto stats_value_label{ new
+            // ui::Label{ gui, "            ", ui::font::name::mono, 32 } }; layout->append_row(0);
+            //
+            // push_button->set_tooltip("Microscope Button");
+            // push_button->set_callback([] {
+            //     log::warning("Button Pressed Callback Invoked");
+            // });
+            //
+            // layout->set_anchor(push_button, ui::Anchor(0, layout->row_count() - 1, 1, 1));
+            // layout->set_anchor(title_label, ui::Anchor{
+            //                                     1,
+            //                                     layout->row_count() - 1,
+            //                                     2,
+            //                                     1,
+            //                                     ui::Alignment::Center,
+            //                                     ui::Alignment::Fill,
+            //                                 });
+            //
+            // layout->append_row(20);
+            // layout->append_row(0);
+            // layout->set_anchor(timer_desc_label, ui::Anchor(0, layout->row_count() - 1));
+            // layout->set_anchor(timer_value_label, ui::Anchor(2, layout->row_count() - 1));
+            // layout->append_row(10);
+            // layout->append_row(0);
+            // layout->set_anchor(stats_desc_label, ui::Anchor(0, layout->row_count() - 1));
+            // layout->set_anchor(stats_value_label, ui::Anchor(2, layout->row_count() - 1));
+            // layout->append_row(10);
+            // layout->append_row(0);
+            //
+            // timer_desc_label->set_tooltip("Timer Label");
+            // timer_value_label->set_tooltip("Elapsed Time");
+            //
+            // stats_desc_label->set_tooltip("Stats Label");
+            // stats_value_label->set_tooltip("Average FPS");
+            // stats_desc_label->set_callback([] {
+            //     log::warning("Stats callback invoked");
+            // });
+            //
+            // gui->add_update_callback([&]() {
+            //     auto&& elapsed_str{ fmt::format("{:.3f} sec", m_timer.elapsed()) };
+            //     timer_value_label->set_caption(std::move(elapsed_str));
+            // });
+            //
+            // gui->add_update_callback([&]() {
+            //     auto&& fps_str{ fmt::to_string(fmt::format("{:.1f} fps", fps)) };
+            //     stats_value_label->set_caption(std::move(fps_str));
+            // });
+            //
+            // gui->update();
+            // gui->perform_layout();
+        }
+
+        void new_gui()
+        {
+            // auto gui{ m_window->gui() };
+            // ui::FormHelper* form{ new ui::FormHelper(gui) };
+            // ds::shared<ui::Dialog> dialog{ gui->add_window({ 10, 10 }, "Form helper example") };
+            // form->add_group("Basic types");
+            // form->add_variable("bool", true);
+            // form->add_variable("string", "asdfg");
+            // 
+            // form->add_group("Validating fields");
+            // form->add_variable("int", 123);
+            // form->add_variable("float", 1.23f);
+            // form->add_variable("double", 3.14);
+            // 
+            // form->add_group("Complex types");
+            // form->add_variable("Enumeration", ui::Horizontal, true)
+            //     ->setItems({ "Item 1", "Item 2", "Item 3" });
+            // 
+            // form->add_group("Other widgets");
+            // form->add_button("A button", []() {
+            //     std::cout << "Button pressed." << std::endl;
+            // });
+            // 
+            // gui->set_visible(true);
+            // gui->perform_layout();
+            // gui->center();
+        }
+
         bool run()
         {
             bool ret{ this->setup() };
@@ -69,76 +168,36 @@ namespace rl {
             const std::unique_ptr<rl::OpenGLRenderer>& renderer{ m_window->renderer() };
             gl::InstancedVertexBuffer vbo{ renderer->get_viewport() };
 
-            auto layout{ new ui::AdvancedGridLayout({ 0, 0, 0 }, {}, 30) };
+            bool bval{ true };
+            i32 ival{ true };
+            f32 fval{ true };
+            f64 dval{ true };
+            std::string sval{ "asdsad" };
+            ui::Axis eval{ ui::Horizontal };
             auto gui{ m_window->gui() };
+            ui::FormHelper* form{ new ui::FormHelper(gui) };
+            ds::shared<ui::Dialog> dialog{ form->add_dialog({ 10, 10 }, "Form helper example") };
+            form->add_group("Basic types");
+            form->add_variable<bool>("bool", bval);
+            form->add_variable<std::string>("string", sval);
 
-            gui->set_layout(layout);
+            form->add_group("Validating fields");
+            form->add_variable<i32>("int", ival);
+            form->add_variable<f32>("float", fval);
+            form->add_variable<f64>("double", dval);
+
+            form->add_group("Complex types");
+            // form->add_variable<ui::Axis>("Enumeration", eval, true)
+            //     ->setItems({ "Horizontal", "Vertical" });
+
+            form->add_group("Other widgets");
+            form->add_button("A button", []() {
+                std::cout << "Button pressed." << std::endl;
+            });
+
             gui->set_visible(true);
-
-            layout->set_col_stretch(1, 1.0f);
-
-            auto title_label{ new ui::Label{ gui, "GUI Canvas Span Label",
-                                             ui::font::name::sans_bold, 40 } };
-            layout->append_row(0);
-            auto push_button{ new ui::Button{ gui, "Push Button", ui::Icon::Microscope } };
-            layout->append_row(0);
-            auto timer_desc_label{ new ui::Label{ gui, "Timer: ", ui::font::name::sans, 32 } };
-            layout->append_row(0);
-            auto timer_value_label{ new ui::Label{ gui, "            ", ui::font::name::mono, 32 } };
-            layout->append_row(0);
-            auto stats_desc_label{ new ui::Label{ gui, "Stats: ", ui::font::name::sans, 32 } };
-            layout->append_row(0);
-            auto stats_value_label{ new ui::Label{ gui, "            ", ui::font::name::mono, 32 } };
-            layout->append_row(0);
-
-            push_button->set_tooltip("Microscope Button");
-            push_button->set_callback([] {
-                log::warning("Button Pressed Callback Invoked");
-            });
-
-            layout->set_anchor(push_button, ui::Anchor(0, layout->row_count() - 1, 1, 1));
-            layout->set_anchor(title_label, ui::Anchor{
-                                                1,
-                                                layout->row_count() - 1,
-                                                2,
-                                                1,
-                                                ui::Alignment::Center,
-                                                ui::Alignment::Fill,
-                                            });
-
-            layout->append_row(20);
-            layout->append_row(0);
-            layout->set_anchor(timer_desc_label, ui::Anchor(0, layout->row_count() - 1));
-            layout->set_anchor(timer_value_label, ui::Anchor(2, layout->row_count() - 1));
-            layout->append_row(10);
-            layout->append_row(0);
-            layout->set_anchor(stats_desc_label, ui::Anchor(0, layout->row_count() - 1));
-            layout->set_anchor(stats_value_label, ui::Anchor(2, layout->row_count() - 1));
-            layout->append_row(10);
-            layout->append_row(0);
-
-            timer_desc_label->set_tooltip("Timer Label");
-            timer_value_label->set_tooltip("Elapsed Time");
-
-            stats_desc_label->set_tooltip("Stats Label");
-            stats_value_label->set_tooltip("Average FPS");
-            stats_desc_label->set_callback([] {
-                log::warning("Stats callback invoked");
-            });
-
-            gui->add_update_callback([&]() {
-                auto&& elapsed_str{ fmt::format("{:.3f} sec", m_timer.elapsed()) };
-                timer_value_label->set_caption(std::move(elapsed_str));
-            });
-
-            gui->add_update_callback([&]() {
-                auto&& fps_str{ fmt::to_string(fmt::format("{:.1f} fps", fps)) };
-                stats_value_label->set_caption(std::move(fps_str));
-            });
-
-            gui->update();
             gui->perform_layout();
-
+            dialog->center();
             // vbo.bind_buffers();
 
             m_timer.reset();
