@@ -25,6 +25,11 @@ namespace rl::ui::crtp {
                 parent->add_child(std::shared_ptr<widget>{ this });
         }
 
+        const static inline std::shared_ptr<widget> null()
+        {
+            return std::shared_ptr<widget>{ nullptr };
+        }
+
         constexpr inline std::string name()
         {
             return m_name;

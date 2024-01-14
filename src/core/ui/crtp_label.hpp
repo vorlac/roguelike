@@ -14,8 +14,8 @@ namespace rl::ui::crtp {
     public:
         template <typename TWidget>
         constexpr inline explicit label(const std::shared_ptr<TWidget>& parent,
-                                        const std::string& widget_name,
-                                        const std::string& label_text)
+                                        const std::string& widget_name = "",
+                                        const std::string& label_text = "")
             : crtp::widget{ std::forward<decltype(parent)>(parent),
                             std::forward<decltype(widget_name)>(widget_name) }
             , m_text{ std::forward<decltype(label_text)>(label_text) }
