@@ -31,8 +31,8 @@ namespace rl::ui {
         void set_pushed(const bool& pushed);
         void set_caption(const std::string& caption);
 
-        const std::function<void(bool)>& toggled_callback() const;
-        void set_toggled_callback(const std::function<void(bool)>& toggled_callback);
+        const std::function<void(bool)>& callback() const;
+        void set_callback(const std::function<void(bool)>& toggled_callback);
 
     public:
         virtual bool on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb) override;

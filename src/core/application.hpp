@@ -137,21 +137,21 @@ namespace rl {
             // form->add_group("Basic types");
             // form->add_variable("bool", true);
             // form->add_variable("string", "asdfg");
-            // 
+            //
             // form->add_group("Validating fields");
             // form->add_variable("int", 123);
             // form->add_variable("float", 1.23f);
             // form->add_variable("double", 3.14);
-            // 
+            //
             // form->add_group("Complex types");
             // form->add_variable("Enumeration", ui::Horizontal, true)
             //     ->setItems({ "Item 1", "Item 2", "Item 3" });
-            // 
+            //
             // form->add_group("Other widgets");
             // form->add_button("A button", []() {
             //     std::cout << "Button pressed." << std::endl;
             // });
-            // 
+            //
             // gui->set_visible(true);
             // gui->perform_layout();
             // gui->center();

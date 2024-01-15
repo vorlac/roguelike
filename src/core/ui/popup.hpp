@@ -30,8 +30,6 @@ namespace rl::ui {
     public:
         virtual void draw(vg::NVGcontext* nvg_context) override;
         virtual void perform_layout(vg::NVGcontext* nvg_context) override;
-
-    protected:
         virtual void refresh_relative_placement() override;
 
     protected:
@@ -39,6 +37,6 @@ namespace rl::ui {
         ds::point<i32> m_anchor_pos{ 0, 0 };
         i32 m_anchor_offset{ 0 };
         i32 m_anchor_size{ 0 };
-        ui::Popup::Side m_side{};
+        ui::Popup::Side m_side{ Popup::Side::Left };
     };
 }

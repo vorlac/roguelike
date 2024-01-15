@@ -86,7 +86,7 @@ namespace rl::ui {
             return;
 
         m_theme = theme;
-        for (auto child : m_children)
+        for (auto& child : m_children)
             child->set_theme(theme);
     }
 

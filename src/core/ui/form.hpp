@@ -90,10 +90,10 @@ namespace rl::ui {
                     widget->set_value(value);
             };
 
-            this->refresh();
+            this->update();
 
             // TODO: missing??
-            // widget->set_callback(setter);
+            widget->set_callback(setter);
             widget->set_editable(editable);
             widget->set_font_size(m_widget_font_size);
 
@@ -146,9 +146,7 @@ namespace rl::ui {
         {
             m_layout->append_row(0);
             if (label == "")
-            {
                 m_layout->set_anchor(widget, ui::Anchor(1, m_layout->row_count() - 1, 3, 1));
-            }
             else
             {
                 ui::Label* label_w = new ui::Label(m_window, label, m_label_font_name,

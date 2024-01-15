@@ -50,12 +50,12 @@ namespace rl::ui {
         m_pushed = pushed;
     }
 
-    const std::function<void(bool)>& CheckBox::toggled_callback() const
+    const std::function<void(bool)>& CheckBox::callback() const
     {
         return m_toggled_callback;
     }
 
-    void CheckBox::set_toggled_callback(const std::function<void(bool)>& toggled_callback)
+    void CheckBox::set_callback(const std::function<void(bool)>& toggled_callback)
     {
         m_toggled_callback = toggled_callback;
     }
