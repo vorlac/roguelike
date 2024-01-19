@@ -10,7 +10,7 @@
 namespace rl::ui {
     using namespace vg;
 
-    UICanvas::UICanvas(ds::dims<i32> size, const Mouse& mouse, const Keyboard& kb,
+    UICanvas::UICanvas(ds::dims<f32> size, const Mouse& mouse, const Keyboard& kb,
                        const std::unique_ptr<VectorizedRenderer>& nvg_renderer)
         : ui::Widget{ nullptr, nvg_renderer }
         , m_nvg_context{ nvg_renderer ? nvg_renderer->nvg_context() : nullptr }
@@ -86,10 +86,12 @@ namespace rl::ui {
             const ui::Widget* widget{ this->find_widget(m_mouse_ref.pos()) };
             if (widget != nullptr && !widget->tooltip().empty())
             {
-                constexpr i32 tooltip_width{ 150 };
+                constexpr f32 tooltip_width{ 150.0f };
                 std::array<f32, 4> bounds = { 0.0f };
-                ds::point<i32> pos{ widget->abs_position() +
-                                    ds::point<i32>(widget->width() / 2, widget->height() + 10) };
+                ds::point<f32> pos{
+                    widget->abs_position() +
+                        ds::point<f32>(widget->width() / 2.0f, widget->height() + 10.0f),
+                };
 
                 nvgFontFace(m_nvg_context, font::name::sans);
                 nvgFontSize(m_nvg_context, 20.0f);
@@ -98,7 +100,7 @@ namespace rl::ui {
                 nvgTextBounds(m_nvg_context, pos.x, pos.y, widget->tooltip().c_str(), nullptr,
                               bounds.data());
 
-                i32 height{ static_cast<i32>((bounds[2] - bounds[0]) / 2.0f) };
+                f32 height{ (bounds[2] - bounds[0]) / 2.0f };
                 if (height > tooltip_width / 2)
                 {
                     nvgTextAlign(m_nvg_context, Text::Alignment::TopMiddle);
@@ -108,7 +110,7 @@ namespace rl::ui {
                     height = (bounds[2] - bounds[0]) / 2;
                 }
 
-                i32 shift{ 0 };
+                f32 shift{ 0.0f };
                 if (pos.x - height - 8 < 0)
                 {
                     // Keep tooltips on screen
@@ -123,11 +125,11 @@ namespace rl::ui {
 
                 nvgBeginPath(m_nvg_context);
                 nvgFillColor(m_nvg_context, rl::Colors::DarkererGrey);
-                nvgRoundedRect(m_nvg_context, bounds[0] - 4 - height, bounds[1] - 4,
-                               static_cast<i32>(bounds[2] - bounds[0]) + 8,
-                               static_cast<i32>(bounds[3] - bounds[1]) + 8, 3);
+                nvgRoundedRect(m_nvg_context, bounds[0] - 4.0f - height, bounds[1] - 4.0f,
+                               (bounds[2] - bounds[0]) + 8.0f, (bounds[3] - bounds[1]) + 8.0f,
+                               3.0f);
 
-                const i32 px{ static_cast<i32>((bounds[2] + bounds[0]) / 2) - height + shift };
+                const f32 px{ ((bounds[2] + bounds[0]) / 2.0f) - height + shift };
 
                 nvgMoveTo(m_nvg_context, px, bounds[1] - 10);
                 nvgLineTo(m_nvg_context, px + 7, bounds[1] + 1);
@@ -185,12 +187,12 @@ namespace rl::ui {
         return m_framebuf_size;
     }
 
-    const std::function<void(ds::dims<i32>)>& UICanvas::resize_callback() const
+    const std::function<void(ds::dims<f32>)>& UICanvas::resize_callback() const
     {
         return m_resize_callback;
     }
 
-    void UICanvas::set_resize_callback(const std::function<void(ds::dims<i32>)>& callback)
+    void UICanvas::set_resize_callback(const std::function<void(ds::dims<f32>)>& callback)
     {
         m_resize_callback = callback;
     }
@@ -356,15 +358,16 @@ namespace rl::ui {
 
     void UICanvas::center_dialog(ui::Dialog* window) const
     {
-        if (window->size() == ds::dims<i32>::zero())
+        if (window->size() == ds::dims<f32>::zero())
         {
             auto&& pref_size{ window->preferred_size(m_nvg_context) };
             window->set_size(pref_size);
             window->perform_layout(m_nvg_context);
         }
 
-        auto&& offset{ (m_size - window->size()) / 2 };
-        window->set_position({ offset.width, offset.height });
+        ds::dims<f32> offset{ (m_size - window->size()) / 2.0f };
+        ds::point<f32> position{ offset.width, offset.height };
+        window->set_position(position);
     }
 
     bool UICanvas::drop_event(const std::vector<std::string>& filenames)
@@ -383,12 +386,12 @@ namespace rl::ui {
         m_redraw |= this->drop_event(arg);
     }
 
-    bool UICanvas::on_moved(ds::point<i32> pt)
+    bool UICanvas::on_moved(ds::point<f32> pt)
     {
         if constexpr (io::logging::gui_events)
         {
-            ds::rect<i32> prev_rect{ m_pos, m_size };
-            ds::rect<i32> new_rect{ pt, prev_rect.size };
+            ds::rect<f32> prev_rect{ m_pos, m_size };
+            ds::rect<f32> new_rect{ pt, prev_rect.size };
             log::info("UICanvas::on_moved: {} => {}", prev_rect, new_rect);
         }
 
@@ -396,21 +399,21 @@ namespace rl::ui {
         return true;
     }
 
-    bool UICanvas::on_resized(ds::dims<i32> size)
+    bool UICanvas::on_resized(ds::dims<f32> size)
     {
         if constexpr (io::logging::gui_events)
         {
-            ds::rect<i32> prev_rect{ m_pos, m_size };
-            ds::rect<i32> new_rect{ m_pos, size / m_pixel_ratio };
+            ds::rect<f32> prev_rect{ m_pos, m_size };
+            ds::rect<f32> new_rect{ m_pos, size / m_pixel_ratio };
             log::info("UICanvas::on_resized: {} => {}", prev_rect, new_rect);
         }
 
         if (size.area() == 0)
             return false;
 
-        auto new_size = ds::dims<i32>{
-            static_cast<i32>(size.width / m_pixel_ratio),
-            static_cast<i32>(size.height / m_pixel_ratio),
+        ds::dims<f32> new_size{
+            size.width / m_pixel_ratio,
+            size.height / m_pixel_ratio,
         };
 
         this->set_size(new_size);
@@ -516,8 +519,8 @@ namespace rl::ui {
         {
             m_pos += mouse.pos_delta();
 
-            m_pos.x = std::max(m_pos.x, 0);
-            m_pos.y = std::max(m_pos.y, 0);
+            m_pos.x = std::max(m_pos.x, 0.0f);
+            m_pos.y = std::max(m_pos.y, 0.0f);
 
             auto relative_size{ this->parent()->size() - m_size };
 

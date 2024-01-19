@@ -17,9 +17,9 @@
 #include "utils/numeric.hpp"
 #include "utils/time.hpp"
 
-#if _MSC_VER
-  #pragma warning(disable : 4244)
-#endif
+// #if _MSC_VER
+//   #pragma warning(disable : 4244)
+// #endif
 
 namespace rl::ui {
     class Dialog;
@@ -41,11 +41,11 @@ namespace rl::ui {
         bool focused() const;
         bool contains(ds::point<i32> pt) const;
 
-        i32 width() const;
-        i32 height() const;
-        i32 fixed_width() const;
-        i32 fixed_height() const;
-        i32 font_size() const;
+        f32 width() const;
+        f32 height() const;
+        f32 fixed_width() const;
+        f32 fixed_height() const;
+        f32 font_size() const;
         f32 icon_extra_scale() const;
         i32 child_index(ui::Widget* widget) const;
         i32 child_count() const;
@@ -57,10 +57,10 @@ namespace rl::ui {
         ui::Widget* child_at(i32 index);
         rl::Mouse::Cursor::ID cursor() const;
         ui::Widget* find_widget(ds::point<i32> pt);
-        ds::point<i32> position() const;
-        ds::point<i32> abs_position() const;
-        ds::dims<i32> fixed_size() const;
-        ds::dims<i32> size() const;
+        ds::point<f32> position() const;
+        ds::point<f32> abs_position() const;
+        ds::dims<f32> fixed_size() const;
+        ds::dims<f32> size() const;
 
         const ui::Dialog* dialog() const;
         const ui::Widget* parent() const;
@@ -78,18 +78,18 @@ namespace rl::ui {
 
         void set_parent(ui::Widget* parent);
         void set_layout(ui::Layout* layout);
-        void set_position(ds::point<i32> pos);
-        void set_size(ds::dims<i32> size);
-        void set_width(i32 width);
-        void set_height(i32 height);
-        void set_fixed_size(ds::dims<i32> fixed_size);
-        void set_fixed_width(i32 width);
-        void set_fixed_height(i32 height);
+        void set_position(ds::point<f32> pos);
+        void set_size(ds::dims<f32> size);
+        void set_width(f32 width);
+        void set_height(f32 height);
+        void set_fixed_size(ds::dims<f32> fixed_size);
+        void set_fixed_width(f32 width);
+        void set_fixed_height(f32 height);
         void set_visible(bool visible);
         void set_enabled(bool enabled);
         void set_focused(bool focused);
         void set_tooltip(const std::string& tooltip);
-        void set_font_size(i32 font_size);
+        void set_font_size(f32 font_size);
         void set_icon_extra_scale(f32 scale);
         void set_cursor(Mouse::Cursor::ID cursor);
 
@@ -122,7 +122,7 @@ namespace rl::ui {
         virtual void set_theme(ui::Theme* theme);
         virtual void add_child(i32 index, Widget* widget);
         virtual void perform_layout(vg::NVGcontext* nvg_context);
-        virtual ds::dims<i32> preferred_size(vg::NVGcontext* nvg_context) const;
+        virtual ds::dims<f32> preferred_size(vg::NVGcontext* nvg_context) const;
 
     public:
         virtual void draw_mouse_intersection(vg::NVGcontext* nvg_context, ds::point<i32> pt);
@@ -142,13 +142,13 @@ namespace rl::ui {
         bool m_focused{ false };
         bool m_mouse_focus{ false };
 
-        i32 m_font_size{ 16 };
+        f32 m_font_size{ 16.0 };
         f32 m_icon_extra_scale{ 1.0f };
 
-        ds::point<i32> m_pos{ 0, 0 };
-        ds::dims<i32> m_size{ 0, 0 };
-        ds::dims<i32> m_fixed_size{ 0, 0 };
-        ds::dims<i32> m_framebuf_size{ 0, 0 };
+        ds::point<f32> m_pos{ 0.0f, 0.0f };
+        ds::dims<f32> m_size{ 0.0f, 0.0f };
+        ds::dims<f32> m_fixed_size{ 0.0f, 0.0f };
+        ds::dims<f32> m_framebuf_size{ 0.0f, 0.0f };
 
         Mouse::Cursor::ID m_cursor{ Mouse::Cursor::Arrow };
         std::vector<Widget*> m_children{};

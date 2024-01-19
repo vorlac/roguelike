@@ -15,16 +15,16 @@ namespace rl::ui {
 
         Popup(ui::Widget* parent, ui::Dialog* parent_dialog = nullptr);
 
-        i32 anchor_offset() const;
-        i32 anchor_size() const;
+        f32 anchor_offset() const;
+        f32 anchor_size() const;
         Side side() const;
         ui::Dialog* parent_window();
         const ui::Dialog* parent_window() const;
-        const ds::point<i32> anchor_pos() const;
+        const ds::point<f32> anchor_pos() const;
 
-        void set_anchor_pos(const ds::point<i32>& anchor_pos);
-        void set_anchor_offset(i32 anchor_offset);
-        void set_anchor_size(i32 anchor_size);
+        void set_anchor_pos(const ds::point<f32>& anchor_pos);
+        void set_anchor_offset(f32 anchor_offset);
+        void set_anchor_size(f32 anchor_size);
         void set_side(Side popup_side);
 
     public:
@@ -34,9 +34,9 @@ namespace rl::ui {
 
     protected:
         ui::Dialog* m_parent_dialog{ nullptr };
-        ds::point<i32> m_anchor_pos{ 0, 0 };
-        i32 m_anchor_offset{ 0 };
-        i32 m_anchor_size{ 0 };
+        ds::point<f32> m_anchor_pos{ 0.0f, 0.0f };
+        f32 m_anchor_offset{ 0.0f };
+        f32 m_anchor_size{ 0.0f };
         ui::Popup::Side m_side{ Popup::Side::Left };
     };
 }

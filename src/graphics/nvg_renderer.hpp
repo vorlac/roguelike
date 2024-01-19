@@ -31,7 +31,7 @@ namespace rl {
 
         // Draws rectangle outline in a specific width, color,
         // and location (inner vs outer outline)
-        void draw_rect_outline(ds::rect<i32> rect, f32 stroke_width, ds::color<f32> color,
+        void draw_rect_outline(ds::rect<f32> rect, f32 stroke_width, ds::color<f32> color,
                                ui::Outline type);
 
     private:

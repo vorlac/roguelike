@@ -101,18 +101,19 @@ namespace rl::ui {
         return true;
     }
 
-    ds::dims<i32> CheckBox::preferred_size(NVGcontext* nvg_context) const
+    ds::dims<f32> CheckBox::preferred_size(NVGcontext* nvg_context) const
     {
-        if (m_fixed_size != ds::dims<i32>::zero())
+        if (m_fixed_size != ds::dims<f32>::zero())
             return m_fixed_size;
 
         nvgFontSize(nvg_context, this->font_size());
         nvgFontFace(nvg_context, font::name::sans);
 
-        f32 text_bounds{ nvgTextBounds(nvg_context, 0, 0, m_caption.c_str(), nullptr, nullptr) };
-        return ds::dims<i32>{
-            static_cast<i32>(text_bounds + 1.8f * this->font_size()),
-            static_cast<i32>(this->font_size() * 1.3f),
+        f32 text_bounds{ nvgTextBounds(nvg_context, 0.0f, 0.0f, m_caption.c_str(), nullptr,
+                                       nullptr) };
+        return ds::dims<f32>{
+            text_bounds + 1.8f * this->font_size(),
+            this->font_size() * 1.3f,
         };
     }
 

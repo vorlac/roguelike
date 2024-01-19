@@ -65,8 +65,12 @@ namespace rl {
 
         SDL3::SDL_GL_SetSwapInterval(0);
 
-        m_gui_canvas = new ui::UICanvas{ window_size, m_mouse, m_keyboard,
-                                         m_renderer->vectorized_renderer() };
+        m_gui_canvas = new ui::UICanvas{
+            static_cast<ds::dims<f32>>(window_size),
+            m_mouse,
+            m_keyboard,
+            m_renderer->vectorized_renderer(),
+        };
     }
 
     MainWindow::~MainWindow()
@@ -199,7 +203,10 @@ namespace rl {
         const i32 result{ SDL3::SDL_SetWindowSize(m_sdl_window, size.width, size.height) };
         runtime_assert(result == 0, "failed to set size");
         m_window_rect.size = size;
-        m_gui_canvas->set_size(size);
+        m_gui_canvas->set_size(ds::dims<f32>{
+            static_cast<f32>(size.width),
+            static_cast<f32>(size.height),
+        });
         return result == 0;
     }
 
@@ -332,6 +339,7 @@ namespace rl {
         sdl_assert(m_pixel_ratio != 0.0f, "failed to get pixel ratio [window:{}]", m_window_id);
         m_pixel_density = SDL3::SDL_GetWindowPixelDensity(m_sdl_window);
         sdl_assert(m_pixel_density != 0.0f, "failed to get pixel density [window:{}]", m_window_id);
+
         return m_framebuf_size;
     }
 
@@ -454,17 +462,16 @@ namespace rl {
             return;
 
         m_framebuf_size = framebuf_size;
-        m_window_rect.size = ds::dims<i32>{
-            static_cast<i32>(window_size.width / m_pixel_ratio),
-            static_cast<i32>(window_size.height / m_pixel_ratio),
-        };
 
-        m_renderer->set_viewport(std::forward<ds::rect<i32>>({
+        ds::dims<f32> window_render_size{ window_size / m_pixel_ratio };
+        m_window_rect.size = static_cast<ds::dims<i32>>(window_render_size);
+
+        m_renderer->set_viewport(ds::rect<i32>{
             ds::point<i32>{ 0, 0 },
             m_window_rect.size,
-        }));
+        });
 
-        m_gui_canvas->on_resized(m_window_rect.size);
+        m_gui_canvas->on_resized(window_render_size);
     }
 
     void MainWindow::window_moved_event_callback(const SDL3::SDL_Event& e)

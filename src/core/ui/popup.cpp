@@ -8,44 +8,44 @@ namespace rl::ui {
     Popup::Popup(ui::Widget* parent, ui::Dialog* parent_dialog)
         : ui::Dialog{ parent, "" }
         , m_parent_dialog{ parent_dialog }
-        , m_anchor_pos{ 0, 0 }
-        , m_anchor_offset{ 30 }
-        , m_anchor_size{ 15 }
-        , m_side{ Side::Right }
+        , m_anchor_pos{ 0.0f, 0.0f }
+        , m_anchor_offset{ 30.0f }
+        , m_anchor_size{ 15.0f }
+        , m_side{ Popup::Side::Right }
     {
     }
 
-    void Popup::set_anchor_pos(const ds::point<i32>& anchor_pos)
+    void Popup::set_anchor_pos(const ds::point<f32>& anchor_pos)
     {
         m_anchor_pos = anchor_pos;
     }
 
-    const ds::point<i32> Popup::anchor_pos() const
+    const ds::point<f32> Popup::anchor_pos() const
     {
         return m_anchor_pos;
     }
 
-    void Popup::set_anchor_offset(i32 anchor_offset)
+    void Popup::set_anchor_offset(f32 anchor_offset)
     {
         m_anchor_offset = anchor_offset;
     }
 
-    i32 Popup::anchor_offset() const
+    f32 Popup::anchor_offset() const
     {
         return m_anchor_offset;
     }
 
-    void Popup::set_anchor_size(i32 anchor_size)
+    void Popup::set_anchor_size(f32 anchor_size)
     {
         m_anchor_size = anchor_size;
     }
 
-    i32 Popup::anchor_size() const
+    f32 Popup::anchor_size() const
     {
         return m_anchor_size;
     }
 
-    void Popup::set_side(Side popup_side)
+    void Popup::set_side(Popup::Side popup_side)
     {
         m_side = popup_side;
     }
@@ -87,18 +87,18 @@ namespace rl::ui {
 
         m_parent_dialog->refresh_relative_placement();
         m_visible &= m_parent_dialog->visible_recursive();
-        m_pos = m_parent_dialog->position() + m_anchor_pos - ds::point<i32>{ 0, m_anchor_offset };
+        m_pos = m_parent_dialog->position() + m_anchor_pos -
+                ds::point<f32>{ 0.0f, m_anchor_offset };
     }
 
     void Popup::draw(NVGcontext* ctx)
     {
         this->refresh_relative_placement();
-
         if (!m_visible)
             return;
 
-        i32 ds{ m_theme->m_window_drop_shadow_size };
-        i32 cr{ m_theme->m_window_corner_radius };
+        f32 ds{ m_theme->m_window_drop_shadow_size };
+        f32 cr{ m_theme->m_window_corner_radius };
 
         nvgSave(ctx);
         nvgResetScissor(ctx);
@@ -119,7 +119,8 @@ namespace rl::ui {
         nvgBeginPath(ctx);
         nvgRoundedRect(ctx, m_pos.x, m_pos.y, m_size.width, m_size.height, cr);
 
-        ds::point<i32> base{ m_pos + ds::point<i32>{ 0, m_anchor_offset } };
+        ds::point<f32> base{ m_pos + ds::point<f32>{ 0.0f, m_anchor_offset } };
+
         i32 sign = -1;
         if (m_side == Side::Left)
         {

@@ -16,7 +16,7 @@ namespace rl::ui {
     {
     public:
         Label(ui::Widget* parent, const std::string& caption,
-              const std::string& font = font::name::mono, i32 font_size = -1);
+              const std::string& font = font::name::mono, f32 font_size = -1.0f);
 
         std::string font() const;
         std::string caption() const;
@@ -28,7 +28,7 @@ namespace rl::ui {
         void set_callback(std::function<void()> callable);
 
     public:
-        virtual ds::dims<i32> preferred_size(vg::NVGcontext* nvg_context) const override;
+        virtual ds::dims<f32> preferred_size(vg::NVGcontext* nvg_context) const override;
         virtual void set_theme(ui::Theme* theme) override;
         virtual void draw(vg::NVGcontext* nvg_context) override;
 

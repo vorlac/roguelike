@@ -97,11 +97,11 @@ namespace rl::ui {
             widget->set_editable(editable);
             widget->set_font_size(m_widget_font_size);
 
-            ds::dims<i32> fs{ widget->fixed_size() };
+            ds::dims<f32> fs{ widget->fixed_size() };
 
-            widget->set_fixed_size({
-                fs.width != 0 ? fs.width : m_fixed_size.width,
-                fs.height != 0 ? fs.height : m_fixed_size.height,
+            widget->set_fixed_size(ds::dims<f32>{
+                fs.width != 0.0f ? fs.width : m_fixed_size.width,
+                fs.height != 0.0f ? fs.height : m_fixed_size.height,
             });
 
             m_refresh_callbacks.push_back(refresh);
@@ -175,12 +175,12 @@ namespace rl::ui {
                 throw std::runtime_error("Internal error: window has an incompatible layout!");
         }
 
-        void set_fixed_size(const ds::dims<i32>& fw)
+        void set_fixed_size(const ds::dims<f32>& fw)
         {
             m_fixed_size = fw;
         }
 
-        ds::dims<i32> fixed_size()
+        ds::dims<f32> fixed_size()
         {
             return m_fixed_size;
         }
@@ -205,32 +205,32 @@ namespace rl::ui {
             m_label_font_name = name;
         }
 
-        int group_font_size() const
+        f32 group_font_size() const
         {
             return m_group_font_size;
         }
 
-        void set_group_font_size(int value)
+        void set_group_font_size(f32 value)
         {
             m_group_font_size = value;
         }
 
-        i32 label_font_size() const
+        f32 label_font_size() const
         {
             return m_label_font_size;
         }
 
-        void set_label_font_size(i32 value)
+        void set_label_font_size(f32 value)
         {
             m_label_font_size = value;
         }
 
-        i32 widget_font_size() const
+        f32 widget_font_size() const
         {
             return m_widget_font_size;
         }
 
-        void set_widget_font_size(i32 value)
+        void set_widget_font_size(f32 value)
         {
             m_widget_font_size = value;
         }
@@ -242,13 +242,13 @@ namespace rl::ui {
         std::vector<std::function<void()>> m_refresh_callbacks;
         std::string m_group_font_name{ font::name::sans_bold };
         std::string m_label_font_name{ font::name::sans };
-        ds::dims<i32> m_fixed_size{ 0, 20 };
-        i32 m_group_font_size{ 20 };
-        i32 m_label_font_size{ 16 };
-        i32 m_widget_font_size{ 16 };
-        i32 m_pre_group_spacing{ 15 };
-        i32 m_post_group_spacing{ 5 };
-        i32 m_variable_spacing{ 5 };
+        ds::dims<f32> m_fixed_size{ 0.0f, 20.0f };
+        f32 m_group_font_size{ 20.0f };
+        f32 m_label_font_size{ 16.0f };
+        f32 m_widget_font_size{ 16.0f };
+        f32 m_pre_group_spacing{ 15.0f };
+        f32 m_post_group_spacing{ 5.0f };
+        f32 m_variable_spacing{ 5.0f };
     };
 
     namespace detail {

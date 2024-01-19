@@ -9,7 +9,7 @@ namespace rl::ui {
     using namespace vg;
 
     Label::Label(ui::Widget* parent, const std::string& caption, const std::string& font,
-                 i32 font_size)
+                 f32 font_size)
         : ui::Widget{ parent }
         , m_caption{ caption }
         , m_font{ font }
@@ -69,28 +69,35 @@ namespace rl::ui {
         }
     }
 
-    ds::dims<i32> Label::preferred_size(NVGcontext* nvg_context) const
+    ds::dims<f32> Label::preferred_size(NVGcontext* nvg_context) const
     {
         if (m_caption.empty())
-            return ds::dims<i32>{ 0, 0 };
+            return ds::dims<f32>::zero();
 
         nvgFontFace(nvg_context, m_font.c_str());
         nvgFontSize(nvg_context, this->font_size());
 
         if (m_fixed_size.width > 0)
         {
-            float bounds[4];
-            nvgTextAlign(nvg_context, NVGalign::NVG_ALIGN_LEFT | NVGalign::NVG_ALIGN_TOP);
+            f32 bounds[4] = { 0 };
+
+            nvgTextAlign(nvg_context, Text::Alignment::TopLeft);
             nvgTextBoxBounds(nvg_context, m_pos.x, m_pos.y, m_fixed_size.width, m_caption.c_str(),
                              nullptr, bounds);
-            return ds::dims<i32>(m_fixed_size.width, bounds[3] - bounds[1]);
+
+            return ds::dims<f32>{
+                m_fixed_size.width,
+                bounds[3] - bounds[1],
+            };
         }
         else
         {
-            nvgTextAlign(nvg_context, NVGalign::NVG_ALIGN_LEFT | NVGalign::NVG_ALIGN_MIDDLE);
-            return ds::dims<i32>(
+            nvgTextAlign(nvg_context, Text::Alignment::CenteredLeft);
+
+            return ds::dims<f32>{
                 nvgTextBounds(nvg_context, 0, 0, m_caption.c_str(), nullptr, nullptr) + 2,
-                font_size());
+                this->font_size(),
+            };
         }
     }
 
@@ -99,18 +106,18 @@ namespace rl::ui {
         ui::Widget::draw(nvg_context);
 
         nvgFontFace(nvg_context, m_font.c_str());
-        nvgFontSize(nvg_context, font_size());
+        nvgFontSize(nvg_context, this->font_size());
         nvgFillColor(nvg_context, m_color);
 
         if (m_fixed_size.width > 0)
         {
-            nvgTextAlign(nvg_context, NVGalign::NVG_ALIGN_LEFT | NVGalign::NVG_ALIGN_TOP);
+            nvgTextAlign(nvg_context, Text::Alignment::TopLeft);
             nvgTextBox(nvg_context, m_pos.x, m_pos.y, m_fixed_size.width, m_caption.c_str(),
                        nullptr);
         }
         else
         {
-            nvgTextAlign(nvg_context, NVGalign::NVG_ALIGN_LEFT | NVGalign::NVG_ALIGN_MIDDLE);
+            nvgTextAlign(nvg_context, Text::Alignment::CenteredLeft);
             nvgText(nvg_context, m_pos.x, m_pos.y + m_size.height * 0.5f, m_caption.c_str(),
                     nullptr);
         }

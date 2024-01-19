@@ -28,6 +28,8 @@ namespace rl::ui {
             Centered = HorizCenter | VertCenter,
             TopLeft = HorizLeft | VertTop,
             TopMiddle = HorizCenter | VertTop,
+            CenteredLeft = HorizLeft | VertCenter,
+            CenteredRight = HorizRight | VertCenter,
         };
     };
 
@@ -79,13 +81,13 @@ namespace rl::ui {
         f32 m_icon_scale{ 1.0f };
         f32 m_tab_border_width{ 0.75f };
 
-        i32 m_standard_font_size{ 16 };
-        i32 m_button_font_size{ 20 };
-        i32 m_text_box_font_size{ 20 };
-        i32 m_window_corner_radius{ 2 };
-        i32 m_window_header_height{ 30 };
-        i32 m_window_drop_shadow_size{ 10 };
-        i32 m_button_corner_radius{ 2 };
+        f32 m_standard_font_size{ 16.0f };
+        f32 m_button_font_size{ 20.0f };
+        f32 m_text_box_font_size{ 20.0f };
+        f32 m_window_corner_radius{ 2.0f };
+        f32 m_window_header_height{ 30.0f };
+        f32 m_window_drop_shadow_size{ 10.0f };
+        f32 m_button_corner_radius{ 2.0f };
         i32 m_tab_inner_margin{ 5 };
         i32 m_tab_min_button_width{ 20 };
         i32 m_tab_max_button_width{ 160 };

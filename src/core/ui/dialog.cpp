@@ -47,7 +47,7 @@ namespace rl::ui {
         {
             m_button_panel = new ui::Widget(this);
             m_button_panel->set_layout(
-                new ui::BoxLayout{ Orientation::Horizontal, Alignment::Center, 0, 4 });
+                new ui::BoxLayout{ Orientation::Horizontal, Alignment::Center, 0.0f, 4.0f });
         }
 
         return m_button_panel;
@@ -71,82 +71,82 @@ namespace rl::ui {
         static_cast<ui::UICanvas*>(owner)->center_dialog(this);
     }
 
-    void Dialog::draw(NVGcontext* ctx)
+    void Dialog::draw(NVGcontext* nvg_context)
     {
-        const i32 ds{ m_theme->m_window_drop_shadow_size };
-        const i32 cr{ m_theme->m_window_corner_radius };
-        const i32 hh{ m_theme->m_window_header_height };
+        const f32 drop_shadow_size{ m_theme->m_window_drop_shadow_size };
+        const f32 corner_radius{ m_theme->m_window_corner_radius };
+        const f32 header_height{ m_theme->m_window_header_height };
 
-        // Draw window
-        nvgSave(ctx);
-        nvgBeginPath(ctx);
-        nvgRoundedRect(ctx, m_pos.x, m_pos.y, m_size.width, m_size.height, cr);
-        nvgFillColor(ctx, m_mouse_focus ? m_theme->m_window_fill_focused
-                                        : m_theme->m_window_fill_unfocused);
-        nvgFill(ctx);
+        // nvgSave(nvg_context);
+        nvgBeginPath(nvg_context);
+        nvgRoundedRect(nvg_context, m_pos.x, m_pos.y, m_size.width, m_size.height, corner_radius);
+        nvgFillColor(nvg_context, m_mouse_focus ? m_theme->m_window_fill_focused
+                                                : m_theme->m_window_fill_unfocused);
+        nvgFill(nvg_context);
 
-        // Draw a drop shadow
-        NVGpaint shadow_paint{ nvgBoxGradient(ctx, m_pos.x, m_pos.y, m_size.width, m_size.height,
-                                              cr * 2, ds * 2, m_theme->m_drop_shadow,
-                                              m_theme->m_transparent) };
+        NVGpaint shadow_paint = nvgBoxGradient(
+            nvg_context, m_pos.x, m_pos.y, m_size.width, m_size.height, corner_radius * 2.0f,
+            drop_shadow_size * 2, m_theme->m_drop_shadow, m_theme->m_transparent);
 
-        nvgSave(ctx);
-        nvgResetScissor(ctx);
-        nvgBeginPath(ctx);
-        nvgRect(ctx, m_pos.x - ds, m_pos.y - ds, m_size.width + 2 * ds, m_size.height + 2 * ds);
-        nvgRoundedRect(ctx, m_pos.x, m_pos.y, m_size.width, m_size.height, cr);
-        nvgPathWinding(ctx, NVG_HOLE);
-        nvgFillPaint(ctx, shadow_paint);
-        nvgFill(ctx);
-        nvgRestore(ctx);
+        // nvgSave(nvg_context);
+        nvgResetScissor(nvg_context);
+        nvgBeginPath(nvg_context);
+        nvgRect(nvg_context, m_pos.x - drop_shadow_size, m_pos.y - drop_shadow_size,
+                m_size.width + 2 * drop_shadow_size, m_size.height + 2.0f * drop_shadow_size);
+        nvgRoundedRect(nvg_context, m_pos.x, m_pos.y, m_size.width, m_size.height, corner_radius);
+        nvgPathWinding(nvg_context, NVGsolidity::NVG_HOLE);
+        nvgFillPaint(nvg_context, shadow_paint);
+        nvgFill(nvg_context);
+        // nvgRestore(nvg_context);
 
         if (!m_title.empty())
         {
-            // Draw header
-            NVGpaint header_paint{ nvgLinearGradient(ctx, m_pos.x, m_pos.y, m_pos.x, m_pos.y + hh,
-                                                     m_theme->m_window_header_gradient_top,
-                                                     m_theme->m_window_header_gradient_bot) };
+            NVGpaint header_paint{ nvgLinearGradient(
+                nvg_context, m_pos.x, m_pos.y, m_pos.x, m_pos.y + header_height,
+                m_theme->m_window_header_gradient_top, m_theme->m_window_header_gradient_bot) };
 
-            nvgBeginPath(ctx);
-            nvgRoundedRect(ctx, m_pos.x, m_pos.y, m_size.width, hh, cr);
+            nvgBeginPath(nvg_context);
+            nvgRoundedRect(nvg_context, m_pos.x, m_pos.y, m_size.width, header_height,
+                           corner_radius);
 
-            nvgFillPaint(ctx, header_paint);
-            nvgFill(ctx);
+            nvgFillPaint(nvg_context, header_paint);
+            nvgFill(nvg_context);
 
-            nvgBeginPath(ctx);
-            nvgRoundedRect(ctx, m_pos.x, m_pos.y, m_size.width, hh, cr);
-            nvgStrokeColor(ctx, m_theme->m_window_header_sep_top);
+            nvgBeginPath(nvg_context);
+            nvgRoundedRect(nvg_context, m_pos.x, m_pos.y, m_size.width, header_height,
+                           corner_radius);
+            nvgStrokeColor(nvg_context, m_theme->m_window_header_sep_top);
 
-            nvgSave(ctx);
-            nvgIntersectScissor(ctx, m_pos.x, m_pos.y, m_size.width, 0.5f);
-            nvgStroke(ctx);
-            nvgRestore(ctx);
+            // nvgSave(nvg_context);
+            // nvgIntersectScissor(nvg_context, m_pos.x, m_pos.y, m_size.width, 0.5f);
+            nvgStroke(nvg_context);
+            // nvgRestore(nvg_context);
 
-            nvgBeginPath(ctx);
-            nvgMoveTo(ctx, m_pos.x + 0.5f, m_pos.y + hh - 1.5f);
-            nvgLineTo(ctx, m_pos.x + m_size.width - 0.5f, m_pos.y + hh - 1.5f);
-            nvgStrokeColor(ctx, m_theme->m_window_header_sep_bot);
-            nvgStroke(ctx);
+            nvgBeginPath(nvg_context);
+            nvgMoveTo(nvg_context, m_pos.x + 0.5f, m_pos.y + header_height - 1.5f);
+            nvgLineTo(nvg_context, m_pos.x + m_size.width - 0.5f, m_pos.y + header_height - 1.5f);
+            nvgStrokeColor(nvg_context, m_theme->m_window_header_sep_bot);
+            nvgStroke(nvg_context);
 
-            nvgFontSize(ctx, 18.0f);
-            nvgFontFace(ctx, ui::font::name::sans_bold);
-            nvgTextAlign(ctx, NVGalign::NVG_ALIGN_CENTER | NVGalign::NVG_ALIGN_MIDDLE);
+            nvgFontSize(nvg_context, 18.0f);
+            nvgFontFace(nvg_context, ui::font::name::sans_bold);
+            nvgTextAlign(nvg_context, Text::Alignment::Centered);
 
-            nvgFontBlur(ctx, 2.0f);
-            nvgFillColor(ctx, m_theme->m_drop_shadow);
-            nvgText(ctx, m_pos.x + m_size.width / 2.0f, m_pos.y + hh / 2.0f, m_title.c_str(),
-                    nullptr);
+            nvgFontBlur(nvg_context, 2.0f);
+            nvgFillColor(nvg_context, m_theme->m_drop_shadow);
+            nvgText(nvg_context, m_pos.x + m_size.width / 2.0f, m_pos.y + header_height / 2.0f,
+                    m_title.c_str(), nullptr);
 
-            nvgFontBlur(ctx, 0.0f);
-            nvgFillColor(ctx, m_focused ? m_theme->m_window_title_focused
-                                        : m_theme->m_window_title_unfocused);
-            nvgText(ctx, m_pos.x + m_size.width / 2.0f, m_pos.y + hh / 2.0f - 1, m_title.c_str(),
-                    nullptr);
+            nvgFontBlur(nvg_context, 0.0f);
+            nvgFillColor(nvg_context, m_focused ? m_theme->m_window_title_focused
+                                                : m_theme->m_window_title_unfocused);
+            nvgText(nvg_context, m_pos.x + m_size.width / 2.0f,
+                    m_pos.y + header_height / 2.0f - 1.0f, m_title.c_str(), nullptr);
         }
 
-        nvgRestore(ctx);
+        // nvgRestore(nvg_context);
 
-        ui::Widget::draw(ctx);
+        ui::Widget::draw(nvg_context);
     }
 
     bool Dialog::on_mouse_entered(const Mouse& mouse)
@@ -172,10 +172,10 @@ namespace rl::ui {
         {
             m_pos += mouse.pos_delta();
 
-            m_pos.x = std::max(m_pos.x, 0);
-            m_pos.y = std::max(m_pos.y, 0);
+            m_pos.x = std::max(m_pos.x, 0.0f);
+            m_pos.y = std::max(m_pos.y, 0.0f);
 
-            const ds::dims<i32> relative_size{ this->parent()->size() - m_size };
+            const ds::dims<f32> relative_size{ this->parent()->size() - m_size };
 
             m_pos.x = std::min(m_pos.x, relative_size.width);
             m_pos.y = std::min(m_pos.y, relative_size.height);
@@ -197,7 +197,7 @@ namespace rl::ui {
 
         if (mouse.is_button_pressed(Mouse::Button::Left))
         {
-            i32 offset_height{ mouse.pos().y - m_pos.y };
+            f32 offset_height{ mouse.pos().y - m_pos.y };
             m_drag = offset_height < m_theme->m_window_header_height;
             return true;
         }
@@ -231,12 +231,12 @@ namespace rl::ui {
         return ui::Widget::on_mouse_scroll(mouse, kb);
     }
 
-    ds::dims<i32> Dialog::preferred_size(NVGcontext* nvg_context) const
+    ds::dims<f32> Dialog::preferred_size(NVGcontext* nvg_context) const
     {
         if (m_button_panel != nullptr)
             m_button_panel->hide();
 
-        ds::dims<i32> result{ ui::Widget::preferred_size(nvg_context) };
+        ds::dims<f32> result{ ui::Widget::preferred_size(nvg_context) };
 
         if (m_button_panel != nullptr)
             m_button_panel->show();
@@ -247,8 +247,8 @@ namespace rl::ui {
         std::array<f32, 4> bounds = {};
         nvgTextBounds(nvg_context, 0, 0, m_title.c_str(), nullptr, bounds.data());
 
-        return ds::dims<i32>(std::max(result.width, static_cast<i32>(bounds[2] - bounds[0] + 20)),
-                             std::max(result.height, static_cast<i32>(bounds[3] - bounds[1])));
+        return ds::dims<f32>(std::max(result.width, bounds[2] - bounds[0] + 20),
+                             std::max(result.height, bounds[3] - bounds[1]));
     }
 
     void Dialog::perform_layout(NVGcontext* ctx)

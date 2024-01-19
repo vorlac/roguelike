@@ -38,7 +38,7 @@ namespace rl::ui {
         virtual bool on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb) override;
         virtual bool on_mouse_button_released(const Mouse& mouse, const Keyboard& kb) override;
 
-        virtual ds::dims<i32> preferred_size(vg::NVGcontext* nvg_context) const override;
+        virtual ds::dims<f32> preferred_size(vg::NVGcontext* nvg_context) const override;
         virtual void draw(vg::NVGcontext* nvg_context) override;
 
     protected:

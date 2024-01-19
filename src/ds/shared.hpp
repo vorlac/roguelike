@@ -10,6 +10,7 @@
 namespace rl::ds {
 
     template <typename T>
+        requires std::derived_from<T, ds::refcounted>
     class shared final
     {
     public:
@@ -36,7 +37,7 @@ namespace rl::ds {
             other.m_data = nullptr;
         }
 
-        constexpr virtual ~shared()
+        constexpr inline virtual ~shared()
         {
             if (m_data != nullptr)
                 m_data->release_ref();
@@ -114,13 +115,13 @@ namespace rl::ds {
 
         constexpr inline T& operator*()
         {
-            runtime_assert(m_data != nullptr, "dereferencing null shared<T>");
+            runtime_assert(m_data != nullptr, "dereferencing null shared<{}>", typeid(T).name());
             return *m_data;
         }
 
         constexpr const inline T& operator*() const
         {
-            runtime_assert(m_data != nullptr, "dereferencing null shared<T>");
+            runtime_assert(m_data != nullptr, "dereferencing null shared<{}>", typeid(T).name());
             return *m_data;
         }
 

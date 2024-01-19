@@ -14,7 +14,7 @@ namespace rl::ui {
             : ui::Button(parent, caption, icon)
         {
             this->set_flags(Button::Flags::ToolButton);
-            this->set_fixed_size(ds::dims<i32>{ 25, 25 });
+            this->set_fixed_size(ds::dims<f32>{ 25.0f, 25.0f });
         }
     };
 }

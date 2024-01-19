@@ -26,7 +26,7 @@ namespace rl::ui {
 
     public:
         virtual void draw(vg::NVGcontext* ctx) override;
-        virtual ds::dims<i32> preferred_size(vg::NVGcontext* ctx) const override;
+        virtual ds::dims<f32> preferred_size(vg::NVGcontext* ctx) const override;
         virtual void perform_layout(vg::NVGcontext* ctx) override;
 
     protected:

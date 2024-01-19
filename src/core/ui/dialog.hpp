@@ -41,7 +41,7 @@ namespace rl {
         public:
             virtual void draw(vg::NVGcontext* ctx) override;
             virtual void perform_layout(vg::NVGcontext* ctx) override;
-            virtual ds::dims<i32> preferred_size(vg::NVGcontext* nvg_context) const override;
+            virtual ds::dims<f32> preferred_size(vg::NVGcontext* nvg_context) const override;
 
         protected:
             virtual void refresh_relative_placement();

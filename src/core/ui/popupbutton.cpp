@@ -45,9 +45,9 @@ namespace rl::ui {
         return m_popup;
     }
 
-    ds::dims<i32> PopupButton::preferred_size(NVGcontext* ctx) const
+    ds::dims<f32> PopupButton::preferred_size(NVGcontext* ctx) const
     {
-        return Button::preferred_size(ctx) + ds::dims<i32>{ 15, 0 };
+        return Button::preferred_size(ctx) + ds::dims<f32>{ 15.0f, 0.0f };
     }
 
     void PopupButton::draw(NVGcontext* ctx)
@@ -63,7 +63,7 @@ namespace rl::ui {
         {
             std::string icon{ utf8(std::to_underlying(m_chevron_icon)) };
             ds::color<u8> text_color{ m_text_color.a == 0 ? m_theme->m_text_color : m_text_color };
-            i32 text_size{ m_font_size < 0 ? m_theme->m_button_font_size : m_font_size };
+            f32 text_size{ m_font_size < 0.0f ? m_theme->m_button_font_size : m_font_size };
 
             nvgFontFace(ctx, font::name::icons);
             nvgFontSize(ctx, text_size * this->icon_scale());
@@ -88,21 +88,26 @@ namespace rl::ui {
     void PopupButton::perform_layout(NVGcontext* ctx)
     {
         ui::Widget::perform_layout(ctx);
-        i32 anchor_size{ m_popup->anchor_size() };
+        f32 anchor_size{ m_popup->anchor_size() };
 
         const ui::Dialog* parent_dialog{ this->dialog() };
         if (parent_dialog != nullptr)
         {
-            i32 pos_y{ this->abs_position().y - parent_dialog->position().y + m_size.height / 2 };
+            f32 pos_y{ this->abs_position().y - parent_dialog->position().y + m_size.height / 2 };
             if (m_popup->side() == Popup::Side::Right)
-                m_popup->set_anchor_pos(
-                    ds::point<i32>{ parent_dialog->width() + anchor_size, pos_y });
+                m_popup->set_anchor_pos(ds::point<f32>{
+                    parent_dialog->width() + anchor_size,
+                    pos_y,
+                });
             else
-                m_popup->set_anchor_pos(ds::point<i32>{ -anchor_size, pos_y });
+                m_popup->set_anchor_pos(ds::point<f32>{
+                    -anchor_size,
+                    pos_y,
+                });
         }
         else
         {
-            m_popup->set_position(this->abs_position() + ds::point<i32>{
+            m_popup->set_position(this->abs_position() + ds::point<f32>{
                                                              this->width() + anchor_size + 1,
                                                              m_size.height / 2 - anchor_size,
                                                          });

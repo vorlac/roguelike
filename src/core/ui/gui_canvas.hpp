@@ -24,7 +24,7 @@ namespace rl::ui {
     class UICanvas : public ui::Widget
     {
     public:
-        UICanvas(ds::dims<i32> size, const Mouse& mouse, const Keyboard& kb,
+        UICanvas(ds::dims<f32> size, const Mouse& mouse, const Keyboard& kb,
                  const std::unique_ptr<VectorizedRenderer>& nvg_renderer);
         ~UICanvas();
 
@@ -37,7 +37,7 @@ namespace rl::ui {
         void dispose_dialog(ui::Dialog* dialog);
 
         void set_visible(bool visible);
-        void set_resize_callback(const std::function<void(ds::dims<i32>)>& callback);
+        void set_resize_callback(const std::function<void(ds::dims<f32>)>& callback);
         void add_update_callback(const std::function<void()>& update_func);
         void drop_callback_event(i32 count, const char** filenames);
 
@@ -46,7 +46,7 @@ namespace rl::ui {
         vg::NVGcontext* nvg_context() const;
         const ds::color<u8>& background() const;
         void set_background(ds::color<u8> background);
-        const std::function<void(ds::dims<i32>)>& resize_callback() const;
+        const std::function<void(ds::dims<f32>)>& resize_callback() const;
 
         bool has_depth_buffer() const;
         bool has_stencil_buffer() const;
@@ -82,8 +82,8 @@ namespace rl::ui {
         virtual bool on_focus_gained() override;
         virtual bool on_focus_lost() override;
 
-        virtual bool on_moved(ds::point<i32> pt);
-        virtual bool on_resized(ds::dims<i32> size);
+        virtual bool on_moved(ds::point<f32> pt);
+        virtual bool on_resized(ds::dims<f32> size);
         virtual bool drop_event(const std::vector<std::string>& filenames);
 
     protected:
@@ -91,7 +91,7 @@ namespace rl::ui {
         vg::NVGcontext* m_nvg_context{ nullptr };
 
         std::vector<ui::Widget*> m_focus_path{};
-        std::function<void(ds::dims<i32>)> m_resize_callback;
+        std::function<void(ds::dims<f32>)> m_resize_callback;
         std::vector<std::function<void()>> m_update_callbacks;
         std::array<SDL3::SDL_Cursor*, Mouse::Cursor::CursorCount> m_cursors{};
 

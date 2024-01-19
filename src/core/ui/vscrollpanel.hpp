@@ -21,10 +21,10 @@ namespace rl::ui {
     public:
         virtual void draw(vg::NVGcontext* ctx) override;
         virtual void perform_layout(vg::NVGcontext* ctx) override;
-        virtual ds::dims<i32> preferred_size(vg::NVGcontext* ctx) const override;
+        virtual ds::dims<f32> preferred_size(vg::NVGcontext* ctx) const override;
 
     protected:
-        i32 m_child_preferred_height{ 0 };
+        f32 m_child_preferred_height{ 0.0f };
         f32 m_scroll{ 0.0f };
         bool m_update_layout{ false };
     };

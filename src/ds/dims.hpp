@@ -75,6 +75,26 @@ namespace rl::ds {
             return width * height;
         }
 
+        template <typename I>
+        explicit constexpr inline operator ds::dims<I>()
+            requires rl::floating_point<T>
+        {
+            return ds::dims<I>{
+                static_cast<I>(width),
+                static_cast<I>(height),
+            };
+        }
+
+        template <typename F>
+        explicit constexpr inline operator ds::dims<F>()
+            requires rl::integer<T>
+        {
+            return ds::dims<F>{
+                static_cast<F>(width),
+                static_cast<F>(height),
+            };
+        }
+
         constexpr inline dims<T>& operator=(const dims<T>& other)
         {
             this->height = other.height;
@@ -153,9 +173,10 @@ namespace rl::ds {
             return *this;
         }
 
-        constexpr inline dims<T> operator/(const T& val) const
+        template <rl::numeric N>
+        constexpr inline ds::dims<N> operator/(const N& val) const
         {
-            return {
+            return ds::dims{
                 this->width / val,
                 this->height / val,
             };

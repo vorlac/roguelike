@@ -83,7 +83,7 @@ namespace rl {
         nvgRestore(m_nvg_context);
     }
 
-    void VectorizedRenderer::draw_rect_outline(ds::rect<i32> rect, f32 stroke_width,
+    void VectorizedRenderer::draw_rect_outline(ds::rect<f32> rect, f32 stroke_width,
                                                ds::color<f32> color, ui::Outline type)
     {
         nvgStrokeWidth(m_nvg_context, stroke_width);

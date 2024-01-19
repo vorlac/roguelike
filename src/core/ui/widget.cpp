@@ -90,79 +90,79 @@ namespace rl::ui {
             child->set_theme(theme);
     }
 
-    ds::point<i32> Widget::position() const
+    ds::point<f32> Widget::position() const
     {
         return m_pos;
     }
 
-    void Widget::set_position(ds::point<i32> pos)
+    void Widget::set_position(ds::point<f32> pos)
     {
         m_pos = pos;
     }
 
-    ds::point<i32> Widget::abs_position() const
+    ds::point<f32> Widget::abs_position() const
     {
         return m_parent != nullptr                   //
                  ? m_parent->abs_position() + m_pos  //
                  : m_pos;                            //
     }
 
-    ds::dims<i32> Widget::size() const
+    ds::dims<f32> Widget::size() const
     {
         return m_size;
     }
 
-    void Widget::set_size(ds::dims<i32> size)
+    void Widget::set_size(ds::dims<f32> size)
     {
         m_size = size;
     }
 
-    i32 Widget::width() const
+    f32 Widget::width() const
     {
         return m_size.width;
     }
 
-    void Widget::set_width(i32 width)
+    void Widget::set_width(f32 width)
     {
         m_size.width = width;
     }
 
-    i32 Widget::height() const
+    f32 Widget::height() const
     {
         return m_size.height;
     }
 
-    void Widget::set_height(i32 height)
+    void Widget::set_height(f32 height)
     {
         m_size.height = height;
     }
 
-    void Widget::set_fixed_size(ds::dims<i32> fixed_size)
+    void Widget::set_fixed_size(ds::dims<f32> fixed_size)
     {
         m_fixed_size = fixed_size;
     }
 
-    ds::dims<i32> Widget::fixed_size() const
+    ds::dims<f32> Widget::fixed_size() const
     {
         return m_fixed_size;
     }
 
-    i32 Widget::fixed_width() const
+    f32 Widget::fixed_width() const
     {
         return m_fixed_size.width;
     }
 
-    i32 Widget::fixed_height() const
+    f32 Widget::fixed_height() const
     {
         return m_fixed_size.height;
     }
 
-    void Widget::set_fixed_width(i32 width)
+    void Widget::set_fixed_width(f32 width)
     {
         m_fixed_size.width = width;
     }
 
-    void Widget::set_fixed_height(i32 height)
+    void Widget::set_fixed_height(f32 height)
     {
         m_fixed_size.height = height;
     }
@@ -223,14 +223,14 @@ namespace rl::ui {
         return m_children;
     }
 
-    int Widget::font_size() const
+    f32 Widget::font_size() const
     {
         return (m_font_size < 0 && m_theme != nullptr)  //
                  ? m_theme->m_standard_font_size        //
                  : m_font_size;                         //
     }
 
-    ds::dims<i32> Widget::preferred_size(NVGcontext* nvg_context) const
+    ds::dims<f32> Widget::preferred_size(NVGcontext* nvg_context) const
     {
         return m_layout != nullptr                              //
                  ? m_layout->preferred_size(nvg_context, this)  //
@@ -248,7 +248,7 @@ namespace rl::ui {
                 auto&& pref{ child->preferred_size(nvg_context) };
                 auto&& fix{ child->fixed_size() };
 
-                child->set_size(ds::dims<i32>{
+                child->set_size(ds::dims<f32>{
                     fix.width ? fix.width : pref.width,
                     fix.height ? fix.height : pref.height,
                 });
@@ -466,7 +466,7 @@ namespace rl::ui {
         m_tooltip = tooltip;
     }
 
-    void Widget::set_font_size(i32 font_size)
+    void Widget::set_font_size(f32 font_size)
     {
         m_font_size = font_size;
     }
@@ -499,7 +499,7 @@ namespace rl::ui {
     bool Widget::contains(ds::point<i32> pt) const
     {
         // Check if the widget contains a certain position
-        ds::rect<i32> widget_rect{ this->abs_position(), m_size };
+        ds::rect<f32> widget_rect{ this->abs_position(), m_size };
         return widget_rect.contains(pt);
     }
 
@@ -540,9 +540,12 @@ namespace rl::ui {
         if (!this->contains(pt))
             return;
 
-        ds::rect<i32>{ this->abs_position(), m_size };
-        m_nvg_renderer->draw_rect_outline(ds::rect<i32>{ this->abs_position(), m_size }, 1.0f,
-                                          rl::Colors::Yellow, ui::Outline::Inner);
+        ds::rect<f32> widget_rect{
+            this->abs_position(),
+            m_size,
+        };
+
+        m_nvg_renderer->draw_rect_outline(widget_rect, 1.0f, rl::Colors::Yellow, ui::Outline::Inner);
 
         for (auto child : m_children)
         {
@@ -557,7 +560,7 @@ namespace rl::ui {
     {
         if constexpr (Widget::DiagnosticsEnabled)
         {
-            m_nvg_renderer->draw_rect_outline(ds::rect<i32>{ this->abs_position(), m_size }, 1.0f,
+            m_nvg_renderer->draw_rect_outline(ds::rect<f32>{ this->abs_position(), m_size }, 1.0f,
                                               rl::Colors::Grey, ui::Outline::Outer);
         }
 
