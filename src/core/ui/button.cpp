@@ -337,7 +337,8 @@ namespace rl::ui {
             center.y - 1.0f,
         };
 
-        NVGcolor text_color = m_text_color.a == 0 ? m_theme->m_text_color : m_text_color;
+        NVGcolor text_color{ m_text_color.a == 0.0f ? m_theme->m_text_color
+                                                    : static_cast<NVGcolor>(m_text_color) };
 
         if (!m_enabled)
             text_color = m_theme->m_disabled_text_color;

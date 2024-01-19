@@ -264,7 +264,7 @@ namespace rl::ui {
         {
             unit_width = nvgTextBounds(nvg_context, 0.0f, 0.0f, m_units.c_str(), nullptr, nullptr);
 
-            nvgFillColor(nvg_context, ds::color<u8>{ 255, 255, 255, m_enabled ? 64 : 32 });
+            nvgFillColor(nvg_context, ds::color<f32>{ 255, 255, 255, m_enabled ? 64 : 32 });
             nvgTextAlign(nvg_context, Text::CenteredRight);
             nvgText(nvg_context, m_pos.x + m_size.width - x_spacing, draw_pos.y, m_units.c_str(),
                     nullptr);

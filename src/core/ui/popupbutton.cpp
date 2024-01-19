@@ -62,7 +62,8 @@ namespace rl::ui {
         if (m_chevron_icon != Icon::None)
         {
             std::string icon{ utf8(std::to_underlying(m_chevron_icon)) };
-            ds::color<u8> text_color{ m_text_color.a == 0 ? m_theme->m_text_color : m_text_color };
+            ds::color<f32> text_color{ m_text_color.a == 0.0f ? m_theme->m_text_color
+                                                              : m_text_color };
             f32 text_size{ m_font_size < 0.0f ? m_theme->m_button_font_size : m_font_size };
 
             nvgFontFace(ctx, font::name::icons);

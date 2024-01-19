@@ -95,33 +95,33 @@ namespace rl::ui {
         i32 m_tab_button_horizontal_padding{ 10 };
         i32 m_tab_button_vertical_padding{ 2 };
 
-        ds::color<u8> m_drop_shadow{ 0, 0, 0, 128 };
-        ds::color<u8> m_transparent{ 0, 0, 0, 0 };
-        ds::color<u8> m_border_dark{ 29, 29, 29, 255 };
-        ds::color<u8> m_border_light{ 92, 92, 92, 255 };
-        ds::color<u8> m_border_medium{ 35, 35, 35, 255 };
-        ds::color<u8> m_text_color{ 255, 255, 255, 160 };
-        ds::color<u8> m_disabled_text_color{ 255, 255, 255, 80 };
-        ds::color<u8> m_text_shadow_color{ 0, 0, 0, 0 };
-        ds::color<u8> m_icon_color{ m_text_color };
+        ds::color<f32> m_drop_shadow{ 0, 0, 0, 128 };
+        ds::color<f32> m_transparent{ 0, 0, 0, 0 };
+        ds::color<f32> m_border_dark{ 29, 29, 29, 255 };
+        ds::color<f32> m_border_light{ 92, 92, 92, 255 };
+        ds::color<f32> m_border_medium{ 35, 35, 35, 255 };
+        ds::color<f32> m_text_color{ 255, 255, 255, 160 };
+        ds::color<f32> m_disabled_text_color{ 255, 255, 255, 80 };
+        ds::color<f32> m_text_shadow_color{ 0, 0, 0, 0 };
+        ds::color<f32> m_icon_color{ m_text_color };
 
-        ds::color<u8> m_button_gradient_top_focused{ 64, 64, 64, 255 };
-        ds::color<u8> m_button_gradient_bot_focused{ 48, 48, 48, 255 };
-        ds::color<u8> m_button_gradient_top_unfocused{ 74, 74, 74, 255 };
-        ds::color<u8> m_button_gradient_bot_unfocused{ 58, 58, 58, 255 };
-        ds::color<u8> m_button_gradient_top_pushed{ 41, 41, 41, 255 };
-        ds::color<u8> m_button_gradient_bot_pushed{ 29, 29, 29, 255 };
+        ds::color<f32> m_button_gradient_top_focused{ 64, 64, 64, 255 };
+        ds::color<f32> m_button_gradient_bot_focused{ 48, 48, 48, 255 };
+        ds::color<f32> m_button_gradient_top_unfocused{ 74, 74, 74, 255 };
+        ds::color<f32> m_button_gradient_bot_unfocused{ 58, 58, 58, 255 };
+        ds::color<f32> m_button_gradient_top_pushed{ 41, 41, 41, 255 };
+        ds::color<f32> m_button_gradient_bot_pushed{ 29, 29, 29, 255 };
 
-        ds::color<u8> m_window_fill_unfocused{ 43, 43, 43, 230 };
-        ds::color<u8> m_window_fill_focused{ 45, 45, 45, 230 };
-        ds::color<u8> m_window_title_unfocused{ 220, 220, 220, 160 };
-        ds::color<u8> m_window_title_focused{ 255, 255, 255, 190 };
-        ds::color<u8> m_window_header_gradient_top{ m_button_gradient_top_unfocused };
-        ds::color<u8> m_window_header_gradient_bot{ m_button_gradient_bot_unfocused };
-        ds::color<u8> m_window_header_sep_top{ m_border_light };
-        ds::color<u8> m_window_header_sep_bot{ m_border_dark };
-        ds::color<u8> m_window_popup{ 50, 50, 50, 255 };
-        ds::color<u8> m_window_popup_transparent{ 50, 50, 50, 0 };
+        ds::color<f32> m_window_fill_unfocused{ 43, 43, 43, 230 };
+        ds::color<f32> m_window_fill_focused{ 45, 45, 45, 230 };
+        ds::color<f32> m_window_title_unfocused{ 220, 220, 220, 160 };
+        ds::color<f32> m_window_title_focused{ 255, 255, 255, 190 };
+        ds::color<f32> m_window_header_gradient_top{ m_button_gradient_top_unfocused };
+        ds::color<f32> m_window_header_gradient_bot{ m_button_gradient_bot_unfocused };
+        ds::color<f32> m_window_header_sep_top{ m_border_light };
+        ds::color<f32> m_window_header_sep_bot{ m_border_dark };
+        ds::color<f32> m_window_popup{ 50, 50, 50, 255 };
+        ds::color<f32> m_window_popup_transparent{ 50, 50, 50, 0 };
 
         ui::Icon::ID m_check_box_icon{ ui::Icon::Check };
         ui::Icon::ID m_message_information_icon{ ui::Icon::InfoCircle };

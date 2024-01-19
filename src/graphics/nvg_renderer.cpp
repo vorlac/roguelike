@@ -103,7 +103,7 @@ namespace rl {
                 break;
         }
 
-        nvgStrokeColor(m_nvg_context, std::forward<NVGcolor>(color));
+        nvgStrokeColor(m_nvg_context, color);
         nvgStroke(m_nvg_context);
     }
 }

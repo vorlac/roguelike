@@ -7,7 +7,7 @@
     <Type Name="rl::ds::vector2&lt;*&gt;">
         <AlternativeType Name="rl::ds::point&lt;*&gt;" />
         <DisplayString>
-            x,y =&gt; ({x}, {y})
+            (x:{x,g}, y:{y,g})
         </DisplayString>
         <Expand HideRawView="true">
             <Item Name="[x]">x</Item>
@@ -20,7 +20,7 @@
     <!-- - - - - - - - - -->
     <Type Name="rl::ds::dims&lt;*&gt;">
         <DisplayString>
-            WxH =&gt; [{width} x {height}]
+            [w:{width,g} x h:{height,g}]
         </DisplayString>
         <Expand HideRawView="true">
             <Item Name="[width]">width</Item>
@@ -34,36 +34,38 @@
     <!-- - - - - - - - - -->
     <Type Name="rl::ds::rect&lt;*&gt;">
         <DisplayString>
-            pt:{{ {pt.x,nvo}, {pt.y,nvo} }} size:[ {size.width,nvo} x {size.height,nvo} ]
+            pt:{{ {pt.x,g}, {pt.y,g} }} size:[ {size.width,g} x {size.height,g} ]
         </DisplayString>
         <Expand HideRawView="true">
-            <Item Name="[pt] ">pt</Item>
+            <Item Name="[pt]">pt</Item>
             <Item Name="[size]">size</Item>
         </Expand>
+    </Type>
+
+    <!-- - - - - - - - - - - - - - -->
+    <!--  rl::utils::timer<T, S> - -->
+    <!-- - - - - - - - - - - - - - -->
+    <Type Name="rl::utils::Timer&lt;*,*&gt;">
+        <DisplayString>
+            delta:[{m_start_timestamp - m_delta_timestamp}]
+        </DisplayString>
     </Type>
 
     <!-- - - - - - - - - - - -->
     <!--  rl::ds::color<T> - -->
     <!-- - - - - - - - - - - -->
     <Type Name="rl::ds::color&lt;*&gt;">
-      <DisplayString>
-          rgb:[{r,nvo},{g,nvo},{b,nvo} =&gt; 0x{r,nvoHb}{g,nvoHb}{b,nvoHb}] a:({a,nvo} =&gt; {a,nvoH})
-      </DisplayString>
-      <Expand HideRawView="true">
-          <Item Name="[red]">r,nvo</Item>
-          <Item Name="[green]">g,nvo</Item>
-          <Item Name="[blue]">b,nvo</Item>
-          <Item Name="[alpha]">a,nvo</Item>
-          <Item Name="RGBA Hex">
-              (uint32_t)(r &lt;&lt; 24)|(g &lt;&lt; 16)|(b &lt;&lt; 8 )|(a),nvoH
-          </Item>
-          <Item Name="(SDL_Color*)">
-              ((const SDL_Color&amp;)(*this))
-          </Item>
-          <Item Name="(NVGcolor*)">
-              ((const NVGcolor&amp;)(*this))
-          </Item>
-      </Expand>
+        <DisplayString>
+            r:{r,nvog} g:{g,nvog} b:{b,nvog} a:{a,nvog}
+        </DisplayString>
+        <Expand HideRawView="true">
+            <Item Name="[red]">r,nvog</Item>
+            <Item Name="[green]">g,nvog</Item>
+            <Item Name="[blue]">b,nvog</Item>
+            <Item Name="[alpha]">a,nvog</Item>
+            <Item Name="color&lt;f32&gt;">(ds::color&lt;float&gt;*)this,na</Item>
+            <Item Name="color&lt;u8&gt;">(ds::color&lt;unsigned char&gt;*)this,na</Item>
+        </Expand>
     </Type>
 
     <!-- - - - - - - -->
@@ -71,22 +73,22 @@
     <!-- - - - - - - -->
     <Type Name="NVGcolor">
         <DisplayString>
-            NVGcolor{{r={r,nvo}, g={g,nvo}, b={r,nvo}}}
+            NVGcolor{{r={r,g}, g={g,g}, b={r,g}}}
         </DisplayString>
         <Expand HideRawView="true">
-            <Item Name="[red]">r,nvo</Item>
-            <Item Name="[green]">g,nvo</Item>
-            <Item Name="[blue]">b,nvo</Item>
-            <Item Name="[alpha]">a,nvo</Item>
+            <Item Name="[red]">r,nvog</Item>
+            <Item Name="[green]">g,nvog</Item>
+            <Item Name="[blue]">b,nvog</Item>
+            <Item Name="[alpha]">a,nvog</Item>
         </Expand>
     </Type>
 
     <!-- - - - - - - - - - - - -->
     <!-- rl::ds::refcounted- - -->
     <!-- - - - - - - - - - - - -->
-    <Type Name="rl::ds::refcounted">
+    <Type Name="rl::ds::refcounted" Inheritable="true">
         <DisplayString>
-            asdf asdf references:{m_references,na}
+            refs:{m_references}
         </DisplayString>
     </Type>
 
@@ -95,7 +97,7 @@
     <!-- - - - - - - - - - - -->
     <Type Name="rl::ds::shared&lt;*&gt;">
         <DisplayString>
-          data:{m_data}
+            data:{m_data}
         </DisplayString>
         <Expand HideRawView="true">
             <Item Name="[object]">m_data</Item>
@@ -106,151 +108,206 @@
     <!-- rl::ui::theme - -->
     <!-- - - - - - - - - -->
     <Type Name="rl::ui::theme">
-      <!--<DisplayString>
+        <!--<DisplayString>
           refcount:{m_references,na}
       </DisplayString>-->
-      <Expand HideRawView="true">
-        <Item Name="refcount">m_references</Item>
-        <Synthetic Name="fonts">
-            <DisplayString>
-                Size:{m_standard_font_size}
-            </DisplayString>
-            <Expand>
-                <Item Name="Sans Regular">m_font_sans_regular</Item>
-                <Item Name="Sans Bold">m_font_sans_bold</Item>
-                <Item Name="Mono Regular">m_font_mono_regular</Item>
-                <Item Name="Icons Font">m_font_icons</Item>
-                <Item Name="Standard Font Size">m_standard_font_size</Item>
-            </Expand>
-        </Synthetic>
-
-        <Synthetic Name="colors">
-          <DisplayString>
-          </DisplayString>
-          <Expand>
-            <Item Name="Drop Shadow">m_drop_shadow</Item>
-            <Item Name="Transparent">m_transparent</Item>
-            <Item Name="Border: Dark">m_border_dark</Item>
-            <Item Name="Border: Light">m_border_light</Item>
-            <Item Name="Border: Medium">m_border_medium</Item>
-            <Item Name="Text Foreground">m_text_color</Item>
-            <Item Name="Disabled Text">m_disabled_text_color</Item>
-            <Item Name="Text Shadow">m_text_shadow_color</Item>
-            <Item Name="Icon Color">m_icon_color</Item>
-          </Expand>
-        </Synthetic>
-
-        <Synthetic Name="icons">
-          <DisplayString>
-              Scale:{m_icon_scale}
-          </DisplayString>
-          <Expand>
-              <Item Name="Scale">m_icon_scale</Item>
-          </Expand>
-        </Synthetic>
-
-        <Synthetic Name="[button]">
-          <DisplayString>
-          </DisplayString>
-          <Expand>
-            <Item Name="Font Size">m_button_font_size</Item>
-            <Item Name="Corner Radius">m_button_corner_radius</Item>
-            <Item Name="Drop Shadow Size">m_window_drop_shadow_size</Item>
-            <Synthetic Name="[button colors]">
-              <DisplayString>
-              </DisplayString>
-              <Expand>
-                <Item Name="Gradient Top: Focused">m_button_gradient_top_focused</Item>
-                <Item Name="Gradient Bop: Focused">m_button_gradient_bot_focused</Item>
-                <Item Name="Gradient Top: Unfocused">m_button_gradient_top_unfocused</Item>
-                <Item Name="Gradient Bop: Unfocused">m_button_gradient_bot_unfocused</Item>
-                <Item Name="Gradient Top: Pressed">m_button_gradient_top_pushed</Item>
-                <Item Name="Gradient Bop: Pressed">m_button_gradient_bot_pushed</Item>
-              </Expand>
-             </Synthetic>
-          </Expand>
-        </Synthetic>
-
-        <Synthetic Name="[text box]">
-          <DisplayString>
-          </DisplayString>
-          <Expand>
-            <Item Name="Font Size">m_text_box_font_size</Item>
-            <Item Name="Box Up Icon">m_text_box_up_icon</Item>
-            <Item Name="Box Down Icon">m_text_box_down_icon</Item>
-          </Expand>
-        </Synthetic>
-
-        <Synthetic Name="[tab]">
-            <DisplayString>
-            </DisplayString>
-            <Expand>
-              <Item Name="Border Width">m_tab_border_width</Item>
-              <Item Name="Inner Margin">m_tab_inner_margin</Item>
-              <Item Name="Min Button Width">m_tab_min_button_width</Item>
-              <Item Name="Max Button Width">m_tab_max_button_width</Item>
-              <Item Name="Control Width">m_tab_control_width</Item>
-              <Item Name="Button Horizontal Padding">m_tab_button_horizontal_padding</Item>
-              <Item Name="Button Vertical Padding">m_tab_button_vertical_padding</Item>
-            </Expand>
-        </Synthetic>
-
-        <Synthetic Name="[dialog]">
-          <DisplayString>
-          </DisplayString>
-          <Expand>
-            <Item Name="Corner Radius">m_window_corner_radius</Item>
-            <Item Name="Header Height">m_window_header_height</Item>
-            <Item Name="Drop Shadow Size">m_window_drop_shadow_size</Item>
-            <Synthetic Name="[colors]">
-              <DisplayString>
-              </DisplayString>
-              <Expand>
-                <Item Name="Fill: Unfocused">m_window_fill_unfocused</Item>
-                <Item Name="Fill: Focused">m_window_fill_focused</Item>
-                <Item Name="Title: Unfocused">m_window_title_unfocused</Item>
-                <Item Name="Title: Focused">m_window_title_focused</Item>
-                <Item Name="Header Gradient: Top">m_window_header_gradient_top</Item>
-                <Item Name="Header Gradient: Bot">m_window_header_gradient_bot</Item>
-                <Item Name="Header Gradient: Top">m_window_header_sep_top</Item>
-                <Item Name="Header Gradient: Bot">m_window_header_sep_bot</Item>
-                <Item Name="Popup">m_window_popup</Item>
-                <Item Name="Popup Transparent">m_window_popup_transparent</Item>
-              </Expand>
+        <Expand HideRawView="true">
+            <Item Name="refcount">m_references</Item>
+            <Synthetic Name="fonts">
+                <DisplayString>
+                    Size:{m_standard_font_size}
+                </DisplayString>
+                <Expand>
+                    <Item Name="Sans Regular">m_font_sans_regular</Item>
+                    <Item Name="Sans Bold">m_font_sans_bold</Item>
+                    <Item Name="Mono Regular">m_font_mono_regular</Item>
+                    <Item Name="Icons Font">m_font_icons</Item>
+                    <Item Name="Standard Font Size">m_standard_font_size</Item>
+                </Expand>
             </Synthetic>
-          </Expand>
-        </Synthetic>
 
-        <Synthetic Name="[checkbox]">
-          <DisplayString>
-          </DisplayString>
-          <Expand>
-            <Item Name="Checkbox Icon">m_check_box_icon</Item>
-          </Expand>
-        </Synthetic>
+            <Synthetic Name="colors">
+                <DisplayString>
+                </DisplayString>
+                <Expand>
+                    <Item Name="Drop Shadow">m_drop_shadow</Item>
+                    <Item Name="Transparent">m_transparent</Item>
+                    <Item Name="Border: Dark">m_border_dark</Item>
+                    <Item Name="Border: Light">m_border_light</Item>
+                    <Item Name="Border: Medium">m_border_medium</Item>
+                    <Item Name="Text Foreground">m_text_color</Item>
+                    <Item Name="Disabled Text">m_disabled_text_color</Item>
+                    <Item Name="Text Shadow">m_text_shadow_color</Item>
+                    <Item Name="Icon Color">m_icon_color</Item>
+                </Expand>
+            </Synthetic>
 
-        <Synthetic Name="[message]">
-          <DisplayString>
-          </DisplayString>
-          <Expand>
-            <Item Name="Information Icon">m_message_information_icon</Item>
-            <Item Name="Question Icon">m_message_question_icon</Item>
-            <Item Name="Warning Icon">m_message_warning_icon</Item>
-            <Item Name="Alt Button Icon">m_message_alt_button_icon</Item>
-            <Item Name="Primary Button Icon">m_message_primary_button_icon</Item>
-          </Expand>
-        </Synthetic>
+            <Synthetic Name="icons">
+                <DisplayString>
+                    Scale:{m_icon_scale}
+                </DisplayString>
+                <Expand>
+                    <Item Name="Scale">m_icon_scale</Item>
+                </Expand>
+            </Synthetic>
 
-        <Synthetic Name="[popup]">
-          <DisplayString>
-          </DisplayString>
-          <Expand>
-            <Item Name="Chevron Right Icon">m_popup_chevron_right_icon</Item>
-            <Item Name="Chevron Left Icon">m_popup_chevron_left_icon</Item>
-          </Expand>
-        </Synthetic>
+            <Synthetic Name="[button]">
+                <DisplayString>
+                </DisplayString>
+                <Expand>
+                    <Item Name="Font Size">m_button_font_size</Item>
+                    <Item Name="Corner Radius">m_button_corner_radius</Item>
+                    <Item Name="Drop Shadow Size">m_window_drop_shadow_size</Item>
+                    <Synthetic Name="[button colors]">
+                        <DisplayString>
+                        </DisplayString>
+                        <Expand>
+                            <Item Name="Gradient Top: Focused">m_button_gradient_top_focused</Item>
+                            <Item Name="Gradient Bop: Focused">m_button_gradient_bot_focused</Item>
+                            <Item Name="Gradient Top: Unfocused">m_button_gradient_top_unfocused</Item>
+                            <Item Name="Gradient Bop: Unfocused">m_button_gradient_bot_unfocused</Item>
+                            <Item Name="Gradient Top: Pressed">m_button_gradient_top_pushed</Item>
+                            <Item Name="Gradient Bop: Pressed">m_button_gradient_bot_pushed</Item>
+                        </Expand>
+                    </Synthetic>
+                </Expand>
+            </Synthetic>
 
-      </Expand>
+            <Synthetic Name="[text box]">
+                <DisplayString>
+                </DisplayString>
+                <Expand>
+                    <Item Name="Font Size">m_text_box_font_size</Item>
+                    <Item Name="Box Up Icon">m_text_box_up_icon</Item>
+                    <Item Name="Box Down Icon">m_text_box_down_icon</Item>
+                </Expand>
+            </Synthetic>
+
+            <Synthetic Name="[tab]">
+                <DisplayString>
+                </DisplayString>
+                <Expand>
+                    <Item Name="Border Width">m_tab_border_width</Item>
+                    <Item Name="Inner Margin">m_tab_inner_margin</Item>
+                    <Item Name="Min Button Width">m_tab_min_button_width</Item>
+                    <Item Name="Max Button Width">m_tab_max_button_width</Item>
+                    <Item Name="Control Width">m_tab_control_width</Item>
+                    <Item Name="Button Horizontal Padding">m_tab_button_horizontal_padding</Item>
+                    <Item Name="Button Vertical Padding">m_tab_button_vertical_padding</Item>
+                </Expand>
+            </Synthetic>
+
+            <Synthetic Name="[dialog]">
+                <DisplayString>
+                </DisplayString>
+                <Expand>
+                    <Item Name="Corner Radius">m_window_corner_radius</Item>
+                    <Item Name="Header Height">m_window_header_height</Item>
+                    <Item Name="Drop Shadow Size">m_window_drop_shadow_size</Item>
+                    <Synthetic Name="[colors]">
+                        <DisplayString>
+                        </DisplayString>
+                        <Expand>
+                            <Item Name="Fill: Unfocused">m_window_fill_unfocused</Item>
+                            <Item Name="Fill: Focused">m_window_fill_focused</Item>
+                            <Item Name="Title: Unfocused">m_window_title_unfocused</Item>
+                            <Item Name="Title: Focused">m_window_title_focused</Item>
+                            <Item Name="Header Gradient: Top">m_window_header_gradient_top</Item>
+                            <Item Name="Header Gradient: Bot">m_window_header_gradient_bot</Item>
+                            <Item Name="Header Gradient: Top">m_window_header_sep_top</Item>
+                            <Item Name="Header Gradient: Bot">m_window_header_sep_bot</Item>
+                            <Item Name="Popup">m_window_popup</Item>
+                            <Item Name="Popup Transparent">m_window_popup_transparent</Item>
+                        </Expand>
+                    </Synthetic>
+                </Expand>
+            </Synthetic>
+
+            <Synthetic Name="[checkbox]">
+                <DisplayString>
+                </DisplayString>
+                <Expand>
+                    <Item Name="Checkbox Icon">m_check_box_icon</Item>
+                </Expand>
+            </Synthetic>
+
+            <Synthetic Name="[message]">
+                <DisplayString>
+                </DisplayString>
+                <Expand>
+                    <Item Name="Information Icon">m_message_information_icon</Item>
+                    <Item Name="Question Icon">m_message_question_icon</Item>
+                    <Item Name="Warning Icon">m_message_warning_icon</Item>
+                    <Item Name="Alt Button Icon">m_message_alt_button_icon</Item>
+                    <Item Name="Primary Button Icon">m_message_primary_button_icon</Item>
+                </Expand>
+            </Synthetic>
+
+            <Synthetic Name="[popup]">
+                <DisplayString>
+                </DisplayString>
+                <Expand>
+                    <Item Name="Chevron Right Icon">m_popup_chevron_right_icon</Item>
+                    <Item Name="Chevron Left Icon">m_popup_chevron_left_icon</Item>
+                </Expand>
+            </Synthetic>
+
+        </Expand>
+    </Type>
+
+    <!-- - - - - - - - - -->
+    <!--  rl::ui::Widget -->
+    <!-- - - - - - - - - -->
+    <Type Name="rl::ui::Widget" Inheritable="true">
+        <DisplayString>
+            Widget[{m_size}]
+        </DisplayString>
+        <Expand HideRawView="false">
+            <Item Name="[parent]">m_parent,na</Item>
+            <Item Name="[nvg_ctx]">m_nvg_context,na</Item>
+            <Item Name="[pos]">m_pos</Item>
+            <Item Name="[size]">m_size</Item>
+        </Expand>
+    </Type>
+
+    <!-- - - - - - - - - -->
+    <!--  rl::ui::Label -->
+    <!-- - - - - - - - - -->
+    <Type Name="rl::ui::Label" Inheritable="true">
+        <DisplayString>
+            Label[{m_caption}] refs:{m_references}
+        </DisplayString>
+        <Expand HideRawView="false">
+            <Item Name="[widget]">(rl::ui::Widget*)this,nand</Item>
+            <Item Name="[font]">m_font</Item>
+            <Item Name="[caption]">m_caption</Item>
+            <Item Name="[color]">m_color</Item>
+            <Item Name="[callback]">m_callback</Item>
+        </Expand>
+    </Type>
+
+    <!-- - - - - - - - - -->
+    <!--  rl::ui::Button -->
+    <!-- - - - - - - - - -->
+    <Type Name="rl::ui::Button" Inheritable="true">
+        <DisplayString>
+            ui::Button:[{m_callback}] refs:{m_references}
+        </DisplayString>
+        <Expand HideRawView="false">
+            <Item Name="[title]">m_callback</Item>
+        </Expand>
+    </Type>
+
+    <!-- - - - - - - - - -->
+    <!--  rl::ui::Dialog -->
+    <!-- - - - - - - - - -->
+    <Type Name="rl::ui::Dialog" Inheritable="true">
+        <DisplayString>
+            ui::Dialog:[{m_title}] refs:{m_references}
+        </DisplayString>
+        <Expand HideRawView="false">
+            <Item Name="[title]">m_title</Item>
+        </Expand>
     </Type>
 
     <!-- - - - - - - - - - - - - - - -  -->

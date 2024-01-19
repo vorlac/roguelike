@@ -35,53 +35,6 @@ namespace rl::ds {
     public:
         constexpr inline color() = default;
 
-        template <rl::integer I>
-            requires(!std::same_as<T, I>)
-        constexpr inline color(I ri, I gi, I bi, I ai = Opaque)
-            : r{ static_cast<T>(ri) }
-            , g{ static_cast<T>(gi) }
-            , b{ static_cast<T>(bi) }
-            , a{ static_cast<T>(ai) }
-        {
-        }
-
-        template <rl::floating_point F>
-        explicit constexpr inline color(F rf, F gf, F bf, F af = 1.0f)
-            requires std::same_as<T, u8>
-            : r{ static_cast<T>(std::clamp(rf * 255.0f, 0.0f, 255.0f)) }
-            , g{ static_cast<T>(std::clamp(gf * 255.0f, 0.0f, 255.0f)) }
-            , b{ static_cast<T>(std::clamp(bf * 255.0f, 0.0f, 255.0f)) }
-            , a{ static_cast<T>(std::clamp(af * 255.0f, 0.0f, 255.0f)) }
-        {
-        }
-
-        template <rl::integer I>
-        explicit constexpr inline color(I cr, I cg, I cb, I ca = 1.0f)
-            requires std::same_as<T, f32>
-            : r{ static_cast<T>(cr / 255.0f) }
-            , g{ static_cast<T>(cg / 255.0f) }
-            , b{ static_cast<T>(cb / 255.0f) }
-            , a{ static_cast<T>(ca / 255.0f) }
-        {
-        }
-
-        constexpr inline color(std::tuple<T, T, T> tup)
-            : r{ std::get<0>(tup) }
-            , g{ std::get<1>(tup) }
-            , b{ std::get<2>(tup) }
-            , a{ Opaque }
-        {
-        }
-
-        template <rl::integer I>
-        constexpr inline color& operator=(std::tuple<I, I, I> tup)
-        {
-            r = cast::to<I>(std::get<0>(tup));
-            g = cast::to<I>(std::get<1>(tup));
-            b = cast::to<I>(std::get<2>(tup));
-            return *this;
-        }
-
         constexpr inline color(T cr, T cg, T cb, T ca = Opaque)
             : r{ cr }
             , g{ cg }
@@ -90,23 +43,43 @@ namespace rl::ds {
         {
         }
 
+        template <rl::integer I>
+            requires rl::floating_point<T>
+        constexpr inline color(I ri, I gi, I bi, I ai = Opaque)
+            : r{ static_cast<T>(ri / 255.0f) }
+            , g{ static_cast<T>(gi / 255.0f) }
+            , b{ static_cast<T>(bi / 255.0f) }
+            , a{ static_cast<T>(ai / 255.0f) }
+        {
+        }
+
+        template <rl::floating_point F>
+            requires rl::integer<T>
+        explicit constexpr inline color(F rf, F gf, F bf, F af = 1.0f)
+            : r{ static_cast<T>(std::clamp(rf * 255.0f, 0.0f, 255.0f)) }
+            , g{ static_cast<T>(std::clamp(gf * 255.0f, 0.0f, 255.0f)) }
+            , b{ static_cast<T>(std::clamp(bf * 255.0f, 0.0f, 255.0f)) }
+            , a{ static_cast<T>(std::clamp(af * 255.0f, 0.0f, 255.0f)) }
+        {
+        }
+
         // 0xRRGGBBAA
         explicit constexpr inline color(u32 rgba)
             requires std::same_as<T, u8>
-            : r{ cast::to<u8>(0xff & (rgba >> (8 * 3))) }
-            , g{ cast::to<u8>(0xff & (rgba >> (8 * 2))) }
-            , b{ cast::to<u8>(0xff & (rgba >> (8 * 1))) }
-            , a{ cast::to<u8>(0xff & (rgba >> (8 * 0))) }
+            : r{ static_cast<u8>(0xff & (rgba >> (8 * 3))) }
+            , g{ static_cast<u8>(0xff & (rgba >> (8 * 2))) }
+            , b{ static_cast<u8>(0xff & (rgba >> (8 * 1))) }
+            , a{ static_cast<u8>(0xff & (rgba >> (8 * 0))) }
         {
         }
 
         // 0xRRGGBBAA
         explicit constexpr inline color(u32 rgba)
             requires std::same_as<T, f32>
-            : r{ cast::to<f32>((0xff & (rgba >> (8 * 3))) / 255.0f) }
-            , g{ cast::to<f32>((0xff & (rgba >> (8 * 2))) / 255.0f) }
-            , b{ cast::to<f32>((0xff & (rgba >> (8 * 1))) / 255.0f) }
-            , a{ cast::to<f32>((0xff & (rgba >> (8 * 0))) / 255.0f) }
+            : r{ static_cast<f32>((0xff & (rgba >> (8 * 3))) / 255.0f) }
+            , g{ static_cast<f32>((0xff & (rgba >> (8 * 2))) / 255.0f) }
+            , b{ static_cast<f32>((0xff & (rgba >> (8 * 1))) / 255.0f) }
+            , a{ static_cast<f32>((0xff & (rgba >> (8 * 0))) / 255.0f) }
         {
         }
 
@@ -120,24 +93,7 @@ namespace rl::ds {
         {
         }
 
-        constexpr inline color(const SDL3::SDL_Color& c)
-            requires std::same_as<T, u8>
-            : r{ c.r }
-            , g{ c.g }
-            , b{ c.b }
-            , a{ c.a }
-        {
-        }
-
-        constexpr inline color(SDL3::SDL_Color&& c)
-            requires std::same_as<T, u8>
-            : r{ c.r }
-            , g{ c.g }
-            , b{ c.b }
-            , a{ c.a }
-        {
-        }
-
+    public:
         constexpr inline color<T> operator+(const color<T>& other) const
         {
             return {
@@ -277,18 +233,41 @@ namespace rl::ds {
             return !this->operator==(other);
         }
 
-        constexpr inline operator SDL3::SDL_Color&()
+    public:
+        constexpr inline operator color<f32>()
+            requires std::same_as<T, u8>
         {
-            return *reinterpret_cast<SDL3::SDL_Color*>(this);
+            return color<f32>{
+                static_cast<f32>(this->r / 255.0f),
+                static_cast<f32>(this->g / 255.0f),
+                static_cast<f32>(this->b / 255.0f),
+                static_cast<f32>(this->a / 255.0f),
+            };
         }
 
-        constexpr inline operator const vg::NVGcolor&() const&
+        constexpr inline operator color<u8>()
             requires std::same_as<T, f32>
         {
-            return *reinterpret_cast<const vg::NVGcolor*>(this);
+            return color<u8>{
+                static_cast<u8>(this->r * 255.0f),
+                static_cast<u8>(this->g * 255.0f),
+                static_cast<u8>(this->b * 255.0f),
+                static_cast<u8>(this->a * 255.0f),
+            };
         }
 
-        constexpr inline operator vg::NVGcolor()
+        constexpr inline operator const vg::NVGcolor() const
+            requires std::same_as<T, f32>
+        {
+            return vg::NVGcolor{
+                this->r,
+                this->g,
+                this->b,
+                this->a,
+            };
+        }
+
+        constexpr inline operator const vg::NVGcolor() const
             requires std::same_as<T, u8>
         {
             return vg::NVGcolor{
@@ -299,76 +278,15 @@ namespace rl::ds {
             };
         }
 
-        constexpr inline operator vg::NVGcolor&()
-            requires rl::floating_point<T>
-        {
-            return *reinterpret_cast<vg::NVGcolor*>(this);
-        }
-
-        constexpr inline operator vg::NVGcolor() const
-            requires rl::integer<T>
-        {
-            return vg::NVGcolor{
-                r / 255.0f,
-                g / 255.0f,
-                b / 255.0f,
-                a / 255.0f,
-            };
-        }
-
         constexpr inline operator fmt::rgb() const
             requires rl::integer<T>
         {
             return fmt::rgb{ r, g, b };
         }
 
-        constexpr inline operator ::fmt::text_style() const
+        constexpr inline operator fmt::text_style() const
         {
-            return ::fmt::fg(static_cast<fmt::rgb>(*this));
-        }
-
-        constexpr inline operator color<f32>() const
-            requires rl::integer<T>
-        {
-            return color<f32>{
-                r / 255.0f,
-                g / 255.0f,
-                b / 255.0f,
-                a / 255.0f,
-            };
-        }
-
-        constexpr inline operator std::array<T, 4>() const
-        {
-            return std::array<T, 4>{ r, g, b, a };
-        }
-
-        constexpr inline operator std::tuple<T, T, T, T>() const
-        {
-            return { r, g, b, a };
-        }
-
-        constexpr inline operator std::tuple<f32, f32, f32, f32>() const
-            requires std::same_as<T, u8>
-        {
-            return std::tuple{ r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f };
-        }
-
-        constexpr inline operator std::array<f32, 4>() const
-            requires std::same_as<T, u8>
-        {
-            return std::array{ r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f };
-        }
-
-        constexpr inline operator std::tuple<T, T, T>() const
-        {
-            return { r, g, b };
-        }
-
-        constexpr static inline auto create(T r, T g, T b)
-            -> std::remove_reference_t<decltype(std::declval<color>())>
-        {
-            return std::tuple<T, T, T>(r, g, b);
+            return fmt::fg(static_cast<fmt::rgb>(*this));
         }
 
     public:

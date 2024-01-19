@@ -80,7 +80,6 @@ namespace rl::ui {
         if (m_fixed_size.width > 0)
         {
             f32 bounds[4] = { 0 };
-
             nvgTextAlign(nvg_context, Text::Alignment::TopLeft);
             nvgTextBoxBounds(nvg_context, m_pos.x, m_pos.y, m_fixed_size.width, m_caption.c_str(),
                              nullptr, bounds);
@@ -95,7 +94,7 @@ namespace rl::ui {
             nvgTextAlign(nvg_context, Text::Alignment::CenteredLeft);
 
             return ds::dims<f32>{
-                nvgTextBounds(nvg_context, 0, 0, m_caption.c_str(), nullptr, nullptr) + 2,
+                nvgTextBounds(nvg_context, 0.0f, 0.0f, m_caption.c_str(), nullptr, nullptr) + 2.0f,
                 this->font_size(),
             };
         }
