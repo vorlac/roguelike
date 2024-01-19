@@ -58,8 +58,10 @@ namespace rl::ui {
                 m_group_font_size,
             };
 
-            if (m_layout->row_count() > 0)
-                m_layout->append_row(m_pre_group_spacing);
+            m_layout->append_row(          // add spacing to account for the header if it's
+                m_layout->row_count() > 0  // the first group insert otherwise just offset downw
+                    ? m_pre_group_spacing  // by offsetting by the default pre group spacing
+                    : m_window->header_height());
 
             m_layout->append_row(0);
             m_layout->set_anchor(label, ui::Anchor{ 0, m_layout->row_count() - 1, 4, 1 });

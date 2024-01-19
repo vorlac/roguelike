@@ -21,6 +21,7 @@ namespace rl {
 
             void dispose();
             void center();
+            f32 header_height() const;
 
             bool modal() const;
             const std::string& title() const;

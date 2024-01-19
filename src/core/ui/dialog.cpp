@@ -71,11 +71,19 @@ namespace rl::ui {
         static_cast<ui::UICanvas*>(owner)->center_dialog(this);
     }
 
+    f32 Dialog::header_height() const
+    {
+        if (!m_title.empty())
+            return m_theme->m_window_header_height;
+
+        return 0.0f;
+    }
+
     void Dialog::draw(NVGcontext* nvg_context)
     {
         const f32 drop_shadow_size{ m_theme->m_window_drop_shadow_size };
         const f32 corner_radius{ m_theme->m_window_corner_radius };
-        const f32 header_height{ m_theme->m_window_header_height };
+        const f32 header_height{ this->header_height() };
 
         // nvgSave(nvg_context);
         nvgBeginPath(nvg_context);
