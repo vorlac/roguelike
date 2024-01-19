@@ -71,8 +71,8 @@ namespace rl::ui {
 
     public:
         virtual void set_theme(ui::Theme* theme) override;
-        virtual ds::dims<f32> preferred_size(vg::NVGcontext* nvg_context) const override;
-        virtual void draw(vg::NVGcontext* nvg_context) override;
+        virtual ds::dims<f32> preferred_size(nvg::NVGcontext* nvg_context) const override;
+        virtual void draw(nvg::NVGcontext* nvg_context) override;
 
     protected:
         bool check_format(const std::string& input, const std::string& format);
@@ -80,12 +80,12 @@ namespace rl::ui {
         bool delete_selection();
 
         void paste_from_clipboard();
-        void update_cursor(vg::NVGcontext* nvg_context, f32 last_x,
-                           const vg::NVGglyphPosition* glyphs, i32 size);
+        void update_cursor(nvg::NVGcontext* nvg_context, f32 last_x,
+                           const nvg::NVGglyphPosition* glyphs, i32 size);
 
-        f32 cursor_index_to_position(i32 index, f32 last_x, const vg::NVGglyphPosition* glyphs,
+        f32 cursor_index_to_position(i32 index, f32 last_x, const nvg::NVGglyphPosition* glyphs,
                                      i32 size);
-        i32 position_to_cursor_index(i32 pos_x, f32 last_x, const vg::NVGglyphPosition* glyphs,
+        i32 position_to_cursor_index(i32 pos_x, f32 last_x, const nvg::NVGglyphPosition* glyphs,
                                      i32 size);
 
         // The location (if any) for the spin area.

@@ -13,7 +13,7 @@
 #define NSVG__FIXMASK      (NSVG__FIX - 1)
 #define NSVG__MEMPAGE_SIZE 1024
 
-namespace rl::vg {
+namespace rl::nvg {
 
     typedef struct NSVGedge
     {

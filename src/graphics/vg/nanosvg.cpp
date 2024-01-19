@@ -33,7 +33,7 @@
 // #pragma warning(disable : 2220)
 #endif
 
-namespace rl::vg {
+namespace rl::nvg {
 
     static int nsvg__isspace(char c)
     {

@@ -7,24 +7,24 @@
 #include "graphics/vg/nanovg_gl_utils.hpp"
 
 namespace rl {
-    using namespace vg;
 
     struct Property
     {
         enum Flags {
             // Flag indicating if geometry based anti-aliasing is used.
             // May not be needed when using MSAA.
-            AntiAlias = NVGcreateFlags::NVG_ANTIALIAS,
+            AntiAlias = nvg::NVGcreateFlags::NVG_ANTIALIAS,
             // Flag indicating if strokes should be drawn using stencil buffer. The rendering
             // will be a little slower, but path overlaps (i.e. self-intersecting or sharp
             // turns) will be drawn just once.
-            StencilStrokes = NVGcreateFlags::NVG_STENCIL_STROKES,
+            StencilStrokes = nvg::NVGcreateFlags::NVG_STENCIL_STROKES,
             // Flag indicating that additional debug checks are done.
-            Debug = NVGcreateFlags::NVG_DEBUG,
+            Debug = nvg::NVGcreateFlags::NVG_DEBUG,
         };
     };
 
-    static NVGcontext* create_nanovg_context(bool& stencil_buf, bool& depth_buf, bool& float_buf)
+    static nvg::NVGcontext* create_nanovg_context(bool& stencil_buf, bool& depth_buf,
+                                                  bool& float_buf)
     {
         u8 float_mode{ 0 };
         i32 depth_bits{ 0 };
@@ -48,7 +48,7 @@ namespace rl {
 #ifndef NDEBUG
         nvg_flags |= Property::Debug;
 #endif
-        NVGcontext* nvg_context{ nvgCreateGL3(nvg_flags) };
+        nvg::NVGcontext* nvg_context{ nvg::nvgCreateGL3(nvg_flags) };
         runtime_assert(nvg_context != nullptr, "Failed to create NVG context");
         return nvg_context;
     };
@@ -59,15 +59,23 @@ namespace rl {
     {
     }
 
-    NVGcontext* VectorizedRenderer::nvg_context() const
+    nvg::NVGcontext* VectorizedRenderer::nvg_context() const
     {
         return m_nvg_context;
+    }
+
+    void VectorizedRenderer::begin_frame()
+    {
+    }
+
+    void VectorizedRenderer::end_frame()
+    {
     }
 
     void VectorizedRenderer::flush(ds::dims<i32> viewport, f32 pixel_ratio)
     {
         // Flush all queued up NanoVG rendering commands
-        NVGparams* params{ nvgInternalParams(m_nvg_context) };
+        nvg::NVGparams* params{ nvg::InternalParams(m_nvg_context) };
         params->renderFlush(params->userPtr);
         params->renderViewport(params->userPtr, static_cast<f32>(viewport.width),
                                static_cast<f32>(viewport.height), pixel_ratio);
@@ -75,35 +83,35 @@ namespace rl {
 
     void VectorizedRenderer::push_render_state()
     {
-        nvgSave(m_nvg_context);
+        nvg::Save(m_nvg_context);
     }
 
     void VectorizedRenderer::pop_render_state()
     {
-        nvgRestore(m_nvg_context);
+        nvg::Restore(m_nvg_context);
     }
 
     void VectorizedRenderer::draw_rect_outline(ds::rect<f32> rect, f32 stroke_width,
                                                ds::color<f32> color, ui::Outline type)
     {
-        nvgStrokeWidth(m_nvg_context, stroke_width);
-        nvgBeginPath(m_nvg_context);
+        nvg::StrokeWidth(m_nvg_context, stroke_width);
+        nvg::BeginPath(m_nvg_context);
 
         switch (type)
         {
             case ui::Outline::Inner:
-                nvgRect(m_nvg_context, rect.pt.x + (stroke_width / 2.0f),
-                        rect.pt.y + (stroke_width / 2.0f), rect.size.width - stroke_width,
-                        rect.size.height - stroke_width);
+                nvg::Rect(m_nvg_context, rect.pt.x + (stroke_width / 2.0f),
+                          rect.pt.y + (stroke_width / 2.0f), rect.size.width - stroke_width,
+                          rect.size.height - stroke_width);
                 break;
             case ui::Outline::Outer:
-                nvgRect(m_nvg_context, rect.pt.x - (stroke_width / 2.0f),
-                        rect.pt.y - (stroke_width / 2.0f), rect.size.width + stroke_width,
-                        rect.size.height + stroke_width);
+                nvg::Rect(m_nvg_context, rect.pt.x - (stroke_width / 2.0f),
+                          rect.pt.y - (stroke_width / 2.0f), rect.size.width + stroke_width,
+                          rect.size.height + stroke_width);
                 break;
         }
 
-        nvgStrokeColor(m_nvg_context, color);
-        nvgStroke(m_nvg_context);
+        nvg::StrokeColor(m_nvg_context, color);
+        nvg::Stroke(m_nvg_context);
     }
 }

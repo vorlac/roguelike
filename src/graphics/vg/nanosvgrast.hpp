@@ -1,6 +1,6 @@
 #pragma once
 
-namespace rl::vg {
+namespace rl::nvg {
     typedef struct NSVGrasterizer NSVGrasterizer;
 
     /* Example Usage:

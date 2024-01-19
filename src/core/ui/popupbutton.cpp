@@ -3,7 +3,6 @@
 #include "utils/unicode.hpp"
 
 namespace rl::ui {
-    using namespace vg;
 
     PopupButton::PopupButton(ui::Widget* parent, const std::string& caption,
                              ui::Icon::ID button_icon)
@@ -45,12 +44,12 @@ namespace rl::ui {
         return m_popup;
     }
 
-    ds::dims<f32> PopupButton::preferred_size(NVGcontext* ctx) const
+    ds::dims<f32> PopupButton::preferred_size(nvg::NVGcontext* nvg_context) const
     {
-        return Button::preferred_size(ctx) + ds::dims<f32>{ 15.0f, 0.0f };
+        return Button::preferred_size(nvg_context) + ds::dims<f32>{ 15.0f, 0.0f };
     }
 
-    void PopupButton::draw(NVGcontext* ctx)
+    void PopupButton::draw(nvg::NVGcontext* ctx)
     {
         if (!m_enabled && m_pressed)
             m_pressed = false;
@@ -66,12 +65,12 @@ namespace rl::ui {
                                                               : m_text_color };
             f32 text_size{ m_font_size < 0.0f ? m_theme->m_button_font_size : m_font_size };
 
-            nvgFontFace(ctx, font::name::icons);
-            nvgFontSize(ctx, text_size * this->icon_scale());
-            nvgFillColor(ctx, m_enabled ? text_color : m_theme->m_disabled_text_color);
-            nvgTextAlign(ctx, NVGalign::NVG_ALIGN_LEFT | NVGalign::NVG_ALIGN_MIDDLE);
+            nvg::FontFace(ctx, font::name::icons);
+            nvg::FontSize(ctx, text_size * this->icon_scale());
+            nvg::FillColor(ctx, m_enabled ? text_color : m_theme->m_disabled_text_color);
+            nvg::TextAlign(ctx, nvg::NVGalign::NVG_ALIGN_LEFT | nvg::NVGalign::NVG_ALIGN_MIDDLE);
 
-            f32 iw{ nvgTextBounds(ctx, 0.0f, 0.0f, icon.data(), nullptr, nullptr) };
+            f32 iw{ nvg::TextBounds(ctx, 0.0f, 0.0f, icon.data(), nullptr, nullptr) };
             ds::point<f32> icon_pos{
                 0.0f,
                 m_pos.y + m_size.height * 0.5f - 1.0f,
@@ -82,11 +81,11 @@ namespace rl::ui {
             else
                 icon_pos.x = m_pos.x + 8;
 
-            nvgText(ctx, icon_pos.x, icon_pos.y, icon.data(), nullptr);
+            nvg::Text(ctx, icon_pos.x, icon_pos.y, icon.data(), nullptr);
         }
     }
 
-    void PopupButton::perform_layout(NVGcontext* ctx)
+    void PopupButton::perform_layout(nvg::NVGcontext* ctx)
     {
         ui::Widget::perform_layout(ctx);
         f32 anchor_size{ m_popup->anchor_size() };

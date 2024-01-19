@@ -12,7 +12,7 @@
 
 #define NANOVG_GL_USE_STATE_FILTER (1)
 
-namespace rl::vg {
+namespace rl::nvg {
 
     enum GLNVGuniformLoc {
         GLNVG_LOC_VIEWSIZE,
@@ -724,7 +724,7 @@ namespace rl::vg {
         }
         else
         {
-            nvgTransformInverse(invxform, scissor->xform);
+            nvg::TransformInverse(invxform, scissor->xform);
             glnvg__xformToMat3x4(frag->scissorMat, invxform);
             frag->scissorExt[0] = scissor->extent[0];
             frag->scissorExt[1] = scissor->extent[1];
@@ -748,17 +748,17 @@ namespace rl::vg {
             if ((tex->flags & NVG_IMAGE_FLIPY) != 0)
             {
                 float m1[6], m2[6];
-                nvgTransformTranslate(m1, 0.0f, frag->extent[1] * 0.5f);
-                nvgTransformMultiply(m1, paint->xform);
-                nvgTransformScale(m2, 1.0f, -1.0f);
-                nvgTransformMultiply(m2, m1);
-                nvgTransformTranslate(m1, 0.0f, -frag->extent[1] * 0.5f);
-                nvgTransformMultiply(m1, m2);
-                nvgTransformInverse(invxform, m1);
+                nvg::TransformTranslate(m1, 0.0f, frag->extent[1] * 0.5f);
+                nvg::TransformMultiply(m1, paint->xform);
+                nvg::TransformScale(m2, 1.0f, -1.0f);
+                nvg::TransformMultiply(m2, m1);
+                nvg::TransformTranslate(m1, 0.0f, -frag->extent[1] * 0.5f);
+                nvg::TransformMultiply(m1, m2);
+                nvg::TransformInverse(invxform, m1);
             }
             else
             {
-                nvgTransformInverse(invxform, paint->xform);
+                nvg::TransformInverse(invxform, paint->xform);
             }
             frag->type = NSVG_SHADER_FILLIMG;
 
@@ -774,7 +774,7 @@ namespace rl::vg {
             frag->type = NSVG_SHADER_FILLGRAD;
             frag->radius = paint->radius;
             frag->feather = paint->feather;
-            nvgTransformInverse(invxform, paint->xform);
+            nvg::TransformInverse(invxform, paint->xform);
         }
 
         glnvg__xformToMat3x4(frag->paintMat, invxform);
@@ -1427,7 +1427,7 @@ namespace rl::vg {
 
         gl->flags = flags;
 
-        ctx = nvgCreateInternal(&params);
+        ctx = nvg::CreateInternal(&params);
         if (ctx == NULL)
             goto error;
 
@@ -1436,19 +1436,19 @@ namespace rl::vg {
     error:
         // 'gl' is freed by nvgDeleteInternal.
         if (ctx != NULL)
-            nvgDeleteInternal(ctx);
+            nvg::DeleteInternal(ctx);
         return NULL;
     }
 
     void nvgDeleteGL3(NVGcontext* ctx)
     {
-        nvgDeleteInternal(ctx);
+        nvg::DeleteInternal(ctx);
     }
 
     int nvglCreateImageFromHandleGL3(NVGcontext* ctx, unsigned int textureId, int w, int h,
                                      int imageFlags)
     {
-        GLNVGcontext* gl = (GLNVGcontext*)nvgInternalParams(ctx)->userPtr;
+        GLNVGcontext* gl = (GLNVGcontext*)nvg::InternalParams(ctx)->userPtr;
         GLNVGtexture* tex = glnvg__allocTexture(gl);
 
         if (tex == NULL)
@@ -1465,7 +1465,7 @@ namespace rl::vg {
 
     unsigned int nvglImageHandleGL3(NVGcontext* ctx, int image)
     {
-        GLNVGcontext* gl = (GLNVGcontext*)nvgInternalParams(ctx)->userPtr;
+        GLNVGcontext* gl = (GLNVGcontext*)nvg::InternalParams(ctx)->userPtr;
         GLNVGtexture* tex = glnvg__findTexture(gl, image);
         return tex->tex;
     }

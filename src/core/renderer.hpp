@@ -54,7 +54,7 @@ namespace rl {
         ~OpenGLRenderer() = default;
 
         SDL3::SDL_GLContext gl_context() const;
-        vg::NVGcontext* nvg_context();
+        nvg::NVGcontext* nvg_context();
 
         bool clear();
         bool swap_buffers(rl::MainWindow& window);

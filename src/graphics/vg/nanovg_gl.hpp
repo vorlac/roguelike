@@ -2,7 +2,7 @@
 
 #include "graphics/vg/nanovg.hpp"
 
-namespace rl::vg {
+namespace rl::nvg {
     // Create flags
 
     enum NVGcreateFlags {

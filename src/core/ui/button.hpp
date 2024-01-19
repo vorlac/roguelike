@@ -60,8 +60,8 @@ namespace rl::ui {
         virtual bool on_mouse_button_released(const Mouse& mouse, const Keyboard& kb) override;
 
     public:
-        virtual void draw(vg::NVGcontext* ctx) override;
-        virtual ds::dims<f32> preferred_size(vg::NVGcontext* ctx) const override;
+        virtual void draw(nvg::NVGcontext* ctx) override;
+        virtual ds::dims<f32> preferred_size(nvg::NVGcontext* ctx) const override;
 
     private:
         bool handle_mouse_button_event(const ds::point<i32>& pt, Mouse::Button::ID button,

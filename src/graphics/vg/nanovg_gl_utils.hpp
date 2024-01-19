@@ -2,7 +2,7 @@
 
 #include "graphics/vg/nanovg_gl.hpp"
 
-namespace rl::vg {
+namespace rl::nvg {
 
     struct NVGLUframebuffer
     {

@@ -6,7 +6,6 @@
 #include "resources/fonts.hpp"
 
 namespace rl::ui {
-    using namespace vg;
 
     Label::Label(ui::Widget* parent, const std::string& caption, const std::string& font,
                  f32 font_size)
@@ -69,20 +68,20 @@ namespace rl::ui {
         }
     }
 
-    ds::dims<f32> Label::preferred_size(NVGcontext* nvg_context) const
+    ds::dims<f32> Label::preferred_size(nvg::NVGcontext* nvg_context) const
     {
         if (m_caption.empty())
             return ds::dims<f32>::zero();
 
-        nvgFontFace(nvg_context, m_font.c_str());
-        nvgFontSize(nvg_context, this->font_size());
+        nvg::FontFace(nvg_context, m_font.c_str());
+        nvg::FontSize(nvg_context, this->font_size());
 
         if (m_fixed_size.width > 0)
         {
             f32 bounds[4] = { 0 };
-            nvgTextAlign(nvg_context, Text::Alignment::TopLeft);
-            nvgTextBoxBounds(nvg_context, m_pos.x, m_pos.y, m_fixed_size.width, m_caption.c_str(),
-                             nullptr, bounds);
+            nvg::TextAlign(nvg_context, Text::Alignment::TopLeft);
+            nvg::TextBoxBounds(nvg_context, m_pos.x, m_pos.y, m_fixed_size.width, m_caption.c_str(),
+                               nullptr, bounds);
 
             return ds::dims<f32>{
                 m_fixed_size.width,
@@ -91,34 +90,34 @@ namespace rl::ui {
         }
         else
         {
-            nvgTextAlign(nvg_context, Text::Alignment::CenteredLeft);
+            nvg::TextAlign(nvg_context, Text::Alignment::CenteredLeft);
 
             return ds::dims<f32>{
-                nvgTextBounds(nvg_context, 0.0f, 0.0f, m_caption.c_str(), nullptr, nullptr) + 2.0f,
+                nvg::TextBounds(nvg_context, 0.0f, 0.0f, m_caption.c_str(), nullptr, nullptr) + 2.0f,
                 this->font_size(),
             };
         }
     }
 
-    void Label::draw(NVGcontext* nvg_context)
+    void Label::draw(nvg::NVGcontext* nvg_context)
     {
         ui::Widget::draw(nvg_context);
 
-        nvgFontFace(nvg_context, m_font.c_str());
-        nvgFontSize(nvg_context, this->font_size());
-        nvgFillColor(nvg_context, m_color);
+        nvg::FontFace(nvg_context, m_font.c_str());
+        nvg::FontSize(nvg_context, this->font_size());
+        nvg::FillColor(nvg_context, m_color);
 
         if (m_fixed_size.width > 0)
         {
-            nvgTextAlign(nvg_context, Text::Alignment::TopLeft);
-            nvgTextBox(nvg_context, m_pos.x, m_pos.y, m_fixed_size.width, m_caption.c_str(),
-                       nullptr);
+            nvg::TextAlign(nvg_context, Text::Alignment::TopLeft);
+            nvg::TextBox(nvg_context, m_pos.x, m_pos.y, m_fixed_size.width, m_caption.c_str(),
+                         nullptr);
         }
         else
         {
-            nvgTextAlign(nvg_context, Text::Alignment::CenteredLeft);
-            nvgText(nvg_context, m_pos.x, m_pos.y + m_size.height * 0.5f, m_caption.c_str(),
-                    nullptr);
+            nvg::TextAlign(nvg_context, Text::Alignment::CenteredLeft);
+            nvg::Text(nvg_context, m_pos.x, m_pos.y + m_size.height * 0.5f, m_caption.c_str(),
+                      nullptr);
         }
     }
 }

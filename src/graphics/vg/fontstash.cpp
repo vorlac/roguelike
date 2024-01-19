@@ -1,7 +1,7 @@
 #include "graphics/stb/stb_truetype.hpp"
 #include "graphics/vg/fontstash.hpp"
 
-namespace rl::vg {
+namespace rl::nvg {
     using namespace rl::stb;
 
 #define FONS_NOTUSED(v) (void)sizeof(v)

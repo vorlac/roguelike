@@ -40,7 +40,7 @@
 // To use this header file in implementation mode, define BLENDISH_IMPLEMENTATION
 // before including blendish.h, otherwise the file will be in header-only mode.
 
-namespace rl::vg {
+namespace rl::nvg {
     // describes the theme used to draw a single widget or widget box;
     // these values correspond to the same values that can be retrieved from
     // the Theme panel in the Blender preferences
@@ -165,7 +165,7 @@ namespace rl::vg {
 // and so on.
 #define BND_ICONID(x, y)   ((x) | ((y) << 8))
 // alpha of disabled widget groups
-// can be used in conjunction with nvgGlobalAlpha()
+// can be used in conjunction with nvg::GlobalAlpha()
 #define BND_DISABLED_ALPHA 0.5
 
     enum {

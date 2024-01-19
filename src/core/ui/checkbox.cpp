@@ -8,7 +8,6 @@
 #include "utils/unicode.hpp"
 
 namespace rl::ui {
-    using namespace vg;
 
     CheckBox::CheckBox(ui::Widget* parent, const std::string& caption,
                        const std::function<void(bool)>& toggled_callback)
@@ -101,54 +100,55 @@ namespace rl::ui {
         return true;
     }
 
-    ds::dims<f32> CheckBox::preferred_size(NVGcontext* nvg_context) const
+    ds::dims<f32> CheckBox::preferred_size(nvg::NVGcontext* nvg_context) const
     {
         if (m_fixed_size != ds::dims<f32>::zero())
             return m_fixed_size;
 
-        nvgFontSize(nvg_context, this->font_size());
-        nvgFontFace(nvg_context, font::name::sans);
+        nvg::FontSize(nvg_context, this->font_size());
+        nvg::FontFace(nvg_context, font::name::sans);
 
-        f32 text_bounds{ nvgTextBounds(nvg_context, 0.0f, 0.0f, m_caption.c_str(), nullptr,
-                                       nullptr) };
+        f32 text_bounds{ nvg::TextBounds(nvg_context, 0.0f, 0.0f, m_caption.c_str(), nullptr,
+                                         nullptr) };
         return ds::dims<f32>{
             text_bounds + 1.8f * this->font_size(),
             this->font_size() * 1.3f,
         };
     }
 
-    void CheckBox::draw(NVGcontext* nvg_context)
+    void CheckBox::draw(nvg::NVGcontext* nvg_context)
     {
         ui::Widget::draw(nvg_context);
 
-        nvgFontSize(nvg_context, this->font_size());
-        nvgFontFace(nvg_context, font::name::sans);
-        nvgFillColor(nvg_context,
-                     m_enabled ? m_theme->m_text_color : m_theme->m_disabled_text_color);
-        nvgTextAlign(nvg_context, NVG_ALIGN_LEFT | NVG_ALIGN_MIDDLE);
-        nvgText(nvg_context, m_pos.x + 1.6f * this->font_size(), m_pos.y + m_size.height * 0.5f,
-                m_caption.c_str(), nullptr);
+        nvg::FontSize(nvg_context, this->font_size());
+        nvg::FontFace(nvg_context, font::name::sans);
+        nvg::FillColor(nvg_context,
+                       m_enabled ? m_theme->m_text_color : m_theme->m_disabled_text_color);
+        nvg::TextAlign(nvg_context, nvg::NVG_ALIGN_LEFT | nvg::NVG_ALIGN_MIDDLE);
+        nvg::Text(nvg_context, m_pos.x + 1.6f * this->font_size(), m_pos.y + m_size.height * 0.5f,
+                  m_caption.c_str(), nullptr);
 
-        NVGpaint bg{ nvgBoxGradient(
+        nvg::NVGpaint bg{ nvg::BoxGradient(
             nvg_context, m_pos.x + 1.5f, m_pos.y + 1.5f, m_size.height - 2.0f, m_size.height - 2.0f,
             3, 3, m_pushed ? ds::color<u8>{ 0, 0, 0, 100 } : ds::color<u8>{ 0, 0, 0, 32 },
             ds::color<u8>{ 0, 0, 0, 180 }) };
 
-        nvgBeginPath(nvg_context);
-        nvgRoundedRect(nvg_context, m_pos.x + 1.0f, m_pos.y + 1.0f, m_size.height - 2.0f,
-                       m_size.height - 2.0f, 3);
-        nvgFillPaint(nvg_context, bg);
-        nvgFill(nvg_context);
+        nvg::BeginPath(nvg_context);
+        nvg::RoundedRect(nvg_context, m_pos.x + 1.0f, m_pos.y + 1.0f, m_size.height - 2.0f,
+                         m_size.height - 2.0f, 3);
+        nvg::FillPaint(nvg_context, bg);
+        nvg::Fill(nvg_context);
 
         if (m_checked)
         {
-            nvgFontSize(nvg_context, this->icon_scale() * m_size.height);
-            nvgFontFace(nvg_context, font::name::icons);
-            nvgFillColor(nvg_context,
-                         m_enabled ? m_theme->m_icon_color : m_theme->m_disabled_text_color);
-            nvgTextAlign(nvg_context, NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE);
-            nvgText(nvg_context, m_pos.x + m_size.height * 0.5f + 1, m_pos.y + m_size.height * 0.5f,
-                    rl::utf8(m_theme->m_check_box_icon).data(), nullptr);
+            nvg::FontSize(nvg_context, this->icon_scale() * m_size.height);
+            nvg::FontFace(nvg_context, font::name::icons);
+            nvg::FillColor(nvg_context,
+                           m_enabled ? m_theme->m_icon_color : m_theme->m_disabled_text_color);
+            nvg::TextAlign(nvg_context, nvg::NVG_ALIGN_CENTER | nvg::NVG_ALIGN_MIDDLE);
+            nvg::Text(nvg_context, m_pos.x + m_size.height * 0.5f + 1,
+                      m_pos.y + m_size.height * 0.5f, rl::utf8(m_theme->m_check_box_icon).data(),
+                      nullptr);
         }
     }
 }

@@ -13,7 +13,6 @@
 #include "utils/numeric.hpp"
 
 namespace rl::ui {
-    using namespace vg;
 
     BoxLayout::BoxLayout(ui::Orientation orientation, ui::Alignment alignment, f32 margin,
                          f32 spacing)
@@ -24,7 +23,8 @@ namespace rl::ui {
     {
     }
 
-    ds::dims<f32> BoxLayout::preferred_size(NVGcontext* nvg_context, const ui::Widget* widget) const
+    ds::dims<f32> BoxLayout::preferred_size(nvg::NVGcontext* nvg_context,
+                                            const ui::Widget* widget) const
     {
         ds::dims<f32> size{
             2.0f * m_margin,
@@ -70,7 +70,7 @@ namespace rl::ui {
         return size + ds::dims<f32>{ 0.0f, y_offset };
     }
 
-    void BoxLayout::perform_layout(NVGcontext* nvg_context, ui::Widget* widget) const
+    void BoxLayout::perform_layout(nvg::NVGcontext* nvg_context, ui::Widget* widget) const
     {
         ds::dims<f32> fs_w{ widget->fixed_size() };
         ds::dims<f32> container_size{
@@ -190,7 +190,7 @@ namespace rl::ui {
 
     //======================================================================
 
-    ds::dims<f32> GroupLayout::preferred_size(NVGcontext* nvg_context,
+    ds::dims<f32> GroupLayout::preferred_size(nvg::NVGcontext* nvg_context,
                                               const ui::Widget* widget) const
     {
         f32 height{ m_margin };
@@ -234,7 +234,7 @@ namespace rl::ui {
         };
     }
 
-    void GroupLayout::perform_layout(NVGcontext* nvg_context, ui::Widget* widget) const
+    void GroupLayout::perform_layout(nvg::NVGcontext* nvg_context, ui::Widget* widget) const
     {
         f32 height{ this->m_margin };
         f32 available_width{ (widget->fixed_width() ? widget->fixed_width() : widget->width()) -
@@ -324,7 +324,8 @@ namespace rl::ui {
 
     //==================================================================
 
-    ds::dims<f32> GridLayout::preferred_size(NVGcontext* nvg_context, const ui::Widget* widget) const
+    ds::dims<f32> GridLayout::preferred_size(nvg::NVGcontext* nvg_context,
+                                             const ui::Widget* widget) const
     {
         /* Compute minimum row / column sizes */
         std::array<std::vector<f32>, 2> grid{ { {}, {} } };
@@ -344,7 +345,7 @@ namespace rl::ui {
         return pref_size;
     }
 
-    void GridLayout::compute_layout(NVGcontext* nvg_context, const ui::Widget* widget,
+    void GridLayout::compute_layout(nvg::NVGcontext* nvg_context, const ui::Widget* widget,
                                     std::array<std::vector<f32>, 2>& grid) const
     {
         i32 axis1{ std::to_underlying(m_orientation) };
@@ -406,7 +407,7 @@ namespace rl::ui {
         }
     }
 
-    void GridLayout::perform_layout(NVGcontext* nvg_context, ui::Widget* widget) const
+    void GridLayout::perform_layout(nvg::NVGcontext* nvg_context, ui::Widget* widget) const
     {
         ds::dims<f32> fs_w{ widget->fixed_size() };
         ds::dims<f32> container_size{
@@ -647,7 +648,7 @@ namespace rl::ui {
         m_row_stretch.resize(m_rows.size(), 0.0f);
     }
 
-    ds::dims<f32> AdvancedGridLayout::preferred_size(NVGcontext* nvg_context,
+    ds::dims<f32> AdvancedGridLayout::preferred_size(nvg::NVGcontext* nvg_context,
                                                      const ui::Widget* widget) const
     {
         // Compute minimum row / column sizes
@@ -672,7 +673,7 @@ namespace rl::ui {
         return size + extra;
     }
 
-    void AdvancedGridLayout::perform_layout(NVGcontext* nvg_context, ui::Widget* widget) const
+    void AdvancedGridLayout::perform_layout(nvg::NVGcontext* nvg_context, ui::Widget* widget) const
     {
         std::array<std::vector<f32>, 2> grid{ { {}, {} } };
         this->compute_layout(nvg_context, widget, grid);
@@ -751,7 +752,7 @@ namespace rl::ui {
         }
     }
 
-    void AdvancedGridLayout::compute_layout(NVGcontext* nvg_context, const ui::Widget* widget,
+    void AdvancedGridLayout::compute_layout(nvg::NVGcontext* nvg_context, const ui::Widget* widget,
                                             std::array<std::vector<f32>, 2>& grid_cell_sizes) const
     {
         ds::dims<f32> fs_w{ widget->fixed_size() };

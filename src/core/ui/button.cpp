@@ -7,7 +7,6 @@
 #include "utils/unicode.hpp"
 
 namespace rl::ui {
-    using namespace vg;
 
     Button::Button(ui::Widget* parent, const std::string& caption, ui::Icon::ID icon)
         : ui::Widget{ parent }
@@ -121,14 +120,14 @@ namespace rl::ui {
         m_button_group = button_group;
     }
 
-    ds::dims<f32> Button::preferred_size(NVGcontext* ctx) const
+    ds::dims<f32> Button::preferred_size(nvg::NVGcontext* ctx) const
     {
         f32 font_size{ m_font_size == -1.0f ? m_theme->m_button_font_size : m_font_size };
 
-        nvgFontSize(ctx, font_size);
-        nvgFontFace(ctx, font::name::sans_bold);
+        nvg::FontSize(ctx, font_size);
+        nvg::FontFace(ctx, font::name::sans_bold);
 
-        f32 tw{ nvgTextBounds(ctx, 0.0f, 0.0f, m_caption.c_str(), nullptr, nullptr) };
+        f32 tw{ nvg::TextBounds(ctx, 0.0f, 0.0f, m_caption.c_str(), nullptr, nullptr) };
         f32 iw{ 0.0f };
         f32 ih{ font_size };
 
@@ -137,10 +136,10 @@ namespace rl::ui {
             if (Icon::is_font(m_icon))
             {
                 ih *= icon_scale();
-                nvgFontFace(ctx, "icons");
-                nvgFontSize(ctx, ih);
-                iw = nvgTextBounds(ctx, 0.0f, 0.0f, utf8(std::to_underlying(m_icon)).data(),
-                                   nullptr, nullptr) +
+                nvg::FontFace(ctx, "icons");
+                nvg::FontSize(ctx, ih);
+                iw = nvg::TextBounds(ctx, 0.0f, 0.0f, utf8(std::to_underlying(m_icon)).data(),
+                                     nullptr, nullptr) +
                      m_size.height * 0.15f;
             }
             else
@@ -149,7 +148,7 @@ namespace rl::ui {
                 i32 h{ 0 };
 
                 ih *= 0.9f;
-                nvgImageSize(ctx, std::to_underlying(m_icon), &w, &h);
+                nvg::ImageSize(ctx, std::to_underlying(m_icon), &w, &h);
                 iw = w * ih / h;
             }
         }
@@ -266,12 +265,12 @@ namespace rl::ui {
                                          kb.keys_down());
     }
 
-    void Button::draw(NVGcontext* ctx)
+    void Button::draw(nvg::NVGcontext* ctx)
     {
         ui::Widget::draw(ctx);
 
-        NVGcolor grad_top = m_theme->m_button_gradient_top_unfocused;
-        NVGcolor grad_bot = m_theme->m_button_gradient_bot_unfocused;
+        nvg::NVGcolor grad_top = m_theme->m_button_gradient_top_unfocused;
+        nvg::NVGcolor grad_bot = m_theme->m_button_gradient_bot_unfocused;
 
         if (m_pressed || (m_mouse_focus && (m_flags & MenuButton)))
         {
@@ -284,14 +283,14 @@ namespace rl::ui {
             grad_bot = m_theme->m_button_gradient_bot_focused;
         }
 
-        nvgBeginPath(ctx);
-        nvgRoundedRect(ctx, m_pos.x + 1.0f, m_pos.y + 1.0f, m_size.width - 2.0f,
-                       m_size.height - 2.0f, m_theme->m_button_corner_radius - 1.0f);
+        nvg::BeginPath(ctx);
+        nvg::RoundedRect(ctx, m_pos.x + 1.0f, m_pos.y + 1.0f, m_size.width - 2.0f,
+                         m_size.height - 2.0f, m_theme->m_button_corner_radius - 1.0f);
 
         if (m_background_color.a != 0)
         {
-            nvgFillColor(ctx, m_background_color);
-            nvgFill(ctx);
+            nvg::FillColor(ctx, m_background_color);
+            nvg::Fill(ctx);
 
             if (m_pressed)
                 grad_top.a = grad_bot.a = 0.8f;
@@ -303,29 +302,29 @@ namespace rl::ui {
             }
         }
 
-        NVGpaint bg{ nvgLinearGradient(ctx, m_pos.x, m_pos.y, m_pos.x, m_pos.y + m_size.height,
-                                       grad_top, grad_bot) };
-        nvgFillPaint(ctx, bg);
-        nvgFill(ctx);
+        nvg::NVGpaint bg{ nvg::LinearGradient(ctx, m_pos.x, m_pos.y, m_pos.x,
+                                              m_pos.y + m_size.height, grad_top, grad_bot) };
+        nvg::FillPaint(ctx, bg);
+        nvg::Fill(ctx);
 
-        nvgBeginPath(ctx);
-        nvgStrokeWidth(ctx, 1.0f);
-        nvgRoundedRect(ctx, m_pos.x + 0.5f, m_pos.y + (m_pressed ? 0.5f : 1.5f),
-                       m_size.width - 1.0f, m_size.height - 1.0f - (m_pressed ? 0.0f : 1.0f),
-                       m_theme->m_button_corner_radius);
-        nvgStrokeColor(ctx, m_theme->m_border_light);
-        nvgStroke(ctx);
+        nvg::BeginPath(ctx);
+        nvg::StrokeWidth(ctx, 1.0f);
+        nvg::RoundedRect(ctx, m_pos.x + 0.5f, m_pos.y + (m_pressed ? 0.5f : 1.5f),
+                         m_size.width - 1.0f, m_size.height - 1.0f - (m_pressed ? 0.0f : 1.0f),
+                         m_theme->m_button_corner_radius);
+        nvg::StrokeColor(ctx, m_theme->m_border_light);
+        nvg::Stroke(ctx);
 
-        nvgBeginPath(ctx);
-        nvgRoundedRect(ctx, m_pos.x + 0.5f, m_pos.y + 0.5f, m_size.width - 1.0f,
-                       m_size.height - 2.0f, m_theme->m_button_corner_radius);
-        nvgStrokeColor(ctx, m_theme->m_border_dark);
-        nvgStroke(ctx);
+        nvg::BeginPath(ctx);
+        nvg::RoundedRect(ctx, m_pos.x + 0.5f, m_pos.y + 0.5f, m_size.width - 1.0f,
+                         m_size.height - 2.0f, m_theme->m_button_corner_radius);
+        nvg::StrokeColor(ctx, m_theme->m_border_dark);
+        nvg::Stroke(ctx);
 
         f32 font_size{ m_font_size == -1 ? m_theme->m_button_font_size : m_font_size };
-        nvgFontSize(ctx, font_size);
-        nvgFontFace(ctx, "sans-bold");
-        f32 tw{ nvgTextBounds(ctx, 0.0f, 0.0f, m_caption.c_str(), nullptr, nullptr) };
+        nvg::FontSize(ctx, font_size);
+        nvg::FontFace(ctx, "sans-bold");
+        f32 tw{ nvg::TextBounds(ctx, 0.0f, 0.0f, m_caption.c_str(), nullptr, nullptr) };
 
         ds::point<f32> center{
             m_pos.x + m_size.width * 0.5f,
@@ -337,8 +336,9 @@ namespace rl::ui {
             center.y - 1.0f,
         };
 
-        NVGcolor text_color{ m_text_color.a == 0.0f ? m_theme->m_text_color
-                                                    : static_cast<NVGcolor>(m_text_color) };
+        nvg::NVGcolor text_color{ m_text_color.a == 0.0f
+                                      ? m_theme->m_text_color
+                                      : static_cast<nvg::NVGcolor>(m_text_color) };
 
         if (!m_enabled)
             text_color = m_theme->m_disabled_text_color;
@@ -352,9 +352,9 @@ namespace rl::ui {
             if (Icon::is_font(m_icon))
             {
                 ih *= this->icon_scale();
-                nvgFontSize(ctx, ih);
-                nvgFontFace(ctx, "icons");
-                iw = nvgTextBounds(ctx, 0, 0, icon.data(), nullptr, nullptr);
+                nvg::FontSize(ctx, ih);
+                nvg::FontFace(ctx, "icons");
+                iw = nvg::TextBounds(ctx, 0, 0, icon.data(), nullptr, nullptr);
             }
             else
             {
@@ -362,15 +362,15 @@ namespace rl::ui {
                 i32 h{ 0 };
 
                 ih *= 0.9f;
-                nvgImageSize(ctx, std::to_underlying(m_icon), &w, &h);
+                nvg::ImageSize(ctx, std::to_underlying(m_icon), &w, &h);
                 iw = w * ih / h;
             }
 
             if (!m_caption.empty())
                 iw += m_size.height * 0.15f;
 
-            nvgFillColor(ctx, text_color);
-            nvgTextAlign(ctx, NVG_ALIGN_LEFT | NVG_ALIGN_MIDDLE);
+            nvg::FillColor(ctx, text_color);
+            nvg::TextAlign(ctx, nvg::NVG_ALIGN_LEFT | nvg::NVG_ALIGN_MIDDLE);
             ds::point<f32> icon_pos = center;
             icon_pos.y -= 1;
 
@@ -401,24 +401,25 @@ namespace rl::ui {
             }
 
             if (Icon::is_font(m_icon))
-                nvgText(ctx, icon_pos.x, icon_pos.y + 1.0f, icon.data(), nullptr);
+                nvg::Text(ctx, icon_pos.x, icon_pos.y + 1.0f, icon.data(), nullptr);
             else
             {
-                NVGpaint img_paint{ nvgImagePattern(ctx, icon_pos.x, icon_pos.y - ih / 2.0f, iw, ih,
-                                                    0.0f, m_icon, m_enabled ? 0.5f : 0.25f) };
+                nvg::NVGpaint img_paint{ nvg::ImagePattern(ctx, icon_pos.x, icon_pos.y - ih / 2.0f,
+                                                           iw, ih, 0.0f, m_icon,
+                                                           m_enabled ? 0.5f : 0.25f) };
 
-                nvgFillPaint(ctx, img_paint);
-                nvgFill(ctx);
+                nvg::FillPaint(ctx, img_paint);
+                nvg::Fill(ctx);
             }
         }
 
-        nvgFontSize(ctx, font_size);
-        nvgFontFace(ctx, "sans-bold");
-        nvgTextAlign(ctx, NVG_ALIGN_LEFT | NVG_ALIGN_MIDDLE);
-        nvgFillColor(ctx, m_theme->m_text_shadow_color);
-        nvgText(ctx, text_pos.x, text_pos.y, m_caption.c_str(), nullptr);
-        nvgFillColor(ctx, text_color);
-        nvgText(ctx, text_pos.x, text_pos.y + 1, m_caption.c_str(), nullptr);
+        nvg::FontSize(ctx, font_size);
+        nvg::FontFace(ctx, "sans-bold");
+        nvg::TextAlign(ctx, nvg::NVG_ALIGN_LEFT | nvg::NVG_ALIGN_MIDDLE);
+        nvg::FillColor(ctx, m_theme->m_text_shadow_color);
+        nvg::Text(ctx, text_pos.x, text_pos.y, m_caption.c_str(), nullptr);
+        nvg::FillColor(ctx, text_color);
+        nvg::Text(ctx, text_pos.x, text_pos.y + 1, m_caption.c_str(), nullptr);
     }
 
 }

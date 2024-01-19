@@ -256,10 +256,10 @@ namespace rl::ds {
             };
         }
 
-        constexpr inline operator const vg::NVGcolor() const
+        constexpr inline operator const nvg::NVGcolor() const
             requires std::same_as<T, f32>
         {
-            return vg::NVGcolor{
+            return nvg::NVGcolor{
                 this->r,
                 this->g,
                 this->b,
@@ -267,10 +267,10 @@ namespace rl::ds {
             };
         }
 
-        constexpr inline operator const vg::NVGcolor() const
+        constexpr inline operator const nvg::NVGcolor() const
             requires std::same_as<T, u8>
         {
-            return vg::NVGcolor{
+            return nvg::NVGcolor{
                 this->r / 255.0f,
                 this->g / 255.0f,
                 this->b / 255.0f,

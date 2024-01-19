@@ -17,13 +17,13 @@ namespace rl::ui {
     struct Text
     {
         enum Alignment {
-            HorizLeft = vg::NVG_ALIGN_LEFT,         // Default, align text horizontally to left.
-            HorizCenter = vg::NVG_ALIGN_CENTER,     // Align text horizontally to center.
-            HorizRight = vg::NVG_ALIGN_RIGHT,       // Align text horizontally to right.
-            VertTop = vg::NVG_ALIGN_TOP,            // Align text vertically to top.
-            VertCenter = vg::NVG_ALIGN_MIDDLE,      // Align text vertically to middle.
-            VertBottom = vg::NVG_ALIGN_BOTTOM,      // Align text vertically to bottom.
-            VertBaseline = vg::NVG_ALIGN_BASELINE,  // Align text vertically to baseline.
+            HorizLeft = nvg::NVG_ALIGN_LEFT,         // Default, align text horizontally to left.
+            HorizCenter = nvg::NVG_ALIGN_CENTER,     // Align text horizontally to center.
+            HorizRight = nvg::NVG_ALIGN_RIGHT,       // Align text horizontally to right.
+            VertTop = nvg::NVG_ALIGN_TOP,            // Align text vertically to top.
+            VertCenter = nvg::NVG_ALIGN_MIDDLE,      // Align text vertically to middle.
+            VertBottom = nvg::NVG_ALIGN_BOTTOM,      // Align text vertically to bottom.
+            VertBaseline = nvg::NVG_ALIGN_BASELINE,  // Align text vertically to baseline.
 
             Centered = HorizCenter | VertCenter,
             TopLeft = HorizLeft | VertTop,
@@ -47,21 +47,21 @@ namespace rl::ui {
     class Theme : public ds::refcounted
     {
     public:
-        Theme(vg::NVGcontext* nvg_context)
+        Theme(nvg::NVGcontext* nvg_context)
             : m_font_sans_regular{
-                vg::nvgCreateFontMem(nvg_context, ui::font::name::sans,
+                nvg::CreateFontMem(nvg_context, ui::font::name::sans,
                                  roboto_regular_ttf, roboto_regular_ttf_size, 0),
             }
             , m_font_sans_bold{
-                vg::nvgCreateFontMem(nvg_context, ui::font::name::sans_bold,
+                nvg::CreateFontMem(nvg_context, ui::font::name::sans_bold,
                                  roboto_bold_ttf, roboto_bold_ttf_size, 0),
             }
             , m_font_icons{
-                vg::nvgCreateFontMem(nvg_context, ui::font::name::icons,
+                nvg::CreateFontMem(nvg_context, ui::font::name::icons,
                                  fontawesome_solid_ttf, fontawesome_solid_ttf_size, 0),
             }
             , m_font_mono_regular{
-                vg::nvgCreateFontMem(nvg_context, ui::font::name::mono, fira_code_regular_ttf,
+                nvg::CreateFontMem(nvg_context, ui::font::name::mono, fira_code_regular_ttf,
                                  fira_code_regular_ttf_size, 0),
             }
         {

@@ -1,6 +1,6 @@
 #pragma once
 
-namespace rl::vg {
+namespace rl::nvg {
 
     // NanoSVG is a simple stupid single-header-file SVG parse. The output of the parser is a
     // list of cubic bezier shapes.

@@ -13,7 +13,7 @@
   #define NANOVG_GL3
 #endif
 
-namespace rl::vg {
+namespace rl::nvg {
     static GLint defaultFBO = -1;
 
     NVGLUframebuffer* nvgluCreateFramebufferGL3(NVGcontext* ctx, int w, int h, int imageFlags)
@@ -30,7 +30,7 @@ namespace rl::vg {
             goto error;
         memset(fb, 0, sizeof(NVGLUframebuffer));
 
-        fb->image = nvgCreateImageRGBA(
+        fb->image = nvg::CreateImageRGBA(
             ctx, w, h, imageFlags | NVG_IMAGE_FLIPY | NVG_IMAGE_PREMULTIPLIED, NULL);
 
         fb->texture = nvglImageHandleGL3(ctx, fb->image);
@@ -93,7 +93,7 @@ namespace rl::vg {
         if (fb->rbo != 0)
             glDeleteRenderbuffers(1, &fb->rbo);
         if (fb->image >= 0)
-            nvgDeleteImage(fb->ctx, fb->image);
+            nvg::DeleteImage(fb->ctx, fb->image);
         fb->ctx = NULL;
         fb->fbo = 0;
         fb->rbo = 0;

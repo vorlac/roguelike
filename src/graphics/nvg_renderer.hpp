@@ -7,7 +7,7 @@
 #include "ds/point.hpp"
 #include "ds/rect.hpp"
 
-namespace rl::vg {
+namespace rl::nvg {
     struct NVGcontext;
 }
 
@@ -17,9 +17,12 @@ namespace rl {
     public:
         VectorizedRenderer();
 
-        vg::NVGcontext* nvg_context() const;
+        nvg::NVGcontext* nvg_context() const;
 
         void flush(ds::dims<i32> viewport, f32 pixel_ratio);
+
+        void begin_frame();
+        void end_frame();
 
         // saves the current context render state to an internal
         // stack that tracks all theme, text, AA, etc settings
@@ -38,6 +41,6 @@ namespace rl {
         bool m_depth_buffer{ false };
         bool m_stencil_buffer{ false };
         bool m_float_buffer{ false };
-        vg::NVGcontext* m_nvg_context{ nullptr };
+        nvg::NVGcontext* m_nvg_context{ nullptr };
     };
 }

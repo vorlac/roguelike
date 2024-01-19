@@ -28,7 +28,6 @@ SDL_C_LIB_BEGIN
 SDL_C_LIB_END
 
 namespace rl {
-    using namespace vg;
 
     MainWindow::MainWindow(std::string title, const ds::dims<i32>& dims,
                            MainWindow::Properties flags)

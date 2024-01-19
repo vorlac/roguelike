@@ -13,7 +13,6 @@
 #include "graphics/nvg_renderer.hpp"
 
 namespace rl::ui {
-    using namespace vg;
 
     Widget::Widget(ui::Widget* parent)
         : m_parent{ parent }
@@ -230,14 +229,14 @@ namespace rl::ui {
                  : m_font_size;                         //
     }
 
-    ds::dims<f32> Widget::preferred_size(NVGcontext* nvg_context) const
+    ds::dims<f32> Widget::preferred_size(nvg::NVGcontext* nvg_context) const
     {
         return m_layout != nullptr                              //
                  ? m_layout->preferred_size(nvg_context, this)  //
                  : m_size;                                      //
     }
 
-    void Widget::perform_layout(NVGcontext* nvg_context)
+    void Widget::perform_layout(nvg::NVGcontext* nvg_context)
     {
         if (m_layout != nullptr)
             m_layout->perform_layout(nvg_context, this);
@@ -535,7 +534,7 @@ namespace rl::ui {
         static_cast<ui::UICanvas*>(widget)->update_focus(this);
     }
 
-    void Widget::draw_mouse_intersection(NVGcontext* nvg_context, ds::point<i32> pt)
+    void Widget::draw_mouse_intersection(nvg::NVGcontext* nvg_context, ds::point<i32> pt)
     {
         if (!this->contains(pt))
             return;
@@ -556,7 +555,7 @@ namespace rl::ui {
         }
     }
 
-    void Widget::draw(NVGcontext* nvg_context)
+    void Widget::draw(nvg::NVGcontext* nvg_context)
     {
         if constexpr (Widget::DiagnosticsEnabled)
         {
@@ -567,7 +566,7 @@ namespace rl::ui {
         if (m_children.empty())
             return;
 
-        nvgTranslate(nvg_context, m_pos.x, m_pos.y);
+        nvg::Translate(nvg_context, m_pos.x, m_pos.y);
 
         for (auto child : m_children)
         {
@@ -577,8 +576,8 @@ namespace rl::ui {
             if constexpr (!Widget::DiagnosticsEnabled)
             {
                 m_nvg_renderer->push_render_state();
-                nvgIntersectScissor(nvg_context, child->m_pos.x, child->m_pos.y,
-                                    child->m_size.width, child->m_size.height);
+                nvg::IntersectScissor(nvg_context, child->m_pos.x, child->m_pos.y,
+                                      child->m_size.width, child->m_size.height);
             }
 
             child->draw(nvg_context);
@@ -587,7 +586,7 @@ namespace rl::ui {
                 m_nvg_renderer->pop_render_state();
         }
 
-        nvgTranslate(nvg_context, -m_pos.x, -m_pos.y);
+        nvg::Translate(nvg_context, -m_pos.x, -m_pos.y);
     }
 
     f32 Widget::icon_scale() const

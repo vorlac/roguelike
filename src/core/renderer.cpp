@@ -17,7 +17,6 @@ typedef struct SDL_VideoDevice SDL_VideoDevice;
 SDL_C_LIB_END
 
 namespace rl {
-    using namespace vg;
 
     static SDL3::SDL_GLContext create_opengl_context(SDL3::SDL_Window* sdl_window)
     {
@@ -77,7 +76,7 @@ namespace rl {
         return m_sdl_glcontext;
     }
 
-    NVGcontext* OpenGLRenderer::nvg_context()
+    nvg::NVGcontext* OpenGLRenderer::nvg_context()
     {
         return m_nvg_renderer->nvg_context();
     }

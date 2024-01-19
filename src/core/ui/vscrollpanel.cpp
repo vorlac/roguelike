@@ -2,7 +2,6 @@
 #include "core/ui/vscrollpanel.hpp"
 
 namespace rl::ui {
-    using namespace vg;
 
     VScrollPanel::VScrollPanel(ui::Widget* parent)
         : ui::Widget{ parent }
@@ -26,7 +25,7 @@ namespace rl::ui {
         m_scroll = scroll;
     }
 
-    void VScrollPanel::perform_layout(NVGcontext* nvg_context)
+    void VScrollPanel::perform_layout(nvg::NVGcontext* nvg_context)
     {
         ui::Widget::perform_layout(nvg_context);
 
@@ -59,7 +58,7 @@ namespace rl::ui {
         child->perform_layout(nvg_context);
     }
 
-    ds::dims<f32> VScrollPanel::preferred_size(NVGcontext* nvg_context) const
+    ds::dims<f32> VScrollPanel::preferred_size(nvg::NVGcontext* nvg_context) const
     {
         if (m_children.empty())
             return ds::dims<f32>{ 0.0f, 0.0f };
@@ -158,7 +157,7 @@ namespace rl::ui {
         }
     }
 
-    void VScrollPanel::draw(NVGcontext* ctx)
+    void VScrollPanel::draw(nvg::NVGcontext* nvg_context)
     {
         if (m_children.empty())
             return;
@@ -170,48 +169,49 @@ namespace rl::ui {
             yoffset = -m_scroll * (m_child_preferred_height - m_size.height);
 
         child->set_position(ds::point<f32>{ 0.0f, yoffset });
-        m_child_preferred_height = child->preferred_size(ctx).height;
+        m_child_preferred_height = child->preferred_size(nvg_context).height;
         f32 scrollh{ height() *
                      std::min(1.f, height() / static_cast<f32>(m_child_preferred_height)) };
 
         if (m_update_layout)
         {
             m_update_layout = false;
-            child->perform_layout(ctx);
+            child->perform_layout(nvg_context);
         }
 
-        nvgSave(ctx);
-        nvgTranslate(ctx, m_pos.x, m_pos.y);
-        nvgIntersectScissor(ctx, 0, 0, m_size.width, m_size.height);
+        nvg::Save(nvg_context);
+        nvg::Translate(nvg_context, m_pos.x, m_pos.y);
+        nvg::IntersectScissor(nvg_context, 0, 0, m_size.width, m_size.height);
 
         if (child->visible())
-            child->draw(ctx);
+            child->draw(nvg_context);
 
-        nvgRestore(ctx);
+        nvg::Restore(nvg_context);
 
         if (m_child_preferred_height <= m_size.height)
             return;
 
-        NVGpaint paint{ nvgBoxGradient(ctx, m_pos.x + m_size.width - 12.0f + 1.0f,
-                                       m_pos.y + 4.0f + 1.0f, 8.0f, m_size.height - 8.0f, 3.0f,
-                                       4.0f, ds::color<u8>{ 0, 0, 0, 32 },
-                                       ds::color<u8>{ 0, 0, 0, 92 }) };
-        nvgBeginPath(ctx);
-        nvgRoundedRect(ctx, m_pos.x + m_size.width - 12, m_pos.y + 4, 8, m_size.height - 8, 3);
-        nvgFillPaint(ctx, paint);
-        nvgFill(ctx);
+        nvg::NVGpaint paint{ nvg::BoxGradient(nvg_context, m_pos.x + m_size.width - 12.0f + 1.0f,
+                                              m_pos.y + 4.0f + 1.0f, 8.0f, m_size.height - 8.0f,
+                                              3.0f, 4.0f, ds::color<u8>{ 0, 0, 0, 32 },
+                                              ds::color<u8>{ 0, 0, 0, 92 }) };
+        nvg::BeginPath(nvg_context);
+        nvg::RoundedRect(nvg_context, m_pos.x + m_size.width - 12, m_pos.y + 4, 8,
+                         m_size.height - 8, 3);
+        nvg::FillPaint(nvg_context, paint);
+        nvg::Fill(nvg_context);
 
-        paint = nvgBoxGradient(ctx, m_pos.x + m_size.width - 12.0f - 1.0f,
-                               m_pos.y + 4.0f + (m_size.height - 8.0f - scrollh) * m_scroll - 1.0f,
-                               8.0f, scrollh, 3.0f, 4.0f, ds::color<u8>{ 220, 220, 220, 100 },
-                               ds::color<u8>{ 128, 128, 128, 100 });
+        paint = nvg::BoxGradient(
+            nvg_context, m_pos.x + m_size.width - 12.0f - 1.0f,
+            m_pos.y + 4.0f + (m_size.height - 8.0f - scrollh) * m_scroll - 1.0f, 8.0f, scrollh,
+            3.0f, 4.0f, ds::color<u8>{ 220, 220, 220, 100 }, ds::color<u8>{ 128, 128, 128, 100 });
 
-        nvgBeginPath(ctx);
-        nvgRoundedRect(ctx, m_pos.x + m_size.width - 1.0f + 1.0f,
-                       m_pos.y + 4.0f + 1.0f + (m_size.height - 8.0f - scrollh) * m_scroll,
-                       8.0f - 2.0f, scrollh - 2.0f, 2.0f);
+        nvg::BeginPath(nvg_context);
+        nvg::RoundedRect(nvg_context, m_pos.x + m_size.width - 1.0f + 1.0f,
+                         m_pos.y + 4.0f + 1.0f + (m_size.height - 8.0f - scrollh) * m_scroll,
+                         8.0f - 2.0f, scrollh - 2.0f, 2.0f);
 
-        nvgFillPaint(ctx, paint);
-        nvgFill(ctx);
+        nvg::FillPaint(nvg_context, paint);
+        nvg::Fill(nvg_context);
     }
 }

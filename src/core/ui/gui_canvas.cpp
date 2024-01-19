@@ -8,7 +8,6 @@
 #include "utils/io.hpp"
 
 namespace rl::ui {
-    using namespace vg;
 
     UICanvas::UICanvas(ds::dims<f32> size, const Mouse& mouse, const Keyboard& kb,
                        const std::unique_ptr<VectorizedRenderer>& nvg_renderer)
@@ -66,7 +65,7 @@ namespace rl::ui {
     bool UICanvas::draw_widgets()
     {
         constexpr static f32 PIXEL_RATIO = 1.0f;
-        nvgBeginFrame(m_nvg_context, m_size.width, m_size.height, PIXEL_RATIO);
+        nvg::BeginFrame(m_nvg_context, m_size.width, m_size.height, PIXEL_RATIO);
 
         this->draw(m_nvg_context);
 
@@ -93,19 +92,19 @@ namespace rl::ui {
                         ds::point<f32>(widget->width() / 2.0f, widget->height() + 10.0f),
                 };
 
-                nvgFontFace(m_nvg_context, font::name::sans);
-                nvgFontSize(m_nvg_context, 20.0f);
-                nvgTextAlign(m_nvg_context, Text::Alignment::TopLeft);
-                nvgTextLineHeight(m_nvg_context, 1.125f);
-                nvgTextBounds(m_nvg_context, pos.x, pos.y, widget->tooltip().c_str(), nullptr,
-                              bounds.data());
+                nvg::FontFace(m_nvg_context, font::name::sans);
+                nvg::FontSize(m_nvg_context, 20.0f);
+                nvg::TextAlign(m_nvg_context, Text::Alignment::TopLeft);
+                nvg::TextLineHeight(m_nvg_context, 1.125f);
+                nvg::TextBounds(m_nvg_context, pos.x, pos.y, widget->tooltip().c_str(), nullptr,
+                                bounds.data());
 
                 f32 height{ (bounds[2] - bounds[0]) / 2.0f };
                 if (height > tooltip_width / 2)
                 {
-                    nvgTextAlign(m_nvg_context, Text::Alignment::TopMiddle);
-                    nvgTextBoxBounds(m_nvg_context, pos.x, pos.y, tooltip_width,
-                                     widget->tooltip().c_str(), nullptr, bounds.data());
+                    nvg::TextAlign(m_nvg_context, Text::Alignment::TopMiddle);
+                    nvg::TextBoxBounds(m_nvg_context, pos.x, pos.y, tooltip_width,
+                                       widget->tooltip().c_str(), nullptr, bounds.data());
 
                     height = (bounds[2] - bounds[0]) / 2;
                 }
@@ -120,30 +119,30 @@ namespace rl::ui {
                     bounds[2] -= shift;
                 }
 
-                nvgGlobalAlpha(m_nvg_context,
-                               std::min(1.0f, 2.0f * (elapsed - m_tooltip_delay)) * 0.8f);
+                nvg::GlobalAlpha(m_nvg_context,
+                                 std::min(1.0f, 2.0f * (elapsed - m_tooltip_delay)) * 0.8f);
 
-                nvgBeginPath(m_nvg_context);
-                nvgFillColor(m_nvg_context, rl::Colors::DarkererGrey);
-                nvgRoundedRect(m_nvg_context, bounds[0] - 4.0f - height, bounds[1] - 4.0f,
-                               (bounds[2] - bounds[0]) + 8.0f, (bounds[3] - bounds[1]) + 8.0f,
-                               3.0f);
+                nvg::BeginPath(m_nvg_context);
+                nvg::FillColor(m_nvg_context, rl::Colors::DarkererGrey);
+                nvg::RoundedRect(m_nvg_context, bounds[0] - 4.0f - height, bounds[1] - 4.0f,
+                                 (bounds[2] - bounds[0]) + 8.0f, (bounds[3] - bounds[1]) + 8.0f,
+                                 3.0f);
 
                 const f32 px{ ((bounds[2] + bounds[0]) / 2.0f) - height + shift };
 
-                nvgMoveTo(m_nvg_context, px, bounds[1] - 10);
-                nvgLineTo(m_nvg_context, px + 7, bounds[1] + 1);
-                nvgLineTo(m_nvg_context, px - 7, bounds[1] + 1);
-                nvgFill(m_nvg_context);
+                nvg::MoveTo(m_nvg_context, px, bounds[1] - 10);
+                nvg::LineTo(m_nvg_context, px + 7, bounds[1] + 1);
+                nvg::LineTo(m_nvg_context, px - 7, bounds[1] + 1);
+                nvg::Fill(m_nvg_context);
 
-                nvgFillColor(m_nvg_context, rl::Colors::White);
-                nvgFontBlur(m_nvg_context, 0.0f);
-                nvgTextBox(m_nvg_context, pos.x - height, pos.y, tooltip_width,
-                           widget->tooltip().c_str(), nullptr);
+                nvg::FillColor(m_nvg_context, rl::Colors::White);
+                nvg::FontBlur(m_nvg_context, 0.0f);
+                nvg::TextBox(m_nvg_context, pos.x - height, pos.y, tooltip_width,
+                             widget->tooltip().c_str(), nullptr);
             }
         }
 
-        nvgEndFrame(m_nvg_context);
+        nvg::EndFrame(m_nvg_context);
 
         return true;
     }

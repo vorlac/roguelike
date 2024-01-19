@@ -2,7 +2,7 @@
 
 void test_crtp_ui()
 {
-    using namespace rl::vg;
+    using namespace rl::nvg;
     using namespace rl::ui::crtp;
 
     auto root = std::make_shared<label>(widget::null(), "root widget");

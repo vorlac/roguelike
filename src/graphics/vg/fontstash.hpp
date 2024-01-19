@@ -40,7 +40,7 @@ static void fons__tmpfree(void* ptr, void* up);
   #define FONS_MAX_FALLBACKS 20
 #endif
 
-namespace rl::vg {
+namespace rl::nvg {
     using namespace stb;
 
     struct FONSttFontImpl
