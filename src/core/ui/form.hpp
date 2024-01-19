@@ -90,7 +90,7 @@ namespace rl::ui {
                     widget->set_value(value);
             };
 
-            this->update();
+            refresh();
 
             // TODO: missing??
             widget->set_callback(setter);
