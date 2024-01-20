@@ -107,10 +107,10 @@
     <!-- - - - - - - - - -->
     <!-- rl::ui::theme - -->
     <!-- - - - - - - - - -->
-    <Type Name="rl::ui::theme">
-        <!--<DisplayString>
-          refcount:{m_references,na}
-      </DisplayString>-->
+    <Type Name="rl::ui::Theme">
+        <DisplayString>
+            refcount:{m_references,,nvog}
+        </DisplayString>
         <Expand HideRawView="true">
             <Item Name="refcount">m_references</Item>
             <Synthetic Name="fonts">

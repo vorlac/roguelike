@@ -79,8 +79,8 @@ namespace rl::ui {
         Button::Flags m_flags{};
         bool m_pressed{ false };
         ui::Icon::Position m_icon_position{};
-        ds::color<f32> m_background_color{ rl::Colors::LightGrey };
-        ds::color<f32> m_text_color{ rl::Colors::White };
+        ds::color<f32> m_background_color{ rl::Colors::DarkGrey };
+        ds::color<f32> m_text_color{ rl::Colors::LightGrey };
         std::function<void()> m_callback;
         std::function<void(bool)> m_change_callback;
         std::vector<ui::Button*> m_button_group{};

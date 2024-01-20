@@ -256,14 +256,25 @@ namespace rl::ds {
             };
         }
 
-        constexpr inline operator const nvg::NVGcolor()
-            requires rl::floating_point<T>
+        constexpr inline operator const nvg::NVGcolor() const
+            requires std::same_as<T, f32>
         {
-            return nvg::NVGcolor{
+            return {
                 this->r,
                 this->g,
                 this->b,
                 this->a,
+            };
+        }
+
+        constexpr inline operator nvg::NVGcolor() const
+            requires std::same_as<T, u8>
+        {
+            return {
+                static_cast<f32>(std::clamp(this->r / 255.0f, 0.0f, 1.0f)),
+                static_cast<f32>(std::clamp(this->g / 255.0f, 0.0f, 1.0f)),
+                static_cast<f32>(std::clamp(this->b / 255.0f, 0.0f, 1.0f)),
+                static_cast<f32>(std::clamp(this->a / 255.0f, 0.0f, 1.0f)),
             };
         }
 
@@ -291,21 +302,19 @@ namespace rl::ds {
 namespace rl {
     struct Colors
     {
-        constexpr static inline ds::color<f32> White{ 0xFFFFFFFF };
-        constexpr static inline ds::color<f32> LightGrey{ 0xC1C4CAFF };
-        constexpr static inline ds::color<f32> Grey{ 0xA6A6A6FF };
-        constexpr static inline ds::color<f32> DarkGrey{ 0x262B33FF };
-        constexpr static inline ds::color<f32> DarkerGrey{ 0x333333FF };
-        constexpr static inline ds::color<f32> DarkererGrey{ 0x111111FF };
-        constexpr static inline ds::color<f32> Black{ 0x000000FF };
-
-        constexpr static inline ds::color<f32> Red{ 0xD4A4A4FF };
-        constexpr static inline ds::color<f32> Green{ 0x9AAF8BFF };
-        constexpr static inline ds::color<f32> Yellow{ 0xCAB880FF };
-        constexpr static inline ds::color<f32> Blue{ 0x779DC9FF };
-        constexpr static inline ds::color<f32> Purple{ 0xB6ADDBFF };
-        constexpr static inline ds::color<f32> Cyan{ 0x83B2B6FF };
-
-        constexpr static inline ds::color<f32> Background{ 0x282C34FF };
+        constexpr static inline ds::color<f32> White{ 1.0f, 1.0f, 1.0f, 1.0f };
+        constexpr static inline ds::color<f32> LightGrey{ 0.756862f, 0.768627f, 0.792156f, 1.0f };
+        constexpr static inline ds::color<f32> Grey{ 0.65098f, 0.65098f, 0.65098f, 1.0f };
+        constexpr static inline ds::color<f32> DarkGrey{ 0.14901961f, 0.16862746f, 0.2f, 1.0f };
+        constexpr static inline ds::color<f32> DarkerGrey{ 0.2f, 0.2f, 0.2f, 1.0f };
+        constexpr static inline ds::color<f32> DarkererGrey{ 0.066667f, 0.066667f, 0.066667f, 1.0f };
+        constexpr static inline ds::color<f32> Black{ 0.0f, 0.0f, 0.0f, 1.0f };
+        constexpr static inline ds::color<f32> Red{ 0.83137256f, 0.6431373f, 0.6431373f, 1.0f };
+        constexpr static inline ds::color<f32> Green{ 0.6039216f, 0.6862745f, 0.54509807f, 1.0f };
+        constexpr static inline ds::color<f32> Yellow{ 0.7921569f, 0.7215686f, 0.501960f, 1.0f };
+        constexpr static inline ds::color<f32> Blue{ 0.46666667f, 0.6156863f, 0.7882353f, 1.0f };
+        constexpr static inline ds::color<f32> Purple{ 0.7137255f, 0.6784314f, 0.85882354f, 1.0f };
+        constexpr static inline ds::color<f32> Cyan{ 0.5137255f, 0.69803923f, 0.7137255f, 1.0f };
+        constexpr static inline ds::color<f32> Background{ 0.156862f, 0.172549f, 0.203921f, 1.0f };
     };
 }

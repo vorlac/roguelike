@@ -1,3 +1,14 @@
+#include <memory>
+#include <string>
+#include <string_view>
+#include <tuple>
+#include <type_traits>
+#include <utility>
+
+#include <fmt/compile.h>
+#include <fmt/core.h>
+#include <fmt/format.h>
+
 #include "core/keyboard.hpp"
 #include "core/mouse.hpp"
 #include "core/ui/button.hpp"
@@ -270,8 +281,10 @@ namespace rl::ui {
     {
         ui::Widget::draw(ctx);
 
-        nvg::NVGcolor grad_top = m_theme->m_button_gradient_top_unfocused;
-        nvg::NVGcolor grad_bot = m_theme->m_button_gradient_bot_unfocused;
+        nvg::NVGcolor grad_top{ std::forward<const nvg::NVGcolor>(
+            m_theme->m_button_gradient_top_unfocused) };
+        nvg::NVGcolor grad_bot{ std::forward<const nvg::NVGcolor>(
+            m_theme->m_button_gradient_bot_unfocused) };
 
         if (m_pressed || (m_mouse_focus && (m_flags & MenuButton)))
         {
@@ -324,7 +337,7 @@ namespace rl::ui {
 
         f32 font_size{ m_font_size == -1 ? m_theme->m_button_font_size : m_font_size };
         nvg::FontSize(ctx, font_size);
-        nvg::FontFace(ctx, "sans-bold");
+        nvg::FontFace(ctx, font::name::mono);
         f32 tw{ nvg::TextBounds(ctx, 0.0f, 0.0f, m_caption.c_str(), nullptr, nullptr) };
 
         ds::point<f32> center{
@@ -337,9 +350,7 @@ namespace rl::ui {
             center.y - 1.0f,
         };
 
-        nvg::NVGcolor text_color{ m_text_color.a == 0.0f
-                                      ? m_theme->m_text_color
-                                      : static_cast<nvg::NVGcolor>(m_text_color) };
+        nvg::NVGcolor text_color = m_text_color.a == 0.0f ? m_theme->m_text_color : m_text_color;
 
         if (!m_enabled)
             text_color = m_theme->m_disabled_text_color;
@@ -354,7 +365,7 @@ namespace rl::ui {
             {
                 ih *= this->icon_scale();
                 nvg::FontSize(ctx, ih);
-                nvg::FontFace(ctx, "icons");
+                nvg::FontFace(ctx, font::name::icons);
                 iw = nvg::TextBounds(ctx, 0, 0, icon.data(), nullptr, nullptr);
             }
             else
@@ -415,12 +426,12 @@ namespace rl::ui {
         }
 
         nvg::FontSize(ctx, font_size);
-        nvg::FontFace(ctx, "sans-bold");
-        nvg::TextAlign(ctx, nvg::NVG_ALIGN_LEFT | nvg::NVG_ALIGN_MIDDLE);
+        nvg::FontFace(ctx, font::name::mono);
+        nvg::TextAlign(ctx, Text::HLeftVMiddle);
         nvg::FillColor(ctx, m_theme->m_text_shadow_color);
         nvg::Text(ctx, text_pos.x, text_pos.y, m_caption.c_str(), nullptr);
         nvg::FillColor(ctx, text_color);
-        nvg::Text(ctx, text_pos.x, text_pos.y + 1, m_caption.c_str(), nullptr);
+        nvg::Text(ctx, text_pos.x, text_pos.y + 1.0f, m_caption.c_str(), nullptr);
     }
 
 }

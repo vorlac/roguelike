@@ -19,7 +19,7 @@ namespace rl::ui {
             m_color = m_theme->m_text_color;
         }
 
-        if (font_size >= 0)
+        if (font_size >= 0.0f)
             m_font_size = font_size;
     }
 
@@ -76,24 +76,26 @@ namespace rl::ui {
         nvg::FontFace(nvg_context, m_font.c_str());
         nvg::FontSize(nvg_context, this->font_size());
 
-        if (m_fixed_size.width > 0)
+        if (m_fixed_size.width > 0.0f)
         {
-            f32 bounds[4] = { 0 };
+            std::array<f32, 4> bounds{ 0.0f };
             nvg::TextAlign(nvg_context, Text::Alignment::HLeftVTop);
             nvg::TextBoxBounds(nvg_context, m_pos.x, m_pos.y, m_fixed_size.width, m_caption.c_str(),
-                               nullptr, bounds);
+                               nullptr, bounds.data());
 
+            const f32 textbox_height{ bounds[3] - bounds[1] };
             return ds::dims<f32>{
                 m_fixed_size.width,
-                bounds[3] - bounds[1],
+                textbox_height,
             };
         }
         else
         {
             nvg::TextAlign(nvg_context, Text::Alignment::HLeftVMiddle);
-
+            const f32 text_width{ nvg::TextBounds(nvg_context, 0.0f, 0.0f, m_caption.c_str(),
+                                                  nullptr, nullptr) };
             return ds::dims<f32>{
-                nvg::TextBounds(nvg_context, 0.0f, 0.0f, m_caption.c_str(), nullptr, nullptr) + 2.0f,
+                text_width + 2.0f,
                 this->font_size(),
             };
         }

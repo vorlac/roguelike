@@ -24,7 +24,7 @@ namespace rl::ui {
 
     ComboBox::ComboBox(ui::Widget* parent, const std::vector<std::string>& items,
                        const std::vector<std::string>& items_short)
-        : PopupButton{ parent }
+        : ui::PopupButton{ parent }
         , m_container{ this->popup() }
     {
         this->set_items(items, items_short);
@@ -151,5 +151,4 @@ namespace rl::ui {
 
         return ui::Widget::on_mouse_scroll(mouse, kb);
     }
-
 }

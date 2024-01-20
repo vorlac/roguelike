@@ -64,19 +64,19 @@ namespace rl::ui {
         return m_parent_dialog;
     }
 
-    void Popup::perform_layout(nvg::NVGcontext* ctx)
+    void Popup::perform_layout(nvg::NVGcontext* nvg_context)
     {
         if (m_layout != nullptr || m_children.size() != 1)
-            ui::Widget::perform_layout(ctx);
+            ui::Widget::perform_layout(nvg_context);
         else
         {
             m_children[0]->set_position({ 0.0f, 0.0f });
             m_children[0]->set_size(m_size);
-            m_children[0]->perform_layout(ctx);
+            m_children[0]->perform_layout(nvg_context);
         }
 
         if (m_side == Side::Left)
-            m_anchor_pos.x -= size().width;
+            m_anchor_pos.x -= m_size.width;
     }
 
     void Popup::refresh_relative_placement()
@@ -90,36 +90,35 @@ namespace rl::ui {
                 ds::point<f32>{ 0.0f, m_anchor_offset };
     }
 
-    void Popup::draw(nvg::NVGcontext* ctx)
+    void Popup::draw(nvg::NVGcontext* nvg_context)
     {
         this->refresh_relative_placement();
         if (!m_visible)
             return;
 
-        f32 ds{ m_theme->m_window_drop_shadow_size };
-        f32 cr{ m_theme->m_window_corner_radius };
+        const f32 ds{ m_theme->m_window_drop_shadow_size };
+        const f32 cr{ m_theme->m_window_corner_radius };
 
-        nvg::Save(ctx);
-        nvg::ResetScissor(ctx);
+        nvg::Save(nvg_context);
+        nvg::ResetScissor(nvg_context);
 
         // Draw a drop shadow
         nvg::NVGpaint shadow_paint = nvg::BoxGradient(
-            ctx, m_pos.x, m_pos.y, m_size.width, m_size.height, cr * 2.0f, ds * 2.0f,
+            nvg_context, m_pos.x, m_pos.y, m_size.width, m_size.height, cr * 2.0f, ds * 2.0f,
             m_theme->m_drop_shadow, m_theme->m_transparent);
 
-        nvg::BeginPath(ctx);
-        nvg::Rect(ctx, m_pos.x - ds, m_pos.y - ds, m_size.width + (2.0f * ds),
+        nvg::BeginPath(nvg_context);
+        nvg::Rect(nvg_context, m_pos.x - ds, m_pos.y - ds, m_size.width + (2.0f * ds),
                   m_size.height + (2.0f * ds));
-        nvg::RoundedRect(ctx, m_pos.x, m_pos.y, m_size.width, m_size.height, cr);
-        nvg::PathWinding(ctx, nvg::NVG_HOLE);
-        nvg::FillPaint(ctx, shadow_paint);
-        nvg::Fill(ctx);
+        nvg::RoundedRect(nvg_context, m_pos.x, m_pos.y, m_size.width, m_size.height, cr);
+        nvg::PathWinding(nvg_context, nvg::NVG_HOLE);
+        nvg::FillPaint(nvg_context, shadow_paint);
+        nvg::Fill(nvg_context);
 
         // Draw window
-        nvg::BeginPath(ctx);
-        nvg::RoundedRect(ctx, m_pos.x, m_pos.y, m_size.width, m_size.height, cr);
-
-        ds::point<f32> base{ m_pos + ds::point<f32>{ 0.0f, m_anchor_offset } };
+        nvg::BeginPath(nvg_context);
+        nvg::RoundedRect(nvg_context, m_pos.x, m_pos.y, m_size.width, m_size.height, cr);
+        ds::point<f32> base{ m_pos + ds::point{ 0.0f, m_anchor_offset } };
 
         f32 sign = -1.0f;
         if (m_side == Side::Left)
@@ -128,14 +127,14 @@ namespace rl::ui {
             sign = 1.0f;
         }
 
-        nvg::MoveTo(ctx, base.x + m_anchor_size * sign, base.y);
-        nvg::LineTo(ctx, base.x - (1.0f * sign), base.y - m_anchor_size);
-        nvg::LineTo(ctx, base.x - (1.0f * sign), base.y + m_anchor_size);
+        nvg::MoveTo(nvg_context, base.x + m_anchor_size * sign, base.y);
+        nvg::LineTo(nvg_context, base.x - (1.0f * sign), base.y - m_anchor_size);
+        nvg::LineTo(nvg_context, base.x - (1.0f * sign), base.y + m_anchor_size);
 
-        nvg::FillColor(ctx, m_theme->m_window_popup);
-        nvg::Fill(ctx);
-        nvg::Restore(ctx);
+        nvg::FillColor(nvg_context, m_theme->m_window_popup);
+        nvg::Fill(nvg_context);
+        nvg::Restore(nvg_context);
 
-        ui::Widget::draw(ctx);
+        ui::Widget::draw(nvg_context);
     }
 }

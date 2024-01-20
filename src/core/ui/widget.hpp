@@ -131,7 +131,6 @@ namespace rl::ui {
 
     protected:
         ui::Widget* m_parent{ nullptr };
-        // nvg::NVGcontext* m_nvg_context{ nullptr };
         ds::shared<ui::Theme> m_theme{ nullptr };
         ds::shared<ui::Layout> m_layout{ nullptr };
         static inline rl::NVGRenderer* m_nvg_renderer{ nullptr };
