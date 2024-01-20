@@ -11,7 +11,7 @@ namespace rl::ui {
 
     UICanvas::UICanvas(ds::dims<f32> size, const Mouse& mouse, const Keyboard& kb,
                        const std::unique_ptr<NVGRenderer>& nvg_renderer)
-        : ui::Widget{ nullptr, nvg_renderer }
+        : Widget{ nullptr, nvg_renderer }
         , m_nvg_context{ nvg_renderer ? nvg_renderer->nvg_context() : nullptr }
         , m_mouse_ref{ mouse }
         , m_kb_ref{ kb }
@@ -22,7 +22,7 @@ namespace rl::ui {
             m_cursors[i] = SDL3::SDL_CreateSystemCursor(Mouse::Cursor::type(i));
 
         this->set_visible(true);
-        this->set_theme(new ui::Theme(m_nvg_context));
+        this->set_theme(new Theme(m_nvg_context));
         this->on_mouse_move({}, {});
 
         m_last_interaction = m_timer.elapsed();
@@ -82,7 +82,7 @@ namespace rl::ui {
         const f32 elapsed{ m_timer.elapsed() - m_last_interaction };
         if (elapsed > m_tooltip_delay)
         {
-            const ui::Widget* widget{ this->find_widget(m_mouse_ref.pos()) };
+            const Widget* widget{ this->find_widget(m_mouse_ref.pos()) };
             if (widget != nullptr && !widget->tooltip().empty())
             {
                 constexpr f32 tooltip_width{ 150.0f };
@@ -278,11 +278,11 @@ namespace rl::ui {
             return false;
 
         // Temporarily increase the frame rate to fade in the tooltip
-        const ui::Widget* widget{ this->find_widget(m_mouse_ref.pos()) };
+        const Widget* widget{ this->find_widget(m_mouse_ref.pos()) };
         return widget != nullptr && !widget->tooltip().empty();
     }
 
-    void UICanvas::update_focus(ui::Widget* widget)
+    void UICanvas::update_focus(Widget* widget)
     {
         for (auto focus_widget : m_focus_path)
         {
@@ -294,12 +294,12 @@ namespace rl::ui {
 
         m_focus_path.clear();
 
-        ui::Widget* window{ nullptr };
+        Widget* window{ nullptr };
         while (widget != nullptr)
         {
             m_focus_path.push_back(widget);
 
-            ui::UICanvas* as_canvas{ dynamic_cast<ui::UICanvas*>(widget) };
+            UICanvas* as_canvas{ dynamic_cast<UICanvas*>(widget) };
             if (as_canvas != nullptr)
                 window = as_canvas;
 
@@ -310,10 +310,10 @@ namespace rl::ui {
             focus_widget->on_focus_gained();
 
         // if (window != nullptr)
-        //     this->move_dialog_to_front(static_cast<ui::Dialog*>(window));
+        //     this->move_dialog_to_front(static_cast<Dialog*>(window));
     }
 
-    void UICanvas::move_dialog_to_front(ui::Dialog* dialog)
+    void UICanvas::move_dialog_to_front(Dialog* dialog)
     {
         auto removal_iterator{ std::remove(m_children.begin(), m_children.end(), dialog) };
         m_children.erase(removal_iterator, m_children.end());
@@ -332,7 +332,7 @@ namespace rl::ui {
             changed = false;
             for (size_t idx = 0; idx < m_children.size(); ++idx)
             {
-                ui::Popup* popup_wnd{ dynamic_cast<ui::Popup*>(m_children[idx]) };
+                Popup* popup_wnd{ dynamic_cast<Popup*>(m_children[idx]) };
                 if (popup_wnd != nullptr && popup_wnd->parent_window() == dialog && idx < base_idx)
                 {
                     this->move_dialog_to_front(dialog);
@@ -344,7 +344,7 @@ namespace rl::ui {
         while (changed);
     }
 
-    void UICanvas::dispose_dialog(ui::Dialog* window)
+    void UICanvas::dispose_dialog(Dialog* window)
     {
         if (std::find(m_focus_path.begin(), m_focus_path.end(), window) != m_focus_path.end())
             m_focus_path.clear();
@@ -355,7 +355,7 @@ namespace rl::ui {
         this->remove_child(window);
     }
 
-    void UICanvas::center_dialog(ui::Dialog* window) const
+    void UICanvas::center_dialog(Dialog* window) const
     {
         if (window->size() == ds::dims<f32>::zero())
         {
@@ -430,8 +430,8 @@ namespace rl::ui {
 
         if (m_focus_path.size() > 1)
         {
-            const ui::Widget* w{ m_focus_path[m_focus_path.size() - 2] };
-            const ui::Dialog* dialog{ dynamic_cast<const ui::Dialog*>(w) };
+            const Widget* w{ m_focus_path[m_focus_path.size() - 2] };
+            const Dialog* dialog{ dynamic_cast<const Dialog*>(w) };
             if (dialog != nullptr && dialog->modal())
             {
                 if (!dialog->contains(mouse_pos))
@@ -460,7 +460,7 @@ namespace rl::ui {
                 update_focus(nullptr);
         }
 
-        m_redraw |= ui::Widget::on_mouse_button_pressed(mouse, kb);
+        m_redraw |= Widget::on_mouse_button_pressed(mouse, kb);
 
         return m_redraw;
     }
@@ -475,8 +475,8 @@ namespace rl::ui {
 
         if (m_focus_path.size() > 1)
         {
-            const ui::Widget* w{ m_focus_path[m_focus_path.size() - 2] };
-            const ui::Dialog* window{ dynamic_cast<const ui::Dialog*>(w) };
+            const Widget* w{ m_focus_path[m_focus_path.size() - 2] };
+            const Dialog* window{ dynamic_cast<const Dialog*>(w) };
             if (window != nullptr && window->modal())
             {
                 if (!window->contains(mouse_pos))
@@ -503,7 +503,7 @@ namespace rl::ui {
             m_drag_widget = nullptr;
         }
 
-        m_redraw |= ui::Widget::on_mouse_button_released(mouse, kb);
+        m_redraw |= Widget::on_mouse_button_released(mouse, kb);
         return m_redraw;
     }
 
@@ -553,7 +553,7 @@ namespace rl::ui {
             ret = m_drag_widget->on_mouse_drag(mouse, kb);
         else
         {
-            ui::Widget* widget{ this->find_widget(pnt) };
+            Widget* widget{ this->find_widget(pnt) };
             if (widget != nullptr && widget->cursor() != m_cursor)
             {
                 m_cursor = widget->cursor();
@@ -563,7 +563,7 @@ namespace rl::ui {
             }
         }
 
-        m_redraw |= ui::Widget::on_mouse_move(mouse, kb);
+        m_redraw |= Widget::on_mouse_move(mouse, kb);
         return m_redraw;
     }
 
@@ -575,7 +575,7 @@ namespace rl::ui {
         m_last_interaction = m_timer.elapsed();
         if (m_focus_path.size() > 1)
         {
-            auto window{ dynamic_cast<ui::Dialog*>(m_focus_path[m_focus_path.size() - 2]) };
+            auto window{ dynamic_cast<Dialog*>(m_focus_path[m_focus_path.size() - 2]) };
             if (window != nullptr && window->modal())
             {
                 if (!window->contains(mouse.pos()))
@@ -583,7 +583,7 @@ namespace rl::ui {
             }
         }
 
-        m_redraw |= ui::Widget::on_mouse_scroll(mouse, kb);
+        m_redraw |= Widget::on_mouse_scroll(mouse, kb);
         return m_redraw;
     }
 
@@ -592,7 +592,7 @@ namespace rl::ui {
         if constexpr (io::logging::gui_events)
             log::info("UICanvas::on_mouse_entered [pos:{}]", mouse.pos());
 
-        return ui::Widget::on_mouse_entered(mouse);
+        return Widget::on_mouse_entered(mouse);
     }
 
     bool UICanvas::on_mouse_exited(const Mouse& mouse)
@@ -600,7 +600,7 @@ namespace rl::ui {
         if constexpr (io::logging::gui_events)
             log::info("UICanvas::on_mouse_exited [pos:{}]", mouse.pos());
 
-        return ui::Widget::on_mouse_exited(mouse);
+        return Widget::on_mouse_exited(mouse);
     }
 
     bool UICanvas::on_focus_gained()
@@ -608,7 +608,7 @@ namespace rl::ui {
         if constexpr (io::logging::gui_events)
             log::info("UICanvas::on_focus_gained");
 
-        return ui::Widget::on_focus_gained();
+        return Widget::on_focus_gained();
     }
 
     bool UICanvas::on_focus_lost()
@@ -616,7 +616,7 @@ namespace rl::ui {
         if constexpr (io::logging::gui_events)
             log::info("UICanvas::on_focus_lost");
 
-        return ui::Widget::on_focus_lost();
+        return Widget::on_focus_lost();
     }
 
     bool UICanvas::on_key_pressed(const Keyboard& kb)
@@ -625,7 +625,7 @@ namespace rl::ui {
             log::info("UICanvas::on_key_pressed => {}", kb);
 
         m_last_interaction = m_timer.elapsed();
-        m_redraw |= ui::Widget::on_key_pressed(kb);
+        m_redraw |= Widget::on_key_pressed(kb);
         return m_redraw;
     }
 
@@ -635,7 +635,7 @@ namespace rl::ui {
             log::info("UICanvas::on_key_released => {}", kb);
 
         m_last_interaction = m_timer.elapsed();
-        m_redraw |= ui::Widget::on_key_released(kb);
+        m_redraw |= Widget::on_key_released(kb);
         return m_redraw;
     }
 
@@ -645,7 +645,7 @@ namespace rl::ui {
             log::info("UICanvas::on_character_input => {}", kb);
 
         m_last_interaction = m_timer.elapsed();
-        m_redraw |= ui::Widget::on_character_input(kb);
+        m_redraw |= Widget::on_character_input(kb);
         return m_redraw;
     }
 }

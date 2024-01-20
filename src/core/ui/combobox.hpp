@@ -12,12 +12,12 @@ namespace rl {
         class Widget;
         class VScrollPanel;
 
-        class ComboBox : public ui::PopupButton
+        class ComboBox : public PopupButton
         {
         public:
-            ComboBox(ui::Widget* parent);
-            ComboBox(ui::Widget* parent, const std::vector<std::string>& items);
-            ComboBox(ui::Widget* parent, const std::vector<std::string>& items,
+            ComboBox(Widget* parent);
+            ComboBox(Widget* parent, const std::vector<std::string>& items);
+            ComboBox(Widget* parent, const std::vector<std::string>& items,
                      const std::vector<std::string>& items_short);
 
             void set_selected_index(i32 idx);
@@ -35,8 +35,8 @@ namespace rl {
             virtual bool on_mouse_scroll(const Mouse& mouse, const Keyboard& kb) override;
 
         protected:
-            ui::VScrollPanel* m_vscroll_panel{ nullptr };
-            ui::Widget* m_container{ nullptr };
+            VScrollPanel* m_vscroll_panel{ nullptr };
+            Widget* m_container{ nullptr };
             std::vector<std::string> m_items{};
             std::vector<std::string> m_items_short{};
             std::function<void(int)> m_callback;

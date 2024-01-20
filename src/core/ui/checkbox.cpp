@@ -9,13 +9,13 @@
 
 namespace rl::ui {
 
-    CheckBox::CheckBox(ui::Widget* parent, const std::string& caption,
+    CheckBox::CheckBox(Widget* parent, const std::string& caption,
                        const std::function<void(bool)>& toggled_callback)
-        : ui::Widget{ parent }
+        : Widget{ parent }
         , m_caption{ caption }
         , m_toggled_callback{ toggled_callback }
     {
-        // ui::Widget default value override
+        // Widget default value override
         m_icon_extra_scale = 1.2f;
     }
 
@@ -61,7 +61,7 @@ namespace rl::ui {
 
     bool CheckBox::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb)
     {
-        ui::Widget::on_mouse_button_pressed(mouse, kb);
+        Widget::on_mouse_button_pressed(mouse, kb);
 
         if (!m_enabled)
             return false;
@@ -77,7 +77,7 @@ namespace rl::ui {
 
     bool CheckBox::on_mouse_button_released(const Mouse& mouse, const Keyboard& kb)
     {
-        ui::Widget::on_mouse_button_pressed(mouse, kb);
+        Widget::on_mouse_button_pressed(mouse, kb);
 
         if (!m_enabled)
             return false;
@@ -118,7 +118,7 @@ namespace rl::ui {
 
     void CheckBox::draw(nvg::NVGcontext* nvg_context)
     {
-        ui::Widget::draw(nvg_context);
+        Widget::draw(nvg_context);
 
         nvg::FontSize(nvg_context, this->font_size());
         nvg::FontFace(nvg_context, font::name::sans);

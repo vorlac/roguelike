@@ -40,8 +40,7 @@ namespace rl::ui {
     public:
         Anchor() = default;
 
-        Anchor(u32 x, u32 y, ui::Alignment horiz = ui::Alignment::Fill,
-               ui::Alignment vert = ui::Alignment::Fill)
+        Anchor(u32 x, u32 y, Alignment horiz = Alignment::Fill, Alignment vert = Alignment::Fill)
             : grid_pos{ static_cast<u8>(x), static_cast<u8>(y) }
             , cell_size{ 1, 1 }
             , align{ horiz, vert }
@@ -49,8 +48,8 @@ namespace rl::ui {
         }
 
         Anchor(u32 grid_x, u32 grid_y, u32 cell_span_width, u32 cell_span_height,
-               ui::Alignment horizontal_alignment = ui::Alignment::Fill,
-               ui::Alignment vertical_alignment = ui::Alignment::Fill)
+               Alignment horizontal_alignment = Alignment::Fill,
+               Alignment vertical_alignment = Alignment::Fill)
             : grid_pos{ grid_x, grid_y }
             , cell_size{ cell_span_width, cell_span_height }
             , align{ horizontal_alignment, vertical_alignment }
@@ -60,7 +59,7 @@ namespace rl::ui {
     public:
         ds::point<u32> grid_pos{ 0, 0 };
         ds::dims<u32> cell_size{ 0, 0 };
-        std::array<ui::Alignment, 2> align{};
+        std::array<Alignment, 2> align{};
     };
 
     /// @brief
@@ -83,7 +82,7 @@ namespace rl::ui {
         ///     The NanoVG context being used for drawing.
         /// @param  w
         ///     The Widget whose child widgets will be positioned by the Layout class.
-        virtual void perform_layout(nvg::NVGcontext* nvc, ui::Widget* w) const = 0;
+        virtual void perform_layout(nvg::NVGcontext* nvc, Widget* w) const = 0;
 
         /// @brief
         ///     Compute the preferred size for a given Layout and widget
@@ -95,50 +94,49 @@ namespace rl::ui {
         ///
         /// @returns
         ///     A ds::dims{i32}
-        virtual ds::dims<f32> preferred_size(nvg::NVGcontext* nvc, const ui::Widget* w) const = 0;
+        virtual ds::dims<f32> preferred_size(nvg::NVGcontext* nvc, const Widget* w) const = 0;
     };
 
     /// @brief
     ///     Box Layout is a simple Layout that supports horizontal and vertical
     ///     orientation.
     ///
-    ///     Aside form defining the ui::Layout interface for sizing and
+    ///     Aside form defining the Layout interface for sizing and
     ///     performing the Layout, a box_layout only handles basic orientation,
     ///     margins and spacing.
     class BoxLayout : public Layout
     {
     public:
-        BoxLayout(ui::Orientation orientation,                      // horizontal or vertical
-                  ui::Alignment alignment = ui::Alignment::Center,  // min, middle, max, full
-                  f32 margin = 0.0f,                                // the widget margins
-                  f32 spacing = 0.0f);                              // the widget spacing
+        BoxLayout(Orientation orientation,                  // horizontal or vertical
+                  Alignment alignment = Alignment::Center,  // min, middle, max, full
+                  f32 margin = 0.0f,                        // the widget margins
+                  f32 spacing = 0.0f);                      // the widget spacing
 
         f32 margin() const;
         f32 spacing() const;
-        ui::Alignment alignment() const;
-        ui::Orientation orientation() const;
+        Alignment alignment() const;
+        Orientation orientation() const;
 
         void set_margin(f32 margin);
         void set_spacing(f32 spacing);
-        void set_orientation(ui::Orientation orientation);
-        void set_alignment(ui::Alignment alignment);
+        void set_orientation(Orientation orientation);
+        void set_alignment(Alignment alignment);
 
     public:
-        virtual ds::dims<f32> preferred_size(nvg::NVGcontext* nvc,
-                                             const ui::Widget* w) const override;
-        virtual void perform_layout(nvg::NVGcontext* nvc, ui::Widget* w) const override;
+        virtual ds::dims<f32> preferred_size(nvg::NVGcontext* nvc, const Widget* w) const override;
+        virtual void perform_layout(nvg::NVGcontext* nvc, Widget* w) const override;
 
     protected:
         f32 m_margin{ 0.0f };
         f32 m_spacing{ 0.0f };
-        ui::Orientation m_orientation{};
-        ui::Alignment m_alignment{};
+        Orientation m_orientation{};
+        Alignment m_alignment{};
     };
 
     /// Group Layout
     ///
     /// @brief
-    ///     Aside form definint the ui::Layout interface for sizing and performing the Layout, a
+    ///     Aside form definint the Layout interface for sizing and performing the Layout, a
     ///     box_layout only handles basic orientation, margins and spacing.
     class GroupLayout : public Layout
     {
@@ -163,9 +161,8 @@ namespace rl::ui {
         void set_group_spacing(f32 group_spacing);
 
     public:
-        virtual ds::dims<f32> preferred_size(nvg::NVGcontext* nvc,
-                                             const ui::Widget* w) const override;
-        virtual void perform_layout(nvg::NVGcontext* nvc, ui::Widget* w) const override;
+        virtual ds::dims<f32> preferred_size(nvg::NVGcontext* nvc, const Widget* w) const override;
+        virtual void perform_layout(nvg::NVGcontext* nvc, Widget* w) const override;
 
     protected:
         f32 m_margin{ 15.0f };
@@ -177,11 +174,11 @@ namespace rl::ui {
     class GridLayout : public Layout
     {
     public:
-        GridLayout(ui::Orientation orientation = ui::Orientation::Horizontal,  //
-                   f32 resolution = 2.0f,                                      //
-                   ui::Alignment alignment = ui::Alignment::Center,            //
-                   f32 margin = 0.0f,                                          //
-                   f32 spacing = 0.0f)                                         //
+        GridLayout(Orientation orientation = Orientation::Horizontal,  //
+                   f32 resolution = 2.0f,                              //
+                   Alignment alignment = Alignment::Center,            //
+                   f32 margin = 0.0f,                                  //
+                   f32 spacing = 0.0f)                                 //
             : m_margin{ margin }
             , m_resolution{ resolution }
             , m_spacing{ spacing, spacing }
@@ -192,36 +189,35 @@ namespace rl::ui {
 
         f32 margin() const;
         f32 resolution() const;
-        f32 spacing(ui::Axis axis) const;
-        ui::Orientation orientation() const;
-        ui::Alignment alignment(ui::Axis axis, i32 item) const;
+        f32 spacing(Axis axis) const;
+        Orientation orientation() const;
+        Alignment alignment(Axis axis, i32 item) const;
 
         void set_margin(f32 margin);
         void set_resolution(f32 resolution);
         void set_spacing(f32 spacing);
-        void set_spacing(ui::Axis axis, f32 spacing);
-        void set_orientation(ui::Orientation orientation);
-        void set_col_alignment(ui::Alignment value);
-        void set_row_alignment(ui::Alignment value);
-        void set_col_alignment(const std::vector<ui::Alignment>& value);
-        void set_row_alignment(const std::vector<ui::Alignment>& value);
+        void set_spacing(Axis axis, f32 spacing);
+        void set_orientation(Orientation orientation);
+        void set_col_alignment(Alignment value);
+        void set_row_alignment(Alignment value);
+        void set_col_alignment(const std::vector<Alignment>& value);
+        void set_row_alignment(const std::vector<Alignment>& value);
 
     public:
-        virtual ds::dims<f32> preferred_size(nvg::NVGcontext* nvc,
-                                             const ui::Widget* w) const override;
-        virtual void perform_layout(nvg::NVGcontext* nvc, ui::Widget* w) const override;
+        virtual ds::dims<f32> preferred_size(nvg::NVGcontext* nvc, const Widget* w) const override;
+        virtual void perform_layout(nvg::NVGcontext* nvc, Widget* w) const override;
 
     protected:
-        void compute_layout(nvg::NVGcontext* nvg_context, const ui::Widget* widget,
+        void compute_layout(nvg::NVGcontext* nvg_context, const Widget* widget,
                             std::array<std::vector<f32>, 2>& grid) const;
 
     protected:
         f32 m_margin{ 0.0f };
         f32 m_resolution{ 0.0f };
         ds::vector2<f32> m_spacing{ 0.0f, 0.0f };
-        ui::Orientation m_orientation{ Orientation::Unknown };
-        std::array<ui::Alignment, 2> m_default_alignment{ { {}, {} } };
-        std::array<std::vector<ui::Alignment>, 2> m_alignment{ { {}, {} } };
+        Orientation m_orientation{ Orientation::Unknown };
+        std::array<Alignment, 2> m_default_alignment{ { {}, {} } };
+        std::array<std::vector<Alignment>, 2> m_alignment{ { {}, {} } };
     };
 
     class AdvancedGridLayout : public Layout
@@ -233,22 +229,21 @@ namespace rl::ui {
         f32 margin() const;
         u32 col_count() const;
         u32 row_count() const;
-        Anchor anchor(const ui::Widget* widget) const;
+        Anchor anchor(const Widget* widget) const;
 
         void set_margin(f32 margin);
         void append_row(f32 size, f32 stretch = 0.0f);
         void append_col(f32 size, f32 stretch = 0.0f);
         void set_row_stretch(i32 index, f32 stretch);
         void set_col_stretch(i32 index, f32 stretch);
-        void set_anchor(const ui::Widget* widget, const Anchor& anchor);
+        void set_anchor(const Widget* widget, const Anchor& anchor);
 
     public:
-        virtual ds::dims<f32> preferred_size(nvg::NVGcontext* nvc,
-                                             const ui::Widget* w) const override;
-        virtual void perform_layout(nvg::NVGcontext* nvc, ui::Widget* w) const override;
+        virtual ds::dims<f32> preferred_size(nvg::NVGcontext* nvc, const Widget* w) const override;
+        virtual void perform_layout(nvg::NVGcontext* nvc, Widget* w) const override;
 
     protected:
-        void compute_layout(nvg::NVGcontext* nvg_context, const ui::Widget* widget,
+        void compute_layout(nvg::NVGcontext* nvg_context, const Widget* widget,
                             std::array<std::vector<f32>, 2>& grid) const;
 
     protected:
@@ -256,7 +251,7 @@ namespace rl::ui {
         std::vector<f32> m_rows{};
         std::vector<f32> m_col_stretch{};
         std::vector<f32> m_row_stretch{};
-        std::unordered_map<const ui::Widget*, Anchor> m_anchor{};
+        std::unordered_map<const Widget*, Anchor> m_anchor{};
         f32 m_margin{ 0.0f };
 
     private:

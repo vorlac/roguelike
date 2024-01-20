@@ -19,7 +19,7 @@ namespace rl::ui {
     // This class overrides widget::m_icon_extra_scale to be 0.8f, which
     // affects all subclasses of this widget. Subclasses must explicitly set
     // a different value if needed (e.g., in their constructor).
-    class TextBox : public ui::Widget
+    class TextBox : public Widget
     {
     public:
         enum class Alignment {
@@ -28,7 +28,7 @@ namespace rl::ui {
             Right
         };
 
-        TextBox(ui::Widget* parent, const std::string& value = "Untitled");
+        TextBox(Widget* parent, const std::string& value = "Untitled");
 
         bool editable() const;
         bool spinnable() const;
@@ -70,7 +70,7 @@ namespace rl::ui {
         virtual bool on_character_input(const Keyboard& kb) override;
 
     public:
-        virtual void set_theme(ui::Theme* theme) override;
+        virtual void set_theme(Theme* theme) override;
         virtual ds::dims<f32> preferred_size(nvg::NVGcontext* nvg_context) const override;
         virtual void draw(nvg::NVGcontext* nvg_context) override;
 
@@ -128,10 +128,10 @@ namespace rl::ui {
 
     // A specialization of TextBox for representing integral values.
     template <constraint::integer Scalar>
-    class IntBox : public ui::TextBox
+    class IntBox : public TextBox
     {
     public:
-        IntBox(ui::Widget* parent, Scalar value = (Scalar)0)
+        IntBox(Widget* parent, Scalar value = (Scalar)0)
             : TextBox(parent)
         {
             this->set_default_value("0");
@@ -244,7 +244,7 @@ namespace rl::ui {
 
         virtual bool on_mouse_scroll(const Mouse& mouse, const Keyboard& kb) override
         {
-            if (ui::Widget::on_mouse_scroll(mouse, kb))
+            if (Widget::on_mouse_scroll(mouse, kb))
                 return true;
 
             if (m_spinnable && !this->focused())
@@ -272,11 +272,11 @@ namespace rl::ui {
     // emplate parametersshould a be floating point type, e.g. `float` or
     // `double`.
     template <constraint::floating_point Scalar>
-    class FloatBox : public ui::TextBox
+    class FloatBox : public TextBox
     {
     public:
-        FloatBox(ui::Widget* parent, Scalar value = (Scalar)0.f)
-            : ui::TextBox(parent)
+        FloatBox(Widget* parent, Scalar value = (Scalar)0.f)
+            : TextBox(parent)
         {
             m_number_format = sizeof(Scalar) == sizeof(float) ? "%.4g" : "%.7g";
             this->set_default_value("0");
@@ -396,7 +396,7 @@ namespace rl::ui {
 
         virtual bool on_mouse_scroll(const Mouse& mouse, const Keyboard& kb) override
         {
-            if (ui::Widget::on_mouse_scroll(mouse, kb))
+            if (Widget::on_mouse_scroll(mouse, kb))
                 return true;
 
             if (m_spinnable && !this->focused())

@@ -5,7 +5,7 @@
 
 namespace rl::ui {
 
-    class Popup : public ui::Dialog
+    class Popup : public Dialog
     {
     public:
         enum class Side {
@@ -13,13 +13,13 @@ namespace rl::ui {
             Right
         };
 
-        Popup(ui::Widget* parent, ui::Dialog* parent_dialog = nullptr);
+        Popup(Widget* parent, Dialog* parent_dialog = nullptr);
 
         f32 anchor_offset() const;
         f32 anchor_size() const;
         Side side() const;
-        ui::Dialog* parent_window();
-        const ui::Dialog* parent_window() const;
+        Dialog* parent_window();
+        const Dialog* parent_window() const;
         const ds::point<f32> anchor_pos() const;
 
         void set_anchor_pos(const ds::point<f32>& anchor_pos);
@@ -33,10 +33,10 @@ namespace rl::ui {
         virtual void refresh_relative_placement() override;
 
     protected:
-        ui::Dialog* m_parent_dialog{ nullptr };
+        Dialog* m_parent_dialog{ nullptr };
         ds::point<f32> m_anchor_pos{ 0.0f, 0.0f };
         f32 m_anchor_offset{ 0.0f };
         f32 m_anchor_size{ 0.0f };
-        ui::Popup::Side m_side{ Popup::Side::Left };
+        Popup::Side m_side{ Popup::Side::Left };
     };
 }

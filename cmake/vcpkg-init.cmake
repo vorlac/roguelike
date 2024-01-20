@@ -40,7 +40,7 @@ else()
 
     if(WIN32)
         set(VCPKG_INSTALL_COMMAND
-            powershell 
+            powershell
             -c
             "${CMAKE_CURRENT_SOURCE_DIR}/extern/vcpkg/bootstrap-vcpkg.bat"
         )

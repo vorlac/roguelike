@@ -4,10 +4,10 @@
 
 namespace rl::ui {
 
-    class VScrollPanel : public ui::Widget
+    class VScrollPanel : public Widget
     {
     public:
-        VScrollPanel(ui::Widget* parent);
+        VScrollPanel(Widget* parent);
 
         f32 scroll() const;
         void set_scroll(f32 scroll);

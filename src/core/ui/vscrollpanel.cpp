@@ -3,8 +3,8 @@
 
 namespace rl::ui {
 
-    VScrollPanel::VScrollPanel(ui::Widget* parent)
-        : ui::Widget{ parent }
+    VScrollPanel::VScrollPanel(Widget* parent)
+        : Widget{ parent }
         , m_child_preferred_height{ 0 }
         , m_scroll{ 0.0f }
         , m_update_layout{ false }
@@ -27,14 +27,14 @@ namespace rl::ui {
 
     void VScrollPanel::perform_layout(nvg::NVGcontext* nvg_context)
     {
-        ui::Widget::perform_layout(nvg_context);
+        Widget::perform_layout(nvg_context);
 
         if (m_children.empty())
             return;
 
         runtime_assert(m_children.size() == 1, "vertical scroll panel should only have 1 child");
 
-        ui::Widget* child{ m_children[0] };
+        Widget* child{ m_children[0] };
         m_child_preferred_height = child->preferred_size(nvg_context).height;
 
         if (m_child_preferred_height > m_size.height)
@@ -70,7 +70,7 @@ namespace rl::ui {
     bool VScrollPanel::on_mouse_drag(const Mouse& mouse, const Keyboard& kb)
     {
         if (m_children.empty() || m_child_preferred_height <= m_size.height)
-            return ui::Widget::on_mouse_drag(mouse, kb);
+            return Widget::on_mouse_drag(mouse, kb);
         else
         {
             f32 scrollh{
@@ -90,7 +90,7 @@ namespace rl::ui {
 
     bool VScrollPanel::on_mouse_button_released(const Mouse& mouse, const Keyboard& kb)
     {
-        if (ui::Widget::on_mouse_button_released(mouse, kb))
+        if (Widget::on_mouse_button_released(mouse, kb))
             return true;
 
         return false;
@@ -98,7 +98,7 @@ namespace rl::ui {
 
     bool VScrollPanel::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb)
     {
-        if (ui::Widget::on_mouse_button_pressed(mouse, kb))
+        if (Widget::on_mouse_button_pressed(mouse, kb))
             return true;
 
         const auto&& pos{ mouse.pos() };
@@ -133,10 +133,10 @@ namespace rl::ui {
     bool VScrollPanel::on_mouse_scroll(const Mouse& mouse, const Keyboard& kb)
     {
         if (m_children.empty() || m_child_preferred_height <= m_size.height)
-            return ui::Widget::on_mouse_scroll(mouse, kb);
+            return Widget::on_mouse_scroll(mouse, kb);
         else
         {
-            ui::Widget* child{ m_children[0] };
+            Widget* child{ m_children[0] };
             f32 scroll_amount{ mouse.wheel().y * m_size.height * 0.25f };
 
             m_scroll = std::max(0.0f,
@@ -163,7 +163,7 @@ namespace rl::ui {
         if (m_children.empty())
             return;
 
-        ui::Widget* child{ m_children[0] };
+        Widget* child{ m_children[0] };
 
         f32 yoffset{ 0.0f };
         if (m_child_preferred_height > m_size.height)

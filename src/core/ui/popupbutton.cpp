@@ -5,26 +5,32 @@
 
 namespace rl::ui {
 
-    PopupButton::PopupButton(ui::Widget* parent, const std::string& caption,
-                             ui::Icon::ID button_icon)
-        : ui::Button{ parent, caption, button_icon }
+    PopupButton::PopupButton(Widget* parent, const std::string& caption, Icon::ID button_icon)
+        : Button{ parent, caption, button_icon }
     {
         m_icon_extra_scale = 0.8f;
         m_chevron_icon = m_theme->m_popup_chevron_right_icon;
-        constexpr auto popup_btn_flags{ Button::Flags(Button::ToggleButton | Button::PopupButton) };
-        this->set_flags(popup_btn_flags);
+        this->set_property(Property::TogglePopupMenu);
 
-        m_popup = new ui::Popup{ this->canvas(), this->dialog() };
-        m_popup->set_size({ 320.0f, 250.0f });
+        m_popup = new Popup{
+            this->canvas(),
+            this->dialog(),
+        };
+
         m_popup->set_visible(false);
+        // TODO: why?.. necessary?
+        m_popup->set_size(ds::dims<f32>{
+            750.0f,
+            300.0f,
+        });
     }
 
-    void PopupButton::set_chevron_icon(ui::Icon::ID icon)
+    void PopupButton::set_chevron_icon(Icon::ID icon)
     {
         m_chevron_icon = icon;
     }
 
-    ui::Icon::ID PopupButton::chevron_icon() const
+    Icon::ID PopupButton::chevron_icon() const
     {
         return m_chevron_icon;
     }
@@ -56,7 +62,7 @@ namespace rl::ui {
             m_pressed = false;
 
         m_popup->set_visible(m_pressed);
-        ui::Button::draw(nvg_context);
+        Button::draw(nvg_context);
 
         if (m_chevron_icon != Icon::None)
         {
@@ -84,9 +90,9 @@ namespace rl::ui {
 
     void PopupButton::perform_layout(nvg::NVGcontext* nvg_context)
     {
-        ui::Widget::perform_layout(nvg_context);
+        Widget::perform_layout(nvg_context);
 
-        const ui::Dialog* parent_dialog{ this->dialog() };
+        const Dialog* parent_dialog{ this->dialog() };
         if (parent_dialog != nullptr)
         {
             const f32 anchor_size{ m_popup->anchor_size() };
@@ -110,18 +116,18 @@ namespace rl::ui {
             const f32 anchor_size{ m_popup->anchor_size() };
             const ds::point<f32> offset{
                 this->width() + anchor_size + 1.0f,
-                m_size.height / 2.0f - anchor_size,
+                (m_size.height / 2.0f) - anchor_size,
             };
 
-            const ds::point<f32> popup_pos{ this->abs_position() + offset };
+            const ds::point<f32> popup_pos{ this->position() + offset };
             m_popup->set_position(popup_pos);
         }
     }
 
     void PopupButton::set_side(Popup::Side side)
     {
-        const ui::Icon::ID right_icon{ m_theme->m_popup_chevron_right_icon };
-        const ui::Icon::ID left_icon{ m_theme->m_popup_chevron_left_icon };
+        const Icon::ID right_icon{ m_theme->m_popup_chevron_right_icon };
+        const Icon::ID left_icon{ m_theme->m_popup_chevron_left_icon };
 
         switch (m_popup->side())
         {

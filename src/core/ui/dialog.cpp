@@ -11,8 +11,8 @@
 
 namespace rl::ui {
 
-    Dialog::Dialog(ui::Widget* parent, const std::string& title)
-        : ui::Widget{ parent }
+    Dialog::Dialog(Widget* parent, const std::string& title)
+        : Widget{ parent }
         , m_title{ title }
         , m_button_panel{ nullptr }
         , m_modal{ false }
@@ -40,13 +40,13 @@ namespace rl::ui {
         m_modal = modal;
     }
 
-    ui::Widget* Dialog::button_panel()
+    Widget* Dialog::button_panel()
     {
         if (m_button_panel == nullptr)
         {
-            m_button_panel = new ui::Widget(this);
+            m_button_panel = new Widget(this);
             m_button_panel->set_layout(
-                new ui::BoxLayout{ Orientation::Horizontal, Alignment::Center, 0.0f, 4.0f });
+                new BoxLayout{ Orientation::Horizontal, Alignment::Center, 0.0f, 4.0f });
         }
 
         return m_button_panel;
@@ -54,20 +54,20 @@ namespace rl::ui {
 
     void Dialog::dispose()
     {
-        ui::Widget* owner{ this };
+        Widget* owner{ this };
         while (owner->parent() != nullptr)
             owner = owner->parent();
 
-        static_cast<ui::UICanvas*>(owner)->dispose_dialog(this);
+        static_cast<UICanvas*>(owner)->dispose_dialog(this);
     }
 
     void Dialog::center()
     {
-        ui::Widget* owner{ this };
+        Widget* owner{ this };
         while (owner->parent() != nullptr)
             owner = owner->parent();
 
-        static_cast<ui::UICanvas*>(owner)->center_dialog(this);
+        static_cast<UICanvas*>(owner)->center_dialog(this);
     }
 
     f32 Dialog::header_height() const
@@ -136,7 +136,7 @@ namespace rl::ui {
             nvg::Stroke(nvg_context);
 
             nvg::FontSize(nvg_context, 18.0f);
-            nvg::FontFace(nvg_context, ui::font::name::sans_bold);
+            nvg::FontFace(nvg_context, font::name::sans_bold);
             nvg::TextAlign(nvg_context, Text::Alignment::HCenterVMiddle);
 
             nvg::FontBlur(nvg_context, 2.0f);
@@ -153,18 +153,18 @@ namespace rl::ui {
 
         nvg::Restore(nvg_context);
 
-        ui::Widget::draw(nvg_context);
+        Widget::draw(nvg_context);
     }
 
     bool Dialog::on_mouse_entered(const Mouse& mouse)
     {
-        ui::Widget::on_mouse_entered(mouse);
+        Widget::on_mouse_entered(mouse);
         return true;
     }
 
     bool Dialog::on_mouse_exited(const Mouse& mouse)
     {
-        ui::Widget::on_mouse_exited(mouse);
+        Widget::on_mouse_exited(mouse);
         return true;
     }
 
@@ -199,7 +199,7 @@ namespace rl::ui {
             rl::log::info("Dialog::on_mouse_button_pressed [button:{}]",
                           std::to_underlying(mouse.button_pressed()));
 
-        if (ui::Widget::on_mouse_button_pressed(mouse, kb))
+        if (Widget::on_mouse_button_pressed(mouse, kb))
             return true;
 
         if (mouse.is_button_pressed(Mouse::Button::Left))
@@ -218,7 +218,7 @@ namespace rl::ui {
             rl::log::info("Dialog::on_mouse_button_released [button:{}]",
                           std::to_underlying(mouse.button_released()));
 
-        if (ui::Widget::on_mouse_button_released(mouse, kb))
+        if (Widget::on_mouse_button_released(mouse, kb))
             return true;
 
         if (mouse.is_button_released(Mouse::Button::Left))
@@ -235,7 +235,7 @@ namespace rl::ui {
         if constexpr (io::logging::window_events)
             rl::log::info("Dialog::on_mouse_scroll [pos:{}, rel:{}]", mouse.pos(), mouse.wheel());
 
-        return ui::Widget::on_mouse_scroll(mouse, kb);
+        return Widget::on_mouse_scroll(mouse, kb);
     }
 
     ds::dims<f32> Dialog::preferred_size(nvg::NVGcontext* nvg_context) const
@@ -243,13 +243,13 @@ namespace rl::ui {
         if (m_button_panel != nullptr)
             m_button_panel->hide();
 
-        ds::dims<f32> result{ ui::Widget::preferred_size(nvg_context) };
+        ds::dims<f32> result{ Widget::preferred_size(nvg_context) };
 
         if (m_button_panel != nullptr)
             m_button_panel->show();
 
         nvg::FontSize(nvg_context, 18.0f);
-        nvg::FontFace(nvg_context, ui::font::name::sans_bold);
+        nvg::FontFace(nvg_context, font::name::sans_bold);
 
         std::array<f32, 4> bounds = {};
         nvg::TextBounds(nvg_context, 0, 0, m_title.c_str(), nullptr, bounds.data());
@@ -261,11 +261,11 @@ namespace rl::ui {
     void Dialog::perform_layout(nvg::NVGcontext* ctx)
     {
         if (m_button_panel == nullptr)
-            ui::Widget::perform_layout(ctx);
+            Widget::perform_layout(ctx);
         else
         {
             m_button_panel->set_visible(false);
-            ui::Widget::perform_layout(ctx);
+            Widget::perform_layout(ctx);
 
             for (auto w : m_button_panel->children())
             {
@@ -287,7 +287,7 @@ namespace rl::ui {
     void Dialog::refresh_relative_placement()
     {
         // helper to maintain nested window position values,
-        // overridden in ui::Popup
+        // overridden in Popup
         return;
     }
 

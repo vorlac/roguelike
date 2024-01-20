@@ -9,22 +9,22 @@
 
 namespace rl::ui {
 
-    ComboBox::ComboBox(ui::Widget* parent)
-        : ui::PopupButton{ parent }
+    ComboBox::ComboBox(Widget* parent)
+        : PopupButton{ parent }
         , m_container{ this->popup() }
     {
     }
 
-    ComboBox::ComboBox(ui::Widget* parent, const std::vector<std::string>& items)
-        : ui::PopupButton{ parent }
+    ComboBox::ComboBox(Widget* parent, const std::vector<std::string>& items)
+        : PopupButton{ parent }
         , m_container{ this->popup() }
     {
         this->set_items(items);
     }
 
-    ComboBox::ComboBox(ui::Widget* parent, const std::vector<std::string>& items,
+    ComboBox::ComboBox(Widget* parent, const std::vector<std::string>& items,
                        const std::vector<std::string>& items_short)
-        : ui::PopupButton{ parent }
+        : PopupButton{ parent }
         , m_container{ this->popup() }
     {
         this->set_items(items, items_short);
@@ -40,9 +40,9 @@ namespace rl::ui {
         if (m_items_short.empty())
             return;
 
-        const std::vector<ui::Widget*>& children{ m_container->children() };
-        static_cast<ui::Button*>(children[m_selected_index])->set_pressed(false);
-        static_cast<ui::Button*>(children[idx])->set_pressed(true);
+        const std::vector<Widget*>& children{ m_container->children() };
+        static_cast<Button*>(children[m_selected_index])->set_pressed(false);
+        static_cast<Button*>(children[idx])->set_pressed(true);
 
         m_selected_index = idx;
 
@@ -91,22 +91,22 @@ namespace rl::ui {
 
         if (m_vscroll_panel == nullptr && items.size() > 8)
         {
-            m_vscroll_panel = new ui::VScrollPanel{ m_popup };
+            m_vscroll_panel = new VScrollPanel{ m_popup };
             m_vscroll_panel->set_fixed_height(300);
-            m_container = new ui::Widget{ m_vscroll_panel };
-            m_popup->set_layout(new ui::BoxLayout{
-                ui::Orientation::Horizontal,
-                ui::Alignment::Center,
+            m_container = new Widget{ m_vscroll_panel };
+            m_popup->set_layout(new BoxLayout{
+                Orientation::Horizontal,
+                Alignment::Center,
             });
         }
 
-        m_container->set_layout(new ui::GroupLayout{ 10 });
+        m_container->set_layout(new GroupLayout{ 10 });
 
         i32 index{ 0 };
         for (const auto& str : items)
         {
-            ui::Button* button{ new ui::Button{ m_container, str } };
-            button->set_flags(ui::Button::Flags::RadioButton);
+            Button* button{ new Button{ m_container, str } };
+            button->set_property(Button::Property::Radio);
             button->set_callback([&, index] {
                 m_selected_index = index;
 
@@ -149,6 +149,6 @@ namespace rl::ui {
             return true;
         }
 
-        return ui::Widget::on_mouse_scroll(mouse, kb);
+        return Widget::on_mouse_scroll(mouse, kb);
     }
 }

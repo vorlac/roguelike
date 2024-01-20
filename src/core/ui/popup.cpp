@@ -4,11 +4,11 @@
 
 namespace rl::ui {
 
-    Popup::Popup(ui::Widget* parent, ui::Dialog* parent_dialog)
-        : ui::Dialog{ parent, "" }
+    Popup::Popup(Widget* parent, Dialog* parent_dialog)
+        : Dialog{ parent, "" }
         , m_parent_dialog{ parent_dialog }
         , m_anchor_pos{ 0.0f, 0.0f }
-        , m_anchor_offset{ 30.0f }
+        , m_anchor_offset{ 60.0f }
         , m_anchor_size{ 15.0f }
         , m_side{ Popup::Side::Right }
     {
@@ -54,12 +54,12 @@ namespace rl::ui {
         return m_side;
     }
 
-    ui::Dialog* Popup::parent_window()
+    Dialog* Popup::parent_window()
     {
         return m_parent_dialog;
     }
 
-    const ui::Dialog* Popup::parent_window() const
+    const Dialog* Popup::parent_window() const
     {
         return m_parent_dialog;
     }
@@ -67,7 +67,7 @@ namespace rl::ui {
     void Popup::perform_layout(nvg::NVGcontext* nvg_context)
     {
         if (m_layout != nullptr || m_children.size() != 1)
-            ui::Widget::perform_layout(nvg_context);
+            Widget::perform_layout(nvg_context);
         else
         {
             m_children[0]->set_position({ 0.0f, 0.0f });
@@ -135,6 +135,6 @@ namespace rl::ui {
         nvg::Fill(nvg_context);
         nvg::Restore(nvg_context);
 
-        ui::Widget::draw(nvg_context);
+        Widget::draw(nvg_context);
     }
 }

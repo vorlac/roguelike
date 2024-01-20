@@ -7,22 +7,22 @@ namespace rl::ui {
 
     // Button which launches a popup widget.
     //
-    // This class overrides ui::widget::m_icon_extra_scale to be 0.8, which
-    // affects all subclasses of this ui::widget. Subclasses must explicitly set
+    // This class overrides widget::m_icon_extra_scale to be 0.8, which
+    // affects all subclasses of this widget. Subclasses must explicitly set
     // a different value if needed (e.g., in their constructor).
-    class PopupButton : public ui::Button
+    class PopupButton : public Button
     {
     public:
-        PopupButton(ui::Widget* parent, const std::string& caption = "Untitled",
-                    ui::Icon::ID button_icon = ui::Icon::None);
+        PopupButton(Widget* parent, const std::string& caption = "Untitled",
+                    Icon::ID button_icon = Icon::None);
 
-        void set_chevron_icon(ui::Icon::ID icon);
+        void set_chevron_icon(Icon::ID icon);
         void set_side(Popup::Side popup_side);
 
-        ui::Popup* popup();
-        ui::Icon::ID chevron_icon() const;
-        ui::Popup::Side side() const;
-        const ui::Popup* popup() const;
+        Popup* popup();
+        Icon::ID chevron_icon() const;
+        Popup::Side side() const;
+        const Popup* popup() const;
 
     public:
         virtual void draw(nvg::NVGcontext* ctx) override;
@@ -30,8 +30,8 @@ namespace rl::ui {
         virtual void perform_layout(nvg::NVGcontext* ctx) override;
 
     protected:
-        ui::Popup* m_popup{};
-        ui::Icon::ID m_chevron_icon{ ui::Icon::None };
+        Popup* m_popup{};
+        Icon::ID m_chevron_icon{ Icon::None };
     };
 
 }

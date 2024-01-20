@@ -37,7 +37,7 @@ namespace rl::ui {
 
     namespace font {
         using Handle = i32;
-        using Map = phmap::flat_hash_map<std::string, ui::font::Handle>;
+        using Map = phmap::flat_hash_map<std::string, font::Handle>;
 
         constexpr i32 InvalidHandle{ -1 };
 
@@ -60,19 +60,19 @@ namespace rl::ui {
     public:
         Theme(nvg::NVGcontext* nvg_context)
             : m_font_sans_regular{
-                nvg::CreateFontMem(nvg_context, ui::font::name::sans,
+                nvg::CreateFontMem(nvg_context, font::name::sans,
                                  roboto_regular_ttf, roboto_regular_ttf_size, 0),
             }
             , m_font_sans_bold{
-                nvg::CreateFontMem(nvg_context, ui::font::name::sans_bold,
+                nvg::CreateFontMem(nvg_context, font::name::sans_bold,
                                  roboto_bold_ttf, roboto_bold_ttf_size, 0),
             }
             , m_font_icons{
-                nvg::CreateFontMem(nvg_context, ui::font::name::icons,
+                nvg::CreateFontMem(nvg_context, font::name::icons,
                                  fontawesome_solid_ttf, fontawesome_solid_ttf_size, 0),
             }
             , m_font_mono_regular{
-                nvg::CreateFontMem(nvg_context, ui::font::name::mono, fira_code_regular_ttf,
+                nvg::CreateFontMem(nvg_context, font::name::mono, fira_code_regular_ttf,
                                  fira_code_regular_ttf_size, 0),
             }
         {
@@ -134,15 +134,15 @@ namespace rl::ui {
         ds::color<f32> m_window_popup{ 50, 50, 50, 255 };
         ds::color<f32> m_window_popup_transparent{ 50, 50, 50, 0 };
 
-        ui::Icon::ID m_check_box_icon{ ui::Icon::Check };
-        ui::Icon::ID m_message_information_icon{ ui::Icon::InfoCircle };
-        ui::Icon::ID m_message_question_icon{ ui::Icon::QuestionCircle };
-        ui::Icon::ID m_message_warning_icon{ ui::Icon::ExclamationTriangle };
-        ui::Icon::ID m_message_alt_button_icon{ ui::Icon::PlusCircle };
-        ui::Icon::ID m_message_primary_button_icon{ ui::Icon::Check };
-        ui::Icon::ID m_popup_chevron_right_icon{ ui::Icon::ChevronRight };
-        ui::Icon::ID m_popup_chevron_left_icon{ ui::Icon::ChevronLeft };
-        ui::Icon::ID m_text_box_up_icon{ ui::Icon::ChevronUp };
-        ui::Icon::ID m_text_box_down_icon{ ui::Icon::ChevronDown };
+        Icon::ID m_check_box_icon{ Icon::Check };
+        Icon::ID m_message_information_icon{ Icon::InfoCircle };
+        Icon::ID m_message_question_icon{ Icon::QuestionCircle };
+        Icon::ID m_message_warning_icon{ Icon::ExclamationTriangle };
+        Icon::ID m_message_alt_button_icon{ Icon::PlusCircle };
+        Icon::ID m_message_primary_button_icon{ Icon::Check };
+        Icon::ID m_popup_chevron_right_icon{ Icon::ChevronRight };
+        Icon::ID m_popup_chevron_left_icon{ Icon::ChevronLeft };
+        Icon::ID m_text_box_up_icon{ Icon::ChevronUp };
+        Icon::ID m_text_box_down_icon{ Icon::ChevronDown };
     };
 }

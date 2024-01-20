@@ -20,7 +20,7 @@ namespace rl::ui {
     using PixelFormat = i32;
     using ComponentFormat = i32;
 
-    class UICanvas : public ui::Widget
+    class UICanvas : public Widget
     {
     public:
         UICanvas(ds::dims<f32> size, const Mouse& mouse, const Keyboard& kb,
@@ -30,10 +30,10 @@ namespace rl::ui {
         bool redraw();
         bool draw_widgets();
 
-        void center_dialog(ui::Dialog* dialog) const;
-        void move_dialog_to_front(ui::Dialog* dialog);
-        void update_focus(ui::Widget* widget);
-        void dispose_dialog(ui::Dialog* dialog);
+        void center_dialog(Dialog* dialog) const;
+        void move_dialog_to_front(Dialog* dialog);
+        void update_focus(Widget* widget);
+        void dispose_dialog(Dialog* dialog);
 
         void set_visible(bool visible);
         void set_background(ds::color<u8> background);
@@ -52,11 +52,11 @@ namespace rl::ui {
         bool has_float_buffer() const;
         bool tooltip_fade_in_progress() const;
 
-        using ui::Widget::perform_layout;
+        using Widget::perform_layout;
         void perform_layout();
 
-        ui::ComponentFormat component_format() const;
-        ui::PixelFormat pixel_format() const;
+        ComponentFormat component_format() const;
+        PixelFormat pixel_format() const;
 
     public:
         virtual bool update();
@@ -86,10 +86,10 @@ namespace rl::ui {
         virtual bool drop_event(const std::vector<std::string>& filenames);
 
     protected:
-        ui::Widget* m_drag_widget{ nullptr };
+        Widget* m_drag_widget{ nullptr };
         nvg::NVGcontext* m_nvg_context{ nullptr };
 
-        std::vector<ui::Widget*> m_focus_path{};
+        std::vector<Widget*> m_focus_path{};
         std::function<void(ds::dims<f32>)> m_resize_callback;
         std::vector<std::function<void()>> m_update_callbacks;
         std::array<SDL3::SDL_Cursor*, Mouse::Cursor::CursorCount> m_cursors{};

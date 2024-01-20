@@ -14,14 +14,14 @@
 
 namespace rl::ui {
 
-    Widget::Widget(ui::Widget* parent)
+    Widget::Widget(Widget* parent)
         : m_parent{ parent }
     {
         if (parent != nullptr)
             parent->add_child(this);
     }
 
-    Widget::Widget(ui::Widget* parent, const std::unique_ptr<NVGRenderer>& vec_renderer)
+    Widget::Widget(Widget* parent, const std::unique_ptr<NVGRenderer>& vec_renderer)
         : m_parent{ parent }
     {
         runtime_assert(m_nvg_renderer == nullptr, "widget vectorized renderer already set");
@@ -39,47 +39,47 @@ namespace rl::ui {
                 child->release_ref();
     }
 
-    ui::Widget* Widget::parent()
+    Widget* Widget::parent()
     {
         return m_parent;
     }
 
-    const ui::Widget* Widget::parent() const
+    const Widget* Widget::parent() const
     {
         return m_parent;
     }
 
-    void Widget::set_parent(ui::Widget* parent)
+    void Widget::set_parent(Widget* parent)
     {
         m_parent = parent;
     }
 
-    ui::Layout* Widget::layout()
+    Layout* Widget::layout()
     {
         return m_layout;
     }
 
-    const ui::Layout* Widget::layout() const
+    const Layout* Widget::layout() const
     {
         return m_layout.get();
     }
 
-    void Widget::set_layout(ui::Layout* layout)
+    void Widget::set_layout(Layout* layout)
     {
         m_layout = layout;
     }
 
-    ui::Theme* Widget::theme()
+    Theme* Widget::theme()
     {
         return m_theme;
     }
 
-    const ui::Theme* Widget::theme() const
+    const Theme* Widget::theme() const
     {
         return m_theme.get();
     }
 
-    void Widget::set_theme(ui::Theme* theme)
+    void Widget::set_theme(Theme* theme)
     {
         if (m_theme.get() == theme)
             return;
@@ -207,12 +207,12 @@ namespace rl::ui {
         return static_cast<i32>(m_children.size());
     }
 
-    ui::Widget* Widget::child_at(i32 index)
+    Widget* Widget::child_at(i32 index)
     {
         return m_children[index];
     }
 
-    const ui::Widget* Widget::child_at(i32 index) const
+    const Widget* Widget::child_at(i32 index) const
     {
         return m_children[index];
     }
@@ -401,12 +401,12 @@ namespace rl::ui {
         widget->set_theme(m_theme);
     }
 
-    void Widget::add_child(ui::Widget* widget)
+    void Widget::add_child(Widget* widget)
     {
         this->add_child(this->child_count(), widget);
     }
 
-    void Widget::remove_child(const ui::Widget* widget)
+    void Widget::remove_child(const Widget* widget)
     {
         size_t child_count{ m_children.size() };
         m_children.erase(std::remove(m_children.begin(), m_children.end(), widget),
@@ -421,12 +421,12 @@ namespace rl::ui {
         runtime_assert(index > 0 && index < m_children.size(),
                        "widget child remove idx out of bounds");
 
-        ui::Widget* widget{ m_children[index] };
+        Widget* widget{ m_children[index] };
         m_children.erase(m_children.begin() + index);
         widget->release_ref();
     }
 
-    i32 Widget::child_index(ui::Widget* widget) const
+    i32 Widget::child_index(Widget* widget) const
     {
         auto it = std::find(m_children.begin(), m_children.end(), widget);
         if (it == m_children.end())
@@ -502,12 +502,12 @@ namespace rl::ui {
         return widget_rect.contains(pt);
     }
 
-    ui::UICanvas* Widget::canvas()
+    UICanvas* Widget::canvas()
     {
-        ui::Widget* widget{ this };
+        Widget* widget{ this };
         while (widget != nullptr)
         {
-            ui::UICanvas* canvas{ dynamic_cast<ui::UICanvas*>(widget) };
+            UICanvas* canvas{ dynamic_cast<UICanvas*>(widget) };
             if (canvas != nullptr)
                 return canvas;
 
@@ -518,12 +518,12 @@ namespace rl::ui {
         return nullptr;
     }
 
-    ui::Dialog* Widget::dialog()
+    Dialog* Widget::dialog()
     {
-        ui::Widget* widget{ this };
+        Widget* widget{ this };
         while (widget != nullptr)
         {
-            ui::Dialog* dialog{ dynamic_cast<ui::Dialog*>(widget) };
+            Dialog* dialog{ dynamic_cast<Dialog*>(widget) };
             if (dialog != nullptr)
                 return dialog;
 
@@ -534,23 +534,23 @@ namespace rl::ui {
         return nullptr;
     }
 
-    const ui::UICanvas* Widget::canvas() const
+    const UICanvas* Widget::canvas() const
     {
-        return const_cast<ui::Widget*>(this)->canvas();
+        return const_cast<Widget*>(this)->canvas();
     }
 
-    const ui::Dialog* Widget::dialog() const
+    const Dialog* Widget::dialog() const
     {
-        return const_cast<ui::Widget*>(this)->dialog();
+        return const_cast<Widget*>(this)->dialog();
     }
 
     void Widget::request_focus()
     {
-        ui::Widget* widget{ this };
+        Widget* widget{ this };
         while (widget->parent() != nullptr)
             widget = widget->parent();
 
-        static_cast<ui::UICanvas*>(widget)->update_focus(this);
+        static_cast<UICanvas*>(widget)->update_focus(this);
     }
 
     void Widget::draw_mouse_intersection(nvg::NVGcontext* nvg_context, ds::point<i32> pt)
@@ -563,7 +563,7 @@ namespace rl::ui {
             m_size,
         };
 
-        m_nvg_renderer->draw_rect_outline(widget_rect, 1.0f, rl::Colors::Yellow, ui::Outline::Inner);
+        m_nvg_renderer->draw_rect_outline(widget_rect, 1.0f, rl::Colors::Yellow, Outline::Inner);
 
         for (auto child : m_children)
         {
@@ -578,7 +578,7 @@ namespace rl::ui {
     {
         if constexpr (Widget::DiagnosticsEnabled)
             m_nvg_renderer->draw_rect_outline(ds::rect<f32>{ this->abs_position(), m_size }, 1.0f,
-                                              rl::Colors::Grey, ui::Outline::Outer);
+                                              rl::Colors::Grey, Outline::Outer);
 
         if (m_children.empty())
             return;

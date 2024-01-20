@@ -44,39 +44,39 @@ namespace rl::ui {
         f32 fixed_height() const;
         f32 font_size() const;
         f32 icon_extra_scale() const;
-        i32 child_index(ui::Widget* widget) const;
+        i32 child_index(Widget* widget) const;
         i32 child_count() const;
 
-        ui::UICanvas* canvas();
-        ui::Dialog* dialog();
-        ui::Widget* parent();
-        ui::Layout* layout();
-        ui::Theme* theme();
-        ui::Widget* child_at(i32 index);
+        UICanvas* canvas();
+        Dialog* dialog();
+        Widget* parent();
+        Layout* layout();
+        Theme* theme();
+        Widget* child_at(i32 index);
         rl::Mouse::Cursor::ID cursor() const;
-        ui::Widget* find_widget(ds::point<i32> pt);
+        Widget* find_widget(ds::point<i32> pt);
         ds::point<f32> position() const;
         ds::point<f32> abs_position() const;
         ds::dims<f32> fixed_size() const;
         ds::dims<f32> size() const;
 
-        const ui::UICanvas* canvas() const;
-        const ui::Dialog* dialog() const;
-        const ui::Widget* parent() const;
-        const ui::Layout* layout() const;
-        const ui::Theme* theme() const;
-        const ui::Widget* child_at(i32 index) const;
-        const ui::Widget* find_widget(ds::point<i32> pt) const;
-        const std::vector<ui::Widget*>& children() const;
+        const UICanvas* canvas() const;
+        const Dialog* dialog() const;
+        const Widget* parent() const;
+        const Layout* layout() const;
+        const Theme* theme() const;
+        const Widget* child_at(i32 index) const;
+        const Widget* find_widget(ds::point<i32> pt) const;
+        const std::vector<Widget*>& children() const;
         const std::string& tooltip() const;
 
         void request_focus();
         void remove_child_at(i32 index);
-        void remove_child(const ui::Widget* widget);
-        void add_child(ui::Widget* widget);
+        void remove_child(const Widget* widget);
+        void add_child(Widget* widget);
 
-        void set_parent(ui::Widget* parent);
-        void set_layout(ui::Layout* layout);
+        void set_parent(Widget* parent);
+        void set_layout(Layout* layout);
         void set_position(ds::point<f32> pos);
         void set_size(ds::dims<f32> size);
         void set_width(f32 width);
@@ -118,7 +118,7 @@ namespace rl::ui {
 
     public:
         virtual void draw(nvg::NVGcontext* nvg_context);
-        virtual void set_theme(ui::Theme* theme);
+        virtual void set_theme(Theme* theme);
         virtual void add_child(i32 index, Widget* widget);
         virtual void perform_layout(nvg::NVGcontext* nvg_context);
         virtual ds::dims<f32> preferred_size(nvg::NVGcontext* nvg_context) const;
@@ -130,9 +130,9 @@ namespace rl::ui {
         f32 icon_scale() const;
 
     protected:
-        ui::Widget* m_parent{ nullptr };
-        ds::shared<ui::Theme> m_theme{ nullptr };
-        ds::shared<ui::Layout> m_layout{ nullptr };
+        Widget* m_parent{ nullptr };
+        ds::shared<Theme> m_theme{ nullptr };
+        ds::shared<Layout> m_layout{ nullptr };
         static inline rl::NVGRenderer* m_nvg_renderer{ nullptr };
 
         bool m_enabled{ true };

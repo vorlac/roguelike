@@ -12,12 +12,12 @@ namespace rl {
     namespace ui {
         class Popup;
 
-        class Dialog : public ui::Widget
+        class Dialog : public Widget
         {
             friend class Popup;
 
         public:
-            Dialog(ui::Widget* parent, const std::string& title = "Untitled Dialog");
+            Dialog(Widget* parent, const std::string& title = "Untitled Dialog");
 
             void dispose();
             void center();
@@ -26,7 +26,7 @@ namespace rl {
             bool modal() const;
             const std::string& title() const;
 
-            ui::Widget* button_panel();
+            Widget* button_panel();
 
             void set_title(const std::string& title);
             void set_modal(bool modal);
@@ -49,7 +49,7 @@ namespace rl {
 
         protected:
             std::string m_title{ "" };
-            ui::Widget* m_button_panel{ nullptr };
+            Widget* m_button_panel{ nullptr };
             bool m_modal{ false };
             bool m_drag{ false };
         };

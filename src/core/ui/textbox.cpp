@@ -18,8 +18,8 @@ SDL_C_LIB_END
 
 namespace rl::ui {
 
-    TextBox::TextBox(ui::Widget* parent, const std::string& value)
-        : ui::Widget{ parent }
+    TextBox::TextBox(Widget* parent, const std::string& value)
+        : Widget{ parent }
         , m_editable{ false }
         , m_spinnable{ false }
         , m_committed{ true }
@@ -153,9 +153,9 @@ namespace rl::ui {
         this->set_cursor(editable ? Mouse::Cursor::IBeam : Mouse::Cursor::Arrow);
     }
 
-    void TextBox::set_theme(ui::Theme* theme)
+    void TextBox::set_theme(Theme* theme)
     {
-        ui::Widget::set_theme(theme);
+        Widget::set_theme(theme);
         if (m_theme != nullptr)
             m_font_size = m_theme->m_text_box_font_size;
     }
@@ -192,7 +192,7 @@ namespace rl::ui {
 
     void TextBox::draw(nvg::NVGcontext* nvg_context)
     {
-        ui::Widget::draw(nvg_context);
+        Widget::draw(nvg_context);
 
         nvg::NVGpaint bg{ nvg::BoxGradient(nvg_context, m_pos.x + 1.0f, m_pos.y + 1.0f + 1.0f,
                                            m_size.width - 2.0f, m_size.height - 2.0f, 3.0f, 4.0f,
@@ -437,13 +437,13 @@ namespace rl::ui {
 
     bool TextBox::on_mouse_entered(const Mouse& mouse)
     {
-        ui::Widget::on_mouse_entered(mouse);
+        Widget::on_mouse_entered(mouse);
         return true;
     }
 
     bool TextBox::on_mouse_exited(const Mouse& mouse)
     {
-        ui::Widget::on_mouse_exited(mouse);
+        Widget::on_mouse_exited(mouse);
         return true;
     }
 
@@ -558,7 +558,7 @@ namespace rl::ui {
 
     bool TextBox::on_focus_gained()
     {
-        ui::Widget::on_focus_gained();
+        Widget::on_focus_gained();
         std::string backup{ m_value };
 
         if (m_editable)
@@ -574,7 +574,7 @@ namespace rl::ui {
 
     bool TextBox::on_focus_lost()
     {
-        ui::Widget::on_focus_lost();
+        Widget::on_focus_lost();
         std::string backup{ m_value };
 
         if (m_editable)
@@ -766,7 +766,7 @@ namespace rl::ui {
     {
         if (m_selection_pos > -1)
         {
-            ui::Dialog* window{ this->dialog() };
+            Dialog* window{ this->dialog() };
             if (window == nullptr)
                 return false;
 
@@ -785,7 +785,7 @@ namespace rl::ui {
 
     void TextBox::paste_from_clipboard()
     {
-        ui::Dialog* window{ this->dialog() };
+        Dialog* window{ this->dialog() };
         if (window == nullptr)
             return;
 
