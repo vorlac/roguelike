@@ -127,7 +127,7 @@ target_compile_options(${PROJECT_NAME}
             #/GS- # disable buffer security checks
             /GA # optimize for windows application
             /GL # whole program optimization
-            /fp:fast # prefer fast over accurate floating point math
+            #/fp:fast # prefer fast over accurate floating point math
             #/favor:INTEL64
 
             #/Ox # enable most speed optimizations

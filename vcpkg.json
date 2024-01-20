@@ -4,7 +4,8 @@
     "name": "roguelike",
     "version": "0.1.0",
     "dependencies": [
-        "nanobench",
+      "nanobench",
+        "parallel-hashmap",
         "glm",
         "fmt"
     ]

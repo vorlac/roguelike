@@ -27,20 +27,20 @@ namespace rl::nvg {
         return a > b ? a : b;
     }
 
-    int fons__tt_init(FONScontext* context)
+    static int fons__tt_init(FONScontext* context)
     {
         FONS_NOTUSED(context);
         return 1;
     }
 
-    int fons__tt_done(FONScontext* context)
+    static int fons__tt_done(FONScontext* context)
     {
         FONS_NOTUSED(context);
         return 1;
     }
 
-    int fons__tt_loadFont(FONScontext* context, FONSttFontImpl* font, unsigned char* data,
-                          int dataSize, int fontIndex)
+    static int fons__tt_loadFont(FONScontext* context, FONSttFontImpl* font,
+                                 const unsigned char* data, int dataSize, int fontIndex)
     {
         int offset, stbError;
         FONS_NOTUSED(dataSize);
@@ -54,23 +54,24 @@ namespace rl::nvg {
         return stbError;
     }
 
-    void fons__tt_getFontVMetrics(FONSttFontImpl* font, int* ascent, int* descent, int* lineGap)
+    static void fons__tt_getFontVMetrics(FONSttFontImpl* font, int* ascent, int* descent,
+                                         int* lineGap)
     {
         stbtt_GetFontVMetrics(&font->font, ascent, descent, lineGap);
     }
 
-    float fons__tt_getPixelHeightScale(FONSttFontImpl* font, float size)
+    static float fons__tt_getPixelHeightScale(FONSttFontImpl* font, float size)
     {
         return stbtt_ScaleForMappingEmToPixels(&font->font, size);
     }
 
-    int fons__tt_getGlyphIndex(FONSttFontImpl* font, int codepoint)
+    static int fons__tt_getGlyphIndex(FONSttFontImpl* font, int codepoint)
     {
         return stbtt_FindGlyphIndex(&font->font, codepoint);
     }
 
-    int fons__tt_buildGlyphBitmap(FONSttFontImpl* font, int glyph, float size, float scale,
-                                  int* advance, int* lsb, int* x0, int* y0, int* x1, int* y1)
+    static int fons__tt_buildGlyphBitmap(FONSttFontImpl* font, int glyph, float size, float scale,
+                                         int* advance, int* lsb, int* x0, int* y0, int* x1, int* y1)
     {
         FONS_NOTUSED(size);
         stbtt_GetGlyphHMetrics(&font->font, glyph, advance, lsb);
@@ -78,15 +79,15 @@ namespace rl::nvg {
         return 1;
     }
 
-    void fons__tt_renderGlyphBitmap(FONSttFontImpl* font, unsigned char* output, int outWidth,
-                                    int outHeight, int outStride, float scaleX, float scaleY,
-                                    int glyph)
+    static void fons__tt_renderGlyphBitmap(FONSttFontImpl* font, unsigned char* output,
+                                           int outWidth, int outHeight, int outStride, float scaleX,
+                                           float scaleY, int glyph)
     {
         stbtt_MakeGlyphBitmap(&font->font, output, outWidth, outHeight, outStride, scaleX, scaleY,
                               glyph);
     }
 
-    int fons__tt_getGlyphKernAdvance(FONSttFontImpl* font, int glyph1, int glyph2)
+    static int fons__tt_getGlyphKernAdvance(FONSttFontImpl* font, int glyph1, int glyph2)
     {
         return stbtt_GetGlyphKernAdvance(&font->font, glyph1, glyph2);
     }
@@ -1274,6 +1275,7 @@ namespace rl::nvg {
         {
             if (fons__decutf8(&utf8state, &codepoint, *(const unsigned char*)str))
                 continue;
+
             glyph = fons__getGlyph(stash, font, codepoint, isize, iblur, FONS_GLYPH_BITMAP_OPTIONAL);
             if (glyph != NULL)
             {

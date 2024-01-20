@@ -1,5 +1,7 @@
 #pragma once
 
+#include <parallel_hashmap/phmap.h>
+
 #include "core/ui/icons.hpp"
 #include "ds/color.hpp"
 #include "ds/refcounted.hpp"
@@ -21,20 +23,28 @@ namespace rl::ui {
             HorizCenter = nvg::NVG_ALIGN_CENTER,     // Align text horizontally to center.
             HorizRight = nvg::NVG_ALIGN_RIGHT,       // Align text horizontally to right.
             VertTop = nvg::NVG_ALIGN_TOP,            // Align text vertically to top.
-            VertCenter = nvg::NVG_ALIGN_MIDDLE,      // Align text vertically to middle.
+            VertMiddle = nvg::NVG_ALIGN_MIDDLE,      // Align text vertically to middle.
             VertBottom = nvg::NVG_ALIGN_BOTTOM,      // Align text vertically to bottom.
             VertBaseline = nvg::NVG_ALIGN_BASELINE,  // Align text vertically to baseline.
 
-            Centered = HorizCenter | VertCenter,
-            TopLeft = HorizLeft | VertTop,
-            TopMiddle = HorizCenter | VertTop,
-            CenteredLeft = HorizLeft | VertCenter,
-            CenteredRight = HorizRight | VertCenter,
+            HCenterVMiddle = HorizCenter | VertMiddle,
+            HLeftVTop = HorizLeft | VertTop,
+            HMiddleVTop = HorizCenter | VertTop,
+            HLeftVMiddle = HorizLeft | VertMiddle,
+            HRightVMiddle = HorizRight | VertMiddle,
         };
     };
 
     namespace font {
-        constexpr i32 uninitialized{ -1 };
+        using Handle = i32;
+        using Map = phmap::flat_hash_map<std::string, ui::font::Handle>;
+
+        constexpr i32 InvalidHandle{ -1 };
+
+        enum class Source {
+            Memory,
+            Disk,
+        };
 
         namespace name {
             constexpr const char* const sans{ "sans" };
@@ -42,6 +52,7 @@ namespace rl::ui {
             constexpr const char* const icons{ "icons" };
             constexpr const char* const mono{ "mono" };
         }
+
     }
 
     class Theme : public ds::refcounted
@@ -66,17 +77,17 @@ namespace rl::ui {
             }
         {
             bool font_load_success{ true };
-            font_load_success &= m_font_sans_regular != font::uninitialized;
-            font_load_success &= m_font_sans_bold != font::uninitialized;
-            font_load_success &= m_font_icons != font::uninitialized;
-            font_load_success &= m_font_mono_regular != font::uninitialized;
+            font_load_success &= m_font_sans_regular != font::InvalidHandle;
+            font_load_success &= m_font_sans_bold != font::InvalidHandle;
+            font_load_success &= m_font_icons != font::InvalidHandle;
+            font_load_success &= m_font_mono_regular != font::InvalidHandle;
             runtime_assert(font_load_success, "Failed to load fonts");
         }
 
-        i32 m_font_sans_regular{ font::uninitialized };
-        i32 m_font_sans_bold{ font::uninitialized };
-        i32 m_font_icons{ font::uninitialized };
-        i32 m_font_mono_regular{ font::uninitialized };
+        i32 m_font_sans_regular{ font::InvalidHandle };
+        i32 m_font_sans_bold{ font::InvalidHandle };
+        i32 m_font_icons{ font::InvalidHandle };
+        i32 m_font_mono_regular{ font::InvalidHandle };
 
         f32 m_icon_scale{ 1.0f };
         f32 m_tab_border_width{ 0.75f };
@@ -117,7 +128,9 @@ namespace rl::ui {
         ds::color<f32> m_window_title_unfocused{ 220, 220, 220, 160 };
         ds::color<f32> m_window_title_focused{ 255, 255, 255, 190 };
         ds::color<f32> m_window_header_gradient_top{ m_button_gradient_top_unfocused };
-        ds::color<f32> m_window_header_gradient_bot{ m_button_gradient_bot_unfocused };
+        ds::color<f32> m_window_header_gradient_bot{
+            m_button_gradient_bot_unfocused.to_u8().to_f32()
+        };
         ds::color<f32> m_window_header_sep_top{ m_border_light };
         ds::color<f32> m_window_header_sep_bot{ m_border_dark };
         ds::color<f32> m_window_popup{ 50, 50, 50, 255 };

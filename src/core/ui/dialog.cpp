@@ -95,7 +95,7 @@ namespace rl::ui {
             nvg_context, m_pos.x, m_pos.y, m_size.width, m_size.height, corner_radius * 2.0f,
             drop_shadow_size * 2, m_theme->m_drop_shadow, m_theme->m_transparent);
 
-        // nvg::Save(nvg_context);
+        nvg::Save(nvg_context);
         nvg::ResetScissor(nvg_context);
         nvg::BeginPath(nvg_context);
         nvg::Rect(nvg_context, m_pos.x - drop_shadow_size, m_pos.y - drop_shadow_size,
@@ -104,7 +104,7 @@ namespace rl::ui {
         nvg::PathWinding(nvg_context, nvg::NVGsolidity::NVG_HOLE);
         nvg::FillPaint(nvg_context, shadow_paint);
         nvg::Fill(nvg_context);
-        // nvg::Restore(nvg_context);
+        nvg::Restore(nvg_context);
 
         if (!m_title.empty())
         {
@@ -124,10 +124,10 @@ namespace rl::ui {
                              corner_radius);
             nvg::StrokeColor(nvg_context, m_theme->m_window_header_sep_top);
 
-            // nvg::Save(nvg_context);
-            // nvg::IntersectScissor(nvg_context, m_pos.x, m_pos.y, m_size.width, 0.5f);
+            nvg::Save(nvg_context);
+            nvg::IntersectScissor(nvg_context, m_pos.x, m_pos.y, m_size.width, 0.5f);
             nvg::Stroke(nvg_context);
-            // nvg::Restore(nvg_context);
+            nvg::Restore(nvg_context);
 
             nvg::BeginPath(nvg_context);
             nvg::MoveTo(nvg_context, m_pos.x + 0.5f, m_pos.y + header_height - 1.5f);
@@ -137,7 +137,7 @@ namespace rl::ui {
 
             nvg::FontSize(nvg_context, 18.0f);
             nvg::FontFace(nvg_context, ui::font::name::sans_bold);
-            nvg::TextAlign(nvg_context, Text::Alignment::Centered);
+            nvg::TextAlign(nvg_context, Text::Alignment::HCenterVMiddle);
 
             nvg::FontBlur(nvg_context, 2.0f);
             nvg::FillColor(nvg_context, m_theme->m_drop_shadow);
@@ -151,7 +151,7 @@ namespace rl::ui {
                       m_pos.y + header_height / 2.0f - 1.0f, m_title.c_str(), nullptr);
         }
 
-        // nvg::Restore(nvg_context);
+        nvg::Restore(nvg_context);
 
         ui::Widget::draw(nvg_context);
     }

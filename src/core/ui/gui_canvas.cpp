@@ -10,7 +10,7 @@
 namespace rl::ui {
 
     UICanvas::UICanvas(ds::dims<f32> size, const Mouse& mouse, const Keyboard& kb,
-                       const std::unique_ptr<VectorizedRenderer>& nvg_renderer)
+                       const std::unique_ptr<NVGRenderer>& nvg_renderer)
         : ui::Widget{ nullptr, nvg_renderer }
         , m_nvg_context{ nvg_renderer ? nvg_renderer->nvg_context() : nullptr }
         , m_mouse_ref{ mouse }
@@ -94,7 +94,7 @@ namespace rl::ui {
 
                 nvg::FontFace(m_nvg_context, font::name::sans);
                 nvg::FontSize(m_nvg_context, 20.0f);
-                nvg::TextAlign(m_nvg_context, Text::Alignment::TopLeft);
+                nvg::TextAlign(m_nvg_context, Text::Alignment::HLeftVTop);
                 nvg::TextLineHeight(m_nvg_context, 1.125f);
                 nvg::TextBounds(m_nvg_context, pos.x, pos.y, widget->tooltip().c_str(), nullptr,
                                 bounds.data());
@@ -102,7 +102,7 @@ namespace rl::ui {
                 f32 height{ (bounds[2] - bounds[0]) / 2.0f };
                 if (height > tooltip_width / 2)
                 {
-                    nvg::TextAlign(m_nvg_context, Text::Alignment::TopMiddle);
+                    nvg::TextAlign(m_nvg_context, Text::Alignment::HMiddleVTop);
                     nvg::TextBoxBounds(m_nvg_context, pos.x, pos.y, tooltip_width,
                                        widget->tooltip().c_str(), nullptr, bounds.data());
 
@@ -123,7 +123,7 @@ namespace rl::ui {
                                  std::min(1.0f, 2.0f * (elapsed - m_tooltip_delay)) * 0.8f);
 
                 nvg::BeginPath(m_nvg_context);
-                nvg::FillColor(m_nvg_context, rl::Colors::DarkererGrey);
+                nvg::FillColor(m_nvg_context, ds::color<f32>{ rl::Colors::DarkererGrey });
                 nvg::RoundedRect(m_nvg_context, bounds[0] - 4.0f - height, bounds[1] - 4.0f,
                                  (bounds[2] - bounds[0]) + 8.0f, (bounds[3] - bounds[1]) + 8.0f,
                                  3.0f);
@@ -135,7 +135,7 @@ namespace rl::ui {
                 nvg::LineTo(m_nvg_context, px - 7, bounds[1] + 1);
                 nvg::Fill(m_nvg_context);
 
-                nvg::FillColor(m_nvg_context, rl::Colors::White);
+                nvg::FillColor(m_nvg_context, ds::color<f32>{ rl::Colors::White });
                 nvg::FontBlur(m_nvg_context, 0.0f);
                 nvg::TextBox(m_nvg_context, pos.x - height, pos.y, tooltip_width,
                              widget->tooltip().c_str(), nullptr);

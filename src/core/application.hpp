@@ -176,7 +176,7 @@ namespace rl {
             ui::Axis eval{ ui::Horizontal };
             auto gui{ m_window->gui() };
             ui::FormHelper* form{ new ui::FormHelper(gui) };
-            ds::shared<ui::Dialog> dialog{ form->add_dialog({ 10, 10 }, "Form helper example") };
+            ds::shared<ui::Dialog> dialog{ form->add_dialog({ 10, 10 }, "Nested Diaog Test") };
             form->add_group("Basic types");
             form->add_variable<bool>("bool", bval);
             form->add_variable<std::string>("string", sval);
@@ -187,8 +187,8 @@ namespace rl {
             form->add_variable<f64>("double", dval);
 
             form->add_group("Complex types");
-            // form->add_variable<ui::Axis>("Enumeration", eval, true)
-            //     ->setItems({ "Horizontal", "Vertical" });
+            form->add_variable<ui::Axis>("Enumeration", eval, true)
+                ->set_items({ "Horizontal", "Vertical" });
 
             form->add_group("Other widgets");
             form->add_button("A button", []() {

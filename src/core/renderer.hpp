@@ -12,7 +12,7 @@ struct NVGLUframebuffer;
 
 namespace rl {
     class MainWindow;
-    class VectorizedRenderer;
+    class NVGRenderer;
 
     class OpenGLRenderer
     {
@@ -68,7 +68,7 @@ namespace rl {
         bool set_draw_blend_mode(const SDL3::SDL_BlendMode blend_mode);
 
     public:
-        const std::unique_ptr<VectorizedRenderer>& vectorized_renderer() const
+        const std::unique_ptr<NVGRenderer>& vectorized_renderer() const
         {
             return m_nvg_renderer;
         }
@@ -94,6 +94,6 @@ namespace rl {
 
         rl::OpenGLRenderer::Properties m_properties{ Properties::None };
         SDL3::SDL_GLContext m_sdl_glcontext{ nullptr };
-        std::unique_ptr<rl::VectorizedRenderer> m_nvg_renderer{ nullptr };
+        std::unique_ptr<rl::NVGRenderer> m_nvg_renderer{ nullptr };
     };
 }

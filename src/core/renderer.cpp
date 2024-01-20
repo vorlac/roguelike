@@ -46,7 +46,7 @@ namespace rl {
     OpenGLRenderer::OpenGLRenderer(rl::MainWindow& window, rl::OpenGLRenderer::Properties flags)
         : m_properties{ flags }
         , m_sdl_glcontext{ create_opengl_context(window.sdl_handle()) }
-        , m_nvg_renderer{ std::make_unique<rl::VectorizedRenderer>() }
+        , m_nvg_renderer{ std::make_unique<rl::NVGRenderer>() }
     {
         if (m_sdl_glcontext != nullptr)
         {

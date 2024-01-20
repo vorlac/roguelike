@@ -51,12 +51,12 @@ namespace rl::ui {
         /// Add a new group that may contain several sub-widgets
         ui::Label* add_group(const std::string& caption)
         {
-            ui::Label* label = new ui::Label{
+            ui::Label* label{ new ui::Label{
                 m_window,
                 caption,
                 m_group_font_name,
                 m_group_font_size,
-            };
+            } };
 
             m_layout->append_row(          // add spacing to account for the header if it's
                 m_layout->row_count() > 0  // the first group insert otherwise just offset downw
@@ -94,13 +94,11 @@ namespace rl::ui {
 
             refresh();
 
-            // TODO: missing??
             widget->set_callback(setter);
             widget->set_editable(editable);
             widget->set_font_size(m_widget_font_size);
 
             ds::dims<f32> fs{ widget->fixed_size() };
-
             widget->set_fixed_size(ds::dims<f32>{
                 fs.width != 0.0f ? fs.width : m_fixed_size.width,
                 fs.height != 0.0f ? fs.height : m_fixed_size.height,
@@ -112,8 +110,8 @@ namespace rl::ui {
                 m_layout->append_row(m_variable_spacing);
 
             m_layout->append_row(0);
-            m_layout->set_anchor(label_w, ui::Anchor(1, m_layout->row_count() - 1));
-            m_layout->set_anchor(widget, ui::Anchor(3, m_layout->row_count() - 1));
+            m_layout->set_anchor(label_w, ui::Anchor{ 1, m_layout->row_count() - 1 });
+            m_layout->set_anchor(widget, ui::Anchor{ 3, m_layout->row_count() - 1 });
 
             return widget;
         }
@@ -134,27 +132,31 @@ namespace rl::ui {
 
         ui::Button* add_button(const std::string& label, const std::function<void()>& cb)
         {
-            ui::Button* button = new Button(m_window, label);
+            ui::Button* button{ new Button{ m_window, label } };
+
             button->set_callback(cb);
             button->set_fixed_height(25);
+
             if (m_layout->row_count() > 0)
                 m_layout->append_row(m_variable_spacing);
+
             m_layout->append_row(0);
-            m_layout->set_anchor(button, ui::Anchor(1, m_layout->row_count() - 1, 3, 1));
+            m_layout->set_anchor(button, ui::Anchor{ 1, m_layout->row_count() - 1, 3, 1 });
+
             return button;
         }
 
-        void add_widget(const std::string& label, ui::Widget* widget)
+        void add_widget(const std::string& label_text, ui::Widget* widget)
         {
             m_layout->append_row(0);
-            if (label == "")
-                m_layout->set_anchor(widget, ui::Anchor(1, m_layout->row_count() - 1, 3, 1));
+            if (label_text.empty())
+                m_layout->set_anchor(widget, ui::Anchor{ 1, m_layout->row_count() - 1, 3, 1 });
             else
             {
-                ui::Label* label_w = new ui::Label(m_window, label, m_label_font_name,
-                                                   m_label_font_size);
-                m_layout->set_anchor(label_w, ui::Anchor(1, m_layout->row_count() - 1));
-                m_layout->set_anchor(widget, ui::Anchor(3, m_layout->row_count() - 1));
+                ui::Label* label{ new ui::Label{ m_window, label_text, m_label_font_name,
+                                                 m_label_font_size } };
+                m_layout->set_anchor(label, ui::Anchor{ 1, m_layout->row_count() - 1 });
+                m_layout->set_anchor(widget, ui::Anchor{ 3, m_layout->row_count() - 1 });
             }
         }
 
@@ -173,8 +175,7 @@ namespace rl::ui {
         {
             m_window = window;
             m_layout = dynamic_cast<AdvancedGridLayout*>(window->layout());
-            if (m_layout == nullptr)
-                throw std::runtime_error("Internal error: window has an incompatible layout!");
+            runtime_assert(m_layout == nullptr, "invalid layout");
         }
 
         void set_fixed_size(const ds::dims<f32>& fw)
@@ -260,7 +261,7 @@ namespace rl::ui {
         {
         public:
             FormWidget(ui::Widget* p)
-                : ui::CheckBox(p, "")
+                : ui::CheckBox{ p, "" }
             {
                 this->set_fixed_width(20);
             }
@@ -292,19 +293,19 @@ namespace rl::ui {
 
             T value() const
             {
-                return (T)selected_index();
+                return static_cast<T>(this->selected_index());
             }
 
             void set_value(T value)
             {
-                set_selected_index((int)value);
-                m_selected_index = (int)value;
+                this->set_selected_index(value);
+                m_selected_index = value;
             }
 
             void set_callback(const std::function<void(const T&)>& cb)
             {
-                ui::ComboBox::set_callback([cb](int v) {
-                    cb((T)v);
+                ui::ComboBox::set_callback([cb](i32 v) {
+                    cb(static_cast<T>(v));
                 });
             }
 
@@ -319,7 +320,7 @@ namespace rl::ui {
         {
         public:
             FormWidget(ui::Widget* p)
-                : IntBox<T>(p)
+                : IntBox<T>{ p }
             {
                 this->set_alignment(TextBox::Alignment::Right);
             }
@@ -330,7 +331,7 @@ namespace rl::ui {
         {
         public:
             FormWidget(ui::Widget* p)
-                : FloatBox<T>(p)
+                : FloatBox<T>{ p }
             {
                 this->set_alignment(TextBox::Alignment::Right);
             }
@@ -341,7 +342,7 @@ namespace rl::ui {
         {
         public:
             FormWidget(ui::Widget* p)
-                : ui::TextBox(p)
+                : ui::TextBox{ p }
             {
                 this->set_alignment(TextBox::Alignment::Left);
             }

@@ -24,7 +24,7 @@ SDL_C_LIB_END
 namespace rl::ds {
 #pragma pack(4)
 
-    template <rl::numeric T = u8>
+    template <rl::numeric T>
         requires rl::any_of<T, f32, u8>
     struct color
     {
@@ -234,47 +234,36 @@ namespace rl::ds {
         }
 
     public:
-        constexpr inline operator color<f32>()
+        constexpr inline color<f32> to_f32() const
             requires std::same_as<T, u8>
         {
             return color<f32>{
-                static_cast<f32>(this->r / 255.0f),
-                static_cast<f32>(this->g / 255.0f),
-                static_cast<f32>(this->b / 255.0f),
-                static_cast<f32>(this->a / 255.0f),
+                static_cast<f32>(std::clamp(this->r / 255.0f, 0.0f, 1.0f)),
+                static_cast<f32>(std::clamp(this->g / 255.0f, 0.0f, 1.0f)),
+                static_cast<f32>(std::clamp(this->b / 255.0f, 0.0f, 1.0f)),
+                static_cast<f32>(std::clamp(this->a / 255.0f, 0.0f, 1.0f)),
             };
         }
 
-        constexpr inline operator color<u8>()
+        constexpr inline color<u8> to_u8() const
             requires std::same_as<T, f32>
         {
             return color<u8>{
-                static_cast<u8>(this->r * 255.0f),
-                static_cast<u8>(this->g * 255.0f),
-                static_cast<u8>(this->b * 255.0f),
-                static_cast<u8>(this->a * 255.0f),
+                static_cast<u8>(std::clamp(this->r * 255.0f, 0.0f, 255.0f)),
+                static_cast<u8>(std::clamp(this->g * 255.0f, 0.0f, 255.0f)),
+                static_cast<u8>(std::clamp(this->b * 255.0f, 0.0f, 255.0f)),
+                static_cast<u8>(std::clamp(this->a * 255.0f, 0.0f, 255.0f)),
             };
         }
 
-        constexpr inline operator const nvg::NVGcolor() const
-            requires std::same_as<T, f32>
+        constexpr inline operator const nvg::NVGcolor()
+            requires rl::floating_point<T>
         {
             return nvg::NVGcolor{
                 this->r,
                 this->g,
                 this->b,
                 this->a,
-            };
-        }
-
-        constexpr inline operator const nvg::NVGcolor() const
-            requires std::same_as<T, u8>
-        {
-            return nvg::NVGcolor{
-                this->r / 255.0f,
-                this->g / 255.0f,
-                this->b / 255.0f,
-                this->a / 255.0f,
             };
         }
 

@@ -6,8 +6,8 @@
 #include "core/ui/dialog.hpp"
 #include "core/ui/gui_canvas.hpp"
 #include "core/ui/layout.hpp"
+#include "core/ui/popup.hpp"
 #include "core/ui/theme.hpp"
-#include "core/ui/widget.hpp"
 #include "ds/refcounted.hpp"
 #include "ds/shared.hpp"
 #include "graphics/nvg_renderer.hpp"
@@ -21,7 +21,7 @@ namespace rl::ui {
             parent->add_child(this);
     }
 
-    Widget::Widget(ui::Widget* parent, const std::unique_ptr<VectorizedRenderer>& vec_renderer)
+    Widget::Widget(ui::Widget* parent, const std::unique_ptr<NVGRenderer>& vec_renderer)
         : m_parent{ parent }
     {
         runtime_assert(m_nvg_renderer == nullptr, "widget vectorized renderer already set");
@@ -502,14 +502,28 @@ namespace rl::ui {
         return widget_rect.contains(pt);
     }
 
+    ui::UICanvas* Widget::canvas()
+    {
+        ui::Widget* widget{ this };
+        while (widget != nullptr)
+        {
+            ui::UICanvas* canvas{ dynamic_cast<ui::UICanvas*>(widget) };
+            if (canvas != nullptr)
+                return canvas;
+
+            widget = widget->parent();
+        }
+
+        assert_msg("failed to get GUI canvas that owns widget");
+        return nullptr;
+    }
+
     ui::Dialog* Widget::dialog()
     {
         ui::Widget* widget{ this };
         while (widget != nullptr)
         {
             ui::Dialog* dialog{ dynamic_cast<ui::Dialog*>(widget) };
-            runtime_assert(dialog != nullptr, "failed widget cast to window");
-
             if (dialog != nullptr)
                 return dialog;
 
@@ -518,6 +532,11 @@ namespace rl::ui {
 
         runtime_assert(false, "failed to get window that owns widget");
         return nullptr;
+    }
+
+    const ui::UICanvas* Widget::canvas() const
+    {
+        return const_cast<ui::Widget*>(this)->canvas();
     }
 
     const ui::Dialog* Widget::dialog() const
@@ -558,10 +577,8 @@ namespace rl::ui {
     void Widget::draw(nvg::NVGcontext* nvg_context)
     {
         if constexpr (Widget::DiagnosticsEnabled)
-        {
             m_nvg_renderer->draw_rect_outline(ds::rect<f32>{ this->abs_position(), m_size }, 1.0f,
                                               rl::Colors::Grey, ui::Outline::Outer);
-        }
 
         if (m_children.empty())
             return;

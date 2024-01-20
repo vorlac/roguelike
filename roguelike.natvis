@@ -63,8 +63,8 @@
             <Item Name="[green]">g,nvog</Item>
             <Item Name="[blue]">b,nvog</Item>
             <Item Name="[alpha]">a,nvog</Item>
-            <Item Name="color&lt;f32&gt;">(ds::color&lt;float&gt;*)this,na</Item>
-            <Item Name="color&lt;u8&gt;">(ds::color&lt;unsigned char&gt;*)this,na</Item>
+            <Item Name="color&lt;f32&gt;" Optional="true">this->to_f32()</Item>
+            <Item Name="color&lt;u8&gt;" Optional="true">this->to_u8()</Item>
         </Expand>
     </Type>
 

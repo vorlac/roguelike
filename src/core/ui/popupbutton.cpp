@@ -1,3 +1,4 @@
+#include "core/ui/gui_canvas.hpp"
 #include "core/ui/popupbutton.hpp"
 #include "core/ui/theme.hpp"
 #include "utils/unicode.hpp"
@@ -8,15 +9,14 @@ namespace rl::ui {
                              ui::Icon::ID button_icon)
         : ui::Button{ parent, caption, button_icon }
     {
+        m_icon_extra_scale = 0.8f;
         m_chevron_icon = m_theme->m_popup_chevron_right_icon;
-        auto popup_btn_flags{ Button::Flags(Flags::ToggleButton | Flags::PopupButton) };
+        constexpr auto popup_btn_flags = Button::Flags(Button::ToggleButton | Button::PopupButton);
         this->set_flags(popup_btn_flags);
 
-        m_popup = new ui::Popup{ this, this->dialog() };
-        m_popup->set_size({ 320, 250 });
+        m_popup = new ui::Popup{ this->canvas(), this->dialog() };
+        m_popup->set_size({ 320.0f, 250.0f });
         m_popup->set_visible(false);
-
-        m_icon_extra_scale = 0.8f;  // widget override
     }
 
     void PopupButton::set_chevron_icon(ui::Icon::ID icon)
@@ -68,7 +68,7 @@ namespace rl::ui {
             nvg::FontFace(ctx, font::name::icons);
             nvg::FontSize(ctx, text_size * this->icon_scale());
             nvg::FillColor(ctx, m_enabled ? text_color : m_theme->m_disabled_text_color);
-            nvg::TextAlign(ctx, nvg::NVGalign::NVG_ALIGN_LEFT | nvg::NVGalign::NVG_ALIGN_MIDDLE);
+            nvg::TextAlign(ctx, Text::Alignment::HLeftVMiddle);
 
             f32 iw{ nvg::TextBounds(ctx, 0.0f, 0.0f, icon.data(), nullptr, nullptr) };
             ds::point<f32> icon_pos{
@@ -93,7 +93,7 @@ namespace rl::ui {
         const ui::Dialog* parent_dialog{ this->dialog() };
         if (parent_dialog != nullptr)
         {
-            f32 pos_y{ this->abs_position().y - parent_dialog->position().y + m_size.height / 2 };
+            f32 pos_y{ m_pos.y - parent_dialog->position().y + (m_size.height / 2.0f) };
             if (m_popup->side() == Popup::Side::Right)
                 m_popup->set_anchor_pos(ds::point<f32>{
                     parent_dialog->width() + anchor_size,
@@ -107,10 +107,12 @@ namespace rl::ui {
         }
         else
         {
-            m_popup->set_position(this->abs_position() + ds::point<f32>{
-                                                             this->width() + anchor_size + 1,
-                                                             m_size.height / 2 - anchor_size,
-                                                         });
+            ds::point<f32> offset{
+                this->width() + anchor_size + 1.0f,
+                m_size.height / 2.0f - anchor_size,
+            };
+
+            m_popup->set_position(this->abs_position() + offset);
         }
     }
 

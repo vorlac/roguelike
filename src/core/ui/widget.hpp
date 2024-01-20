@@ -17,18 +17,15 @@
 #include "utils/numeric.hpp"
 #include "utils/time.hpp"
 
-// #if _MSC_VER
-//   #pragma warning(disable : 4244)
-// #endif
-
 namespace rl::ui {
     class Dialog;
+    class UICanvas;
 
     class Widget : public ds::refcounted
     {
     public:
         Widget(Widget* parent);
-        Widget(Widget* parent, const std::unique_ptr<VectorizedRenderer>& vec_renderer);
+        Widget(Widget* parent, const std::unique_ptr<NVGRenderer>& vec_renderer);
 
         virtual ~Widget();
 
@@ -50,6 +47,7 @@ namespace rl::ui {
         i32 child_index(ui::Widget* widget) const;
         i32 child_count() const;
 
+        ui::UICanvas* canvas();
         ui::Dialog* dialog();
         ui::Widget* parent();
         ui::Layout* layout();
@@ -62,6 +60,7 @@ namespace rl::ui {
         ds::dims<f32> fixed_size() const;
         ds::dims<f32> size() const;
 
+        const ui::UICanvas* canvas() const;
         const ui::Dialog* dialog() const;
         const ui::Widget* parent() const;
         const ui::Layout* layout() const;
@@ -132,10 +131,10 @@ namespace rl::ui {
 
     protected:
         ui::Widget* m_parent{ nullptr };
-        nvg::NVGcontext* m_nvg_context{ nullptr };
+        // nvg::NVGcontext* m_nvg_context{ nullptr };
         ds::shared<ui::Theme> m_theme{ nullptr };
         ds::shared<ui::Layout> m_layout{ nullptr };
-        static inline rl::VectorizedRenderer* m_nvg_renderer{ nullptr };
+        static inline rl::NVGRenderer* m_nvg_renderer{ nullptr };
 
         bool m_enabled{ true };
         bool m_visible{ true };

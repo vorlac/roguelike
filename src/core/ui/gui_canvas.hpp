@@ -14,7 +14,6 @@
 #include "utils/time.hpp"
 
 namespace rl::ui {
-
     using WindowID = SDL3::SDL_WindowID;
     using DisplayID = SDL3::SDL_DisplayID;
 
@@ -25,7 +24,7 @@ namespace rl::ui {
     {
     public:
         UICanvas(ds::dims<f32> size, const Mouse& mouse, const Keyboard& kb,
-                 const std::unique_ptr<VectorizedRenderer>& nvg_renderer);
+                 const std::unique_ptr<NVGRenderer>& nvg_renderer);
         ~UICanvas();
 
         bool redraw();
@@ -37,6 +36,7 @@ namespace rl::ui {
         void dispose_dialog(ui::Dialog* dialog);
 
         void set_visible(bool visible);
+        void set_background(ds::color<u8> background);
         void set_resize_callback(const std::function<void(ds::dims<f32>)>& callback);
         void add_update_callback(const std::function<void()>& update_func);
         void drop_callback_event(i32 count, const char** filenames);
@@ -45,7 +45,6 @@ namespace rl::ui {
         ds::dims<i32> frame_buffer_size() const;
         nvg::NVGcontext* nvg_context() const;
         const ds::color<u8>& background() const;
-        void set_background(ds::color<u8> background);
         const std::function<void(ds::dims<f32>)>& resize_callback() const;
 
         bool has_depth_buffer() const;

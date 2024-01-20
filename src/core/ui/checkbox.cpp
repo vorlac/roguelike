@@ -130,8 +130,8 @@ namespace rl::ui {
 
         nvg::NVGpaint bg{ nvg::BoxGradient(
             nvg_context, m_pos.x + 1.5f, m_pos.y + 1.5f, m_size.height - 2.0f, m_size.height - 2.0f,
-            3, 3, m_pushed ? ds::color<u8>{ 0, 0, 0, 100 } : ds::color<u8>{ 0, 0, 0, 32 },
-            ds::color<u8>{ 0, 0, 0, 180 }) };
+            3, 3, m_pushed ? ds::color<f32>{ 0, 0, 0, 100 } : ds::color<f32>{ 0, 0, 0, 32 },
+            ds::color<f32>{ 0, 0, 0, 180 }) };
 
         nvg::BeginPath(nvg_context);
         nvg::RoundedRect(nvg_context, m_pos.x + 1.0f, m_pos.y + 1.0f, m_size.height - 2.0f,

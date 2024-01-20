@@ -2640,32 +2640,32 @@ namespace rl::nvg {
     // Add fonts
     int CreateFont(NVGcontext* ctx, const char* name, const char* filename)
     {
-        return fonsAddFont(ctx->fs, name, filename, 0);
+        return nvg::fonsAddFont(ctx->fs, name, filename, 0);
     }
 
     int CreateFontAtIndex(NVGcontext* ctx, const char* name, const char* filename,
                           const int fontIndex)
     {
-        return fonsAddFont(ctx->fs, name, filename, fontIndex);
+        return nvg::fonsAddFont(ctx->fs, name, filename, fontIndex);
     }
 
     int CreateFontMem(NVGcontext* ctx, const char* name, unsigned char* data, int ndata,
                       int freeData)
     {
-        return fonsAddFontMem(ctx->fs, name, data, ndata, freeData, 0);
+        return nvg::fonsAddFontMem(ctx->fs, name, data, ndata, freeData, 0);
     }
 
     int CreateFontMemAtIndex(NVGcontext* ctx, const char* name, unsigned char* data, int ndata,
                              int freeData, const int fontIndex)
     {
-        return fonsAddFontMem(ctx->fs, name, data, ndata, freeData, fontIndex);
+        return nvg::fonsAddFontMem(ctx->fs, name, data, ndata, freeData, fontIndex);
     }
 
     int FindFont(NVGcontext* ctx, const char* name)
     {
         if (name == NULL)
             return -1;
-        return fonsGetFontByName(ctx->fs, name);
+        return nvg::fonsGetFontByName(ctx->fs, name);
     }
 
     int AddFallbackFontId(NVGcontext* ctx, int baseFont, int fallbackFont)
@@ -2683,7 +2683,7 @@ namespace rl::nvg {
 
     void ResetFallbackFontsId(NVGcontext* ctx, int baseFont)
     {
-        fonsResetFallbackFont(ctx->fs, baseFont);
+        nvg::fonsResetFallbackFont(ctx->fs, baseFont);
     }
 
     void ResetFallbackFonts(NVGcontext* ctx, const char* baseFont)
@@ -2834,21 +2834,21 @@ namespace rl::nvg {
         if (state->fontId == FONS_INVALID)
             return x;
 
-        fonsSetSize(ctx->fs, state->fontSize * scale);
-        fonsSetSpacing(ctx->fs, state->letterSpacing * scale);
-        fonsSetBlur(ctx->fs, state->fontBlur * scale);
-        fonsSetAlign(ctx->fs, state->textAlign);
-        fonsSetFont(ctx->fs, state->fontId);
+        nvg::fonsSetSize(ctx->fs, state->fontSize * scale);
+        nvg::fonsSetSpacing(ctx->fs, state->letterSpacing * scale);
+        nvg::fonsSetBlur(ctx->fs, state->fontBlur * scale);
+        nvg::fonsSetAlign(ctx->fs, state->textAlign);
+        nvg::fonsSetFont(ctx->fs, state->fontId);
 
         cverts = nvg__maxi(2, (int)(end - string)) * 6;  // conservative estimate.
         verts = nvg__allocTempVerts(ctx, cverts);
         if (verts == NULL)
             return x;
 
-        fonsTextIterInit(ctx->fs, &iter, x * scale, y * scale, string, end,
-                         FONS_GLYPH_BITMAP_REQUIRED);
+        nvg::fonsTextIterInit(ctx->fs, &iter, x * scale, y * scale, string, end,
+                              FONS_GLYPH_BITMAP_REQUIRED);
         prevIter = iter;
-        while (fonsTextIterNext(ctx->fs, &iter, &q))
+        while (nvg::fonsTextIterNext(ctx->fs, &iter, &q))
         {
             float c[4 * 2];
             if (iter.prevGlyphIndex == -1)
@@ -2861,8 +2861,8 @@ namespace rl::nvg {
                 if (!nvg__allocTextAtlas(ctx))
                     break;  // no memory :(
                 iter = prevIter;
-                fonsTextIterNext(ctx->fs, &iter, &q);  // try again
-                if (iter.prevGlyphIndex == -1)         // still can not find glyph?
+                nvg::fonsTextIterNext(ctx->fs, &iter, &q);  // try again
+                if (iter.prevGlyphIndex == -1)              // still can not find glyph?
                     break;
             }
             prevIter = iter;
@@ -2902,7 +2902,6 @@ namespace rl::nvg {
 
         // TODO: add back-end bit to do this just once per frame.
         nvg__flushTextTexture(ctx);
-
         nvg__renderText(ctx, verts, nverts);
 
         return iter.nextx / scale;
@@ -2966,14 +2965,14 @@ namespace rl::nvg {
         if (string == end)
             return 0;
 
-        fonsSetSize(ctx->fs, state->fontSize * scale);
-        fonsSetSpacing(ctx->fs, state->letterSpacing * scale);
-        fonsSetBlur(ctx->fs, state->fontBlur * scale);
-        fonsSetAlign(ctx->fs, state->textAlign);
-        fonsSetFont(ctx->fs, state->fontId);
+        nvg::fonsSetSize(ctx->fs, state->fontSize * scale);
+        nvg::fonsSetSpacing(ctx->fs, state->letterSpacing * scale);
+        nvg::fonsSetBlur(ctx->fs, state->fontBlur * scale);
+        nvg::fonsSetAlign(ctx->fs, state->textAlign);
+        nvg::fonsSetFont(ctx->fs, state->fontId);
 
-        fonsTextIterInit(ctx->fs, &iter, x * scale, y * scale, string, end,
-                         FONS_GLYPH_BITMAP_OPTIONAL);
+        nvg::fonsTextIterInit(ctx->fs, &iter, x * scale, y * scale, string, end,
+                              FONS_GLYPH_BITMAP_OPTIONAL);
         prevIter = iter;
         while (fonsTextIterNext(ctx->fs, &iter, &q))
         {
@@ -3037,22 +3036,22 @@ namespace rl::nvg {
         if (string == end)
             return 0;
 
-        fonsSetSize(ctx->fs, state->fontSize * scale);
-        fonsSetSpacing(ctx->fs, state->letterSpacing * scale);
-        fonsSetBlur(ctx->fs, state->fontBlur * scale);
-        fonsSetAlign(ctx->fs, state->textAlign);
-        fonsSetFont(ctx->fs, state->fontId);
+        nvg::fonsSetSize(ctx->fs, state->fontSize * scale);
+        nvg::fonsSetSpacing(ctx->fs, state->letterSpacing * scale);
+        nvg::fonsSetBlur(ctx->fs, state->fontBlur * scale);
+        nvg::fonsSetAlign(ctx->fs, state->textAlign);
+        nvg::fonsSetFont(ctx->fs, state->fontId);
 
         breakRowWidth *= scale;
 
-        fonsTextIterInit(ctx->fs, &iter, 0, 0, string, end, FONS_GLYPH_BITMAP_OPTIONAL);
+        nvg::fonsTextIterInit(ctx->fs, &iter, 0, 0, string, end, FONS_GLYPH_BITMAP_OPTIONAL);
         prevIter = iter;
-        while (fonsTextIterNext(ctx->fs, &iter, &q))
+        while (nvg::fonsTextIterNext(ctx->fs, &iter, &q))
         {
             if (iter.prevGlyphIndex < 0 && nvg__allocTextAtlas(ctx))
             {  // can not retrieve glyph?
                 iter = prevIter;
-                fonsTextIterNext(ctx->fs, &iter, &q);  // try again
+                nvg::fonsTextIterNext(ctx->fs, &iter, &q);  // try again
             }
             prevIter = iter;
             switch (iter.codepoint)
@@ -3242,17 +3241,17 @@ namespace rl::nvg {
         if (state->fontId == FONS_INVALID)
             return 0;
 
-        fonsSetSize(ctx->fs, state->fontSize * scale);
-        fonsSetSpacing(ctx->fs, state->letterSpacing * scale);
-        fonsSetBlur(ctx->fs, state->fontBlur * scale);
-        fonsSetAlign(ctx->fs, state->textAlign);
-        fonsSetFont(ctx->fs, state->fontId);
+        nvg::fonsSetSize(ctx->fs, state->fontSize * scale);
+        nvg::fonsSetSpacing(ctx->fs, state->letterSpacing * scale);
+        nvg::fonsSetBlur(ctx->fs, state->fontBlur * scale);
+        nvg::fonsSetAlign(ctx->fs, state->textAlign);
+        nvg::fonsSetFont(ctx->fs, state->fontId);
 
-        width = fonsTextBounds(ctx->fs, x * scale, y * scale, string, end, bounds);
+        width = nvg::fonsTextBounds(ctx->fs, x * scale, y * scale, string, end, bounds);
         if (bounds != NULL)
         {
             // Use line bounds for height.
-            fonsLineBounds(ctx->fs, y * scale, &bounds[1], &bounds[3]);
+            nvg::fonsLineBounds(ctx->fs, y * scale, &bounds[1], &bounds[3]);
             bounds[0] *= invscale;
             bounds[1] *= invscale;
             bounds[2] *= invscale;
@@ -3290,12 +3289,12 @@ namespace rl::nvg {
         minx = maxx = x;
         miny = maxy = y;
 
-        fonsSetSize(ctx->fs, state->fontSize * scale);
-        fonsSetSpacing(ctx->fs, state->letterSpacing * scale);
-        fonsSetBlur(ctx->fs, state->fontBlur * scale);
-        fonsSetAlign(ctx->fs, state->textAlign);
-        fonsSetFont(ctx->fs, state->fontId);
-        fonsLineBounds(ctx->fs, 0, &rminy, &rmaxy);
+        nvg::fonsSetSize(ctx->fs, state->fontSize * scale);
+        nvg::fonsSetSpacing(ctx->fs, state->letterSpacing * scale);
+        nvg::fonsSetBlur(ctx->fs, state->fontBlur * scale);
+        nvg::fonsSetAlign(ctx->fs, state->textAlign);
+        nvg::fonsSetFont(ctx->fs, state->fontId);
+        nvg::fonsLineBounds(ctx->fs, 0, &rminy, &rmaxy);
         rminy *= invscale;
         rmaxy *= invscale;
 
@@ -3345,13 +3344,13 @@ namespace rl::nvg {
         if (state->fontId == FONS_INVALID)
             return;
 
-        fonsSetSize(ctx->fs, state->fontSize * scale);
-        fonsSetSpacing(ctx->fs, state->letterSpacing * scale);
-        fonsSetBlur(ctx->fs, state->fontBlur * scale);
-        fonsSetAlign(ctx->fs, state->textAlign);
-        fonsSetFont(ctx->fs, state->fontId);
+        nvg::fonsSetSize(ctx->fs, state->fontSize * scale);
+        nvg::fonsSetSpacing(ctx->fs, state->letterSpacing * scale);
+        nvg::fonsSetBlur(ctx->fs, state->fontBlur * scale);
+        nvg::fonsSetAlign(ctx->fs, state->textAlign);
+        nvg::fonsSetFont(ctx->fs, state->fontId);
 
-        fonsVertMetrics(ctx->fs, ascender, descender, lineh);
+        nvg::fonsVertMetrics(ctx->fs, ascender, descender, lineh);
         if (ascender != NULL)
             *ascender *= invscale;
         if (descender != NULL)

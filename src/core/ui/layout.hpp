@@ -40,7 +40,7 @@ namespace rl::ui {
     public:
         Anchor() = default;
 
-        Anchor(i32 x, i32 y, ui::Alignment horiz = ui::Alignment::Fill,
+        Anchor(u32 x, u32 y, ui::Alignment horiz = ui::Alignment::Fill,
                ui::Alignment vert = ui::Alignment::Fill)
             : grid_pos{ static_cast<u8>(x), static_cast<u8>(y) }
             , cell_size{ 1, 1 }

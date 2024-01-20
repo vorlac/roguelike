@@ -32,7 +32,7 @@ namespace rl::ui {
         if (m_children.empty())
             return;
 
-        runtime_assert(m_children.size() == 0, "vertical scroll panel should only have 1 child");
+        runtime_assert(m_children.size() == 1, "vertical scroll panel should only have 1 child");
 
         ui::Widget* child{ m_children[0] };
         m_child_preferred_height = child->preferred_size(nvg_context).height;
@@ -55,6 +55,7 @@ namespace rl::ui {
             child->set_size(m_size);
             m_scroll = 0;
         }
+
         child->perform_layout(nvg_context);
     }
 
@@ -170,8 +171,7 @@ namespace rl::ui {
 
         child->set_position(ds::point<f32>{ 0.0f, yoffset });
         m_child_preferred_height = child->preferred_size(nvg_context).height;
-        f32 scrollh{ height() *
-                     std::min(1.f, height() / static_cast<f32>(m_child_preferred_height)) };
+        f32 scrollh{ this->height() * std::min(1.0f, this->height() / m_child_preferred_height) };
 
         if (m_update_layout)
         {
@@ -181,7 +181,7 @@ namespace rl::ui {
 
         nvg::Save(nvg_context);
         nvg::Translate(nvg_context, m_pos.x, m_pos.y);
-        nvg::IntersectScissor(nvg_context, 0, 0, m_size.width, m_size.height);
+        nvg::IntersectScissor(nvg_context, 0.0f, 0.0f, m_size.width, m_size.height);
 
         if (child->visible())
             child->draw(nvg_context);
@@ -193,8 +193,8 @@ namespace rl::ui {
 
         nvg::NVGpaint paint{ nvg::BoxGradient(nvg_context, m_pos.x + m_size.width - 12.0f + 1.0f,
                                               m_pos.y + 4.0f + 1.0f, 8.0f, m_size.height - 8.0f,
-                                              3.0f, 4.0f, ds::color<u8>{ 0, 0, 0, 32 },
-                                              ds::color<u8>{ 0, 0, 0, 92 }) };
+                                              3.0f, 4.0f, ds::color<f32>{ 0, 0, 0, 32 },
+                                              ds::color<f32>{ 0, 0, 0, 92 }) };
         nvg::BeginPath(nvg_context);
         nvg::RoundedRect(nvg_context, m_pos.x + m_size.width - 12, m_pos.y + 4, 8,
                          m_size.height - 8, 3);
@@ -204,7 +204,7 @@ namespace rl::ui {
         paint = nvg::BoxGradient(
             nvg_context, m_pos.x + m_size.width - 12.0f - 1.0f,
             m_pos.y + 4.0f + (m_size.height - 8.0f - scrollh) * m_scroll - 1.0f, 8.0f, scrollh,
-            3.0f, 4.0f, ds::color<u8>{ 220, 220, 220, 100 }, ds::color<u8>{ 128, 128, 128, 100 });
+            3.0f, 4.0f, ds::color<f32>{ 220, 220, 220, 100 }, ds::color<f32>{ 128, 128, 128, 100 });
 
         nvg::BeginPath(nvg_context);
         nvg::RoundedRect(nvg_context, m_pos.x + m_size.width - 1.0f + 1.0f,

@@ -121,7 +121,7 @@ namespace rl::ui {
             index++;
         }
 
-        set_selected_index(m_selected_index);
+        this->set_selected_index(m_selected_index);
     }
 
     bool ComboBox::on_mouse_scroll(const Mouse& mouse, const Keyboard& kb)

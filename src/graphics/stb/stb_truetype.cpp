@@ -241,22 +241,22 @@ namespace rl::stb {
 #define ttCHAR(p)  (*(stbtt_int8*)(p))
 #define ttFixed(p) ttLONG(p)
 
-    static stbtt_uint16 ttUSHORT(stbtt_uint8* p)
+    static stbtt_uint16 ttUSHORT(const stbtt_uint8* p)
     {
         return p[0] * 256 + p[1];
     }
 
-    static stbtt_int16 ttSHORT(stbtt_uint8* p)
+    static stbtt_int16 ttSHORT(const stbtt_uint8* p)
     {
         return p[0] * 256 + p[1];
     }
 
-    static stbtt_uint32 ttULONG(stbtt_uint8* p)
+    static stbtt_uint32 ttULONG(const stbtt_uint8* p)
     {
         return (p[0] << 24) + (p[1] << 16) + (p[2] << 8) + p[3];
     }
 
-    static stbtt_int32 ttLONG(stbtt_uint8* p)
+    static stbtt_int32 ttLONG(const stbtt_uint8* p)
     {
         return (p[0] << 24) + (p[1] << 16) + (p[2] << 8) + p[3];
     }
@@ -265,7 +265,7 @@ namespace rl::stb {
     ((p)[0] == (c0) && (p)[1] == (c1) && (p)[2] == (c2) && (p)[3] == (c3))
 #define stbtt_tag(p, str) stbtt_tag4(p, str[0], str[1], str[2], str[3])
 
-    static int stbtt__isfont(stbtt_uint8* font)
+    static int stbtt__isfont(const stbtt_uint8* font)
     {
         // check the version number
         if (stbtt_tag4(font, '1', 0, 0, 0))
@@ -296,7 +296,7 @@ namespace rl::stb {
         return 0;
     }
 
-    static int stbtt_GetFontOffsetForIndex_internal(unsigned char* font_collection, int index)
+    static int stbtt_GetFontOffsetForIndex_internal(const unsigned char* font_collection, int index)
     {
         // if it's just a font, there's only one valid index
         if (stbtt__isfont(font_collection))
@@ -312,9 +312,11 @@ namespace rl::stb {
                 stbtt_int32 n = ttLONG(font_collection + 8);
                 if (index >= n)
                     return -1;
+
                 return ttULONG(font_collection + 12 + index * 4);
             }
         }
+
         return -1;
     }
 
@@ -4611,7 +4613,7 @@ namespace rl::stb {
 
     int stbtt_GetFontOffsetForIndex(const unsigned char* data, int index)
     {
-        return stbtt_GetFontOffsetForIndex_internal((unsigned char*)data, index);
+        return stbtt_GetFontOffsetForIndex_internal(data, index);
     }
 
     int stbtt_GetNumberOfFonts(const unsigned char* data)

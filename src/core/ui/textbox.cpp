@@ -196,16 +196,16 @@ namespace rl::ui {
 
         nvg::NVGpaint bg{ nvg::BoxGradient(nvg_context, m_pos.x + 1.0f, m_pos.y + 1.0f + 1.0f,
                                            m_size.width - 2.0f, m_size.height - 2.0f, 3.0f, 4.0f,
-                                           ds::color<u8>{ 255, 255, 255, 32 },
-                                           ds::color<u8>{ 32, 32, 32, 32 }) };
+                                           ds::color<f32>{ 255, 255, 255, 32 },
+                                           ds::color<f32>{ 32, 32, 32, 32 }) };
         nvg::NVGpaint fg1{ nvg::BoxGradient(nvg_context, m_pos.x + 1.0f, m_pos.y + 1.0f + 1.0f,
                                             m_size.width - 2.0f, m_size.height - 2.0f, 3.0f, 4.0f,
-                                            ds::color<u8>{ 150, 150, 150, 32 },
-                                            ds::color<u8>{ 32, 32, 32, 32 }) };
+                                            ds::color<f32>{ 150, 150, 150, 32 },
+                                            ds::color<f32>{ 32, 32, 32, 32 }) };
         nvg::NVGpaint fg2{ nvg::BoxGradient(nvg_context, m_pos.x + 1.0f, m_pos.y + 1.0f + 1.0f,
                                             m_size.width - 2.0f, m_size.height - 2.0f, 3.0f, 4.0f,
-                                            ds::color<u8>{ 255, 0, 0, 100 },
-                                            ds::color<u8>{ 255, 0, 0, 50 }) };
+                                            ds::color<f32>{ 255, 0, 0, 100 },
+                                            ds::color<f32>{ 255, 0, 0, 50 }) };
 
         nvg::BeginPath(nvg_context);
         nvg::RoundedRect(nvg_context, m_pos.x + 1, m_pos.y + 1 + 1.0f, m_size.width - 2,
@@ -223,7 +223,7 @@ namespace rl::ui {
         nvg::BeginPath(nvg_context);
         nvg::RoundedRect(nvg_context, m_pos.x + 0.5f, m_pos.y + 0.5f, m_size.width - 1,
                          m_size.height - 1, 2.5f);
-        nvg::StrokeColor(nvg_context, ds::color<u8>{ 0, 0, 0, 48 });
+        nvg::StrokeColor(nvg_context, ds::color<f32>{ 0, 0, 0, 48 });
         nvg::Stroke(nvg_context);
 
         nvg::FontSize(nvg_context, this->font_size());
@@ -265,7 +265,7 @@ namespace rl::ui {
             unit_width = nvg::TextBounds(nvg_context, 0.0f, 0.0f, m_units.c_str(), nullptr, nullptr);
 
             nvg::FillColor(nvg_context, ds::color<f32>{ 255, 255, 255, m_enabled ? 64 : 32 });
-            nvg::TextAlign(nvg_context, Text::CenteredRight);
+            nvg::TextAlign(nvg_context, Text::Alignment::HRightVMiddle);
             nvg::Text(nvg_context, m_pos.x + m_size.width - x_spacing, draw_pos.y, m_units.c_str(),
                       nullptr);
 
@@ -310,7 +310,7 @@ namespace rl::ui {
                                                 : m_theme->m_disabled_text_color);
 
                 auto icon{ utf8(m_theme->m_text_box_down_icon) };
-                nvg::TextAlign(nvg_context, Text::Alignment::CenteredLeft);
+                nvg::TextAlign(nvg_context, Text::Alignment::HLeftVMiddle);
 
                 ds::point<f32> icon_pos{
                     m_pos.x + 4.0f,
@@ -327,15 +327,15 @@ namespace rl::ui {
         switch (m_alignment)
         {
             case Alignment::Left:
-                nvg::TextAlign(nvg_context, Text::Alignment::CenteredLeft);
+                nvg::TextAlign(nvg_context, Text::Alignment::HLeftVMiddle);
                 draw_pos.x += x_spacing + spin_arrows_width;
                 break;
             case Alignment::Right:
-                nvg::TextAlign(nvg_context, Text::Alignment::CenteredRight);
+                nvg::TextAlign(nvg_context, Text::Alignment::HRightVMiddle);
                 draw_pos.x += m_size.width - unit_width - x_spacing;
                 break;
             case Alignment::Center:
-                nvg::TextAlign(nvg_context, Text::Alignment::Centered);
+                nvg::TextAlign(nvg_context, Text::Alignment::HCenterVMiddle);
                 draw_pos.x += m_size.width * 0.5f;
                 break;
         }
@@ -348,7 +348,7 @@ namespace rl::ui {
         // clip visible text area
         f32 clip_x{ m_pos.x + x_spacing + spin_arrows_width - 1.0f };
         f32 clip_y{ m_pos.y + 1.0f };
-        f32 clip_width{ m_size.width - unit_width - spin_arrows_width - 2 * x_spacing + 2.0f };
+        f32 clip_width{ m_size.width - unit_width - spin_arrows_width - 2.0f * x_spacing + 2.0f };
         f32 clip_height{ m_size.height - 3.0f };
 
         nvg::Save(nvg_context);

@@ -48,7 +48,7 @@ namespace rl::ui {
         m_font = font;
     }
 
-    void Label::set_color(ds::color<u8> color)
+    void Label::set_color(ds::color<f32> color)
     {
         m_color = color;
     }
@@ -79,7 +79,7 @@ namespace rl::ui {
         if (m_fixed_size.width > 0)
         {
             f32 bounds[4] = { 0 };
-            nvg::TextAlign(nvg_context, Text::Alignment::TopLeft);
+            nvg::TextAlign(nvg_context, Text::Alignment::HLeftVTop);
             nvg::TextBoxBounds(nvg_context, m_pos.x, m_pos.y, m_fixed_size.width, m_caption.c_str(),
                                nullptr, bounds);
 
@@ -90,7 +90,7 @@ namespace rl::ui {
         }
         else
         {
-            nvg::TextAlign(nvg_context, Text::Alignment::CenteredLeft);
+            nvg::TextAlign(nvg_context, Text::Alignment::HLeftVMiddle);
 
             return ds::dims<f32>{
                 nvg::TextBounds(nvg_context, 0.0f, 0.0f, m_caption.c_str(), nullptr, nullptr) + 2.0f,
@@ -109,13 +109,13 @@ namespace rl::ui {
 
         if (m_fixed_size.width > 0)
         {
-            nvg::TextAlign(nvg_context, Text::Alignment::TopLeft);
+            nvg::TextAlign(nvg_context, Text::Alignment::HLeftVTop);
             nvg::TextBox(nvg_context, m_pos.x, m_pos.y, m_fixed_size.width, m_caption.c_str(),
                          nullptr);
         }
         else
         {
-            nvg::TextAlign(nvg_context, Text::Alignment::CenteredLeft);
+            nvg::TextAlign(nvg_context, Text::Alignment::HLeftVMiddle);
             nvg::Text(nvg_context, m_pos.x, m_pos.y + m_size.height * 0.5f, m_caption.c_str(),
                       nullptr);
         }

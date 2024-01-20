@@ -2,7 +2,6 @@
 
 #include <string>
 
-#include "core/ui/gui_canvas.hpp"
 #include "core/ui/widget.hpp"
 #include "ds/dims.hpp"
 
@@ -11,6 +10,7 @@ namespace rl {
     class Mouse;
 
     namespace ui {
+        class Popup;
 
         class Dialog : public ui::Widget
         {

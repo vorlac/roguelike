@@ -152,6 +152,7 @@ namespace rl::ui {
                 iw = w * ih / h;
             }
         }
+
         return ds::dims<f32>{
             tw + iw + 20.0f,
             font_size + 10.0f,
