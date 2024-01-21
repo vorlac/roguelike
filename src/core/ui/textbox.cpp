@@ -160,74 +160,76 @@ namespace rl::ui {
             m_font_size = m_theme->text_box_font_size;
     }
 
-    ds::dims<f32> TextBox::preferred_size(nvg::NVGcontext* ctx) const
+    ds::dims<f32> TextBox::preferred_size() const
     {
+        f32 uw{ 0.0f };
         ds::dims<f32> size{
             0.0f,
             this->font_size() * 1.4f,
         };
 
-        f32 uw{ 0.0f };
+        auto&& context{ m_renderer->context() };
         if (m_units_image > 0)
         {
             i32 w{ 0 };
             i32 h{ 0 };
 
-            nvg::ImageSize(ctx, m_units_image, &w, &h);
+            nvg::ImageSize(context, m_units_image, &w, &h);
             f32 uh{ size.height * 0.4f };
             uw = w * uh / h;
         }
         else if (!m_units.empty())
-            uw = nvg::TextBounds(ctx, 0, 0, m_units.c_str(), nullptr, nullptr);
+            uw = nvg::TextBounds(context, 0, 0, m_units.c_str(), nullptr, nullptr);
 
         f32 sw{ 0.0f };
         if (m_spinnable)
             sw = 14.0f;
 
-        f32 ts{ nvg::TextBounds(ctx, 0, 0, m_value.c_str(), nullptr, nullptr) };
+        f32 ts{ nvg::TextBounds(context, 0, 0, m_value.c_str(), nullptr, nullptr) };
         size.width = size.height + ts + uw + sw;
 
         return size;
     }
 
-    void TextBox::draw(nvg::NVGcontext* nvg_context)
+    void TextBox::draw()
     {
-        Widget::draw(nvg_context);
+        Widget::draw();
 
-        nvg::NVGpaint bg{ nvg::BoxGradient(nvg_context, m_pos.x + 1.0f, m_pos.y + 1.0f + 1.0f,
+        auto&& context{ m_renderer->context() };
+        nvg::NVGpaint bg{ nvg::BoxGradient(context, m_pos.x + 1.0f, m_pos.y + 1.0f + 1.0f,
                                            m_size.width - 2.0f, m_size.height - 2.0f, 3.0f, 4.0f,
                                            ds::color<f32>{ 255, 255, 255, 32 },
                                            ds::color<f32>{ 32, 32, 32, 32 }) };
-        nvg::NVGpaint fg1{ nvg::BoxGradient(nvg_context, m_pos.x + 1.0f, m_pos.y + 1.0f + 1.0f,
+        nvg::NVGpaint fg1{ nvg::BoxGradient(context, m_pos.x + 1.0f, m_pos.y + 1.0f + 1.0f,
                                             m_size.width - 2.0f, m_size.height - 2.0f, 3.0f, 4.0f,
                                             ds::color<f32>{ 150, 150, 150, 32 },
                                             ds::color<f32>{ 32, 32, 32, 32 }) };
-        nvg::NVGpaint fg2{ nvg::BoxGradient(nvg_context, m_pos.x + 1.0f, m_pos.y + 1.0f + 1.0f,
+        nvg::NVGpaint fg2{ nvg::BoxGradient(context, m_pos.x + 1.0f, m_pos.y + 1.0f + 1.0f,
                                             m_size.width - 2.0f, m_size.height - 2.0f, 3.0f, 4.0f,
                                             ds::color<f32>{ 255, 0, 0, 100 },
                                             ds::color<f32>{ 255, 0, 0, 50 }) };
 
-        nvg::BeginPath(nvg_context);
-        nvg::RoundedRect(nvg_context, m_pos.x + 1, m_pos.y + 1 + 1.0f, m_size.width - 2,
+        nvg::BeginPath(context);
+        nvg::RoundedRect(context, m_pos.x + 1, m_pos.y + 1 + 1.0f, m_size.width - 2,
                          m_size.height - 2, 3);
 
         if (m_editable && this->focused())
-            m_valid_format ? nvg::FillPaint(nvg_context, fg1) : nvg::FillPaint(nvg_context, fg2);
+            m_valid_format ? nvg::FillPaint(context, fg1) : nvg::FillPaint(context, fg2);
         else if (m_spinnable && m_mouse_down_pos.x != -1)
-            nvg::FillPaint(nvg_context, fg1);
+            nvg::FillPaint(context, fg1);
         else
-            nvg::FillPaint(nvg_context, bg);
+            nvg::FillPaint(context, bg);
 
-        nvg::Fill(nvg_context);
+        nvg::Fill(context);
 
-        nvg::BeginPath(nvg_context);
-        nvg::RoundedRect(nvg_context, m_pos.x + 0.5f, m_pos.y + 0.5f, m_size.width - 1,
+        nvg::BeginPath(context);
+        nvg::RoundedRect(context, m_pos.x + 0.5f, m_pos.y + 0.5f, m_size.width - 1,
                          m_size.height - 1, 2.5f);
-        nvg::StrokeColor(nvg_context, ds::color<f32>{ 0, 0, 0, 48 });
-        nvg::Stroke(nvg_context);
+        nvg::StrokeColor(context, ds::color<f32>{ 0, 0, 0, 48 });
+        nvg::Stroke(context);
 
-        nvg::FontSize(nvg_context, this->font_size());
-        nvg::FontFace(nvg_context, font::name::sans);
+        nvg::FontSize(context, this->font_size());
+        nvg::FontFace(context, font::name::sans);
 
         ds::point<f32> draw_pos{
             m_pos.x,
@@ -242,31 +244,31 @@ namespace rl::ui {
             i32 w{ 0 };
             i32 h{ 0 };
 
-            nvg::ImageSize(nvg_context, m_units_image, &w, &h);
+            nvg::ImageSize(context, m_units_image, &w, &h);
 
             f32 unit_height{ m_size.height * 0.4f };
             unit_width = w * unit_height / h;
 
             nvg::NVGpaint img_paint{ nvg::ImagePattern(
-                nvg_context, m_pos.x + m_size.width - x_spacing - unit_width,
+                context, m_pos.x + m_size.width - x_spacing - unit_width,
                 draw_pos.y - unit_height * 0.5f, unit_width, unit_height, 0.0f, m_units_image,
                 m_enabled ? 0.7f : 0.35f) };
 
-            nvg::BeginPath(nvg_context);
-            nvg::Rect(nvg_context, m_pos.x + m_size.width - x_spacing - unit_width,
+            nvg::BeginPath(context);
+            nvg::Rect(context, m_pos.x + m_size.width - x_spacing - unit_width,
                       draw_pos.y - unit_height * 0.5f, unit_width, unit_height);
-            nvg::FillPaint(nvg_context, img_paint);
-            nvg::Fill(nvg_context);
+            nvg::FillPaint(context, img_paint);
+            nvg::Fill(context);
 
             unit_width += 2;
         }
         else if (!m_units.empty())
         {
-            unit_width = nvg::TextBounds(nvg_context, 0.0f, 0.0f, m_units.c_str(), nullptr, nullptr);
+            unit_width = nvg::TextBounds(context, 0.0f, 0.0f, m_units.c_str(), nullptr, nullptr);
 
-            nvg::FillColor(nvg_context, ds::color<f32>{ 255, 255, 255, m_enabled ? 64 : 32 });
-            nvg::TextAlign(nvg_context, Text::Alignment::HRightVMiddle);
-            nvg::Text(nvg_context, m_pos.x + m_size.width - x_spacing, draw_pos.y, m_units.c_str(),
+            nvg::FillColor(context, ds::color<f32>{ 255, 255, 255, m_enabled ? 64 : 32 });
+            nvg::TextAlign(context, Text::Alignment::HRightVMiddle);
+            nvg::Text(context, m_pos.x + m_size.width - x_spacing, draw_pos.y, m_units.c_str(),
                       nullptr);
 
             unit_width += 2;
@@ -277,73 +279,72 @@ namespace rl::ui {
         {
             spin_arrows_width = 14.0f;
 
-            nvg::FontFace(nvg_context, "icons");
-            nvg::FontSize(nvg_context,
-                          ((m_font_size < 0.0f) ? m_theme->button_font_size : m_font_size) *
-                              this->icon_scale());
+            nvg::FontFace(context, "icons");
+            nvg::FontSize(context, ((m_font_size < 0.0f) ? m_theme->button_font_size : m_font_size) *
+                                       this->icon_scale());
 
             bool spinning = m_mouse_down_pos.x != -1;
 
             {
                 // up button
                 bool hover{ m_mouse_focus && spin_area(m_mouse_pos) == SpinArea::Top };
-                nvg::FillColor(nvg_context, (m_enabled && (hover || spinning))
-                                                ? m_theme->text_color
-                                                : m_theme->disabled_text_color);
+                nvg::FillColor(context, (m_enabled && (hover || spinning))
+                                            ? m_theme->text_color
+                                            : m_theme->disabled_text_color);
 
                 auto icon{ utf8(std::to_underlying(m_theme->text_box_up_icon)) };
-                nvg::TextAlign(nvg_context, nvg::NVG_ALIGN_LEFT | nvg::NVG_ALIGN_MIDDLE);
+                nvg::TextAlign(context, nvg::NVG_ALIGN_LEFT | nvg::NVG_ALIGN_MIDDLE);
 
                 ds::point<f32> icon_pos{
                     m_pos.x + 4.0f,
                     m_pos.y + m_size.height / 2.0f - x_spacing / 2.0f,
                 };
 
-                nvg::Text(nvg_context, icon_pos.x, icon_pos.y, icon.data(), nullptr);
+                nvg::Text(context, icon_pos.x, icon_pos.y, icon.data(), nullptr);
             }
 
             {
                 // down button
                 bool hover{ m_mouse_focus && this->spin_area(m_mouse_pos) == SpinArea::Bottom };
-                nvg::FillColor(nvg_context, (m_enabled && (hover || spinning))
-                                                ? m_theme->text_color
-                                                : m_theme->disabled_text_color);
+                nvg::FillColor(context, (m_enabled && (hover || spinning))
+                                            ? m_theme->text_color
+                                            : m_theme->disabled_text_color);
 
                 auto icon{ utf8(m_theme->text_box_down_icon) };
-                nvg::TextAlign(nvg_context, Text::Alignment::HLeftVMiddle);
+                nvg::TextAlign(context, Text::Alignment::HLeftVMiddle);
 
                 ds::point<f32> icon_pos{
                     m_pos.x + 4.0f,
                     m_pos.y + m_size.height / 2.0f + x_spacing / 2.0f + 1.5f,
                 };
 
-                nvg::Text(nvg_context, icon_pos.x, icon_pos.y, icon.data(), nullptr);
+                nvg::Text(context, icon_pos.x, icon_pos.y, icon.data(), nullptr);
             }
 
-            nvg::FontSize(nvg_context, this->font_size());
-            nvg::FontFace(nvg_context, font::name::sans);
+            nvg::FontSize(context, this->font_size());
+            nvg::FontFace(context, font::name::sans);
         }
 
         switch (m_alignment)
         {
             case Alignment::Left:
-                nvg::TextAlign(nvg_context, Text::Alignment::HLeftVMiddle);
+                nvg::TextAlign(context, Text::Alignment::HLeftVMiddle);
                 draw_pos.x += x_spacing + spin_arrows_width;
                 break;
             case Alignment::Right:
-                nvg::TextAlign(nvg_context, Text::Alignment::HRightVMiddle);
+                nvg::TextAlign(context, Text::Alignment::HRightVMiddle);
                 draw_pos.x += m_size.width - unit_width - x_spacing;
                 break;
             case Alignment::Center:
-                nvg::TextAlign(nvg_context, Text::Alignment::HCenterVMiddle);
+                nvg::TextAlign(context, Text::Alignment::HCenterVMiddle);
                 draw_pos.x += m_size.width * 0.5f;
                 break;
         }
 
-        nvg::FontSize(nvg_context, this->font_size());
-        nvg::FillColor(nvg_context, m_enabled && (!m_committed || !m_value.empty())
-                                        ? m_theme->text_color
-                                        : m_theme->disabled_text_color);
+        nvg::FontSize(context, this->font_size());
+        nvg::FillColor(context, m_enabled && (!m_committed || !m_value.empty())
+                                    ? m_theme->text_color
+                                    : m_theme->disabled_text_color);
 
         // clip visible text area
         f32 clip_x{ m_pos.x + x_spacing + spin_arrows_width - 1.0f };
@@ -351,15 +352,15 @@ namespace rl::ui {
         f32 clip_width{ m_size.width - unit_width - spin_arrows_width - 2.0f * x_spacing + 2.0f };
         f32 clip_height{ m_size.height - 3.0f };
 
-        nvg::Save(nvg_context);
-        nvg::IntersectScissor(nvg_context, clip_x, clip_y, clip_width, clip_height);
+        nvg::Save(context);
+        nvg::IntersectScissor(context, clip_x, clip_y, clip_width, clip_height);
 
         ds::point<f32> old_draw_pos{ draw_pos };
         draw_pos.x += static_cast<i32>(m_text_offset);
 
         if (m_committed)
         {
-            nvg::Text(nvg_context, draw_pos.x, draw_pos.y,
+            nvg::Text(context, draw_pos.x, draw_pos.y,
                       m_value.empty() ? m_placeholder.c_str() : m_value.c_str(), nullptr);
         }
         else
@@ -368,16 +369,16 @@ namespace rl::ui {
             nvg::NVGglyphPosition glyphs[max_glyphs];
 
             std::array<f32, 4> text_bound = { 0.0f };
-            nvg::TextBounds(nvg_context, draw_pos.x, draw_pos.y, m_value_temp.c_str(), nullptr,
+            nvg::TextBounds(context, draw_pos.x, draw_pos.y, m_value_temp.c_str(), nullptr,
                             text_bound.data());
 
             f32 lineh{ text_bound[3] - text_bound[1] };
 
             // find cursor positions
-            i32 nglyphs{ nvg::TextGlyphPositions(nvg_context, draw_pos.x, draw_pos.y,
+            i32 nglyphs{ nvg::TextGlyphPositions(context, draw_pos.x, draw_pos.y,
                                                  m_value_temp.c_str(), nullptr, glyphs,
                                                  max_glyphs) };
-            this->update_cursor(nvg_context, text_bound[2], glyphs, nglyphs);
+            this->update_cursor(text_bound[2], glyphs, nglyphs);
 
             // compute text offset
             i32 prev_cpos{ m_cursor_pos > 0 ? m_cursor_pos - 1 : 0 };
@@ -394,13 +395,13 @@ namespace rl::ui {
             draw_pos.x = old_draw_pos.x + m_text_offset;
 
             // draw text with offset
-            nvg::Text(nvg_context, draw_pos.x, draw_pos.y, m_value_temp.c_str(), nullptr);
-            nvg::TextBounds(nvg_context, draw_pos.x, draw_pos.y, m_value_temp.c_str(), nullptr,
+            nvg::Text(context, draw_pos.x, draw_pos.y, m_value_temp.c_str(), nullptr);
+            nvg::TextBounds(context, draw_pos.x, draw_pos.y, m_value_temp.c_str(), nullptr,
                             text_bound.data());
 
             // recompute cursor positions
-            nglyphs = nvg::TextGlyphPositions(nvg_context, draw_pos.x, draw_pos.y,
-                                              m_value_temp.c_str(), nullptr, glyphs, max_glyphs);
+            nglyphs = nvg::TextGlyphPositions(context, draw_pos.x, draw_pos.y, m_value_temp.c_str(),
+                                              nullptr, glyphs, max_glyphs);
 
             if (m_cursor_pos > -1)
             {
@@ -414,25 +415,25 @@ namespace rl::ui {
                         std::swap(caretx, selx);
 
                     // draw selection
-                    nvg::BeginPath(nvg_context);
-                    nvg::FillColor(nvg_context, nvg::RGBA(255, 255, 255, 80));
-                    nvg::Rect(nvg_context, caretx, draw_pos.y - lineh * 0.5f, selx - caretx, lineh);
-                    nvg::Fill(nvg_context);
+                    nvg::BeginPath(context);
+                    nvg::FillColor(context, nvg::RGBA(255, 255, 255, 80));
+                    nvg::Rect(context, caretx, draw_pos.y - lineh * 0.5f, selx - caretx, lineh);
+                    nvg::Fill(context);
                 }
 
                 f32 caretx{ cursor_index_to_position(m_cursor_pos, text_bound[2], glyphs, nglyphs) };
 
                 // draw cursor
-                nvg::BeginPath(nvg_context);
-                nvg::MoveTo(nvg_context, caretx, draw_pos.y - lineh * 0.5f);
-                nvg::LineTo(nvg_context, caretx, draw_pos.y + lineh * 0.5f);
-                nvg::StrokeColor(nvg_context, nvg::RGBA(255, 192, 0, 255));
-                nvg::StrokeWidth(nvg_context, 1.0f);
-                nvg::Stroke(nvg_context);
+                nvg::BeginPath(context);
+                nvg::MoveTo(context, caretx, draw_pos.y - lineh * 0.5f);
+                nvg::LineTo(context, caretx, draw_pos.y + lineh * 0.5f);
+                nvg::StrokeColor(context, nvg::RGBA(255, 192, 0, 255));
+                nvg::StrokeWidth(context, 1.0f);
+                nvg::Stroke(context);
             }
         }
 
-        nvg::Restore(nvg_context);
+        nvg::Restore(context);
     }
 
     bool TextBox::on_mouse_entered(const Mouse& mouse)
@@ -820,8 +821,7 @@ namespace rl::ui {
         return false;
     }
 
-    void TextBox::update_cursor(nvg::NVGcontext*, f32 last_x, const nvg::NVGglyphPosition* glyphs,
-                                i32 size)
+    void TextBox::update_cursor(f32 last_x, const nvg::NVGglyphPosition* glyphs, i32 size)
     {
         // handle mouse cursor events
         if (m_mouse_down_pos.x != -1)

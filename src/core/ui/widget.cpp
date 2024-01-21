@@ -3,8 +3,8 @@
 #include "core/keyboard.hpp"
 #include "core/main_window.hpp"
 #include "core/mouse.hpp"
+#include "core/ui/canvas.hpp"
 #include "core/ui/dialog.hpp"
-#include "core/ui/gui_canvas.hpp"
 #include "core/ui/layout.hpp"
 #include "core/ui/popup.hpp"
 #include "core/ui/theme.hpp"
@@ -21,12 +21,12 @@ namespace rl::ui {
             parent->add_child(this);
     }
 
-    Widget::Widget(Widget* parent, const std::unique_ptr<NVGRenderer>& vec_renderer)
+    Widget::Widget(Widget* parent, const std::unique_ptr<NVGRenderer>& vg_renderer)
         : m_parent{ parent }
     {
-        runtime_assert(m_nvg_renderer == nullptr, "widget vectorized renderer already set");
-        if (m_nvg_renderer == nullptr)
-            m_nvg_renderer = vec_renderer.get();
+        runtime_assert(m_renderer == nullptr, "widget vectorized renderer already set");
+        if (m_renderer == nullptr)
+            m_renderer = vg_renderer.get();
 
         if (parent != nullptr)
             parent->add_child(this);
@@ -225,26 +225,28 @@ namespace rl::ui {
     f32 Widget::font_size() const
     {
         return (m_font_size < 0 && m_theme != nullptr)  //
-                 ? m_theme->standard_font_size        //
+                 ? m_theme->standard_font_size          //
                  : m_font_size;                         //
     }
 
-    ds::dims<f32> Widget::preferred_size(nvg::NVGcontext* nvg_context) const
+    ds::dims<f32> Widget::preferred_size() const
     {
-        return m_layout != nullptr                              //
-                 ? m_layout->preferred_size(nvg_context, this)  //
-                 : m_size;                                      //
+        auto&& context{ m_renderer->context() };
+        return m_layout != nullptr                          //
+                 ? m_layout->preferred_size(context, this)  //
+                 : m_size;                                  //
     }
 
-    void Widget::perform_layout(nvg::NVGcontext* nvg_context)
+    void Widget::perform_layout()
     {
+        auto&& context{ m_renderer->context() };
         if (m_layout != nullptr)
-            m_layout->perform_layout(nvg_context, this);
+            m_layout->perform_layout(context, this);
         else
         {
             for (auto child : m_children)
             {
-                auto&& pref{ child->preferred_size(nvg_context) };
+                auto&& pref{ child->preferred_size() };
                 auto&& fix{ child->fixed_size() };
 
                 child->set_size(ds::dims<f32>{
@@ -252,7 +254,7 @@ namespace rl::ui {
                     fix.height ? fix.height : pref.height,
                 });
 
-                child->perform_layout(nvg_context);
+                child->perform_layout();
             }
         }
     }
@@ -553,7 +555,7 @@ namespace rl::ui {
         static_cast<UICanvas*>(widget)->update_focus(this);
     }
 
-    void Widget::draw_mouse_intersection(nvg::NVGcontext* nvg_context, ds::point<i32> pt)
+    void Widget::draw_mouse_intersection(ds::point<i32> pt)
     {
         if (!this->contains(pt))
             return;
@@ -563,27 +565,28 @@ namespace rl::ui {
             m_size,
         };
 
-        m_nvg_renderer->draw_rect_outline(widget_rect, 1.0f, rl::Colors::Yellow, Outline::Inner);
+        m_renderer->draw_rect_outline(widget_rect, 1.0f, rl::Colors::Yellow, Outline::Inner);
 
         for (auto child : m_children)
         {
             if (!child->visible())
                 continue;
 
-            child->draw_mouse_intersection(nvg_context, pt);
+            child->draw_mouse_intersection(pt);
         }
     }
 
-    void Widget::draw(nvg::NVGcontext* nvg_context)
+    void Widget::draw()
     {
         if constexpr (Widget::DiagnosticsEnabled)
-            m_nvg_renderer->draw_rect_outline(ds::rect<f32>{ this->abs_position(), m_size }, 1.0f,
-                                              rl::Colors::Grey, Outline::Outer);
+            m_renderer->draw_rect_outline(ds::rect<f32>{ this->abs_position(), m_size }, 1.0f,
+                                          rl::Colors::Grey, Outline::Outer);
 
         if (m_children.empty())
             return;
 
-        nvg::Translate(nvg_context, m_pos.x, m_pos.y);
+        auto&& context{ m_renderer->context() };
+        nvg::Translate(context, m_pos.x, m_pos.y);
 
         for (auto child : m_children)
         {
@@ -592,18 +595,18 @@ namespace rl::ui {
 
             if constexpr (!Widget::DiagnosticsEnabled)
             {
-                m_nvg_renderer->push_render_state();
-                nvg::IntersectScissor(nvg_context, child->m_pos.x, child->m_pos.y,
-                                      child->m_size.width, child->m_size.height);
+                m_renderer->push_render_state();
+                nvg::IntersectScissor(context, child->m_pos.x, child->m_pos.y, child->m_size.width,
+                                      child->m_size.height);
             }
 
-            child->draw(nvg_context);
+            child->draw();
 
             if constexpr (!Widget::DiagnosticsEnabled)
-                m_nvg_renderer->pop_render_state();
+                m_renderer->pop_render_state();
         }
 
-        nvg::Translate(nvg_context, -m_pos.x, -m_pos.y);
+        nvg::Translate(context, -m_pos.x, -m_pos.y);
     }
 
     f32 Widget::icon_scale() const

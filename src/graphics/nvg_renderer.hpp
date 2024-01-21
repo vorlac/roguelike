@@ -14,6 +14,7 @@
 #include "utils/numeric.hpp"
 
 namespace rl {
+
     class NVGRenderer
     {
     public:
@@ -50,7 +51,7 @@ namespace rl {
         void draw_rect_outline(ds::rect<f32> rect, f32 stroke_width, ds::color<f32> color,
                                ui::Outline type);
 
-        nvg::NVGcontext* nvg_context() const;
+        nvg::NVGcontext* context() const;
 
     private:
         bool m_depth_buffer{ false };

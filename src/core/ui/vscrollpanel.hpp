@@ -19,9 +19,9 @@ namespace rl::ui {
         virtual bool on_mouse_drag(const Mouse& mouse, const Keyboard& kb) override;
 
     public:
-        virtual void draw(nvg::NVGcontext* ctx) override;
-        virtual void perform_layout(nvg::NVGcontext* ctx) override;
-        virtual ds::dims<f32> preferred_size(nvg::NVGcontext* ctx) const override;
+        virtual void draw() override;
+        virtual void perform_layout() override;
+        virtual ds::dims<f32> preferred_size() const override;
 
     protected:
         f32 m_child_preferred_height{ 0.0f };

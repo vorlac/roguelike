@@ -1,12 +1,11 @@
 #pragma once
 #include <string>
 
-#include "core/ui/checkbox.hpp"
-// #include "core/ui/colorpicker.hpp"
 #include "core/assert.hpp"
+#include "core/ui/canvas.hpp"
+#include "core/ui/checkbox.hpp"
 #include "core/ui/combobox.hpp"
 #include "core/ui/dialog.hpp"
-#include "core/ui/gui_canvas.hpp"
 #include "core/ui/label.hpp"
 #include "core/ui/layout.hpp"
 #include "core/ui/textbox.hpp"
@@ -27,16 +26,16 @@ namespace rl::ui {
     class FormHelper
     {
     public:
-        FormHelper(ui::UICanvas* screen)
+        FormHelper(UICanvas* screen)
             : m_ui_canvas{ screen }
         {
         }
 
-        ui::Dialog* add_dialog(const ds::point<i32>& pos, const std::string& title = "Untitled")
+        Dialog* add_dialog(const ds::point<i32>& pos, const std::string& title = "Untitled")
         {
             runtime_assert(m_ui_canvas != nullptr, "invalid dialog");
 
-            m_dialog = new ui::Dialog{ m_ui_canvas, title };
+            m_dialog = new Dialog{ m_ui_canvas, title };
             m_layout = new AdvancedGridLayout{ { 10, 0, 10, 0 }, {} };
 
             m_layout->set_margin(10);
@@ -48,10 +47,10 @@ namespace rl::ui {
             return m_dialog;
         }
 
-        ui::Label* add_group(const std::string& caption)
+        Label* add_group(const std::string& caption)
         {
             Theme* theme{ m_dialog->theme() };
-            ui::Label* label{ new ui::Label{
+            Label* label{ new Label{
                 m_dialog,
                 caption,
                 theme->form_group_font_name,
@@ -62,7 +61,7 @@ namespace rl::ui {
                                                            : m_dialog->header_height());
 
             m_layout->append_row(0);
-            m_layout->set_anchor(label, ui::Anchor{ 0, m_layout->row_count() - 1, 4, 1 });
+            m_layout->set_anchor(label, Anchor{ 0, m_layout->row_count() - 1, 4, 1 });
             m_layout->append_row(theme->form_post_group_spacing);
 
             return label;
@@ -75,7 +74,7 @@ namespace rl::ui {
         {
             Theme* theme{ m_dialog->theme() };
 
-            ui::Label* label = new ui::Label{
+            Label* label = new Label{
                 m_dialog,
                 label_text,
                 theme->form_label_font_name,
@@ -107,8 +106,8 @@ namespace rl::ui {
                 m_layout->append_row(theme->form_variable_spacing);
 
             m_layout->append_row(0);
-            m_layout->set_anchor(label, ui::Anchor{ 1, m_layout->row_count() - 1 });
-            m_layout->set_anchor(widget, ui::Anchor{ 3, m_layout->row_count() - 1 });
+            m_layout->set_anchor(label, Anchor{ 1, m_layout->row_count() - 1 });
+            m_layout->set_anchor(widget, Anchor{ 3, m_layout->row_count() - 1 });
 
             return widget;
         }
@@ -127,10 +126,10 @@ namespace rl::ui {
                 editable);
         }
 
-        ui::Button* add_button(const std::string& label, const std::function<void()>& cb)
+        Button* add_button(const std::string& label, const std::function<void()>& cb)
         {
             Theme* theme{ m_dialog->theme() };
-            ui::Button* button{ new Button{ m_dialog, label } };
+            Button* button{ new Button{ m_dialog, label } };
 
             button->set_callback(cb);
             // button->set_fixed_height(32);
@@ -139,28 +138,28 @@ namespace rl::ui {
                 m_layout->append_row(theme->form_variable_spacing);
 
             m_layout->append_row(0);
-            m_layout->set_anchor(button, ui::Anchor{ 1, m_layout->row_count() - 1, 3, 1 });
+            m_layout->set_anchor(button, Anchor{ 1, m_layout->row_count() - 1, 3, 1 });
 
             return button;
         }
 
-        void add_widget(const std::string& label_text, ui::Widget* widget)
+        void add_widget(const std::string& label_text, Widget* widget)
         {
             Theme* theme{ m_dialog->theme() };
             m_layout->append_row(0);
 
             if (label_text.empty())
-                m_layout->set_anchor(widget, ui::Anchor{ 1, m_layout->row_count() - 1, 3, 1 });
+                m_layout->set_anchor(widget, Anchor{ 1, m_layout->row_count() - 1, 3, 1 });
             else
             {
-                ui::Label* label = new ui::Label{
+                Label* label = new Label{
                     m_dialog,
                     label_text,
                     theme->form_label_font_name,
                     theme->form_label_font_size,
                 };
-                m_layout->set_anchor(label, ui::Anchor{ 1, m_layout->row_count() - 1 });
-                m_layout->set_anchor(widget, ui::Anchor{ 3, m_layout->row_count() - 1 });
+                m_layout->set_anchor(label, Anchor{ 1, m_layout->row_count() - 1 });
+                m_layout->set_anchor(widget, Anchor{ 3, m_layout->row_count() - 1 });
             }
         }
 
@@ -170,12 +169,12 @@ namespace rl::ui {
                 callback();
         }
 
-        ui::Dialog* dialog()
+        Dialog* dialog()
         {
             return m_dialog;
         }
 
-        void set_dialog(ui::Dialog* dialog)
+        void set_dialog(Dialog* dialog)
         {
             m_dialog = dialog;
             m_layout = dynamic_cast<AdvancedGridLayout*>(dialog->layout());
@@ -193,8 +192,8 @@ namespace rl::ui {
         }
 
     protected:
-        ds::shared<ui::UICanvas> m_ui_canvas{};
-        ds::shared<ui::Dialog> m_dialog{};
+        ds::shared<UICanvas> m_ui_canvas{};
+        ds::shared<Dialog> m_dialog{};
         ds::shared<AdvancedGridLayout> m_layout{};
         std::vector<std::function<void()>> m_refresh_callbacks;
         ds::dims<f32> m_fixed_size{ 0.0f, 0.0f };
@@ -203,11 +202,11 @@ namespace rl::ui {
     namespace detail {
 
         template <>
-        class FormWidget<bool, std::true_type> : public ui::CheckBox
+        class FormWidget<bool, std::true_type> : public CheckBox
         {
         public:
-            FormWidget(ui::Widget* p)
-                : ui::CheckBox{ p, "" }
+            FormWidget(Widget* p)
+                : CheckBox{ p, "" }
             {
                 this->set_fixed_width(20);
             }
@@ -232,8 +231,8 @@ namespace rl::ui {
         class FormWidget<T, typename std::is_enum<T>::type> : public ComboBox
         {
         public:
-            FormWidget(ui::Widget* p)
-                : ui::ComboBox{ p }
+            FormWidget(Widget* p)
+                : ComboBox{ p }
             {
             }
 
@@ -250,7 +249,7 @@ namespace rl::ui {
 
             void set_callback(const std::function<void(const T&)>& cb)
             {
-                ui::ComboBox::set_callback([cb](i32 v) {
+                ComboBox::set_callback([cb](i32 v) {
                     cb(static_cast<T>(v));
                 });
             }
@@ -265,7 +264,7 @@ namespace rl::ui {
         class FormWidget<T, typename std::is_integral<T>::type> : public IntBox<T>
         {
         public:
-            FormWidget(ui::Widget* p)
+            FormWidget(Widget* p)
                 : IntBox<T>{ p }
             {
                 this->set_alignment(TextBox::Alignment::Right);
@@ -276,7 +275,7 @@ namespace rl::ui {
         class FormWidget<T, typename std::is_floating_point<T>::type> : public FloatBox<T>
         {
         public:
-            FormWidget(ui::Widget* p)
+            FormWidget(Widget* p)
                 : FloatBox<T>{ p }
             {
                 this->set_alignment(TextBox::Alignment::Right);
@@ -284,18 +283,18 @@ namespace rl::ui {
         };
 
         template <>
-        class FormWidget<std::string, std::true_type> : public ui::TextBox
+        class FormWidget<std::string, std::true_type> : public TextBox
         {
         public:
-            FormWidget(ui::Widget* p)
-                : ui::TextBox{ p }
+            FormWidget(Widget* p)
+                : TextBox{ p }
             {
                 this->set_alignment(TextBox::Alignment::Left);
             }
 
             void set_callback(const std::function<void(const std::string&)>& cb)
             {
-                ui::TextBox::set_callback([cb](const std::string& str) {
+                TextBox::set_callback([cb](const std::string& str) {
                     cb(str);
                     return true;
                 });

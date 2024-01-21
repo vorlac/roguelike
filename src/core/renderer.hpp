@@ -12,7 +12,6 @@ struct NVGLUframebuffer;
 
 namespace rl {
     class MainWindow;
-    class NVGRenderer;
 
     class OpenGLRenderer
     {
@@ -45,19 +44,21 @@ namespace rl {
             constexpr static inline auto Invalid = SDL3::SDL_BLENDMODE_INVALID;
         };
 
-        constexpr static inline OpenGLRenderer::Properties DEFAULT_PROPERTY_FLAGS = {
+        constexpr static inline OpenGLRenderer::Properties DefaultProperties = {
             OpenGLRenderer::Properties::HWAccelerated
         };
 
     public:
-        explicit OpenGLRenderer(rl::MainWindow& window, OpenGLRenderer::Properties flags);
+        explicit OpenGLRenderer(
+            MainWindow& window,
+            OpenGLRenderer::Properties flags = OpenGLRenderer::DefaultProperties);
+
         ~OpenGLRenderer() = default;
 
         SDL3::SDL_GLContext gl_context() const;
-        nvg::NVGcontext* nvg_context();
 
         bool clear();
-        bool swap_buffers(rl::MainWindow& window);
+        bool swap_buffers(MainWindow& window);
 
         ds::dims<i32> get_output_size() const;
         ds::rect<i32> get_viewport() const;
@@ -67,33 +68,14 @@ namespace rl {
         bool set_target();
         bool set_draw_blend_mode(const SDL3::SDL_BlendMode blend_mode);
 
-    public:
-        const std::unique_ptr<NVGRenderer>& vectorized_renderer() const
-        {
-            return m_nvg_renderer;
-        }
-
-        void draw_rect_outline(ds::rect<i32> rect, f32 stroke_width, ds::color<f32> color,
-                               ui::Outline outline_type)
-        {
-            m_nvg_renderer->draw_rect_outline(
-                std::forward<ds::rect<i32>>(rect), std::forward<f32>(stroke_width),
-                std::forward<ds::color<f32>>(color), std::forward<ui::Outline>(outline_type));
-        }
-
     private:
         explicit OpenGLRenderer() = delete;
         explicit OpenGLRenderer(const OpenGLRenderer& other) = delete;
         explicit OpenGLRenderer(OpenGLRenderer& other) = delete;
 
     private:
-        constexpr static inline bool GuiWidgetDiagnostics{ true };
-        constexpr static inline bool NanoVGDiagnostics{ true };
-        constexpr static inline ds::color<f32> m_background_color{ rl::Colors::Background };
-        // constexpr static inline ds::color<f32> m_background_color{ 29, 32, 39 };
-
-        rl::OpenGLRenderer::Properties m_properties{ Properties::None };
+        constexpr static inline ds::color m_bg_color{ rl::Colors::Background };
+        Properties m_properties{ OpenGLRenderer::DefaultProperties };
         SDL3::SDL_GLContext m_sdl_glcontext{ nullptr };
-        std::unique_ptr<rl::NVGRenderer> m_nvg_renderer{ nullptr };
     };
 }

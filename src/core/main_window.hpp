@@ -26,6 +26,7 @@ SDL_C_LIB_END
 namespace rl {
     class EventHandler;
     class OpenGLRenderer;
+    class NVGRenderer;
 
     using WindowID = SDL3::SDL_WindowID;
     using DisplayID = SDL3::SDL_DisplayID;
@@ -91,9 +92,9 @@ namespace rl {
 
         struct Properties : public std::bitset<sizeof(u32) * 8>
         {
-            using sdl_type = SDL3::SDL_WindowFlags;
+            using type = SDL3::SDL_WindowFlags;
 
-            enum Flag : std::underlying_type_t<sdl_type> {
+            enum Flag : std::underlying_type_t<type> {
                 None            = 0,
                 Fullscreen      = SDL3::SDL_WINDOW_FULLSCREEN,          // window is in fullscreen mode
                 OpenGL          = SDL3::SDL_WINDOW_OPENGL,              // window usable with OpenGL context
@@ -120,14 +121,14 @@ namespace rl {
                 NotFocusable    = SDL3::SDL_WINDOW_NOT_FOCUSABLE,       // window should not be focusable
             };
 
-            constexpr inline operator sdl_type()
+            constexpr inline operator type()
             {
-                return static_cast<sdl_type>(this->to_ulong());
+                return static_cast<type>(this->to_ulong());
             }
 
-            constexpr inline operator sdl_type() const
+            constexpr inline operator type() const
             {
-                return static_cast<sdl_type>(this->to_ulong());
+                return static_cast<type>(this->to_ulong());
             }
         };
 
@@ -223,12 +224,13 @@ namespace rl {
         ui::Widget* button_panel();
         ds::dims<i32> get_size();
         ds::dims<i32> get_render_size();
+
+        bool is_valid() const;
+        bool input_grabbed() const;
         ds::dims<i32> get_min_size() const;
         ds::dims<i32> get_max_size() const;
         ds::point<i32> get_position() const;
         f32 get_opacity() const;
-        bool is_valid() const;
-        bool input_grabbed() const;
 
         SDL3::SDL_Window* sdl_handle() const;
         SDL3::SDL_WindowFlags get_flags() const;
@@ -236,7 +238,9 @@ namespace rl {
 
         ui::UICanvas* gui() const;
 
-        const std::unique_ptr<OpenGLRenderer>& renderer() const;
+        const std::unique_ptr<OpenGLRenderer>& glrenderer() const;
+        const std::unique_ptr<NVGRenderer>& vgrenderer() const;
+
         const Keyboard& keyboard() const;
         const Mouse& mouse() const;
 
@@ -293,7 +297,11 @@ namespace rl {
         MainWindow(SDL3::SDL_Window* other) = delete;
 
     private:
-        bool m_vsync{ true };
+        SDL3::SDL_Window* m_sdl_window{ nullptr };
+        std::unique_ptr<NVGRenderer> m_vg_renderer;
+        std::unique_ptr<OpenGLRenderer> m_gl_renderer;
+        Keyboard m_keyboard{};
+        Mouse m_mouse{};
 
         std::string m_title{};
         WindowID m_window_id{ 0 };
@@ -301,28 +309,10 @@ namespace rl {
         Properties m_properties{ Properties::None };
         ds::rect<i32> m_window_rect{ 0, 0, 0, 0 };
         ui::UICanvas* m_gui_canvas{ nullptr };
-        SDL3::SDL_Window* m_sdl_window{ nullptr };
         ds::dims<i32> m_framebuf_size{ 0, 0 };
-        std::unique_ptr<rl::OpenGLRenderer> m_renderer;
-        Keyboard m_keyboard{};
-        Mouse m_mouse{};
 
-        // The content display scale relative to a window's pixel size.
-        //
-        // This is a combination of the window pixel density and the display content scale,
-        // and is the expected scale for displaying content in this window. For example, if a
-        // 3840x2160 window had a display scale of 2.0, the user expects the content to take
-        // twice as many pixels and be the same physical size as if it were being displayed in
-        // a 1920x1080 window with a display scale of 1.0. Conceptually this value corresponds
-        // to the scale display setting, and is updated when that setting is changed, or the
-        // window moves to a display with a different scale setting.
         f32 m_pixel_ratio{ 1.0f };
-
-        // The pixel density of a window.
-        //
-        // This is a ratio of pixel size to window size.
-        // For example, if the window is 1920x1080 and it has a high density
-        // back buffer of 3840x2160 pixels, it would have a pixel density of 2.0.
         f32 m_pixel_density{ 1.0f };
+        bool m_vsync{ true };
     };
 }

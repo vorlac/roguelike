@@ -39,7 +39,6 @@ namespace rl::ui {
         void set_background(ds::color<u8> background);
         void set_resize_callback(const std::function<void(ds::dims<f32>)>& callback);
         void add_update_callback(const std::function<void()>& update_func);
-        void drop_callback_event(i32 count, const char** filenames);
 
         std::string title() const;
         ds::dims<i32> frame_buffer_size() const;
@@ -53,14 +52,11 @@ namespace rl::ui {
         bool tooltip_fade_in_progress() const;
 
         using Widget::perform_layout;
-        void perform_layout();
-
         ComponentFormat component_format() const;
         PixelFormat pixel_format() const;
 
     public:
         virtual bool update();
-
         virtual bool draw_all();
         virtual bool draw_setup();
         virtual bool draw_contents();
@@ -83,30 +79,26 @@ namespace rl::ui {
 
         virtual bool on_moved(ds::point<f32> pt);
         virtual bool on_resized(ds::dims<f32> size);
-        virtual bool drop_event(const std::vector<std::string>& filenames);
 
     protected:
-        Widget* m_drag_widget{ nullptr };
-        nvg::NVGcontext* m_nvg_context{ nullptr };
-
-        std::vector<Widget*> m_focus_path{};
-        std::function<void(ds::dims<f32>)> m_resize_callback;
-        std::vector<std::function<void()>> m_update_callbacks;
-        std::array<SDL3::SDL_Cursor*, Mouse::Cursor::CursorCount> m_cursors{};
-
-        std::string m_title{};
-        ds::color<u8> m_background_color{ 29, 32, 39 };
         ds::dims<i32> m_framebuf_size{ 0, 0 };
+        std::vector<Widget*> m_focus_path{};
+        Widget* m_drag_widget{ nullptr };
+        std::string m_title{};
 
         f32 m_last_interaction{ 0.0f };
         f32 m_tooltip_delay{ 0.5f };
         f32 m_pixel_ratio{ 1.0f };
 
-        bool m_drag_active{ false };
-        bool m_process_events{ true };
         bool m_redraw{ true };
+        bool m_process_events{ true };
+        bool m_drag_active{ false };
 
-        const Mouse& m_mouse_ref{};
-        const Keyboard& m_kb_ref{};
+        const Mouse& m_mouse{};
+        const Keyboard& m_keyboard{};
+
+        std::function<void(ds::dims<f32>)> m_resize_callback;
+        std::vector<std::function<void()>> m_update_callbacks;
+        std::array<SDL3::SDL_Cursor*, Mouse::Cursor::CursorCount> m_cursors{};
     };
 }

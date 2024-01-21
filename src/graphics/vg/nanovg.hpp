@@ -612,14 +612,14 @@ namespace rl::nvg {
     // are encountered. Words longer than the max width are slit at nearest character (i.e. no
     // hyphenation).
     void TextBox(NVGcontext* ctx, float x, float y, float breakRowWidth, const char* string,
-                 const char* end);
+                 const char* end = nullptr);
 
     // Measures the specified text string. Parameter bounds should be a pointer to float[4],
     // if the bounding box of the text should be returned. The bounds value are [xmin,ymin,
     // xmax,ymax] Returns the horizontal advance of the measured text (i.e. where the next
     // character should drawn). Measured values are returned in local coordinate space.
-    float TextBounds(NVGcontext* ctx, float x, float y, const char* string, const char* end,
-                     float* bounds);
+    float TextBounds(NVGcontext* ctx, float x, float y, const char* string,
+                     const char* end = nullptr, float* bounds = nullptr);
 
     // Measures the specified multi-text string. Parameter bounds should be a pointer to
     // float[4], if the bounding box of the text should be returned. The bounds value are

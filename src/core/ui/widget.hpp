@@ -23,9 +23,12 @@ namespace rl::ui {
 
     class Widget : public ds::refcounted
     {
+    private:
+        friend class UICanvas;
+        Widget(Widget* parent, const std::unique_ptr<NVGRenderer>& vg_renderer);
+
     public:
         Widget(Widget* parent);
-        Widget(Widget* parent, const std::unique_ptr<NVGRenderer>& vec_renderer);
 
         virtual ~Widget();
 
@@ -117,14 +120,14 @@ namespace rl::ui {
         virtual bool on_mouse_drag(const Mouse& mouse, const Keyboard& kb);
 
     public:
-        virtual void draw(nvg::NVGcontext* nvg_context);
+        virtual void draw();
         virtual void set_theme(Theme* theme);
         virtual void add_child(i32 index, Widget* widget);
-        virtual void perform_layout(nvg::NVGcontext* nvg_context);
-        virtual ds::dims<f32> preferred_size(nvg::NVGcontext* nvg_context) const;
+        virtual void perform_layout();
+        virtual ds::dims<f32> preferred_size() const;
 
     public:
-        virtual void draw_mouse_intersection(nvg::NVGcontext* nvg_context, ds::point<i32> pt);
+        virtual void draw_mouse_intersection(ds::point<i32> pt);
 
     protected:
         f32 icon_scale() const;
@@ -133,7 +136,7 @@ namespace rl::ui {
         Widget* m_parent{ nullptr };
         ds::shared<Theme> m_theme{ nullptr };
         ds::shared<Layout> m_layout{ nullptr };
-        static inline rl::NVGRenderer* m_nvg_renderer{ nullptr };
+        static inline rl::NVGRenderer* m_renderer{ nullptr };
 
         bool m_enabled{ true };
         bool m_visible{ true };

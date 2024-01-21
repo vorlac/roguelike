@@ -43,10 +43,9 @@ namespace rl {
         return gl_context;
     }
 
-    OpenGLRenderer::OpenGLRenderer(rl::MainWindow& window, rl::OpenGLRenderer::Properties flags)
+    OpenGLRenderer::OpenGLRenderer(MainWindow& window, OpenGLRenderer::Properties flags)
         : m_properties{ flags }
         , m_sdl_glcontext{ create_opengl_context(window.sdl_handle()) }
-        , m_nvg_renderer{ std::make_unique<rl::NVGRenderer>() }
     {
         if (m_sdl_glcontext != nullptr)
         {
@@ -58,8 +57,7 @@ namespace rl {
 
     bool OpenGLRenderer::clear()
     {
-        glClearColor(m_background_color.r, m_background_color.g, m_background_color.b,
-                     m_background_color.a);
+        glClearColor(m_bg_color.r, m_bg_color.g, m_bg_color.b, m_bg_color.a);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         return true;
     }
@@ -74,11 +72,6 @@ namespace rl {
     SDL3::SDL_GLContext OpenGLRenderer::gl_context() const
     {
         return m_sdl_glcontext;
-    }
-
-    nvg::NVGcontext* OpenGLRenderer::nvg_context()
-    {
-        return m_nvg_renderer->nvg_context();
     }
 
     ds::dims<i32> OpenGLRenderer::get_output_size() const

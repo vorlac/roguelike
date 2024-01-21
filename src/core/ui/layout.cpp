@@ -1,8 +1,8 @@
 #include <numeric>
 #include <utility>
 
+#include "core/ui/canvas.hpp"
 #include "core/ui/dialog.hpp"
-#include "core/ui/gui_canvas.hpp"
 #include "core/ui/label.hpp"
 #include "core/ui/layout.hpp"
 #include "core/ui/theme.hpp"
@@ -51,7 +51,7 @@ namespace rl::ui {
             if (!first_child)
                 size.height += m_spacing;
 
-            const ds::dims<f32> ps{ w->preferred_size(nvg_context) };
+            const ds::dims<f32> ps{ w->preferred_size() };
             const ds::dims<f32> fs{ w->fixed_size() };
             const ds::dims<f32> target_size{
                 fs.width ? fs.width : ps.width,
@@ -101,7 +101,7 @@ namespace rl::ui {
                 position += m_spacing;
 
             first_child = false;
-            const ds::dims<f32> ps{ child->preferred_size(nvg_context) };
+            const ds::dims<f32> ps{ child->preferred_size() };
             const ds::dims<f32> fs{ child->fixed_size() };
             ds::dims<f32> target_size{
                 fs.width ? fs.width : ps.width,
@@ -135,7 +135,7 @@ namespace rl::ui {
 
             child->set_position(pos);
             child->set_size(target_size);
-            child->perform_layout(nvg_context);
+            child->perform_layout();
             position += target_size.width;
         }
     }
@@ -202,7 +202,7 @@ namespace rl::ui {
                 height += (label == nullptr) ? m_spacing : m_group_spacing;
             first = false;
 
-            ds::dims<f32> ps{ c->preferred_size(nvg_context) };
+            ds::dims<f32> ps{ c->preferred_size() };
             ds::dims<f32> fs{ c->fixed_size() };
             ds::dims<f32> target_size{
                 fs.width ? fs.width : ps.width,
@@ -252,7 +252,7 @@ namespace rl::ui {
             const ds::dims<f32> fs{ child->fixed_size() };
             const ds::dims<f32> ps{
                 available_width - (indent_cur ? m_group_indent : 0.0f),
-                child->preferred_size(nvg_context).height,
+                child->preferred_size().height,
             };
 
             const ds::dims<f32> target_size{
@@ -262,7 +262,7 @@ namespace rl::ui {
 
             child->set_position({ m_margin + (indent_cur ? m_group_indent : 0.0f), height });
             child->set_size(target_size);
-            child->perform_layout(nvg_context);
+            child->perform_layout();
 
             height += target_size.height;
             if (label != nullptr)
@@ -373,7 +373,7 @@ namespace rl::ui {
                 }
                 while (!w->visible());
 
-                ds::dims<f32> ps{ w->preferred_size(nvg_context) };
+                ds::dims<f32> ps{ w->preferred_size() };
                 ds::dims<f32> fs{ w->fixed_size() };
                 ds::dims<f32> target_size{
                     fs.width ? fs.width : ps.width,
@@ -478,7 +478,7 @@ namespace rl::ui {
                 }
                 while (!child->visible());
 
-                const ds::dims<f32> ps{ child->preferred_size(nvg_context) };
+                const ds::dims<f32> ps{ child->preferred_size() };
                 ds::dims<f32> fs{ child->fixed_size() };
                 ds::dims<f32> target_size{
                     fs.width ? fs.width : ps.width,
@@ -522,7 +522,7 @@ namespace rl::ui {
 
                 child->set_position(item_pos);
                 child->set_size(target_size);
-                child->perform_layout(nvg_context);
+                child->perform_layout();
 
                 axis1_pos += static_cast<i32>(grid[axis1][i1] + this->spacing(Axis(axis1)));
             }
@@ -700,7 +700,7 @@ namespace rl::ui {
                 f32 item_pos{ axis_grids[axis_anchor_pos] };
                 f32 cell_size{ axis_grids[axis_anchor_pos + axis_anchor_size] - item_pos };
 
-                const ds::dims<f32> widget_ps{ child->preferred_size(nvg_context) };
+                const ds::dims<f32> widget_ps{ child->preferred_size() };
                 const ds::dims<f32> widget_fs{ child->fixed_size() };
                 const f32 ps{ axis == Axis::Horizontal ? widget_ps.width : widget_ps.height };
                 const f32 fs{ axis == Axis::Horizontal ? widget_fs.width : widget_fs.height };
@@ -731,7 +731,7 @@ namespace rl::ui {
 
                 child->set_position(pos);
                 child->set_size(size);
-                child->perform_layout(nvg_context);
+                child->perform_layout();
             }
         }
     }
@@ -782,7 +782,7 @@ namespace rl::ui {
                     if (cell_is_single_grid_sized != compute_single_cell_sizes)
                         continue;
 
-                    const ds::dims<f32> widget_ps{ w->preferred_size(nvg_context) };
+                    const ds::dims<f32> widget_ps{ w->preferred_size() };
                     const ds::dims<f32> widget_fs{ w->fixed_size() };
 
                     const f32 ps{ col_axis ? widget_ps.width : widget_ps.height };

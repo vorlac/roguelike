@@ -3,18 +3,17 @@
 #include "core/assert.hpp"
 #include "core/keyboard.hpp"
 #include "core/mouse.hpp"
-#include "core/ui/gui_canvas.hpp"
+#include "core/ui/canvas.hpp"
 #include "core/ui/popup.hpp"
 #include "utils/io.hpp"
 
 namespace rl::ui {
 
     UICanvas::UICanvas(ds::dims<f32> size, const Mouse& mouse, const Keyboard& kb,
-                       const std::unique_ptr<NVGRenderer>& nvg_renderer)
-        : Widget{ nullptr, nvg_renderer }
-        , m_nvg_context{ nvg_renderer ? nvg_renderer->nvg_context() : nullptr }
-        , m_mouse_ref{ mouse }
-        , m_kb_ref{ kb }
+                       const std::unique_ptr<NVGRenderer>& vg_renderer)
+        : Widget{ nullptr, vg_renderer }
+        , m_mouse{ mouse }
+        , m_keyboard{ kb }
     {
         m_size = size;
 
@@ -22,7 +21,7 @@ namespace rl::ui {
             m_cursors[i] = SDL3::SDL_CreateSystemCursor(Mouse::Cursor::type(i));
 
         this->set_visible(true);
-        this->set_theme(new Theme(m_nvg_context));
+        this->set_theme(new Theme{ vg_renderer->context() });
         this->on_mouse_move({}, {});
 
         m_last_interaction = m_timer.elapsed();
@@ -46,11 +45,6 @@ namespace rl::ui {
         return m_update_callbacks.size() > 0;
     }
 
-    void UICanvas::perform_layout()
-    {
-        this->perform_layout(m_nvg_context);
-    }
-
     bool UICanvas::draw_setup()
     {
         return true;
@@ -64,16 +58,17 @@ namespace rl::ui {
 
     bool UICanvas::draw_widgets()
     {
+        auto&& context{ m_renderer->context() };
         constexpr static f32 PIXEL_RATIO = 1.0f;
-        nvg::BeginFrame(m_nvg_context, m_size.width, m_size.height, PIXEL_RATIO);
+        nvg::BeginFrame(context, m_size.width, m_size.height, PIXEL_RATIO);
 
-        this->draw(m_nvg_context);
+        this->draw();
 
         // ================================================================
         // ================= DEBUG RENDERING ==============================
         // ================================================================
 
-        this->draw_mouse_intersection(m_nvg_context, m_mouse_ref.pos());
+        this->draw_mouse_intersection(m_mouse.pos());
 
         // ================================================================
         // ================================================================
@@ -82,7 +77,7 @@ namespace rl::ui {
         const f32 elapsed{ m_timer.elapsed() - m_last_interaction };
         if (elapsed > m_tooltip_delay)
         {
-            const Widget* widget{ this->find_widget(m_mouse_ref.pos()) };
+            const Widget* widget{ this->find_widget(m_mouse.pos()) };
             if (widget != nullptr && !widget->tooltip().empty())
             {
                 constexpr f32 tooltip_width{ 150.0f };
@@ -92,18 +87,18 @@ namespace rl::ui {
                         ds::point<f32>(widget->width() / 2.0f, widget->height() + 10.0f),
                 };
 
-                nvg::FontFace(m_nvg_context, font::name::sans);
-                nvg::FontSize(m_nvg_context, 20.0f);
-                nvg::TextAlign(m_nvg_context, Text::Alignment::HLeftVTop);
-                nvg::TextLineHeight(m_nvg_context, 1.125f);
-                nvg::TextBounds(m_nvg_context, pos.x, pos.y, widget->tooltip().c_str(), nullptr,
+                nvg::FontFace(context, font::name::sans);
+                nvg::FontSize(context, 20.0f);
+                nvg::TextAlign(context, Text::Alignment::HLeftVTop);
+                nvg::TextLineHeight(context, 1.125f);
+                nvg::TextBounds(context, pos.x, pos.y, widget->tooltip().c_str(), nullptr,
                                 bounds.data());
 
                 f32 height{ (bounds[2] - bounds[0]) / 2.0f };
                 if (height > tooltip_width / 2)
                 {
-                    nvg::TextAlign(m_nvg_context, Text::Alignment::HMiddleVTop);
-                    nvg::TextBoxBounds(m_nvg_context, pos.x, pos.y, tooltip_width,
+                    nvg::TextAlign(context, Text::Alignment::HMiddleVTop);
+                    nvg::TextBoxBounds(context, pos.x, pos.y, tooltip_width,
                                        widget->tooltip().c_str(), nullptr, bounds.data());
 
                     height = (bounds[2] - bounds[0]) / 2;
@@ -119,30 +114,29 @@ namespace rl::ui {
                     bounds[2] -= shift;
                 }
 
-                nvg::GlobalAlpha(m_nvg_context,
-                                 std::min(1.0f, 2.0f * (elapsed - m_tooltip_delay)) * 0.8f);
+                nvg::GlobalAlpha(context, std::min(1.0f, 2.0f * (elapsed - m_tooltip_delay)) * 0.8f);
 
-                nvg::BeginPath(m_nvg_context);
-                nvg::FillColor(m_nvg_context, ds::color<f32>{ rl::Colors::DarkererGrey });
-                nvg::RoundedRect(m_nvg_context, bounds[0] - 4.0f - height, bounds[1] - 4.0f,
+                nvg::BeginPath(context);
+                nvg::FillColor(context, ds::color<f32>{ rl::Colors::DarkererGrey });
+                nvg::RoundedRect(context, bounds[0] - 4.0f - height, bounds[1] - 4.0f,
                                  (bounds[2] - bounds[0]) + 8.0f, (bounds[3] - bounds[1]) + 8.0f,
                                  3.0f);
 
                 const f32 px{ ((bounds[2] + bounds[0]) / 2.0f) - height + shift };
 
-                nvg::MoveTo(m_nvg_context, px, bounds[1] - 10);
-                nvg::LineTo(m_nvg_context, px + 7, bounds[1] + 1);
-                nvg::LineTo(m_nvg_context, px - 7, bounds[1] + 1);
-                nvg::Fill(m_nvg_context);
+                nvg::MoveTo(context, px, bounds[1] - 10);
+                nvg::LineTo(context, px + 7, bounds[1] + 1);
+                nvg::LineTo(context, px - 7, bounds[1] + 1);
+                nvg::Fill(context);
 
-                nvg::FillColor(m_nvg_context, ds::color<f32>{ rl::Colors::White });
-                nvg::FontBlur(m_nvg_context, 0.0f);
-                nvg::TextBox(m_nvg_context, pos.x - height, pos.y, tooltip_width,
+                nvg::FillColor(context, ds::color<f32>{ rl::Colors::White });
+                nvg::FontBlur(context, 0.0f);
+                nvg::TextBox(context, pos.x - height, pos.y, tooltip_width,
                              widget->tooltip().c_str(), nullptr);
             }
         }
 
-        nvg::EndFrame(m_nvg_context);
+        nvg::EndFrame(context);
 
         return true;
     }
@@ -274,11 +268,11 @@ namespace rl::ui {
     {
         // Is a tooltip currently fading in?
         const f32 elapsed{ m_timer.elapsed() - m_last_interaction };
-        if (elapsed < (m_tooltip_delay / 2) || elapsed > (m_tooltip_delay * 2))
+        if (elapsed < (m_tooltip_delay / 2.0f) || elapsed > (m_tooltip_delay * 2.0f))
             return false;
 
         // Temporarily increase the frame rate to fade in the tooltip
-        const Widget* widget{ this->find_widget(m_mouse_ref.pos()) };
+        const Widget* widget{ this->find_widget(m_mouse.pos()) };
         return widget != nullptr && !widget->tooltip().empty();
     }
 
@@ -315,10 +309,9 @@ namespace rl::ui {
 
     void UICanvas::move_dialog_to_front(Dialog* dialog)
     {
+        bool changed{ false };
         auto removal_iterator{ std::remove(m_children.begin(), m_children.end(), dialog) };
         m_children.erase(removal_iterator, m_children.end());
-
-        bool changed{ false };
         m_children.push_back(dialog);
 
         do
@@ -359,30 +352,14 @@ namespace rl::ui {
     {
         if (dialog->size() == ds::dims<f32>::zero())
         {
-            auto&& pref_size{ dialog->preferred_size(m_nvg_context) };
+            auto&& pref_size{ dialog->preferred_size() };
             dialog->set_size(pref_size);
-            dialog->perform_layout(m_nvg_context);
+            dialog->perform_layout();
         }
 
         ds::dims<f32> offset{ (m_size - dialog->size()) / 2.0f };
         ds::point<f32> position{ offset.width, offset.height };
         dialog->set_position(position);
-    }
-
-    bool UICanvas::drop_event(const std::vector<std::string>& filenames)
-    {
-        // do nothing,
-        // derived objects should define
-        return false;
-    }
-
-    void UICanvas::drop_callback_event(i32 count, const char** filenames)
-    {
-        std::vector<std::string> arg(count);
-        for (i32 i = 0; i < count; ++i)
-            arg[i] = filenames[i];
-
-        m_redraw |= this->drop_event(arg);
     }
 
     bool UICanvas::on_moved(ds::point<f32> pt)

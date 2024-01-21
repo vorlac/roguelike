@@ -25,9 +25,9 @@ namespace rl::ui {
         const Popup* popup() const;
 
     public:
-        virtual void draw(nvg::NVGcontext* ctx) override;
-        virtual ds::dims<f32> preferred_size(nvg::NVGcontext* ctx) const override;
-        virtual void perform_layout(nvg::NVGcontext* ctx) override;
+        virtual void draw() override;
+        virtual ds::dims<f32> preferred_size() const override;
+        virtual void perform_layout() override;
 
     protected:
         Popup* m_popup{};

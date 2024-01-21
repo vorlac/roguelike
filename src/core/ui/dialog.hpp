@@ -40,9 +40,9 @@ namespace rl {
             virtual bool on_mouse_exited(const Mouse& mouse) override;
 
         public:
-            virtual void draw(nvg::NVGcontext* nvg_context) override;
-            virtual void perform_layout(nvg::NVGcontext* nvg_context) override;
-            virtual ds::dims<f32> preferred_size(nvg::NVGcontext* nvg_context) const override;
+            virtual void draw() override;
+            virtual void perform_layout() override;
+            virtual ds::dims<f32> preferred_size() const override;
 
         protected:
             virtual void refresh_relative_placement();

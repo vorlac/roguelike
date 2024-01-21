@@ -71,17 +71,15 @@ namespace rl::ui {
 
     public:
         virtual void set_theme(Theme* theme) override;
-        virtual ds::dims<f32> preferred_size(nvg::NVGcontext* nvg_context) const override;
-        virtual void draw(nvg::NVGcontext* nvg_context) override;
+        virtual ds::dims<f32> preferred_size() const override;
+        virtual void draw() override;
 
     protected:
-        bool check_format(const std::string& input, const std::string& format);
         bool copy_selection();
         bool delete_selection();
-
         void paste_from_clipboard();
-        void update_cursor(nvg::NVGcontext* nvg_context, f32 last_x,
-                           const nvg::NVGglyphPosition* glyphs, i32 size);
+        bool check_format(const std::string& input, const std::string& format);
+        void update_cursor(f32 last_x, const nvg::NVGglyphPosition* glyphs, i32 size);
 
         f32 cursor_index_to_position(i32 index, f32 last_x, const nvg::NVGglyphPosition* glyphs,
                                      i32 size);

@@ -2909,7 +2909,7 @@ namespace rl::nvg {
     }
 
     void TextBox(NVGcontext* ctx, float x, float y, float breakRowWidth, const char* string,
-                 const char* end)
+                 const char* end /*= nullptr*/)
     {
         NVGstate* state = nvg__getState(ctx);
         NVGtextRow rows[2];
@@ -3231,8 +3231,8 @@ namespace rl::nvg {
         return nrows;
     }
 
-    float nvg::TextBounds(NVGcontext* ctx, float x, float y, const char* string, const char* end,
-                          float* bounds)
+    float nvg::TextBounds(NVGcontext* ctx, float x, float y, const char* string,
+                          const char* end /*= nullptr*/, float* bounds /*= nullptr*/)
     {
         NVGstate* state = nvg__getState(ctx);
         float scale = nvg__getFontScale(state) * ctx->devicePxRatio;

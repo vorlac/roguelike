@@ -63,16 +63,15 @@ namespace rl {
             bool ret{ this->setup() };
             bool bval{ true };
 
-            f32 fps{ 0.0f };
+            u64 frame_count{ 0 };
             f32 framerate{ 0.0f };
             f32 elapsed_time{ 0.0f };
-            std::string sval{ "asdsad" };
             f32 delta_time{ m_timer.delta() };
+            std::string sval{ "asdsad" };
             ui::Axis eval{ ui::Horizontal };
-            u64 frame_count{ 0 };
 
             auto gui{ m_main_window->gui() };
-            const std::unique_ptr<rl::OpenGLRenderer>& renderer{ m_main_window->renderer() };
+            const std::unique_ptr<rl::OpenGLRenderer>& renderer{ m_main_window->glrenderer() };
             gl::InstancedVertexBuffer vbo{ renderer->get_viewport() };
             ui::FormHelper* form{ new ui::FormHelper(gui) };
 
@@ -106,14 +105,15 @@ namespace rl {
                         "FFFF",
                     });
 
-                form->add_group("Other");
-                form->add_button("Pushbutton", []() {
+                form->add_group("Other Group");
+                form->add_button("Push Button", []() {
                     std::cout << "Button pressed." << std::endl;
                 });
 
                 gui->set_visible(true);
                 gui->perform_layout();
                 gui->update();
+
                 dialog->center();
             };
 
@@ -181,7 +181,7 @@ namespace rl {
                 });
 
                 gui->add_update_callback([&]() {
-                    auto&& fps_str{ fmt::to_string(fmt::format("{:.1f} fps", fps)) };
+                    auto&& fps_str{ fmt::to_string(fmt::format("{:.1f} fps", framerate)) };
                     stats_value_label->set_caption(std::move(fps_str));
                 });
 

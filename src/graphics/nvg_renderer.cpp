@@ -63,33 +63,32 @@ namespace rl {
         : m_nvg_context{ rl::create_nanovg_context(m_stencil_buffer, m_depth_buffer,
                                                    m_float_buffer) }
     {
-        ;
         this->load_fonts({
-            {
-                ui::font::name::sans_bold,
-                std::basic_string_view<u8>{
-                    roboto_regular_ttf,
-                    roboto_regular_ttf_size,
-                },
-            },
-            {
-                ui::font::name::sans_bold,
-                std::basic_string_view<u8>{
-                    roboto_bold_ttf,
-                    roboto_bold_ttf_size,
-                },
-            },
-            {
-                ui::font::name::sans_bold,
-                std::basic_string_view<u8>{
-                    fontawesome_solid_ttf,
-                    fontawesome_solid_ttf_size,
-                },
-            },
+            //{
+            //    ui::font::name::sans,
+            //    std::basic_string_view<u8>{
+            //        roboto_regular_ttf,
+            //        roboto_regular_ttf_size,
+            //    },
+            //},
+            //{
+            //    ui::font::name::sans_bold,
+            //    std::basic_string_view<u8>{
+            //        roboto_bold_ttf,
+            //        roboto_bold_ttf_size,
+            //    },
+            //},
+            //{
+            //    ui::font::name::mono,
+            //    std::basic_string_view<u8>{
+            //        fontawesome_solid_ttf,
+            //        fontawesome_solid_ttf_size,
+            //    },
+            //},
         });
     }
 
-    nvg::NVGcontext* NVGRenderer::nvg_context() const
+    nvg::NVGcontext* NVGRenderer::context() const
     {
         return m_nvg_context;
     }
@@ -174,7 +173,7 @@ namespace rl {
 
         return ds::rect<f32>{
             pos,
-            ds::dims<f32>{
+            ds::dims{
                 fold_width,
                 bounds[3] - bounds[1],
             },

@@ -8,13 +8,14 @@
 #include "core/assert.hpp"
 #include "core/main_window.hpp"
 #include "core/renderer.hpp"
-#include "core/ui/gui_canvas.hpp"
+#include "core/ui/canvas.hpp"
 #include "core/ui/layout.hpp"
 #include "core/ui/popup.hpp"
 #include "ds/dims.hpp"
 #include "ds/point.hpp"
 #include "ds/rect.hpp"
 #include "ds/vector2d.hpp"
+#include "graphics/nvg_renderer.hpp"
 #include "graphics/vg/nanovg.hpp"
 #include "sdl/defs.hpp"
 #include "sdl/utils.hpp"
@@ -53,10 +54,10 @@ namespace rl {
             m_sdl_window ? this->get_position() : ds::point<i32>::null(),
             dims,
         };
-        m_renderer = std::make_unique<OpenGLRenderer>(*this, OpenGLRenderer::DEFAULT_PROPERTY_FLAGS);
+        m_gl_renderer = std::make_unique<OpenGLRenderer>(*this);
 
         sdl_assert(m_sdl_window != nullptr, "failed to create SDL_Window");
-        sdl_assert(m_renderer != nullptr, "failed to create rl::OpenGLRenderer");
+        sdl_assert(m_gl_renderer != nullptr, "failed to create rl::OpenGLRenderer");
 
         this->get_display();
         ds::dims<i32> window_size{ this->get_size() };
@@ -64,11 +65,13 @@ namespace rl {
 
         SDL3::SDL_GL_SetSwapInterval(0);
 
+        m_vg_renderer = std::make_unique<rl::NVGRenderer>();
+
         m_gui_canvas = new ui::UICanvas{
             static_cast<ds::dims<f32>>(window_size),
             m_mouse,
             m_keyboard,
-            m_renderer->vectorized_renderer(),
+            m_vg_renderer,
         };
     }
 
@@ -90,7 +93,7 @@ namespace rl {
         }
 
         std::swap(m_sdl_window, other.m_sdl_window);
-        m_renderer = std::move(other.m_renderer);
+        m_gl_renderer = std::move(other.m_gl_renderer);
         m_properties = std::move(other.m_properties);
 
         return *this;
@@ -233,9 +236,14 @@ namespace rl {
         return this->sdl_handle() != nullptr;
     }
 
-    const std::unique_ptr<OpenGLRenderer>& MainWindow::renderer() const
+    const std::unique_ptr<OpenGLRenderer>& MainWindow::glrenderer() const
     {
-        return m_renderer;
+        return m_gl_renderer;
+    }
+
+    const std::unique_ptr<NVGRenderer>& MainWindow::vgrenderer() const
+    {
+        return m_vg_renderer;
     }
 
     SDL3::SDL_Window* MainWindow::sdl_handle() const
@@ -351,7 +359,7 @@ namespace rl {
 
     bool MainWindow::clear()
     {
-        return m_renderer->clear();
+        return m_gl_renderer->clear();
     }
 
     bool MainWindow::render_start()
@@ -369,16 +377,16 @@ namespace rl {
 
     bool MainWindow::swap_buffers()
     {
-        return m_renderer->swap_buffers(*this);
+        return m_gl_renderer->swap_buffers(*this);
     }
 
     bool MainWindow::render()
     {
-        const i32 result{ SDL3::SDL_GL_MakeCurrent(m_sdl_window, m_renderer->gl_context()) };
+        const i32 result{ SDL3::SDL_GL_MakeCurrent(m_sdl_window, m_gl_renderer->gl_context()) };
         sdl_assert(result == 0, "failed to make context current");
 
         m_gui_canvas->draw_all();
-        m_renderer->clear();
+        m_gl_renderer->clear();
         return result == 0;
     }
 
@@ -465,7 +473,7 @@ namespace rl {
         ds::dims<f32> window_render_size{ window_size / m_pixel_ratio };
         m_window_rect.size = static_cast<ds::dims<i32>>(window_render_size);
 
-        m_renderer->set_viewport(ds::rect<i32>{
+        m_gl_renderer->set_viewport(ds::rect<i32>{
             ds::point<i32>{ 0, 0 },
             m_window_rect.size,
         });

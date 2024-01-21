@@ -136,14 +136,16 @@ namespace rl::ui {
         m_button_group = button_group;
     }
 
-    ds::dims<f32> Button::preferred_size(nvg::NVGcontext* nvg_context) const
+    ds::dims<f32> Button::preferred_size() const
     {
+        auto&& context{ m_renderer->context() };
         const f32 font_size{ m_font_size == -1.0f ? m_theme->button_font_size : m_font_size };
-        nvg::FontSize(nvg_context, font_size);
-        nvg::FontFace(nvg_context, font::name::sans);
+
+        nvg::FontSize(context, font_size);
+        nvg::FontFace(context, font::name::sans);
 
         ds::dims<f32> icon_size{ 0.0f, font_size };
-        const f32 text_width{ nvg::TextBounds(nvg_context, 0.0f, 0.0f, m_caption.c_str(), nullptr,
+        const f32 text_width{ nvg::TextBounds(context, 0.0f, 0.0f, m_caption.c_str(), nullptr,
                                               nullptr) };
 
         if (m_icon != Icon::None)
@@ -151,17 +153,17 @@ namespace rl::ui {
             if (Icon::is_font(m_icon))
             {
                 icon_size.height *= icon_scale();
-                nvg::FontFace(nvg_context, font::name::icons);
-                nvg::FontSize(nvg_context, icon_size.height);
-                icon_size.width = nvg::TextBounds(nvg_context, 0.0f, 0.0f, utf8(m_icon).data(),
-                                                  nullptr, nullptr) +
+                nvg::FontFace(context, font::name::icons);
+                nvg::FontSize(context, icon_size.height);
+                icon_size.width = nvg::TextBounds(context, 0.0f, 0.0f, utf8(m_icon).data(), nullptr,
+                                                  nullptr) +
                                   m_size.height * 0.15f;
             }
             else
             {
                 icon_size.height *= 0.9f;
                 ds::dims<i32> image_size{ 0, 0 };
-                nvg::ImageSize(nvg_context, std::to_underlying(m_icon), &image_size.width,
+                nvg::ImageSize(context, std::to_underlying(m_icon), &image_size.width,
                                &image_size.height);
 
                 icon_size.width = image_size.width * icon_size.height / image_size.height;
@@ -283,15 +285,16 @@ namespace rl::ui {
                                          kb.keys_down());
     }
 
-    void Button::draw(nvg::NVGcontext* ctx)
+    void Button::draw()
     {
-        Widget::draw(ctx);
+        Widget::draw();
 
         nvg::NVGcolor grad_top{ std::forward<const nvg::NVGcolor>(
             m_theme->button_gradient_top_unfocused) };
         nvg::NVGcolor grad_bot{ std::forward<const nvg::NVGcolor>(
             m_theme->button_gradient_bot_unfocused) };
 
+        auto&& context{ m_renderer->context() };
         if (m_pressed || (m_mouse_focus && this->has_property(Property::StandardMenu)))
         {
             grad_top = m_theme->button_gradient_top_pushed;
@@ -303,14 +306,14 @@ namespace rl::ui {
             grad_bot = m_theme->button_gradient_bot_focused;
         }
 
-        nvg::BeginPath(ctx);
-        nvg::RoundedRect(ctx, m_pos.x + 1.0f, m_pos.y + 1.0f, m_size.width - 2.0f,
+        nvg::BeginPath(context);
+        nvg::RoundedRect(context, m_pos.x + 1.0f, m_pos.y + 1.0f, m_size.width - 2.0f,
                          m_size.height - 2.0f, m_theme->button_corner_radius - 1.0f);
 
         if (m_background_color.a != 0)
         {
-            nvg::FillColor(ctx, m_background_color);
-            nvg::Fill(ctx);
+            nvg::FillColor(context, m_background_color);
+            nvg::Fill(context);
 
             if (m_pressed)
                 grad_top.a = grad_bot.a = 0.8f;
@@ -322,29 +325,29 @@ namespace rl::ui {
             }
         }
 
-        const nvg::NVGpaint bg{ nvg::LinearGradient(ctx, m_pos.x, m_pos.y, m_pos.x,
+        const nvg::NVGpaint bg{ nvg::LinearGradient(context, m_pos.x, m_pos.y, m_pos.x,
                                                     m_pos.y + m_size.height, grad_top, grad_bot) };
-        nvg::FillPaint(ctx, bg);
-        nvg::Fill(ctx);
+        nvg::FillPaint(context, bg);
+        nvg::Fill(context);
 
-        nvg::BeginPath(ctx);
-        nvg::StrokeWidth(ctx, 1.0f);
-        nvg::RoundedRect(ctx, m_pos.x + 0.5f, m_pos.y + (m_pressed ? 0.5f : 1.5f),
+        nvg::BeginPath(context);
+        nvg::StrokeWidth(context, 1.0f);
+        nvg::RoundedRect(context, m_pos.x + 0.5f, m_pos.y + (m_pressed ? 0.5f : 1.5f),
                          m_size.width - 1.0f, m_size.height - 1.0f - (m_pressed ? 0.0f : 1.0f),
                          m_theme->button_corner_radius);
-        nvg::StrokeColor(ctx, m_theme->border_light);
-        nvg::Stroke(ctx);
+        nvg::StrokeColor(context, m_theme->border_light);
+        nvg::Stroke(context);
 
-        nvg::BeginPath(ctx);
-        nvg::RoundedRect(ctx, m_pos.x + 0.5f, m_pos.y + 0.5f, m_size.width - 1.0f,
+        nvg::BeginPath(context);
+        nvg::RoundedRect(context, m_pos.x + 0.5f, m_pos.y + 0.5f, m_size.width - 1.0f,
                          m_size.height - 2.0f, m_theme->button_corner_radius);
-        nvg::StrokeColor(ctx, m_theme->border_dark);
-        nvg::Stroke(ctx);
+        nvg::StrokeColor(context, m_theme->border_dark);
+        nvg::Stroke(context);
 
         f32 font_size{ m_font_size == -1 ? m_theme->button_font_size : m_font_size };
-        nvg::FontSize(ctx, font_size);
-        nvg::FontFace(ctx, font::name::sans);
-        f32 text_width{ nvg::TextBounds(ctx, 0.0f, 0.0f, m_caption.c_str(), nullptr, nullptr) };
+        nvg::FontSize(context, font_size);
+        nvg::FontFace(context, font::name::sans);
+        f32 text_width{ nvg::TextBounds(context, 0.0f, 0.0f, m_caption.c_str(), nullptr, nullptr) };
 
         ds::point<f32> center{
             m_pos.x + m_size.width * 0.5f,
@@ -370,23 +373,23 @@ namespace rl::ui {
             if (Icon::is_font(m_icon))
             {
                 icon_size.height *= this->icon_scale();
-                nvg::FontSize(ctx, icon_size.height);
-                nvg::FontFace(ctx, font::name::icons);
-                icon_size.width = nvg::TextBounds(ctx, 0, 0, icon.data(), nullptr, nullptr);
+                nvg::FontSize(context, icon_size.height);
+                nvg::FontFace(context, font::name::icons);
+                icon_size.width = nvg::TextBounds(context, 0, 0, icon.data(), nullptr, nullptr);
             }
             else
             {
                 icon_size.height *= 0.9f;
                 ds::dims<i32> image_size{ 0, 0 };
-                nvg::ImageSize(ctx, m_icon, &image_size.width, &image_size.height);
+                nvg::ImageSize(context, m_icon, &image_size.width, &image_size.height);
                 icon_size.width = image_size.height * icon_size.height / image_size.height;
             }
 
             if (!m_caption.empty())
                 icon_size.width += m_size.height * 0.15f;
 
-            nvg::FillColor(ctx, text_color);
-            nvg::TextAlign(ctx, Text::Alignment::HLeftVMiddle);
+            nvg::FillColor(context, text_color);
+            nvg::TextAlign(context, Text::Alignment::HLeftVMiddle);
             ds::point<f32> icon_pos{ center };
 
             icon_pos.y -= 1;
@@ -409,26 +412,26 @@ namespace rl::ui {
             }
 
             if (Icon::is_font(m_icon))
-                nvg::Text(ctx, icon_pos.x, icon_pos.y + 1.0f, icon.data(), nullptr);
+                nvg::Text(context, icon_pos.x, icon_pos.y + 1.0f, icon.data(), nullptr);
             else
             {
                 const nvg::NVGpaint img_paint{
-                    nvg::ImagePattern(ctx, icon_pos.x, icon_pos.y - (icon_size.height / 2.0f),
+                    nvg::ImagePattern(context, icon_pos.x, icon_pos.y - (icon_size.height / 2.0f),
                                       icon_size.width, icon_size.height, 0.0f, m_icon,
                                       m_enabled ? 0.5f : 0.25f),
                 };
-                nvg::FillPaint(ctx, img_paint);
-                nvg::Fill(ctx);
+                nvg::FillPaint(context, img_paint);
+                nvg::Fill(context);
             }
         }
 
-        nvg::FontSize(ctx, font_size);
-        nvg::FontFace(ctx, font::name::mono);
-        nvg::TextAlign(ctx, Text::HLeftVMiddle);
-        nvg::FillColor(ctx, m_theme->text_shadow_color);
-        nvg::Text(ctx, text_pos.x, text_pos.y, m_caption.c_str(), nullptr);
-        nvg::FillColor(ctx, text_color);
-        nvg::Text(ctx, text_pos.x, text_pos.y + 1.0f, m_caption.c_str(), nullptr);
+        nvg::FontSize(context, font_size);
+        nvg::FontFace(context, font::name::mono);
+        nvg::TextAlign(context, Text::HLeftVMiddle);
+        nvg::FillColor(context, m_theme->text_shadow_color);
+        nvg::Text(context, text_pos.x, text_pos.y, m_caption.c_str(), nullptr);
+        nvg::FillColor(context, text_color);
+        nvg::Text(context, text_pos.x, text_pos.y + 1.0f, m_caption.c_str(), nullptr);
     }
 
 }

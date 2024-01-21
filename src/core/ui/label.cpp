@@ -68,19 +68,20 @@ namespace rl::ui {
         }
     }
 
-    ds::dims<f32> Label::preferred_size(nvg::NVGcontext* nvg_context) const
+    ds::dims<f32> Label::preferred_size() const
     {
         if (m_caption.empty())
             return ds::dims<f32>::zero();
 
-        nvg::FontFace(nvg_context, m_font.c_str());
-        nvg::FontSize(nvg_context, this->font_size());
+        auto&& context{ m_renderer->context() };
+        nvg::FontFace(context, m_font.c_str());
+        nvg::FontSize(context, this->font_size());
 
         if (m_fixed_size.width > 0.0f)
         {
             std::array<f32, 4> bounds{ 0.0f };
-            nvg::TextAlign(nvg_context, Text::Alignment::HLeftVTop);
-            nvg::TextBoxBounds(nvg_context, m_pos.x, m_pos.y, m_fixed_size.width, m_caption.c_str(),
+            nvg::TextAlign(context, Text::Alignment::HLeftVTop);
+            nvg::TextBoxBounds(context, m_pos.x, m_pos.y, m_fixed_size.width, m_caption.c_str(),
                                nullptr, bounds.data());
 
             const f32 textbox_height{ bounds[3] - bounds[1] };
@@ -91,9 +92,8 @@ namespace rl::ui {
         }
         else
         {
-            nvg::TextAlign(nvg_context, Text::Alignment::HLeftVMiddle);
-            const f32 text_width{ nvg::TextBounds(nvg_context, 0.0f, 0.0f, m_caption.c_str(),
-                                                  nullptr, nullptr) };
+            nvg::TextAlign(context, Text::Alignment::HLeftVMiddle);
+            const f32 text_width{ nvg::TextBounds(context, 0.0f, 0.0f, m_caption.c_str()) };
             return ds::dims<f32>{
                 text_width + 2.0f,
                 this->font_size(),
@@ -101,25 +101,24 @@ namespace rl::ui {
         }
     }
 
-    void Label::draw(nvg::NVGcontext* nvg_context)
+    void Label::draw()
     {
-        ui::Widget::draw(nvg_context);
+        ui::Widget::draw();
 
-        nvg::FontFace(nvg_context, m_font.c_str());
-        nvg::FontSize(nvg_context, this->font_size());
-        nvg::FillColor(nvg_context, m_color);
+        auto&& context{ m_renderer->context() };
+        nvg::FontFace(context, m_font.c_str());
+        nvg::FontSize(context, this->font_size());
+        nvg::FillColor(context, m_color);
 
         if (m_fixed_size.width > 0)
         {
-            nvg::TextAlign(nvg_context, Text::Alignment::HLeftVTop);
-            nvg::TextBox(nvg_context, m_pos.x, m_pos.y, m_fixed_size.width, m_caption.c_str(),
-                         nullptr);
+            nvg::TextAlign(context, Text::Alignment::HLeftVTop);
+            nvg::TextBox(context, m_pos.x, m_pos.y, m_fixed_size.width, m_caption.c_str());
         }
         else
         {
-            nvg::TextAlign(nvg_context, Text::Alignment::HLeftVMiddle);
-            nvg::Text(nvg_context, m_pos.x, m_pos.y + m_size.height * 0.5f, m_caption.c_str(),
-                      nullptr);
+            nvg::TextAlign(context, Text::Alignment::HLeftVMiddle);
+            nvg::Text(context, m_pos.x, m_pos.y + m_size.height * 0.5f, m_caption.c_str());
         }
     }
 }
