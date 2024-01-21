@@ -530,7 +530,7 @@ namespace rl::ui {
             widget = widget->parent();
         }
 
-        runtime_assert(false, "failed to get window that owns widget");
+        runtime_assert(false, "failed to get dialog that owns widget");
         return nullptr;
     }
 

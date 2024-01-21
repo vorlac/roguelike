@@ -766,8 +766,8 @@ namespace rl::ui {
     {
         if (m_selection_pos > -1)
         {
-            Dialog* window{ this->dialog() };
-            if (window == nullptr)
+            Dialog* dialog{ this->dialog() };
+            if (dialog == nullptr)
                 return false;
 
             i32 begin{ m_cursor_pos };
@@ -785,8 +785,8 @@ namespace rl::ui {
 
     void TextBox::paste_from_clipboard()
     {
-        Dialog* window{ this->dialog() };
-        if (window == nullptr)
+        Dialog* dialog{ this->dialog() };
+        if (dialog == nullptr)
             return;
 
         if (SDL3::SDL_HasClipboardText())

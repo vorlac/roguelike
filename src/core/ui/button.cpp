@@ -140,7 +140,7 @@ namespace rl::ui {
     {
         const f32 font_size{ m_font_size == -1.0f ? m_theme->m_button_font_size : m_font_size };
         nvg::FontSize(nvg_context, font_size);
-        nvg::FontFace(nvg_context, font::name::sans_bold);
+        nvg::FontFace(nvg_context, font::name::sans);
 
         ds::dims<f32> icon_size{ 0.0f, font_size };
         const f32 text_width{ nvg::TextBounds(nvg_context, 0.0f, 0.0f, m_caption.c_str(), nullptr,
@@ -169,7 +169,7 @@ namespace rl::ui {
         }
 
         return ds::dims<f32>{
-            text_width + icon_size.width + 20.0f,
+            (text_width + icon_size.width) + 20.0f,
             font_size + 10.0f,
         };
     }

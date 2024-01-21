@@ -8,7 +8,7 @@ namespace rl::ui {
     PopupButton::PopupButton(Widget* parent, const std::string& caption, Icon::ID button_icon)
         : Button{ parent, caption, button_icon }
     {
-        m_icon_extra_scale = 0.8f;
+        m_icon_extra_scale = 1.0f;  // 0.8f;
         m_chevron_icon = m_theme->m_popup_chevron_right_icon;
         this->set_property(Property::TogglePopupMenu);
 
@@ -52,7 +52,7 @@ namespace rl::ui {
 
     ds::dims<f32> PopupButton::preferred_size(nvg::NVGcontext* nvg_context) const
     {
-        constexpr static ds::dims<f32> width_buffer{ 15.0f, 0.0f };
+        constexpr static ds::dims<f32> width_buffer{ 24.0f, 0.0f };
         return Button::preferred_size(nvg_context) + width_buffer;
     }
 

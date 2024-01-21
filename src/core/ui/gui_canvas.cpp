@@ -294,14 +294,14 @@ namespace rl::ui {
 
         m_focus_path.clear();
 
-        Widget* window{ nullptr };
+        Widget* dialog{ nullptr };
         while (widget != nullptr)
         {
             m_focus_path.push_back(widget);
 
             UICanvas* as_canvas{ dynamic_cast<UICanvas*>(widget) };
             if (as_canvas != nullptr)
-                window = as_canvas;
+                dialog = as_canvas;
 
             widget = widget->parent();
         }
@@ -310,7 +310,7 @@ namespace rl::ui {
             focus_widget->on_focus_gained();
 
         // if (window != nullptr)
-        //     this->move_dialog_to_front(static_cast<Dialog*>(window));
+        //     this->move_dialog_to_front(static_cast<Dialog*>(dialog));
     }
 
     void UICanvas::move_dialog_to_front(Dialog* dialog)
@@ -344,29 +344,29 @@ namespace rl::ui {
         while (changed);
     }
 
-    void UICanvas::dispose_dialog(Dialog* window)
+    void UICanvas::dispose_dialog(Dialog* dialog)
     {
-        if (std::find(m_focus_path.begin(), m_focus_path.end(), window) != m_focus_path.end())
+        if (std::find(m_focus_path.begin(), m_focus_path.end(), dialog) != m_focus_path.end())
             m_focus_path.clear();
 
-        if (m_drag_widget == window)
+        if (m_drag_widget == dialog)
             m_drag_widget = nullptr;
 
-        this->remove_child(window);
+        this->remove_child(dialog);
     }
 
-    void UICanvas::center_dialog(Dialog* window) const
+    void UICanvas::center_dialog(Dialog* dialog) const
     {
-        if (window->size() == ds::dims<f32>::zero())
+        if (dialog->size() == ds::dims<f32>::zero())
         {
-            auto&& pref_size{ window->preferred_size(m_nvg_context) };
-            window->set_size(pref_size);
-            window->perform_layout(m_nvg_context);
+            auto&& pref_size{ dialog->preferred_size(m_nvg_context) };
+            dialog->set_size(pref_size);
+            dialog->perform_layout(m_nvg_context);
         }
 
-        ds::dims<f32> offset{ (m_size - window->size()) / 2.0f };
+        ds::dims<f32> offset{ (m_size - dialog->size()) / 2.0f };
         ds::point<f32> position{ offset.width, offset.height };
-        window->set_position(position);
+        dialog->set_position(position);
     }
 
     bool UICanvas::drop_event(const std::vector<std::string>& filenames)
@@ -476,10 +476,10 @@ namespace rl::ui {
         if (m_focus_path.size() > 1)
         {
             const Widget* w{ m_focus_path[m_focus_path.size() - 2] };
-            const Dialog* window{ dynamic_cast<const Dialog*>(w) };
-            if (window != nullptr && window->modal())
+            const Dialog* dialog{ dynamic_cast<const Dialog*>(w) };
+            if (dialog != nullptr && dialog->modal())
             {
-                if (!window->contains(mouse_pos))
+                if (!dialog->contains(mouse_pos))
                     return true;
             }
         }
@@ -575,10 +575,10 @@ namespace rl::ui {
         m_last_interaction = m_timer.elapsed();
         if (m_focus_path.size() > 1)
         {
-            auto window{ dynamic_cast<Dialog*>(m_focus_path[m_focus_path.size() - 2]) };
-            if (window != nullptr && window->modal())
+            auto dialog{ dynamic_cast<Dialog*>(m_focus_path[m_focus_path.size() - 2]) };
+            if (dialog != nullptr && dialog->modal())
             {
-                if (!window->contains(mouse.pos()))
+                if (!dialog->contains(mouse.pos()))
                     return true;
             }
         }

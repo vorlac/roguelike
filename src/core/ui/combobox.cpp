@@ -100,7 +100,7 @@ namespace rl::ui {
             });
         }
 
-        m_container->set_layout(new GroupLayout{ 10 });
+        m_container->set_layout(new GroupLayout{ 0 });
 
         i32 index{ 0 };
         for (const auto& str : items)

@@ -73,27 +73,28 @@ namespace rl::ui {
     f32 Dialog::header_height() const
     {
         if (!m_title.empty())
-            return m_theme->m_window_header_height;
+            return m_theme->m_dialog_header_height;
 
         return 0.0f;
     }
 
     void Dialog::draw(nvg::NVGcontext* nvg_context)
     {
-        const f32 drop_shadow_size{ m_theme->m_window_drop_shadow_size };
-        const f32 corner_radius{ m_theme->m_window_corner_radius };
+        const f32 drop_shadow_size{ m_theme->m_dialog_drop_shadow_size };
+        const f32 corner_radius{ m_theme->m_dialog_corner_radius };
         const f32 header_height{ this->header_height() };
 
-        // nvg::Save(nvg_context);
+        nvg::Save(nvg_context);
         nvg::BeginPath(nvg_context);
         nvg::RoundedRect(nvg_context, m_pos.x, m_pos.y, m_size.width, m_size.height, corner_radius);
-        nvg::FillColor(nvg_context, m_mouse_focus ? m_theme->m_window_fill_focused
-                                                  : m_theme->m_window_fill_unfocused);
+        nvg::FillColor(nvg_context, m_mouse_focus ? m_theme->m_dialog_fill_focused
+                                                  : m_theme->m_dialog_fill_unfocused);
         nvg::Fill(nvg_context);
 
+        // Dialog shadow
         nvg::NVGpaint shadow_paint = nvg::BoxGradient(
             nvg_context, m_pos.x, m_pos.y, m_size.width, m_size.height, corner_radius * 2.0f,
-            drop_shadow_size * 2, m_theme->m_drop_shadow, m_theme->m_transparent);
+            drop_shadow_size * 2, m_theme->m_dialog_shadow, m_theme->m_transparent);
 
         nvg::Save(nvg_context);
         nvg::ResetScissor(nvg_context);
@@ -110,7 +111,7 @@ namespace rl::ui {
         {
             nvg::NVGpaint header_paint{ nvg::LinearGradient(
                 nvg_context, m_pos.x, m_pos.y, m_pos.x, m_pos.y + header_height,
-                m_theme->m_window_header_gradient_top, m_theme->m_window_header_gradient_bot) };
+                m_theme->m_dialog_header_gradient_top, m_theme->m_dialog_header_gradient_bot) };
 
             nvg::BeginPath(nvg_context);
             nvg::RoundedRect(nvg_context, m_pos.x, m_pos.y, m_size.width, header_height,
@@ -122,7 +123,7 @@ namespace rl::ui {
             nvg::BeginPath(nvg_context);
             nvg::RoundedRect(nvg_context, m_pos.x, m_pos.y, m_size.width, header_height,
                              corner_radius);
-            nvg::StrokeColor(nvg_context, m_theme->m_window_header_sep_top);
+            nvg::StrokeColor(nvg_context, m_theme->m_dialog_header_sep_top);
 
             nvg::Save(nvg_context);
             nvg::IntersectScissor(nvg_context, m_pos.x, m_pos.y, m_size.width, 0.5f);
@@ -132,27 +133,28 @@ namespace rl::ui {
             nvg::BeginPath(nvg_context);
             nvg::MoveTo(nvg_context, m_pos.x + 0.5f, m_pos.y + header_height - 1.5f);
             nvg::LineTo(nvg_context, m_pos.x + m_size.width - 0.5f, m_pos.y + header_height - 1.5f);
-            nvg::StrokeColor(nvg_context, m_theme->m_window_header_sep_bot);
+            nvg::StrokeColor(nvg_context, m_theme->m_dialog_header_sep_bot);
             nvg::Stroke(nvg_context);
 
-            nvg::FontSize(nvg_context, 18.0f);
-            nvg::FontFace(nvg_context, font::name::sans_bold);
+            nvg::FontSize(nvg_context, m_theme->m_tooltip_font_size);
+            nvg::FontFace(nvg_context, m_theme->m_tooltip_font_name.data());
             nvg::TextAlign(nvg_context, Text::Alignment::HCenterVMiddle);
 
-            nvg::FontBlur(nvg_context, 2.0f);
-            nvg::FillColor(nvg_context, m_theme->m_drop_shadow);
-            nvg::Text(nvg_context, m_pos.x + m_size.width / 2.0f, m_pos.y + header_height / 2.0f,
-                      m_title.c_str(), nullptr);
-
+            // header text shadow
             nvg::FontBlur(nvg_context, 0.0f);
-            nvg::FillColor(nvg_context, m_focused ? m_theme->m_window_title_focused
-                                                  : m_theme->m_window_title_unfocused);
+            nvg::FillColor(nvg_context, m_theme->m_text_shadow);
+            nvg::Text(nvg_context, m_pos.x + (m_size.width / 2.0f),
+                      m_pos.y + (header_height / 2.0f), m_title.c_str());
+
+            // Header text
+            nvg::FontBlur(nvg_context, 0.0f);
+            nvg::FillColor(nvg_context, m_focused ? m_theme->m_dialog_title_focused
+                                                  : m_theme->m_dialog_title_unfocused);
             nvg::Text(nvg_context, m_pos.x + m_size.width / 2.0f,
-                      m_pos.y + header_height / 2.0f - 1.0f, m_title.c_str(), nullptr);
+                      m_pos.y + header_height / 2.0f - 1.0f, m_title.c_str());
         }
 
         nvg::Restore(nvg_context);
-
         Widget::draw(nvg_context);
     }
 
@@ -205,7 +207,7 @@ namespace rl::ui {
         if (mouse.is_button_pressed(Mouse::Button::Left))
         {
             f32 offset_height{ mouse.pos().y - m_pos.y };
-            m_drag = offset_height < m_theme->m_window_header_height;
+            m_drag = offset_height < m_theme->m_dialog_header_height;
             return true;
         }
 
@@ -249,7 +251,7 @@ namespace rl::ui {
             m_button_panel->show();
 
         nvg::FontSize(nvg_context, 18.0f);
-        nvg::FontFace(nvg_context, font::name::sans_bold);
+        nvg::FontFace(nvg_context, font::name::sans);
 
         std::array<f32, 4> bounds = {};
         nvg::TextBounds(nvg_context, 0, 0, m_title.c_str(), nullptr, bounds.data());
@@ -258,29 +260,29 @@ namespace rl::ui {
                              std::max(result.height, bounds[3] - bounds[1]));
     }
 
-    void Dialog::perform_layout(nvg::NVGcontext* ctx)
+    void Dialog::perform_layout(nvg::NVGcontext* nvg_context)
     {
         if (m_button_panel == nullptr)
-            Widget::perform_layout(ctx);
+            Widget::perform_layout(nvg_context);
         else
         {
             m_button_panel->set_visible(false);
-            Widget::perform_layout(ctx);
+            Widget::perform_layout(nvg_context);
 
-            for (auto w : m_button_panel->children())
+            for (auto& bp_child : m_button_panel->children())
             {
-                w->set_fixed_size({ 22, 22 });
-                w->set_font_size(15);
+                bp_child->set_fixed_size({ 22.0f, 22.0f });
+                bp_child->set_font_size(15.0f);
             }
 
             m_button_panel->set_visible(true);
-            m_button_panel->set_size({ this->width(), 22 });
+            m_button_panel->set_size({ this->width(), 22.0f });
             m_button_panel->set_position({
-                this->width() - (m_button_panel->preferred_size(ctx).width + 5),
-                3,
+                this->width() - (m_button_panel->preferred_size(nvg_context).width + 5.0f),
+                3.0f,
             });
 
-            m_button_panel->perform_layout(ctx);
+            m_button_panel->perform_layout(nvg_context);
         }
     }
 

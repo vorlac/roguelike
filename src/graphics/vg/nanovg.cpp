@@ -2816,7 +2816,8 @@ namespace rl::nvg {
         return det < 0;
     }
 
-    float nvg::Text(NVGcontext* ctx, float x, float y, const char* string, const char* end)
+    float nvg::Text(NVGcontext* ctx, float x, float y, const char* string,
+                    const char* end /*= nullptr*/)
     {
         NVGstate* state = nvg__getState(ctx);
         FONStextIter iter, prevIter;

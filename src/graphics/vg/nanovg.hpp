@@ -604,7 +604,7 @@ namespace rl::nvg {
 
     // Draws text string at specified location. If end is specified only the sub-string up to
     // the end is drawn.
-    float Text(NVGcontext* ctx, float x, float y, const char* string, const char* end);
+    float Text(NVGcontext* ctx, float x, float y, const char* string, const char* end = nullptr);
 
     // Draws multi-line text string at specified location wrapped at the specified width. If end
     // is specified only the sub-string up to the end is drawn. White space is stripped at the

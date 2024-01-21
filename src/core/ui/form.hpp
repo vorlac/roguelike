@@ -36,54 +36,53 @@ namespace rl::ui {
         {
             runtime_assert(m_ui_canvas != nullptr, "invalid dialog");
 
-            m_window = new ui::Dialog{ m_ui_canvas, title };
+            m_dialog = new ui::Dialog{ m_ui_canvas, title };
             m_layout = new AdvancedGridLayout{ { 10, 0, 10, 0 }, {} };
 
             m_layout->set_margin(10);
-            m_layout->set_col_stretch(2, 1);
-            m_window->set_position(pos);
-            m_window->set_layout(m_layout);
-            m_window->set_visible(true);
+            m_layout->set_col_stretch(2, 1.0f);
+            m_dialog->set_position(pos);
+            m_dialog->set_layout(m_layout);
+            m_dialog->set_visible(true);
 
-            return m_window;
+            return m_dialog;
         }
 
-        /// Add a new group that may contain several sub-widgets
         ui::Label* add_group(const std::string& caption)
         {
+            Theme* theme{ m_dialog->theme() };
             ui::Label* label{ new ui::Label{
-                m_window,
+                m_dialog,
                 caption,
-                m_group_font_name,
-                m_group_font_size,
+                theme->m_form_group_font_name,
+                theme->m_form_group_font_size,
             } };
 
-            m_layout->append_row(          // add spacing to account for the header if it's
-                m_layout->row_count() > 0  // the first group insert otherwise just offset downw
-                    ? m_pre_group_spacing  // by offsetting by the default pre group spacing
-                    : m_window->header_height());
+            m_layout->append_row(m_layout->row_count() > 0 ? theme->m_form_pre_group_spacing
+                                                           : m_dialog->header_height());
 
             m_layout->append_row(0);
             m_layout->set_anchor(label, ui::Anchor{ 0, m_layout->row_count() - 1, 4, 1 });
-            m_layout->append_row(m_post_group_spacing);
+            m_layout->append_row(theme->m_form_post_group_spacing);
 
             return label;
         }
 
-        /// Add a new data widget controlled using custom getter/setter functions
         template <typename T>
-        detail::FormWidget<T>* add_variable(const std::string& label,
+        detail::FormWidget<T>* add_variable(const std::string& label_text,
                                             const std::function<void(const T&)>& setter,
                                             const std::function<T()>& getter, bool editable = true)
         {
-            ui::Label* label_w{ new ui::Label{
-                m_window,
-                label,
-                m_label_font_name,
-                m_label_font_size,
-            } };
+            Theme* theme{ m_dialog->theme() };
 
-            auto widget{ new detail::FormWidget<T>{ m_window } };
+            ui::Label* label = new ui::Label{
+                m_dialog,
+                label_text,
+                theme->m_form_label_font_name,
+                theme->m_form_label_font_size,
+            };
+
+            auto widget{ new detail::FormWidget<T>{ m_dialog } };
             auto refresh = [widget, getter] {
                 T value{ getter() };
                 T current{ widget->value() };
@@ -96,7 +95,7 @@ namespace rl::ui {
 
             widget->set_callback(setter);
             widget->set_editable(editable);
-            widget->set_font_size(m_widget_font_size);
+            // widget->set_font_size(m_widget_font_size);
 
             ds::dims<f32> fs{ widget->fixed_size() };
             widget->set_fixed_size(ds::dims<f32>{
@@ -107,10 +106,10 @@ namespace rl::ui {
             m_refresh_callbacks.push_back(refresh);
 
             if (m_layout->row_count() > 0)
-                m_layout->append_row(m_variable_spacing);
+                m_layout->append_row(theme->m_form_variable_spacing);
 
             m_layout->append_row(0);
-            m_layout->set_anchor(label_w, ui::Anchor{ 1, m_layout->row_count() - 1 });
+            m_layout->set_anchor(label, ui::Anchor{ 1, m_layout->row_count() - 1 });
             m_layout->set_anchor(widget, ui::Anchor{ 3, m_layout->row_count() - 1 });
 
             return widget;
@@ -132,13 +131,14 @@ namespace rl::ui {
 
         ui::Button* add_button(const std::string& label, const std::function<void()>& cb)
         {
-            ui::Button* button{ new Button{ m_window, label } };
+            Theme* theme{ m_dialog->theme() };
+            ui::Button* button{ new Button{ m_dialog, label } };
 
             button->set_callback(cb);
-            button->set_fixed_height(25);
+            // button->set_fixed_height(32);
 
             if (m_layout->row_count() > 0)
-                m_layout->append_row(m_variable_spacing);
+                m_layout->append_row(theme->m_form_variable_spacing);
 
             m_layout->append_row(0);
             m_layout->set_anchor(button, ui::Anchor{ 1, m_layout->row_count() - 1, 3, 1 });
@@ -148,13 +148,19 @@ namespace rl::ui {
 
         void add_widget(const std::string& label_text, ui::Widget* widget)
         {
+            Theme* theme{ m_dialog->theme() };
             m_layout->append_row(0);
+
             if (label_text.empty())
                 m_layout->set_anchor(widget, ui::Anchor{ 1, m_layout->row_count() - 1, 3, 1 });
             else
             {
-                ui::Label* label{ new ui::Label{ m_window, label_text, m_label_font_name,
-                                                 m_label_font_size } };
+                ui::Label* label = new ui::Label{
+                    m_dialog,
+                    label_text,
+                    theme->m_form_label_font_name,
+                    theme->m_form_label_font_size,
+                };
                 m_layout->set_anchor(label, ui::Anchor{ 1, m_layout->row_count() - 1 });
                 m_layout->set_anchor(widget, ui::Anchor{ 3, m_layout->row_count() - 1 });
             }
@@ -166,15 +172,15 @@ namespace rl::ui {
                 callback();
         }
 
-        ui::Dialog* window()
+        ui::Dialog* dialog()
         {
-            return m_window;
+            return m_dialog;
         }
 
-        void set_window(ui::Dialog* window)
+        void set_dialog(ui::Dialog* dialog)
         {
-            m_window = window;
-            m_layout = dynamic_cast<AdvancedGridLayout*>(window->layout());
+            m_dialog = dialog;
+            m_layout = dynamic_cast<AdvancedGridLayout*>(dialog->layout());
             runtime_assert(m_layout == nullptr, "invalid layout");
         }
 
@@ -188,70 +194,12 @@ namespace rl::ui {
             return m_fixed_size;
         }
 
-        const std::string& group_font_name() const
-        {
-            return m_group_font_name;
-        }
-
-        void set_group_font_name(const std::string& name)
-        {
-            m_group_font_name = name;
-        }
-
-        const std::string& label_font_name() const
-        {
-            return m_label_font_name;
-        }
-
-        void set_label_font_name(const std::string& name)
-        {
-            m_label_font_name = name;
-        }
-
-        f32 group_font_size() const
-        {
-            return m_group_font_size;
-        }
-
-        void set_group_font_size(f32 value)
-        {
-            m_group_font_size = value;
-        }
-
-        f32 label_font_size() const
-        {
-            return m_label_font_size;
-        }
-
-        void set_label_font_size(f32 value)
-        {
-            m_label_font_size = value;
-        }
-
-        f32 widget_font_size() const
-        {
-            return m_widget_font_size;
-        }
-
-        void set_widget_font_size(f32 value)
-        {
-            m_widget_font_size = value;
-        }
-
     protected:
         ds::shared<ui::UICanvas> m_ui_canvas{};
-        ds::shared<ui::Dialog> m_window{};
+        ds::shared<ui::Dialog> m_dialog{};
         ds::shared<AdvancedGridLayout> m_layout{};
         std::vector<std::function<void()>> m_refresh_callbacks;
-        std::string m_group_font_name{ font::name::sans_bold };
-        std::string m_label_font_name{ font::name::sans };
-        ds::dims<f32> m_fixed_size{ 0.0f, 20.0f };
-        f32 m_group_font_size{ 20.0f };
-        f32 m_label_font_size{ 16.0f };
-        f32 m_widget_font_size{ 16.0f };
-        f32 m_pre_group_spacing{ 15.0f };
-        f32 m_post_group_spacing{ 5.0f };
-        f32 m_variable_spacing{ 5.0f };
+        ds::dims<f32> m_fixed_size{ 0.0f, 0.0f };
     };
 
     namespace detail {
