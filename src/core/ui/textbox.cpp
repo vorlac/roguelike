@@ -41,7 +41,7 @@ namespace rl::ui {
         , m_last_click{ 0 }
     {
         if (m_theme != nullptr)
-            m_font_size = m_theme->m_text_box_font_size;
+            m_font_size = m_theme->text_box_font_size;
 
         m_icon_extra_scale = .8f;
     }
@@ -157,7 +157,7 @@ namespace rl::ui {
     {
         Widget::set_theme(theme);
         if (m_theme != nullptr)
-            m_font_size = m_theme->m_text_box_font_size;
+            m_font_size = m_theme->text_box_font_size;
     }
 
     ds::dims<f32> TextBox::preferred_size(nvg::NVGcontext* ctx) const
@@ -279,7 +279,7 @@ namespace rl::ui {
 
             nvg::FontFace(nvg_context, "icons");
             nvg::FontSize(nvg_context,
-                          ((m_font_size < 0.0f) ? m_theme->m_button_font_size : m_font_size) *
+                          ((m_font_size < 0.0f) ? m_theme->button_font_size : m_font_size) *
                               this->icon_scale());
 
             bool spinning = m_mouse_down_pos.x != -1;
@@ -288,10 +288,10 @@ namespace rl::ui {
                 // up button
                 bool hover{ m_mouse_focus && spin_area(m_mouse_pos) == SpinArea::Top };
                 nvg::FillColor(nvg_context, (m_enabled && (hover || spinning))
-                                                ? m_theme->m_text_color
-                                                : m_theme->m_disabled_text_color);
+                                                ? m_theme->text_color
+                                                : m_theme->disabled_text_color);
 
-                auto icon{ utf8(std::to_underlying(m_theme->m_text_box_up_icon)) };
+                auto icon{ utf8(std::to_underlying(m_theme->text_box_up_icon)) };
                 nvg::TextAlign(nvg_context, nvg::NVG_ALIGN_LEFT | nvg::NVG_ALIGN_MIDDLE);
 
                 ds::point<f32> icon_pos{
@@ -306,10 +306,10 @@ namespace rl::ui {
                 // down button
                 bool hover{ m_mouse_focus && this->spin_area(m_mouse_pos) == SpinArea::Bottom };
                 nvg::FillColor(nvg_context, (m_enabled && (hover || spinning))
-                                                ? m_theme->m_text_color
-                                                : m_theme->m_disabled_text_color);
+                                                ? m_theme->text_color
+                                                : m_theme->disabled_text_color);
 
-                auto icon{ utf8(m_theme->m_text_box_down_icon) };
+                auto icon{ utf8(m_theme->text_box_down_icon) };
                 nvg::TextAlign(nvg_context, Text::Alignment::HLeftVMiddle);
 
                 ds::point<f32> icon_pos{
@@ -342,8 +342,8 @@ namespace rl::ui {
 
         nvg::FontSize(nvg_context, this->font_size());
         nvg::FillColor(nvg_context, m_enabled && (!m_committed || !m_value.empty())
-                                        ? m_theme->m_text_color
-                                        : m_theme->m_disabled_text_color);
+                                        ? m_theme->text_color
+                                        : m_theme->disabled_text_color);
 
         // clip visible text area
         f32 clip_x{ m_pos.x + x_spacing + spin_arrows_width - 1.0f };

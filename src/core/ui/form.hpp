@@ -54,16 +54,16 @@ namespace rl::ui {
             ui::Label* label{ new ui::Label{
                 m_dialog,
                 caption,
-                theme->m_form_group_font_name,
-                theme->m_form_group_font_size,
+                theme->form_group_font_name,
+                theme->form_group_font_size,
             } };
 
-            m_layout->append_row(m_layout->row_count() > 0 ? theme->m_form_pre_group_spacing
+            m_layout->append_row(m_layout->row_count() > 0 ? theme->form_pre_group_spacing
                                                            : m_dialog->header_height());
 
             m_layout->append_row(0);
             m_layout->set_anchor(label, ui::Anchor{ 0, m_layout->row_count() - 1, 4, 1 });
-            m_layout->append_row(theme->m_form_post_group_spacing);
+            m_layout->append_row(theme->form_post_group_spacing);
 
             return label;
         }
@@ -78,8 +78,8 @@ namespace rl::ui {
             ui::Label* label = new ui::Label{
                 m_dialog,
                 label_text,
-                theme->m_form_label_font_name,
-                theme->m_form_label_font_size,
+                theme->form_label_font_name,
+                theme->form_label_font_size,
             };
 
             auto widget{ new detail::FormWidget<T>{ m_dialog } };
@@ -92,10 +92,8 @@ namespace rl::ui {
             };
 
             refresh();
-
             widget->set_callback(setter);
             widget->set_editable(editable);
-            // widget->set_font_size(m_widget_font_size);
 
             ds::dims<f32> fs{ widget->fixed_size() };
             widget->set_fixed_size(ds::dims<f32>{
@@ -106,7 +104,7 @@ namespace rl::ui {
             m_refresh_callbacks.push_back(refresh);
 
             if (m_layout->row_count() > 0)
-                m_layout->append_row(theme->m_form_variable_spacing);
+                m_layout->append_row(theme->form_variable_spacing);
 
             m_layout->append_row(0);
             m_layout->set_anchor(label, ui::Anchor{ 1, m_layout->row_count() - 1 });
@@ -138,7 +136,7 @@ namespace rl::ui {
             // button->set_fixed_height(32);
 
             if (m_layout->row_count() > 0)
-                m_layout->append_row(theme->m_form_variable_spacing);
+                m_layout->append_row(theme->form_variable_spacing);
 
             m_layout->append_row(0);
             m_layout->set_anchor(button, ui::Anchor{ 1, m_layout->row_count() - 1, 3, 1 });
@@ -158,8 +156,8 @@ namespace rl::ui {
                 ui::Label* label = new ui::Label{
                     m_dialog,
                     label_text,
-                    theme->m_form_label_font_name,
-                    theme->m_form_label_font_size,
+                    theme->form_label_font_name,
+                    theme->form_label_font_size,
                 };
                 m_layout->set_anchor(label, ui::Anchor{ 1, m_layout->row_count() - 1 });
                 m_layout->set_anchor(widget, ui::Anchor{ 3, m_layout->row_count() - 1 });

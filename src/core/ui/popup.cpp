@@ -96,8 +96,8 @@ namespace rl::ui {
         if (!m_visible)
             return;
 
-        const f32 drop_shadow_size{ m_theme->m_dialog_drop_shadow_size };
-        const f32 corner_radius{ m_theme->m_dialog_corner_radius };
+        const f32 drop_shadow_size{ m_theme->dialog_drop_shadow_size };
+        const f32 corner_radius{ m_theme->dialog_corner_radius };
 
         nvg::Save(nvg_context);
         nvg::ResetScissor(nvg_context);
@@ -105,7 +105,7 @@ namespace rl::ui {
         // Draw a drop shadow
         nvg::NVGpaint shadow_paint = nvg::BoxGradient(
             nvg_context, m_pos.x, m_pos.y, m_size.width, m_size.height, corner_radius * 2.0f,
-            drop_shadow_size * 2.0f, m_theme->m_drop_shadow, m_theme->m_transparent);
+            drop_shadow_size * 2.0f, m_theme->drop_shadow, m_theme->transparent);
 
         nvg::BeginPath(nvg_context);
         nvg::Rect(nvg_context, m_pos.x - drop_shadow_size, m_pos.y - drop_shadow_size,
@@ -132,7 +132,7 @@ namespace rl::ui {
         nvg::LineTo(nvg_context, base.x - (1.0f * sign), base.y - m_anchor_size);
         nvg::LineTo(nvg_context, base.x - (1.0f * sign), base.y + m_anchor_size);
 
-        nvg::FillColor(nvg_context, m_theme->m_dialog_popup_fill);
+        nvg::FillColor(nvg_context, m_theme->dialog_popup_fill);
         nvg::Fill(nvg_context);
         nvg::Restore(nvg_context);
 

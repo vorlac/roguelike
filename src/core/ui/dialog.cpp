@@ -73,28 +73,28 @@ namespace rl::ui {
     f32 Dialog::header_height() const
     {
         if (!m_title.empty())
-            return m_theme->m_dialog_header_height;
+            return m_theme->dialog_header_height;
 
         return 0.0f;
     }
 
     void Dialog::draw(nvg::NVGcontext* nvg_context)
     {
-        const f32 drop_shadow_size{ m_theme->m_dialog_drop_shadow_size };
-        const f32 corner_radius{ m_theme->m_dialog_corner_radius };
+        const f32 drop_shadow_size{ m_theme->dialog_drop_shadow_size };
+        const f32 corner_radius{ m_theme->dialog_corner_radius };
         const f32 header_height{ this->header_height() };
 
         nvg::Save(nvg_context);
         nvg::BeginPath(nvg_context);
         nvg::RoundedRect(nvg_context, m_pos.x, m_pos.y, m_size.width, m_size.height, corner_radius);
-        nvg::FillColor(nvg_context, m_mouse_focus ? m_theme->m_dialog_fill_focused
-                                                  : m_theme->m_dialog_fill_unfocused);
+        nvg::FillColor(nvg_context, m_mouse_focus ? m_theme->dialog_fill_focused
+                                                  : m_theme->dialog_fill_unfocused);
         nvg::Fill(nvg_context);
 
         // Dialog shadow
         nvg::NVGpaint shadow_paint = nvg::BoxGradient(
             nvg_context, m_pos.x, m_pos.y, m_size.width, m_size.height, corner_radius * 2.0f,
-            drop_shadow_size * 2, m_theme->m_dialog_shadow, m_theme->m_transparent);
+            drop_shadow_size * 2, m_theme->dialog_shadow, m_theme->transparent);
 
         nvg::Save(nvg_context);
         nvg::ResetScissor(nvg_context);
@@ -111,7 +111,7 @@ namespace rl::ui {
         {
             nvg::NVGpaint header_paint{ nvg::LinearGradient(
                 nvg_context, m_pos.x, m_pos.y, m_pos.x, m_pos.y + header_height,
-                m_theme->m_dialog_header_gradient_top, m_theme->m_dialog_header_gradient_bot) };
+                m_theme->dialog_header_gradient_top, m_theme->dialog_header_gradient_bot) };
 
             nvg::BeginPath(nvg_context);
             nvg::RoundedRect(nvg_context, m_pos.x, m_pos.y, m_size.width, header_height,
@@ -123,7 +123,7 @@ namespace rl::ui {
             nvg::BeginPath(nvg_context);
             nvg::RoundedRect(nvg_context, m_pos.x, m_pos.y, m_size.width, header_height,
                              corner_radius);
-            nvg::StrokeColor(nvg_context, m_theme->m_dialog_header_sep_top);
+            nvg::StrokeColor(nvg_context, m_theme->dialog_header_sep_top);
 
             nvg::Save(nvg_context);
             nvg::IntersectScissor(nvg_context, m_pos.x, m_pos.y, m_size.width, 0.5f);
@@ -133,23 +133,23 @@ namespace rl::ui {
             nvg::BeginPath(nvg_context);
             nvg::MoveTo(nvg_context, m_pos.x + 0.5f, m_pos.y + header_height - 1.5f);
             nvg::LineTo(nvg_context, m_pos.x + m_size.width - 0.5f, m_pos.y + header_height - 1.5f);
-            nvg::StrokeColor(nvg_context, m_theme->m_dialog_header_sep_bot);
+            nvg::StrokeColor(nvg_context, m_theme->dialog_header_sep_bot);
             nvg::Stroke(nvg_context);
 
-            nvg::FontSize(nvg_context, m_theme->m_tooltip_font_size);
-            nvg::FontFace(nvg_context, m_theme->m_tooltip_font_name.data());
+            nvg::FontSize(nvg_context, m_theme->tooltip_font_size);
+            nvg::FontFace(nvg_context, m_theme->tooltip_font_name.data());
             nvg::TextAlign(nvg_context, Text::Alignment::HCenterVMiddle);
 
             // header text shadow
             nvg::FontBlur(nvg_context, 0.0f);
-            nvg::FillColor(nvg_context, m_theme->m_text_shadow);
+            nvg::FillColor(nvg_context, m_theme->text_shadow);
             nvg::Text(nvg_context, m_pos.x + (m_size.width / 2.0f),
                       m_pos.y + (header_height / 2.0f), m_title.c_str());
 
             // Header text
             nvg::FontBlur(nvg_context, 0.0f);
-            nvg::FillColor(nvg_context, m_focused ? m_theme->m_dialog_title_focused
-                                                  : m_theme->m_dialog_title_unfocused);
+            nvg::FillColor(nvg_context, m_focused ? m_theme->dialog_title_focused
+                                                  : m_theme->dialog_title_unfocused);
             nvg::Text(nvg_context, m_pos.x + m_size.width / 2.0f,
                       m_pos.y + header_height / 2.0f - 1.0f, m_title.c_str());
         }
@@ -207,7 +207,7 @@ namespace rl::ui {
         if (mouse.is_button_pressed(Mouse::Button::Left))
         {
             f32 offset_height{ mouse.pos().y - m_pos.y };
-            m_drag = offset_height < m_theme->m_dialog_header_height;
+            m_drag = offset_height < m_theme->dialog_header_height;
             return true;
         }
 

@@ -15,8 +15,8 @@ namespace rl::ui {
     {
         if (m_theme != nullptr)
         {
-            m_font_size = m_theme->m_standard_font_size;
-            m_color = m_theme->m_text_color;
+            m_font_size = m_theme->standard_font_size;
+            m_color = m_theme->text_color;
         }
 
         if (font_size >= 0.0f)
@@ -63,8 +63,8 @@ namespace rl::ui {
         Widget::set_theme(theme);
         if (m_theme != nullptr)
         {
-            m_font_size = m_theme->m_standard_font_size;
-            m_color = m_theme->m_text_color;
+            m_font_size = m_theme->standard_font_size;
+            m_color = m_theme->text_color;
         }
     }
 

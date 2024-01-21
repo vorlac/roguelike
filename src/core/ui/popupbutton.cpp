@@ -9,7 +9,7 @@ namespace rl::ui {
         : Button{ parent, caption, button_icon }
     {
         m_icon_extra_scale = 1.0f;  // 0.8f;
-        m_chevron_icon = m_theme->m_popup_chevron_right_icon;
+        m_chevron_icon = m_theme->popup_chevron_right_icon;
         this->set_property(Property::TogglePopupMenu);
 
         m_popup = new Popup{
@@ -66,13 +66,13 @@ namespace rl::ui {
 
         if (m_chevron_icon != Icon::None)
         {
-            const f32 text_size{ m_font_size < 0.0f ? m_theme->m_button_font_size : m_font_size };
+            const f32 text_size{ m_font_size < 0.0f ? m_theme->button_font_size : m_font_size };
             const std::string icon{ utf8(std::to_underlying(m_chevron_icon)) };
-            const ds::color<f32> text_color{ m_text_color.a == 0.0f ? m_theme->m_text_color
+            const ds::color<f32> text_color{ m_text_color.a == 0.0f ? m_theme->text_color
                                                                     : m_text_color };
             nvg::FontFace(nvg_context, font::name::icons);
             nvg::FontSize(nvg_context, text_size * this->icon_scale());
-            nvg::FillColor(nvg_context, m_enabled ? text_color : m_theme->m_disabled_text_color);
+            nvg::FillColor(nvg_context, m_enabled ? text_color : m_theme->disabled_text_color);
             nvg::TextAlign(nvg_context, Text::Alignment::HLeftVMiddle);
 
             const f32 icon_width{ nvg::TextBounds(nvg_context, 0.0f, 0.0f, icon.data(), nullptr,
@@ -126,8 +126,8 @@ namespace rl::ui {
 
     void PopupButton::set_side(Popup::Side side)
     {
-        const Icon::ID right_icon{ m_theme->m_popup_chevron_right_icon };
-        const Icon::ID left_icon{ m_theme->m_popup_chevron_left_icon };
+        const Icon::ID right_icon{ m_theme->popup_chevron_right_icon };
+        const Icon::ID left_icon{ m_theme->popup_chevron_left_icon };
 
         switch (m_popup->side())
         {

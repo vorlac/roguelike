@@ -225,7 +225,7 @@ namespace rl::ui {
     f32 Widget::font_size() const
     {
         return (m_font_size < 0 && m_theme != nullptr)  //
-                 ? m_theme->m_standard_font_size        //
+                 ? m_theme->standard_font_size        //
                  : m_font_size;                         //
     }
 
@@ -609,6 +609,6 @@ namespace rl::ui {
     f32 Widget::icon_scale() const
     {
         runtime_assert(m_theme != nullptr, "theme not set");
-        return m_theme->m_icon_scale * m_icon_extra_scale;
+        return m_theme->icon_scale * m_icon_extra_scale;
     }
 }

@@ -34,9 +34,9 @@ namespace rl::ui {
         if (gui_canvas != nullptr && !gui_canvas->title().empty())
         {
             if (m_orientation == Orientation::Vertical)
-                size.height += widget->theme()->m_dialog_header_height - (m_margin / 2.0f);
+                size.height += widget->theme()->dialog_header_height - (m_margin / 2.0f);
             else
-                y_offset = widget->theme()->m_dialog_header_height;
+                y_offset = widget->theme()->dialog_header_height;
         }
 
         bool first_child{ true };
@@ -83,10 +83,10 @@ namespace rl::ui {
         if (gui_canvas != nullptr && !gui_canvas->title().empty())
         {
             if (m_orientation == Orientation::Vertical)
-                position += widget->theme()->m_dialog_header_height - (m_margin / 2.0f);
+                position += widget->theme()->dialog_header_height - (m_margin / 2.0f);
             else
             {
-                y_offset = widget->theme()->m_dialog_header_height;
+                y_offset = widget->theme()->dialog_header_height;
                 container_size.height -= y_offset;
             }
         }
@@ -190,7 +190,7 @@ namespace rl::ui {
 
         const UICanvas* gui_canvas{ dynamic_cast<const UICanvas*>(widget) };
         if (gui_canvas != nullptr && !gui_canvas->title().empty())
-            height += widget->theme()->m_dialog_header_height - m_margin / 2.0f;
+            height += widget->theme()->dialog_header_height - m_margin / 2.0f;
 
         bool first = true, indent = false;
         for (auto&& c : widget->children())
@@ -233,7 +233,7 @@ namespace rl::ui {
 
         const UICanvas* gui_canvas{ dynamic_cast<const UICanvas*>(widget) };
         if (gui_canvas != nullptr && !gui_canvas->title().empty())
-            height += widget->theme()->m_dialog_header_height - (m_margin / 2.0f);
+            height += widget->theme()->dialog_header_height - (m_margin / 2.0f);
 
         bool first_child{ true };
         bool indent{ false };
@@ -327,7 +327,7 @@ namespace rl::ui {
 
         const UICanvas* gui_canvas{ dynamic_cast<const UICanvas*>(widget) };
         if (gui_canvas != nullptr && !gui_canvas->title().empty())
-            pref_size.height += widget->theme()->m_dialog_header_height - (m_margin / 2.0f);
+            pref_size.height += widget->theme()->dialog_header_height - (m_margin / 2.0f);
 
         return pref_size;
     }
@@ -413,7 +413,7 @@ namespace rl::ui {
         ds::dims<f32> extra{ 0.0f, 0.0f };
         const UICanvas* gui_canvas{ dynamic_cast<const UICanvas*>(widget) };
         if (gui_canvas != nullptr && !gui_canvas->title().empty())
-            extra.height += widget->theme()->m_dialog_header_height - (m_margin / 2.0f);
+            extra.height += widget->theme()->dialog_header_height - (m_margin / 2.0f);
 
         // Strech to size provided by widget
         for (auto cur_axis : { Axis::Horizontal, Axis::Vertical })
@@ -655,7 +655,7 @@ namespace rl::ui {
 
         const UICanvas* gui_canvas{ dynamic_cast<const UICanvas*>(widget) };
         if (gui_canvas != nullptr && !gui_canvas->title().empty())
-            extra.height += widget->theme()->m_dialog_header_height - m_margin / 2.0f;
+            extra.height += widget->theme()->dialog_header_height - m_margin / 2.0f;
 
         return size + extra;
     }
@@ -673,7 +673,7 @@ namespace rl::ui {
         else
         {
             grid[Axis::Vertical].insert(grid[Axis::Vertical].begin(),
-                                        widget->theme()->m_dialog_header_height + m_margin / 2.0f);
+                                        widget->theme()->dialog_header_height + m_margin / 2.0f);
         }
 
         for (Axis axis : { Axis::Horizontal, Axis::Vertical })
@@ -752,7 +752,7 @@ namespace rl::ui {
 
         const UICanvas* gui_canvas{ dynamic_cast<const UICanvas*>(widget) };
         if (gui_canvas != nullptr && gui_canvas->title().length() == 0)
-            extra.height += widget->theme()->m_dialog_header_height - (m_margin / 2.0f);
+            extra.height += widget->theme()->dialog_header_height - (m_margin / 2.0f);
 
         container_size -= extra;
         for (Axis axis : { Axis::Horizontal, Axis::Vertical })
