@@ -5,7 +5,7 @@
 #include <string.h>
 
 #include "graphics/vg/nanosvg.hpp"
-#include "graphics/vg/nanosvgrast.hpp"
+#include "graphics/vg/nanosvg_rast.hpp"
 
 #define NSVG__SUBSAMPLES   5
 #define NSVG__FIXSHIFT     10
