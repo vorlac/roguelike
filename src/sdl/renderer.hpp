@@ -463,7 +463,7 @@ namespace rl::sdl {
         }
 
         bool fill_rect(const ds::rect<f32>& rect = ds::rect<i32>::null(),
-                       const ds::color<u8>& c = {})
+                       const ds::color<u8>& c = ds::color<u8>{})
         {
             i32 result = 0;
             if (!c.is_empty())
@@ -587,13 +587,13 @@ namespace rl::sdl {
             return mode;
         }
 
-        ds::color<u8> get_draw_color() const
-        {
-            ds::color<u8> c{};
-            i32 result = SDL3::SDL_GetRenderDrawColor(m_sdl_renderer, &c.r, &c.g, &c.b, &c.a);
-            sdl_assert(result == 0, "failed to get draw color");
-            return c;
-        }
+        // ds::color<u8> get_draw_color() const
+        //{
+        //     ds::color<u8> c{};
+        //     i32 result = SDL3::SDL_GetRenderDrawColor(m_sdl_renderer, &c.r, &c.g, &c.b, &c.a);
+        //     sdl_assert(result == 0, "failed to get draw color");
+        //     return c;
+        // }
 
     private:
         Properties m_properties{ Properties::None };

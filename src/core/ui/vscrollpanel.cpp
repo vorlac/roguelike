@@ -197,7 +197,8 @@ namespace rl::ui {
                                               3.0f, 4.0f, ds::color<f32>{ 0, 0, 0, 32 },
                                               ds::color<f32>{ 0, 0, 0, 92 }) };
         nvg::BeginPath(context);
-        nvg::RoundedRect(context, m_pos.x + m_size.width - 12, m_pos.y + 4, 8, m_size.height - 8, 3);
+        nvg::RoundedRect(context, m_pos.x + m_size.width - 12.0f, m_pos.y + 4.0f, 8.0f,
+                         m_size.height - 8.0f, 3.0f);
         nvg::FillPaint(context, paint);
         nvg::Fill(context);
 

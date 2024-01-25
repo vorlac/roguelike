@@ -20,7 +20,7 @@ namespace rl::ui {
 
         std::string font() const;
         std::string caption() const;
-        ds::color<f32> color() const;
+        const ds::color<f32>& color() const;
 
         void set_caption(const std::string& caption);
         void set_font(const std::string& font);

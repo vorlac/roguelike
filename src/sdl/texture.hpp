@@ -64,7 +64,7 @@ namespace rl::sdl {
         SDL3::SDL_TextureAccess get_access() const;
         SDL3::SDL_BlendMode get_blend_mode() const;
 
-        ds::color<u8> get_color_mod() const;
+        // ds::color<u8> get_color_mod() const;
         ds::dims<i32> size();
         u8 get_alpha_mod() const;
 

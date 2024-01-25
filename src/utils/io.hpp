@@ -14,7 +14,7 @@
 #include <fmt/std.h>
 
 namespace rl::io {
-    const static std::locale locale{ "en_US.UTF-8" };
+    static const std::locale locale{ "en_US.UTF-8" };
 
     enum class LogMode {
         LogFile = 1 << 0,

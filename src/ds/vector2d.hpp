@@ -23,7 +23,7 @@ namespace rl::ds {
 #pragma pack(4)
 
     template <rl::numeric T>
-    struct alignas(T) vector2
+    struct vector2
     {
         explicit constexpr vector2()
             : x{ std::numeric_limits<T>::max() }
@@ -174,7 +174,7 @@ namespace rl::ds {
             return (pt - *this).angle();
         }
 
-        constexpr const inline vector2<T>& normalize()
+        constexpr inline const vector2<T>& normalize()
         {
             f32 len_sq = this->length_squared();
             if (len_sq != 0.0f)
@@ -348,16 +348,16 @@ namespace rl::ds {
         constexpr inline vector2<T> operator-(const vector2<V>& other) const
         {
             return vector2<T>{
-                x - cast::to<T>(other.x),
-                y - cast::to<T>(other.y),
+                x - static_cast<T>(other.x),
+                y - static_cast<T>(other.y),
             };
         }
 
         constexpr inline vector2<T> operator-(const T& other) const
         {
             return vector2<T>{
-                x - cast::to<T>(other),
-                y - cast::to<T>(other),
+                x - static_cast<T>(other),
+                y - static_cast<T>(other),
             };
         }
 

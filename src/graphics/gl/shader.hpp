@@ -37,7 +37,7 @@ namespace rl::gl {
         struct GLSL
         {
             constexpr static inline Program shader_type = VShaderType;
-            const static inline std::filesystem::path GLSL_SHADER_DIR = {
+            static inline const std::filesystem::path GLSL_SHADER_DIR = {
                 fs::absolute("shaders/"),
             };
 

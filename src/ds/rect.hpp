@@ -64,8 +64,8 @@ namespace rl::ds {
         template <rl::integer I>
         constexpr inline rect(const rect<I>& other)
             requires rl::floating_point<T>
-            : pt(T(other.pt.x), T(other.pt.y))
-            , size(T(other.size.width), T(other.size.height))
+            : pt{ static_cast<T>(other.pt.x), static_cast<T>(other.pt.y) }
+            , size{ static_cast<T>(other.size.width), static_cast<T>(other.size.height) }
         {
         }
 
@@ -87,6 +87,14 @@ namespace rl::ds {
         constexpr inline rect(point<T>&& pnt, dims<T>&& dims)
             : pt{ pnt }
             , size{ dims }
+        {
+        }
+
+        template <rl::integer I>
+            requires rl::floating_point<T>
+        constexpr inline rect(const point<T>& pnt, dims<I>&& dims)
+            : pt{ pnt }
+            , size{ static_cast<T>(dims.width), static_cast<T>(dims.height) }
         {
         }
 

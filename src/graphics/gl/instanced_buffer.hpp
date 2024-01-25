@@ -53,27 +53,22 @@ namespace rl::gl {
             m_rect_positions_data.reserve(m_rect_count);
             m_rect_velocities_data.reserve(m_rect_count);
 
-            srand((u32)time(nullptr));
-            auto rect_color = ds::color<u8>{
-                static_cast<u8>(rand() % 128),
-                static_cast<u8>(rand() % 128),
-                static_cast<u8>(rand() % 128),
-            };
+            ds::color<u8> rect_color = ds::color<u8>::rand();
 
             log::info("InstancedVertexBuffer Spawning {} Rectangles (clr:{}MB, pos:{}MB)",
                       m_rect_count, colors_size_mb, positions_size_mb);
 
             for (size_t i = 0; i < m_rect_count; ++i)
             {
-                u32 xv = rand() % 2000;
-                u32 yv = rand() % 2000;
+                const u32 xv{ rl::random<0U, 2000U>::value() };
+                const u32 yv{ rl::random<0U, 2000U>::value() };
 
-                m_rect_colors_data.emplace_back((f32(rand() % 500) + 250) / 1000.0f,
-                                                (f32(rand() % 500) + 250) / 1000.0f,
-                                                (f32(rand() % 500) + 250) / 1000.0f);
+                m_rect_colors_data.emplace_back((rl::random<0, 500>::value() + 250.0f) / 1000.0f,
+                                                (rl::random<0, 500>::value() + 250.0f) / 1000.0f,
+                                                (rl::random<0, 500>::value() + 250.0f) / 1000.0f);
 
-                m_rect_velocities_data.emplace_back((cast::to<f32>(xv) - 1000.0f) / 10.0f,
-                                                    (cast::to<f32>(yv) - 1000.0f) / 10.0f);
+                m_rect_velocities_data.emplace_back((static_cast<f32>(xv) - 1000.0f) / 10.0f,
+                                                    (static_cast<f32>(yv) - 1000.0f) / 10.0f);
 
                 ds::circle<f32> spawn{ viewport_rect.centroid(), 500.0f };
 
@@ -242,9 +237,9 @@ namespace rl::gl {
             ds::rect<f32>{ ds::point<f32>{ 0.0f, 0.0f }, ds::dims<f32>{ m_rect_size } }.triangles(),
         };
 
-        std::vector<ds::color<f32>> m_rect_colors_data = {};
-        std::vector<ds::point<f32>> m_rect_positions_data = {};
-        std::vector<ds::vector2<f32>> m_rect_velocities_data = {};
+        std::vector<ds::color<f32>> m_rect_colors_data{};
+        std::vector<ds::point<f32>> m_rect_positions_data{};
+        std::vector<ds::vector2<f32>> m_rect_velocities_data{};
 
         /**
          * @brief VBO name of fuffer containing

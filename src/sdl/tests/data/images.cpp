@@ -9,7 +9,7 @@ SDL_C_LIB_BEGIN
 SDL_C_LIB_END
 
 namespace rl::sdl::test::image {
-    const static SurfaceImage Blit = {
+    static const SurfaceImage Blit = {
         .width = 80,
         .height = 60,
         .bytes_per_pixel = 3,
@@ -523,7 +523,7 @@ namespace rl::sdl::test::image {
             "\0\0",
     };
 
-    const static SurfaceImage BlitColor = {
+    static const SurfaceImage BlitColor = {
         .width = 80,
         .height = 60,
         .bytes_per_pixel = 3,
@@ -983,7 +983,7 @@ namespace rl::sdl::test::image {
             "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0",
     };
 
-    const static SurfaceImage BlitAlpha = {
+    static const SurfaceImage BlitAlpha = {
         .width = 80,
         .height = 60,
         .bytes_per_pixel = 3,
@@ -1607,7 +1607,7 @@ namespace rl::sdl::test::image {
     };
 
     /* GIMP RGB C-Source image dump (alpha.c) */
-    const static SurfaceImage BlitBlendAdd = {
+    static const SurfaceImage BlitBlendAdd = {
         .width = 80,
         .height = 60,
         .bytes_per_pixel = 3,
@@ -2161,7 +2161,7 @@ namespace rl::sdl::test::image {
             "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0",
     };
 
-    const static SurfaceImage BlitBlend = {
+    static const SurfaceImage BlitBlend = {
         .width = 80,
         .height = 60,
         .bytes_per_pixel = 3,
@@ -2738,7 +2738,7 @@ namespace rl::sdl::test::image {
             "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0",
     };
 
-    const static SurfaceImage BlitBlendMod = {
+    static const SurfaceImage BlitBlendMod = {
         .width = 80,
         .height = 60,
         .bytes_per_pixel = 3,
@@ -3145,7 +3145,7 @@ namespace rl::sdl::test::image {
             "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0",
     };
 
-    const static SurfaceImage BlitBlendNone = {
+    static const SurfaceImage BlitBlendNone = {
         .width = 80,
         .height = 60,
         .bytes_per_pixel = 3,
@@ -3935,7 +3935,7 @@ namespace rl::sdl::test::image {
             "\377\377\377\377\377\377\377\377",
     };
 
-    const static SurfaceImage BlitBlendAll = {
+    static const SurfaceImage BlitBlendAll = {
         .width = 80,
         .height = 60,
         .bytes_per_pixel = 3,
@@ -4458,7 +4458,7 @@ namespace rl::sdl::test::image {
     };
 
     /* GIMP RGBA C-Source image dump (face.c) */
-    const static SurfaceImage Face = {
+    static const SurfaceImage Face = {
         .width = 32,
         .height = 32,
         .bytes_per_pixel = 4,
@@ -4656,7 +4656,7 @@ namespace rl::sdl::test::image {
     };
 
     /* GIMP RGB C-Source image dump (primitives.c) */
-    const static SurfaceImage Primitives = {
+    static const SurfaceImage Primitives = {
         .width = 80,
         .height = 60,
         .bytes_per_pixel = 3,

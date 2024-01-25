@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 
 #include <parallel_hashmap/phmap.h>
@@ -124,8 +125,8 @@ namespace rl::ui {
         f32 tab_button_vertical_padding{ 2.0f };
 
         ds::color<f32> drop_shadow{ 0, 0, 0, 128 };
-        ds::color<f32> text_shadow{ drop_shadow };
-        ds::color<f32> dialog_shadow{ drop_shadow };
+        ds::color<f32> text_shadow{ 0, 0, 0, 128 };
+        ds::color<f32> dialog_shadow{ 0, 0, 0, 128 };
         ds::color<f32> transparent{ 0, 0, 0, 0 };
         ds::color<f32> border_dark{ 29, 29, 29, 255 };
         ds::color<f32> border_light{ 92, 92, 92, 255 };
@@ -133,7 +134,7 @@ namespace rl::ui {
         ds::color<f32> text_color{ rl::Colors::LightGrey };
         ds::color<f32> disabled_text_color{ rl::Colors::DarkGrey };
         ds::color<f32> text_shadow_color{ rl::Colors::Black };
-        ds::color<f32> icon_color{ text_color };
+        ds::color<f32> icon_color{ rl::Colors::LightGrey };
 
         ds::color<f32> button_gradient_top_focused{ 64, 64, 64, 255 };
         ds::color<f32> button_gradient_bot_focused{ 48, 48, 48, 255 };
@@ -146,10 +147,10 @@ namespace rl::ui {
         ds::color<f32> dialog_fill_focused{ 45, 45, 45, 230 };
         ds::color<f32> dialog_title_unfocused{ 220, 220, 220, 160 };
         ds::color<f32> dialog_title_focused{ 255, 255, 255, 190 };
-        ds::color<f32> dialog_header_gradient_top{ button_gradient_top_unfocused };
-        ds::color<f32> dialog_header_gradient_bot{ button_gradient_bot_unfocused };
-        ds::color<f32> dialog_header_sep_top{ border_light };
-        ds::color<f32> dialog_header_sep_bot{ border_dark };
+        ds::color<f32> dialog_header_gradient_top{ 74, 74, 74, 255 };
+        ds::color<f32> dialog_header_gradient_bot{ 58, 58, 58, 255 };
+        ds::color<f32> dialog_header_sep_top{ 92, 92, 92, 255 };
+        ds::color<f32> dialog_header_sep_bot{ 29, 29, 29, 255 };
         ds::color<f32> dialog_popup_fill{ 50, 50, 50, 255 };
         ds::color<f32> dialog_popup_transparent{ 50, 50, 50, 0 };
 

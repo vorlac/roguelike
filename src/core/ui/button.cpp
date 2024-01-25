@@ -23,12 +23,12 @@ namespace rl::ui {
         : Widget{ parent }
         , m_caption{ caption }
         , m_icon{ icon }
-        , m_icon_placement{ Icon::Placement::LeftCentered }
-        , m_pressed{ false }
-        , m_props{ Property::StandardPush }
-        , m_background_color{ m_theme ? m_theme->button_gradient_top_focused : Colors::Grey }
-        , m_text_color{ m_theme ? m_theme->text_color : Colors::White }
     {
+        if (m_theme != nullptr)
+        {
+            m_background_color = m_theme->button_gradient_top_focused;
+            m_text_color = m_theme->text_color;
+        }
     }
 
     bool Button::has_property(Button::Property prop) const
@@ -56,7 +56,7 @@ namespace rl::ui {
         m_caption = caption;
     }
 
-    ds::color<f32> Button::background_color() const
+    const ds::color<f32>& Button::background_color() const
     {
         return m_background_color;
     }
@@ -66,7 +66,7 @@ namespace rl::ui {
         m_background_color = bg_color;
     }
 
-    ds::color<f32> Button::text_color() const
+    const ds::color<f32>& Button::text_color() const
     {
         return m_text_color;
     }
@@ -289,21 +289,19 @@ namespace rl::ui {
     {
         Widget::draw();
 
-        nvg::NVGcolor grad_top{ std::forward<const nvg::NVGcolor>(
-            m_theme->button_gradient_top_unfocused) };
-        nvg::NVGcolor grad_bot{ std::forward<const nvg::NVGcolor>(
-            m_theme->button_gradient_bot_unfocused) };
+        nvg::NVGcolor grad_top{ m_theme->button_gradient_top_unfocused.nvg() };
+        nvg::NVGcolor grad_bot{ m_theme->button_gradient_bot_unfocused.nvg() };
 
         auto&& context{ m_renderer->context() };
         if (m_pressed || (m_mouse_focus && this->has_property(Property::StandardMenu)))
         {
-            grad_top = m_theme->button_gradient_top_pushed;
-            grad_bot = m_theme->button_gradient_bot_pushed;
+            grad_top = m_theme->button_gradient_top_pushed.nvg();
+            grad_bot = m_theme->button_gradient_bot_pushed.nvg();
         }
         else if (m_mouse_focus && m_enabled)
         {
-            grad_top = m_theme->button_gradient_top_focused;
-            grad_bot = m_theme->button_gradient_bot_focused;
+            grad_top = m_theme->button_gradient_top_focused.nvg();
+            grad_bot = m_theme->button_gradient_bot_focused.nvg();
         }
 
         nvg::BeginPath(context);
@@ -312,7 +310,7 @@ namespace rl::ui {
 
         if (m_background_color.a != 0)
         {
-            nvg::FillColor(context, m_background_color);
+            nvg::FillColor(context, m_background_color.nvg());
             nvg::Fill(context);
 
             if (m_pressed)
@@ -335,13 +333,13 @@ namespace rl::ui {
         nvg::RoundedRect(context, m_pos.x + 0.5f, m_pos.y + (m_pressed ? 0.5f : 1.5f),
                          m_size.width - 1.0f, m_size.height - 1.0f - (m_pressed ? 0.0f : 1.0f),
                          m_theme->button_corner_radius);
-        nvg::StrokeColor(context, m_theme->border_light);
+        nvg::StrokeColor(context, m_theme->border_light.nvg());
         nvg::Stroke(context);
 
         nvg::BeginPath(context);
         nvg::RoundedRect(context, m_pos.x + 0.5f, m_pos.y + 0.5f, m_size.width - 1.0f,
                          m_size.height - 2.0f, m_theme->button_corner_radius);
-        nvg::StrokeColor(context, m_theme->border_dark);
+        nvg::StrokeColor(context, m_theme->border_dark.nvg());
         nvg::Stroke(context);
 
         f32 font_size{ m_font_size == -1 ? m_theme->button_font_size : m_font_size };
@@ -359,11 +357,10 @@ namespace rl::ui {
             center.y - 1.0f,
         };
 
-        nvg::NVGcolor text_color{ std::forward<const nvg::NVGcolor>(
-            m_text_color.a == 0.0f ? m_theme->text_color : m_text_color) };
-
+        nvg::NVGcolor text_color{ m_text_color.a == 0.0f ? m_theme->text_color.nvg()
+                                                         : m_text_color.nvg() };
         if (!m_enabled)
-            text_color = m_theme->disabled_text_color;
+            text_color = m_theme->disabled_text_color.nvg();
 
         if (m_icon != Icon::None)
         {
@@ -428,10 +425,9 @@ namespace rl::ui {
         nvg::FontSize(context, font_size);
         nvg::FontFace(context, font::name::mono);
         nvg::TextAlign(context, Text::HLeftVMiddle);
-        nvg::FillColor(context, m_theme->text_shadow_color);
+        nvg::FillColor(context, m_theme->text_shadow_color.nvg());
         nvg::Text(context, text_pos.x, text_pos.y, m_caption.c_str(), nullptr);
         nvg::FillColor(context, text_color);
         nvg::Text(context, text_pos.x, text_pos.y + 1.0f, m_caption.c_str(), nullptr);
     }
-
 }

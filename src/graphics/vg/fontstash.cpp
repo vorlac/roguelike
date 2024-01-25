@@ -123,7 +123,7 @@ namespace rl::nvg {
 
     static unsigned int fons__decutf8(unsigned int* state, unsigned int* codep, unsigned int byte)
     {
-        const static unsigned char utf8d[] = {
+        static const unsigned char utf8d[] = {
             // The first part of the table maps bytes to character classes that
             // to reduce the size of the transition table and create bitmasks.
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,

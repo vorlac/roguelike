@@ -136,8 +136,7 @@ namespace rl {
                 layout->append_row(0);
                 auto stats_desc_label{ new ui::Label{ gui, "Stats: ", ui::font::name::sans, 32 } };
                 layout->append_row(0);
-                auto stats_value_label{ new ui::Label{ gui, "            ", ui::font::name::mono,
-                                                       32 } };
+                auto stats_value_label{ new ui::Label{ gui, " ", ui::font::name::mono, 32 } };
                 layout->append_row(0);
 
                 push_button->set_tooltip("Microscope Button");

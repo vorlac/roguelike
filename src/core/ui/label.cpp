@@ -1,3 +1,5 @@
+#include <memory>
+
 #include "core/ui/label.hpp"
 #include "core/ui/theme.hpp"
 #include "ds/dims.hpp"
@@ -33,7 +35,7 @@ namespace rl::ui {
         return m_font;
     }
 
-    ds::color<f32> Label::color() const
+    const ds::color<f32>& Label::color() const
     {
         return m_color;
     }
@@ -108,7 +110,7 @@ namespace rl::ui {
         auto&& context{ m_renderer->context() };
         nvg::FontFace(context, m_font.c_str());
         nvg::FontSize(context, this->font_size());
-        nvg::FillColor(context, m_color);
+        nvg::FillColor(context, m_color.nvg());
 
         if (m_fixed_size.width > 0)
         {

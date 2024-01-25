@@ -106,7 +106,7 @@ namespace rl::ui {
         // Draw a drop shadow
         nvg::NVGpaint shadow_paint = nvg::BoxGradient(
             context, m_pos.x, m_pos.y, m_size.width, m_size.height, corner_radius * 2.0f,
-            drop_shadow_size * 2.0f, m_theme->drop_shadow, m_theme->transparent);
+            drop_shadow_size * 2.0f, m_theme->drop_shadow.nvg(), m_theme->transparent.nvg());
 
         nvg::BeginPath(context);
         nvg::Rect(context, m_pos.x - drop_shadow_size, m_pos.y - drop_shadow_size,
@@ -133,7 +133,7 @@ namespace rl::ui {
         nvg::LineTo(context, base.x - (1.0f * sign), base.y - m_anchor_size);
         nvg::LineTo(context, base.x - (1.0f * sign), base.y + m_anchor_size);
 
-        nvg::FillColor(context, m_theme->dialog_popup_fill);
+        nvg::FillColor(context, m_theme->dialog_popup_fill.nvg());
         nvg::Fill(context);
         nvg::Restore(context);
 

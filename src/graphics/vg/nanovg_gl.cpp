@@ -373,13 +373,13 @@ namespace rl::nvg {
 
         // TODO: mediump float may not be enough for GLES2 in iOS.
         // see the following discussion: https://github.com/memononen/nanovg/issues/46
-        const static char* shaderHeader =
+        static const char* shaderHeader =
             "#version 150 core\n"
             "#define NANOVG_GL3 1\n"
             "#define USE_UNIFORMBUFFER 1\n"
             "\n";
 
-        const static char* fillVertShader =
+        static const char* fillVertShader =
             "#ifdef NANOVG_GL3\n"
             "	uniform vec2 viewSize;\n"
             "	in vec2 vertex;\n"
@@ -399,7 +399,7 @@ namespace rl::nvg {
             "	gl_Position = vec4(2.0*vertex.x/viewSize.x - 1.0, 1.0 - 2.0*vertex.y/viewSize.y, 0, 1);\n"
             "}\n";
 
-        const static char* fillFragShader =
+        static const char* fillFragShader =
             "#ifdef GL_ES\n"
             "#if defined(GL_FRAGMENT_PRECISION_HIGH) || defined(NANOVG_GL3)\n"
             " precision highp float;\n"

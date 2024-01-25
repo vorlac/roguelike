@@ -155,7 +155,7 @@ namespace rl::ui {
         std::vector<Widget*> m_children{};
         std::string m_tooltip{ "" };
 
-        mutable Timer<float> m_timer{};
+        mutable Timer<f32> m_timer{};
 
     private:
         constexpr static bool DiagnosticsEnabled{ false };

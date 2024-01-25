@@ -323,13 +323,13 @@ namespace rl::sdl {
         return blend_mode;
     }
 
-    ds::color<u8> Surface::get_color_mod() const
-    {
-        ds::color<u8> c{ 0, 0, 0, 0 };
-        this->get_color_mod(c.r, c.g, c.b);
-        c.a = this->get_alpha_mod();
-        return c;
-    }
+    // ds::color<u8> Surface::get_color_mod() const
+    //{
+    //     ds::color<u8> c{ 0, 0, 0, 0 };
+    //     this->get_color_mod(c.r, c.g, c.b);
+    //     c.a = this->get_alpha_mod();
+    //     return c;
+    // }
 
     bool Surface::get_color_mod(u8& r, u8& g, u8& b) const
     {

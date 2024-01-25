@@ -68,8 +68,8 @@ namespace rl::ui {
         {
             const f32 text_size{ m_font_size < 0.0f ? m_theme->button_font_size : m_font_size };
             const std::string icon{ utf8(std::to_underlying(m_chevron_icon)) };
-            const ds::color<f32> text_color{ m_text_color.a == 0.0f ? m_theme->text_color
-                                                                    : m_text_color };
+            const ds::color<f32>& text_color{ m_text_color.a == 0.0f ? m_theme->text_color
+                                                                     : m_text_color };
             auto&& context{ m_renderer->context() };
             nvg::FontFace(context, font::name::icons);
             nvg::FontSize(context, text_size * this->icon_scale());

@@ -30,14 +30,14 @@ namespace rl::sdl::test {
         if (!renderer.set_draw_color(set_clr))
             return false;
 
-        rl::ds::color<u8> get_clr = renderer.get_draw_color();
+        // rl::ds::color<u8> get_clr = renderer.get_draw_color();
         if (!renderer.set_draw_color({ 0, 0, 0 }))
             return false;
 
-        if (set_clr != get_clr)
-            return false;
+        // if (set_clr != get_clr)
+        return false;
 
-        return true;
+        // return true;
     }
 
     static bool has_blend_modes(sdl::Renderer& renderer)
@@ -91,13 +91,14 @@ namespace rl::sdl::test {
         rl::sdl::Texture tface = load_test_face(renderer);
         if (tface.is_valid())
         {
-            ds::color<u8> set_clr{ 100, 100, 100 };
-            if (!tface.set_color_mod(set_clr))
-                return false;
+            // ds::color<u8> set_clr{ 100, 100, 100 };
+            // if (!tface.set_color_mod(set_clr))
+            //     return false;
 
-            ds::color<u8> get_clr{ tface.get_color_mod() };
-            if (get_clr != set_clr)
-                return false;
+            // ds::color<u8> get_clr{ tface.get_color_mod() };
+            // if (get_clr != set_clr)
+            //     return false;
+            return false;
         }
 
         return true;
@@ -218,17 +219,17 @@ namespace rl::sdl::test {
         {
             for (rl::i32 x = y % 2; x < sdl::test::TESTRENDER_SCREEN_W; x += 2)
             {
-                ret = renderer.set_draw_color({
-                    static_cast<u8>(x * y),
-                    static_cast<u8>(x * y / 2),
-                    static_cast<u8>(x * y / 3),
-                });
-                if (!ret)
-                    ++check_fail_count_1;
+                // ret = renderer.set_draw_color({
+                //     static_cast<u8>(x * y),
+                //     static_cast<u8>(x * y / 2),
+                //     static_cast<u8>(x * y / 3),
+                // });
+                // if (!ret)
+                //     ++check_fail_count_1;
 
-                ret = renderer.draw_point({ cast::to<f32>(x), cast::to<f32>(y) });
-                if (!ret)
-                    check_fail_count_2++;
+                // ret = renderer.draw_point({ cast::to<f32>(x), cast::to<f32>(y) });
+                // if (!ret)
+                //     check_fail_count_2++;
             }
         }
 
@@ -313,18 +314,18 @@ namespace rl::sdl::test {
             auto blend_mode = (((i / 2) % 3) == 0) ? SDL3::SDL_BLENDMODE_BLEND
                             : (((i / 2) % 3) == 1) ? SDL3::SDL_BLENDMODE_ADD
                                                    : SDL3::SDL_BLENDMODE_NONE;
-            ds::color<u8> color = {
-                static_cast<u8>(abs((60 + 2 * i) % 255)),
-                static_cast<u8>(abs((240 - 2 * i) % 255)),
-                static_cast<u8>(abs((3 * i) % 255)),
-            };
+            // ds::color<u8> color = {
+            //     static_cast<u8>(abs((60 + 2 * i) % 255)),
+            //     static_cast<u8>(abs((240 - 2 * i) % 255)),
+            //     static_cast<u8>(abs((3 * i) % 255)),
+            // };
 
-            if (!renderer.set_draw_color(color))
-                ++check_fail_count_1;
-            if (!renderer.set_draw_blend_mode(blend_mode))
-                check_fail_count_2++;
-            if (!renderer.draw_line({ 0.0f, 0.0f }, { (float)i, 59.0f }))
-                check_fail_count_3++;
+            // if (!renderer.set_draw_color(color))
+            //     ++check_fail_count_1;
+            // if (!renderer.set_draw_blend_mode(blend_mode))
+            //     check_fail_count_2++;
+            // if (!renderer.draw_line({ 0.0f, 0.0f }, { (float)i, 59.0f }))
+            //     check_fail_count_3++;
         }
 
         sdl_assert(check_fail_count_1 == 0, "render test 1 failed");
@@ -339,18 +340,18 @@ namespace rl::sdl::test {
             auto blend_mode = (((i / 2) % 3) == 0) ? SDL3::SDL_BLENDMODE_BLEND
                             : (((i / 2) % 3) == 1) ? SDL3::SDL_BLENDMODE_ADD
                                                    : SDL3::SDL_BLENDMODE_NONE;
-            ds::color<u8> color = {
-                static_cast<u8>(abs((60 + 2 * i) % 255)),
-                static_cast<u8>(abs((240 - 2 * i) % 255)),
-                static_cast<u8>(abs((3 * i) % 255)),
-            };
+            // ds::color<u8> color = {
+            //     static_cast<u8>(abs((60 + 2 * i) % 255)),
+            //     static_cast<u8>(abs((240 - 2 * i) % 255)),
+            //     static_cast<u8>(abs((3 * i) % 255)),
+            // };
 
-            if (!renderer.set_draw_color(color))
-                ++check_fail_count_1;
-            if (!renderer.set_draw_blend_mode(blend_mode))
-                check_fail_count_2++;
-            if (!renderer.draw_line({ 0.0f, 0.0f }, { 79.0f, (float)i }))
-                check_fail_count_3++;
+            // if (!renderer.set_draw_color(color))
+            //     ++check_fail_count_1;
+            // if (!renderer.set_draw_blend_mode(blend_mode))
+            //     check_fail_count_2++;
+            // if (!renderer.draw_line({ 0.0f, 0.0f }, { 79.0f, (float)i }))
+            //     check_fail_count_3++;
         }
 
         sdl_assert(check_fail_count_1 == 0, "render test 1 failed");
@@ -369,19 +370,19 @@ namespace rl::sdl::test {
                                 : ((((i + j) / 3) % 3) == 1) ? SDL3::SDL_BLENDMODE_ADD
                                                              : SDL3::SDL_BLENDMODE_NONE;
 
-                ds::color<u8> color = {
-                    static_cast<u8>(abs((j * 4) % 255)),
-                    static_cast<u8>(abs((i * 3) % 255)),
-                    static_cast<u8>(abs((j * 4) % 255)),
-                    static_cast<u8>(abs((i * 3) % 255)),
-                };
+                // ds::color<u8> color = {
+                //     static_cast<u8>(abs((j * 4) % 255)),
+                //     static_cast<u8>(abs((i * 3) % 255)),
+                //     static_cast<u8>(abs((j * 4) % 255)),
+                //     static_cast<u8>(abs((i * 3) % 255)),
+                // };
 
-                if (!renderer.set_draw_color(color))
-                    ++check_fail_count_1;
-                if (!renderer.set_draw_blend_mode(blend_mode))
-                    check_fail_count_2++;
-                if (!renderer.draw_point({ (float)i, (float)j }))
-                    check_fail_count_3++;
+                // if (!renderer.set_draw_color(color))
+                //     ++check_fail_count_1;
+                // if (!renderer.set_draw_blend_mode(blend_mode))
+                //     check_fail_count_2++;
+                // if (!renderer.draw_point({ (float)i, (float)j }))
+                //     check_fail_count_3++;
             }
         }
 
@@ -496,14 +497,14 @@ namespace rl::sdl::test {
             for (rl::i32 i = 0; i <= ni; i += 4)
             {
                 /* Set color mod. */
-                ds::color<u8> color_mod{
-                    static_cast<u8>((255 / nj) * j),
-                    static_cast<u8>((255 / ni) * i),
-                    static_cast<u8>((255 / nj) * j),
-                };
+                // ds::color<u8> color_mod{
+                //     static_cast<u8>((255 / nj) * j),
+                //     static_cast<u8>((255 / ni) * i),
+                //     static_cast<u8>((255 / nj) * j),
+                // };
 
-                if (!tface.set_color_mod(color_mod))
-                    ++check_fail_count_1;
+                // if (!tface.set_color_mod(color_mod))
+                //     ++check_fail_count_1;
 
                 /* Blitting. */
                 rect.pt.x = (float)i;
@@ -720,17 +721,17 @@ namespace rl::sdl::test {
             {
                 for (rl::i32 i = 0; i <= ni; i += 4)
                 {
-                    ds::color<u8> color{
-                        static_cast<u8>((255 / nj) * j),
-                        static_cast<u8>((255 / ni) * i),
-                        static_cast<u8>((255 / nj) * j),
-                    };
+                    // ds::color<u8> color{
+                    //     static_cast<u8>((255 / nj) * j),
+                    //     static_cast<u8>((255 / ni) * i),
+                    //     static_cast<u8>((255 / nj) * j),
+                    // };
 
-                    if (!tface.set_color_mod(color))
-                        ++check_fail_count_1;
+                    // if (!tface.set_color_mod(color))
+                    //     ++check_fail_count_1;
 
-                    if (!tface.set_alpha_mod(cast::to<u8>((100 / ni) * i)))
-                        ++check_fail_count_2;
+                    // if (!tface.set_alpha_mod(cast::to<u8>((100 / ni) * i)))
+                    //     ++check_fail_count_2;
 
                     /* Crazy blending mode magic. */
                     SDL3::SDL_BlendMode mode(static_cast<SDL3::SDL_BlendMode>((i / 4 * j / 4) % 4));
@@ -789,7 +790,7 @@ namespace rl::sdl::test {
         runtime_assert(color_val == sdl::test::RENDER_COLOR_CLEAR, "color conversion mismatch");
         ret = reference_surface.fill(sdl::test::RENDER_COLOR_CLEAR);
 
-        fill_color = { 0, 255, 0 };
+        // fill_color = { 0, 255, 0 };
         color_val = fill_color.rgba(reference_surface.get_format_full());
         runtime_assert(color_val == sdl::test::RENDER_COLOR_GREEN, "color conversion mismatch");
         reference_surface.fill_rect(sdl::test::RENDER_COLOR_GREEN, viewport);

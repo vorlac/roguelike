@@ -209,15 +209,15 @@ namespace rl::sdl {
         return result == 0;
     }
 
-    bool Texture::set_color_mod(ds::color<u8> c)
-    {
-        i32 result = 0;
-        result |= SDL3::SDL_SetTextureColorMod(m_sdl_texture, c.r, c.g, c.b);
-        sdl_assert(result == 0, "failed to set color mod");
-        result |= SDL3::SDL_SetTextureAlphaMod(m_sdl_texture, c.a);
-        sdl_assert(result == 0, "failed to set alpha mod");
-        return result == 0;
-    }
+    // bool Texture::set_color_mod(ds::color<u8> c)
+    //{
+    //     i32 result = 0;
+    //     result |= SDL3::SDL_SetTextureColorMod(m_sdl_texture, c.r, c.g, c.b);
+    //     sdl_assert(result == 0, "failed to set color mod");
+    //     result |= SDL3::SDL_SetTextureAlphaMod(m_sdl_texture, c.a);
+    //     sdl_assert(result == 0, "failed to set alpha mod");
+    //     return result == 0;
+    // }
 
     SDL3::SDL_PixelFormatEnum Texture::get_format() const
     {
@@ -263,14 +263,14 @@ namespace rl::sdl {
         return mode;
     }
 
-    ds::color<u8> Texture::get_color_mod() const
-    {
-        i32 result = 0;
-        ds::color<u8> c{ 0, 0, 0 };
-        result |= SDL3::SDL_GetTextureColorMod(m_sdl_texture, &c.r, &c.g, &c.b);
-        sdl_assert(result == 0, "failed to get color mod");
-        result |= SDL3::SDL_GetTextureAlphaMod(m_sdl_texture, &c.a);
-        sdl_assert(result == 0, "failed to get alpha mod");
-        return c;
-    }
+    // ds::color<u8> Texture::get_color_mod() const
+    //{
+    //     i32 result = 0;
+    //     ds::color<u8> c{ 0, 0, 0 };
+    //     result |= SDL3::SDL_GetTextureColorMod(m_sdl_texture, &c.r, &c.g, &c.b);
+    //     sdl_assert(result == 0, "failed to get color mod");
+    //     result |= SDL3::SDL_GetTextureAlphaMod(m_sdl_texture, &c.a);
+    //     sdl_assert(result == 0, "failed to get alpha mod");
+    //     return c;
+    // }
 }

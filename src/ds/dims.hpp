@@ -12,6 +12,8 @@
 
 namespace rl::ds {
 #pragma pack(4)
+    template <rl::numeric T>
+    struct vector2;
 
     template <rl::numeric T>
     struct dims
@@ -34,6 +36,12 @@ namespace rl::ds {
         constexpr inline dims(const dims<T>& other)
             : width{ other.width }
             , height{ other.height }
+        {
+        }
+
+        constexpr inline dims(const vector2<T>& other)
+            : width{ other.x }
+            , height{ other.y }
         {
         }
 
@@ -154,8 +162,8 @@ namespace rl::ds {
         constexpr inline dims<T> operator-(const V& val) const
         {
             return {
-                this->width - cast::to<T>(val),
-                this->height - cast::to<T>(val),
+                this->width - static_cast<T>(val),
+                this->height - static_cast<T>(val),
             };
         }
 
@@ -182,6 +190,14 @@ namespace rl::ds {
             };
         }
 
+        constexpr inline ds::dims<T> operator/(const vector2<T>& vec) const
+        {
+            return ds::dims<T>{
+                static_cast<T>(this->width / vec.x),
+                static_cast<T>(this->height / vec.y),
+            };
+        }
+
         constexpr inline dims<T>& operator/=(const T& val)
         {
             this->width /= val;
@@ -192,8 +208,16 @@ namespace rl::ds {
         constexpr inline dims<T> operator*(const T& val) const
         {
             return dims<T>{
-                cast::to<T>(this->width * val),
-                cast::to<T>(this->height * val),
+                static_cast<T>(this->width * val),
+                static_cast<T>(this->height * val),
+            };
+        }
+
+        constexpr inline dims<T> operator*(const vector2<T>& vec) const
+        {
+            return dims<T>{
+                static_cast<T>(this->width * vec.x),
+                static_cast<T>(this->height * vec.y),
             };
         }
 

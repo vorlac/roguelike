@@ -132,7 +132,7 @@ PenaltyIndentedWhitespace: 0
 PointerAlignment: Left
 PPIndentWidth: 2
 QualifierAlignment: Custom
-QualifierOrder: ['constexpr', 'const', 'static', 'inline', 'volatile', 'type']
+QualifierOrder: ['constexpr', 'static', 'inline', 'volatile', 'const', 'type']
 ReferenceAlignment: Pointer
 ReflowComments: true
 RemoveBracesLLVM: true

@@ -108,7 +108,7 @@ namespace rl::ds {
             return m_data;
         };
 
-        constexpr const inline T* operator->() const
+        constexpr inline const T* operator->() const
         {
             return m_data;
         }
@@ -119,7 +119,7 @@ namespace rl::ds {
             return *m_data;
         }
 
-        constexpr const inline T& operator*() const
+        constexpr inline const T& operator*() const
         {
             runtime_assert(m_data != nullptr, "dereferencing null shared<{}>", typeid(T).name());
             return *m_data;
@@ -130,7 +130,7 @@ namespace rl::ds {
             return m_data;
         }
 
-        constexpr const inline T* get() const
+        constexpr inline const T* get() const
         {
             return m_data;
         }

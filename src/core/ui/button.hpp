@@ -36,8 +36,8 @@ namespace rl::ui {
         Icon::ID icon() const;
         Button::Property properties() const;
         Icon::Placement icon_placement() const;
-        ds::color<f32> background_color() const;
-        ds::color<f32> text_color() const;
+        const ds::color<f32>& background_color() const;
+        const ds::color<f32>& text_color() const;
         const std::string& caption() const;
         const std::function<void()>& callback() const;
         const std::function<void(bool)>& change_callback() const;
@@ -71,13 +71,13 @@ namespace rl::ui {
 
     protected:
         bool m_pressed{ false };
-        std::string m_caption{};
+        std::string m_caption{ "" };
         Icon::ID m_icon{ Icon::None };
-        Button::Property m_props{};
-        Icon::Placement m_icon_placement{};
+        Button::Property m_props{ Property::StandardPush };
+        Icon::Placement m_icon_placement{ Icon::Placement::LeftCentered };
         std::vector<Button*> m_button_group{};
-        ds::color<f32> m_background_color{ rl::Colors::DarkGrey };
-        ds::color<f32> m_text_color{ rl::Colors::LightGrey };
+        ds::color<f32> m_background_color{ Colors::Grey };
+        ds::color<f32> m_text_color{ Colors::White };
         std::function<void(bool)> m_change_callback;
         std::function<void()> m_callback;
     };

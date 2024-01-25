@@ -266,7 +266,10 @@ namespace rl::ui {
         {
             unit_width = nvg::TextBounds(context, 0.0f, 0.0f, m_units.c_str(), nullptr, nullptr);
 
-            nvg::FillColor(context, ds::color<f32>{ 255, 255, 255, m_enabled ? 64 : 32 });
+            ds::color<f32> color{ 255, 255, 255 };
+            color.a = m_enabled ? 0.25f : 0.125f;
+
+            nvg::FillColor(context, color.nvg());
             nvg::TextAlign(context, Text::Alignment::HRightVMiddle);
             nvg::Text(context, m_pos.x + m_size.width - x_spacing, draw_pos.y, m_units.c_str(),
                       nullptr);
@@ -289,8 +292,8 @@ namespace rl::ui {
                 // up button
                 bool hover{ m_mouse_focus && spin_area(m_mouse_pos) == SpinArea::Top };
                 nvg::FillColor(context, (m_enabled && (hover || spinning))
-                                            ? m_theme->text_color
-                                            : m_theme->disabled_text_color);
+                                            ? m_theme->text_color.nvg()
+                                            : m_theme->disabled_text_color.nvg());
 
                 auto icon{ utf8(std::to_underlying(m_theme->text_box_up_icon)) };
                 nvg::TextAlign(context, nvg::NVG_ALIGN_LEFT | nvg::NVG_ALIGN_MIDDLE);
@@ -307,10 +310,10 @@ namespace rl::ui {
                 // down button
                 bool hover{ m_mouse_focus && this->spin_area(m_mouse_pos) == SpinArea::Bottom };
                 nvg::FillColor(context, (m_enabled && (hover || spinning))
-                                            ? m_theme->text_color
-                                            : m_theme->disabled_text_color);
+                                            ? m_theme->text_color.nvg()
+                                            : m_theme->disabled_text_color.nvg());
 
-                auto icon{ utf8(m_theme->text_box_down_icon) };
+                auto&& icon{ utf8(m_theme->text_box_down_icon) };
                 nvg::TextAlign(context, Text::Alignment::HLeftVMiddle);
 
                 ds::point<f32> icon_pos{
@@ -343,8 +346,8 @@ namespace rl::ui {
 
         nvg::FontSize(context, this->font_size());
         nvg::FillColor(context, m_enabled && (!m_committed || !m_value.empty())
-                                    ? m_theme->text_color
-                                    : m_theme->disabled_text_color);
+                                    ? m_theme->text_color.nvg()
+                                    : m_theme->disabled_text_color.nvg());
 
         // clip visible text area
         f32 clip_x{ m_pos.x + x_spacing + spin_arrows_width - 1.0f };

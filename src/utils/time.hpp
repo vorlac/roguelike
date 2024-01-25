@@ -67,7 +67,7 @@ namespace rl::inline utils {
         constexpr static inline TimeDuration time_unit{ Duration };
         // the timer internally always stores the
         // highest resolution of time point units
-        const static inline TimeDuration tick_unit{ Timer::unit() };
+        static inline const TimeDuration tick_unit{ Timer::unit() };
 
     public:
         constexpr inline Timer()
@@ -78,8 +78,8 @@ namespace rl::inline utils {
 
         constexpr inline T convert(u64 ticks)
         {
-            const static TimeDuration td = this->unit();
-            const static u64 freq = SDL3::SDL_GetPerformanceFrequency();
+            static const TimeDuration td = this->unit();
+            static const u64 freq = SDL3::SDL_GetPerformanceFrequency();
             constexpr u64 to_ratio = std::to_underlying(time_unit);
             const f64 seconds{ ticks / static_cast<f64>(freq) };
             return static_cast<T>(seconds * to_ratio);

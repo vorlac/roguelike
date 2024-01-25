@@ -214,7 +214,7 @@ namespace rl {
                 break;
         }
 
-        nvg::StrokeColor(m_nvg_context, color);
+        nvg::StrokeColor(m_nvg_context, color.nvg());
         nvg::Stroke(m_nvg_context);
     }
 }

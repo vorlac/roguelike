@@ -123,15 +123,17 @@ namespace rl::ui {
         auto&& context{ m_renderer->context() };
         nvg::FontSize(context, this->font_size());
         nvg::FontFace(context, font::name::sans);
-        nvg::FillColor(context, m_enabled ? m_theme->text_color : m_theme->disabled_text_color);
+        nvg::FillColor(context,
+                       m_enabled ? m_theme->text_color.nvg() : m_theme->disabled_text_color.nvg());
         nvg::TextAlign(context, nvg::NVG_ALIGN_LEFT | nvg::NVG_ALIGN_MIDDLE);
         nvg::Text(context, m_pos.x + 1.6f * this->font_size(), m_pos.y + m_size.height * 0.5f,
                   m_caption.c_str(), nullptr);
 
-        nvg::NVGpaint bg{ nvg::BoxGradient(
-            context, m_pos.x + 1.5f, m_pos.y + 1.5f, m_size.height - 2.0f, m_size.height - 2.0f, 3,
-            3, m_pushed ? ds::color<f32>{ 0, 0, 0, 100 } : ds::color<f32>{ 0, 0, 0, 32 },
-            ds::color<f32>{ 0, 0, 0, 180 }) };
+        nvg::NVGpaint bg{ nvg::BoxGradient(context, m_pos.x + 1.5f, m_pos.y + 1.5f,
+                                           m_size.height - 2.0f, m_size.height - 2.0f, 3, 3.0f,
+                                           m_pushed ? ds::color<f32>{ 0, 0, 0, 100 }.nvg()
+                                                    : ds::color<f32>{ 0, 0, 0, 32 }.nvg(),
+                                           ds::color<f32>{ 0, 0, 0, 180 }) };
 
         nvg::BeginPath(context);
         nvg::RoundedRect(context, m_pos.x + 1.0f, m_pos.y + 1.0f, m_size.height - 2.0f,
@@ -143,7 +145,8 @@ namespace rl::ui {
         {
             nvg::FontSize(context, this->icon_scale() * m_size.height);
             nvg::FontFace(context, font::name::icons);
-            nvg::FillColor(context, m_enabled ? m_theme->icon_color : m_theme->disabled_text_color);
+            nvg::FillColor(context, m_enabled ? m_theme->icon_color.nvg()
+                                              : m_theme->disabled_text_color.nvg());
             nvg::TextAlign(context, nvg::NVG_ALIGN_CENTER | nvg::NVG_ALIGN_MIDDLE);
             nvg::Text(context, m_pos.x + m_size.height * 0.5f + 1, m_pos.y + m_size.height * 0.5f,
                       rl::utf8(m_theme->check_box_icon).data(), nullptr);

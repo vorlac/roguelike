@@ -1105,7 +1105,7 @@ namespace rl::nvg {
         return res * sign;
     }
 
-    const static char* nsvg__parseNumber(const char* s, char* it, const int size)
+    static const char* nsvg__parseNumber(const char* s, char* it, const int size)
     {
         const int last = size - 1;
         int i = 0;
@@ -1162,7 +1162,7 @@ namespace rl::nvg {
         return s;
     }
 
-    const static char* nsvg__getNextPathItemWhenArcFlag(const char* s, char* it)
+    static const char* nsvg__getNextPathItemWhenArcFlag(const char* s, char* it)
     {
         it[0] = '\0';
         // Skip white spaces and commas
@@ -1185,7 +1185,7 @@ namespace rl::nvg {
         return s;
     }
 
-    const static char* nsvg__getNextPathItem(const char* s, char* it)
+    static const char* nsvg__getNextPathItem(const char* s, char* it)
     {
         it[0] = '\0';
         // Skip white spaces and commas
@@ -1757,7 +1757,7 @@ namespace rl::nvg {
         return NSVG_FILLRULE_NONZERO;
     }
 
-    const static char* nsvg__getNextDashItem(const char* s, char* it)
+    static const char* nsvg__getNextDashItem(const char* s, char* it)
     {
         int n = 0;
         it[0] = '\0';
