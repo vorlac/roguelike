@@ -70,9 +70,10 @@ namespace rl::ui {
             Widget::perform_layout();
         else
         {
-            m_children[0]->set_position({ 0.0f, 0.0f });
-            m_children[0]->set_size(m_size);
-            m_children[0]->perform_layout();
+            auto&& first_child{ m_children.front() };
+            first_child->set_position({ 0.0f, 0.0f });
+            first_child->set_size(m_size);
+            first_child->perform_layout();
         }
 
         if (m_side == Side::Left)
@@ -120,7 +121,7 @@ namespace rl::ui {
         // Draw window
         nvg::BeginPath(context);
         nvg::RoundedRect(context, m_pos.x, m_pos.y, m_size.width, m_size.height, corner_radius);
-        ds::point<f32> base{ m_pos + ds::point{ 0.0f, m_anchor_offset } };
+        ds::point<f32> base{ ds::point{ 0.0f, m_anchor_offset } + m_pos };
 
         f32 sign = -1.0f;
         if (m_side == Side::Left)

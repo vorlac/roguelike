@@ -14,9 +14,6 @@ namespace rl::ui {
     Dialog::Dialog(Widget* parent, const std::string& title)
         : Widget{ parent }
         , m_title{ title }
-        , m_button_panel{ nullptr }
-        , m_modal{ false }
-        , m_drag{ false }
     {
     }
 
@@ -93,9 +90,9 @@ namespace rl::ui {
         nvg::Fill(context);
 
         // Dialog shadow
-        nvg::NVGpaint shadow_paint = nvg::BoxGradient(
+        nvg::NVGpaint shadow_paint{ nvg::BoxGradient(
             context, m_pos.x, m_pos.y, m_size.width, m_size.height, corner_radius * 2.0f,
-            drop_shadow_size * 2.0f, m_theme->dialog_shadow.nvg(), m_theme->transparent.nvg());
+            drop_shadow_size * 2.0f, m_theme->dialog_shadow.nvg(), m_theme->transparent.nvg()) };
 
         nvg::Save(context);
         nvg::ResetScissor(context);
@@ -141,7 +138,7 @@ namespace rl::ui {
             nvg::TextAlign(context, Text::Alignment::HCenterVMiddle);
 
             // header text shadow
-            nvg::FontBlur(context, 0.0f);
+            nvg::FontBlur(context, 2.0f);
             nvg::FillColor(context, m_theme->text_shadow.nvg());
             nvg::Text(context, m_pos.x + (m_size.width / 2.0f), m_pos.y + (header_height / 2.0f),
                       m_title.c_str());
@@ -150,12 +147,20 @@ namespace rl::ui {
             nvg::FontBlur(context, 0.0f);
             nvg::FillColor(context, m_focused ? m_theme->dialog_title_focused.nvg()
                                               : m_theme->dialog_title_unfocused.nvg());
-            nvg::Text(context, m_pos.x + m_size.width / 2.0f, m_pos.y + header_height / 2.0f - 1.0f,
-                      m_title.c_str());
+            nvg::Text(context, m_pos.x + (m_size.width / 2.0f),
+                      m_pos.y + (header_height / 2.0f) - 1.0f, m_title.c_str());
         }
-
         nvg::Restore(context);
+        // nvg::Save(context);
+
+        // if there's a dialog title/header, shift contents down and
+        // prevent the dialog's contents from drawing on top of it by
+        // nvg::IntersectScissor(context, m_pos.x, m_pos.y, m_size.width,
+        //                      m_size.height - this->header_height());
+        // nvg::Translate(context, 0.5f, header_height + 1.5f);
         Widget::draw();
+        // nvg::Translate(context, -0.5f, -header_height - 1.5f);
+        //   nvg::Restore(context);
     }
 
     bool Dialog::on_mouse_entered(const Mouse& mouse)
@@ -206,7 +211,7 @@ namespace rl::ui {
 
         if (mouse.is_button_pressed(Mouse::Button::Left))
         {
-            f32 offset_height{ mouse.pos().y - m_pos.y };
+            const f32 offset_height{ mouse.pos().y - m_pos.y };
             m_drag = offset_height < m_theme->dialog_header_height;
             return true;
         }
@@ -251,14 +256,23 @@ namespace rl::ui {
         if (m_button_panel != nullptr)
             m_button_panel->show();
 
-        nvg::FontSize(context, 18.0f);
-        nvg::FontFace(context, font::name::sans);
+        nvg::FontSize(context, m_theme->dialog_title_font_size);
+        nvg::FontFace(context, m_theme->dialog_title_font_name.data());
 
+        // [xmin,ymin,xmax,ymax]
         std::array<f32, 4> bounds = {};
         nvg::TextBounds(context, 0, 0, m_title.c_str(), nullptr, bounds.data());
 
-        return ds::dims<f32>(std::max(result.width, bounds[2] - bounds[0] + 20),
-                             std::max(result.height, bounds[3] - bounds[1]));
+        constexpr static f32 TEXT_SIZE_WIDTH_PADDING{ 20.0f };
+        ds::rect<f32> bounding_rect{
+            ds::point<f32>::zero(),
+            ds::dims<f32>{
+                std::max(result.width, bounds[2] - bounds[0] + TEXT_SIZE_WIDTH_PADDING),
+                std::max(result.height, bounds[3] - bounds[1]),
+            },
+        };
+
+        return bounding_rect.size;
     }
 
     void Dialog::perform_layout()
@@ -267,18 +281,19 @@ namespace rl::ui {
             Widget::perform_layout();
         else
         {
-            m_button_panel->set_visible(false);
-            Widget::perform_layout();
+            m_button_panel->hide();
 
-            for (auto& bp_child : m_button_panel->children())
+            Widget::perform_layout();
+            for (auto bp_child : m_button_panel->children())
             {
                 bp_child->set_fixed_size({ 22.0f, 22.0f });
                 bp_child->set_font_size(15.0f);
             }
 
-            m_button_panel->set_visible(true);
-            m_button_panel->set_size({ this->width(), 22.0f });
-            m_button_panel->set_position({
+            m_button_panel->show();
+
+            m_button_panel->set_size(ds::dims{ this->width(), 22.0f });
+            m_button_panel->set_position(ds::point{
                 this->width() - (m_button_panel->preferred_size().width + 5.0f),
                 3.0f,
             });

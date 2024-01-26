@@ -313,7 +313,7 @@ namespace rl::ds {
             return *this;
         }
 
-        constexpr inline vector2<T> operator+(const T& other) const
+        constexpr inline vector2<T> operator+(T&& other) noexcept
         {
             return vector2<T>{
                 x + other,
@@ -321,7 +321,7 @@ namespace rl::ds {
             };
         }
 
-        constexpr inline vector2<T> operator+(const vector2<T>& other) const
+        constexpr inline vector2<T> operator+(vector2<T>&& other) noexcept
         {
             return vector2<T>{
                 x + other.x,
@@ -329,11 +329,11 @@ namespace rl::ds {
             };
         }
 
-        constexpr inline vector2<T> operator+(const dims<T>& other) const
+        constexpr inline vector2<T> operator+(dims<T>&& other) noexcept
         {
             return vector2<T>{
-                x + other.width,
-                y + other.height,
+                static_cast<T>(this->x + other.width),
+                static_cast<T>(this->y + other.height),
             };
         }
 
@@ -418,6 +418,14 @@ namespace rl::ds {
             return vector2<T>{
                 x / other.x,
                 y / other.y,
+            };
+        }
+
+        constexpr inline vector2<T> operator/(dims<T>&& other) noexcept
+        {
+            return vector2<T>{
+                static_cast<T>(this->x / other.width),
+                static_cast<T>(this->y / other.height),
             };
         }
 

@@ -66,12 +66,12 @@ namespace rl::ui {
         virtual ds::dims<f32> preferred_size() const override;
 
     private:
-        bool handle_mouse_button_event(const ds::point<i32>& pt, Mouse::Button::ID button,
+        bool handle_mouse_button_event(const ds::point<f32>& pt, Mouse::Button::ID button,
                                        bool down, Keyboard::Scancode::ID modifiers);
 
     protected:
         bool m_pressed{ false };
-        std::string m_caption{ "" };
+        std::string m_caption{};
         Icon::ID m_icon{ Icon::None };
         Button::Property m_props{ Property::StandardPush };
         Icon::Placement m_icon_placement{ Icon::Placement::LeftCentered };

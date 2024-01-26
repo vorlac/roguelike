@@ -9,6 +9,7 @@
 #include "core/ui/label.hpp"
 #include "core/ui/layout.hpp"
 #include "core/ui/textbox.hpp"
+#include "core/ui/vscrollpanel.hpp"
 #include "ds/color.hpp"
 #include "ds/dims.hpp"
 #include "ds/refcounted.hpp"
@@ -16,7 +17,6 @@
 
 namespace rl::ui {
     namespace detail {
-
         template <typename T, typename sfinae = std::true_type>
         class FormWidget
         {
@@ -36,12 +36,22 @@ namespace rl::ui {
             runtime_assert(m_ui_canvas != nullptr, "invalid dialog");
 
             m_dialog = new Dialog{ m_ui_canvas, title };
-            m_layout = new AdvancedGridLayout{ { 10, 0, 10, 0 }, {} };
+            m_dialog->set_layout(new GridLayout{
+                Orientation::Horizontal,
+                Alignment::Center,
+            });
 
-            m_layout->set_margin(10);
+            m_scroll = new VScrollPanel{ m_dialog };
+            m_scroll->set_fixed_height(300);
+
+            m_container = new Widget{ m_scroll };
+
+            m_layout = new AdvancedGridLayout{ { 10, 0, 10, 0 }, {} };
+            m_layout->set_margin(10.0f);
             m_layout->set_col_stretch(2, 1.0f);
+            m_container->set_layout(m_layout);
+
             m_dialog->set_position(pos);
-            m_dialog->set_layout(m_layout);
             m_dialog->set_visible(true);
 
             return m_dialog;
@@ -49,17 +59,18 @@ namespace rl::ui {
 
         Label* add_group(const std::string& caption)
         {
-            Theme* theme{ m_dialog->theme() };
+            Theme* theme{ m_container->theme() };
             Label* label{ new Label{
-                m_dialog,
+                m_container,
                 caption,
                 theme->form_group_font_name,
                 theme->form_group_font_size,
             } };
 
-            m_layout->append_row(m_layout->row_count() > 0 ? theme->form_pre_group_spacing
-                                                           : m_dialog->header_height());
+            m_layout->append_row(theme->form_pre_group_spacing);
 
+            // m_layout->append_row(m_layout->row_count() > 0 ? theme->form_pre_group_spacing
+            //                                                : m_dialog->header_height());
             m_layout->append_row(0);
             m_layout->set_anchor(label, Anchor{ 0, m_layout->row_count() - 1, 4, 1 });
             m_layout->append_row(theme->form_post_group_spacing);
@@ -72,16 +83,15 @@ namespace rl::ui {
                                             const std::function<void(const T&)>& setter,
                                             const std::function<T()>& getter, bool editable = true)
         {
-            Theme* theme{ m_dialog->theme() };
-
+            Theme* theme{ m_container->theme() };
             Label* label = new Label{
-                m_dialog,
+                m_container,
                 label_text,
                 theme->form_label_font_name,
                 theme->form_label_font_size,
             };
 
-            auto widget{ new detail::FormWidget<T>{ m_dialog } };
+            auto widget{ new detail::FormWidget<T>{ m_container } };
             auto refresh = [widget, getter] {
                 T value{ getter() };
                 T current{ widget->value() };
@@ -95,7 +105,7 @@ namespace rl::ui {
             widget->set_editable(editable);
 
             ds::dims<f32> fs{ widget->fixed_size() };
-            widget->set_fixed_size(ds::dims<f32>{
+            widget->set_fixed_size({
                 fs.width != 0.0f ? fs.width : m_fixed_size.width,
                 fs.height != 0.0f ? fs.height : m_fixed_size.height,
             });
@@ -128,12 +138,10 @@ namespace rl::ui {
 
         Button* add_button(const std::string& label, const std::function<void()>& cb)
         {
-            Theme* theme{ m_dialog->theme() };
-            Button* button{ new Button{ m_dialog, label } };
+            Theme* theme{ m_container->theme() };
+            Button* button{ new Button{ m_container, label } };
 
             button->set_callback(cb);
-            // button->set_fixed_height(32);
-
             if (m_layout->row_count() > 0)
                 m_layout->append_row(theme->form_variable_spacing);
 
@@ -145,7 +153,7 @@ namespace rl::ui {
 
         void add_widget(const std::string& label_text, Widget* widget)
         {
-            Theme* theme{ m_dialog->theme() };
+            Theme* theme{ m_container->theme() };
             m_layout->append_row(0);
 
             if (label_text.empty())
@@ -153,7 +161,7 @@ namespace rl::ui {
             else
             {
                 Label* label = new Label{
-                    m_dialog,
+                    m_container,
                     label_text,
                     theme->form_label_font_name,
                     theme->form_label_font_size,
@@ -192,9 +200,11 @@ namespace rl::ui {
         }
 
     protected:
-        ds::shared<UICanvas> m_ui_canvas{};
-        ds::shared<Dialog> m_dialog{};
-        ds::shared<AdvancedGridLayout> m_layout{};
+        ds::shared<UICanvas> m_ui_canvas{ nullptr };
+        ds::shared<Dialog> m_dialog{ nullptr };
+        ds::shared<VScrollPanel> m_scroll{ nullptr };
+        ds::shared<Widget> m_container{ nullptr };
+        ds::shared<AdvancedGridLayout> m_layout{ nullptr };
         std::vector<std::function<void()>> m_refresh_callbacks;
         ds::dims<f32> m_fixed_size{ 0.0f, 0.0f };
     };

@@ -23,7 +23,7 @@ namespace rl::ui {
     class UICanvas : public Widget
     {
     public:
-        UICanvas(ds::dims<f32> size, const Mouse& mouse, const Keyboard& kb,
+        UICanvas(ds::rect<f32> rect, const Mouse& mouse, const Keyboard& kb,
                  const std::unique_ptr<NVGRenderer>& nvg_renderer);
         ~UICanvas();
 

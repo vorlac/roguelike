@@ -95,6 +95,7 @@ namespace rl::ui {
         std::string form_group_font_name{ font::name::mono };
         std::string form_label_font_name{ font::name::sans };
         std::string tooltip_font_name{ font::name::sans_bold };
+        std::string dialog_title_font_name{ font::name::sans_bold };
 
         f32 icon_scale{ 1.0f };
         f32 tab_border_width{ 0.75f };
@@ -103,10 +104,10 @@ namespace rl::ui {
         f32 tooltip_font_size{ 18.0f };
         f32 button_font_size{ 20.0f };
         f32 text_box_font_size{ 20.0f };
+        f32 dialog_title_font_size{ 24.0f };
         f32 form_group_font_size{ 24.0f };
         f32 form_label_font_size{ 18.0f };
         f32 form_widget_font_size{ 18.0f };
-
         f32 form_pre_group_spacing{ 15.0f };
         f32 form_post_group_spacing{ 15.0f };
         f32 form_variable_spacing{ 10.0f };

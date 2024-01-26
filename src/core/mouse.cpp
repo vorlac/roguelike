@@ -33,8 +33,8 @@ namespace rl {
     {
         m_prev_cursor_pos = m_cursor_position;
         m_cursor_position = {
-            static_cast<i32>(motion.x),
-            static_cast<i32>(motion.y),
+            motion.x,
+            motion.y,
         };
     }
 
@@ -45,37 +45,37 @@ namespace rl {
         auto new_wheel_pos{ wheel };
         if (new_wheel_pos.direction == Mouse::Wheel::Direction::Flipped)
         {
-            new_wheel_pos.x *= -1;
-            new_wheel_pos.y *= -1;
+            new_wheel_pos.x *= -1.0f;
+            new_wheel_pos.y *= -1.0f;
         }
 
         // positive to the right
         // and negative to the left
-        if (new_wheel_pos.x != 0)
-            m_wheel_position.x += static_cast<i32>(new_wheel_pos.x * 10.0f);
+        if (new_wheel_pos.x != 0.0f)
+            m_wheel_position.x += new_wheel_pos.x;
 
         // positive away from the user
         // and negative towards the user
-        if (new_wheel_pos.y != 0)
-            m_wheel_position.y -= static_cast<i32>(new_wheel_pos.y * 10.0f);
+        if (new_wheel_pos.y != 0.0f)
+            m_wheel_position.y -= new_wheel_pos.y;
     }
 
-    ds::point<i32> Mouse::pos() const
+    ds::point<f32> Mouse::pos() const
     {
         return m_cursor_position;
     }
 
-    ds::vector2<i32> Mouse::wheel() const
+    ds::vector2<f32> Mouse::wheel() const
     {
         return m_wheel_position;
     }
 
-    ds::vector2<i32> Mouse::pos_delta() const
+    ds::vector2<f32> Mouse::pos_delta() const
     {
         return m_cursor_position - m_prev_cursor_pos;
     }
 
-    ds::vector2<i32> Mouse::wheel_delta() const
+    ds::vector2<f32> Mouse::wheel_delta() const
     {
         return m_wheel_position - m_prev_wheel_pos;
     }

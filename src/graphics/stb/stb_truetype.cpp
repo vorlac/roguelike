@@ -1823,7 +1823,6 @@ namespace rl::stb {
                         }
                         else
                             return 0;
-                        break;
                     }
 
                     default:

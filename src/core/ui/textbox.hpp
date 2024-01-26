@@ -83,7 +83,7 @@ namespace rl::ui {
 
         f32 cursor_index_to_position(i32 index, f32 last_x, const nvg::NVGglyphPosition* glyphs,
                                      i32 size);
-        i32 position_to_cursor_index(i32 pos_x, f32 last_x, const nvg::NVGglyphPosition* glyphs,
+        i32 position_to_cursor_index(f32 pos_x, f32 last_x, const nvg::NVGglyphPosition* glyphs,
                                      i32 size);
 
         // The location (if any) for the spin area.
@@ -93,7 +93,7 @@ namespace rl::ui {
             Bottom
         };
 
-        SpinArea spin_area(ds::point<i32> pos) const;
+        SpinArea spin_area(ds::point<f32> pos) const;
 
     protected:
         bool m_editable{ false };
@@ -115,9 +115,9 @@ namespace rl::ui {
         f32 m_text_offset{ 0.0f };
         f32 m_last_click{ 0.0f };
 
-        ds::point<i32> m_mouse_pos{ -1, -1 };
-        ds::point<i32> m_mouse_down_pos{ -1, -1 };
-        ds::point<i32> m_mouse_drag_pos{ -1, -1 };
+        ds::point<f32> m_mouse_pos{ ds::point<f32>::null() };
+        ds::point<f32> m_mouse_down_pos{ ds::point<f32>::null() };
+        ds::point<f32> m_mouse_drag_pos{ ds::point<f32>::null() };
 
         Alignment m_alignment{};
 
@@ -381,7 +381,7 @@ namespace rl::ui {
             if (m_spinnable && !this->focused() && mouse.is_button_held(Mouse::Button::Right) &&
                 m_mouse_down_pos.x != -1)
             {
-                i32 value_delta{ static_cast<i32>((mouse.pos().x - m_mouse_down_pos.x) / 10.0f) };
+                const f32 value_delta{ (mouse.pos().x - m_mouse_down_pos.x) / 10.0f };
                 this->set_value(m_mouse_down_value + value_delta * m_value_increment);
 
                 if (m_callback != nullptr)

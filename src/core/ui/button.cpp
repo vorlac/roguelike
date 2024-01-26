@@ -186,7 +186,7 @@ namespace rl::ui {
         return Widget::on_mouse_exited(mouse);
     }
 
-    bool Button::handle_mouse_button_event(const ds::point<i32>& pt, Mouse::Button::ID mouse_btn,
+    bool Button::handle_mouse_button_event(const ds::point<f32>& pt, Mouse::Button::ID mouse_btn,
                                            bool button_just_pressed,
                                            Keyboard::Scancode::ID keys_down)
     {
@@ -221,7 +221,7 @@ namespace rl::ui {
                     }
                     else
                     {
-                        for (auto& button : m_button_group)
+                        for (auto button : m_button_group)
                         {
                             if (button != this && button->has_property(Property::Radio) &&
                                 button->m_pressed)

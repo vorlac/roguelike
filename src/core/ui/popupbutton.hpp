@@ -30,7 +30,7 @@ namespace rl::ui {
         virtual void perform_layout() override;
 
     protected:
-        Popup* m_popup{};
+        Popup* m_popup{ nullptr };
         Icon::ID m_chevron_icon{ Icon::None };
     };
 

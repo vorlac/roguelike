@@ -133,8 +133,8 @@ namespace rl::ui {
                     break;
             }
 
-            child->set_position(pos);
-            child->set_size(target_size);
+            child->set_position(std::move(pos));
+            child->set_size(std::move(target_size));
             child->perform_layout();
             position += target_size.width;
         }
@@ -255,13 +255,17 @@ namespace rl::ui {
                 child->preferred_size().height,
             };
 
-            const ds::dims<f32> target_size{
+            ds::dims<f32> target_size{
                 fs.width ? fs.width : ps.width,
                 fs.height ? fs.height : ps.height,
             };
 
-            child->set_position({ m_margin + (indent_cur ? m_group_indent : 0.0f), height });
-            child->set_size(target_size);
+            child->set_position({
+                m_margin + (indent_cur ? m_group_indent : 0.0f),
+                height,
+            });
+
+            child->set_size(std::move(target_size));
             child->perform_layout();
 
             height += target_size.height;
@@ -521,7 +525,7 @@ namespace rl::ui {
                 }
 
                 child->set_position(item_pos);
-                child->set_size(target_size);
+                child->set_size(std::move(target_size));
                 child->perform_layout();
 
                 axis1_pos += static_cast<i32>(grid[axis1][i1] + this->spacing(Axis(axis1)));
@@ -729,8 +733,8 @@ namespace rl::ui {
                 item_axis_pos = item_pos;
                 item_axis_size = target_size;
 
-                child->set_position(pos);
-                child->set_size(size);
+                child->set_position(std::move(pos));
+                child->set_size(std::move(size));
                 child->perform_layout();
             }
         }

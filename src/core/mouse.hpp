@@ -89,10 +89,10 @@ namespace rl {
         };
 
     public:
-        [[nodiscard]] ds::point<i32> pos() const;
-        [[nodiscard]] ds::vector2<i32> wheel() const;
-        [[nodiscard]] ds::vector2<i32> pos_delta() const;
-        [[nodiscard]] ds::vector2<i32> wheel_delta() const;
+        [[nodiscard]] ds::point<f32> pos() const;
+        [[nodiscard]] ds::vector2<f32> wheel() const;
+        [[nodiscard]] ds::vector2<f32> pos_delta() const;
+        [[nodiscard]] ds::vector2<f32> wheel_delta() const;
         [[nodiscard]] Mouse::Button::ID button_pressed() const;
         [[nodiscard]] Mouse::Button::ID button_released() const;
 
@@ -116,10 +116,10 @@ namespace rl {
         u32 m_buttons_held{ 0 };
         u32 m_buttons_pressed{ 0 };
         u32 m_buttons_released{ 0 };
-        ds::point<i32> m_cursor_position{ 0, 0 };
-        ds::point<i32> m_prev_cursor_pos{ 0, 0 };
-        ds::vector2<i32> m_wheel_position{ 0, 0 };
-        ds::vector2<i32> m_prev_wheel_pos{ 0, 0 };
+        ds::point<f32> m_cursor_position{ 0.0f, 0.0f };
+        ds::point<f32> m_prev_cursor_pos{ 0.0f, 0.0f };
+        ds::vector2<f32> m_wheel_position{ 0.0f, 0.0f };
+        ds::vector2<f32> m_prev_wheel_pos{ 0.0f, 0.0f };
     };
 }
 

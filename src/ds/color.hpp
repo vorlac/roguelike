@@ -31,7 +31,8 @@ namespace rl::ds {
     {
     public:
         constexpr static inline T Transparent = T(0);
-        constexpr static inline T Opaque = sizeof(T) == sizeof(u8) ? T(255) : T(1);
+        constexpr static inline T Opaque = sizeof(T) == sizeof(u8) ? static_cast<T>(255)
+                                                                   : static_cast<T>(1.0f);
 
     public:
         consteval inline color() = default;
@@ -131,7 +132,7 @@ namespace rl::ds {
 
         constexpr static inline ds::color<T> rand()
         {
-            return ds::color{
+            return ds::color<T>{
                 static_cast<u8>(rl::random<0, 128>::value()),
                 static_cast<u8>(rl::random<0, 128>::value()),
                 static_cast<u8>(rl::random<0, 128>::value()),

@@ -93,7 +93,7 @@ namespace rl {
         return m_nvg_context;
     }
 
-    void NVGRenderer::begin_frame(ds::dims<f32> render_size, f32 pixel_ratio)
+    void NVGRenderer::begin_frame(const ds::dims<f32>& render_size, f32 pixel_ratio)
     {
         nvg::BeginFrame(m_nvg_context, render_size.width, render_size.height, pixel_ratio);
     }
@@ -103,14 +103,15 @@ namespace rl {
         nvg::EndFrame(m_nvg_context);
     }
 
-    void NVGRenderer::render_frame(ds::dims<f32> render_size, f32 pixel_ratio, auto&& render_func)
+    void NVGRenderer::render_frame(const ds::dims<f32>& render_size, f32 pixel_ratio,
+                                   auto&& render_func)
     {
         this->begin_frame(render_size, pixel_ratio);
         render_func();
         this->end_frame();
     }
 
-    void NVGRenderer::flush(ds::dims<i32> viewport, f32 pixel_ratio)
+    void NVGRenderer::flush(const ds::dims<f32>& viewport, f32 pixel_ratio)
     {
         // Flush all queued up NanoVG rendering commands
         nvg::NVGparams* params{ nvg::InternalParams(m_nvg_context) };
@@ -119,24 +120,24 @@ namespace rl {
                                static_cast<f32>(viewport.height), pixel_ratio);
     }
 
-    void NVGRenderer::push_render_state()
+    void NVGRenderer::save_state()
     {
         nvg::Save(m_nvg_context);
     }
 
-    void NVGRenderer::pop_render_state()
+    void NVGRenderer::restore_state()
     {
         nvg::Restore(m_nvg_context);
     }
 
     void NVGRenderer::scoped_state_draw(auto&& draw_func)
     {
-        this->push_render_state();
+        this->save_state();
         draw_func();
-        this->pop_render_state();
+        this->restore_state();
     }
 
-    ui::font::Handle NVGRenderer::load_font(std::string_view font_name,
+    ui::font::Handle NVGRenderer::load_font(const std::string& font_name,
                                             std::basic_string_view<u8>&& font_ttf)
     {
         return nvg::CreateFontMem(m_nvg_context, font_name.data(), const_cast<u8*>(font_ttf.data()),
@@ -153,7 +154,7 @@ namespace rl {
         }
     }
 
-    void NVGRenderer::set_text_properties(std::string_view& font_name, f32 font_size,
+    void NVGRenderer::set_text_properties(const std::string_view& font_name, f32 font_size,
                                           ui::Text::Alignment alignment) const
     {
         nvg::FontFace(m_nvg_context, font_name.data());
@@ -180,7 +181,7 @@ namespace rl {
         };
     }
 
-    ds::dims<f32> NVGRenderer::get_text_size(const std::string& text, std::string_view& font_name,
+    ds::dims<f32> NVGRenderer::get_text_size(const std::string& text, const std::string& font_name,
                                              f32 font_size, ui::Text::Alignment alignment) const
     {
         this->set_text_properties(font_name, font_size, alignment);
@@ -194,8 +195,8 @@ namespace rl {
         };
     }
 
-    void NVGRenderer::draw_rect_outline(ds::rect<f32> rect, f32 stroke_width, ds::color<f32> color,
-                                        ui::Outline type)
+    void NVGRenderer::draw_rect_outline(const ds::rect<f32>& rect, f32 stroke_width,
+                                        const ds::color<f32>& color, ui::Outline type)
     {
         nvg::StrokeWidth(m_nvg_context, stroke_width);
         nvg::BeginPath(m_nvg_context);

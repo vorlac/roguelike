@@ -42,8 +42,8 @@ namespace rl::ui {
     i32 ImagePanel::index_for_position(const ds::point<f32>& mouse_pos) const
     {
         // TODO: revisit this and remove the duplicate logic if doesn't trigger assert
-        ds::point<f32> pp{ ((mouse_pos - m_pos) - m_margin) / (m_spacing + m_thumb_size) };
-        ds::dims<f32> icon_size{ m_thumb_size / (m_spacing + m_thumb_size) };
+        ds::point<f32> pp{ (((mouse_pos - m_pos) - m_margin) / (m_thumb_size + m_spacing)) };
+        ds::dims<f32> icon_size{ m_thumb_size / ds::dims<f32>{ m_thumb_size + m_spacing } };
         ds::rect<f32> image_rect{ pp, icon_size };
         bool over_image{ image_rect.contains(mouse_pos) };
 
@@ -80,7 +80,7 @@ namespace rl::ui {
 
     bool ImagePanel::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb)
     {
-        i32 index{ this->index_for_position(mouse.pos()) };
+        const i32 index{ this->index_for_position(mouse.pos()) };
         if (index >= 0 && index < static_cast<i32>(m_images.size()) && m_callback != nullptr)
             m_callback(index);
         return true;
@@ -106,7 +106,7 @@ namespace rl::ui {
         {
             ds::point<f32> p{
                 m_pos + m_margin +
-                    ds::dims<f32>{ m_spacing + m_thumb_size } *
+                    ds::dims<f32>{ m_thumb_size + m_spacing } *
                         ds::vector2{ i % grid.width, i / grid.height },
             };
 

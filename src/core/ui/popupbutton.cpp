@@ -115,13 +115,12 @@ namespace rl::ui {
         else
         {
             const f32 anchor_size{ m_popup->anchor_size() };
-            const ds::point<f32> offset{
+            ds::point<f32> offset{
                 this->width() + anchor_size + 1.0f,
                 (m_size.height / 2.0f) - anchor_size,
             };
 
-            const ds::point<f32> popup_pos{ this->position() + offset };
-            m_popup->set_position(popup_pos);
+            m_popup->set_position({ this->position() + offset });
         }
     }
 

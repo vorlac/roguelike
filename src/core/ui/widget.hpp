@@ -39,7 +39,7 @@ namespace rl::ui {
         bool has_font_size() const;
         bool enabled() const;
         bool focused() const;
-        bool contains(ds::point<i32> pt) const;
+        bool contains(ds::point<f32> pt) const;
 
         f32 width() const;
         f32 height() const;
@@ -57,11 +57,11 @@ namespace rl::ui {
         Theme* theme();
         Widget* child_at(i32 index);
         rl::Mouse::Cursor::ID cursor() const;
-        Widget* find_widget(ds::point<i32> pt);
+        Widget* find_widget(ds::point<f32> pt);
         ds::point<f32> position() const;
         ds::point<f32> abs_position() const;
-        ds::dims<f32> fixed_size() const;
-        ds::dims<f32> size() const;
+        const ds::dims<f32>& fixed_size() const;
+        const ds::dims<f32>& size() const;
 
         const UICanvas* canvas() const;
         const Dialog* dialog() const;
@@ -69,7 +69,7 @@ namespace rl::ui {
         const Layout* layout() const;
         const Theme* theme() const;
         const Widget* child_at(i32 index) const;
-        const Widget* find_widget(ds::point<i32> pt) const;
+        const Widget* find_widget(ds::point<f32> pt) const;
         const std::vector<Widget*>& children() const;
         const std::string& tooltip() const;
 
@@ -94,12 +94,6 @@ namespace rl::ui {
         void set_font_size(f32 font_size);
         void set_icon_extra_scale(f32 scale);
         void set_cursor(Mouse::Cursor::ID cursor);
-
-        template <typename TWidget, typename... TArgs>
-        TWidget* add(const TArgs&... args)
-        {
-            return new TWidget{ this, args... };
-        }
 
     public:
         virtual bool on_focus_gained();
@@ -127,7 +121,7 @@ namespace rl::ui {
         virtual ds::dims<f32> preferred_size() const;
 
     public:
-        virtual void draw_mouse_intersection(ds::point<i32> pt);
+        virtual void draw_mouse_intersection( ds::point<f32> pt);
 
     protected:
         f32 icon_scale() const;

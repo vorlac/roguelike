@@ -4,7 +4,7 @@ namespace rl {
 
     Keyboard::Scancode::ID Keyboard::keys_down() const
     {
-        return Scancode::ID(m_pressed.all() | m_held.all());
+        return Keyboard::Scancode::ID(m_pressed.all() | m_held.all());
     }
 
     bool Keyboard::is_button_pressed(const Keyboard::Scancode::ID key) const

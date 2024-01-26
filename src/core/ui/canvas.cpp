@@ -9,13 +9,14 @@
 
 namespace rl::ui {
 
-    UICanvas::UICanvas(ds::dims<f32> size, const Mouse& mouse, const Keyboard& kb,
+    UICanvas::UICanvas(ds::rect<f32> rect, const Mouse& mouse, const Keyboard& kb,
                        const std::unique_ptr<NVGRenderer>& vg_renderer)
         : Widget{ nullptr, vg_renderer }
         , m_mouse{ mouse }
         , m_keyboard{ kb }
     {
-        m_size = size;
+        // m_pos = rect.pt;
+        m_size = rect.size;
 
         for (i32 i = Mouse::Cursor::Arrow; i < Mouse::Cursor::CursorCount; ++i)
             m_cursors[i] = SDL3::SDL_CreateSystemCursor(Mouse::Cursor::type(i));
@@ -25,9 +26,6 @@ namespace rl::ui {
         this->on_mouse_move({}, {});
 
         m_last_interaction = m_timer.elapsed();
-        m_process_events = true;
-        m_drag_active = false;
-        m_redraw = true;
     }
 
     UICanvas::~UICanvas()
@@ -39,7 +37,7 @@ namespace rl::ui {
 
     bool UICanvas::update()
     {
-        for (auto&& update_widget_func : m_update_callbacks)
+        for (const auto& update_widget_func : m_update_callbacks)
             update_widget_func();
 
         return m_update_callbacks.size() > 0;
@@ -83,7 +81,7 @@ namespace rl::ui {
                 constexpr f32 tooltip_width{ 150.0f };
                 std::array<f32, 4> bounds = { 0.0f };
                 ds::point<f32> pos{
-                    widget->abs_position() +
+                    widget->position() +
                         ds::point<f32>(widget->width() / 2.0f, widget->height() + 10.0f),
                 };
 
@@ -95,7 +93,7 @@ namespace rl::ui {
                                 bounds.data());
 
                 f32 height{ (bounds[2] - bounds[0]) / 2.0f };
-                if (height > tooltip_width / 2)
+                if (height > (tooltip_width / 2.0f))
                 {
                     nvg::TextAlign(context, Text::Alignment::HMiddleVTop);
                     nvg::TextBoxBounds(context, pos.x, pos.y, tooltip_width,
@@ -105,10 +103,10 @@ namespace rl::ui {
                 }
 
                 f32 shift{ 0.0f };
-                if (pos.x - height - 8 < 0)
+                if (pos.x - height - 8.0f < 0.0f)
                 {
                     // Keep tooltips on screen
-                    shift = pos.x - height - 8;
+                    shift = pos.x - height - 8.0f;
                     pos.x -= shift;
                     bounds[0] -= shift;
                     bounds[2] -= shift;
@@ -129,7 +127,7 @@ namespace rl::ui {
                 nvg::LineTo(context, px - 7, bounds[1] + 1);
                 nvg::Fill(context);
 
-                nvg::FillColor(context, ds::color<f32>{ rl::Colors::White });
+                nvg::FillColor(context, rl::Colors::White);
                 nvg::FontBlur(context, 0.0f);
                 nvg::TextBox(context, pos.x - height, pos.y, tooltip_width,
                              widget->tooltip().c_str(), nullptr);
@@ -357,7 +355,7 @@ namespace rl::ui {
             dialog->perform_layout();
         }
 
-        ds::dims<f32> offset{ (m_size - dialog->size()) / 2.0f };
+        ds::dims<f32> offset{ ((m_size - dialog->size()) / 2.0f) - m_pos };
         ds::point<f32> position{ offset.width, offset.height };
         dialog->set_position(position);
     }
@@ -387,24 +385,22 @@ namespace rl::ui {
         if (size.area() == 0)
             return false;
 
-        ds::dims<f32> new_size{
+        this->set_size({
             size.width / m_pixel_ratio,
             size.height / m_pixel_ratio,
-        };
+        });
 
-        this->set_size(new_size);
         this->perform_layout();
         return this->redraw();
     }
 
     bool UICanvas::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb)
     {
-        m_last_interaction = m_timer.elapsed();
-        ds::point<i32> mouse_pos{ mouse.pos() };
-
+        const ds::point<f32> mouse_pos{ mouse.pos() };
         if constexpr (io::logging::gui_events)
             log::info("UICanvas::on_mouse_button_pressed => {}", mouse);
 
+        m_last_interaction = m_timer.elapsed();
         if (m_focus_path.size() > 1)
         {
             const Widget* w{ m_focus_path[m_focus_path.size() - 2] };
@@ -434,7 +430,7 @@ namespace rl::ui {
 
             m_drag_active = m_drag_widget != nullptr;
             if (!m_drag_active)
-                update_focus(nullptr);
+                this->update_focus(nullptr);
         }
 
         m_redraw |= Widget::on_mouse_button_pressed(mouse, kb);
@@ -447,7 +443,7 @@ namespace rl::ui {
         if constexpr (io::logging::gui_events)
             log::info("UICanvas::on_mouse_button_released => {}", mouse);
 
-        ds::point<i32> mouse_pos{ mouse.pos() };
+        const ds::point<f32> mouse_pos{ mouse.pos() };
         m_last_interaction = m_timer.elapsed();
 
         if (m_focus_path.size() > 1)
@@ -461,7 +457,7 @@ namespace rl::ui {
             }
         }
 
-        auto drop_widget{ this->find_widget(mouse_pos) };
+        Widget* drop_widget{ this->find_widget(mouse_pos) };
         if (m_drag_active && drop_widget != m_drag_widget)
             m_redraw |= m_drag_widget->on_mouse_button_released(mouse, kb);
 
@@ -515,16 +511,13 @@ namespace rl::ui {
         if constexpr (io::logging::mouse_move_events)
             log::info("UICanvas::on_mouse_move => {}", mouse);
 
-        ds::point<i32> mouse_pos{ mouse.pos() };
+        const ds::point<f32> mouse_pos{ mouse.pos() };
         m_last_interaction = m_timer.elapsed();
 
-        ds::point<i32> pnt{
-            static_cast<i32>(std::round(mouse_pos.x / m_pixel_ratio)),
-            static_cast<i32>(std::round(mouse_pos.y / m_pixel_ratio)),
+        ds::point<f32> pnt{
+            (mouse_pos.x / m_pixel_ratio) - 1.0f,
+            (mouse_pos.y / m_pixel_ratio) - 2.0f,
         };
-
-        // TODO: ????????
-        pnt -= ds::vector2<i32>{ 1, 2 };
 
         if (m_drag_active)
             ret = m_drag_widget->on_mouse_drag(mouse, kb);

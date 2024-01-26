@@ -85,7 +85,7 @@ namespace rl::ui {
             return;
 
         m_theme = theme;
-        for (auto& child : m_children)
+        for (auto child : m_children)
             child->set_theme(theme);
     }
 
@@ -106,7 +106,7 @@ namespace rl::ui {
                  : m_pos;                            //
     }
 
-    ds::dims<f32> Widget::size() const
+    const ds::dims<f32>& Widget::size() const
     {
         return m_size;
     }
@@ -141,7 +141,7 @@ namespace rl::ui {
         m_fixed_size = fixed_size;
     }
 
-    ds::dims<f32> Widget::fixed_size() const
+    const ds::dims<f32>& Widget::fixed_size() const
     {
         return m_fixed_size;
     }
@@ -224,9 +224,9 @@ namespace rl::ui {
 
     f32 Widget::font_size() const
     {
-        return (m_font_size < 0 && m_theme != nullptr)  //
-                 ? m_theme->standard_font_size          //
-                 : m_font_size;                         //
+        return (m_font_size < 0.0f && m_theme != nullptr)  //
+                 ? m_theme->standard_font_size             //
+                 : m_font_size;                            //
     }
 
     ds::dims<f32> Widget::preferred_size() const
@@ -249,7 +249,7 @@ namespace rl::ui {
                 auto&& pref{ child->preferred_size() };
                 auto&& fix{ child->fixed_size() };
 
-                child->set_size(ds::dims<f32>{
+                child->set_size({
                     fix.width ? fix.width : pref.width,
                     fix.height ? fix.height : pref.height,
                 });
@@ -259,20 +259,28 @@ namespace rl::ui {
         }
     }
 
-    Widget* Widget::find_widget(ds::point<i32> pt)
+    Widget* Widget::find_widget(ds::point<f32> pt)
     {
         for (auto child : std::ranges::reverse_view{ m_children })
-            if (child->visible() && child->contains(pt))
-                return child->find_widget(pt);
+        {
+            if (!child->visible())
+                continue;
+            if (child->contains(pt - m_pos))
+                return child->find_widget(pt - m_pos);
+        }
 
         return this->contains(pt) ? this : nullptr;
     }
 
-    const Widget* Widget::find_widget(ds::point<i32> pt) const
+    const Widget* Widget::find_widget(ds::point<f32> pt) const
     {
         for (auto child : std::ranges::reverse_view{ m_children })
-            if (child->visible() && child->contains(pt))
-                return child->find_widget(pt);
+        {
+            if (!child->visible())
+                continue;
+            if (child->contains(pt - m_pos))
+                return child->find_widget(pt - m_pos);
+        }
 
         return this->contains(pt) ? this : nullptr;
     }
@@ -303,41 +311,83 @@ namespace rl::ui {
 
     bool Widget::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb)
     {
-        auto&& mouse_pos{ mouse.pos() };
-        for (auto child : std::ranges::reverse_view{ m_children })
-            if (child->visible() && child->contains(mouse_pos) &&
-                child->on_mouse_button_pressed(mouse, kb))
-                return true;
+        bool ret{ false };
 
-        if (mouse.is_button_pressed(Mouse::Button::Left) && !m_focused)
-            this->request_focus();
+        const auto&& mouse_pos{ mouse.pos() };
+        auto&& context{ m_renderer->context() };
 
-        return false;
-    }
+        nvg::Translate(context, m_pos.x, m_pos.y);
 
-    bool Widget::on_mouse_button_released(const Mouse& mouse, const Keyboard& kb)
-    {
-        auto&& mouse_pos{ mouse.pos() };
-        for (auto child : std::ranges::reverse_view{ m_children })
-            if (child->visible() && child->contains(mouse_pos) &&
-                child->on_mouse_button_released(mouse, kb))
-                return true;
-
-        return false;
-    }
-
-    bool Widget::on_mouse_scroll(const Mouse& mouse, const Keyboard& kb)
-    {
         for (auto child : std::ranges::reverse_view{ m_children })
         {
             if (!child->visible())
                 continue;
 
-            auto&& mouse_pos{ mouse.pos() };
-            if (child->contains(mouse_pos) && child->on_mouse_scroll(mouse, kb))
-                return true;
+            if (child->contains(mouse_pos - m_pos) && child->on_mouse_button_pressed(mouse, kb))
+            {
+                ret = true;
+                break;
+            }
         }
-        return false;
+
+        if (mouse.is_button_pressed(Mouse::Button::Left) && !m_focused)
+            this->request_focus();
+
+        nvg::Translate(context, -m_pos.x, -m_pos.y);
+
+        return ret;
+    }
+
+    bool Widget::on_mouse_button_released(const Mouse& mouse, const Keyboard& kb)
+    {
+        bool ret{ false };
+
+        auto&& mouse_pos{ mouse.pos() };
+        auto&& context{ m_renderer->context() };
+
+        nvg::Translate(context, m_pos.x, m_pos.y);
+
+        for (auto child : std::ranges::reverse_view{ m_children })
+        {
+            if (!child->visible())
+                continue;
+
+            if (child->contains(mouse_pos - m_pos) && child->on_mouse_button_released(mouse, kb))
+            {
+                ret = true;
+                break;
+            }
+        }
+
+        nvg::Translate(context, -m_pos.x, -m_pos.y);
+
+        return ret;
+    }
+
+    bool Widget::on_mouse_scroll(const Mouse& mouse, const Keyboard& kb)
+    {
+        bool ret{ false };
+
+        auto&& mouse_pos{ mouse.pos() };
+        auto&& context{ m_renderer->context() };
+
+        nvg::Translate(context, m_pos.x, m_pos.y);
+
+        for (auto child : std::ranges::reverse_view{ m_children })
+        {
+            if (!child->visible())
+                continue;
+
+            if (child->contains(mouse_pos - m_pos) && child->on_mouse_scroll(mouse, kb))
+            {
+                ret = true;
+                break;
+            }
+        }
+
+        nvg::Translate(context, -m_pos.x, -m_pos.y);
+
+        return ret;
     }
 
     bool Widget::on_mouse_move(const Mouse& mouse, const Keyboard& kb)
@@ -350,8 +400,8 @@ namespace rl::ui {
                 continue;
 
             const auto mouse_pos{ mouse.pos() };
-            const bool contained{ child->contains(mouse_pos) };
-            const bool prev_contained{ child->contains(mouse_pos - mouse.pos_delta()) };
+            const bool contained{ child->contains(mouse_pos - m_pos) };
+            const bool prev_contained{ child->contains(mouse_pos - m_pos - mouse.pos_delta()) };
 
             if (contained && !prev_contained)
                 handled |= child->on_mouse_entered(mouse);
@@ -420,7 +470,7 @@ namespace rl::ui {
 
     void Widget::remove_child_at(i32 index)
     {
-        runtime_assert(index > 0 && index < m_children.size(),
+        runtime_assert(index >= 0 && index < m_children.size(),
                        "widget child remove idx out of bounds");
 
         Widget* widget{ m_children[index] };
@@ -497,10 +547,10 @@ namespace rl::ui {
         m_cursor = cursor;
     }
 
-    bool Widget::contains(ds::point<i32> pt) const
+    bool Widget::contains(ds::point<f32> pt) const
     {
         // Check if the widget contains a certain position
-        ds::rect<f32> widget_rect{ this->abs_position(), m_size };
+        ds::rect<f32> widget_rect{ m_pos, m_size };
         return widget_rect.contains(pt);
     }
 
@@ -555,32 +605,39 @@ namespace rl::ui {
         static_cast<UICanvas*>(widget)->update_focus(this);
     }
 
-    void Widget::draw_mouse_intersection(ds::point<i32> pt)
+    void Widget::draw_mouse_intersection(ds::point<f32> pt)
     {
-        if (!this->contains(pt))
-            return;
+        auto&& context{ m_renderer->context() };
+        nvg::Translate(context, m_pos.x, m_pos.y);
 
-        ds::rect<f32> widget_rect{
-            this->abs_position(),
-            m_size,
-        };
-
-        m_renderer->draw_rect_outline(widget_rect, 1.0f, rl::Colors::Yellow, Outline::Inner);
-
-        for (auto child : m_children)
+        for (auto child : std::ranges::reverse_view{ m_children })
         {
             if (!child->visible())
                 continue;
 
-            child->draw_mouse_intersection(pt);
+            child->draw_mouse_intersection(pt - m_pos);
+        }
+
+        nvg::Translate(context, -m_pos.x, -m_pos.y);
+
+        if (this->contains(pt))
+        {
+            ds::rect<f32> widget_rect{
+                m_pos,
+                m_size,
+            };
+
+            m_renderer->draw_rect_outline(widget_rect, 1.0f, rl::Colors::Yellow, Outline::Inner);
         }
     }
 
     void Widget::draw()
     {
         if constexpr (Widget::DiagnosticsEnabled)
-            m_renderer->draw_rect_outline(ds::rect<f32>{ this->abs_position(), m_size }, 1.0f,
-                                          rl::Colors::Grey, Outline::Outer);
+        {
+            m_renderer->draw_rect_outline(ds::rect{ m_pos, m_size }, 1.0f, rl::Colors::Grey,
+                                          Outline::Outer);
+        }
 
         if (m_children.empty())
             return;
@@ -595,7 +652,7 @@ namespace rl::ui {
 
             if constexpr (!Widget::DiagnosticsEnabled)
             {
-                m_renderer->push_render_state();
+                m_renderer->save_state();
                 nvg::IntersectScissor(context, child->m_pos.x, child->m_pos.y, child->m_size.width,
                                       child->m_size.height);
             }
@@ -603,7 +660,7 @@ namespace rl::ui {
             child->draw();
 
             if constexpr (!Widget::DiagnosticsEnabled)
-                m_renderer->pop_render_state();
+                m_renderer->restore_state();
         }
 
         nvg::Translate(context, -m_pos.x, -m_pos.y);

@@ -68,7 +68,7 @@ namespace rl {
         m_vg_renderer = std::make_unique<rl::NVGRenderer>();
 
         m_gui_canvas = new ui::UICanvas{
-            static_cast<ds::dims<f32>>(window_size),
+            m_window_rect,
             m_mouse,
             m_keyboard,
             m_vg_renderer,

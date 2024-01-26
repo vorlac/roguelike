@@ -318,10 +318,10 @@ namespace rl::ui {
 
                 ds::point<f32> icon_pos{
                     m_pos.x + 4.0f,
-                    m_pos.y + m_size.height / 2.0f + x_spacing / 2.0f + 1.5f,
+                    m_pos.y + (m_size.height / 2.0f) + (x_spacing / 2.0f + 1.5f),
                 };
 
-                nvg::Text(context, icon_pos.x, icon_pos.y, icon.data(), nullptr);
+                nvg::Text(context, icon_pos.x, icon_pos.y, icon.data());
             }
 
             nvg::FontSize(context, this->font_size());
@@ -871,7 +871,7 @@ namespace rl::ui {
         return pos;
     }
 
-    i32 TextBox::position_to_cursor_index(i32 pos_x, f32 last_x,
+    i32 TextBox::position_to_cursor_index(f32 pos_x, f32 last_x,
                                           const nvg::NVGglyphPosition* glyphs, i32 size)
     {
         i32 m_cursor_id{ 0 };
@@ -892,7 +892,7 @@ namespace rl::ui {
         return m_cursor_id;
     }
 
-    TextBox::SpinArea TextBox::spin_area(ds::point<i32> pos) const
+    TextBox::SpinArea TextBox::spin_area(ds::point<f32> pos) const
     {
         if ((0 <= pos.x - m_pos.x) && (pos.x - m_pos.x < 14.f))
         {

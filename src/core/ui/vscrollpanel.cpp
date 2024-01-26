@@ -5,9 +5,6 @@ namespace rl::ui {
 
     VScrollPanel::VScrollPanel(Widget* parent)
         : Widget{ parent }
-        , m_child_preferred_height{ 0 }
-        , m_scroll{ 0.0f }
-        , m_update_layout{ false }
     {
     }
 
@@ -28,30 +25,29 @@ namespace rl::ui {
     void VScrollPanel::perform_layout()
     {
         Widget::perform_layout();
-
         if (m_children.empty())
             return;
 
         runtime_assert(m_children.size() == 1, "vertical scroll panel should only have 1 child");
 
-        Widget* child{ m_children[0] };
+        Widget* child{ m_children.front() };
         m_child_preferred_height = child->preferred_size().height;
 
         if (m_child_preferred_height > m_size.height)
         {
-            child->set_position(ds::point<f32>{
+            child->set_position({
                 0.0f,
                 -m_scroll * (m_child_preferred_height - m_size.height),
             });
 
-            child->set_size(ds::dims<f32>{
+            child->set_size({
                 m_size.width - 12.0f,
                 m_child_preferred_height,
             });
         }
         else
         {
-            child->set_position(ds::point<f32>{ 0.0f, 0.0f });
+            child->set_position({ 0.0f, 0.0f });
             child->set_size(m_size);
             m_scroll = 0;
         }
@@ -64,7 +60,7 @@ namespace rl::ui {
         if (m_children.empty())
             return ds::dims<f32>{ 0.0f, 0.0f };
 
-        return m_children[0]->preferred_size() + ds::dims<f32>{ 12.0f, 0.0f };
+        return m_children.front()->preferred_size() + ds::dims{ 12.0f, 0.0f };
     }
 
     bool VScrollPanel::on_mouse_drag(const Mouse& mouse, const Keyboard& kb)
@@ -73,15 +69,12 @@ namespace rl::ui {
             return Widget::on_mouse_drag(mouse, kb);
         else
         {
-            f32 scrollh{
-                this->height() *
-                    std::min(1.f, this->height() / static_cast<f32>(m_child_preferred_height)),
-            };
-
-            auto&& rel{ mouse.pos_delta() };
+            auto&& mouse_delta{ mouse.pos_delta() };
+            f32 scrollh{ this->height() *
+                         std::min(1.0f, this->height() / m_child_preferred_height) };
 
             m_scroll = std::max(
-                0.0f, std::min(1.0f, m_scroll + rel.y / (m_size.height - 8.0f - scrollh)));
+                0.0f, std::min(1.0f, m_scroll + mouse_delta.y / (m_size.height - 8.0f - scrollh)));
 
             m_update_layout = true;
             return true;
@@ -103,25 +96,25 @@ namespace rl::ui {
 
         const auto&& pos{ mouse.pos() };
         if (mouse.is_button_down(Mouse::Button::Left) && !m_children.empty() &&
-            m_child_preferred_height > m_size.height && pos.x > m_pos.x + m_size.width - 13 &&
+            m_child_preferred_height > m_size.height && pos.x > m_pos.x + m_size.width - 13.0f &&
             pos.x < m_pos.x + m_size.width - 4)
         {
-            i32 scrollh{ static_cast<i32>(
-                this->height() *
-                std::min(1.0f, this->height() / static_cast<f32>(m_child_preferred_height))) };
+            f32 scrollh{ this->height() *
+                         std::min(1.0f, this->height() / m_child_preferred_height) };
 
-            i32 start{ static_cast<i32>(
-                m_pos.y + 4 + 1 + (m_size.height - 8 - scrollh) * m_scroll) };
+            f32 start{ m_pos.y + 4.0f + 1.0f + (m_size.height - 8.0f - scrollh) * m_scroll };
 
             f32 delta{ 0.0f };
             if (pos.y < start)
-                delta = -m_size.height / static_cast<f32>(m_child_preferred_height);
+                delta = -m_size.height / m_child_preferred_height;
             else if (pos.y > start + scrollh)
-                delta = m_size.height / static_cast<f32>(m_child_preferred_height);
+                delta = m_size.height / m_child_preferred_height;
 
             m_scroll = std::max(0.0f, std::min(1.0f, m_scroll + delta * 0.98f));
-            m_children[0]->set_position(ds::point<i32>{
-                0, static_cast<i32>(-m_scroll * (m_child_preferred_height - m_size.height)) });
+            m_children.front()->set_position({
+                0.0f,
+                -m_scroll * (m_child_preferred_height - m_size.height),
+            });
 
             m_update_layout = true;
             return true;
@@ -136,17 +129,17 @@ namespace rl::ui {
             return Widget::on_mouse_scroll(mouse, kb);
         else
         {
-            Widget* child{ m_children[0] };
-            f32 scroll_amount{ mouse.wheel().y * m_size.height * 0.25f };
+            Widget* child{ m_children.front() };
+            f32 scroll_amount{ (mouse.wheel_delta().y) * m_size.height * 0.2f };
 
-            m_scroll = std::max(0.0f,
-                                std::min(1.f, m_scroll - scroll_amount / m_child_preferred_height));
+            m_scroll = std::max(
+                0.0f, std::min(1.0f, m_scroll + (scroll_amount / m_child_preferred_height)));
 
             ds::point<f32> old_pos{ child->position() };
 
-            child->set_position(ds::point<f32>{
+            child->set_position({
                 0.0f,
-                -m_scroll * (m_child_preferred_height - m_size.height),
+                m_scroll * (m_child_preferred_height - m_size.height),
             });
 
             ds::point<f32> new_pos{ child->position() };
@@ -170,7 +163,7 @@ namespace rl::ui {
             yoffset = -m_scroll * (m_child_preferred_height - m_size.height);
 
         auto&& context{ m_renderer->context() };
-        child->set_position(ds::point<f32>{ 0.0f, yoffset });
+        child->set_position({ 0.0f, yoffset });
         m_child_preferred_height = child->preferred_size().height;
         f32 scrollh{ this->height() * std::min(1.0f, this->height() / m_child_preferred_height) };
 
