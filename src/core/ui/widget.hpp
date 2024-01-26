@@ -96,6 +96,13 @@ namespace rl::ui {
         void set_cursor(Mouse::Cursor::ID cursor);
 
     public:
+        // TODO: get rid of this
+        nvg::NVGcontext* context()
+        {
+            return m_renderer->context();
+        }
+
+    public:
         virtual bool on_focus_gained();
         virtual bool on_focus_lost();
 
@@ -121,7 +128,7 @@ namespace rl::ui {
         virtual ds::dims<f32> preferred_size() const;
 
     public:
-        virtual void draw_mouse_intersection( ds::point<f32> pt);
+        virtual void draw_mouse_intersection(ds::point<f32> pt);
 
     protected:
         f32 icon_scale() const;

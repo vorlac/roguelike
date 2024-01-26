@@ -25,40 +25,40 @@ namespace rl::ds {
     template <rl::numeric T>
     struct vector2
     {
-        explicit constexpr vector2()
+        constexpr inline vector2() noexcept
             : x{ std::numeric_limits<T>::max() }
             , y{ std::numeric_limits<T>::max() }
-            , z{ T(0) }
+            , z{ static_cast<T>(0) }
         {
         }
 
-        constexpr inline vector2(const T& _x, const T& _y, const T& _z = 0)
-            : x{ _x }
-            , y{ _y }
-            , z{ _z }
+        constexpr inline vector2(const T _x, const T _y, const T _z = 0) noexcept
+            : x{ static_cast<T>(_x) }
+            , y{ static_cast<T>(_y) }
+            , z{ static_cast<T>(_z) }
         {
         }
 
         template <rl::integer I>
-        constexpr inline vector2(const vector2<I>& other)
+        constexpr inline vector2(const vector2<I>& other) noexcept
             requires rl::floating_point<T>
-            : x{ T(other.x) }
-            , y{ T(other.y) }
-            , z{ 0 }
+            : x{ static_cast<T>(other.x) }
+            , y{ static_cast<T>(other.y) }
+            , z{ static_cast<T>(0) }
         {
         }
 
-        constexpr inline vector2(const vector2<T>& other)
-            : x{ other.x }
-            , y{ other.y }
-            , z{ 0 }
+        constexpr inline vector2(const vector2<T>& other) noexcept
+            : x{ static_cast<T>(other.x) }
+            , y{ static_cast<T>(other.y) }
+            , z{ static_cast<T>(0) }
         {
         }
 
-        constexpr inline vector2(vector2<T>&& other) noexcept
-            : x{ other.x }
-            , y{ other.y }
-            , z{ 0 }
+        constexpr inline vector2(const vector2<T>&& other) noexcept
+            : x{ static_cast<T>(other.x) }
+            , y{ static_cast<T>(other.y) }
+            , z{ static_cast<T>(0) }
         {
         }
 
@@ -66,7 +66,7 @@ namespace rl::ds {
             requires std::same_as<T, i32>
             : x{ pt.x }
             , y{ pt.y }
-            , z{ T(0) }
+            , z{ static_cast<T>(0) }
         {
         }
 
@@ -74,7 +74,7 @@ namespace rl::ds {
             requires std::same_as<T, i32>
             : x{ pt.x }
             , y{ pt.y }
-            , z{ T(0) }
+            , z{ static_cast<T>(0) }
         {
         }
 
@@ -313,7 +313,7 @@ namespace rl::ds {
             return *this;
         }
 
-        constexpr inline vector2<T> operator+(T&& other) noexcept
+        constexpr inline vector2<T> operator+(const T& other)
         {
             return vector2<T>{
                 x + other,
@@ -329,7 +329,7 @@ namespace rl::ds {
             };
         }
 
-        constexpr inline vector2<T> operator+(dims<T>&& other) noexcept
+        constexpr inline vector2<T> operator+(dims<T>&& other) const noexcept
         {
             return vector2<T>{
                 static_cast<T>(this->x + other.width),

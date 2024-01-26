@@ -506,7 +506,10 @@ namespace rl {
     {
         const MainWindow::Event::Data& window_event{ e.window };
         const WindowID id{ window_event.windowID };
-        const ds::vector2<i32> pixel_size{ window_event.data1, window_event.data2 };
+        const ds::vector2<i32> pixel_size{
+            window_event.data1,
+            window_event.data2,
+        };
         if constexpr (io::logging::window_events)
             log::trace("MainWindow::pixel_size_changed [id:{}] => {}", id, pixel_size);
 

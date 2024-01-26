@@ -1,5 +1,7 @@
 
 
+#include <numbers>
+
 #include <math.h>
 #include <memory.h>
 #include <stdio.h>
@@ -610,6 +612,16 @@ namespace rl::nvg {
         t[5] = ty;
     }
 
+    void TransformTranslate(float* t, ds::vector2<f32>&& translation)
+    {
+        t[0] = 1.0f;
+        t[1] = 0.0f;
+        t[2] = 0.0f;
+        t[3] = 1.0f;
+        t[4] = translation.x;
+        t[5] = translation.y;
+    }
+
     void TransformScale(float* t, float sx, float sy)
     {
         t[0] = sx;
@@ -698,12 +710,12 @@ namespace rl::nvg {
 
     float DegToRad(float deg)
     {
-        return deg / 180.0f * NVG_PI;
+        return deg / 180.0f * std::numbers::pi_v<f32>;
     }
 
     float RadToDeg(float rad)
     {
-        return rad / NVG_PI * 180.0f;
+        return rad / std::numbers::pi_v<f32> * 180.0f;
     }
 
     static void nvg__setPaintColor(NVGpaint* p, NVGcolor color)
@@ -815,6 +827,14 @@ namespace rl::nvg {
         NVGstate* state = nvg__getState(ctx);
         float t[6];
         nvg::TransformTranslate(t, x, y);
+        nvg::TransformPremultiply(state->xform, t);
+    }
+
+    void Translate(NVGcontext* ctx, ds::vector2<f32>&& local_offset)
+    {
+        float t[6] = { 0 };
+        NVGstate* state{ nvg__getState(ctx) };
+        nvg::TransformTranslate(t, local_offset.x, local_offset.y);
         nvg::TransformPremultiply(state->xform, t);
     }
 
@@ -1600,14 +1620,14 @@ namespace rl::nvg {
             a0 = atan2f(-dly0, -dlx0);
             a1 = atan2f(-dly1, -dlx1);
             if (a1 > a0)
-                a1 -= NVG_PI * 2;
+                a1 -= std::numbers::pi_v<f32> * 2;
 
             nvg__vset(dst, lx0, ly0, lu, 1);
             dst++;
             nvg__vset(dst, p1->x - dlx0 * rw, p1->y - dly0 * rw, ru, 1);
             dst++;
 
-            n = nvg__clampi((int)ceilf(((a0 - a1) / NVG_PI) * ncap), 2, ncap);
+            n = nvg__clampi((int)ceilf(((a0 - a1) / std::numbers::pi_v<f32>)*ncap), 2, ncap);
             for (i = 0; i < n; i++)
             {
                 float u = i / (float)(n - 1);
@@ -1632,14 +1652,14 @@ namespace rl::nvg {
             a0 = atan2f(dly0, dlx0);
             a1 = atan2f(dly1, dlx1);
             if (a1 < a0)
-                a1 += NVG_PI * 2;
+                a1 += std::numbers::pi_v<f32> * 2;
 
             nvg__vset(dst, p1->x + dlx0 * rw, p1->y + dly0 * rw, lu, 1);
             dst++;
             nvg__vset(dst, rx0, ry0, ru, 1);
             dst++;
 
-            n = nvg__clampi((int)ceilf(((a1 - a0) / NVG_PI) * ncap), 2, ncap);
+            n = nvg__clampi((int)ceilf(((a1 - a0) / std::numbers::pi_v<f32>)*ncap), 2, ncap);
             for (i = 0; i < n; i++)
             {
                 float u = i / (float)(n - 1);
@@ -1816,7 +1836,7 @@ namespace rl::nvg {
         NVG_NOTUSED(aa);
         for (i = 0; i < ncap; i++)
         {
-            float a = i / (float)(ncap - 1) * NVG_PI;
+            float a = i / (float)(ncap - 1) * std::numbers::pi_v<f32>;
             float ax = cosf(a) * w, ay = sinf(a) * w;
             nvg__vset(dst, px - dlx * ax - dx * ay, py - dly * ax - dy * ay, u0, 1);
             dst++;
@@ -1845,7 +1865,7 @@ namespace rl::nvg {
         dst++;
         for (i = 0; i < ncap; i++)
         {
-            float a = i / (float)(ncap - 1) * NVG_PI;
+            float a = i / (float)(ncap - 1) * std::numbers::pi_v<f32>;
             float ax = cosf(a) * w, ay = sinf(a) * w;
             nvg__vset(dst, px, py, 0.5f, 1);
             dst++;
@@ -1940,7 +1960,8 @@ namespace rl::nvg {
         int cverts, i, j;
         float aa = fringe;  // ctx->fringeWidth;
         float u0 = 0.0f, u1 = 1.0f;
-        int ncap = nvg__curveDivs(w, NVG_PI, ctx->tessTol);  // Calculate divisions per half circle.
+        int ncap = nvg__curveDivs(w, std::numbers::pi_v<f32>, ctx->tessTol);  // Calculate divisions
+                                                                              // per half circle.
 
         w += aa * 0.5f;
 
@@ -2293,7 +2314,7 @@ namespace rl::nvg {
         a = nvg__acosf(dx0 * dx1 + dy0 * dy1);
         d = radius / nvg__tanf(a / 2.0f);
 
-        //	printf("a=%f° d=%f\n", a/NVG_PI*180.0f, d);
+        //	printf("a=%f° d=%f\n", a/std::numbers::pi_v<f32>*180.0f, d);
 
         if (d > 10000.0f)
         {
@@ -2308,8 +2329,9 @@ namespace rl::nvg {
             a0 = nvg__atan2f(dx0, -dy0);
             a1 = nvg__atan2f(-dx1, dy1);
             dir = NVG_CW;
-            //		printf("CW c=(%f, %f) a0=%f° a1=%f°\n", cx, cy, a0/NVG_PI*180.0f,
-            // a1/NVG_PI*180.0f);
+            //		printf("CW c=(%f, %f) a0=%f° a1=%f°\n", cx, cy,
+            // a0/std::numbers::pi_v<f32>*180.0f,
+            // a1/std::numbers::pi_v<f32>*180.0f);
         }
         else
         {
@@ -2318,8 +2340,9 @@ namespace rl::nvg {
             a0 = nvg__atan2f(-dx0, dy0);
             a1 = nvg__atan2f(dx1, -dy1);
             dir = NVG_CCW;
-            //		printf("CCW c=(%f, %f) a0=%f° a1=%f°\n", cx, cy, a0/NVG_PI*180.0f,
-            // a1/NVG_PI*180.0f);
+            //		printf("CCW c=(%f, %f) a0=%f° a1=%f°\n", cx, cy,
+            // a0/std::numbers::pi_v<f32>*180.0f,
+            // a1/std::numbers::pi_v<f32>*180.0f);
         }
 
         nvg::Arc(ctx, cx, cy, radius, a0, a1, dir);
@@ -2350,23 +2373,24 @@ namespace rl::nvg {
         da = a1 - a0;
         if (dir == NVG_CW)
         {
-            if (nvg__absf(da) >= NVG_PI * 2)
-                da = NVG_PI * 2;
+            if (nvg__absf(da) >= std::numbers::pi_v<f32> * 2)
+                da = std::numbers::pi_v<f32> * 2;
             else
                 while (da < 0.0f)
-                    da += NVG_PI * 2;
+                    da += std::numbers::pi_v<f32> * 2;
         }
         else
         {
-            if (nvg__absf(da) >= NVG_PI * 2)
-                da = -NVG_PI * 2;
+            if (nvg__absf(da) >= std::numbers::pi_v<f32> * 2)
+                da = -std::numbers::pi_v<f32> * 2;
             else
                 while (da > 0.0f)
-                    da -= NVG_PI * 2;
+                    da -= std::numbers::pi_v<f32> * 2;
         }
 
         // Split arc into max 90 degree segments.
-        ndivs = nvg__maxi(1, nvg__mini((int)(nvg__absf(da) / (NVG_PI * 0.5f) + 0.5f), 5));
+        ndivs = nvg__maxi(
+            1, nvg__mini((int)(nvg__absf(da) / (std::numbers::pi_v<f32> * 0.5f) + 0.5f), 5));
         hda = (da / (float)ndivs) / 2.0f;
         kappa = nvg__absf(4.0f / 3.0f * (1.0f - nvg__cosf(hda)) / nvg__sinf(hda));
 

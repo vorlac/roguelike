@@ -11,6 +11,7 @@
 #include "ds/refcounted.hpp"
 #include "ds/shared.hpp"
 #include "graphics/nvg_renderer.hpp"
+#include "graphics/vg/nanovg_state.hpp"
 
 namespace rl::ui {
 
@@ -316,8 +317,7 @@ namespace rl::ui {
         const auto&& mouse_pos{ mouse.pos() };
         auto&& context{ m_renderer->context() };
 
-        nvg::Translate(context, m_pos.x, m_pos.y);
-
+        LocalTransform transform{ this };
         for (auto child : std::ranges::reverse_view{ m_children })
         {
             if (!child->visible())
@@ -333,8 +333,6 @@ namespace rl::ui {
         if (mouse.is_button_pressed(Mouse::Button::Left) && !m_focused)
             this->request_focus();
 
-        nvg::Translate(context, -m_pos.x, -m_pos.y);
-
         return ret;
     }
 
@@ -345,8 +343,7 @@ namespace rl::ui {
         auto&& mouse_pos{ mouse.pos() };
         auto&& context{ m_renderer->context() };
 
-        nvg::Translate(context, m_pos.x, m_pos.y);
-
+        LocalTransform transform{ this };
         for (auto child : std::ranges::reverse_view{ m_children })
         {
             if (!child->visible())
@@ -359,8 +356,6 @@ namespace rl::ui {
             }
         }
 
-        nvg::Translate(context, -m_pos.x, -m_pos.y);
-
         return ret;
     }
 
@@ -371,8 +366,7 @@ namespace rl::ui {
         auto&& mouse_pos{ mouse.pos() };
         auto&& context{ m_renderer->context() };
 
-        nvg::Translate(context, m_pos.x, m_pos.y);
-
+        LocalTransform transform{ this };
         for (auto child : std::ranges::reverse_view{ m_children })
         {
             if (!child->visible())
@@ -384,8 +378,6 @@ namespace rl::ui {
                 break;
             }
         }
-
-        nvg::Translate(context, -m_pos.x, -m_pos.y);
 
         return ret;
     }
@@ -608,17 +600,17 @@ namespace rl::ui {
     void Widget::draw_mouse_intersection(ds::point<f32> pt)
     {
         auto&& context{ m_renderer->context() };
-        nvg::Translate(context, m_pos.x, m_pos.y);
 
-        for (auto child : std::ranges::reverse_view{ m_children })
         {
-            if (!child->visible())
-                continue;
+            LocalTransform transform{ this };
+            for (auto child : std::ranges::reverse_view{ m_children })
+            {
+                if (!child->visible())
+                    continue;
 
-            child->draw_mouse_intersection(pt - m_pos);
+                child->draw_mouse_intersection(pt - m_pos);
+            }
         }
-
-        nvg::Translate(context, -m_pos.x, -m_pos.y);
 
         if (this->contains(pt))
         {
@@ -643,8 +635,8 @@ namespace rl::ui {
             return;
 
         auto&& context{ m_renderer->context() };
-        nvg::Translate(context, m_pos.x, m_pos.y);
 
+        LocalTransform transform{ this };
         for (auto child : m_children)
         {
             if (!child->visible())
@@ -662,8 +654,6 @@ namespace rl::ui {
             if constexpr (!Widget::DiagnosticsEnabled)
                 m_renderer->restore_state();
         }
-
-        nvg::Translate(context, -m_pos.x, -m_pos.y);
     }
 
     f32 Widget::icon_scale() const

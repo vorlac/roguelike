@@ -1,6 +1,6 @@
 #pragma once
 
-#define NVG_PI 3.14159265358979323846264338327f
+#include "ds/point.hpp"
 
 #ifdef _MSC_VER
   #pragma warning(push)
@@ -293,6 +293,7 @@ namespace rl::nvg {
 
     // Translates current coordinate system.
     void Translate(NVGcontext* ctx, float x, float y);
+    void Translate(NVGcontext* ctx, ds::vector2<f32>&& local_offset);
 
     // Rotates current coordinate system. Angle is specified in radians.
     void Rotate(NVGcontext* ctx, float angle);
@@ -322,6 +323,7 @@ namespace rl::nvg {
 
     // Sets the transform to translation matrix matrix.
     void TransformTranslate(float* dst, float tx, float ty);
+    void TransformTranslate(float* t, ds::vector2<f32>&& translation);
 
     // Sets the transform to scale matrix.
     void TransformScale(float* dst, float sx, float sy);

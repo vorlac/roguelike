@@ -43,7 +43,7 @@ namespace rl::gl {
             bool shaders_valid = m_shader.compile();
             runtime_assert(shaders_valid, "Failed to compile shaders");
 
-            ds::point<f32> centroid = viewport_rect.centroid();
+            ds::point<f32> centroid{ viewport_rect.centroid() };
             auto colors_size_mb = math::to_bytes(sizeof(f32) * 4 * m_rect_count, math::units::byte,
                                                  math::units::megabyte);
             auto positions_size_mb = math::to_bytes(sizeof(f32) * 3 * m_rect_count,
@@ -60,17 +60,19 @@ namespace rl::gl {
 
             for (size_t i = 0; i < m_rect_count; ++i)
             {
-                const u32 xv{ rl::random<0U, 2000U>::value() };
-                const u32 yv{ rl::random<0U, 2000U>::value() };
+                const f32 xv{ static_cast<f32>(rl::random<0U, 2000U>::value()) };
+                const f32 yv{ static_cast<f32>(rl::random<0U, 2000U>::value()) };
 
                 m_rect_colors_data.emplace_back((rl::random<0, 500>::value() + 250.0f) / 1000.0f,
                                                 (rl::random<0, 500>::value() + 250.0f) / 1000.0f,
                                                 (rl::random<0, 500>::value() + 250.0f) / 1000.0f);
 
-                m_rect_velocities_data.emplace_back((static_cast<f32>(xv) - 1000.0f) / 10.0f,
-                                                    (static_cast<f32>(yv) - 1000.0f) / 10.0f);
+                m_rect_velocities_data.emplace_back((xv - 1000.0f) / 10.0f, (yv - 1000.0f) / 10.0f);
 
-                ds::circle<f32> spawn{ viewport_rect.centroid(), 500.0f };
+                const ds::circle<f32> spawn{
+                    viewport_rect.centroid(),
+                    500.0f,
+                };
 
                 const f32 outer{ 500.0f };
                 const f32 inner{ 250.0f };
@@ -233,8 +235,12 @@ namespace rl::gl {
 
         constexpr static inline u32 m_rect_count{ 1000000 };
         constexpr static inline ds::dims<f32> m_rect_size{ 5.0f, 5.0f };
-        constexpr static inline std::array m_rect_vertex_buffer_data{
-            ds::rect<f32>{ ds::point<f32>{ 0.0f, 0.0f }, ds::dims<f32>{ m_rect_size } }.triangles(),
+        constexpr static inline std::array<ds::point<f32>, 6> m_rect_vertex_buffer_data{
+            ds::rect<f32>{
+                ds::point<f32>{ 0.0f, 0.0f },
+                ds::dims{ m_rect_size },
+            }
+                .triangles()
         };
 
         std::vector<ds::color<f32>> m_rect_colors_data{};

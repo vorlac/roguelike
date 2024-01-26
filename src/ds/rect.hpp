@@ -343,8 +343,8 @@ namespace rl::ds {
         constexpr inline point<T> centroid() const
         {
             return point<T>{
-                pt.x + (size.width / static_cast<T>(2)),
-                pt.y + (size.height / static_cast<T>(2)),
+                static_cast<T>(pt.x + (size.width / 2)),
+                static_cast<T>(pt.y + (size.height / 2)),
             };
         }
 

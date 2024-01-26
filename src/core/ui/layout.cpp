@@ -133,8 +133,8 @@ namespace rl::ui {
                     break;
             }
 
-            child->set_position(std::move(pos));
-            child->set_size(std::move(target_size));
+            child->set_position(pos);
+            child->set_size(target_size);
             child->perform_layout();
             position += target_size.width;
         }
@@ -733,8 +733,8 @@ namespace rl::ui {
                 item_axis_pos = item_pos;
                 item_axis_size = target_size;
 
-                child->set_position(std::move(pos));
-                child->set_size(std::move(size));
+                child->set_position(pos);
+                child->set_size(size);
                 child->perform_layout();
             }
         }
