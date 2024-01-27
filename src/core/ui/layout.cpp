@@ -202,8 +202,8 @@ namespace rl::ui {
             const Label* label{ dynamic_cast<const Label*>(c) };
             if (!first)
                 height += (label == nullptr) ? m_spacing : m_group_spacing;
-            first = false;
 
+            first = false;
             ds::dims<f32> ps{ c->preferred_size() };
             ds::dims<f32> fs{ c->fixed_size() };
             ds::dims<f32> target_size{
@@ -211,7 +211,7 @@ namespace rl::ui {
                 fs.height ? fs.height : ps.height,
             };
 
-            bool indent_cur = indent && label == nullptr;
+            bool indent_cur{ indent && label == nullptr };
             height += target_size.height;
             width = std::max(width, target_size.width + (2.0f * m_margin) +
                                         (indent_cur ? m_group_indent : 0.0f));
@@ -235,7 +235,7 @@ namespace rl::ui {
 
         bool first_child{ true };
         bool indent{ false };
-        for (auto& child : widget->children())
+        for (auto child : widget->children())
         {
             if (!child->visible())
                 continue;
@@ -263,7 +263,7 @@ namespace rl::ui {
                 height,
             });
 
-            child->set_size(std::move(target_size));
+            child->set_size(target_size);
             child->perform_layout();
 
             height += target_size.height;
