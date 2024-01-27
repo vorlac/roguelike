@@ -256,7 +256,7 @@ namespace rl::ui {
             }
             else if (m_pressed || this->has_property(Property::StandardMenu))
             {
-                if (m_callback != nullptr && this->contains(pt - m_pos))  // ?????????????
+                if (m_callback != nullptr && this->contains(pt))
                     m_callback();
                 if (this->has_property(Property::StandardPush))
                     m_pressed = false;
@@ -273,14 +273,13 @@ namespace rl::ui {
     bool Button::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb)
     {
         Widget::on_mouse_button_pressed(mouse, kb);
-        return handle_mouse_button_event(mouse.pos() = m_pos, mouse.button_pressed(), true,
-                                         kb.keys_down());
+        return handle_mouse_button_event(mouse.pos(), mouse.button_pressed(), true, kb.keys_down());
     }
 
     bool Button::on_mouse_button_released(const Mouse& mouse, const Keyboard& kb)
     {
         Widget::on_mouse_button_released(mouse, kb);
-        return handle_mouse_button_event(mouse.pos() - m_pos, mouse.button_released(), false,
+        return handle_mouse_button_event(mouse.pos(), mouse.button_released(), false,
                                          kb.keys_down());
     }
 

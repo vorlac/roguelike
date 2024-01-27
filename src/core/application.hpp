@@ -74,10 +74,9 @@ namespace rl {
             const std::unique_ptr<rl::OpenGLRenderer>& renderer{ m_main_window->glrenderer() };
             gl::InstancedVertexBuffer vbo{ renderer->get_viewport() };
             ui::FormHelper* form{ new ui::FormHelper(gui) };
+            auto dialog = ds::shared{ form->add_dialog(ds::point{ 10, 10 }, "Nested Diaog Test") };
 
             auto floating_form_gui = [&] {
-                auto dialog = ds::shared{ form->add_dialog(ds::point{ 10, 10 },
-                                                           "Nested Diaog Test") };
                 form->add_group("Group 1");
                 form->add_variable<bool>("checkbox", bval);
                 form->add_variable<std::string>("string", sval);
@@ -120,10 +119,9 @@ namespace rl {
             std::string elapsed_str{ fmt::to_string(
                 fmt::format("{:<3.3f} sec", m_timer.elapsed())) };
             std::string fps_str{ fmt::to_string(fmt::format("{:<3.3f} fps", framerate)) };
+            auto layout{ new ui::AdvancedGridLayout({ 0, 0, 0 }, {}, 30) };
 
             auto full_window_menu = [&] {
-                auto layout{ new ui::AdvancedGridLayout({ 0, 0, 0 }, {}, 30) };
-
                 gui->set_layout(layout);
 
                 layout->set_col_stretch(1, 1.0f);
@@ -142,11 +140,11 @@ namespace rl {
                 auto stats_value_label = new ui::Label{ gui, "", ui::font::name::mono, 32 };
                 layout->append_row(0);
 
-                gui->add_update_callback([=]() {
+                gui->add_update_callback([=, &elapsed_str] {
                     timer_value_label->set_text(elapsed_str);
                 });
 
-                gui->add_update_callback([=]() {
+                gui->add_update_callback([=, &fps_str] {
                     stats_value_label->set_text(fps_str);
                 });
 
@@ -191,15 +189,16 @@ namespace rl {
 
             floating_form_gui();
             full_window_menu();
-            // auto test { timer_value_label;
 
-            gui->update();
             gui->set_visible(true);
             gui->perform_layout();
+            gui->update();
+
+            dialog->center();
 
             m_timer.reset();
             // vbo.bind_buffers();
-            while (!this->should_exit()) [[likely]]
+            while (!this->should_exit()) [[unlikely]]
             {
                 this->handle_events();
                 this->update();
@@ -207,8 +206,8 @@ namespace rl {
                 m_timer.tick([&]() {
                     elapsed_time = m_timer.elapsed();
                     framerate = ++frame_count / elapsed_time;
-                    auto&& elapsed_str{ fmt::to_string(fmt::format("{:<3.3f} sec", elapsed_time)) };
-                    auto&& fps_str{ fmt::to_string(fmt::format("{:<3.3f} fps", framerate)) };
+                    elapsed_str = fmt::to_string(fmt::format("{:<3.3f} sec", elapsed_time));
+                    fps_str = fmt::to_string(fmt::format("{:<3.3f} fps", framerate));
 
                     form->refresh();
 

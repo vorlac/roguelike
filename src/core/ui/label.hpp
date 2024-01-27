@@ -25,7 +25,7 @@ namespace rl::ui {
         void set_text(std::string text);
         void set_font(std::string font);
         void set_color(ds::color<f32> color);
-        void set_callback(std::function<void()> callable);
+        void set_callback(const std::function<void()>& callable);
 
     public:
         virtual ds::dims<f32> preferred_size() const override;

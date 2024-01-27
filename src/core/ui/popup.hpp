@@ -22,7 +22,7 @@ namespace rl::ui {
         const Dialog* parent_window() const;
         const ds::point<f32> anchor_pos() const;
 
-        void set_anchor_pos(const ds::point<f32>& anchor_pos);
+        void set_anchor_pos(ds::point<f32> anchor_pos);
         void set_anchor_offset(f32 anchor_offset);
         void set_anchor_size(f32 anchor_size);
         void set_side(Side popup_side);

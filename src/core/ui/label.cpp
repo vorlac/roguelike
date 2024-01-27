@@ -54,7 +54,7 @@ namespace rl::ui {
         m_color = color;
     }
 
-    void Label::set_callback(std::function<void()> callable)
+    void Label::set_callback(const std::function<void()>& callable)
     {
         m_callback = callable;
     }

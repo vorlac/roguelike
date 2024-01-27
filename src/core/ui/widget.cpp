@@ -260,7 +260,7 @@ namespace rl::ui {
         }
     }
 
-    Widget* Widget::find_widget(ds::point<f32> pt) const
+    Widget* Widget::find_widget(ds::point<f32> pt)
     {
         for (auto child : std::ranges::reverse_view{ m_children })
         {
@@ -270,7 +270,20 @@ namespace rl::ui {
                 return child->find_widget(pt - m_pos);
         }
 
-        return this->contains(pt) ? const_cast<Widget*>(this) : nullptr;
+        return this->contains(pt) ? this : nullptr;
+    }
+
+    const Widget* Widget::find_widget(ds::point<f32> pt) const
+    {
+        for (auto child : std::ranges::reverse_view{ m_children })
+        {
+            if (!child->visible())
+                continue;
+            if (child->contains(pt - m_pos))
+                return child->find_widget(pt - m_pos);
+        }
+
+        return this->contains(pt) ? this : nullptr;
     }
 
     bool Widget::on_mouse_entered(const Mouse& mouse)
@@ -311,7 +324,7 @@ namespace rl::ui {
                 continue;
             else if (!child->contains(mouse_pos - m_pos))
                 continue;
-            else if (!child->on_mouse_button_released(mouse, kb))
+            else if (!child->on_mouse_button_pressed(mouse, kb))
                 continue;
             else
             {

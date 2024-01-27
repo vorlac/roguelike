@@ -14,7 +14,7 @@ namespace rl::ui {
     {
     }
 
-    void Popup::set_anchor_pos(const ds::point<f32>& anchor_pos)
+    void Popup::set_anchor_pos(ds::point<f32> anchor_pos)
     {
         m_anchor_pos = anchor_pos;
     }

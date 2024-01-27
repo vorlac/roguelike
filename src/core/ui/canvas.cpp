@@ -81,8 +81,7 @@ namespace rl::ui {
                 constexpr f32 tooltip_width{ 150.0f };
                 std::array<f32, 4> bounds = { 0.0f };
                 ds::point<f32> pos{
-                    widget->position() +
-                        ds::point<f32>(widget->width() / 2.0f, widget->height() + 10.0f),
+                    widget->position() + (widget->width() / 2.0f, widget->height() + 10.0f),
                 };
 
                 nvg::FontFace(context, font::name::sans);
@@ -115,7 +114,7 @@ namespace rl::ui {
                 nvg::GlobalAlpha(context, std::min(1.0f, 2.0f * (elapsed - m_tooltip_delay)) * 0.8f);
 
                 nvg::BeginPath(context);
-                nvg::FillColor(context, ds::color<f32>{ rl::Colors::DarkererGrey });
+                nvg::FillColor(context, rl::Colors::DarkererGrey);
                 nvg::RoundedRect(context, bounds[0] - 4.0f - height, bounds[1] - 4.0f,
                                  (bounds[2] - bounds[0]) + 8.0f, (bounds[3] - bounds[1]) + 8.0f,
                                  3.0f);
@@ -188,9 +187,9 @@ namespace rl::ui {
         m_resize_callback = callback;
     }
 
-    void UICanvas::add_update_callback(std::function<void()>&& refresh_func)
+    void UICanvas::add_update_callback(const std::function<void()>& refresh_func)
     {
-        m_update_callbacks.emplace_back(std::forward<decltype(refresh_func)>(refresh_func));
+        m_update_callbacks.push_back(refresh_func);
     }
 
     // Return the component format underlying the screen
@@ -337,9 +336,11 @@ namespace rl::ui {
 
     void UICanvas::dispose_dialog(Dialog* dialog)
     {
-        // m_focus_path
-        // std::ranges::find_if(m_focus_path, [](Widget* w){w})
-        if (std::find(m_focus_path.begin(), m_focus_path.end(), dialog) != m_focus_path.end())
+        bool match_found = std::ranges::find_if(m_focus_path, [&](Widget* w) {
+                               return w == dialog;
+                           }) != m_focus_path.end();
+
+        if (match_found)
             m_focus_path.clear();
 
         if (m_drag_widget == dialog)

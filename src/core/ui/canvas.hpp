@@ -38,13 +38,13 @@ namespace rl::ui {
         void set_visible(bool visible);
         void set_background(ds::color<u8> background);
         void set_resize_callback(const std::function<void(ds::dims<f32>)>& callback);
-        void add_update_callback(std::function<void()>&& refresh_func);
+        void add_update_callback(const std::function<void()>& refresh_func);
+        const std::function<void(ds::dims<f32>)>& resize_callback() const;
 
         std::string title() const;
         ds::dims<i32> frame_buffer_size() const;
         nvg::NVGcontext* nvg_context() const;
-        const ds::color<u8>& background() const;
-        const std::function<void(ds::dims<f32>)>& resize_callback() const;
+        ds::color<u8> background() const;
 
         bool has_depth_buffer() const;
         bool has_stencil_buffer() const;
@@ -84,7 +84,7 @@ namespace rl::ui {
         ds::dims<i32> m_framebuf_size{ 0, 0 };
         std::vector<Widget*> m_focus_path{};
         Widget* m_drag_widget{ nullptr };
-        std::string m_title{ "" };
+        std::string m_title{};
 
         f32 m_last_interaction{ 0.0f };
         f32 m_tooltip_delay{ 0.5f };

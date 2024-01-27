@@ -5,7 +5,7 @@
 
 namespace rl::ui {
 
-    PopupButton::PopupButton(Widget* parent, const std::string& caption, Icon::ID button_icon)
+    PopupButton::PopupButton(Widget* parent, std::string caption, Icon::ID button_icon)
         : Button{ parent, caption, button_icon }
     {
         this->set_icon_extra_scale(1.0f);
