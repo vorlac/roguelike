@@ -50,10 +50,8 @@ namespace rl {
         i32 nvg_flags{ Property::AntiAlias };
         if (stencil_buf)
             nvg_flags |= Property::StencilStrokes;
-
-#ifndef NDEBUG
         nvg_flags |= Property::Debug;
-#endif
+
         nvg::NVGcontext* nvg_context{ nvg::nvgCreateGL3(nvg_flags) };
         runtime_assert(nvg_context != nullptr, "Failed to create NVG context");
         return nvg_context;
@@ -103,12 +101,14 @@ namespace rl {
         nvg::EndFrame(m_nvg_context);
     }
 
-    void NVGRenderer::render_frame(const ds::dims<f32>& render_size, f32 pixel_ratio,
-                                   auto&& render_func)
+    void NVGRenderer::save_state()
     {
-        this->begin_frame(render_size, pixel_ratio);
-        render_func();
-        this->end_frame();
+        nvg::Save(m_nvg_context);
+    }
+
+    void NVGRenderer::restore_state()
+    {
+        nvg::Restore(m_nvg_context);
     }
 
     void NVGRenderer::flush(const ds::dims<f32>& viewport, f32 pixel_ratio)
@@ -120,25 +120,8 @@ namespace rl {
                                static_cast<f32>(viewport.height), pixel_ratio);
     }
 
-    void NVGRenderer::save_state()
-    {
-        nvg::Save(m_nvg_context);
-    }
-
-    void NVGRenderer::restore_state()
-    {
-        nvg::Restore(m_nvg_context);
-    }
-
-    void NVGRenderer::scoped_state_draw(auto&& draw_func)
-    {
-        this->save_state();
-        draw_func();
-        this->restore_state();
-    }
-
-    ui::font::Handle NVGRenderer::load_font(const std::string& font_name,
-                                            std::basic_string_view<u8>&& font_ttf)
+    ui::font::ID NVGRenderer::load_font(const std::string& font_name,
+                                        std::basic_string_view<u8>&& font_ttf)
     {
         return nvg::CreateFontMem(m_nvg_context, font_name.data(), const_cast<u8*>(font_ttf.data()),
                                   static_cast<i32>(font_ttf.size()), 0);

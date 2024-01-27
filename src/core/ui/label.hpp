@@ -12,18 +12,18 @@
 
 namespace rl::ui {
 
-    class Label : public ui::Widget
+    class Label : public Widget
     {
     public:
-        Label(ui::Widget* parent, const std::string& caption,
-              const std::string& font = font::name::mono, f32 font_size = -1.0f);
+        Label(Widget* parent, std::string caption, std::string font = font::name::mono,
+              f32 font_size = -1.0f);
 
         std::string font() const;
-        std::string caption() const;
-        const ds::color<f32>& color() const;
+        std::string text() const;
+        ds::color<f32> color() const;
 
-        void set_caption(const std::string& caption);
-        void set_font(const std::string& font);
+        void set_text(std::string text);
+        void set_font(std::string font);
         void set_color(ds::color<f32> color);
         void set_callback(std::function<void()> callable);
 
@@ -34,7 +34,7 @@ namespace rl::ui {
 
     protected:
         std::string m_font{};
-        std::string m_caption{};
+        std::string m_text{};
         ds::color<f32> m_color{ rl::Colors::Yellow };
         std::function<void()> m_callback;
     };

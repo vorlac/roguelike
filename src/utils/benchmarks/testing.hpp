@@ -1,8 +1,12 @@
 #pragma once
 
+#include <array>
 #include <chrono>
 #include <iostream>
+#include <ranges>
 #include <string>
+#include <tuple>
+#include <utility>
 
 #include <fmt/format.h>
 #include <nanobench.h>
@@ -11,6 +15,36 @@
 #include "utils/memory.hpp"
 #include "utils/numeric.hpp"
 #include "utils/random.hpp"
+
+namespace rl::bench::asdf {
+
+    consteval static inline int fib(const int n)
+    {
+        if (n <= 1)
+            return n;
+        return fib(n - 1) + fib(n - 2);
+    }
+
+    template <typename T, T... nums>
+    static inline consteval auto fib_array(std::integer_sequence<T, nums...>&& intseq)
+    {
+        return std::array{ fib(nums)... };
+    }
+
+    template <typename T, T... nums>
+    static inline consteval auto int_array(std::integer_sequence<T, nums...>&& intseq)
+    {
+        return std::array{ nums... };
+    }
+
+    int asdf()
+    {
+        auto ints{ std::make_integer_sequence<int, 28>{} };
+        constexpr std::array int_vals{ int_array(std::forward<decltype(ints)>(ints)) };
+        constexpr std::array fib_vals{ fib_array(std::forward<decltype(ints)>(ints)) };
+    }
+
+}
 
 namespace rl::bench {
     using namespace std::chrono_literals;
@@ -25,7 +59,7 @@ namespace rl::bench {
             .performanceCounters(true);
 
         rand_benchmarks.minEpochTime(1s).run("c_rand", [&] {
-            const i32 randval{ rl::crand<1, 100>::value() };
+            const i32 randval{ rl::random<1, 100>::value() };
             ankerl::nanobench::doNotOptimizeAway(randval);
             const bool is_in_range{ randval >= 1 && randval <= 100 };
             ankerl::nanobench::doNotOptimizeAway(is_in_range);

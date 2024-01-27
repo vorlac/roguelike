@@ -39,8 +39,8 @@ namespace rl::ui {
     };
 
     namespace font {
-        using Handle = i32;
-        using Map = phmap::flat_hash_map<std::string, font::Handle>;
+        using ID = i32;
+        using Map = phmap::flat_hash_map<std::string, font::ID>;
 
         constexpr i32 InvalidHandle{ -1 };
 
@@ -125,7 +125,7 @@ namespace rl::ui {
         f32 tab_button_horizontal_padding{ 10.0f };
         f32 tab_button_vertical_padding{ 2.0f };
 
-        ds::color<f32> drop_shadow{ 0, 0, 0, 128 };
+        constexpr static inline ds::color<f32> drop_shadow{ 0, 0, 0, 128 };
         ds::color<f32> text_shadow{ 0, 0, 0, 128 };
         ds::color<f32> dialog_shadow{ 0, 0, 0, 128 };
         ds::color<f32> transparent{ 0, 0, 0, 0 };

@@ -9,10 +9,9 @@
 
 namespace rl::ui {
 
-    Label::Label(ui::Widget* parent, const std::string& caption, const std::string& font,
-                 f32 font_size)
-        : ui::Widget{ parent }
-        , m_caption{ caption }
+    Label::Label(Widget* parent, std::string text, std::string font, f32 font_size)
+        : Widget{ parent }
+        , m_text{ text }
         , m_font{ font }
     {
         if (m_theme != nullptr)
@@ -25,9 +24,9 @@ namespace rl::ui {
             m_font_size = font_size;
     }
 
-    std::string Label::caption() const
+    std::string Label::text() const
     {
-        return m_caption;
+        return m_text;
     }
 
     std::string Label::font() const
@@ -35,17 +34,17 @@ namespace rl::ui {
         return m_font;
     }
 
-    const ds::color<f32>& Label::color() const
+    ds::color<f32> Label::color() const
     {
         return m_color;
     }
 
-    void Label::set_caption(const std::string& caption)
+    void Label::set_text(std::string text)
     {
-        m_caption = caption;
+        m_text = text;
     }
 
-    void Label::set_font(const std::string& font)
+    void Label::set_font(std::string font)
     {
         m_font = font;
     }
@@ -72,7 +71,7 @@ namespace rl::ui {
 
     ds::dims<f32> Label::preferred_size() const
     {
-        if (m_caption.empty())
+        if (m_text.empty())
             return ds::dims<f32>::zero();
 
         auto&& context{ m_renderer->context() };
@@ -83,7 +82,7 @@ namespace rl::ui {
         {
             std::array<f32, 4> bounds{ 0.0f };
             nvg::TextAlign(context, Text::Alignment::HLeftVTop);
-            nvg::TextBoxBounds(context, m_pos.x, m_pos.y, m_fixed_size.width, m_caption.c_str(),
+            nvg::TextBoxBounds(context, m_pos.x, m_pos.y, m_fixed_size.width, m_text.c_str(),
                                nullptr, bounds.data());
 
             const f32 textbox_height{ bounds[3] - bounds[1] };
@@ -95,7 +94,7 @@ namespace rl::ui {
         else
         {
             nvg::TextAlign(context, Text::Alignment::HLeftVMiddle);
-            const f32 text_width{ nvg::TextBounds(context, 0.0f, 0.0f, m_caption.c_str()) };
+            const f32 text_width{ nvg::TextBounds(context, 0.0f, 0.0f, m_text.c_str()) };
             return ds::dims<f32>{
                 text_width + 2.0f,
                 this->font_size(),
@@ -115,12 +114,12 @@ namespace rl::ui {
         if (m_fixed_size.width > 0)
         {
             nvg::TextAlign(context, Text::Alignment::HLeftVTop);
-            nvg::TextBox(context, m_pos.x, m_pos.y, m_fixed_size.width, m_caption.c_str());
+            nvg::TextBox(context, m_pos.x, m_pos.y, m_fixed_size.width, m_text.c_str());
         }
         else
         {
             nvg::TextAlign(context, Text::Alignment::HLeftVMiddle);
-            nvg::Text(context, m_pos.x, m_pos.y + m_size.height * 0.5f, m_caption.c_str());
+            nvg::Text(context, m_pos.x, m_pos.y + m_size.height * 0.5f, m_text.c_str());
         }
     }
 }

@@ -107,7 +107,7 @@ namespace rl::ui {
                  : m_pos;                            //
     }
 
-    const ds::dims<f32>& Widget::size() const
+    ds::dims<f32> Widget::size() const
     {
         return m_size;
     }
@@ -142,7 +142,7 @@ namespace rl::ui {
         m_fixed_size = fixed_size;
     }
 
-    const ds::dims<f32>& Widget::fixed_size() const
+    ds::dims<f32> Widget::fixed_size() const
     {
         return m_fixed_size;
     }
@@ -260,7 +260,7 @@ namespace rl::ui {
         }
     }
 
-    Widget* Widget::find_widget(ds::point<f32> pt)
+    Widget* Widget::find_widget(ds::point<f32> pt) const
     {
         for (auto child : std::ranges::reverse_view{ m_children })
         {
@@ -270,20 +270,7 @@ namespace rl::ui {
                 return child->find_widget(pt - m_pos);
         }
 
-        return this->contains(pt) ? this : nullptr;
-    }
-
-    const Widget* Widget::find_widget(ds::point<f32> pt) const
-    {
-        for (auto child : std::ranges::reverse_view{ m_children })
-        {
-            if (!child->visible())
-                continue;
-            if (child->contains(pt - m_pos))
-                return child->find_widget(pt - m_pos);
-        }
-
-        return this->contains(pt) ? this : nullptr;
+        return this->contains(pt) ? const_cast<Widget*>(this) : nullptr;
     }
 
     bool Widget::on_mouse_entered(const Mouse& mouse)
@@ -312,7 +299,7 @@ namespace rl::ui {
 
     bool Widget::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb)
     {
-        bool ret{ false };
+        bool handled{ false };
 
         const auto&& mouse_pos{ mouse.pos() };
         auto&& context{ m_renderer->context() };
@@ -322,23 +309,26 @@ namespace rl::ui {
         {
             if (!child->visible())
                 continue;
-
-            if (child->contains(mouse_pos - m_pos) && child->on_mouse_button_pressed(mouse, kb))
+            else if (!child->contains(mouse_pos - m_pos))
+                continue;
+            else if (!child->on_mouse_button_released(mouse, kb))
+                continue;
+            else
             {
-                ret = true;
+                handled = true;
                 break;
             }
         }
 
-        if (mouse.is_button_pressed(Mouse::Button::Left) && !m_focused)
+        if (!handled && mouse.is_button_pressed(Mouse::Button::Left) && !m_focused)
             this->request_focus();
 
-        return ret;
+        return handled;
     }
 
     bool Widget::on_mouse_button_released(const Mouse& mouse, const Keyboard& kb)
     {
-        bool ret{ false };
+        bool handled{ false };
 
         auto&& mouse_pos{ mouse.pos() };
         auto&& context{ m_renderer->context() };
@@ -348,20 +338,23 @@ namespace rl::ui {
         {
             if (!child->visible())
                 continue;
-
-            if (child->contains(mouse_pos - m_pos) && child->on_mouse_button_released(mouse, kb))
+            else if (!child->contains(mouse_pos - m_pos))
+                continue;
+            else if (!child->on_mouse_button_released(mouse, kb))
+                continue;
+            else
             {
-                ret = true;
+                handled = true;
                 break;
             }
         }
 
-        return ret;
+        return handled;
     }
 
     bool Widget::on_mouse_scroll(const Mouse& mouse, const Keyboard& kb)
     {
-        bool ret{ false };
+        bool handled{ false };
 
         auto&& mouse_pos{ mouse.pos() };
         auto&& context{ m_renderer->context() };
@@ -371,15 +364,18 @@ namespace rl::ui {
         {
             if (!child->visible())
                 continue;
-
-            if (child->contains(mouse_pos - m_pos) && child->on_mouse_scroll(mouse, kb))
+            else if (!child->contains(mouse_pos - m_pos))
+                continue;
+            else if (!child->on_mouse_scroll(mouse, kb))
+                continue;
+            else
             {
-                ret = true;
+                handled = true;
                 break;
             }
         }
 
-        return ret;
+        return handled;
     }
 
     bool Widget::on_mouse_move(const Mouse& mouse, const Keyboard& kb)
@@ -391,7 +387,7 @@ namespace rl::ui {
             if (!child->visible())
                 continue;
 
-            const auto mouse_pos{ mouse.pos() };
+            const ds::point mouse_pos{ mouse.pos() };
             const bool contained{ child->contains(mouse_pos - m_pos) };
             const bool prev_contained{ child->contains(mouse_pos - m_pos - mouse.pos_delta()) };
 
@@ -642,17 +638,11 @@ namespace rl::ui {
             if (!child->visible())
                 continue;
 
-            if constexpr (!Widget::DiagnosticsEnabled)
-            {
-                m_renderer->save_state();
+            m_renderer->state_scoped_draw([&]() {
                 nvg::IntersectScissor(context, child->m_pos.x, child->m_pos.y, child->m_size.width,
                                       child->m_size.height);
-            }
-
-            child->draw();
-
-            if constexpr (!Widget::DiagnosticsEnabled)
-                m_renderer->restore_state();
+                child->draw();
+            });
         }
     }
 

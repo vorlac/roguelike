@@ -15,7 +15,7 @@ namespace rl::ui {
         , m_mouse{ mouse }
         , m_keyboard{ kb }
     {
-        // m_pos = rect.pt;
+        m_pos = ds::point{ 0.0f, 0.0f };
         m_size = rect.size;
 
         for (i32 i = Mouse::Cursor::Arrow; i < Mouse::Cursor::CursorCount; ++i)
@@ -37,7 +37,7 @@ namespace rl::ui {
 
     bool UICanvas::update()
     {
-        for (const auto& update_widget_func : m_update_callbacks)
+        for (auto update_widget_func : m_update_callbacks)
             update_widget_func();
 
         return m_update_callbacks.size() > 0;
@@ -57,7 +57,7 @@ namespace rl::ui {
     bool UICanvas::draw_widgets()
     {
         auto&& context{ m_renderer->context() };
-        constexpr static f32 PIXEL_RATIO = 1.0f;
+        constexpr static f32 PIXEL_RATIO{ 1.0f };
         nvg::BeginFrame(context, m_size.width, m_size.height, PIXEL_RATIO);
 
         this->draw();
@@ -188,9 +188,9 @@ namespace rl::ui {
         m_resize_callback = callback;
     }
 
-    void UICanvas::add_update_callback(const std::function<void()>& refresh_func)
+    void UICanvas::add_update_callback(std::function<void()>&& refresh_func)
     {
-        m_update_callbacks.push_back(refresh_func);
+        m_update_callbacks.emplace_back(std::forward<decltype(refresh_func)>(refresh_func));
     }
 
     // Return the component format underlying the screen
@@ -337,6 +337,8 @@ namespace rl::ui {
 
     void UICanvas::dispose_dialog(Dialog* dialog)
     {
+        // m_focus_path
+        // std::ranges::find_if(m_focus_path, [](Widget* w){w})
         if (std::find(m_focus_path.begin(), m_focus_path.end(), dialog) != m_focus_path.end())
             m_focus_path.clear();
 

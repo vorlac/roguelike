@@ -110,34 +110,45 @@ namespace rl {
                     std::cout << "Button pressed." << std::endl;
                 });
 
-                gui->set_visible(true);
-                gui->perform_layout();
-                gui->update();
+                // gui->set_visible(true);
+                // gui->perform_layout();
+                // gui->update();
 
                 dialog->center();
             };
+
+            std::string elapsed_str{ fmt::to_string(
+                fmt::format("{:<3.3f} sec", m_timer.elapsed())) };
+            std::string fps_str{ fmt::to_string(fmt::format("{:<3.3f} fps", framerate)) };
 
             auto full_window_menu = [&] {
                 auto layout{ new ui::AdvancedGridLayout({ 0, 0, 0 }, {}, 30) };
 
                 gui->set_layout(layout);
-                gui->set_visible(true);
 
                 layout->set_col_stretch(1, 1.0f);
 
                 auto title_label{ new ui::Label{ gui, "GUI Canvas Span Label",
                                                  ui::font::name::sans_bold, 40 } };
                 layout->append_row(0);
-                auto push_button{ new ui::Button{ gui, "Push Button", ui::Icon::Microscope } };
+                auto push_button = new ui::Button{ gui, "Push Button", ui::Icon::Microscope };
                 layout->append_row(0);
-                auto timer_desc_label{ new ui::Label{ gui, "Timer: ", ui::font::name::sans, 32 } };
+                auto timer_desc_label = new ui::Label{ gui, "Timer: ", ui::font::name::sans, 32 };
                 layout->append_row(0);
-                auto timer_value_label{ new ui::Label{ gui, " ", ui::font::name::mono, 32 } };
+                auto timer_value_label = new ui::Label{ gui, "", ui::font::name::mono, 32 };
                 layout->append_row(0);
-                auto stats_desc_label{ new ui::Label{ gui, "Stats: ", ui::font::name::sans, 32 } };
+                auto stats_desc_label = new ui::Label{ gui, "Stats: ", ui::font::name::sans, 32 };
                 layout->append_row(0);
-                auto stats_value_label{ new ui::Label{ gui, " ", ui::font::name::mono, 32 } };
+                auto stats_value_label = new ui::Label{ gui, "", ui::font::name::mono, 32 };
                 layout->append_row(0);
+
+                gui->add_update_callback([=]() {
+                    timer_value_label->set_text(elapsed_str);
+                });
+
+                gui->add_update_callback([=]() {
+                    stats_value_label->set_text(fps_str);
+                });
 
                 push_button->set_tooltip("Microscope Button");
                 push_button->set_callback([] {
@@ -174,44 +185,43 @@ namespace rl {
                     log::warning("Stats callback invoked");
                 });
 
-                gui->add_update_callback([&]() {
-                    auto&& elapsed_str{ fmt::format("{:.3f} sec", m_timer.elapsed()) };
-                    timer_value_label->set_caption(std::move(elapsed_str));
-                });
-
-                gui->add_update_callback([&]() {
-                    auto&& fps_str{ fmt::to_string(fmt::format("{:.1f} fps", framerate)) };
-                    stats_value_label->set_caption(std::move(fps_str));
-                });
-
-                gui->update();
-                gui->perform_layout();
+                // gui->update();
+                // gui->perform_layout();
             };
 
             floating_form_gui();
+            full_window_menu();
+            // auto test { timer_value_label;
+
+            gui->update();
+            gui->set_visible(true);
+            gui->perform_layout();
 
             m_timer.reset();
             // vbo.bind_buffers();
             while (!this->should_exit()) [[likely]]
             {
-                delta_time = m_timer.delta();
-
                 this->handle_events();
                 this->update();
-                form->refresh();
 
-                m_main_window->clear();
-                gui->draw_all();
-                m_main_window->swap_buffers();
+                m_timer.tick([&]() {
+                    elapsed_time = m_timer.elapsed();
+                    framerate = ++frame_count / elapsed_time;
+                    auto&& elapsed_str{ fmt::to_string(fmt::format("{:<3.3f} sec", elapsed_time)) };
+                    auto&& fps_str{ fmt::to_string(fmt::format("{:<3.3f} fps", framerate)) };
 
-                elapsed_time = m_timer.elapsed();
-                framerate = ++frame_count / elapsed_time;
+                    form->refresh();
+
+                    m_main_window->clear();
+                    gui->draw_all();
+                    m_main_window->swap_buffers();
+                });
 
                 // vbo.update_buffers(renderer->get_viewport());
                 // vbo.draw_triangles();
 
-                if constexpr (io::logging::main_loop)
-                    this->print_loop_stats(delta_time);
+                // if constexpr (io::logging::main_loop)
+                //     this->print_loop_stats(delta_time);
             }
 
             ret &= this->teardown();

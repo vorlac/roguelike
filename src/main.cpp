@@ -1,8 +1,3 @@
-#include <memory>
-#include <string>
-#include <type_traits>
-#include <utility>
-
 #include "core/application.hpp"
 #include "core/ui/crtp/crtp_label.hpp"
 #include "core/ui/crtp/crtp_widget.hpp"

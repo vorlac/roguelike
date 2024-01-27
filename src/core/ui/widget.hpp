@@ -57,11 +57,11 @@ namespace rl::ui {
         Theme* theme();
         Widget* child_at(i32 index);
         rl::Mouse::Cursor::ID cursor() const;
-        Widget* find_widget(ds::point<f32> pt);
+        Widget* find_widget(ds::point<f32> pt) const;
         ds::point<f32> position() const;
         ds::point<f32> abs_position() const;
-        const ds::dims<f32>& fixed_size() const;
-        const ds::dims<f32>& size() const;
+        ds::dims<f32> fixed_size() const;
+        ds::dims<f32> size() const;
 
         const UICanvas* canvas() const;
         const Dialog* dialog() const;
@@ -69,7 +69,6 @@ namespace rl::ui {
         const Layout* layout() const;
         const Theme* theme() const;
         const Widget* child_at(i32 index) const;
-        const Widget* find_widget(ds::point<f32> pt) const;
         const std::vector<Widget*>& children() const;
         const std::string& tooltip() const;
 

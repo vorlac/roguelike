@@ -32,19 +32,19 @@ namespace rl::inline utils {
         // clang-format on
     };
 
-    template <rl::numeric T = double, auto Duration = TimeDuration::Second>
+    template <rl::numeric T = f64, auto FixedStep = 60, auto Duration = TimeDuration::Second>
         requires std::same_as<decltype(Duration), TimeDuration>
     struct Timer
     {
         // gets time unit of a single tick
         static inline TimeDuration unit()
         {
-            constexpr static u64 pico = std::to_underlying(TimeDuration::Picosecond);
-            constexpr static u64 nano = std::to_underlying(TimeDuration::Nanosecond);
-            constexpr static u64 micr = std::to_underlying(TimeDuration::Microsecond);
-            constexpr static u64 mili = std::to_underlying(TimeDuration::Millisecond);
+            constexpr static u64 pico{ std::to_underlying(TimeDuration::Picosecond) };
+            constexpr static u64 nano{ std::to_underlying(TimeDuration::Nanosecond) };
+            constexpr static u64 micr{ std::to_underlying(TimeDuration::Microsecond) };
+            constexpr static u64 mili{ std::to_underlying(TimeDuration::Millisecond) };
 
-            const u64 freq = SDL3::SDL_GetPerformanceFrequency();
+            const u64 freq{ SDL3::SDL_GetPerformanceFrequency() };
 
             if (pico < freq)
                 return TimeDuration::Picosecond;
@@ -71,76 +71,144 @@ namespace rl::inline utils {
 
     public:
         constexpr inline Timer()
-            : m_start_timestamp{ Timer::get_tick() }
-            , m_delta_timestamp{ Timer::get_tick() }
+            : m_start_timestamp{ Timer::now() }
+            , m_delta_timestamp{ Timer::now() }
         {
         }
 
-        constexpr inline T convert(u64 ticks)
+        [[nodiscard]]
+        constexpr inline T convert(u64 timestamp_duration)
         {
-            static const TimeDuration td = this->unit();
-            static const u64 freq = SDL3::SDL_GetPerformanceFrequency();
-            constexpr u64 to_ratio = std::to_underlying(time_unit);
-            const f64 seconds{ ticks / static_cast<f64>(freq) };
+            constexpr u64 to_ratio{ std::to_underlying(time_unit) };
+            const f64 seconds{ timestamp_duration / static_cast<f64>(m_perf_counter_freq) };
             return static_cast<T>(seconds * to_ratio);
         }
 
-        // get tick frequency
-        static inline u64 tick_freq()
+        [[nodiscard]]
+        static inline u64 timer_freq()
         {
+            // get tick frequency
             return SDL3::SDL_GetPerformanceFrequency();
         }
 
-        // get current tick/timestamp
-        static inline u64 get_tick()
+        [[nodiscard]]
+        static inline u64 now()
         {
+            // get current tick/timestamp
             return SDL3::SDL_GetPerformanceCounter();
         }
 
         [[nodiscard]]
-        constexpr inline time_type now() const
+        constexpr inline time_type delta()
         {
-            return this->convert(Timer::get_tick());
+            const u64 curr_timestamp{ Timer::now() };
+            const u64 prev_timestamp{ m_delta_timestamp };
+
+            m_delta_timestamp = curr_timestamp;
+            return this->convert(curr_timestamp - prev_timestamp);
         }
 
         [[nodiscard]]
-        inline time_type delta()
+        constexpr inline time_type elapsed()
         {
-            ++m_tick_count;
-
-            const u64 curr_tick = Timer::get_tick();
-            const u64 prev_tick = m_delta_timestamp;
-
-            m_delta_timestamp = curr_tick;
-
-            return this->convert(curr_tick - prev_tick);
+            const u64 curr_timestamp{ Timer::now() };
+            const u64 init_timestamp{ m_start_timestamp };
+            return this->convert(curr_timestamp - init_timestamp);
         }
 
         [[nodiscard]]
-        inline time_type elapsed()
-        {
-            const u64 curr_tick = Timer::get_tick();
-            const u64 prev_tick = m_start_timestamp;
-            return this->convert(curr_tick - prev_tick);
-        }
-
-        [[nodiscard]]
-        inline u64 tick_count() const
+        constexpr inline u64 tick_count() const
         {
             return m_tick_count;
         }
 
         inline void reset()
         {
-            m_start_timestamp = Timer::get_tick();
+            m_start_timestamp = Timer::now();
+        }
+
+        template <std::invocable TCallable>
+        void tick(const TCallable& callable)
+        {
+            // Query the current time.
+            m_elapsed_time = this->elapsed();
+            m_delta_time = m_elapsed_time - m_prev_tick_time;
+            m_prev_tick_time = m_elapsed_time;
+
+            const u64 last_frame_count{ m_frame_count };
+            if (m_delta_time > m_max_delta_time)
+                m_delta_time = m_max_delta_time;
+
+            if (m_fixed_timestep > 0)
+            {
+                // Fixed timestep update logic
+                if (std::abs(m_delta_time - m_fixed_timestep) < 1 / 4000)
+                    m_delta_time = m_fixed_timestep;
+
+                m_leftover_ticks += m_delta_time;
+                while (m_leftover_ticks >= m_fixed_timestep)
+                {
+                    m_elapsed_time = m_fixed_timestep;
+                    m_tick_timer += m_fixed_timestep;
+                    m_leftover_ticks -= m_fixed_timestep;
+                    ++m_frame_count;
+
+                    std::invoke(callable);
+                }
+            }
+            else
+            {
+                // Variable timestep update logic.
+                m_elapsed_time = m_delta_time;
+                m_tick_timer += m_delta_time;
+                m_leftover_ticks = 0;
+                ++m_frame_count;
+
+                std::invoke(callable);
+            }
+
+            // Track the current framerate.
+            if (m_frame_count != last_frame_count)
+                ++m_fps_cur_count;
+
+            if (m_fps_cur_timer >= 1.0f)
+            {
+                m_fps_avg_count = m_fps_cur_count;
+                m_fps_cur_count = 0;
+                m_fps_cur_timer -= 1.0f;
+            }
         }
 
     private:
+        // the number of times tick() has been called
         u64 m_tick_count{ 0 };
+        u64 m_frame_count{ 0 };
         // tick valye captured on init
-        u64 m_start_timestamp{ 0 };
+        u64 m_start_timestamp{ Timer::now() };
         // tick captured each time delta() is called
-        u64 m_delta_timestamp{ 0 };
+        u64 m_delta_timestamp{ Timer::now() };
+
+        // elapsed time (in seconds) since timer
+        // was initialized or last reset
+        f64 m_elapsed_time{ 0.0 };
+        // elapsed time (in seconds) since timer
+        // was initialized or last reset
+        f64 m_delta_time{ 0.0 };
+        f64 m_max_delta_time{ 1.0 };
+        // time when tick was last called (in seconds)
+        f64 m_prev_tick_time{ 0.0 };
+        f64 m_leftover_ticks{ 0.0 };
+        f64 m_tick_timer{ 0.0 };  // FixedStep is set from the 2nd template arg and defines how many
+                                  // times per second the fixed timestep should increment
+        f64 m_fixed_timestep{ FixedStep > 0 ? 1.0f / FixedStep : -1.0f };
+        // total average ticks per second
+        f64 m_fps_avg_count{ 0.0 };
+        // ticks per second in the past second
+        f64 m_fps_cur_count{ 0.0 };
+        f64 m_fps_cur_timer{ 0.0 };
+
+        const TimeDuration m_duration_unit{ TimeDuration::Second };
+        const u64 m_perf_counter_freq{ SDL3::SDL_GetPerformanceFrequency() };
     };
 
     // class StepTimer

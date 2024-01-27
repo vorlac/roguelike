@@ -1,3 +1,4 @@
+#include <array>
 #include <memory>
 #include <string>
 #include <string_view>
@@ -19,7 +20,7 @@
 
 namespace rl::ui {
 
-    Button::Button(Widget* parent, const std::string& caption, Icon::ID icon)
+    Button::Button(Widget* parent, std::string caption, Icon::ID icon)
         : Widget{ parent }
         , m_caption{ caption }
         , m_icon{ icon }
@@ -56,7 +57,7 @@ namespace rl::ui {
         m_caption = caption;
     }
 
-    const ds::color<f32>& Button::background_color() const
+    ds::color<f32> Button::background_color() const
     {
         return m_background_color;
     }
@@ -66,7 +67,7 @@ namespace rl::ui {
         m_background_color = bg_color;
     }
 
-    const ds::color<f32>& Button::text_color() const
+    ds::color<f32> Button::text_color() const
     {
         return m_text_color;
     }
@@ -186,7 +187,7 @@ namespace rl::ui {
         return Widget::on_mouse_exited(mouse);
     }
 
-    bool Button::handle_mouse_button_event(const ds::point<f32>& pt, Mouse::Button::ID mouse_btn,
+    bool Button::handle_mouse_button_event(ds::point<f32> pt, Mouse::Button::ID mouse_btn,
                                            bool button_just_pressed,
                                            Keyboard::Scancode::ID keys_down)
     {
@@ -207,11 +208,11 @@ namespace rl::ui {
                 {
                     if (m_button_group.empty())
                     {
-                        for (auto& widget : parent()->children())
+                        for (auto widget : parent()->children())
                         {
                             Button* button{ dynamic_cast<Button*>(widget) };
                             if (button != this && button != nullptr &&
-                                button->has_property(Property::Radio) && button->m_pressed)
+                                button->has_property(Property::Radio) && button->pressed())
                             {
                                 button->m_pressed = false;
                                 if (button->m_change_callback != nullptr)
@@ -240,7 +241,7 @@ namespace rl::ui {
                     {
                         Button* button{ dynamic_cast<Button*>(widget) };
                         if (button != this && button != nullptr &&
-                            button->has_property(Property::PopupMenu) && button->m_pressed)
+                            button->has_property(Property::PopupMenu) && button->pressed())
                         {
                             button->set_pressed(false);
                             if (button->m_change_callback != nullptr)
@@ -251,20 +252,17 @@ namespace rl::ui {
                     dynamic_cast<PopupButton*>(this)->popup()->request_focus();
                 }
 
-                if (this->has_property(Property::Toggle))
-                    m_pressed = !m_pressed;
-                else
-                    m_pressed = true;
+                m_pressed = this->has_property(Property::Toggle) ? !m_pressed : true;
             }
             else if (m_pressed || this->has_property(Property::StandardMenu))
             {
-                if (this->contains(pt) && m_callback != nullptr)
+                if (m_callback != nullptr && this->contains(pt - m_pos))  // ?????????????
                     m_callback();
                 if (this->has_property(Property::StandardPush))
                     m_pressed = false;
             }
 
-            if (pushed_backup != m_pressed && m_change_callback)
+            if (pushed_backup != m_pressed && m_change_callback != nullptr)
                 m_change_callback(m_pressed);
 
             return true;
@@ -275,13 +273,14 @@ namespace rl::ui {
     bool Button::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb)
     {
         Widget::on_mouse_button_pressed(mouse, kb);
-        return handle_mouse_button_event(mouse.pos(), mouse.button_pressed(), true, kb.keys_down());
+        return handle_mouse_button_event(mouse.pos() = m_pos, mouse.button_pressed(), true,
+                                         kb.keys_down());
     }
 
     bool Button::on_mouse_button_released(const Mouse& mouse, const Keyboard& kb)
     {
         Widget::on_mouse_button_released(mouse, kb);
-        return handle_mouse_button_event(mouse.pos(), mouse.button_released(), false,
+        return handle_mouse_button_event(mouse.pos() - m_pos, mouse.button_released(), false,
                                          kb.keys_down());
     }
 

@@ -1,7 +1,9 @@
 #pragma once
 
+#include <concepts>
 #include <string>
 #include <string_view>
+#include <type_traits>
 #include <utility>
 #include <vector>
 
@@ -30,10 +32,8 @@ namespace rl {
 
         void save_state();
         void restore_state();
-        void scoped_state_draw(auto&& draw_func);
 
-        ui::font::Handle load_font(const std::string& font_name,
-                                   std::basic_string_view<u8>&& font_ttf);
+        ui::font::ID load_font(const std::string& font_name, std::basic_string_view<u8>&& font_ttf);
 
         void load_fonts(std::vector<FontInfo>&& fonts);
         void set_text_properties(const std::string_view& font_name, f32 font_size,
@@ -52,6 +52,24 @@ namespace rl {
                                const ds::color<f32>& color, ui::Outline type);
 
         nvg::NVGcontext* context() const;
+
+    public:
+        template <std::invocable TCallable>
+        inline void state_scoped_draw(TCallable&& callable)
+        {
+            this->save_state();
+            std::invoke(std::forward<decltype(callable)>(callable));
+            this->restore_state();
+        }
+
+        template <std::invocable TCallable>
+        inline void draw_frame(TCallable&& callable, const ds::dims<f32>& render_size,
+                               f32 pixel_ratio)
+        {
+            this->begin_frame(render_size, pixel_ratio);
+            std::invoke(std::forward<decltype(callable)>(callable));
+            this->end_frame();
+        }
 
     private:
         bool m_depth_buffer{ false };

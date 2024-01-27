@@ -190,14 +190,16 @@ namespace rl::ui {
 
         const UICanvas* gui_canvas{ dynamic_cast<const UICanvas*>(widget) };
         if (gui_canvas != nullptr && !gui_canvas->title().empty())
-            height += widget->theme()->dialog_header_height - m_margin / 2.0f;
+            height += widget->theme()->dialog_header_height - (m_margin / 2.0f);
 
-        bool first = true, indent = false;
-        for (auto&& c : widget->children())
+        bool first{ true };
+        bool indent{ false };
+        for (auto c : widget->children())
         {
             if (!c->visible())
                 continue;
-            const Label* label = dynamic_cast<const Label*>(c);
+
+            const Label* label{ dynamic_cast<const Label*>(c) };
             if (!first)
                 height += (label == nullptr) ? m_spacing : m_group_spacing;
             first = false;
@@ -211,18 +213,14 @@ namespace rl::ui {
 
             bool indent_cur = indent && label == nullptr;
             height += target_size.height;
-            width = std::max(
-                width, target_size.width + 2.0f * m_margin + (indent_cur ? m_group_indent : 0.0f));
-
+            width = std::max(width, target_size.width + (2.0f * m_margin) +
+                                        (indent_cur ? m_group_indent : 0.0f));
             if (label != nullptr)
-                indent = !label->caption().empty();
+                indent = !label->text().empty();
         }
 
         height += m_margin;
-        return ds::dims<f32>{
-            width,
-            height,
-        };
+        return ds::dims<f32>{ width, height };
     }
 
     void GroupLayout::perform_layout(nvg::NVGcontext* nvg_context, Widget* widget) const
@@ -270,7 +268,7 @@ namespace rl::ui {
 
             height += target_size.height;
             if (label != nullptr)
-                indent = !label->caption().empty();
+                indent = !label->text().empty();
         }
     }
 

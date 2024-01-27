@@ -30,15 +30,15 @@ namespace rl::ui {
         };
 
     public:
-        Button(Widget* parent, const std::string& caption = "Untitled", Icon::ID icon = Icon::None);
+        Button(Widget* parent, std::string caption = "Untitled", Icon::ID icon = Icon::None);
 
         bool pressed() const;
         Icon::ID icon() const;
+        const std::string& caption() const;
         Button::Property properties() const;
         Icon::Placement icon_placement() const;
-        const ds::color<f32>& background_color() const;
-        const ds::color<f32>& text_color() const;
-        const std::string& caption() const;
+        ds::color<f32> background_color() const;
+        ds::color<f32> text_color() const;
         const std::function<void()>& callback() const;
         const std::function<void(bool)>& change_callback() const;
         const std::vector<Button*>& button_group() const;
@@ -66,8 +66,8 @@ namespace rl::ui {
         virtual ds::dims<f32> preferred_size() const override;
 
     private:
-        bool handle_mouse_button_event(const ds::point<f32>& pt, Mouse::Button::ID button,
-                                       bool down, Keyboard::Scancode::ID modifiers);
+        bool handle_mouse_button_event(ds::point<f32> pt, Mouse::Button::ID button, bool down,
+                                       Keyboard::Scancode::ID modifiers);
 
     protected:
         bool m_pressed{ false };
