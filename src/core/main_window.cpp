@@ -18,7 +18,6 @@
 #include "graphics/nvg_renderer.hpp"
 #include "graphics/vg/nanovg.hpp"
 #include "sdl/defs.hpp"
-#include "sdl/utils.hpp"
 #include "utils/io.hpp"
 #include "utils/numeric.hpp"
 #include "utils/options.hpp"
@@ -226,9 +225,9 @@ namespace rl {
         return result == 0;
     }
 
-    SDL3::SDL_WindowFlags MainWindow::get_flags() const
+    MainWindow::Properties::Flags MainWindow::get_flags() const
     {
-        return MainWindow::Properties(SDL3::SDL_GetWindowFlags(m_sdl_window));
+        return Properties::Flags(SDL3::SDL_GetWindowFlags(m_sdl_window));
     }
 
     bool MainWindow::is_valid() const
@@ -298,8 +297,7 @@ namespace rl {
 
     bool MainWindow::input_grabbed() const
     {
-        u32 result{ SDL3::SDL_GetWindowGrab(m_sdl_window) };
-        return result != 0;
+        return SDL3::SDL_GetWindowGrab(m_sdl_window);
     }
 
     DisplayID MainWindow::get_display()
@@ -316,7 +314,7 @@ namespace rl {
         runtime_assert(mode == nullptr, "failed to get window display mode");
 
         if (mode != nullptr)
-            SDL3::SDL_memcpy(&ret, mode, sizeof(ret));
+            std::memcpy(&ret, mode, sizeof(ret));
 
         return ret;
     }

@@ -10,7 +10,7 @@ namespace rl::ds {
     {
     public:
         constexpr inline refcounted() = default;
-        constexpr inline virtual ~refcounted() = default;
+        inline virtual ~refcounted() = default;
 
         constexpr inline refcounted(const refcounted&) noexcept
             : m_references{ 1 }

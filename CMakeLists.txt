@@ -94,12 +94,15 @@ target_compile_definitions(${PROJECT_NAME}
     KHRONOS_STATIC
 	NANOVG_GL3
     NOMINMAX
+	UNICODE
 
     $<${compiler_is_msvc}:
         _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING
         _CRT_SECURE_NO_WARNINGS
 
         $<$<CONFIG:Debug>:
+			_DISABLE_STRING_ANNOTATION=1 # needed with ASAN enabled because of fmt
+			_DISABLE_VECTOR_ANNOTATION=1 # needed with ASAN enabled because of fmt
             _NO_DEBUG_HEAP=1
         >
     >
@@ -115,6 +118,8 @@ target_compile_options(${PROJECT_NAME}
         /nologo
 
         $<$<CONFIG:Debug>:
+			#/fsanitize=fuzzer
+		    /fsanitize=address
             # /Z7 # embed debug info into .o files instead of pdb (for ccache)
             # /ZI # enable edit and continue
         >
@@ -157,13 +162,14 @@ target_link_options(${PROJECT_NAME}
         # /verbose
 
         $<$<CONFIG:Release>:
-            /machine:x64
-            /ltcg # link time code gen
-            /opt:ref # eliminate unreferenced functions/data
+            # /machine:x64
+            # /ltcg # link time code gen
+            # /opt:ref # eliminate unreferenced functions/data
             # /FASTGENPROFILE # generate optimization profile
         >
 
         $<$<CONFIG:Debug>:
+			/INFERASANLIBS
             # /natvis:<path> # link natvis into pdb
             # /libpath:dir # additional lib paths
             # /wholearchive # include all library object files in binary

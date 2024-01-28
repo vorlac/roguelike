@@ -69,6 +69,15 @@ namespace rl::ui {
         return m_items_short;
     }
 
+    i32 ComboBox::item_count() const
+    {
+        runtime_assert(m_items.size() == m_items_short.size(),
+                       "Combo box: item counts mismatch: \n\titems:{} vs items_short:{}",
+                       m_items.size(), m_items_short.size());
+
+        return static_cast<i32>(m_items.size());
+    }
+
     void ComboBox::set_items(const std::vector<std::string>& items)
     {
         this->set_items(items, items);
@@ -83,7 +92,7 @@ namespace rl::ui {
         m_items = items;
         m_items_short = items_short;
 
-        if (m_selected_index < 0 || m_selected_index >= static_cast<int>(items.size()))
+        if (m_selected_index < 0 || m_selected_index >= this->item_count())
             m_selected_index = 0;
 
         while (m_container->child_count() != 0)

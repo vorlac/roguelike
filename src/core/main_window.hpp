@@ -92,43 +92,41 @@ namespace rl {
 
         struct Properties : public std::bitset<sizeof(u32) * 8>
         {
-            using type = SDL3::SDL_WindowFlags;
-
-            enum Flag : std::underlying_type_t<type> {
+            enum Flags  {
                 None            = 0,
-                Fullscreen      = SDL3::SDL_WINDOW_FULLSCREEN,          // window is in fullscreen mode
-                OpenGL          = SDL3::SDL_WINDOW_OPENGL,              // window usable with OpenGL context
-                Occluded        = SDL3::SDL_WINDOW_OCCLUDED,            // window is occluded
-                Hidden          = SDL3::SDL_WINDOW_HIDDEN,              // window is neither mapped onto the desktop nor shown in the taskbar/dock/window list; SDL_ShowWindow() is required for it to become visible
-                Borderless      = SDL3::SDL_WINDOW_BORDERLESS,          // no window decoration
-                Resizable       = SDL3::SDL_WINDOW_RESIZABLE,           // window can be resized
-                Minimized       = SDL3::SDL_WINDOW_MINIMIZED,           // window is minimized
-                Maximized       = SDL3::SDL_WINDOW_MAXIMIZED,           // window is maximized
-                MouseGrabbed    = SDL3::SDL_WINDOW_MOUSE_GRABBED,       // window has grabbed mouse input
-                InputFocus      = SDL3::SDL_WINDOW_INPUT_FOCUS,         // window has input focus
-                MouseFocus      = SDL3::SDL_WINDOW_MOUSE_FOCUS,         // window has mouse focus
-                External        = SDL3::SDL_WINDOW_EXTERNAL,            // window not created by SDL
-                HighDPI         = SDL3::SDL_WINDOW_HIGH_PIXEL_DENSITY,  // window uses high pixel density back buffer if possible
-                MouseCapture    = SDL3::SDL_WINDOW_MOUSE_CAPTURE,       // window has mouse captured (unrelated to MOUSE_GRABBED)
-                AlwaysOnTop     = SDL3::SDL_WINDOW_ALWAYS_ON_TOP,       // window should always be above others
-                Utility         = SDL3::SDL_WINDOW_UTILITY,             // window should be treated as a utility window, not showing in the task bar and window list
-                Tooltip         = SDL3::SDL_WINDOW_TOOLTIP,             // window should be treated as a tooltip
-                PopupMenu       = SDL3::SDL_WINDOW_POPUP_MENU,          // window should be treated as a popup menu
-                KeyboardGrabbed = SDL3::SDL_WINDOW_KEYBOARD_GRABBED,    // window has grabbed keyboard input
-                Vulkan          = SDL3::SDL_WINDOW_VULKAN,              // window usable for Vulkan surface
-                Metal           = SDL3::SDL_WINDOW_METAL,               // window usable for Metal view
-                Transparent     = SDL3::SDL_WINDOW_TRANSPARENT,         // window with transparent buffer
-                NotFocusable    = SDL3::SDL_WINDOW_NOT_FOCUSABLE,       // window should not be focusable
+                Fullscreen      = SDL_WINDOW_FULLSCREEN,          // window is in fullscreen mode
+                OpenGL          = SDL_WINDOW_OPENGL,              // window usable with OpenGL context
+                Occluded        = SDL_WINDOW_OCCLUDED,            // window is occluded
+                Hidden          = SDL_WINDOW_HIDDEN,              // window is neither mapped onto the desktop nor shown in the taskbar/dock/window list; SDL_ShowWindow() is required for it to become visible
+                Borderless      = SDL_WINDOW_BORDERLESS,          // no window decoration
+                Resizable       = SDL_WINDOW_RESIZABLE,           // window can be resized
+                Minimized       = SDL_WINDOW_MINIMIZED,           // window is minimized
+                Maximized       = SDL_WINDOW_MAXIMIZED,           // window is maximized
+                MouseGrabbed    = SDL_WINDOW_MOUSE_GRABBED,       // window has grabbed mouse input
+                InputFocus      = SDL_WINDOW_INPUT_FOCUS,         // window has input focus
+                MouseFocus      = SDL_WINDOW_MOUSE_FOCUS,         // window has mouse focus
+                External        = SDL_WINDOW_EXTERNAL,            // window not created by SDL
+                HighDPI         = SDL_WINDOW_HIGH_PIXEL_DENSITY,  // window uses high pixel density back buffer if possible
+                MouseCapture    = SDL_WINDOW_MOUSE_CAPTURE,       // window has mouse captured (unrelated to MOUSE_GRABBED)
+                AlwaysOnTop     = SDL_WINDOW_ALWAYS_ON_TOP,       // window should always be above others
+                Utility         = SDL_WINDOW_UTILITY,             // window should be treated as a utility window, not showing in the task bar and window list
+                Tooltip         = SDL_WINDOW_TOOLTIP,             // window should be treated as a tooltip
+                PopupMenu       = SDL_WINDOW_POPUP_MENU,          // window should be treated as a popup menu
+                KeyboardGrabbed = SDL_WINDOW_KEYBOARD_GRABBED,    // window has grabbed keyboard input
+                Vulkan          = SDL_WINDOW_VULKAN,              // window usable for Vulkan surface
+                Metal           = SDL_WINDOW_METAL,               // window usable for Metal view
+                Transparent     = SDL_WINDOW_TRANSPARENT,         // window with transparent buffer
+                NotFocusable    = SDL_WINDOW_NOT_FOCUSABLE,       // window should not be focusable
             };
 
-            constexpr inline operator type()
+            constexpr inline operator u32()
             {
-                return static_cast<type>(this->to_ulong());
+                return static_cast<u32>(this->to_ulong());
             }
 
-            constexpr inline operator type() const
+            constexpr inline operator u32() const
             {
-                return static_cast<type>(this->to_ulong());
+                return static_cast<u32>(this->to_ulong());
             }
         };
 
@@ -184,7 +182,7 @@ namespace rl {
         // clang-format on
 
         constexpr static inline MainWindow::Properties DEFAULT_PROPERTY_FLAGS = {
-            Properties::Flag::Resizable | Properties::Flag::OpenGL
+            Properties::Flags::Resizable | Properties::Flags::OpenGL
         };
 
         constexpr static inline ds::point<i32> DEFAULT_POSITION = {
@@ -233,7 +231,7 @@ namespace rl {
         f32 get_opacity() const;
 
         SDL3::SDL_Window* sdl_handle() const;
-        SDL3::SDL_WindowFlags get_flags() const;
+        MainWindow::Properties::Flags get_flags() const;
         SDL3::SDL_DisplayMode get_display_mode() const;
 
         ui::UICanvas* gui() const;

@@ -26,6 +26,7 @@ namespace rl {
             void set_items(const std::vector<std::string>& items,
                            const std::vector<std::string>& items_short);
 
+            i32 item_count() const;
             i32 selected_index() const;
             const std::vector<std::string>& items() const;
             const std::vector<std::string>& items_short() const;

@@ -1,17 +1,12 @@
 #include "core/application.hpp"
-#include "core/ui/crtp/crtp_label.hpp"
-#include "core/ui/crtp/crtp_widget.hpp"
-#include "graphics/vg/nanovg.hpp"
+#include "sdl/defs.hpp"
+#include "utils/options.hpp"
 
-SDL_C_LIB_BEGIN
-#include <SDL3/SDL_main.h>
-SDL_C_LIB_END
-
-int SDL3::main(int argc, char** argv)
+int wmain(int argc, wchar_t* argv[], wchar_t* envp)
 {
     int ret = -1;
     if (!rl::parse_args(argc, argv))
-        return 1;
+        ret = 1;
     else
     {
         rl::Application game{};

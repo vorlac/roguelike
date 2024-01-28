@@ -1,6 +1,11 @@
 ﻿#pragma once
 
-#include "sdl/texture.hpp"
+#include <bitset>
+
+#include "ds/dims.hpp"
+#include "ds/point.hpp"
+#include "ds/rect.hpp"
+#include "sdl/defs.hpp"
 
 SDL_C_LIB_BEGIN
 #include <SDL3/SDL_blendmode.h>
@@ -18,18 +23,18 @@ namespace rl {
     public:
         struct Properties : public std::bitset<32>
         {
-            using sdl_type = SDL3::SDL_RendererFlags;
+            using type = SDL3::SDL_RendererFlags;
 
-            enum Flag : std::underlying_type_t<sdl_type> {
+            enum Flag : std::underlying_type_t<type> {
                 None = 0,
                 Software = SDL3::SDL_RENDERER_SOFTWARE,
                 HWAccelerated = SDL3::SDL_RENDERER_ACCELERATED,
                 VSync = SDL3::SDL_RENDERER_PRESENTVSYNC,
             };
 
-            constexpr inline operator sdl_type()
+            constexpr inline operator type()
             {
-                return static_cast<sdl_type>(this->to_ulong());
+                return static_cast<type>(this->to_ulong());
             }
         };
 

@@ -48,3 +48,215 @@
 #define EIGEN_NOEXCEPT
 #define FMT_ENABLE_IF(__VA_ARGS__)
 #define FMT_ENABLE_IF(__VA_ARGS__) fmt::enable_if_t<(__VA_ARGS__), int> = 0
+#define SDLMAIN_DECLSPEC
+#define ANKERL_NANOBENCH(x) ANKERL_NANOBENCH_PRIVATE_##x()
+#define GLAD_API_CALL __attribute__((dllexport)) extern
+#define GLAD_API_CALL __declspec(dllexport) extern
+#define GLAD_API_CALL __attribute__((dllimport)) extern
+#define GLAD_API_CALL __declspec(dllimport) extern
+#define GLAD_API_CALL __attribute__((visibility("default"))) extern
+#define GLAD_API_CALL
+#define NULL
+#define NULL ((void *)0)
+#define VK_DEFINE_HANDLE(object)
+#define SDL_SCANF_FORMAT_STRING
+#define SDL_PRINTF_FORMAT_STRING
+#define SDL_PRINTF_VARARG_FUNCV(fmtargnumber)
+#define SDL_PRINTF_VARARG_FUNCV(fmtargnumber) __attribute__(( format( __printf__, fmtargnumber, 0 )))
+#define VK_DEFINE_NON_DISPATCHABLE_HANDLE(object)
+#define SDL_ALLOC_SIZE(p) __attribute__((alloc_size(p)))
+#define SDL_ALLOC_SIZE(p)
+#define SDL_MALLOC __attribute__((malloc))
+#define SDL_MALLOC
+#define SDL_ALLOC_SIZE2(p1, p2) __attribute__((alloc_size(p1, p2)))
+#define SDL_ALLOC_SIZE2(p1, p2)
+#define SDL_FORCE_INLINE
+#define SDL_FORCE_INLINE __attribute__((always_inline)) static __inline__
+#define SDL_PLATFORM_WIN32#define ANKERL_NANOBENCH_NO_SANITIZE(__VA_ARGS__) __attribute__((no_sanitize(__VA_ARGS__)))
+#define ANKERL_NANOBENCH_NO_SANITIZE(__VA_ARGS__)
+#define FMT_END_NAMESPACE } }
+#define FMT_GCC_PRAGMA(arg) _Pragma(arg)
+#define FMT_GCC_PRAGMA(arg)
+#define FMT_EXPORT
+#define FMT_THROW(x) detail::do_throw(x)
+#define FMT_THROW(x)
+#define FMT_THROW(x) ::fmt::detail::assert_fail(__FILE__, __LINE__, (x).what())
+#define FMT_EXCEPTIONS
+#define FMT_TRY
+#define FMT_TRY if (true)
+#define FMT_CATCH(x) catch (x)
+#define FMT_CATCH(x) if (false)
+#define FMT_BEGIN_NAMESPACE namespace fmt { inline namespace v10 {
+#define FMT_HAS_FEATURE(x) __has_feature(x)
+#define FMT_HAS_FEATURE(x)
+#define FMT_INLINE inline __attribute__((always_inline))
+#define FMT_INLINE
+#define FMT_NORETURN [[noreturn]]
+#define FMT_NORETURN
+#define FMT_API __declspec(dllexport)
+#define FMT_API __declspec(dllimport)
+#define FMT_API __attribute__((visibility("default")))
+#define FMT_API
+#define FMT_CONSTEXPR_CHAR_TRAITS
+#define FMT_CONSTEXPR20
+#define FMT_MSC_WARNING(__VA_ARGS__) __pragma(warning(__VA_ARGS__))
+#define FMT_MSC_WARNING(__VA_ARGS__)
+#define FMT_BEGIN_EXPORT
+#define FMT_END_EXPORT
+#define FMT_NODISCARD [[nodiscard]]
+#define FMT_NODISCARD
+#define FMT_CONSTEXPR20
+#define FMT_REDUCE_INT_INSTANTIATIONS
+#define FMT_MSC_VERSION
+#define FMT_HAS_BUILTIN(x) __has_builtin(x)
+#define FMT_HAS_BUILTIN(x)
+#define FMT_ICC_VERSION
+#define FMT_BUILTIN_CTZ(n) __builtin_ctz(n)
+#define FMT_BUILTIN_CTZ(n) detail::ctz(n)
+#define FMT_BUILTIN_CTZLL(n) __builtin_ctzll(n)
+#define FMT_BUILTIN_CTZLL(n) detail::ctzll(n)
+#define VKAPI_ATTR
+#define VKAPI_ATTR __attribute__((pcs("aapcs-vfp")))
+#define GLM_FUNC_QUALIFIER
+#define GLM_CONSTEXPR
+#define GLM_DEFAULT
+#define GLM_FUNC_DECL
+#define FMT_DECLTYPE_RETURN(val) ->decltype(val) { return val; } static_assert( true, "")
+#define FMT_DEPRECATED [[deprecated]]
+#define FMT_DEPRECATED __attribute__((deprecated))
+#define FMT_DEPRECATED __declspec(deprecated)
+#define FMT_DEPRECATED
+#define FMT_NOINLINE __attribute__((noinline))
+#define FMT_NOINLINE
+#define FMT_FUNC
+#define FMT_VISIBILITY(value) __attribute__((visibility(value)))
+#define FMT_VISIBILITY(value)
+#define FMT_INLINE_VARIABLE
+#define SDL_OUT_Z_CAP(x)
+#define SDL_OUT_Z_CAP(x) _Out_z_cap_(x)
+#define SDL_SCANF_VARARG_FUNC(fmtargnumber)
+#define SDL_SCANF_VARARG_FUNC(fmtargnumber) __attribute__ (( format( __scanf__, fmtargnumber, fmtargnumber+1 )))
+#define SDL_SCANF_VARARG_FUNCV(fmtargnumber)
+#define SDL_SCANF_VARARG_FUNCV(fmtargnumber) __attribute__(( format( __scanf__, fmtargnumber, 0 )))
+#define SDL_WPRINTF_VARARG_FUNC(fmtargnumber)
+#define GLAPI
+#define GLAPI __declspec(dllexport)
+#define GLAPI __declspec(dllimport)
+#define GLAPI __attribute__((visibility("default")))
+#define GLAPIENTRY
+#define PHMAP_COMPARE_INLINE_BASECLASS_DECL(name)
+#define PHMAP_ATTRIBUTE_REINITIALIZES [[clang::reinitializes]]
+#define PHMAP_ATTRIBUTE_REINITIALIZES
+#define PHMAP_PREDICT_TRUE(x) (__builtin_expect(!!(x), 1))
+#define PHMAP_PREDICT_TRUE(x) (x)
+#define PHMAP_NO_THREAD_SAFETY_ANALYSIS PHMAP_THREAD_ANNOTATION_ATTRIBUTE__(no_thread_safety_analysis)
+#define EGLAPI
+#define SDL_ACQUIRE(x) SDL_THREAD_ANNOTATION_ATTRIBUTE__(acquire_capability(x))
+#define SDL_ACQUIRE_SHARED(x) SDL_THREAD_ANNOTATION_ATTRIBUTE__(acquire_shared_capability(x))
+#define SDL_NO_THREAD_SAFETY_ANALYSIS SDL_THREAD_ANNOTATION_ATTRIBUTE__(no_thread_safety_analysis)
+#define SDL_TRY_ACQUIRE(x, y) SDL_THREAD_ANNOTATION_ATTRIBUTE__(try_acquire_capability(x, y))
+#define SDL_RELEASE(x) SDL_THREAD_ANNOTATION_ATTRIBUTE__(release_capability(x))
+#define SDL_TRY_ACQUIRE_SHARED(x, y) SDL_THREAD_ANNOTATION_ATTRIBUTE__(try_acquire_shared_capability(x, y))
+#define SDL_RELEASE_GENERIC(x) SDL_THREAD_ANNOTATION_ATTRIBUTE__(release_generic_capability(x))
+#define SDL_TARGETING(x) __attribute__((target(x)))
+#define SDL_TARGETING(x)
+#define SDL_LockMutex
+#define SDL_TryLockMutex
+#define SDL_JAVA_INTERFACE(function) CONCAT1(SDL_JAVA_PREFIX, SDLActivity, function)
+#define SDL_DYNAPI_VARARGS(_static, name, initcall) _static int SDLCALL SDL_SetError##name(SDL_PRINTF_FORMAT_STRING const char *fmt, ...) { char buf[128], *str = buf; int result; va_list ap; initcall; va_start(ap, fmt); result = jump_table.SDL_vsnprintf(buf, sizeof(buf), fmt, ap); va_end(ap); if (result >= 0 && (size_t)result >= sizeof(buf)) { size_t len = (size_t)result + 1; str = (char *)jump_table.SDL_malloc(len); if (str) { va_start(ap, fmt); result = jump_table.SDL_vsnprintf(str, len, fmt, ap); va_end(ap); } } if (result >= 0) { result = jump_table.SDL_SetError("%s", str); } if (str != buf) { jump_table.SDL_free(str); } return result; } _static int SDLCALL SDL_sscanf##name(const char *buf, SDL_SCANF_FORMAT_STRING const char *fmt, ...) { int retval; va_list ap; initcall; va_start(ap, fmt); retval = jump_table.SDL_vsscanf(buf, fmt, ap); va_end(ap); return retval; } _static int SDLCALL SDL_snprintf##name(SDL_OUT_Z_CAP(maxlen) char *buf, size_t maxlen, SDL_PRINTF_FORMAT_STRING const char *fmt, ...) { int retval; va_list ap; initcall; va_start(ap, fmt); retval = jump_table.SDL_vsnprintf(buf, maxlen, fmt, ap); va_end(ap); return retval; } _static int SDLCALL SDL_swprintf##name(SDL_OUT_Z_CAP(maxlen) wchar_t *buf, size_t maxlen, SDL_PRINTF_FORMAT_STRING const wchar_t *fmt, ...) { int retval; va_list ap; initcall; va_start(ap, fmt); retval = jump_table.SDL_vswprintf(buf, maxlen, fmt, ap); va_end(ap); return retval; } _static int SDLCALL SDL_asprintf##name(char **strp, SDL_PRINTF_FORMAT_STRING const char *fmt, ...) { int retval; va_list ap; initcall; va_start(ap, fmt); retval = jump_table.SDL_vasprintf(strp, fmt, ap); va_end(ap); return retval; } _static size_t SDLCALL SDL_RWprintf##name(SDL_RWops *context, SDL_PRINTF_FORMAT_STRING const char *fmt, ...) { size_t retval; va_list ap; initcall; va_start(ap, fmt); retval = jump_table.SDL_RWvprintf(context, fmt, ap); va_end(ap); return retval; } _static void SDLCALL SDL_Log##name(SDL_PRINTF_FORMAT_STRING const char *fmt, ...) { va_list ap; initcall; va_start(ap, fmt); jump_table.SDL_LogMessageV(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_INFO, fmt, ap); va_end(ap); } _static void SDLCALL SDL_LogMessage##name(int category, SDL_LogPriority priority, SDL_PRINTF_FORMAT_STRING const char *fmt, ...) { va_list ap; initcall; va_start(ap, fmt); jump_table.SDL_LogMessageV(category, priority, fmt, ap); va_end(ap); } SDL_DYNAPI_VARARGS_LOGFN(_static, name, initcall, Verbose, VERBOSE) SDL_DYNAPI_VARARGS_LOGFN(_static, name, initcall, Debug, DEBUG) SDL_DYNAPI_VARARGS_LOGFN(_static, name, initcall, Info, INFO) SDL_DYNAPI_VARARGS_LOGFN(_static, name, initcall, Warn, WARN) SDL_DYNAPI_VARARGS_LOGFN(_static, name, initcall, Error, ERROR) SDL_DYNAPI_VARARGS_LOGFN(_static, name, initcall, Critical, CRITICAL)
+#define SDL_NORETURN __attribute__((noreturn))
+#define SDL_NORETURN __declspec(noreturn)
+#define SDL_NORETURN
+#define SDL_RestoreWindow
+#define SDL_free
+#define SDL_ASSERT_CAPABILITY(x) SDL_THREAD_ANNOTATION_ATTRIBUTE__(assert_capability(x))
+#define _guarded SDL_GUARDED_BY(SDL_joystick_lock)
+#define _guarded SDL_GUARDED_BY(SDL_sensor_lock)
+#define SDL_AtomicDecRef(a) (SDL_AtomicAdd(a, -1) == 1)
+#define SDL_GetCurrentThreadID
+#define SDL_UnlockMutex
+#define SDL_LockRWLockForReading
+#define SDL_LockRWLockForWriting
+#define SDL_CreateThreadWithStackSize(fn, name, stacksize, data) SDL_CreateThreadWithStackSize_REAL(fn, name, stacksize, data, (pfnSDL_CurrentBeginThread)SDL_beginthread, (pfnSDL_CurrentEndThread)SDL_endthread)
+#define SDL_CreateThreadWithStackSize(fn, name, stacksize, data) SDL_CreateThreadWithStackSize(fn, name, stacksize, data, (pfnSDL_CurrentBeginThread)SDL_beginthread, (pfnSDL_CurrentEndThread)SDL_endthread)
+#define SDL_CreateThreadWithStackSize
+#define SDL_UnlockRWLock
+#define GL_APICALL
+#define GL_APIENTRY
+#define SDL_INLINE
+#define SDLRootViewController
+#define SDL_WINDOW_MAXIMIZED
+#define SDL_WINDOW_MINIMIZED
+#define SDL_Unsupported() SDL_Error(SDL_UNSUPPORTED)
+#define CHECK_WINDOW_MAGIC(window, retval) if (!_this) { SDL_UninitializedVideo(); return retval; } if (!(window) || (window)->magic != &_this->window_magic) { SDL_SetError("Invalid window"); return retval; }
+#define SDL_X11_SYM(rc, fn, params, args, ret)
+#define SDL_X11_SYM(a, fn, x, y, z) X11_##fn = (SDL_DYNX11FN_##fn)X11_GetSym(#fn, thismod);
+#define SDL_X11_SYM(a, fn, x, y, z) X11_##fn = (SDL_DYNX11FN_##fn)fn;
+#define SDL_X11_SYM(rc, fn, params, args, ret) typedef rc(*SDL_DYNX11FN_##fn) params; extern SDL_DYNX11FN_##fn X11_##fn;
+#define SDL_X11_MODULE(modname)
+#define SDL_EGL_SwapWindow_impl(BACKEND) int BACKEND##_GLES_SwapWindow(SDL_VideoDevice *_this, SDL_Window *window) { return SDL_EGL_SwapBuffers(_this, window->driverdata->egl_surface); }
+#define RWOP_ERR_QUIT(x) rwops_error_quit(__LINE__, (x))
+#define SDL_WINDOW_OPENGL
+#define SDL_WINDOW_RESIZABLE
+#define SDL_BITSPERPIXEL(X) (((X) >> 8) & 0xFF)
+#define SDL_FALSE
+#define NUM_OBJECTS
+#define SIGINT
+#define HEIGHT
+#define WIDTH
+#define SIGTERM
+#define SDL_CreateThread(fn, name, data) SDL_CreateThread_REAL(fn, name, data, (pfnSDL_CurrentBeginThread)SDL_beginthread, (pfnSDL_CurrentEndThread)SDL_endthread)
+#define SDL_CreateThread(fn, name, data) SDL_CreateThread(fn, name, data, (pfnSDL_CurrentBeginThread)SDL_beginthread, (pfnSDL_CurrentEndThread)SDL_endthread)
+#define SDL_CreateThread
+#define SDL_arraysize(array) (sizeof(array)/sizeof(array[0]))
+#define VULKAN_FUNCTIONS() VULKAN_DEVICE_FUNCTION(vkAcquireNextImageKHR) VULKAN_DEVICE_FUNCTION(vkAllocateCommandBuffers) VULKAN_DEVICE_FUNCTION(vkBeginCommandBuffer) VULKAN_DEVICE_FUNCTION(vkCmdClearColorImage) VULKAN_DEVICE_FUNCTION(vkCmdPipelineBarrier) VULKAN_DEVICE_FUNCTION(vkCreateCommandPool) VULKAN_DEVICE_FUNCTION(vkCreateFence) VULKAN_DEVICE_FUNCTION(vkCreateImageView) VULKAN_DEVICE_FUNCTION(vkCreateSemaphore) VULKAN_DEVICE_FUNCTION(vkCreateSwapchainKHR) VULKAN_DEVICE_FUNCTION(vkDestroyCommandPool) VULKAN_DEVICE_FUNCTION(vkDestroyDevice) VULKAN_DEVICE_FUNCTION(vkDestroyFence) VULKAN_DEVICE_FUNCTION(vkDestroyImageView) VULKAN_DEVICE_FUNCTION(vkDestroySemaphore) VULKAN_DEVICE_FUNCTION(vkDestroySwapchainKHR) VULKAN_DEVICE_FUNCTION(vkDeviceWaitIdle) VULKAN_DEVICE_FUNCTION(vkEndCommandBuffer) VULKAN_DEVICE_FUNCTION(vkFreeCommandBuffers) VULKAN_DEVICE_FUNCTION(vkGetDeviceQueue) VULKAN_DEVICE_FUNCTION(vkGetFenceStatus) VULKAN_DEVICE_FUNCTION(vkGetSwapchainImagesKHR) VULKAN_DEVICE_FUNCTION(vkQueuePresentKHR) VULKAN_DEVICE_FUNCTION(vkQueueSubmit) VULKAN_DEVICE_FUNCTION(vkResetCommandBuffer) VULKAN_DEVICE_FUNCTION(vkResetFences) VULKAN_DEVICE_FUNCTION(vkWaitForFences) VULKAN_GLOBAL_FUNCTION(vkCreateInstance) VULKAN_GLOBAL_FUNCTION(vkEnumerateInstanceExtensionProperties) VULKAN_GLOBAL_FUNCTION(vkEnumerateInstanceLayerProperties) VULKAN_INSTANCE_FUNCTION(vkCreateDevice) VULKAN_INSTANCE_FUNCTION(vkDestroyInstance) VULKAN_INSTANCE_FUNCTION(vkDestroySurfaceKHR) VULKAN_INSTANCE_FUNCTION(vkEnumerateDeviceExtensionProperties) VULKAN_INSTANCE_FUNCTION(vkEnumeratePhysicalDevices) VULKAN_INSTANCE_FUNCTION(vkGetDeviceProcAddr) VULKAN_INSTANCE_FUNCTION(vkGetPhysicalDeviceFeatures) VULKAN_INSTANCE_FUNCTION(vkGetPhysicalDeviceProperties) VULKAN_INSTANCE_FUNCTION(vkGetPhysicalDeviceQueueFamilyProperties) VULKAN_INSTANCE_FUNCTION(vkGetPhysicalDeviceSurfaceCapabilitiesKHR) VULKAN_INSTANCE_FUNCTION(vkGetPhysicalDeviceSurfaceFormatsKHR) VULKAN_INSTANCE_FUNCTION(vkGetPhysicalDeviceSurfacePresentModesKHR) VULKAN_INSTANCE_FUNCTION(vkGetPhysicalDeviceSurfaceSupportKHR)
+#define SDL_PROPERTY_WINDOW_WAYLAND_DISPLAY_POINTER
+#define SIGSEGV
+#define SIG_DFL
+#define NUMTHREADS
+#define DEFAULT_RESOLUTION
+#define SDL_WINDOW_TRANSPARENT
+#define DEFAULT_WINDOW_WIDTH
+#define DEFAULT_WINDOW_HEIGHT
+#define PATH_SEP
+#define HID_DEVICE_MANAGER_JAVA_INTERFACE(function) CONCAT1(SDL_JAVA_PREFIX, HIDDeviceManager, function)
+#define HID_API_EXPORT __declspec(dllexport)
+#define HID_API_EXPORT
+#define EXIT_FAILURE
+#define stderr
+#define __ieee754_sqrt
+#define attribute_hidden
+#define __ieee754_log
+#define SDL_HAPTIC_SINE (1u<<1)
+#define SDL_HAPTIC_SAWTOOTHUP (1u<<4)
+#define SDL_HAPTIC_POLAR
+#define SDL_HAPTIC_SPRING (1u<<7)
+#define SDL_HAPTIC_CONSTANT (1u<<0)
+#define SDL_HAPTIC_DAMPER (1u<<8)
+#define SDL_HAPTIC_INERTIA (1u<<9)
+#define SDL_HAPTIC_FRICTION (1u<<10)
+#define SDL_HAPTIC_RAMP (1u<<6)
+#define SDL_HAPTIC_CARTESIAN
+#define SDL_HAPTIC_LEFTRIGHT (1u<<11)
+#define RPNGAPI __declspec(dllexport)
+#define RPNGAPI __declspec(dllimport)
+#define RPNGAPI
+#define stbi_inline
+#define STBI_THREAD_LOCAL
+#define STBI_THREAD_LOCAL __declspec(thread)
+#define stdout
+#define RPNG_FREE(ptr) free(ptr)
+// Hint files help the Visual Studio IDE interpret Visual C++ identifiers
+// such as names of functions and macros.
+// For more information see https://go.microsoft.com/fwlink/?linkid=865984
+#define _EXPORT_STD
+// Hint files help the Visual Studio IDE interpret Visual C++ identifiers
+// such as names of functions and macros.
+// For more information see https://go.microsoft.com/fwlink/?linkid=865984
+#define _EXPORT_STD
+// Hint files help the Visual Studio IDE interpret Visual C++ identifiers
+// such as names of functions and macros.
+// For more information see https://go.microsoft.com/fwlink/?linkid=865984
+#define _CSTD
+#define __cplusplus
+#define wmain
