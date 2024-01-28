@@ -2,7 +2,7 @@
 #include "sdl/defs.hpp"
 #include "utils/options.hpp"
 
-int wmain(int argc, wchar_t* argv[], wchar_t* envp)
+int main(int argc, char* argv[])
 {
     int ret = -1;
     if (!rl::parse_args(argc, argv))

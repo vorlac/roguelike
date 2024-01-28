@@ -49,7 +49,7 @@ set(compiler_is_msvc "$<CXX_COMPILER_ID:MSVC>")
 set(compiler_is_gnu "$<CXX_COMPILER_ID:GNU>")
 set(compiler_is_clang "$<OR:$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:Clang>>")
 
-set(FORCE_STATIC_VCRT OFF)
+set(FORCE_STATIC_VCRT ON)
 set(BUILD_SHARED_LIBS OFF)
 
 find_package(glm CONFIG REQUIRED)
@@ -94,7 +94,7 @@ target_compile_definitions(${PROJECT_NAME}
     KHRONOS_STATIC
 	NANOVG_GL3
     NOMINMAX
-	UNICODE
+	#UNICODE
 
     $<${compiler_is_msvc}:
         _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING
@@ -164,11 +164,12 @@ target_link_options(${PROJECT_NAME}
         $<$<CONFIG:Release>:
             # /machine:x64
             # /ltcg # link time code gen
-            # /opt:ref # eliminate unreferenced functions/data
+            /opt:ref # eliminate unreferenced functions/data
             # /FASTGENPROFILE # generate optimization profile
         >
 
         $<$<CONFIG:Debug>:
+            /opt:ref # eliminate unreferenced functions/data
 			/INFERASANLIBS
             # /natvis:<path> # link natvis into pdb
             # /libpath:dir # additional lib paths
