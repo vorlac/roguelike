@@ -119,7 +119,7 @@ target_compile_options(${PROJECT_NAME}
 
         $<$<CONFIG:Debug>:
 			#/fsanitize=fuzzer
-		    /fsanitize=address
+		    ## /fsanitize=address
             # /Z7 # embed debug info into .o files instead of pdb (for ccache)
             # /ZI # enable edit and continue
         >
@@ -170,7 +170,7 @@ target_link_options(${PROJECT_NAME}
 
         $<$<CONFIG:Debug>:
             /opt:ref # eliminate unreferenced functions/data
-			/INFERASANLIBS
+			## /INFERASANLIBS
             # /natvis:<path> # link natvis into pdb
             # /libpath:dir # additional lib paths
             # /wholearchive # include all library object files in binary

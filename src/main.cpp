@@ -1,5 +1,4 @@
 #include "core/application.hpp"
-#include "sdl/defs.hpp"
 #include "utils/options.hpp"
 
 int main(int argc, char* argv[])
