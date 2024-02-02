@@ -20,12 +20,12 @@ namespace rl::ui {
     using PixelFormat = i32;
     using ComponentFormat = i32;
 
-    class UICanvas : public Widget
+    class Canvas : public Widget
     {
     public:
-        UICanvas(ds::rect<f32> rect, const Mouse& mouse, const Keyboard& kb,
+        Canvas(ds::rect<f32> rect, const Mouse& mouse, const Keyboard& kb,
                  const std::unique_ptr<NVGRenderer>& nvg_renderer);
-        ~UICanvas();
+        ~Canvas();
 
         bool redraw();
         bool draw_widgets();

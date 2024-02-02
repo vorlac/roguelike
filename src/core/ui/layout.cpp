@@ -30,7 +30,7 @@ namespace rl::ui {
         };
 
         f32 y_offset{ 0.0f };
-        const UICanvas* gui_canvas{ dynamic_cast<const UICanvas*>(widget) };
+        const Canvas* gui_canvas{ dynamic_cast<const Canvas*>(widget) };
         if (gui_canvas != nullptr && !gui_canvas->title().empty())
         {
             if (m_orientation == Orientation::Vertical)
@@ -79,7 +79,7 @@ namespace rl::ui {
         f32 position{ m_margin };
         f32 y_offset{ 0.0f };
 
-        const UICanvas* gui_canvas{ dynamic_cast<const UICanvas*>(widget) };
+        const Canvas* gui_canvas{ dynamic_cast<const Canvas*>(widget) };
         if (gui_canvas != nullptr && !gui_canvas->title().empty())
         {
             if (m_orientation == Orientation::Vertical)
@@ -188,7 +188,7 @@ namespace rl::ui {
         f32 height{ m_margin };
         f32 width{ 2.0f * m_margin };
 
-        const UICanvas* gui_canvas{ dynamic_cast<const UICanvas*>(widget) };
+        const Canvas* gui_canvas{ dynamic_cast<const Canvas*>(widget) };
         if (gui_canvas != nullptr && !gui_canvas->title().empty())
             height += widget->theme()->dialog_header_height - (m_margin / 2.0f);
 
@@ -229,7 +229,7 @@ namespace rl::ui {
         f32 available_width{ (widget->fixed_width() ? widget->fixed_width() : widget->width()) -
                              (2.0f * m_margin) };
 
-        const UICanvas* gui_canvas{ dynamic_cast<const UICanvas*>(widget) };
+        const Canvas* gui_canvas{ dynamic_cast<const Canvas*>(widget) };
         if (gui_canvas != nullptr && !gui_canvas->title().empty())
             height += widget->theme()->dialog_header_height - (m_margin / 2.0f);
 
@@ -327,7 +327,7 @@ namespace rl::ui {
                 std::max(static_cast<f32>(grid[1].size()) - 1.0f, 0.0f) * m_spacing.y,
         };
 
-        const UICanvas* gui_canvas{ dynamic_cast<const UICanvas*>(widget) };
+        const Canvas* gui_canvas{ dynamic_cast<const Canvas*>(widget) };
         if (gui_canvas != nullptr && !gui_canvas->title().empty())
             pref_size.height += widget->theme()->dialog_header_height - (m_margin / 2.0f);
 
@@ -413,7 +413,7 @@ namespace rl::ui {
         };
 
         ds::dims<f32> extra{ 0.0f, 0.0f };
-        const UICanvas* gui_canvas{ dynamic_cast<const UICanvas*>(widget) };
+        const Canvas* gui_canvas{ dynamic_cast<const Canvas*>(widget) };
         if (gui_canvas != nullptr && !gui_canvas->title().empty())
             extra.height += widget->theme()->dialog_header_height - (m_margin / 2.0f);
 
@@ -655,7 +655,7 @@ namespace rl::ui {
             2.0f * m_margin,
         };
 
-        const UICanvas* gui_canvas{ dynamic_cast<const UICanvas*>(widget) };
+        const Canvas* gui_canvas{ dynamic_cast<const Canvas*>(widget) };
         if (gui_canvas != nullptr && !gui_canvas->title().empty())
             extra.height += widget->theme()->dialog_header_height - m_margin / 2.0f;
 
@@ -669,7 +669,7 @@ namespace rl::ui {
         this->compute_layout(nvg_context, widget, grid);
         grid[Axis::Horizontal].insert(grid[Axis::Horizontal].begin(), m_margin);
 
-        const UICanvas* gui_canvas{ dynamic_cast<const UICanvas*>(widget) };
+        const Canvas* gui_canvas{ dynamic_cast<const Canvas*>(widget) };
         if (gui_canvas == nullptr || gui_canvas->title().empty())
             grid[Axis::Vertical].insert(grid[Axis::Vertical].begin(), m_margin);
         else
@@ -752,7 +752,7 @@ namespace rl::ui {
             2.0f * m_margin,
         };
 
-        const UICanvas* gui_canvas{ dynamic_cast<const UICanvas*>(widget) };
+        const Canvas* gui_canvas{ dynamic_cast<const Canvas*>(widget) };
         if (gui_canvas != nullptr && gui_canvas->title().length() == 0)
             extra.height += widget->theme()->dialog_header_height - (m_margin / 2.0f);
 

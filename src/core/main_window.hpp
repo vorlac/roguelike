@@ -32,7 +32,7 @@ namespace rl {
     using DisplayID = SDL3::SDL_DisplayID;
 
     namespace ui {
-        class UICanvas;
+        class Canvas;
     }
 
     class MainWindow
@@ -234,7 +234,7 @@ namespace rl {
         MainWindow::Properties::Flags get_flags() const;
         SDL3::SDL_DisplayMode get_display_mode() const;
 
-        ui::UICanvas* gui() const;
+        ui::Canvas* gui() const;
 
         const std::unique_ptr<OpenGLRenderer>& glrenderer() const;
         const std::unique_ptr<NVGRenderer>& vgrenderer() const;
@@ -306,7 +306,7 @@ namespace rl {
         DisplayID m_display_id{ 0 };
         Properties m_properties{ Properties::None };
         ds::rect<i32> m_window_rect{ 0, 0, 0, 0 };
-        ui::UICanvas* m_gui_canvas{ nullptr };
+        ui::Canvas* m_gui_canvas{ nullptr };
         ds::dims<i32> m_framebuf_size{ 0, 0 };
 
         f32 m_pixel_ratio{ 1.0f };

@@ -19,12 +19,12 @@
 
 namespace rl::ui {
     class Dialog;
-    class UICanvas;
+    class Canvas;
 
     class Widget : public ds::refcounted
     {
     private:
-        friend class UICanvas;
+        friend class Canvas;
         Widget(Widget* parent, const std::unique_ptr<NVGRenderer>& vg_renderer);
 
     public:
@@ -50,7 +50,7 @@ namespace rl::ui {
         i32 child_index(Widget* widget) const;
         i32 child_count() const;
 
-        UICanvas* canvas();
+        Canvas* canvas();
         Dialog* dialog();
         Widget* parent();
         Layout* layout();
@@ -63,7 +63,7 @@ namespace rl::ui {
         ds::dims<f32> fixed_size() const;
         ds::dims<f32> size() const;
 
-        const UICanvas* canvas() const;
+        const Canvas* canvas() const;
         const Dialog* dialog() const;
         const Widget* parent() const;
         const Layout* layout() const;

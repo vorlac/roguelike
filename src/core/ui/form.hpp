@@ -26,7 +26,7 @@ namespace rl::ui {
     class FormHelper
     {
     public:
-        FormHelper(UICanvas* screen)
+        FormHelper(Canvas* screen)
             : m_ui_canvas{ screen }
         {
         }
@@ -200,7 +200,7 @@ namespace rl::ui {
         }
 
     protected:
-        ds::shared<UICanvas> m_ui_canvas{ nullptr };
+        ds::shared<Canvas> m_ui_canvas{ nullptr };
         ds::shared<Dialog> m_dialog{ nullptr };
         ds::shared<VScrollPanel> m_scroll{ nullptr };
         ds::shared<Widget> m_container{ nullptr };

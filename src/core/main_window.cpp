@@ -66,7 +66,7 @@ namespace rl {
 
         m_vg_renderer = std::make_unique<rl::NVGRenderer>();
 
-        m_gui_canvas = new ui::UICanvas{
+        m_gui_canvas = new ui::Canvas{
             m_window_rect,
             m_mouse,
             m_keyboard,
@@ -260,7 +260,7 @@ namespace rl {
         return m_mouse;
     }
 
-    ui::UICanvas* MainWindow::gui() const
+    ui::Canvas* MainWindow::gui() const
     {
         return m_gui_canvas;
     }

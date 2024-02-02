@@ -555,12 +555,12 @@ namespace rl::ui {
         return widget_rect.contains(pt);
     }
 
-    UICanvas* Widget::canvas()
+    Canvas* Widget::canvas()
     {
         Widget* widget{ this };
         while (widget != nullptr)
         {
-            UICanvas* canvas{ dynamic_cast<UICanvas*>(widget) };
+            Canvas* canvas{ dynamic_cast<Canvas*>(widget) };
             if (canvas != nullptr)
                 return canvas;
 
@@ -587,7 +587,7 @@ namespace rl::ui {
         return nullptr;
     }
 
-    const UICanvas* Widget::canvas() const
+    const Canvas* Widget::canvas() const
     {
         return const_cast<Widget*>(this)->canvas();
     }
@@ -603,7 +603,7 @@ namespace rl::ui {
         while (widget->parent() != nullptr)
             widget = widget->parent();
 
-        static_cast<UICanvas*>(widget)->update_focus(this);
+        static_cast<Canvas*>(widget)->update_focus(this);
     }
 
     void Widget::draw_mouse_intersection(ds::point<f32> pt)

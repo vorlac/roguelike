@@ -9,8 +9,8 @@
 
 namespace rl::ui {
 
-    UICanvas::UICanvas(ds::rect<f32> rect, const Mouse& mouse, const Keyboard& kb,
-                       const std::unique_ptr<NVGRenderer>& vg_renderer)
+    Canvas::Canvas(ds::rect<f32> rect, const Mouse& mouse, const Keyboard& kb,
+                   const std::unique_ptr<NVGRenderer>& vg_renderer)
         : Widget{ nullptr, vg_renderer }
         , m_mouse{ mouse }
         , m_keyboard{ kb }
@@ -28,14 +28,14 @@ namespace rl::ui {
         m_last_interaction = m_timer.elapsed();
     }
 
-    UICanvas::~UICanvas()
+    Canvas::~Canvas()
     {
         for (i32 i = Mouse::Cursor::Arrow; i < Mouse::Cursor::CursorCount; ++i)
             if (m_cursors[i] != nullptr)
                 SDL3::SDL_DestroyCursor(m_cursors[i]);
     }
 
-    bool UICanvas::update()
+    bool Canvas::update()
     {
         for (auto update_widget_func : m_update_callbacks)
             update_widget_func();
@@ -43,18 +43,18 @@ namespace rl::ui {
         return m_update_callbacks.size() > 0;
     }
 
-    bool UICanvas::draw_setup()
+    bool Canvas::draw_setup()
     {
         return true;
     }
 
-    bool UICanvas::draw_contents()
+    bool Canvas::draw_contents()
     {
         this->update();
         return true;
     }
 
-    bool UICanvas::draw_widgets()
+    bool Canvas::draw_widgets()
     {
         auto&& context{ m_renderer->context() };
         constexpr static f32 PIXEL_RATIO{ 1.0f };
@@ -81,7 +81,8 @@ namespace rl::ui {
                 constexpr f32 tooltip_width{ 150.0f };
                 std::array<f32, 4> bounds = { 0.0f };
                 ds::point<f32> pos{
-                    widget->position() + (widget->width() / 2.0f, widget->height() + 10.0f),
+                    widget->position() +
+                        ds::point{ (widget->width() / 2.0f), widget->height() + 10.0f },
                 };
 
                 nvg::FontFace(context, font::name::sans);
@@ -138,19 +139,19 @@ namespace rl::ui {
         return true;
     }
 
-    bool UICanvas::redraw()
+    bool Canvas::redraw()
     {
         m_redraw |= true;
         return true;
     }
 
-    bool UICanvas::draw_teardown()
+    bool Canvas::draw_teardown()
     {
         // moved to Window::render_end()
         return true;
     }
 
-    bool UICanvas::draw_all()
+    bool Canvas::draw_all()
     {
         bool ret = true;
         ret &= this->draw_setup();
@@ -160,7 +161,7 @@ namespace rl::ui {
         return ret;
     }
 
-    void UICanvas::set_visible(bool visible)
+    void Canvas::set_visible(bool visible)
     {
         if (visible != m_visible)
         {
@@ -170,30 +171,30 @@ namespace rl::ui {
         }
     }
 
-    ds::dims<i32> UICanvas::frame_buffer_size() const
+    ds::dims<i32> Canvas::frame_buffer_size() const
     {
         // Return the framebuffer size (potentially larger than size() on high-DPI screens)
         // TODO: is ds::dims<i32> get_render_size() good equivalent?
         return m_framebuf_size;
     }
 
-    const std::function<void(ds::dims<f32>)>& UICanvas::resize_callback() const
+    const std::function<void(ds::dims<f32>)>& Canvas::resize_callback() const
     {
         return m_resize_callback;
     }
 
-    void UICanvas::set_resize_callback(const std::function<void(ds::dims<f32>)>& callback)
+    void Canvas::set_resize_callback(const std::function<void(ds::dims<f32>)>& callback)
     {
         m_resize_callback = callback;
     }
 
-    void UICanvas::add_update_callback(const std::function<void()>& refresh_func)
+    void Canvas::add_update_callback(const std::function<void()>& refresh_func)
     {
         m_update_callbacks.push_back(refresh_func);
     }
 
     // Return the component format underlying the screen
-    ComponentFormat UICanvas::component_format() const
+    ComponentFormat Canvas::component_format() const
     {
         // Signed and unsigned integer formats
         // ====================================
@@ -213,7 +214,7 @@ namespace rl::ui {
     }
 
     // Return the pixel format underlying the screen
-    PixelFormat UICanvas::pixel_format() const
+    PixelFormat Canvas::pixel_format() const
     {
         // Single-channel bitmap
         //   R,
@@ -235,33 +236,33 @@ namespace rl::ui {
         return 0;
     }
 
-    bool UICanvas::has_depth_buffer() const
+    bool Canvas::has_depth_buffer() const
     {
         // Does the framebuffer have a depth buffer
         // TODO: call opengl to confirm for debug builds
         return true;
     }
 
-    bool UICanvas::has_stencil_buffer() const
+    bool Canvas::has_stencil_buffer() const
     {
         // Does the framebuffer have a stencil buffer
         // TODO: call opengl to confirm for debug builds
         return true;
     }
 
-    bool UICanvas::has_float_buffer() const
+    bool Canvas::has_float_buffer() const
     {
         // Does the framebuffer use a floating point representation
         // TODO: call opengl to confirm for debug builds
         return true;
     }
 
-    std::string UICanvas::title() const
+    std::string Canvas::title() const
     {
         return m_title;
     }
 
-    bool UICanvas::tooltip_fade_in_progress() const
+    bool Canvas::tooltip_fade_in_progress() const
     {
         // Is a tooltip currently fading in?
         const f32 elapsed{ m_timer.elapsed() - m_last_interaction };
@@ -273,7 +274,7 @@ namespace rl::ui {
         return widget != nullptr && !widget->tooltip().empty();
     }
 
-    void UICanvas::update_focus(Widget* widget)
+    void Canvas::update_focus(Widget* widget)
     {
         for (auto focus_widget : m_focus_path)
         {
@@ -290,7 +291,7 @@ namespace rl::ui {
         {
             m_focus_path.push_back(widget);
 
-            UICanvas* as_canvas{ dynamic_cast<UICanvas*>(widget) };
+            Canvas* as_canvas{ dynamic_cast<Canvas*>(widget) };
             if (as_canvas != nullptr)
                 dialog = as_canvas;
 
@@ -304,7 +305,7 @@ namespace rl::ui {
         //     this->move_dialog_to_front(static_cast<Dialog*>(dialog));
     }
 
-    void UICanvas::move_dialog_to_front(Dialog* dialog)
+    void Canvas::move_dialog_to_front(Dialog* dialog)
     {
         bool changed{ false };
         auto removal_iterator{ std::remove(m_children.begin(), m_children.end(), dialog) };
@@ -334,7 +335,7 @@ namespace rl::ui {
         while (changed);
     }
 
-    void UICanvas::dispose_dialog(Dialog* dialog)
+    void Canvas::dispose_dialog(Dialog* dialog)
     {
         bool match_found = std::ranges::find_if(m_focus_path, [&](Widget* w) {
                                return w == dialog;
@@ -349,7 +350,7 @@ namespace rl::ui {
         this->remove_child(dialog);
     }
 
-    void UICanvas::center_dialog(Dialog* dialog) const
+    void Canvas::center_dialog(Dialog* dialog) const
     {
         if (dialog->size() == ds::dims<f32>::zero())
         {
@@ -363,26 +364,26 @@ namespace rl::ui {
         dialog->set_position(position);
     }
 
-    bool UICanvas::on_moved(ds::point<f32> pt)
+    bool Canvas::on_moved(ds::point<f32> pt)
     {
         if constexpr (io::logging::gui_events)
         {
             ds::rect<f32> prev_rect{ m_pos, m_size };
             ds::rect<f32> new_rect{ pt, prev_rect.size };
-            log::info("UICanvas::on_moved: {} => {}", prev_rect, new_rect);
+            log::info("Canvas::on_moved: {} => {}", prev_rect, new_rect);
         }
 
         this->set_position(pt);
         return true;
     }
 
-    bool UICanvas::on_resized(ds::dims<f32> size)
+    bool Canvas::on_resized(ds::dims<f32> size)
     {
         if constexpr (io::logging::gui_events)
         {
             ds::rect<f32> prev_rect{ m_pos, m_size };
             ds::rect<f32> new_rect{ m_pos, size / m_pixel_ratio };
-            log::info("UICanvas::on_resized: {} => {}", prev_rect, new_rect);
+            log::info("Canvas::on_resized: {} => {}", prev_rect, new_rect);
         }
 
         if (size.area() == 0)
@@ -397,11 +398,11 @@ namespace rl::ui {
         return this->redraw();
     }
 
-    bool UICanvas::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb)
+    bool Canvas::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb)
     {
         const ds::point<f32> mouse_pos{ mouse.pos() };
         if constexpr (io::logging::gui_events)
-            log::info("UICanvas::on_mouse_button_pressed => {}", mouse);
+            log::info("Canvas::on_mouse_button_pressed => {}", mouse);
 
         m_last_interaction = m_timer.elapsed();
         if (m_focus_path.size() > 1)
@@ -441,10 +442,10 @@ namespace rl::ui {
         return m_redraw;
     }
 
-    bool UICanvas::on_mouse_button_released(const Mouse& mouse, const Keyboard& kb)
+    bool Canvas::on_mouse_button_released(const Mouse& mouse, const Keyboard& kb)
     {
         if constexpr (io::logging::gui_events)
-            log::info("UICanvas::on_mouse_button_released => {}", mouse);
+            log::info("Canvas::on_mouse_button_released => {}", mouse);
 
         const ds::point<f32> mouse_pos{ mouse.pos() };
         m_last_interaction = m_timer.elapsed();
@@ -483,10 +484,10 @@ namespace rl::ui {
         return m_redraw;
     }
 
-    bool UICanvas::on_mouse_drag(const Mouse& mouse, const Keyboard& kb)
+    bool Canvas::on_mouse_drag(const Mouse& mouse, const Keyboard& kb)
     {
         if constexpr (io::logging::gui_events)
-            log::info("UICanvas::on_mouse_drag [pt:{}, rel:{}, btn:{}, mod:{}]", mouse.pos(),
+            log::info("Canvas::on_mouse_drag [pt:{}, rel:{}, btn:{}, mod:{}]", mouse.pos(),
                       mouse.pos_delta(), std::to_underlying(mouse.button_pressed()),
                       kb.is_button_down(Keyboard::Scancode::Modifiers));
 
@@ -508,11 +509,11 @@ namespace rl::ui {
         return false;
     }
 
-    bool UICanvas::on_mouse_move(const Mouse& mouse, const Keyboard& kb)
+    bool Canvas::on_mouse_move(const Mouse& mouse, const Keyboard& kb)
     {
         bool ret{ false };
         if constexpr (io::logging::mouse_move_events)
-            log::info("UICanvas::on_mouse_move => {}", mouse);
+            log::info("Canvas::on_mouse_move => {}", mouse);
 
         const ds::point<f32> mouse_pos{ mouse.pos() };
         m_last_interaction = m_timer.elapsed();
@@ -540,10 +541,10 @@ namespace rl::ui {
         return m_redraw;
     }
 
-    bool UICanvas::on_mouse_scroll(const Mouse& mouse, const Keyboard& kb)
+    bool Canvas::on_mouse_scroll(const Mouse& mouse, const Keyboard& kb)
     {
         if constexpr (io::logging::gui_events)
-            log::info("UICanvas::on_mouse_scroll => {}", mouse);
+            log::info("Canvas::on_mouse_scroll => {}", mouse);
 
         m_last_interaction = m_timer.elapsed();
         if (m_focus_path.size() > 1)
@@ -560,62 +561,62 @@ namespace rl::ui {
         return m_redraw;
     }
 
-    bool UICanvas::on_mouse_entered(const Mouse& mouse)
+    bool Canvas::on_mouse_entered(const Mouse& mouse)
     {
         if constexpr (io::logging::gui_events)
-            log::info("UICanvas::on_mouse_entered [pos:{}]", mouse.pos());
+            log::info("Canvas::on_mouse_entered [pos:{}]", mouse.pos());
 
         return Widget::on_mouse_entered(mouse);
     }
 
-    bool UICanvas::on_mouse_exited(const Mouse& mouse)
+    bool Canvas::on_mouse_exited(const Mouse& mouse)
     {
         if constexpr (io::logging::gui_events)
-            log::info("UICanvas::on_mouse_exited [pos:{}]", mouse.pos());
+            log::info("Canvas::on_mouse_exited [pos:{}]", mouse.pos());
 
         return Widget::on_mouse_exited(mouse);
     }
 
-    bool UICanvas::on_focus_gained()
+    bool Canvas::on_focus_gained()
     {
         if constexpr (io::logging::gui_events)
-            log::info("UICanvas::on_focus_gained");
+            log::info("Canvas::on_focus_gained");
 
         return Widget::on_focus_gained();
     }
 
-    bool UICanvas::on_focus_lost()
+    bool Canvas::on_focus_lost()
     {
         if constexpr (io::logging::gui_events)
-            log::info("UICanvas::on_focus_lost");
+            log::info("Canvas::on_focus_lost");
 
         return Widget::on_focus_lost();
     }
 
-    bool UICanvas::on_key_pressed(const Keyboard& kb)
+    bool Canvas::on_key_pressed(const Keyboard& kb)
     {
         if constexpr (io::logging::gui_events)
-            log::info("UICanvas::on_key_pressed => {}", kb);
+            log::info("Canvas::on_key_pressed => {}", kb);
 
         m_last_interaction = m_timer.elapsed();
         m_redraw |= Widget::on_key_pressed(kb);
         return m_redraw;
     }
 
-    bool UICanvas::on_key_released(const Keyboard& kb)
+    bool Canvas::on_key_released(const Keyboard& kb)
     {
         if constexpr (io::logging::gui_events)
-            log::info("UICanvas::on_key_released => {}", kb);
+            log::info("Canvas::on_key_released => {}", kb);
 
         m_last_interaction = m_timer.elapsed();
         m_redraw |= Widget::on_key_released(kb);
         return m_redraw;
     }
 
-    bool UICanvas::on_character_input(const Keyboard& kb)
+    bool Canvas::on_character_input(const Keyboard& kb)
     {
         if constexpr (io::logging::gui_events)
-            log::info("UICanvas::on_character_input => {}", kb);
+            log::info("Canvas::on_character_input => {}", kb);
 
         m_last_interaction = m_timer.elapsed();
         m_redraw |= Widget::on_character_input(kb);

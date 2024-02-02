@@ -55,7 +55,7 @@ namespace rl::ui {
         while (owner->parent() != nullptr)
             owner = owner->parent();
 
-        static_cast<UICanvas*>(owner)->dispose_dialog(this);
+        static_cast<Canvas*>(owner)->dispose_dialog(this);
     }
 
     void Dialog::center()
@@ -64,7 +64,7 @@ namespace rl::ui {
         while (owner->parent() != nullptr)
             owner = owner->parent();
 
-        static_cast<UICanvas*>(owner)->center_dialog(this);
+        static_cast<Canvas*>(owner)->center_dialog(this);
     }
 
     f32 Dialog::header_height() const

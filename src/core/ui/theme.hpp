@@ -33,6 +33,8 @@ namespace rl::ui {
             HCenterVMiddle = HorizCenter | VertMiddle,
             HLeftVTop = HorizLeft | VertTop,
             HMiddleVTop = HorizCenter | VertTop,
+            HMiddleVBot = HorizCenter | VertBottom,
+            HMiddleVBase = HorizCenter | VertBaseline,
             HLeftVMiddle = HorizLeft | VertMiddle,
             HRightVMiddle = HorizRight | VertMiddle,
         };
