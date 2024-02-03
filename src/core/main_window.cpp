@@ -404,7 +404,10 @@ namespace rl {
     void MainWindow::mouse_moved_event_callback(const SDL3::SDL_Event& e)
     {
         scoped_trace(log_level::trace);
+
         m_mouse.process_motion(e.motion);
+        // update button states from pressed to held if the
+        // button that was pressed last frame is still dowwn
         if (m_mouse.is_button_pressed(Mouse::Button::Left))
             this->mouse_button_pressed_event_callback(e);
 
@@ -462,45 +465,39 @@ namespace rl {
                 m_keyboard.process_text_editing(e.edit.text, e.edit.start, e.edit.length);
                 break;
         }
+
         m_gui_canvas->on_character_input(m_keyboard);
     }
 
     void MainWindow::window_resized_event_callback(const SDL3::SDL_Event& e)
     {
-        // TODO: just use the values from the resize event struct
-        // and the existing m_pixel_ratio sizes instead of calling
-        // the SDL APIs for the dimensions instead?
-
-        scoped_log();
         ds::dims<i32> window_size{ this->get_size() };
+
+        scoped_log("size={}", window_size);
         ds::dims<i32> framebuf_size{ this->get_render_size() };
-        if (framebuf_size.area() == 0 || window_size.area() == 0)
-            return;
+        ds::dims<f32> render_size{ window_size / m_pixel_ratio };
+        runtime_assert(framebuf_size.area() > 0.0f && window_size.area() > 0.0f,
+                       "invalid window size/location");
 
         m_framebuf_size = framebuf_size;
-
-        ds::dims<f32> window_render_size{ window_size / m_pixel_ratio };
-        m_window_rect.size = static_cast<ds::dims<i32>>(window_render_size);
-
+        m_window_rect.size = static_cast<ds::dims<i32>>(render_size);
         m_gl_renderer->set_viewport(ds::rect<i32>{
             ds::point<i32>{ 0, 0 },
             m_window_rect.size,
         });
 
-        m_gui_canvas->on_resized(window_render_size);
+        m_gui_canvas->on_resized(render_size);
     }
 
     void MainWindow::window_moved_event_callback(const SDL3::SDL_Event& e)
     {
-        scoped_log();
         ds::point<i32> window_pos{ this->get_position() };
-        if constexpr (io::logging::window_events)
-            log::trace("MainWindow::moved => {}", window_pos);
 
+        scoped_log("mod_pos={}", window_pos);
         ds::dims<i32> window_size{ this->get_size() };
         ds::dims<i32> framebuf_size{ this->get_render_size() };
-        if (framebuf_size.area() == 0 || window_size.area() == 0)
-            return;
+        runtime_assert(framebuf_size.area() > 0.0f && window_size.area() > 0.0f,
+                       "invalid window size/location");
 
         m_framebuf_size = framebuf_size;
         m_window_rect.pt = window_pos;
@@ -508,24 +505,18 @@ namespace rl {
             static_cast<i32>(window_size.width / m_pixel_ratio),
             static_cast<i32>(window_size.height / m_pixel_ratio),
         };
-
-        // // the gui canvas should always use the same "root" coords of {0,0}
-        // // as it's relative location within the window / viewport.
-        // m_gui_canvas->on_moved(std::forward<ds::point<f32>>(window_pos));
     }
 
     bool MainWindow::window_pixel_size_changed_event_callback(const SDL3::SDL_Event& e)
     {
-        scoped_log();
         const MainWindow::Event::Data& window_event{ e.window };
         const WindowID id{ window_event.windowID };
         const ds::vector2<i32> pixel_size{
             window_event.data1,
             window_event.data2,
         };
-        if constexpr (io::logging::window_events)
-            log::trace("MainWindow::pixel_size_changed [id:{}] => {}", id, pixel_size);
 
+        scoped_log();
         m_pixel_ratio = SDL3::SDL_GetWindowDisplayScale(m_sdl_window);
         sdl_assert(m_pixel_ratio != 0.0f, "failed to get pixel ratio [window:{}]", m_window_id);
         m_pixel_density = SDL3::SDL_GetWindowPixelDensity(m_sdl_window);
@@ -538,9 +529,6 @@ namespace rl {
         scoped_log();
         const MainWindow::Event::Data& window_event{ e.window };
         const WindowID id{ window_event.windowID };
-        if constexpr (io::logging::window_events)
-            log::trace("MainWindow::focus_gained [id:{}]", id);
-
         m_gui_canvas->on_focus_gained();
     }
 
@@ -549,9 +537,6 @@ namespace rl {
         scoped_log();
         const MainWindow::Event::Data& window_event{ e.window };
         const WindowID id{ window_event.windowID };
-        if constexpr (io::logging::window_events)
-            log::trace("MainWindow::focus_lost [id:{}]", id);
-
         m_gui_canvas->on_focus_lost();
     }
 
@@ -560,9 +545,6 @@ namespace rl {
         scoped_log();
         const MainWindow::Event::Data& window_event{ e.window };
         const WindowID id{ window_event.windowID };
-        if constexpr (io::logging::window_events)
-            log::trace("MainWindow::shown [id:{}]", id);
-
         return true;
     }
 
@@ -571,9 +553,6 @@ namespace rl {
         scoped_log();
         const MainWindow::Event::Data& window_event{ e.window };
         const WindowID id{ window_event.windowID };
-        if constexpr (io::logging::window_events)
-            rl::log::trace("MainWindow::occluded [id:{}]", id);
-
         return true;
     }
 
@@ -582,9 +561,6 @@ namespace rl {
         scoped_log();
         const MainWindow::Event::Data& window_event{ e.window };
         const WindowID id{ window_event.windowID };
-        if constexpr (io::logging::window_events)
-            log::trace("MainWindow::hidden [id:{}]", id);
-
         return true;
     }
 
@@ -593,9 +569,6 @@ namespace rl {
         scoped_log();
         const MainWindow::Event::Data& window_event{ e.window };
         const WindowID id{ window_event.windowID };
-        if constexpr (io::logging::window_events)
-            log::trace("MainWindow::exposed [id:{}]", id);
-
         return true;
     }
 
@@ -604,9 +577,6 @@ namespace rl {
         scoped_log();
         const MainWindow::Event::Data& window_event{ e.window };
         const WindowID id{ window_event.windowID };
-        if constexpr (io::logging::window_events)
-            log::trace("MainWindow::minimized [id:{}]", id);
-
         return true;
     }
 
@@ -615,9 +585,6 @@ namespace rl {
         scoped_log();
         const MainWindow::Event::Data& window_event{ e.window };
         const WindowID id{ window_event.windowID };
-        if constexpr (io::logging::window_events)
-            log::trace("MainWindow::maximized [id:{}]", id);
-
         return true;
     }
 
@@ -626,9 +593,6 @@ namespace rl {
         scoped_log();
         const MainWindow::Event::Data& window_event{ e.window };
         const WindowID id{ window_event.windowID };
-        if constexpr (io::logging::window_events)
-            log::trace("MainWindow::restored [id:{}]", id);
-
         return true;
     }
 
@@ -637,9 +601,6 @@ namespace rl {
         scoped_log();
         const MainWindow::Event::Data& window_event{ e.window };
         const WindowID id{ window_event.windowID };
-        if constexpr (io::logging::window_events)
-            log::trace("MainWindow::close_requested [id:{}]", id);
-
         return true;
     }
 
@@ -648,9 +609,6 @@ namespace rl {
         scoped_log();
         const MainWindow::Event::Data& window_event{ e.window };
         const WindowID id{ window_event.windowID };
-        if constexpr (io::logging::window_events)
-            log::trace("MainWindow::take_focus [id:{}]", id);
-
         return true;
     }
 
@@ -659,9 +617,6 @@ namespace rl {
         scoped_log();
         const MainWindow::Event::Data& window_event{ e.window };
         const WindowID id{ window_event.windowID };
-        if constexpr (io::logging::window_events)
-            log::trace("MainWindow::hit_test [id:{}]", id);
-
         return true;
     }
 
@@ -670,9 +625,6 @@ namespace rl {
         scoped_log();
         const MainWindow::Event::Data& window_event{ e.window };
         const WindowID id{ window_event.windowID };
-        if constexpr (io::logging::window_events)
-            log::trace("MainWindow::icc_profile_changed [id:{}]", id);
-
         return true;
     }
 
@@ -681,9 +633,6 @@ namespace rl {
         scoped_log();
         const MainWindow::Event::Data& window_event{ e.window };
         const WindowID id{ window_event.windowID };
-        if constexpr (io::logging::window_events)
-            log::trace("MainWindow::display_changed [id:{}]", id);
-
         return true;
     }
 
@@ -692,9 +641,6 @@ namespace rl {
         scoped_log();
         const MainWindow::Event::Data& window_event{ e.window };
         const WindowID id{ window_event.windowID };
-        if constexpr (io::logging::window_events)
-            log::trace("MainWindow::display_scale_changed [id:{}]", id);
-
         return true;
     }
 
@@ -703,9 +649,6 @@ namespace rl {
         scoped_log();
         const MainWindow::Event::Data& window_event{ e.window };
         const WindowID id{ window_event.windowID };
-        if constexpr (io::logging::window_events)
-            log::trace("MainWindow::destroyed [id:{}]", id);
-
         return true;
     }
 }

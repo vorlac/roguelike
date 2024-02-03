@@ -184,30 +184,30 @@ namespace rl::ui {
 
     void Widget::set_fixed_height(f32 height)
     {
-        scoped_log();
+        scoped_log("height={}", height);
         m_fixed_size.height = height;
     }
 
     bool Widget::visible() const
     {
+        scoped_log("m_visible={}", m_visible);
         return m_visible;
     }
 
     void Widget::set_visible(bool visible)
     {
+        scoped_log("visible={}", visible);
         m_visible = visible;
     }
 
     bool Widget::show()
     {
-        scoped_log();
         this->set_visible(true);
         return true;
     }
 
     bool Widget::hide()
     {
-        scoped_log();
         this->set_visible(false);
         return true;
     }
@@ -290,12 +290,16 @@ namespace rl::ui {
     Widget* Widget::find_widget(ds::point<f32> pt)
     {
         scoped_trace(log_level::debug);
-        for (auto child : std::ranges::reverse_view{ m_children })
+
         {
-            if (!child->visible())
-                continue;
-            if (child->contains(pt - m_pos))
-                return child->find_widget(pt - m_pos);
+            LocalTransform transform{ this };
+            for (auto child : std::ranges::reverse_view{ m_children })
+            {
+                if (!child->visible())
+                    continue;
+                if (child->contains(pt - m_pos))
+                    return child->find_widget(pt - m_pos);
+            }
         }
 
         return this->contains(pt) ? this : nullptr;
@@ -304,6 +308,8 @@ namespace rl::ui {
     const Widget* Widget::find_widget(ds::point<f32> pt) const
     {
         scoped_trace(log_level::debug);
+
+        LocalTransform transform{ this };
         for (auto child : std::ranges::reverse_view{ m_children })
         {
             if (!child->visible())
@@ -333,14 +339,14 @@ namespace rl::ui {
     {
         scoped_trace(log_level::debug);
         m_focused = true;
-        return true;
+        return false;
     }
 
     bool Widget::on_focus_lost()
     {
         scoped_trace(log_level::debug);
         m_focused = false;
-        return true;
+        return false;
     }
 
     bool Widget::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb)
@@ -362,6 +368,9 @@ namespace rl::ui {
                 continue;
             else
             {
+                diag_log("btn pressed handled:{} mouse_pos={} rel={}, abs={}", this->name(),
+                         mouse.pos(), ds::rect{ m_pos, m_size },
+                         ds::rect{ this->abs_position(), m_size });
                 handled = true;
                 break;
             }
@@ -392,6 +401,9 @@ namespace rl::ui {
                 continue;
             else
             {
+                diag_log("btn rel handled:{} mouse_pos={} rel={}, abs={}", this->name(),
+                         mouse.pos(), ds::rect{ m_pos, m_size },
+                         ds::rect{ this->abs_position(), m_size });
                 handled = true;
                 break;
             }
@@ -419,6 +431,9 @@ namespace rl::ui {
                 continue;
             else
             {
+                diag_log("mouse scroll handled:{} mouse_pos={} rel={}, abs={}", this->name(),
+                         mouse.pos(), ds::rect{ m_pos, m_size },
+                         ds::rect{ this->abs_position(), m_size });
                 handled = true;
                 break;
             }

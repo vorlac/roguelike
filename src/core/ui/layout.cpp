@@ -1,7 +1,6 @@
 #include <numeric>
 #include <utility>
 
-#include "core/ui/canvas.hpp"
 #include "core/ui/dialog.hpp"
 #include "core/ui/label.hpp"
 #include "core/ui/layout.hpp"
@@ -27,19 +26,21 @@ namespace rl::ui {
     ds::dims<f32> BoxLayout::preferred_size(nvg::NVGcontext* nvg_context, const Widget* widget) const
     {
         scoped_log();
+
         ds::dims<f32> size{
             2.0f * m_margin,
             2.0f * m_margin,
         };
 
         f32 y_offset{ 0.0f };
-        const Canvas* gui_canvas{ dynamic_cast<const Canvas*>(widget) };
-        if (gui_canvas != nullptr && !gui_canvas->title().empty())
+        const Dialog* dialog{ dynamic_cast<const Dialog*>(widget) };
+        if (dialog != nullptr && !dialog->title().empty())
         {
+            const auto header_size{ dialog->header_height() };
             if (m_orientation == Orientation::Vertical)
-                size.height += widget->theme()->dialog_header_height - (m_margin / 2.0f);
+                size.height += header_size - (m_margin / 2.0f);
             else
-                y_offset = widget->theme()->dialog_header_height;
+                y_offset = header_size;
         }
 
         bool first_child{ true };
@@ -72,6 +73,7 @@ namespace rl::ui {
     void BoxLayout::perform_layout(nvg::NVGcontext* nvg_context, Widget* widget) const
     {
         scoped_log();
+
         const ds::dims<f32> fs_w{ widget->fixed_size() };
         ds::dims<f32> container_size{
             fs_w.width ? fs_w.width : widget->width(),
@@ -83,14 +85,14 @@ namespace rl::ui {
         f32 position{ m_margin };
         f32 y_offset{ 0.0f };
 
-        const Canvas* gui_canvas{ dynamic_cast<const Canvas*>(widget) };
-        if (gui_canvas != nullptr && !gui_canvas->title().empty())
+        const Dialog* dialog{ dynamic_cast<const Dialog*>(widget) };
+        if (dialog != nullptr && !dialog->title().empty())
         {
             if (m_orientation == Orientation::Vertical)
-                position += widget->theme()->dialog_header_height - (m_margin / 2.0f);
+                position += dialog->header_height() - (m_margin / 2.0f);
             else
             {
-                y_offset = widget->theme()->dialog_header_height;
+                y_offset = dialog->header_height();
                 container_size.height -= y_offset;
             }
         }
@@ -197,12 +199,13 @@ namespace rl::ui {
                                               const Widget* widget) const
     {
         scoped_log();
+
         f32 height{ m_margin };
         f32 width{ 2.0f * m_margin };
 
-        const Canvas* gui_canvas{ dynamic_cast<const Canvas*>(widget) };
-        if (gui_canvas != nullptr && !gui_canvas->title().empty())
-            height += widget->theme()->dialog_header_height - (m_margin / 2.0f);
+        const Dialog* dialog{ dynamic_cast<const Dialog*>(widget) };
+        if (dialog != nullptr && !dialog->title().empty())
+            height += dialog->header_height() - (m_margin / 2.0f);
 
         bool first{ true };
         bool indent{ false };
@@ -238,16 +241,17 @@ namespace rl::ui {
     void GroupLayout::perform_layout(nvg::NVGcontext* nvg_context, Widget* widget) const
     {
         scoped_log();
+
         f32 height{ m_margin };
         f32 available_width{ (widget->fixed_width() ? widget->fixed_width() : widget->width()) -
                              (2.0f * m_margin) };
 
-        const Canvas* gui_canvas{ dynamic_cast<const Canvas*>(widget) };
-        if (gui_canvas != nullptr && !gui_canvas->title().empty())
-            height += widget->theme()->dialog_header_height - (m_margin / 2.0f);
+        const Dialog* dialog{ dynamic_cast<const Dialog*>(widget) };
+        if (dialog != nullptr && !dialog->title().empty())
+            height += dialog->header_height() - (m_margin / 2.0f);
 
-        bool first_child{ true };
         bool indent{ false };
+        bool first_child{ true };
         for (auto child : widget->children())
         {
             if (!child->visible())
@@ -339,6 +343,7 @@ namespace rl::ui {
                                              const Widget* widget) const
     {
         scoped_log();
+
         std::array<std::vector<f32>, 2> grid{ { {}, {} } };
         this->compute_layout(nvg_context, widget, grid);
 
@@ -349,9 +354,9 @@ namespace rl::ui {
                 std::max(static_cast<f32>(grid[1].size()) - 1.0f, 0.0f) * m_spacing.y,
         };
 
-        const Canvas* gui_canvas{ dynamic_cast<const Canvas*>(widget) };
-        if (gui_canvas != nullptr && !gui_canvas->title().empty())
-            pref_size.height += widget->theme()->dialog_header_height - (m_margin / 2.0f);
+        const Dialog* dialog{ dynamic_cast<const Dialog*>(widget) };
+        if (dialog != nullptr && !dialog->title().empty())
+            pref_size.height += dialog->header_height() - (m_margin / 2.0f);
 
         return pref_size;
     }
@@ -360,6 +365,7 @@ namespace rl::ui {
                                     std::array<std::vector<f32>, 2>& grid) const
     {
         scoped_log();
+
         const i32 axis1{ std::to_underlying(m_orientation) };
         const i32 axis2{ (axis1 + 1) % 2 };
         const i32 num_children{ widget->child_count() };
@@ -421,6 +427,7 @@ namespace rl::ui {
     void GridLayout::perform_layout(nvg::NVGcontext* nvg_context, Widget* widget) const
     {
         scoped_log();
+
         const ds::dims<f32> fs_w{ widget->fixed_size() };
         ds::dims<f32> container_size{
             fs_w.width ? fs_w.width : widget->width(),
@@ -437,9 +444,9 @@ namespace rl::ui {
         };
 
         ds::dims<f32> extra{ 0.0f, 0.0f };
-        const Canvas* gui_canvas{ dynamic_cast<const Canvas*>(widget) };
-        if (gui_canvas != nullptr && !gui_canvas->title().empty())
-            extra.height += widget->theme()->dialog_header_height - (m_margin / 2.0f);
+        const Dialog* dialog{ dynamic_cast<const Dialog*>(widget) };
+        if (dialog != nullptr && !dialog->title().empty())
+            extra.height += dialog->header_height() - (m_margin / 2.0f);
 
         // Strech to size provided by widget
         for (auto cur_axis : { Axis::Horizontal, Axis::Vertical })
@@ -471,13 +478,10 @@ namespace rl::ui {
             }
         }
 
+        const i32 num_children{ widget->child_count() };
         const i32 axis1{ std::to_underlying(m_orientation) };
         const i32 axis2{ (axis1 + 1) % 2 };
 
-        const i32 num_children{ widget->child_count() };
-        i32 child_idx{ 0 };
-
-        // TODO: check all of this logic
         ds::dims<i32> start_offset{ extra + m_margin };
         ds::point<i32> start{ start_offset.width, start_offset.height };
         ds::point<i32> pos{ start };
@@ -485,6 +489,7 @@ namespace rl::ui {
         i32& axis1_pos{ axis1 == std::to_underlying(Orientation::Horizontal) ? pos.x : pos.y };
         i32& axis2_pos{ axis2 == std::to_underlying(Orientation::Horizontal) ? pos.x : pos.y };
 
+        i32 child_idx{ 0 };
         for (i32 i2 = 0; i2 < dim[axis2]; i2++)
         {
             i32& s{ m_orientation == Orientation::Horizontal ? start.x : start.y };
@@ -584,6 +589,7 @@ namespace rl::ui {
     f32 GridLayout::spacing(Axis axis) const
     {
         scoped_log();
+
         switch (axis)
         {
             case Axis::Horizontal:
@@ -599,6 +605,7 @@ namespace rl::ui {
     void GridLayout::set_spacing(Axis axis, f32 spacing)
     {
         scoped_log();
+
         switch (axis)
         {
             case Axis::Horizontal:
@@ -616,7 +623,7 @@ namespace rl::ui {
     void GridLayout::set_spacing(f32 spacing)
     {
         scoped_log();
-        m_spacing = { spacing, spacing };
+        m_spacing = ds::vector2{ spacing, spacing };
     }
 
     f32 GridLayout::margin() const
@@ -673,6 +680,7 @@ namespace rl::ui {
         , m_margin(margin)
     {
         scoped_log();
+
         m_col_stretch.resize(m_cols.size(), 0.0f);
         m_row_stretch.resize(m_rows.size(), 0.0f);
     }
@@ -681,6 +689,7 @@ namespace rl::ui {
                                                      const Widget* widget) const
     {
         scoped_log();
+
         // Compute minimum row / column sizes
         std::array<std::vector<f32>, 2> grid{ { {}, {} } };
         this->compute_layout(nvg_context, widget, grid);
@@ -695,8 +704,8 @@ namespace rl::ui {
             2.0f * m_margin,
         };
 
-        const Canvas* gui_canvas{ dynamic_cast<const Canvas*>(widget) };
-        if (gui_canvas != nullptr && !gui_canvas->title().empty())
+        const Dialog* dialog{ dynamic_cast<const Dialog*>(widget) };
+        if (dialog != nullptr && !dialog->title().empty())
             extra.height += widget->theme()->dialog_header_height - m_margin / 2.0f;
 
         return size + extra;
@@ -705,14 +714,18 @@ namespace rl::ui {
     void AdvancedGridLayout::perform_layout(nvg::NVGcontext* nvg_context, Widget* widget) const
     {
         scoped_log();
-        std::array<std::vector<f32>, 2> grid{ { {}, {} } };
 
+        std::array<std::vector<f32>, 2> grid{ { {}, {} } };
         this->compute_layout(nvg_context, widget, grid);
+
         grid[Axis::Horizontal].insert(grid[Axis::Horizontal].begin(), m_margin);
 
-        const Canvas* gui_canvas{ dynamic_cast<const Canvas*>(widget) };
-        if (gui_canvas == nullptr || gui_canvas->title().empty())
+        const Dialog* dialog{ dynamic_cast<const Dialog*>(widget) };
+        if (dialog == nullptr || dialog->title().empty())
             grid[Axis::Vertical].insert(grid[Axis::Vertical].begin(), m_margin);
+        else if (dialog != nullptr)
+            grid[Axis::Vertical].insert(grid[Axis::Vertical].begin(),
+                                        dialog->header_height() + m_margin / 2.0f);
         else
         {
             grid[Axis::Vertical].insert(grid[Axis::Vertical].begin(),
@@ -727,8 +740,8 @@ namespace rl::ui {
 
             for (Widget* child : widget->children())
             {
-                const Dialog* child_window{ dynamic_cast<Dialog*>(child) };
-                if (!child->visible() || child_window != nullptr)
+                const Dialog* child_dialog{ dynamic_cast<Dialog*>(child) };
+                if (!child->visible() || child_dialog != nullptr)
                     continue;
 
                 if (child == nullptr)
@@ -783,6 +796,7 @@ namespace rl::ui {
                                             std::array<std::vector<f32>, 2>& grid_cell_sizes) const
     {
         scoped_log();
+
         const ds::dims<f32> fs_w{ widget->fixed_size() };
         ds::dims<f32> container_size{
             fs_w.width ? fs_w.width : widget->width(),
@@ -790,13 +804,13 @@ namespace rl::ui {
         };
 
         ds::dims<f32> extra{
-            2.0f * m_margin,
-            2.0f * m_margin,
+            m_margin * 2.0f,
+            m_margin * 2.0f,
         };
 
-        const Canvas* gui_canvas{ dynamic_cast<const Canvas*>(widget) };
-        if (gui_canvas != nullptr && gui_canvas->title().length() == 0)
-            extra.height += widget->theme()->dialog_header_height - (m_margin / 2.0f);
+        const Dialog* dialog{ dynamic_cast<const Dialog*>(widget) };
+        if (dialog != nullptr && !dialog->title().empty())
+            extra.height += dialog->header_height() - (m_margin / 2.0f);
 
         container_size -= extra;
         for (Axis axis : { Axis::Horizontal, Axis::Vertical })
@@ -838,7 +852,6 @@ namespace rl::ui {
 
                     f32 current_size{ 0.0f };
                     f32 total_stretch{ 0.0f };
-
                     for (u32 i = axis_anchor_pos; i < axis_anchor_pos + axis_anchor_size; ++i)
                     {
                         if (sizes[i] == 0 && axis_anchor_size == 1)
@@ -933,6 +946,7 @@ namespace rl::ui {
     Anchor AdvancedGridLayout::anchor(const Widget* widget) const
     {
         scoped_log();
+
         auto it{ m_anchor.find(widget) };
         runtime_assert(it != m_anchor.end(), "Widget was not registered with the grid layout!");
         return it->second;

@@ -48,6 +48,10 @@
       __VA_OPT__(std::string _o{ fmt::format(" => {}", fmt::format(__VA_ARGS__)) }; _f = _f + _o;) \
       rl::ScopedLogger _lg(std::move(_f))
 
+  #define diag_log(...)                              \
+      std::string _diag{ fmt::format(__VA_ARGS__) }; \
+      _lg.inner_scope_diag(std::move(_diag))
+
 #endif
 
 namespace rl {
@@ -55,6 +59,9 @@ namespace rl {
 
     class ScopedLogger
     {
+        constexpr static inline log_level LOGFILE_LEVEL{ log_level::info };
+        constexpr static inline log_level STD_OUT_LEVEL{ log_level::warn };
+
     public:
         explicit inline ScopedLogger(std::string&& str)
             : m_log_str{ std::forward<decltype(str)>(str) }
@@ -76,34 +83,34 @@ namespace rl {
             m_logger->log(m_level, "{:{}}-> {}", "", ++m_depth * INDENT, m_log_str);
         }
 
-        ScopedLogger(ScopedLogger&& logger) = delete;
-        ScopedLogger(const ScopedLogger& logger) = delete;
-        ScopedLogger& operator=(ScopedLogger&& logger) = delete;
-        ScopedLogger& operator=(const ScopedLogger& logger) = delete;
-
         inline ~ScopedLogger()
         {
             m_logger->log(m_level, "{:{}}<- {}", "", m_depth-- * INDENT, m_log_str);
         }
 
-    private:
-        static inline bool init_logger()
+        void inner_scope_diag(std::string&& str)
         {
+            m_logger->log(m_level, "{:{}}   {}", "", m_depth * INDENT,
+                          std::forward<std::string>(str));
+        }
+
+    private:
+        static inline bool init_sinks()
+        {
+            constexpr log_level detail_level{ std::min(LOGFILE_LEVEL, STD_OUT_LEVEL) };
             auto stdout_sink = std::make_shared<spdlog::sinks::stderr_color_sink_mt>(
                 spdlog::color_mode::always);
-
             auto logfile_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(
                 fs::absolute("../../../log/roguelike_trace.log").string(),
                 ScopedLogger::MAX_LOGFILE_SIZE, ScopedLogger::MAX_LOGFILE_COUNT, true);
 
             stdout_sink->set_pattern("[%^%L%$] %v");
-            stdout_sink->set_level(spdlog::level::debug);
+            stdout_sink->set_level(STD_OUT_LEVEL);
 
             logfile_sink->set_pattern("%^[%I:%M:%S.%e %p] [%L]%$ %v");
-            logfile_sink->set_level(spdlog::level::trace);
+            logfile_sink->set_level(LOGFILE_LEVEL);
 
             spdlog::set_default_logger(m_logger);
-
             m_logger = std::shared_ptr<spdlog::logger>{
                 new spdlog::logger{
                     "scoped_loggers",
@@ -111,10 +118,17 @@ namespace rl {
                 },
             };
 
-            m_logger->set_level(std::min(spdlog::level::debug, spdlog::level::trace));
-            spdlog::set_level(std::min(spdlog::level::debug, spdlog::level::trace));
+            m_logger->set_level(detail_level);
+            spdlog::set_level(detail_level);
+
             return true;
         }
+
+    private:
+        ScopedLogger(ScopedLogger&& logger) = delete;
+        ScopedLogger(const ScopedLogger& logger) = delete;
+        ScopedLogger& operator=(ScopedLogger&& logger) = delete;
+        ScopedLogger& operator=(const ScopedLogger& logger) = delete;
 
     private:
         constexpr static inline i32 BYTES_PER_KB{ 1024 };
@@ -125,7 +139,7 @@ namespace rl {
 
     private:
         static inline std::shared_ptr<spdlog::logger> m_logger{};
-        static inline bool m_initialized{ ScopedLogger::init_logger() };
+        static inline bool m_initialized{ ScopedLogger::init_sinks() };
         static inline thread_local u32 m_depth{ 0 };
 
         log_level m_level{ log_level::info };

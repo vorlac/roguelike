@@ -427,13 +427,12 @@ namespace rl::ui {
         }
 
         m_redraw |= Widget::on_mouse_button_pressed(mouse, kb);
-
         return m_redraw;
     }
 
     bool Canvas::on_mouse_button_released(const Mouse& mouse, const Keyboard& kb)
     {
-        scoped_log("btn_released={}", mouse.button_released());
+        scoped_log("btn={}", mouse.button_released());
 
         const ds::point<f32> mouse_pos{ mouse.pos() };
         m_last_interaction = m_timer.elapsed();
@@ -493,14 +492,11 @@ namespace rl::ui {
 
     bool Canvas::on_mouse_move(const Mouse& mouse, const Keyboard& kb)
     {
-        scoped_logger(log_level::trace, "move_pos={}", mouse.pos());
-
         bool ret{ false };
-        if constexpr (io::logging::mouse_move_events)
-            log::info("Canvas::on_mouse_move => {}", mouse);
-
         const ds::point<f32> mouse_pos{ mouse.pos() };
         m_last_interaction = m_timer.elapsed();
+
+        scoped_logger(log_level::trace, "move_pos={}", mouse.pos());
 
         ds::point<f32> pnt{
             (mouse_pos.x / m_pixel_ratio) - 1.0f,
@@ -547,15 +543,12 @@ namespace rl::ui {
     bool Canvas::on_mouse_entered(const Mouse& mouse)
     {
         scoped_log("entered_pos={}", mouse.pos());
-
         return Widget::on_mouse_entered(mouse);
     }
 
     bool Canvas::on_mouse_exited(const Mouse& mouse)
     {
-        if constexpr (io::logging::gui_events)
-            log::info("Canvas::on_mouse_exited [pos:{}]", mouse.pos());
-
+        scoped_log("exit_pos={}", mouse.pos());
         return Widget::on_mouse_exited(mouse);
     }
 

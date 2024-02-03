@@ -43,12 +43,11 @@ namespace rl::ui {
 
             m_scroll = new VScrollPanel{ m_dialog };
             m_scroll->set_fixed_height(300);
-
             m_container = new Widget{ m_scroll };
 
-            m_layout = new AdvancedGridLayout{ { 10, 0, 10, 0 }, {} };
+            m_layout = new AdvancedGridLayout{ { 0, 0, 0, 0 }, {} };
             m_layout->set_margin(10.0f);
-            m_layout->set_col_stretch(2, 1.0f);
+
             m_container->set_layout(m_layout);
 
             m_dialog->set_position(pos);
@@ -68,9 +67,6 @@ namespace rl::ui {
             } };
 
             m_layout->append_row(theme->form_pre_group_spacing);
-
-            // m_layout->append_row(m_layout->row_count() > 0 ? theme->form_pre_group_spacing
-            //                                                : m_dialog->header_height());
             m_layout->append_row(0);
             m_layout->set_anchor(label, Anchor{ 0, m_layout->row_count() - 1, 4, 1 });
             m_layout->append_row(theme->form_post_group_spacing);

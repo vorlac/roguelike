@@ -69,6 +69,7 @@ namespace rl::ui {
     void Dialog::center()
     {
         scoped_log();
+
         Widget* owner{ this };
         while (owner->parent() != nullptr)
             owner = owner->parent();
@@ -79,6 +80,7 @@ namespace rl::ui {
     f32 Dialog::header_height() const
     {
         scoped_logger(log_level::debug, "{}", m_title.empty() ? 0 : m_theme->dialog_header_height);
+
         if (!m_title.empty())
             return m_theme->dialog_header_height;
 
@@ -171,7 +173,7 @@ namespace rl::ui {
         // nvg::Translate(context, 0.5f, header_height + 1.5f);
         Widget::draw();
         // nvg::Translate(context, -0.5f, -header_height - 1.5f);
-        //   nvg::Restore(context);
+        //    nvg::Restore(context);
     }
 
     bool Dialog::on_mouse_entered(const Mouse& mouse)
@@ -190,24 +192,23 @@ namespace rl::ui {
 
     bool Dialog::on_mouse_drag(const Mouse& mouse, const Keyboard& kb)
     {
-        scoped_trace(log_level::debug);
-        if constexpr (io::logging::window_events)
-            log::info("Dialog::on_mouse_drag [pt:{}, rel:{}, btn:{}, mod:{}]", mouse.pos(),
-                      mouse.pos_delta(), std::to_underlying(mouse.button_pressed()),
-                      kb.is_button_down(Keyboard::Scancode::Modifiers));
-
+        scoped_logger(log_level::debug, "pt:{}, rel:{}", mouse.pos(), mouse.pos_delta());
         if (m_drag && mouse.is_button_held(Mouse::Button::Left))
         {
-            m_pos += mouse.pos_delta();
+            {
+                diag_log("m_pos_1={} mouse_delta={}", m_pos, mouse.pos_delta());
+                m_pos += mouse.pos_delta();
+                m_pos.x = std::max(m_pos.x, 0.0f);
+                m_pos.y = std::max(m_pos.y, 0.0f);
+            }
+            {
+                const ds::dims<f32> relative_size{ this->parent()->size() - m_size };
+                diag_log("m_pos_2={} rel_size={}", m_pos, relative_size);
+                m_pos.x = std::min(m_pos.x, relative_size.width);
+                m_pos.y = std::min(m_pos.y, relative_size.height);
+            }
 
-            m_pos.x = std::max(m_pos.x, 0.0f);
-            m_pos.y = std::max(m_pos.y, 0.0f);
-
-            const ds::dims<f32> relative_size{ this->parent()->size() - m_size };
-
-            m_pos.x = std::min(m_pos.x, relative_size.width);
-            m_pos.y = std::min(m_pos.y, relative_size.height);
-
+            diag_log("m_pos_3={}", m_pos);
             return true;
         }
 
@@ -216,11 +217,7 @@ namespace rl::ui {
 
     bool Dialog::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb)
     {
-        scoped_log();
-        if constexpr (io::logging::window_events)
-            rl::log::info("Dialog::on_mouse_button_pressed [button:{}]",
-                          std::to_underlying(mouse.button_pressed()));
-
+        scoped_log("btn={}", mouse.button_pressed());
         if (Widget::on_mouse_button_pressed(mouse, kb))
             return true;
 
@@ -228,6 +225,7 @@ namespace rl::ui {
         {
             const f32 offset_height{ mouse.pos().y - m_pos.y };
             m_drag = offset_height < m_theme->dialog_header_height;
+            diag_log("Dialog::m_drag={} offset_height={}", m_drag, offset_height);
             return true;
         }
 
@@ -236,17 +234,14 @@ namespace rl::ui {
 
     bool Dialog::on_mouse_button_released(const Mouse& mouse, const Keyboard& kb)
     {
-        scoped_log();
-        if constexpr (io::logging::window_events)
-            rl::log::info("Dialog::on_mouse_button_released [button:{}]",
-                          std::to_underlying(mouse.button_released()));
-
+        scoped_log("btn={}", mouse.button_released());
         if (Widget::on_mouse_button_released(mouse, kb))
             return true;
 
         if (mouse.is_button_released(Mouse::Button::Left))
         {
             m_drag = false;
+            diag_log("Dialog::m_drag={}", m_drag);
             return true;
         }
 
@@ -255,11 +250,9 @@ namespace rl::ui {
 
     bool Dialog::on_mouse_scroll(const Mouse& mouse, const Keyboard& kb)
     {
-        scoped_log();
-        if constexpr (io::logging::window_events)
-            rl::log::info("Dialog::on_mouse_scroll [pos:{}, rel:{}]", mouse.pos(), mouse.wheel());
-
-        return Widget::on_mouse_scroll(mouse, kb);
+        scoped_logger(log_level::debug, "pos:{} wheel:{}", mouse.pos(), mouse.wheel());
+        Widget::on_mouse_scroll(mouse, kb);
+        return true;
     }
 
     ds::dims<f32> Dialog::preferred_size() const
@@ -324,7 +317,7 @@ namespace rl::ui {
 
     void Dialog::refresh_relative_placement()
     {
-        scoped_log();
+        scoped_log("noop");
         // helper to maintain nested window position values,
         // overridden in Popup
         return;
