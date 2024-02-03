@@ -19,6 +19,7 @@
 #include "graphics/vg/nanovg.hpp"
 #include "sdl/defs.hpp"
 #include "utils/io.hpp"
+#include "utils/logging.hpp"
 #include "utils/numeric.hpp"
 #include "utils/options.hpp"
 
@@ -390,16 +391,19 @@ namespace rl {
 
     void MainWindow::mouse_entered_event_callback(const SDL3::SDL_Event& e)
     {
+        scoped_log();
         m_gui_canvas->on_mouse_entered(m_mouse);
     }
 
     void MainWindow::mouse_exited_event_callback(const SDL3::SDL_Event& e)
     {
+        scoped_log();
         m_gui_canvas->on_mouse_exited(m_mouse);
     }
 
     void MainWindow::mouse_moved_event_callback(const SDL3::SDL_Event& e)
     {
+        scoped_trace(log_level::trace);
         m_mouse.process_motion(e.motion);
         if (m_mouse.is_button_pressed(Mouse::Button::Left))
             this->mouse_button_pressed_event_callback(e);
@@ -409,12 +413,14 @@ namespace rl {
 
     void MainWindow::mouse_wheel_event_callback(const SDL3::SDL_Event& e)
     {
+        scoped_log();
         m_mouse.process_wheel(e.wheel);
         m_gui_canvas->on_mouse_scroll(m_mouse, m_keyboard);
     }
 
     void MainWindow::mouse_button_pressed_event_callback(const SDL3::SDL_Event& e)
     {
+        scoped_log();
         const Mouse::Button::ID button_pressed{ e.button.button };
         m_mouse.process_button_down(button_pressed);
         m_gui_canvas->on_mouse_button_pressed(m_mouse, m_keyboard);
@@ -422,6 +428,7 @@ namespace rl {
 
     void MainWindow::mouse_button_released_event_callback(const SDL3::SDL_Event& e)
     {
+        scoped_log();
         const Mouse::Button::ID button_released{ e.button.button };
         m_mouse.process_button_up(button_released);
         m_gui_canvas->on_mouse_button_released(m_mouse, m_keyboard);
@@ -429,6 +436,7 @@ namespace rl {
 
     void MainWindow::keyboard_key_pressed_event_callback(const SDL3::SDL_Event& e)
     {
+        scoped_log();
         const Keyboard::Scancode::ID pressed_button{ e.key.keysym.scancode };
         m_keyboard.process_button_down(pressed_button);
         m_gui_canvas->on_key_pressed(m_keyboard);
@@ -436,6 +444,7 @@ namespace rl {
 
     void MainWindow::keyboard_key_released_event_callback(const SDL3::SDL_Event& e)
     {
+        scoped_log();
         const Keyboard::Scancode::ID released_button{ e.key.keysym.scancode };
         m_keyboard.process_button_up(released_button);
         m_gui_canvas->on_key_pressed(m_keyboard);
@@ -443,6 +452,7 @@ namespace rl {
 
     void MainWindow::keyboard_char_event_callback(const SDL3::SDL_Event& e)
     {
+        scoped_log();
         switch (e.type)
         {
             case Keyboard::Event::TextInput:
@@ -461,6 +471,7 @@ namespace rl {
         // and the existing m_pixel_ratio sizes instead of calling
         // the SDL APIs for the dimensions instead?
 
+        scoped_log();
         ds::dims<i32> window_size{ this->get_size() };
         ds::dims<i32> framebuf_size{ this->get_render_size() };
         if (framebuf_size.area() == 0 || window_size.area() == 0)
@@ -481,6 +492,7 @@ namespace rl {
 
     void MainWindow::window_moved_event_callback(const SDL3::SDL_Event& e)
     {
+        scoped_log();
         ds::point<i32> window_pos{ this->get_position() };
         if constexpr (io::logging::window_events)
             log::trace("MainWindow::moved => {}", window_pos);
@@ -497,11 +509,14 @@ namespace rl {
             static_cast<i32>(window_size.height / m_pixel_ratio),
         };
 
-        // m_gui_canvas->on_moved(this->get_position());
+        // // the gui canvas should always use the same "root" coords of {0,0}
+        // // as it's relative location within the window / viewport.
+        // m_gui_canvas->on_moved(std::forward<ds::point<f32>>(window_pos));
     }
 
     bool MainWindow::window_pixel_size_changed_event_callback(const SDL3::SDL_Event& e)
     {
+        scoped_log();
         const MainWindow::Event::Data& window_event{ e.window };
         const WindowID id{ window_event.windowID };
         const ds::vector2<i32> pixel_size{
@@ -520,6 +535,7 @@ namespace rl {
 
     void MainWindow::window_focus_gained_event_callback(const SDL3::SDL_Event& e)
     {
+        scoped_log();
         const MainWindow::Event::Data& window_event{ e.window };
         const WindowID id{ window_event.windowID };
         if constexpr (io::logging::window_events)
@@ -530,6 +546,7 @@ namespace rl {
 
     void MainWindow::window_focus_lost_event_callback(const SDL3::SDL_Event& e)
     {
+        scoped_log();
         const MainWindow::Event::Data& window_event{ e.window };
         const WindowID id{ window_event.windowID };
         if constexpr (io::logging::window_events)
@@ -540,6 +557,7 @@ namespace rl {
 
     bool MainWindow::window_shown_event_callback(const SDL3::SDL_Event& e)
     {
+        scoped_log();
         const MainWindow::Event::Data& window_event{ e.window };
         const WindowID id{ window_event.windowID };
         if constexpr (io::logging::window_events)
@@ -550,6 +568,7 @@ namespace rl {
 
     bool MainWindow::window_occluded_event_callback(const SDL3::SDL_Event& e)
     {
+        scoped_log();
         const MainWindow::Event::Data& window_event{ e.window };
         const WindowID id{ window_event.windowID };
         if constexpr (io::logging::window_events)
@@ -560,6 +579,7 @@ namespace rl {
 
     bool MainWindow::window_hidden_event_callback(const SDL3::SDL_Event& e)
     {
+        scoped_log();
         const MainWindow::Event::Data& window_event{ e.window };
         const WindowID id{ window_event.windowID };
         if constexpr (io::logging::window_events)
@@ -570,6 +590,7 @@ namespace rl {
 
     bool MainWindow::window_exposed_event_callback(const SDL3::SDL_Event& e)
     {
+        scoped_log();
         const MainWindow::Event::Data& window_event{ e.window };
         const WindowID id{ window_event.windowID };
         if constexpr (io::logging::window_events)
@@ -580,6 +601,7 @@ namespace rl {
 
     bool MainWindow::window_minimized_event_callback(const SDL3::SDL_Event& e)
     {
+        scoped_log();
         const MainWindow::Event::Data& window_event{ e.window };
         const WindowID id{ window_event.windowID };
         if constexpr (io::logging::window_events)
@@ -590,6 +612,7 @@ namespace rl {
 
     bool MainWindow::window_maximized_event_callback(const SDL3::SDL_Event& e)
     {
+        scoped_log();
         const MainWindow::Event::Data& window_event{ e.window };
         const WindowID id{ window_event.windowID };
         if constexpr (io::logging::window_events)
@@ -600,6 +623,7 @@ namespace rl {
 
     bool MainWindow::window_restored_event_callback(const SDL3::SDL_Event& e)
     {
+        scoped_log();
         const MainWindow::Event::Data& window_event{ e.window };
         const WindowID id{ window_event.windowID };
         if constexpr (io::logging::window_events)
@@ -610,6 +634,7 @@ namespace rl {
 
     bool MainWindow::window_close_requested_event_callback(const SDL3::SDL_Event& e)
     {
+        scoped_log();
         const MainWindow::Event::Data& window_event{ e.window };
         const WindowID id{ window_event.windowID };
         if constexpr (io::logging::window_events)
@@ -620,6 +645,7 @@ namespace rl {
 
     bool MainWindow::window_take_focus_event_callback(const SDL3::SDL_Event& e)
     {
+        scoped_log();
         const MainWindow::Event::Data& window_event{ e.window };
         const WindowID id{ window_event.windowID };
         if constexpr (io::logging::window_events)
@@ -630,6 +656,7 @@ namespace rl {
 
     bool MainWindow::window_hit_test_event_callback(const SDL3::SDL_Event& e)
     {
+        scoped_log();
         const MainWindow::Event::Data& window_event{ e.window };
         const WindowID id{ window_event.windowID };
         if constexpr (io::logging::window_events)
@@ -640,6 +667,7 @@ namespace rl {
 
     bool MainWindow::window_icc_profile_changed_callback(const SDL3::SDL_Event& e)
     {
+        scoped_log();
         const MainWindow::Event::Data& window_event{ e.window };
         const WindowID id{ window_event.windowID };
         if constexpr (io::logging::window_events)
@@ -650,6 +678,7 @@ namespace rl {
 
     bool MainWindow::window_display_changed_event_callback(const SDL3::SDL_Event& e)
     {
+        scoped_log();
         const MainWindow::Event::Data& window_event{ e.window };
         const WindowID id{ window_event.windowID };
         if constexpr (io::logging::window_events)
@@ -660,6 +689,7 @@ namespace rl {
 
     bool MainWindow::window_display_scale_changed_event_callback(const SDL3::SDL_Event& e)
     {
+        scoped_log();
         const MainWindow::Event::Data& window_event{ e.window };
         const WindowID id{ window_event.windowID };
         if constexpr (io::logging::window_events)
@@ -670,6 +700,7 @@ namespace rl {
 
     bool MainWindow::window_destroyed_event_callback(const SDL3::SDL_Event& e)
     {
+        scoped_log();
         const MainWindow::Event::Data& window_event{ e.window };
         const WindowID id{ window_event.windowID };
         if constexpr (io::logging::window_events)

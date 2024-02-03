@@ -104,6 +104,7 @@ namespace rl {
         [[nodiscard]] bool any_buttons_down(std::vector<Mouse::Button::ID> buttons) const;
 
         [[nodiscard]] std::string get_button_state(Mouse::Button::ID button) const;
+        [[nodiscard]] std::string name() const;
 
     protected:
         void process_button_down(Mouse::Button::ID mouse_button);
@@ -131,4 +132,31 @@ namespace rl {
                            mouse.get_button_state(Mouse::Button::Right),
                            mouse.get_button_state(Mouse::Button::Middle), mouse.wheel());
     }
+
+    constexpr inline auto format_as(Mouse::Button::ID btn)
+    {
+        switch (btn)
+        {
+            case Mouse::Button::ID::Left:
+                return "left";
+            case Mouse::Button::ID::Middle:
+                return "middle";
+            case Mouse::Button::ID::Right:
+                return "right";
+            case Mouse::Button::ID::X1:
+                return "x1";
+            case Mouse::Button::ID::X2:
+                return "x2";
+            default:
+                return "unknown";
+        }
+    }
 }
+
+SDL_C_LIB_BEGIN
+auto format_as(const auto& wheel)
+{
+    return fmt::format("({},{})", wheel.x, wheel.y);
+}
+
+SDL_C_LIB_END

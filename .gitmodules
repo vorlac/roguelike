@@ -7,3 +7,6 @@
 [submodule "extern/skity"]
 	path = extern/skity
 	url = git@github.com:vorlac/Skity.git
+[submodule "extern/tracy"]
+	path = extern/tracy
+	url = https://github.com/wolfpld/tracy.git

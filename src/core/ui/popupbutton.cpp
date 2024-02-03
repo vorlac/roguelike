@@ -1,6 +1,7 @@
 #include "core/ui/canvas.hpp"
 #include "core/ui/popupbutton.hpp"
 #include "core/ui/theme.hpp"
+#include "utils/logging.hpp"
 #include "utils/unicode.hpp"
 
 namespace rl::ui {
@@ -8,6 +9,7 @@ namespace rl::ui {
     PopupButton::PopupButton(Widget* parent, std::string caption, Icon::ID button_icon)
         : Button{ parent, caption, button_icon }
     {
+        scoped_log();
         this->set_icon_extra_scale(1.0f);
         this->set_chevron_icon(m_theme->popup_chevron_right_icon);
         this->set_property(Property::TogglePopupMenu);
@@ -27,16 +29,19 @@ namespace rl::ui {
 
     void PopupButton::set_chevron_icon(Icon::ID icon)
     {
+        scoped_log("{}", static_cast<i32>(icon));
         m_chevron_icon = icon;
     }
 
     Icon::ID PopupButton::chevron_icon() const
     {
+        scoped_log("{}", static_cast<i32>(m_chevron_icon));
         return m_chevron_icon;
     }
 
     Popup::Side PopupButton::side() const
     {
+        scoped_log("{}", m_popup->side());
         return m_popup->side();
     }
 
@@ -52,12 +57,14 @@ namespace rl::ui {
 
     ds::dims<f32> PopupButton::preferred_size() const
     {
+        scoped_log();
         constexpr static ds::dims<f32> width_buffer{ 24.0f, 0.0f };
         return Button::preferred_size() + width_buffer;
     }
 
     void PopupButton::draw()
     {
+        scoped_log();
         if (!m_enabled && m_pressed)
             m_pressed = false;
 
@@ -91,6 +98,7 @@ namespace rl::ui {
 
     void PopupButton::perform_layout()
     {
+        scoped_log();
         Widget::perform_layout();
 
         const Dialog* parent_dialog{ this->dialog() };
@@ -126,6 +134,7 @@ namespace rl::ui {
 
     void PopupButton::set_side(Popup::Side side)
     {
+        scoped_log();
         const Icon::ID right_icon{ m_theme->popup_chevron_right_icon };
         const Icon::ID left_icon{ m_theme->popup_chevron_left_icon };
 

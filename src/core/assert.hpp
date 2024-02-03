@@ -3,6 +3,7 @@
 #include <string>
 
 #include <fmt/color.h>
+#include <fmt/compile.h>
 #include <fmt/format.h>
 #include <fmt/ranges.h>
 
@@ -13,6 +14,7 @@ SDL_C_LIB_BEGIN
 SDL_C_LIB_END
 
 #ifdef NDEBUG
+
   #define runtime_assert(condition, fmtstr, ...) static_cast<void>(0)
   #define sdl_assert(condition, fmtstr, ...)     static_cast<void>(0)
   #define assert_cond(condition)                 static_cast<void>(0)
@@ -98,26 +100,19 @@ SDL_C_LIB_END
       }                                                                                            \
       while (0)
 
-  #define VA_ASSERT(cond, ...)                                                    \
-      do                                                                          \
-      {                                                                           \
-          if (!(cond)) [[unlikely]]                                               \
-          {                                                                       \
-              /* this fmt::print() call will only be called if any args are */    \
-              /* passed in besides the condition. it will print a refular str */  \
-              /* or any number of args that are compatible with fmt::format() */  \
-              __VA_OPT__(fmt::print(__VA_ARGS__));                                \
-                                                                                  \
-              /* this logic doesn't really make sense but it's just an example */ \
-              /* of how to invoke some other logic based on the VA_ARGS count  */ \
-              /* this will cause the debugger to pause if the condition check */  \
-              /* fails and more than two additional args are passed in  */        \
-              constexpr std::tuple args{ std::make_tuple(__VA_ARGS__) };          \
-              constexpr uint32_t arg_count{ std::tuple_size_v<decltype(args)> };  \
-              if constexpr (arg_count > 2)                                        \
-                  __debugbreak();                                                 \
-          }                                                                       \
-      }                                                                           \
+  #define VA_ASSERT(cond, ...)                                                   \
+      do                                                                         \
+      {                                                                          \
+          if (!(cond)) [[unlikely]]                                              \
+          {                                                                      \
+              __VA_OPT__(fmt::print(__VA_ARGS__));                               \
+                                                                                 \
+              constexpr std::tuple args{ std::make_tuple(__VA_ARGS__) };         \
+              constexpr uint32_t arg_count{ std::tuple_size_v<decltype(args)> }; \
+              if constexpr (arg_count > 2)                                       \
+                  __debugbreak();                                                \
+          }                                                                      \
+      }                                                                          \
       while (0)
 
   #define assert_msg(message) runtime_assert(false, message)

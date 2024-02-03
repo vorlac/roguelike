@@ -132,6 +132,7 @@ namespace rl::ui {
 
     protected:
         f32 icon_scale() const;
+        virtual std::string name() const;
 
     protected:
         Widget* m_parent{ nullptr };

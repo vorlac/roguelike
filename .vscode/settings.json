@@ -20,7 +20,7 @@
     "cppref.invertColorInDarkTheme": true,
     "cppref.searchEngine": "Google",
     "C_Cpp.workspaceParsingPriority": "high",
-    "cmake.automaticReconfigure": true,
+    "cmake.automaticReconfigure": false,
     "cmake.buildBeforeRun": true,
     "cmake.buildTask": false,
     "cmake.cmakeCommunicationMode": "fileApi",

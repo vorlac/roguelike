@@ -200,14 +200,14 @@ namespace rl {
             // vbo.bind_buffers();
             while (!this->should_exit()) [[unlikely]]
             {
-                this->handle_events();
-                this->update();
-
                 m_timer.tick([&]() {
+                    this->handle_events();
+                    this->update();
+
                     elapsed_time = m_timer.elapsed();
                     framerate = ++frame_count / elapsed_time;
-                    elapsed_str = fmt::to_string(fmt::format("{:<3.3f} sec", elapsed_time));
-                    fps_str = fmt::to_string(fmt::format("{:<3.3f} fps", framerate));
+                    elapsed_str = fmt::format("{:<3.3f} sec", elapsed_time);
+                    fps_str = fmt::format("{:<3.3f} fps", framerate);
 
                     form->refresh();
 

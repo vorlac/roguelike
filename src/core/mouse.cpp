@@ -2,6 +2,7 @@
 
 #include "core/assert.hpp"
 #include "core/mouse.hpp"
+#include "utils/logging.hpp"
 
 namespace rl {
 
@@ -40,22 +41,17 @@ namespace rl {
 
     void Mouse::process_wheel(const Mouse::Event::Data::Wheel& wheel)
     {
-        m_prev_wheel_pos = m_wheel_position;
-
         auto new_wheel_pos{ wheel };
+
+        m_prev_wheel_pos = m_wheel_position;
         if (new_wheel_pos.direction == Mouse::Wheel::Direction::Flipped)
         {
             new_wheel_pos.x *= -1.0f;
             new_wheel_pos.y *= -1.0f;
         }
 
-        // positive to the right
-        // and negative to the left
         if (new_wheel_pos.x != 0.0f)
             m_wheel_position.x += new_wheel_pos.x;
-
-        // positive away from the user
-        // and negative towards the user
         if (new_wheel_pos.y != 0.0f)
             m_wheel_position.y -= new_wheel_pos.y;
     }
@@ -126,6 +122,11 @@ namespace rl {
                 return true;
 
         return false;
+    }
+
+    std::string Mouse::name() const
+    {
+        return typeid(*this).name();
     }
 
     std::string Mouse::get_button_state(Mouse::Button::ID button) const

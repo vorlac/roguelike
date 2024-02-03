@@ -24,7 +24,7 @@ namespace rl::ui {
     {
     public:
         Canvas(ds::rect<f32> rect, const Mouse& mouse, const Keyboard& kb,
-                 const std::unique_ptr<NVGRenderer>& nvg_renderer);
+               const std::unique_ptr<NVGRenderer>& nvg_renderer);
         ~Canvas();
 
         bool redraw();

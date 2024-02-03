@@ -6,6 +6,7 @@
 #include "core/ui/canvas.hpp"
 #include "core/ui/popup.hpp"
 #include "utils/io.hpp"
+#include "utils/logging.hpp"
 
 namespace rl::ui {
 
@@ -366,25 +367,14 @@ namespace rl::ui {
 
     bool Canvas::on_moved(ds::point<f32> pt)
     {
-        if constexpr (io::logging::gui_events)
-        {
-            ds::rect<f32> prev_rect{ m_pos, m_size };
-            ds::rect<f32> new_rect{ pt, prev_rect.size };
-            log::info("Canvas::on_moved: {} => {}", prev_rect, new_rect);
-        }
-
-        this->set_position(pt);
+        scoped_log("{} => {}", ds::rect{ m_pos, m_size }, ds::rect{ pt, m_size });
+        this->set_position(std::forward<decltype(pt)>(pt));
         return true;
     }
 
     bool Canvas::on_resized(ds::dims<f32> size)
     {
-        if constexpr (io::logging::gui_events)
-        {
-            ds::rect<f32> prev_rect{ m_pos, m_size };
-            ds::rect<f32> new_rect{ m_pos, size / m_pixel_ratio };
-            log::info("Canvas::on_resized: {} => {}", prev_rect, new_rect);
-        }
+        scoped_log("{} => {}", ds::rect{ m_pos, m_size }, ds::rect{ m_pos, size / m_pixel_ratio });
 
         if (size.area() == 0)
             return false;
@@ -400,9 +390,8 @@ namespace rl::ui {
 
     bool Canvas::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb)
     {
+        scoped_log("btn_pressed={}", mouse.button_pressed());
         const ds::point<f32> mouse_pos{ mouse.pos() };
-        if constexpr (io::logging::gui_events)
-            log::info("Canvas::on_mouse_button_pressed => {}", mouse);
 
         m_last_interaction = m_timer.elapsed();
         if (m_focus_path.size() > 1)
@@ -444,8 +433,7 @@ namespace rl::ui {
 
     bool Canvas::on_mouse_button_released(const Mouse& mouse, const Keyboard& kb)
     {
-        if constexpr (io::logging::gui_events)
-            log::info("Canvas::on_mouse_button_released => {}", mouse);
+        scoped_log("btn_released={}", mouse.button_released());
 
         const ds::point<f32> mouse_pos{ mouse.pos() };
         m_last_interaction = m_timer.elapsed();
@@ -486,20 +474,14 @@ namespace rl::ui {
 
     bool Canvas::on_mouse_drag(const Mouse& mouse, const Keyboard& kb)
     {
-        if constexpr (io::logging::gui_events)
-            log::info("Canvas::on_mouse_drag [pt:{}, rel:{}, btn:{}, mod:{}]", mouse.pos(),
-                      mouse.pos_delta(), std::to_underlying(mouse.button_pressed()),
-                      kb.is_button_down(Keyboard::Scancode::Modifiers));
-
+        scoped_logger(log_level::debug, "drag_pos={}", mouse.pos());
         if (m_drag_active && mouse.is_button_held(Mouse::Button::Left))
         {
             m_pos += mouse.pos_delta();
-
             m_pos.x = std::max(m_pos.x, 0.0f);
             m_pos.y = std::max(m_pos.y, 0.0f);
 
             auto relative_size{ this->parent()->size() - m_size };
-
             m_pos.x = std::min(m_pos.x, relative_size.width);
             m_pos.y = std::min(m_pos.y, relative_size.height);
 
@@ -511,6 +493,8 @@ namespace rl::ui {
 
     bool Canvas::on_mouse_move(const Mouse& mouse, const Keyboard& kb)
     {
+        scoped_logger(log_level::trace, "move_pos={}", mouse.pos());
+
         bool ret{ false };
         if constexpr (io::logging::mouse_move_events)
             log::info("Canvas::on_mouse_move => {}", mouse);
@@ -543,8 +527,7 @@ namespace rl::ui {
 
     bool Canvas::on_mouse_scroll(const Mouse& mouse, const Keyboard& kb)
     {
-        if constexpr (io::logging::gui_events)
-            log::info("Canvas::on_mouse_scroll => {}", mouse);
+        scoped_log("move_pos={}", mouse.wheel());
 
         m_last_interaction = m_timer.elapsed();
         if (m_focus_path.size() > 1)
@@ -563,8 +546,7 @@ namespace rl::ui {
 
     bool Canvas::on_mouse_entered(const Mouse& mouse)
     {
-        if constexpr (io::logging::gui_events)
-            log::info("Canvas::on_mouse_entered [pos:{}]", mouse.pos());
+        scoped_log("entered_pos={}", mouse.pos());
 
         return Widget::on_mouse_entered(mouse);
     }
@@ -579,25 +561,19 @@ namespace rl::ui {
 
     bool Canvas::on_focus_gained()
     {
-        if constexpr (io::logging::gui_events)
-            log::info("Canvas::on_focus_gained");
-
+        scoped_log();
         return Widget::on_focus_gained();
     }
 
     bool Canvas::on_focus_lost()
     {
-        if constexpr (io::logging::gui_events)
-            log::info("Canvas::on_focus_lost");
-
+        scoped_log();
         return Widget::on_focus_lost();
     }
 
     bool Canvas::on_key_pressed(const Keyboard& kb)
     {
-        if constexpr (io::logging::gui_events)
-            log::info("Canvas::on_key_pressed => {}", kb);
-
+        scoped_log();
         m_last_interaction = m_timer.elapsed();
         m_redraw |= Widget::on_key_pressed(kb);
         return m_redraw;
@@ -605,9 +581,7 @@ namespace rl::ui {
 
     bool Canvas::on_key_released(const Keyboard& kb)
     {
-        if constexpr (io::logging::gui_events)
-            log::info("Canvas::on_key_released => {}", kb);
-
+        scoped_log();
         m_last_interaction = m_timer.elapsed();
         m_redraw |= Widget::on_key_released(kb);
         return m_redraw;
@@ -615,9 +589,7 @@ namespace rl::ui {
 
     bool Canvas::on_character_input(const Keyboard& kb)
     {
-        if constexpr (io::logging::gui_events)
-            log::info("Canvas::on_character_input => {}", kb);
-
+        scoped_log();
         m_last_interaction = m_timer.elapsed();
         m_redraw |= Widget::on_character_input(kb);
         return m_redraw;

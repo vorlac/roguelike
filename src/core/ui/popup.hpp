@@ -40,3 +40,18 @@ namespace rl::ui {
         Popup::Side m_side{ Popup::Side::Left };
     };
 }
+
+namespace rl::ui {
+    constexpr inline auto format_as(Popup::Side side)
+    {
+        switch (side)
+        {
+            case Popup::Side::Left:
+                return "Left";
+            case Popup::Side::Right:
+                return "Right";
+            default:
+                return "Invalid";
+        }
+    }
+}

@@ -8,6 +8,7 @@
 #include "ds/vector2d.hpp"
 #include "graphics/vg/nanovg.hpp"
 #include "utils/io.hpp"
+#include "utils/logging.hpp"
 
 namespace rl::ui {
 
@@ -15,30 +16,36 @@ namespace rl::ui {
         : Widget{ parent }
         , m_title{ title }
     {
+        scoped_log();
     }
 
     const std::string& Dialog::title() const
     {
+        scoped_log();
         return m_title;
     }
 
     void Dialog::set_title(const std::string& title)
     {
+        scoped_log();
         m_title = title;
     }
 
     bool Dialog::modal() const
     {
+        scoped_log();
         return m_modal;
     }
 
     void Dialog::set_modal(bool modal)
     {
+        scoped_log();
         m_modal = modal;
     }
 
     Widget* Dialog::button_panel()
     {
+        scoped_log();
         if (m_button_panel == nullptr)
         {
             m_button_panel = new Widget(this);
@@ -51,6 +58,7 @@ namespace rl::ui {
 
     void Dialog::dispose()
     {
+        scoped_log();
         Widget* owner{ this };
         while (owner->parent() != nullptr)
             owner = owner->parent();
@@ -60,6 +68,7 @@ namespace rl::ui {
 
     void Dialog::center()
     {
+        scoped_log();
         Widget* owner{ this };
         while (owner->parent() != nullptr)
             owner = owner->parent();
@@ -69,6 +78,7 @@ namespace rl::ui {
 
     f32 Dialog::header_height() const
     {
+        scoped_logger(log_level::debug, "{}", m_title.empty() ? 0 : m_theme->dialog_header_height);
         if (!m_title.empty())
             return m_theme->dialog_header_height;
 
@@ -77,6 +87,7 @@ namespace rl::ui {
 
     void Dialog::draw()
     {
+        scoped_trace(log_level::trace);
         auto&& context{ m_renderer->context() };
         const f32 drop_shadow_size{ m_theme->dialog_drop_shadow_size };
         const f32 corner_radius{ m_theme->dialog_corner_radius };
@@ -165,18 +176,21 @@ namespace rl::ui {
 
     bool Dialog::on_mouse_entered(const Mouse& mouse)
     {
+        scoped_log();
         Widget::on_mouse_entered(mouse);
         return true;
     }
 
     bool Dialog::on_mouse_exited(const Mouse& mouse)
     {
+        scoped_log();
         Widget::on_mouse_exited(mouse);
         return true;
     }
 
     bool Dialog::on_mouse_drag(const Mouse& mouse, const Keyboard& kb)
     {
+        scoped_trace(log_level::debug);
         if constexpr (io::logging::window_events)
             log::info("Dialog::on_mouse_drag [pt:{}, rel:{}, btn:{}, mod:{}]", mouse.pos(),
                       mouse.pos_delta(), std::to_underlying(mouse.button_pressed()),
@@ -202,6 +216,7 @@ namespace rl::ui {
 
     bool Dialog::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb)
     {
+        scoped_log();
         if constexpr (io::logging::window_events)
             rl::log::info("Dialog::on_mouse_button_pressed [button:{}]",
                           std::to_underlying(mouse.button_pressed()));
@@ -221,6 +236,7 @@ namespace rl::ui {
 
     bool Dialog::on_mouse_button_released(const Mouse& mouse, const Keyboard& kb)
     {
+        scoped_log();
         if constexpr (io::logging::window_events)
             rl::log::info("Dialog::on_mouse_button_released [button:{}]",
                           std::to_underlying(mouse.button_released()));
@@ -239,6 +255,7 @@ namespace rl::ui {
 
     bool Dialog::on_mouse_scroll(const Mouse& mouse, const Keyboard& kb)
     {
+        scoped_log();
         if constexpr (io::logging::window_events)
             rl::log::info("Dialog::on_mouse_scroll [pos:{}, rel:{}]", mouse.pos(), mouse.wheel());
 
@@ -247,6 +264,8 @@ namespace rl::ui {
 
     ds::dims<f32> Dialog::preferred_size() const
     {
+        scoped_trace(log_level::debug);
+
         if (m_button_panel != nullptr)
             m_button_panel->hide();
 
@@ -277,6 +296,7 @@ namespace rl::ui {
 
     void Dialog::perform_layout()
     {
+        scoped_log();
         if (m_button_panel == nullptr)
             Widget::perform_layout();
         else
@@ -304,6 +324,7 @@ namespace rl::ui {
 
     void Dialog::refresh_relative_placement()
     {
+        scoped_log();
         // helper to maintain nested window position values,
         // overridden in Popup
         return;

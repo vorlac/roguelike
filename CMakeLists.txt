@@ -54,6 +54,7 @@ set(BUILD_SHARED_LIBS OFF)
 
 find_package(glm CONFIG REQUIRED)
 find_package(fmt CONFIG REQUIRED)
+find_package(spdlog CONFIG REQUIRED)
 find_package(nanobench CONFIG REQUIRED)
 
 # SDL3 build options
@@ -67,6 +68,10 @@ set(SDL_TESTS OFF)
 set(SDL_TEST_LIBRARY OFF)
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl)
+
+# option(TRACY_ENABLE "" ON)
+# option(TRACY_ON_DEMAND "" ON)
+# add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/tracy)
 
 file(GLOB_RECURSE
   roguelike_sources
@@ -91,18 +96,19 @@ target_compile_features(${PROJECT_NAME}
 target_compile_definitions(${PROJECT_NAME}
   PRIVATE
     ROGUELIKE_TESTS_ENABLED
+	SPDLOG_NO_EXCEPTIONS
     KHRONOS_STATIC
 	NANOVG_GL3
     NOMINMAX
-	#UNICODE
+	# UNICODE
 
     $<${compiler_is_msvc}:
         _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING
         _CRT_SECURE_NO_WARNINGS
 
         $<$<CONFIG:Debug>:
-			_DISABLE_STRING_ANNOTATION=1 # needed with ASAN enabled because of fmt
-			_DISABLE_VECTOR_ANNOTATION=1 # needed with ASAN enabled because of fmt
+			# _DISABLE_STRING_ANNOTATION=1 # needed with ASAN enabled because of fmt
+			# _DISABLE_VECTOR_ANNOTATION=1 # needed with ASAN enabled because of fmt
             _NO_DEBUG_HEAP=1
         >
     >
@@ -197,10 +203,12 @@ target_include_directories(${PROJECT_NAME}
 )
 
 target_link_libraries(${PROJECT_NAME}
-  PRIVATE SDL3::SDL3-static
-  PRIVATE nanobench::nanobench
-  PRIVATE glm::glm
   PRIVATE fmt::fmt
+  PRIVATE spdlog::spdlog_header_only
+  PRIVATE nanobench::nanobench
+  PRIVATE SDL3::SDL3-static
+  PRIVATE glm::glm
+  # PUBLIC Tracy::TracyClient
 )
 
 if (ENABLE_CCACHE MATCHES ON)

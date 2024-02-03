@@ -294,6 +294,12 @@ namespace rl {
         MainWindow(MainWindow&& window) noexcept = delete;
         MainWindow(SDL3::SDL_Window* other) = delete;
 
+        // TODO: remove
+        std::string name() const
+        {
+            return "MainWindow;";
+        }
+
     private:
         SDL3::SDL_Window* m_sdl_window{ nullptr };
         std::unique_ptr<NVGRenderer> m_vg_renderer;

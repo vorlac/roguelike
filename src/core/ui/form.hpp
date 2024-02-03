@@ -235,6 +235,11 @@ namespace rl::ui {
             {
                 return this->checked();
             }
+
+            virtual std::string name() const override
+            {
+                return "class rl::ui::FormWidget[CheckBox]";
+            }
         };
 
         template <typename T>
@@ -268,6 +273,11 @@ namespace rl::ui {
             {
                 this->set_enabled(e);
             }
+
+            virtual std::string name() const override
+            {
+                return "class rl::ui::FormWidget[ComboBox]";
+            }
         };
 
         template <typename T>
@@ -279,6 +289,11 @@ namespace rl::ui {
             {
                 this->set_alignment(TextBox::Alignment::Right);
             }
+
+            virtual std::string name() const override
+            {
+                return "class rl::ui::FormWidget[IntBox]";
+            }
         };
 
         template <typename T>
@@ -289,6 +304,11 @@ namespace rl::ui {
                 : FloatBox<T>{ p }
             {
                 this->set_alignment(TextBox::Alignment::Right);
+            }
+
+            virtual std::string name() const override
+            {
+                return "class rl::ui::FormWidget[FloatBox]";
             }
         };
 
@@ -308,6 +328,11 @@ namespace rl::ui {
                     cb(str);
                     return true;
                 });
+            }
+
+            virtual std::string name() const override
+            {
+                return "class rl::ui::FormWidget[TextBox]";
             }
         };
     }

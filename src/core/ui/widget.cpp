@@ -12,12 +12,15 @@
 #include "ds/shared.hpp"
 #include "graphics/nvg_renderer.hpp"
 #include "graphics/vg/nanovg_state.hpp"
+#include "utils/logging.hpp"
 
 namespace rl::ui {
 
     Widget::Widget(Widget* parent)
         : m_parent{ parent }
     {
+        scoped_log();
+
         if (parent != nullptr)
             parent->add_child(this);
     }
@@ -25,6 +28,7 @@ namespace rl::ui {
     Widget::Widget(Widget* parent, const std::unique_ptr<NVGRenderer>& vg_renderer)
         : m_parent{ parent }
     {
+        scoped_log();
         runtime_assert(m_renderer == nullptr, "widget vectorized renderer already set");
         if (m_renderer == nullptr)
             m_renderer = vg_renderer.get();
@@ -35,6 +39,7 @@ namespace rl::ui {
 
     Widget::~Widget()
     {
+        scoped_log();
         for (auto child : m_children)
             if (child != nullptr)
                 child->release_ref();
@@ -42,46 +47,55 @@ namespace rl::ui {
 
     Widget* Widget::parent()
     {
+        scoped_log();
         return m_parent;
     }
 
     const Widget* Widget::parent() const
     {
+        scoped_log();
         return m_parent;
     }
 
     void Widget::set_parent(Widget* parent)
     {
+        scoped_log();
         m_parent = parent;
     }
 
     Layout* Widget::layout()
     {
+        scoped_log();
         return m_layout;
     }
 
     const Layout* Widget::layout() const
     {
+        scoped_log();
         return m_layout.get();
     }
 
     void Widget::set_layout(Layout* layout)
     {
+        scoped_log();
         m_layout = layout;
     }
 
     Theme* Widget::theme()
     {
+        scoped_log();
         return m_theme;
     }
 
     const Theme* Widget::theme() const
     {
+        scoped_log();
         return m_theme.get();
     }
 
     void Widget::set_theme(Theme* theme)
     {
+        scoped_log();
         if (m_theme.get() == theme)
             return;
 
@@ -97,11 +111,13 @@ namespace rl::ui {
 
     void Widget::set_position(ds::point<f32> pos)
     {
+        scoped_log();
         m_pos = pos;
     }
 
     ds::point<f32> Widget::abs_position() const
     {
+        scoped_log();
         return m_parent != nullptr                   //
                  ? m_parent->abs_position() + m_pos  //
                  : m_pos;                            //
@@ -124,6 +140,7 @@ namespace rl::ui {
 
     void Widget::set_width(f32 width)
     {
+        scoped_log();
         m_size.width = width;
     }
 
@@ -134,11 +151,13 @@ namespace rl::ui {
 
     void Widget::set_height(f32 height)
     {
+        scoped_log();
         m_size.height = height;
     }
 
     void Widget::set_fixed_size(ds::dims<f32> fixed_size)
     {
+        scoped_log();
         m_fixed_size = fixed_size;
     }
 
@@ -159,11 +178,13 @@ namespace rl::ui {
 
     void Widget::set_fixed_width(f32 width)
     {
+        scoped_log();
         m_fixed_size.width = width;
     }
 
     void Widget::set_fixed_height(f32 height)
     {
+        scoped_log();
         m_fixed_size.height = height;
     }
 
@@ -179,18 +200,21 @@ namespace rl::ui {
 
     bool Widget::show()
     {
+        scoped_log();
         this->set_visible(true);
         return true;
     }
 
     bool Widget::hide()
     {
+        scoped_log();
         this->set_visible(false);
         return true;
     }
 
     bool Widget::visible_recursive() const
     {
+        scoped_log();
         bool visible{ true };
 
         const Widget* widget{ this };
@@ -205,16 +229,19 @@ namespace rl::ui {
 
     i32 Widget::child_count() const
     {
+        scoped_log("{}", m_children.size());
         return static_cast<i32>(m_children.size());
     }
 
     Widget* Widget::child_at(i32 index)
     {
+        scoped_log("idx={} cnt={}", index, m_children.size());
         return m_children[index];
     }
 
     const Widget* Widget::child_at(i32 index) const
     {
+        scoped_log("idx={} cnt={}", index, m_children.size());
         return m_children[index];
     }
 
@@ -225,21 +252,21 @@ namespace rl::ui {
 
     f32 Widget::font_size() const
     {
-        return (m_font_size < 0.0f && m_theme != nullptr)  //
-                 ? m_theme->standard_font_size             //
-                 : m_font_size;                            //
+        return (m_font_size < 0.0f && m_theme != nullptr) ? m_theme->standard_font_size
+                                                          : m_font_size;
     }
 
     ds::dims<f32> Widget::preferred_size() const
     {
         auto&& context{ m_renderer->context() };
-        return m_layout != nullptr                          //
-                 ? m_layout->preferred_size(context, this)  //
-                 : m_size;                                  //
+        auto&& ret{ (m_layout != nullptr ? m_layout->preferred_size(context, this) : m_size) };
+        scoped_logger(log_level::trace, "{}", ret);
+        return ret;
     }
 
     void Widget::perform_layout()
     {
+        scoped_trace(log_level::trace);
         auto&& context{ m_renderer->context() };
         if (m_layout != nullptr)
             m_layout->perform_layout(context, this);
@@ -262,6 +289,7 @@ namespace rl::ui {
 
     Widget* Widget::find_widget(ds::point<f32> pt)
     {
+        scoped_trace(log_level::debug);
         for (auto child : std::ranges::reverse_view{ m_children })
         {
             if (!child->visible())
@@ -275,6 +303,7 @@ namespace rl::ui {
 
     const Widget* Widget::find_widget(ds::point<f32> pt) const
     {
+        scoped_trace(log_level::debug);
         for (auto child : std::ranges::reverse_view{ m_children })
         {
             if (!child->visible())
@@ -288,30 +317,35 @@ namespace rl::ui {
 
     bool Widget::on_mouse_entered(const Mouse& mouse)
     {
+        scoped_logger(log_level::warn, "enter_pos={}", mouse.pos());
         m_mouse_focus = true;
         return false;
     }
 
     bool Widget::on_mouse_exited(const Mouse& mouse)
     {
+        scoped_logger(log_level::warn, "exit_pos={}", mouse.pos());
         m_mouse_focus = false;
         return false;
     }
 
     bool Widget::on_focus_gained()
     {
+        scoped_trace(log_level::debug);
         m_focused = true;
         return true;
     }
 
     bool Widget::on_focus_lost()
     {
+        scoped_trace(log_level::debug);
         m_focused = false;
         return true;
     }
 
     bool Widget::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb)
     {
+        scoped_log("btn={}", mouse.button_pressed());
         bool handled{ false };
 
         const auto&& mouse_pos{ mouse.pos() };
@@ -341,6 +375,7 @@ namespace rl::ui {
 
     bool Widget::on_mouse_button_released(const Mouse& mouse, const Keyboard& kb)
     {
+        scoped_log("btn={}", mouse.button_released());
         bool handled{ false };
 
         auto&& mouse_pos{ mouse.pos() };
@@ -367,6 +402,7 @@ namespace rl::ui {
 
     bool Widget::on_mouse_scroll(const Mouse& mouse, const Keyboard& kb)
     {
+        scoped_logger(log_level::trace, "pos={} wheel={}", mouse.pos(), mouse.wheel());
         bool handled{ false };
 
         auto&& mouse_pos{ mouse.pos() };
@@ -393,6 +429,7 @@ namespace rl::ui {
 
     bool Widget::on_mouse_move(const Mouse& mouse, const Keyboard& kb)
     {
+        scoped_logger(log_level::trace, "pos={}", mouse.pos());
         bool handled{ false };
 
         for (auto child : std::ranges::reverse_view{ m_children })
@@ -418,6 +455,7 @@ namespace rl::ui {
 
     bool Widget::on_mouse_drag(const Mouse& mouse, const Keyboard& kb)
     {
+        scoped_log("noop");
         // do nothing,
         // derived objects should implement
         return false;
@@ -425,6 +463,7 @@ namespace rl::ui {
 
     bool Widget::on_key_pressed(const Keyboard& kb)
     {
+        scoped_log("noop");
         // do nothing,
         // derived objects should implement
         return false;
@@ -432,6 +471,7 @@ namespace rl::ui {
 
     bool Widget::on_key_released(const Keyboard& kb)
     {
+        scoped_log("noop");
         // do nothing,
         // derived objects should implement
         return false;
@@ -439,6 +479,7 @@ namespace rl::ui {
 
     bool Widget::on_character_input(const Keyboard& kb)
     {
+        scoped_log("noop");
         // do nothing,
         // derived objects should implement
         return false;
@@ -446,6 +487,7 @@ namespace rl::ui {
 
     void Widget::add_child(i32 index, Widget* widget)
     {
+        scoped_log();
         runtime_assert(index <= child_count(), "child widget index out of bounds");
         m_children.insert(m_children.begin() + index, widget);
 
@@ -456,11 +498,13 @@ namespace rl::ui {
 
     void Widget::add_child(Widget* widget)
     {
+        scoped_log("{}", widget->name());
         this->add_child(this->child_count(), widget);
     }
 
     void Widget::remove_child(const Widget* widget)
     {
+        scoped_log("{}", widget->name());
         size_t child_count{ m_children.size() };
         m_children.erase(std::remove(m_children.begin(), m_children.end(), widget),
                          m_children.end());
@@ -471,6 +515,7 @@ namespace rl::ui {
 
     void Widget::remove_child_at(i32 index)
     {
+        scoped_log();
         runtime_assert(index >= 0 && index < m_children.size(),
                        "widget child remove idx out of bounds");
 
@@ -481,6 +526,7 @@ namespace rl::ui {
 
     i32 Widget::child_index(Widget* widget) const
     {
+        scoped_log();
         auto it = std::find(m_children.begin(), m_children.end(), widget);
         if (it == m_children.end())
             return -1;
@@ -490,61 +536,73 @@ namespace rl::ui {
 
     bool Widget::enabled() const
     {
+        scoped_log("enabled={}", m_enabled);
         return m_enabled;
     }
 
     void Widget::set_enabled(bool enabled)
     {
+        scoped_log("enabled={}", enabled);
         m_enabled = enabled;
     }
 
     bool Widget::focused() const
     {
+        scoped_logger(log_level::trace, "m_focused={}", m_focused);
         return m_focused;
     }
 
     void Widget::set_focused(bool focused)
     {
+        scoped_log("focused={}", focused);
         m_focused = focused;
     }
 
     const std::string& Widget::tooltip() const
     {
+        scoped_log("m_tooltip={}", m_tooltip);
         return m_tooltip;
     }
 
     void Widget::set_tooltip(const std::string& tooltip)
     {
+        scoped_log("tooltip={}", tooltip);
         m_tooltip = tooltip;
     }
 
     void Widget::set_font_size(f32 font_size)
     {
+        scoped_log("font_size={}", font_size);
         m_font_size = font_size;
     }
 
     bool Widget::has_font_size() const
     {
+        scoped_logger(log_level::debug, "m_icon_extra_scale={}", m_icon_extra_scale);
         return m_font_size > 0;
     }
 
     f32 Widget::icon_extra_scale() const
     {
+        scoped_log("m_icon_extra_scale={}", m_icon_extra_scale);
         return m_icon_extra_scale;
     }
 
     void Widget::set_icon_extra_scale(f32 scale)
     {
+        scoped_log("scale={}", scale);
         m_icon_extra_scale = scale;
     }
 
     Mouse::Cursor::ID Widget::cursor() const
     {
+        scoped_logger(log_level::debug, "{}", static_cast<i32>(m_cursor));
         return m_cursor;
     }
 
     void Widget::set_cursor(Mouse::Cursor::ID cursor)
     {
+        scoped_log("{}", static_cast<i32>(cursor));
         m_cursor = cursor;
     }
 
@@ -557,6 +615,7 @@ namespace rl::ui {
 
     Canvas* Widget::canvas()
     {
+        scoped_log();
         Widget* widget{ this };
         while (widget != nullptr)
         {
@@ -573,6 +632,7 @@ namespace rl::ui {
 
     Dialog* Widget::dialog()
     {
+        scoped_log();
         Widget* widget{ this };
         while (widget != nullptr)
         {
@@ -589,16 +649,19 @@ namespace rl::ui {
 
     const Canvas* Widget::canvas() const
     {
+        scoped_log();
         return const_cast<Widget*>(this)->canvas();
     }
 
     const Dialog* Widget::dialog() const
     {
+        scoped_log();
         return const_cast<Widget*>(this)->dialog();
     }
 
     void Widget::request_focus()
     {
+        scoped_log();
         Widget* widget{ this };
         while (widget->parent() != nullptr)
             widget = widget->parent();
@@ -608,6 +671,7 @@ namespace rl::ui {
 
     void Widget::draw_mouse_intersection(ds::point<f32> pt)
     {
+        scoped_trace(log_level::trace);
         auto&& context{ m_renderer->context() };
 
         {
@@ -634,6 +698,7 @@ namespace rl::ui {
 
     void Widget::draw()
     {
+        scoped_trace(log_level::trace);
         if constexpr (Widget::DiagnosticsEnabled)
         {
             m_renderer->draw_rect_outline(ds::rect{ m_pos, m_size }, 1.0f, rl::Colors::Grey,
@@ -663,5 +728,10 @@ namespace rl::ui {
     {
         runtime_assert(m_theme != nullptr, "theme not set");
         return m_theme->icon_scale * m_icon_extra_scale;
+    }
+
+    std::string Widget::name() const
+    {
+        return typeid(*this).name();
     }
 }

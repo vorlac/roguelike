@@ -95,6 +95,12 @@ namespace rl::ui {
         /// @returns
         ///     A ds::dims{i32}
         virtual ds::dims<f32> preferred_size(nvg::NVGcontext* nvc, const Widget* w) const = 0;
+
+    protected:
+        std::string name() const
+        {
+            return typeid(*this).name();
+        }
     };
 
     /// @brief

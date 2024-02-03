@@ -260,3 +260,14 @@
 #define _CSTD
 #define __cplusplus
 #define wmain
+#define ARGC(__VA_ARGS__) GET_COUNT(__VA_ARGS__)
+#define VA_SELECT(NAME, __VA_ARGS__) SELECT(NAME,##(ARGC(__VA_ARGS__))##(__VA_ARGS__))
+// Hint files help the Visual Studio IDE interpret Visual C++ identifiers
+// such as names of functions and macros.
+// For more information see https://go.microsoft.com/fwlink/?linkid=865984
+#define _EXPORT_STD
+#define SPDLOG_NOEXCEPT
+// Hint files help the Visual Studio IDE interpret Visual C++ identifiers
+// such as names of functions and macros.
+// For more information see https://go.microsoft.com/fwlink/?linkid=865984
+#define _CONSTEXPR20
