@@ -12,7 +12,7 @@ namespace rl {
         {
 #ifndef NDEBUG
             // TODO: remove this after more testing
-            bool already_in_local_space{
+            const bool already_in_local_space{
                 std::ranges::find_if(m_stack,
                                      [&](const ui::Widget* w) {
                                          return w == widget;
@@ -25,7 +25,7 @@ namespace rl {
             runtime_assert(widget != nullptr, "invalid reference to UI element");
             if (m_stack.empty() || m_stack.back() != widget)
             {
-                nvg::Translate(widget->context(), widget->position());
+                nvg::translate(widget->context(), widget->position());
                 m_stack.push_back(widget);
             }
         }
@@ -33,7 +33,7 @@ namespace rl {
         inline ~LocalTransform() noexcept
         {
             const ui::Widget* widget{ m_stack.back() };
-            nvg::Translate(widget->context(), -widget->position());
+            nvg::translate(widget->context(), -widget->position());
             m_stack.pop_back();
         }
 

@@ -1,5 +1,6 @@
 #include <glad/gl.h>
 
+#include <bit>
 #include <memory>
 #include <type_traits>
 
@@ -32,7 +33,7 @@ namespace rl {
     static nvg::NVGcontext* create_nanovg_context(bool& stencil_buf, bool& depth_buf,
                                                   bool& float_buf)
     {
-        u8 float_mode{ 0 };
+        const u8 float_mode{ 0 };
         i32 depth_bits{ 0 };
         i32 stencil_bits{ 0 };
 
@@ -63,21 +64,21 @@ namespace rl {
     {
         this->load_fonts({
             //{
-            //    ui::font::name::sans,
+            //    ui::Font::name::sans,
             //    std::basic_string_view<u8>{
             //        roboto_regular_ttf,
             //        roboto_regular_ttf_size,
             //    },
             //},
             //{
-            //    ui::font::name::sans_bold,
+            //    ui::Font::name::sans_bold,
             //    std::basic_string_view<u8>{
             //        roboto_bold_ttf,
             //        roboto_bold_ttf_size,
             //    },
             //},
             //{
-            //    ui::font::name::mono,
+            //    ui::Font::name::mono,
             //    std::basic_string_view<u8>{
             //        fontawesome_solid_ttf,
             //        fontawesome_solid_ttf_size,
@@ -91,40 +92,39 @@ namespace rl {
         return m_nvg_context;
     }
 
-    void NVGRenderer::begin_frame(const ds::dims<f32>& render_size, f32 pixel_ratio)
+    void NVGRenderer::begin_frame(const ds::dims<f32>& render_size, f32 pixel_ratio) const
     {
-        nvg::BeginFrame(m_nvg_context, render_size.width, render_size.height, pixel_ratio);
+        nvg::begin_frame(m_nvg_context, render_size.width, render_size.height, pixel_ratio);
     }
 
-    void NVGRenderer::end_frame()
+    void NVGRenderer::end_frame() const
     {
-        nvg::EndFrame(m_nvg_context);
+        nvg::end_frame(m_nvg_context);
     }
 
-    void NVGRenderer::save_state()
+    void NVGRenderer::save_state() const
     {
-        nvg::Save(m_nvg_context);
+        nvg::save(m_nvg_context);
     }
 
-    void NVGRenderer::restore_state()
+    void NVGRenderer::restore_state() const
     {
-        nvg::Restore(m_nvg_context);
+        nvg::restore(m_nvg_context);
     }
 
-    void NVGRenderer::flush(const ds::dims<f32>& viewport, f32 pixel_ratio)
+    ui::Font::ID NVGRenderer::load_font(const std::string_view& font_name,
+                                        const std::u8string_view& font_ttf) const
+    {
+        return nvg::create_font_mem(m_nvg_context, font_name, (u8*)font_ttf.data());
+    }
+
+    void NVGRenderer::flush(const ds::dims<f32>& viewport, const f32 pixel_ratio) const
     {
         // Flush all queued up NanoVG rendering commands
-        nvg::NVGparams* params{ nvg::InternalParams(m_nvg_context) };
+        const nvg::NVGparams* params{ nvg::internal_params(m_nvg_context) };
         params->renderFlush(params->userPtr);
         params->renderViewport(params->userPtr, static_cast<f32>(viewport.width),
                                static_cast<f32>(viewport.height), pixel_ratio);
-    }
-
-    ui::font::ID NVGRenderer::load_font(const std::string& font_name,
-                                        std::basic_string_view<u8>&& font_ttf)
-    {
-        return nvg::CreateFontMem(m_nvg_context, font_name.data(), const_cast<u8*>(font_ttf.data()),
-                                  static_cast<i32>(font_ttf.size()), 0);
     }
 
     void NVGRenderer::load_fonts(std::vector<FontInfo>&& fonts)
@@ -132,7 +132,7 @@ namespace rl {
         for (auto&& font_info : fonts)
         {
             auto&& [font_name, font_ttf] = font_info;
-            auto handle{ this->load_font(font_name, std::forward<decltype(font_ttf)>(font_ttf)) };
+            const auto handle{ this->load_font(font_name, font_ttf) };
             m_font_map[font_name] = handle;
         }
     }
@@ -140,20 +140,26 @@ namespace rl {
     void NVGRenderer::set_text_properties(const std::string_view& font_name, f32 font_size,
                                           ui::Text::Alignment alignment) const
     {
-        nvg::FontFace(m_nvg_context, font_name.data());
-        nvg::FontSize(m_nvg_context, font_size);
-        nvg::TextAlign(m_nvg_context, alignment);
+        nvg::font_face(m_nvg_context, font_name.data());
+        nvg::font_size(m_nvg_context, font_size);
+        nvg::text_align(m_nvg_context, alignment);
+    }
+
+    ds::dims<f32> NVGRenderer::get_text_size(const std::string& text) const
+    {
+        assert_cond(false);
+        return {};
     }
 
     ds::rect<f32> NVGRenderer::get_text_box_rect(
-        const std::string& text, const ds::point<f32>& pos, std::string_view& font_name,
-        f32 font_size, f32 fold_width, ui::Text::Alignment alignment) const
+        const std::string& text, const ds::point<f32>& pos, const std::string_view& font_name,
+        const f32 font_size, const f32 fold_width, const ui::Text::Alignment alignment) const
     {
         this->set_text_properties(font_name, font_size, alignment);
 
         std::array<f32, 4> bounds{ 0.0f };
-        nvg::TextBoxBounds(m_nvg_context, pos.x, pos.y, fold_width, text.data(), nullptr,
-                           &bounds.front());
+        nvg::text_box_bounds(m_nvg_context, pos.x, pos.y, fold_width, text.data(), nullptr,
+                             &bounds.front());
 
         return ds::rect<f32>{
             pos,
@@ -164,41 +170,43 @@ namespace rl {
         };
     }
 
-    ds::dims<f32> NVGRenderer::get_text_size(const std::string& text, const std::string& font_name,
-                                             f32 font_size, ui::Text::Alignment alignment) const
+    ds::dims<f32> NVGRenderer::get_text_size(const std::string& text,
+                                             const std::string_view& font_name, const f32 font_size,
+                                             const ui::Text::Alignment alignment) const
     {
         this->set_text_properties(font_name, font_size, alignment);
 
-        f32 width{ nvg::TextBounds(m_nvg_context, 0.0f, 0.0f, text.data(), nullptr, nullptr) };
+        const f32 width{ nvg::text_bounds(m_nvg_context, 0.0f, 0.0f, text.data(), nullptr,
+                                          nullptr) };
 
-        constexpr static f32 WIDTH_BUFFER{ 2.0f };
+        constexpr static f32 width_buffer{ 2.0f };
         return ds::dims<f32>{
-            width + WIDTH_BUFFER,
+            width + width_buffer,
             font_size,
         };
     }
 
-    void NVGRenderer::draw_rect_outline(const ds::rect<f32>& rect, f32 stroke_width,
-                                        const ds::color<f32>& color, ui::Outline type)
+    void NVGRenderer::draw_rect_outline(const ds::rect<f32>& rect, const f32 stroke_width,
+                                        const ds::color<f32>& color, const ui::Outline type) const
     {
-        nvg::StrokeWidth(m_nvg_context, stroke_width);
-        nvg::BeginPath(m_nvg_context);
+        nvg::stroke_width(m_nvg_context, stroke_width);
+        nvg::begin_path(m_nvg_context);
 
         switch (type)
         {
             case ui::Outline::Inner:
-                nvg::Rect(m_nvg_context, rect.pt.x + (stroke_width / 2.0f),
+                nvg::rect(m_nvg_context, rect.pt.x + (stroke_width / 2.0f),
                           rect.pt.y + (stroke_width / 2.0f), rect.size.width - stroke_width,
                           rect.size.height - stroke_width);
                 break;
             case ui::Outline::Outer:
-                nvg::Rect(m_nvg_context, rect.pt.x - (stroke_width / 2.0f),
+                nvg::rect(m_nvg_context, rect.pt.x - (stroke_width / 2.0f),
                           rect.pt.y - (stroke_width / 2.0f), rect.size.width + stroke_width,
                           rect.size.height + stroke_width);
                 break;
         }
 
-        nvg::StrokeColor(m_nvg_context, color.nvg());
-        nvg::Stroke(m_nvg_context);
+        nvg::stroke_color(m_nvg_context, color.nvg());
+        nvg::stroke(m_nvg_context);
     }
 }

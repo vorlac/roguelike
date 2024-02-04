@@ -15,7 +15,7 @@ namespace rl::ui {
         return m_scroll;
     }
 
-    void VScrollPanel::set_scroll(f32 scroll)
+    void VScrollPanel::set_scroll(const f32 scroll)
     {
         // Set the scroll amount to a value between 0 and 1. 0 means scrolled to
         // the top and 1 to the bottom.
@@ -173,39 +173,39 @@ namespace rl::ui {
             child->perform_layout();
         }
 
-        nvg::Save(context);
-        nvg::Translate(context, m_pos.x, m_pos.y);
-        nvg::IntersectScissor(context, 0.0f, 0.0f, m_size.width, m_size.height);
+        nvg::save(context);
+        nvg::translate(context, m_pos.x, m_pos.y);
+        nvg::intersect_scissor(context, 0.0f, 0.0f, m_size.width, m_size.height);
 
         if (child->visible())
             child->draw();
 
-        nvg::Restore(context);
+        nvg::restore(context);
 
         if (m_child_preferred_height <= m_size.height)
             return;
 
-        nvg::NVGpaint paint{ nvg::BoxGradient(context, m_pos.x + m_size.width - 12.0f + 1.0f,
-                                              m_pos.y + 4.0f + 1.0f, 8.0f, m_size.height - 8.0f,
-                                              3.0f, 4.0f, ds::color<f32>{ 0, 0, 0, 32 },
-                                              ds::color<f32>{ 0, 0, 0, 92 }) };
-        nvg::BeginPath(context);
-        nvg::RoundedRect(context, m_pos.x + m_size.width - 12.0f, m_pos.y + 4.0f, 8.0f,
-                         m_size.height - 8.0f, 3.0f);
-        nvg::FillPaint(context, paint);
-        nvg::Fill(context);
+        nvg::NVGpaint paint{ nvg::box_gradient(context, m_pos.x + m_size.width - 12.0f + 1.0f,
+                                               m_pos.y + 4.0f + 1.0f, 8.0f, m_size.height - 8.0f,
+                                               3.0f, 4.0f, ds::color<f32>{ 0, 0, 0, 32 },
+                                               ds::color<f32>{ 0, 0, 0, 92 }) };
+        nvg::begin_path(context);
+        nvg::rounded_rect(context, m_pos.x + m_size.width - 12.0f, m_pos.y + 4.0f, 8.0f,
+                          m_size.height - 8.0f, 3.0f);
+        nvg::fill_paint(context, paint);
+        nvg::fill(context);
 
-        paint = nvg::BoxGradient(
+        paint = nvg::box_gradient(
             context, m_pos.x + m_size.width - 12.0f - 1.0f,
             m_pos.y + 4.0f + (m_size.height - 8.0f - scrollh) * m_scroll - 1.0f, 8.0f, scrollh,
             3.0f, 4.0f, ds::color<f32>{ 220, 220, 220, 100 }, ds::color<f32>{ 128, 128, 128, 100 });
 
-        nvg::BeginPath(context);
-        nvg::RoundedRect(context, m_pos.x + m_size.width - 1.0f + 1.0f,
-                         m_pos.y + 4.0f + 1.0f + (m_size.height - 8.0f - scrollh) * m_scroll,
-                         8.0f - 2.0f, scrollh - 2.0f, 2.0f);
+        nvg::begin_path(context);
+        nvg::rounded_rect(context, m_pos.x + m_size.width - 1.0f + 1.0f,
+                          m_pos.y + 4.0f + 1.0f + (m_size.height - 8.0f - scrollh) * m_scroll,
+                          8.0f - 2.0f, scrollh - 2.0f, 2.0f);
 
-        nvg::FillPaint(context, paint);
-        nvg::Fill(context);
+        nvg::fill_paint(context, paint);
+        nvg::fill(context);
     }
 }

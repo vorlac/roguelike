@@ -6,7 +6,7 @@
 
 namespace rl {
 
-    void Mouse::process_button_down(Mouse::Button::ID mouse_button)
+    void Mouse::process_button_down(const Mouse::Button::ID mouse_button)
     {
         runtime_assert(mouse_button - 1 < Mouse::Button::Count, "invalid mouse button");
 
@@ -18,7 +18,7 @@ namespace rl {
         m_buttons_released = 0;  //&= ~SDL_BUTTON(mouse_button);
     }
 
-    void Mouse::process_button_up(Mouse::Button::ID mouse_button)
+    void Mouse::process_button_up(const Mouse::Button::ID mouse_button)
     {
         runtime_assert(mouse_button - 1 < Mouse::Button::Count, "invalid mouse button");
 
@@ -86,22 +86,22 @@ namespace rl {
         return Mouse::Button::ID(m_buttons_released);
     }
 
-    bool Mouse::is_button_down(Mouse::Button::ID button) const
+    bool Mouse::is_button_down(const Mouse::Button::ID button) const
     {
         return this->is_button_pressed(button) || this->is_button_held(button);
     }
 
-    bool Mouse::is_button_pressed(Mouse::Button::ID button) const
+    bool Mouse::is_button_pressed(const Mouse::Button::ID button) const
     {
         return 0 != (m_buttons_pressed & SDL_BUTTON(button));
     }
 
-    bool Mouse::is_button_released(Mouse::Button::ID button) const
+    bool Mouse::is_button_released(const Mouse::Button::ID button) const
     {
         return 0 != (m_buttons_released & SDL_BUTTON(button));
     }
 
-    bool Mouse::is_button_held(Mouse::Button::ID button) const
+    bool Mouse::is_button_held(const Mouse::Button::ID button) const
     {
         return 0 != (m_buttons_held & SDL_BUTTON(button));
     }
@@ -129,7 +129,7 @@ namespace rl {
         return typeid(*this).name();
     }
 
-    std::string Mouse::get_button_state(Mouse::Button::ID button) const
+    std::string Mouse::get_button_state(const Mouse::Button::ID button) const
     {
         return this->is_button_held(button)     ? "Held"
              : this->is_button_pressed(button)  ? "Pressed"

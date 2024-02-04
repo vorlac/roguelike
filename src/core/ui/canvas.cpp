@@ -59,7 +59,7 @@ namespace rl::ui {
     {
         auto&& context{ m_renderer->context() };
         constexpr static f32 PIXEL_RATIO{ 1.0f };
-        nvg::BeginFrame(context, m_size.width, m_size.height, PIXEL_RATIO);
+        nvg::begin_frame(context, m_size.width, m_size.height, PIXEL_RATIO);
 
         this->draw();
 
@@ -86,19 +86,19 @@ namespace rl::ui {
                         ds::point{ (widget->width() / 2.0f), widget->height() + 10.0f },
                 };
 
-                nvg::FontFace(context, font::name::sans);
-                nvg::FontSize(context, 20.0f);
-                nvg::TextAlign(context, Text::Alignment::HLeftVTop);
-                nvg::TextLineHeight(context, 1.125f);
-                nvg::TextBounds(context, pos.x, pos.y, widget->tooltip().c_str(), nullptr,
-                                bounds.data());
+                nvg::font_face(context, Font::Name::Sans);
+                nvg::font_size(context, 20.0f);
+                nvg::text_align(context, Text::Alignment::HLeftVTop);
+                nvg::text_line_height(context, 1.125f);
+                nvg::text_bounds(context, pos.x, pos.y, widget->tooltip().c_str(), nullptr,
+                                 bounds.data());
 
                 f32 height{ (bounds[2] - bounds[0]) / 2.0f };
                 if (height > (tooltip_width / 2.0f))
                 {
-                    nvg::TextAlign(context, Text::Alignment::HMiddleVTop);
-                    nvg::TextBoxBounds(context, pos.x, pos.y, tooltip_width,
-                                       widget->tooltip().c_str(), nullptr, bounds.data());
+                    nvg::text_align(context, Text::Alignment::HMiddleVTop);
+                    nvg::text_box_bounds(context, pos.x, pos.y, tooltip_width,
+                                         widget->tooltip().c_str(), nullptr, bounds.data());
 
                     height = (bounds[2] - bounds[0]) / 2;
                 }
@@ -113,29 +113,30 @@ namespace rl::ui {
                     bounds[2] -= shift;
                 }
 
-                nvg::GlobalAlpha(context, std::min(1.0f, 2.0f * (elapsed - m_tooltip_delay)) * 0.8f);
+                nvg::global_alpha(context,
+                                  std::min(1.0f, 2.0f * (elapsed - m_tooltip_delay)) * 0.8f);
 
-                nvg::BeginPath(context);
-                nvg::FillColor(context, rl::Colors::DarkererGrey);
-                nvg::RoundedRect(context, bounds[0] - 4.0f - height, bounds[1] - 4.0f,
-                                 (bounds[2] - bounds[0]) + 8.0f, (bounds[3] - bounds[1]) + 8.0f,
-                                 3.0f);
+                nvg::begin_path(context);
+                nvg::fill_color(context, rl::Colors::DarkererGrey);
+                nvg::rounded_rect(context, bounds[0] - 4.0f - height, bounds[1] - 4.0f,
+                                  (bounds[2] - bounds[0]) + 8.0f, (bounds[3] - bounds[1]) + 8.0f,
+                                  3.0f);
 
                 const f32 px{ ((bounds[2] + bounds[0]) / 2.0f) - height + shift };
 
-                nvg::MoveTo(context, px, bounds[1] - 10);
-                nvg::LineTo(context, px + 7, bounds[1] + 1);
-                nvg::LineTo(context, px - 7, bounds[1] + 1);
-                nvg::Fill(context);
+                nvg::move_to(context, px, bounds[1] - 10);
+                nvg::line_to(context, px + 7, bounds[1] + 1);
+                nvg::line_to(context, px - 7, bounds[1] + 1);
+                nvg::fill(context);
 
-                nvg::FillColor(context, rl::Colors::White);
-                nvg::FontBlur(context, 0.0f);
-                nvg::TextBox(context, pos.x - height, pos.y, tooltip_width,
-                             widget->tooltip().c_str(), nullptr);
+                nvg::fill_color(context, rl::Colors::White);
+                nvg::font_blur(context, 0.0f);
+                nvg::text_box(context, pos.x - height, pos.y, tooltip_width,
+                              widget->tooltip().c_str(), nullptr);
             }
         }
 
-        nvg::EndFrame(context);
+        nvg::end_frame(context);
 
         return true;
     }
@@ -162,7 +163,7 @@ namespace rl::ui {
         return ret;
     }
 
-    void Canvas::set_visible(bool visible)
+    void Canvas::set_visible(const bool visible)
     {
         if (visible != m_visible)
         {
@@ -372,7 +373,7 @@ namespace rl::ui {
         return true;
     }
 
-    bool Canvas::on_resized(ds::dims<f32> size)
+    bool Canvas::on_resized(const ds::dims<f32> size)
     {
         scoped_log("{} => {}", ds::rect{ m_pos, m_size }, ds::rect{ m_pos, size / m_pixel_ratio });
 

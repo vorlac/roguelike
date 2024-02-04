@@ -15,7 +15,7 @@ namespace rl::ui {
         return m_value;
     }
 
-    void Slider::set_value(f32 value)
+    void Slider::set_value(const f32 value)
     {
         m_value = value;
     }
@@ -35,7 +35,7 @@ namespace rl::ui {
         return m_range;
     }
 
-    void Slider::set_range(std::pair<f32, f32> range)
+    void Slider::set_range(const std::pair<f32, f32> range)
     {
         m_range = range;
     }
@@ -45,7 +45,7 @@ namespace rl::ui {
         return m_highlighted_range;
     }
 
-    void Slider::set_highlighted_range(std::pair<f32, f32> highlighted_range)
+    void Slider::set_highlighted_range(const std::pair<f32, f32> highlighted_range)
     {
         m_highlighted_range = highlighted_range;
     }
@@ -162,58 +162,58 @@ namespace rl::ui {
             center.y + 0.5f,
         };
 
-        nvg::NVGpaint bg{ nvg::BoxGradient(
+        nvg::NVGpaint bg{ nvg::box_gradient(
             context, start_x, center.y - 3.0f + 1.0f, width_x, 6.0f, 3.0f, 3.0f,
             ds::color<f32>{ 0, 0, 0, m_enabled ? 32 : 10 }.nvg(),
             ds::color<f32>{ 0, 0, 0, m_enabled ? 128 : 210 }.nvg()) };
 
-        nvg::BeginPath(context);
-        nvg::RoundedRect(context, start_x, center.y - 3.0f + 1.0f, width_x, 6.0f, 2.0f);
-        nvg::FillPaint(context, bg);
-        nvg::Fill(context);
+        nvg::begin_path(context);
+        nvg::rounded_rect(context, start_x, center.y - 3.0f + 1.0f, width_x, 6.0f, 2.0f);
+        nvg::fill_paint(context, bg);
+        nvg::fill(context);
 
         if (m_highlighted_range.second != m_highlighted_range.first)
         {
-            nvg::BeginPath(context);
-            nvg::RoundedRect(context, start_x + m_highlighted_range.first * m_size.width,
-                             center.y - kshadow + 1.0f,
-                             width_x * (m_highlighted_range.second - m_highlighted_range.first),
-                             kshadow * 2.0f, 2.0f);
-            nvg::FillColor(context, m_highlight_color.nvg());
-            nvg::Fill(context);
+            nvg::begin_path(context);
+            nvg::rounded_rect(context, start_x + m_highlighted_range.first * m_size.width,
+                              center.y - kshadow + 1.0f,
+                              width_x * (m_highlighted_range.second - m_highlighted_range.first),
+                              kshadow * 2.0f, 2.0f);
+            nvg::fill_color(context, m_highlight_color.nvg());
+            nvg::fill(context);
         }
 
         nvg::NVGpaint knob_shadow{
-            nvg::RadialGradient(context, knob_pos.x, knob_pos.y, kr - kshadow, kr + kshadow,
-                                ds::color<f32>{ 0, 0, 0, 64 }, m_theme->transparent.nvg()),
+            nvg::radial_gradient(context, knob_pos.x, knob_pos.y, kr - kshadow, kr + kshadow,
+                                 ds::color<f32>{ 0, 0, 0, 64 }, m_theme->transparent.nvg()),
         };
 
-        nvg::BeginPath(context);
-        nvg::Rect(context, knob_pos.x - kr - 5.0f, knob_pos.y - kr - 5.0f, kr * 2.0f + 10.0f,
+        nvg::begin_path(context);
+        nvg::rect(context, knob_pos.x - kr - 5.0f, knob_pos.y - kr - 5.0f, kr * 2.0f + 10.0f,
                   kr * 2.0f + 10.0f + kshadow);
-        nvg::Circle(context, knob_pos.x, knob_pos.y, kr);
-        nvg::PathWinding(context, nvg::NVG_HOLE);
-        nvg::FillPaint(context, knob_shadow);
-        nvg::Fill(context);
+        nvg::circle(context, knob_pos.x, knob_pos.y, kr);
+        nvg::path_winding(context, nvg::NVG_HOLE);
+        nvg::fill_paint(context, knob_shadow);
+        nvg::fill(context);
 
-        nvg::NVGpaint knob{ nvg::LinearGradient(context, m_pos.x, center.y - kr, m_pos.x,
-                                                center.y + kr, m_theme->border_light.nvg(),
-                                                m_theme->border_medium.nvg()) };
-        nvg::NVGpaint knob_reverse{ nvg::LinearGradient(context, m_pos.x, center.y - kr, m_pos.x,
-                                                        center.y + kr, m_theme->border_medium.nvg(),
-                                                        m_theme->border_light.nvg()) };
+        nvg::NVGpaint knob{ nvg::linear_gradient(context, m_pos.x, center.y - kr, m_pos.x,
+                                                 center.y + kr, m_theme->border_light.nvg(),
+                                                 m_theme->border_medium.nvg()) };
+        nvg::NVGpaint knob_reverse{ nvg::linear_gradient(
+            context, m_pos.x, center.y - kr, m_pos.x, center.y + kr, m_theme->border_medium.nvg(),
+            m_theme->border_light.nvg()) };
 
-        nvg::BeginPath(context);
-        nvg::Circle(context, knob_pos.x, knob_pos.y, kr);
-        nvg::StrokeColor(context, m_theme->border_dark.nvg());
-        nvg::FillPaint(context, knob);
-        nvg::Stroke(context);
-        nvg::Fill(context);
-        nvg::BeginPath(context);
-        nvg::Circle(context, knob_pos.x, knob_pos.y, kr / 2.0f);
-        nvg::FillColor(context, ds::color<f32>{ 150, 150, 150, m_enabled ? 255 : 100 }.nvg());
-        nvg::StrokePaint(context, knob_reverse);
-        nvg::Stroke(context);
-        nvg::Fill(context);
+        nvg::begin_path(context);
+        nvg::circle(context, knob_pos.x, knob_pos.y, kr);
+        nvg::stroke_color(context, m_theme->border_dark.nvg());
+        nvg::fill_paint(context, knob);
+        nvg::stroke(context);
+        nvg::fill(context);
+        nvg::begin_path(context);
+        nvg::circle(context, knob_pos.x, knob_pos.y, kr / 2.0f);
+        nvg::fill_color(context, ds::color<f32>{ 150, 150, 150, m_enabled ? 255 : 100 }.nvg());
+        nvg::stroke_paint(context, knob_reverse);
+        nvg::stroke(context);
+        nvg::fill(context);
     }
 }

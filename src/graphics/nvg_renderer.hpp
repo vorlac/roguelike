@@ -20,42 +20,43 @@ namespace rl {
     class NVGRenderer
     {
     public:
-        using FontInfo = std::pair<std::string, std::basic_string_view<u8>>;
+        using FontInfo = std::pair<std::string, std::u8string_view>;
 
     public:
         NVGRenderer();
 
-        void flush(const ds::dims<f32>& viewport, f32 pixel_ratio = 1.0f);
-        void render_frame(const ds::dims<f32>& render_size, f32 pixel_ratio, auto&& render_func);
-        void begin_frame(const ds::dims<f32>& render_size, f32 pixel_ratio = 1.0f);
-        void end_frame();
+        void flush(const ds::dims<f32>& viewport, f32 pixel_ratio = 1.0f) const;
+        void begin_frame(const ds::dims<f32>& render_size, f32 pixel_ratio = 1.0f) const;
+        void end_frame() const;
 
-        void save_state();
-        void restore_state();
+        void save_state() const;
+        void restore_state() const;
 
-        ui::font::ID load_font(const std::string& font_name, std::basic_string_view<u8>&& font_ttf);
+        ui::Font::ID load_font(const std::string_view& font_name,
+                               const std::u8string_view& font_ttf) const;
 
         void load_fonts(std::vector<FontInfo>&& fonts);
         void set_text_properties(const std::string_view& font_name, f32 font_size,
                                  ui::Text::Alignment alignment) const;
 
-        ds::dims<f32> get_text_size(const std::string& text) const;
-        ds::dims<f32> get_text_size(
-            const std::string& text, const std::string& font_name, f32 font_size,
+        [[nodiscard]] ds::dims<f32> get_text_size(const std::string& text) const;
+        [[nodiscard]] ds::dims<f32> get_text_size(
+            const std::string& text, const std::string_view& font_name, f32 font_size,
             ui::Text::Alignment alignment = ui::Text::Alignment::HCenterVMiddle) const;
-        ds::rect<f32> get_text_box_rect(
-            const std::string& text, const ds::point<f32>& pos, std::string_view& font_name,
+
+        [[nodiscard]] ds::rect<f32> get_text_box_rect(
+            const std::string& text, const ds::point<f32>& pos, const std::string_view& font_name,
             f32 font_size, f32 fold_width,
             ui::Text::Alignment alignment = ui::Text::Alignment::HLeftVTop) const;
 
         void draw_rect_outline(const ds::rect<f32>& rect, f32 stroke_width,
-                               const ds::color<f32>& color, ui::Outline type);
+                               const ds::color<f32>& color, ui::Outline type) const;
 
-        nvg::NVGcontext* context() const;
+        [[nodiscard]] nvg::NVGcontext* context() const;
 
     public:
         template <std::invocable TCallable>
-        inline void state_scoped_draw(TCallable&& callable)
+        inline void scoped_draw(TCallable&& callable)
         {
             this->save_state();
             std::invoke(std::forward<decltype(callable)>(callable));
@@ -64,7 +65,7 @@ namespace rl {
 
         template <std::invocable TCallable>
         inline void draw_frame(TCallable&& callable, const ds::dims<f32>& render_size,
-                               f32 pixel_ratio)
+                               const f32 pixel_ratio)
         {
             this->begin_frame(render_size, pixel_ratio);
             std::invoke(std::forward<decltype(callable)>(callable));
@@ -76,6 +77,6 @@ namespace rl {
         bool m_stencil_buffer{ false };
         bool m_float_buffer{ false };
         nvg::NVGcontext* m_nvg_context{ nullptr };
-        ui::font::Map m_font_map{};
+        ui::Font::Map m_font_map{};
     };
 }

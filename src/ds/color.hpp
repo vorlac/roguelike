@@ -30,15 +30,15 @@ namespace rl::ds {
     struct color
     {
     public:
-        constexpr static inline T Transparent = T(0);
-        constexpr static inline T Opaque = sizeof(T) == sizeof(u8) ? static_cast<T>(255)
+        constexpr static inline T transparent = T(0);
+        constexpr static inline T opaque = sizeof(T) == sizeof(u8) ? static_cast<T>(255)
                                                                    : static_cast<T>(1.0f);
 
     public:
-        consteval inline color() = default;
-        constexpr inline ~color() = default;
+        consteval color() = default;
+        constexpr ~color() = default;
 
-        consteval inline color(T cr, T cg, T cb, T ca = Opaque)
+        consteval color(T cr, T cg, T cb, T ca = opaque)
             : r{ cr }
             , g{ cg }
             , b{ cb }
@@ -46,7 +46,7 @@ namespace rl::ds {
         {
         }
 
-        constexpr inline color(color<T>&& other)
+        constexpr color(color<T>&& other) noexcept
             : r{ other.r }
             , g{ other.g }
             , b{ other.b }
@@ -54,7 +54,7 @@ namespace rl::ds {
         {
         }
 
-        constexpr inline color(const color<T>& other)
+        constexpr color(const color<T>& other)
             : r{ other.r }
             , g{ other.g }
             , b{ other.b }
@@ -62,7 +62,7 @@ namespace rl::ds {
         {
         }
 
-        constexpr inline color(T ri, T gi, T bi, T ai = Opaque)
+        constexpr color(T ri, T gi, T bi, T ai = opaque)
             requires rl::integer<T>
             : r{ static_cast<u8>(ri) }
             , g{ static_cast<u8>(gi) }
@@ -71,7 +71,7 @@ namespace rl::ds {
         {
         }
 
-        constexpr inline color(T rf, T gf, T bf, T af = Opaque)
+        constexpr color(T rf, T gf, T bf, T af = opaque)
             requires rl::floating_point<T>
             : r{ static_cast<f32>(rf) }
             , g{ static_cast<f32>(gf) }
@@ -82,7 +82,7 @@ namespace rl::ds {
 
         template <rl::integer I>
             requires rl::floating_point<T>
-        constexpr inline color(I ri, I gi, I bi, I ai = Opaque)
+        constexpr color(I ri, I gi, I bi, I ai = opaque)
             : r{ static_cast<T>(static_cast<u8>(ri) / 255.0f) }
             , g{ static_cast<T>(static_cast<u8>(gi) / 255.0f) }
             , b{ static_cast<T>(static_cast<u8>(bi) / 255.0f) }
@@ -92,7 +92,7 @@ namespace rl::ds {
 
         template <rl::floating_point F>
             requires rl::integer<T>
-        explicit constexpr inline color(F rf, F gf, F bf, F af = Opaque)
+        explicit constexpr color(F rf, F gf, F bf, F af = opaque)
             : r{ static_cast<T>(std::clamp(static_cast<f32>(rf) * 255.0f, 0.0f, 255.0f)) }
             , g{ static_cast<T>(std::clamp(static_cast<f32>(gf) * 255.0f, 0.0f, 255.0f)) }
             , b{ static_cast<T>(std::clamp(static_cast<f32>(bf) * 255.0f, 0.0f, 255.0f)) }
@@ -101,7 +101,7 @@ namespace rl::ds {
         }
 
         // 0xRRGGBBAA
-        explicit constexpr inline color(u32 rgba)
+        explicit constexpr color(u32 rgba)
             requires std::same_as<T, u8>
             : r{ static_cast<u8>(0xff & (rgba >> (8 * 3))) }
             , g{ static_cast<u8>(0xff & (rgba >> (8 * 2))) }
@@ -111,7 +111,7 @@ namespace rl::ds {
         }
 
         // 0xRRGGBBAA
-        explicit constexpr inline color(u32 rgba)
+        explicit constexpr color(u32 rgba)
             requires std::same_as<T, f32>
             : r{ static_cast<f32>((0xff & (rgba >> (8 * 3))) / 255.0f) }
             , g{ static_cast<f32>((0xff & (rgba >> (8 * 2))) / 255.0f) }
@@ -121,26 +121,26 @@ namespace rl::ds {
         }
 
         // 0x00RRGGBB
-        constexpr inline color(fmt::rgb rgb)
+        constexpr color(fmt::rgb rgb)
             requires std::same_as<T, u8>
             : r{ rgb.r }
             , g{ rgb.g }
             , b{ rgb.b }
-            , a{ Opaque }
+            , a{ opaque }
         {
         }
 
-        constexpr static inline ds::color<T> rand()
+        constexpr static ds::color<T> rand()
         {
             return ds::color<T>{
                 static_cast<u8>(rl::random<0, 128>::value()),
                 static_cast<u8>(rl::random<0, 128>::value()),
                 static_cast<u8>(rl::random<0, 128>::value()),
-                static_cast<u8>(Opaque),
+                static_cast<u8>(opaque),
             };
         }
 
-        constexpr inline nvg::NVGcolor nvg() const
+        [[nodiscard]] constexpr nvg::NVGcolor nvg() const
             requires rl::integer<T>
         {
             return nvg::NVGcolor{
@@ -151,14 +151,14 @@ namespace rl::ds {
             };
         }
 
-        constexpr inline nvg::NVGcolor nvg() const
+        [[nodiscard]] constexpr nvg::NVGcolor nvg() const
             requires rl::floating_point<T>
         {
             return nvg::NVGcolor{ r, g, b, a };
         }
 
     public:
-        constexpr inline const color<T>& operator=(const color<T>& other)
+        constexpr color<T>& operator=(const color<T>& other)
         {
             this->r = other.r;
             this->g = other.g;
@@ -167,7 +167,7 @@ namespace rl::ds {
             return *this;
         }
 
-        constexpr inline const color<T>& operator=(color<T>&& other)
+        constexpr color<T>& operator=(color<T>&& other)
         {
             this->r = other.r;
             this->g = other.g;
@@ -177,7 +177,7 @@ namespace rl::ds {
         }
 
     public:
-        constexpr inline color<T> operator+(const color<T>& other) const
+        constexpr color<T> operator+(const color<T>& other) const
         {
             return {
                 static_cast<T>(r + other.r),
@@ -187,7 +187,7 @@ namespace rl::ds {
             };
         }
 
-        constexpr inline color<T> operator-(const color<T>& other) const
+        constexpr color<T> operator-(const color<T>& other) const
         {
             return {
                 static_cast<T>(r - other.r),
@@ -197,7 +197,7 @@ namespace rl::ds {
             };
         }
 
-        constexpr inline color<T> operator*(const color<T>& other) const
+        constexpr color<T> operator*(const color<T>& other) const
         {
             return {
                 static_cast<T>(r * other.r),
@@ -207,7 +207,7 @@ namespace rl::ds {
             };
         }
 
-        constexpr inline color<T> operator/(const color<T>& other) const
+        constexpr color<T> operator/(const color<T>& other) const
         {
             return {
                 static_cast<T>(r / other.r),
@@ -218,7 +218,7 @@ namespace rl::ds {
         }
 
         template <rl::numeric N>
-        constexpr inline color<T> operator+(const N val) const
+        constexpr color<T> operator+(const N val) const
         {
             return {
                 static_cast<T>(r + val),
@@ -229,7 +229,7 @@ namespace rl::ds {
         }
 
         template <rl::numeric N>
-        constexpr inline color<T> operator-(const N val) const
+        constexpr color<T> operator-(const N val) const
         {
             return {
                 static_cast<T>(r - val),
@@ -240,7 +240,7 @@ namespace rl::ds {
         }
 
         template <rl::numeric N>
-        constexpr inline color<T> operator*(const N val) const
+        constexpr color<T> operator*(const N val) const
         {
             return {
                 static_cast<T>(r * val),
@@ -251,7 +251,7 @@ namespace rl::ds {
         }
 
         template <rl::numeric N>
-        constexpr inline color<T> operator/(const N val) const
+        constexpr color<T> operator/(const N val) const
         {
             return {
                 static_cast<T>(r / val),
@@ -261,63 +261,63 @@ namespace rl::ds {
             };
         }
 
-        constexpr inline color<T>& operator+=(const color<T>& other)
+        constexpr color<T>& operator+=(const color<T>& other)
         {
             *this = (*this + other);
             return *this;
         }
 
-        constexpr inline color<T>& operator-=(const color<T>& other)
+        constexpr color<T>& operator-=(const color<T>& other)
         {
             *this = (*this - other);
             return *this;
         }
 
-        constexpr inline color<T>& operator*=(const color<T>& other)
+        constexpr color<T>& operator*=(const color<T>& other)
         {
             *this = (*this * other);
             return *this;
         }
 
-        constexpr inline color<T>& operator/=(const color<T>& other)
+        constexpr color<T>& operator/=(const color<T>& other)
         {
             *this = (*this / other);
             return *this;
         }
 
     public:
-        constexpr static inline color<T> lerp(const color<T>& s, const color<T>& e, T step)
+        constexpr static color<T> lerp(const color<T>& s, const color<T>& e, T step)
         {
             return { s + (e - s) * step };
         }
 
-        inline u32 rgb(const SDL3::SDL_PixelFormat* format) const
+        u32 rgb(const SDL3::SDL_PixelFormat* format) const
         {
             return SDL3::SDL_MapRGB(format, this->r, this->g, this->b);
         }
 
-        inline u32 rgba(const SDL3::SDL_PixelFormat* format) const
+        u32 rgba(const SDL3::SDL_PixelFormat* format) const
         {
             return SDL3::SDL_MapRGBA(format, this->r, this->g, this->b, this->a);
         }
 
-        constexpr inline bool operator==(const color& other) const
+        constexpr bool operator==(const color& other) const
         {
             return 0 == memory::static_memcmp<sizeof(*this)>(this, &other);
         }
 
-        constexpr inline bool is_empty() const
+        constexpr bool is_empty() const
         {
             return this->operator==({});
         }
 
-        constexpr inline bool operator!=(const color& other) const
+        constexpr bool operator!=(const color& other) const
         {
             return !this->operator==(other);
         }
 
     public:
-        consteval inline color<f32> to_f32() const
+        consteval color<f32> to_f32() const
             requires std::same_as<T, u8>
         {
             return color<f32>{
@@ -328,7 +328,7 @@ namespace rl::ds {
             };
         }
 
-        consteval inline color<u8> to_u8() const
+        consteval color<u8> to_u8() const
             requires std::same_as<T, f32>
         {
             return color<u8>{
@@ -339,7 +339,7 @@ namespace rl::ds {
             };
         }
 
-        consteval inline operator const nvg::NVGcolor()
+        consteval operator const nvg::NVGcolor()
             requires rl::floating_point<T>
         {
             return nvg::NVGcolor{
@@ -350,7 +350,7 @@ namespace rl::ds {
             };
         }
 
-        constexpr inline operator const nvg::NVGcolor() const
+        constexpr operator const nvg::NVGcolor() const
             requires rl::floating_point<T>
         {
             return nvg::NVGcolor{
@@ -361,7 +361,7 @@ namespace rl::ds {
             };
         }
 
-        consteval inline operator nvg::NVGcolor()
+        consteval operator nvg::NVGcolor()
             requires rl::integer<T>
         {
             return nvg::NVGcolor{
@@ -372,7 +372,7 @@ namespace rl::ds {
             };
         }
 
-        constexpr inline operator nvg::NVGcolor() const
+        constexpr operator nvg::NVGcolor() const
             requires rl::integer<T>
         {
             return nvg::NVGcolor{
@@ -383,13 +383,13 @@ namespace rl::ds {
             };
         }
 
-        constexpr inline operator fmt::rgb() const
+        constexpr operator fmt::rgb() const
             requires rl::integer<T>
         {
             return fmt::rgb{ r, g, b };
         }
 
-        constexpr inline operator fmt::text_style() const
+        constexpr operator fmt::text_style() const
         {
             return fmt::fg(static_cast<fmt::rgb>(*this));
         }
@@ -398,7 +398,7 @@ namespace rl::ds {
         T r{ 0 };
         T g{ 0 };
         T b{ 0 };
-        T a{ Opaque };
+        T a{ opaque };
     };
 
 #pragma pack()
@@ -407,6 +407,7 @@ namespace rl::ds {
 namespace rl {
     struct Colors
     {
+        constexpr static inline ds::color<f32> Transparent{ 0.0f, 0.0f, 0.0f, 0.0f };
         constexpr static inline ds::color<f32> White{ 1.0f, 1.0f, 1.0f, 1.0f };
         constexpr static inline ds::color<f32> LightGrey{ 0.756862f, 0.768627f, 0.792156f, 1.0f };
         constexpr static inline ds::color<f32> Grey{ 0.65098f, 0.65098f, 0.65098f, 1.0f };

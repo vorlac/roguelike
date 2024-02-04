@@ -28,9 +28,8 @@ namespace rl::ui {
         Widget(Widget* parent, const std::unique_ptr<NVGRenderer>& vg_renderer);
 
     public:
-        Widget(Widget* parent);
-
-        virtual ~Widget();
+        explicit Widget(Widget* parent);
+        virtual ~Widget() override;
 
         bool show();
         bool hide();
@@ -47,7 +46,7 @@ namespace rl::ui {
         f32 fixed_height() const;
         f32 font_size() const;
         f32 icon_extra_scale() const;
-        i32 child_index(Widget* widget) const;
+        i32 child_index(const Widget* widget) const;
         i32 child_count() const;
 
         Canvas* canvas();
@@ -57,7 +56,7 @@ namespace rl::ui {
         Theme* theme();
         Widget* child_at(i32 index);
         Widget* find_widget(ds::point<f32> pt);
-        rl::Mouse::Cursor::ID cursor() const;
+        Mouse::Cursor::ID cursor() const;
         ds::point<f32> position() const;
         ds::point<f32> abs_position() const;
         ds::dims<f32> fixed_size() const;
@@ -87,7 +86,7 @@ namespace rl::ui {
         void set_fixed_size(ds::dims<f32> fixed_size);
         void set_fixed_width(f32 width);
         void set_fixed_height(f32 height);
-        void set_visible(bool visible);
+        void set_visible(bool visible);  // virtual?
         void set_enabled(bool enabled);
         void set_focused(bool focused);
         void set_tooltip(const std::string& tooltip);
@@ -97,7 +96,7 @@ namespace rl::ui {
 
     public:
         // TODO: get rid of this
-        nvg::NVGcontext* context() const
+        static nvg::NVGcontext* context()
         {
             return m_renderer->context();
         }
@@ -145,7 +144,7 @@ namespace rl::ui {
         bool m_focused{ false };
         bool m_mouse_focus{ false };
 
-        f32 m_font_size{ 16.0 };
+        f32 m_font_size{ 16.0f };
         f32 m_icon_extra_scale{ 1.0f };
 
         ds::point<f32> m_pos{ 0.0f, 0.0f };
@@ -155,7 +154,7 @@ namespace rl::ui {
 
         Mouse::Cursor::ID m_cursor{ Mouse::Cursor::Arrow };
         std::vector<Widget*> m_children{};
-        std::string m_tooltip{ "" };
+        std::string m_tooltip{};
 
         mutable Timer<f32> m_timer{};
 

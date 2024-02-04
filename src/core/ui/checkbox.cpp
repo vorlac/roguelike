@@ -106,10 +106,11 @@ namespace rl::ui {
             return m_fixed_size;
 
         auto&& context{ m_renderer->context() };
-        nvg::FontSize(context, this->font_size());
-        nvg::FontFace(context, font::name::sans);
+        nvg::font_size(context, this->font_size());
+        nvg::font_face(context, Font::Name::Sans);
 
-        f32 text_bounds{ nvg::TextBounds(context, 0.0f, 0.0f, m_caption.c_str(), nullptr, nullptr) };
+        f32 text_bounds{ nvg::text_bounds(context, 0.0f, 0.0f, m_caption.c_str(), nullptr,
+                                          nullptr) };
         return ds::dims<f32>{
             text_bounds + 1.8f * this->font_size(),
             this->font_size() * 1.3f,
@@ -121,34 +122,34 @@ namespace rl::ui {
         Widget::draw();
 
         auto&& context{ m_renderer->context() };
-        nvg::FontSize(context, this->font_size());
-        nvg::FontFace(context, font::name::sans);
-        nvg::FillColor(context,
-                       m_enabled ? m_theme->text_color.nvg() : m_theme->disabled_text_color.nvg());
-        nvg::TextAlign(context, nvg::NVG_ALIGN_LEFT | nvg::NVG_ALIGN_MIDDLE);
-        nvg::Text(context, m_pos.x + 1.6f * this->font_size(), m_pos.y + m_size.height * 0.5f,
+        nvg::font_size(context, this->font_size());
+        nvg::font_face(context, Font::Name::Sans);
+        nvg::fill_color(context,
+                        m_enabled ? m_theme->text_color.nvg() : m_theme->disabled_text_color.nvg());
+        nvg::text_align(context, nvg::NVG_ALIGN_LEFT | nvg::NVG_ALIGN_MIDDLE);
+        nvg::text(context, m_pos.x + 1.6f * this->font_size(), m_pos.y + m_size.height * 0.5f,
                   m_caption.c_str(), nullptr);
 
-        nvg::NVGpaint bg{ nvg::BoxGradient(context, m_pos.x + 1.5f, m_pos.y + 1.5f,
-                                           m_size.height - 2.0f, m_size.height - 2.0f, 3, 3.0f,
-                                           m_pushed ? ds::color<f32>{ 0, 0, 0, 100 }.nvg()
-                                                    : ds::color<f32>{ 0, 0, 0, 32 }.nvg(),
-                                           ds::color<f32>{ 0, 0, 0, 180 }) };
+        nvg::NVGpaint bg{ nvg::box_gradient(context, m_pos.x + 1.5f, m_pos.y + 1.5f,
+                                            m_size.height - 2.0f, m_size.height - 2.0f, 3, 3.0f,
+                                            m_pushed ? ds::color<f32>{ 0, 0, 0, 100 }.nvg()
+                                                     : ds::color<f32>{ 0, 0, 0, 32 }.nvg(),
+                                            ds::color<f32>{ 0, 0, 0, 180 }) };
 
-        nvg::BeginPath(context);
-        nvg::RoundedRect(context, m_pos.x + 1.0f, m_pos.y + 1.0f, m_size.height - 2.0f,
-                         m_size.height - 2.0f, 3);
-        nvg::FillPaint(context, bg);
-        nvg::Fill(context);
+        nvg::begin_path(context);
+        nvg::rounded_rect(context, m_pos.x + 1.0f, m_pos.y + 1.0f, m_size.height - 2.0f,
+                          m_size.height - 2.0f, 3);
+        nvg::fill_paint(context, bg);
+        nvg::fill(context);
 
         if (m_checked)
         {
-            nvg::FontSize(context, this->icon_scale() * m_size.height);
-            nvg::FontFace(context, font::name::icons);
-            nvg::FillColor(context, m_enabled ? m_theme->icon_color.nvg()
-                                              : m_theme->disabled_text_color.nvg());
-            nvg::TextAlign(context, nvg::NVG_ALIGN_CENTER | nvg::NVG_ALIGN_MIDDLE);
-            nvg::Text(context, m_pos.x + m_size.height * 0.5f + 1, m_pos.y + m_size.height * 0.5f,
+            nvg::font_size(context, this->icon_scale() * m_size.height);
+            nvg::font_face(context, Font::Name::Icons);
+            nvg::fill_color(context, m_enabled ? m_theme->icon_color.nvg()
+                                               : m_theme->disabled_text_color.nvg());
+            nvg::text_align(context, nvg::NVG_ALIGN_CENTER | nvg::NVG_ALIGN_MIDDLE);
+            nvg::text(context, m_pos.x + m_size.height * 0.5f + 1, m_pos.y + m_size.height * 0.5f,
                       rl::utf8(m_theme->check_box_icon).data(), nullptr);
         }
     }

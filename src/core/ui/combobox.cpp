@@ -35,7 +35,7 @@ namespace rl::ui {
         return m_selected_index;
     }
 
-    void ComboBox::set_selected_index(i32 idx)
+    void ComboBox::set_selected_index(const i32 idx)
     {
         if (m_items_short.empty())
             return;

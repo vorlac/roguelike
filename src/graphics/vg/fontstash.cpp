@@ -145,7 +145,7 @@ namespace rl::nvg {
             12, 12, 36, 12, 36, 12, 12, 12, 36, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12
         };
 
-        unsigned int type = utf8d[byte];
+        const unsigned int type = utf8d[byte];
 
         *codep = (*state != FONS_UTF8_ACCEPT) ? (byte & 0x3fu) | (*codep << 6)
                                               : (0xff >> type) & (byte);
@@ -267,7 +267,8 @@ namespace rl::nvg {
         {
             if (atlas->nodes[i].x < atlas->nodes[i - 1].x + atlas->nodes[i - 1].width)
             {
-                int shrink = atlas->nodes[i - 1].x + atlas->nodes[i - 1].width - atlas->nodes[i].x;
+                const int shrink = atlas->nodes[i - 1].x + atlas->nodes[i - 1].width -
+                                   atlas->nodes[i].x;
                 atlas->nodes[i].x += (short)shrink;
                 atlas->nodes[i].width -= (short)shrink;
                 if (atlas->nodes[i].width <= 0)
@@ -305,7 +306,7 @@ namespace rl::nvg {
         // Checks if there is enough space at the location of skyline span 'i',
         // and return the max height of all skyline spans under that at that location,
         // (think tetris block being dropped at that position). Or -1 if no space found.
-        int x = atlas->nodes[i].x;
+        const int x = atlas->nodes[i].x;
         int y = atlas->nodes[i].y;
         int spaceLeft;
         if (x + w > atlas->width)
@@ -332,7 +333,7 @@ namespace rl::nvg {
         // Bottom left fit heuristic.
         for (i = 0; i < atlas->nnodes; i++)
         {
-            int y = fons__atlasRectFits(atlas, i, rw, rh);
+            const int y = fons__atlasRectFits(atlas, i, rw, rh);
             if (y != -1)
             {
                 if (y + rh < besth || (y + rh == besth && atlas->nodes[i].width < bestw))
@@ -621,7 +622,7 @@ namespace rl::nvg {
         int i, ascent, descent, fh, lineGap;
         FONSfont* font;
 
-        int idx = fons__allocFont(stash);
+        const int idx = fons__allocFont(stash);
         if (idx == FONS_INVALID)
             return FONS_INVALID;
 
@@ -762,7 +763,7 @@ namespace rl::nvg {
         float scale;
         FONSglyph* glyph = NULL;
         unsigned int h;
-        float size = isize / 10.0f;
+        const float size = isize / 10.0f;
         int pad, added;
         unsigned char* bdst;
         unsigned char* dst;
@@ -802,7 +803,7 @@ namespace rl::nvg {
             for (i = 0; i < font->nfallbacks; ++i)
             {
                 FONSfont* fallbackFont = stash->fonts[font->fallbacks[i]];
-                int fallbackIndex = fons__tt_getGlyphIndex(&fallbackFont->font, codepoint);
+                const int fallbackIndex = fons__tt_getGlyphIndex(&fallbackFont->font, codepoint);
                 if (fallbackIndex != 0)
                 {
                     g = fallbackIndex;
@@ -917,8 +918,9 @@ namespace rl::nvg {
 
         if (prevGlyphIndex != -1)
         {
-            float adv = fons__tt_getGlyphKernAdvance(&font->font, prevGlyphIndex, glyph->index) *
-                        scale;
+            const float adv = fons__tt_getGlyphKernAdvance(&font->font, prevGlyphIndex,
+                                                           glyph->index) *
+                              scale;
             *x += (int)(adv + spacing + 0.5f);
         }
 
@@ -1030,14 +1032,14 @@ namespace rl::nvg {
 
     float fonsDrawText(FONScontext* stash, float x, float y, const char* str, const char* end)
     {
-        FONSstate* state = fons__getState(stash);
+        const FONSstate* state = fons__getState(stash);
         unsigned int codepoint;
         unsigned int utf8state = 0;
         FONSglyph* glyph = NULL;
         FONSquad q;
         int prevGlyphIndex = -1;
-        short isize = (short)(state->size * 10.0f);
-        short iblur = (short)state->blur;
+        const short isize = (short)(state->size * 10.0f);
+        const short iblur = (short)state->blur;
         float scale;
         FONSfont* font;
         float width;
@@ -1103,7 +1105,7 @@ namespace rl::nvg {
     int fonsTextIterInit(FONScontext* stash, FONStextIter* iter, float x, float y, const char* str,
                          const char* end, int bitmapOption)
     {
-        FONSstate* state = fons__getState(stash);
+        const FONSstate* state = fons__getState(stash);
         float width;
 
         memset(iter, 0, sizeof(*iter));
@@ -1189,10 +1191,10 @@ namespace rl::nvg {
     void fonsDrawDebug(FONScontext* stash, float x, float y)
     {
         int i;
-        int w = stash->params.width;
-        int h = stash->params.height;
-        float u = w == 0 ? 0 : (1.0f / w);
-        float v = h == 0 ? 0 : (1.0f / h);
+        const int w = stash->params.width;
+        const int h = stash->params.height;
+        const float u = w == 0 ? 0 : (1.0f / w);
+        const float v = h == 0 ? 0 : (1.0f / h);
 
         if (stash->nverts + 6 + 6 > FONS_VERTEX_COUNT)
             fons__flush(stash);
@@ -1218,7 +1220,7 @@ namespace rl::nvg {
         // Drawbug draw atlas
         for (i = 0; i < stash->atlas->nnodes; i++)
         {
-            FONSatlasNode* n = &stash->atlas->nodes[i];
+            const FONSatlasNode* n = &stash->atlas->nodes[i];
 
             if (stash->nverts + 6 > FONS_VERTEX_COUNT)
                 fons__flush(stash);
@@ -1238,14 +1240,14 @@ namespace rl::nvg {
     float fonsTextBounds(FONScontext* stash, float x, float y, const char* str, const char* end,
                          float* bounds)
     {
-        FONSstate* state = fons__getState(stash);
+        const FONSstate* state = fons__getState(stash);
         unsigned int codepoint;
         unsigned int utf8state = 0;
         FONSquad q;
         FONSglyph* glyph = NULL;
         int prevGlyphIndex = -1;
-        short isize = (short)(state->size * 10.0f);
-        short iblur = (short)state->blur;
+        const short isize = (short)(state->size * 10.0f);
+        const short iblur = (short)state->blur;
         float scale;
         FONSfont* font;
         float startx, advance;
@@ -1334,7 +1336,7 @@ namespace rl::nvg {
     void fonsVertMetrics(FONScontext* stash, float* ascender, float* descender, float* lineh)
     {
         FONSfont* font;
-        FONSstate* state = fons__getState(stash);
+        const FONSstate* state = fons__getState(stash);
         short isize;
 
         if (stash == NULL)
@@ -1357,7 +1359,7 @@ namespace rl::nvg {
     void fonsLineBounds(FONScontext* stash, float y, float* miny, float* maxy)
     {
         FONSfont* font;
-        FONSstate* state = fons__getState(stash);
+        const FONSstate* state = fons__getState(stash);
         short isize;
 
         if (stash == NULL)
@@ -1480,7 +1482,7 @@ namespace rl::nvg {
         for (i = 0; i < stash->params.height; i++)
         {
             unsigned char* dst = &data[i * width];
-            unsigned char* src = &stash->texData[i * stash->params.width];
+            const unsigned char* src = &stash->texData[i * stash->params.width];
             memcpy(dst, src, stash->params.width);
             if (width > stash->params.width)
                 memset(dst + stash->params.width, 0, width - stash->params.width);

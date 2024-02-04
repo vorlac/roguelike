@@ -217,12 +217,12 @@ namespace rl::ui {
                 this->set_fixed_width(20);
             }
 
-            void set_value(bool v)
+            void set_value(const bool v)
             {
                 this->set_checked(v);
             }
 
-            void set_editable(bool e)
+            void set_editable(const bool e)
             {
                 this->set_enabled(e);
             }
@@ -265,7 +265,7 @@ namespace rl::ui {
                 });
             }
 
-            void set_editable(bool e)
+            void set_editable(const bool e)
             {
                 this->set_enabled(e);
             }

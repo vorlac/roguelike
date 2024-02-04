@@ -10,7 +10,7 @@ namespace rl::ui {
     class ToolButton : public Button
     {
     public:
-        ToolButton(Widget* parent, Icon::ID icon, const std::string& caption = "")
+        ToolButton(Widget* parent, const Icon::ID icon, const std::string& caption = "")
             : Button(parent, caption, icon)
         {
             this->set_property(Button::Property::Toolbar);

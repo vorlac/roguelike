@@ -31,7 +31,7 @@ SDL_C_LIB_END
 namespace rl {
 
     MainWindow::MainWindow(std::string title, const ds::dims<i32>& dims,
-                           MainWindow::Properties flags)
+                           const MainWindow::Properties flags)
     {
         this->set_opengl_attribute(OpenGL::Attribute::AcceleratedVisual, 1);
         this->set_opengl_attribute(OpenGL::Attribute::ContextMajorVersion, 4);
@@ -149,35 +149,35 @@ namespace rl {
         return result == 0;
     }
 
-    bool MainWindow::set_grab(bool grabbed)
+    bool MainWindow::set_grab(const bool grabbed)
     {
         const i32 result{ SDL3::SDL_SetWindowGrab(m_sdl_window, grabbed) };
         sdl_assert(result == 0, "failed to set grab");
         return result == 0;
     }
 
-    bool MainWindow::set_bordered(bool bordered)
+    bool MainWindow::set_bordered(const bool bordered)
     {
         const i32 result{ SDL3::SDL_SetWindowBordered(m_sdl_window, bordered) };
         sdl_assert(result == 0, "failed to set bordered");
         return result == 0;
     }
 
-    bool MainWindow::set_resizable(bool resizable)
+    bool MainWindow::set_resizable(const bool resizable)
     {
         const i32 result{ SDL3::SDL_SetWindowResizable(m_sdl_window, resizable) };
         sdl_assert(result == 0, "failed to set resizeable");
         return result == 0;
     }
 
-    bool MainWindow::set_fullscreen(bool fullscreen)
+    bool MainWindow::set_fullscreen(const bool fullscreen)
     {
         const i32 result{ SDL3::SDL_SetWindowFullscreen(m_sdl_window, fullscreen) };
         runtime_assert(result == 0, "Failed to set window to fullscreen");
         return result == 0;
     }
 
-    bool MainWindow::set_opacity(float opacity)
+    bool MainWindow::set_opacity(const float opacity)
     {
         const i32 result{ SDL3::SDL_SetWindowOpacity(m_sdl_window, opacity) };
         runtime_assert(result != 0, "failed to set window opacity");

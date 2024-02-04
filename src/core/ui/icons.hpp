@@ -971,7 +971,7 @@ namespace rl::ui {
             YinYang = 0xf6ad,
         };
 
-        constexpr static inline bool is_texture(Icon::ID icon_id)
+        constexpr static inline bool is_texture(const Icon::ID icon_id)
         {
             // Determine whether an icon ID is a texture loaded via nvg_image_icon.
             // The implementation defines all value { 1024 as image icons, and
@@ -980,7 +980,7 @@ namespace rl::ui {
             return icon_id < 1024;
         }
 
-        constexpr static inline bool is_font(Icon::ID icon_id)
+        constexpr static inline bool is_font(const Icon::ID icon_id)
         {
             // Determine whether an icon ID is a font-based icon (e.g. from font.ttf).
             return !Icon::is_texture(icon_id);

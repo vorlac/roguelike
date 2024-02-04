@@ -44,7 +44,7 @@ namespace rl {
         return gl_context;
     }
 
-    OpenGLRenderer::OpenGLRenderer(MainWindow& window, OpenGLRenderer::Properties flags)
+    OpenGLRenderer::OpenGLRenderer(MainWindow& window, const OpenGLRenderer::Properties flags)
         : m_properties{ flags }
         , m_sdl_glcontext{ create_opengl_context(window.sdl_handle()) }
     {

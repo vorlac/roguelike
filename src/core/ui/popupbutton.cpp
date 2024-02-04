@@ -6,7 +6,7 @@
 
 namespace rl::ui {
 
-    PopupButton::PopupButton(Widget* parent, std::string caption, Icon::ID button_icon)
+    PopupButton::PopupButton(Widget* parent, std::string caption, const Icon::ID button_icon)
         : Button{ parent, caption, button_icon }
     {
         scoped_log();
@@ -27,7 +27,7 @@ namespace rl::ui {
         });
     }
 
-    void PopupButton::set_chevron_icon(Icon::ID icon)
+    void PopupButton::set_chevron_icon(const Icon::ID icon)
     {
         scoped_log("{}", static_cast<i32>(icon));
         m_chevron_icon = icon;
@@ -78,13 +78,13 @@ namespace rl::ui {
             const ds::color<f32>& text_color{ m_text_color.a == 0.0f ? m_theme->text_color
                                                                      : m_text_color };
             auto&& context{ m_renderer->context() };
-            nvg::FontFace(context, font::name::icons);
-            nvg::FontSize(context, text_size * this->icon_scale());
-            nvg::FillColor(context, m_enabled ? text_color : m_theme->disabled_text_color);
-            nvg::TextAlign(context, Text::Alignment::HLeftVMiddle);
+            nvg::font_face(context, Font::Name::Icons);
+            nvg::font_size(context, text_size * this->icon_scale());
+            nvg::fill_color(context, m_enabled ? text_color : m_theme->disabled_text_color);
+            nvg::text_align(context, Text::Alignment::HLeftVMiddle);
 
-            const f32 icon_width{ nvg::TextBounds(context, 0.0f, 0.0f, icon.data(), nullptr,
-                                                  nullptr) };
+            const f32 icon_width{ nvg::text_bounds(context, 0.0f, 0.0f, icon.data(), nullptr,
+                                                   nullptr) };
 
             ds::point<f32> icon_pos{ 0.0f, m_pos.y + m_size.height * 0.5f - 1.0f };
             if (m_popup->side() == Popup::Side::Right)
@@ -92,7 +92,7 @@ namespace rl::ui {
             else
                 icon_pos.x = m_pos.x + 8.0f;
 
-            nvg::Text(context, icon_pos.x, icon_pos.y, icon.data(), nullptr);
+            nvg::text(context, icon_pos.x, icon_pos.y, icon.data(), nullptr);
         }
     }
 
@@ -132,7 +132,7 @@ namespace rl::ui {
         }
     }
 
-    void PopupButton::set_side(Popup::Side side)
+    void PopupButton::set_side(const Popup::Side side)
     {
         scoped_log();
         const Icon::ID right_icon{ m_theme->popup_chevron_right_icon };

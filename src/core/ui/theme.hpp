@@ -1,6 +1,5 @@
 #pragma once
 
-#include <memory>
 #include <string>
 
 #include <parallel_hashmap/phmap.h>
@@ -17,6 +16,31 @@ namespace rl::ui {
     enum class Outline {
         Inner,
         Outer
+    };
+
+    struct LineProperties
+    {
+    };
+
+    struct Font
+    {
+        using ID = i32;
+        using Map = phmap::flat_hash_map<std::string, ID>;
+
+        constexpr static inline i32 InvalidHandle{ -1 };
+
+        enum class Source {
+            Memory,
+            Disk,
+        };
+
+        struct Name
+        {
+            constexpr static inline std::string_view Sans{ "sans" };
+            constexpr static inline std::string_view SansBold{ "sans_bold" };
+            constexpr static inline std::string_view Icons{ "icons" };
+            constexpr static inline std::string_view Mono{ "mono" };
+        };
     };
 
     struct Text
@@ -38,66 +62,69 @@ namespace rl::ui {
             HLeftVMiddle = HorizLeft | VertMiddle,
             HRightVMiddle = HorizRight | VertMiddle,
         };
-    };
 
-    namespace font {
-        using ID = i32;
-        using Map = phmap::flat_hash_map<std::string, font::ID>;
-
-        constexpr i32 InvalidHandle{ -1 };
-
-        enum class Source {
-            Memory,
-            Disk,
-        };
-
-        namespace name {
-            constexpr const char* const sans{ "sans" };
-            constexpr const char* const sans_bold{ "sans_bold" };
-            constexpr const char* const icons{ "icons" };
-            constexpr const char* const mono{ "mono" };
+        friend Alignment operator|(const Alignment a1, const Alignment a2)
+        {
+            return static_cast<Alignment>(std::to_underlying(a1) | std::to_underlying(a2));
         }
 
-    }
+        struct Properties
+        {
+            f32 font_size{ 18.0f };
+            f32 border_thickness{ 1.0f };
+            f32 border_blur{ 2.0f };
 
-    class Theme : public ds::refcounted
+            std::string font{ Font::Name::SansBold };
+
+            ds::color<f32> color{ Colors::White };
+            ds::color<f32> border_color{ Colors::Transparent };
+
+            ds::vector2<f32> margins{ 10.0f, 10.0f };
+            Alignment alignment{ HorizCenter | VertMiddle };
+        };
+    };
+
+    class Theme final : public ds::refcounted
     {
     public:
-        Theme(nvg::NVGcontext* nvg_context)
-            : font_sans_regular{
-                nvg::CreateFontMem(nvg_context, font::name::sans,
-                                 roboto_regular_ttf, roboto_regular_ttf_size, 0),
-            }
-            , font_sans_bold{
-                nvg::CreateFontMem(nvg_context, font::name::sans_bold,
-                                 roboto_bold_ttf, roboto_bold_ttf_size, 0),
-            }
-            , font_icons{
-                nvg::CreateFontMem(nvg_context, font::name::icons,
-                                 fontawesome_solid_ttf, fontawesome_solid_ttf_size, 0),
-            }
-            , font_mono_regular{
-                nvg::CreateFontMem(nvg_context, font::name::mono, fira_code_regular_ttf,
-                                 fira_code_regular_ttf_size, 0),
-            }
+        explicit Theme(const nvg::NVGcontext* nvg_context)
+            : font_sans_regular{ nvg::create_font_mem(
+                  nvg_context, Font::Name::Sans,
+                  std::basic_string_view<u8>{ roboto_bold_ttf, roboto_bold_ttf_size }) }
+            , font_sans_bold{ nvg::create_font_mem(
+                  nvg_context, Font::Name::SansBold,
+                  std::basic_string_view<u8>{ entypo_ttf, entypo_ttf_size }) }
+            , font_icons{ nvg::create_font_mem(
+                  nvg_context, Font::Name::Icons,
+                  std::basic_string_view{ fontawesome_solid_ttf, fontawesome_solid_ttf_size }) }
+            , font_mono_regular{ nvg::create_font_mem(
+                  nvg_context, Font::Name::Mono,
+                  std::basic_string_view<u8>{ fira_code_bold_ttf, fira_code_bold_ttf_size }) }
         {
             bool font_load_success{ true };
-            font_load_success &= font_sans_regular != font::InvalidHandle;
-            font_load_success &= font_sans_bold != font::InvalidHandle;
-            font_load_success &= font_icons != font::InvalidHandle;
-            font_load_success &= font_mono_regular != font::InvalidHandle;
+
+            font_load_success &= font_sans_regular != Font::InvalidHandle;
+            font_load_success &= font_sans_bold != Font::InvalidHandle;
+            font_load_success &= font_icons != Font::InvalidHandle;
+            font_load_success &= font_mono_regular != Font::InvalidHandle;
             runtime_assert(font_load_success, "Failed to load fonts");
         }
 
-        i32 font_sans_regular{ font::InvalidHandle };
-        i32 font_sans_bold{ font::InvalidHandle };
-        i32 font_icons{ font::InvalidHandle };
-        i32 font_mono_regular{ font::InvalidHandle };
 
-        std::string form_group_font_name{ font::name::mono };
-        std::string form_label_font_name{ font::name::sans };
-        std::string tooltip_font_name{ font::name::sans_bold };
-        std::string dialog_title_font_name{ font::name::sans_bold };
+
+
+
+
+
+        i32 font_sans_regular{ Font::InvalidHandle };
+        i32 font_sans_bold{ Font::InvalidHandle };
+        i32 font_icons{ Font::InvalidHandle };
+        i32 font_mono_regular{ Font::InvalidHandle };
+
+        std::string form_group_font_name{ Font::Name::Mono };
+        std::string form_label_font_name{ Font::Name::Sans };
+        std::string tooltip_font_name{ Font::Name::SansBold };
+        std::string dialog_title_font_name{ Font::Name::SansBold };
 
         f32 icon_scale{ 1.0f };
         f32 tab_border_width{ 0.75f };
@@ -134,10 +161,10 @@ namespace rl::ui {
         ds::color<f32> border_dark{ 29, 29, 29, 255 };
         ds::color<f32> border_light{ 92, 92, 92, 255 };
         ds::color<f32> border_medium{ 35, 35, 35, 255 };
-        ds::color<f32> text_color{ rl::Colors::LightGrey };
-        ds::color<f32> disabled_text_color{ rl::Colors::DarkGrey };
-        ds::color<f32> text_shadow_color{ rl::Colors::Black };
-        ds::color<f32> icon_color{ rl::Colors::LightGrey };
+        ds::color<f32> text_color{ Colors::LightGrey };
+        ds::color<f32> disabled_text_color{ Colors::DarkGrey };
+        ds::color<f32> text_shadow_color{ Colors::Black };
+        ds::color<f32> icon_color{ Colors::LightGrey };
 
         ds::color<f32> button_gradient_top_focused{ 64, 64, 64, 255 };
         ds::color<f32> button_gradient_bot_focused{ 48, 48, 48, 255 };

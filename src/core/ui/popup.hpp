@@ -42,7 +42,7 @@ namespace rl::ui {
 }
 
 namespace rl::ui {
-    constexpr inline auto format_as(Popup::Side side)
+    constexpr inline auto format_as(const Popup::Side side)
     {
         switch (side)
         {

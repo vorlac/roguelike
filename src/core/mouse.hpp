@@ -133,7 +133,7 @@ namespace rl {
                            mouse.get_button_state(Mouse::Button::Middle), mouse.wheel());
     }
 
-    constexpr inline auto format_as(Mouse::Button::ID btn)
+    constexpr inline auto format_as(const Mouse::Button::ID btn)
     {
         switch (btn)
         {

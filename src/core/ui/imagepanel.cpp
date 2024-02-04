@@ -111,7 +111,7 @@ namespace rl::ui {
             };
 
             ds::dims<i32> image_size{ 0, 0 };
-            nvg::ImageSize(context, m_images[i].first, &image_size.width, &image_size.height);
+            nvg::image_size(context, m_images[i].first, &image_size.width, &image_size.height);
 
             ds::rect<f32> image_rect{ 0, 0, 0, 0 };
             if (image_size.width < image_size.height)
@@ -131,32 +131,32 @@ namespace rl::ui {
                 image_rect.pt.y = 0;
             }
 
-            nvg::NVGpaint img_paint{ nvg::ImagePattern(
+            nvg::NVGpaint img_paint{ nvg::image_pattern(
                 context, p.x + image_rect.pt.x, p.y + image_rect.pt.y, image_rect.size.width,
                 image_rect.size.height, 0, m_images[i].first, m_mouse_index == i ? 1.0f : 0.7f) };
 
-            nvg::BeginPath(context);
-            nvg::RoundedRect(context, p.x, p.y, m_thumb_size.width, m_thumb_size.height, 5);
-            nvg::FillPaint(context, img_paint);
-            nvg::Fill(context);
+            nvg::begin_path(context);
+            nvg::rounded_rect(context, p.x, p.y, m_thumb_size.width, m_thumb_size.height, 5);
+            nvg::fill_paint(context, img_paint);
+            nvg::fill(context);
 
-            nvg::NVGpaint shadow_paint{ nvg::BoxGradient(
+            nvg::NVGpaint shadow_paint{ nvg::box_gradient(
                 context, p.x - 1, p.y, m_thumb_size.width + 2.0f, m_thumb_size.height + 2.0f, 5, 3,
                 ds::color<f32>{ 0, 0, 0, 128 }, ds::color<f32>{ 0, 0, 0, 0 }) };
-            nvg::BeginPath(context);
-            nvg::Rect(context, p.x - 5.0f, p.y - 5.0f, m_thumb_size.width + 10,
+            nvg::begin_path(context);
+            nvg::rect(context, p.x - 5.0f, p.y - 5.0f, m_thumb_size.width + 10,
                       m_thumb_size.height + 10);
-            nvg::RoundedRect(context, p.x, p.y, m_thumb_size.width, m_thumb_size.height, 6);
-            nvg::PathWinding(context, nvg::NVG_HOLE);
-            nvg::FillPaint(context, shadow_paint);
-            nvg::Fill(context);
+            nvg::rounded_rect(context, p.x, p.y, m_thumb_size.width, m_thumb_size.height, 6);
+            nvg::path_winding(context, nvg::NVG_HOLE);
+            nvg::fill_paint(context, shadow_paint);
+            nvg::fill(context);
 
-            nvg::BeginPath(context);
-            nvg::RoundedRect(context, p.x + 0.5f, p.y + 0.5f, m_thumb_size.width - 1.0f,
-                             m_thumb_size.height - 1.0f, 4.0f - 0.5f);
-            nvg::StrokeWidth(context, 1.0f);
-            nvg::StrokeColor(context, ds::color<f32>{ 255, 255, 255, 80 });
-            nvg::Stroke(context);
+            nvg::begin_path(context);
+            nvg::rounded_rect(context, p.x + 0.5f, p.y + 0.5f, m_thumb_size.width - 1.0f,
+                              m_thumb_size.height - 1.0f, 4.0f - 0.5f);
+            nvg::stroke_width(context, 1.0f);
+            nvg::stroke_color(context, ds::color<f32>{ 255, 255, 255, 80 });
+            nvg::stroke(context);
         }
     }
 }

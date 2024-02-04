@@ -14,11 +14,12 @@
 
 namespace rl::ui {
 
-    BoxLayout::BoxLayout(Orientation orientation, Alignment alignment, f32 margin, f32 spacing)
-        : m_orientation{ orientation }
-        , m_alignment{ alignment }
-        , m_margin{ margin }
+    BoxLayout::BoxLayout(const Orientation orientation, const Alignment alignment, const f32 margin,
+                         const f32 spacing)
+        : m_margin{ margin }
         , m_spacing{ spacing }
+        , m_orientation{ orientation }
+        , m_alignment{ alignment }
     {
         scoped_log();
     }
@@ -27,13 +28,13 @@ namespace rl::ui {
     {
         scoped_log();
 
-        ds::dims<f32> size{
+        ds::dims size{
             2.0f * m_margin,
             2.0f * m_margin,
         };
 
         f32 y_offset{ 0.0f };
-        const Dialog* dialog{ dynamic_cast<const Dialog*>(widget) };
+        const auto dialog{ dynamic_cast<const Dialog*>(widget) };
         if (dialog != nullptr && !dialog->title().empty())
         {
             const auto header_size{ dialog->header_height() };
@@ -44,10 +45,7 @@ namespace rl::ui {
         }
 
         bool first_child{ true };
-        const i32 axis1{ std::to_underlying(m_orientation) };
-        const i32 axis2{ (std::to_underlying(m_orientation) + 1) % 2 };
-
-        for (auto w : widget->children())
+        for (const auto w : widget->children())
         {
             if (!w->visible())
                 continue;
@@ -55,11 +53,11 @@ namespace rl::ui {
             if (!first_child)
                 size.height += m_spacing;
 
-            const ds::dims<f32> ps{ w->preferred_size() };
-            const ds::dims<f32> fs{ w->fixed_size() };
-            const ds::dims<f32> target_size{
-                fs.width ? fs.width : ps.width,
-                fs.height ? fs.height : ps.height,
+            const ds::dims ps{ w->preferred_size() };
+            const ds::dims fs{ w->fixed_size() };
+            const ds::dims target_size{
+                fs.width != 0.0f ? fs.width : ps.width,
+                fs.height != 0.0f ? fs.height : ps.height,
             };
 
             first_child = false;
@@ -76,8 +74,8 @@ namespace rl::ui {
 
         const ds::dims<f32> fs_w{ widget->fixed_size() };
         ds::dims<f32> container_size{
-            fs_w.width ? fs_w.width : widget->width(),
-            fs_w.height ? fs_w.height : widget->height(),
+            fs_w.width != 0.0f ? fs_w.width : widget->width(),
+            fs_w.height != 0.0f ? fs_w.height : widget->height(),
         };
 
         const i32 axis1{ std::to_underlying(m_orientation) };
@@ -152,7 +150,7 @@ namespace rl::ui {
         return m_orientation;
     }
 
-    void BoxLayout::set_orientation(Orientation orientation)
+    void BoxLayout::set_orientation(const Orientation orientation)
     {
         scoped_log();
         m_orientation = orientation;
@@ -164,7 +162,7 @@ namespace rl::ui {
         return m_alignment;
     }
 
-    void BoxLayout::set_alignment(Alignment alignment)
+    void BoxLayout::set_alignment(const Alignment alignment)
     {
         scoped_log();
         m_alignment = alignment;
@@ -175,7 +173,7 @@ namespace rl::ui {
         return m_margin;
     }
 
-    void BoxLayout::set_margin(f32 margin)
+    void BoxLayout::set_margin(const f32 margin)
     {
         scoped_log();
         m_margin = margin;
@@ -187,7 +185,7 @@ namespace rl::ui {
         return m_spacing;
     }
 
-    void BoxLayout::set_spacing(f32 spacing)
+    void BoxLayout::set_spacing(const f32 spacing)
     {
         scoped_log();
         m_spacing = spacing;
@@ -221,7 +219,7 @@ namespace rl::ui {
             first = false;
             ds::dims<f32> ps{ c->preferred_size() };
             ds::dims<f32> fs{ c->fixed_size() };
-            ds::dims<f32> target_size{
+            const ds::dims<f32> target_size{
                 fs.width ? fs.width : ps.width,
                 fs.height ? fs.height : ps.height,
             };
@@ -295,7 +293,7 @@ namespace rl::ui {
         return m_margin;
     }
 
-    void GroupLayout::set_margin(f32 margin)
+    void GroupLayout::set_margin(const f32 margin)
     {
         scoped_log();
         m_margin = margin;
@@ -307,7 +305,7 @@ namespace rl::ui {
         return m_spacing;
     }
 
-    void GroupLayout::set_spacing(f32 spacing)
+    void GroupLayout::set_spacing(const f32 spacing)
     {
         scoped_log();
         m_spacing = spacing;
@@ -319,7 +317,7 @@ namespace rl::ui {
         return m_group_indent;
     }
 
-    void GroupLayout::set_group_indent(f32 group_indent)
+    void GroupLayout::set_group_indent(const f32 group_indent)
     {
         scoped_log();
         m_group_indent = group_indent;
@@ -331,7 +329,7 @@ namespace rl::ui {
         return m_group_spacing;
     }
 
-    void GroupLayout::set_group_spacing(f32 group_spacing)
+    void GroupLayout::set_group_spacing(const f32 group_spacing)
     {
         scoped_log();
         m_group_spacing = group_spacing;
@@ -568,7 +566,7 @@ namespace rl::ui {
         return m_orientation;
     }
 
-    void GridLayout::set_orientation(Orientation orientation)
+    void GridLayout::set_orientation(const Orientation orientation)
     {
         scoped_log();
         m_orientation = orientation;
@@ -580,13 +578,13 @@ namespace rl::ui {
         return m_resolution;
     }
 
-    void GridLayout::set_resolution(f32 resolution)
+    void GridLayout::set_resolution(const f32 resolution)
     {
         scoped_log();
         m_resolution = resolution;
     }
 
-    f32 GridLayout::spacing(Axis axis) const
+    f32 GridLayout::spacing(const Axis axis) const
     {
         scoped_log();
 
@@ -602,7 +600,7 @@ namespace rl::ui {
         }
     }
 
-    void GridLayout::set_spacing(Axis axis, f32 spacing)
+    void GridLayout::set_spacing(const Axis axis, const f32 spacing)
     {
         scoped_log();
 
@@ -620,7 +618,7 @@ namespace rl::ui {
         }
     }
 
-    void GridLayout::set_spacing(f32 spacing)
+    void GridLayout::set_spacing(const f32 spacing)
     {
         scoped_log();
         m_spacing = ds::vector2{ spacing, spacing };
@@ -632,13 +630,13 @@ namespace rl::ui {
         return m_margin;
     }
 
-    void GridLayout::set_margin(f32 margin)
+    void GridLayout::set_margin(const f32 margin)
     {
         scoped_log();
         m_margin = margin;
     }
 
-    Alignment GridLayout::alignment(Axis axis, i32 item) const
+    Alignment GridLayout::alignment(const Axis axis, const i32 item) const
     {
         scoped_log();
         if (item < static_cast<i32>(m_alignment[axis].size()))
@@ -647,13 +645,13 @@ namespace rl::ui {
             return m_default_alignment[axis];
     }
 
-    void GridLayout::set_col_alignment(Alignment value)
+    void GridLayout::set_col_alignment(const Alignment value)
     {
         scoped_log();
         m_default_alignment[Axis::Horizontal] = value;
     }
 
-    void GridLayout::set_row_alignment(Alignment value)
+    void GridLayout::set_row_alignment(const Alignment value)
     {
         scoped_log();
         m_default_alignment[Axis::Vertical] = value;
@@ -674,7 +672,7 @@ namespace rl::ui {
     //=======================================================================
 
     AdvancedGridLayout::AdvancedGridLayout(const std::vector<f32>& cols,
-                                           const std::vector<f32>& rows, f32 margin)
+                                           const std::vector<f32>& rows, const f32 margin)
         : m_cols(cols)
         , m_rows(rows)
         , m_margin(margin)
@@ -732,7 +730,7 @@ namespace rl::ui {
                                         widget->theme()->dialog_header_height + m_margin / 2.0f);
         }
 
-        for (Axis axis : { Axis::Horizontal, Axis::Vertical })
+        for (const Axis axis : { Axis::Horizontal, Axis::Vertical })
         {
             std::vector<f32>& axis_grids{ grid[axis] };
             for (size_t i = 1; i < axis_grids.size(); ++i)
@@ -754,7 +752,7 @@ namespace rl::ui {
                                                                      : anchor.cell_size.height };
 
                 f32 item_pos{ axis_grids[axis_anchor_pos] };
-                f32 cell_size{ axis_grids[axis_anchor_pos + axis_anchor_size] - item_pos };
+                const f32 cell_size{ axis_grids[(axis_anchor_pos + axis_anchor_size)] - item_pos };
 
                 const ds::dims<f32> widget_ps{ child->preferred_size() };
                 const ds::dims<f32> widget_fs{ child->fixed_size() };
@@ -762,8 +760,7 @@ namespace rl::ui {
                 const f32 fs{ axis == Axis::Horizontal ? widget_fs.width : widget_fs.height };
 
                 f32 target_size{ fs ? fs : ps };
-                Alignment anchor_axis_alignment{ anchor.align[axis] };
-                switch (anchor_axis_alignment)
+                switch (anchor.align[axis])
                 {
                     case Alignment::Minimum:
                         break;
@@ -893,7 +890,7 @@ namespace rl::ui {
         return m_margin;
     }
 
-    void AdvancedGridLayout::set_margin(f32 margin)
+    void AdvancedGridLayout::set_margin(const f32 margin)
     {
         scoped_log();
         m_margin = margin;
@@ -911,27 +908,27 @@ namespace rl::ui {
         return static_cast<u32>(m_rows.size());
     }
 
-    void AdvancedGridLayout::append_row(f32 size, f32 stretch)
+    void AdvancedGridLayout::append_row(const f32 size, const f32 stretch)
     {
         scoped_log();
         m_rows.push_back(size);
         m_row_stretch.push_back(stretch);
     }
 
-    void AdvancedGridLayout::append_col(f32 size, f32 stretch)
+    void AdvancedGridLayout::append_col(const f32 size, const f32 stretch)
     {
         scoped_log();
         m_cols.push_back(size);
         m_col_stretch.push_back(stretch);
     }
 
-    void AdvancedGridLayout::set_row_stretch(i32 index, f32 stretch)
+    void AdvancedGridLayout::set_row_stretch(const i32 index, const f32 stretch)
     {
         scoped_log();
         m_row_stretch.at(index) = stretch;
     }
 
-    void AdvancedGridLayout::set_col_stretch(i32 index, f32 stretch)
+    void AdvancedGridLayout::set_col_stretch(const i32 index, const f32 stretch)
     {
         scoped_log();
         m_col_stretch.at(index) = stretch;

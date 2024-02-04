@@ -15,7 +15,6 @@
 #include "core/main_window.hpp"
 #include "core/renderer.hpp"
 #include "core/state/fsm.hpp"
-#include "core/state/states.hpp"
 #include "core/ui/button.hpp"
 #include "core/ui/gui.hpp"
 #include "graphics/gl/instanced_buffer.hpp"
@@ -48,15 +47,19 @@ namespace rl {
         };
 
     public:
+        Application(Application&& other) = delete;
+        Application(const Application& other) = delete;
+        Application& operator=(const Application& other) = delete;
+        Application& operator=(Application&& other) = delete;
+
+    public:
         Application()
         {
             this->init_subsystem(Subsystem::All);
             m_main_window = std::make_unique<MainWindow>("Roguelite OpenGL");
         }
 
-        ~Application()
-        {
-        }
+        ~Application() = default;
 
         bool run()
         {
@@ -70,11 +73,11 @@ namespace rl {
             std::string sval{ "asdsad" };
             ui::Axis eval{ ui::Horizontal };
 
-            auto gui{ m_main_window->gui() };
-            const std::unique_ptr<rl::OpenGLRenderer>& renderer{ m_main_window->glrenderer() };
+            const auto gui{ m_main_window->gui() };
+            const std::unique_ptr<OpenGLRenderer>& renderer{ m_main_window->glrenderer() };
             gl::InstancedVertexBuffer vbo{ renderer->get_viewport() };
-            ui::FormHelper* form{ new ui::FormHelper(gui) };
-            auto dialog = ds::shared{ form->add_dialog(ds::point{ 10, 10 }, "Nested Diaog Test") };
+            const auto form{ new ui::FormHelper(gui) };
+            auto dialog = ds::shared{ form->add_dialog(ds::point{ 10, 10 }, "Nested Dialog Test") };
 
             auto floating_form_gui = [&] {
                 form->add_group("Group 1");
@@ -119,25 +122,27 @@ namespace rl {
             std::string elapsed_str{ fmt::to_string(
                 fmt::format("{:<3.3f} sec", m_timer.elapsed())) };
             std::string fps_str{ fmt::to_string(fmt::format("{:<3.3f} fps", framerate)) };
-            auto layout{ new ui::AdvancedGridLayout({ 0, 0, 0 }, {}, 30) };
+            const auto layout{ new ui::AdvancedGridLayout({ 0, 0, 0 }, {}, 30) };
 
             auto full_window_menu = [&] {
                 gui->set_layout(layout);
 
                 layout->set_col_stretch(1, 1.0f);
 
-                auto title_label{ new ui::Label{ gui, "GUI Canvas Span Label",
-                                                 ui::font::name::sans_bold, 40 } };
+                const auto title_label{ new ui::Label{ gui, "GUI Canvas Span Label",
+                                                       ui::Font::Name::SansBold, 40 } };
                 layout->append_row(0);
-                auto push_button = new ui::Button{ gui, "Push Button", ui::Icon::Microscope };
+                const auto push_button = new ui::Button{ gui, "Push Button", ui::Icon::Microscope };
                 layout->append_row(0);
-                auto timer_desc_label = new ui::Label{ gui, "Timer: ", ui::font::name::sans, 32 };
+                const auto timer_desc_label = new ui::Label{ gui, "Timer: ", ui::Font::Name::Sans,
+                                                             32 };
                 layout->append_row(0);
-                auto timer_value_label = new ui::Label{ gui, "", ui::font::name::mono, 32 };
+                const auto timer_value_label = new ui::Label{ gui, "", ui::Font::Name::Mono, 32 };
                 layout->append_row(0);
-                auto stats_desc_label = new ui::Label{ gui, "Stats: ", ui::font::name::sans, 32 };
+                const auto stats_desc_label = new ui::Label{ gui, "Stats: ", ui::Font::Name::Sans,
+                                                             32 };
                 layout->append_row(0);
-                auto stats_value_label = new ui::Label{ gui, "", ui::font::name::mono, 32 };
+                const auto stats_value_label = new ui::Label{ gui, "", ui::Font::Name::Mono, 32 };
                 layout->append_row(0);
 
                 gui->add_update_callback([=, &elapsed_str] {
@@ -228,7 +233,7 @@ namespace rl {
         }
 
     private:
-        inline bool setup()
+        bool setup()
         {
             return true;
         }
@@ -238,29 +243,29 @@ namespace rl {
             return this->teardown();
         }
 
-        inline bool teardown()
+        bool teardown()
         {
             return true;
         }
 
-        inline bool handle_events()
+        bool handle_events()
         {
             return m_event_handler.handle_events(m_main_window);
         }
 
-        inline bool update()
+        bool update()
         {
             return true;
         }
 
-        inline bool should_exit() const
+        bool should_exit() const
         {
             return m_event_handler.quit_triggered();
         }
 
-        bool init_subsystem(Subsystem::ID flags)
+        bool init_subsystem(const Subsystem::ID flags)
         {
-            i32 result = SDL3::SDL_Init(flags);
+            const i32 result = SDL3::SDL_Init(flags);
             runtime_assert(result == 0, "failed to init subsystem");
             return result == 0;
         }
@@ -270,18 +275,13 @@ namespace rl {
             return m_main_window;
         }
 
-        rl::Application& sdl()
+        Application& sdl()
         {
             return *this;
         }
 
     private:
-        Application(const rl::Application& other) = delete;
-        Application(rl::Application&& other) = delete;
-        Application& operator=(const rl::Application& other) = delete;
-        Application& operator=(rl::Application&& other) = delete;
-
-        inline void print_loop_stats(f32 delta_time)
+        void print_loop_stats(const f32 delta_time)
         {
             f32 elapsed_time{ m_timer.elapsed() };
             u64 iterations{ m_timer.tick_count() };
@@ -298,9 +298,9 @@ namespace rl {
         }
 
     private:
-        rl::Timer<f32> m_timer{};
-        std::unique_ptr<rl::MainWindow> m_main_window{};
-        rl::EventHandler m_event_handler{};
-        rl::StateMachine m_fsm{};
+        Timer<f32> m_timer{};
+        std::unique_ptr<MainWindow> m_main_window{};
+        EventHandler m_event_handler{};
+        StateMachine m_fsm{};
     };
 }

@@ -30,7 +30,7 @@ namespace rl::nvg {
             goto error;
         memset(fb, 0, sizeof(NVGLUframebuffer));
 
-        fb->image = nvg::CreateImageRGBA(
+        fb->image = nvg::create_image_rgba(
             ctx, w, h, imageFlags | NVG_IMAGE_FLIPY | NVG_IMAGE_PREMULTIPLIED, NULL);
 
         fb->texture = nvglImageHandleGL3(ctx, fb->image);
@@ -93,7 +93,7 @@ namespace rl::nvg {
         if (fb->rbo != 0)
             glDeleteRenderbuffers(1, &fb->rbo);
         if (fb->image >= 0)
-            nvg::DeleteImage(fb->ctx, fb->image);
+            nvg::delete_image(fb->ctx, fb->image);
         fb->ctx = NULL;
         fb->fbo = 0;
         fb->rbo = 0;

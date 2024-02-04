@@ -212,9 +212,9 @@ namespace rl::nvg {
             if (gl->ntextures + 1 > gl->ctextures)
             {
                 GLNVGtexture* textures;
-                int ctextures = glnvg__maxi(gl->ntextures + 1, 4) +
-                                gl->ctextures / 2;  // 1.5x
-                                                    // Overallocate
+                const int ctextures = glnvg__maxi(gl->ntextures + 1, 4) +
+                                      gl->ctextures / 2;  // 1.5x
+                                                          // Overallocate
                 textures = (GLNVGtexture*)realloc(gl->textures, sizeof(GLNVGtexture) * ctextures);
                 if (textures == NULL)
                     return NULL;
@@ -640,7 +640,7 @@ namespace rl::nvg {
                                           const unsigned char* data)
     {
         GLNVGcontext* gl = (GLNVGcontext*)uptr;
-        GLNVGtexture* tex = glnvg__findTexture(gl, image);
+        const GLNVGtexture* tex = glnvg__findTexture(gl, image);
 
         if (tex == NULL)
             return 0;
@@ -671,7 +671,7 @@ namespace rl::nvg {
     static int glnvg__renderGetTextureSize(void* uptr, int image, int* w, int* h)
     {
         GLNVGcontext* gl = (GLNVGcontext*)uptr;
-        GLNVGtexture* tex = glnvg__findTexture(gl, image);
+        const GLNVGtexture* tex = glnvg__findTexture(gl, image);
         if (tex == NULL)
             return 0;
         *w = tex->width;
@@ -706,7 +706,7 @@ namespace rl::nvg {
     static int glnvg__convertPaint(GLNVGcontext* gl, GLNVGfragUniforms* frag, NVGpaint* paint,
                                    NVGscissor* scissor, float width, float fringe, float strokeThr)
     {
-        GLNVGtexture* tex = NULL;
+        const GLNVGtexture* tex = NULL;
         float invxform[6];
 
         memset(frag, 0, sizeof(*frag));
@@ -724,7 +724,7 @@ namespace rl::nvg {
         }
         else
         {
-            nvg::TransformInverse(invxform, scissor->xform);
+            nvg::transform_inverse(invxform, scissor->xform);
             glnvg__xformToMat3x4(frag->scissorMat, invxform);
             frag->scissorExt[0] = scissor->extent[0];
             frag->scissorExt[1] = scissor->extent[1];
@@ -748,17 +748,17 @@ namespace rl::nvg {
             if ((tex->flags & NVG_IMAGE_FLIPY) != 0)
             {
                 float m1[6], m2[6];
-                nvg::TransformTranslate(m1, 0.0f, frag->extent[1] * 0.5f);
-                nvg::TransformMultiply(m1, paint->xform);
-                nvg::TransformScale(m2, 1.0f, -1.0f);
-                nvg::TransformMultiply(m2, m1);
-                nvg::TransformTranslate(m1, 0.0f, -frag->extent[1] * 0.5f);
-                nvg::TransformMultiply(m1, m2);
-                nvg::TransformInverse(invxform, m1);
+                nvg::transform_translate(m1, 0.0f, frag->extent[1] * 0.5f);
+                nvg::transform_multiply(m1, paint->xform);
+                nvg::transform_scale(m2, 1.0f, -1.0f);
+                nvg::transform_multiply(m2, m1);
+                nvg::transform_translate(m1, 0.0f, -frag->extent[1] * 0.5f);
+                nvg::transform_multiply(m1, m2);
+                nvg::transform_inverse(invxform, m1);
             }
             else
             {
-                nvg::TransformInverse(invxform, paint->xform);
+                nvg::transform_inverse(invxform, paint->xform);
             }
             frag->type = NSVG_SHADER_FILLIMG;
 
@@ -774,7 +774,7 @@ namespace rl::nvg {
             frag->type = NSVG_SHADER_FILLGRAD;
             frag->radius = paint->radius;
             frag->feather = paint->feather;
-            nvg::TransformInverse(invxform, paint->xform);
+            nvg::transform_inverse(invxform, paint->xform);
         }
 
         glnvg__xformToMat3x4(frag->paintMat, invxform);
@@ -786,7 +786,7 @@ namespace rl::nvg {
 
     static void glnvg__setUniforms(GLNVGcontext* gl, int uniformOffset, int image)
     {
-        GLNVGtexture* tex = NULL;
+        const GLNVGtexture* tex = NULL;
         glBindBufferRange(GL_UNIFORM_BUFFER, GLNVG_FRAG_BINDING, gl->fragBuf, uniformOffset,
                           sizeof(GLNVGfragUniforms));
 
@@ -809,7 +809,7 @@ namespace rl::nvg {
 
     static void glnvg__fill(GLNVGcontext* gl, GLNVGcall* call)
     {
-        GLNVGpath* paths = &gl->paths[call->pathOffset];
+        const GLNVGpath* paths = &gl->paths[call->pathOffset];
         int i, npaths = call->pathCount;
 
         // Draw shapes
@@ -854,7 +854,7 @@ namespace rl::nvg {
 
     static void glnvg__convexFill(GLNVGcontext* gl, GLNVGcall* call)
     {
-        GLNVGpath* paths = &gl->paths[call->pathOffset];
+        const GLNVGpath* paths = &gl->paths[call->pathOffset];
         int i, npaths = call->pathCount;
 
         glnvg__setUniforms(gl, call->uniformOffset, call->image);
@@ -871,7 +871,7 @@ namespace rl::nvg {
 
     static void glnvg__stroke(GLNVGcontext* gl, GLNVGcall* call)
     {
-        GLNVGpath* paths = &gl->paths[call->pathOffset];
+        const GLNVGpath* paths = &gl->paths[call->pathOffset];
         int npaths = call->pathCount, i;
 
         if (gl->flags & NVG_STENCIL_STROKES)
@@ -1083,7 +1083,8 @@ namespace rl::nvg {
         if (gl->ncalls + 1 > gl->ccalls)
         {
             GLNVGcall* calls;
-            int ccalls = glnvg__maxi(gl->ncalls + 1, 128) + gl->ccalls / 2;  // 1.5x Overallocate
+            const int ccalls = glnvg__maxi(gl->ncalls + 1, 128) + gl->ccalls / 2;  // 1.5x
+                                                                                   // Overallocate
             calls = (GLNVGcall*)realloc(gl->calls, sizeof(GLNVGcall) * ccalls);
             if (calls == NULL)
                 return NULL;
@@ -1101,7 +1102,8 @@ namespace rl::nvg {
         if (gl->npaths + n > gl->cpaths)
         {
             GLNVGpath* paths;
-            int cpaths = glnvg__maxi(gl->npaths + n, 128) + gl->cpaths / 2;  // 1.5x Overallocate
+            const int cpaths = glnvg__maxi(gl->npaths + n, 128) + gl->cpaths / 2;  // 1.5x
+                                                                                   // Overallocate
             paths = (GLNVGpath*)realloc(gl->paths, sizeof(GLNVGpath) * cpaths);
             if (paths == NULL)
                 return -1;
@@ -1119,7 +1121,8 @@ namespace rl::nvg {
         if (gl->nverts + n > gl->cverts)
         {
             NVGvertex* verts;
-            int cverts = glnvg__maxi(gl->nverts + n, 4096) + gl->cverts / 2;  // 1.5x Overallocate
+            const int cverts = glnvg__maxi(gl->nverts + n, 4096) + gl->cverts / 2;  // 1.5x
+                                                                                    // Overallocate
             verts = (NVGvertex*)realloc(gl->verts, sizeof(NVGvertex) * cverts);
             if (verts == NULL)
                 return -1;
@@ -1137,9 +1140,9 @@ namespace rl::nvg {
         if (gl->nuniforms + n > gl->cuniforms)
         {
             unsigned char* uniforms;
-            int cuniforms = glnvg__maxi(gl->nuniforms + n, 128) +
-                            gl->cuniforms / 2;  // 1.5x
-                                                // Overallocate
+            const int cuniforms = glnvg__maxi(gl->nuniforms + n, 128) +
+                                  gl->cuniforms / 2;  // 1.5x
+                                                      // Overallocate
             uniforms = (unsigned char*)realloc(gl->uniforms, structSize * cuniforms);
             if (uniforms == NULL)
                 return -1;
@@ -1436,19 +1439,19 @@ namespace rl::nvg {
     error:
         // 'gl' is freed by nvgDeleteInternal.
         if (ctx != NULL)
-            nvg::DeleteInternal(ctx);
+            nvg::delete_internal(ctx);
         return NULL;
     }
 
     void nvgDeleteGL3(NVGcontext* ctx)
     {
-        nvg::DeleteInternal(ctx);
+        nvg::delete_internal(ctx);
     }
 
     int nvglCreateImageFromHandleGL3(NVGcontext* ctx, unsigned int textureId, int w, int h,
                                      int imageFlags)
     {
-        GLNVGcontext* gl = (GLNVGcontext*)nvg::InternalParams(ctx)->userPtr;
+        GLNVGcontext* gl = (GLNVGcontext*)nvg::internal_params(ctx)->userPtr;
         GLNVGtexture* tex = glnvg__allocTexture(gl);
 
         if (tex == NULL)
@@ -1465,8 +1468,8 @@ namespace rl::nvg {
 
     unsigned int nvglImageHandleGL3(NVGcontext* ctx, int image)
     {
-        GLNVGcontext* gl = (GLNVGcontext*)nvg::InternalParams(ctx)->userPtr;
-        GLNVGtexture* tex = glnvg__findTexture(gl, image);
+        GLNVGcontext* gl = (GLNVGcontext*)nvg::internal_params(ctx)->userPtr;
+        const GLNVGtexture* tex = glnvg__findTexture(gl, image);
         return tex->tex;
     }
 

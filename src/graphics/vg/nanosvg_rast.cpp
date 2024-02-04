@@ -176,8 +176,8 @@ namespace rl::nvg {
 
     static int nsvg__ptEquals(float x1, float y1, float x2, float y2, float tol)
     {
-        float dx = x2 - x1;
-        float dy = y2 - y1;
+        const float dx = x2 - x1;
+        const float dy = y2 - y1;
         return dx * dx + dy * dy < tol * tol;
     }
 
@@ -276,10 +276,10 @@ namespace rl::nvg {
 
     static float nsvg__normalize(float* x, float* y)
     {
-        float d = sqrtf((*x) * (*x) + (*y) * (*y));
+        const float d = sqrtf((*x) * (*x) + (*y) * (*y));
         if (d > 1e-6f)
         {
-            float id = 1.0f / d;
+            const float id = 1.0f / d;
             *x *= id;
             *y *= id;
         }
@@ -346,7 +346,7 @@ namespace rl::nvg {
             nsvg__addPathPoint(r, path->pts[0] * sx, path->pts[1] * sy, 0);
             for (i = 0; i < path->npts - 1; i += 3)
             {
-                float* p = &path->pts[i * 2];
+                const float* p = &path->pts[i * 2];
                 nsvg__flattenCubicBez(r, p[0] * sx, p[1] * sy, p[2] * sx, p[3] * sy, p[4] * sx,
                                       p[5] * sy, p[6] * sx, p[7] * sy, 0, 0);
             }
@@ -367,10 +367,10 @@ namespace rl::nvg {
     static void nsvg__initClosed(NSVGpoint* left, NSVGpoint* right, NSVGpoint* p0, NSVGpoint* p1,
                                  float lineWidth)
     {
-        float w = lineWidth * 0.5f;
+        const float w = lineWidth * 0.5f;
         float dx = p1->x - p0->x;
         float dy = p1->y - p0->y;
-        float len = nsvg__normalize(&dx, &dy);
+        const float len = nsvg__normalize(&dx, &dy);
         float px = p0->x + dx * len * 0.5f, py = p0->y + dy * len * 0.5f;
         float dlx = dy, dly = -dx;
         float lx = px - dlx * w, ly = py - dly * w;
@@ -384,7 +384,7 @@ namespace rl::nvg {
     static void nsvg__buttCap(NSVGrasterizer* r, NSVGpoint* left, NSVGpoint* right, NSVGpoint* p,
                               float dx, float dy, float lineWidth, int connect)
     {
-        float w = lineWidth * 0.5f;
+        const float w = lineWidth * 0.5f;
         float px = p->x, py = p->y;
         float dlx = dy, dly = -dx;
         float lx = px - dlx * w, ly = py - dly * w;
@@ -406,7 +406,7 @@ namespace rl::nvg {
     static void nsvg__squareCap(NSVGrasterizer* r, NSVGpoint* left, NSVGpoint* right, NSVGpoint* p,
                                 float dx, float dy, float lineWidth, int connect)
     {
-        float w = lineWidth * 0.5f;
+        const float w = lineWidth * 0.5f;
         float px = p->x - dx * w, py = p->y - dy * w;
         float dlx = dy, dly = -dx;
         float lx = px - dlx * w, ly = py - dly * w;
@@ -433,17 +433,17 @@ namespace rl::nvg {
                                float dx, float dy, float lineWidth, int ncap, int connect)
     {
         int i;
-        float w = lineWidth * 0.5f;
+        const float w = lineWidth * 0.5f;
         float px = p->x, py = p->y;
         float dlx = dy, dly = -dx;
         float lx = 0, ly = 0, rx = 0, ry = 0, prevx = 0, prevy = 0;
 
         for (i = 0; i < ncap; i++)
         {
-            float a = (float)i / (float)(ncap - 1) * NSVG_PI;
+            const float a = (float)i / (float)(ncap - 1) * NSVG_PI;
             float ax = cosf(a) * w, ay = sinf(a) * w;
-            float x = px - dlx * ax - dx * ay;
-            float y = py - dly * ax - dy * ay;
+            const float x = px - dlx * ax - dx * ay;
+            const float y = py - dly * ax - dy * ay;
 
             if (i > 0)
                 nsvg__addEdge(r, prevx, prevy, x, y);
@@ -478,7 +478,7 @@ namespace rl::nvg {
     static void nsvg__bevelJoin(NSVGrasterizer* r, NSVGpoint* left, NSVGpoint* right, NSVGpoint* p0,
                                 NSVGpoint* p1, float lineWidth)
     {
-        float w = lineWidth * 0.5f;
+        const float w = lineWidth * 0.5f;
         float dlx0 = p0->dy, dly0 = -p0->dx;
         float dlx1 = p1->dy, dly1 = -p1->dx;
         float lx0 = p1->x - (dlx0 * w), ly0 = p1->y - (dly0 * w);
@@ -501,7 +501,7 @@ namespace rl::nvg {
     static void nsvg__miterJoin(NSVGrasterizer* r, NSVGpoint* left, NSVGpoint* right, NSVGpoint* p0,
                                 NSVGpoint* p1, float lineWidth)
     {
-        float w = lineWidth * 0.5f;
+        const float w = lineWidth * 0.5f;
         float dlx0 = p0->dy, dly0 = -p0->dx;
         float dlx1 = p1->dy, dly1 = -p1->dx;
         float lx0, rx0, lx1, rx1;
@@ -544,11 +544,11 @@ namespace rl::nvg {
                                 NSVGpoint* p1, float lineWidth, int ncap)
     {
         int i, n;
-        float w = lineWidth * 0.5f;
+        const float w = lineWidth * 0.5f;
         float dlx0 = p0->dy, dly0 = -p0->dx;
         float dlx1 = p1->dy, dly1 = -p1->dx;
-        float a0 = atan2f(dly0, dlx0);
-        float a1 = atan2f(dly1, dlx1);
+        const float a0 = atan2f(dly0, dlx0);
+        const float a1 = atan2f(dly1, dlx1);
         float da = a1 - a0;
         float lx, ly, rx, ry;
 
@@ -570,8 +570,8 @@ namespace rl::nvg {
 
         for (i = 0; i < n; i++)
         {
-            float u = (float)i / (float)(n - 1);
-            float a = a0 + u * da;
+            const float u = (float)i / (float)(n - 1);
+            const float a = a0 + u * da;
             float ax = cosf(a) * w, ay = sinf(a) * w;
             float lx1 = p1->x - ax, ly1 = p1->y - ay;
             float rx1 = p1->x + ax, ry1 = p1->y + ay;
@@ -594,7 +594,7 @@ namespace rl::nvg {
     static void nsvg__straightJoin(NSVGrasterizer* r, NSVGpoint* left, NSVGpoint* right,
                                    NSVGpoint* p1, float lineWidth)
     {
-        float w = lineWidth * 0.5f;
+        const float w = lineWidth * 0.5f;
         float lx = p1->x - (p1->dmx * w), ly = p1->y - (p1->dmy * w);
         float rx = p1->x + (p1->dmx * w), ry = p1->y + (p1->dmy * w);
 
@@ -609,7 +609,7 @@ namespace rl::nvg {
 
     static int nsvg__curveDivs(float r, float arc, float tol)
     {
-        float da = acosf(r / (r + tol)) * 2.0f;
+        const float da = acosf(r / (r + tol)) * 2.0f;
         int divs = (int)ceilf(arc / da);
         if (divs < 2)
             divs = 2;
@@ -619,8 +619,9 @@ namespace rl::nvg {
     static void nsvg__expandStroke(NSVGrasterizer* r, NSVGpoint* points, int npoints, int closed,
                                    int lineJoin, int lineCap, float lineWidth)
     {
-        int ncap = nsvg__curveDivs(lineWidth * 0.5f, NSVG_PI, r->tessTol);  // Calculate divisions
-                                                                            // per half circle.
+        const int ncap = nsvg__curveDivs(lineWidth * 0.5f, NSVG_PI, r->tessTol);  // Calculate
+                                                                                  // divisions per
+                                                                                  // half circle.
         NSVGpoint left = { 0, 0, 0, 0, 0, 0, 0, 0 }, right = { 0, 0, 0, 0, 0, 0, 0, 0 },
                   firstLeft = { 0, 0, 0, 0, 0, 0, 0, 0 }, firstRight = { 0, 0, 0, 0, 0, 0, 0, 0 };
         NSVGpoint *p0, *p1;
@@ -771,9 +772,9 @@ namespace rl::nvg {
         int i, j, closed;
         NSVGpath* path;
         NSVGpoint *p0, *p1;
-        float miterLimit = shape->miterLimit;
-        int lineJoin = shape->strokeLineJoin;
-        int lineCap = shape->strokeLineCap;
+        const float miterLimit = shape->miterLimit;
+        const int lineJoin = shape->strokeLineJoin;
+        const int lineCap = shape->strokeLineCap;
         const float sw = (sx + sy) / 2;                   // average scaling factor
         const float lineWidth = shape->strokeWidth * sw;  // FIXME (?)
 
@@ -784,7 +785,7 @@ namespace rl::nvg {
             nsvg__addPathPoint(r, path->pts[0] * sx, path->pts[1] * sy, NSVG_PT_CORNER);
             for (i = 0; i < path->npts - 1; i += 3)
             {
-                float* p = &path->pts[i * 2];
+                const float* p = &path->pts[i * 2];
                 nsvg__flattenCubicBez(r, p[0] * sx, p[1] * sy, p[2] * sx, p[3] * sy, p[4] * sx,
                                       p[5] * sy, p[6] * sx, p[7] * sy, 0, NSVG_PT_CORNER);
             }
@@ -839,16 +840,16 @@ namespace rl::nvg {
 
                 for (j = 1; j < r->npoints2;)
                 {
-                    float dx = r->points2[j].x - cur.x;
-                    float dy = r->points2[j].y - cur.y;
-                    float dist = sqrtf(dx * dx + dy * dy);
+                    const float dx = r->points2[j].x - cur.x;
+                    const float dy = r->points2[j].y - cur.y;
+                    const float dist = sqrtf(dx * dx + dy * dy);
 
                     if ((totalDist + dist) > dashLen)
                     {
                         // Calculate intermediate point
-                        float d = (dashLen - totalDist) / dist;
-                        float x = cur.x + dx * d;
-                        float y = cur.y + dy * d;
+                        const float d = (dashLen - totalDist) / dist;
+                        const float x = cur.x + dx * d;
+                        const float y = cur.y + dy * d;
                         nsvg__addPathPoint(r, x, y, NSVG_PT_CORNER);
 
                         // Stroke
@@ -920,7 +921,7 @@ namespace rl::nvg {
                 return NULL;
         }
 
-        float dxdy = (e->x1 - e->x0) / (e->y1 - e->y0);
+        const float dxdy = (e->x1 - e->x0) / (e->y1 - e->y0);
         //	STBTT_assert(e->y0 <= start_point);
         // round dx down to avoid going too far
         if (dxdy < 0)
@@ -1004,7 +1005,7 @@ namespace rl::nvg {
                 }
                 else
                 {
-                    int x1 = e->x;
+                    const int x1 = e->x;
                     w += e->dir;
                     // if we went to zero, we need to draw
                     if (w == 0)
@@ -1026,7 +1027,7 @@ namespace rl::nvg {
                 }
                 else
                 {
-                    int x1 = e->x;
+                    const int x1 = e->x;
                     w = 0;
                     nsvg__fillScanline(scanline, len, x0, x1, maxWeight, xmin, xmax);
                 }
@@ -1049,21 +1050,21 @@ namespace rl::nvg {
 
     static unsigned int nsvg__lerpRGBA(unsigned int c0, unsigned int c1, float u)
     {
-        int iu = (int)(nsvg__clampf(u, 0.0f, 1.0f) * 256.0f);
-        int r = (((c0) & 0xff) * (256 - iu) + (((c1) & 0xff) * iu)) >> 8;
-        int g = (((c0 >> 8) & 0xff) * (256 - iu) + (((c1 >> 8) & 0xff) * iu)) >> 8;
-        int b = (((c0 >> 16) & 0xff) * (256 - iu) + (((c1 >> 16) & 0xff) * iu)) >> 8;
-        int a = (((c0 >> 24) & 0xff) * (256 - iu) + (((c1 >> 24) & 0xff) * iu)) >> 8;
+        const int iu = (int)(nsvg__clampf(u, 0.0f, 1.0f) * 256.0f);
+        const int r = (((c0) & 0xff) * (256 - iu) + (((c1) & 0xff) * iu)) >> 8;
+        const int g = (((c0 >> 8) & 0xff) * (256 - iu) + (((c1 >> 8) & 0xff) * iu)) >> 8;
+        const int b = (((c0 >> 16) & 0xff) * (256 - iu) + (((c1 >> 16) & 0xff) * iu)) >> 8;
+        const int a = (((c0 >> 24) & 0xff) * (256 - iu) + (((c1 >> 24) & 0xff) * iu)) >> 8;
         return nsvg__RGBA((unsigned char)r, (unsigned char)g, (unsigned char)b, (unsigned char)a);
     }
 
     static unsigned int nsvg__applyOpacity(unsigned int c, float u)
     {
-        int iu = (int)(nsvg__clampf(u, 0.0f, 1.0f) * 256.0f);
-        int r = (c) & 0xff;
-        int g = (c >> 8) & 0xff;
-        int b = (c >> 16) & 0xff;
-        int a = (((c >> 24) & 0xff) * iu) >> 8;
+        const int iu = (int)(nsvg__clampf(u, 0.0f, 1.0f) * 256.0f);
+        const int r = (c) & 0xff;
+        const int g = (c >> 8) & 0xff;
+        const int b = (c >> 16) & 0xff;
+        const int a = (((c >> 24) & 0xff) * iu) >> 8;
         return nsvg__RGBA((unsigned char)r, (unsigned char)g, (unsigned char)b, (unsigned char)a);
     }
 
@@ -1214,7 +1215,7 @@ namespace rl::nvg {
         NSVGactiveEdge* active = NULL;
         int y, s;
         int e = 0;
-        int maxWeight = (255 / NSVG__SUBSAMPLES);  // weight per vertical scanline
+        const int maxWeight = (255 / NSVG__SUBSAMPLES);  // weight per vertical scanline
         int xmin, xmax;
 
         for (y = 0; y < r->height; y++)
@@ -1225,7 +1226,7 @@ namespace rl::nvg {
             for (s = 0; s < NSVG__SUBSAMPLES; ++s)
             {
                 // find center of pixel for this scanline
-                float scany = (float)(y * NSVG__SUBSAMPLES + s) + 0.5f;
+                const float scany = (float)(y * NSVG__SUBSAMPLES + s) + 0.5f;
                 NSVGactiveEdge** step = &active;
 
                 // update all active edges;
@@ -1505,7 +1506,7 @@ namespace rl::nvg {
     void nsvgRasterizeXY(NSVGrasterizer* r, const NSVGimage* image, float tx, float ty, float sx,
                          float sy, unsigned char* dst, int w, int h, int stride)
     {
-        NSVGshape* shape = NULL;
+        const NSVGshape* shape = NULL;
         NSVGedge* e = NULL;
         NSVGcachedPaint cache;
         int i;

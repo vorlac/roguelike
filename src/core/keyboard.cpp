@@ -76,7 +76,7 @@ namespace rl {
         return m_text_length;
     }
 
-    void Keyboard::process_button_down(Scancode::ID key)
+    void Keyboard::process_button_down(const Scancode::ID key)
     {
         m_released[key] = false;
         auto& keystates = this->is_button_pressed(key)  //
@@ -85,7 +85,7 @@ namespace rl {
         keystates[key] = true;
     }
 
-    void Keyboard::process_button_up(Scancode::ID key)
+    void Keyboard::process_button_up(const Scancode::ID key)
     {
         m_held[key] = false;
         m_pressed[key] = false;
@@ -97,7 +97,7 @@ namespace rl {
         m_text += std::string{ text };
     }
 
-    void Keyboard::process_text_editing(const char* composition, i32 start, i32 length)
+    void Keyboard::process_text_editing(const char* composition, const i32 start, const i32 length)
     {
         m_composition = std::string{ composition };
         m_cursor_pos = start;

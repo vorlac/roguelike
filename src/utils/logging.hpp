@@ -28,6 +28,7 @@
   #define scoped_log(...)         static_cast<void>(0)
   #define scoped_logger(dbg, ...) static_cast<void>(0)
   #define scoped_log(...)         static_cast<void>(0)
+  #define diag_log(...)           static_cast<void>(0)
 
 #else
 

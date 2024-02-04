@@ -115,9 +115,9 @@ namespace rl::ui {
         f32 m_text_offset{ 0.0f };
         f32 m_last_click{ 0.0f };
 
-        ds::point<f32> m_mouse_pos{ ds::point<f32>::null() };
-        ds::point<f32> m_mouse_down_pos{ ds::point<f32>::null() };
-        ds::point<f32> m_mouse_drag_pos{ ds::point<f32>::null() };
+        ds::point<f32> m_mouse_pos{ -1, -1 };
+        ds::point<f32> m_mouse_down_pos{ -1, -1 };
+        ds::point<f32> m_mouse_drag_pos{ -1, -1 };
 
         Alignment m_alignment{};
 

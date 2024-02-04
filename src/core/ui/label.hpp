@@ -6,25 +6,22 @@
 #include "core/ui/widget.hpp"
 #include "ds/color.hpp"
 #include "ds/dims.hpp"
-#include "ds/refcounted.hpp"
-#include "ds/shared.hpp"
-#include "ds/vector2d.hpp"
 
 namespace rl::ui {
 
     class Label : public Widget
     {
     public:
-        Label(Widget* parent, std::string caption, std::string font = font::name::mono,
+        Label(Widget* parent, std::string text, const std::string_view& font = Font::Name::Mono,
               f32 font_size = -1.0f);
 
-        std::string font() const;
+        const std::string_view& font() const;
         std::string text() const;
         ds::color<f32> color() const;
 
-        void set_text(std::string text);
-        void set_font(std::string font);
-        void set_color(ds::color<f32> color);
+        void set_text(const std::string& text);
+        void set_font(const std::string& font);
+        void set_color(const ds::color<f32>& color);
         void set_callback(const std::function<void()>& callable);
 
     public:
@@ -33,8 +30,8 @@ namespace rl::ui {
         virtual void draw() override;
 
     protected:
-        std::string m_font{};
         std::string m_text{};
+        std::string_view m_font{};
         ds::color<f32> m_color{ rl::Colors::Yellow };
         std::function<void()> m_callback;
     };

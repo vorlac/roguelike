@@ -40,16 +40,17 @@ namespace rl::ui {
     public:
         Anchor() = default;
 
-        Anchor(u32 x, u32 y, Alignment horiz = Alignment::Fill, Alignment vert = Alignment::Fill)
+        Anchor(const u32 x, const u32 y, const Alignment horiz = Alignment::Fill,
+               const Alignment vert = Alignment::Fill)
             : grid_pos{ static_cast<u8>(x), static_cast<u8>(y) }
             , cell_size{ 1, 1 }
             , align{ horiz, vert }
         {
         }
 
-        Anchor(u32 grid_x, u32 grid_y, u32 cell_span_width, u32 cell_span_height,
-               Alignment horizontal_alignment = Alignment::Fill,
-               Alignment vertical_alignment = Alignment::Fill)
+        Anchor(const u32 grid_x, const u32 grid_y, const u32 cell_span_width,
+               const u32 cell_span_height, const Alignment horizontal_alignment = Alignment::Fill,
+               const Alignment vertical_alignment = Alignment::Fill)
             : grid_pos{ grid_x, grid_y }
             , cell_size{ cell_span_width, cell_span_height }
             , align{ horizontal_alignment, vertical_alignment }
@@ -129,8 +130,9 @@ namespace rl::ui {
         void set_alignment(Alignment alignment);
 
     public:
-        virtual ds::dims<f32> preferred_size(nvg::NVGcontext* nvc, const Widget* w) const override;
-        virtual void perform_layout(nvg::NVGcontext* nvc, Widget* w) const override;
+        virtual ds::dims<f32> preferred_size(nvg::NVGcontext* nvg_context,
+                                             const Widget* widget) const override;
+        virtual void perform_layout(nvg::NVGcontext* nvg_context, Widget* widget) const override;
 
     protected:
         f32 m_margin{ 0.0f };
@@ -147,8 +149,8 @@ namespace rl::ui {
     class GroupLayout : public Layout
     {
     public:
-        GroupLayout(f32 margin = 15.0f, f32 spacing = 6.0f, f32 group_spacing = 14.0f,
-                    f32 group_indent = 20.0f)
+        GroupLayout(const f32 margin = 15.0f, const f32 spacing = 6.0f,
+                    const f32 group_spacing = 14.0f, const f32 group_indent = 20.0f)
             : m_margin{ margin }
             , m_spacing{ spacing }
             , m_group_spacing{ group_spacing }
@@ -180,11 +182,11 @@ namespace rl::ui {
     class GridLayout : public Layout
     {
     public:
-        GridLayout(Orientation orientation = Orientation::Horizontal,  //
-                   f32 resolution = 2.0f,                              //
-                   Alignment alignment = Alignment::Center,            //
-                   f32 margin = 0.0f,                                  //
-                   f32 spacing = 0.0f)                                 //
+        GridLayout(const Orientation orientation = Orientation::Horizontal,  //
+                   const f32 resolution = 2.0f,                              //
+                   const Alignment alignment = Alignment::Center,            //
+                   const f32 margin = 0.0f,                                  //
+                   const f32 spacing = 0.0f)                                 //
             : m_margin{ margin }
             , m_resolution{ resolution }
             , m_spacing{ spacing, spacing }
@@ -269,7 +271,7 @@ namespace rl::ui {
 }
 
 namespace rl::ui {
-    constexpr static auto format_as(Alignment alignment)
+    constexpr static auto format_as(const Alignment alignment)
     {
         switch (alignment)
         {
@@ -287,7 +289,7 @@ namespace rl::ui {
         }
     }
 
-    constexpr static auto format_as(Orientation orientation)
+    constexpr static auto format_as(const Orientation orientation)
     {
         switch (orientation)
         {
@@ -301,7 +303,7 @@ namespace rl::ui {
         }
     }
 
-    constexpr static auto format_as(Axis axis)
+    constexpr static auto format_as(const Axis axis)
     {
         switch (axis)
         {
