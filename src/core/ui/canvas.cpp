@@ -81,7 +81,7 @@ namespace rl::ui {
             {
                 constexpr f32 tooltip_width{ 150.0f };
                 std::array<f32, 4> bounds = { 0.0f };
-                ds::point<f32> pos{
+                ds::point pos{
                     widget->position() +
                         ds::point{ (widget->width() / 2.0f), widget->height() + 10.0f },
                 };
@@ -196,7 +196,7 @@ namespace rl::ui {
     }
 
     // Return the component format underlying the screen
-    ComponentFormat Canvas::component_format() const
+    ComponentFormat Canvas::component_format()
     {
         // Signed and unsigned integer formats
         // ====================================
@@ -216,7 +216,7 @@ namespace rl::ui {
     }
 
     // Return the pixel format underlying the screen
-    PixelFormat Canvas::pixel_format() const
+    PixelFormat Canvas::pixel_format()
     {
         // Single-channel bitmap
         //   R,
@@ -238,21 +238,21 @@ namespace rl::ui {
         return 0;
     }
 
-    bool Canvas::has_depth_buffer() const
+    bool Canvas::has_depth_buffer()
     {
         // Does the framebuffer have a depth buffer
         // TODO: call opengl to confirm for debug builds
         return true;
     }
 
-    bool Canvas::has_stencil_buffer() const
+    bool Canvas::has_stencil_buffer()
     {
         // Does the framebuffer have a stencil buffer
         // TODO: call opengl to confirm for debug builds
         return true;
     }
 
-    bool Canvas::has_float_buffer() const
+    bool Canvas::has_float_buffer()
     {
         // Does the framebuffer use a floating point representation
         // TODO: call opengl to confirm for debug builds
@@ -278,7 +278,7 @@ namespace rl::ui {
 
     void Canvas::update_focus(Widget* widget)
     {
-        for (auto focus_widget : m_focus_path)
+        for (const auto focus_widget : m_focus_path)
         {
             if (!focus_widget->focused())
                 continue;
@@ -288,19 +288,19 @@ namespace rl::ui {
 
         m_focus_path.clear();
 
-        Widget* dialog{ nullptr };
+        const Widget* dialog{ nullptr };
         while (widget != nullptr)
         {
             m_focus_path.push_back(widget);
 
-            Canvas* as_canvas{ dynamic_cast<Canvas*>(widget) };
+            const Canvas* as_canvas{ dynamic_cast<Canvas*>(widget) };
             if (as_canvas != nullptr)
                 dialog = as_canvas;
 
             widget = widget->parent();
         }
 
-        for (auto focus_widget : std::ranges::reverse_view{ m_focus_path })
+        for (const auto focus_widget : std::ranges::reverse_view{ m_focus_path })
             focus_widget->on_focus_gained();
 
         // if (window != nullptr)
@@ -310,7 +310,7 @@ namespace rl::ui {
     void Canvas::move_dialog_to_front(Dialog* dialog)
     {
         bool changed{ false };
-        auto removal_iterator{ std::remove(m_children.begin(), m_children.end(), dialog) };
+        const auto removal_iterator{ std::remove(m_children.begin(), m_children.end(), dialog) };
         m_children.erase(removal_iterator, m_children.end());
         m_children.push_back(dialog);
 
@@ -325,7 +325,7 @@ namespace rl::ui {
             changed = false;
             for (size_t idx = 0; idx < m_children.size(); ++idx)
             {
-                Popup* popup_wnd{ dynamic_cast<Popup*>(m_children[idx]) };
+                const auto popup_wnd{ dynamic_cast<Popup*>(m_children[idx]) };
                 if (popup_wnd != nullptr && popup_wnd->parent_window() == dialog && idx < base_idx)
                 {
                     this->move_dialog_to_front(dialog);
@@ -339,9 +339,9 @@ namespace rl::ui {
 
     void Canvas::dispose_dialog(Dialog* dialog)
     {
-        bool match_found = std::ranges::find_if(m_focus_path, [&](Widget* w) {
-                               return w == dialog;
-                           }) != m_focus_path.end();
+        const bool match_found = std::ranges::find_if(m_focus_path, [&](Widget* w) {
+                                     return w == dialog;
+                                 }) != m_focus_path.end();
 
         if (match_found)
             m_focus_path.clear();
@@ -361,19 +361,19 @@ namespace rl::ui {
             dialog->perform_layout();
         }
 
-        ds::dims<f32> offset{ ((m_size - dialog->size()) / 2.0f) - m_pos };
-        ds::point<f32> position{ offset.width, offset.height };
+        const ds::dims offset{ ((m_size - dialog->size()) / 2.0f) - m_pos };
+        const ds::point position{ offset.width, offset.height };
         dialog->set_position(position);
     }
 
-    bool Canvas::on_moved(ds::point<f32> pt)
+    bool Canvas::on_moved(const ds::point<f32>& pt)
     {
         scoped_log("{} => {}", ds::rect{ m_pos, m_size }, ds::rect{ pt, m_size });
         this->set_position(std::forward<decltype(pt)>(pt));
         return true;
     }
 
-    bool Canvas::on_resized(const ds::dims<f32> size)
+    bool Canvas::on_resized(const ds::dims<f32>& size)
     {
         scoped_log("{} => {}", ds::rect{ m_pos, m_size }, ds::rect{ m_pos, size / m_pixel_ratio });
 
@@ -392,18 +392,16 @@ namespace rl::ui {
     bool Canvas::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb)
     {
         scoped_log("btn_pressed={}", mouse.button_pressed());
-        const ds::point<f32> mouse_pos{ mouse.pos() };
+        const ds::point mouse_pos{ mouse.pos() };
 
         m_last_interaction = m_timer.elapsed();
         if (m_focus_path.size() > 1)
         {
             const Widget* w{ m_focus_path[m_focus_path.size() - 2] };
-            const Dialog* dialog{ dynamic_cast<const Dialog*>(w) };
+            const auto dialog{ dynamic_cast<const Dialog*>(w) };
             if (dialog != nullptr && dialog->modal())
-            {
                 if (!dialog->contains(mouse_pos))
                     return true;
-            }
         }
 
         const auto drop_widget{ this->find_widget(mouse_pos) };
@@ -435,21 +433,19 @@ namespace rl::ui {
     {
         scoped_log("btn={}", mouse.button_released());
 
-        const ds::point<f32> mouse_pos{ mouse.pos() };
+        const ds::point mouse_pos{ mouse.pos() };
         m_last_interaction = m_timer.elapsed();
 
         if (m_focus_path.size() > 1)
         {
             const Widget* w{ m_focus_path[m_focus_path.size() - 2] };
-            const Dialog* dialog{ dynamic_cast<const Dialog*>(w) };
+            const auto dialog{ dynamic_cast<const Dialog*>(w) };
             if (dialog != nullptr && dialog->modal())
-            {
                 if (!dialog->contains(mouse_pos))
                     return true;
-            }
         }
 
-        Widget* drop_widget{ this->find_widget(mouse_pos) };
+        const Widget* drop_widget{ this->find_widget(mouse_pos) };
         if (m_drag_active && drop_widget != m_drag_widget)
             m_redraw |= m_drag_widget->on_mouse_button_released(mouse, kb);
 
@@ -481,7 +477,7 @@ namespace rl::ui {
             m_pos.x = std::max(m_pos.x, 0.0f);
             m_pos.y = std::max(m_pos.y, 0.0f);
 
-            auto relative_size{ this->parent()->size() - m_size };
+            const auto relative_size{ this->parent()->size() - m_size };
             m_pos.x = std::min(m_pos.x, relative_size.width);
             m_pos.y = std::min(m_pos.y, relative_size.height);
 
@@ -494,12 +490,12 @@ namespace rl::ui {
     bool Canvas::on_mouse_move(const Mouse& mouse, const Keyboard& kb)
     {
         bool ret{ false };
-        const ds::point<f32> mouse_pos{ mouse.pos() };
+        const ds::point mouse_pos{ mouse.pos() };
         m_last_interaction = m_timer.elapsed();
 
         scoped_logger(log_level::trace, "move_pos={}", mouse.pos());
 
-        ds::point<f32> pnt{
+        const ds::point pnt{
             (mouse_pos.x / m_pixel_ratio) - 1.0f,
             (mouse_pos.y / m_pixel_ratio) - 2.0f,
         };
@@ -508,7 +504,7 @@ namespace rl::ui {
             ret = m_drag_widget->on_mouse_drag(mouse, kb);
         else
         {
-            Widget* widget{ this->find_widget(pnt) };
+            const Widget* widget{ this->find_widget(pnt) };
             if (widget != nullptr && widget->cursor() != m_cursor)
             {
                 m_cursor = widget->cursor();
@@ -529,12 +525,10 @@ namespace rl::ui {
         m_last_interaction = m_timer.elapsed();
         if (m_focus_path.size() > 1)
         {
-            auto dialog{ dynamic_cast<Dialog*>(m_focus_path[m_focus_path.size() - 2]) };
+            const auto dialog{ dynamic_cast<Dialog*>(m_focus_path[m_focus_path.size() - 2]) };
             if (dialog != nullptr && dialog->modal())
-            {
                 if (!dialog->contains(mouse.pos()))
                     return true;
-            }
         }
 
         m_redraw |= Widget::on_mouse_scroll(mouse, kb);

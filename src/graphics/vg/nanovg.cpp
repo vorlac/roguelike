@@ -3308,8 +3308,7 @@ namespace rl::nvg {
         NVGtextRow rows[2];
         const float scale = nvg_getFontScale(state) * ctx->devicePxRatio;
         const float invscale = 1.0f / scale;
-        int nrows = 0;
-        const int oldAlign = state->textAlign;
+        const int old_align = state->textAlign;
         const int haling = state->textAlign & (NVG_ALIGN_LEFT | NVG_ALIGN_CENTER | NVG_ALIGN_RIGHT);
         const int valign = state->textAlign & (NVG_ALIGN_TOP | NVG_ALIGN_MIDDLE | NVG_ALIGN_BOTTOM |
                                                NVG_ALIGN_BASELINE);
@@ -3339,6 +3338,7 @@ namespace rl::nvg {
         rminy *= invscale;
         rmaxy *= invscale;
 
+        int nrows = 0;
         while ((nrows = text_break_lines(ctx, string, end, breakRowWidth, rows, 2)))
         {
             for (int i = 0; i < nrows; i++)
@@ -3368,7 +3368,7 @@ namespace rl::nvg {
             string = rows[nrows - 1].next;
         }
 
-        state->textAlign = oldAlign;
+        state->textAlign = old_align;
 
         if (bounds != nullptr)
         {

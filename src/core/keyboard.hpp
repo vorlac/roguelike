@@ -561,13 +561,13 @@ namespace rl {
         [[nodiscard]] std::string get_inputted_text_compisition() const;
         [[nodiscard]] i32 get_inputted_text_cursor_loc() const;
         [[nodiscard]] i32 get_inputted_text_length() const;
-        [[nodiscard]] Keyboard::Scancode::ID keys_down() const;
-        [[nodiscard]] std::string get_key_state(const Scancode::ID kb_button) const;
+        [[nodiscard]] Scancode::ID keys_down() const;
+        [[nodiscard]] std::string get_key_state(Scancode::ID key) const;
 
-        [[nodiscard]] bool is_button_pressed(const Scancode::ID key) const;
-        [[nodiscard]] bool is_button_released(const Scancode::ID key) const;
-        [[nodiscard]] bool is_button_held(const Scancode::ID key) const;
-        [[nodiscard]] bool is_button_down(const Scancode::ID key) const;
+        [[nodiscard]] bool is_button_pressed(Scancode::ID key) const;
+        [[nodiscard]] bool is_button_released(Scancode::ID key) const;
+        [[nodiscard]] bool is_button_held(Scancode::ID key) const;
+        [[nodiscard]] bool is_button_down(Scancode::ID key) const;
         [[nodiscard]] bool all_buttons_down(std::vector<Scancode::ID> keys) const;
         [[nodiscard]] bool any_buttons_down(std::vector<Scancode::ID> keys) const;
 
@@ -580,8 +580,8 @@ namespace rl {
     private:
         i32 m_cursor_pos{ 0 };
         i32 m_text_length{ 0 };
-        std::string m_text{ "" };
-        std::string m_composition{ "" };
+        std::string m_text{};
+        std::string m_composition{};
         std::bitset<Scancode::Count> m_held{ 0 };
         std::bitset<Scancode::Count> m_pressed{ 0 };
         mutable std::bitset<Scancode::Count> m_released{ 0 };

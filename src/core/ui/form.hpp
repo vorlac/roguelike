@@ -10,9 +10,7 @@
 #include "core/ui/layout.hpp"
 #include "core/ui/textbox.hpp"
 #include "core/ui/vscrollpanel.hpp"
-#include "ds/color.hpp"
 #include "ds/dims.hpp"
-#include "ds/refcounted.hpp"
 #include "ds/shared.hpp"
 
 namespace rl::ui {
@@ -26,7 +24,7 @@ namespace rl::ui {
     class FormHelper
     {
     public:
-        FormHelper(Canvas* screen)
+        explicit FormHelper(Canvas* screen)
             : m_ui_canvas{ screen }
         {
         }
@@ -58,8 +56,8 @@ namespace rl::ui {
 
         Label* add_group(const std::string& caption)
         {
-            Theme* theme{ m_container->theme() };
-            Label* label{ new Label{
+            const Theme* theme{ m_container->theme() };
+            const auto label{ new Label{
                 m_container,
                 caption,
                 theme->form_group_font_name,
@@ -79,8 +77,8 @@ namespace rl::ui {
                                             const std::function<void(const T&)>& setter,
                                             const std::function<T()>& getter, bool editable = true)
         {
-            Theme* theme{ m_container->theme() };
-            Label* label = new Label{
+            const Theme* theme{ m_container->theme() };
+            const Label* label = new Label{
                 m_container,
                 label_text,
                 theme->form_label_font_name,
@@ -134,8 +132,8 @@ namespace rl::ui {
 
         Button* add_button(const std::string& label, const std::function<void()>& cb)
         {
-            Theme* theme{ m_container->theme() };
-            Button* button{ new Button{ m_container, label } };
+            const Theme* theme{ m_container->theme() };
+            const auto button{ new Button{ m_container, label } };
 
             button->set_callback(cb);
             if (m_layout->row_count() > 0)
@@ -147,16 +145,16 @@ namespace rl::ui {
             return button;
         }
 
-        void add_widget(const std::string& label_text, Widget* widget)
+        void add_widget(const std::string& label_text, const Widget* widget)
         {
-            Theme* theme{ m_container->theme() };
+            const Theme* theme{ m_container->theme() };
             m_layout->append_row(0);
 
             if (label_text.empty())
                 m_layout->set_anchor(widget, Anchor{ 1, m_layout->row_count() - 1, 3, 1 });
             else
             {
-                Label* label = new Label{
+                const Label* label = new Label{
                     m_container,
                     label_text,
                     theme->form_label_font_name,
@@ -167,7 +165,7 @@ namespace rl::ui {
             }
         }
 
-        void refresh()
+        void refresh() const
         {
             for (const auto& callback : m_refresh_callbacks)
                 callback();
@@ -211,7 +209,7 @@ namespace rl::ui {
         class FormWidget<bool, std::true_type> : public CheckBox
         {
         public:
-            FormWidget(Widget* p)
+            explicit FormWidget(Widget* p)
                 : CheckBox{ p, "" }
             {
                 this->set_fixed_width(20);
@@ -232,7 +230,7 @@ namespace rl::ui {
                 return this->checked();
             }
 
-            virtual std::string name() const override
+            std::string name() const override
             {
                 return "class rl::ui::FormWidget[CheckBox]";
             }
@@ -242,7 +240,7 @@ namespace rl::ui {
         class FormWidget<T, typename std::is_enum<T>::type> : public ComboBox
         {
         public:
-            FormWidget(Widget* p)
+            explicit FormWidget(Widget* p)
                 : ComboBox{ p }
             {
             }
@@ -270,7 +268,7 @@ namespace rl::ui {
                 this->set_enabled(e);
             }
 
-            virtual std::string name() const override
+            std::string name() const override
             {
                 return "class rl::ui::FormWidget[ComboBox]";
             }
@@ -280,13 +278,13 @@ namespace rl::ui {
         class FormWidget<T, typename std::is_integral<T>::type> : public IntBox<T>
         {
         public:
-            FormWidget(Widget* p)
+            explicit FormWidget(Widget* p)
                 : IntBox<T>{ p }
             {
                 this->set_alignment(TextBox::Alignment::Right);
             }
 
-            virtual std::string name() const override
+            std::string name() const override
             {
                 return "class rl::ui::FormWidget[IntBox]";
             }
@@ -296,13 +294,13 @@ namespace rl::ui {
         class FormWidget<T, typename std::is_floating_point<T>::type> : public FloatBox<T>
         {
         public:
-            FormWidget(Widget* p)
+            explicit FormWidget(Widget* p)
                 : FloatBox<T>{ p }
             {
                 this->set_alignment(TextBox::Alignment::Right);
             }
 
-            virtual std::string name() const override
+            std::string name() const override
             {
                 return "class rl::ui::FormWidget[FloatBox]";
             }
@@ -312,7 +310,7 @@ namespace rl::ui {
         class FormWidget<std::string, std::true_type> : public TextBox
         {
         public:
-            FormWidget(Widget* p)
+            explicit FormWidget(Widget* p)
                 : TextBox{ p }
             {
                 this->set_alignment(TextBox::Alignment::Left);
@@ -326,7 +324,7 @@ namespace rl::ui {
                 });
             }
 
-            virtual std::string name() const override
+            std::string name() const override
             {
                 return "class rl::ui::FormWidget[TextBox]";
             }

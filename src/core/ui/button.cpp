@@ -1,14 +1,6 @@
-#include <array>
-#include <memory>
 #include <string>
 #include <string_view>
-#include <tuple>
-#include <type_traits>
 #include <utility>
-
-#include <fmt/compile.h>
-#include <fmt/core.h>
-#include <fmt/format.h>
 
 #include "core/keyboard.hpp"
 #include "core/mouse.hpp"
@@ -20,9 +12,9 @@
 
 namespace rl::ui {
 
-    Button::Button(Widget* parent, std::string caption, const Icon::ID icon)
+    Button::Button(Widget* parent, std::string text, const Icon::ID icon)
         : Widget{ parent }
-        , m_caption{ caption }
+        , m_text{ std::forward<std::string>(text) }
         , m_icon{ icon }
     {
         if (m_theme != nullptr)
@@ -49,12 +41,12 @@ namespace rl::ui {
 
     const std::string& Button::caption() const
     {
-        return m_caption;
+        return m_text;
     }
 
     void Button::set_caption(const std::string& caption)
     {
-        m_caption = caption;
+        m_text = caption;
     }
 
     ds::color<f32> Button::background_color() const
@@ -62,7 +54,7 @@ namespace rl::ui {
         return m_background_color;
     }
 
-    void Button::set_background_color(ds::color<f32> bg_color)
+    void Button::set_background_color(const ds::color<f32>& bg_color)
     {
         m_background_color = bg_color;
     }
@@ -72,7 +64,7 @@ namespace rl::ui {
         return m_text_color;
     }
 
-    void Button::set_text_color(ds::color<f32> text_color)
+    void Button::set_text_color(const ds::color<f32>& text_color)
     {
         m_text_color = text_color;
     }
@@ -145,15 +137,15 @@ namespace rl::ui {
         nvg::font_size(context, font_size);
         nvg::font_face(context, Font::Name::Sans);
 
-        ds::dims<f32> icon_size{ 0.0f, font_size };
-        const f32 text_width{ nvg::text_bounds(context, 0.0f, 0.0f, m_caption.c_str(), nullptr,
+        ds::dims icon_size{ 0.0f, font_size };
+        const f32 text_width{ nvg::text_bounds(context, 0.0f, 0.0f, m_text.c_str(), nullptr,
                                                nullptr) };
 
         if (m_icon != Icon::None)
         {
             if (Icon::is_font(m_icon))
             {
-                icon_size.height *= icon_scale();
+                icon_size.height *= this->icon_scale();
                 nvg::font_face(context, Font::Name::Icons);
                 nvg::font_size(context, icon_size.height);
                 icon_size.width = nvg::text_bounds(context, 0.0f, 0.0f, utf8(m_icon).data(),
@@ -163,16 +155,16 @@ namespace rl::ui {
             else
             {
                 icon_size.height *= 0.9f;
-                ds::dims<i32> image_size{ 0, 0 };
+                ds::dims image_size{ 0, 0 };
                 nvg::image_size(context, std::to_underlying(m_icon), &image_size.width,
                                 &image_size.height);
 
-                icon_size.width = image_size.width * icon_size.height / image_size.height;
+                icon_size.width = (image_size.width * icon_size.height / image_size.height);
             }
         }
 
-        return ds::dims<f32>{
-            (text_width + icon_size.width) + 20.0f,
+        return ds::dims{
+            text_width + icon_size.width + 20.0f,
             font_size + 10.0f,
         };
     }
@@ -187,19 +179,25 @@ namespace rl::ui {
         return Widget::on_mouse_exited(mouse);
     }
 
-    bool Button::handle_mouse_button_event(ds::point<f32> pt, const Mouse::Button::ID mouse_btn,
+    bool Button::handle_mouse_button_event(
+        const ds::point<f32>& pt, const Mouse::Button::ID button,
                                            const bool button_just_pressed,
                                            Keyboard::Scancode::ID keys_down)
     {
-        const bool isLMBandMenuButton{ mouse_btn == Mouse::Button::Left &&
-                                       !this->has_property(Property::StandardMenu) };
-        const bool isRMBandNotMenuBtn{ mouse_btn == Mouse::Button::Right &&
-                                       this->has_property(Property::StandardMenu) };
 
         // Temporarily increase the reference count of the button in
         // case the button causes the parent window to be destructed
-        ds::shared<Button> self{ this };
-        if (m_enabled && (isLMBandMenuButton || isRMBandNotMenuBtn))
+        ds::shared self{ this };
+
+        const bool lmb_and_menu_btn{ 
+            button == Mouse::Button::Left && 
+            !this->has_property(Property::StandardMenu) };
+
+        const bool rmb_and_not_menu_btn{ 
+            button == Mouse::Button::Right && 
+            this->has_property(Property::StandardMenu) };
+
+        if (m_enabled && (lmb_and_menu_btn || rmb_and_not_menu_btn))
         {
             const bool pushed_backup{ m_pressed };
             if (button_just_pressed)
@@ -207,45 +205,41 @@ namespace rl::ui {
                 if (this->has_property(Property::Radio))
                 {
                     if (m_button_group.empty())
-                    {
-                        for (auto widget : parent()->children())
+                        for (const auto widget : parent()->children())
                         {
-                            Button* button{ dynamic_cast<Button*>(widget) };
-                            if (button != this && button != nullptr &&
-                                button->has_property(Property::Radio) && button->pressed())
+                            const auto btn{ dynamic_cast<Button*>(widget) };
+                            if (btn != this && btn != nullptr &&
+                                btn->has_property(Property::Radio) && btn->pressed())
                             {
-                                button->m_pressed = false;
-                                if (button->m_change_callback != nullptr)
-                                    button->m_change_callback(false);
+                                btn->m_pressed = false;
+                                if (btn->m_change_callback != nullptr)
+                                    btn->m_change_callback(false);
                             }
                         }
-                    }
                     else
                     {
-                        for (auto button : m_button_group)
-                        {
-                            if (button != this && button->has_property(Property::Radio) &&
-                                button->m_pressed)
+                        for (const auto btn : m_button_group)
+                            if (btn != this && btn->has_property(Property::Radio) &&
+                                btn->m_pressed)
                             {
-                                button->m_pressed = false;
-                                if (button->m_change_callback != nullptr)
-                                    button->m_change_callback(false);
+                                btn->m_pressed = false;
+                                if (btn->m_change_callback != nullptr)
+                                    btn->m_change_callback(false);
                             }
-                        }
                     }
                 }
 
                 if (this->has_property(Property::PopupMenu))
                 {
-                    for (auto widget : this->parent()->children())
+                    for (const auto widget : this->parent()->children())
                     {
-                        Button* button{ dynamic_cast<Button*>(widget) };
-                        if (button != this && button != nullptr &&
-                            button->has_property(Property::PopupMenu) && button->pressed())
+                        const auto btn{ dynamic_cast<Button*>(widget) };
+                        if (btn != this && btn != nullptr &&
+                            btn->has_property(Property::PopupMenu) && btn->pressed())
                         {
-                            button->set_pressed(false);
-                            if (button->m_change_callback != nullptr)
-                                button->m_change_callback(false);
+                            btn->set_pressed(false);
+                            if (btn->m_change_callback != nullptr)
+                                btn->m_change_callback(false);
                         }
                     }
 
@@ -343,14 +337,14 @@ namespace rl::ui {
         f32 font_size{ m_font_size == -1 ? m_theme->button_font_size : m_font_size };
         nvg::font_size(context, font_size);
         nvg::font_face(context, Font::Name::Sans);
-        f32 text_width{ nvg::text_bounds(context, 0.0f, 0.0f, m_caption.c_str(), nullptr, nullptr) };
+        f32 text_width{ nvg::text_bounds(context, 0.0f, 0.0f, m_text.c_str(), nullptr, nullptr) };
 
-        ds::point<f32> center{
+        ds::point center{
             m_pos.x + m_size.width * 0.5f,
             m_pos.y + m_size.height * 0.5f,
         };
 
-        ds::point<f32> text_pos{
+        ds::point text_pos{
             center.x - text_width * 0.5f,
             center.y - 1.0f,
         };
@@ -363,7 +357,7 @@ namespace rl::ui {
         if (m_icon != Icon::None)
         {
             const std::string icon{ utf8(std::to_underlying(m_icon)) };
-            ds::dims<f32> icon_size{ font_size, font_size };
+            ds::dims icon_size{ font_size, font_size };
 
             if (Icon::is_font(m_icon))
             {
@@ -375,17 +369,17 @@ namespace rl::ui {
             else
             {
                 icon_size.height *= 0.9f;
-                ds::dims<i32> image_size{ 0, 0 };
+                ds::dims image_size{ 0, 0 };
                 nvg::image_size(context, m_icon, &image_size.width, &image_size.height);
                 icon_size.width = image_size.height * icon_size.height / image_size.height;
             }
 
-            if (!m_caption.empty())
+            if (!m_text.empty())
                 icon_size.width += m_size.height * 0.15f;
 
             nvg::fill_color(context, text_color);
             nvg::text_align(context, Text::Alignment::HLeftVMiddle);
-            ds::point<f32> icon_pos{ center };
+            ds::point icon_pos{ center };
 
             icon_pos.y -= 1;
             switch (m_icon_placement)
@@ -424,8 +418,8 @@ namespace rl::ui {
         nvg::font_face(context, Font::Name::Mono);
         nvg::text_align(context, Text::HLeftVMiddle);
         nvg::fill_color(context, m_theme->text_shadow_color.nvg());
-        nvg::text(context, text_pos.x, text_pos.y, m_caption.c_str(), nullptr);
+        nvg::text(context, text_pos.x, text_pos.y, m_text.c_str(), nullptr);
         nvg::fill_color(context, text_color);
-        nvg::text(context, text_pos.x, text_pos.y + 1.0f, m_caption.c_str(), nullptr);
+        nvg::text(context, text_pos.x, text_pos.y + 1.0f, m_text.c_str(), nullptr);
     }
 }

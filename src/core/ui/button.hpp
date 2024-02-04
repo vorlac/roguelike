@@ -30,7 +30,7 @@ namespace rl::ui {
         };
 
     public:
-        Button(Widget* parent, std::string caption = "Untitled", Icon::ID icon = Icon::None);
+        explicit Button(Widget* parent, std::string text = "Untitled", Icon::ID icon = Icon::None);
 
         bool pressed() const;
         Icon::ID icon() const;
@@ -46,8 +46,8 @@ namespace rl::ui {
         bool has_property(Button::Property prop) const;
         void set_property(Button::Property prop);
         void set_caption(const std::string& caption);
-        void set_background_color(ds::color<f32> bg_color);
-        void set_text_color(ds::color<f32> text_color);
+        void set_background_color(const ds::color<f32>& bg_color);
+        void set_text_color(const ds::color<f32>& text_color);
         void set_icon(Icon::ID icon);
         void set_icon_placement(Icon::Placement placement);
         void set_pressed(bool pressed);
@@ -66,12 +66,12 @@ namespace rl::ui {
         virtual ds::dims<f32> preferred_size() const override;
 
     private:
-        bool handle_mouse_button_event(ds::point<f32> pt, Mouse::Button::ID button, bool down,
-                                       Keyboard::Scancode::ID modifiers);
+        bool handle_mouse_button_event(const ds::point<f32>& pt, Mouse::Button::ID button, bool button_just_pressed,
+                                       Keyboard::Scancode::ID keys_down);
 
     protected:
         bool m_pressed{ false };
-        std::string m_caption{};
+        std::string m_text{};
         Icon::ID m_icon{ Icon::None };
         Button::Property m_props{ Property::StandardPush };
         Icon::Placement m_icon_placement{ Icon::Placement::LeftCentered };

@@ -110,12 +110,6 @@ namespace rl::ui {
             runtime_assert(font_load_success, "Failed to load fonts");
         }
 
-
-
-
-
-
-
         i32 font_sans_regular{ Font::InvalidHandle };
         i32 font_sans_bold{ Font::InvalidHandle };
         i32 font_icons{ Font::InvalidHandle };

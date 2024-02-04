@@ -69,7 +69,6 @@ namespace rl {
             u64 frame_count{ 0 };
             f32 framerate{ 0.0f };
             f32 elapsed_time{ 0.0f };
-            f32 delta_time{ m_timer.delta() };
             std::string sval{ "asdsad" };
             ui::Axis eval{ ui::Horizontal };
 
@@ -129,20 +128,18 @@ namespace rl {
 
                 layout->set_col_stretch(1, 1.0f);
 
-                const auto title_label{ new ui::Label{ gui, "GUI Canvas Span Label",
-                                                       ui::Font::Name::SansBold, 40 } };
+                auto title_label{ new ui::Label{ gui, "GUI Canvas Span Label",
+                                                 ui::Font::Name::SansBold, 40 } };
                 layout->append_row(0);
-                const auto push_button = new ui::Button{ gui, "Push Button", ui::Icon::Microscope };
+                auto push_button = new ui::Button{ gui, "Push Button", ui::Icon::Microscope };
                 layout->append_row(0);
-                const auto timer_desc_label = new ui::Label{ gui, "Timer: ", ui::Font::Name::Sans,
-                                                             32 };
+                auto timer_desc_label = new ui::Label{ gui, "Timer: ", ui::Font::Name::Sans, 32 };
                 layout->append_row(0);
-                const auto timer_value_label = new ui::Label{ gui, "", ui::Font::Name::Mono, 32 };
+                auto timer_value_label = new ui::Label{ gui, "", ui::Font::Name::Mono, 32 };
                 layout->append_row(0);
-                const auto stats_desc_label = new ui::Label{ gui, "Stats: ", ui::Font::Name::Sans,
-                                                             32 };
+                auto stats_desc_label = new ui::Label{ gui, "Stats: ", ui::Font::Name::Sans, 32 };
                 layout->append_row(0);
-                const auto stats_value_label = new ui::Label{ gui, "", ui::Font::Name::Mono, 32 };
+                auto stats_value_label = new ui::Label{ gui, "", ui::Font::Name::Mono, 32 };
                 layout->append_row(0);
 
                 gui->add_update_callback([=, &elapsed_str] {
@@ -203,7 +200,7 @@ namespace rl {
 
             m_timer.reset();
             // vbo.bind_buffers();
-            while (!this->should_exit()) [[unlikely]]
+            while (!this->should_exit())
             {
                 m_timer.tick([&]() {
                     this->handle_events();
