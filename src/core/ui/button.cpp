@@ -130,6 +130,7 @@ namespace rl::ui {
 
     ds::dims<f32> Button::preferred_size() const
     {
+        // TODO: check font size here
         auto&& context{ m_renderer->context() };
         const f32 font_size{ m_font_size < 0.0f ? m_theme->button_font_size : m_font_size };
 
