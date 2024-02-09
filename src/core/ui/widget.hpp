@@ -1,6 +1,5 @@
 #pragma once
 
-#include <algorithm>
 #include <vector>
 
 #include "core/keyboard.hpp"
@@ -9,7 +8,6 @@
 #include "core/ui/theme.hpp"
 #include "ds/dims.hpp"
 #include "ds/point.hpp"
-#include "ds/rect.hpp"
 #include "ds/refcounted.hpp"
 #include "ds/shared.hpp"
 #include "ds/vector2d.hpp"
@@ -25,11 +23,17 @@ namespace rl::ui {
     {
     private:
         friend class Canvas;
-        Widget(Widget* parent, const std::unique_ptr<NVGRenderer>& vg_renderer);
+        explicit Widget(Widget* parent, const std::unique_ptr<NVGRenderer>& vg_renderer);
 
     public:
+        Widget() = delete;
+        Widget(Widget&& other) = delete;
+        Widget(const Widget& other) = delete;
+
         explicit Widget(Widget* parent);
         virtual ~Widget() override;
+
+        using refcounted::operator=;
 
         bool show();
         bool hide();
@@ -144,7 +148,7 @@ namespace rl::ui {
         bool m_focused{ false };
         bool m_mouse_focus{ false };
 
-        f32 m_font_size{ 16.0f };
+        f32 m_font_size{ -1.0f };
         f32 m_icon_extra_scale{ 1.0f };
 
         ds::point<f32> m_pos{ 0.0f, 0.0f };

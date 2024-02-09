@@ -92,7 +92,7 @@ namespace rl {
         return m_nvg_context;
     }
 
-    void NVGRenderer::begin_frame(const ds::dims<f32>& render_size, f32 pixel_ratio) const
+    void NVGRenderer::begin_frame(const ds::dims<f32>& render_size, const f32 pixel_ratio) const
     {
         nvg::begin_frame(m_nvg_context, render_size.width, render_size.height, pixel_ratio);
     }
@@ -127,7 +127,7 @@ namespace rl {
                                static_cast<f32>(viewport.height), pixel_ratio);
     }
 
-    void NVGRenderer::load_fonts(std::vector<FontInfo>&& fonts)
+    void NVGRenderer::load_fonts(const std::vector<FontInfo>& fonts)
     {
         for (auto&& font_info : fonts)
         {
@@ -137,8 +137,8 @@ namespace rl {
         }
     }
 
-    void NVGRenderer::set_text_properties(const std::string_view& font_name, f32 font_size,
-                                          ui::Text::Alignment alignment) const
+    void NVGRenderer::set_text_properties(const std::string_view& font_name, const f32 font_size,
+                                          const ui::Text::Alignment alignment) const
     {
         nvg::font_face(m_nvg_context, font_name.data());
         nvg::font_size(m_nvg_context, font_size);

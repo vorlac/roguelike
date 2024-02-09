@@ -13,7 +13,6 @@
 #include "utils/numeric.hpp"
 
 namespace rl::ui {
-
     BoxLayout::BoxLayout(const Orientation orientation, const Alignment alignment, const f32 margin,
                          const f32 spacing)
         : m_margin{ margin }
@@ -45,19 +44,20 @@ namespace rl::ui {
         }
 
         bool first_child{ true };
-        for (const auto w : widget->children())
+        for (const auto child : widget->children())
         {
-            if (!w->visible())
+            if (!child->visible())
                 continue;
 
             if (!first_child)
                 size.height += m_spacing;
 
-            const ds::dims ps{ w->preferred_size() };
-            const ds::dims fs{ w->fixed_size() };
+            const ds::dims ps{ child->preferred_size() };
+            const ds::dims fs{ child->fixed_size() };
             const ds::dims target_size{
-                fs.width != 0.0f ? fs.width : ps.width,
-                fs.height != 0.0f ? fs.height : ps.height,
+                std::fabs(fs.width) > std::numeric_limits<f32>::epsilon() ? fs.width : ps.width,
+                std::fabs(fs.height) > std::numeric_limits<f32>::epsilon() != 0.0f ? fs.height
+                                                                                   : ps.height,
             };
 
             first_child = false;
@@ -72,18 +72,18 @@ namespace rl::ui {
     {
         scoped_log();
 
-        const ds::dims<f32> fs_w{ widget->fixed_size() };
-        ds::dims<f32> container_size{
-            fs_w.width != 0.0f ? fs_w.width : widget->width(),
-            fs_w.height != 0.0f ? fs_w.height : widget->height(),
+        const ds::dims fs_w{ widget->fixed_size() };
+        ds::dims container_size{
+            std::fabs(fs_w.width) > std::numeric_limits<f32>::epsilon() ? fs_w.width
+                                                                        : widget->width(),
+            std::fabs(fs_w.height) > std::numeric_limits<f32>::epsilon() ? fs_w.height
+                                                                         : widget->height(),
         };
 
-        const i32 axis1{ std::to_underlying(m_orientation) };
-        const i32 axis2{ (std::to_underlying(m_orientation) + 1) % 2 };
         f32 position{ m_margin };
         f32 y_offset{ 0.0f };
 
-        const Dialog* dialog{ dynamic_cast<const Dialog*>(widget) };
+        const auto dialog{ dynamic_cast<const Dialog*>(widget) };
         if (dialog != nullptr && !dialog->title().empty())
         {
             if (m_orientation == Orientation::Vertical)
@@ -105,14 +105,14 @@ namespace rl::ui {
                 position += m_spacing;
 
             first_child = false;
-            const ds::dims<f32> ps{ child->preferred_size() };
-            const ds::dims<f32> fs{ child->fixed_size() };
-            ds::dims<f32> target_size{
-                fs.width ? fs.width : ps.width,
-                fs.height ? fs.height : ps.height,
+            const ds::dims ps{ child->preferred_size() };
+            const ds::dims fs{ child->fixed_size() };
+            ds::dims target_size{
+                std::fabs(fs.width) > std::numeric_limits<f32>::epsilon() ? fs.width : ps.width,
+                std::fabs(fs.height) > std::numeric_limits<f32>::epsilon() ? fs.height : ps.height,
             };
 
-            ds::point<f32> pos{
+            ds::point pos{
                 0.0f,
                 y_offset,
             };
@@ -120,7 +120,6 @@ namespace rl::ui {
             pos.x = position;
             switch (m_alignment)
             {
-                default:
                 case Alignment::Minimum:
                     pos.y += m_margin;
                     break;
@@ -132,8 +131,12 @@ namespace rl::ui {
                     break;
                 case Alignment::Fill:
                     pos.y += m_margin;
-                    target_size.height = fs.height ? fs.height
-                                                   : (container_size.height - m_margin * 2.0f);
+                    target_size.height = std::fabs(fs.height) > std::numeric_limits<f32>::epsilon()
+                                           ? fs.height
+                                           : (container_size.height - m_margin * 2.0f);
+                    break;
+                case Alignment::Unknown:
+                    assert_cond(false);
                     break;
             }
 
@@ -207,24 +210,24 @@ namespace rl::ui {
 
         bool first{ true };
         bool indent{ false };
-        for (auto c : widget->children())
+        for (const auto c : widget->children())
         {
             if (!c->visible())
                 continue;
 
-            const Label* label{ dynamic_cast<const Label*>(c) };
+            const auto label{ dynamic_cast<const Label*>(c) };
             if (!first)
                 height += (label == nullptr) ? m_spacing : m_group_spacing;
 
             first = false;
-            ds::dims<f32> ps{ c->preferred_size() };
-            ds::dims<f32> fs{ c->fixed_size() };
-            const ds::dims<f32> target_size{
-                fs.width ? fs.width : ps.width,
-                fs.height ? fs.height : ps.height,
+            ds::dims ps{ c->preferred_size() };
+            ds::dims fs{ c->fixed_size() };
+            const ds::dims target_size{
+                std::fabs(fs.width) > std::numeric_limits<f32>::epsilon() ? fs.width : ps.width,
+                std::fabs(fs.height) > std::numeric_limits<f32>::epsilon() ? fs.height : ps.height,
             };
 
-            bool indent_cur{ indent && label == nullptr };
+            const bool indent_cur{ indent && label == nullptr };
             height += target_size.height;
             width = std::max(width, target_size.width + (2.0f * m_margin) +
                                         (indent_cur ? m_group_indent : 0.0f));
@@ -233,7 +236,7 @@ namespace rl::ui {
         }
 
         height += m_margin;
-        return ds::dims<f32>{ width, height };
+        return ds::dims{ width, height };
     }
 
     void GroupLayout::perform_layout(nvg::NVGcontext* nvg_context, Widget* widget) const
@@ -241,8 +244,11 @@ namespace rl::ui {
         scoped_log();
 
         f32 height{ m_margin };
-        f32 available_width{ (widget->fixed_width() ? widget->fixed_width() : widget->width()) -
-                             (2.0f * m_margin) };
+        const f32 available_width{ (std::fabs(widget->fixed_width()) >
+                                            std::numeric_limits<f32>::epsilon()
+                                        ? widget->fixed_width()
+                                        : widget->width()) -
+                                   (2.0f * m_margin) };
 
         const Dialog* dialog{ dynamic_cast<const Dialog*>(widget) };
         if (dialog != nullptr && !dialog->title().empty())
@@ -250,7 +256,7 @@ namespace rl::ui {
 
         bool indent{ false };
         bool first_child{ true };
-        for (auto child : widget->children())
+        for (const auto child : widget->children())
         {
             if (!child->visible())
                 continue;
@@ -262,15 +268,15 @@ namespace rl::ui {
             first_child = false;
             const bool indent_cur{ indent && label == nullptr };
 
-            const ds::dims<f32> fs{ child->fixed_size() };
-            const ds::dims<f32> ps{
+            const ds::dims fs{ child->fixed_size() };
+            const ds::dims ps{
                 available_width - (indent_cur ? m_group_indent : 0.0f),
                 child->preferred_size().height,
             };
 
-            ds::dims<f32> target_size{
-                fs.width ? fs.width : ps.width,
-                fs.height ? fs.height : ps.height,
+            const ds::dims target_size{
+                std::fabs(fs.width) > std::numeric_limits<f32>::epsilon() ? fs.width : ps.width,
+                std::fabs(fs.height) > std::numeric_limits<f32>::epsilon() ? fs.height : ps.height,
             };
 
             child->set_position({
@@ -345,14 +351,14 @@ namespace rl::ui {
         std::array<std::vector<f32>, 2> grid{ { {}, {} } };
         this->compute_layout(nvg_context, widget, grid);
 
-        ds::dims<f32> pref_size{
+        ds::dims pref_size{
             (2.0f * m_margin) + std::accumulate(grid[0].begin(), grid[0].end(), 0.0f) +
-                (std::max(i32(grid[0].size()) - 1, 0) * m_spacing.x),
+                (std::max(static_cast<f32>(grid[0].size()) - 1.0f, 0.0f) * m_spacing.x),
             (2.0f * m_margin) + std::accumulate(grid[1].begin(), grid[1].end(), 0.0f) +
                 std::max(static_cast<f32>(grid[1].size()) - 1.0f, 0.0f) * m_spacing.y,
         };
 
-        const Dialog* dialog{ dynamic_cast<const Dialog*>(widget) };
+        const auto dialog{ dynamic_cast<const Dialog*>(widget) };
         if (dialog != nullptr && !dialog->title().empty())
             pref_size.height += dialog->header_height() - (m_margin / 2.0f);
 
@@ -372,9 +378,9 @@ namespace rl::ui {
         for (auto&& w : widget->children())
             visible_children += w->visible() ? 1 : 0;
 
-        ds::dims<f32> dim{
+        const ds::dims dim{
             m_resolution,
-            (visible_children + m_resolution - 1.0f) / m_resolution,
+            (static_cast<f32>(visible_children) + m_resolution - 1.0f) / m_resolution,
         };
 
         grid[axis1].clear();
@@ -382,16 +388,17 @@ namespace rl::ui {
         grid[axis2].clear();
         grid[axis2].resize(static_cast<size_t>(dim.height), 0.0f);
 
-        auto& dim_axis2{ axis2 == Axis::Horizontal ? dim.width : dim.height };
+        const auto dim_axis2{ static_cast<i32>(axis2 == Axis::Horizontal ? dim.width : dim.height) };
 
-        size_t child{ 0 };
+        i32 child{ 0 };
         for (i32 i2 = 0; i2 < dim_axis2; i2++)
         {
-            auto& dim_axis1{ axis1 == Axis::Horizontal ? dim.width : dim.height };
+            const i32 dim_axis1{ static_cast<i32>(axis1 == Axis::Horizontal ? dim.width
+                                                                            : dim.height) };
 
             for (i32 i1 = 0; i1 < dim_axis1; i1++)
             {
-                Widget* w{ nullptr };
+                const Widget* w{ nullptr };
 
                 do
                 {
@@ -402,11 +409,13 @@ namespace rl::ui {
                 }
                 while (!w->visible());
 
-                ds::dims<f32> ps{ w->preferred_size() };
-                ds::dims<f32> fs{ w->fixed_size() };
-                ds::dims<f32> target_size{
-                    fs.width ? fs.width : ps.width,
-                    fs.height ? fs.height : ps.height,
+                ds::dims ps{ w->preferred_size() };
+                ds::dims fs{ w->fixed_size() };
+
+                ds::dims target_size{
+                    std::fabs(fs.width) > std::numeric_limits<f32>::epsilon() ? fs.width : ps.width,
+                    std::fabs(fs.height) > std::numeric_limits<f32>::epsilon() ? fs.height
+                                                                               : ps.height,
                 };
 
                 auto& target_size_axis1{ axis1 == std::to_underlying(Axis::Horizontal)
@@ -426,42 +435,43 @@ namespace rl::ui {
     {
         scoped_log();
 
-        const ds::dims<f32> fs_w{ widget->fixed_size() };
-        ds::dims<f32> container_size{
-            fs_w.width ? fs_w.width : widget->width(),
-            fs_w.height ? fs_w.height : widget->height(),
+        const ds::dims fs_w{ widget->fixed_size() };
+        const ds::dims container_size{
+            std::fabs(fs_w.width) > std::numeric_limits<f32>::epsilon() ? fs_w.width
+                                                                        : widget->width(),
+            std::fabs(fs_w.height) > std::numeric_limits<f32>::epsilon() ? fs_w.height
+                                                                         : widget->height(),
         };
-
         // Compute minimum row / column sizes
         std::array<std::vector<f32>, 2> grid{ { {}, {} } };
         this->compute_layout(nvg_context, widget, grid);
 
-        const std::array<f32, 2> dim = {
+        const std::array dim = {
             static_cast<f32>(grid[Axis::Horizontal].size()),
             static_cast<f32>(grid[Axis::Vertical].size()),
         };
 
-        ds::dims<f32> extra{ 0.0f, 0.0f };
-        const Dialog* dialog{ dynamic_cast<const Dialog*>(widget) };
+        ds::dims extra{ 0.0f, 0.0f };
+        const auto dialog{ dynamic_cast<const Dialog*>(widget) };
         if (dialog != nullptr && !dialog->title().empty())
             extra.height += dialog->header_height() - (m_margin / 2.0f);
 
         // Strech to size provided by widget
-        for (auto cur_axis : { Axis::Horizontal, Axis::Vertical })
+        for (const auto cur_axis : { Axis::Horizontal, Axis::Vertical })
         {
             f32 grid_size{ (2.0f * m_margin) +
                            (cur_axis == Axis::Horizontal ? extra.width : extra.height) };
 
             const i32 axis_idx{ std::to_underlying(cur_axis) };
-            for (auto& s : grid[axis_idx])
+            for (const auto& s : grid[axis_idx])
             {
                 grid_size += s;
-                if (axis_idx + 1.0f < dim[axis_idx])
+                if (1.0f + axis_idx < dim[axis_idx])
                     grid_size += this->spacing(cur_axis);
             }
 
-            f32& axis_size{ cur_axis == Axis::Horizontal ? container_size.width
-                                                         : container_size.height };
+            const f32& axis_size{ cur_axis == Axis::Horizontal ? container_size.width
+                                                               : container_size.height };
             if (grid_size < axis_size)
             {
                 // Re-distribute remaining space evenly
@@ -480,24 +490,23 @@ namespace rl::ui {
         const i32 axis1{ std::to_underlying(m_orientation) };
         const i32 axis2{ (axis1 + 1) % 2 };
 
-        ds::dims<i32> start_offset{ extra + m_margin };
-        ds::point<i32> start{ start_offset.width, start_offset.height };
-        ds::point<i32> pos{ start };
+        const ds::dims<i32> start_offset{ extra + m_margin };
+        const ds::point start{ start_offset.width, start_offset.height };
+        ds::point pos{ start };
 
         i32& axis1_pos{ axis1 == std::to_underlying(Orientation::Horizontal) ? pos.x : pos.y };
         i32& axis2_pos{ axis2 == std::to_underlying(Orientation::Horizontal) ? pos.x : pos.y };
 
         i32 child_idx{ 0 };
-        for (i32 i2 = 0; i2 < dim[axis2]; i2++)
+        for (i32 i2 = 0; i2 < static_cast<i32>(dim[axis2]); i2++)
         {
-            i32& s{ m_orientation == Orientation::Horizontal ? start.x : start.y };
+            const i32& s{ m_orientation == Orientation::Horizontal ? start.x : start.y };
             i32& p{ m_orientation == Orientation::Horizontal ? pos.x : pos.y };
 
             p = s;
-            for (i32 i1 = 0; i1 < dim[axis1]; i1++)
+            for (i32 i1 = 0; i1 < static_cast<i32>(dim[axis1]); i1++)
             {
                 Widget* child{ nullptr };
-
                 do
                 {
                     if (child_idx >= num_children)
@@ -507,19 +516,20 @@ namespace rl::ui {
                 }
                 while (!child->visible());
 
-                const ds::dims<f32> ps{ child->preferred_size() };
-                ds::dims<f32> fs{ child->fixed_size() };
-                ds::dims<f32> target_size{
-                    fs.width ? fs.width : ps.width,
-                    fs.height ? fs.height : ps.height,
+                const ds::dims ps{ child->preferred_size() };
+                ds::dims fs{ child->fixed_size() };
+                ds::dims target_size{
+                    std::fabs(fs.width) > std::numeric_limits<f32>::epsilon() ? fs.width : ps.width,
+                    std::fabs(fs.height) > std::numeric_limits<f32>::epsilon() ? fs.height
+                                                                               : ps.height,
                 };
 
-                ds::point<i32> item_pos{ pos };
+                ds::point item_pos{ pos };
                 for (i32 j = 0; j < 2; j++)
                 {
                     const i32 axis_idx{ (axis1 + j) % 2 };
                     const i32 item_idx{ j == 0 ? i1 : i2 };
-                    const Alignment align{ this->alignment(Axis(axis_idx), item_idx) };
+                    const Alignment align{ this->alignment(static_cast<Axis>(axis_idx), item_idx) };
 
                     i32& item_axis_pos{ axis_idx == Axis::Horizontal ? item_pos.x : item_pos.y };
                     f32& target_axis_size{ axis_idx == std::to_underlying(Orientation::Horizontal)
@@ -531,7 +541,6 @@ namespace rl::ui {
 
                     switch (align)
                     {
-                        default:
                         case Alignment::Minimum:
                             break;
                         case Alignment::Center:
@@ -546,6 +555,9 @@ namespace rl::ui {
                             target_axis_size = fs_axis_size ? fs_axis_size
                                                             : grid[axis_idx][item_idx];
                             break;
+                        case Alignment::Unknown:
+                            assert_cond(false);
+                            break;
                     }
                 }
 
@@ -553,10 +565,11 @@ namespace rl::ui {
                 child->set_size(std::move(target_size));
                 child->perform_layout();
 
-                axis1_pos += static_cast<i32>(grid[axis1][i1] + this->spacing(Axis(axis1)));
+                axis1_pos += static_cast<i32>(
+                    grid[axis1][i1] + this->spacing(static_cast<Axis>(axis1)));
             }
 
-            axis2_pos += static_cast<i32>(grid[axis2][i2] + this->spacing(Axis(axis2)));
+            axis2_pos += static_cast<i32>(grid[axis2][i2] + this->spacing(static_cast<Axis>(axis2)));
         }
     }
 
@@ -692,12 +705,12 @@ namespace rl::ui {
         std::array<std::vector<f32>, 2> grid{ { {}, {} } };
         this->compute_layout(nvg_context, widget, grid);
 
-        const ds::dims<f32> size{
+        const ds::dims size{
             std::accumulate(grid[Axis::Horizontal].begin(), grid[Axis::Horizontal].end(), 0.0f),
             std::accumulate(grid[Axis::Vertical].begin(), grid[Axis::Vertical].end(), 0.0f),
         };
 
-        ds::dims<f32> extra{
+        ds::dims extra{
             2.0f * m_margin,
             2.0f * m_margin,
         };
@@ -754,12 +767,12 @@ namespace rl::ui {
                 f32 item_pos{ axis_grids[axis_anchor_pos] };
                 const f32 cell_size{ axis_grids[(axis_anchor_pos + axis_anchor_size)] - item_pos };
 
-                const ds::dims<f32> widget_ps{ child->preferred_size() };
-                const ds::dims<f32> widget_fs{ child->fixed_size() };
+                const ds::dims widget_ps{ child->preferred_size() };
+                const ds::dims widget_fs{ child->fixed_size() };
                 const f32 ps{ axis == Axis::Horizontal ? widget_ps.width : widget_ps.height };
                 const f32 fs{ axis == Axis::Horizontal ? widget_fs.width : widget_fs.height };
 
-                f32 target_size{ fs ? fs : ps };
+                f32 target_size{ std::fabs(fs) > std::numeric_limits<f32>::epsilon() ? fs : ps };
                 switch (anchor.align[axis])
                 {
                     case Alignment::Minimum:
@@ -771,12 +784,17 @@ namespace rl::ui {
                         item_pos += cell_size - target_size;
                         break;
                     case Alignment::Fill:
-                        target_size = fs ? fs : cell_size;
+                        target_size = std::fabs(fs) > std::numeric_limits<f32>::epsilon()
+                                        ? fs
+                                        : cell_size;
+                        break;
+                    case Alignment::Unknown:
+                        assert_cond(false);
                         break;
                 }
 
-                ds::point<f32> pos{ child->position() };
-                ds::dims<f32> size{ child->size() };
+                ds::point pos{ child->position() };
+                ds::dims size{ child->size() };
                 f32& item_axis_pos{ axis == Axis::Horizontal ? pos.x : pos.y };
                 f32& item_axis_size{ axis == Axis::Horizontal ? size.width : size.height };
                 item_axis_pos = item_pos;
@@ -794,23 +812,25 @@ namespace rl::ui {
     {
         scoped_log();
 
-        const ds::dims<f32> fs_w{ widget->fixed_size() };
-        ds::dims<f32> container_size{
-            fs_w.width ? fs_w.width : widget->width(),
-            fs_w.height ? fs_w.height : widget->height(),
+        const ds::dims fs_w{ widget->fixed_size() };
+        ds::dims container_size{
+            std::fabs(fs_w.width) > std::numeric_limits<f32>::epsilon() ? fs_w.width
+                                                                        : widget->width(),
+            std::fabs(fs_w.height) > std::numeric_limits<f32>::epsilon() ? fs_w.height
+                                                                         : widget->height(),
         };
 
-        ds::dims<f32> extra{
+        ds::dims extra{
             m_margin * 2.0f,
             m_margin * 2.0f,
         };
 
-        const Dialog* dialog{ dynamic_cast<const Dialog*>(widget) };
+        const auto dialog{ dynamic_cast<const Dialog*>(widget) };
         if (dialog != nullptr && !dialog->title().empty())
             extra.height += dialog->header_height() - (m_margin / 2.0f);
 
         container_size -= extra;
-        for (Axis axis : { Axis::Horizontal, Axis::Vertical })
+        for (const Axis axis : { Axis::Horizontal, Axis::Vertical })
         {
             std::vector<f32>& grid{ grid_cell_sizes[axis] };
             const bool col_axis{ axis == Axis::Horizontal };
@@ -818,16 +838,16 @@ namespace rl::ui {
             const std::vector<f32>& stretch{ col_axis ? m_col_stretch : m_row_stretch };
 
             grid = sizes;
-            for (auto phase : { ComputeCellSize, MulitCellMerge })
+            for (const auto phase : { ComputeCellSize, MulitCellMerge })
             {
-                for (const auto& pair : m_anchor)
+                for (const auto& [layout_widget, widget_anchor] : m_anchor)
                 {
-                    const Widget* w{ pair.first };
-                    const Dialog* anchor_window{ dynamic_cast<const Dialog*>(w) };
+                    const Widget* w{ layout_widget };
+                    const auto anchor_window{ dynamic_cast<const Dialog*>(w) };
                     if (!w->visible() || anchor_window != nullptr)
                         continue;
 
-                    const Anchor& anchor{ pair.second };
+                    const Anchor& anchor{ widget_anchor };
                     const u32 axis_anchor_pos{ col_axis ? anchor.grid_pos.x : anchor.grid_pos.y };
                     const u32 axis_anchor_size{ col_axis ? anchor.cell_size.width
                                                          : anchor.cell_size.height };
@@ -837,12 +857,14 @@ namespace rl::ui {
                     if (cell_is_single_grid_sized != compute_single_cell_sizes)
                         continue;
 
-                    const ds::dims<f32> widget_ps{ w->preferred_size() };
-                    const ds::dims<f32> widget_fs{ w->fixed_size() };
+                    const ds::dims widget_ps{ w->preferred_size() };
+                    const ds::dims widget_fs{ w->fixed_size() };
 
                     const f32 ps{ col_axis ? widget_ps.width : widget_ps.height };
                     const f32 fs{ col_axis ? widget_fs.width : widget_fs.height };
-                    const f32 target_size{ fs ? fs : ps };
+                    const f32 target_size{ std::fabs(fs) > std::numeric_limits<f32>::epsilon()
+                                               ? fs
+                                               : ps };
 
                     runtime_assert(axis_anchor_pos + axis_anchor_size <= grid.size(),
                                    "Advanced grid layout: widget is out of bounds: {}", anchor);
@@ -851,7 +873,8 @@ namespace rl::ui {
                     f32 total_stretch{ 0.0f };
                     for (u32 i = axis_anchor_pos; i < axis_anchor_pos + axis_anchor_size; ++i)
                     {
-                        if (sizes[i] == 0 && axis_anchor_size == 1)
+                        if (std::fabs(sizes[i]) < std::numeric_limits<f32>::epsilon() &&
+                            axis_anchor_size == 1)
                             grid[i] = std::max(grid[i], target_size);
 
                         current_size += grid[i];
@@ -866,7 +889,7 @@ namespace rl::ui {
 
                     const f32 amt{ (target_size - current_size) / total_stretch };
                     for (u32 i = axis_anchor_pos; i < axis_anchor_pos + axis_anchor_size; ++i)
-                        grid[i] += static_cast<i32>(std::round(amt * stretch[i]));
+                        grid[i] += std::round(amt * stretch[i]);
                 }
             }
 
@@ -944,7 +967,7 @@ namespace rl::ui {
     {
         scoped_log();
 
-        auto it{ m_anchor.find(widget) };
+        const auto it{ m_anchor.find(widget) };
         runtime_assert(it != m_anchor.end(), "Widget was not registered with the grid layout!");
         return it->second;
     }

@@ -13,6 +13,7 @@
 #include "utils/numeric.hpp"
 
 namespace rl::ui {
+
     enum class Outline {
         Inner,
         Outer
@@ -90,10 +91,10 @@ namespace rl::ui {
         explicit Theme(const nvg::NVGcontext* nvg_context)
             : font_sans_regular{ nvg::create_font_mem(
                   nvg_context, Font::Name::Sans,
-                  std::basic_string_view<u8>{ roboto_bold_ttf, roboto_bold_ttf_size }) }
+                  std::basic_string_view<u8>{ roboto_regular_ttf, roboto_regular_ttf_size }) }
             , font_sans_bold{ nvg::create_font_mem(
                   nvg_context, Font::Name::SansBold,
-                  std::basic_string_view<u8>{ entypo_ttf, entypo_ttf_size }) }
+                  std::basic_string_view<u8>{ roboto_bold_ttf, roboto_bold_ttf_size }) }
             , font_icons{ nvg::create_font_mem(
                   nvg_context, Font::Name::Icons,
                   std::basic_string_view{ fontawesome_solid_ttf, fontawesome_solid_ttf_size }) }

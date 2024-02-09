@@ -1,6 +1,7 @@
 log/
 
 .out/
+.cache/
 cmake-build-*/
 
 export.cfg

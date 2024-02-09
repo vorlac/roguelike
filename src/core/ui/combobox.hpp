@@ -15,7 +15,7 @@ namespace rl {
         class ComboBox : public PopupButton
         {
         public:
-            ComboBox(Widget* parent);
+            explicit ComboBox(Widget* parent);
             ComboBox(Widget* parent, const std::vector<std::string>& items);
             ComboBox(Widget* parent, const std::vector<std::string>& items,
                      const std::vector<std::string>& items_short);

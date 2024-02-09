@@ -17,7 +17,7 @@ namespace rl {
             friend class Popup;
 
         public:
-            Dialog(Widget* parent, const std::string& title = "Untitled Dialog");
+            explicit Dialog(Widget* parent, const std::string& title = "Untitled Dialog");
 
             void dispose();
             void center();
@@ -48,7 +48,7 @@ namespace rl {
             virtual void refresh_relative_placement();
 
         protected:
-            std::string m_title{ "" };
+            std::string m_title{};
             Widget* m_button_panel{ nullptr };
             bool m_modal{ false };
             bool m_drag{ false };

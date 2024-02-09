@@ -9,35 +9,33 @@ namespace rl::ds {
     class refcounted
     {
     public:
-        constexpr inline refcounted() = default;
-        inline virtual ~refcounted() = default;
+        constexpr refcounted() = default;
+        virtual ~refcounted() = default;
 
-        constexpr inline refcounted(const refcounted&) noexcept
-            : m_references{ 1 }
+        constexpr refcounted(const refcounted&) noexcept
         {
         }
 
-        constexpr inline refcounted(refcounted&&) noexcept
-            : m_references{ 1 }
+        constexpr refcounted(refcounted&&) noexcept
         {
         }
 
-        constexpr inline refcounted& operator=(const refcounted&) noexcept
+        virtual constexpr refcounted& operator=(const refcounted&) noexcept
         {
             return *this;
         }
 
-        constexpr inline refcounted& operator=(refcounted&&) noexcept
+        virtual constexpr refcounted& operator=(refcounted&&) noexcept
         {
             return *this;
         }
 
-        inline void acquire_ref() const noexcept
+        void acquire_ref() const noexcept
         {
             ++m_references;
         }
 
-        inline void release_ref() const noexcept
+        void release_ref() const noexcept
         {
             if (--m_references == 0)
                 delete this;

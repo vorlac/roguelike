@@ -1,26 +1,15 @@
 #pragma once
 #include <algorithm>
-#include <array>
 #include <concepts>
-#include <tuple>
-#include <type_traits>
-#include <utility>
-#include <vector>
 
 #include <fmt/color.h>
 
 #include "graphics/vg/nanovg.hpp"
 #include "sdl/defs.hpp"
 #include "utils/concepts.hpp"
-#include "utils/conversions.hpp"
-#include "utils/math.hpp"
 #include "utils/memory.hpp"
 #include "utils/numeric.hpp"
 #include "utils/random.hpp"
-
-SDL_C_LIB_BEGIN
-#include <SDL3/SDL_pixels.h>
-SDL_C_LIB_END
 
 namespace rl::ds {
 #pragma pack(4)
@@ -113,15 +102,15 @@ namespace rl::ds {
         // 0xRRGGBBAA
         explicit constexpr color(u32 rgba)
             requires std::same_as<T, f32>
-            : r{ static_cast<f32>((0xff & (rgba >> (8 * 3))) / 255.0f) }
-            , g{ static_cast<f32>((0xff & (rgba >> (8 * 2))) / 255.0f) }
-            , b{ static_cast<f32>((0xff & (rgba >> (8 * 1))) / 255.0f) }
-            , a{ static_cast<f32>((0xff & (rgba >> (8 * 0))) / 255.0f) }
+            : r{ ((0xff & rgba >> 8 * 3) / 255.0f) }
+            , g{ ((0xff & rgba >> 8 * 2) / 255.0f) }
+            , b{ ((0xff & rgba >> 8 * 1) / 255.0f) }
+            , a{ ((0xff & rgba >> 8 * 0) / 255.0f) }
         {
         }
 
         // 0x00RRGGBB
-        constexpr color(fmt::rgb rgb)
+        explicit constexpr color(fmt::rgb rgb)
             requires std::same_as<T, u8>
             : r{ rgb.r }
             , g{ rgb.g }
@@ -130,9 +119,9 @@ namespace rl::ds {
         {
         }
 
-        constexpr static ds::color<T> rand()
+        constexpr static color<T> rand()
         {
-            return ds::color<T>{
+            return color<T>{
                 static_cast<u8>(rl::random<0, 128>::value()),
                 static_cast<u8>(rl::random<0, 128>::value()),
                 static_cast<u8>(rl::random<0, 128>::value()),
@@ -167,7 +156,7 @@ namespace rl::ds {
             return *this;
         }
 
-        constexpr color<T>& operator=(color<T>&& other)
+        constexpr color<T>& operator=(color<T>&& other) noexcept
         {
             this->r = other.r;
             this->g = other.g;
@@ -320,7 +309,7 @@ namespace rl::ds {
         consteval color<f32> to_f32() const
             requires std::same_as<T, u8>
         {
-            return color<f32>{
+            return color{
                 static_cast<f32>(std::clamp(this->r / 255.0f, 0.0f, 1.0f)),
                 static_cast<f32>(std::clamp(this->g / 255.0f, 0.0f, 1.0f)),
                 static_cast<f32>(std::clamp(this->b / 255.0f, 0.0f, 1.0f)),
@@ -331,7 +320,7 @@ namespace rl::ds {
         consteval color<u8> to_u8() const
             requires std::same_as<T, f32>
         {
-            return color<u8>{
+            return color{
                 static_cast<u8>(std::clamp(static_cast<u8>(this->r) * 255.0f, 0.0f, 255.0f)),
                 static_cast<u8>(std::clamp(static_cast<u8>(this->g) * 255.0f, 0.0f, 255.0f)),
                 static_cast<u8>(std::clamp(static_cast<u8>(this->b) * 255.0f, 0.0f, 255.0f)),

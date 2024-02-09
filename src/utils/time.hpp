@@ -37,7 +37,7 @@ namespace rl::inline utils {
     struct Timer
     {
         // gets time unit of a single tick
-        static inline TimeDuration unit()
+        static TimeDuration unit()
         {
             constexpr static u64 pico{ std::to_underlying(TimeDuration::Picosecond) };
             constexpr static u64 nano{ std::to_underlying(TimeDuration::Nanosecond) };
@@ -70,36 +70,30 @@ namespace rl::inline utils {
         static inline const TimeDuration tick_unit{ Timer::unit() };
 
     public:
-        constexpr inline Timer()
-            : m_start_timestamp{ Timer::now() }
-            , m_delta_timestamp{ Timer::now() }
-        {
-        }
-
         [[nodiscard]]
-        constexpr inline T convert(u64 timestamp_duration)
+        constexpr T convert(const u64 timestamp_duration)
         {
             constexpr u64 to_ratio{ std::to_underlying(time_unit) };
-            const f64 seconds{ timestamp_duration / static_cast<f64>(m_perf_counter_freq) };
+            const f64 seconds{ static_cast<f64>(timestamp_duration) / m_perf_counter_freq };
             return static_cast<T>(seconds * to_ratio);
         }
 
         [[nodiscard]]
-        static inline u64 timer_freq()
+        static u64 timer_freq()
         {
             // get tick frequency
             return SDL3::SDL_GetPerformanceFrequency();
         }
 
         [[nodiscard]]
-        static inline u64 now()
+        static u64 now()
         {
-            // get current tick/timestamp
+            // get current performance counter tick
             return SDL3::SDL_GetPerformanceCounter();
         }
 
         [[nodiscard]]
-        constexpr inline time_type delta()
+        constexpr time_type delta()
         {
             const u64 curr_timestamp{ Timer::now() };
             const u64 prev_timestamp{ m_delta_timestamp };
@@ -109,7 +103,7 @@ namespace rl::inline utils {
         }
 
         [[nodiscard]]
-        constexpr inline time_type elapsed()
+        constexpr time_type elapsed()
         {
             const u64 curr_timestamp{ Timer::now() };
             const u64 init_timestamp{ m_start_timestamp };
@@ -117,12 +111,12 @@ namespace rl::inline utils {
         }
 
         [[nodiscard]]
-        constexpr inline u64 tick_count() const
+        constexpr u64 tick_count() const
         {
             return m_tick_count;
         }
 
-        inline void reset()
+        void reset()
         {
             m_start_timestamp = Timer::now();
         }
@@ -198,8 +192,8 @@ namespace rl::inline utils {
         // time when tick was last called (in seconds)
         f64 m_prev_tick_time{ 0.0 };
         f64 m_leftover_ticks{ 0.0 };
-        f64 m_tick_timer{ 0.0 };  // FixedStep is set from the 2nd template arg and defines how many
-                                  // times per second the fixed timestep should increment
+        f64 m_tick_timer{ 0.0 };
+
         f64 m_fixed_timestep{ FixedStep > 0 ? 1.0f / FixedStep : -1.0f };
         // total average ticks per second
         f64 m_fps_avg_count{ 0.0 };

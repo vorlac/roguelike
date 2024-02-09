@@ -1,13 +1,12 @@
 #pragma once
 
 #include <concepts>
+#include <memory>
 #include <string>
-#include <string_view>
 #include <type_traits>
 #include <utility>
 #include <vector>
 
-#include "core/assert.hpp"
 #include "core/ui/theme.hpp"
 #include "ds/color.hpp"
 #include "ds/dims.hpp"
@@ -35,7 +34,7 @@ namespace rl {
         ui::Font::ID load_font(const std::string_view& font_name,
                                const std::u8string_view& font_ttf) const;
 
-        void load_fonts(std::vector<FontInfo>&& fonts);
+        void load_fonts(const std::vector<FontInfo>& fonts);
         void set_text_properties(const std::string_view& font_name, f32 font_size,
                                  ui::Text::Alignment alignment) const;
 
@@ -56,19 +55,19 @@ namespace rl {
 
     public:
         template <std::invocable TCallable>
-        inline void scoped_draw(TCallable&& callable)
+        void scoped_draw(TCallable&& callable)
         {
             this->save_state();
-            std::invoke(std::forward<decltype(callable)>(callable));
+            std::invoke(std::forward<TCallable>(callable));
             this->restore_state();
         }
 
         template <std::invocable TCallable>
-        inline void draw_frame(TCallable&& callable, const ds::dims<f32>& render_size,
-                               const f32 pixel_ratio)
+        void draw_frame(TCallable&& callable, const ds::dims<f32>& render_size,
+                        const f32 pixel_ratio)
         {
             this->begin_frame(render_size, pixel_ratio);
-            std::invoke(std::forward<decltype(callable)>(callable));
+            std::invoke(std::forward<TCallable>(callable));
             this->end_frame();
         }
 

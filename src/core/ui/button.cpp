@@ -11,7 +11,6 @@
 #include "utils/unicode.hpp"
 
 namespace rl::ui {
-
     Button::Button(Widget* parent, std::string text, const Icon::ID icon)
         : Widget{ parent }
         , m_text{ std::forward<std::string>(text) }
@@ -132,7 +131,7 @@ namespace rl::ui {
     ds::dims<f32> Button::preferred_size() const
     {
         auto&& context{ m_renderer->context() };
-        const f32 font_size{ m_font_size == -1.0f ? m_theme->button_font_size : m_font_size };
+        const f32 font_size{ m_font_size < 0.0f ? m_theme->button_font_size : m_font_size };
 
         nvg::font_size(context, font_size);
         nvg::font_face(context, Font::Name::Sans);
@@ -159,7 +158,8 @@ namespace rl::ui {
                 nvg::image_size(context, std::to_underlying(m_icon), &image_size.width,
                                 &image_size.height);
 
-                icon_size.width = (image_size.width * icon_size.height / image_size.height);
+                icon_size.width = static_cast<f32>(image_size.width) * icon_size.height /
+                                  static_cast<f32>(image_size.height);
             }
         }
 
@@ -179,23 +179,19 @@ namespace rl::ui {
         return Widget::on_mouse_exited(mouse);
     }
 
-    bool Button::handle_mouse_button_event(
-        const ds::point<f32>& pt, const Mouse::Button::ID button,
+    bool Button::handle_mouse_button_event(const ds::point<f32>& pt, const Mouse::Button::ID button,
                                            const bool button_just_pressed,
                                            Keyboard::Scancode::ID keys_down)
     {
-
         // Temporarily increase the reference count of the button in
         // case the button causes the parent window to be destructed
         ds::shared self{ this };
 
-        const bool lmb_and_menu_btn{ 
-            button == Mouse::Button::Left && 
-            !this->has_property(Property::StandardMenu) };
+        const bool lmb_and_menu_btn{ button == Mouse::Button::Left &&
+                                     !this->has_property(Property::StandardMenu) };
 
-        const bool rmb_and_not_menu_btn{ 
-            button == Mouse::Button::Right && 
-            this->has_property(Property::StandardMenu) };
+        const bool rmb_and_not_menu_btn{ button == Mouse::Button::Right &&
+                                         this->has_property(Property::StandardMenu) };
 
         if (m_enabled && (lmb_and_menu_btn || rmb_and_not_menu_btn))
         {
@@ -219,8 +215,7 @@ namespace rl::ui {
                     else
                     {
                         for (const auto btn : m_button_group)
-                            if (btn != this && btn->has_property(Property::Radio) &&
-                                btn->m_pressed)
+                            if (btn != this && btn->has_property(Property::Radio) && btn->m_pressed)
                             {
                                 btn->m_pressed = false;
                                 if (btn->m_change_callback != nullptr)
@@ -334,7 +329,7 @@ namespace rl::ui {
         nvg::stroke_color(context, m_theme->border_dark.nvg());
         nvg::stroke(context);
 
-        f32 font_size{ m_font_size == -1 ? m_theme->button_font_size : m_font_size };
+        f32 font_size{ m_font_size < 0.0f ? m_theme->button_font_size : m_font_size };
         nvg::font_size(context, font_size);
         nvg::font_face(context, Font::Name::Sans);
         f32 text_width{ nvg::text_bounds(context, 0.0f, 0.0f, m_text.c_str(), nullptr, nullptr) };

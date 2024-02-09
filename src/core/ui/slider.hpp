@@ -1,3 +1,5 @@
+#pragma once
+
 #include <functional>
 #include <utility>
 
@@ -9,10 +11,10 @@ namespace rl {
     class Keyboard;
 
     namespace ui {
-        class Slider : public Widget
+        class Slider final : public Widget
         {
         public:
-            Slider(Widget* parent);
+            explicit Slider(Widget* parent);
 
             f32 value() const;
             const ds::color<f32>& highlight_color() const;
@@ -43,6 +45,5 @@ namespace rl {
             std::pair<f32, f32> m_highlighted_range{ 0.0f, 0.0f };
             ds::color<f32> m_highlight_color{ 255, 80, 80, 70 };
         };
-
     }
 }

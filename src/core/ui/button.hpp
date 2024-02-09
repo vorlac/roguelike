@@ -9,7 +9,6 @@
 #include "ds/color.hpp"
 #include "ds/dims.hpp"
 #include "ds/point.hpp"
-#include "ds/shared.hpp"
 #include "utils/numeric.hpp"
 
 namespace rl::ui {
@@ -66,8 +65,8 @@ namespace rl::ui {
         virtual ds::dims<f32> preferred_size() const override;
 
     private:
-        bool handle_mouse_button_event(const ds::point<f32>& pt, Mouse::Button::ID button, bool button_just_pressed,
-                                       Keyboard::Scancode::ID keys_down);
+        bool handle_mouse_button_event(const ds::point<f32>& pt, Mouse::Button::ID button,
+                                       bool button_just_pressed, Keyboard::Scancode::ID keys_down);
 
     protected:
         bool m_pressed{ false };
@@ -76,8 +75,8 @@ namespace rl::ui {
         Button::Property m_props{ Property::StandardPush };
         Icon::Placement m_icon_placement{ Icon::Placement::LeftCentered };
         std::vector<Button*> m_button_group{};
-        ds::color<f32> m_background_color{ Colors::Grey };
-        ds::color<f32> m_text_color{ Colors::White };
+        ds::color<f32> m_background_color{ Colors::Transparent };
+        ds::color<f32> m_text_color{ Colors::Transparent };
         std::function<void(bool)> m_change_callback;
         std::function<void()> m_callback;
     };

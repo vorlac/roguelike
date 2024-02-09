@@ -5,7 +5,7 @@
 
 namespace rl::ui {
 
-    class Popup : public Dialog
+    class Popup final : public Dialog
     {
     public:
         enum class Side {
@@ -13,14 +13,14 @@ namespace rl::ui {
             Right
         };
 
-        Popup(Widget* parent, Dialog* parent_dialog = nullptr);
+        explicit Popup(Widget* parent, Dialog* parent_dialog = nullptr);
 
         f32 anchor_offset() const;
         f32 anchor_size() const;
         Side side() const;
         Dialog* parent_window();
         const Dialog* parent_window() const;
-        const ds::point<f32> anchor_pos() const;
+        ds::point<f32> anchor_pos() const;
 
         void set_anchor_pos(ds::point<f32> anchor_pos);
         void set_anchor_offset(f32 anchor_offset);
@@ -35,14 +35,14 @@ namespace rl::ui {
     protected:
         Dialog* m_parent_dialog{ nullptr };
         ds::point<f32> m_anchor_pos{ 0.0f, 0.0f };
-        f32 m_anchor_offset{ 0.0f };
-        f32 m_anchor_size{ 0.0f };
-        Popup::Side m_side{ Popup::Side::Left };
+        f32 m_anchor_offset{ 30.0f };
+        f32 m_anchor_size{ 15.0f };
+        Popup::Side m_side{ Popup::Side::Right };
     };
 }
 
 namespace rl::ui {
-    constexpr inline auto format_as(const Popup::Side side)
+    constexpr auto format_as(const Popup::Side side)
     {
         switch (side)
         {

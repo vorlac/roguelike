@@ -8,11 +8,10 @@
 #include "utils/unicode.hpp"
 
 namespace rl::ui {
-
-    CheckBox::CheckBox(Widget* parent, const std::string& caption,
+    CheckBox::CheckBox(Widget* parent, std::string caption,
                        const std::function<void(bool)>& toggled_callback)
         : Widget{ parent }
-        , m_caption{ caption }
+        , m_caption{ std::forward<std::string>(caption) }
         , m_toggled_callback{ toggled_callback }
     {
         // Widget default value override

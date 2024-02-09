@@ -8,10 +8,6 @@ namespace rl::ui {
     Popup::Popup(Widget* parent, Dialog* parent_dialog)
         : Dialog{ parent, "" }
         , m_parent_dialog{ parent_dialog }
-        , m_anchor_pos{ 0.0f, 0.0f }
-        , m_anchor_offset{ 30.0f }
-        , m_anchor_size{ 15.0f }
-        , m_side{ Popup::Side::Right }
     {
         scoped_log();
     }
@@ -22,7 +18,7 @@ namespace rl::ui {
         m_anchor_pos = anchor_pos;
     }
 
-    const ds::point<f32> Popup::anchor_pos() const
+    ds::point<f32> Popup::anchor_pos() const
     {
         scoped_log("m_anchor_pos={}", m_anchor_pos);
         return m_anchor_pos;

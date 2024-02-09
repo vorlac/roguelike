@@ -8,7 +8,6 @@
 #include "core/ui/widget.hpp"
 
 namespace rl::ui {
-
     ComboBox::ComboBox(Widget* parent)
         : PopupButton{ parent }
         , m_container{ this->popup() }
@@ -41,8 +40,8 @@ namespace rl::ui {
             return;
 
         const std::vector<Widget*>& children{ m_container->children() };
-        static_cast<Button*>(children[m_selected_index])->set_pressed(false);
-        static_cast<Button*>(children[idx])->set_pressed(true);
+        dynamic_cast<Button*>(children[m_selected_index])->set_pressed(false);
+        dynamic_cast<Button*>(children[idx])->set_pressed(true);
 
         m_selected_index = idx;
 
@@ -114,7 +113,7 @@ namespace rl::ui {
         i32 index{ 0 };
         for (const auto& str : items)
         {
-            Button* button{ new Button{ m_container, str } };
+            const auto button{ new Button{ m_container, str } };
             button->set_property(Button::Property::Radio);
             button->set_callback([&, index] {
                 m_selected_index = index;

@@ -7,10 +7,10 @@
 namespace rl::ui {
 
     PopupButton::PopupButton(Widget* parent, std::string caption, const Icon::ID button_icon)
-        : Button{ parent, caption, button_icon }
+        : Button{ parent, std::forward<std::string>(caption), button_icon }
     {
         scoped_log();
-        this->set_icon_extra_scale(1.0f);
+        this->set_icon_extra_scale(0.8f);
         this->set_chevron_icon(m_theme->popup_chevron_right_icon);
         this->set_property(Property::TogglePopupMenu);
 
@@ -21,7 +21,7 @@ namespace rl::ui {
 
         m_popup->set_visible(false);
         // TODO: why?.. necessary?
-        m_popup->set_size(ds::dims<f32>{
+        m_popup->set_size(ds::dims{
             750.0f,
             300.0f,
         });
@@ -58,7 +58,7 @@ namespace rl::ui {
     ds::dims<f32> PopupButton::preferred_size() const
     {
         scoped_log();
-        constexpr static ds::dims<f32> width_buffer{ 24.0f, 0.0f };
+        constexpr static ds::dims width_buffer{ 24.0f, 0.0f };
         return Button::preferred_size() + width_buffer;
     }
 
@@ -86,7 +86,7 @@ namespace rl::ui {
             const f32 icon_width{ nvg::text_bounds(context, 0.0f, 0.0f, icon.data(), nullptr,
                                                    nullptr) };
 
-            ds::point<f32> icon_pos{ 0.0f, m_pos.y + m_size.height * 0.5f - 1.0f };
+            ds::point icon_pos{ 0.0f, m_pos.y + m_size.height * 0.5f - 1.0f };
             if (m_popup->side() == Popup::Side::Right)
                 icon_pos.x = m_pos.x + m_size.width - icon_width - 8.0f;
             else
@@ -108,7 +108,7 @@ namespace rl::ui {
             const f32 pos_y{ m_pos.y - parent_dialog->position().y + (m_size.height / 2.0f) };
             if (m_popup->side() == Popup::Side::Right)
             {
-                const ds::point<f32> anchor_pos{
+                const ds::point anchor_pos{
                     parent_dialog->width() + anchor_size,
                     pos_y,
                 };
@@ -116,14 +116,14 @@ namespace rl::ui {
             }
             else
             {
-                const ds::point<f32> anchor_pos{ -anchor_size, pos_y };
+                const ds::point anchor_pos{ -anchor_size, pos_y };
                 m_popup->set_anchor_pos(anchor_pos);
             }
         }
         else
         {
             const f32 anchor_size{ m_popup->anchor_size() };
-            ds::point<f32> offset{
+            ds::point offset{
                 this->width() + anchor_size + 1.0f,
                 (m_size.height / 2.0f) - anchor_size,
             };

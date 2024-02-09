@@ -34,10 +34,7 @@ namespace rl::ui {
             runtime_assert(m_ui_canvas != nullptr, "invalid dialog");
 
             m_dialog = new Dialog{ m_ui_canvas, title };
-            m_dialog->set_layout(new GridLayout{
-                Orientation::Horizontal,
-                Alignment::Center,
-            });
+            m_dialog->set_layout(new GridLayout{ Orientation::Horizontal, 2.0, Alignment::Center });
 
             m_scroll = new VScrollPanel{ m_dialog };
             m_scroll->set_fixed_height(300);
@@ -90,8 +87,17 @@ namespace rl::ui {
                 T value{ getter() };
                 T current{ widget->value() };
 
-                if (value != current)
-                    widget->set_value(value);
+                if constexpr (std::floating_point<T>)
+                {
+                    if (std::fabs(value - current) <=
+                        std::numeric_limits<decltype(value - current)>::epsilon())
+                        widget->set_value(value);
+                }
+                else
+                {
+                    if (value != current)
+                        widget->set_value(value);
+                }
             };
 
             refresh();
@@ -204,9 +210,8 @@ namespace rl::ui {
     };
 
     namespace detail {
-
         template <>
-        class FormWidget<bool, std::true_type> : public CheckBox
+        class FormWidget<bool, std::true_type> final : public CheckBox
         {
         public:
             explicit FormWidget(Widget* p)
@@ -230,14 +235,14 @@ namespace rl::ui {
                 return this->checked();
             }
 
-            std::string name() const override
+            virtual std::string name() const override
             {
                 return "class rl::ui::FormWidget[CheckBox]";
             }
         };
 
         template <typename T>
-        class FormWidget<T, typename std::is_enum<T>::type> : public ComboBox
+        class FormWidget<T, typename std::is_enum<T>::type> final : public ComboBox
         {
         public:
             explicit FormWidget(Widget* p)
@@ -268,14 +273,14 @@ namespace rl::ui {
                 this->set_enabled(e);
             }
 
-            std::string name() const override
+            virtual std::string name() const override
             {
                 return "class rl::ui::FormWidget[ComboBox]";
             }
         };
 
         template <typename T>
-        class FormWidget<T, typename std::is_integral<T>::type> : public IntBox<T>
+        class FormWidget<T, typename std::is_integral<T>::type> final : public IntBox<T>
         {
         public:
             explicit FormWidget(Widget* p)
@@ -284,14 +289,14 @@ namespace rl::ui {
                 this->set_alignment(TextBox::Alignment::Right);
             }
 
-            std::string name() const override
+            virtual std::string name() const override
             {
                 return "class rl::ui::FormWidget[IntBox]";
             }
         };
 
         template <typename T>
-        class FormWidget<T, typename std::is_floating_point<T>::type> : public FloatBox<T>
+        class FormWidget<T, typename std::is_floating_point<T>::type> final : public FloatBox<T>
         {
         public:
             explicit FormWidget(Widget* p)
@@ -300,14 +305,14 @@ namespace rl::ui {
                 this->set_alignment(TextBox::Alignment::Right);
             }
 
-            std::string name() const override
+            virtual std::string name() const override
             {
                 return "class rl::ui::FormWidget[FloatBox]";
             }
         };
 
         template <>
-        class FormWidget<std::string, std::true_type> : public TextBox
+        class FormWidget<std::string, std::true_type> final : public TextBox
         {
         public:
             explicit FormWidget(Widget* p)
@@ -324,7 +329,7 @@ namespace rl::ui {
                 });
             }
 
-            std::string name() const override
+            virtual std::string name() const override
             {
                 return "class rl::ui::FormWidget[TextBox]";
             }

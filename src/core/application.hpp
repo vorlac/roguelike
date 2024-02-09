@@ -108,7 +108,7 @@ namespace rl {
 
                 form->add_group("Other Group");
                 form->add_button("Push Button", []() {
-                    std::cout << "Button pressed." << std::endl;
+                    std::cout << "Button pressed.\n";
                 });
 
                 // gui->set_visible(true);
@@ -131,15 +131,15 @@ namespace rl {
                 auto title_label{ new ui::Label{ gui, "GUI Canvas Span Label",
                                                  ui::Font::Name::SansBold, 40 } };
                 layout->append_row(0);
-                auto push_button = new ui::Button{ gui, "Push Button", ui::Icon::Microscope };
+                auto push_button{ new ui::Button{ gui, "Push Button", ui::Icon::Microscope } };
                 layout->append_row(0);
-                auto timer_desc_label = new ui::Label{ gui, "Timer: ", ui::Font::Name::Sans, 32 };
+                auto timer_desc_label{ new ui::Label{ gui, "Timer: ", ui::Font::Name::Sans, 32 } };
                 layout->append_row(0);
-                auto timer_value_label = new ui::Label{ gui, "", ui::Font::Name::Mono, 32 };
+                auto timer_value_label{ new ui::Label{ gui, "", ui::Font::Name::Mono, 32 } };
                 layout->append_row(0);
-                auto stats_desc_label = new ui::Label{ gui, "Stats: ", ui::Font::Name::Sans, 32 };
+                auto stats_desc_label{ new ui::Label{ gui, "Stats: ", ui::Font::Name::Sans, 32 } };
                 layout->append_row(0);
-                auto stats_value_label = new ui::Label{ gui, "", ui::Font::Name::Mono, 32 };
+                auto stats_value_label{ new ui::Label{ gui, "", ui::Font::Name::Mono, 32 } };
                 layout->append_row(0);
 
                 gui->add_update_callback([=, &elapsed_str] {
@@ -235,12 +235,13 @@ namespace rl {
             return true;
         }
 
-        bool quit()
+        [[nodiscard]]
+        bool quit() const
         {
             return this->teardown();
         }
 
-        bool teardown()
+        bool teardown() const
         {
             return true;
         }
@@ -250,11 +251,11 @@ namespace rl {
             return m_event_handler.handle_events(m_main_window);
         }
 
-        bool update()
+        void update() const
         {
-            return true;
         }
 
+        [[nodiscard]]
         bool should_exit() const
         {
             return m_event_handler.quit_triggered();
@@ -287,17 +288,17 @@ namespace rl {
 
             log::debug(
                 " {:>14.6f} s || {:>10L} u ][ {:>10.4f} ms | {:>10.4f} fps ][ {:>10.4f} avg fps ]",
-                elapsed_time,                // elapsed time (seconds)
-                iterations,                  // loop iterations
-                delta_time * 1000.0f,        // delta time (ms)
-                1.0f / delta_time,           // current fps
-                iterations / elapsed_time);  // avg fps
+                elapsed_time,                                  // elapsed time (seconds)
+                iterations,                                    // loop iterations
+                delta_time * 1000.0f,                          // delta time (ms)
+                1.0f / delta_time,                             // current fps
+                static_cast<f32>(iterations) / elapsed_time);  // avg fps
         }
 
     private:
         Timer<f32> m_timer{};
         std::unique_ptr<MainWindow> m_main_window{};
         EventHandler m_event_handler{};
-        StateMachine m_fsm{};
+        // StateMachine m_fsm{};
     };
 }

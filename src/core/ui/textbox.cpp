@@ -20,25 +20,8 @@ namespace rl::ui {
 
     TextBox::TextBox(Widget* parent, const std::string& value)
         : Widget{ parent }
-        , m_editable{ false }
-        , m_spinnable{ false }
-        , m_committed{ true }
         , m_value{ value }
-        , m_default_value{ "" }
-        , m_alignment{ Alignment::Center }
-        , m_units{ "" }
-        , m_format{ "" }
-        , m_units_image{ -1 }
-        , m_valid_format{ true }
         , m_value_temp{ value }
-        , m_cursor_pos{ -1 }
-        , m_selection_pos{ -1 }
-        , m_mouse_pos{ -1, -1 }
-        , m_mouse_down_pos{ -1, -1 }
-        , m_mouse_drag_pos{ -1, -1 }
-        , m_mouse_down_modifier{ 0 }
-        , m_text_offset{ 0 }
-        , m_last_click{ 0 }
     {
         if (m_theme != nullptr)
             m_font_size = m_theme->text_box_font_size;

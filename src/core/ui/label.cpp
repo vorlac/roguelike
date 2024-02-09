@@ -5,7 +5,6 @@
 #include "ds/dims.hpp"
 #include "ds/shared.hpp"
 #include "graphics/vg/nanovg.hpp"
-#include "resources/fonts.hpp"
 
 namespace rl::ui {
 

@@ -103,7 +103,7 @@ namespace rl::ui {
             nvg::fill(context);
 
             // Dialog shadow
-            nvg::NVGpaint shadow_paint{ nvg::box_gradient(
+            const nvg::NVGpaint shadow_paint{ nvg::box_gradient(
                 context, m_pos.x, m_pos.y, m_size.width, m_size.height, corner_radius * 2.0f,
                 drop_shadow_size * 2.0f, m_theme->dialog_shadow.nvg(), m_theme->transparent.nvg()) };
 
@@ -122,7 +122,7 @@ namespace rl::ui {
 
             if (!m_title.empty())
             {
-                nvg::NVGpaint header_paint{ nvg::linear_gradient(
+                const nvg::NVGpaint header_paint{ nvg::linear_gradient(
                     context, m_pos.x, m_pos.y, m_pos.x, m_pos.y + header_height,
                     m_theme->dialog_header_gradient_top.nvg(),
                     m_theme->dialog_header_gradient_bot.nvg()) };
@@ -168,16 +168,8 @@ namespace rl::ui {
                           m_pos.y + (header_height / 2.0f) - 1.0f, m_title.c_str());
             }
         });
-        // nvg::Save(context);
 
-        // if there's a dialog title/header, shift contents down and
-        // prevent the dialog's contents from drawing on top of it by
-        // nvg::IntersectScissor(context, m_pos.x, m_pos.y, m_size.width,
-        //                      m_size.height - this->header_height());
-        // nvg::Translate(context, 0.5f, header_height + 1.5f);
         Widget::draw();
-        // nvg::Translate(context, -0.5f, -header_height - 1.5f);
-        //    nvg::Restore(context);
     }
 
     bool Dialog::on_mouse_entered(const Mouse& mouse)

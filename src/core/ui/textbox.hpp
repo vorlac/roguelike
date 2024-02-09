@@ -98,8 +98,8 @@ namespace rl::ui {
     protected:
         bool m_editable{ false };
         bool m_spinnable{ false };
-        bool m_committed{ false };
-        bool m_valid_format{ false };
+        bool m_committed{ true };
+        bool m_valid_format{ true };
 
         std::string m_value{};
         std::string m_default_value{};
@@ -119,7 +119,7 @@ namespace rl::ui {
         ds::point<f32> m_mouse_down_pos{ -1, -1 };
         ds::point<f32> m_mouse_drag_pos{ -1, -1 };
 
-        Alignment m_alignment{};
+        Alignment m_alignment{ Alignment::Center };
 
         std::function<bool(const std::string& str)> m_callback;
     };

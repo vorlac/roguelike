@@ -1,14 +1,16 @@
+#pragma once
+
 #include "core/ui/widget.hpp"
 #include "ds/dims.hpp"
 
 namespace rl::ui {
 
-    class ProgressBar : public Widget
+    class ProgressBar final : public Widget
     {
     public:
-        ProgressBar(Widget* parent);
+        explicit ProgressBar(Widget* parent);
 
-        f32 value();
+        f32 value() const;
         void set_value(f32 value);
 
     public:

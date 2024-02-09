@@ -7,7 +7,7 @@ namespace rl::ui {
     {
     }
 
-    f32 ProgressBar::value()
+    f32 ProgressBar::value() const
     {
         return m_value;
     }
@@ -36,8 +36,8 @@ namespace rl::ui {
         nvg::fill_paint(context, paint);
         nvg::fill(context);
 
-        f32 value{ std::min(std::max(0.0f, m_value), 1.0f) };
-        f32 bar_pos{ std::round((m_size.width - 2.0f) * value) };
+        const f32 value{ std::min(std::max(0.0f, m_value), 1.0f) };
+        const f32 bar_pos{ std::round((m_size.width - 2.0f) * value) };
 
         paint = nvg::box_gradient(context, m_pos.x, m_pos.y, bar_pos + 1.5f, m_size.height - 1.0f,
                                   3.0f, 4.0f, ds::color<f32>{ 220, 220, 220, 100 },
