@@ -19,7 +19,7 @@ namespace rl::nvg {
 
     // Define VTable with pointers to the functions for a each OpenGL (ES) version.
 
-    typedef struct
+    using NanoVG_GL_Functions_VTable = struct
     {
         const char* name;
         NVGcontext* (*createContext)(int flags);
@@ -27,7 +27,7 @@ namespace rl::nvg {
         int (*createImageFromHandle)(NVGcontext* ctx, unsigned int textureId, int w, int h,
                                      int flags);
         unsigned int (*getImageHandle)(NVGcontext* ctx, int image);
-    } NanoVG_GL_Functions_VTable;
+    };
 
     // Create NanoVG contexts for different OpenGL (ES) versions.
 
@@ -58,7 +58,8 @@ namespace rl::nvg {
 
     // These are additional flags on top of NVGimageFlags.
     enum NVGimageFlagsGL {
-        NVG_IMAGE_NODELETE = 1 << 16,  // Do not delete GL texture handle.
+        NVG_IMAGE_NODELETE = 1 << 16,
+        // Do not delete GL texture handle.
     };
 
     // Create VTables for different OpenGL (ES) versions.
@@ -67,5 +68,4 @@ namespace rl::nvg {
     extern const NanoVG_GL_Functions_VTable NANO_VG_GL3_FUNCTIONS_V_TABLE;
     extern const NanoVG_GL_Functions_VTable NanoVG_GLES2_Functions_VTable;
     extern const NanoVG_GL_Functions_VTable NanoVG_GLES3_Functions_VTable;
-
 }

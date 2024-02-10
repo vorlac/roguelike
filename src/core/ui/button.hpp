@@ -55,14 +55,14 @@ namespace rl::ui {
         void set_button_group(const std::vector<Button*>& button_group);
 
     public:
-        virtual bool on_mouse_entered(const Mouse& mouse) override;
-        virtual bool on_mouse_exited(const Mouse& mouse) override;
-        virtual bool on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb) override;
-        virtual bool on_mouse_button_released(const Mouse& mouse, const Keyboard& kb) override;
+        bool on_mouse_entered(const Mouse& mouse) override;
+        bool on_mouse_exited(const Mouse& mouse) override;
+        bool on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb) override;
+        bool on_mouse_button_released(const Mouse& mouse, const Keyboard& kb) override;
 
     public:
-        virtual void draw() override;
-        virtual ds::dims<f32> preferred_size() const override;
+        void draw() override;
+        ds::dims<f32> preferred_size() const override;
 
     private:
         bool handle_mouse_button_event(const ds::point<f32>& pt, Mouse::Button::ID button,

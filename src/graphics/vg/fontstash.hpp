@@ -126,14 +126,16 @@ namespace rl::nvg {
 
     enum FONSalign {
         // Horizontal align
-        FonsAlignLeft = 1 << 0,  // Default
+        FonsAlignLeft = 1 << 0,
+        // Default
         FonsAlignCenter = 1 << 1,
         FonsAlignRight = 1 << 2,
         // Vertical align
         FonsAlignTop = 1 << 3,
         FonsAlignMiddle = 1 << 4,
         FonsAlignBottom = 1 << 5,
-        FonsAlignBaseline = 1 << 6,  // Default
+        FonsAlignBaseline = 1 << 6,
+        // Default
     };
 
     enum FONSglyphBitmap {

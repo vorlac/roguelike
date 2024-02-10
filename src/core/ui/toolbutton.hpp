@@ -5,7 +5,6 @@
 #include "core/ui/button.hpp"
 
 namespace rl::ui {
-
     // Simple radio+toggle button with an icon.
     class ToolButton : public Button
     {

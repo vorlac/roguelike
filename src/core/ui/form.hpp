@@ -235,7 +235,7 @@ namespace rl::ui {
                 return this->checked();
             }
 
-            virtual std::string name() const override
+            std::string name() const override
             {
                 return "class rl::ui::FormWidget[CheckBox]";
             }
@@ -273,7 +273,7 @@ namespace rl::ui {
                 this->set_enabled(e);
             }
 
-            virtual std::string name() const override
+            std::string name() const override
             {
                 return "class rl::ui::FormWidget[ComboBox]";
             }
@@ -289,7 +289,7 @@ namespace rl::ui {
                 this->set_alignment(TextBox::Alignment::Right);
             }
 
-            virtual std::string name() const override
+            std::string name() const override
             {
                 return "class rl::ui::FormWidget[IntBox]";
             }
@@ -305,7 +305,7 @@ namespace rl::ui {
                 this->set_alignment(TextBox::Alignment::Right);
             }
 
-            virtual std::string name() const override
+            std::string name() const override
             {
                 return "class rl::ui::FormWidget[FloatBox]";
             }
@@ -329,7 +329,7 @@ namespace rl::ui {
                 });
             }
 
-            virtual std::string name() const override
+            std::string name() const override
             {
                 return "class rl::ui::FormWidget[TextBox]";
             }

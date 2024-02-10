@@ -5,7 +5,6 @@
 #include "utils/numeric.hpp"
 
 namespace rl::ds {
-
     class refcounted
     {
     public:

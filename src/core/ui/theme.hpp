@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <type_traits>
 
 #include <parallel_hashmap/phmap.h>
 
@@ -13,7 +14,6 @@
 #include "utils/numeric.hpp"
 
 namespace rl::ui {
-
     enum class Outline {
         Inner,
         Outer
@@ -47,13 +47,20 @@ namespace rl::ui {
     struct Text
     {
         enum Alignment {
-            HorizLeft = nvg::NVGAlignLeft,         // Default, align text horizontally to left.
-            HorizCenter = nvg::NVGAlignCenter,     // Align text horizontally to center.
-            HorizRight = nvg::NVGAlignRight,       // Align text horizontally to right.
-            VertTop = nvg::NVGAlignTop,            // Align text vertically to top.
-            VertMiddle = nvg::NVGAlignMiddle,      // Align text vertically to middle.
-            VertBottom = nvg::NVGAlignBottom,      // Align text vertically to bottom.
-            VertBaseline = nvg::NVGAlignBaseline,  // Align text vertically to baseline.
+            HorizLeft = nvg::NVGAlignLeft,
+            // Default, align text horizontally to left.
+            HorizCenter = nvg::NVGAlignCenter,
+            // Align text horizontally to center.
+            HorizRight = nvg::NVGAlignRight,
+            // Align text horizontally to right.
+            VertTop = nvg::NVGAlignTop,
+            // Align text vertically to top.
+            VertMiddle = nvg::NVGAlignMiddle,
+            // Align text vertically to middle.
+            VertBottom = nvg::NVGAlignBottom,
+            // Align text vertically to bottom.
+            VertBaseline = nvg::NVGAlignBaseline,
+            // Align text vertically to baseline.
 
             HCenterVMiddle = HorizCenter | VertMiddle,
             HLeftVTop = HorizLeft | VertTop,

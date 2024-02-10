@@ -78,7 +78,7 @@ namespace rl::ds {
             return m_occupancies;
         }
 
-        auto pop() -> std::pair<BufferItemStatus, TElem>
+        std::pair<BufferItemStatus, TElem> pop()
         {
             // if the buffer happens to be empty, block any threads
             // from moving any further until an item is added to

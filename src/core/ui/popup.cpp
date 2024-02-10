@@ -4,7 +4,6 @@
 #include "utils/logging.hpp"
 
 namespace rl::ui {
-
     Popup::Popup(Widget* parent, Dialog* parent_dialog)
         : Dialog{ parent, "" }
         , m_parent_dialog{ parent_dialog }

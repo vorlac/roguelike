@@ -30,11 +30,11 @@ namespace rl {
             void set_callback(const std::function<void(bool)>& toggled_callback);
 
         public:
-            virtual bool on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb) override;
-            virtual bool on_mouse_button_released(const Mouse& mouse, const Keyboard& kb) override;
+            bool on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb) override;
+            bool on_mouse_button_released(const Mouse& mouse, const Keyboard& kb) override;
 
-            virtual ds::dims<f32> preferred_size() const override;
-            virtual void draw() override;
+            ds::dims<f32> preferred_size() const override;
+            void draw() override;
 
         protected:
             bool m_pushed{ false };

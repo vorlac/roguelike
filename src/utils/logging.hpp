@@ -64,27 +64,27 @@ namespace rl {
         constexpr static inline log_level STD_OUT_LEVEL{ log_level::warn };
 
     public:
-        explicit inline ScopedLogger(std::string&& str)
-            : m_log_str{ std::forward<decltype(str)>(str) }
-            , m_level{ log_level::info }
+        explicit ScopedLogger(std::string&& str)
+            : m_level{ log_level::info }
+            , m_log_str{ std::forward<decltype(str)>(str) }
         {
             m_logger->log(m_level, "{:{}}-> {}", "", ++m_depth * INDENT, m_log_str);
         }
 
-        explicit inline ScopedLogger(std::string&& str, log_level log_level)
-            : m_log_str{ std::forward<decltype(str)>(str) }
-            , m_level{ log_level }
+        explicit ScopedLogger(std::string&& str, log_level log_level)
+            : m_level{ log_level }
+            , m_log_str{ std::forward<decltype(str)>(str) }
         {
             m_logger->log(m_level, "{:{}}-> {}", "", ++m_depth * INDENT, m_log_str);
         }
 
-        explicit inline ScopedLogger(log_level log_level)
+        explicit ScopedLogger(log_level log_level)
             : m_level{ log_level }
         {
             m_logger->log(m_level, "{:{}}-> {}", "", ++m_depth * INDENT, m_log_str);
         }
 
-        inline ~ScopedLogger()
+        ~ScopedLogger()
         {
             m_logger->log(m_level, "{:{}}<- {}", "", m_depth-- * INDENT, m_log_str);
         }
@@ -96,7 +96,7 @@ namespace rl {
         }
 
     private:
-        static inline bool init_sinks()
+        static bool init_sinks()
         {
             constexpr log_level detail_level{ std::min(LOGFILE_LEVEL, STD_OUT_LEVEL) };
             auto stdout_sink = std::make_shared<spdlog::sinks::stderr_color_sink_mt>(

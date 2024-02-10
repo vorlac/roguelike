@@ -8,7 +8,6 @@
 #include "ds/dims.hpp"
 
 namespace rl::ui {
-
     class Label : public Widget
     {
     public:
@@ -25,9 +24,9 @@ namespace rl::ui {
         void set_callback(const std::function<void()>& callable);
 
     public:
-        virtual ds::dims<f32> preferred_size() const override;
-        virtual void set_theme(ui::Theme* theme) override;
-        virtual void draw() override;
+        ds::dims<f32> preferred_size() const override;
+        void set_theme(ui::Theme* theme) override;
+        void draw() override;
 
     protected:
         std::string m_text{};

@@ -31,11 +31,11 @@ namespace rl {
             void set_final_callback(const std::function<void(f32)>& callback);
 
         public:
-            virtual ds::dims<f32> preferred_size() const override;
-            virtual bool on_mouse_drag(const Mouse& mouse, const Keyboard& kb) override;
-            virtual bool on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb) override;
-            virtual bool on_mouse_button_released(const Mouse& mouse, const Keyboard& kb) override;
-            virtual void draw() override;
+            ds::dims<f32> preferred_size() const override;
+            bool on_mouse_drag(const Mouse& mouse, const Keyboard& kb) override;
+            bool on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb) override;
+            bool on_mouse_button_released(const Mouse& mouse, const Keyboard& kb) override;
+            void draw() override;
 
         protected:
             f32 m_value{ 0.0f };

@@ -4,10 +4,13 @@ namespace rl::ui {
     struct Icon
     {
         enum class Placement {
-            Left,           // far left
-            LeftCentered,   // left, centered (depends on caption text length)
-            RightCentered,  // right, centered (depends on caption text length)
-            Right           // far right
+            Left,
+            // far left
+            LeftCentered,
+            // left, centered (depends on caption text length)
+            RightCentered,
+            // right, centered (depends on caption text length)
+            Right  // far right
         };
 
         enum ID {

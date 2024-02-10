@@ -39,5 +39,4 @@ namespace rl {
 
         static inline std::vector<const ui::Widget*> m_stack = {};
     };
-
 }

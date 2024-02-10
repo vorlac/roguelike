@@ -22,8 +22,8 @@ namespace rl::math {
     }
 
     template <rl::integer I>
-    constexpr inline auto to_bytes(I val, units::binary unit_in,
-                                   units::binary unit_out = units::binary::unknown)
+    constexpr auto to_bytes(I val, units::binary unit_in,
+                            units::binary unit_out = units::binary::unknown)
     {
         return (val * std::to_underlying(unit_in)) / std::to_underlying(unit_out);
     }

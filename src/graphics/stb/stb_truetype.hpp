@@ -272,8 +272,8 @@ using stbtt_int16 = signed short;
 using stbtt_uint32 = unsigned int;
 using stbtt_int32 = signed int;
 
-typedef char stbtt_check_size32[sizeof(stbtt_int32) == 4 ? 1 : -1];
-typedef char stbtt_check_size16[sizeof(stbtt_int16) == 2 ? 1 : -1];
+using stbtt_check_size32 = char[sizeof(stbtt_int32) == 4 ? 1 : -1];
+using stbtt_check_size16 = char[sizeof(stbtt_int16) == 2 ? 1 : -1];
 
 //// e.g. #define your own STBTT_ifloor/STBTT_iceil() to avoid math.h
 // #ifndef STBTT_ifloor
@@ -349,7 +349,6 @@ typedef char stbtt_check_size16[sizeof(stbtt_int16) == 2 ? 1 : -1];
 #endif
 
 namespace rl::stb {
-
     // private structure
     struct stbtt_buf
     {
@@ -377,10 +376,11 @@ namespace rl::stb {
                                                                      // .ttf)
                              float pixel_height,                     // height of font in pixels
                              unsigned char* pixels, int pw, int ph,  // bitmap to be
-                                                                     // filled in
-                             int first_char, int num_chars,          // characters to bake
-                             stbtt_bakedchar* chardata);             // you allocate this, it's
-                                                                     // num_chars long
+                             // filled in
+                             int first_char, int num_chars,  // characters to bake
+                             stbtt_bakedchar* chardata);     // you allocate this, it's
+
+    // num_chars long
 
     // if return is positive, the first unused row of the bitmap
     // if return is negative, returns the negative of the number of characters that fit
@@ -399,10 +399,10 @@ namespace rl::stb {
                                                                               // above
                             int char_index,            // character to display
                             float* xpos, float* ypos,  // pointers to current position
-                                                       // in screen pixel space
-                            stbtt_aligned_quad* q,     // output: quad to draw
-                            int opengl_fillrule);      // true if opengl fill rule; false
-                                                       // if DX9 or earlier
+                            // in screen pixel space
+                            stbtt_aligned_quad* q,  // output: quad to draw
+                            int opengl_fillrule);   // true if opengl fill rule; false
+    // if DX9 or earlier
     // Call GetBakedQuad with char_index = 'character - first_char', and it
     // creates the quad you need to draw and advances the current position.
     //
@@ -432,10 +432,10 @@ namespace rl::stb {
         float xoff2, yoff2;
     };
 
-    typedef struct stbtt_pack_context stbtt_pack_context;
-    typedef struct stbtt_fontinfo stbtt_fontinfo;
+    using stbtt_pack_context = struct stbtt_pack_context;
+    using stbtt_fontinfo = struct stbtt_fontinfo;
 #ifndef STB_RECT_PACK_VERSION
-    typedef struct stbrp_rect stbrp_rect;
+    using stbrp_rect = struct stbrp_rect;
 #endif
 
     int stbtt_PackBegin(stbtt_pack_context* spc, unsigned char* pixels, int width, int height,
@@ -476,9 +476,9 @@ namespace rl::stb {
     {
         float font_size;
         int first_unicode_codepoint_in_range;  // if non-zero, then the chars are continuous,
-                                               // and this is the first codepoint
-        int* array_of_unicode_codepoints;      // if non-zero, then this is an array of unicode
-                                               // codepoints
+        // and this is the first codepoint
+        int* array_of_unicode_codepoints;  // if non-zero, then this is an array of unicode
+        // codepoints
         int num_chars;
         stbtt_packedchar* chardata_for_range;      // output
         unsigned char h_oversample, v_oversample;  // don't set these, they're used internally
@@ -515,14 +515,14 @@ namespace rl::stb {
     // typically an empty box by convention.
 
     void stbtt_GetPackedQuad(const stbtt_packedchar* chardata, int pw,
-                             int ph,                    // same
-                                                        // data as
-                                                        // above
+                             int ph,  // same
+                             // data as
+                             // above
                              int char_index,            // character to display
                              float* xpos, float* ypos,  // pointers to current
-                                                        // position in screen pixel
-                                                        // space
-                             stbtt_aligned_quad* q,     // output: quad to draw
+                             // position in screen pixel
+                             // space
+                             stbtt_aligned_quad* q,  // output: quad to draw
                              int align_to_integer);
 
     int stbtt_PackFontRangesGatherRects(stbtt_pack_context* spc, const stbtt_fontinfo* info,
@@ -591,7 +591,7 @@ namespace rl::stb {
         int numGlyphs;  // number of glyphs, needed for range checking
 
         int loca, head, glyf, hhea, hmtx, kern, gpos, svg;  // table locations as offset from
-                                                            // start of .ttf
+        // start of .ttf
         int index_map;         // a cmap mapping for our chosen character encoding
         int indexToLocFormat;  // format needed to map from glyph index to glyph
 
@@ -679,12 +679,12 @@ namespace rl::stb {
 
     // as above, but takes one or more glyph indices for greater efficiency
 
-    typedef struct stbtt_kerningentry
+    using stbtt_kerningentry = struct stbtt_kerningentry
     {
         int glyph1;  // use stbtt_FindGlyphIndex
         int glyph2;
         int advance;
-    } stbtt_kerningentry;
+    };
 
     int stbtt_GetKerningTableLength(const stbtt_fontinfo* info);
     int stbtt_GetKerningTable(const stbtt_fontinfo* info, stbtt_kerningentry* table,
@@ -710,15 +710,15 @@ namespace rl::stb {
 #endif
 
 #ifndef stbtt_vertex  // you can predefine this to use different values
-                      // (we share this with other code at RAD)
+  // (we share this with other code at RAD)
   #define stbtt_vertex_type \
       short  // can't use stbtt_int16 because that's not visible in the header file
 
-    typedef struct
+    using stbtt_vertex = struct
     {
         stbtt_vertex_type x, y, cx, cy, cx1, cy1;
         unsigned char type, padding;
-    } stbtt_vertex;
+    };
 #endif
 
     int stbtt_IsGlyphEmpty(const stbtt_fontinfo* info, int glyph_index);
@@ -830,26 +830,26 @@ namespace rl::stb {
                                          int* iy0, int* ix1, int* iy1);
 
     // @TODO: don't expose this structure
-    typedef struct
+    using stbtt_bitmap = struct
     {
         int w, h, stride;
         unsigned char* pixels;
-    } stbtt_bitmap;
+    };
 
     // rasterize a shape with quadratic beziers into a bitmap
-    void stbtt_Rasterize(stbtt_bitmap* result,          // 1-channel bitmap to draw into
-                         float flatness_in_pixels,      // allowable error of curve in
-                                                        // pixels
+    void stbtt_Rasterize(stbtt_bitmap* result,      // 1-channel bitmap to draw into
+                         float flatness_in_pixels,  // allowable error of curve in
+                         // pixels
                          stbtt_vertex* vertices,        // array of vertices defining shape
                          int num_verts,                 // number of vertices in above array
                          float scale_x, float scale_y,  // scale applied to input
-                                                        // vertices
+                         // vertices
                          float shift_x, float shift_y,  // translation applied to
-                                                        // input vertices
-                         int x_off, int y_off,          // another translation applied to
-                                                        // input
-                         int invert,                    // if non-zero, vertically flip shape
-                         void* userdata);               // context for to STBTT_MALLOC
+                         // input vertices
+                         int x_off, int y_off,  // another translation applied to
+                         // input
+                         int invert,       // if non-zero, vertically flip shape
+                         void* userdata);  // context for to STBTT_MALLOC
 
     //////////////////////////////////////////////////////////////////////////////
     //
@@ -962,14 +962,16 @@ namespace rl::stb {
     //     http://developer.apple.com/textfonts/TTRefMan/RM06/Chap6name.html
     //     http://www.microsoft.com/typography/otspec/name.htm
 
-    enum {  // platformID
+    enum {
+        // platformID
         STBTT_PLATFORM_ID_UNICODE = 0,
         STBTT_PLATFORM_ID_MAC = 1,
         STBTT_PLATFORM_ID_ISO = 2,
         STBTT_PLATFORM_ID_MICROSOFT = 3
     };
 
-    enum {  // encodingID for STBTT_PLATFORM_ID_UNICODE
+    enum {
+        // encodingID for STBTT_PLATFORM_ID_UNICODE
         STBTT_UNICODE_EID_UNICODE_1_0 = 0,
         STBTT_UNICODE_EID_UNICODE_1_1 = 1,
         STBTT_UNICODE_EID_ISO_10646 = 2,
@@ -977,14 +979,16 @@ namespace rl::stb {
         STBTT_UNICODE_EID_UNICODE_2_0_FULL = 4
     };
 
-    enum {  // encodingID for STBTT_PLATFORM_ID_MICROSOFT
+    enum {
+        // encodingID for STBTT_PLATFORM_ID_MICROSOFT
         STBTT_MS_EID_SYMBOL = 0,
         STBTT_MS_EID_UNICODE_BMP = 1,
         STBTT_MS_EID_SHIFTJIS = 2,
         STBTT_MS_EID_UNICODE_FULL = 10
     };
 
-    enum {  // encodingID for STBTT_PLATFORM_ID_MAC; same as Script Manager codes
+    enum {
+        // encodingID for STBTT_PLATFORM_ID_MAC; same as Script Manager codes
         STBTT_MAC_EID_ROMAN = 0,
         STBTT_MAC_EID_ARABIC = 4,
         STBTT_MAC_EID_JAPANESE = 1,
@@ -995,8 +999,9 @@ namespace rl::stb {
         STBTT_MAC_EID_RUSSIAN = 7
     };
 
-    enum {  // languageID for STBTT_PLATFORM_ID_MICROSOFT; same as LCID...
-            // problematic because there are e.g. 16 english LCIDs and 16 arabic LCIDs
+    enum {
+        // languageID for STBTT_PLATFORM_ID_MICROSOFT; same as LCID...
+        // problematic because there are e.g. 16 english LCIDs and 16 arabic LCIDs
         STBTT_MS_LANG_ENGLISH = 0x0409,
         STBTT_MS_LANG_ITALIAN = 0x0410,
         STBTT_MS_LANG_CHINESE = 0x0804,
@@ -1011,7 +1016,8 @@ namespace rl::stb {
         STBTT_MS_LANG_SWEDISH = 0x041D
     };
 
-    enum {  // languageID for STBTT_PLATFORM_ID_MAC
+    enum {
+        // languageID for STBTT_PLATFORM_ID_MAC
         STBTT_MAC_LANG_ENGLISH = 0,
         STBTT_MAC_LANG_JAPANESE = 11,
         STBTT_MAC_LANG_ARABIC = 12,

@@ -11,7 +11,6 @@
 #include "utils/logging.hpp"
 
 namespace rl::ui {
-
     Dialog::Dialog(Widget* parent, const std::string& title)
         : Widget{ parent }
         , m_title{ title }

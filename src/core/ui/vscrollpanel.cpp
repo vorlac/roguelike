@@ -2,7 +2,6 @@
 #include "core/ui/vscrollpanel.hpp"
 
 namespace rl::ui {
-
     VScrollPanel::VScrollPanel(Widget* parent)
         : Widget{ parent }
     {

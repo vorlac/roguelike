@@ -466,7 +466,7 @@ namespace rl::nvg {
             if (nverts > ctx->cache->cverts)
             {
                 const int32_t cverts = (nverts + 0xff) & ~0xff;  // Round up to prevent allocations
-                                                                 // when
+                // when
                 // things change just slightly.
                 const auto verts = static_cast<NVGvertex*>(
                     realloc(ctx->cache->verts, sizeof(NVGvertex) * cverts));
@@ -1074,7 +1074,7 @@ namespace rl::nvg {
                 const int32_t loop = (path->closed == 0) ? 0 : 1;
                 if (line_join == NVGRound)
                     cverts += (path->count + path->nbevel * (ncap + 2) + 1) * 2;  // plus one for
-                                                                                  // loop
+                // loop
                 else
                     cverts += (path->count + path->nbevel * 5 + 1) * 2;  // plus one for loop
                 if (loop == 0)
@@ -2869,7 +2869,7 @@ namespace rl::nvg {
         fons_set_font(ctx->fs, state->font_id);
 
         cverts = detail::nvg_max(2, static_cast<int32_t>(end - string)) * 6;  // conservative
-                                                                              // estimate.
+        // estimate.
         verts = detail::nvg_alloc_temp_verts(ctx, cverts);
         if (verts == nullptr)
             return x;

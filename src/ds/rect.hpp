@@ -37,8 +37,10 @@ namespace rl::ds {
     };
 
     enum Axis : i8_fast {
-        Horizontal = 1,  // x axis
-        Vertical = 2,    // y axis
+        Horizontal = 1,
+        // x axis
+        Vertical = 2,
+        // y axis
     };
 
     template <rl::numeric T>
@@ -242,7 +244,7 @@ namespace rl::ds {
         }
 
         // Generates an array of vertices representing the rect to be used in an OpenGL VBO
-        constexpr inline auto triangles() -> std::array<ds::point<T>, 6>
+        constexpr inline std::array<ds::point<T>, 6> triangles()
         {
             ds::point<T> tl{ pt.x, pt.y + size.height };
             ds::point<T> bl{ pt.x, pt.y };
@@ -263,9 +265,8 @@ namespace rl::ds {
         //
         // Parameters:
         //     clr - The color to pack into the return array for this rect.
-        constexpr inline auto triangles(const ds::color<f32>& clr)
-            -> std::array<std::pair<ds::point<f32>, ds::color<f32>>, 6>
-
+        constexpr inline std::array<std::pair<ds::point<f32>, ds::color<f32>>, 6> triangles(
+            const ds::color<f32>& clr)
         {
             ds::point<T> tl{ pt.x, pt.y + size.height };
             ds::point<T> bl{ pt.x, pt.y };

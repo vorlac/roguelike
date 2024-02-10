@@ -1,7 +1,6 @@
 #pragma once
 
 namespace rl::stb {
-
     // DOCUMENTATION
     //
     // Limitations:
@@ -247,7 +246,8 @@ namespace rl::stb {
 #define STBI_VERSION 1
 
     enum {
-        STBI_default = 0,  // only used for desired_channels
+        STBI_default = 0,
+        // only used for desired_channels
 
         STBI_grey = 1,
         STBI_grey_alpha = 2,
@@ -256,8 +256,8 @@ namespace rl::stb {
     };
 
 #include <stdlib.h>
-    typedef unsigned char stbi_uc;
-    typedef unsigned short stbi_us;
+    using stbi_uc = unsigned char;
+    using stbi_us = unsigned short;
 
     //////////////////////////////////////////////////////////////////////////////
     //
@@ -271,10 +271,10 @@ namespace rl::stb {
     struct stbi_io_callbacks
     {
         int (*read)(void* user, char* data, int size);  // fill 'data' with 'size' bytes. return
-                                                        // number of bytes actually read
+        // number of bytes actually read
         void (*skip)(void* user, int n);  // skip the next 'n' bytes, or 'unget' the last -n
-                                          // bytes if negative
-        int (*eof)(void* user);           // returns nonzero if we are at end of file/data
+        // bytes if negative
+        int (*eof)(void* user);  // returns nonzero if we are at end of file/data
     };
 
     ////////////////////////////////////
@@ -408,5 +408,4 @@ namespace rl::stb {
 
     char* stbi_zlib_decode_noheader_malloc(const char* buffer, int len, int* outlen);
     int stbi_zlib_decode_noheader_buffer(char* obuffer, int olen, const char* ibuffer, int ilen);
-
 }

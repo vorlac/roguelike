@@ -167,7 +167,7 @@ target_link_options(${PROJECT_NAME}
     $<${compiler_is_msvc}:
         # /verbose
 
-        $<$<CONFIG:Release>: 
+        $<$<CONFIG:Release>:
             # /machine:x64
             # /ltcg # link time code gen
             /opt:ref # eliminate unreferenced functions/data

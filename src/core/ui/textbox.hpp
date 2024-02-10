@@ -14,7 +14,6 @@
 #include "utils/numeric.hpp"
 
 namespace rl::ui {
-
     // Fancy text box with builtin regular expression-based validation.
     // This class overrides widget::m_icon_extra_scale to be 0.8f, which
     // affects all subclasses of this widget. Subclasses must explicitly set
@@ -53,26 +52,26 @@ namespace rl::ui {
         void set_callback(const std::function<bool(const std::string& str)>& callback);
 
     public:
-        virtual bool on_mouse_entered(const Mouse& mouse) override;
-        virtual bool on_mouse_exited(const Mouse& mouse) override;
+        bool on_mouse_entered(const Mouse& mouse) override;
+        bool on_mouse_exited(const Mouse& mouse) override;
 
-        virtual bool on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb) override;
-        virtual bool on_mouse_button_released(const Mouse& mouse, const Keyboard& kb) override;
+        bool on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb) override;
+        bool on_mouse_button_released(const Mouse& mouse, const Keyboard& kb) override;
 
-        virtual bool on_mouse_move(const Mouse& mouse, const Keyboard& kb) override;
-        virtual bool on_mouse_drag(const Mouse& mouse, const Keyboard& kb) override;
+        bool on_mouse_move(const Mouse& mouse, const Keyboard& kb) override;
+        bool on_mouse_drag(const Mouse& mouse, const Keyboard& kb) override;
 
-        virtual bool on_focus_gained() override;
-        virtual bool on_focus_lost() override;
+        bool on_focus_gained() override;
+        bool on_focus_lost() override;
 
-        virtual bool on_key_pressed(const Keyboard& kb) override;
-        virtual bool on_key_released(const Keyboard& kb) override;
-        virtual bool on_character_input(const Keyboard& kb) override;
+        bool on_key_pressed(const Keyboard& kb) override;
+        bool on_key_released(const Keyboard& kb) override;
+        bool on_character_input(const Keyboard& kb) override;
 
     public:
-        virtual void set_theme(Theme* theme) override;
-        virtual ds::dims<f32> preferred_size() const override;
-        virtual void draw() override;
+        void set_theme(Theme* theme) override;
+        ds::dims<f32> preferred_size() const override;
+        void draw() override;
 
     protected:
         bool copy_selection();
@@ -188,7 +187,7 @@ namespace rl::ui {
             set_max_value(max_value);
         }
 
-        virtual bool on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb) override
+        bool on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb) override
         {
             if (m_editable || m_spinnable)
                 m_mouse_down_value = this->value();
@@ -215,12 +214,12 @@ namespace rl::ui {
             return TextBox::on_mouse_button_pressed(mouse, kb);
         }
 
-        virtual bool on_mouse_button_released(const Mouse& mouse, const Keyboard& kb) override
+        bool on_mouse_button_released(const Mouse& mouse, const Keyboard& kb) override
         {
             return TextBox::on_mouse_button_released(mouse, kb);
         }
 
-        virtual bool on_mouse_drag(const Mouse& mouse, const Keyboard& kb) override
+        bool on_mouse_drag(const Mouse& mouse, const Keyboard& kb) override
         {
             if (TextBox::on_mouse_drag(mouse, kb))
                 return true;
@@ -240,7 +239,7 @@ namespace rl::ui {
             return false;
         }
 
-        virtual bool on_mouse_scroll(const Mouse& mouse, const Keyboard& kb) override
+        bool on_mouse_scroll(const Mouse& mouse, const Keyboard& kb) override
         {
             if (Widget::on_mouse_scroll(mouse, kb))
                 return true;
@@ -340,7 +339,7 @@ namespace rl::ui {
             set_max_value(max_value);
         }
 
-        virtual bool on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb) override
+        bool on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb) override
         {
             if (m_editable || m_spinnable)
                 m_mouse_down_value = this->value();
@@ -367,13 +366,13 @@ namespace rl::ui {
             return TextBox::on_mouse_button_pressed(mouse, kb);
         }
 
-        virtual bool on_mouse_button_released(const Mouse& mouse, const Keyboard& kb) override
+        bool on_mouse_button_released(const Mouse& mouse, const Keyboard& kb) override
         {
             SpinArea area{ this->spin_area(mouse.pos()) };
             return TextBox::on_mouse_button_released(mouse, kb);
         }
 
-        virtual bool on_mouse_drag(const Mouse& mouse, const Keyboard& kb) override
+        bool on_mouse_drag(const Mouse& mouse, const Keyboard& kb) override
         {
             if (TextBox::on_mouse_drag(mouse, kb))
                 return true;
@@ -392,7 +391,7 @@ namespace rl::ui {
             return false;
         }
 
-        virtual bool on_mouse_scroll(const Mouse& mouse, const Keyboard& kb) override
+        bool on_mouse_scroll(const Mouse& mouse, const Keyboard& kb) override
         {
             if (Widget::on_mouse_scroll(mouse, kb))
                 return true;

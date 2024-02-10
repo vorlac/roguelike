@@ -14,7 +14,6 @@
 #include "utils/logging.hpp"
 
 namespace rl::ui {
-
     Widget::Widget(Widget* parent)
         : m_parent{ parent }
     {
@@ -216,7 +215,7 @@ namespace rl::ui {
         scoped_log();
         bool visible{ true };
 
-        const Widget* widget{ this };
+        auto widget{ this };
         while (widget != nullptr)
         {
             visible &= widget->visible();
@@ -621,10 +620,10 @@ namespace rl::ui {
     Canvas* Widget::canvas()
     {
         scoped_log();
-        Widget* widget{ this };
+        auto widget{ this };
         while (widget != nullptr)
         {
-            Canvas* canvas{ dynamic_cast<Canvas*>(widget) };
+            auto canvas{ dynamic_cast<Canvas*>(widget) };
             if (canvas != nullptr)
                 return canvas;
 
@@ -638,10 +637,10 @@ namespace rl::ui {
     Dialog* Widget::dialog()
     {
         scoped_log();
-        Widget* widget{ this };
+        auto widget{ this };
         while (widget != nullptr)
         {
-            Dialog* dialog{ dynamic_cast<Dialog*>(widget) };
+            auto dialog{ dynamic_cast<Dialog*>(widget) };
             if (dialog != nullptr)
                 return dialog;
 
@@ -667,7 +666,7 @@ namespace rl::ui {
     void Widget::request_focus()
     {
         scoped_log();
-        Widget* widget{ this };
+        auto widget{ this };
         while (widget->parent() != nullptr)
             widget = widget->parent();
 

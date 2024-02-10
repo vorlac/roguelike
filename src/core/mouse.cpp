@@ -5,7 +5,6 @@
 #include "utils/logging.hpp"
 
 namespace rl {
-
     void Mouse::process_button_down(const Mouse::Button::ID mouse_button)
     {
         runtime_assert(mouse_button - 1 < Mouse::Button::Count, "invalid mouse button");

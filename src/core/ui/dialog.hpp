@@ -32,17 +32,17 @@ namespace rl {
             void set_modal(bool modal);
 
         public:
-            virtual bool on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb) override;
-            virtual bool on_mouse_button_released(const Mouse& mouse, const Keyboard& kb) override;
-            virtual bool on_mouse_scroll(const Mouse& mouse, const Keyboard& kb) override;
-            virtual bool on_mouse_drag(const Mouse& mouse, const Keyboard& kb) override;
-            virtual bool on_mouse_entered(const Mouse& mouse) override;
-            virtual bool on_mouse_exited(const Mouse& mouse) override;
+            bool on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb) override;
+            bool on_mouse_button_released(const Mouse& mouse, const Keyboard& kb) override;
+            bool on_mouse_scroll(const Mouse& mouse, const Keyboard& kb) override;
+            bool on_mouse_drag(const Mouse& mouse, const Keyboard& kb) override;
+            bool on_mouse_entered(const Mouse& mouse) override;
+            bool on_mouse_exited(const Mouse& mouse) override;
 
         public:
-            virtual void draw() override;
-            virtual void perform_layout() override;
-            virtual ds::dims<f32> preferred_size() const override;
+            void draw() override;
+            void perform_layout() override;
+            ds::dims<f32> preferred_size() const override;
 
         protected:
             virtual void refresh_relative_placement();

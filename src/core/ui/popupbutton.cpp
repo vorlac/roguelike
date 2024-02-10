@@ -5,7 +5,6 @@
 #include "utils/unicode.hpp"
 
 namespace rl::ui {
-
     PopupButton::PopupButton(Widget* parent, std::string caption, const Icon::ID button_icon)
         : Button{ parent, std::forward<std::string>(caption), button_icon }
     {

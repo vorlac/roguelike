@@ -8,7 +8,6 @@ SDL_C_LIB_BEGIN
 SDL_C_LIB_END
 
 namespace rl {
-
     class System
     {
     public:

@@ -18,7 +18,7 @@ void get_ipv4(const char* const hostname, char* ipv4_addr, int buf_len)
         hostent* pHostInfo = ::gethostbyname(hostname);
         if (pHostInfo != nullptr)
         {
-            in_addr* pINAddr = (in_addr*)(pHostInfo->h_addr_list[0]);
+            auto pINAddr = (in_addr*)(pHostInfo->h_addr_list[0]);
             if (pINAddr != nullptr)
             {
                 char* ipv4 = inet_ntoa(*pINAddr);

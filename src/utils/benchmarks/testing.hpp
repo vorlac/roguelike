@@ -17,8 +17,7 @@
 #include "utils/random.hpp"
 
 namespace rl::bench::asdf {
-
-    consteval static inline int fib(const int n)
+    consteval static int fib(const int n)
     {
         if (n <= 1)
             return n;
@@ -26,13 +25,13 @@ namespace rl::bench::asdf {
     }
 
     template <typename T, T... nums>
-    static inline consteval auto fib_array(std::integer_sequence<T, nums...>&& intseq)
+    static consteval auto fib_array(std::integer_sequence<T, nums...>&& intseq)
     {
         return std::array{ fib(nums)... };
     }
 
     template <typename T, T... nums>
-    static inline consteval auto int_array(std::integer_sequence<T, nums...>&& intseq)
+    static consteval auto int_array(std::integer_sequence<T, nums...>&& intseq)
     {
         return std::array{ nums... };
     }
@@ -43,7 +42,6 @@ namespace rl::bench::asdf {
         constexpr std::array int_vals{ int_array(std::forward<decltype(ints)>(ints)) };
         constexpr std::array fib_vals{ fib_array(std::forward<decltype(ints)>(ints)) };
     }
-
 }
 
 namespace rl::bench {

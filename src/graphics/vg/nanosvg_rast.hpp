@@ -1,7 +1,7 @@
 #pragma once
 
 namespace rl::nvg {
-    typedef struct NSVGrasterizer NSVGrasterizer;
+    using NSVGrasterizer = struct NSVGrasterizer;
 
     // Allocated rasterizer context.
     NSVGrasterizer* nsvg_create_rasterizer();

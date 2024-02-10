@@ -4,7 +4,6 @@
 #include "utils/numeric.hpp"
 
 namespace rl::ui {
-
     class Popup final : public Dialog
     {
     public:
@@ -28,9 +27,9 @@ namespace rl::ui {
         void set_side(Side popup_side);
 
     public:
-        virtual void draw() override;
-        virtual void perform_layout() override;
-        virtual void refresh_relative_placement() override;
+        void draw() override;
+        void perform_layout() override;
+        void refresh_relative_placement() override;
 
     protected:
         Dialog* m_parent_dialog{ nullptr };

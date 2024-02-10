@@ -4,7 +4,6 @@
 #include "core/ui/imagepanel.hpp"
 
 namespace rl::ui {
-
     ImagePanel::ImagePanel(Widget* parent)
         : Widget(parent)
     {

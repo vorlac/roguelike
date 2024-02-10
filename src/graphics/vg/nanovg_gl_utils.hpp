@@ -3,7 +3,6 @@
 #include "graphics/vg/nanovg_gl.hpp"
 
 namespace rl::nvg {
-
     struct NVGLUframebuffer
     {
         NVGcontext* ctx;

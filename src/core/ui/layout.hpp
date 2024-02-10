@@ -17,22 +17,29 @@ namespace rl::ui {
     class Widget;
 
     enum class Alignment {
-        Unknown = -1,  // Invalid / uninitialized alignment
-        Minimum = 0,   // Take only as much space as is required.
-        Center,        // Center align.
-        Maximum,       // Take as much space as is allowed.
-        Fill           // Fill according to preferred sizes.
+        Unknown = -1,
+        // Invalid / uninitialized alignment
+        Minimum = 0,
+        // Take only as much space as is required.
+        Center,
+        // Center align.
+        Maximum,
+        // Take as much space as is allowed.
+        Fill  // Fill according to preferred sizes.
     };
 
     enum class Orientation {
-        Unknown = -1,    // Invalid / uninitialized orientation
-        Horizontal = 0,  // Layout expands on horizontal axis.
-        Vertical         // Layout expands on vertical axis.
+        Unknown = -1,
+        // Invalid / uninitialized orientation
+        Horizontal = 0,
+        // Layout expands on horizontal axis.
+        Vertical  // Layout expands on vertical axis.
     };
 
     enum Axis {
-        Horizontal = 0,  // Layout expands on horizontal axis.
-        Vertical         // Layout expands on vertical axis.
+        Horizontal = 0,
+        // Layout expands on horizontal axis.
+        Vertical  // Layout expands on vertical axis.
     };
 
     struct Anchor
@@ -109,9 +116,9 @@ namespace rl::ui {
         void set_alignment(Alignment alignment);
 
     public:
-        virtual void perform_layout(nvg::NVGcontext* nvg_context, Widget* widget) const override;
-        virtual ds::dims<f32> preferred_size(nvg::NVGcontext* nvg_context,
-                                             const Widget* widget) const override;
+        void perform_layout(nvg::NVGcontext* nvg_context, Widget* widget) const override;
+        ds::dims<f32> preferred_size(nvg::NVGcontext* nvg_context,
+                                     const Widget* widget) const override;
 
     protected:
         f32 m_margin{ 0.0f };
@@ -148,9 +155,9 @@ namespace rl::ui {
         void set_group_spacing(f32 group_spacing);
 
     public:
-        virtual void perform_layout(nvg::NVGcontext* nvg_context, Widget* widget) const override;
-        virtual ds::dims<f32> preferred_size(nvg::NVGcontext* nvg_context,
-                                             const Widget* widget) const override;
+        void perform_layout(nvg::NVGcontext* nvg_context, Widget* widget) const override;
+        ds::dims<f32> preferred_size(nvg::NVGcontext* nvg_context,
+                                     const Widget* widget) const override;
 
     protected:
         f32 m_margin{ 15.0f };
@@ -192,9 +199,9 @@ namespace rl::ui {
         void set_row_alignment(const std::vector<Alignment>& value);
 
     public:
-        virtual void perform_layout(nvg::NVGcontext* nvg_context, Widget* widget) const override;
-        virtual ds::dims<f32> preferred_size(nvg::NVGcontext* nvg_context,
-                                             const Widget* widget) const override;
+        void perform_layout(nvg::NVGcontext* nvg_context, Widget* widget) const override;
+        ds::dims<f32> preferred_size(nvg::NVGcontext* nvg_context,
+                                     const Widget* widget) const override;
 
     protected:
         void compute_layout(nvg::NVGcontext* nvg_context, const Widget* widget,
@@ -234,9 +241,9 @@ namespace rl::ui {
         void set_anchor(const Widget* widget, const Anchor& anchor);
 
     public:
-        virtual void perform_layout(nvg::NVGcontext* nvg_context, Widget* widget) const override;
-        virtual ds::dims<f32> preferred_size(nvg::NVGcontext* nvg_context,
-                                             const Widget* widget) const override;
+        void perform_layout(nvg::NVGcontext* nvg_context, Widget* widget) const override;
+        ds::dims<f32> preferred_size(nvg::NVGcontext* nvg_context,
+                                     const Widget* widget) const override;
 
     protected:
         void compute_layout(nvg::NVGcontext* nvg_context, const Widget* widget,

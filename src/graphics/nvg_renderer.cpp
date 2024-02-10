@@ -14,7 +14,6 @@
 #include "graphics/vg/nanovg_gl_utils.hpp"
 
 namespace rl {
-
     struct Property
     {
         enum Flags {

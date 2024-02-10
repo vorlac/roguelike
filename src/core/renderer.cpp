@@ -14,11 +14,10 @@ SDL_C_LIB_BEGIN
 #include <SDL3/SDL_render.h>
 #include <SDL3/SDL_video.h>
 struct SDL_VideoDevice;
-typedef struct SDL_VideoDevice SDL_VideoDevice;
+using SDL_VideoDevice = struct SDL_VideoDevice;
 SDL_C_LIB_END
 
 namespace rl {
-
     static SDL3::SDL_GLContext create_opengl_context(SDL3::SDL_Window* sdl_window)
     {
         sdl_assert(sdl_window != nullptr, "Attempting to create context from uninitialized window");

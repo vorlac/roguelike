@@ -31,7 +31,7 @@ namespace rl::ui {
         Widget(const Widget& other) = delete;
 
         explicit Widget(Widget* parent);
-        virtual ~Widget() override;
+        ~Widget() override;
 
         using refcounted::operator=;
 

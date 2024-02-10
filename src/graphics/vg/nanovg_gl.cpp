@@ -9,7 +9,6 @@
 #define NANOVG_GL_USE_UNIFORMBUFFER 1
 
 namespace rl::nvg {
-
     enum GLNVGuniformLoc {
         NVGLocViewsize,
         NVGLocTex,
@@ -211,7 +210,7 @@ namespace rl::nvg {
                 {
                     const int32_t ctextures = glnvg_maxi(gl->ntextures + 1, 4) +
                                               gl->ctextures / 2;  // 1.5x
-                                                                  // Overallocate
+                    // Overallocate
                     const auto textures = static_cast<GLNVGtexture*>(
                         realloc(gl->textures, sizeof(GLNVGtexture) * ctextures));
                     if (textures == nullptr)
@@ -1078,9 +1077,8 @@ namespace rl::nvg {
         {
             if (gl->ncalls + 1 > gl->ccalls)
             {
-                const int32_t ccalls = glnvg_maxi(gl->ncalls + 1, 128) +
-                                       gl->ccalls / 2;  // 1.5x
-                                                        // Overallocate
+                const int32_t ccalls = glnvg_maxi(gl->ncalls + 1, 128) + gl->ccalls / 2;  // 1.5x
+                // Overallocate
                 const auto calls = static_cast<GLNVGcall*>(
                     realloc(gl->calls, sizeof(GLNVGcall) * ccalls));
 
@@ -1099,9 +1097,8 @@ namespace rl::nvg {
         {
             if (gl->npaths + n > gl->cpaths)
             {
-                const int32_t cpaths = glnvg_maxi(gl->npaths + n, 128) +
-                                       gl->cpaths / 2;  // 1.5x
-                                                        // Overallocate
+                const int32_t cpaths = glnvg_maxi(gl->npaths + n, 128) + gl->cpaths / 2;  // 1.5x
+                // Overallocate
                 const auto paths = static_cast<GLNVGpath*>(
                     realloc(gl->paths, sizeof(GLNVGpath) * cpaths));
                 if (paths == nullptr)
@@ -1146,7 +1143,7 @@ namespace rl::nvg {
             {
                 const int32_t cuniforms = glnvg_maxi(gl->nuniforms + n, 128) +
                                           gl->cuniforms / 2;  // 1.5x
-                                                              // Overallocate
+                // Overallocate
                 const auto uniforms = static_cast<uint8_t*>(
                     realloc(gl->uniforms, static_cast<int32_t>(struct_size * cuniforms)));
                 if (uniforms == nullptr)
@@ -1483,5 +1480,4 @@ namespace rl::nvg {
         .createImageFromHandle = &nvgl_create_image_from_handle_gl3,
         .getImageHandle = &nvgl_image_handle_gl3,
     };
-
 }

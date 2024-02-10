@@ -155,27 +155,32 @@ namespace rl {
 
     public:
         // clang-format off
-        enum ButtonState {
+        enum ButtonState
+        {
             Pressed = 0,
             Released = 1,
         };
 
-        struct EventAction {
+        struct EventAction
+        {
             using type = SDL3::SDL_eventaction;
             static inline constexpr type Add = SDL3::SDL_ADDEVENT;
             static inline constexpr type Peek = SDL3::SDL_PEEKEVENT;
             static inline constexpr type Get = SDL3::SDL_GETEVENT;
         };
 
-        struct Event {
+        struct Event
+        {
             using type = SDL3::SDL_EventType;
             static inline constexpr type First = SDL3::SDL_EVENT_FIRST;
             static inline constexpr type Quit = SDL3::SDL_EVENT_QUIT;
             static inline constexpr type Terminating = SDL3::SDL_EVENT_TERMINATING;
             static inline constexpr type LowMemory = SDL3::SDL_EVENT_LOW_MEMORY;
-            static inline constexpr type WillEnterBackground = SDL3::SDL_EVENT_WILL_ENTER_BACKGROUND;
+            static inline constexpr type WillEnterBackground =
+                SDL3::SDL_EVENT_WILL_ENTER_BACKGROUND;
             static inline constexpr type DidEnterBackground = SDL3::SDL_EVENT_DID_ENTER_BACKGROUND;
-            static inline constexpr type WillEnterForeground = SDL3::SDL_EVENT_WILL_ENTER_FOREGROUND;
+            static inline constexpr type WillEnterForeground =
+                SDL3::SDL_EVENT_WILL_ENTER_FOREGROUND;
             static inline constexpr type DidEnterForeground = SDL3::SDL_EVENT_DID_ENTER_FOREGROUND;
             static inline constexpr type LocaleChanged = SDL3::SDL_EVENT_LOCALE_CHANGED;
             static inline constexpr type SystemThemeChanged = SDL3::SDL_EVENT_SYSTEM_THEME_CHANGED;
@@ -184,7 +189,8 @@ namespace rl {
             static inline constexpr type DisplayAdded = SDL3::SDL_EVENT_DISPLAY_ADDED;
             static inline constexpr type DisplayRemoved = SDL3::SDL_EVENT_DISPLAY_REMOVED;
             static inline constexpr type DisplayMoved = SDL3::SDL_EVENT_DISPLAY_MOVED;
-            static inline constexpr type DispContentScaleChanged = SDL3::SDL_EVENT_DISPLAY_CONTENT_SCALE_CHANGED;
+            static inline constexpr type DispContentScaleChanged =
+                SDL3::SDL_EVENT_DISPLAY_CONTENT_SCALE_CHANGED;
             static inline constexpr type DisplayFirst = SDL3::SDL_EVENT_DISPLAY_FIRST;
             static inline constexpr type DisplayLast = SDL3::SDL_EVENT_DISPLAY_LAST;
 
@@ -194,8 +200,10 @@ namespace rl {
             static inline constexpr type JoystickButtonUp = SDL3::SDL_EVENT_JOYSTICK_BUTTON_UP;
             static inline constexpr type JoystickAdded = SDL3::SDL_EVENT_JOYSTICK_ADDED;
             static inline constexpr type JoystickRemoved = SDL3::SDL_EVENT_JOYSTICK_REMOVED;
-            static inline constexpr type JoystickBatteryUpdated = SDL3::SDL_EVENT_JOYSTICK_BATTERY_UPDATED;
-            static inline constexpr type JoystickUpdateComplete = SDL3::SDL_EVENT_JOYSTICK_UPDATE_COMPLETE;
+            static inline constexpr type JoystickBatteryUpdated =
+                SDL3::SDL_EVENT_JOYSTICK_BATTERY_UPDATED;
+            static inline constexpr type JoystickUpdateComplete =
+                SDL3::SDL_EVENT_JOYSTICK_UPDATE_COMPLETE;
 
             static inline constexpr type GamepadAxisMotion = SDL3::SDL_EVENT_GAMEPAD_AXIS_MOTION;
             static inline constexpr type GamepadButtonDown = SDL3::SDL_EVENT_GAMEPAD_BUTTON_DOWN;
@@ -203,11 +211,15 @@ namespace rl {
             static inline constexpr type GamepadAdded = SDL3::SDL_EVENT_GAMEPAD_ADDED;
             static inline constexpr type GamepadRemoved = SDL3::SDL_EVENT_GAMEPAD_REMOVED;
             static inline constexpr type GamepadRemapped = SDL3::SDL_EVENT_GAMEPAD_REMAPPED;
-            static inline constexpr type GamepadTouchpadDown = SDL3::SDL_EVENT_GAMEPAD_TOUCHPAD_DOWN;
-            static inline constexpr type GamepadTouchpadMotion = SDL3::SDL_EVENT_GAMEPAD_TOUCHPAD_MOTION;
+            static inline constexpr type GamepadTouchpadDown =
+                SDL3::SDL_EVENT_GAMEPAD_TOUCHPAD_DOWN;
+            static inline constexpr type GamepadTouchpadMotion =
+                SDL3::SDL_EVENT_GAMEPAD_TOUCHPAD_MOTION;
             static inline constexpr type GamepadTouchpadUp = SDL3::SDL_EVENT_GAMEPAD_TOUCHPAD_UP;
-            static inline constexpr type GamepadSensorUpdate = SDL3::SDL_EVENT_GAMEPAD_SENSOR_UPDATE;
-            static inline constexpr type GamepadUpdateComplete = SDL3::SDL_EVENT_GAMEPAD_UPDATE_COMPLETE;
+            static inline constexpr type GamepadSensorUpdate =
+                SDL3::SDL_EVENT_GAMEPAD_SENSOR_UPDATE;
+            static inline constexpr type GamepadUpdateComplete =
+                SDL3::SDL_EVENT_GAMEPAD_UPDATE_COMPLETE;
 
             static inline constexpr type FingerDown = SDL3::SDL_EVENT_FINGER_DOWN;
             static inline constexpr type FingerUp = SDL3::SDL_EVENT_FINGER_UP;
@@ -222,7 +234,8 @@ namespace rl {
 
             static inline constexpr type AudioDeviceAdded = SDL3::SDL_EVENT_AUDIO_DEVICE_ADDED;
             static inline constexpr type AudioDeviceRemoved = SDL3::SDL_EVENT_AUDIO_DEVICE_REMOVED;
-            static inline constexpr type AudioDeviceFormatChanged = SDL3::SDL_EVENT_AUDIO_DEVICE_FORMAT_CHANGED;
+            static inline constexpr type AudioDeviceFormatChanged =
+                SDL3::SDL_EVENT_AUDIO_DEVICE_FORMAT_CHANGED;
 
             static inline constexpr type SensorUpdate = SDL3::SDL_EVENT_SENSOR_UPDATE;
             static inline constexpr type RenderTargetsReset = SDL3::SDL_EVENT_RENDER_TARGETS_RESET;

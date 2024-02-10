@@ -9,7 +9,6 @@
 #include "utils/concepts.hpp"
 
 namespace rl {
-
     template <auto RangeStart = 0, auto RangeEnd = std::numeric_limits<decltype(RangeStart)>::max()>
         requires(std::same_as<decltype(RangeStart), decltype(RangeEnd)> &&
                  std::integral<decltype(RangeStart)>)
@@ -35,5 +34,4 @@ namespace rl {
         static inline std::uniform_int_distribution<random::type> m_dist{ RangeStart, RangeEnd };
         static inline bool m_seeded{ rl::random<RangeStart, RangeEnd>::seed() };
     };
-
 }

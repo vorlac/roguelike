@@ -7,7 +7,6 @@
 #include "graphics/vg/nanovg.hpp"
 
 namespace rl::ui {
-
     Label::Label(Widget* parent, std::string text, const std::string_view& font, const f32 font_size)
         : Widget{ parent }
         , m_text{ std::move(text) }

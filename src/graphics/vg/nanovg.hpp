@@ -10,7 +10,6 @@
 #endif
 
 namespace rl::nvg {
-
     struct NVGcontext;
 
     struct NVGcolor
@@ -41,13 +40,17 @@ namespace rl::nvg {
     };
 
     enum NVGwinding {
-        NVGccw = 1,  // Winding for solid shapes
-        NVGcw = 2,   // Winding for holes
+        NVGccw = 1,
+        // Winding for solid shapes
+        NVGcw = 2,
+        // Winding for holes
     };
 
     enum NVGsolidity {
-        NVGSolid = 1,  // CCW
-        NVGHole = 2,   // CW
+        NVGSolid = 1,
+        // CCW
+        NVGHole = 2,
+        // CW
     };
 
     enum NVGlineCap {
@@ -60,14 +63,21 @@ namespace rl::nvg {
 
     enum NVGalign {
         // Horizontal align
-        NVGAlignLeft = 1 << 0,    // Default, align text horizontally to left.
-        NVGAlignCenter = 1 << 1,  // Align text horizontally to center.
-        NVGAlignRight = 1 << 2,   // Align text horizontally to right.
+        NVGAlignLeft = 1 << 0,
+        // Default, align text horizontally to left.
+        NVGAlignCenter = 1 << 1,
+        // Align text horizontally to center.
+        NVGAlignRight = 1 << 2,
+        // Align text horizontally to right.
         // Vertical align
-        NVGAlignTop = 1 << 3,       // Align text vertically to top.
-        NVGAlignMiddle = 1 << 4,    // Align text vertically to middle.
-        NVGAlignBottom = 1 << 5,    // Align text vertically to bottom.
-        NVGAlignBaseline = 1 << 6,  // Default, align text vertically to baseline.
+        NVGAlignTop = 1 << 3,
+        // Align text vertically to top.
+        NVGAlignMiddle = 1 << 4,
+        // Align text vertically to middle.
+        NVGAlignBottom = 1 << 5,
+        // Align text vertically to bottom.
+        NVGAlignBaseline = 1 << 6,
+        // Default, align text vertically to baseline.
     };
 
     enum NVGblendFactor {
@@ -118,21 +128,28 @@ namespace rl::nvg {
     {
         const char* start;  // Pointer to the input text where the row starts.
         const char* end;    // Pointer to the input text where the row ends (one past the last
-                            // character).
-        const char* next;   // Pointer to the beginning of the next row.
-        float width;        // Logical width of the row.
-        float minx, maxx;   // Actual bounds of the row. Logical with and bounds can differ
-                            // because of kerning and some parts over extending.
+        // character).
+        const char* next;  // Pointer to the beginning of the next row.
+        float width;       // Logical width of the row.
+        float minx, maxx;  // Actual bounds of the row. Logical with and bounds can differ
+        // because of kerning and some parts over extending.
     };
-    typedef struct NVGtextRow NVGtextRow;
+
+    using NVGtextRow = struct NVGtextRow;
 
     enum NVGimageFlags {
-        NVGImageGenerateMipmaps = 1 << 0,  // Generate mipmaps during creation of the image.
-        NVGImageRepeatx = 1 << 1,          // Repeat image in X direction.
-        NVGImageRepeaty = 1 << 2,          // Repeat image in Y direction.
-        NVGImageFlipy = 1 << 3,            // Flips (inverses) image in Y direction when rendered.
-        NVGImagePremultiplied = 1 << 4,    // Image data has premultiplied alpha.
-        NVGImageNearest = 1 << 5,          // Image interpolation is Nearest instead Linear
+        NVGImageGenerateMipmaps = 1 << 0,
+        // Generate mipmaps during creation of the image.
+        NVGImageRepeatx = 1 << 1,
+        // Repeat image in X direction.
+        NVGImageRepeaty = 1 << 2,
+        // Repeat image in Y direction.
+        NVGImageFlipy = 1 << 3,
+        // Flips (inverses) image in Y direction when rendered.
+        NVGImagePremultiplied = 1 << 4,
+        // Image data has premultiplied alpha.
+        NVGImageNearest = 1 << 5,
+        // Image interpolation is Nearest instead Linear
     };
 
     // Begin drawing a new frame
@@ -718,7 +735,8 @@ namespace rl::nvg {
         int32_t winding;
         int32_t convex;
     };
-    typedef struct NVGpath NVGpath;
+
+    using NVGpath = struct NVGpath;
 
     struct NVGparams
     {
@@ -767,5 +785,4 @@ namespace rl::nvg {
 #ifdef _MSC_VER
   #pragma warning(pop)
 #endif
-
 }

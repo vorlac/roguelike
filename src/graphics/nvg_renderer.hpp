@@ -15,7 +15,6 @@
 #include "utils/numeric.hpp"
 
 namespace rl {
-
     class NVGRenderer
     {
     public:

@@ -29,8 +29,8 @@
 
 // #define your own functions "STBTT_malloc" / "STBTT_free" to avoid malloc.h
 #ifndef STBTT_malloc
-  #define STBTT_malloc(x, u) ((void)(u), malloc(x))
-  #define STBTT_free(x, u)   ((void)(u), free(x))
+  #define STBTT_malloc(x, u) ((void)(u), std::malloc(x))
+  #define STBTT_free(x, u)   ((void)(u), std::free(x))
 #endif
 
 #ifndef STBTT_assert
@@ -64,7 +64,6 @@ using stbtt_test_oversample_pow2 = int32_t[(STBTT_MAX_OVERSAMPLE & (STBTT_MAX_OV
 #endif
 
 namespace rl::stb {
-
     //////////////////////////////////////////////////////////////////////////
     //
     // stbtt_buf helpers to parse data from file
@@ -505,7 +504,8 @@ namespace rl::stb {
 
         stbtt_uint16 format = ttUSHORT(data + index_map + 0);
         if (format == 0)
-        {  // apple byte encoding
+        {
+            // apple byte encoding
             stbtt_int32 bytes = ttUSHORT(data + index_map + 2);
             if (unicode_codepoint < bytes - 6)
                 return ttBYTE(data + index_map + 6 + unicode_codepoint);
@@ -526,7 +526,8 @@ namespace rl::stb {
             return 0;
         }
         else if (format == 4)
-        {  // standard mapping for windows fonts: binary search collection of ranges
+        {
+            // standard mapping for windows fonts: binary search collection of ranges
             stbtt_uint16 segcount = ttUSHORT(data + index_map + 6) >> 1;
             stbtt_uint16 searchRange = ttUSHORT(data + index_map + 8) >> 1;
             stbtt_uint16 entrySelector = ttUSHORT(data + index_map + 10);
@@ -861,7 +862,8 @@ namespace rl::stb {
                     ++j;
                 }
                 else if (!(flags & 1))
-                {                 // if it's a curve
+                {
+                    // if it's a curve
                     if (was_off)  // two off-curve control points in a row means interpolate an
                                   // on-curve midpoint
                         stbtt_setvertex(&vertices[num_vertices++], STBTT_vcurve, (cx + x) >> 1,
@@ -902,9 +904,11 @@ namespace rl::stb {
                 comp += 2;
 
                 if (flags & 2)
-                {  // XY values
+                {
+                    // XY values
                     if (flags & 1)
-                    {  // shorts
+                    {
+                        // shorts
                         mtx[4] = ttSHORT(comp);
                         comp += 2;
                         mtx[5] = ttSHORT(comp);
@@ -924,13 +928,15 @@ namespace rl::stb {
                     STBTT_assert(0);
                 }
                 if (flags & (1 << 3))
-                {  // WE_HAVE_A_SCALE
+                {
+                    // WE_HAVE_A_SCALE
                     mtx[0] = mtx[3] = ttSHORT(comp) / 16384.0f;
                     comp += 2;
                     mtx[1] = mtx[2] = 0;
                 }
                 else if (flags & (1 << 6))
-                {  // WE_HAVE_AN_X_AND_YSCALE
+                {
+                    // WE_HAVE_AN_X_AND_YSCALE
                     mtx[0] = ttSHORT(comp) / 16384.0f;
                     comp += 2;
                     mtx[1] = mtx[2] = 0;
@@ -938,7 +944,8 @@ namespace rl::stb {
                     comp += 2;
                 }
                 else if (flags & (1 << 7))
-                {  // WE_HAVE_A_TWO_BY_TWO
+                {
+                    // WE_HAVE_A_TWO_BY_TWO
                     mtx[0] = ttSHORT(comp) / 16384.0f;
                     comp += 2;
                     mtx[1] = ttSHORT(comp) / 16384.0f;
@@ -1005,7 +1012,7 @@ namespace rl::stb {
         return num_vertices;
     }
 
-    typedef struct
+    using stbtt_csctx = struct
     {
         int32_t bounds;
         int32_t started;
@@ -1015,7 +1022,7 @@ namespace rl::stb {
 
         stbtt_vertex* pvertices;
         int32_t num_vertices;
-    } stbtt_csctx;
+    };
 
 #define STBTT_CSCTX_INIT(bounds)                   \
     {                                              \
@@ -1332,7 +1339,8 @@ namespace rl::stb {
                     return 1;
 
                 case 0x0C:
-                {  // two-byte escape
+                {
+                    // two-byte escape
                     float dx1, dx2, dx3, dx4, dx5, dx6, dy1, dy2, dy3, dy4, dy5, dy6;
                     float dx, dy;
                     int32_t b1 = stbtt_buf_get8(&b);
@@ -1759,7 +1767,8 @@ namespace rl::stb {
                         stbtt_uint16 valueFormat1 = ttUSHORT(table + 4);
                         stbtt_uint16 valueFormat2 = ttUSHORT(table + 6);
                         if (valueFormat1 == 4 && valueFormat2 == 0)
-                        {  // Support more formats?
+                        {
+                            // Support more formats?
                             stbtt_int32 valueRecordPairSizeInBytes = 2;
                             stbtt_uint16 pairSetCount = ttUSHORT(table + 8);
                             stbtt_uint16 pairPosOffset = ttUSHORT(table + 10 + 2 * coverageIndex);
@@ -1804,7 +1813,8 @@ namespace rl::stb {
                         stbtt_uint16 valueFormat1 = ttUSHORT(table + 4);
                         stbtt_uint16 valueFormat2 = ttUSHORT(table + 6);
                         if (valueFormat1 == 4 && valueFormat2 == 0)
-                        {  // Support more formats?
+                        {
+                            // Support more formats?
                             stbtt_uint16 classDef1Offset = ttUSHORT(table + 8);
                             stbtt_uint16 classDef2Offset = ttUSHORT(table + 10);
                             int32_t glyph1class = stbtt_GetGlyphClass(table + classDef1Offset,
@@ -2029,17 +2039,17 @@ namespace rl::stb {
     //
     //  Rasterizer
 
-    typedef struct stbtt_hheap_chunk
+    using stbtt_hheap_chunk = struct stbtt_hheap_chunk
     {
         struct stbtt_hheap_chunk* next;
-    } stbtt_hheap_chunk;
+    };
 
-    typedef struct stbtt_hheap
+    using stbtt_hheap = struct stbtt_hheap
     {
         struct stbtt_hheap_chunk* head;
         void* first_free;
         int32_t num_remaining_in_head_chunk;
-    } stbtt_hheap;
+    };
 
     static void* stbtt_hheap_alloc(stbtt_hheap* hh, size_t size, void* userdata)
     {
@@ -2054,8 +2064,8 @@ namespace rl::stb {
             if (hh->num_remaining_in_head_chunk == 0)
             {
                 int32_t count = (size < 32 ? 2000 : size < 128 ? 800 : 100);
-                stbtt_hheap_chunk* c = (stbtt_hheap_chunk*)STBTT_malloc(
-                    sizeof(stbtt_hheap_chunk) + size * count, userdata);
+                auto c = (stbtt_hheap_chunk*)STBTT_malloc(sizeof(stbtt_hheap_chunk) + size * count,
+                                                          userdata);
                 if (c == nullptr)
                     return nullptr;
                 c->next = hh->head;
@@ -2085,13 +2095,13 @@ namespace rl::stb {
         }
     }
 
-    typedef struct stbtt_edge
+    using stbtt_edge = struct stbtt_edge
     {
         float x0, y0, x1, y1;
         int32_t invert;
-    } stbtt_edge;
+    };
 
-    typedef struct stbtt_active_edge
+    using stbtt_active_edge = struct stbtt_active_edge
     {
         struct stbtt_active_edge* next;
 #if STBTT_RASTERIZER_VERSION == 1
@@ -2106,7 +2116,7 @@ namespace rl::stb {
 #else
   #error "Unrecognized value of STBTT_RASTERIZER_VERSION"
 #endif
-    } stbtt_active_edge;
+    };
 
 #if STBTT_RASTERIZER_VERSION == 1
   #define STBTT_FIXSHIFT 10
@@ -2642,39 +2652,46 @@ namespace rl::stb {
                         float y2 = (x + 1 - x0) / dx + y_top;
 
                         if (x0 < x1 && x3 > x2)
-                        {  // three segments descending down-right
+                        {
+                            // three segments descending down-right
                             stbtt_handle_clipped_edge(scanline, x, e, x0, y0, x1, y1);
                             stbtt_handle_clipped_edge(scanline, x, e, x1, y1, x2, y2);
                             stbtt_handle_clipped_edge(scanline, x, e, x2, y2, x3, y3);
                         }
                         else if (x3 < x1 && x0 > x2)
-                        {  // three segments descending down-left
+                        {
+                            // three segments descending down-left
                             stbtt_handle_clipped_edge(scanline, x, e, x0, y0, x2, y2);
                             stbtt_handle_clipped_edge(scanline, x, e, x2, y2, x1, y1);
                             stbtt_handle_clipped_edge(scanline, x, e, x1, y1, x3, y3);
                         }
                         else if (x0 < x1 && x3 > x1)
-                        {  // two segments across x, down-right
+                        {
+                            // two segments across x, down-right
                             stbtt_handle_clipped_edge(scanline, x, e, x0, y0, x1, y1);
                             stbtt_handle_clipped_edge(scanline, x, e, x1, y1, x3, y3);
                         }
                         else if (x3 < x1 && x0 > x1)
-                        {  // two segments across x, down-left
+                        {
+                            // two segments across x, down-left
                             stbtt_handle_clipped_edge(scanline, x, e, x0, y0, x1, y1);
                             stbtt_handle_clipped_edge(scanline, x, e, x1, y1, x3, y3);
                         }
                         else if (x0 < x2 && x3 > x2)
-                        {  // two segments across x+1, down-right
+                        {
+                            // two segments across x+1, down-right
                             stbtt_handle_clipped_edge(scanline, x, e, x0, y0, x2, y2);
                             stbtt_handle_clipped_edge(scanline, x, e, x2, y2, x3, y3);
                         }
                         else if (x3 < x2 && x0 > x2)
-                        {  // two segments across x+1, down-left
+                        {
+                            // two segments across x+1, down-left
                             stbtt_handle_clipped_edge(scanline, x, e, x0, y0, x2, y2);
                             stbtt_handle_clipped_edge(scanline, x, e, x2, y2, x3, y3);
                         }
                         else
-                        {  // one segment
+                        {
+                            // one segment
                             stbtt_handle_clipped_edge(scanline, x, e, x0, y0, x3, y3);
                         }
                     }
@@ -2900,10 +2917,10 @@ namespace rl::stb {
         stbtt_sort_edges_ins_sort(p, n);
     }
 
-    typedef struct
+    using stbtt_point = struct
     {
         float x, y;
-    } stbtt_point;
+    };
 
     static void stbtt_rasterize(stbtt_bitmap* result, stbtt_point* pts, int32_t* wcount,
                                 int32_t windings, float scale_x, float scale_y, float shift_x,
@@ -2993,7 +3010,8 @@ namespace rl::stb {
         if (n > 16)  // 65536 segments on one curve better be enough!
             return 1;
         if (dx * dx + dy * dy > objspace_flatness_squared)
-        {  // half-pixel error allowed... need to be smaller if AA
+        {
+            // half-pixel error allowed... need to be smaller if AA
             stbtt_tesselate_curve(points, num_points, x0, y0, (x0 + x1) / 2.0f, (y0 + y1) / 2.0f,
                                   mx, my, objspace_flatness_squared, n + 1);
             stbtt_tesselate_curve(points, num_points, mx, my, (x1 + x2) / 2.0f, (y1 + y2) / 2.0f,
@@ -3394,7 +3412,7 @@ namespace rl::stb {
 
 #ifndef STB_RECT_PACK_VERSION
 
-    typedef int32_t stbrp_coord;
+    using stbrp_coord = int32_t;
 
     ////////////////////////////////////////////////////////////////////////////////////
     //                                                                                //
@@ -3407,16 +3425,16 @@ namespace rl::stb {
     //                                                                                //
     ////////////////////////////////////////////////////////////////////////////////////
 
-    typedef struct
+    using stbrp_context = struct
     {
         int32_t width, height;
         int32_t x, y, bottom_y;
-    } stbrp_context;
+    };
 
-    typedef struct
+    using stbrp_node = struct
     {
         uint8_t x;
-    } stbrp_node;
+    };
 
     struct stbrp_rect
     {
@@ -4302,12 +4320,14 @@ namespace rl::stb {
                                 float px, py, t, it, dist2;
                                 float a_inv = precompute[i];
                                 if (a_inv == 0.0)
-                                {  // if a_inv is 0, it's 2nd degree so use quadratic formula
+                                {
+                                    // if a_inv is 0, it's 2nd degree so use quadratic formula
                                     float a = 3 * (ax * bx + ay * by);
                                     float b = 2 * (ax * ax + ay * ay) + (mx * bx + my * by);
                                     float c = mx * ax + my * ay;
                                     if (a == 0.0)
-                                    {  // if a is 0, it's linear
+                                    {
+                                        // if a is 0, it's linear
                                         if (b != 0.0)
                                             res[num++] = -c / b;
                                     }
@@ -4663,5 +4683,4 @@ namespace rl::stb {
     {
         return stbtt_CompareUTF8toUTF16_bigendian_internal((char*)s1, len1, (char*)s2, len2);
     }
-
 }

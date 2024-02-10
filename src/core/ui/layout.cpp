@@ -204,7 +204,7 @@ namespace rl::ui {
         f32 height{ m_margin };
         f32 width{ 2.0f * m_margin };
 
-        const Dialog* dialog{ dynamic_cast<const Dialog*>(widget) };
+        auto dialog{ dynamic_cast<const Dialog*>(widget) };
         if (dialog != nullptr && !dialog->title().empty())
             height += dialog->header_height() - (m_margin / 2.0f);
 
@@ -250,7 +250,7 @@ namespace rl::ui {
                                         : widget->width()) -
                                    (2.0f * m_margin) };
 
-        const Dialog* dialog{ dynamic_cast<const Dialog*>(widget) };
+        auto dialog{ dynamic_cast<const Dialog*>(widget) };
         if (dialog != nullptr && !dialog->title().empty())
             height += dialog->header_height() - (m_margin / 2.0f);
 
@@ -261,7 +261,7 @@ namespace rl::ui {
             if (!child->visible())
                 continue;
 
-            const Label* label{ dynamic_cast<const Label*>(child) };
+            auto label{ dynamic_cast<const Label*>(child) };
             if (!first_child)
                 height += (label == nullptr) ? m_spacing : m_group_spacing;
 
@@ -715,7 +715,7 @@ namespace rl::ui {
             2.0f * m_margin,
         };
 
-        const Dialog* dialog{ dynamic_cast<const Dialog*>(widget) };
+        auto dialog{ dynamic_cast<const Dialog*>(widget) };
         if (dialog != nullptr && !dialog->title().empty())
             extra.height += widget->theme()->dialog_header_height - m_margin / 2.0f;
 
@@ -731,7 +731,7 @@ namespace rl::ui {
 
         grid[Axis::Horizontal].insert(grid[Axis::Horizontal].begin(), m_margin);
 
-        const Dialog* dialog{ dynamic_cast<const Dialog*>(widget) };
+        auto dialog{ dynamic_cast<const Dialog*>(widget) };
         if (dialog == nullptr || dialog->title().empty())
             grid[Axis::Vertical].insert(grid[Axis::Vertical].begin(), m_margin);
         else if (dialog != nullptr)

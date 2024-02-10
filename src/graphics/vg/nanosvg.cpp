@@ -223,23 +223,23 @@ namespace rl::nsvg {
 
     /* Simple SVG parser. */
 
-    typedef struct NSVGcoordinate
+    using NSVGcoordinate = struct NSVGcoordinate
     {
         float value;
         int units;
-    } NSVGcoordinate;
+    };
 
-    typedef struct NSVGlinearData
+    using NSVGlinearData = struct NSVGlinearData
     {
         NSVGcoordinate x1, y1, x2, y2;
-    } NSVGlinearData;
+    };
 
-    typedef struct NSVGradialData
+    using NSVGradialData = struct NSVGradialData
     {
         NSVGcoordinate cx, cy, r, fx, fy;
-    } NSVGradialData;
+    };
 
-    typedef struct NSVGgradientData
+    using NSVGgradientData = struct NSVGgradientData
     {
         char id[64];
         char ref[64];
@@ -257,9 +257,9 @@ namespace rl::nsvg {
         int nstops;
         NSVGgradientStop* stops;
         struct NSVGgradientData* next;
-    } NSVGgradientData;
+    };
 
-    typedef struct NSVGattrib
+    using NSVGattrib = struct NSVGattrib
     {
         char id[64];
         float xform[6];
@@ -285,9 +285,9 @@ namespace rl::nsvg {
         char hasFill;
         char hasStroke;
         char visible;
-    } NSVGattrib;
+    };
 
-    typedef struct NSVGparser
+    using NSVGparser = struct NSVGparser
     {
         NSVGattrib attr[NSVG_MAX_ATTR];
         int attrHead;
@@ -303,7 +303,7 @@ namespace rl::nsvg {
         float dpi;
         char pathFlag;
         char defsFlag;
-    } NSVGparser;
+    };
 
     static void nsvg_xformIdentity(float* t)
     {
@@ -1290,11 +1290,11 @@ namespace rl::nsvg {
         return NSVG_RGB(rgbi[0], rgbi[1], rgbi[2]);
     }
 
-    typedef struct NSVGNamedColor
+    using NSVGNamedColor = struct NSVGNamedColor
     {
         const char* name;
         unsigned int color;
-    } NSVGNamedColor;
+    };
 
     NSVGNamedColor nsvg_colors[] = {
 
@@ -2271,7 +2271,8 @@ namespace rl::nsvg {
         x1 = *cpx;                           // start point
         y1 = *cpy;
         if (rel)
-        {  // end point
+        {
+            // end point
             x2 = *cpx + args[5];
             y2 = *cpy + args[6];
         }
@@ -2883,7 +2884,7 @@ namespace rl::nsvg {
     static void nsvg_parseGradient(NSVGparser* p, const char** attr, signed char type)
     {
         int i;
-        NSVGgradientData* grad = (NSVGgradientData*)malloc(sizeof(NSVGgradientData));
+        auto grad = (NSVGgradientData*)malloc(sizeof(NSVGgradientData));
         if (grad == nullptr)
             return;
         memset(grad, 0, sizeof(NSVGgradientData));
@@ -3040,7 +3041,7 @@ namespace rl::nsvg {
 
     static void nsvg_startElement(void* ud, const char* el, const char** attr)
     {
-        NSVGparser* p = (NSVGparser*)ud;
+        auto p = (NSVGparser*)ud;
 
         if (p->defsFlag)
         {
@@ -3127,7 +3128,7 @@ namespace rl::nsvg {
 
     static void nsvg_endElement(void* ud, const char* el)
     {
-        NSVGparser* p = (NSVGparser*)ud;
+        auto p = (NSVGparser*)ud;
 
         if (strcmp(el, "g") == 0)
             nsvg_popAttr(p);

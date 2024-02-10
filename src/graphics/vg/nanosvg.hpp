@@ -1,7 +1,6 @@
 #pragma once
 
 namespace rl::nsvg {
-
     enum NSVGpaintType {
         NSVGPaintUndef = -1,
         NSVGPaintNone = 0,
@@ -95,12 +94,12 @@ namespace rl::nsvg {
         struct NSVGshape* next;      // Pointer to next shape, or NULL if last element.
     };
 
-    typedef struct NSVGimage
+    using NSVGimage = struct NSVGimage
     {
         float width;        // Width of the image.
         float height;       // Height of the image.
         NSVGshape* shapes;  // Linked list of shapes in the image.
-    } NSVGimage;
+    };
 
     // Parses SVG file from a file, returns SVG image as paths.
     NSVGimage* nsvg_parse_from_file(const char* filename, const char* units, float dpi);

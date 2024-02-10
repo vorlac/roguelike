@@ -8,7 +8,6 @@
 #include "ds/refcounted.hpp"
 
 namespace rl::ds {
-
     template <typename T>
         requires std::derived_from<T, ds::refcounted>
     class shared final

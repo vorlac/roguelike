@@ -23,18 +23,24 @@ namespace rl {
 
     public:
         // clang-format off
-        
+
         // Keyboard Specific Event Identifiers
         struct Event
         {
             using type = SDL3::SDL_EventType;
 
-            enum ID : std::underlying_type_t<type> {
-                KeyDown       = SDL3::SDL_EVENT_KEY_DOWN,       // Key pressed
-                KeyUp         = SDL3::SDL_EVENT_KEY_UP,         // Key released
-                TextEditing   = SDL3::SDL_EVENT_TEXT_EDITING,   // Keyboard text editing (composition)
-                TextInput     = SDL3::SDL_EVENT_TEXT_INPUT,     // Keyboard text input
-                KeymapChanged = SDL3::SDL_EVENT_KEYMAP_CHANGED, // Keymap changed due to a system event such as an input language or keyboard layout change
+            enum ID : std::underlying_type_t<type>
+            {
+                KeyDown = SDL3::SDL_EVENT_KEY_DOWN,
+                // Key pressed
+                KeyUp = SDL3::SDL_EVENT_KEY_UP,
+                // Key released
+                TextEditing = SDL3::SDL_EVENT_TEXT_EDITING,
+                // Keyboard text editing (composition)
+                TextInput = SDL3::SDL_EVENT_TEXT_INPUT,
+                // Keyboard text input
+                KeymapChanged = SDL3::SDL_EVENT_KEYMAP_CHANGED,
+                // Keymap changed due to a system event such as an input language or keyboard layout change
             };
         };
 

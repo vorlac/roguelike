@@ -1,7 +1,6 @@
 #include "core/keyboard.hpp"
 
 namespace rl {
-
     Keyboard::Scancode::ID Keyboard::keys_down() const
     {
         return Keyboard::Scancode::ID(m_pressed.all() | m_held.all());

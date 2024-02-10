@@ -33,7 +33,7 @@ namespace rl {
             const std::function<void(int)>& callback() const;
 
         public:
-            virtual bool on_mouse_scroll(const Mouse& mouse, const Keyboard& kb) override;
+            bool on_mouse_scroll(const Mouse& mouse, const Keyboard& kb) override;
 
         protected:
             VScrollPanel* m_vscroll_panel{ nullptr };

@@ -5,7 +5,6 @@
 #include "core/state/fsm.hpp"
 
 namespace rl {
-
     // template <typename T>
     // void StateMachine::push(state_t&& s)
     //{

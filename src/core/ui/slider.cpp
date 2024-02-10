@@ -4,7 +4,6 @@
 #include "core/ui/theme.hpp"
 
 namespace rl::ui {
-
     Slider::Slider(Widget* parent)
         : Widget(parent)
     {

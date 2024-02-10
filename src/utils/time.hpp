@@ -20,15 +20,15 @@ namespace rl::inline utils {
     // as well as convert between timer values
     enum class TimeDuration : rl::u64 {
         // clang-format off
-        Unknown      = 0,
-        Second       = 1,
-        Decisecond   = 10,
-        Centisecond  = 100,
-        Millisecond  = 1000,
-        Microsecond  = 1000000,
-        Nanosecond   = 1000000000,
-        Picosecond   = 1000000000000,
-        Femtosecond  = 1000000000000000,
+        Unknown = 0,
+        Second = 1,
+        Decisecond = 10,
+        Centisecond = 100,
+        Millisecond = 1000,
+        Microsecond = 1000000,
+        Nanosecond = 1000000000,
+        Picosecond = 1000000000000,
+        Femtosecond = 1000000000000000,
         // clang-format on
     };
 

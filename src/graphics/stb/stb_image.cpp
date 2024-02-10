@@ -1,7 +1,6 @@
 #include "graphics/stb/stb_image.hpp"
 
 namespace rl::stb {
-
 #if defined(STBI_ONLY_JPEG) || defined(STBI_ONLY_PNG) || defined(STBI_ONLY_BMP) || \
     defined(STBI_ONLY_TGA) || defined(STBI_ONLY_GIF) || defined(STBI_ONLY_PSD) ||  \
     defined(STBI_ONLY_HDR) || defined(STBI_ONLY_PIC) || defined(STBI_ONLY_PNM) ||  \
@@ -93,10 +92,10 @@ namespace rl::stb {
 #endif
 
 #if defined(_MSC_VER) || defined(__SYMBIAN32__)
-    typedef unsigned short stbi__uint16;
-    typedef signed short stbi__int16;
-    typedef unsigned int stbi__uint32;
-    typedef signed int stbi__int32;
+    using stbi__uint16 = unsigned short;
+    using stbi__int16 = signed short;
+    using stbi__uint32 = unsigned int;
+    using stbi__int32 = signed int;
 #else
   #include <stdint.h>
     typedef uint16_t stbi__uint16;
@@ -106,7 +105,7 @@ namespace rl::stb {
 #endif
 
     // should produce compiler error if size is wrong
-    typedef unsigned char validate_uint32[sizeof(stbi__uint32) == 4 ? 1 : -1];
+    using validate_uint32 = unsigned char[sizeof(stbi__uint32) == 4 ? 1 : -1];
 
 #ifdef _MSC_VER
   #define STBI_NOTUSED(v) (void)(v)
@@ -261,7 +260,7 @@ namespace rl::stb {
 
     // stbi__context structure is our basic context used by all images, so it
     // contains all the IO context, plus some basic image information
-    typedef struct
+    using stbi__context = struct
     {
         stbi__uint32 img_x, img_y;
         int img_n, img_out_n;
@@ -276,7 +275,7 @@ namespace rl::stb {
 
         stbi_uc *img_buffer, *img_buffer_end;
         stbi_uc *img_buffer_original, *img_buffer_original_end;
-    } stbi__context;
+    };
 
     static void stbi__refill_buffer(stbi__context* s);
 
@@ -353,12 +352,12 @@ namespace rl::stb {
         STBI_ORDER_BGR
     };
 
-    typedef struct
+    using stbi__result_info = struct
     {
         int bits_per_channel;
         int num_channels;
         int channel_order;
-    } stbi__result_info;
+    };
 
 #ifndef STBI_NO_JPEG
     static int stbi__jpeg_test(stbi__context* s);
@@ -543,7 +542,7 @@ namespace rl::stb {
             return 1;  // a and b have different signs, so no overflow
         if (a < 0 && b < 0)
             return a >= INT_MIN - b;  // same as a + b >= INT_MIN; INT_MIN - b cannot overflow since
-                                      // b < 0.
+        // b < 0.
         return a <= INT_MAX - b;
     }
 
@@ -552,7 +551,7 @@ namespace rl::stb {
     {
         if (b == 0 || b == -1)
             return 1;  // multiplication by 0 is always 0; check for -1 so SHRT_MIN/b doesn't
-                       // overflow
+        // overflow
         if ((a >= 0) == (b >= 0))
             return a <= SHRT_MAX / b;  // product is positive, so similar to mul2sizes_valid
         if (b < 0)
@@ -618,7 +617,7 @@ namespace rl::stb {
         memset(ri, 0, sizeof(*ri));          // make sure it's initialized if we add new fields
         ri->bits_per_channel = 8;            // default is 8 so most paths don't have to be changed
         ri->channel_order = STBI_ORDER_RGB;  // all current input & output are this, but this is
-                                             // here so we can add BGR order
+        // here so we can add BGR order
         ri->num_channels = 0;
 
 // test the formats with a very explicit header first (at least a FOURCC
@@ -687,7 +686,7 @@ namespace rl::stb {
 
         for (i = 0; i < img_len; ++i)
             reduced[i] = (stbi_uc)((orig[i] >> 8) & 0xFF);  // top half of each byte is sufficient
-                                                            // approx of 16->8 bit scaling
+        // approx of 16->8 bit scaling
 
         STBI_FREE(orig);
         return reduced;
@@ -705,7 +704,7 @@ namespace rl::stb {
 
         for (i = 0; i < img_len; ++i)
             enlarged[i] = (stbi__uint16)((orig[i] << 8) + orig[i]);  // replicate to high and low
-                                                                     // byte, maps 0->0, 255->0xffff
+        // byte, maps 0->0, 255->0xffff
 
         STBI_FREE(orig);
         return enlarged;
@@ -716,7 +715,7 @@ namespace rl::stb {
         int row;
         size_t bytes_per_row = (size_t)w * bytes_per_pixel;
         stbi_uc temp[2048];
-        stbi_uc* bytes = (stbi_uc*)image;
+        auto bytes = (stbi_uc*)image;
 
         for (row = 0; row < (h >> 1); row++)
         {
@@ -743,7 +742,7 @@ namespace rl::stb {
         int slice;
         int slice_size = w * h * bytes_per_pixel;
 
-        stbi_uc* bytes = (stbi_uc*)image;
+        auto bytes = (stbi_uc*)image;
         for (slice = 0; slice < z; ++slice)
         {
             stbi__vertical_flip(bytes, w, h, bytes_per_pixel);
@@ -1655,7 +1654,7 @@ namespace rl::stb {
   // huffman decoding acceleration
   #define FAST_BITS 9  // larger handles more cases; smaller stomps less cache
 
-    typedef struct
+    using stbi__huffman = struct
     {
         stbi_uc fast[1 << FAST_BITS];
         // weirdly, repacking this into AoS is a 10% speed loss, instead of a win
@@ -1664,9 +1663,9 @@ namespace rl::stb {
         stbi_uc size[257];
         unsigned int maxcode[18];
         int delta[17];  // old 'firstsymbol' - old 'firstcode'
-    } stbi__huffman;
+    };
 
-    typedef struct
+    using stbi__jpeg = struct
     {
         stbi__context* s;
         stbi__huffman huff_dc[4];
@@ -1720,7 +1719,7 @@ namespace rl::stb {
                                     const stbi_uc* pcr, int count, int step);
         stbi_uc* (*resample_row_hv_2_kernel)(stbi_uc* out, stbi_uc* in_near, stbi_uc* in_far, int w,
                                              int hs);
-    } stbi__jpeg;
+    };
 
     static int stbi__build_huffman(stbi__huffman* h, int* count)
     {
@@ -1905,7 +1904,7 @@ namespace rl::stb {
             return 0;  // ran out of bits from stream, return 0s intead of continuing
 
         sgn = j->code_buffer >> 31;  // sign bit always in MSB; 0 if MSB clear (positive), 1 if MSB
-                                     // set (negative)
+        // set (negative)
         k = stbi_lrot(j->code_buffer, n);
         j->code_buffer = k & ~stbi__bmask[n];
         k &= stbi__bmask[n];
@@ -1988,7 +1987,8 @@ namespace rl::stb {
             c = (j->code_buffer >> (32 - FAST_BITS)) & ((1 << FAST_BITS) - 1);
             r = fac[c];
             if (r)
-            {                        // fast-AC path
+            {
+                // fast-AC path
                 k += (r >> 4) & 15;  // run
                 s = r & 15;          // combined length
                 if (s > j->code_bits)
@@ -2092,7 +2092,8 @@ namespace rl::stb {
                 c = (j->code_buffer >> (32 - FAST_BITS)) & ((1 << FAST_BITS) - 1);
                 r = fac[c];
                 if (r)
-                {                        // fast-AC path
+                {
+                    // fast-AC path
                     k += (r >> 4) & 15;  // run
                     s = r & 15;          // combined length
                     if (s > j->code_bits)
@@ -2162,8 +2163,8 @@ namespace rl::stb {
                 {
                     int r, s;
                     int rs = stbi__jpeg_huff_decode(j, hac);  // @OPTIMIZE see if we can use the
-                                                              // fast path here, advance-by-r is so
-                                                              // slow, eh
+                    // fast path here, advance-by-r is so
+                    // slow, eh
                     if (rs < 0)
                         return stbi__err("bad huffman code", "Corrupt JPEG");
                     s = rs & 15;
@@ -2876,7 +2877,8 @@ namespace rl::stb {
                 return 1;
             }
             else
-            {  // interleaved
+            {
+                // interleaved
                 int i, j, k, x, y;
                 STBI_SIMD_ALIGN(short, data[64]);
                 for (j = 0; j < z->img_mcu_y; ++j)
@@ -2964,7 +2966,8 @@ namespace rl::stb {
             return 1;
         }
         else
-        {  // interleaved
+        {
+            // interleaved
             int i, j, k, x, y;
             for (j = 0; j < z->img_mcu_y; ++j)
             {
@@ -3091,8 +3094,8 @@ namespace rl::stb {
                     }
                     if (n > 256)
                         return stbi__err("bad DHT header", "Corrupt JPEG");  // Loop over i < n
-                                                                             // would write past end
-                                                                             // of values!
+                    // would write past end
+                    // of values!
                     L -= 17;
                     if (tc == 0)
                     {
@@ -3129,7 +3132,8 @@ namespace rl::stb {
             L -= 2;
 
             if (m == 0xE0 && L >= 5)
-            {  // JFIF APP0 segment
+            {
+                // JFIF APP0 segment
                 static const unsigned char tag[5] = { 'J', 'F', 'I', 'F', '\0' };
                 int ok = 1;
                 int i;
@@ -3141,7 +3145,8 @@ namespace rl::stb {
                     z->jfif = 1;
             }
             else if (m == 0xEE && L >= 12)
-            {  // Adobe APP14 segment
+            {
+                // Adobe APP14 segment
                 static const unsigned char tag[6] = { 'A', 'd', 'o', 'b', 'e', '\0' };
                 int ok = 1;
                 int i;
@@ -3256,13 +3261,13 @@ namespace rl::stb {
         p = stbi__get8(s);
         if (p != 8)
             return stbi__err("only 8-bit", "JPEG format not supported: 8-bit only");  // JPEG
-                                                                                      // baseline
+        // baseline
         s->img_y = stbi__get16be(s);
         if (s->img_y == 0)
             return stbi__err("no header height",
                              "JPEG format not supported: delayed height");  // Legal, but we don't
-                                                                            // handle it--but
-                                                                            // neither does IJG
+        // handle it--but
+        // neither does IJG
         s->img_x = stbi__get16be(s);
         if (s->img_x == 0)
             return stbi__err("0 width", "Corrupt JPEG");  // JPEG requires
@@ -3422,7 +3427,8 @@ namespace rl::stb {
         {
             stbi_uc x = stbi__get8(j->s);
             while (x == 0xff)
-            {  // might be a marker
+            {
+                // might be a marker
                 if (stbi__at_eof(j->s))
                     return STBI__MARKER_none;
                 x = stbi__get8(j->s);
@@ -3495,7 +3501,7 @@ namespace rl::stb {
 
     // static jfif-centered resampling (across block boundaries)
 
-    typedef stbi_uc* (*resample_row_func)(stbi_uc* out, stbi_uc* in0, stbi_uc* in1, int w, int hs);
+    using resample_row_func = stbi_uc* (*)(stbi_uc* out, stbi_uc* in0, stbi_uc* in1, int w, int hs);
 
   #define stbi__div4(x) ((stbi_uc)((x) >> 2))
 
@@ -3951,7 +3957,7 @@ namespace rl::stb {
         stbi__free_jpeg_components(j, j->s->img_n, 0);
     }
 
-    typedef struct
+    using stbi__resample = struct
     {
         resample_row_func resample;
         stbi_uc *line0, *line1;
@@ -3959,7 +3965,7 @@ namespace rl::stb {
         int w_lores;  // horizontal pixels pre-expansion
         int ystep;    // how far through vertical expansion we are
         int ypos;     // which pre-expansion row we're on
-    } stbi__resample;
+    };
 
     // fast 0..255 * 0..255 => 0..255 rounded multiplication
     static stbi_uc stbi__blinn_8x8(stbi_uc x, stbi_uc y)
@@ -4093,7 +4099,8 @@ namespace rl::stb {
                     else if (z->s->img_n == 4)
                     {
                         if (z->app14_color_transform == 0)
-                        {  // CMYK
+                        {
+                            // CMYK
                             for (i = 0; i < z->s->img_x; ++i)
                             {
                                 stbi_uc m = coutput[3][i];
@@ -4105,7 +4112,8 @@ namespace rl::stb {
                             }
                         }
                         else if (z->app14_color_transform == 2)
-                        {  // YCCK
+                        {
+                            // YCCK
                             z->YCbCr_to_RGB_kernel(out, y, coutput[1], coutput[2], z->s->img_x, n);
                             for (i = 0; i < z->s->img_x; ++i)
                             {
@@ -4117,7 +4125,8 @@ namespace rl::stb {
                             }
                         }
                         else
-                        {  // YCbCr + alpha?  Ignore the fourth channel for now
+                        {
+                            // YCbCr + alpha?  Ignore the fourth channel for now
                             z->YCbCr_to_RGB_kernel(out, y, coutput[1], coutput[2], z->s->img_x, n);
                         }
                     }
@@ -4192,7 +4201,7 @@ namespace rl::stb {
                                  stbi__result_info* ri)
     {
         unsigned char* result;
-        stbi__jpeg* j = (stbi__jpeg*)stbi__malloc(sizeof(stbi__jpeg));
+        auto j = (stbi__jpeg*)stbi__malloc(sizeof(stbi__jpeg));
         if (!j)
             return stbi__errpuc("outofmem", "Out of memory");
         memset(j, 0, sizeof(stbi__jpeg));
@@ -4207,7 +4216,7 @@ namespace rl::stb {
     static int stbi__jpeg_test(stbi__context* s)
     {
         int r;
-        stbi__jpeg* j = (stbi__jpeg*)stbi__malloc(sizeof(stbi__jpeg));
+        auto j = (stbi__jpeg*)stbi__malloc(sizeof(stbi__jpeg));
         if (!j)
             return stbi__err("outofmem", "Out of memory");
         memset(j, 0, sizeof(stbi__jpeg));
@@ -4238,7 +4247,7 @@ namespace rl::stb {
     static int stbi__jpeg_info(stbi__context* s, int* x, int* y, int* comp)
     {
         int result;
-        stbi__jpeg* j = (stbi__jpeg*)(stbi__malloc(sizeof(stbi__jpeg)));
+        auto j = (stbi__jpeg*)(stbi__malloc(sizeof(stbi__jpeg)));
         if (!j)
             return stbi__err("outofmem", "Out of memory");
         memset(j, 0, sizeof(stbi__jpeg));
@@ -4265,7 +4274,7 @@ namespace rl::stb {
 
     // zlib-style huffman encoding
     // (jpegs packs from left, zlib from right, so can't share code)
-    typedef struct
+    using stbi__zhuffman = struct
     {
         stbi__uint16 fast[1 << STBI__ZFAST_BITS];
         stbi__uint16 firstcode[16];
@@ -4273,7 +4282,7 @@ namespace rl::stb {
         stbi__uint16 firstsymbol[16];
         stbi_uc size[STBI__ZNSYMS];
         stbi__uint16 value[STBI__ZNSYMS];
-    } stbi__zhuffman;
+    };
 
     static stbi_inline int stbi__bitreverse16(int n)
     {
@@ -4351,7 +4360,7 @@ namespace rl::stb {
     //    we require PNG read all the IDATs and combine them into a single
     //    memory buffer
 
-    typedef struct
+    using stbi__zbuf = struct
     {
         stbi_uc *zbuffer, *zbuffer_end;
         int num_bits;
@@ -4364,7 +4373,7 @@ namespace rl::stb {
         int z_expandable;
 
         stbi__zhuffman z_length, z_distance;
-    } stbi__zbuf;
+    };
 
     static stbi_inline int stbi__zeof(stbi__zbuf* z)
     {
@@ -4541,9 +4550,9 @@ namespace rl::stb {
                 }
                 if (z >= 286)
                     return stbi__err("bad huffman code", "Corrupt PNG");  // per DEFLATE, length
-                                                                          // codes 286 and 287 must
-                                                                          // not appear in
-                                                                          // compressed data
+                // codes 286 and 287 must
+                // not appear in
+                // compressed data
                 z -= 257;
                 len = stbi__zlength_base[z];
                 if (stbi__zlength_extra[z])
@@ -4551,9 +4560,9 @@ namespace rl::stb {
                 z = stbi__zhuffman_decode(a, &a->z_distance);
                 if (z < 0 || z >= 30)
                     return stbi__err("bad huffman code", "Corrupt PNG");  // per DEFLATE, distance
-                                                                          // codes 30 and 31 must
-                                                                          // not appear in
-                                                                          // compressed data
+                // codes 30 and 31 must
+                // not appear in
+                // compressed data
                 dist = stbi__zdist_base[z];
                 if (stbi__zdist_extra[z])
                     dist += stbi__zreceive(a, stbi__zdist_extra[z]);
@@ -4567,19 +4576,24 @@ namespace rl::stb {
                 }
                 p = (stbi_uc*)(zout - dist);
                 if (dist == 1)
-                {  // run of one byte; common in images.
+                {
+                    // run of one byte; common in images.
                     stbi_uc v = *p;
                     if (len)
                     {
                         do
+                        {
                             *zout++ = v;
+                        }
                         while (--len);
                     }
                 }
                 else if (len)
                 {
                     do
+                    {
                         *zout++ = *p++;
+                    }
                     while (--len);
                 }
             }
@@ -4700,7 +4714,7 @@ namespace rl::stb {
             return stbi__err("bad zlib header", "Corrupt PNG");  // zlib spec
         if (flg & 32)
             return stbi__err("no preset dict", "Corrupt PNG");  // preset dictionary not allowed in
-                                                                // png
+        // png
         if (cm != 8)
             return stbi__err("bad compression", "Corrupt PNG");  // DEFLATE required for png
         // window = 1 << (8 + cinfo)... but who cares, we fully buffer output
@@ -4795,7 +4809,7 @@ namespace rl::stb {
                                             int* outlen)
     {
         stbi__zbuf a;
-        char* p = (char*)stbi__malloc(initial_size);
+        auto p = (char*)stbi__malloc(initial_size);
         if (p == NULL)
             return NULL;
         a.zbuffer = (stbi_uc*)buffer;
@@ -4822,7 +4836,7 @@ namespace rl::stb {
         const char* buffer, int len, int initial_size, int* outlen, int parse_header)
     {
         stbi__zbuf a;
-        char* p = (char*)stbi__malloc(initial_size);
+        auto p = (char*)stbi__malloc(initial_size);
         if (p == NULL)
             return NULL;
         a.zbuffer = (stbi_uc*)buffer;
@@ -4854,7 +4868,7 @@ namespace rl::stb {
     char* stbi_zlib_decode_noheader_malloc(const char* buffer, int len, int* outlen)
     {
         stbi__zbuf a;
-        char* p = (char*)stbi__malloc(16384);
+        auto p = (char*)stbi__malloc(16384);
         if (p == NULL)
             return NULL;
         a.zbuffer = (stbi_uc*)buffer;
@@ -4895,11 +4909,11 @@ namespace rl::stb {
     //      - uses stb_zlib, a PD zlib implementation with fast huffman decoding
 
 #ifndef STBI_NO_PNG
-    typedef struct
+    using stbi__pngchunk = struct
     {
         stbi__uint32 length;
         stbi__uint32 type;
-    } stbi__pngchunk;
+    };
 
     static stbi__pngchunk stbi__get_chunk_header(stbi__context* s)
     {
@@ -4919,12 +4933,12 @@ namespace rl::stb {
         return 1;
     }
 
-    typedef struct
+    using stbi__png = struct
     {
         stbi__context* s;
         stbi_uc *idata, *expanded, *out;
         int depth;
-    } stbi__png;
+    };
 
     enum {
         STBI__F_none = 0,
@@ -5005,7 +5019,7 @@ namespace rl::stb {
 
         STBI_ASSERT(out_n == s->img_n || out_n == s->img_n + 1);
         a->out = (stbi_uc*)stbi__malloc_mad3(x, y, output_bytes, 0);  // extra bytes to write off
-                                                                      // the end into
+        // the end into
         if (!a->out)
             return stbi__err("outofmem", "Out of memory");
 
@@ -5098,9 +5112,9 @@ namespace rl::stb {
             if (depth < 8)
             {
                 stbi_uc scale = (color == 0) ? stbi__depth_scale_table[depth] : 1;  // scale
-                                                                                    // grayscale
-                                                                                    // values to
-                                                                                    // 0..255 range
+                // grayscale
+                // values to
+                // 0..255 range
                 stbi_uc* in = cur;
                 stbi_uc* out = dest;
                 stbi_uc inb = 0;
@@ -5153,7 +5167,7 @@ namespace rl::stb {
             else if (depth == 16)
             {
                 // convert the image data from big-endian to platform-native
-                stbi__uint16* dest16 = (stbi__uint16*)dest;
+                auto dest16 = (stbi__uint16*)dest;
                 stbi__uint32 nsmp = x * img_n;
 
                 if (img_n == out_n)
@@ -5283,7 +5297,7 @@ namespace rl::stb {
     {
         stbi__context* s = z->s;
         stbi__uint32 i, pixel_count = s->img_x * s->img_y;
-        stbi__uint16* p = (stbi__uint16*)z->out;
+        auto p = (stbi__uint16*)z->out;
 
         // compute color-based transparency, assuming we've
         // already got 65535 as the alpha value in the output
@@ -5398,7 +5412,8 @@ namespace rl::stb {
         stbi_uc* p = z->out;
 
         if (s->img_out_n == 3)
-        {  // convert bgr to rgb
+        {
+            // convert bgr to rgb
             for (i = 0; i < pixel_count; ++i)
             {
                 stbi_uc t = p[0];
@@ -5595,7 +5610,7 @@ namespace rl::stb {
                             for (k = 0; k < s->img_n; ++k)
                                 tc[k] = (stbi_uc)(stbi__get16be(s) & 255) *
                                         stbi__depth_scale_table[z->depth];  // non 8-bit images will
-                                                                            // be larger
+                        // be larger
                     }
                     break;
                 }
@@ -5919,12 +5934,12 @@ namespace rl::stb {
         return (int)((unsigned)v * mul_table[bits]) >> shift_table[bits];
     }
 
-    typedef struct
+    using stbi__bmp_data = struct
     {
         int bpp, offset, hsz;
         unsigned int mr, mg, mb, ma, all_a;
         int extra_read;
-    } stbi__bmp_data;
+    };
 
     static int stbi__bmp_set_mask_defaults(stbi__bmp_data* info, int compress)
     {
@@ -5947,7 +5962,7 @@ namespace rl::stb {
                 info->mb = 0xffu << 0;
                 info->ma = 0xffu << 24;
                 info->all_a = 0;  // if all_a is 0 at end, then we loaded alpha channel but it was
-                                  // all 0
+                // all 0
             }
             else
             {
@@ -5998,17 +6013,17 @@ namespace rl::stb {
             if (compress >= 4)
                 return stbi__errpuc("BMP JPEG/PNG",
                                     "BMP type not supported: unsupported compression");  // this
-                                                                                         // includes
-                                                                                         // PNG/JPEG
-                                                                                         // modes
+            // includes
+            // PNG/JPEG
+            // modes
             if (compress == 3 && info->bpp != 16 && info->bpp != 32)
                 return stbi__errpuc("bad BMP", "bad BMP");  // bitfields requires 16 or 32
-                                                            // bits/pixel
-            stbi__get32le(s);                               // discard sizeof
-            stbi__get32le(s);                               // discard hres
-            stbi__get32le(s);                               // discard vres
-            stbi__get32le(s);                               // discard colorsused
-            stbi__get32le(s);                               // discard max important
+            // bits/pixel
+            stbi__get32le(s);  // discard sizeof
+            stbi__get32le(s);  // discard hres
+            stbi__get32le(s);  // discard vres
+            stbi__get32le(s);  // discard colorsused
+            stbi__get32le(s);  // discard max important
             if (hsz == 40 || hsz == 56)
             {
                 if (hsz == 56)
@@ -6116,7 +6131,7 @@ namespace rl::stb {
                                     (int)(s->img_buffer - s->img_buffer_original);
             int header_limit = 1024;         // max we actually read is below 256 bytes currently.
             int extra_data_limit = 256 * 4;  // what ordinarily goes here is a palette; 256
-                                             // entries*4 bytes is its max size.
+            // entries*4 bytes is its max size.
             if (bytes_read_so_far <= 0 || bytes_read_so_far > header_limit)
                 return stbi__errpuc("bad header", "Corrupt BMP");
             // we established that bytes_read_so_far is positive and sensible.
@@ -6366,7 +6381,7 @@ namespace rl::stb {
             case 16:
                 if (is_grey)
                     return STBI_grey_alpha;
-                // fallthrough
+            // fallthrough
             case 15:
                 if (is_rgb16)
                     *is_rgb16 = 1;
@@ -6392,7 +6407,8 @@ namespace rl::stb {
         }
         tga_image_type = stbi__get8(s);  // image type
         if (tga_colormap_type == 1)
-        {  // colormapped (paletted) image
+        {
+            // colormapped (paletted) image
             if (tga_image_type != 1 && tga_image_type != 9)
             {
                 stbi__rewind(s);
@@ -6409,7 +6425,8 @@ namespace rl::stb {
             tga_colormap_bpp = sz;
         }
         else
-        {  // "normal" image w/o colormap - only RGB or grey allowed, +/- RLE
+        {
+            // "normal" image w/o colormap - only RGB or grey allowed, +/- RLE
             if ((tga_image_type != 2) && (tga_image_type != 3) && (tga_image_type != 10) &&
                 (tga_image_type != 11))
             {
@@ -6473,7 +6490,8 @@ namespace rl::stb {
             goto errorEnd;   //   only RGB or indexed allowed
         sz = stbi__get8(s);  //   image type
         if (tga_color_type == 1)
-        {  // colormapped (paletted) image
+        {
+            // colormapped (paletted) image
             if (sz != 1 && sz != 9)
                 goto errorEnd;   // colortype 1 demands image type 1 or 9
             stbi__skip(s, 4);    // skip index of first colormap entry and number of entries
@@ -6483,7 +6501,8 @@ namespace rl::stb {
             stbi__skip(s, 4);  // skip image x and y origin
         }
         else
-        {  // "normal" image w/o colormap
+        {
+            // "normal" image w/o colormap
             if ((sz != 2) && (sz != 3) && (sz != 10) && (sz != 11))
                 goto errorEnd;  // only RGB or grey allowed, +/- RLE
             stbi__skip(s, 9);   // skip colormap specification and image x/y origin
@@ -6576,7 +6595,7 @@ namespace rl::stb {
             tga_comp = stbi__tga_get_comp(tga_bits_per_pixel, (tga_image_type == 3), &tga_rgb16);
 
         if (!tga_comp)  // shouldn't really happen, stbi__tga_test() should have ensured basic
-                        // consistency
+            // consistency
             return stbi__errpuc("bad format", "Can't find out TGA pixelformat");
 
         //   tga info
@@ -6610,7 +6629,8 @@ namespace rl::stb {
             if (tga_indexed)
             {
                 if (tga_palette_len == 0)
-                { /* you have to have at least one entry! */
+                {
+                    /* you have to have at least one entry! */
                     STBI_FREE(tga_data);
                     return stbi__errpuc("bad palette", "Corrupt TGA");
                 }
@@ -6969,7 +6989,8 @@ namespace rl::stb {
                     }
                 }
                 else if (ri->bits_per_channel == 16)
-                {  // output bpc
+                {
+                    // output bpc
                     stbi__uint16* q = ((stbi__uint16*)out) + channel;
                     for (i = 0; i < pixelCount; i++, q += 4)
                         *q = (stbi__uint16)stbi__get16be(s);
@@ -6978,7 +6999,8 @@ namespace rl::stb {
                 {
                     stbi_uc* p = out + channel;
                     if (bitdepth == 16)
-                    {  // input bpc
+                    {
+                        // input bpc
                         for (i = 0; i < pixelCount; i++, p += 4)
                             *p = (stbi_uc)(stbi__get16be(s) >> 8);
                     }
@@ -7082,10 +7104,10 @@ namespace rl::stb {
         return 1;
     }
 
-    typedef struct
+    using stbi__pic_packet = struct
     {
         stbi_uc size, type, channel;
-    } stbi__pic_packet;
+    };
 
     static stbi_uc* stbi__readval(stbi__context* s, int channel, stbi_uc* dest)
     {
@@ -7161,7 +7183,8 @@ namespace rl::stb {
                         return stbi__errpuc("bad format", "packet has bad compression type");
 
                     case 0:
-                    {  // uncompressed
+                    {
+                        // uncompressed
                         int x;
 
                         for (x = 0; x < width; ++x, dest += 4)
@@ -7196,7 +7219,8 @@ namespace rl::stb {
                     break;
 
                     case 2:
-                    {  // Mixed RLE
+                    {
+                        // Mixed RLE
                         int left = width;
                         while (left > 0)
                         {
@@ -7205,7 +7229,8 @@ namespace rl::stb {
                                 return stbi__errpuc("bad file", "file too short (mixed read count)");
 
                             if (count >= 128)
-                            {  // Repeated
+                            {
+                                // Repeated
                                 stbi_uc value[4];
 
                                 if (count == 128)
@@ -7222,7 +7247,8 @@ namespace rl::stb {
                                     stbi__copyval(packet->channel, dest, value);
                             }
                             else
-                            {  // Raw
+                            {
+                                // Raw
                                 ++count;
                                 if (count > left)
                                     return stbi__errpuc("bad file", "scanline overrun");
@@ -7304,14 +7330,14 @@ namespace rl::stb {
     // GIF loader -- public domain by Jean-Marc Lienher -- simplified/shrunk by stb
 
 #ifndef STBI_NO_GIF
-    typedef struct
+    using stbi__gif_lzw = struct
     {
         stbi__int16 prefix;
         stbi_uc first;
         stbi_uc suffix;
-    } stbi__gif_lzw;
+    };
 
-    typedef struct
+    using stbi__gif = struct
     {
         int w, h;
         stbi_uc* out;         // output buffer (always 4 components)
@@ -7329,7 +7355,7 @@ namespace rl::stb {
         int cur_x, cur_y;
         int line_size;
         int delay;
-    } stbi__gif;
+    };
 
     static int stbi__gif_test_raw(stbi__context* s)
     {
@@ -7405,7 +7431,7 @@ namespace rl::stb {
 
     static int stbi__gif_info_raw(stbi__context* s, int* x, int* y, int* comp)
     {
-        stbi__gif* g = (stbi__gif*)stbi__malloc(sizeof(stbi__gif));
+        auto g = (stbi__gif*)stbi__malloc(sizeof(stbi__gif));
         if (!g)
             return stbi__err("outofmem", "Out of memory");
         if (!stbi__gif_header(s, g, comp, 1))
@@ -7441,7 +7467,8 @@ namespace rl::stb {
 
         c = &g->color_table[g->codes[code].suffix * 4];
         if (c[3] > 128)
-        {  // don't render transparent pixels;
+        {
+            // don't render transparent pixels;
             p[0] = c[2];
             p[1] = c[1];
             p[2] = c[0];
@@ -7513,7 +7540,8 @@ namespace rl::stb {
                 valid_bits -= codesize;
                 // @OPTIMIZE: is there some way we can accelerate the non-clear path?
                 if (code == clear)
-                {  // clear code
+                {
+                    // clear code
                     codesize = lzw_cs + 1;
                     codemask = (1 << codesize) - 1;
                     avail = clear + 2;
@@ -7521,7 +7549,8 @@ namespace rl::stb {
                     first = 0;
                 }
                 else if (code == clear + 1)
-                {  // end of stream code
+                {
+                    // end of stream code
                     stbi__skip(s, len);
                     while ((len = stbi__get8(s)) > 0)
                         stbi__skip(s, len);
@@ -7595,8 +7624,8 @@ namespace rl::stb {
             // frame.
             memset(g->out, 0x00, 4 * pcount);
             memset(g->background, 0x00, 4 * pcount);  // state of the background (starts
-                                                      // transparent)
-            memset(g->history, 0x00, pcount);         // pixels that were affected previous frame
+            // transparent)
+            memset(g->history, 0x00, pcount);  // pixels that were affected previous frame
             first_frame = 1;
         }
         else
@@ -7608,11 +7637,12 @@ namespace rl::stb {
             if ((dispose == 3) && (two_back == 0))
             {
                 dispose = 2;  // if I don't have an image to revert back to, default to the old
-                              // background
+                // background
             }
 
             if (dispose == 3)
-            {  // use previous graphic
+            {
+                // use previous graphic
                 for (pi = 0; pi < pcount; ++pi)
                     if (g->history[pi])
                         memcpy(&g->out[pi * 4], &two_back[pi * 4], 4);
@@ -7711,8 +7741,8 @@ namespace rl::stb {
                             if (g->history[pi] == 0)
                             {
                                 g->pal[g->bgindex][3] = 255;  // just in case it was made
-                                                              // transparent, undo that; It will be
-                                                              // reset next frame if need be;
+                                // transparent, undo that; It will be
+                                // reset next frame if need be;
                                 memcpy(&g->out[pi * 4], &g->pal[g->bgindex], 4);
                             }
                         }
@@ -7726,13 +7756,14 @@ namespace rl::stb {
                     int len;
                     int ext = stbi__get8(s);
                     if (ext == 0xF9)
-                    {  // Graphic Control Extension.
+                    {
+                        // Graphic Control Extension.
                         len = stbi__get8(s);
                         if (len == 4)
                         {
                             g->eflags = stbi__get8(s);
                             g->delay = 10 * stbi__get16le(s);  // delay - 1/100th of a second,
-                                                               // saving as 1/1000ths.
+                            // saving as 1/1000ths.
 
                             // unset old transparent
                             if (g->transparent >= 0)
@@ -7830,7 +7861,7 @@ namespace rl::stb {
 
                         if (delays)
                         {
-                            int* new_delays = (int*)STBI_REALLOC_SIZED(*delays, delays_size,
+                            auto new_delays = (int*)STBI_REALLOC_SIZED(*delays, delays_size,
                                                                        sizeof(int) * layers);
                             if (!new_delays)
                                 return stbi__load_gif_main_outofmem(&g, out, delays);
@@ -8726,5 +8757,4 @@ namespace rl::stb {
         stbi__start_callbacks(&s, (stbi_io_callbacks*)c, user);
         return stbi__is_16_main(&s);
     }
-
 }

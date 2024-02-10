@@ -47,11 +47,10 @@ namespace rl::io {
 }
 
 namespace rl::log {
-
     using namespace std::chrono_literals;
 
     template <auto log_level, typename... TArgs>
-    constexpr inline void print(fmt::format_string<TArgs...> format_str, TArgs&&... args)
+    constexpr void print(fmt::format_string<TArgs...> format_str, TArgs&&... args)
     {
         if constexpr (io::logging::level >= log_level)
         {
@@ -84,37 +83,37 @@ namespace rl::log {
     }
 
     template <typename... TArgs>
-    constexpr inline void trace(fmt::format_string<TArgs...> format_str, TArgs&&... args)
+    constexpr void trace(fmt::format_string<TArgs...> format_str, TArgs&&... args)
     {
         log::print<io::LogLevel::Trace>(format_str, std::forward<TArgs>(args)...);
     }
 
     template <typename... TArgs>
-    constexpr inline void info(fmt::format_string<TArgs...> format_str, TArgs&&... args)
+    constexpr void info(fmt::format_string<TArgs...> format_str, TArgs&&... args)
     {
         log::print<io::LogLevel::Info>(format_str, std::forward<TArgs>(args)...);
     }
 
     template <typename... TArgs>
-    constexpr inline void debug(fmt::format_string<TArgs...> format_str, TArgs&&... args)
+    constexpr void debug(fmt::format_string<TArgs...> format_str, TArgs&&... args)
     {
         log::print<io::LogLevel::Debug>(format_str, std::forward<TArgs>(args)...);
     }
 
     template <typename... TArgs>
-    constexpr inline void warning(fmt::format_string<TArgs...> format_str, TArgs&&... args)
+    constexpr void warning(fmt::format_string<TArgs...> format_str, TArgs&&... args)
     {
         log::print<io::LogLevel::Warning>(format_str, std::forward<TArgs>(args)...);
     }
 
     template <typename... TArgs>
-    constexpr inline void error(fmt::format_string<TArgs...> format_str, TArgs&&... args)
+    constexpr void error(fmt::format_string<TArgs...> format_str, TArgs&&... args)
     {
         log::print<io::LogLevel::Error>(format_str, std::forward<TArgs>(args)...);
     }
 
     template <typename... TArgs>
-    constexpr inline void fatal(fmt::format_string<TArgs...> format_str, TArgs&&... args)
+    constexpr void fatal(fmt::format_string<TArgs...> format_str, TArgs&&... args)
     {
         log::print<io::LogLevel::Fatal>(format_str, std::forward<TArgs>(args)...);
         exit(-1);

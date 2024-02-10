@@ -8,7 +8,6 @@
 #include "utils/numeric.hpp"
 
 namespace rl::ui::crtp {
-
     struct label : public widget
     {
     public:

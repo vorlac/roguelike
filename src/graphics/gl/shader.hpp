@@ -24,7 +24,6 @@
 #include "utils/numeric.hpp"
 
 namespace rl::gl {
-
     struct Shader
     {
         enum class Program : u32 {
@@ -169,8 +168,8 @@ namespace rl::gl {
 
         void set_transform()
         {
-            glm::mat4 model = glm::identity<glm::mat4>();
-            glm::mat4 view = glm::identity<glm::mat4>();
+            auto model = glm::identity<glm::mat4>();
+            auto view = glm::identity<glm::mat4>();
             glm::mat4 projection = glm::ortho(0.0f, 1920.0f, 1080.0f, 0.0f, 0.1f, 100.0f);
 
             model = glm::scale(model, glm::vec3(1.0f));

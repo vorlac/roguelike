@@ -1,7 +1,6 @@
 #include "core/ui/progressbar.hpp"
 
 namespace rl::ui {
-
     ProgressBar::ProgressBar(Widget* parent)
         : Widget{ parent }
     {

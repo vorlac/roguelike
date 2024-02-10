@@ -1,4 +1,5 @@
 // #pragma once
+#pragma once
 
 #define LITERAL(_s_) _s_
 
