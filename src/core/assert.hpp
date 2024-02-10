@@ -12,7 +12,7 @@ SDL_C_LIB_BEGIN
 #include <SDL3/SDL_error.h>
 SDL_C_LIB_END
 
-#ifndef NDEBUG
+#ifdef NDEBUG
 
   #define runtime_assert(condition, fmtstr, ...) static_cast<void>(0)
   #define sdl_assert(condition, fmtstr, ...)     static_cast<void>(0)
