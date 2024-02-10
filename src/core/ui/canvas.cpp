@@ -9,7 +9,7 @@
 #include "utils/logging.hpp"
 
 namespace rl::ui {
-    Canvas::Canvas(ds::rect<f32> rect, const Mouse& mouse, const Keyboard& kb,
+    Canvas::Canvas(const ds::rect<f32>& rect, const Mouse& mouse, const Keyboard& kb,
                    const std::unique_ptr<NVGRenderer>& vg_renderer)
         : Widget{ nullptr, vg_renderer }
         , m_mouse{ mouse }

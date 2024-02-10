@@ -116,7 +116,8 @@ namespace rl::ds {
             };
         }
 
-        [[nodiscard]] constexpr nvg::NVGcolor nvg() const
+        [[nodiscard]]
+        constexpr nvg::NVGcolor nvg() const
             requires rl::integer<T>
         {
             return nvg::NVGcolor{
@@ -127,7 +128,8 @@ namespace rl::ds {
             };
         }
 
-        [[nodiscard]] constexpr nvg::NVGcolor nvg() const
+        [[nodiscard]]
+        constexpr nvg::NVGcolor nvg() const
             requires rl::floating_point<T>
         {
             return nvg::NVGcolor{ r, g, b, a };
@@ -339,7 +341,7 @@ namespace rl::ds {
             } };
         }
 
-        consteval operator nvg::NVGcolor()
+        constexpr operator nvg::NVGcolor()
             requires std::same_as<T, u8>
         {
             return nvg::NVGcolor{ {

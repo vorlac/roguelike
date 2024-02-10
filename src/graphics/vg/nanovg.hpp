@@ -2,12 +2,22 @@
 
 #include <cstdint>
 
+#include "ds/dims.hpp"
 #include "ds/point.hpp"
 
 #ifdef _MSC_VER
   #pragma warning(push)
   #pragma warning(disable : 4201)  // nonstandard extension used : nameless struct/union
 #endif
+
+namespace rl::ds {
+    template <rl::numeric T>
+    class rect;
+
+    template <rl::numeric T>
+        requires rl::any_of<T, f32, u8>
+    struct color;
+}
 
 namespace rl::nvg {
 
@@ -122,16 +132,17 @@ namespace rl::nvg {
                             // character).
         const char* next;   // Pointer to the beginning of the next row.
         float width;        // Logical width of the row.
-        float minx, maxx;   // Actual bounds of the row. Logical with and bounds can differ
-                            // because of kerning and some parts over extending.
+        float minx;
+        float maxx;
+        // because of kerning and some parts over extending.
     };
 
     enum NVGimageFlags {
         NVGImageGenerateMipmaps = 1 << 0,  // Generate mipmaps during creation of the image.
-        NVGImageRepeatx = 1 << 1,          // Repeat image in X direction.
-        NVGImageRepeaty = 1 << 2,          // Repeat image in Y direction.
-        NVGImageFlipy = 1 << 3,            // Flips (inverses) image in Y direction when rendered.
-        NVGImagePremultiplied = 1 << 4,    // Image data has premultiplied alpha.
+        NVGImageRepeatX = 1 << 1,          // Repeat image in X direction.
+        NVGImageRepeatY = 1 << 2,          // Repeat image in Y direction.
+        NVGImageFlipY = 1 << 3,            // Flips (inverses) image in Y direction when rendered.
+        NVGImagePreMultiplied = 1 << 4,    // Image data has pre-multiplied alpha.
         NVGImageNearest = 1 << 5,          // Image interpolation is Nearest instead Linear
     };
 
@@ -163,7 +174,7 @@ namespace rl::nvg {
     void global_composite_operation(NVGcontext* ctx, int32_t op);
 
     // Sets the composite operation with custom pixel arithmetic. The parameters should be one
-    // of NVGblendFactor.
+    // of NVGBlendFactor.
     void global_composite_blend_func(NVGcontext* ctx, int32_t sfactor, int32_t dfactor);
 
     // Sets the composite operation with custom pixel arithmetic for RGB and alpha components
@@ -263,13 +274,13 @@ namespace rl::nvg {
     void stroke_color(NVGcontext* ctx, NVGcolor color);
 
     // Sets current stroke style to a paint, which can be a one of the gradients or a pattern.
-    void stroke_paint(NVGcontext* ctx, const NVGpaint paint);
+    void stroke_paint(NVGcontext* ctx, const NVGpaint& paint);
 
     // Sets current fill style to a solid color.
     void fill_color(NVGcontext* ctx, NVGcolor color);
 
     // Sets current fill style to a paint, which can be a one of the gradients or a pattern.
-    void fill_paint(NVGcontext* ctx, const NVGpaint paint);
+    void fill_paint(NVGcontext* ctx, const NVGpaint& paint);
 
     // Sets the miter limit of the stroke style.
     // Miter limit controls when a sharp corner is beveled.
@@ -390,7 +401,7 @@ namespace rl::nvg {
 
     // Creates image by loading it from the disk from specified file name.
     // Returns handle to the image.
-    int32_t create_image(const NVGcontext* ctx, const char* filename, int32_t imageFlags);
+    int32_t create_image(const NVGcontext* ctx, const char* filename, int32_t image_flags);
 
     // Creates image by loading it from the specified chunk of memory.
     // Returns handle to the image.
@@ -409,7 +420,7 @@ namespace rl::nvg {
     void update_image(const NVGcontext* ctx, int32_t image, const uint8_t* data);
 
     // Returns the dimensions of a created image.
-    void image_size(const NVGcontext* ctx, int32_t image, int32_t* w, int32_t* h);
+    void image_size(const NVGcontext* ctx, int32_t image, float* w, float* h);
 
     // Deletes created image.
     void delete_image(const NVGcontext* ctx, int32_t image);
@@ -436,6 +447,9 @@ namespace rl::nvg {
     // StrokePaint().
     NVGpaint box_gradient(NVGcontext* ctx, float x, float y, float w, float h, float r, float f,
                           NVGcolor icol, NVGcolor ocol);
+    NVGpaint box_gradient(NVGcontext* ctx, ds::rect<f32>&& rect, const f32 corner_radius,
+                          const f32 feather_blur, ds::color<f32>&& inner_color,
+                          ds::color<f32>&& outer_gradient_color);
 
     // Creates and returns a radial gradient. Parameters (cx,cy) specify the center, inr and
     // outr specify the inner and outer radius of the gradient, icol specifies the start color
@@ -718,7 +732,6 @@ namespace rl::nvg {
         int32_t winding;
         int32_t convex;
     };
-    typedef struct NVGpath NVGpath;
 
     struct NVGparams
     {
@@ -734,7 +747,7 @@ namespace rl::nvg {
         int32_t (*render_update_texture)(void* uptr, int32_t image, int32_t x, int32_t y, int32_t w,
                                          int32_t h, const uint8_t* data);
 
-        int32_t (*render_get_texture_size)(void* uptr, int32_t image, int32_t* w, int32_t* h);
+        int32_t (*render_get_texture_size)(void* uptr, int32_t image, float* w, float* h);
 
         void (*render_viewport)(void* uptr, float width, float height, float device_pixel_ratio);
         void (*render_cancel)(void* uptr);

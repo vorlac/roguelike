@@ -8,6 +8,7 @@
 #include "core/ui/popupbutton.hpp"
 #include "core/ui/theme.hpp"
 #include "graphics/vg/nanovg.hpp"
+#include "utils/math.hpp"
 #include "utils/unicode.hpp"
 
 namespace rl::ui {
@@ -146,8 +147,8 @@ namespace rl::ui {
             if (Icon::is_font(m_icon))
             {
                 icon_size.height *= this->icon_scale();
-                nvg::font_face(context, Font::Name::Icons);
                 nvg::font_size(context, icon_size.height);
+                nvg::font_face(context, Font::Name::Icons);
                 icon_size.width = nvg::text_bounds(context, 0.0f, 0.0f, utf8(m_icon).data(),
                                                    nullptr, nullptr) +
                                   m_size.height * 0.15f;
@@ -155,12 +156,11 @@ namespace rl::ui {
             else
             {
                 icon_size.height *= 0.9f;
-                ds::dims image_size{ 0, 0 };
+                ds::dims<f32> image_size{ 0.0f, 0.0f };
                 nvg::image_size(context, std::to_underlying(m_icon), &image_size.width,
                                 &image_size.height);
 
-                icon_size.width = static_cast<f32>(image_size.width) * icon_size.height /
-                                  static_cast<f32>(image_size.height);
+                icon_size.width = image_size.width * icon_size.height / image_size.height;
             }
         }
 
@@ -296,7 +296,7 @@ namespace rl::ui {
         nvg::rounded_rect(context, m_pos.x + 1.0f, m_pos.y + 1.0f, m_size.width - 2.0f,
                           m_size.height - 2.0f, m_theme->button_corner_radius - 1.0f);
 
-        if (m_background_color.a != 0)
+        if (math::is_equal(m_background_color.a, 0.0f))
         {
             nvg::fill_color(context, m_background_color.nvg());
             nvg::fill(context);
@@ -332,7 +332,7 @@ namespace rl::ui {
 
         f32 font_size{ m_font_size < 0.0f ? m_theme->button_font_size : m_font_size };
         nvg::font_size(context, font_size);
-        nvg::font_face(context, Font::Name::Sans);
+        nvg::font_face(context, Font::Name::SansBold);
         f32 text_width{ nvg::text_bounds(context, 0.0f, 0.0f, m_text.c_str(), nullptr, nullptr) };
 
         ds::point center{
@@ -352,7 +352,7 @@ namespace rl::ui {
 
         if (m_icon != Icon::None)
         {
-            const std::string icon{ utf8(std::to_underlying(m_icon)) };
+            const std::string icon{ utf8(m_icon) };
             ds::dims icon_size{ font_size, font_size };
 
             if (Icon::is_font(m_icon))
@@ -365,7 +365,7 @@ namespace rl::ui {
             else
             {
                 icon_size.height *= 0.9f;
-                ds::dims image_size{ 0, 0 };
+                ds::dims<f32> image_size{ 0.0f, 0.0f };
                 nvg::image_size(context, m_icon, &image_size.width, &image_size.height);
                 icon_size.width = image_size.height * icon_size.height / image_size.height;
             }
@@ -411,7 +411,7 @@ namespace rl::ui {
         }
 
         nvg::font_size(context, font_size);
-        nvg::font_face(context, Font::Name::Mono);
+        nvg::font_face(context, Font::Name::SansBold);
         nvg::text_align(context, Text::HLeftVMiddle);
         nvg::fill_color(context, m_theme->text_shadow_color.nvg());
         nvg::text(context, text_pos.x, text_pos.y, m_text.c_str(), nullptr);

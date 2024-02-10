@@ -74,7 +74,7 @@ namespace rl::ui {
         if (m_chevron_icon != Icon::None)
         {
             const f32 text_size{ m_font_size < 0.0f ? m_theme->button_font_size : m_font_size };
-            const std::string icon{ utf8(std::to_underlying(m_chevron_icon)) };
+            const std::string icon{ utf8(m_chevron_icon) };
             const ds::color<f32>& text_color{ m_text_color.a == 0.0f ? m_theme->text_color
                                                                      : m_text_color };
             auto&& context{ m_renderer->context() };
@@ -123,7 +123,7 @@ namespace rl::ui {
         else
         {
             const f32 anchor_size{ m_popup->anchor_size() };
-            ds::point offset{
+            const ds::point offset{
                 this->width() + anchor_size + 1.0f,
                 (m_size.height / 2.0f) - anchor_size,
             };

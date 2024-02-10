@@ -28,7 +28,7 @@ namespace rl::ui {
             Right
         };
 
-        TextBox(Widget* parent, const std::string& value = "Untitled");
+        explicit TextBox(Widget* parent, const std::string& value = "Untitled");
 
         bool editable() const;
         bool spinnable() const;
@@ -93,7 +93,7 @@ namespace rl::ui {
             Bottom
         };
 
-        SpinArea spin_area(ds::point<f32> pos) const;
+        SpinArea spin_area(const ds::point<f32>& pos) const;
 
     protected:
         bool m_editable{ false };
@@ -129,15 +129,15 @@ namespace rl::ui {
     class IntBox : public TextBox
     {
     public:
-        IntBox(Widget* parent, Scalar value = (Scalar)0)
+        explicit IntBox(Widget* parent, Scalar value = static_cast<Scalar>(0))
             : TextBox(parent)
         {
             this->set_default_value("0");
-            this->set_format(std::is_signed<Scalar>::value ? "[-]?[0-9]*" : "[0-9]*");
+            this->set_format(std::is_signed_v<Scalar> ? "[-]?[0-9]*" : "[0-9]*");
             this->set_value_increment(1);
             this->set_min_max_values(std::numeric_limits<Scalar>::lowest(),
                                      std::numeric_limits<Scalar>::max());
-            this->set_value(value);
+            this->IntBox<Scalar>::set_value(value);
             this->set_spinnable(false);
         }
 
@@ -193,7 +193,7 @@ namespace rl::ui {
             if (m_editable || m_spinnable)
                 m_mouse_down_value = this->value();
 
-            SpinArea area{ this->spin_area(mouse.pos()) };
+            const SpinArea area{ this->spin_area(mouse.pos()) };
             if (m_spinnable && area != SpinArea::None && !this->focused())
             {
                 if (area == SpinArea::Top)
@@ -273,16 +273,16 @@ namespace rl::ui {
     class FloatBox : public TextBox
     {
     public:
-        FloatBox(Widget* parent, Scalar value = (Scalar)0.f)
+        FloatBox(Widget* parent, Scalar value = static_cast<Scalar>(0.f))
             : TextBox(parent)
         {
             m_number_format = sizeof(Scalar) == sizeof(float) ? "%.4g" : "%.7g";
             this->set_default_value("0");
             this->set_format("[-+]?[0-9]*\\.?[0-9]+([e_e][-+]?[0-9]+)?");
-            this->set_value_increment((Scalar)0.1);
+            this->set_value_increment(static_cast<Scalar>(0.1));
             this->set_min_max_values(std::numeric_limits<Scalar>::lowest(),
                                      std::numeric_limits<Scalar>::max());
-            this->set_value(value);
+            this->FloatBox<Scalar>::set_value(value);
             this->set_spinnable(false);
         }
 
@@ -298,7 +298,7 @@ namespace rl::ui {
 
         Scalar value() const
         {
-            return (Scalar)std::stod(TextBox::value());
+            return static_cast<Scalar>(std::stod(TextBox::value()));
         }
 
         void set_value(Scalar value)
@@ -312,7 +312,7 @@ namespace rl::ui {
         void set_callback(const std::function<void(Scalar)>& cb)
         {
             TextBox::set_callback([cb, this](const std::string& str) {
-                Scalar scalar = (Scalar)std::stod(str);
+                Scalar scalar = static_cast<Scalar>(std::stod(str));
                 set_value(scalar);
                 cb(scalar);
                 return true;
@@ -345,7 +345,7 @@ namespace rl::ui {
             if (m_editable || m_spinnable)
                 m_mouse_down_value = this->value();
 
-            SpinArea area{ this->spin_area(mouse.pos()) };
+            const SpinArea area{ this->spin_area(mouse.pos()) };
             if (m_spinnable && area != SpinArea::None && !this->focused())
             {
                 if (area == SpinArea::Top)
@@ -369,7 +369,6 @@ namespace rl::ui {
 
         virtual bool on_mouse_button_released(const Mouse& mouse, const Keyboard& kb) override
         {
-            SpinArea area{ this->spin_area(mouse.pos()) };
             return TextBox::on_mouse_button_released(mouse, kb);
         }
 

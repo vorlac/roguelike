@@ -25,7 +25,7 @@ namespace rl::ui {
         return m_highlight_color;
     }
 
-    void Slider::set_highlight_color(ds::color<f32> highlight_color)
+    void Slider::set_highlight_color(const ds::color<f32>& highlight_color)
     {
         m_highlight_color = highlight_color;
     }

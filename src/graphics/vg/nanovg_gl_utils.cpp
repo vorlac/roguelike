@@ -31,7 +31,7 @@ namespace rl::nvg {
         memset(fb, 0, sizeof(NVGLUframebuffer));
 
         fb->image = nvg::create_image_rgba(
-            ctx, w, h, imageFlags | NVGImageFlipy | NVGImagePremultiplied, nullptr);
+            ctx, w, h, imageFlags | NVGImageFlipY | NVGImagePreMultiplied, nullptr);
 
         fb->texture = nvgl_image_handle_gl3(ctx, fb->image);
         fb->ctx = ctx;

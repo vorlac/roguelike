@@ -22,7 +22,7 @@ namespace rl::ui {
     class Canvas final : public Widget
     {
     public:
-        Canvas(ds::rect<f32> rect, const Mouse& mouse, const Keyboard& kb,
+        Canvas(const ds::rect<f32>& rect, const Mouse& mouse, const Keyboard& kb,
                const std::unique_ptr<NVGRenderer>& nvg_renderer);
         ~Canvas() override;
 

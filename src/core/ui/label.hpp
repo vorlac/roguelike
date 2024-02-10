@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <functional>
 #include <string>
 
@@ -9,7 +10,7 @@
 
 namespace rl::ui {
 
-    class Label : public Widget
+    class Label final : public Widget
     {
     public:
         Label(Widget* parent, std::string text, const std::string_view& font = Font::Name::Mono,
@@ -30,6 +31,8 @@ namespace rl::ui {
         virtual void draw() override;
 
     protected:
+        static inline std::array m_arr = { 1, 2, 3, 4 };
+
         std::string m_text{};
         std::string_view m_font{};
         ds::color<f32> m_color{ rl::Colors::Yellow };

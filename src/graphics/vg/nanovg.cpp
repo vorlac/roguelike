@@ -3,21 +3,17 @@
 #include <numbers>
 #include <print>
 
+#include "ds/color.hpp"
+#include "ds/rect.hpp"
 #include "graphics/stb/stb_image.hpp"
 #include "graphics/vg/fontstash.hpp"
 #include "graphics/vg/nanovg.hpp"
 
 #ifdef _MSC_VER
   #pragma warning(disable : 4100)  // unreferenced formal parameter
-// #pragma warning(disable : 4127)  // conditional expression is constant
-// #pragma warning(disable : 4204)  // nonstandard extension used : non-constant aggregate
-// initializer
   #pragma warning(disable : 4706)  // assignment within conditional expression
-  // #pragma warning(disable : 4244)
   #pragma warning(disable : 4267)
 #endif
-
-// #define NVG_COUNTOF(arr) (sizeof(arr) / sizeof(0 [arr]))
 
 namespace rl::nvg {
     constexpr int32_t NVG_MAX_STATES{ 64 };
@@ -130,81 +126,82 @@ namespace rl::nvg {
     };
 
     namespace detail {
-        float nvg_sqrtf(const float a)
+        static float nvg_sqrtf(const float a)
         {
             return std::sqrtf(a);
         }
 
-        float nvg_modf(const float a, const float b)
+        static float nvg_modf(const float a, const float b)
         {
             return std::fmodf(a, b);
         }
 
-        float nvg_sinf(const float a)
+        static float nvg_sinf(const float a)
         {
             return std::sinf(a);
         }
 
-        float nvg_cosf(const float a)
+        static float nvg_cosf(const float a)
         {
             return std::cosf(a);
         }
 
-        float nvg_tanf(const float a)
+        static float nvg_tanf(const float a)
         {
             return std::tanf(a);
         }
 
         // ReSharper disable once CppInconsistentNaming
-        float nvg_atan2f(const float a, const float b)
+        static float nvg_atan2f(const float a, const float b)
         {
             return std::atan2f(a, b);
         }
 
-        float nvg_acosf(const float a)
+        static float nvg_acosf(const float a)
         {
             return std::acosf(a);
         }
 
         template <typename T>
-        constexpr auto nvg_min(const T a, const T b)
+        constexpr static auto nvg_min(const T a, const T b)
         {
             return a < b ? a : b;
         }
 
         template <typename T>
-        constexpr auto nvg_max(const T a, const T b)
+        constexpr static auto nvg_max(const T a, const T b)
         {
             return a > b ? a : b;
         }
 
         template <typename T>
-        constexpr int32_t nvg_clampi(const T a, const T mn, const T mx)
+        constexpr static int32_t nvg_clampi(const T a, const T mn, const T mx)
         {
             return a < mn ? mn : (a > mx ? mx : a);
         }
 
-        constexpr float nvg_absf(const float a)
+        constexpr static float nvg_absf(const float a)
         {
             return a >= 0.0f ? a : -a;
         }
 
-        constexpr float nvg_signf(const float a)
+        constexpr static float nvg_signf(const float a)
         {
             return a >= 0.0f ? 1.0f : -1.0f;
         }
 
-        constexpr float nvg_clampf(const float a, const float mn, const float mx)
+        constexpr static float nvg_clampf(const float a, const float mn, const float mx)
         {
             return a < mn ? mn : (a > mx ? mx : a);
         }
 
-        constexpr float nvg_cross(const float dx0, const float dy0, const float dx1, const float dy1)
+        constexpr static float nvg_cross(const float dx0, const float dy0, const float dx1,
+                                         const float dy1)
         {
             return dx1 * dy0 - dx0 * dy1;
         }
 
-        float nvg_normalize(float* x, float* y)
+        static float nvg_normalize(float* x, float* y)
         {
             const float d = nvg_sqrtf((*x) * (*x) + (*y) * (*y));
             if (d > 1e-6f)
@@ -216,7 +213,7 @@ namespace rl::nvg {
             return d;
         }
 
-        void nvg_delete_path_cache(NVGpathCache* c)
+        static void nvg_delete_path_cache(NVGpathCache* c)
         {
             if (c == nullptr)
                 return;
@@ -230,7 +227,7 @@ namespace rl::nvg {
             std::free(c);
         }
 
-        NVGpathCache* nvg_alloc_path_cache()
+        static NVGpathCache* nvg_alloc_path_cache()
         {
             const auto c = static_cast<NVGpathCache*>(std::malloc(sizeof(NVGpathCache)));
             if (c == nullptr)
@@ -264,7 +261,7 @@ namespace rl::nvg {
             return nullptr;
         }
 
-        constexpr void nvg_set_device_pixel_ratio(NVGcontext* ctx, const float ratio)
+        constexpr static void nvg_set_device_pixel_ratio(NVGcontext* ctx, const float ratio)
         {
             ctx->tess_tol = 0.25f / ratio;
             ctx->dist_tol = 0.01f / ratio;
@@ -272,7 +269,7 @@ namespace rl::nvg {
             ctx->device_px_ratio = ratio;
         }
 
-        constexpr NVGcompositeOperationState nvg_composite_operation_state(const int32_t op)
+        constexpr static NVGcompositeOperationState nvg_composite_operation_state(const int32_t op)
         {
             int32_t sfactor;
             int32_t dfactor;
@@ -348,25 +345,25 @@ namespace rl::nvg {
             return state;
         }
 
-        NVGstate* nvg_get_state(NVGcontext* ctx)
+        static NVGstate* nvg_get_state(NVGcontext* ctx)
         {
             return &ctx->states[ctx->nstates - 1];
         }
 
-        void nvg_clear_path_cache(const NVGcontext* ctx)
+        static void nvg_clear_path_cache(const NVGcontext* ctx)
         {
             ctx->cache->npoints = 0;
             ctx->cache->npaths = 0;
         }
 
-        NVGpath* nvg_last_path(const NVGcontext* ctx)
+        static NVGpath* nvg_last_path(const NVGcontext* ctx)
         {
             if (ctx->cache->npaths > 0)
                 return &ctx->cache->paths[ctx->cache->npaths - 1];
             return nullptr;
         }
 
-        void nvg_add_path(const NVGcontext* ctx)
+        static void nvg_add_path(const NVGcontext* ctx)
         {
             if (ctx->cache->npaths + 1 > ctx->cache->cpaths)
             {
@@ -386,22 +383,23 @@ namespace rl::nvg {
             ctx->cache->npaths++;
         }
 
-        NVGpoint* nvg_last_point(const NVGcontext* ctx)
+        static NVGpoint* nvg_last_point(const NVGcontext* ctx)
         {
             if (ctx->cache->npoints > 0)
                 return &ctx->cache->points[ctx->cache->npoints - 1];
             return nullptr;
         }
 
-        int32_t nvg_pt_equals(const float x1, const float y1, const float x2, const float y2,
-                              const float tol)
+        static int32_t nvg_pt_equals(const float x1, const float y1, const float x2, const float y2,
+                                     const float tol)
         {
             const float dx = x2 - x1;
             const float dy = y2 - y1;
             return dx * dx + dy * dy < tol * tol;
         }
 
-        void nvg_add_point(const NVGcontext* ctx, const float x, const float y, const int32_t flags)
+        static void nvg_add_point(const NVGcontext* ctx, const float x, const float y,
+                                  const int32_t flags)
         {
             NVGpath* path = nvg_last_path(ctx);
             NVGpoint* pt;
@@ -439,7 +437,7 @@ namespace rl::nvg {
             path->count++;
         }
 
-        void nvg_close_path(const NVGcontext* ctx)
+        static void nvg_close_path(const NVGcontext* ctx)
         {
             NVGpath* path = nvg_last_path(ctx);
             if (path == nullptr)
@@ -447,7 +445,7 @@ namespace rl::nvg {
             path->closed = 1;
         }
 
-        void nvg_path_winding(const NVGcontext* ctx, const int32_t winding)
+        static void nvg_path_winding(const NVGcontext* ctx, const int32_t winding)
         {
             NVGpath* path = nvg_last_path(ctx);
             if (path == nullptr)
@@ -455,14 +453,14 @@ namespace rl::nvg {
             path->winding = winding;
         }
 
-        float nvg_get_average_scale(const float* t)
+        static float nvg_get_average_scale(const float* t)
         {
             const float sx = sqrtf(t[0] * t[0] + t[2] * t[2]);
             const float sy = sqrtf(t[1] * t[1] + t[3] * t[3]);
             return (sx + sy) * 0.5f;
         }
 
-        NVGvertex* nvg_alloc_temp_verts(const NVGcontext* ctx, const int32_t nverts)
+        static NVGvertex* nvg_alloc_temp_verts(const NVGcontext* ctx, const int32_t nverts)
         {
             if (nverts > ctx->cache->cverts)
             {
@@ -470,7 +468,7 @@ namespace rl::nvg {
                                                                  // when
                 // things change just slightly.
                 const auto verts = static_cast<NVGvertex*>(
-                    realloc(ctx->cache->verts, sizeof(NVGvertex) * cverts));
+                    std::realloc(ctx->cache->verts, sizeof(NVGvertex) * cverts));
                 if (verts == nullptr)
                     return nullptr;
                 ctx->cache->verts = verts;
@@ -480,8 +478,8 @@ namespace rl::nvg {
             return ctx->cache->verts;
         }
 
-        float nvg_triarea2(const float ax, const float ay, const float bx, const float by,
-                           const float cx, const float cy)
+        static float nvg_triarea2(const float ax, const float ay, const float bx, const float by,
+                                  const float cx, const float cy)
         {
             const float abx = bx - ax;
             const float aby = by - ay;
@@ -490,7 +488,7 @@ namespace rl::nvg {
             return acx * aby - abx * acy;
         }
 
-        float nvg_poly_area(NVGpoint* pts, const int32_t npts)
+        static float nvg_poly_area(NVGpoint* pts, const int32_t npts)
         {
             float area = 0;
             for (int32_t i = 2; i < npts; i++)
@@ -503,7 +501,7 @@ namespace rl::nvg {
             return area * 0.5f;
         }
 
-        void nvg_poly_reverse(NVGpoint* pts, const int32_t npts)
+        static void nvg_poly_reverse(NVGpoint* pts, const int32_t npts)
         {
             int32_t i = 0, j = npts - 1;
             while (i < j)
@@ -516,7 +514,8 @@ namespace rl::nvg {
             }
         }
 
-        void nvg_vset(NVGvertex* vtx, const float x, const float y, const float u, const float v)
+        static void nvg_vset(NVGvertex* vtx, const float x, const float y, const float u,
+                             const float v)
         {
             vtx->x = x;
             vtx->y = y;
@@ -524,9 +523,10 @@ namespace rl::nvg {
             vtx->v = v;
         }
 
-        void nvg_tesselate_bezier(NVGcontext* ctx, const float x1, const float y1, const float x2,
-                                  const float y2, const float x3, const float y3, const float x4,
-                                  const float y4, const int32_t level, const int32_t type)
+        static void nvg_tesselate_bezier(NVGcontext* ctx, const float x1, const float y1,
+                                         const float x2, const float y2, const float x3,
+                                         const float y3, const float x4, const float y4,
+                                         const int32_t level, const int32_t type)
         {
             if (level > 10)
                 return;
@@ -564,7 +564,7 @@ namespace rl::nvg {
             nvg_tesselate_bezier(ctx, x1234, y1234, x234, y234, x34, y34, x4, y4, level + 1, type);
         }
 
-        void nvg_flatten_paths(NVGcontext* ctx)
+        static void nvg_flatten_paths(NVGcontext* ctx)
         {
             NVGpathCache* cache = ctx->cache;
             //	NVGstate* state = nvg__getState(ctx);
@@ -664,14 +664,14 @@ namespace rl::nvg {
             }
         }
 
-        int32_t nvg_curve_divs(const float r, const float arc, const float tol)
+        static int32_t nvg_curve_divs(const float r, const float arc, const float tol)
         {
             const float da = acosf(r / (r + tol)) * 2.0f;
             return nvg_max(2, static_cast<int32_t>(ceilf(arc / da)));
         }
 
-        void nvg_choose_bevel(const int32_t bevel, const NVGpoint* p0, const NVGpoint* p1,
-                              const float w, float* x0, float* y0, float* x1, float* y1)
+        static void nvg_choose_bevel(const int32_t bevel, const NVGpoint* p0, const NVGpoint* p1,
+                                     const float w, float* x0, float* y0, float* x1, float* y1)
         {
             if (bevel)
             {
@@ -689,9 +689,9 @@ namespace rl::nvg {
             }
         }
 
-        NVGvertex* nvg_round_join(NVGvertex* dst, const NVGpoint* p0, const NVGpoint* p1,
-                                  const float lw, const float rw, const float lu, const float ru,
-                                  const int32_t ncap, float fringe)
+        static NVGvertex* nvg_round_join(NVGvertex* dst, const NVGpoint* p0, const NVGpoint* p1,
+                                         const float lw, const float rw, const float lu,
+                                         const float ru, const int32_t ncap, float fringe)
         {
             int32_t i, n;
             const float dlx0 = p0->dy;
@@ -770,9 +770,9 @@ namespace rl::nvg {
             return dst;
         }
 
-        NVGvertex* nvg_bevel_join(NVGvertex* dst, const NVGpoint* p0, const NVGpoint* p1,
-                                  const float lw, const float rw, const float lu, const float ru,
-                                  float fringe)
+        static NVGvertex* nvg_bevel_join(NVGvertex* dst, const NVGpoint* p0, const NVGpoint* p1,
+                                         const float lw, const float rw, const float lu,
+                                         const float ru, float fringe)
         {
             float rx0, ry0, rx1, ry1;
             float lx0, ly0, lx1, ly1;
@@ -879,9 +879,9 @@ namespace rl::nvg {
             return dst;
         }
 
-        NVGvertex* nvg_butt_cap_start(NVGvertex* dst, const NVGpoint* p, const float dx,
-                                      const float dy, const float w, const float d, const float aa,
-                                      const float u0, const float u1)
+        static NVGvertex* nvg_butt_cap_start(NVGvertex* dst, const NVGpoint* p, const float dx,
+                                             const float dy, const float w, const float d,
+                                             const float aa, const float u0, const float u1)
         {
             const float px = p->x - dx * d;
             const float py = p->y - dy * d;
@@ -900,9 +900,9 @@ namespace rl::nvg {
             return dst;
         }
 
-        NVGvertex* nvg_butt_cap_end(NVGvertex* dst, const NVGpoint* p, const float dx,
-                                    const float dy, const float w, const float d, const float aa,
-                                    const float u0, const float u1)
+        static NVGvertex* nvg_butt_cap_end(NVGvertex* dst, const NVGpoint* p, const float dx,
+                                           const float dy, const float w, const float d,
+                                           const float aa, const float u0, const float u1)
         {
             const float px = p->x + dx * d;
             const float py = p->y + dy * d;
@@ -921,9 +921,9 @@ namespace rl::nvg {
             return dst;
         }
 
-        NVGvertex* nvg_round_cap_start(NVGvertex* dst, const NVGpoint* p, const float dx,
-                                       const float dy, const float w, const int32_t ncap, float aa,
-                                       const float u0, const float u1)
+        static NVGvertex* nvg_round_cap_start(NVGvertex* dst, const NVGpoint* p, const float dx,
+                                              const float dy, const float w, const int32_t ncap,
+                                              float aa, const float u0, const float u1)
         {
             const float px = p->x;
             const float py = p->y;
@@ -948,9 +948,9 @@ namespace rl::nvg {
             return dst;
         }
 
-        NVGvertex* nvg_round_cap_end(NVGvertex* dst, const NVGpoint* p, const float dx,
-                                     const float dy, const float w, const int32_t ncap, float aa,
-                                     const float u0, const float u1)
+        static NVGvertex* nvg_round_cap_end(NVGvertex* dst, const NVGpoint* p, const float dx,
+                                            const float dy, const float w, const int32_t ncap,
+                                            float aa, const float u0, const float u1)
         {
             const float px = p->x;
             const float py = p->y;
@@ -972,8 +972,8 @@ namespace rl::nvg {
             return dst;
         }
 
-        void nvg_calculate_joins(const NVGcontext* ctx, const float w, const int32_t lineJoin,
-                                 const float miterLimit)
+        static void nvg_calculate_joins(const NVGcontext* ctx, const float w,
+                                        const int32_t lineJoin, const float miterLimit)
         {
             const NVGpathCache* cache = ctx->cache;
             float iw = 0.0f;
@@ -1043,9 +1043,9 @@ namespace rl::nvg {
             }
         }
 
-        int32_t nvg_expand_stroke(const NVGcontext* ctx, float w, const float fringe,
-                                  const int32_t line_cap, const int32_t line_join,
-                                  const float miter_limit)
+        static int32_t nvg_expand_stroke(const NVGcontext* ctx, float w, const float fringe,
+                                         const int32_t line_cap, const int32_t line_join,
+                                         const float miter_limit)
         {
             const NVGpathCache* cache = ctx->cache;
             int32_t i;
@@ -1189,8 +1189,8 @@ namespace rl::nvg {
             return 1;
         }
 
-        int32_t nvg_expand_fill(const NVGcontext* ctx, const float w, const int32_t lineJoin,
-                                const float miterLimit)
+        static int32_t nvg_expand_fill(const NVGcontext* ctx, const float w, const int32_t lineJoin,
+                                       const float miterLimit)
         {
             const NVGpathCache* cache = ctx->cache;
             int32_t i, j;
@@ -1333,7 +1333,7 @@ namespace rl::nvg {
             return 1;
         }
 
-        void nvg_set_paint_color(NVGpaint* p, const NVGcolor color)
+        static void nvg_set_paint_color(NVGpaint* p, const NVGcolor color)
         {
             memset(p, 0, sizeof(*p));
 
@@ -1345,7 +1345,7 @@ namespace rl::nvg {
             p->outer_color = color;
         }
 
-        constexpr float nvg_hue(float h, const float m1, const float m2)
+        constexpr static float nvg_hue(float h, const float m1, const float m2)
         {
             if (h < 0)
                 h += 1;
@@ -1365,18 +1365,17 @@ namespace rl::nvg {
             return m1;
         }
 
-        float nvg_quantize(const float a, const float d)
+        static float nvg_quantize(const float a, const float d)
         {
-            return static_cast<int32_t>(a / d + 0.5f) * d;
+            return (a / d + 0.5f) * d;
         }
 
-        float nvg_get_font_scale(const NVGstate* state)
+        static float nvg_get_font_scale(const NVGstate* state)
         {
-            return detail::nvg_min(nvg_quantize(detail::nvg_get_average_scale(state->xform), 0.01f),
-                                   4.0f);
+            return nvg_min(nvg_quantize(nvg_get_average_scale(state->xform), 0.01f), 4.0f);
         }
 
-        void nvg_flush_text_texture(const NVGcontext* ctx)
+        static void nvg_flush_text_texture(const NVGcontext* ctx)
         {
             int32_t dirty[4] = { 0 };
 
@@ -1398,13 +1397,13 @@ namespace rl::nvg {
             }
         }
 
-        int32_t nvg_alloc_text_atlas(NVGcontext* ctx)
+        static int32_t nvg_alloc_text_atlas(NVGcontext* ctx)
         {
             nvg_flush_text_texture(ctx);
             if (ctx->font_image_idx >= NvgMaxFontimages - 1)
                 return 0;
 
-            int32_t iw, ih;
+            float iw, ih;
             // if next fontImage already have a texture
             if (ctx->font_images[ctx->font_image_idx + 1] != 0)
                 image_size(ctx, ctx->font_images[ctx->font_image_idx + 1], &iw, &ih);
@@ -1417,20 +1416,23 @@ namespace rl::nvg {
                 else
                     iw *= 2;
 
-                if (iw > NvgMaxFontimageSize || ih > NvgMaxFontimageSize)
+                if (iw > static_cast<float>(NvgMaxFontimageSize) ||
+                    ih > static_cast<float>(NvgMaxFontimageSize))
                     iw = ih = NvgMaxFontimageSize;
 
                 ctx->font_images[ctx->font_image_idx + 1] = ctx->params.render_create_texture(
-                    ctx->params.user_ptr, NVGTextureAlpha, iw, ih, 0, nullptr);
+                    ctx->params.user_ptr, NVGTextureAlpha, static_cast<int32_t>(iw),
+                    static_cast<int32_t>(ih), 0, nullptr);
             }
 
             ++ctx->font_image_idx;
-            fons_reset_atlas(ctx->fs, iw, ih);
+            fons_reset_atlas(ctx->fs, static_cast<int32_t>(iw), static_cast<int32_t>(ih));
 
             return 1;
         }
 
-        void nvg_render_text(NVGcontext* ctx, const NVGvertex* verts, const int32_t nverts)
+        static void nvg_render_text(NVGcontext* ctx, const NVGvertex* vertices,
+                                    const int32_t vertex_count)
         {
             const NVGstate* state = detail::nvg_get_state(ctx);
             NVGpaint paint = state->fill;
@@ -1443,13 +1445,14 @@ namespace rl::nvg {
             paint.outer_color.a *= state->alpha;
 
             ctx->params.render_triangles(ctx->params.user_ptr, &paint, state->composite_operation,
-                                         &state->scissor, verts, nverts, ctx->fringe_width);
+                                         &state->scissor, vertices, vertex_count,
+                                         ctx->fringe_width);
 
             ctx->draw_call_count++;
-            ctx->text_tri_count += nverts / 3;
+            ctx->text_tri_count += vertex_count / 3;
         }
 
-        int32_t nvg_is_transform_flipped(const float* xform)
+        static int32_t nvg_is_transform_flipped(const float* xform)
         {
             const float det = xform[0] * xform[3] - xform[2] * xform[1];
             return det < 0;
@@ -1580,12 +1583,13 @@ namespace rl::nvg {
         {
             const int32_t font_image = ctx->font_images[ctx->font_image_idx];
             ctx->font_images[ctx->font_image_idx] = 0;
-            int32_t iw;
-            int32_t ih;
+
             // delete images that smaller than current one
             if (font_image == 0)
                 return;
 
+            float iw{ 0.0f };
+            float ih{ 0.0f };
             image_size(ctx, font_image, &iw, &ih);
 
             int32_t j = 0;
@@ -1596,7 +1600,7 @@ namespace rl::nvg {
                     const int32_t image = ctx->font_images[i];
                     ctx->font_images[i] = 0;
 
-                    int32_t nw, nh;
+                    float nw, nh;
                     image_size(ctx, image, &nw, &nh);
 
                     if (nw < iw || nh < ih)
@@ -1957,7 +1961,7 @@ namespace rl::nvg {
         detail::nvg_set_paint_color(&state->stroke, color);
     }
 
-    void stroke_paint(NVGcontext* ctx, const NVGpaint paint)
+    void stroke_paint(NVGcontext* ctx, const NVGpaint& paint)
     {
         NVGstate* state = detail::nvg_get_state(ctx);
         state->stroke = paint;
@@ -1970,7 +1974,7 @@ namespace rl::nvg {
         detail::nvg_set_paint_color(&state->fill, color);
     }
 
-    void fill_paint(NVGcontext* ctx, const NVGpaint paint)
+    void fill_paint(NVGcontext* ctx, const NVGpaint& paint)
     {
         NVGstate* state = detail::nvg_get_state(ctx);
         state->fill = paint;
@@ -1978,7 +1982,7 @@ namespace rl::nvg {
     }
 
 #ifndef NVG_NO_STB
-    int32_t create_image(const NVGcontext* ctx, const char* filename, const int32_t imageFlags)
+    int32_t create_image(const NVGcontext* ctx, const char* filename, const int32_t image_flags)
     {
         int32_t w, h, n;
         stb::stbi_set_unpremultiply_on_load(1);
@@ -1987,7 +1991,7 @@ namespace rl::nvg {
         if (img == nullptr)
             //		printf("Failed to load %s - %s\n", filename, stbi_failure_reason());
             return 0;
-        const int32_t image = create_image_rgba(ctx, w, h, imageFlags, img);
+        const int32_t image = create_image_rgba(ctx, w, h, image_flags, img);
         stb::stbi_image_free(img);
         return image;
     }
@@ -2022,12 +2026,14 @@ namespace rl::nvg {
 
     void update_image(const NVGcontext* ctx, const int32_t image, const uint8_t* data)
     {
-        int32_t w, h;
+        float w{ 0.0f };
+        float h{ 0.0f };
         ctx->params.render_get_texture_size(ctx->params.user_ptr, image, &w, &h);
-        ctx->params.render_update_texture(ctx->params.user_ptr, image, 0, 0, w, h, data);
+        ctx->params.render_update_texture(ctx->params.user_ptr, image, 0, 0,
+                                          static_cast<int32_t>(w), static_cast<int32_t>(h), data);
     }
 
-    void image_size(const NVGcontext* ctx, const int32_t image, int32_t* w, int32_t* h)
+    void image_size(const NVGcontext* ctx, const int32_t image, float* w, float* h)
     {
         ctx->params.render_get_texture_size(ctx->params.user_ptr, image, w, h);
     }
@@ -2109,20 +2115,38 @@ namespace rl::nvg {
         NVGpaint p = {};
 
         transform_identity(p.xform);
+
         p.xform[4] = x + w * 0.5f;
         p.xform[5] = y + h * 0.5f;
-
         p.extent[0] = w * 0.5f;
         p.extent[1] = h * 0.5f;
 
         p.radius = r;
-
         p.feather = detail::nvg_max(1.0f, f);
-
         p.inner_color = icol;
         p.outer_color = ocol;
 
         return p;
+    }
+
+    NVGpaint box_gradient(NVGcontext* ctx, ds::rect<f32>&& rect, const f32 corner_radius,
+                          const f32 feather_blur, ds::color<f32>&& inner_color,
+                          ds::color<f32>&& outer_gradient_color)
+    {
+        NVGpaint paint = {};
+        transform_identity(paint.xform);
+
+        paint.xform[4] = rect.pt.x + rect.size.width * 0.5f;
+        paint.xform[5] = rect.pt.y + rect.size.height * 0.5f;
+        paint.extent[0] = rect.size.width * 0.5f;
+        paint.extent[1] = rect.size.height * 0.5f;
+
+        paint.radius = corner_radius;
+        paint.feather = detail::nvg_max(1.0f, feather_blur);
+        paint.inner_color = inner_color.nvg();
+        paint.outer_color = outer_gradient_color.nvg();
+
+        return paint;
     }
 
     NVGpaint image_pattern(NVGcontext* ctx, const float cx, const float cy, const float w,
@@ -2162,8 +2186,9 @@ namespace rl::nvg {
         state->scissor.extent[1] = h * 0.5f;
     }
 
-    void nvg_isect_rects(float* dst, const float ax, const float ay, const float aw, const float ah,
-                         const float bx, const float by, const float bw, const float bh)
+    static void nvg_isect_rects(float* dst, const float ax, const float ay, const float aw,
+                                const float ah, const float bx, const float by, const float bw,
+                                const float bh)
     {
         const float minx = detail::nvg_max(ax, bx);
         const float miny = detail::nvg_max(ay, by);
@@ -2239,8 +2264,8 @@ namespace rl::nvg {
         state->composite_operation = op;
     }
 
-    float nvg_dist_pt_seg(const float x, const float y, const float px, const float py,
-                          const float qx, const float qy)
+    static float nvg_dist_pt_seg(const float x, const float y, const float px, const float py,
+                                 const float qx, const float qy)
     {
         const float pqx = qx - px;
         const float pqy = qy - py;
@@ -2259,14 +2284,14 @@ namespace rl::nvg {
         return dx * dx + dy * dy;
     }
 
-    void nvg_append_commands(NVGcontext* ctx, float* vals, const int32_t nvals)
+    static void nvg_append_commands(NVGcontext* ctx, float* vals, const int32_t nvals)
     {
         const NVGstate* state = detail::nvg_get_state(ctx);
         if (ctx->ncommands + nvals > ctx->ccommands)
         {
-            const int32_t ccommands = ctx->ncommands + nvals + ctx->ccommands / 2;
+            int32_t ccommands = ctx->ncommands + nvals + ctx->ccommands / 2;
             const auto commands = static_cast<float*>(
-                realloc(ctx->commands, sizeof(float) * ccommands));
+                realloc(ctx->commands, sizeof(float) * static_cast<uint64_t>(ccommands)));
 
             if (commands == nullptr)
                 return;

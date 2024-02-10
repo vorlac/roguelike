@@ -31,8 +31,7 @@ namespace rl {
     };
 
     namespace detail {
-        static nvg::NVGcontext* create_nanovg_context(bool& stencil_buf, bool& depth_buf,
-                                                      bool& float_buf)
+        nvg::NVGcontext* create_nanovg_context(bool& stencil_buf, bool& depth_buf, bool& float_buf)
         {
             constexpr u8 float_mode{ 0 };
             i32 depth_bits{ 0 };
@@ -110,14 +109,42 @@ namespace rl {
         nvg::save(m_nvg_context);
     }
 
+    void NVGRenderer::begin_path() const
+    {
+        nvg::begin_path(m_nvg_context);
+    }
+
+    void NVGRenderer::end_path() const
+    {
+        nvg::begin_path(m_nvg_context);
+    }
+
     void NVGRenderer::restore_state() const
     {
         nvg::restore(m_nvg_context);
     }
 
+    nvg::NVGpaint NVGRenderer::create_box_gradient(
+        ds::rect<f32>&& rect, const f32 corner_radius, const f32 outer_blur,
+        ds::color<f32>&& inner_color, ds::color<f32>&& outer_gradient_color) const
+    {
+        // Creates and returns a box gradient.
+        // Box gradient is a feathered rounded rectangle, it is useful for rendering drop shadows or
+        // highlights for boxes. Parameters (x,y) define the top-left corner of the rectangle, (w,h)
+        // define the size of the rectangle, r defines the corner radius, and f feather. Feather
+        // defines how blurry the border of the rectangle is. Parameter icol specifies the inner
+        // color and ocol the outer color of the gradient. The gradient is transformed by the
+        // current transform when it is passed to FillPaint() or StrokePaint().
+        return nvg::box_gradient(m_nvg_context, std::forward<ds::rect<f32>>(rect), corner_radius,
+                                 outer_blur, std::forward<ds::color<f32>>(inner_color),
+                                 std::forward<ds::color<f32>>(outer_gradient_color));
+    }
+
     ui::Font::ID NVGRenderer::load_font(const std::string_view& font_name,
                                         const std::basic_string_view<u8>& font_ttf) const
     {
+        // Creates font by loading it from the specified memory chunk.
+        // Returns handle to the font.
         return nvg::create_font_mem(m_nvg_context, font_name, font_ttf);
     }
 
@@ -132,9 +159,8 @@ namespace rl {
 
     void NVGRenderer::load_fonts(const std::vector<FontInfo>& fonts)
     {
-        for (auto&& font_info : fonts)
+        for (auto&& [font_name, font_ttf] : fonts)
         {
-            auto&& [font_name, font_ttf] = font_info;
             const auto handle{ this->load_font(font_name, font_ttf) };
             m_font_map[font_name] = handle;
         }
@@ -158,13 +184,15 @@ namespace rl {
         const std::string& text, const ds::point<f32>& pos, const std::string_view& font_name,
         const f32 font_size, const f32 fold_width, const ui::Text::Alignment alignment) const
     {
-        this->set_text_properties(font_name, font_size, alignment);
-
         std::array<f32, 4> bounds{ 0.0f };
+        this->set_text_properties(font_name, font_size, alignment);
+        // Measures the specified multi-text string. Parameter bounds should be a pointer to
+        // float[4], if the bounding box of the text should be returned. The bounds value are
+        // [xmin,ymin, xmax,ymax] Measured values are returned in local coordinate space.
         nvg::text_box_bounds(m_nvg_context, pos.x, pos.y, fold_width, text.data(), nullptr,
                              &bounds.front());
 
-        return ds::rect<f32>{
+        return ds::rect{
             pos,
             ds::dims{
                 fold_width,
@@ -183,7 +211,7 @@ namespace rl {
                                           nullptr) };
 
         constexpr static f32 width_buffer{ 2.0f };
-        return ds::dims<f32>{
+        return ds::dims{
             width + width_buffer,
             font_size,
         };

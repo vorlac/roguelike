@@ -24,7 +24,7 @@ namespace rl {
             const std::function<void(f32)>& final_callback() const;
 
             void set_value(f32 value);
-            void set_highlight_color(ds::color<f32> highlight_color);
+            void set_highlight_color(const ds::color<f32>& highlight_color);
             void set_range(std::pair<f32, f32> range);
             void set_highlighted_range(std::pair<f32, f32> highlighted_range);
             void set_callback(const std::function<void(f32)>& callback);

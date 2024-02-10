@@ -19,7 +19,6 @@
 #include "core/ui/gui.hpp"
 #include "graphics/gl/instanced_buffer.hpp"
 #include "sdl/defs.hpp"
-#include "utils/crtp.hpp"
 #include "utils/numeric.hpp"
 #include "utils/time.hpp"
 
@@ -107,8 +106,8 @@ namespace rl {
                     });
 
                 form->add_group("Other Group");
-                form->add_button("Push Button", []() {
-                    std::cout << "Button pressed.\n";
+                form->add_button("Push Button", [] {
+                    log::info("Button pressed.\n");
                 });
 
                 // gui->set_visible(true);
@@ -120,13 +119,13 @@ namespace rl {
 
             std::string elapsed_str{ fmt::to_string(
                 fmt::format("{:<3.3f} sec", m_timer.elapsed())) };
-            std::string fps_str{ fmt::to_string(fmt::format("{:<3.3f} fps", framerate)) };
-            const auto layout{ new ui::AdvancedGridLayout({ 0, 0, 0 }, {}, 30) };
+            std::string fps_str{ fmt::format("{:<3.3f} fps", framerate) };
+            const auto layout{ new ui::AdvancedGridLayout({ 0, 10, 0 }, {}, 30) };
 
             auto full_window_menu = [&] {
                 gui->set_layout(layout);
 
-                layout->set_col_stretch(1, 1.0f);
+                layout->set_col_stretch(1, 0.5f);
 
                 auto title_label{ new ui::Label{ gui, "GUI Canvas Span Label",
                                                  ui::Font::Name::SansBold, 40 } };
@@ -193,8 +192,9 @@ namespace rl {
             full_window_menu();
 
             gui->set_visible(true);
-            gui->perform_layout();
+            form->refresh();
             gui->update();
+            gui->perform_layout();
 
             dialog->center();
 

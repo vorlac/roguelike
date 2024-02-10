@@ -1,6 +1,7 @@
 #pragma once
 
 #include <atomic>
+#include <memory>
 
 #include "utils/numeric.hpp"
 
@@ -32,7 +33,7 @@ namespace rl::ds {
 
         void acquire_ref() const noexcept
         {
-            ++m_references;
+            m_references.fetch_add(1, std::memory_order_relaxed);
         }
 
         void release_ref() const noexcept

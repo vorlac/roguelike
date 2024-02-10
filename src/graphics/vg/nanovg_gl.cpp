@@ -593,12 +593,12 @@ namespace rl::nvg {
             else
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-            if (image_flags & NVGImageRepeatx)
+            if (image_flags & NVGImageRepeatX)
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
             else
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 
-            if (image_flags & NVGImageRepeaty)
+            if (image_flags & NVGImageRepeatY)
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
             else
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -657,15 +657,15 @@ namespace rl::nvg {
             return 1;
         }
 
-        int32_t glnvg_render_get_texture_size(void* uptr, const int32_t image, int32_t* w,
-                                              int32_t* h)
+        int32_t glnvg_render_get_texture_size(void* uptr, const int32_t image, float* w, float* h)
         {
             const auto gl = static_cast<GLNVGcontext*>(uptr);
             const GLNVGtexture* tex = glnvg_findTexture(gl, image);
             if (tex == nullptr)
                 return 0;
-            *w = tex->width;
-            *h = tex->height;
+
+            *w = static_cast<float>(tex->width);
+            *h = static_cast<float>(tex->height);
             return 1;
         }
 
@@ -735,7 +735,7 @@ namespace rl::nvg {
                 const GLNVGtexture* tex = glnvg_findTexture(gl, paint->image);
                 if (tex == nullptr)
                     return 0;
-                if ((tex->flags & NVGImageFlipy) != 0)
+                if ((tex->flags & NVGImageFlipY) != 0)
                 {
                     float m1[6], m2[6];
                     transform_translate(m1, 0.0f, frag->extent[1] * 0.5f);
@@ -753,7 +753,7 @@ namespace rl::nvg {
                 frag->type = SVGShaderFillimg;
 
                 if (tex->type == NVGTextureRgba)
-                    frag->tex_type = (tex->flags & NVGImagePremultiplied) ? 0 : 1;
+                    frag->tex_type = (tex->flags & NVGImagePreMultiplied) ? 0 : 1;
                 else
                     frag->tex_type = 2;
             }

@@ -42,7 +42,7 @@ namespace rl::ui {
         bool has_font_size() const;
         bool enabled() const;
         bool focused() const;
-        bool contains(ds::point<f32> pt) const;
+        bool contains(const ds::point<f32>& pt) const;
 
         f32 width() const;
         f32 height() const;
@@ -59,7 +59,7 @@ namespace rl::ui {
         Layout* layout();
         Theme* theme();
         Widget* child_at(i32 index);
-        Widget* find_widget(ds::point<f32> pt);
+        Widget* find_widget(const ds::point<f32>& pt);
         Mouse::Cursor::ID cursor() const;
         ds::point<f32> position() const;
         ds::point<f32> abs_position() const;
@@ -72,7 +72,7 @@ namespace rl::ui {
         const Layout* layout() const;
         const Theme* theme() const;
         const Widget* child_at(i32 index) const;
-        const Widget* find_widget(ds::point<f32> pt) const;
+        const Widget* find_widget(const ds::point<f32>& pt) const;
         const std::vector<Widget*>& children() const;
         const std::string& tooltip() const;
 
@@ -83,11 +83,11 @@ namespace rl::ui {
 
         void set_parent(Widget* parent);
         void set_layout(Layout* layout);
-        void set_position(ds::point<f32> pos);
-        void set_size(ds::dims<f32> size);
+        void set_position(const ds::point<f32>& pos);
+        void set_size(const ds::dims<f32>& size);
         void set_width(f32 width);
         void set_height(f32 height);
-        void set_fixed_size(ds::dims<f32> fixed_size);
+        void set_fixed_size(const ds::dims<f32>& fixed_size);
         void set_fixed_width(f32 width);
         void set_fixed_height(f32 height);
         void set_visible(bool visible);  // virtual?

@@ -154,12 +154,10 @@ namespace rl::ui {
         auto&& context{ m_renderer->context() };
         if (m_units_image > 0)
         {
-            i32 w{ 0 };
-            i32 h{ 0 };
-
-            nvg::image_size(context, m_units_image, &w, &h);
+            ds::dims<f32> img_size{ 0.0f, 0.0f };
+            nvg::image_size(context, m_units_image, &img_size.width, &img_size.height);
             f32 uh{ size.height * 0.4f };
-            uw = w * uh / h;
+            uw = img_size.width * uh / img_size.height;
         }
         else if (!m_units.empty())
             uw = nvg::text_bounds(context, 0, 0, m_units.c_str(), nullptr, nullptr);
@@ -224,8 +222,8 @@ namespace rl::ui {
 
         if (m_units_image > 0)
         {
-            i32 w{ 0 };
-            i32 h{ 0 };
+            float w{ 0 };
+            float h{ 0 };
 
             nvg::image_size(context, m_units_image, &w, &h);
 
@@ -877,7 +875,7 @@ namespace rl::ui {
         return m_cursor_id;
     }
 
-    TextBox::SpinArea TextBox::spin_area(ds::point<f32> pos) const
+    TextBox::SpinArea TextBox::spin_area(const ds::point<f32>& pos) const
     {
         if ((0 <= pos.x - m_pos.x) && (pos.x - m_pos.x < 14.f))
         {

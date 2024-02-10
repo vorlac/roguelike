@@ -25,6 +25,7 @@
 
 #ifdef NDEBUG
 
+  #define scoped_trace(...)       static_cast<void>(0)
   #define scoped_log(...)         static_cast<void>(0)
   #define scoped_logger(dbg, ...) static_cast<void>(0)
   #define scoped_log(...)         static_cast<void>(0)

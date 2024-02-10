@@ -12,6 +12,7 @@
 #include "graphics/nvg_renderer.hpp"
 #include "graphics/vg/nanovg_state.hpp"
 #include "utils/logging.hpp"
+#include "utils/math.hpp"
 
 namespace rl::ui {
 
@@ -108,7 +109,7 @@ namespace rl::ui {
         return m_pos;
     }
 
-    void Widget::set_position(ds::point<f32> pos)
+    void Widget::set_position(const ds::point<f32>& pos)
     {
         scoped_log();
         m_pos = pos;
@@ -127,7 +128,7 @@ namespace rl::ui {
         return m_size;
     }
 
-    void Widget::set_size(ds::dims<f32> size)
+    void Widget::set_size(const ds::dims<f32>& size)
     {
         m_size = size;
     }
@@ -154,7 +155,7 @@ namespace rl::ui {
         m_size.height = height;
     }
 
-    void Widget::set_fixed_size(ds::dims<f32> fixed_size)
+    void Widget::set_fixed_size(const ds::dims<f32>& fixed_size)
     {
         scoped_log();
         m_fixed_size = fixed_size;
@@ -277,8 +278,8 @@ namespace rl::ui {
                 auto&& fix{ child->fixed_size() };
 
                 child->set_size({
-                    fix.width ? fix.width : pref.width,
-                    fix.height ? fix.height : pref.height,
+                    math::is_equal(fix.width, 0.0f) ? fix.width : pref.width,
+                    math::is_equal(fix.height, 0.0f) ? fix.height : pref.height,
                 });
 
                 child->perform_layout();
@@ -286,7 +287,7 @@ namespace rl::ui {
         }
     }
 
-    Widget* Widget::find_widget(ds::point<f32> pt)
+    Widget* Widget::find_widget(const ds::point<f32>& pt)
     {
         scoped_trace(log_level::debug);
 
@@ -304,7 +305,7 @@ namespace rl::ui {
         return this->contains(pt) ? this : nullptr;
     }
 
-    const Widget* Widget::find_widget(ds::point<f32> pt) const
+    const Widget* Widget::find_widget(const ds::point<f32>& pt) const
     {
         scoped_trace(log_level::debug);
 
@@ -611,7 +612,7 @@ namespace rl::ui {
         m_cursor = cursor;
     }
 
-    bool Widget::contains(ds::point<f32> pt) const
+    bool Widget::contains(const ds::point<f32>& pt) const
     {
         // Check if the widget contains a certain position
         const ds::rect<f32> widget_rect{ m_pos, m_size };

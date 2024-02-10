@@ -58,7 +58,7 @@ namespace rl::ui {
     ds::dims<f32> VScrollPanel::preferred_size() const
     {
         if (m_children.empty())
-            return ds::dims<f32>{ 0.0f, 0.0f };
+            return ds::dims{ 0.0f, 0.0f };
 
         return m_children.front()->preferred_size() + ds::dims{ 12.0f, 0.0f };
     }
@@ -70,8 +70,8 @@ namespace rl::ui {
         else
         {
             auto&& mouse_delta{ mouse.pos_delta() };
-            f32 scrollh{ this->height() *
-                         std::min(1.0f, this->height() / m_child_preferred_height) };
+            const f32 scrollh{ this->height() *
+                               std::min(1.0f, this->height() / m_child_preferred_height) };
 
             m_scroll = std::max(
                 0.0f, std::min(1.0f, m_scroll + mouse_delta.y / (m_size.height - 8.0f - scrollh)));
@@ -99,10 +99,10 @@ namespace rl::ui {
             m_child_preferred_height > m_size.height && pos.x > m_pos.x + m_size.width - 13.0f &&
             pos.x < m_pos.x + m_size.width - 4)
         {
-            f32 scrollh{ this->height() *
-                         std::min(1.0f, this->height() / m_child_preferred_height) };
+            const f32 scrollh{ this->height() *
+                               std::min(1.0f, this->height() / m_child_preferred_height) };
 
-            f32 start{ m_pos.y + 4.0f + 1.0f + (m_size.height - 8.0f - scrollh) * m_scroll };
+            const f32 start{ m_pos.y + 4.0f + 1.0f + (m_size.height - 8.0f - scrollh) * m_scroll };
 
             f32 delta{ 0.0f };
             if (pos.y < start)
@@ -127,28 +127,22 @@ namespace rl::ui {
     {
         if (m_children.empty() || m_child_preferred_height <= m_size.height)
             return Widget::on_mouse_scroll(mouse, kb);
-        else
-        {
-            Widget* child{ m_children.front() };
-            f32 scroll_amount{ (mouse.wheel_delta().y) * m_size.height * 0.2f };
 
-            m_scroll = std::max(
-                0.0f, std::min(1.0f, m_scroll + (scroll_amount / m_child_preferred_height)));
+        Widget* child{ m_children.front() };
+        const f32 scroll_amount{ (mouse.wheel_delta().y) * m_size.height * 0.2f };
 
-            ds::point<f32> old_pos{ child->position() };
+        m_scroll = std::max(0.0f,
+                            std::min(1.0f, m_scroll + (scroll_amount / m_child_preferred_height)));
 
-            child->set_position({
-                0.0f,
-                m_scroll * (m_child_preferred_height - m_size.height),
-            });
+        child->set_position({
+            0.0f,
+            m_scroll * (m_child_preferred_height - m_size.height),
+        });
 
-            ds::point<f32> new_pos{ child->position() };
+        m_update_layout = true;
+        child->on_mouse_move(mouse, kb);
 
-            m_update_layout = true;
-            child->on_mouse_move(mouse, kb);
-
-            return true;
-        }
+        return true;
     }
 
     void VScrollPanel::draw()
@@ -165,7 +159,8 @@ namespace rl::ui {
         auto&& context{ m_renderer->context() };
         child->set_position({ 0.0f, yoffset });
         m_child_preferred_height = child->preferred_size().height;
-        f32 scrollh{ this->height() * std::min(1.0f, this->height() / m_child_preferred_height) };
+        const f32 scrollh{ this->height() *
+                           std::min(1.0f, this->height() / m_child_preferred_height) };
 
         if (m_update_layout)
         {
@@ -173,22 +168,29 @@ namespace rl::ui {
             child->perform_layout();
         }
 
-        nvg::save(context);
-        nvg::translate(context, m_pos.x, m_pos.y);
-        nvg::intersect_scissor(context, 0.0f, 0.0f, m_size.width, m_size.height);
+        m_renderer->scoped_draw([&] {
+            nvg::translate(context, m_pos.x, m_pos.y);
+            nvg::intersect_scissor(context, 0.0f, 0.0f, m_size.width, m_size.height);
 
-        if (child->visible())
-            child->draw();
-
-        nvg::restore(context);
+            if (child->visible())
+                child->draw();
+        });
 
         if (m_child_preferred_height <= m_size.height)
             return;
 
-        nvg::NVGpaint paint{ nvg::box_gradient(context, m_pos.x + m_size.width - 12.0f + 1.0f,
-                                               m_pos.y + 4.0f + 1.0f, 8.0f, m_size.height - 8.0f,
-                                               3.0f, 4.0f, ds::color<f32>{ 0, 0, 0, 32 },
-                                               ds::color<f32>{ 0, 0, 0, 92 }) };
+        ds::rect panel_rect{
+            ds::point{ m_pos.x + m_size.width - 12.0f + 1.0f, m_pos.y + 4.0f + 1.0f },
+            ds::dims{ 8.0f, m_size.height - 8.0f },
+        };
+
+        nvg::NVGpaint paint{ m_renderer->create_box_gradient(
+            std::forward<ds::rect<f32>>(panel_rect), 3.0f, 4.0f, ds::color<f32>{ 0, 0, 0, 32 },
+            ds::color<f32>{ 0, 0, 0, 92 }) };
+
+        m_renderer->draw_path([&] {
+
+        });
         nvg::begin_path(context);
         nvg::rounded_rect(context, m_pos.x + m_size.width - 12.0f, m_pos.y + 4.0f, 8.0f,
                           m_size.height - 8.0f, 3.0f);
