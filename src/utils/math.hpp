@@ -63,9 +63,9 @@ namespace rl::math {
         else
         {
             using lp_float_t = traits::float_traits<B>;
+            return math::abs(a - b) <= lp_float_t::eps * math::abs(a + b) ||
+                   math::abs(a - b) < lp_float_t::min;
         }
-        return math::abs(a - b) <= lp_float_t::eps * math::abs(a + b) ||
-               math::abs(a - b) < lp_float_t::min;
     }
 
     template <rl::integer A, rl::integer B>
@@ -73,10 +73,4 @@ namespace rl::math {
     {
         return a == b;
     }
-
-    constexpr static bool test1 = is_equal(0.12300, 0.123000001f);
-    constexpr static bool test2 = is_equal(0.12300, 0.12300001f);
-    constexpr static bool test3 = is_equal(0.123, 0.1230001f);
-    constexpr static bool test4 = is_equal(0.123, 0.123001f);
-    constexpr static bool test5 = is_equal(0.123, 0.12301f);
 }

@@ -112,6 +112,7 @@ namespace rl::ds {
                 static_cast<u8>(rl::random<0, 128>::value()),
                 static_cast<u8>(rl::random<0, 128>::value()),
                 static_cast<u8>(rl::random<0, 128>::value()),
+                255,
             };
         }
 

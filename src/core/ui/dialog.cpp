@@ -90,6 +90,7 @@ namespace rl::ui {
     void Dialog::draw()
     {
         scoped_trace(log_level::trace);
+
         auto&& context{ m_renderer->context() };
         const f32 drop_shadow_size{ m_theme->dialog_drop_shadow_size };
         const f32 corner_radius{ m_theme->dialog_corner_radius };

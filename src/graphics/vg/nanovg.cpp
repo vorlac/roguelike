@@ -9,17 +9,23 @@
 
 #ifdef _MSC_VER
   #pragma warning(disable : 4100)  // unreferenced formal parameter
-  #pragma warning(disable : 4127)  // conditional expression is constant
-  #pragma warning(disable : 4204)  // nonstandard extension used : non-constant aggregate
-  // initializer
+// #pragma warning(disable : 4127)  // conditional expression is constant
+// #pragma warning(disable : 4204)  // nonstandard extension used : non-constant aggregate
+// initializer
   #pragma warning(disable : 4706)  // assignment within conditional expression
-  #pragma warning(disable : 4244)
+  // #pragma warning(disable : 4244)
   #pragma warning(disable : 4267)
 #endif
 
 // #define NVG_COUNTOF(arr) (sizeof(arr) / sizeof(0 [arr]))
 
 namespace rl::nvg {
+    constexpr int32_t NVG_MAX_STATES{ 64 };
+
+    // Length proportional to radius of a
+    // cubic bezier handle for 90deg arcs.
+    constexpr float NVG_KAPPA90{ 0.5522847493f };
+
     enum {
         NvgInitFontimageSize = 512,
         NvgMaxFontimageSize = 2048,
@@ -33,11 +39,12 @@ namespace rl::nvg {
         NvgInitVertsSize = 256
     };
 
-    constexpr int32_t NVG_MAX_STATES{ 64 };
-
-    // Length proportional to radius of a
-    // cubic bezier handle for 90deg arcs.
-    constexpr float NVG_KAPPA90{ 0.5522847493f };
+    enum NVGcodepointType {
+        Space,
+        Newline,
+        Char,
+        CJK_Char,
+    };
 
     enum NVGcommands {
         MoveTo = 0,
@@ -75,8 +82,6 @@ namespace rl::nvg {
         int32_t font_id;
     };
 
-    using NVGstate = NVGstate;
-
     struct NVGpoint
     {
         float x, y;
@@ -85,8 +90,6 @@ namespace rl::nvg {
         float dmx, dmy;
         uint8_t flags;
     };
-
-    using NVGpoint = NVGpoint;
 
     struct NVGpathCache
     {
@@ -101,8 +104,6 @@ namespace rl::nvg {
         int32_t cverts;
         float bounds[4];
     };
-
-    using NVGpathCache = NVGpathCache;
 
     struct NVGcontext
     {
@@ -166,13 +167,13 @@ namespace rl::nvg {
         }
 
         template <typename T>
-        constexpr int32_t nvg_min(const T a, const T b)
+        constexpr auto nvg_min(const T a, const T b)
         {
             return a < b ? a : b;
         }
 
         template <typename T>
-        constexpr int32_t nvg_max(const T a, const T b)
+        constexpr auto nvg_max(const T a, const T b)
         {
             return a > b ? a : b;
         }
@@ -276,57 +277,57 @@ namespace rl::nvg {
             int32_t sfactor;
             int32_t dfactor;
 
-            if (op == NVGSourceOver)
+            if (op == NVGcompositeOperation::NVGSourceOver)
             {
                 sfactor = NVGOne;
                 dfactor = NVGOneMinusSrcAlpha;
             }
-            else if (op == NVGSourceIn)
+            else if (op == NVGcompositeOperation::NVGSourceIn)
             {
                 sfactor = NVGDstAlpha;
                 dfactor = NVGZero;
             }
-            else if (op == NVGSourceOut)
+            else if (op == NVGcompositeOperation::NVGSourceOut)
             {
                 sfactor = NVGOneMinusDstAlpha;
                 dfactor = NVGZero;
             }
-            else if (op == NVGAtop)
+            else if (op == NVGcompositeOperation::NVGAtop)
             {
                 sfactor = NVGDstAlpha;
                 dfactor = NVGOneMinusSrcAlpha;
             }
-            else if (op == NVGDestinationOver)
+            else if (op == NVGcompositeOperation::NVGDestinationOver)
             {
                 sfactor = NVGOneMinusDstAlpha;
                 dfactor = NVGOne;
             }
-            else if (op == NVGDestinationIn)
+            else if (op == NVGcompositeOperation::NVGDestinationIn)
             {
                 sfactor = NVGZero;
                 dfactor = NVGSrcAlpha;
             }
-            else if (op == NVGDestinationOut)
+            else if (op == NVGcompositeOperation::NVGDestinationOut)
             {
                 sfactor = NVGZero;
                 dfactor = NVGOneMinusSrcAlpha;
             }
-            else if (op == NVGDestinationAtop)
+            else if (op == NVGcompositeOperation::NVGDestinationAtop)
             {
                 sfactor = NVGOneMinusDstAlpha;
                 dfactor = NVGSrcAlpha;
             }
-            else if (op == NVGLighter)
+            else if (op == NVGcompositeOperation::NVGLighter)
             {
                 sfactor = NVGOne;
                 dfactor = NVGOne;
             }
-            else if (op == NVGCopy)
+            else if (op == NVGcompositeOperation::NVGCopy)
             {
                 sfactor = NVGOne;
                 dfactor = NVGZero;
             }
-            else if (op == NVGXor)
+            else if (op == NVGcompositeOperation::NVGXor)
             {
                 sfactor = NVGOneMinusDstAlpha;
                 dfactor = NVGOneMinusSrcAlpha;
@@ -1335,7 +1336,9 @@ namespace rl::nvg {
         void nvg_set_paint_color(NVGpaint* p, const NVGcolor color)
         {
             memset(p, 0, sizeof(*p));
+
             transform_identity(p->xform);
+
             p->radius = 0.0f;
             p->feather = 1.0f;
             p->inner_color = color;
@@ -1346,15 +1349,110 @@ namespace rl::nvg {
         {
             if (h < 0)
                 h += 1;
+
             if (h > 1)
                 h -= 1;
+
             if (h < 1.0f / 6.0f)
                 return m1 + (m2 - m1) * h * 6.0f;
+
             if (h < 3.0f / 6.0f)
                 return m2;
+
             if (h < 4.0f / 6.0f)
                 return m1 + (m2 - m1) * (2.0f / 3.0f - h) * 6.0f;
+
             return m1;
+        }
+
+        float nvg_quantize(const float a, const float d)
+        {
+            return static_cast<int32_t>(a / d + 0.5f) * d;
+        }
+
+        float nvg_get_font_scale(const NVGstate* state)
+        {
+            return detail::nvg_min(nvg_quantize(detail::nvg_get_average_scale(state->xform), 0.01f),
+                                   4.0f);
+        }
+
+        void nvg_flush_text_texture(const NVGcontext* ctx)
+        {
+            int32_t dirty[4] = { 0 };
+
+            if (fons_validate_texture(ctx->fs, dirty))
+            {
+                const int32_t font_image = ctx->font_images[ctx->font_image_idx];
+                // Update texture
+                if (font_image != 0)
+                {
+                    int32_t iw, ih;
+                    const uint8_t* data = fons_get_texture_data(ctx->fs, &iw, &ih);
+                    const int32_t x = dirty[0];
+                    const int32_t y = dirty[1];
+                    const int32_t w = dirty[2] - dirty[0];
+                    const int32_t h = dirty[3] - dirty[1];
+                    ctx->params.render_update_texture(ctx->params.user_ptr, font_image, x, y, w, h,
+                                                      data);
+                }
+            }
+        }
+
+        int32_t nvg_alloc_text_atlas(NVGcontext* ctx)
+        {
+            nvg_flush_text_texture(ctx);
+            if (ctx->font_image_idx >= NvgMaxFontimages - 1)
+                return 0;
+
+            int32_t iw, ih;
+            // if next fontImage already have a texture
+            if (ctx->font_images[ctx->font_image_idx + 1] != 0)
+                image_size(ctx, ctx->font_images[ctx->font_image_idx + 1], &iw, &ih);
+            else
+            {
+                // calculate the new font image size and create it.
+                image_size(ctx, ctx->font_images[ctx->font_image_idx], &iw, &ih);
+                if (iw > ih)
+                    ih *= 2;
+                else
+                    iw *= 2;
+
+                if (iw > NvgMaxFontimageSize || ih > NvgMaxFontimageSize)
+                    iw = ih = NvgMaxFontimageSize;
+
+                ctx->font_images[ctx->font_image_idx + 1] = ctx->params.render_create_texture(
+                    ctx->params.user_ptr, NVGTextureAlpha, iw, ih, 0, nullptr);
+            }
+
+            ++ctx->font_image_idx;
+            fons_reset_atlas(ctx->fs, iw, ih);
+
+            return 1;
+        }
+
+        void nvg_render_text(NVGcontext* ctx, const NVGvertex* verts, const int32_t nverts)
+        {
+            const NVGstate* state = detail::nvg_get_state(ctx);
+            NVGpaint paint = state->fill;
+
+            // Render triangles.
+            paint.image = ctx->font_images[ctx->font_image_idx];
+
+            // Apply global alpha
+            paint.inner_color.a *= state->alpha;
+            paint.outer_color.a *= state->alpha;
+
+            ctx->params.render_triangles(ctx->params.user_ptr, &paint, state->composite_operation,
+                                         &state->scissor, verts, nverts, ctx->fringe_width);
+
+            ctx->draw_call_count++;
+            ctx->text_tri_count += nverts / 3;
+        }
+
+        int32_t nvg_is_transform_flipped(const float* xform)
+        {
+            const float det = xform[0] * xform[3] - xform[2] * xform[1];
+            return det < 0;
         }
     }
 
@@ -1396,6 +1494,7 @@ namespace rl::nvg {
                         font_params.render_draw = nullptr;
                         font_params.render_delete = nullptr;
                         font_params.user_ptr = nullptr;
+
                         ctx->fs = fons_create_internal(&font_params);
                         if (ctx->fs != nullptr)
                         {
@@ -1433,11 +1532,10 @@ namespace rl::nvg {
             free(ctx->commands);
         if (ctx->cache != nullptr)
             detail::nvg_delete_path_cache(ctx->cache);
-
         if (ctx->fs)
             fons_delete_internal(ctx->fs);
 
-        for (int& font_image : ctx->font_images)
+        for (i32& font_image : ctx->font_images)
         {
             if (font_image != 0)
             {
@@ -1456,11 +1554,11 @@ namespace rl::nvg {
                      const float device_pixel_ratio)
     {
         ctx->nstates = 0;
+
         save(ctx);
         reset(ctx);
 
         detail::nvg_set_device_pixel_ratio(ctx, device_pixel_ratio);
-
         ctx->params.render_viewport(ctx->params.user_ptr, window_width, window_height,
                                     device_pixel_ratio);
 
@@ -1482,20 +1580,25 @@ namespace rl::nvg {
         {
             const int32_t font_image = ctx->font_images[ctx->font_image_idx];
             ctx->font_images[ctx->font_image_idx] = 0;
-            int32_t j, iw, ih;
+            int32_t iw;
+            int32_t ih;
             // delete images that smaller than current one
             if (font_image == 0)
                 return;
 
             image_size(ctx, font_image, &iw, &ih);
-            for (int32_t i = j = 0; i < ctx->font_image_idx; i++)
+
+            int32_t j = 0;
+            for (int32_t i = 0; i < ctx->font_image_idx; i++)
             {
                 if (ctx->font_images[i] != 0)
                 {
-                    int32_t nw, nh;
                     const int32_t image = ctx->font_images[i];
                     ctx->font_images[i] = 0;
+
+                    int32_t nw, nh;
                     image_size(ctx, image, &nw, &nh);
+
                     if (nw < iw || nh < ih)
                         delete_image(ctx, image);
                     else
@@ -1512,7 +1615,7 @@ namespace rl::nvg {
 
     NVGcolor trans_rgba(NVGcolor c0, const uint8_t a)
     {
-        c0.a = a / 255.0f;
+        c0.a = static_cast<f32>(a) / 255.0f;
         return c0;
     }
 
@@ -1541,18 +1644,23 @@ namespace rl::nvg {
 
     NVGcolor hsla(float h, float s, float l, const uint8_t a)
     {
-        NVGcolor col{};
+        NVGcolor col = {};
         h = detail::nvg_modf(h, 1.0f);
         if (h < 0.0f)
             h += 1.0f;
+
         s = detail::nvg_clampf(s, 0.0f, 1.0f);
         l = detail::nvg_clampf(l, 0.0f, 1.0f);
+
         const float m2 = l <= 0.5f ? (l * (1 + s)) : (l + s - l * s);
         const float m1 = 2 * l - m2;
+
         col.r = detail::nvg_clampf(detail::nvg_hue(h + 1.0f / 3.0f, m1, m2), 0.0f, 1.0f);
         col.g = detail::nvg_clampf(detail::nvg_hue(h, m1, m2), 0.0f, 1.0f);
         col.b = detail::nvg_clampf(detail::nvg_hue(h - 1.0f / 3.0f, m1, m2), 0.0f, 1.0f);
-        col.a = a / 255.0f;
+
+        col.a = static_cast<f32>(a) / 255.0f;
+
         return col;
     }
 
@@ -1582,8 +1690,8 @@ namespace rl::nvg {
         t[1] = 0.0f;
         t[2] = 0.0f;
         t[3] = 1.0f;
-        t[4] = translation.x;
-        t[5] = translation.y;
+        t[4] = std::move(translation.x);
+        t[5] = std::move(translation.y);
     }
 
     void transform_scale(float* dst, const float sx, const float sy)
@@ -1714,6 +1822,7 @@ namespace rl::nvg {
 
         detail::nvg_set_paint_color(&state->fill, rgba(255, 255, 255, 255));
         detail::nvg_set_paint_color(&state->stroke, rgba(0, 0, 0, 255));
+
         state->composite_operation = detail::nvg_composite_operation_state(NVGSourceOver);
         state->shape_anti_alias = 1;
         state->stroke_width = 1.0f;
@@ -1721,6 +1830,7 @@ namespace rl::nvg {
         state->line_cap = NVGButt;
         state->line_join = NVGMiter;
         state->alpha = 1.0f;
+
         transform_identity(state->xform);
 
         state->scissor.extent[0] = -1.0f;
@@ -1797,7 +1907,7 @@ namespace rl::nvg {
     {
         float t[6] = { 0 };
         NVGstate* state{ detail::nvg_get_state(ctx) };
-        transform_translate(t, local_offset.x, local_offset.y);
+        transform_translate(t, std::move(local_offset.x), std::move(local_offset.y));
         transform_premultiply(state->xform, t);
     }
 
@@ -1847,7 +1957,7 @@ namespace rl::nvg {
         detail::nvg_set_paint_color(&state->stroke, color);
     }
 
-    void stroke_paint(NVGcontext* ctx, const NVGpaint& paint)
+    void stroke_paint(NVGcontext* ctx, const NVGpaint paint)
     {
         NVGstate* state = detail::nvg_get_state(ctx);
         state->stroke = paint;
@@ -1860,7 +1970,7 @@ namespace rl::nvg {
         detail::nvg_set_paint_color(&state->fill, color);
     }
 
-    void fill_paint(NVGcontext* ctx, const NVGpaint& paint)
+    void fill_paint(NVGcontext* ctx, const NVGpaint paint)
     {
         NVGstate* state = detail::nvg_get_state(ctx);
         state->fill = paint;
@@ -2115,15 +2225,15 @@ namespace rl::nvg {
         global_composite_blend_func_separate(ctx, sfactor, dfactor, sfactor, dfactor);
     }
 
-    void global_composite_blend_func_separate(NVGcontext* ctx, const int32_t srcRGB,
-                                              const int32_t dstRGB, const int32_t srcAlpha,
-                                              const int32_t dstAlpha)
+    void global_composite_blend_func_separate(NVGcontext* ctx, const int32_t src_rgb,
+                                              const int32_t dst_rgb, const int32_t src_alpha,
+                                              const int32_t dst_alpha)
     {
-        NVGcompositeOperationState op{};
-        op.src_rgb = srcRGB;
-        op.dst_rgb = dstRGB;
-        op.src_alpha = srcAlpha;
-        op.dst_alpha = dstAlpha;
+        NVGcompositeOperationState op;
+        op.src_rgb = src_rgb;
+        op.dst_rgb = dst_rgb;
+        op.src_alpha = src_alpha;
+        op.dst_alpha = dst_alpha;
 
         NVGstate* state = detail::nvg_get_state(ctx);
         state->composite_operation = op;
@@ -2152,20 +2262,21 @@ namespace rl::nvg {
     void nvg_append_commands(NVGcontext* ctx, float* vals, const int32_t nvals)
     {
         const NVGstate* state = detail::nvg_get_state(ctx);
-
         if (ctx->ncommands + nvals > ctx->ccommands)
         {
             const int32_t ccommands = ctx->ncommands + nvals + ctx->ccommands / 2;
             const auto commands = static_cast<float*>(
                 realloc(ctx->commands, sizeof(float) * ccommands));
+
             if (commands == nullptr)
                 return;
+
             ctx->commands = commands;
             ctx->ccommands = ccommands;
         }
 
-        const int32_t val = vals[0];
-        if (val != static_cast<float>(Close) && val != static_cast<float>(Winding))
+        const int32_t val = static_cast<int32_t>(vals[0]);
+        if (val != Close && val != Winding)
         {
             ctx->commandx = vals[nvals - 2];
             ctx->commandy = vals[nvals - 1];
@@ -2178,19 +2289,19 @@ namespace rl::nvg {
             const auto cmd{ static_cast<NVGcommands>(static_cast<int32_t>(vals[i])) };
             switch (cmd)
             {
-                case MoveTo:
+                case NVGcommands::MoveTo:
                     transform_point(&vals[i + 1], &vals[i + 2], state->xform, vals[i + 1],
                                     vals[i + 2]);
                     i += 3;
                     break;
 
-                case LineTo:
+                case NVGcommands::LineTo:
                     transform_point(&vals[i + 1], &vals[i + 2], state->xform, vals[i + 1],
                                     vals[i + 2]);
                     i += 3;
                     break;
 
-                case Bezierto:
+                case NVGcommands::Bezierto:
                     transform_point(&vals[i + 1], &vals[i + 2], state->xform, vals[i + 1],
                                     vals[i + 2]);
                     transform_point(&vals[i + 3], &vals[i + 4], state->xform, vals[i + 3],
@@ -2200,11 +2311,11 @@ namespace rl::nvg {
                     i += 7;
                     break;
 
-                case Close:
+                case NVGcommands::Close:
                     i++;
                     break;
 
-                case Winding:
+                case NVGcommands::Winding:
                     i += 2;
                     break;
 
@@ -2240,7 +2351,7 @@ namespace rl::nvg {
     void bezier_to(NVGcontext* ctx, const float c1_x, const float c1_y, const float c2_x,
                    const float c2_y, const float x, const float y)
     {
-        auto vals = std::array{ (float)Bezierto, x, y };
+        auto vals = std::array{ static_cast<float>(Bezierto), x, y };
         nvg_append_commands(ctx, vals.data(), static_cast<int32_t>(vals.size()));
     }
 
@@ -2366,9 +2477,10 @@ namespace rl::nvg {
 
         // Split arc into max 90 degree segments.
         const int32_t ndivs = detail::nvg_max(
-            1, detail::nvg_min(static_cast<int32_t>(
-                                   detail::nvg_absf(da) / (std::numbers::pi_v<f32> * 0.5f) + 0.5f),
+            1, detail::nvg_min(static_cast<int32_t>(std::round(
+                                   detail::nvg_absf(da) / (std::numbers::pi_v<f32> * 0.5f))),
                                5));
+
         const float hda = (da / static_cast<float>(ndivs)) / 2.0f;
         float kappa = detail::nvg_absf(
             4.0f / 3.0f * (1.0f - detail::nvg_cosf(hda)) / detail::nvg_sinf(hda));
@@ -2457,87 +2569,93 @@ namespace rl::nvg {
         const float rx_tl = detail::nvg_min(rad_top_left, halfw) * detail::nvg_signf(w);
         const float ry_tl = detail::nvg_min(rad_top_left, halfh) * detail::nvg_signf(h);
 
-        auto vals = std::array{ static_cast<float>(MoveTo),
-                                x,
-                                y + ry_tl,
-                                static_cast<float>(LineTo),
-                                x,
-                                y + h - ry_bl,
-                                static_cast<float>(Bezierto),
-                                x,
-                                y + h - ry_bl * (1 - NVG_KAPPA90),
-                                x + rx_bl * (1 - NVG_KAPPA90),
-                                y + h,
-                                x + rx_bl,
-                                y + h,
-                                static_cast<float>(LineTo),
-                                x + w - rx_br,
-                                y + h,
-                                static_cast<float>(Bezierto),
-                                x + w - rx_br * (1 - NVG_KAPPA90),
-                                y + h,
-                                x + w,
-                                y + h - ry_br * (1 - NVG_KAPPA90),
-                                x + w,
-                                y + h - ry_br,
-                                static_cast<float>(LineTo),
-                                x + w,
-                                y + ry_tr,
-                                static_cast<float>(Bezierto),
-                                x + w,
-                                y + ry_tr * (1 - NVG_KAPPA90),
-                                x + w - rx_tr * (1 - NVG_KAPPA90),
-                                y,
-                                x + w - rx_tr,
-                                y,
-                                static_cast<float>(LineTo),
-                                x + rx_tl,
-                                y,
-                                static_cast<float>(Bezierto),
-                                x + rx_tl * (1 - NVG_KAPPA90),
-                                y,
-                                x,
-                                y + ry_tl * (1 - NVG_KAPPA90),
-                                x,
-                                y + ry_tl,
-                                static_cast<float>(Close) };
+        auto vals = std::array{
+            static_cast<float>(MoveTo),
+            x,
+            y + ry_tl,
+            static_cast<float>(LineTo),
+            x,
+            y + h - ry_bl,
+            static_cast<float>(Bezierto),
+            x,
+            y + h - ry_bl * (1 - NVG_KAPPA90),
+            x + rx_bl * (1 - NVG_KAPPA90),
+            y + h,
+            x + rx_bl,
+            y + h,
+            static_cast<float>(LineTo),
+            x + w - rx_br,
+            y + h,
+            static_cast<float>(Bezierto),
+            x + w - rx_br * (1 - NVG_KAPPA90),
+            y + h,
+            x + w,
+            y + h - ry_br * (1 - NVG_KAPPA90),
+            x + w,
+            y + h - ry_br,
+            static_cast<float>(LineTo),
+            x + w,
+            y + ry_tr,
+            static_cast<float>(Bezierto),
+            x + w,
+            y + ry_tr * (1 - NVG_KAPPA90),
+            x + w - rx_tr * (1 - NVG_KAPPA90),
+            y,
+            x + w - rx_tr,
+            y,
+            static_cast<float>(LineTo),
+            x + rx_tl,
+            y,
+            static_cast<float>(Bezierto),
+            x + rx_tl * (1 - NVG_KAPPA90),
+            y,
+            x,
+            y + ry_tl * (1 - NVG_KAPPA90),
+            x,
+            y + ry_tl,
+            static_cast<float>(Close),
+        };
+
         nvg_append_commands(ctx, vals.data(), vals.size());
     }
 
     void ellipse(NVGcontext* ctx, const float cx, const float cy, const float rx, const float ry)
     {
-        auto vals = std::array{ static_cast<float>(MoveTo),
-                                cx - rx,
-                                cy,
-                                static_cast<float>(Bezierto),
-                                cx - rx,
-                                cy + ry * NVG_KAPPA90,
-                                cx - rx * NVG_KAPPA90,
-                                cy + ry,
-                                cx,
-                                cy + ry,
-                                static_cast<float>(Bezierto),
-                                cx + rx * NVG_KAPPA90,
-                                cy + ry,
-                                cx + rx,
-                                cy + ry * NVG_KAPPA90,
-                                cx + rx,
-                                cy,
-                                static_cast<float>(Bezierto),
-                                cx + rx,
-                                cy - ry * NVG_KAPPA90,
-                                cx + rx * NVG_KAPPA90,
-                                cy - ry,
-                                cx,
-                                cy - ry,
-                                static_cast<float>(Bezierto),
-                                cx - rx * NVG_KAPPA90,
-                                cy - ry,
-                                cx - rx,
-                                cy - ry * NVG_KAPPA90,
-                                cx - rx,
-                                cy,
-                                static_cast<float>(Close) };
+        auto vals = std::array{
+            static_cast<float>(MoveTo),
+            cx - rx,
+            cy,
+            static_cast<float>(Bezierto),
+            cx - rx,
+            cy + ry * NVG_KAPPA90,
+            cx - rx * NVG_KAPPA90,
+            cy + ry,
+            cx,
+            cy + ry,
+            static_cast<float>(Bezierto),
+            cx + rx * NVG_KAPPA90,
+            cy + ry,
+            cx + rx,
+            cy + ry * NVG_KAPPA90,
+            cx + rx,
+            cy,
+            static_cast<float>(Bezierto),
+            cx + rx,
+            cy - ry * NVG_KAPPA90,
+            cx + rx * NVG_KAPPA90,
+            cy - ry,
+            cx,
+            cy - ry,
+            static_cast<float>(Bezierto),
+            cx - rx * NVG_KAPPA90,
+            cy - ry,
+            cx - rx,
+            cy - ry * NVG_KAPPA90,
+            cx - rx,
+            cy,
+            static_cast<float>(Close),
+        };
+
         nvg_append_commands(ctx, vals.data(), std::size(vals));
     }
 
@@ -2666,7 +2784,7 @@ namespace rl::nvg {
         constexpr static i32 font_index{ 0 };
         constexpr static i32 dealloc_data{ false };
 
-        return fons_add_font_mem(ctx->fs, name.data(), (uint8_t*)font_data.data(),
+        return fons_add_font_mem(ctx->fs, name.data(), const_cast<uint8_t*>(font_data.data()),
                                  static_cast<i32>(font_data.size()), dealloc_data, font_index);
     }
 
@@ -2757,104 +2875,17 @@ namespace rl::nvg {
         state->font_id = fons_get_font_by_name(ctx->fs, font.data());
     }
 
-    namespace {
-        float nvg_quantize(const float a, const float d)
-        {
-            return static_cast<int32_t>(a / d + 0.5f) * d;
-        }
-
-        float nvg_get_font_scale(const NVGstate* state)
-        {
-            return detail::nvg_min(nvg_quantize(detail::nvg_get_average_scale(state->xform), 0.01f),
-                                   4.0f);
-        }
-
-        void nvg_flush_text_texture(const NVGcontext* ctx)
-        {
-            int32_t dirty[4] = { 0 };
-
-            if (fons_validate_texture(ctx->fs, dirty))
-            {
-                const int32_t font_image = ctx->font_images[ctx->font_image_idx];
-                // Update texture
-                if (font_image != 0)
-                {
-                    int32_t iw, ih;
-                    const uint8_t* data = fons_get_texture_data(ctx->fs, &iw, &ih);
-                    const int32_t x = dirty[0];
-                    const int32_t y = dirty[1];
-                    const int32_t w = dirty[2] - dirty[0];
-                    const int32_t h = dirty[3] - dirty[1];
-                    ctx->params.render_update_texture(ctx->params.user_ptr, font_image, x, y, w, h,
-                                                      data);
-                }
-            }
-        }
-
-        int32_t nvg_alloc_text_atlas(NVGcontext* ctx)
-        {
-            int32_t iw, ih;
-            nvg_flush_text_texture(ctx);
-            if (ctx->font_image_idx >= NvgMaxFontimages - 1)
-                return 0;
-            // if next fontImage already have a texture
-            if (ctx->font_images[ctx->font_image_idx + 1] != 0)
-                image_size(ctx, ctx->font_images[ctx->font_image_idx + 1], &iw, &ih);
-            else
-            {
-                // calculate the new font image size and create it.
-                image_size(ctx, ctx->font_images[ctx->font_image_idx], &iw, &ih);
-                if (iw > ih)
-                    ih *= 2;
-                else
-                    iw *= 2;
-                if (iw > NvgMaxFontimageSize || ih > NvgMaxFontimageSize)
-                    iw = ih = NvgMaxFontimageSize;
-                ctx->font_images[ctx->font_image_idx + 1] = ctx->params.render_create_texture(
-                    ctx->params.user_ptr, NVGTextureAlpha, iw, ih, 0, nullptr);
-            }
-            ++ctx->font_image_idx;
-            fons_reset_atlas(ctx->fs, iw, ih);
-            return 1;
-        }
-
-        void nvg_render_text(NVGcontext* ctx, const NVGvertex* verts, const int32_t nverts)
-        {
-            const NVGstate* state = detail::nvg_get_state(ctx);
-            NVGpaint paint = state->fill;
-
-            // Render triangles.
-            paint.image = ctx->font_images[ctx->font_image_idx];
-
-            // Apply global alpha
-            paint.inner_color.a *= state->alpha;
-            paint.outer_color.a *= state->alpha;
-
-            ctx->params.render_triangles(ctx->params.user_ptr, &paint, state->composite_operation,
-                                         &state->scissor, verts, nverts, ctx->fringe_width);
-
-            ctx->draw_call_count++;
-            ctx->text_tri_count += nverts / 3;
-        }
-
-        int32_t nvg_is_transform_flipped(const float* xform)
-        {
-            const float det = xform[0] * xform[3] - xform[2] * xform[1];
-            return det < 0;
-        }
-    }
-
     float text(NVGcontext* ctx, float x, float y, const char* string, const char* end /*= nullptr*/)
     {
         NVGstate* state = detail::nvg_get_state(ctx);
         FONStextIter iter, prev_iter;
         FONSquad q;
         NVGvertex* verts;
-        float scale = nvg_get_font_scale(state) * ctx->device_px_ratio;
+        float scale = detail::nvg_get_font_scale(state) * ctx->device_px_ratio;
         float invscale = 1.0f / scale;
         int32_t cverts = 0;
         int32_t nverts = 0;
-        int32_t is_flipped = nvg_is_transform_flipped(state->xform);
+        int32_t is_flipped = detail::nvg_is_transform_flipped(state->xform);
 
         if (end == nullptr)
             end = string + strlen(string);
@@ -2885,11 +2916,13 @@ namespace rl::nvg {
                 // can not retrieve glyph?
                 if (nverts != 0)
                 {
-                    nvg_render_text(ctx, verts, nverts);
+                    detail::nvg_render_text(ctx, verts, nverts);
                     nverts = 0;
                 }
-                if (!nvg_alloc_text_atlas(ctx))
+
+                if (detail::nvg_alloc_text_atlas(ctx) == 0)
                     break;  // no memory :(
+
                 iter = prev_iter;
                 fons_text_iter_next(ctx->fs, &iter, &q);  // try again
                 if (iter.prev_glyph_index == -1)          // still can not find glyph?
@@ -2912,6 +2945,7 @@ namespace rl::nvg {
             transform_point(&c[2], &c[3], state->xform, q.x1 * invscale, q.y0 * invscale);
             transform_point(&c[4], &c[5], state->xform, q.x1 * invscale, q.y1 * invscale);
             transform_point(&c[6], &c[7], state->xform, q.x0 * invscale, q.y1 * invscale);
+
             // Create triangles
             if (nverts + 6 <= cverts)
             {
@@ -2931,8 +2965,8 @@ namespace rl::nvg {
         }
 
         // TODO: add back-end bit to do this just once per frame.
-        nvg_flush_text_texture(ctx);
-        nvg_render_text(ctx, verts, nverts);
+        detail::nvg_flush_text_texture(ctx);
+        detail::nvg_render_text(ctx, verts, nverts);
 
         return iter.nextx / scale;
     }
@@ -2981,7 +3015,7 @@ namespace rl::nvg {
                                  int32_t max_positions)
     {
         NVGstate* state = detail::nvg_get_state(ctx);
-        float scale = nvg_get_font_scale(state) * ctx->device_px_ratio;
+        float scale = detail::nvg_get_font_scale(state) * ctx->device_px_ratio;
         float invscale = 1.0f / scale;
         FONStextIter iter, prev_iter;
         FONSquad q;
@@ -3007,7 +3041,7 @@ namespace rl::nvg {
         prev_iter = iter;
         while (fons_text_iter_next(ctx->fs, &iter, &q))
         {
-            if (iter.prev_glyph_index < 0 && nvg_alloc_text_atlas(ctx))
+            if (iter.prev_glyph_index < 0 && detail::nvg_alloc_text_atlas(ctx))
             {
                 // can not retrieve glyph?
                 iter = prev_iter;
@@ -3026,18 +3060,11 @@ namespace rl::nvg {
         return npos;
     }
 
-    enum NVGcodepointType {
-        Space,
-        Newline,
-        Char,
-        CJK_Char,
-    };
-
     int32_t text_break_lines(NVGcontext* ctx, const char* string, const char* end,
                              float break_row_width, NVGtextRow* rows, int32_t max_rows)
     {
         NVGstate* state = detail::nvg_get_state(ctx);
-        float scale = nvg_get_font_scale(state) * ctx->device_px_ratio;
+        float scale = detail::nvg_get_font_scale(state) * ctx->device_px_ratio;
         float invscale = 1.0f / scale;
         FONStextIter iter;
         FONStextIter prev_iter;
@@ -3082,7 +3109,7 @@ namespace rl::nvg {
         prev_iter = iter;
         while (fons_text_iter_next(ctx->fs, &iter, &q))
         {
-            if (iter.prev_glyph_index < 0 && nvg_alloc_text_atlas(ctx))
+            if (iter.prev_glyph_index < 0 && detail::nvg_alloc_text_atlas(ctx))
             {
                 // can not retrieve glyph?
                 iter = prev_iter;
@@ -3267,7 +3294,7 @@ namespace rl::nvg {
                       const char* end /*= nullptr*/, float* bounds /*= nullptr*/)
     {
         const NVGstate* state = detail::nvg_get_state(ctx);
-        const float scale = nvg_get_font_scale(state) * ctx->device_px_ratio;
+        const float scale = detail::nvg_get_font_scale(state) * ctx->device_px_ratio;
         const float invscale = 1.0f / scale;
 
         if (state->font_id == FONS_INVALID)
@@ -3297,7 +3324,7 @@ namespace rl::nvg {
     {
         NVGstate* state = detail::nvg_get_state(ctx);
         NVGtextRow rows[2];
-        const float scale = nvg_get_font_scale(state) * ctx->device_px_ratio;
+        const float scale = detail::nvg_get_font_scale(state) * ctx->device_px_ratio;
         const float invscale = 1.0f / scale;
         const int32_t old_align = state->text_align;
         const int32_t haling = state->text_align & (NVGAlignLeft | NVGAlignCenter | NVGAlignRight);
@@ -3373,7 +3400,7 @@ namespace rl::nvg {
     void text_metrics(NVGcontext* ctx, float* ascender, float* descender, float* lineh)
     {
         const NVGstate* state = detail::nvg_get_state(ctx);
-        const float scale = nvg_get_font_scale(state) * ctx->device_px_ratio;
+        const float scale = detail::nvg_get_font_scale(state) * ctx->device_px_ratio;
         const float invscale = 1.0f / scale;
 
         if (state->font_id == FONS_INVALID)

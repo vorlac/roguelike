@@ -1241,23 +1241,25 @@ namespace rl::nvg {
                             memset(frag, 0, sizeof(*frag));
                             frag->stroke_thr = -1.0f;
                             frag->type = SVGShaderSimple;
+
                             // Fill shader
                             glnvg_convert_paint(
                                 gl, nvg_frag_uniform_ptr(gl, call->uniform_offset + gl->frag_size),
                                 paint, scissor, fringe, fringe, -1.0f);
-
-                            return;
                         }
-
+                    }
+                    else
+                    {
                         call->uniform_offset = glnvg_alloc_frag_uniforms(gl, 1);
                         if (call->uniform_offset != -1)
                         {
                             // Fill shader
                             glnvg_convert_paint(gl, nvg_frag_uniform_ptr(gl, call->uniform_offset),
                                                 paint, scissor, fringe, fringe, -1.0f);
-                            return;
                         }
                     }
+
+                    return;
                 }
             }
 

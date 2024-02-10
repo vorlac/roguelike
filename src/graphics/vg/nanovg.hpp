@@ -63,6 +63,7 @@ namespace rl::nvg {
         NVGAlignLeft = 1 << 0,    // Default, align text horizontally to left.
         NVGAlignCenter = 1 << 1,  // Align text horizontally to center.
         NVGAlignRight = 1 << 2,   // Align text horizontally to right.
+
         // Vertical align
         NVGAlignTop = 1 << 3,       // Align text vertically to top.
         NVGAlignMiddle = 1 << 4,    // Align text vertically to middle.
@@ -124,7 +125,6 @@ namespace rl::nvg {
         float minx, maxx;   // Actual bounds of the row. Logical with and bounds can differ
                             // because of kerning and some parts over extending.
     };
-    typedef struct NVGtextRow NVGtextRow;
 
     enum NVGimageFlags {
         NVGImageGenerateMipmaps = 1 << 0,  // Generate mipmaps during creation of the image.
@@ -168,8 +168,8 @@ namespace rl::nvg {
 
     // Sets the composite operation with custom pixel arithmetic for RGB and alpha components
     // separately. The parameters should be one of NVGblendFactor.
-    void global_composite_blend_func_separate(NVGcontext* ctx, int32_t srcRGB, int32_t dstRGB,
-                                              int32_t srcAlpha, int32_t dstAlpha);
+    void global_composite_blend_func_separate(NVGcontext* ctx, int32_t src_rgb, int32_t dst_rgb,
+                                              int32_t src_alpha, int32_t dst_alpha);
 
     //
     // Color utils
@@ -179,13 +179,13 @@ namespace rl::nvg {
     // Returns a color value from red, green, blue values. Alpha will be set to 255 (1.0f).
     // NVGcolor rgb(uint8_t r, uint8_t g, uint8_t b);
 
-    constexpr NVGcolor rgba_f(const float _r, const float _g, const float _b, const float _a)
+    constexpr NVGcolor rgba_f(const float r, const float g, const float b, const float a)
     {
         return NVGcolor{
-            _r,
-            _g,
-            _b,
-            _a,
+            r,
+            g,
+            b,
+            a,
         };
     }
 
@@ -195,13 +195,13 @@ namespace rl::nvg {
         return rgba_f(r, g, b, 1.0f);
     }
 
-    consteval NVGcolor rgba(const uint8_t _r, const uint8_t _g, const uint8_t _b, const uint8_t _a)
+    consteval NVGcolor rgba(const uint8_t r, const uint8_t g, const uint8_t b, const uint8_t a)
     {
         return {
-            _r / 255.0f,
-            _g / 255.0f,
-            _b / 255.0f,
-            _a / 255.0f,
+            static_cast<float>(r) / 255.0f,
+            static_cast<float>(g) / 255.0f,
+            static_cast<float>(b) / 255.0f,
+            static_cast<float>(a) / 255.0f,
         };
     }
 
@@ -263,13 +263,13 @@ namespace rl::nvg {
     void stroke_color(NVGcontext* ctx, NVGcolor color);
 
     // Sets current stroke style to a paint, which can be a one of the gradients or a pattern.
-    void stroke_paint(NVGcontext* ctx, const NVGpaint& paint);
+    void stroke_paint(NVGcontext* ctx, const NVGpaint paint);
 
     // Sets current fill style to a solid color.
     void fill_color(NVGcontext* ctx, NVGcolor color);
 
     // Sets current fill style to a paint, which can be a one of the gradients or a pattern.
-    void fill_paint(NVGcontext* ctx, const NVGpaint& paint);
+    void fill_paint(NVGcontext* ctx, const NVGpaint paint);
 
     // Sets the miter limit of the stroke style.
     // Miter limit controls when a sharp corner is beveled.
