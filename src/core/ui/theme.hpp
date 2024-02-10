@@ -47,13 +47,13 @@ namespace rl::ui {
     struct Text
     {
         enum Alignment {
-            HorizLeft = nvg::NVG_ALIGN_LEFT,         // Default, align text horizontally to left.
-            HorizCenter = nvg::NVG_ALIGN_CENTER,     // Align text horizontally to center.
-            HorizRight = nvg::NVG_ALIGN_RIGHT,       // Align text horizontally to right.
-            VertTop = nvg::NVG_ALIGN_TOP,            // Align text vertically to top.
-            VertMiddle = nvg::NVG_ALIGN_MIDDLE,      // Align text vertically to middle.
-            VertBottom = nvg::NVG_ALIGN_BOTTOM,      // Align text vertically to bottom.
-            VertBaseline = nvg::NVG_ALIGN_BASELINE,  // Align text vertically to baseline.
+            HorizLeft = nvg::NVGAlignLeft,         // Default, align text horizontally to left.
+            HorizCenter = nvg::NVGAlignCenter,     // Align text horizontally to center.
+            HorizRight = nvg::NVGAlignRight,       // Align text horizontally to right.
+            VertTop = nvg::NVGAlignTop,            // Align text vertically to top.
+            VertMiddle = nvg::NVGAlignMiddle,      // Align text vertically to middle.
+            VertBottom = nvg::NVGAlignBottom,      // Align text vertically to bottom.
+            VertBaseline = nvg::NVGAlignBaseline,  // Align text vertically to baseline.
 
             HCenterVMiddle = HorizCenter | VertMiddle,
             HLeftVTop = HorizLeft | VertTop,

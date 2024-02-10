@@ -115,7 +115,7 @@ namespace rl::ui {
                           m_size.height + 2.0f * drop_shadow_size);
                 nvg::rounded_rect(context, m_pos.x, m_pos.y, m_size.width, m_size.height,
                                   corner_radius);
-                nvg::path_winding(context, nvg::NVGsolidity::NVG_HOLE);
+                nvg::path_winding(context, nvg::NVGsolidity::NVGHole);
                 nvg::fill_paint(context, shadow_paint);
                 nvg::fill(context);
             });

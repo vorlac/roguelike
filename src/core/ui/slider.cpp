@@ -192,7 +192,7 @@ namespace rl::ui {
         nvg::rect(context, knob_pos.x - kr - 5.0f, knob_pos.y - kr - 5.0f, kr * 2.0f + 10.0f,
                   kr * 2.0f + 10.0f + kshadow);
         nvg::circle(context, knob_pos.x, knob_pos.y, kr);
-        nvg::path_winding(context, nvg::NVG_HOLE);
+        nvg::path_winding(context, nvg::NVGHole);
         nvg::fill_paint(context, knob_shadow);
         nvg::fill(context);
 

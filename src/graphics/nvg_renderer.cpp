@@ -30,37 +30,40 @@ namespace rl {
         };
     };
 
-    static nvg::NVGcontext* create_nanovg_context(bool& stencil_buf, bool& depth_buf,
-                                                  bool& float_buf)
-    {
-        const u8 float_mode{ 0 };
-        i32 depth_bits{ 0 };
-        i32 stencil_bits{ 0 };
+    namespace detail {
+        static nvg::NVGcontext* create_nanovg_context(bool& stencil_buf, bool& depth_buf,
+                                                      bool& float_buf)
+        {
+            constexpr u8 float_mode{ 0 };
+            i32 depth_bits{ 0 };
+            i32 stencil_bits{ 0 };
 
-        // TODO: look into why this returns an error code?..
-        // glGetBooleanv(GL_RGBA_FLOAT_MODE_ARB, &float_mode);
-        glGetFramebufferAttachmentParameteriv(GL_DRAW_FRAMEBUFFER, GL_DEPTH,
-                                              GL_FRAMEBUFFER_ATTACHMENT_DEPTH_SIZE, &depth_bits);
-        glGetFramebufferAttachmentParameteriv(
-            GL_DRAW_FRAMEBUFFER, GL_STENCIL, GL_FRAMEBUFFER_ATTACHMENT_STENCIL_SIZE, &stencil_bits);
+            // TODO: look into why this returns an error code?..
+            // glGetBooleanv(GL_RGBA_FLOAT_MODE_ARB, &float_mode);
+            glGetFramebufferAttachmentParameteriv(
+                GL_DRAW_FRAMEBUFFER, GL_DEPTH, GL_FRAMEBUFFER_ATTACHMENT_DEPTH_SIZE, &depth_bits);
+            glGetFramebufferAttachmentParameteriv(GL_DRAW_FRAMEBUFFER, GL_STENCIL,
+                                                  GL_FRAMEBUFFER_ATTACHMENT_STENCIL_SIZE,
+                                                  &stencil_bits);
 
-        stencil_buf = stencil_bits > 0;
-        depth_buf = depth_bits > 0;
-        float_buf = float_mode != 0;
+            stencil_buf = stencil_bits > 0;
+            depth_buf = depth_bits > 0;
+            float_buf = float_mode != 0;
 
-        i32 nvg_flags{ Property::AntiAlias };
-        if (stencil_buf)
-            nvg_flags |= Property::StencilStrokes;
-        nvg_flags |= Property::Debug;
+            i32 nvg_flags{ Property::AntiAlias };
+            if (stencil_buf)
+                nvg_flags |= Property::StencilStrokes;
+            nvg_flags |= Property::Debug;
 
-        nvg::NVGcontext* nvg_context{ nvg::nvgCreateGL3(nvg_flags) };
-        runtime_assert(nvg_context != nullptr, "Failed to create NVG context");
-        return nvg_context;
-    };
+            nvg::NVGcontext* nvg_context{ nvg::nvg_create_gl3(nvg_flags) };
+            runtime_assert(nvg_context != nullptr, "Failed to create NVG context");
+            return nvg_context;
+        };
+    }
 
     NVGRenderer::NVGRenderer()
-        : m_nvg_context{ rl::create_nanovg_context(m_stencil_buffer, m_depth_buffer,
-                                                   m_float_buffer) }
+        : m_nvg_context{ detail::create_nanovg_context(m_stencil_buffer, m_depth_buffer,
+                                                       m_float_buffer) }
     {
         this->load_fonts({
             //{
@@ -113,18 +116,18 @@ namespace rl {
     }
 
     ui::Font::ID NVGRenderer::load_font(const std::string_view& font_name,
-                                        const std::u8string_view& font_ttf) const
+                                        const std::basic_string_view<u8>& font_ttf) const
     {
-        return nvg::create_font_mem(m_nvg_context, font_name, (u8*)font_ttf.data());
+        return nvg::create_font_mem(m_nvg_context, font_name, font_ttf);
     }
 
     void NVGRenderer::flush(const ds::dims<f32>& viewport, const f32 pixel_ratio) const
     {
         // Flush all queued up NanoVG rendering commands
         const nvg::NVGparams* params{ nvg::internal_params(m_nvg_context) };
-        params->renderFlush(params->userPtr);
-        params->renderViewport(params->userPtr, static_cast<f32>(viewport.width),
-                               static_cast<f32>(viewport.height), pixel_ratio);
+        params->render_flush(params->user_ptr);
+        params->render_viewport(params->user_ptr, static_cast<f32>(viewport.width),
+                                static_cast<f32>(viewport.height), pixel_ratio);
     }
 
     void NVGRenderer::load_fonts(const std::vector<FontInfo>& fonts)

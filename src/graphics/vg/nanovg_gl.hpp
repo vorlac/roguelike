@@ -37,11 +37,12 @@ namespace rl::nvg {
     int nvglCreateImageFromHandleGL2(NVGcontext* ctx, GLuint textureId, int w, int h, int flags);
     GLuint nvglImageHandleGL2(NVGcontext* ctx, int image);
 
-    NVGcontext* nvgCreateGL3(int flags);
-    void nvgDeleteGL3(NVGcontext* ctx);
+    NVGcontext* nvg_create_gl3(int flags);
+    void nvg_delete_gl3(NVGcontext* ctx);
 
-    int nvglCreateImageFromHandleGL3(NVGcontext* ctx, GLuint textureId, int w, int h, int flags);
-    GLuint nvglImageHandleGL3(NVGcontext* ctx, int image);
+    int nvgl_create_image_from_handle_gl3(NVGcontext* ctx, GLuint textureId, int w, int h,
+                                          int flags);
+    GLuint nvgl_image_handle_gl3(NVGcontext* ctx, int image);
 
     NVGcontext* nvgCreateGLES2(int flags);
     void nvgDeleteGLES2(NVGcontext* ctx);
@@ -63,7 +64,7 @@ namespace rl::nvg {
     // Create VTables for different OpenGL (ES) versions.
 
     extern const NanoVG_GL_Functions_VTable NanoVG_GL2_Functions_VTable;
-    extern const NanoVG_GL_Functions_VTable NanoVG_GL3_Functions_VTable;
+    extern const NanoVG_GL_Functions_VTable NANO_VG_GL3_FUNCTIONS_V_TABLE;
     extern const NanoVG_GL_Functions_VTable NanoVG_GLES2_Functions_VTable;
     extern const NanoVG_GL_Functions_VTable NanoVG_GLES3_Functions_VTable;
 

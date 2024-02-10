@@ -19,59 +19,30 @@ namespace rl::ds {
     struct color
     {
     public:
-        constexpr static inline T transparent = T(0);
-        constexpr static inline T opaque = sizeof(T) == sizeof(u8) ? static_cast<T>(255)
-                                                                   : static_cast<T>(1.0f);
-
-    public:
         consteval color() = default;
         constexpr ~color() = default;
 
-        consteval color(T cr, T cg, T cb, T ca = opaque)
-            : r{ cr }
-            , g{ cg }
-            , b{ cb }
-            , a{ ca }
+        constexpr color(T fr, T fg, T fb, T fa = 1.0f)
+            requires std::same_as<T, f32>
+            : r{ std::forward<T>(fr) }
+            , g{ std::forward<T>(fg) }
+            , b{ std::forward<T>(fb) }
+            , a{ std::forward<T>(fa) }
         {
         }
 
-        constexpr color(color<T>&& other) noexcept
-            : r{ other.r }
-            , g{ other.g }
-            , b{ other.b }
-            , a{ other.a }
-        {
-        }
-
-        constexpr color(const color<T>& other)
-            : r{ other.r }
-            , g{ other.g }
-            , b{ other.b }
-            , a{ other.a }
-        {
-        }
-
-        constexpr color(T ri, T gi, T bi, T ai = opaque)
-            requires rl::integer<T>
-            : r{ static_cast<u8>(ri) }
-            , g{ static_cast<u8>(gi) }
-            , b{ static_cast<u8>(bi) }
-            , a{ static_cast<u8>(ai) }
-        {
-        }
-
-        constexpr color(T rf, T gf, T bf, T af = opaque)
-            requires rl::floating_point<T>
-            : r{ static_cast<f32>(rf) }
-            , g{ static_cast<f32>(gf) }
-            , b{ static_cast<f32>(bf) }
-            , a{ static_cast<f32>(af) }
+        constexpr color(T ir, T ig, T ib, T ia = 255)
+            requires std::same_as<T, u8>
+            : r{ std::forward<T>(ir) }
+            , g{ std::forward<T>(ig) }
+            , b{ std::forward<T>(ib) }
+            , a{ std::forward<T>(ia) }
         {
         }
 
         template <rl::integer I>
-            requires rl::floating_point<T>
-        constexpr color(I ri, I gi, I bi, I ai = opaque)
+            requires std::same_as<T, f32>
+        constexpr color(I ri, I gi, I bi, I ai = 255)
             : r{ static_cast<T>(static_cast<u8>(ri) / 255.0f) }
             , g{ static_cast<T>(static_cast<u8>(gi) / 255.0f) }
             , b{ static_cast<T>(static_cast<u8>(bi) / 255.0f) }
@@ -80,17 +51,33 @@ namespace rl::ds {
         }
 
         template <rl::floating_point F>
-            requires rl::integer<T>
-        explicit constexpr color(F rf, F gf, F bf, F af = opaque)
-            : r{ static_cast<T>(std::clamp(static_cast<f32>(rf) * 255.0f, 0.0f, 255.0f)) }
-            , g{ static_cast<T>(std::clamp(static_cast<f32>(gf) * 255.0f, 0.0f, 255.0f)) }
-            , b{ static_cast<T>(std::clamp(static_cast<f32>(bf) * 255.0f, 0.0f, 255.0f)) }
-            , a{ static_cast<T>(std::clamp(static_cast<f32>(af) * 255.0f, 0.0f, 255.0f)) }
+            requires std::same_as<T, u8>
+        explicit constexpr color(F rf, F gf, F bf, F af = 1.0f)
+            : r{ static_cast<u8>(std::clamp(static_cast<f32>(rf) * 255.0f, 0.0f, 255.0f)) }
+            , g{ static_cast<u8>(std::clamp(static_cast<f32>(gf) * 255.0f, 0.0f, 255.0f)) }
+            , b{ static_cast<u8>(std::clamp(static_cast<f32>(bf) * 255.0f, 0.0f, 255.0f)) }
+            , a{ static_cast<u8>(std::clamp(static_cast<f32>(af) * 255.0f, 0.0f, 255.0f)) }
+        {
+        }
+
+        constexpr color(color<T>&& other) noexcept
+            : r{ std::forward<T>(other.r) }
+            , g{ std::forward<T>(other.g) }
+            , b{ std::forward<T>(other.b) }
+            , a{ std::forward<T>(other.a) }
+        {
+        }
+
+        constexpr color(const color<T>& other)
+            : r{ std::forward<const T>(other.r) }
+            , g{ std::forward<const T>(other.g) }
+            , b{ std::forward<const T>(other.b) }
+            , a{ std::forward<const T>(other.a) }
         {
         }
 
         // 0xRRGGBBAA
-        explicit constexpr color(u32 rgba)
+        explicit constexpr color(const u32 rgba)
             requires std::same_as<T, u8>
             : r{ static_cast<u8>(0xff & (rgba >> (8 * 3))) }
             , g{ static_cast<u8>(0xff & (rgba >> (8 * 2))) }
@@ -100,7 +87,7 @@ namespace rl::ds {
         }
 
         // 0xRRGGBBAA
-        explicit constexpr color(u32 rgba)
+        explicit constexpr color(const u32 rgba)
             requires std::same_as<T, f32>
             : r{ ((0xff & rgba >> 8 * 3) / 255.0f) }
             , g{ ((0xff & rgba >> 8 * 2) / 255.0f) }
@@ -115,17 +102,16 @@ namespace rl::ds {
             : r{ rgb.r }
             , g{ rgb.g }
             , b{ rgb.b }
-            , a{ opaque }
+            , a{ 255 }
         {
         }
 
-        constexpr static color<T> rand()
+        constexpr static color<u8> rand()
         {
-            return color<T>{
+            return color{
                 static_cast<u8>(rl::random<0, 128>::value()),
                 static_cast<u8>(rl::random<0, 128>::value()),
                 static_cast<u8>(rl::random<0, 128>::value()),
-                static_cast<u8>(opaque),
             };
         }
 
@@ -133,10 +119,10 @@ namespace rl::ds {
             requires rl::integer<T>
         {
             return nvg::NVGcolor{
-                static_cast<f32>(std::clamp(static_cast<T>(r) / 255.0f, 0.0f, 255.0f)),
-                static_cast<f32>(std::clamp(static_cast<T>(g) / 255.0f, 0.0f, 255.0f)),
-                static_cast<f32>(std::clamp(static_cast<T>(b) / 255.0f, 0.0f, 255.0f)),
-                static_cast<f32>(std::clamp(static_cast<T>(a) / 255.0f, 0.0f, 255.0f)),
+                std::clamp(static_cast<T>(r) / 255.0f, 0.0f, 255.0f),
+                std::clamp(static_cast<T>(g) / 255.0f, 0.0f, 255.0f),
+                std::clamp(static_cast<T>(b) / 255.0f, 0.0f, 255.0f),
+                std::clamp(static_cast<T>(a) / 255.0f, 0.0f, 255.0f),
             };
         }
 
@@ -306,21 +292,23 @@ namespace rl::ds {
         }
 
     public:
+        [[nodiscard]]
         consteval color<f32> to_f32() const
             requires std::same_as<T, u8>
         {
-            return color{
-                static_cast<f32>(std::clamp(this->r / 255.0f, 0.0f, 1.0f)),
-                static_cast<f32>(std::clamp(this->g / 255.0f, 0.0f, 1.0f)),
-                static_cast<f32>(std::clamp(this->b / 255.0f, 0.0f, 1.0f)),
-                static_cast<f32>(std::clamp(this->a / 255.0f, 0.0f, 1.0f)),
+            return color<f32>{
+                std::clamp(this->r / 255.0f, 0.0f, 1.0f),
+                std::clamp(this->g / 255.0f, 0.0f, 1.0f),
+                std::clamp(this->b / 255.0f, 0.0f, 1.0f),
+                std::clamp(this->a / 255.0f, 0.0f, 1.0f),
             };
         }
 
+        [[nodiscard]]
         consteval color<u8> to_u8() const
             requires std::same_as<T, f32>
         {
-            return color{
+            return color<u8>{
                 static_cast<u8>(std::clamp(static_cast<u8>(this->r) * 255.0f, 0.0f, 255.0f)),
                 static_cast<u8>(std::clamp(static_cast<u8>(this->g) * 255.0f, 0.0f, 255.0f)),
                 static_cast<u8>(std::clamp(static_cast<u8>(this->b) * 255.0f, 0.0f, 255.0f)),
@@ -329,56 +317,56 @@ namespace rl::ds {
         }
 
         consteval operator const nvg::NVGcolor()
-            requires rl::floating_point<T>
+            requires std::same_as<T, f32>
         {
-            return nvg::NVGcolor{
-                static_cast<f32>(this->r),
-                static_cast<f32>(this->g),
-                static_cast<f32>(this->b),
-                static_cast<f32>(this->a),
-            };
+            return nvg::NVGcolor{ {
+                std::forward<f32>(this->r),
+                std::forward<f32>(this->g),
+                std::forward<f32>(this->b),
+                std::forward<f32>(this->a),
+            } };
         }
 
         constexpr operator const nvg::NVGcolor() const
-            requires rl::floating_point<T>
+            requires std::same_as<T, f32>
         {
-            return nvg::NVGcolor{
-                static_cast<f32>(this->r),
-                static_cast<f32>(this->g),
-                static_cast<f32>(this->b),
-                static_cast<f32>(this->a),
-            };
+            return nvg::NVGcolor{ {
+                std::forward<const f32>(this->r),
+                std::forward<const f32>(this->g),
+                std::forward<const f32>(this->b),
+                std::forward<const f32>(this->a),
+            } };
         }
 
         consteval operator nvg::NVGcolor()
-            requires rl::integer<T>
+            requires std::same_as<T, u8>
         {
-            return nvg::NVGcolor{
-                static_cast<f32>(std::clamp(static_cast<u8>(this->r) / 255.0f, 0.0f, 1.0f)),
-                static_cast<f32>(std::clamp(static_cast<u8>(this->g) / 255.0f, 0.0f, 1.0f)),
-                static_cast<f32>(std::clamp(static_cast<u8>(this->b) / 255.0f, 0.0f, 1.0f)),
-                static_cast<f32>(std::clamp(static_cast<u8>(this->a) / 255.0f, 0.0f, 1.0f)),
-            };
+            return nvg::NVGcolor{ {
+                std::clamp(static_cast<u8>(this->r) / 255.0f, 0.0f, 1.0f),
+                std::clamp(static_cast<u8>(this->g) / 255.0f, 0.0f, 1.0f),
+                std::clamp(static_cast<u8>(this->b) / 255.0f, 0.0f, 1.0f),
+                std::clamp(static_cast<u8>(this->a) / 255.0f, 0.0f, 1.0f),
+            } };
         }
 
         constexpr operator nvg::NVGcolor() const
-            requires rl::integer<T>
+            requires std::same_as<T, u8>
         {
-            return nvg::NVGcolor{
-                static_cast<f32>(std::clamp(static_cast<u8>(this->r) / 255.0f, 0.0f, 1.0f)),
-                static_cast<f32>(std::clamp(static_cast<u8>(this->g) / 255.0f, 0.0f, 1.0f)),
-                static_cast<f32>(std::clamp(static_cast<u8>(this->b) / 255.0f, 0.0f, 1.0f)),
-                static_cast<f32>(std::clamp(static_cast<u8>(this->a) / 255.0f, 0.0f, 1.0f)),
-            };
+            return nvg::NVGcolor{ {
+                std::clamp(static_cast<u8>(this->r) / 255.0f, 0.0f, 1.0f),
+                std::clamp(static_cast<u8>(this->g) / 255.0f, 0.0f, 1.0f),
+                std::clamp(static_cast<u8>(this->b) / 255.0f, 0.0f, 1.0f),
+                std::clamp(static_cast<u8>(this->a) / 255.0f, 0.0f, 1.0f),
+            } };
         }
 
-        constexpr operator fmt::rgb() const
-            requires rl::integer<T>
+        explicit constexpr operator fmt::rgb() const
+            requires std::same_as<T, u8>
         {
             return fmt::rgb{ r, g, b };
         }
 
-        constexpr operator fmt::text_style() const
+        explicit constexpr operator fmt::text_style() const
         {
             return fmt::fg(static_cast<fmt::rgb>(*this));
         }
@@ -387,7 +375,7 @@ namespace rl::ds {
         T r{ 0 };
         T g{ 0 };
         T b{ 0 };
-        T a{ opaque };
+        T a{ rl::integer<T> ? 255 : 1.0f };
     };
 
 #pragma pack()
@@ -396,20 +384,20 @@ namespace rl::ds {
 namespace rl {
     struct Colors
     {
-        constexpr static inline ds::color<f32> Transparent{ 0.0f, 0.0f, 0.0f, 0.0f };
-        constexpr static inline ds::color<f32> White{ 1.0f, 1.0f, 1.0f, 1.0f };
-        constexpr static inline ds::color<f32> LightGrey{ 0.756862f, 0.768627f, 0.792156f, 1.0f };
-        constexpr static inline ds::color<f32> Grey{ 0.65098f, 0.65098f, 0.65098f, 1.0f };
-        constexpr static inline ds::color<f32> DarkGrey{ 0.14901961f, 0.16862746f, 0.2f, 1.0f };
-        constexpr static inline ds::color<f32> DarkerGrey{ 0.2f, 0.2f, 0.2f, 1.0f };
-        constexpr static inline ds::color<f32> DarkererGrey{ 0.066667f, 0.066667f, 0.066667f, 1.0f };
-        constexpr static inline ds::color<f32> Black{ 0.0f, 0.0f, 0.0f, 1.0f };
-        constexpr static inline ds::color<f32> Red{ 0.83137256f, 0.6431373f, 0.6431373f, 1.0f };
-        constexpr static inline ds::color<f32> Green{ 0.6039216f, 0.6862745f, 0.54509807f, 1.0f };
-        constexpr static inline ds::color<f32> Yellow{ 0.7921569f, 0.7215686f, 0.501960f, 1.0f };
-        constexpr static inline ds::color<f32> Blue{ 0.46666667f, 0.6156863f, 0.7882353f, 1.0f };
-        constexpr static inline ds::color<f32> Purple{ 0.7137255f, 0.6784314f, 0.85882354f, 1.0f };
-        constexpr static inline ds::color<f32> Cyan{ 0.5137255f, 0.69803923f, 0.7137255f, 1.0f };
-        constexpr static inline ds::color<f32> Background{ 0.156862f, 0.172549f, 0.203921f, 1.0f };
+        constexpr static inline ds::color<f32> Transparent{ 0, 0, 0, 0 };
+        constexpr static inline ds::color<f32> White{ 255, 255, 255, 255 };
+        constexpr static inline ds::color<f32> LightGrey{ 192, 195, 201, 255 };
+        constexpr static inline ds::color<f32> Grey{ 165, 165, 165, 255 };
+        constexpr static inline ds::color<f32> DarkGrey{ 38, 43, 51, 255 };
+        constexpr static inline ds::color<f32> DarkerGrey{ 51, 51, 51, 255 };
+        constexpr static inline ds::color<f32> DarkererGrey{ 17, 17, 17, 255 };
+        constexpr static inline ds::color<f32> Black{ 0, 0, 0, 255 };
+        constexpr static inline ds::color<f32> Red{ 212, 164, 164, 255 };
+        constexpr static inline ds::color<f32> Green{ 154, 175, 139, 255 };
+        constexpr static inline ds::color<f32> Yellow{ 202, 183, 127, 255 };
+        constexpr static inline ds::color<f32> Blue{ 119, 157, 201, 255 };
+        constexpr static inline ds::color<f32> Purple{ 182, 173, 219, 255 };
+        constexpr static inline ds::color<f32> Cyan{ 131, 178, 182, 255 };
+        constexpr static inline ds::color<f32> Background{ 39, 43, 51, 255 };
     };
 }

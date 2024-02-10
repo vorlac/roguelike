@@ -19,7 +19,7 @@ namespace rl {
     class NVGRenderer
     {
     public:
-        using FontInfo = std::pair<std::string, std::u8string_view>;
+        using FontInfo = std::pair<std::string, std::basic_string_view<u8>>;
 
     public:
         NVGRenderer();
@@ -32,7 +32,7 @@ namespace rl {
         void restore_state() const;
 
         ui::Font::ID load_font(const std::string_view& font_name,
-                               const std::u8string_view& font_ttf) const;
+                               const std::basic_string_view<u8>& font_ttf) const;
 
         void load_fonts(const std::vector<FontInfo>& fonts);
         void set_text_properties(const std::string_view& font_name, f32 font_size,

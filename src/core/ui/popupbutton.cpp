@@ -78,7 +78,7 @@ namespace rl::ui {
             const ds::color<f32>& text_color{ m_text_color.a == 0.0f ? m_theme->text_color
                                                                      : m_text_color };
             auto&& context{ m_renderer->context() };
-            nvg::font_face(context, Font::Name::Icons);
+            font_face(context, Font::Name::Icons);
             nvg::font_size(context, text_size * this->icon_scale());
             nvg::fill_color(context, m_enabled ? text_color : m_theme->disabled_text_color);
             nvg::text_align(context, Text::Alignment::HLeftVMiddle);

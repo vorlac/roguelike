@@ -20,20 +20,20 @@ namespace rl::nvg {
     {
         // GLint defaultFBO;
         GLint defaultRBO;
-        NVGLUframebuffer* fb = NULL;
+        NVGLUframebuffer* fb = nullptr;
 
         glGetIntegerv(GL_FRAMEBUFFER_BINDING, &defaultFBO);
         glGetIntegerv(GL_RENDERBUFFER_BINDING, &defaultRBO);
 
         fb = (NVGLUframebuffer*)malloc(sizeof(NVGLUframebuffer));
-        if (fb == NULL)
+        if (fb == nullptr)
             goto error;
         memset(fb, 0, sizeof(NVGLUframebuffer));
 
         fb->image = nvg::create_image_rgba(
-            ctx, w, h, imageFlags | NVG_IMAGE_FLIPY | NVG_IMAGE_PREMULTIPLIED, NULL);
+            ctx, w, h, imageFlags | NVGImageFlipy | NVGImagePremultiplied, nullptr);
 
-        fb->texture = nvglImageHandleGL3(ctx, fb->image);
+        fb->texture = nvgl_image_handle_gl3(ctx, fb->image);
         fb->ctx = ctx;
 
         // frame buffer object
@@ -74,19 +74,19 @@ namespace rl::nvg {
 
         nvgluDeleteFramebufferGL3(fb);
 
-        return NULL;
+        return nullptr;
     }
 
     void nvgluBindFramebufferGL3(NVGLUframebuffer* fb)
     {
         if (defaultFBO == -1)
             glGetIntegerv(GL_FRAMEBUFFER_BINDING, &defaultFBO);
-        glBindFramebuffer(GL_FRAMEBUFFER, fb != NULL ? fb->fbo : defaultFBO);
+        glBindFramebuffer(GL_FRAMEBUFFER, fb != nullptr ? fb->fbo : defaultFBO);
     }
 
     void nvgluDeleteFramebufferGL3(NVGLUframebuffer* fb)
     {
-        if (fb == NULL)
+        if (fb == nullptr)
             return;
         if (fb->fbo != 0)
             glDeleteFramebuffers(1, &fb->fbo);
@@ -94,7 +94,7 @@ namespace rl::nvg {
             glDeleteRenderbuffers(1, &fb->rbo);
         if (fb->image >= 0)
             nvg::delete_image(fb->ctx, fb->image);
-        fb->ctx = NULL;
+        fb->ctx = nullptr;
         fb->fbo = 0;
         fb->rbo = 0;
         fb->texture = 0;

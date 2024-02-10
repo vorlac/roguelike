@@ -63,17 +63,17 @@
             <Item Name="[green]">g,nvog</Item>
             <Item Name="[blue]">b,nvog</Item>
             <Item Name="[alpha]">a,nvog</Item>
-            <Item Name="color&lt;f32&gt;" Optional="true">this->to_f32()</Item>
-            <Item Name="color&lt;u8&gt;" Optional="true">this->to_u8()</Item>
+            <Item Name="color&lt;f32&gt;" Optional="true">to_f32()</Item>
+            <Item Name="color&lt;u8&gt;" Optional="true">to_u8()</Item>
         </Expand>
     </Type>
 
     <!-- - - - - - - -->
     <!--  NVGcolor - -->
     <!-- - - - - - - -->
-    <Type Name="NVGcolor">
+    <Type Name="rl::nvg::NVGcolor">
         <DisplayString>
-            NVGcolor{{r={r,g}, g={g,g}, b={r,g}}}
+            NVGcolor[r={r,g} g={g,g} b={r,g} a={a,g}]
         </DisplayString>
         <Expand HideRawView="true">
             <Item Name="[red]">r,nvog</Item>
@@ -109,45 +109,45 @@
     <!-- - - - - - - - - -->
     <Type Name="rl::ui::Theme">
         <DisplayString>
-            refcount:{m_references,,nvog}
+            refcount:{m_references,nvog}
         </DisplayString>
         <Expand HideRawView="true">
             <Item Name="refcount">m_references</Item>
             <Synthetic Name="fonts">
                 <DisplayString>
-                    Size:{m_standard_font_size}
+                    Size:{standard_font_size}
                 </DisplayString>
                 <Expand>
-                    <Item Name="Sans Regular">m_font_sans_regular</Item>
-                    <Item Name="Sans Bold">m_font_sans_bold</Item>
-                    <Item Name="Mono Regular">m_font_mono_regular</Item>
-                    <Item Name="Icons Font">m_font_icons</Item>
-                    <Item Name="Standard Font Size">m_standard_font_size</Item>
+                    <Item Name="Sans Regular">font_sans_regular</Item>
+                    <Item Name="Sans Bold">font_sans_bold</Item>
+                    <Item Name="Mono Regular">font_mono_regular</Item>
+                    <Item Name="Icons Font">font_icons</Item>
+                    <Item Name="Standard Font Size">standard_font_size</Item>
                 </Expand>
             </Synthetic>
 
-            <Synthetic Name="colors">
+          <Synthetic Name="[base colors]">
                 <DisplayString>
                 </DisplayString>
                 <Expand>
-                    <Item Name="Drop Shadow">m_drop_shadow</Item>
-                    <Item Name="Transparent">m_transparent</Item>
-                    <Item Name="Border: Dark">m_border_dark</Item>
-                    <Item Name="Border: Light">m_border_light</Item>
-                    <Item Name="Border: Medium">m_border_medium</Item>
-                    <Item Name="Text Foreground">m_text_color</Item>
-                    <Item Name="Disabled Text">m_disabled_text_color</Item>
-                    <Item Name="Text Shadow">m_text_shadow_color</Item>
-                    <Item Name="Icon Color">m_icon_color</Item>
+                    <Item Name="Drop Shadow">drop_shadow</Item>
+                    <Item Name="Transparent">transparent</Item>
+                    <Item Name="Border: Dark">border_dark</Item>
+                    <Item Name="Border: Light">border_light</Item>
+                    <Item Name="Border: Medium">border_medium</Item>
+                    <Item Name="Text Foreground">text_color</Item>
+                    <Item Name="Disabled Text">disabled_text_color</Item>
+                    <Item Name="Text Shadow">text_shadow_color</Item>
+                    <Item Name="Icon Color">icon_color</Item>
                 </Expand>
             </Synthetic>
 
-            <Synthetic Name="icons">
+            <Synthetic Name="[icons]">
                 <DisplayString>
-                    Scale:{m_icon_scale}
+                    Scale:{icon_scale}
                 </DisplayString>
                 <Expand>
-                    <Item Name="Scale">m_icon_scale</Item>
+                    <Item Name="Scale">icon_scale</Item>
                 </Expand>
             </Synthetic>
 
@@ -155,19 +155,27 @@
                 <DisplayString>
                 </DisplayString>
                 <Expand>
-                    <Item Name="Font Size">m_button_font_size</Item>
-                    <Item Name="Corner Radius">m_button_corner_radius</Item>
-                    <Item Name="Drop Shadow Size">m_window_drop_shadow_size</Item>
-                    <Synthetic Name="[button colors]">
+                    <Item Name="Font Size">button_font_size</Item>
+                    <Item Name="Corner Radius">button_corner_radius</Item>
+                    <Item Name="Drop Shadow Size">dialog_drop_shadow_size</Item>
+                    <Synthetic Name="[colors]">
                         <DisplayString>
                         </DisplayString>
                         <Expand>
-                            <Item Name="Gradient Top: Focused">m_button_gradient_top_focused</Item>
-                            <Item Name="Gradient Bop: Focused">m_button_gradient_bot_focused</Item>
-                            <Item Name="Gradient Top: Unfocused">m_button_gradient_top_unfocused</Item>
-                            <Item Name="Gradient Bop: Unfocused">m_button_gradient_bot_unfocused</Item>
-                            <Item Name="Gradient Top: Pressed">m_button_gradient_top_pushed</Item>
-                            <Item Name="Gradient Bop: Pressed">m_button_gradient_bot_pushed</Item>
+                            <Item Name="Gradient Top: Focused">button_gradient_top_focused</Item>
+                            <Item Name="Gradient Bop: Focused">button_gradient_bot_focused</Item>
+                            <Item Name="Gradient Top: Unfocused">button_gradient_top_unfocused</Item>
+                            <Item Name="Gradient Bop: Unfocused">button_gradient_bot_unfocused</Item>
+                            <Item Name="Gradient Top: Pressed">button_gradient_top_pushed</Item>
+                            <Item Name="Gradient Bop: Pressed">button_gradient_bot_pushed</Item>
+                        </Expand>
+                    </Synthetic>
+                    <Synthetic Name="[icons]">
+                        <DisplayString>
+                        </DisplayString>
+                        <Expand>
+                            <Item Name="Popup Button Icon (L)">popup_chevron_left_icon</Item>
+                            <Item Name="Popup Button Icon (R)">popup_chevron_right_icon</Item>
                         </Expand>
                     </Synthetic>
                 </Expand>
@@ -177,9 +185,9 @@
                 <DisplayString>
                 </DisplayString>
                 <Expand>
-                    <Item Name="Font Size">m_text_box_font_size</Item>
-                    <Item Name="Box Up Icon">m_text_box_up_icon</Item>
-                    <Item Name="Box Down Icon">m_text_box_down_icon</Item>
+                    <Item Name="Font Size">text_box_font_size</Item>
+                    <Item Name="Box Up Icon">text_box_up_icon</Item>
+                    <Item Name="Box Down Icon">text_box_down_icon</Item>
                 </Expand>
             </Synthetic>
 
@@ -187,13 +195,13 @@
                 <DisplayString>
                 </DisplayString>
                 <Expand>
-                    <Item Name="Border Width">m_tab_border_width</Item>
-                    <Item Name="Inner Margin">m_tab_inner_margin</Item>
-                    <Item Name="Min Button Width">m_tab_min_button_width</Item>
-                    <Item Name="Max Button Width">m_tab_max_button_width</Item>
-                    <Item Name="Control Width">m_tab_control_width</Item>
-                    <Item Name="Button Horizontal Padding">m_tab_button_horizontal_padding</Item>
-                    <Item Name="Button Vertical Padding">m_tab_button_vertical_padding</Item>
+                    <Item Name="Border Width">tab_border_width</Item>
+                    <Item Name="Inner Margin">tab_inner_margin</Item>
+                    <Item Name="Min Button Width">tab_min_button_width</Item>
+                    <Item Name="Max Button Width">tab_max_button_width</Item>
+                    <Item Name="Control Width">tab_control_width</Item>
+                    <Item Name="Button Horizontal Padding">tab_button_horizontal_padding</Item>
+                    <Item Name="Button Vertical Padding">tab_button_vertical_padding</Item>
                 </Expand>
             </Synthetic>
 
@@ -201,23 +209,23 @@
                 <DisplayString>
                 </DisplayString>
                 <Expand>
-                    <Item Name="Corner Radius">m_window_corner_radius</Item>
-                    <Item Name="Header Height">m_window_header_height</Item>
-                    <Item Name="Drop Shadow Size">m_window_drop_shadow_size</Item>
+                    <Item Name="Corner Radius">dialog_corner_radius</Item>
+                    <Item Name="Header Height">dialog_header_height</Item>
+                    <Item Name="Drop Shadow Size">dialog_drop_shadow_size</Item>
                     <Synthetic Name="[colors]">
                         <DisplayString>
                         </DisplayString>
                         <Expand>
-                            <Item Name="Fill: Unfocused">m_window_fill_unfocused</Item>
-                            <Item Name="Fill: Focused">m_window_fill_focused</Item>
-                            <Item Name="Title: Unfocused">m_window_title_unfocused</Item>
-                            <Item Name="Title: Focused">m_window_title_focused</Item>
-                            <Item Name="Header Gradient: Top">m_window_header_gradient_top</Item>
-                            <Item Name="Header Gradient: Bot">m_window_header_gradient_bot</Item>
-                            <Item Name="Header Gradient: Top">m_window_header_sep_top</Item>
-                            <Item Name="Header Gradient: Bot">m_window_header_sep_bot</Item>
-                            <Item Name="Popup">m_window_popup</Item>
-                            <Item Name="Popup Transparent">m_window_popup_transparent</Item>
+                            <Item Name="Fill: Unfocused">dialog_fill_unfocused</Item>
+                            <Item Name="Fill: Focused">dialog_fill_focused</Item>
+                            <Item Name="Title: Unfocused">dialog_title_unfocused</Item>
+                            <Item Name="Title: Focused">dialog_title_focused</Item>
+                            <Item Name="Header Gradient: Top">dialog_header_gradient_top</Item>
+                            <Item Name="Header Gradient: Bot">dialog_header_gradient_bot</Item>
+                            <Item Name="Header Gradient: Top">dialog_header_sep_top</Item>
+                            <Item Name="Header Gradient: Bot">dialog_header_sep_bot</Item>
+                            <Item Name="Popup: Fill">dialog_popup_fill</Item>
+                            <Item Name="Popup Transparent">dialog_popup_transparent</Item>
                         </Expand>
                     </Synthetic>
                 </Expand>
@@ -227,7 +235,7 @@
                 <DisplayString>
                 </DisplayString>
                 <Expand>
-                    <Item Name="Checkbox Icon">m_check_box_icon</Item>
+                    <Item Name="Checkbox Icon">check_box_icon</Item>
                 </Expand>
             </Synthetic>
 
@@ -235,11 +243,11 @@
                 <DisplayString>
                 </DisplayString>
                 <Expand>
-                    <Item Name="Information Icon">m_message_information_icon</Item>
-                    <Item Name="Question Icon">m_message_question_icon</Item>
-                    <Item Name="Warning Icon">m_message_warning_icon</Item>
-                    <Item Name="Alt Button Icon">m_message_alt_button_icon</Item>
-                    <Item Name="Primary Button Icon">m_message_primary_button_icon</Item>
+                    <Item Name="Information Icon">message_information_icon</Item>
+                    <Item Name="Question Icon">message_question_icon</Item>
+                    <Item Name="Warning Icon">message_warning_icon</Item>
+                    <Item Name="Alt Button Icon">message_alt_button_icon</Item>
+                    <Item Name="Primary Button Icon">message_primary_button_icon</Item>
                 </Expand>
             </Synthetic>
 
@@ -247,8 +255,8 @@
                 <DisplayString>
                 </DisplayString>
                 <Expand>
-                    <Item Name="Chevron Right Icon">m_popup_chevron_right_icon</Item>
-                    <Item Name="Chevron Left Icon">m_popup_chevron_left_icon</Item>
+                    <Item Name="Chevron Right Icon">popup_chevron_right_icon</Item>
+                    <Item Name="Chevron Left Icon">popup_chevron_left_icon</Item>
                 </Expand>
             </Synthetic>
 
@@ -311,9 +319,9 @@
     </Type>
 
     <!-- - - - - - - - - - - - - - - -  -->
-    <!-- rl::Renderer::Properties- -->
+    <!-- rl::GLRenderer::Properties- -->
     <!-- - - - - - - - - - - - - - - -  -->
-    <Type Name="rl::Renderer::Properties">
+    <Type Name="rl::GLRenderer::Properties">
         <DisplayString Condition="0 == _Array[0]">{{}}</DisplayString>
         <DisplayString Condition="0 != _Array[0]">
             {(rl::Renderer::Properties::Flag)_Array[0],en}
@@ -367,9 +375,9 @@
     </Type>
 
     <!-- - - - - - - - - - - - - - - -  -->
-    <!-- - rl::Window::Properties- -->
+    <!-- - rl::MainWindow::Properties- -->
     <!-- - - - - - - - - - - - - - - -  -->
-    <Type Name="rl::Window::Properties">
+    <Type Name="rl::MainWindow::Properties">
         <DisplayString Condition="0 == _Array[0]">{{}}</DisplayString>
         <DisplayString Condition="0 != _Array[0]">
             {(rl::Window::Properties::Flag)_Array[0],en}

@@ -280,7 +280,7 @@ namespace rl::ui {
                                              : m_theme->disabled_text_color.nvg());
 
                 auto icon{ utf8(std::to_underlying(m_theme->text_box_up_icon)) };
-                nvg::text_align(context, nvg::NVG_ALIGN_LEFT | nvg::NVG_ALIGN_MIDDLE);
+                nvg::text_align(context, nvg::NVGAlignLeft | nvg::NVGAlignMiddle);
 
                 ds::point<f32> icon_pos{
                     m_pos.x + 4.0f,
@@ -403,7 +403,7 @@ namespace rl::ui {
 
                     // draw selection
                     nvg::begin_path(context);
-                    nvg::fill_color(context, nvg::RGBA(255, 255, 255, 80));
+                    nvg::fill_color(context, nvg::rgba(255, 255, 255, 80));
                     nvg::rect(context, caretx, draw_pos.y - lineh * 0.5f, selx - caretx, lineh);
                     nvg::fill(context);
                 }
@@ -414,7 +414,7 @@ namespace rl::ui {
                 nvg::begin_path(context);
                 nvg::move_to(context, caretx, draw_pos.y - lineh * 0.5f);
                 nvg::line_to(context, caretx, draw_pos.y + lineh * 0.5f);
-                nvg::stroke_color(context, nvg::RGBA(255, 192, 0, 255));
+                nvg::stroke_color(context, nvg::rgba(255, 192, 0, 255));
                 nvg::stroke_width(context, 1.0f);
                 nvg::stroke(context);
             }

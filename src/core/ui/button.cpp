@@ -135,7 +135,7 @@ namespace rl::ui {
         const f32 font_size{ m_font_size < 0.0f ? m_theme->button_font_size : m_font_size };
 
         nvg::font_size(context, font_size);
-        nvg::font_face(context, Font::Name::Sans);
+        nvg::font_face(context, Font::Name::SansBold);
 
         ds::dims icon_size{ 0.0f, font_size };
         const f32 text_width{ nvg::text_bounds(context, 0.0f, 0.0f, m_text.c_str(), nullptr,

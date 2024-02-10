@@ -8,7 +8,7 @@
 namespace rl {
     struct LocalTransform
     {
-        inline LocalTransform(const ui::Widget* widget) noexcept
+        LocalTransform(const ui::Widget* widget) noexcept
         {
 #ifndef NDEBUG
             // TODO: remove this after more testing
@@ -30,7 +30,7 @@ namespace rl {
             }
         }
 
-        inline ~LocalTransform() noexcept
+        ~LocalTransform() noexcept
         {
             const ui::Widget* widget{ m_stack.back() };
             nvg::translate(widget->context(), -widget->position());

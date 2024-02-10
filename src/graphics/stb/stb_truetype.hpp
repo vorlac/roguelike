@@ -272,8 +272,8 @@ using stbtt_int16 = signed short;
 using stbtt_uint32 = unsigned int;
 using stbtt_int32 = signed int;
 
-typedef char stbtt__check_size32[sizeof(stbtt_int32) == 4 ? 1 : -1];
-typedef char stbtt__check_size16[sizeof(stbtt_int16) == 2 ? 1 : -1];
+typedef char stbtt_check_size32[sizeof(stbtt_int32) == 4 ? 1 : -1];
+typedef char stbtt_check_size16[sizeof(stbtt_int16) == 2 ? 1 : -1];
 
 //// e.g. #define your own STBTT_ifloor/STBTT_iceil() to avoid math.h
 // #ifndef STBTT_ifloor
@@ -335,7 +335,7 @@ typedef char stbtt__check_size16[sizeof(stbtt_int16) == 2 ? 1 : -1];
 // #endif
 //
 // typedef int
-//     stbtt__test_oversample_pow2[(STBTT_MAX_OVERSAMPLE & (STBTT_MAX_OVERSAMPLE - 1)) == 0 ? 1 :
+//     stbtt_test_oversample_pow2[(STBTT_MAX_OVERSAMPLE & (STBTT_MAX_OVERSAMPLE - 1)) == 0 ? 1 :
 //     -1];
 //
 // #ifndef STBTT_RASTERIZER_VERSION
@@ -351,7 +351,7 @@ typedef char stbtt__check_size16[sizeof(stbtt_int16) == 2 ? 1 : -1];
 namespace rl::stb {
 
     // private structure
-    struct stbtt__buf
+    struct stbtt_buf
     {
         unsigned char* data;
         int cursor;
@@ -595,12 +595,12 @@ namespace rl::stb {
         int index_map;         // a cmap mapping for our chosen character encoding
         int indexToLocFormat;  // format needed to map from glyph index to glyph
 
-        stbtt__buf cff;          // cff font data
-        stbtt__buf charstrings;  // the charstring index
-        stbtt__buf gsubrs;       // global charstring subroutines index
-        stbtt__buf subrs;        // private charstring subroutines index
-        stbtt__buf fontdicts;    // array of font dicts
-        stbtt__buf fdselect;     // map from glyph to fontdict
+        stbtt_buf cff;          // cff font data
+        stbtt_buf charstrings;  // the charstring index
+        stbtt_buf gsubrs;       // global charstring subroutines index
+        stbtt_buf subrs;        // private charstring subroutines index
+        stbtt_buf fontdicts;    // array of font dicts
+        stbtt_buf fdselect;     // map from glyph to fontdict
     };
 
     int stbtt_InitFont(stbtt_fontinfo* info, const unsigned char* data, int offset);
@@ -834,10 +834,10 @@ namespace rl::stb {
     {
         int w, h, stride;
         unsigned char* pixels;
-    } stbtt__bitmap;
+    } stbtt_bitmap;
 
     // rasterize a shape with quadratic beziers into a bitmap
-    void stbtt_Rasterize(stbtt__bitmap* result,         // 1-channel bitmap to draw into
+    void stbtt_Rasterize(stbtt_bitmap* result,          // 1-channel bitmap to draw into
                          float flatness_in_pixels,      // allowable error of curve in
                                                         // pixels
                          stbtt_vertex* vertices,        // array of vertices defining shape
