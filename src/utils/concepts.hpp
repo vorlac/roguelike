@@ -14,46 +14,84 @@ namespace rl::inline constraint {
     };
 
     template <typename T, typename... TOther>
-    concept any_of = (std::same_as<T, TOther> || ...);
+    concept any_of = (std::same_as<std::type_identity_t<T>, TOther> || ...);
 
-    template <typename T>
-    concept floating_point = any_of<T, f32, f64>;
+    template <typename... T>
+    concept floating_point = (any_of<std::type_identity_t<T>, f32, f64, double, float> || ...);
 
-    template <typename T>
-    concept signed_integer = any_of<T, i8, i16, i32, i64>;
+    template <typename... T>
+    concept signed_integer = (any_of<std::type_identity_t<T>, i8, i16, i32, i64> || ...);
 
-    template <typename T>
-    concept unsigned_integer = any_of<T, u8, u16, u32, u64>;
+    template <typename... T>
+    concept unsigned_integer = (any_of<std::type_identity_t<T>, u8, u16, u32, u64> || ...);
 
-    template <typename T>
-    concept integer = (unsigned_integer<T> || signed_integer<T>);
+    template <typename... T>
+    concept integer = ((unsigned_integer<std::type_identity_t<T>> ||
+                        signed_integer<std::type_identity_t<T>>) ||
+                       ...);
 
-    template <typename T>
-    concept numeric = (floating_point<T> || integer<T>);
+    template <typename... T>
+    concept numeric = ((floating_point<std::type_identity_t<T>> ||
+                        integer<std::type_identity_t<T>>) ||
+                       ...);
 
-    template <auto N>
-    concept positive_numeric = (numeric<decltype(N)> && N > 0);
+    template <auto... N>
+    concept positive_numeric = ((numeric<decltype(N)> && N > 0) || ...);
 
-    template <auto N>
-    concept negative_numeric = (numeric<decltype(N)> && N < 0);
+    template <auto... N>
+    concept negative_numeric = ((numeric<decltype(N)> && N < 0) || ...);
 
-    template <auto N>
-    concept positive_floating_point = positive_numeric<N> && floating_point<decltype(N)>;
+    template <auto A, auto B>
+    concept equal = (std::same_as<decltype(A), decltype(B)> && numeric<decltype(A)> &&
+                     numeric<decltype(B)> && A == B);
 
-    template <auto N>
-    concept negative_floating_point = negative_numeric<N> && floating_point<decltype(N)>;
+    template <auto A, auto B>
+    concept greater_than = (std::same_as<decltype(A), decltype(B)> && numeric<decltype(A)> &&
+                            numeric<decltype(B)> && A > B);
 
-    template <auto N>
-    concept positive_integer = positive_numeric<N> && integer<decltype(N)>;
+    template <auto A, auto B>
+    concept less_than = (std::same_as<decltype(A), decltype(B)> && numeric<decltype(A)> &&
+                         numeric<decltype(B)> && A < B);
 
-    template <auto N>
-    concept negative_integer = negative_numeric<N> && integer<decltype(N)>;
+    template <auto A, auto B>
+    concept greater_than_or_eq = (greater_than<A, B> || equal<A, B>);
+
+    template <auto A, auto B>
+    concept less_than_or_eq = (greater_than<A, B> || equal<A, B>);
+
+    template <auto... N>
+    concept positive_floating_point = ((positive_numeric<N> && floating_point<decltype(N)>) || ...);
+
+    template <auto... N>
+    concept negative_floating_point = ((negative_numeric<N> && floating_point<decltype(N)>) || ...);
+
+    template <auto... N>
+    concept positive_integer = ((positive_numeric<N> && integer<decltype(N)>) || ...);
+
+    template <auto... N>
+    concept negative_integer = ((negative_numeric<N> && integer<decltype(N)>) || ...);
 
     template <typename L, typename R>
-    concept higher_max = std::numeric_limits<L>::max() > std::numeric_limits<R>::max();
+    concept higher_precision = (floating_point<L, R> && greater_than<std::numeric_limits<L>::max(),
+                                                                     std::numeric_limits<R>::max()>);
+    template <typename L, typename R>
+    concept lower_precision = (floating_point<L, R> &&
+                               less_than_or_eq<std::numeric_limits<L>::max(),
+                                               std::numeric_limits<R>::max()>);
+    template <typename L, typename R>
+    concept lower_min = (integer<L, R> &&
+                         std::numeric_limits<L>::min() < std::numeric_limits<R>::min());
+    template <typename L, typename R>
+    concept higher_min = (integer<L, R> &&
+                          std::numeric_limits<L>::min() > std::numeric_limits<R>::min());
 
     template <typename L, typename R>
-    concept lower_min = std::numeric_limits<L>::min() < std::numeric_limits<R>::min();
+    concept lower_max = (integer<L, R> &&
+                         std::numeric_limits<L>::max() < std::numeric_limits<R>::max());
+
+    template <typename L, typename R>
+    concept higher_max = (integer<L, R> &&
+                          std::numeric_limits<L>::max() > std::numeric_limits<R>::max());
 
     template <typename T>
     concept scoped_enum = std::is_scoped_enum_v<T>;

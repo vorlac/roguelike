@@ -44,10 +44,10 @@ namespace rl::gl {
             runtime_assert(shaders_valid, "Failed to compile shaders");
 
             ds::point<f32> centroid{ viewport_rect.centroid() };
-            auto colors_size_mb = math::to_bytes(sizeof(f32) * 4 * m_rect_count, math::units::byte,
-                                                 math::units::megabyte);
+            auto colors_size_mb = math::to_bytes(sizeof(f32) * 4 * m_rect_count, math::Units::Byte,
+                                                 math::Units::Megabyte);
             auto positions_size_mb = math::to_bytes(sizeof(f32) * 3 * m_rect_count,
-                                                    math::units::byte, math::units::megabyte);
+                                                    math::Units::Byte, math::Units::Megabyte);
 
             m_rect_colors_data.reserve(m_rect_count);
             m_rect_positions_data.reserve(m_rect_count);
@@ -129,7 +129,7 @@ namespace rl::gl {
             glDeleteBuffers(1, &m_vbo_id);
         }
 
-        void set_draw_mode(DrawMode mode = DrawMode::Fill)
+        void set_draw_mode(const DrawMode mode = DrawMode::Fill) const
         {
             if (mode == m_draw_mode)
                 return;
