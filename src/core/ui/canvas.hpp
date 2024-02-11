@@ -7,7 +7,6 @@
 #include "core/ui/widget.hpp"
 #include "ds/dims.hpp"
 #include "ds/point.hpp"
-#include "ds/rect.hpp"
 #include "sdl/defs.hpp"
 #include "utils/numeric.hpp"
 #include "utils/time.hpp"

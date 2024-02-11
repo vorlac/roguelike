@@ -149,6 +149,7 @@ namespace rl::ui {
         f32 tab_button_horizontal_padding{ 10.0f };
         f32 tab_button_vertical_padding{ 2.0f };
 
+        // ReSharper disable once CppInconsistentNaming
         constexpr static inline ds::color<f32> drop_shadow{ 0, 0, 0, 128 };
         ds::color<f32> text_shadow{ 0, 0, 0, 128 };
         ds::color<f32> dialog_shadow{ 0, 0, 0, 128 };

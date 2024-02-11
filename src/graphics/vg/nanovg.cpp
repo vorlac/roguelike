@@ -2953,6 +2953,7 @@ namespace rl::nvg {
                 if (iter.prev_glyph_index == -1)          // still can not find glyph?
                     break;
             }
+
             prev_iter = iter;
             if (is_flipped)
             {
@@ -2965,6 +2966,7 @@ namespace rl::nvg {
                 q.t0 = q.t1;
                 q.t1 = tmp;
             }
+
             // Transform corners.
             transform_point(&c[0], &c[1], state->xform, q.x0 * invscale, q.y0 * invscale);
             transform_point(&c[2], &c[3], state->xform, q.x1 * invscale, q.y0 * invscale);

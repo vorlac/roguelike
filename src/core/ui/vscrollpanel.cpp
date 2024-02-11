@@ -1,5 +1,6 @@
 #include "core/ui/theme.hpp"
 #include "core/ui/vscrollpanel.hpp"
+#include "utils/math.hpp"
 
 namespace rl::ui {
 
@@ -160,7 +161,7 @@ namespace rl::ui {
         child->set_position({ 0.0f, yoffset });
         m_child_preferred_height = child->preferred_size().height;
         const f32 scrollh{ this->height() *
-                           std::min(1.0f, this->height() / m_child_preferred_height) };
+                           math::min(1.0f, this->height() / m_child_preferred_height) };
 
         if (m_update_layout)
         {
@@ -179,35 +180,44 @@ namespace rl::ui {
         if (m_child_preferred_height <= m_size.height)
             return;
 
-        ds::rect panel_rect{
-            ds::point{ m_pos.x + m_size.width - 12.0f + 1.0f, m_pos.y + 4.0f + 1.0f },
-            ds::dims{ 8.0f, m_size.height - 8.0f },
+        constexpr static f32 OUTLINE_SIZE{ 1.0f };
+        ds::rect<f32> panel_rect{
+            ds::point{
+                m_pos.x + m_size.width - 12.0f + OUTLINE_SIZE,
+                m_pos.y + 4.0f + OUTLINE_SIZE,
+            },
+            ds::dims{
+                8.0f,
+                m_size.height - 8.0f,
+            },
         };
 
         nvg::NVGpaint paint{ m_renderer->create_box_gradient(
             std::forward<ds::rect<f32>>(panel_rect), 3.0f, 4.0f, ds::color<f32>{ 0, 0, 0, 32 },
             ds::color<f32>{ 0, 0, 0, 92 }) };
 
-        m_renderer->draw_path([&] {
+        m_renderer->draw_path(false, [&] {
+            nvg::rounded_rect(context, m_pos.x + m_size.width - 12.0f, m_pos.y + 4.0f, 8.0f,
+                              m_size.height - 8.0f, 3.0f);
+            nvg::fill_paint(context, paint);
+            nvg::fill(context);
 
+            paint = nvg::box_gradient(
+                context, m_pos.x + m_size.width - 12.0f - OUTLINE_SIZE,
+                m_pos.y + 4.0f + (m_size.height - 8.0f - scrollh) * m_scroll - OUTLINE_SIZE, 8.0f,
+                scrollh, 3.0f, 4.0f, ds::color<f32>{ 220, 220, 220, 100 },
+                ds::color<f32>{ 128, 128, 128, 100 });
+
+            // subpath
+            m_renderer->draw_path(false, [&] {
+                nvg::rounded_rect(
+                    context, m_pos.x + m_size.width - 12.0f + OUTLINE_SIZE,
+                    m_pos.y + 4.0f + OUTLINE_SIZE + (m_size.height - 8.0f - scrollh) * m_scroll,
+                    8.0f - 2.0f, scrollh - 2.0f, 2.0f);
+
+                nvg::fill_paint(context, paint);
+                nvg::fill(context);
+            });
         });
-        nvg::begin_path(context);
-        nvg::rounded_rect(context, m_pos.x + m_size.width - 12.0f, m_pos.y + 4.0f, 8.0f,
-                          m_size.height - 8.0f, 3.0f);
-        nvg::fill_paint(context, paint);
-        nvg::fill(context);
-
-        paint = nvg::box_gradient(
-            context, m_pos.x + m_size.width - 12.0f - 1.0f,
-            m_pos.y + 4.0f + (m_size.height - 8.0f - scrollh) * m_scroll - 1.0f, 8.0f, scrollh,
-            3.0f, 4.0f, ds::color<f32>{ 220, 220, 220, 100 }, ds::color<f32>{ 128, 128, 128, 100 });
-
-        nvg::begin_path(context);
-        nvg::rounded_rect(context, m_pos.x + m_size.width - 1.0f + 1.0f,
-                          m_pos.y + 4.0f + 1.0f + (m_size.height - 8.0f - scrollh) * m_scroll,
-                          8.0f - 2.0f, scrollh - 2.0f, 2.0f);
-
-        nvg::fill_paint(context, paint);
-        nvg::fill(context);
     }
 }

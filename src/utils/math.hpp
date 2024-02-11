@@ -1,6 +1,4 @@
 #pragma once
-#include <limits>
-#include <type_traits>
 
 #include "utils/numeric_traits.hpp"
 
@@ -29,20 +27,18 @@ namespace rl::math {
         return (val * std::to_underlying(unit_in)) / std::to_underlying(unit_out);
     }
 
-    namespace detail {
-        template <rl::numeric A, rl::numeric B>
-            requires std::same_as<A, B>
-        constexpr auto max(const A a, const B b) -> decltype(a > b ? a : b)
-        {
-            return a > b ? a : b;
-        }
+    template <rl::numeric A, rl::numeric B>
+        requires std::same_as<A, B>
+    constexpr auto max(const A a, const B b)
+    {
+        return a > b ? a : b;
+    }
 
-        template <rl::numeric A, rl::numeric B>
-        constexpr auto min(const A a, const B b) -> decltype(a < b ? a : b)
-            requires std::same_as<A, B>
-        {
-            return a < b ? a : b;
-        }
+    template <rl::numeric A, rl::numeric B>
+        requires std::same_as<A, B>
+    constexpr auto min(const A a, const B b)
+    {
+        return a < b ? a : b;
     }
 
     template <rl::numeric T>

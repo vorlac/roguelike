@@ -81,11 +81,12 @@ namespace rl {
         }
 
         template <std::invocable TCallable>
-        void draw_path(TCallable&& callable)
+        void draw_path(bool close_when_done, TCallable&& callable)
         {
             this->begin_path();
             std::invoke(std::forward<TCallable>(callable));
-            this->end_path();
+            if (close_when_done)
+                this->end_path();
         }
 
     private:
