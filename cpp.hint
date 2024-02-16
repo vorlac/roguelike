@@ -1,6 +1,3 @@
-// Hint files help the Visual Studio IDE interpret Visual C++ identifiers
-// such as names of functions and macros.
-// For more information see https://go.microsoft.com/fwlink/?linkid=865984
 #define DECLSPEC __declspec(dllexport)
 #define DECLSPEC
 #define DECLSPEC __attribute__ ((visibility("default")))
@@ -24,14 +21,6 @@
 #define assert(expression) (void)( (!!(expression)) || (_wassert(_CRT_WIDE(#expression), _CRT_WIDE(__FILE__), (unsigned)(__LINE__)), 0) )
 #define STBIDEF
 #define STBTT_DEF
-// Hint files help the Visual Studio IDE interpret Visual C++ identifiers
-// such as names of functions and macros.
-// For more information see https://go.microsoft.com/fwlink/?linkid=865984
-#define _EXPORT_STD
-// Hint files help the Visual Studio IDE interpret Visual C++ identifiers
-// such as names of functions and macros.
-// For more information see https://go.microsoft.com/fwlink/?linkid=865984
-#define _EXPORT_STD
 #define _MSC_VER
 #define main
 #define EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -246,32 +235,23 @@
 #define STBI_THREAD_LOCAL __declspec(thread)
 #define stdout
 #define RPNG_FREE(ptr) free(ptr)
-// Hint files help the Visual Studio IDE interpret Visual C++ identifiers
-// such as names of functions and macros.
-// For more information see https://go.microsoft.com/fwlink/?linkid=865984
 #define _EXPORT_STD
-// Hint files help the Visual Studio IDE interpret Visual C++ identifiers
-// such as names of functions and macros.
-// For more information see https://go.microsoft.com/fwlink/?linkid=865984
-#define _EXPORT_STD
-// Hint files help the Visual Studio IDE interpret Visual C++ identifiers
-// such as names of functions and macros.
-// For more information see https://go.microsoft.com/fwlink/?linkid=865984
 #define _CSTD
 #define __cplusplus
-#define wmain
 #define ARGC(__VA_ARGS__) GET_COUNT(__VA_ARGS__)
 #define VA_SELECT(NAME, __VA_ARGS__) SELECT(NAME,##(ARGC(__VA_ARGS__))##(__VA_ARGS__))
-// Hint files help the Visual Studio IDE interpret Visual C++ identifiers
-// such as names of functions and macros.
-// For more information see https://go.microsoft.com/fwlink/?linkid=865984
 #define _EXPORT_STD
 #define SPDLOG_NOEXCEPT
-// Hint files help the Visual Studio IDE interpret Visual C++ identifiers
-// such as names of functions and macros.
-// For more information see https://go.microsoft.com/fwlink/?linkid=865984
 #define _CONSTEXPR20
-// Hint files help the Visual Studio IDE interpret Visual C++ identifiers
-// such as names of functions and macros.
-// For more information see https://go.microsoft.com/fwlink/?linkid=865984
-#define _EXPORT_STD
+#define _NODISCARD [[nodiscard]]
+#define _HAS_CXX20
+#define _MSVC_INTRINSIC [[msvc::intrinsic]]
+#define _INLINE_VAR
+#define _STL_RESTORE_DEPRECATED_WARNING _Pragma("clang diagnostic pop")
+#define _STL_RESTORE_DEPRECATED_WARNING __pragma(warning(pop))
+#define _STL_RESTORE_DEPRECATED_WARNING _Pragma("warning(pop)")
+#define _CXX23_DEPRECATE_ALIGNED_UNION [[deprecated("warning STL4035: " "std::aligned_union and std::aligned_union_t are deprecated in C++23. " "Prefer alignas(Ts...) std::byte t_buff[std::max({sizeof(Ts)...})]. " "You can define _SILENCE_CXX23_ALIGNED_UNION_DEPRECATION_WARNING " "or _SILENCE_ALL_CXX23_DEPRECATION_WARNINGS to suppress this warning.")]]
+#define _STL_DISABLE_DEPRECATED_WARNING _Pragma("clang diagnostic push") _Pragma("clang diagnostic ignored \"-Wdeprecated-declarations\"")
+#define _STL_DISABLE_DEPRECATED_WARNING __pragma(warning(push)) __pragma(warning(disable : 4996))
+#define _STL_DISABLE_DEPRECATED_WARNING _Pragma("warning(push)") _Pragma("warning(disable : 4996)")
+#define _CXX23_DEPRECATE_ALIGNED_STORAGE [[deprecated("warning STL4034: " "std::aligned_storage and std::aligned_storage_t are deprecated in C++23. " "Prefer alignas(T) std::byte t_buff[sizeof(T)]. " "You can define _SILENCE_CXX23_ALIGNED_STORAGE_DEPRECATION_WARNING " "or _SILENCE_ALL_CXX23_DEPRECATION_WARNINGS to suppress this warning.")]]

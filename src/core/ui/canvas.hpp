@@ -32,7 +32,7 @@ namespace rl::ui {
         void center_dialog(Dialog* dialog) const;
         void move_dialog_to_front(Dialog* dialog);
         void update_focus(Widget* widget);
-        void dispose_dialog(Dialog* dialog);
+        void dispose_dialog(const Dialog* dialog);
         void set_resize_callback(const std::function<void(ds::dims<f32>)>& callback);
         void add_update_callback(const std::function<void()>& refresh_func);
         const std::function<void(ds::dims<f32>)>& resize_callback() const;

@@ -17,23 +17,21 @@ namespace rl::inline constraint {
     concept any_of = (std::same_as<std::type_identity_t<T>, TOther> || ...);
 
     template <typename... T>
-    concept floating_point = (any_of<std::type_identity_t<T>, f32, f64, double, float> || ...);
+    concept floating_point = (any_of<std::type_identity_t<T>, f32, f64> && ...);
 
     template <typename... T>
-    concept signed_integer = (any_of<std::type_identity_t<T>, i8, i16, i32, i64> || ...);
+    concept signed_integer = (any_of<std::type_identity_t<T>, i8, i16, i32, i64> && ...);
 
     template <typename... T>
-    concept unsigned_integer = (any_of<std::type_identity_t<T>, u8, u16, u32, u64> || ...);
+    concept unsigned_integer = (any_of<std::type_identity_t<T>, u8, u16, u32, u64> && ...);
 
     template <typename... T>
     concept integer = ((unsigned_integer<std::type_identity_t<T>> ||
-                        signed_integer<std::type_identity_t<T>>) ||
-                       ...);
+                        signed_integer<std::type_identity_t<T>>)&&...);
 
     template <typename... T>
     concept numeric = ((floating_point<std::type_identity_t<T>> ||
-                        integer<std::type_identity_t<T>>) ||
-                       ...);
+                        integer<std::type_identity_t<T>>)&&...);
 
     template <auto... N>
     concept positive_numeric = ((numeric<decltype(N)> && N > 0) || ...);

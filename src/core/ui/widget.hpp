@@ -131,7 +131,7 @@ namespace rl::ui {
         virtual ds::dims<f32> preferred_size() const;
 
     public:
-        virtual void draw_mouse_intersection(ds::point<f32> pt);
+        virtual void draw_mouse_intersection(const ds::point<f32>& pt);
 
     protected:
         f32 icon_scale() const;

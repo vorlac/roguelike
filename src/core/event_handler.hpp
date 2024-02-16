@@ -17,7 +17,25 @@ namespace rl {
     class EventHandler
     {
     public:
-        bool handle_events(std::unique_ptr<MainWindow>& window)
+        // friend static int resizing_event_watcher(void* data, SDL3::SDL_Event* event)
+        //{
+        //     if (event->type == MainWindow::Event::Resized)
+        //     {
+        //         const SDL3::SDL_Window* resize_win{ SDL3::SDL_GetWindowFromID(
+        //             event->window.windowID) };
+        //         const MainWindow* window{ static_cast<MainWindow*>(data) };
+        //         if (resize_win == window->m_window_id)
+        //             printf("resizing.....\n");
+        //     }
+        //     return 0;
+        // }
+
+        // explicit EventHandler(std::unique_ptr<MainWindow>& window)
+        //{
+        //     SDL3::SDL_AddEventWatch(resizing_event_watcher, window.get());
+        // }
+
+        bool handle_events(const std::unique_ptr<MainWindow>& window)
         {
             SDL3::SDL_Event e{};
 
@@ -43,7 +61,7 @@ namespace rl {
                     case Keyboard::Event::KeyDown:
                     {
                         window->keyboard_key_pressed_event_callback(e);
-                        Keyboard::Scancode::ID key{ e.key.keysym.scancode };
+                        const auto key = static_cast<Keyboard::Scancode::ID>(e.key.keysym.scancode);
                         if (key == Keyboard::Scancode::Escape) [[unlikely]]
                             m_quit = true;
                         break;
@@ -139,6 +157,10 @@ namespace rl {
                     // Quit request event
                     case Event::Quit:
                         m_quit = true;
+                        break;
+
+                    default:
+                        runtime_assert(false, "unhandled event type");
                         break;
                 }
             }

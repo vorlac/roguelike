@@ -181,7 +181,7 @@ namespace rl::ui {
             return;
 
         constexpr static f32 OUTLINE_SIZE{ 1.0f };
-        ds::rect<f32> panel_rect{
+        ds::rect panel_rect{
             ds::point{
                 m_pos.x + m_size.width - 12.0f + OUTLINE_SIZE,
                 m_pos.y + 4.0f + OUTLINE_SIZE,

@@ -84,7 +84,7 @@ namespace rl {
         }
     }
 
-    const MainWindow& MainWindow::operator=(MainWindow&& other) noexcept
+    MainWindow& MainWindow::operator=(MainWindow&& other) noexcept
     {
         if (m_sdl_window != nullptr)
         {

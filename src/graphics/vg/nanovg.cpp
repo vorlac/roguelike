@@ -6,7 +6,6 @@
 #include "ds/color.hpp"
 #include "ds/rect.hpp"
 #include "graphics/stb/stb_image.hpp"
-#include "graphics/vg/fontstash.hpp"
 #include "graphics/vg/nanovg.hpp"
 
 #ifdef _MSC_VER
@@ -16,17 +15,6 @@
 #endif
 
 namespace rl::nvg {
-    constexpr int32_t NVG_MAX_STATES{ 64 };
-
-    // Length proportional to radius of a
-    // cubic bezier handle for 90deg arcs.
-    constexpr float NVG_KAPPA90{ 0.5522847493f };
-
-    enum {
-        NvgInitFontimageSize = 512,
-        NvgMaxFontimageSize = 2048,
-        NvgMaxFontimages = 4
-    };
 
     enum {
         NvgInitCommandsSize = 256,
@@ -57,73 +45,29 @@ namespace rl::nvg {
         NvgPrInnerbevel = 0x08,
     };
 
-    struct NVGstate
-    {
-        NVGcompositeOperationState composite_operation;
-        int32_t shape_anti_alias;
-        NVGpaint fill;
-        NVGpaint stroke;
-        float stroke_width;
-        float miter_limit;
-        int32_t line_join;
-        int32_t line_cap;
-        float alpha;
-        float xform[6];
-        NVGscissor scissor;
-        float font_size;
-        float letter_spacing;
-        float line_height;
-        float font_blur;
-        int32_t text_align;
-        int32_t font_id;
-    };
-
-    struct NVGpoint
-    {
-        float x, y;
-        float dx, dy;
-        float len;
-        float dmx, dmy;
-        uint8_t flags;
-    };
-
-    struct NVGpathCache
-    {
-        NVGpoint* points;
-        int32_t npoints;
-        int32_t cpoints;
-        NVGpath* paths;
-        int32_t npaths;
-        int32_t cpaths;
-        NVGvertex* verts;
-        int32_t nverts;
-        int32_t cverts;
-        float bounds[4];
-    };
-
-    struct NVGcontext
-    {
-        NVGparams params;
-        float* commands;
-        int32_t ccommands;
-        int32_t ncommands;
-        float commandx;
-        float commandy;
-        NVGstate states[NVG_MAX_STATES];
-        int32_t nstates;
-        NVGpathCache* cache;
-        float tess_tol;
-        float dist_tol;
-        float fringe_width;
-        float device_px_ratio;
-        FONScontext* fs;
-        int32_t font_images[NvgMaxFontimages];
-        int32_t font_image_idx;
-        int32_t draw_call_count;
-        int32_t fill_tri_count;
-        int32_t stroke_tri_count;
-        int32_t text_tri_count;
-    };
+    // struct NVGcontext
+    //{
+    //     NVGparams params;
+    //     float* commands;
+    //     int32_t ccommands;
+    //     int32_t ncommands;
+    //     float commandx;
+    //     float commandy;
+    //     NVGstate states[NVG_MAX_STATES];
+    //     int32_t nstates;
+    //     NVGpathCache* cache;
+    //     float tess_tol;
+    //     float dist_tol;
+    //     float fringe_width;
+    //     float device_px_ratio;
+    //     FONScontext* fs;
+    //     int32_t font_images[NvgMaxFontimages];
+    //     int32_t font_image_idx;
+    //     int32_t draw_call_count;
+    //     int32_t fill_tri_count;
+    //     int32_t stroke_tri_count;
+    //     int32_t text_tri_count;
+    // };
 
     namespace detail {
         static float nvg_sqrtf(const float a)
@@ -230,33 +174,37 @@ namespace rl::nvg {
         static NVGpathCache* nvg_alloc_path_cache()
         {
             const auto c = static_cast<NVGpathCache*>(std::malloc(sizeof(NVGpathCache)));
-            if (c == nullptr)
-                goto error;
+            if (c != nullptr)
+            {
+                std::memset(c, 0, sizeof(NVGpathCache));
+                c->points = static_cast<NVGpoint*>(
+                    std::malloc(sizeof(NVGpoint) * NvgInitPointsSize));
 
-            memset(c, 0, sizeof(NVGpathCache));
-            c->points = static_cast<NVGpoint*>(std::malloc(sizeof(NVGpoint) * NvgInitPointsSize));
-            if (!c->points)
-                goto error;
+                if (c->points != nullptr)
+                {
+                    c->npoints = 0;
+                    c->cpoints = NvgInitPointsSize;
+                    c->paths = static_cast<NVGpath*>(
+                        std::malloc(sizeof(NVGpath) * NvgInitPathsSize));
 
-            c->npoints = 0;
-            c->cpoints = NvgInitPointsSize;
+                    if (c->paths != nullptr)
+                    {
+                        c->npaths = 0;
+                        c->cpaths = NvgInitPathsSize;
+                        c->verts = static_cast<NVGvertex*>(
+                            std::malloc(sizeof(NVGvertex) * NvgInitVertsSize));
 
-            c->paths = static_cast<NVGpath*>(std::malloc(sizeof(NVGpath) * NvgInitPathsSize));
-            if (!c->paths)
-                goto error;
+                        if (c->verts != nullptr)
+                        {
+                            c->nverts = 0;
+                            c->cverts = NvgInitVertsSize;
+                            return c;
+                        }
+                    }
+                }
+            }
 
-            c->npaths = 0;
-            c->cpaths = NvgInitPathsSize;
-
-            c->verts = static_cast<NVGvertex*>(std::malloc(sizeof(NVGvertex) * NvgInitVertsSize));
-            if (!c->verts)
-                goto error;
-
-            c->nverts = 0;
-            c->cverts = NvgInitVertsSize;
-
-            return c;
-        error:
+            // error
             nvg_delete_path_cache(c);
             return nullptr;
         }
@@ -367,9 +315,9 @@ namespace rl::nvg {
         {
             if (ctx->cache->npaths + 1 > ctx->cache->cpaths)
             {
-                const int32_t cpaths = ctx->cache->npaths + 1 + ctx->cache->cpaths / 2;
+                const int32_t cpaths = ctx->cache->npaths + 1 + (ctx->cache->cpaths / 2);
                 const auto paths = static_cast<NVGpath*>(
-                    realloc(ctx->cache->paths, sizeof(NVGpath) * cpaths));
+                    realloc(ctx->cache->paths, sizeof(NVGpath) * static_cast<uint64_t>(cpaths)));
                 if (paths == nullptr)
                     return;
                 ctx->cache->paths = paths;
@@ -420,7 +368,7 @@ namespace rl::nvg {
             {
                 const int32_t cpoints = ctx->cache->npoints + 1 + ctx->cache->cpoints / 2;
                 const auto points = static_cast<NVGpoint*>(
-                    realloc(ctx->cache->points, sizeof(NVGpoint) * cpoints));
+                    realloc(ctx->cache->points, sizeof(NVGpoint) * static_cast<uint64_t>(cpoints)));
                 if (points == nullptr)
                     return;
                 ctx->cache->points = points;
@@ -467,8 +415,8 @@ namespace rl::nvg {
                 const int32_t cverts = (nverts + 0xff) & ~0xff;  // Round up to prevent allocations
                                                                  // when
                 // things change just slightly.
-                const auto verts = static_cast<NVGvertex*>(
-                    std::realloc(ctx->cache->verts, sizeof(NVGvertex) * cverts));
+                const auto verts = static_cast<NVGvertex*>(std::realloc(
+                    ctx->cache->verts, sizeof(NVGvertex) * static_cast<uint64_t>(cverts)));
                 if (verts == nullptr)
                     return nullptr;
                 ctx->cache->verts = verts;
@@ -488,7 +436,7 @@ namespace rl::nvg {
             return acx * aby - abx * acy;
         }
 
-        static float nvg_poly_area(NVGpoint* pts, const int32_t npts)
+        static float nvg_poly_area(const NVGpoint* pts, const int32_t npts)
         {
             float area = 0;
             for (int32_t i = 2; i < npts; i++)
@@ -713,12 +661,13 @@ namespace rl::nvg {
                 nvg_vset(dst, p1->x - dlx0 * rw, p1->y - dly0 * rw, ru, 1);
                 dst++;
 
-                n = nvg_clampi(
-                    static_cast<int32_t>(ceilf(((a0 - a1) / std::numbers::pi_v<f32>)*ncap)), 2,
-                    ncap);
+                n = nvg_clampi(static_cast<int32_t>(ceilf(
+                                   (a0 - a1) / std::numbers::pi_v<f32> * static_cast<float>(ncap))),
+                               2, ncap);
+
                 for (i = 0; i < n; i++)
                 {
-                    const float u = i / static_cast<float>(n - 1);
+                    const float u = static_cast<float>(i) / (static_cast<float>(n) - 1.0f);
                     const float a = a0 + u * (a1 - a0);
                     const float rx = p1->x + cosf(a) * rw;
                     const float ry = p1->y + sinf(a) * rw;
@@ -747,23 +696,27 @@ namespace rl::nvg {
                 nvg_vset(dst, rx0, ry0, ru, 1);
                 dst++;
 
-                n = nvg_clampi(
-                    static_cast<int32_t>(ceilf(((a1 - a0) / std::numbers::pi_v<f32>)*ncap)), 2,
-                    ncap);
+                n = std::clamp(static_cast<int32_t>(std::ceil(
+                                   (a1 - a0) / std::numbers::pi_v<f32> * static_cast<float>(ncap))),
+                               2, ncap);
+
                 for (i = 0; i < n; i++)
                 {
-                    const float u = i / static_cast<float>(n - 1);
+                    const float u = static_cast<float>(i) / (static_cast<float>(n) - 1.0f);
                     const float a = a0 + u * (a1 - a0);
-                    const float lx = p1->x + cosf(a) * lw;
-                    const float ly = p1->y + sinf(a) * lw;
+                    const float lx = p1->x + std::cosf(a) * lw;
+                    const float ly = p1->y + std::sinf(a) * lw;
+
                     nvg_vset(dst, lx, ly, lu, 1);
                     dst++;
+
                     nvg_vset(dst, p1->x, p1->y, 0.5f, 1);
                     dst++;
                 }
 
                 nvg_vset(dst, p1->x + dlx1 * rw, p1->y + dly1 * rw, lu, 1);
                 dst++;
+
                 nvg_vset(dst, rx1, ry1, ru, 1);
                 dst++;
             }
@@ -932,7 +885,8 @@ namespace rl::nvg {
 
             for (int32_t i = 0; i < ncap; i++)
             {
-                const float a = i / static_cast<float>(ncap - 1) * std::numbers::pi_v<f32>;
+                const float a = static_cast<float>(i) / (static_cast<float>(ncap) - 1.0f) *
+                                std::numbers::pi_v<f32>;
                 const float ax = cosf(a) * w;
                 const float ay = sinf(a) * w;
 
@@ -962,8 +916,9 @@ namespace rl::nvg {
             dst++;
             for (int32_t i = 0; i < ncap; i++)
             {
-                const float a = i / static_cast<float>(ncap - 1) * std::numbers::pi_v<f32>;
-                float ax = cosf(a) * w, ay = sinf(a) * w;
+                const float a = static_cast<float>(i) / static_cast<float>(ncap - 1) *
+                                std::numbers::pi_v<f32>;
+                const float ax = cosf(a) * w, ay = sinf(a) * w;
                 nvg_vset(dst, px, py, 0.5f, 1);
                 dst++;
                 nvg_vset(dst, px - dlx * ax + dx * ay, py - dly * ax + dy * ay, u0, 1);
@@ -973,7 +928,7 @@ namespace rl::nvg {
         }
 
         static void nvg_calculate_joins(const NVGcontext* ctx, const float w,
-                                        const int32_t lineJoin, const float miterLimit)
+                                        const int32_t line_join, const float miter_limit)
         {
             const NVGpathCache* cache = ctx->cache;
             float iw = 0.0f;
@@ -1029,8 +984,8 @@ namespace rl::nvg {
 
                     // Check to see if the corner needs to be beveled.
                     if (p1->flags & NvgPtCorner)
-                        if ((dmr2 * miterLimit * miterLimit) < 1.0f || lineJoin == NVGBevel ||
-                            lineJoin == NVGRound)
+                        if ((dmr2 * miter_limit * miter_limit) < 1.0f || line_join == NVGBevel ||
+                            line_join == NVGRound)
                             p1->flags |= NvgPtBevel;
 
                     if ((p1->flags & (NvgPtBevel | NvgPrInnerbevel)) != 0)
@@ -1648,7 +1603,7 @@ namespace rl::nvg {
 
     NVGcolor hsla(float h, float s, float l, const uint8_t a)
     {
-        NVGcolor col = {};
+        NVGcolor col;
         h = detail::nvg_modf(h, 1.0f);
         if (h < 0.0f)
             h += 1.0f;
@@ -1688,14 +1643,14 @@ namespace rl::nvg {
         t[5] = ty;
     }
 
-    void transform_translate(float* t, ds::vector2<f32>&& translation)
+    void transform_translate(float* t, const ds::vector2<f32>& translation)
     {
         t[0] = 1.0f;
         t[1] = 0.0f;
         t[2] = 0.0f;
         t[3] = 1.0f;
-        t[4] = std::move(translation.x);
-        t[5] = std::move(translation.y);
+        t[4] = translation.x;
+        t[5] = translation.y;
     }
 
     void transform_scale(float* dst, const float sx, const float sy)
@@ -1907,11 +1862,11 @@ namespace rl::nvg {
         transform_premultiply(state->xform, t);
     }
 
-    void translate(NVGcontext* ctx, ds::vector2<f32>&& local_offset)
+    void translate(NVGcontext* ctx, const ds::vector2<f32>& local_offset)
     {
         float t[6] = { 0 };
         NVGstate* state{ detail::nvg_get_state(ctx) };
-        transform_translate(t, std::move(local_offset.x), std::move(local_offset.y));
+        transform_translate(t, local_offset.x, local_offset.y);
         transform_premultiply(state->xform, t);
     }
 
@@ -2129,9 +2084,9 @@ namespace rl::nvg {
         return p;
     }
 
-    NVGpaint box_gradient(NVGcontext* ctx, ds::rect<f32>&& rect, const f32 corner_radius,
-                          const f32 feather_blur, ds::color<f32>&& inner_color,
-                          ds::color<f32>&& outer_gradient_color)
+    NVGpaint box_gradient(NVGcontext* ctx, const ds::rect<f32>& rect, const f32 corner_radius,
+                          const f32 feather_blur, const ds::color<f32>& inner_color,
+                          const ds::color<f32>& outer_gradient_color)
     {
         NVGpaint paint = {};
         transform_identity(paint.xform);
@@ -2289,7 +2244,7 @@ namespace rl::nvg {
         const NVGstate* state = detail::nvg_get_state(ctx);
         if (ctx->ncommands + nvals > ctx->ccommands)
         {
-            int32_t ccommands = ctx->ncommands + nvals + ctx->ccommands / 2;
+            const int32_t ccommands = ctx->ncommands + nvals + ctx->ccommands / 2;
             const auto commands = static_cast<float*>(
                 realloc(ctx->commands, sizeof(float) * static_cast<uint64_t>(ccommands)));
 
@@ -2349,7 +2304,8 @@ namespace rl::nvg {
             }
         }
 
-        memcpy(&ctx->commands[ctx->ncommands], vals, nvals * sizeof(float));
+        std::memcpy(&ctx->commands[ctx->ncommands], vals,
+                    static_cast<uint64_t>(nvals) * sizeof(float));
 
         ctx->ncommands += nvals;
     }
@@ -3003,7 +2959,6 @@ namespace rl::nvg {
     {
         NVGstate* state = detail::nvg_get_state(ctx);
         NVGtextRow rows[2];
-        int32_t nrows = 0;
         const int32_t old_align = state->text_align;
         const int32_t haling = state->text_align & (NVGAlignLeft | NVGAlignCenter | NVGAlignRight);
         const int32_t valign = state->text_align &
@@ -3017,6 +2972,7 @@ namespace rl::nvg {
 
         state->text_align = NVGAlignLeft | valign;
 
+        int32_t nrows;
         while ((nrows = text_break_lines(ctx, string, end, break_row_width, rows, 2)))
         {
             for (int32_t i = 0; i < nrows; i++)
@@ -3383,7 +3339,7 @@ namespace rl::nvg {
         rminy *= invscale;
         rmaxy *= invscale;
 
-        int32_t nrows = 0;
+        int32_t nrows;
         while ((nrows = text_break_lines(ctx, string, end, break_row_width, rows, 2)))
         {
             for (int32_t i = 0; i < nrows; i++)
@@ -3398,8 +3354,10 @@ namespace rl::nvg {
                     dx = break_row_width * 0.5f - row->width * 0.5f;
                 else if (haling & NVGAlignRight)
                     dx = break_row_width - row->width;
+
                 const float rminx = x + row->minx + dx;
                 const float rmaxx = x + row->maxx + dx;
+
                 minx = detail::nvg_min(minx, rminx);
                 maxx = detail::nvg_max(maxx, rmaxx);
 

@@ -16,7 +16,6 @@
 #include "ds/rect.hpp"
 #include "ds/vector2d.hpp"
 #include "sdl/defs.hpp"
-#include "utils/time.hpp"
 
 SDL_C_LIB_BEGIN
 #include <SDL3/SDL_events.h>
@@ -35,7 +34,7 @@ namespace rl {
         class Canvas;
     }
 
-    class MainWindow
+    class MainWindow final
     {
         friend class Popup;
         friend class EventHandler;
@@ -201,7 +200,7 @@ namespace rl {
 
         virtual ~MainWindow();
 
-        const MainWindow& operator=(MainWindow&& other) noexcept;
+        MainWindow& operator=(MainWindow&& other) noexcept;
 
     public:
         bool raise();

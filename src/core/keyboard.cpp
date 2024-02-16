@@ -1,35 +1,37 @@
+#include <algorithm>
+
 #include "core/keyboard.hpp"
 
 namespace rl {
 
     Keyboard::Scancode::ID Keyboard::keys_down() const
     {
-        return static_cast<Keyboard::Scancode::ID>(m_pressed.all() | m_held.all());
+        return static_cast<Keyboard::Scancode::ID>(static_cast<i32>(m_pressed.all()) | m_held.all());
     }
 
     bool Keyboard::is_button_pressed(const Keyboard::Scancode::ID key) const
     {
-        return m_pressed[key];
+        return m_pressed[static_cast<std::size_t>(key)];
     }
 
     bool Keyboard::is_button_released(const Keyboard::Scancode::ID key) const
     {
-        const bool ret = m_released[key];
-        m_released[key] = false;
+        const bool ret = m_released[static_cast<std::size_t>(key)];
+        m_released[static_cast<std::size_t>(key)] = false;
         return ret;
     }
 
     bool Keyboard::is_button_held(const Keyboard::Scancode::ID key) const
     {
-        return m_held[key];
+        return m_held[static_cast<std::size_t>(key)];
     }
 
     bool Keyboard::is_button_down(const Keyboard::Scancode::ID key) const
     {
-        return m_held[key] || m_pressed[key];
+        return m_held[static_cast<std::size_t>(key)] || m_pressed[static_cast<std::size_t>(key)];
     }
 
-    bool Keyboard::all_buttons_down(std::vector<Keyboard::Scancode::ID> keys) const
+    bool Keyboard::all_buttons_down(const std::vector<Keyboard::Scancode::ID>& keys) const
     {
         bool ret{ true };
 
@@ -39,13 +41,17 @@ namespace rl {
         return ret;
     }
 
-    bool Keyboard::any_buttons_down(std::vector<Keyboard::Scancode::ID> keys) const
+    bool Keyboard::any_buttons_down(const std::vector<Keyboard::Scancode::ID>& keys) const
     {
-        for (auto&& key : keys)
-            if (this->is_button_down(key))
-                return true;
+        return std::ranges::any_of(keys, [&](const Keyboard::Scancode::ID key) {
+            return this->is_button_down(key);
+        });
 
-        return false;
+        // for (auto&& key : keys)
+        //     if (this->is_button_down(key))
+        //         return true;
+
+        // return false;
     }
 
     std::string Keyboard::get_key_state(const Keyboard::Scancode::ID key) const

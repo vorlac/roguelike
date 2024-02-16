@@ -126,7 +126,7 @@ namespace rl {
             return true;
         }
 
-    private:
+    public:
         ScopedLogger(ScopedLogger&& logger) = delete;
         ScopedLogger(const ScopedLogger& logger) = delete;
         ScopedLogger& operator=(ScopedLogger&& logger) = delete;

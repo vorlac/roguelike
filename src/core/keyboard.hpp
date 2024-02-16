@@ -566,8 +566,8 @@ namespace rl {
         [[nodiscard]] bool is_button_released(Scancode::ID key) const;
         [[nodiscard]] bool is_button_held(Scancode::ID key) const;
         [[nodiscard]] bool is_button_down(Scancode::ID key) const;
-        [[nodiscard]] bool all_buttons_down(std::vector<Scancode::ID> keys) const;
-        [[nodiscard]] bool any_buttons_down(std::vector<Scancode::ID> keys) const;
+        [[nodiscard]] bool all_buttons_down(const std::vector<Scancode::ID>& keys) const;
+        [[nodiscard]] bool any_buttons_down(const std::vector<Scancode::ID>& keys) const;
 
     protected:
         void process_button_down(Scancode::ID key);

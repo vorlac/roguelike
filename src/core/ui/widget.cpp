@@ -236,13 +236,13 @@ namespace rl::ui {
     Widget* Widget::child_at(i32 index)
     {
         scoped_log("idx={} cnt={}", index, m_children.size());
-        return m_children[index];
+        return m_children[static_cast<size_t>(index)];
     }
 
     const Widget* Widget::child_at(i32 index) const
     {
         scoped_log("idx={} cnt={}", index, m_children.size());
-        return m_children[index];
+        return m_children[static_cast<size_t>(index)];
     }
 
     const std::vector<Widget*>& Widget::children() const
@@ -409,10 +409,9 @@ namespace rl::ui {
     bool Widget::on_mouse_scroll(const Mouse& mouse, const Keyboard& kb)
     {
         scoped_logger(log_level::trace, "pos={} wheel={}", mouse.pos(), mouse.wheel());
-        bool handled{ false };
 
+        bool handled{ false };
         auto&& mouse_pos{ mouse.pos() };
-        auto&& context{ m_renderer->context() };
 
         LocalTransform transform{ this };
         for (const auto child : std::ranges::reverse_view{ m_children })
@@ -522,10 +521,10 @@ namespace rl::ui {
     void Widget::remove_child_at(const i32 index)
     {
         scoped_log();
-        runtime_assert(index >= 0 && index < m_children.size(),
+        runtime_assert(index >= 0 && index < static_cast<i32>(m_children.size()),
                        "widget child remove idx out of bounds");
 
-        const Widget* widget{ m_children[index] };
+        const Widget* widget{ m_children[static_cast<std::size_t>(index)] };
         m_children.erase(m_children.begin() + index);
         widget->release_ref();
     }
@@ -615,7 +614,7 @@ namespace rl::ui {
     bool Widget::contains(const ds::point<f32>& pt) const
     {
         // Check if the widget contains a certain position
-        const ds::rect<f32> widget_rect{ m_pos, m_size };
+        const ds::rect widget_rect{ m_pos, m_size };
         return widget_rect.contains(pt);
     }
 
@@ -672,13 +671,12 @@ namespace rl::ui {
         while (widget->parent() != nullptr)
             widget = widget->parent();
 
-        static_cast<Canvas*>(widget)->update_focus(this);
+        dynamic_cast<Canvas*>(widget)->update_focus(this);
     }
 
-    void Widget::draw_mouse_intersection(const ds::point<f32> pt)
+    void Widget::draw_mouse_intersection(const ds::point<f32>& pt)
     {
         scoped_trace(log_level::trace);
-        auto&& context{ m_renderer->context() };
 
         {
             LocalTransform transform{ this };
@@ -693,7 +691,7 @@ namespace rl::ui {
 
         if (this->contains(pt))
         {
-            const ds::rect<f32> widget_rect{
+            const ds::rect widget_rect{
                 m_pos,
                 m_size,
             };

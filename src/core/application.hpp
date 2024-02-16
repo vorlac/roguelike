@@ -118,8 +118,8 @@ namespace rl {
             };
 
             std::string elapsed_str{ fmt::to_string(
-                fmt::format("{:<3.3f} sec", m_timer.elapsed())) };
-            std::string fps_str{ fmt::format("{:<3.3f} fps", framerate) };
+                fmt::format("{:0>6.3f} sec", m_timer.elapsed())) };
+            std::string fps_str{ fmt::format("{:0>6.3f} fps", framerate) };
             const auto layout{ new ui::AdvancedGridLayout({ 0, 10, 0 }, {}, 30) };
 
             auto full_window_menu = [&] {
@@ -208,8 +208,8 @@ namespace rl {
 
                     elapsed_time = m_timer.elapsed();
                     framerate = ++frame_count / elapsed_time;
-                    elapsed_str = fmt::format("{:<3.3f} sec", elapsed_time);
-                    fps_str = fmt::format("{:<3.3f} fps", framerate);
+                    elapsed_str = fmt::format("{:>6.3f} sec", elapsed_time);
+                    fps_str = fmt::format("{:>6.3f} fps", framerate);
 
                     form->refresh();
 

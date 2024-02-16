@@ -7,11 +7,12 @@
 #include "core/ui/popup.hpp"
 #include "utils/io.hpp"
 #include "utils/logging.hpp"
+#include "utils/math.hpp"
 
 namespace rl::ui {
     Canvas::Canvas(const ds::rect<f32>& rect, const Mouse& mouse, const Keyboard& kb,
-                   const std::unique_ptr<NVGRenderer>& vg_renderer)
-        : Widget{ nullptr, vg_renderer }
+                   const std::unique_ptr<NVGRenderer>& nvg_renderer)
+        : Widget{ nullptr, nvg_renderer }
         , m_mouse{ mouse }
         , m_keyboard{ kb }
     {
@@ -19,10 +20,11 @@ namespace rl::ui {
         m_size = rect.size;
 
         for (i32 i = Mouse::Cursor::Arrow; i < Mouse::Cursor::CursorCount; ++i)
-            m_cursors[i] = SDL3::SDL_CreateSystemCursor(Mouse::Cursor::type(i));
+            m_cursors[static_cast<std::size_t>(i)] = SDL3::SDL_CreateSystemCursor(
+                static_cast<Mouse::Cursor::type>(i));
 
+        Widget::set_theme(new Theme{ nvg_renderer->context() });
         this->set_visible(true);
-        this->set_theme(new Theme{ vg_renderer->context() });
         this->on_mouse_move({}, {});
 
         m_last_interaction = m_timer.elapsed();
@@ -32,15 +34,15 @@ namespace rl::ui {
     {
         for (i32 i = Mouse::Cursor::Arrow; i < Mouse::Cursor::CursorCount; ++i)
             if (m_cursors[i] != nullptr)
-                SDL3::SDL_DestroyCursor(m_cursors[i]);
+                SDL3::SDL_DestroyCursor(m_cursors[static_cast<std::size_t>(i)]);
     }
 
     bool Canvas::update()
     {
-        for (auto update_widget_func : m_update_callbacks)
+        for (const auto& update_widget_func : m_update_callbacks)
             update_widget_func();
 
-        return m_update_callbacks.size() > 0;
+        return !m_update_callbacks.empty();
     }
 
     bool Canvas::draw_setup()
@@ -309,7 +311,7 @@ namespace rl::ui {
     void Canvas::move_dialog_to_front(Dialog* dialog)
     {
         bool changed{ false };
-        const auto removal_iterator{ std::remove(m_children.begin(), m_children.end(), dialog) };
+        const auto removal_iterator{ std::ranges::remove(m_children, dialog).begin() };
         m_children.erase(removal_iterator, m_children.end());
         m_children.push_back(dialog);
 
@@ -336,9 +338,9 @@ namespace rl::ui {
         while (changed);
     }
 
-    void Canvas::dispose_dialog(Dialog* dialog)
+    void Canvas::dispose_dialog(const Dialog* dialog)
     {
-        const bool match_found = std::ranges::find_if(m_focus_path, [&](Widget* w) {
+        const bool match_found = std::ranges::find_if(m_focus_path, [&](const Widget* w) {
                                      return w == dialog;
                                  }) != m_focus_path.end();
 
@@ -376,7 +378,7 @@ namespace rl::ui {
     {
         scoped_log("{} => {}", ds::rect{ m_pos, m_size }, ds::rect{ m_pos, size / m_pixel_ratio });
 
-        if (size.area() == 0)
+        if (math::is_equal(size.area(), 0.0f))
             return false;
 
         this->set_size({

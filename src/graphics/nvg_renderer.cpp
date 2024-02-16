@@ -31,7 +31,8 @@ namespace rl {
     };
 
     namespace detail {
-        nvg::NVGcontext* create_nanovg_context(bool& stencil_buf, bool& depth_buf, bool& float_buf)
+        static nvg::NVGcontext* create_nanovg_context(bool& stencil_buf, bool& depth_buf,
+                                                      bool& float_buf)
         {
             constexpr u8 float_mode{ 0 };
             i32 depth_bits{ 0 };
@@ -39,12 +40,13 @@ namespace rl {
 
             // TODO: look into why this returns an error code?..
             // glGetBooleanv(GL_RGBA_FLOAT_MODE_ARB, &float_mode);
+
             glGetFramebufferAttachmentParameteriv(
                 GL_DRAW_FRAMEBUFFER, GL_DEPTH, GL_FRAMEBUFFER_ATTACHMENT_DEPTH_SIZE, &depth_bits);
+
             glGetFramebufferAttachmentParameteriv(GL_DRAW_FRAMEBUFFER, GL_STENCIL,
                                                   GL_FRAMEBUFFER_ATTACHMENT_STENCIL_SIZE,
                                                   &stencil_bits);
-
             stencil_buf = stencil_bits > 0;
             depth_buf = depth_bits > 0;
             float_buf = float_mode != 0;
@@ -91,37 +93,37 @@ namespace rl {
 
     nvg::NVGcontext* NVGRenderer::context() const
     {
-        return m_nvg_context;
+        return m_nvg_context.get();
     }
 
     void NVGRenderer::begin_frame(const ds::dims<f32>& render_size, const f32 pixel_ratio) const
     {
-        nvg::begin_frame(m_nvg_context, render_size.width, render_size.height, pixel_ratio);
+        nvg::begin_frame(m_nvg_context.get(), render_size.width, render_size.height, pixel_ratio);
     }
 
     void NVGRenderer::end_frame() const
     {
-        nvg::end_frame(m_nvg_context);
+        nvg::end_frame(m_nvg_context.get());
     }
 
     void NVGRenderer::save_state() const
     {
-        nvg::save(m_nvg_context);
+        nvg::save(m_nvg_context.get());
     }
 
     void NVGRenderer::begin_path() const
     {
-        nvg::begin_path(m_nvg_context);
+        nvg::begin_path(m_nvg_context.get());
     }
 
     void NVGRenderer::end_path() const
     {
-        nvg::begin_path(m_nvg_context);
+        nvg::begin_path(m_nvg_context.get());
     }
 
     void NVGRenderer::restore_state() const
     {
-        nvg::restore(m_nvg_context);
+        nvg::restore(m_nvg_context.get());
     }
 
     nvg::NVGpaint NVGRenderer::create_box_gradient(
@@ -135,8 +137,9 @@ namespace rl {
         // defines how blurry the border of the rectangle is. Parameter icol specifies the inner
         // color and ocol the outer color of the gradient. The gradient is transformed by the
         // current transform when it is passed to FillPaint() or StrokePaint().
-        return nvg::box_gradient(m_nvg_context, std::forward<ds::rect<f32>>(rect), corner_radius,
-                                 outer_blur, std::forward<ds::color<f32>>(inner_color),
+        return nvg::box_gradient(m_nvg_context.get(), std::forward<ds::rect<f32>>(rect),
+                                 corner_radius, outer_blur,
+                                 std::forward<ds::color<f32>>(inner_color),
                                  std::forward<ds::color<f32>>(outer_gradient_color));
     }
 
@@ -145,13 +148,13 @@ namespace rl {
     {
         // Creates font by loading it from the specified memory chunk.
         // Returns handle to the font.
-        return nvg::create_font_mem(m_nvg_context, font_name, font_ttf);
+        return nvg::create_font_mem(m_nvg_context.get(), font_name, font_ttf);
     }
 
     void NVGRenderer::flush(const ds::dims<f32>& viewport, const f32 pixel_ratio) const
     {
         // Flush all queued up NanoVG rendering commands
-        const nvg::NVGparams* params{ nvg::internal_params(m_nvg_context) };
+        const nvg::NVGparams* params{ nvg::internal_params(m_nvg_context.get()) };
         params->render_flush(params->user_ptr);
         params->render_viewport(params->user_ptr, static_cast<f32>(viewport.width),
                                 static_cast<f32>(viewport.height), pixel_ratio);
@@ -169,9 +172,9 @@ namespace rl {
     void NVGRenderer::set_text_properties(const std::string_view& font_name, const f32 font_size,
                                           const ui::Text::Alignment alignment) const
     {
-        nvg::font_face(m_nvg_context, font_name.data());
-        nvg::font_size(m_nvg_context, font_size);
-        nvg::text_align(m_nvg_context, alignment);
+        nvg::font_face(m_nvg_context.get(), font_name.data());
+        nvg::font_size(m_nvg_context.get(), font_size);
+        nvg::text_align(m_nvg_context.get(), alignment);
     }
 
     ds::dims<f32> NVGRenderer::get_text_size(const std::string& text) const
@@ -189,7 +192,7 @@ namespace rl {
         // Measures the specified multi-text string. Parameter bounds should be a pointer to
         // float[4], if the bounding box of the text should be returned. The bounds value are
         // [xmin,ymin, xmax,ymax] Measured values are returned in local coordinate space.
-        nvg::text_box_bounds(m_nvg_context, pos.x, pos.y, fold_width, text.data(), nullptr,
+        nvg::text_box_bounds(m_nvg_context.get(), pos.x, pos.y, fold_width, text.data(), nullptr,
                              &bounds.front());
 
         return ds::rect{
@@ -207,7 +210,7 @@ namespace rl {
     {
         this->set_text_properties(font_name, font_size, alignment);
 
-        const f32 width{ nvg::text_bounds(m_nvg_context, 0.0f, 0.0f, text.data(), nullptr,
+        const f32 width{ nvg::text_bounds(m_nvg_context.get(), 0.0f, 0.0f, text.data(), nullptr,
                                           nullptr) };
 
         constexpr static f32 width_buffer{ 2.0f };
@@ -220,24 +223,24 @@ namespace rl {
     void NVGRenderer::draw_rect_outline(const ds::rect<f32>& rect, const f32 stroke_width,
                                         const ds::color<f32>& color, const ui::Outline type) const
     {
-        nvg::stroke_width(m_nvg_context, stroke_width);
-        nvg::begin_path(m_nvg_context);
+        nvg::stroke_width(m_nvg_context.get(), stroke_width);
+        nvg::begin_path(m_nvg_context.get());
 
         switch (type)
         {
             case ui::Outline::Inner:
-                nvg::rect(m_nvg_context, rect.pt.x + (stroke_width / 2.0f),
+                nvg::rect(m_nvg_context.get(), rect.pt.x + (stroke_width / 2.0f),
                           rect.pt.y + (stroke_width / 2.0f), rect.size.width - stroke_width,
                           rect.size.height - stroke_width);
                 break;
             case ui::Outline::Outer:
-                nvg::rect(m_nvg_context, rect.pt.x - (stroke_width / 2.0f),
+                nvg::rect(m_nvg_context.get(), rect.pt.x - (stroke_width / 2.0f),
                           rect.pt.y - (stroke_width / 2.0f), rect.size.width + stroke_width,
                           rect.size.height + stroke_width);
                 break;
         }
 
-        nvg::stroke_color(m_nvg_context, color.nvg());
-        nvg::stroke(m_nvg_context);
+        nvg::stroke_color(m_nvg_context.get(), color.nvg());
+        nvg::stroke(m_nvg_context.get());
     }
 }

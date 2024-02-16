@@ -8,10 +8,10 @@
 #include <vector>
 
 #include "core/ui/theme.hpp"
-#include "ds/color.hpp"
 #include "ds/dims.hpp"
 #include "ds/point.hpp"
 #include "ds/rect.hpp"
+#include "graphics/vg/nanovg.hpp"
 #include "utils/numeric.hpp"
 
 namespace rl {
@@ -39,20 +39,24 @@ namespace rl {
                                           f32 outer_blur, ds::color<f32>&& inner_color,
                                           ds::color<f32>&& outer_gradient_color) const;
 
-        [[nodiscard]]
-        ui::Font::ID load_font(const std::string_view& font_name,
-                               const std::basic_string_view<u8>& font_ttf) const;
-
         void load_fonts(const std::vector<FontInfo>& fonts);
         void set_text_properties(const std::string_view& font_name, f32 font_size,
                                  ui::Text::Alignment alignment) const;
 
-        [[nodiscard]] ds::dims<f32> get_text_size(const std::string& text) const;
-        [[nodiscard]] ds::dims<f32> get_text_size(
+        [[nodiscard]]
+        ui::Font::ID load_font(const std::string_view& font_name,
+                               const std::basic_string_view<u8>& font_ttf) const;
+
+        [[nodiscard]]
+        ds::dims<f32> get_text_size(const std::string& text) const;
+
+        [[nodiscard]]
+        ds::dims<f32> get_text_size(
             const std::string& text, const std::string_view& font_name, f32 font_size,
             ui::Text::Alignment alignment = ui::Text::Alignment::HCenterVMiddle) const;
 
-        [[nodiscard]] ds::rect<f32> get_text_box_rect(
+        [[nodiscard]]
+        ds::rect<f32> get_text_box_rect(
             const std::string& text, const ds::point<f32>& pos, const std::string_view& font_name,
             f32 font_size, f32 fold_width,
             ui::Text::Alignment alignment = ui::Text::Alignment::HLeftVTop) const;
@@ -60,7 +64,8 @@ namespace rl {
         void draw_rect_outline(const ds::rect<f32>& rect, f32 stroke_width,
                                const ds::color<f32>& color, ui::Outline type) const;
 
-        [[nodiscard]] nvg::NVGcontext* context() const;
+        [[nodiscard]]
+        nvg::NVGcontext* context() const;
 
     public:
         template <std::invocable TCallable>
@@ -81,7 +86,7 @@ namespace rl {
         }
 
         template <std::invocable TCallable>
-        void draw_path(bool close_when_done, TCallable&& callable)
+        void draw_path(const bool close_when_done, TCallable&& callable)
         {
             this->begin_path();
             std::invoke(std::forward<TCallable>(callable));
@@ -93,7 +98,7 @@ namespace rl {
         bool m_depth_buffer{ false };
         bool m_stencil_buffer{ false };
         bool m_float_buffer{ false };
-        nvg::NVGcontext* m_nvg_context{ nullptr };
+        std::unique_ptr<nvg::NVGcontext> m_nvg_context{ nullptr };
         ui::Font::Map m_font_map{};
     };
 }

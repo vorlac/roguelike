@@ -4,6 +4,7 @@
 
 #include "ds/dims.hpp"
 #include "ds/point.hpp"
+#include "graphics/vg/fontstash.hpp"
 
 #ifdef _MSC_VER
   #pragma warning(push)
@@ -20,8 +21,65 @@ namespace rl::ds {
 }
 
 namespace rl::nvg {
+    constexpr int32_t NVG_MAX_STATES{ 64 };
+    // Length proportional to radius of a
+    // cubic bezier handle for 90deg arcs.
+    constexpr float NVG_KAPPA90{ 0.5522847493f };
 
-    struct NVGcontext;
+    enum NVGcompositeOperation {
+        NVGSourceOver,
+        NVGSourceIn,
+        NVGSourceOut,
+        NVGAtop,
+        NVGDestinationOver,
+        NVGDestinationIn,
+        NVGDestinationOut,
+        NVGDestinationAtop,
+        NVGLighter,
+        NVGCopy,
+        NVGXor,
+    };
+
+    enum NVGtexture {
+        NVGTextureAlpha = 0x01,
+        NVGTextureRgba = 0x02,
+    };
+
+    struct NVGscissor
+    {
+        float xform[6];
+        float extent[2];
+    };
+
+    struct NVGvertex
+    {
+        float x;
+        float y;
+        float u;
+        float v;
+    };
+
+    struct NVGpath
+    {
+        int32_t first;
+        int32_t count;
+        uint8_t closed;
+        int32_t nbevel;
+        NVGvertex* fill;
+        int32_t nfill;
+        NVGvertex* stroke;
+        int32_t nstroke;
+        int32_t winding;
+        int32_t convex;
+    };
+
+    struct NVGcompositeOperationState
+    {
+        int32_t src_rgb;
+        int32_t dst_rgb;
+        int32_t src_alpha;
+        int32_t dst_alpha;
+    };
 
     struct NVGcolor
     {
@@ -48,6 +106,115 @@ namespace rl::nvg {
         NVGcolor inner_color;
         NVGcolor outer_color;
         int32_t image;
+    };
+
+    struct NVGstate
+    {
+        NVGcompositeOperationState composite_operation;
+        int32_t shape_anti_alias;
+        NVGpaint fill;
+        NVGpaint stroke;
+        float stroke_width;
+        float miter_limit;
+        int32_t line_join;
+        int32_t line_cap;
+        float alpha;
+        float xform[6];
+        NVGscissor scissor;
+        float font_size;
+        float letter_spacing;
+        float line_height;
+        float font_blur;
+        int32_t text_align;
+        int32_t font_id;
+    };
+
+    struct NVGparams
+    {
+        void* user_ptr = nullptr;
+
+        int32_t edge_anti_alias;
+
+        int32_t (*render_create)(void* uptr);
+        int32_t (*render_create_texture)(void* uptr, int32_t type, int32_t w, int32_t h,
+                                         int32_t image_flags, const uint8_t* data);
+
+        int32_t (*render_delete_texture)(void* uptr, int32_t image);
+        int32_t (*render_update_texture)(void* uptr, int32_t image, int32_t x, int32_t y, int32_t w,
+                                         int32_t h, const uint8_t* data);
+
+        int32_t (*render_get_texture_size)(void* uptr, int32_t image, float* w, float* h);
+
+        void (*render_viewport)(void* uptr, float width, float height, float device_pixel_ratio);
+        void (*render_cancel)(void* uptr);
+        void (*render_flush)(void* uptr);
+
+        void (*render_fill)(void* uptr, const NVGpaint* paint,
+                            NVGcompositeOperationState composite_operation,
+                            const NVGscissor* scissor, float fringe, const float* bounds,
+                            const NVGpath* paths, int32_t npaths);
+        void (*render_stroke)(void* uptr, const NVGpaint* paint,
+                              NVGcompositeOperationState composite_operation,
+                              const NVGscissor* scissor, float fringe, float stroke_width,
+                              const NVGpath* paths, int32_t npaths);
+        void (*render_triangles)(
+            void* uptr, const NVGpaint* paint, NVGcompositeOperationState composite_operation,
+            const NVGscissor* scissor, const NVGvertex* verts, int32_t nverts, float fringe);
+
+        void (*render_delete)(void* uptr);
+    };
+
+    struct NVGpoint
+    {
+        float x, y;
+        float dx, dy;
+        float len;
+        float dmx, dmy;
+        uint8_t flags;
+    };
+
+    struct NVGpathCache
+    {
+        NVGpoint* points;
+        int32_t npoints;
+        int32_t cpoints;
+        NVGpath* paths;
+        int32_t npaths;
+        int32_t cpaths;
+        NVGvertex* verts;
+        int32_t nverts;
+        int32_t cverts;
+        float bounds[4];
+    };
+
+    enum {
+        NvgInitFontimageSize = 512,
+        NvgMaxFontimageSize = 2048,
+        NvgMaxFontimages = 4
+    };
+
+    struct NVGcontext
+    {
+        NVGparams params;
+        float* commands;
+        int32_t ccommands;
+        int32_t ncommands;
+        float commandx;
+        float commandy;
+        NVGstate states[NVG_MAX_STATES];
+        int32_t nstates;
+        NVGpathCache* cache;
+        float tess_tol;
+        float dist_tol;
+        float fringe_width;
+        float device_px_ratio;
+        FONScontext* fs;
+        int32_t font_images[NvgMaxFontimages];
+        int32_t font_image_idx;
+        int32_t draw_call_count;
+        int32_t fill_tri_count;
+        int32_t stroke_tri_count;
+        int32_t text_tri_count;
     };
 
     enum NVGwinding {
@@ -93,28 +260,6 @@ namespace rl::nvg {
         NVGDstAlpha = 1 << 8,
         NVGOneMinusDstAlpha = 1 << 9,
         NVGSrcAlphaSaturate = 1 << 10,
-    };
-
-    enum NVGcompositeOperation {
-        NVGSourceOver,
-        NVGSourceIn,
-        NVGSourceOut,
-        NVGAtop,
-        NVGDestinationOver,
-        NVGDestinationIn,
-        NVGDestinationOut,
-        NVGDestinationAtop,
-        NVGLighter,
-        NVGCopy,
-        NVGXor,
-    };
-
-    struct NVGcompositeOperationState
-    {
-        int32_t src_rgb;
-        int32_t dst_rgb;
-        int32_t src_alpha;
-        int32_t dst_alpha;
     };
 
     struct NVGglyphPosition
@@ -193,10 +338,7 @@ namespace rl::nvg {
     constexpr NVGcolor rgba_f(const float r, const float g, const float b, const float a)
     {
         return NVGcolor{
-            r,
-            g,
-            b,
-            a,
+            { { r, g, b, a } },
         };
     }
 
@@ -208,11 +350,13 @@ namespace rl::nvg {
 
     consteval NVGcolor rgba(const uint8_t r, const uint8_t g, const uint8_t b, const uint8_t a)
     {
-        return {
-            static_cast<float>(r) / 255.0f,
-            static_cast<float>(g) / 255.0f,
-            static_cast<float>(b) / 255.0f,
-            static_cast<float>(a) / 255.0f,
+        return NVGcolor{
+            { {
+                static_cast<float>(r) / 255.0f,
+                static_cast<float>(g) / 255.0f,
+                static_cast<float>(b) / 255.0f,
+                static_cast<float>(a) / 255.0f,
+            } },
         };
     }
 
@@ -331,7 +475,7 @@ namespace rl::nvg {
 
     // Translates current coordinate system.
     void translate(NVGcontext* ctx, float x, float y);
-    void translate(NVGcontext* ctx, ds::vector2<f32>&& local_offset);
+    void translate(NVGcontext* ctx, const ds::vector2<f32>& local_offset);
 
     // Rotates current coordinate system. Angle is specified in radians.
     void rotate(NVGcontext* ctx, float angle);
@@ -361,7 +505,7 @@ namespace rl::nvg {
 
     // Sets the transform to translation matrix matrix.
     void transform_translate(float* dst, float tx, float ty);
-    void transform_translate(float* t, ds::vector2<f32>&& translation);
+    void transform_translate(float* t, const ds::vector2<f32>& translation);
 
     // Sets the transform to scale matrix.
     void transform_scale(float* dst, float sx, float sy);
@@ -447,9 +591,10 @@ namespace rl::nvg {
     // StrokePaint().
     NVGpaint box_gradient(NVGcontext* ctx, float x, float y, float w, float h, float r, float f,
                           NVGcolor icol, NVGcolor ocol);
-    NVGpaint box_gradient(NVGcontext* ctx, ds::rect<f32>&& rect, const f32 corner_radius,
-                          const f32 feather_blur, ds::color<f32>&& inner_color,
-                          ds::color<f32>&& outer_gradient_color);
+
+    NVGpaint box_gradient(NVGcontext* ctx, const ds::rect<f32>& rect, f32 corner_radius,
+                          f32 feather_blur, const ds::color<f32>& inner_color,
+                          const ds::color<f32>& outer_gradient_color);
 
     // Creates and returns a radial gradient. Parameters (cx,cy) specify the center, inr and
     // outr specify the inner and outer radius of the gradient, icol specifies the start color
@@ -700,73 +845,6 @@ namespace rl::nvg {
     //
     // Internal Render API
     //
-    enum NVGtexture {
-        NVGTextureAlpha = 0x01,
-        NVGTextureRgba = 0x02,
-    };
-
-    struct NVGscissor
-    {
-        float xform[6];
-        float extent[2];
-    };
-
-    struct NVGvertex
-    {
-        float x;
-        float y;
-        float u;
-        float v;
-    };
-
-    struct NVGpath
-    {
-        int32_t first;
-        int32_t count;
-        uint8_t closed;
-        int32_t nbevel;
-        NVGvertex* fill;
-        int32_t nfill;
-        NVGvertex* stroke;
-        int32_t nstroke;
-        int32_t winding;
-        int32_t convex;
-    };
-
-    struct NVGparams
-    {
-        void* user_ptr = nullptr;
-
-        int32_t edge_anti_alias;
-
-        int32_t (*render_create)(void* uptr);
-        int32_t (*render_create_texture)(void* uptr, int32_t type, int32_t w, int32_t h,
-                                         int32_t image_flags, const uint8_t* data);
-
-        int32_t (*render_delete_texture)(void* uptr, int32_t image);
-        int32_t (*render_update_texture)(void* uptr, int32_t image, int32_t x, int32_t y, int32_t w,
-                                         int32_t h, const uint8_t* data);
-
-        int32_t (*render_get_texture_size)(void* uptr, int32_t image, float* w, float* h);
-
-        void (*render_viewport)(void* uptr, float width, float height, float device_pixel_ratio);
-        void (*render_cancel)(void* uptr);
-        void (*render_flush)(void* uptr);
-
-        void (*render_fill)(void* uptr, const NVGpaint* paint,
-                            NVGcompositeOperationState composite_operation,
-                            const NVGscissor* scissor, float fringe, const float* bounds,
-                            const NVGpath* paths, int32_t npaths);
-        void (*render_stroke)(void* uptr, const NVGpaint* paint,
-                              NVGcompositeOperationState composite_operation,
-                              const NVGscissor* scissor, float fringe, float stroke_width,
-                              const NVGpath* paths, int32_t npaths);
-        void (*render_triangles)(
-            void* uptr, const NVGpaint* paint, NVGcompositeOperationState composite_operation,
-            const NVGscissor* scissor, const NVGvertex* verts, int32_t nverts, float fringe);
-
-        void (*render_delete)(void* uptr);
-    };
 
     // Constructor and destructor, called by the render back-end.
     NVGcontext* create_internal(const NVGparams* params);
