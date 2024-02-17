@@ -21,6 +21,7 @@
 	<s:String x:Key="/Default/CodeEditing/Intellisense/CodeCompletion/IntellisenseGloballyEnabled/IntellisenseEnabled/@EntryValue">Disabled</s:String>
 	<s:Int64 x:Key="/Default/CodeEditing/Intellisense/LookupWindow/LookupHeight/@EntryValue">12</s:Int64>
 	<s:Boolean x:Key="/Default/CodeEditing/Intellisense/LookupWindow/ShowSignatures/@EntryValue">True</s:Boolean>
+	<s:String x:Key="/Default/CodeEditing/TypingAssist/BraceInsertType/@EntryValue">DISABLED</s:String>
 	<s:Boolean x:Key="/Default/CodeEditing/TypingAssist/Cpp/GenerateDocumentationComment/@EntryValue">False</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeEditing/TypingAssist/InsertAsteriskInBlockComments/@EntryValue">False</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeEditing/TypingAssist/SkipClosingBracesOnTab/@EntryValue">False</s:Boolean>
@@ -104,6 +105,7 @@
 	<s:Boolean x:Key="/Default/Debugger/TrivialExpressionsEditorAdornmentsEnabled/@EntryValue">False</s:Boolean>
 
 	<s:Boolean x:Key="/Default/Environment/CppEnableRsCppOnExternalModuleFiles/IsEnabled/@EntryValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/Environment/Editor/CppUsagesHighlighter/HighlightUsages/@EntryValue">True</s:Boolean>
 	<s:String x:Key="/Default/Environment/Editor/MatchingBraceHighlighting/Position/@EntryValue">DISABLED</s:String>
 	
 	<s:String x:Key="/Default/Environment/Editor/MatchingBraceHighlighting/Style/@EntryValue">OUTLINE</s:String>
@@ -164,7 +166,7 @@
 	<s:Boolean x:Key="/Default/Environment/SearchAndNavigation/FileAndDirsToSkip/=DB94C55F_002D6B9A_002D4AAE_002D80D7_002D29FD8153E6B5_002Fd_003Atools/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/Environment/SearchAndNavigation/FileMasksToSkip/=fonts_002Ecpp/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/Environment/SearchAndNavigation/MergeOccurrences/@EntryValue">True</s:Boolean>
-	<s:Boolean x:Key="/Default/Environment/SearchAndNavigation/OpenPreviewTabForSelectedItemInFindResults/@EntryValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/Environment/SearchAndNavigation/OpenPreviewTabForSelectedItemInFindResults/@EntryValue">False</s:Boolean>
 	<s:Boolean x:Key="/Default/Environment/SearchAndNavigation/UseReSharperMouseBackForwardNavigation/@EntryValue">True</s:Boolean>
 	
 	<s:String x:Key="/Default/Environment/UserInterface/ThemedIcon/IconThemeSelection/@EntryValue">GrayDark</s:String>

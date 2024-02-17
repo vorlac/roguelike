@@ -9,18 +9,23 @@
 #include "graphics/nvg_renderer.hpp"
 #include "sdl/defs.hpp"
 #include "utils/io.hpp"
+#include "utils/logging.hpp"
 
 SDL_C_LIB_BEGIN
-#include <SDL3/SDL_render.h>
-#include <SDL3/SDL_video.h>
 struct SDL_VideoDevice;
-typedef struct SDL_VideoDevice SDL_VideoDevice;
 SDL_C_LIB_END
 
 namespace rl {
     namespace detail {
+        static std::string name()
+        {
+            return "OpenGL Context Creation";
+        }
+
         static SDL3::SDL_GLContext create_opengl_context(SDL3::SDL_Window* sdl_window)
         {
+            scoped_log();
+
             sdl_assert(sdl_window != nullptr,
                        "Attempting to create context from uninitialized window");
             const SDL3::SDL_GLContext gl_context{ SDL3::SDL_GL_CreateContext(sdl_window) };
@@ -37,10 +42,9 @@ namespace rl {
             {
                 const GLubyte* const gl_ver_str = glGetString(GL_VERSION);
                 const GLubyte* const renderer_str = glGetString(GL_RENDERER);
-                log::warning("GL_RENDERER = {}", reinterpret_cast<const char*>(renderer_str));
-                log::warning("GL_VERSION = {}", reinterpret_cast<const char*>(gl_ver_str));
-                log::warning("OpenGL [{}.{}] Context Created Successfully", gl_major_ver,
-                             gl_minor_ver);
+                diag_log("GL_RENDERER = {}", reinterpret_cast<const char*>(renderer_str));
+                diag_log("GL_VERSION = {}", reinterpret_cast<const char*>(gl_ver_str));
+                diag_log("OpenGL [{}.{}] Context Created Successfully", gl_major_ver, gl_minor_ver);
             }
 
             return gl_context;

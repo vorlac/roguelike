@@ -10,15 +10,18 @@
 namespace rl {
     class EventHandler
     {
-        static int resizing_event_watcher(void* data, SDL3::SDL_Event* e)
+        constexpr static i32 resizing_event_watcher(void* data, SDL3::SDL_Event* e)
         {
-            if (e->type == MainWindow::Event::Resized)
-            {
-                const auto window{ static_cast<MainWindow*>(data) };
-                if (e->window.windowID == window->get_window_id())
-                    window->window_resized_event_callback(*e);
-            }
-            return 0;
+            constexpr i32 ret{ 0 };
+            if (e->type != MainWindow::Event::Resized)
+                return ret;
+
+            const auto window{ static_cast<MainWindow*>(data) };
+            runtime_assert(e->window.windowID == window->window_id(),
+                           "main window resize event callback window id mismatch");
+
+            window->window_resized_event_callback(*e);
+            return ret;
         }
 
     public:
@@ -99,9 +102,11 @@ namespace rl {
                         window->window_restored_event_callback(e);
                         break;
                     case MainWindow::Event::MouseEnter:
+                        window->mouse_moved_event_callback(e);
                         window->mouse_entered_event_callback(e);
                         break;
                     case MainWindow::Event::MouseLeave:
+                        window->mouse_moved_event_callback(e);
                         window->mouse_exited_event_callback(e);
                         break;
                     case MainWindow::Event::FocusGained:

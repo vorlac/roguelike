@@ -1,6 +1,4 @@
-﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml"
-    xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
 	<s:String x:Key="/Default/CodeEditing/CppCodeGeneration/EmptyCtorsAndDtorsBodyKind/@EntryValue">Empty</s:String>
 	<s:String x:Key="/Default/CodeEditing/CppCodeGeneration/FunctionImplementationKind/@EntryValue">ReturnDefaultValue</s:String>
 	<s:String x:Key="/Default/CodeEditing/GenerateMemberBody/AccessorImplementationKind/@EntryValue">BackingField</s:String>
@@ -52,12 +50,14 @@
 	<s:String x:Key="/Default/CodeStyle/Naming/CppNaming/Abbreviations/=ES/@EntryIndexedValue">ES</s:String>
 	<s:String x:Key="/Default/CodeStyle/Naming/CppNaming/Abbreviations/=GL/@EntryIndexedValue">GL</s:String>
 	<s:String x:Key="/Default/CodeStyle/Naming/CppNaming/Abbreviations/=GLNV/@EntryIndexedValue">GLNV</s:String>
+	<s:String x:Key="/Default/CodeStyle/Naming/CppNaming/Abbreviations/=GLSL/@EntryIndexedValue">GLSL</s:String>
 	<s:String x:Key="/Default/CodeStyle/Naming/CppNaming/Abbreviations/=ICC/@EntryIndexedValue">ICC</s:String>
 	<s:String x:Key="/Default/CodeStyle/Naming/CppNaming/Abbreviations/=ID/@EntryIndexedValue">ID</s:String>
 	<s:String x:Key="/Default/CodeStyle/Naming/CppNaming/Abbreviations/=NV/@EntryIndexedValue">NV</s:String>
 	<s:String x:Key="/Default/CodeStyle/Naming/CppNaming/Abbreviations/=NV/@EntryIndexedValue">SDL</s:String>
 	<s:String x:Key="/Default/CodeStyle/Naming/CppNaming/Rules/=Classes_0020and_0020structs/@EntryIndexedValue">&lt;NamingElement Priority="1"&gt;&lt;Descriptor Static="Indeterminate" Constexpr="Indeterminate" Const="Indeterminate" Volatile="Indeterminate" Accessibility="NOT_APPLICABLE"&gt;&lt;type Name="__interface" /&gt;&lt;type Name="class" /&gt;&lt;type Name="struct" /&gt;&lt;/Descriptor&gt;&lt;Policy Inspect="True" Prefix="" Suffix="" Style="AaBb"&gt;&lt;ExtraRule Prefix="" Suffix="" Style="aa_bb" /&gt;&lt;/Policy&gt;&lt;/NamingElement&gt;</s:String>
 	<s:String x:Key="/Default/CodeStyle/Naming/CppNaming/Rules/=Enum_0020members/@EntryIndexedValue">&lt;NamingElement Priority="14"&gt;&lt;Descriptor Static="Indeterminate" Constexpr="Indeterminate" Const="Indeterminate" Volatile="Indeterminate" Accessibility="NOT_APPLICABLE"&gt;&lt;type Name="scoped enumerator" /&gt;&lt;type Name="unscoped enumerator" /&gt;&lt;/Descriptor&gt;&lt;Policy Inspect="True" Prefix="" Suffix="" Style="AaBb"&gt;&lt;ExtraRule Prefix="" Suffix="" Style="aa_bb" /&gt;&lt;/Policy&gt;&lt;/NamingElement&gt;</s:String>
+	<s:String x:Key="/Default/CodeStyle/Naming/CppNaming/Rules/=Macros/@EntryIndexedValue">&lt;NamingElement Priority="19"&gt;&lt;Descriptor Static="Indeterminate" Constexpr="Indeterminate" Const="Indeterminate" Volatile="Indeterminate" Accessibility="NOT_APPLICABLE"&gt;&lt;type Name="macro" /&gt;&lt;/Descriptor&gt;&lt;Policy Inspect="True" Prefix="" Suffix="" Style="AA_BB"&gt;&lt;ExtraRule Prefix="" Suffix="" Style="aa_bb" /&gt;&lt;/Policy&gt;&lt;/NamingElement&gt;</s:String>
 	<s:String x:Key="/Default/CodeStyle/Naming/CppNaming/Rules/=Other_0020constants/@EntryIndexedValue">&lt;NamingElement Priority="15"&gt;&lt;Descriptor Static="True" Constexpr="Indeterminate" Const="True" Volatile="Indeterminate" Accessibility="NOT_APPLICABLE"&gt;&lt;type Name="class field" /&gt;&lt;type Name="local variable" /&gt;&lt;type Name="struct field" /&gt;&lt;/Descriptor&gt;&lt;Policy Inspect="True" Prefix="" Suffix="" Style="AaBb"&gt;&lt;ExtraRule Prefix="" Suffix="" Style="AA_BB" /&gt;&lt;ExtraRule Prefix="" Suffix="" Style="aa_bb" /&gt;&lt;/Policy&gt;&lt;/NamingElement&gt;</s:String>
 	<s:Boolean x:Key="/Default/CppPerformance/UseIntelliSenseInfoApi/@EntryValue">False</s:Boolean>
 	<s:Boolean x:Key="/Default/CppUnrealEngine/EnableBlueprintClassHighlightings/@EntryValue">False</s:Boolean>
@@ -124,6 +124,7 @@
 	<s:String x:Key="/Default/Environment/PerformanceGuide/SwitchConflictResolutionMode/=XAML_0020Designer/@EntryIndexedValue">DO_NOTHING</s:String>
 	<s:Boolean x:Key="/Default/Environment/SearchAndNavigation/FileAndDirsToSkip/=DB94C55F_002D6B9A_002D4AAE_002D80D7_002D29FD8153E6B5_002Fd_003A_002Ecache/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/Environment/SearchAndNavigation/FileAndDirsToSkip/=DB94C55F_002D6B9A_002D4AAE_002D80D7_002D29FD8153E6B5_002Fd_003A_002Eout_002Fd_003Abuild_002Fd_003Amsvc_002Ddebug_002Fd_003Aresources_002Ff_003Afonts_002Ecpp/@EntryIndexedValue">False</s:Boolean>
+	<s:Boolean x:Key="/Default/Environment/SearchAndNavigation/FileAndDirsToSkip/=DB94C55F_002D6B9A_002D4AAE_002D80D7_002D29FD8153E6B5_002Fd_003A_002Eout_002Fd_003Abuild_002Fd_003Amsvc_002Ddebug_002Fd_003Aresources_002Ff_003Afonts_002Ecpp/@EntryIndexRemoved">True</s:Boolean>
 	<s:Boolean x:Key="/Default/Environment/SearchAndNavigation/FileAndDirsToSkip/=DB94C55F_002D6B9A_002D4AAE_002D80D7_002D29FD8153E6B5_002Fd_003A_002Evscode/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/Environment/SearchAndNavigation/FileAndDirsToSkip/=DB94C55F_002D6B9A_002D4AAE_002D80D7_002D29FD8153E6B5_002Fd_003Acmake/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/Environment/SearchAndNavigation/FileAndDirsToSkip/=DB94C55F_002D6B9A_002D4AAE_002D80D7_002D29FD8153E6B5_002Fd_003Adata/@EntryIndexedValue">True</s:Boolean>
@@ -131,8 +132,8 @@
 	<s:Boolean x:Key="/Default/Environment/SearchAndNavigation/FileAndDirsToSkip/=DB94C55F_002D6B9A_002D4AAE_002D80D7_002D29FD8153E6B5_002Fd_003Alog/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/Environment/SearchAndNavigation/FileAndDirsToSkip/=DB94C55F_002D6B9A_002D4AAE_002D80D7_002D29FD8153E6B5_002Fd_003Atools/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/Environment/SearchAndNavigation/MergeOccurrences/@EntryValue">True</s:Boolean>
-	<s:Boolean x:Key="/Default/Environment/SearchAndNavigation/OpenPreviewTabForSelectedItemInFindResults/@EntryValue">True</s:Boolean>
-	<s:Boolean x:Key="/Default/Environment/SearchAndNavigation/UseReSharperMouseBackForwardNavigation/@EntryValue">True</s:Boolean>
+	
+	<s:Boolean x:Key="/Default/Environment/SearchAndNavigation/UseReSharperMouseBackForwardNavigation/@EntryValue">False</s:Boolean>
 	<s:String x:Key="/Default/Environment/UserInterface/ThemedIcon/IconThemeSelection/@EntryValue">GrayDark</s:String>
 	<s:String x:Key="/Default/Environment/UserInterface/ThemedIcon/IconThemeSelectionExtensionForFluentDesign/@EntryValue">Never</s:String>
 	<s:String x:Key="/Default/Environment/UserInterface/ThemedIcon/PsiSymbolIcon/PsiSymbolIconThemeSelection/@EntryValue">SymbolsVs11Gray</s:String>

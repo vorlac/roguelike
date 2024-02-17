@@ -136,7 +136,7 @@ QualifierOrder: ['constexpr', 'static', 'inline', 'volatile', 'const', 'type']
 ReferenceAlignment: Pointer
 ReflowComments: true
 RemoveBracesLLVM: true
-RemoveParentheses: ReturnStatement ## clang v17 only
+#RemoveParentheses: ReturnStatement ## clang v17 only
 RequiresClausePosition: OwnLine
 SeparateDefinitionBlocks: Always # Leave
 ShortNamespaceLines: 1

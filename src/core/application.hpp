@@ -1,14 +1,8 @@
 #pragma once
 
-#include <array>
-#include <atomic>
-#include <concepts>
 #include <memory>
 #include <string>
 #include <string_view>
-#include <tuple>
-#include <type_traits>
-#include <utility>
 
 #include "core/assert.hpp"
 #include "core/event_handler.hpp"
@@ -19,6 +13,7 @@
 #include "core/ui/gui.hpp"
 #include "graphics/gl/instanced_buffer.hpp"
 #include "sdl/defs.hpp"
+#include "utils/logging.hpp"
 #include "utils/numeric.hpp"
 #include "utils/time.hpp"
 
@@ -63,6 +58,8 @@ namespace rl {
 
         bool run()
         {
+            scoped_log();
+
             bool ret{ this->setup() };
             bool bval{ true };
 
@@ -79,6 +76,8 @@ namespace rl {
             auto dialog = ds::shared{ form->add_dialog(ds::point{ 10, 10 }, "Nested Dialog Test") };
 
             auto floating_form_gui = [&] {
+                scoped_log();
+
                 form->add_group("Group 1");
                 form->add_variable<bool>("checkbox", bval);
                 form->add_variable<std::string>("string", sval);
@@ -107,8 +106,8 @@ namespace rl {
                     });
 
                 form->add_group("Other Group");
-                form->add_button("Push Button", [] {
-                    log::info("Button pressed.\n");
+                form->add_button("Push Button", [&] {
+                    diag_log("Button pressed.\n");
                 });
 
                 dialog->center();
@@ -120,6 +119,8 @@ namespace rl {
             const auto layout{ new ui::AdvancedGridLayout({ 0, 10, 0 }, {}, 30) };
 
             auto full_window_menu = [&] {
+                scoped_log();
+
                 gui->set_layout(layout);
 
                 layout->set_col_stretch(1, 0.5f);
@@ -175,19 +176,14 @@ namespace rl {
                 });
 
                 push_button->set_tooltip("Microscope Button");
-                push_button->set_callback([] {
-                    log::warning("Button Pressed Callback Invoked");
+                push_button->set_callback([&] {
+                    scoped_log("Push Button Callback Invoked");
                 });
 
                 layout->set_anchor(push_button, ui::Anchor(0, layout->row_count() - 1, 1, 1));
-                layout->set_anchor(title_label, ui::Anchor{
-                                                    1,
-                                                    layout->row_count() - 1,
-                                                    2,
-                                                    1,
-                                                    ui::Alignment::Center,
-                                                    ui::Alignment::Fill,
-                                                });
+                layout->set_anchor(title_label,
+                                   ui::Anchor{ 1, layout->row_count() - 1, 2, 1,
+                                               ui::Alignment::Center, ui::Alignment::Fill });
 
                 layout->append_row(20);
                 layout->append_row(0);
@@ -205,8 +201,8 @@ namespace rl {
 
                 stats_desc_label->set_tooltip("Stats Label");
                 stats_value_label->set_tooltip("Average FPS");
-                stats_desc_label->set_callback([] {
-                    log::warning("Stats callback invoked");
+                stats_desc_label->set_callback([&] {
+                    scoped_log("Button Pressed Callback Invoked");
                 });
             };
 
@@ -304,6 +300,11 @@ namespace rl {
         }
 
     private:
+        static std::string name()
+        {
+            return "Application";
+        }
+
         void print_loop_stats(const f32 delta_time)
         {
             f32 elapsed_time{ m_timer.elapsed() };
@@ -311,19 +312,15 @@ namespace rl {
             if (iterations % 60 != 0)
                 return;
 
-            log::debug(
+            scoped_log(
                 " {:>14.6f} s || {:>10L} u ][ {:>10.4f} ms | {:>10.4f} fps ][ {:>10.4f} avg fps ]",
-                elapsed_time,                                  // elapsed time (seconds)
-                iterations,                                    // loop iterations
-                delta_time * 1000.0f,                          // delta time (ms)
-                1.0f / delta_time,                             // current fps
-                static_cast<f32>(iterations) / elapsed_time);  // avg fps
+                elapsed_time, iterations, delta_time * 1000.0f, 1.0f / delta_time,
+                static_cast<f32>(iterations) / elapsed_time);
         }
 
     private:
         Timer<f32> m_timer{};
         std::unique_ptr<MainWindow> m_main_window{};
         EventHandler m_event_handler{};
-        // StateMachine m_fsm{};
     };
 }

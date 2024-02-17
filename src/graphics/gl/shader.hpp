@@ -21,6 +21,7 @@
 #include "utils/concepts.hpp"
 #include "utils/fs.hpp"
 #include "utils/io.hpp"
+#include "utils/logging.hpp"
 #include "utils/numeric.hpp"
 
 namespace rl::gl {
@@ -37,18 +38,16 @@ namespace rl::gl {
         struct GLSL
         {
             constexpr static inline Program shader_type = VShaderType;
-            static inline const std::filesystem::path GLSL_SHADER_DIR = {
-                fs::absolute("shaders/"),
-            };
+            static inline const std::filesystem::path GLSL_SHADER_DIR{ fs::absolute("shaders/") };
 
-            GLSL() = default;
+            explicit constexpr GLSL() = default;
 
-            GLSL(std::filesystem::path glsl_path)
-                : m_path{ fs::absolute(GLSL_SHADER_DIR.generic_string() + glsl_path.generic_string())
-                              .make_preferred() }
+            explicit GLSL(const std::filesystem::path& glsl_path)
+                : m_path{ fs::absolute(
+                      GLSL_SHADER_DIR.generic_string() + glsl_path.generic_string()) }
             {
                 namespace fs = std::filesystem;
-                bool glsl_exists = fs::exists(m_path);
+                const bool glsl_exists = fs::exists(m_path);
                 runtime_assert(glsl_exists, "GLSL file not found: {}", m_path);
 
                 if (fs::exists(m_path))
@@ -59,10 +58,17 @@ namespace rl::gl {
                 }
             }
 
+            static std::string name()
+            {
+                return "GLSL";
+            }
+
             u32 compile()
             {
-                log::info("Compiling shader: {}", m_path);
-                u32 shader_id = glCreateShader(std::to_underlying(shader_type));
+                scoped_log();
+
+                diag_log("Compiling shader: {}", m_path);
+                const u32 shader_id = glCreateShader(std::to_underlying(shader_type));
                 const char* glsl = m_glsl.c_str();
                 glShaderSource(shader_id, 1, &glsl, nullptr);
                 glCompileShader(shader_id);
@@ -72,7 +78,7 @@ namespace rl::gl {
                 if (success != 0)
                 {
                     m_id = shader_id;
-                    log::info("Success. Shader ID: {}", m_id);
+                    diag_log("Success. Shader ID: {}", m_id);
                 }
                 else
                 {
@@ -85,7 +91,7 @@ namespace rl::gl {
                 return m_id;
             }
 
-            u32 id()
+            [[nodiscard]] u32 id() const
             {
                 return m_id;
             }
@@ -97,7 +103,8 @@ namespace rl::gl {
         };
 
     public:
-        Shader(std::filesystem::path vert_glsl_file, std::filesystem::path frag_glsl_file)
+        Shader(const std::filesystem::path& vert_glsl_file,
+               const std::filesystem::path& frag_glsl_file)
             : m_fragment_shader(frag_glsl_file.native())
             , m_vertex_shader(vert_glsl_file.native())
         {
@@ -108,23 +115,32 @@ namespace rl::gl {
             glDeleteProgram(m_shader_id);
         }
 
-        inline bool compile()
+        static std::string name()
         {
-            u32 vert_shader_id = m_vertex_shader.compile();
-            u32 frag_shader_id = m_fragment_shader.compile();
+            return "Shader";
+        }
+
+        bool compile()
+        {
+            scoped_log();
+
+            const u32 vert_shader_id{ m_vertex_shader.compile() };
+            const u32 frag_shader_id{ m_fragment_shader.compile() };
             if (vert_shader_id == 0 || frag_shader_id == 0)
                 return false;
 
             m_shader_id = glCreateProgram();
+
             glAttachShader(m_shader_id, frag_shader_id);
             glAttachShader(m_shader_id, vert_shader_id);
             glLinkProgram(m_shader_id);
 
+            diag_log("Linking shaders...");
+
             i32 success = 0;
-            log::info("Linking shaders...");
             glGetProgramiv(m_shader_id, GL_LINK_STATUS, &success);
             if (success != 0)
-                log::info("Success. Shader Program ID: {}", m_shader_id);
+                diag_log("Success. Shader Program ID: {}", m_shader_id);
             else
             {
                 char error_msg[256] = { 0 };
@@ -135,19 +151,18 @@ namespace rl::gl {
             }
 
             glUseProgram(m_shader_id);
-
             glDeleteShader(vert_shader_id);
             glDeleteShader(frag_shader_id);
 
             return true;
         }
 
-        u32 id() const
+        [[nodiscard]] u32 id() const
         {
             return m_shader_id;
         }
 
-        void set_active()
+        void set_active() const
         {
             glUseProgram(m_shader_id);
             this->set_transform();
@@ -167,18 +182,18 @@ namespace rl::gl {
             glUniform1i(glGetUniformLocation(m_shader_id, name.data()), value);
         }
 
-        void set_transform()
+        void set_transform() const
         {
             glm::mat4 model = glm::identity<glm::mat4>();
             glm::mat4 view = glm::identity<glm::mat4>();
-            glm::mat4 projection = glm::ortho(0.0f, 1920.0f, 1080.0f, 0.0f, 0.1f, 100.0f);
+            const glm::mat4 projection = glm::ortho(0.0f, 1920.0f, 1080.0f, 0.0f, 0.1f, 100.0f);
 
             model = glm::scale(model, glm::vec3(1.0f));
             model = glm::rotate(model, glm::radians(0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
             view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
 
             auto mvp{ projection * view * model };
-            u32 mvp_loc = glGetUniformLocation(m_shader_id, "mvp");
+            const i32 mvp_loc = glGetUniformLocation(m_shader_id, "mvp");
             glUniformMatrix4fv(mvp_loc, 1, GL_FALSE, glm::value_ptr(mvp));
         }
 

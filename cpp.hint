@@ -255,3 +255,51 @@
 #define _STL_DISABLE_DEPRECATED_WARNING __pragma(warning(push)) __pragma(warning(disable : 4996))
 #define _STL_DISABLE_DEPRECATED_WARNING _Pragma("warning(push)") _Pragma("warning(disable : 4996)")
 #define _CXX23_DEPRECATE_ALIGNED_STORAGE [[deprecated("warning STL4034: " "std::aligned_storage and std::aligned_storage_t are deprecated in C++23. " "Prefer alignas(T) std::byte t_buff[sizeof(T)]. " "You can define _SILENCE_CXX23_ALIGNED_STORAGE_DEPRECATION_WARNING " "or _SILENCE_ALL_CXX23_DEPRECATION_WARNINGS to suppress this warning.")]]
+// Hint files help the Visual Studio IDE interpret Visual C++ identifiers
+// such as names of functions and macros.
+// For more information see https://go.microsoft.com/fwlink/?linkid=865984
+#define _EXPORT_STD
+// Hint files help the Visual Studio IDE interpret Visual C++ identifiers
+// such as names of functions and macros.
+// For more information see https://go.microsoft.com/fwlink/?linkid=865984
+#define _CONSTEXPR17
+// Hint files help the Visual Studio IDE interpret Visual C++ identifiers
+// such as names of functions and macros.
+// For more information see https://go.microsoft.com/fwlink/?linkid=865984
+#define _STD
+// Hint files help the Visual Studio IDE interpret Visual C++ identifiers
+// such as names of functions and macros.
+// For more information see https://go.microsoft.com/fwlink/?linkid=865984
+#define _HAS_CXX20
+// Hint files help the Visual Studio IDE interpret Visual C++ identifiers
+// such as names of functions and macros.
+// For more information see https://go.microsoft.com/fwlink/?linkid=865984
+#define _NON_MEMBER_CALL_CV_REF_NOEXCEPT(FUNC) _NON_MEMBER_CALL_CV_REF(FUNC, ) _NON_MEMBER_CALL_CV_REF(FUNC, noexcept)
+#define _NON_MEMBER_CALL_CV_REF_NOEXCEPT(FUNC) _NON_MEMBER_CALL_CV_REF(FUNC, )
+// Hint files help the Visual Studio IDE interpret Visual C++ identifiers
+// such as names of functions and macros.
+// For more information see https://go.microsoft.com/fwlink/?linkid=865984
+#define _RESULT_TYPE_NAME
+// Hint files help the Visual Studio IDE interpret Visual C++ identifiers
+// such as names of functions and macros.
+// For more information see https://go.microsoft.com/fwlink/?linkid=865984
+#define _CXX17_DEPRECATE_ADAPTOR_TYPEDEFS [[deprecated( "warning STL4007: Many result_type typedefs " "and all argument_type, first_argument_type, and second_argument_type typedefs are deprecated in C++17. " "You can define _SILENCE_CXX17_ADAPTOR_TYPEDEFS_DEPRECATION_WARNING " "or _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS to suppress this warning.")]]
+#define _CXX17_DEPRECATE_ADAPTOR_TYPEDEFS
+// Hint files help the Visual Studio IDE interpret Visual C++ identifiers
+// such as names of functions and macros.
+// For more information see https://go.microsoft.com/fwlink/?linkid=865984
+#define _NODISCARD [[nodiscard]]
+#define _NODISCARD
+// Hint files help the Visual Studio IDE interpret Visual C++ identifiers
+// such as names of functions and macros.
+// For more information see https://go.microsoft.com/fwlink/?linkid=865984
+#define _EXPORT_STD
+// Hint files help the Visual Studio IDE interpret Visual C++ identifiers
+// such as names of functions and macros.
+// For more information see https://go.microsoft.com/fwlink/?linkid=865984
+#define _EXPORT_STD
+#define SPDLOG_CONSTEXPR
+#define SPDLOG_API __declspec(dllexport)
+#define SPDLOG_API __declspec(dllimport)
+#define SPDLOG_API __attribute__((visibility("default")))
+#define SPDLOG_API

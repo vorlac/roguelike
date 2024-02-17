@@ -1,5 +1,6 @@
 #include "core/ui/theme.hpp"
 #include "core/ui/vscrollpanel.hpp"
+#include "utils/logging.hpp"
 #include "utils/math.hpp"
 
 namespace rl::ui {
@@ -25,6 +26,8 @@ namespace rl::ui {
 
     void VScrollPanel::perform_layout()
     {
+        scoped_log();
+
         Widget::perform_layout();
         if (m_children.empty())
             return;
@@ -58,6 +61,8 @@ namespace rl::ui {
 
     ds::dims<f32> VScrollPanel::preferred_size() const
     {
+        scoped_log();
+
         if (m_children.empty())
             return ds::dims{ 0.0f, 0.0f };
 
@@ -66,26 +71,31 @@ namespace rl::ui {
 
     bool VScrollPanel::on_mouse_drag(const Mouse& mouse, const Keyboard& kb)
     {
+        scoped_log();
+
         if (m_children.empty() || m_child_preferred_height <= m_size.height)
             return Widget::on_mouse_drag(mouse, kb);
-        else
-        {
-            auto&& mouse_delta{ mouse.pos_delta() };
-            const f32 scrollh{ this->height() *
-                               std::min(1.0f, this->height() / m_child_preferred_height) };
 
-            m_scroll = std::max(
-                0.0f, std::min(1.0f, m_scroll + mouse_delta.y / (m_size.height - 8.0f - scrollh)));
+        auto&& mouse_delta{ mouse.pos_delta() };
+        const f32 scrollh{ this->height() *
+                           std::min(1.0f, this->height() / m_child_preferred_height) };
 
-            m_update_layout = true;
-            return true;
-        }
+        m_scroll = std::max(
+            0.0f, std::min(1.0f, m_scroll + mouse_delta.y / (m_size.height - 8.0f - scrollh)));
+
+        m_update_layout = true;
+        return true;
     }
 
     bool VScrollPanel::on_mouse_button_released(const Mouse& mouse, const Keyboard& kb)
     {
+        scoped_log();
+
         if (Widget::on_mouse_button_released(mouse, kb))
+        {
+            diag_log("Mouse Released");
             return true;
+        }
 
         return false;
     }
@@ -95,6 +105,7 @@ namespace rl::ui {
         if (Widget::on_mouse_button_pressed(mouse, kb))
             return true;
 
+        scoped_log();
         const auto&& pos{ mouse.pos() };
         if (mouse.is_button_down(Mouse::Button::Left) && !m_children.empty() &&
             m_child_preferred_height > m_size.height && pos.x > m_pos.x + m_size.width - 13.0f &&
@@ -126,6 +137,8 @@ namespace rl::ui {
 
     bool VScrollPanel::on_mouse_scroll(const Mouse& mouse, const Keyboard& kb)
     {
+        scoped_log();
+
         if (m_children.empty() || m_child_preferred_height <= m_size.height)
             return Widget::on_mouse_scroll(mouse, kb);
 
@@ -150,6 +163,8 @@ namespace rl::ui {
     {
         if (m_children.empty())
             return;
+
+        scoped_log();
 
         Widget* child{ m_children[0] };
 

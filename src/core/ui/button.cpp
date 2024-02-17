@@ -8,6 +8,7 @@
 #include "core/ui/popupbutton.hpp"
 #include "core/ui/theme.hpp"
 #include "graphics/vg/nanovg.hpp"
+#include "utils/logging.hpp"
 #include "utils/math.hpp"
 #include "utils/unicode.hpp"
 
@@ -139,8 +140,7 @@ namespace rl::ui {
         nvg::font_face(context, Font::Name::SansBold);
 
         ds::dims icon_size{ 0.0f, font_size };
-        const f32 text_width{ nvg::text_bounds(context, 0.0f, 0.0f, m_text.c_str(), nullptr,
-                                               nullptr) };
+        const f32 text_width{ nvg::text_bounds(context, 0.0f, 0.0f, m_text.c_str()) };
 
         if (m_icon != Icon::None)
         {
@@ -149,14 +149,13 @@ namespace rl::ui {
                 icon_size.height *= this->icon_scale();
                 nvg::font_size(context, icon_size.height);
                 nvg::font_face(context, Font::Name::Icons);
-                icon_size.width = nvg::text_bounds(context, 0.0f, 0.0f, utf8(m_icon).data(),
-                                                   nullptr, nullptr) +
+                icon_size.width = nvg::text_bounds(context, 0.0f, 0.0f, utf8(m_icon).data()) +
                                   m_size.height * 0.15f;
             }
             else
             {
                 icon_size.height *= 0.9f;
-                ds::dims<f32> image_size{ 0.0f, 0.0f };
+                ds::dims image_size{ 0.0f, 0.0f };
                 nvg::image_size(context, std::to_underlying(m_icon), &image_size.width,
                                 &image_size.height);
 
@@ -184,6 +183,8 @@ namespace rl::ui {
                                            const bool button_just_pressed,
                                            Keyboard::Scancode::ID keys_down)
     {
+        scoped_log("pt={} btn={} just_pressed={}", pt, button, button_just_pressed);
+
         // Temporarily increase the reference count of the button in
         // case the button causes the parent window to be destructed
         ds::shared self{ this };
@@ -194,6 +195,9 @@ namespace rl::ui {
         const bool rmb_and_not_menu_btn{ button == Mouse::Button::Right &&
                                          this->has_property(Property::StandardMenu) };
 
+        diag_log("enabled={} && (lmb_menu={} || rmb_not_menu={})", m_enabled, lmb_and_menu_btn,
+                 rmb_and_not_menu_btn);
+
         if (m_enabled && (lmb_and_menu_btn || rmb_and_not_menu_btn))
         {
             const bool pushed_backup{ m_pressed };
@@ -201,6 +205,7 @@ namespace rl::ui {
             {
                 if (this->has_property(Property::Radio))
                 {
+                    diag_log("radio button");
                     if (m_button_group.empty())
                         for (const auto widget : parent()->children())
                         {
@@ -227,6 +232,7 @@ namespace rl::ui {
 
                 if (this->has_property(Property::PopupMenu))
                 {
+                    diag_log("popup button");
                     for (const auto widget : this->parent()->children())
                     {
                         const auto btn{ dynamic_cast<Button*>(widget) };
@@ -246,6 +252,7 @@ namespace rl::ui {
             }
             else if (m_pressed || this->has_property(Property::StandardMenu))
             {
+                diag_log("standard menu button");
                 if (m_callback != nullptr && this->contains(pt))
                     m_callback();
                 if (this->has_property(Property::StandardPush))
@@ -253,8 +260,10 @@ namespace rl::ui {
             }
 
             if (pushed_backup != m_pressed && m_change_callback != nullptr)
+            {
+                diag_log("change callback invoked");
                 m_change_callback(m_pressed);
-
+            }
             return true;
         }
         return false;
@@ -365,7 +374,7 @@ namespace rl::ui {
             else
             {
                 icon_size.height *= 0.9f;
-                ds::dims<f32> image_size{ 0.0f, 0.0f };
+                ds::dims image_size{ 0.0f, 0.0f };
                 nvg::image_size(context, m_icon, &image_size.width, &image_size.height);
                 icon_size.width = image_size.height * icon_size.height / image_size.height;
             }

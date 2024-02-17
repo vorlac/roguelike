@@ -42,7 +42,8 @@ namespace rl {
 
         m_properties = flags;
         m_sdl_window = SDL3::SDL_CreateWindow(title.data(), dims.width, dims.height, m_properties);
-        m_window_id = SDL3::SDL_GetWindowID(m_sdl_window);
+
+        m_window_id = this->get_window_id();
         m_window_rect = ds::rect{
             m_sdl_window ? this->get_position() : ds::point<i32>::null(),
             dims,
@@ -130,6 +131,21 @@ namespace rl {
         const i32 result{ SDL3::SDL_ShowWindow(m_sdl_window) };
         sdl_assert(result == 0, "failed to show");
         return result == 0;
+    }
+
+    WindowID MainWindow::window_id() const
+    {
+        runtime_assert(m_window_id != 0, "invalid window ID");
+        return m_window_id;
+    }
+
+    WindowID MainWindow::get_window_id()
+    {
+        const WindowID result{ SDL3::SDL_GetWindowID(m_sdl_window) };
+        sdl_assert(result != 0, "failed to get window id");
+        sdl_assert(m_window_id == 0 || result == m_window_id, "sdl window id mismatch");
+        m_window_id = result;
+        return m_window_id;
     }
 
     bool MainWindow::set_vsync(bool enabled)
@@ -313,11 +329,6 @@ namespace rl {
         return m_display_id;
     }
 
-    WindowID MainWindow::get_window_id() const
-    {
-        return m_window_id;
-    }
-
     SDL3::SDL_DisplayMode MainWindow::get_display_mode() const
     {
         SDL3::SDL_DisplayMode ret{};
@@ -340,19 +351,21 @@ namespace rl {
 
     ds::dims<i32> MainWindow::get_size()
     {
-        const i32 result{ SDL3::SDL_GetWindowSize(m_sdl_window, &m_window_rect.size.width,
-                                                  &m_window_rect.size.height) };
+        auto& size = m_window_rect.size;
+        const i32 result{ SDL3::SDL_GetWindowSize(m_sdl_window, &size.width, &size.height) };
         sdl_assert(result == 0, "failed to set size");
         return m_window_rect.size;
     }
 
     ds::dims<i32> MainWindow::get_render_size()
     {
-        const i32 result{ SDL3::SDL_GetWindowSizeInPixels(m_sdl_window, &m_framebuf_size.width,
-                                                          &m_framebuf_size.height) };
+        auto& size = m_framebuf_size;
+        const i32 result{ SDL3::SDL_GetWindowSizeInPixels(m_sdl_window, &size.width, &size.height) };
         sdl_assert(result == 0, "failed to set render size");
+
         m_pixel_ratio = SDL3::SDL_GetWindowDisplayScale(m_sdl_window);
         sdl_assert(m_pixel_ratio != 0.0f, "failed to get pixel ratio [window:{}]", m_window_id);
+
         m_pixel_density = SDL3::SDL_GetWindowPixelDensity(m_sdl_window);
         sdl_assert(m_pixel_density != 0.0f, "failed to get pixel density [window:{}]", m_window_id);
 
@@ -409,6 +422,7 @@ namespace rl {
     void MainWindow::mouse_exited_event_callback(const SDL3::SDL_Event& e) const
     {
         scoped_log();
+
         m_gui_canvas->on_mouse_exited(m_mouse);
     }
 

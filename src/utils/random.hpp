@@ -15,10 +15,18 @@ namespace rl {
                  std::integral<decltype(RangeStart)>)
     struct random
     {
+        using numeric_type = decltype(RangeStart);
+
     public:
         constexpr static auto value()
+            requires rl::integer<numeric_type>
         {
             return m_dist(m_engine);
+        }
+
+        constexpr static auto value()
+        {
+            return static_cast<auto>(m_dist(m_engine));
         }
 
     private:

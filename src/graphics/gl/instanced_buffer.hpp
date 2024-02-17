@@ -8,7 +8,6 @@
 #include "ds/circle.hpp"
 #include "ds/color.hpp"
 #include "ds/rect.hpp"
-#include "ds/triangle.hpp"
 #include "ds/vector2d.hpp"
 #include "graphics/gl/shader.hpp"
 #include "utils/math.hpp"
@@ -27,8 +26,15 @@ namespace rl::gl {
         };
 
     public:
-        InstancedVertexBuffer(const ds::rect<f32>& viewport_rect)
+        static std::string name()
         {
+            return "InstancedVertexBuffer";
+        }
+
+        explicit InstancedVertexBuffer(const ds::rect<f32>& viewport_rect)
+        {
+            scoped_log();
+
             auto&& window_rect{ viewport_rect.inflated(-450.0f) };
 
             // create vertex array object
@@ -55,8 +61,8 @@ namespace rl::gl {
 
             ds::color<u8> rect_color = ds::color<u8>::rand();
 
-            log::info("InstancedVertexBuffer Spawning {} Rectangles (clr:{}MB, pos:{}MB)",
-                      m_rect_count, colors_size_mb, positions_size_mb);
+            diag_log("InstancedVertexBuffer Spawning {} Rectangles (clr:{}MB, pos:{}MB)",
+                     m_rect_count, colors_size_mb, positions_size_mb);
 
             for (size_t i = 0; i < m_rect_count; ++i)
             {

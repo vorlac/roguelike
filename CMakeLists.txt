@@ -97,10 +97,11 @@ target_compile_definitions(${PROJECT_NAME}
   PRIVATE
     ROGUELIKE_TESTS_ENABLED
 	SPDLOG_NO_EXCEPTIONS
+	SPDLOG_WCHAR_TO_UTF8_SUPPORT
     KHRONOS_STATIC
 	NANOVG_GL3
     NOMINMAX
-	# UNICODE
+	UNICODE
 
     $<${compiler_is_msvc}:
         _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING
@@ -127,7 +128,7 @@ target_compile_options(${PROJECT_NAME}
 			#/fsanitize=fuzzer
 		    ## /fsanitize=address
             # /Z7 # embed debug info into .o files instead of pdb (for ccache)
-            # /ZI # enable edit and continue
+            /Zi # enable edit and continue
         >
 
         $<$<CONFIG:Release>:
@@ -136,7 +137,7 @@ target_compile_options(${PROJECT_NAME}
             /Oy # frame pointer omission
             #/Gw # optimize global data
             #/GS- # disable buffer security checks
-            /GA # optimize for windows application
+            #/GA # optimize for windows application
             /GL # whole program optimization
             #/fp:fast # prefer fast over accurate floating point math
             #/favor:INTEL64
@@ -167,7 +168,7 @@ target_link_options(${PROJECT_NAME}
     $<${compiler_is_msvc}:
         # /verbose
 
-        $<$<CONFIG:Release>: 
+        $<$<CONFIG:Release>:
             # /machine:x64
             # /ltcg # link time code gen
             /opt:ref # eliminate unreferenced functions/data
