@@ -5,35 +5,29 @@
 #include "core/mouse.hpp"
 #include "core/system.hpp"
 #include "sdl/defs.hpp"
-#include "utils/conversions.hpp"
 #include "utils/io.hpp"
-#include "utils/options.hpp"
-
-SDL_C_LIB_BEGIN
-#include <SDL3/SDL_events.h>
-SDL_C_LIB_END
 
 namespace rl {
     class EventHandler
     {
-    public:
-        // friend static int resizing_event_watcher(void* data, SDL3::SDL_Event* event)
-        //{
-        //     if (event->type == MainWindow::Event::Resized)
-        //     {
-        //         const SDL3::SDL_Window* resize_win{ SDL3::SDL_GetWindowFromID(
-        //             event->window.windowID) };
-        //         const MainWindow* window{ static_cast<MainWindow*>(data) };
-        //         if (resize_win == window->m_window_id)
-        //             printf("resizing.....\n");
-        //     }
-        //     return 0;
-        // }
+        static int resizing_event_watcher(void* data, SDL3::SDL_Event* e)
+        {
+            if (e->type == MainWindow::Event::Resized)
+            {
+                const auto window{ static_cast<MainWindow*>(data) };
+                if (e->window.windowID == window->get_window_id())
+                    window->window_resized_event_callback(*e);
+            }
+            return 0;
+        }
 
-        // explicit EventHandler(std::unique_ptr<MainWindow>& window)
-        //{
-        //     SDL3::SDL_AddEventWatch(resizing_event_watcher, window.get());
-        // }
+    public:
+        constexpr EventHandler() = default;
+
+        explicit EventHandler(const std::unique_ptr<MainWindow>& window)
+        {
+            SDL3::SDL_AddEventWatch(EventHandler::resizing_event_watcher, window.get());
+        }
 
         bool handle_events(const std::unique_ptr<MainWindow>& window)
         {
@@ -160,14 +154,14 @@ namespace rl {
                         break;
 
                     default:
-                        runtime_assert(false, "unhandled event type");
+                        // runtime_assert(false, "unhandled event type");
                         break;
                 }
             }
             return true;
         }
 
-        constexpr inline bool quit_triggered() const
+        constexpr bool quit_triggered() const
         {
             return m_quit;
         }

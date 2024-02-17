@@ -11,6 +11,10 @@
 #include "utils/numeric.hpp"
 #include "utils/random.hpp"
 
+SDL_C_LIB_BEGIN
+#include <SDL3/SDL_pixels.h>
+SDL_C_LIB_END
+
 namespace rl::ds {
 #pragma pack(4)
 
@@ -403,4 +407,12 @@ namespace rl {
         constexpr static inline ds::color<f32> Cyan{ 131, 178, 182, 255 };
         constexpr static inline ds::color<f32> Background{ 39, 43, 51, 255 };
     };
+}
+
+namespace rl::ds {
+    template <typename T>
+    constexpr auto format_as(const color<T>& c)
+    {
+        return fmt::format("(r={} g={} b={} a={})", c.r, c.g, c.b, c.a);
+    }
 }

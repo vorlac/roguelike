@@ -55,7 +55,8 @@ namespace rl {
         Application()
         {
             this->init_subsystem(Subsystem::All);
-            m_main_window = std::make_unique<MainWindow>("Roguelite OpenGL");
+            m_main_window = std::make_unique<MainWindow>("Roguelite [OpenGL Window]");
+            m_event_handler = EventHandler{ m_main_window };
         }
 
         ~Application() = default;
@@ -110,10 +111,6 @@ namespace rl {
                     log::info("Button pressed.\n");
                 });
 
-                // gui->set_visible(true);
-                // gui->perform_layout();
-                // gui->update();
-
                 dialog->center();
             };
 
@@ -127,18 +124,46 @@ namespace rl {
 
                 layout->set_col_stretch(1, 0.5f);
 
-                auto title_label{ new ui::Label{ gui, "GUI Canvas Span Label",
-                                                 ui::Font::Name::SansBold, 40 } };
+                const auto title_label{ new ui::Label{
+                    gui,
+                    "GUI Canvas Span Label",
+                    ui::Font::Name::SansBold,
+                    40,
+                } };
                 layout->append_row(0);
-                auto push_button{ new ui::Button{ gui, "Push Button", ui::Icon::Microscope } };
+                const auto push_button{ new ui::Button{
+                    gui,
+                    "Push Button",
+                    ui::Icon::Microscope,
+                } };
                 layout->append_row(0);
-                auto timer_desc_label{ new ui::Label{ gui, "Timer: ", ui::Font::Name::Sans, 32 } };
+                const auto timer_desc_label{ new ui::Label{
+                    gui,
+                    "Timer: ",
+                    ui::Font::Name::Sans,
+                    32,
+                } };
                 layout->append_row(0);
-                auto timer_value_label{ new ui::Label{ gui, "", ui::Font::Name::Mono, 32 } };
+                const auto timer_value_label{ new ui::Label{
+                    gui,
+                    "",
+                    ui::Font::Name::Mono,
+                    32,
+                } };
                 layout->append_row(0);
-                auto stats_desc_label{ new ui::Label{ gui, "Stats: ", ui::Font::Name::Sans, 32 } };
+                const auto stats_desc_label{ new ui::Label{
+                    gui,
+                    "Stats: ",
+                    ui::Font::Name::Sans,
+                    32,
+                } };
                 layout->append_row(0);
-                auto stats_value_label{ new ui::Label{ gui, "", ui::Font::Name::Mono, 32 } };
+                const auto stats_value_label{ new ui::Label{
+                    gui,
+                    "",
+                    ui::Font::Name::Mono,
+                    32,
+                } };
                 layout->append_row(0);
 
                 gui->add_update_callback([=, &elapsed_str] {
@@ -183,9 +208,6 @@ namespace rl {
                 stats_desc_label->set_callback([] {
                     log::warning("Stats callback invoked");
                 });
-
-                // gui->update();
-                // gui->perform_layout();
             };
 
             floating_form_gui();
@@ -198,8 +220,9 @@ namespace rl {
 
             dialog->center();
 
-            m_timer.reset();
             // vbo.bind_buffers();
+
+            m_timer.reset();
             while (!this->should_exit())
             {
                 m_timer.tick([&]() {
@@ -207,15 +230,12 @@ namespace rl {
                     this->update();
 
                     elapsed_time = m_timer.elapsed();
-                    framerate = ++frame_count / elapsed_time;
+                    framerate = static_cast<f32>(++frame_count) / elapsed_time;
                     elapsed_str = fmt::format("{:>6.3f} sec", elapsed_time);
                     fps_str = fmt::format("{:>6.3f} fps", framerate);
-
                     form->refresh();
 
-                    m_main_window->clear();
-                    gui->draw_all();
-                    m_main_window->swap_buffers();
+                    this->render();
                 });
 
                 // vbo.update_buffers(renderer->get_viewport());
@@ -230,6 +250,11 @@ namespace rl {
         }
 
     private:
+        void render() const
+        {
+            m_main_window->render();
+        }
+
         bool setup()
         {
             return true;

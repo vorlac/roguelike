@@ -50,14 +50,14 @@ namespace rl::ui {
         static PixelFormat pixel_format();
 
     public:
-        virtual bool update();
-        virtual bool draw_all();
-        virtual bool draw_setup();
-        virtual bool draw_contents();
-        virtual bool draw_teardown();
+        bool update();
+        bool draw_all();
+        bool draw_setup();
+        bool draw_contents();
+        bool draw_teardown();
 
-        virtual bool on_moved(const ds::point<f32>& pt);
-        virtual bool on_resized(const ds::dims<f32>& size);
+        bool on_moved(const ds::point<f32>& pt);
+        bool on_resized(const ds::dims<f32>& size);
 
         bool on_key_pressed(const Keyboard& kb) override;
         bool on_key_released(const Keyboard& kb) override;

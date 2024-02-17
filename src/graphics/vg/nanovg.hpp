@@ -3,7 +3,6 @@
 #include <cstdint>
 
 #include "ds/dims.hpp"
-#include "ds/point.hpp"
 #include "graphics/vg/fontstash.hpp"
 
 #ifdef _MSC_VER

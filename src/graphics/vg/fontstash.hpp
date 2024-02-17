@@ -15,8 +15,6 @@ constexpr int32_t FONS_MAX_STATES{ 20 };
 constexpr int32_t FONS_MAX_FALLBACKS{ 20 };
 
 namespace rl::nvg {
-    // using namespace stb;
-
     struct FONSttFontImpl
     {
         stb::stbtt_fontinfo font;

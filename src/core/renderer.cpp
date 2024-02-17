@@ -18,54 +18,57 @@ typedef struct SDL_VideoDevice SDL_VideoDevice;
 SDL_C_LIB_END
 
 namespace rl {
-
-    static SDL3::SDL_GLContext create_opengl_context(SDL3::SDL_Window* sdl_window)
-    {
-        sdl_assert(sdl_window != nullptr, "Attempting to create context from uninitialized window");
-        SDL3::SDL_GLContext gl_context{ SDL3::SDL_GL_CreateContext(sdl_window) };
-        runtime_assert(gl_context != nullptr, "Failed to create OpenGL context");
-
-        i32 gl_version = gladLoadGL(SDL3::SDL_GL_GetProcAddress);
-        i32 gl_major_ver{ GLAD_VERSION_MAJOR(gl_version) };
-        i32 gl_minor_ver{ GLAD_VERSION_MINOR(gl_version) };
-
-        runtime_assert((gl_major_ver >= 3 && gl_minor_ver >= 3 || gl_major_ver > 3),
-                       "Deprecated OpenGL Version Loaded: {}.{}", gl_major_ver, gl_minor_ver);
-
-        if (gl_major_ver > 3 || (gl_major_ver == 3 && gl_minor_ver >= 3))
+    namespace detail {
+        static SDL3::SDL_GLContext create_opengl_context(SDL3::SDL_Window* sdl_window)
         {
-            const GLubyte* const gl_ver_str = glGetString(GL_VERSION);
-            const GLubyte* const renderer_str = glGetString(GL_RENDERER);
-            log::warning("GL_RENDERER = {}", reinterpret_cast<const char*>(renderer_str));
-            log::warning("GL_VERSION = {}", reinterpret_cast<const char*>(gl_ver_str));
-            log::warning("OpenGL [{}.{}] Context Created Successfully", gl_major_ver, gl_minor_ver);
-        }
+            sdl_assert(sdl_window != nullptr,
+                       "Attempting to create context from uninitialized window");
+            const SDL3::SDL_GLContext gl_context{ SDL3::SDL_GL_CreateContext(sdl_window) };
+            runtime_assert(gl_context != nullptr, "Failed to create OpenGL context");
 
-        return gl_context;
+            const i32 gl_version = gladLoadGL(SDL3::SDL_GL_GetProcAddress);
+            i32 gl_major_ver{ GLAD_VERSION_MAJOR(gl_version) };
+            i32 gl_minor_ver{ GLAD_VERSION_MINOR(gl_version) };
+
+            runtime_assert((gl_major_ver >= 3 && gl_minor_ver >= 3 || gl_major_ver > 3),
+                           "Deprecated OpenGL Version Loaded: {}.{}", gl_major_ver, gl_minor_ver);
+
+            if (gl_major_ver > 3 || (gl_major_ver == 3 && gl_minor_ver >= 3))
+            {
+                const GLubyte* const gl_ver_str = glGetString(GL_VERSION);
+                const GLubyte* const renderer_str = glGetString(GL_RENDERER);
+                log::warning("GL_RENDERER = {}", reinterpret_cast<const char*>(renderer_str));
+                log::warning("GL_VERSION = {}", reinterpret_cast<const char*>(gl_ver_str));
+                log::warning("OpenGL [{}.{}] Context Created Successfully", gl_major_ver,
+                             gl_minor_ver);
+            }
+
+            return gl_context;
+        }
     }
 
     OpenGLRenderer::OpenGLRenderer(MainWindow& window, const OpenGLRenderer::Properties flags)
         : m_properties{ flags }
-        , m_sdl_glcontext{ create_opengl_context(window.sdl_handle()) }
+        , m_sdl_glcontext{ detail::create_opengl_context(window.sdl_handle()) }
     {
         if (m_sdl_glcontext != nullptr)
         {
             sdl_assert(m_sdl_glcontext != nullptr, "failed to create renderer");
-            ds::dims<i32> viewport{ window.get_render_size() };
+            const ds::dims<i32> viewport{ window.get_render_size() };
             glViewport(0, 0, viewport.width, viewport.height);
         }
     }
 
-    bool OpenGLRenderer::clear()
+    bool OpenGLRenderer::clear() const
     {
         glClearColor(m_bg_color.r, m_bg_color.g, m_bg_color.b, m_bg_color.a);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         return true;
     }
 
-    bool OpenGLRenderer::swap_buffers(rl::MainWindow& window)
+    bool OpenGLRenderer::swap_buffers(const rl::MainWindow& window) const
     {
-        i32 result = SDL3::SDL_GL_SwapWindow(window.sdl_handle());
+        const i32 result = SDL3::SDL_GL_SwapWindow(window.sdl_handle());
         sdl_assert(result == 0, "OpenGL renderer buffer swap failed");
         return result == 0;
     }
@@ -82,23 +85,23 @@ namespace rl {
         return s;
     }
 
-    bool OpenGLRenderer::set_draw_color(ds::color<f32> c)
+    bool OpenGLRenderer::set_draw_color(ds::color<f32> c) const
     {
-        i32 result = 0;
+        const i32 result = 0;
         runtime_assert(false, "not implemented");
         return result == 0;
     }
 
     bool OpenGLRenderer::set_target()
     {
-        i32 result = 0;
+        const i32 result = 0;
         runtime_assert(false, "not implemented");
         return result == 0;
     }
 
     bool OpenGLRenderer::set_draw_blend_mode(const SDL3::SDL_BlendMode blend_mode)
     {
-        i32 result = 0;
+        const i32 result = 0;
         runtime_assert(false, "not implemented");
         return result == 0;
     }

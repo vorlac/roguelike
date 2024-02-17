@@ -8,6 +8,7 @@
 #include "ds/color.hpp"
 #include "ds/refcounted.hpp"
 #include "ds/shared.hpp"
+#include "ds/vector2d.hpp"
 #include "graphics/vg/nanovg.hpp"
 #include "resources/fonts.hpp"
 #include "utils/numeric.hpp"

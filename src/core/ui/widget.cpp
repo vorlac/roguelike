@@ -641,7 +641,7 @@ namespace rl::ui {
         Widget* widget{ this };
         while (widget != nullptr)
         {
-            Dialog* dialog{ dynamic_cast<Dialog*>(widget) };
+            const auto dialog{ dynamic_cast<Dialog*>(widget) };
             if (dialog != nullptr)
                 return dialog;
 

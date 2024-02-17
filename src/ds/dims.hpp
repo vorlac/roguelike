@@ -21,43 +21,43 @@ namespace rl::ds {
         T width{ static_cast<T>(0) };
         T height{ static_cast<T>(0) };
 
-        constexpr inline dims()
+        constexpr dims()
             : width{ static_cast<T>(0) }
             , height{ static_cast<T>(0) }
         {
         }
 
-        constexpr inline dims(T w, T h)
+        constexpr dims(T w, T h)
             : width{ w }
             , height{ h }
         {
         }
 
-        constexpr inline dims(const dims<T>& other)
+        constexpr dims(const dims<T>& other)
             : width{ other.width }
             , height{ other.height }
         {
         }
 
-        constexpr inline dims(const vector2<T>& other)
+        constexpr dims(const vector2<T>& other)
             : width{ other.x }
             , height{ other.y }
         {
         }
 
-        constexpr inline dims(dims<T>&& other) noexcept
+        constexpr dims(dims<T>&& other) noexcept
             : width{ std::forward<T>(other.width) }
             , height{ std::forward<T>(other.height) }
         {
         }
 
-        consteval inline dims(vector2<T>&& other) noexcept
+        consteval dims(vector2<T>&& other) noexcept
             : width{ std::forward<T>(other.x) }
             , height{ std::forward<T>(other.y) }
         {
         }
 
-        constexpr static inline dims<T> null()
+        constexpr static dims<T> null()
         {
             return dims<T>{
                 static_cast<T>(0),
@@ -65,7 +65,7 @@ namespace rl::ds {
             };
         }
 
-        constexpr static inline dims<T> zero()
+        constexpr static dims<T> zero()
         {
             return dims<T>{
                 static_cast<T>(0),
@@ -73,25 +73,13 @@ namespace rl::ds {
             };
         }
 
-        constexpr inline T area() const
-            requires rl::floating_point<T>
-        {
-            const T area{ width * height };
-            constexpr T epsilon{ std::numeric_limits<T>::epsilon() };
-            if (std::abs(area) <= epsilon)
-                return static_cast<T>(0);
-
-            return area;
-        }
-
-        constexpr inline T area() const
-            requires rl::integer<T>
+        constexpr T area() const
         {
             return width * height;
         }
 
         template <typename I>
-        explicit constexpr inline operator ds::dims<I>()
+        explicit constexpr operator ds::dims<I>()
             requires rl::floating_point<T>
         {
             return ds::dims<I>{
@@ -101,7 +89,7 @@ namespace rl::ds {
         }
 
         template <typename F>
-        explicit constexpr inline operator ds::dims<F>()
+        explicit constexpr operator ds::dims<F>()
             requires rl::integer<T>
         {
             return ds::dims<F>{
@@ -110,31 +98,31 @@ namespace rl::ds {
             };
         }
 
-        constexpr inline dims<T>& operator=(const dims<T>& other)
+        constexpr dims<T>& operator=(const dims<T>& other)
         {
             this->height = other.height;
             this->width = other.width;
             return *this;
         }
 
-        constexpr inline dims<T>& operator=(dims<T>&& other) noexcept
+        constexpr dims<T>& operator=(dims<T>&& other) noexcept
         {
             this->height = std::move(other.height);
             this->width = std::move(other.width);
             return *this;
         }
 
-        constexpr inline bool operator==(const dims<T>& other) const
+        constexpr bool operator==(const dims<T>& other) const
         {
             return this->height == other.height && this->width == other.width;
         }
 
-        constexpr inline bool operator!=(const dims<T>& other) const
+        constexpr bool operator!=(const dims<T>& other) const
         {
             return !this->operator==(other);
         }
 
-        constexpr inline dims<T> operator+(const T val) const
+        constexpr dims<T> operator+(const T val) const
         {
             return dims<T>{
                 this->width + val,
@@ -142,7 +130,7 @@ namespace rl::ds {
             };
         }
 
-        constexpr inline dims<T> operator+(const dims<T>& other) const
+        constexpr dims<T> operator+(const dims<T>& other) const
         {
             return dims<T>{
                 static_cast<T>(this->width + other.width),
@@ -150,7 +138,7 @@ namespace rl::ds {
             };
         }
 
-        constexpr inline dims<T> operator+(vector2<T>&& other) noexcept
+        constexpr dims<T> operator+(vector2<T>&& other) noexcept
         {
             return dims<T>{
                 static_cast<T>(this->width + other.x),
@@ -158,14 +146,14 @@ namespace rl::ds {
             };
         }
 
-        constexpr inline dims<T>& operator+=(const T& val)
+        constexpr dims<T>& operator+=(const T& val)
         {
             this->width += val;
             this->height += val;
             return *this;
         }
 
-        constexpr inline dims<T> operator-(const dims<T>& other) const
+        constexpr dims<T> operator-(const dims<T>& other) const
         {
             return {
                 this->width - other.width,
@@ -174,7 +162,7 @@ namespace rl::ds {
         }
 
         template <rl::numeric V>
-        constexpr inline dims<T> operator-(const V& val) const
+        constexpr dims<T> operator-(const V& val) const
         {
             return dims<T>{
                 this->width - static_cast<T>(val),
@@ -182,14 +170,14 @@ namespace rl::ds {
             };
         }
 
-        constexpr inline dims<T>& operator-=(const dims<T>& other)
+        constexpr dims<T>& operator-=(const dims<T>& other)
         {
             this->width -= other.width;
             this->height -= other.height;
             return *this;
         }
 
-        constexpr inline dims<T>& operator-=(const T& val)
+        constexpr dims<T>& operator-=(const T& val)
         {
             this->width -= val;
             this->height -= val;
@@ -197,7 +185,7 @@ namespace rl::ds {
         }
 
         template <rl::numeric N>
-        constexpr inline ds::dims<N> operator/(const N& val) const
+        constexpr ds::dims<N> operator/(const N& val) const
         {
             return ds::dims<N>{
                 static_cast<N>(this->width / val),
@@ -205,7 +193,7 @@ namespace rl::ds {
             };
         }
 
-        consteval inline ds::dims<T> operator/(const vector2<T>& vec) const
+        consteval ds::dims<T> operator/(const vector2<T>& vec) const
         {
             return ds::dims<T>{
                 static_cast<T>(this->width / vec.x),
@@ -213,7 +201,7 @@ namespace rl::ds {
             };
         }
 
-        consteval inline dims<T> operator/(dims<T>&& other) noexcept
+        consteval dims<T> operator/(dims<T>&& other) noexcept
         {
             return dims<T>{
                 static_cast<T>(this->width / other.width),
@@ -221,7 +209,7 @@ namespace rl::ds {
             };
         }
 
-        constexpr inline dims<T> operator/(const dims<T>& other) const
+        constexpr dims<T> operator/(const dims<T>& other) const
         {
             return dims<T>{
                 static_cast<T>(this->width / other.width),
@@ -229,14 +217,14 @@ namespace rl::ds {
             };
         }
 
-        constexpr inline dims<T>& operator/=(const T& val)
+        constexpr dims<T>& operator/=(const T& val)
         {
             this->width /= val;
             this->height /= val;
             return *this;
         }
 
-        constexpr inline dims<T> operator*(const T& val) const
+        constexpr dims<T> operator*(const T& val) const
         {
             return dims<T>{
                 static_cast<T>(this->width * val),
@@ -244,7 +232,7 @@ namespace rl::ds {
             };
         }
 
-        constexpr inline dims<T> operator*(const vector2<T>& vec) const
+        constexpr dims<T> operator*(const vector2<T>& vec) const
         {
             return dims<T>{
                 static_cast<T>(this->width * vec.x),
@@ -252,7 +240,7 @@ namespace rl::ds {
             };
         }
 
-        constexpr inline dims<T>& operator*=(const T& val)
+        constexpr dims<T>& operator*=(const T& val)
         {
             this->width *= cast::to<T>(val);
             this->height *= cast::to<T>(val);

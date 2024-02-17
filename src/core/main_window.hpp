@@ -1,12 +1,8 @@
 #pragma once
 
-#include <glad/gl.h>
-
 #include <bitset>
-#include <functional>
 #include <memory>
 #include <string>
-#include <vector>
 
 #include "core/keyboard.hpp"
 #include "core/mouse.hpp"
@@ -16,11 +12,6 @@
 #include "ds/rect.hpp"
 #include "ds/vector2d.hpp"
 #include "sdl/defs.hpp"
-
-SDL_C_LIB_BEGIN
-#include <SDL3/SDL_events.h>
-#include <SDL3/SDL_video.h>
-SDL_C_LIB_END
 
 namespace rl {
     class EventHandler;
@@ -41,6 +32,7 @@ namespace rl {
 
     public:
         // clang-format off
+
         struct Event
         {
             using Data = SDL3::SDL_WindowEvent;
@@ -86,12 +78,12 @@ namespace rl {
                 Moved               = SDL3::SDL_EVENT_DISPLAY_MOVED,                 // Display has changed position
                 ContentScaleChanged = SDL3::SDL_EVENT_DISPLAY_CONTENT_SCALE_CHANGED, // Display has changed content scale
                 DisplayLast         = SDL3::SDL_EVENT_DISPLAY_LAST,                  // The last MainWindow::DisplayEvent::ID possible (highest integer value)
-            };
+            }; 
         };
 
-        struct Properties : public std::bitset<sizeof(u32) * 8>
+        struct Properties : std::bitset<sizeof(u32) * 8>
         {
-            enum Flags  {
+            enum Flags : u32 {
                 None            = 0,
                 Fullscreen      = SDL_WINDOW_FULLSCREEN,          // window is in fullscreen mode
                 OpenGL          = SDL_WINDOW_OPENGL,              // window usable with OpenGL context
@@ -118,12 +110,7 @@ namespace rl {
                 NotFocusable    = SDL_WINDOW_NOT_FOCUSABLE,       // window should not be focusable
             };
 
-            constexpr inline operator u32()
-            {
-                return static_cast<u32>(this->to_ulong());
-            }
-
-            constexpr inline operator u32() const
+            constexpr operator u32() const
             {
                 return static_cast<u32>(this->to_ulong());
             }
@@ -131,9 +118,7 @@ namespace rl {
 
         struct OpenGL
         {
-            using type = SDL3::SDL_GLattr;
-
-            enum Attribute : std::underlying_type_t<type> {
+            enum Attribute : std::underlying_type_t<SDL3::SDL_GLattr> {
                 RedSize                  = SDL3::SDL_GL_RED_SIZE,
                 GreenSize                = SDL3::SDL_GL_GREEN_SIZE,
                 BlueSize                 = SDL3::SDL_GL_BLUE_SIZE,
@@ -195,29 +180,31 @@ namespace rl {
         };
 
     public:
-        explicit MainWindow(std::string title, const ds::dims<i32>& dims = DEFAULT_SIZE,
+        explicit MainWindow(const std::string& title, const ds::dims<i32>& dims = DEFAULT_SIZE,
                             Properties flags = DEFAULT_PROPERTY_FLAGS);
 
         virtual ~MainWindow();
 
         MainWindow& operator=(MainWindow&& other) noexcept;
+        MainWindow& operator=(const MainWindow& other) = delete;
 
     public:
-        bool raise();
-        bool restore();
-        bool minimize();
-        bool maximize();
-        bool hide();
-        bool show();
+        bool raise() const;
+        bool restore() const;
+        bool minimize() const;
+        bool maximize() const;
+        bool hide() const;
+        bool show() const;
 
-        bool clear();
-        bool render_start();
-        bool render();
-        bool render_end();
-        bool swap_buffers();
+        bool clear() const;
+        bool render_start() const;
+        bool render() const;
+        bool render_end() const;
+        bool swap_buffers() const;
 
         std::string get_title();
-        DisplayID get_display();
+        DisplayID get_display_id();
+        WindowID get_window_id() const;
         ui::Widget* button_panel();
         ds::dims<i32> get_size();
         ds::dims<i32> get_render_size();
@@ -242,59 +229,59 @@ namespace rl {
         const Mouse& mouse() const;
 
         bool set_vsync(bool enabled);
-        bool set_grab(bool grabbed);
-        bool set_bordered(bool bordered);
-        bool set_resizable(bool resizable);
-        bool set_fullscreen(bool fullscreen);
-        bool set_opacity(f32 opacity);
-        bool set_position(ds::point<i32> pos);
-        bool set_size(ds::dims<i32> size);
-        bool set_min_size(ds::dims<i32> size);
-        bool set_max_size(ds::dims<i32> size);
+        bool set_grab(bool grabbed) const;
+        bool set_bordered(bool bordered) const;
+        bool set_resizable(bool resizable) const;
+        bool set_fullscreen(bool fullscreen) const;
+        bool set_opacity(f32 opacity) const;
+        bool set_position(const ds::point<i32>& pos);
+        bool set_size(const ds::dims<i32>& size);
+        bool set_min_size(const ds::dims<i32>& size) const;
+        bool set_max_size(const ds::dims<i32>& size) const;
         bool set_opengl_attribute(OpenGL::Attribute attr, auto val);
-        bool set_background(ds::color<u8> background);
-        bool set_title(std::string title);
-        bool set_modal(bool modal);
+        bool set_background(const ds::color<u8>& background)const;
+        bool set_title(const std::string& title);
+        bool set_modal(bool modal)const;
 
     protected:
         void mouse_moved_event_callback(const SDL3::SDL_Event& e);
         void mouse_wheel_event_callback(const SDL3::SDL_Event& e);
         void mouse_button_pressed_event_callback(const SDL3::SDL_Event& e);
         void mouse_button_released_event_callback(const SDL3::SDL_Event& e);
-        void mouse_entered_event_callback(const SDL3::SDL_Event& e);
-        void mouse_exited_event_callback(const SDL3::SDL_Event& e);
+        void mouse_entered_event_callback(const SDL3::SDL_Event& e) const;
+        void mouse_exited_event_callback(const SDL3::SDL_Event& e) const;
         void keyboard_key_pressed_event_callback(const SDL3::SDL_Event& e);
         void keyboard_key_released_event_callback(const SDL3::SDL_Event& e);
         void keyboard_char_event_callback(const SDL3::SDL_Event& e);
-        void window_focus_gained_event_callback(const SDL3::SDL_Event& e);
-        void window_focus_lost_event_callback(const SDL3::SDL_Event& e);
+        void window_focus_gained_event_callback(const SDL3::SDL_Event& e) const;
+        void window_focus_lost_event_callback(const SDL3::SDL_Event& e) const;
         void window_resized_event_callback(const SDL3::SDL_Event& e);
         void window_moved_event_callback(const SDL3::SDL_Event& e);
 
     protected:
-        bool window_shown_event_callback(const SDL3::SDL_Event& e);
-        bool window_occluded_event_callback(const SDL3::SDL_Event& e);
-        bool window_hidden_event_callback(const SDL3::SDL_Event& e);
-        bool window_exposed_event_callback(const SDL3::SDL_Event& e);
-        bool window_minimized_event_callback(const SDL3::SDL_Event& e);
-        bool window_maximized_event_callback(const SDL3::SDL_Event& e);
-        bool window_restored_event_callback(const SDL3::SDL_Event& e);
-        bool window_close_requested_event_callback(const SDL3::SDL_Event& e);
-        bool window_take_focus_event_callback(const SDL3::SDL_Event& e);
-        bool window_hit_test_event_callback(const SDL3::SDL_Event& e);
-        bool window_icc_profile_changed_callback(const SDL3::SDL_Event& e);
+        bool window_shown_event_callback(const SDL3::SDL_Event& e) const;
+        bool window_occluded_event_callback(const SDL3::SDL_Event& e) const;
+        bool window_hidden_event_callback(const SDL3::SDL_Event& e) const;
+        bool window_exposed_event_callback(const SDL3::SDL_Event& e) const;
+        bool window_minimized_event_callback(const SDL3::SDL_Event& e) const;
+        bool window_maximized_event_callback(const SDL3::SDL_Event& e) const;
+        bool window_restored_event_callback(const SDL3::SDL_Event& e) const;
+        bool window_close_requested_event_callback(const SDL3::SDL_Event& e) const;
+        bool window_take_focus_event_callback(const SDL3::SDL_Event& e) const;
+        bool window_hit_test_event_callback(const SDL3::SDL_Event& e) const;
+        bool window_icc_profile_changed_callback(const SDL3::SDL_Event& e) const;
         bool window_pixel_size_changed_event_callback(const SDL3::SDL_Event& e);
-        bool window_display_changed_event_callback(const SDL3::SDL_Event& e);
-        bool window_display_scale_changed_event_callback(const SDL3::SDL_Event& e);
-        bool window_destroyed_event_callback(const SDL3::SDL_Event& e);
+        bool window_display_changed_event_callback(const SDL3::SDL_Event& e) const;
+        bool window_display_scale_changed_event_callback(const SDL3::SDL_Event& e) const;
+        bool window_destroyed_event_callback(const SDL3::SDL_Event& e) const;
 
-    private:
-        MainWindow(const MainWindow& window) = delete;
-        MainWindow(MainWindow&& window) noexcept = delete;
-        MainWindow(SDL3::SDL_Window* other) = delete;
+    public:
+        explicit MainWindow(const MainWindow& window) = delete;
+        explicit MainWindow(MainWindow&& window) noexcept = delete;
+        explicit MainWindow(SDL3::SDL_Window* other) = delete;
 
         // TODO: remove
-        std::string name() const
+        static std::string name()
         {
             return "MainWindow;";
         }
