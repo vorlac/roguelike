@@ -183,7 +183,7 @@ namespace rl {
         explicit MainWindow(const std::string& title, const ds::dims<i32>& dims = DEFAULT_SIZE,
                             Properties flags = DEFAULT_PROPERTY_FLAGS);
 
-        virtual ~MainWindow();
+        ~MainWindow();
 
         MainWindow& operator=(MainWindow&& other) noexcept;
         MainWindow& operator=(const MainWindow& other) = delete;
@@ -239,9 +239,9 @@ namespace rl {
         bool set_min_size(const ds::dims<i32>& size) const;
         bool set_max_size(const ds::dims<i32>& size) const;
         bool set_opengl_attribute(OpenGL::Attribute attr, auto val);
-        bool set_background(const ds::color<u8>& background)const;
+        bool set_background(const ds::color<u8>& background) const;
         bool set_title(const std::string& title);
-        bool set_modal(bool modal)const;
+        bool set_modal(bool modal) const;
 
     protected:
         void mouse_moved_event_callback(const SDL3::SDL_Event& e);

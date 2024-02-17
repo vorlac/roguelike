@@ -1,15 +1,15 @@
 {
-  "version": "0.2.1",
-  "configurations": [
-    {
-      "args": [
-        "--console=info",
-        "--log=error"
-      ],
-      "isDefaultConfiguration": true,
-      "name": "roguelike",
-      "project": "CMakeLists.txt",
-      "type": "default"
-    }
-  ]
+    "version": "0.2.1",
+    "configurations": [
+        {
+            "args": [
+                "--console=info",
+                "--log=error"
+            ],
+            "isDefaultConfiguration": true,
+            "name": "roguelike",
+            "project": "CMakeLists.txt",
+            "type": "default"
+        }
+    ]
 }

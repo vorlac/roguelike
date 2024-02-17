@@ -1,4 +1,6 @@
-﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml"
+    xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
 	<s:String x:Key="/Default/CodeEditing/CppCodeGeneration/EmptyCtorsAndDtorsBodyKind/@EntryValue">Empty</s:String>
 	<s:String x:Key="/Default/CodeEditing/CppCodeGeneration/FunctionImplementationKind/@EntryValue">ReturnDefaultValue</s:String>
 	<s:String x:Key="/Default/CodeEditing/GenerateMemberBody/AccessorImplementationKind/@EntryValue">BackingField</s:String>
@@ -13,7 +15,7 @@
 	<s:Boolean x:Key="/Default/CodeEditing/TypingAssist/Cpp/GenerateDocumentationComment/@EntryValue">False</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeEditing/TypingAssist/InsertAsteriskInBlockComments/@EntryValue">False</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeEditing/TypingAssist/SkipClosingBracesOnTab/@EntryValue">False</s:Boolean>
-	<s:Boolean x:Key="/Default/CodeEditing/TypingAssist/SmartIndentOnEnter/@EntryValue">False</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeEditing/TypingAssist/SmartIndentOnEnter/@EntryValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeEditing/TypingAssist/StringLiteralJoinEnabled/@EntryValue">False</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeEditing/TypingAssist/Xml/ChangedTagNameTracking/@EntryValue">False</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeInspection/CppInspection/IdentifierHighlightingEnabled/@EntryValue">False</s:Boolean>
@@ -85,7 +87,7 @@
 	<s:Boolean x:Key="/Default/Environment/ExcludedFiles/FilesAndFoldersToSkip/=DB94C55F_002D6B9A_002D4AAE_002D80D7_002D29FD8153E6B5_002Fd_003A_002Eout/@EntryIndexedValue">False</s:Boolean>
 	<s:Boolean x:Key="/Default/Environment/ExtensionManager/PackageSource/=_002ENET_0020Products_0020Gallery/IsEnabled/@EntryValue">False</s:Boolean>
 	<s:String x:Key="/Default/Environment/GutterMargin/ContextActionsIndication/@EntryValue">BulbIndicator</s:String>
-	<s:String x:Key="/Default/Environment/Hierarchy/PsiConfigurationSettingsKey/CustomLocation/@EntryValue">C:\Users\sal\development\vorlac\roguelike\.cache</s:String>
+    <s:String x:Key="/Default/Environment/Hierarchy/PsiConfigurationSettingsKey/CustomLocation/@EntryValue">C:\Users\sal\development\vorlac\roguelike\.cache</s:String>
 	<s:String x:Key="/Default/Environment/Hierarchy/PsiConfigurationSettingsKey/LocationType/@EntryValue">CUSTOM_FOLDER</s:String>
 	<s:Boolean x:Key="/Default/Environment/InjectedLayers/FileInjectedLayer/=50816A96C6F6E649ABB7F28CEB6A1FFC/@KeyIndexDefined">True</s:Boolean>
 	<s:String x:Key="/Default/Environment/InjectedLayers/FileInjectedLayer/=50816A96C6F6E649ABB7F28CEB6A1FFC/AbsolutePath/@EntryValue">C:\Users\sal\development\vorlac\roguelike\Folder.DotSettings</s:String>

@@ -42,6 +42,7 @@ namespace rl {
 
         m_properties = flags;
         m_sdl_window = SDL3::SDL_CreateWindow(title.data(), dims.width, dims.height, m_properties);
+        m_window_id = SDL3::SDL_GetWindowID(m_sdl_window);
         m_window_rect = ds::rect{
             m_sdl_window ? this->get_position() : ds::point<i32>::null(),
             dims,
