@@ -137,6 +137,9 @@ namespace rl::ui {
         f32 icon_scale() const;
         virtual std::string name() const;
 
+        //=============!!!INCONCISTENT WITH nanogui!!======================================
+        // request_focus();
+        // request_focus();
     protected:
         Widget* m_parent{ nullptr };
         ds::shared<Theme> m_theme{ nullptr };

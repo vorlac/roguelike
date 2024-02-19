@@ -323,6 +323,7 @@ namespace rl::ui {
 
     bool Widget::on_mouse_entered(const Mouse& mouse)
     {
+        // TODO: THIS IS GETTING SKIPPED
         scoped_logger(log_level::warn, "enter_pos={}", mouse.pos());
         m_mouse_focus = true;
         return false;
@@ -330,6 +331,7 @@ namespace rl::ui {
 
     bool Widget::on_mouse_exited(const Mouse& mouse)
     {
+        // TODO: THIS IS GETTING SKIPPED
         scoped_logger(log_level::warn, "exit_pos={}", mouse.pos());
         m_mouse_focus = false;
         return false;

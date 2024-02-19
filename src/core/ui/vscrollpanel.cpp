@@ -87,29 +87,18 @@ namespace rl::ui {
         return true;
     }
 
-    bool VScrollPanel::on_mouse_button_released(const Mouse& mouse, const Keyboard& kb)
-    {
-        scoped_log();
-
-        if (Widget::on_mouse_button_released(mouse, kb))
-        {
-            diag_log("Mouse Released");
-            return true;
-        }
-
-        return false;
-    }
-
     bool VScrollPanel::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb)
     {
         if (Widget::on_mouse_button_pressed(mouse, kb))
             return true;
 
         scoped_log();
-        const auto&& pos{ mouse.pos() };
-        if (mouse.is_button_down(Mouse::Button::Left) && !m_children.empty() &&
-            m_child_preferred_height > m_size.height && pos.x > m_pos.x + m_size.width - 13.0f &&
-            pos.x < m_pos.x + m_size.width - 4)
+        const auto&& mouse_pos{ mouse.pos() };
+        const bool lmb_just_pressed{ mouse.is_button_pressed(Mouse::Button::Left) };
+
+        if (lmb_just_pressed && !m_children.empty() && m_child_preferred_height > m_size.height &&
+            mouse_pos.x > m_pos.x + m_size.width - 13.0f &&
+            mouse_pos.x < m_pos.x + m_size.width - 4)
         {
             const f32 scrollh{ this->height() *
                                std::min(1.0f, this->height() / m_child_preferred_height) };
@@ -117,9 +106,9 @@ namespace rl::ui {
             const f32 start{ m_pos.y + 4.0f + 1.0f + (m_size.height - 8.0f - scrollh) * m_scroll };
 
             f32 delta{ 0.0f };
-            if (pos.y < start)
+            if (mouse_pos.y < start)
                 delta = -m_size.height / m_child_preferred_height;
-            else if (pos.y > start + scrollh)
+            else if (mouse_pos.y > start + scrollh)
                 delta = m_size.height / m_child_preferred_height;
 
             m_scroll = std::max(0.0f, std::min(1.0f, m_scroll + delta * 0.98f));
@@ -129,6 +118,21 @@ namespace rl::ui {
             });
 
             m_update_layout = true;
+            return true;
+        }
+
+        return false;
+    }
+
+    bool VScrollPanel::on_mouse_button_released(const Mouse& mouse, const Keyboard& kb)
+    {
+        scoped_log();
+        if (Widget::on_mouse_button_released(mouse, kb))
+            return true;
+
+        if (Widget::on_mouse_button_released(mouse, kb))
+        {
+            diag_log("Mouse Released");
             return true;
         }
 
