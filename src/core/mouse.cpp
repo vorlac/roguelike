@@ -30,6 +30,12 @@ namespace rl {
         m_buttons_held &= ~SDL_BUTTON(mouse_button);
     }
 
+    void Mouse::process_motion_delta(const ds::vector2<f32>& delta)
+    {
+        m_prev_cursor_pos = m_cursor_position;
+        m_cursor_position += delta;
+    }
+
     void Mouse::process_motion(const Event::Data::Motion& motion)
     {
         m_prev_cursor_pos = m_cursor_position;
@@ -78,12 +84,12 @@ namespace rl {
 
     Mouse::Button::ID Mouse::button_pressed() const
     {
-        return Mouse::Button::ID(m_buttons_pressed);
+        return static_cast<Mouse::Button::ID>(m_buttons_pressed);
     }
 
     Mouse::Button::ID Mouse::button_released() const
     {
-        return Mouse::Button::ID(m_buttons_released);
+        return static_cast<Mouse::Button::ID>(m_buttons_released);
     }
 
     bool Mouse::is_button_down(const Mouse::Button::ID button) const

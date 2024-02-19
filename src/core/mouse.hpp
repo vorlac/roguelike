@@ -109,6 +109,7 @@ namespace rl {
     protected:
         void process_button_down(Mouse::Button::ID mouse_button);
         void process_button_up(Mouse::Button::ID mouse_button);
+        void process_motion_delta(const ds::vector2<f32>& delta);
         void process_motion(const Event::Data::Motion& motion);
         void process_wheel(const Mouse::Event::Data::Wheel& wheel);
 

@@ -32,8 +32,8 @@ namespace rl::inline utils {
         // clang-format on
     };
 
-    template <rl::numeric T = f64, auto FixedStep = 30, auto Duration = TimeDuration::Second>
-        requires std::same_as<decltype(Duration), TimeDuration>
+    template <rl::numeric T = f64, auto FixedStep = 30, auto VDuration = TimeDuration::Second>
+        requires std::same_as<decltype(VDuration), TimeDuration>
     struct Timer
     {
         // gets time unit of a single tick
@@ -64,7 +64,7 @@ namespace rl::inline utils {
         // data type that will be output
         using time_type = T;
         // the unti that will be output by the timer
-        constexpr static inline TimeDuration time_unit{ Duration };
+        constexpr static inline TimeDuration time_unit{ VDuration };
         // the timer internally always stores the
         // highest resolution of time point units
         static inline const TimeDuration tick_unit{ Timer::unit() };
@@ -201,7 +201,7 @@ namespace rl::inline utils {
         f64 m_fps_cur_count{ 0.0 };
         f64 m_fps_cur_timer{ 0.0 };
 
-        const TimeDuration m_duration_unit{ TimeDuration::Second };
+        const TimeDuration m_duration_unit{ VDuration };
         const u64 m_perf_counter_freq{ SDL3::SDL_GetPerformanceFrequency() };
     };
 }

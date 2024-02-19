@@ -413,16 +413,21 @@ namespace rl {
         return result == 0;
     }
 
-    void MainWindow::mouse_entered_event_callback(const SDL3::SDL_Event& e) const
+    void MainWindow::mouse_entered_event_callback(const SDL3::SDL_Event& e)
     {
         scoped_log();
+        ds::point delta{ 0.0f, 0.0f };
+        SDL3::SDL_GetRelativeMouseState(&delta.x, &delta.y);
+        m_mouse.process_motion_delta(std::move(delta));
         m_gui_canvas->on_mouse_entered(m_mouse);
     }
 
-    void MainWindow::mouse_exited_event_callback(const SDL3::SDL_Event& e) const
+    void MainWindow::mouse_exited_event_callback(const SDL3::SDL_Event& e)
     {
         scoped_log();
-
+        ds::point delta{ 0.0f, 0.0f };
+        SDL3::SDL_GetRelativeMouseState(&delta.x, &delta.y);
+        m_mouse.process_motion_delta(std::move(delta));
         m_gui_canvas->on_mouse_exited(m_mouse);
     }
 
@@ -550,13 +555,13 @@ namespace rl {
         return m_pixel_ratio > 0.0f && m_pixel_density > 0.0f;
     }
 
-    void MainWindow::window_focus_gained_event_callback(const SDL3::SDL_Event& e) const
+    void MainWindow::window_focus_gained_event_callback(const SDL3::SDL_Event& e)
     {
         scoped_log();
         m_gui_canvas->on_focus_gained();
     }
 
-    void MainWindow::window_focus_lost_event_callback(const SDL3::SDL_Event& e) const
+    void MainWindow::window_focus_lost_event_callback(const SDL3::SDL_Event& e)
     {
         scoped_log();
         m_gui_canvas->on_focus_lost();

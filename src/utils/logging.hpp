@@ -1,25 +1,7 @@
 #pragma once
 
-#include <filesystem>
-#include <memory>
-#include <string>
-#include <type_traits>
-#include <utility>
-#include <xstring>
-
-#include <fmt/core.h>
-#include <spdlog/common.h>
-#include <spdlog/pattern_formatter.h>
-#include <spdlog/sinks/msvc_sink.h>
-#include <spdlog/sinks/rotating_file_sink.h>
-#include <spdlog/sinks/sink.h>
-#include <spdlog/sinks/stdout_color_sinks.h>
-#include <spdlog/spdlog.h>
-
-#include "utils/fs.hpp"
-#include "utils/numeric.hpp"
-
-#ifdef NDEBUG
+#define RL_ENABLE_LOGGER 0
+#if not RL_ENABLE_LOGGER
 
   #define scoped_trace(...)       static_cast<void>(0)
   #define scoped_log(...)         static_cast<void>(0)
@@ -28,6 +10,25 @@
   #define diag_log(...)           static_cast<void>(0)
 
 #else
+
+  #include <filesystem>
+  #include <memory>
+  #include <string>
+  #include <type_traits>
+  #include <utility>
+  #include <xstring>
+
+  #include <fmt/core.h>
+  #include <spdlog/common.h>
+  #include <spdlog/pattern_formatter.h>
+  #include <spdlog/sinks/msvc_sink.h>
+  #include <spdlog/sinks/rotating_file_sink.h>
+  #include <spdlog/sinks/sink.h>
+  #include <spdlog/sinks/stdout_color_sinks.h>
+  #include <spdlog/spdlog.h>
+
+  #include "utils/fs.hpp"
+  #include "utils/numeric.hpp"
 
   #define scoped_trace(dbg)                                                                         \
       std::string _f{ fmt::to_string(fmt::format("{}", name() + "::" + std::string{ __func__ })) }; \
@@ -50,8 +51,6 @@
           _lg.inner_scope_diag(std::move(_diag));        \
       }                                                  \
       while (0)
-
-#endif
 
 namespace rl {
     using log_level = spdlog::level::level_enum;
@@ -154,3 +153,5 @@ namespace rl {
         log_level m_level{ log_level::info };
     };
 }
+
+#endif

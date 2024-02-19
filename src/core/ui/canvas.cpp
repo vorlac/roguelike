@@ -343,7 +343,6 @@ namespace rl::ui {
         const bool match_found = std::ranges::find_if(m_focus_path, [&](const Widget* w) {
                                      return w == dialog;
                                  }) != m_focus_path.end();
-
         if (match_found)
             m_focus_path.clear();
 
@@ -495,11 +494,7 @@ namespace rl::ui {
         m_last_interaction = m_timer.elapsed();
 
         scoped_logger(log_level::trace, "move_pos={}", mouse.pos());
-
-        const ds::point pnt{
-            (mouse_pos.x / m_pixel_ratio) - 1.0f,
-            (mouse_pos.y / m_pixel_ratio) - 2.0f,
-        };
+        const ds::point pnt{ mouse_pos / m_pixel_ratio };
 
         if (m_drag_active)
             ret = m_drag_widget->on_mouse_drag(mouse, kb);

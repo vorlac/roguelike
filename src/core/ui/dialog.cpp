@@ -63,7 +63,7 @@ namespace rl::ui {
         while (owner->parent() != nullptr)
             owner = owner->parent();
 
-        static_cast<Canvas*>(owner)->dispose_dialog(this);
+        dynamic_cast<Canvas*>(owner)->dispose_dialog(this);
     }
 
     void Dialog::center()

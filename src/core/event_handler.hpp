@@ -102,11 +102,9 @@ namespace rl {
                         window->window_restored_event_callback(e);
                         break;
                     case MainWindow::Event::MouseEnter:
-                        window->mouse_moved_event_callback(e);
                         window->mouse_entered_event_callback(e);
                         break;
                     case MainWindow::Event::MouseLeave:
-                        window->mouse_moved_event_callback(e);
                         window->mouse_exited_event_callback(e);
                         break;
                     case MainWindow::Event::FocusGained:
