@@ -92,15 +92,15 @@ namespace rl::nsvg {
         char stroke_gradient[64];    // Optional 'id' of stroke gradient
         float xform[6];              // Root transformation for fill/stroke gradient
         NSVGpath* paths;             // Linked list of paths in the image.
-        struct NSVGshape* next;      // Pointer to next shape, or NULL if last element.
+        NSVGshape* next;             // Pointer to next shape, or NULL if last element.
     };
 
-    typedef struct NSVGimage
+    struct NSVGimage
     {
         float width;        // Width of the image.
         float height;       // Height of the image.
         NSVGshape* shapes;  // Linked list of shapes in the image.
-    } NSVGimage;
+    };
 
     // Parses SVG file from a file, returns SVG image as paths.
     NSVGimage* nsvg_parse_from_file(const char* filename, const char* units, float dpi);
@@ -110,7 +110,7 @@ namespace rl::nsvg {
     NSVGimage* nsvg_parse(char* input, const char* units, float dpi);
 
     // Duplicates a path.
-    NSVGpath* nsvg_duplicate_path(NSVGpath* p);
+    NSVGpath* nsvg_duplicate_path(const NSVGpath* p);
 
     // Deletes an image.
     void nsvg_delete(NSVGimage* image);

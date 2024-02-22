@@ -628,7 +628,7 @@ namespace rl::ui {
 
     Canvas* Widget::canvas()
     {
-        scoped_log();
+        scoped_trace(log_level::trace);
         Widget* widget{ this };
         while (widget != nullptr)
         {
@@ -645,7 +645,7 @@ namespace rl::ui {
 
     Dialog* Widget::dialog()
     {
-        scoped_log();
+        scoped_trace(log_level::trace);
         Widget* widget{ this };
         while (widget != nullptr)
         {
@@ -662,13 +662,13 @@ namespace rl::ui {
 
     const Canvas* Widget::canvas() const
     {
-        scoped_log();
+        scoped_trace(log_level::trace);
         return const_cast<Widget*>(this)->canvas();
     }
 
     const Dialog* Widget::dialog() const
     {
-        scoped_log();
+        scoped_trace(log_level::trace);
         return const_cast<Widget*>(this)->dialog();
     }
 
