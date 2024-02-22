@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-#include "ds/dims.hpp"
+#include "ds/point.hpp"
 #include "graphics/vg/fontstash.hpp"
 
 #ifdef _MSC_VER
@@ -530,6 +530,7 @@ namespace rl::nvg {
 
     // Transform a point by given transform.
     void transform_point(float* dstx, float* dsty, const float* xform, float srcx, float srcy);
+    ds::point<f32> transform_point(NVGcontext* ctx, const ds::point<f32>& src_pt);
 
     // Converts degrees to radians and vice versa.
     float deg_to_rad(float deg);

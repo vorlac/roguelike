@@ -1747,6 +1747,18 @@ namespace rl::nvg {
         *dsty = srcx * xform[1] + srcy * xform[3] + xform[5];
     }
 
+    ds::point<f32> transform_point(NVGcontext* ctx, const ds::point<f32>& src_pt)
+    {
+        float xform[6] = { 0 };
+        // float curr_xform[6] = { 0 };
+        nvg::current_transform(ctx, xform);
+        // nvg::transform_inverse(xform, curr_xform);
+        return ds::point{
+            src_pt.x * xform[0] + src_pt.y * xform[2] + xform[4],
+            src_pt.x * xform[1] + src_pt.y * xform[3] + xform[5],
+        };
+    }
+
     float deg_to_rad(const float deg)
     {
         return deg / 180.0f * std::numbers::pi_v<f32>;

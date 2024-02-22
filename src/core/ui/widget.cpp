@@ -440,6 +440,7 @@ namespace rl::ui {
         scoped_logger(log_level::trace, "pos={}", mouse.pos());
 
         bool handled{ false };
+        LocalTransform transform{ this };
         for (const auto child : std::ranges::reverse_view{ m_children })
         {
             if (!child->visible())
@@ -616,7 +617,10 @@ namespace rl::ui {
     bool Widget::contains(const ds::point<f32>& pt) const
     {
         // Check if the widget contains a certain position
+        // const ds::rect widget_rect2{ nvg::transform_point(m_renderer->context(), m_pos), m_size
+        // }; const ds::rect widget_rect{ this->abs_position(), m_size };
         const ds::rect widget_rect{ m_pos, m_size };
+        // const auto trans_point{ nvg::transform_point(m_renderer->context(), pt) };
         return widget_rect.contains(pt);
     }
 
