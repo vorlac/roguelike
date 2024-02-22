@@ -1,43 +1,60 @@
 #pragma once
 #include <ranges>
-#include <stack>
 
 #include "core/ui/widget.hpp"
 #include "graphics/vg/nanovg.hpp"
 
 namespace rl {
-    struct LocalTransform
+    struct LocalTransform final
     {
-        LocalTransform(const ui::Widget* widget) noexcept
+    public:
+        LocalTransform() = delete;
+        LocalTransform(const LocalTransform&) = delete;
+        LocalTransform(LocalTransform&&) = delete;
+        LocalTransform& operator=(LocalTransform&&) = delete;
+        LocalTransform& operator=(const LocalTransform&) = delete;
+
+    public:
+        explicit LocalTransform(const ui::Widget* widget) noexcept
         {
 #ifndef NDEBUG
             // TODO: remove this after more testing
             const bool already_in_local_space{
-                std::ranges::find_if(m_stack,
+                std::ranges::find_if(scope_stack,
                                      [&](const ui::Widget* w) {
                                          return w == widget;
-                                     }) != m_stack.end(),
+                                     }) != scope_stack.end(),
             };
 
-            runtime_assert(already_in_local_space != (m_stack.empty() || m_stack.back() != widget),
-                           "????");
+            runtime_assert(
+                already_in_local_space != (scope_stack.empty() || scope_stack.back() != widget),
+                "????");
 #endif
             runtime_assert(widget != nullptr, "invalid reference to UI element");
-            if (m_stack.empty() || m_stack.back() != widget)
+            if (scope_stack.empty() || scope_stack.back() != widget)
             {
-                nvg::translate(widget->context(), widget->position());
-                m_stack.push_back(widget);
+                absolute_pos += widget->position();
+                nvg::translate(ui::Widget::context(), widget->position());
+                scope_stack.push_back(widget);
             }
         }
 
-        ~LocalTransform() noexcept
+        [[nodiscard]]
+        ds::point<f32> abs_local_position() const
         {
-            const ui::Widget* widget{ m_stack.back() };
-            nvg::translate(widget->context(), -widget->position());
-            m_stack.pop_back();
+            return absolute_pos;
         }
 
-        static inline std::vector<const ui::Widget*> m_stack = {};
+        ~LocalTransform()
+        {
+            const ui::Widget* widget{ scope_stack.back() };
+            absolute_pos -= widget->position();
+            nvg::translate(ui::Widget::context(), -widget->position());
+            scope_stack.pop_back();
+        }
+
+        static inline std::vector scope_stack{ std::vector<const ui::Widget*>(128) };
+        static inline ds::point<f32> absolute_pos{ 0.0f, 0.0f };
     };
 
 }

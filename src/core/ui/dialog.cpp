@@ -199,7 +199,7 @@ namespace rl::ui {
                 m_pos.y = std::max(m_pos.y, 0.0f);
             }
             {
-                const ds::dims<f32> relative_size{ this->parent()->size() - m_size };
+                const ds::dims relative_size{ this->parent()->size() - m_size };
                 diag_log("m_pos_2={} rel_size={}", m_pos, relative_size);
                 m_pos.x = std::min(m_pos.x, relative_size.width);
                 m_pos.y = std::min(m_pos.y, relative_size.height);
@@ -260,7 +260,7 @@ namespace rl::ui {
             m_button_panel->hide();
 
         auto&& context{ m_renderer->context() };
-        ds::dims<f32> result{ Widget::preferred_size() };
+        const ds::dims result{ Widget::preferred_size() };
 
         if (m_button_panel != nullptr)
             m_button_panel->show();
@@ -268,14 +268,14 @@ namespace rl::ui {
         nvg::font_size(context, m_theme->dialog_title_font_size);
         nvg::font_face(context, m_theme->dialog_title_font_name.data());
 
-        // [xmin,ymin,xmax,ymax]
+        // [xmin, ymin, xmax, ymax]
         std::array<f32, 4> bounds = {};
         nvg::text_bounds(context, 0, 0, m_title.c_str(), nullptr, bounds.data());
 
         constexpr static f32 TEXT_SIZE_WIDTH_PADDING{ 20.0f };
-        ds::rect<f32> bounding_rect{
+        ds::rect bounding_rect{
             ds::point<f32>::zero(),
-            ds::dims<f32>{
+            ds::dims{
                 std::max(result.width, bounds[2] - bounds[0] + TEXT_SIZE_WIDTH_PADDING),
                 std::max(result.height, bounds[3] - bounds[1]),
             },
@@ -314,7 +314,6 @@ namespace rl::ui {
 
     void Dialog::refresh_relative_placement()
     {
-        scoped_log("noop");
         // helper to maintain nested window position values,
         // overridden in Popup
         return;

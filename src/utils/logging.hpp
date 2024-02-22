@@ -1,6 +1,6 @@
 #pragma once
 
-#define RL_ENABLE_LOGGER 0
+#define RL_ENABLE_LOGGER 1
 #if not RL_ENABLE_LOGGER
 
   #define scoped_trace(...)       static_cast<void>(0)
@@ -58,7 +58,7 @@ namespace rl {
     class ScopedLogger
     {
         constexpr static inline log_level LOGFILE_LEVEL{ log_level::info };
-        constexpr static inline log_level STD_OUT_LEVEL{ log_level::warn };
+        constexpr static inline log_level STD_OUT_LEVEL{ log_level::info };
 
     public:
         explicit ScopedLogger(std::string&& str)
@@ -87,7 +87,7 @@ namespace rl {
 
         void inner_scope_diag(std::string&& str) const
         {
-            m_logger->log(m_level, "{:{}}   {}", "", m_depth * INDENT, std::move(str));
+            m_logger->log(log_level::warn, "{:{}}   | {}", "", m_depth * INDENT, std::move(str));
         }
 
     private:

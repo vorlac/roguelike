@@ -168,7 +168,7 @@ namespace rl::ui {
         if (m_children.empty())
             return;
 
-        scoped_log();
+        scoped_trace(log_level::trace);
 
         Widget* child{ m_children[0] };
 

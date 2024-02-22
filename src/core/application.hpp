@@ -251,7 +251,7 @@ namespace rl {
             m_main_window->render();
         }
 
-        bool setup()
+        bool setup() const
         {
             return true;
         }

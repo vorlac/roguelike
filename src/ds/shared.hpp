@@ -14,16 +14,16 @@ namespace rl::ds {
     class shared final
     {
     public:
-        constexpr inline shared() = default;
+        constexpr shared() = default;
 
-        constexpr inline shared(T* data)
+        explicit constexpr shared(T* data)
             : m_data{ data }
         {
             if (m_data != nullptr)
                 m_data->acquire_ref();
         }
 
-        constexpr inline shared(const ds::shared<T>& other)
+        constexpr shared(const shared& other)
             : m_data{ other.m_data }
         {
             // acquire a reference to existing
@@ -31,19 +31,19 @@ namespace rl::ds {
                 m_data->acquire_ref();
         }
 
-        constexpr inline shared(shared<T>&& other) noexcept
+        constexpr shared(shared&& other) noexcept
             : m_data{ other.m_data }
         {
             other.m_data = nullptr;
         }
 
-        constexpr inline virtual ~shared()
+        constexpr ~shared()
         {
             if (m_data != nullptr)
                 m_data->release_ref();
         }
 
-        constexpr inline shared<T>& operator=(shared<T>&& other) noexcept
+        constexpr shared& operator=(shared&& other) noexcept
         {
             // release reference on existing data
             // if one was already being held to it
@@ -57,80 +57,88 @@ namespace rl::ds {
             return *this;
         }
 
-        constexpr inline shared<T>& operator=(const shared<T>& other)
+        constexpr shared& operator=(const shared& other)
         {
-            if (other.m_data != nullptr)
-                other.m_data->acquire_ref();
-            if (m_data != nullptr)
-                m_data->release_ref();
+            if (this != &other)
+            {
+                if (other.m_data != nullptr)
+                    other.m_data->acquire_ref();
+                if (m_data != nullptr)
+                    m_data->release_ref();
 
-            m_data = other.m_data;
+                m_data = other.m_data;
+            }
+
             return *this;
         }
 
-        constexpr inline shared<T>& operator=(T* data)
+        constexpr shared& operator=(T* data)
         {
-            if (data != nullptr)
-                data->acquire_ref();
-            if (m_data != nullptr)
-                m_data->release_ref();
+            if (data != m_data)
+            {
+                if (data != nullptr)
+                    data->acquire_ref();
+                if (m_data != nullptr)
+                    m_data->release_ref();
 
-            m_data = data;
+                m_data = data;
+            }
+
             return *this;
         }
 
-        constexpr inline bool operator==(const shared<T>& other) const
+        constexpr bool operator==(const shared& other) const
         {
             // address comparison to guarantee it's
             // the same exact shared<T> object ref
             return m_data == other.m_data;
         }
 
-        constexpr inline bool operator==(const T* data) const
+        constexpr bool operator==(const T* data) const
         {
             // address comparison to guarantee it's
             // the same exact data being referenced
             return m_data == data;
         }
 
-        constexpr inline bool operator!=(const shared<T>& other) const
+        constexpr bool operator!=(const shared& other) const
         {
             return !this->operator==(other);
         }
 
-        constexpr inline bool operator!=(const T* data) const
+        constexpr bool operator!=(const T* data) const
         {
             return !this->operator==(data);
         }
 
-        constexpr inline T* operator->()
-        {
-            return m_data;
-        };
-
-        constexpr inline const T* operator->() const
+        constexpr T* operator->()
         {
             return m_data;
         }
 
-        constexpr inline T& operator*()
+        constexpr const T* operator->() const
+        {
+            return m_data;
+        }
+
+        constexpr T& operator*()
         {
             runtime_assert(m_data != nullptr, "dereferencing null shared<{}>", typeid(T).name());
             return *m_data;
         }
 
-        constexpr inline const T& operator*() const
+        constexpr const T& operator*() const
         {
             runtime_assert(m_data != nullptr, "dereferencing null shared<{}>", typeid(T).name());
             return *m_data;
         }
 
-        constexpr inline operator T*()
+        constexpr operator T*()
         {
             return m_data;
         }
 
-        constexpr inline const T* get() const
+        constexpr const T* get() const
         {
             return m_data;
         }

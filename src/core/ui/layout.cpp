@@ -10,6 +10,7 @@
 #include "graphics/vg/nanovg.hpp"
 #include "utils/io.hpp"
 #include "utils/logging.hpp"
+#include "utils/math.hpp"
 #include "utils/numeric.hpp"
 
 namespace rl::ui {
@@ -20,12 +21,12 @@ namespace rl::ui {
         , m_orientation{ orientation }
         , m_alignment{ alignment }
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
     }
 
     ds::dims<f32> BoxLayout::preferred_size(nvg::NVGcontext* nvg_context, const Widget* widget) const
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
 
         ds::dims size{
             2.0f * m_margin,
@@ -55,9 +56,8 @@ namespace rl::ui {
             const ds::dims ps{ child->preferred_size() };
             const ds::dims fs{ child->fixed_size() };
             const ds::dims target_size{
-                std::fabs(fs.width) > std::numeric_limits<f32>::epsilon() ? fs.width : ps.width,
-                std::fabs(fs.height) > std::numeric_limits<f32>::epsilon() != 0.0f ? fs.height
-                                                                                   : ps.height,
+                math::is_equal(fs.width, 0.0f) ? ps.width : fs.width,
+                math::is_equal(fs.height, 0.0f) ? ps.height : fs.height,
             };
 
             first_child = false;
@@ -70,7 +70,7 @@ namespace rl::ui {
 
     void BoxLayout::perform_layout(nvg::NVGcontext* nvg_context, Widget* widget) const
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
 
         const ds::dims fs_w{ widget->fixed_size() };
         ds::dims container_size{
@@ -149,25 +149,25 @@ namespace rl::ui {
 
     Orientation BoxLayout::orientation() const
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
         return m_orientation;
     }
 
     void BoxLayout::set_orientation(const Orientation orientation)
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
         m_orientation = orientation;
     }
 
     Alignment BoxLayout::alignment() const
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
         return m_alignment;
     }
 
     void BoxLayout::set_alignment(const Alignment alignment)
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
         m_alignment = alignment;
     }
 
@@ -178,19 +178,19 @@ namespace rl::ui {
 
     void BoxLayout::set_margin(const f32 margin)
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
         m_margin = margin;
     }
 
     f32 BoxLayout::spacing() const
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
         return m_spacing;
     }
 
     void BoxLayout::set_spacing(const f32 spacing)
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
         m_spacing = spacing;
     }
 
@@ -199,7 +199,7 @@ namespace rl::ui {
     ds::dims<f32> GroupLayout::preferred_size(nvg::NVGcontext* nvg_context,
                                               const Widget* widget) const
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
 
         f32 height{ m_margin };
         f32 width{ 2.0f * m_margin };
@@ -241,7 +241,7 @@ namespace rl::ui {
 
     void GroupLayout::perform_layout(nvg::NVGcontext* nvg_context, Widget* widget) const
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
 
         f32 height{ m_margin };
         const f32 available_width{ (std::fabs(widget->fixed_width()) >
@@ -295,49 +295,49 @@ namespace rl::ui {
 
     f32 GroupLayout::margin() const
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
         return m_margin;
     }
 
     void GroupLayout::set_margin(const f32 margin)
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
         m_margin = margin;
     }
 
     f32 GroupLayout::spacing() const
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
         return m_spacing;
     }
 
     void GroupLayout::set_spacing(const f32 spacing)
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
         m_spacing = spacing;
     }
 
     f32 GroupLayout::group_indent() const
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
         return m_group_indent;
     }
 
     void GroupLayout::set_group_indent(const f32 group_indent)
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
         m_group_indent = group_indent;
     }
 
     f32 GroupLayout::group_spacing() const
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
         return m_group_spacing;
     }
 
     void GroupLayout::set_group_spacing(const f32 group_spacing)
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
         m_group_spacing = group_spacing;
     }
 
@@ -346,7 +346,7 @@ namespace rl::ui {
     ds::dims<f32> GridLayout::preferred_size(nvg::NVGcontext* nvg_context,
                                              const Widget* widget) const
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
 
         std::array<std::vector<f32>, 2> grid{ { {}, {} } };
         this->compute_layout(nvg_context, widget, grid);
@@ -368,7 +368,7 @@ namespace rl::ui {
     void GridLayout::compute_layout(nvg::NVGcontext* nvg_context, const Widget* widget,
                                     std::array<std::vector<f32>, 2>& grid) const
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
 
         const i32 axis1{ std::to_underlying(m_orientation) };
         const i32 axis2{ (axis1 + 1) % 2 };
@@ -433,7 +433,7 @@ namespace rl::ui {
 
     void GridLayout::perform_layout(nvg::NVGcontext* nvg_context, Widget* widget) const
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
 
         const ds::dims fs_w{ widget->fixed_size() };
         const ds::dims container_size{
@@ -466,7 +466,7 @@ namespace rl::ui {
             for (const auto& s : grid[axis_idx])
             {
                 grid_size += s;
-                if (1.0f + axis_idx < dim[axis_idx])
+                if (1.0f + static_cast<f32>(axis_idx) < dim[axis_idx])
                     grid_size += this->spacing(cur_axis);
             }
 
@@ -479,9 +479,9 @@ namespace rl::ui {
                 const f32 g{ gap / dim[axis_idx] };
 
                 f32 rest{ gap - g * dim[axis_idx] };
-                for (i32 i = 0; i < dim[axis_idx]; ++i)
+                for (i32 i = 0; static_cast<f32>(i) < dim[axis_idx]; ++i)
                     grid[axis_idx][i] += g;
-                for (i32 i = 0; rest > 0 && i < dim[axis_idx]; --rest, ++i)
+                for (i32 i = 0; rest > 0 && static_cast<f32>(i) < dim[axis_idx]; --rest, ++i)
                     grid[axis_idx][i] += 1.0f;
             }
         }
@@ -575,31 +575,31 @@ namespace rl::ui {
 
     Orientation GridLayout::orientation() const
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
         return m_orientation;
     }
 
     void GridLayout::set_orientation(const Orientation orientation)
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
         m_orientation = orientation;
     }
 
     f32 GridLayout::resolution() const
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
         return m_resolution;
     }
 
     void GridLayout::set_resolution(const f32 resolution)
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
         m_resolution = resolution;
     }
 
     f32 GridLayout::spacing(const Axis axis) const
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
 
         switch (axis)
         {
@@ -615,7 +615,7 @@ namespace rl::ui {
 
     void GridLayout::set_spacing(const Axis axis, const f32 spacing)
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
 
         switch (axis)
         {
@@ -633,25 +633,25 @@ namespace rl::ui {
 
     void GridLayout::set_spacing(const f32 spacing)
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
         m_spacing = ds::vector2{ spacing, spacing };
     }
 
     f32 GridLayout::margin() const
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
         return m_margin;
     }
 
     void GridLayout::set_margin(const f32 margin)
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
         m_margin = margin;
     }
 
     Alignment GridLayout::alignment(const Axis axis, const i32 item) const
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
         if (item < static_cast<i32>(m_alignment[axis].size()))
             return m_alignment[axis][item];
         else
@@ -660,25 +660,25 @@ namespace rl::ui {
 
     void GridLayout::set_col_alignment(const Alignment value)
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
         m_default_alignment[Axis::Horizontal] = value;
     }
 
     void GridLayout::set_row_alignment(const Alignment value)
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
         m_default_alignment[Axis::Vertical] = value;
     }
 
     void GridLayout::set_col_alignment(const std::vector<Alignment>& value)
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
         m_alignment[Axis::Horizontal] = value;
     }
 
     void GridLayout::set_row_alignment(const std::vector<Alignment>& value)
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
         m_alignment[Axis::Vertical] = value;
     }
 
@@ -690,7 +690,7 @@ namespace rl::ui {
         , m_rows(rows)
         , m_margin(margin)
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
 
         m_col_stretch.resize(m_cols.size(), 0.0f);
         m_row_stretch.resize(m_rows.size(), 0.0f);
@@ -699,7 +699,7 @@ namespace rl::ui {
     ds::dims<f32> AdvancedGridLayout::preferred_size(nvg::NVGcontext* nvg_context,
                                                      const Widget* widget) const
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
 
         // Compute minimum row / column sizes
         std::array<std::vector<f32>, 2> grid{ { {}, {} } };
@@ -724,7 +724,7 @@ namespace rl::ui {
 
     void AdvancedGridLayout::perform_layout(nvg::NVGcontext* nvg_context, Widget* widget) const
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
 
         std::array<std::vector<f32>, 2> grid{ { {}, {} } };
         this->compute_layout(nvg_context, widget, grid);
@@ -810,7 +810,7 @@ namespace rl::ui {
     void AdvancedGridLayout::compute_layout(nvg::NVGcontext* nvg_context, const Widget* widget,
                                             std::array<std::vector<f32>, 2>& grid_cell_sizes) const
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
 
         const ds::dims fs_w{ widget->fixed_size() };
         ds::dims container_size{
@@ -909,63 +909,63 @@ namespace rl::ui {
 
     f32 AdvancedGridLayout::margin() const
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
         return m_margin;
     }
 
     void AdvancedGridLayout::set_margin(const f32 margin)
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
         m_margin = margin;
     }
 
     u32 AdvancedGridLayout::col_count() const
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
         return static_cast<u32>(m_cols.size());
     }
 
     u32 AdvancedGridLayout::row_count() const
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
         return static_cast<u32>(m_rows.size());
     }
 
     void AdvancedGridLayout::append_row(const f32 size, const f32 stretch)
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
         m_rows.push_back(size);
         m_row_stretch.push_back(stretch);
     }
 
     void AdvancedGridLayout::append_col(const f32 size, const f32 stretch)
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
         m_cols.push_back(size);
         m_col_stretch.push_back(stretch);
     }
 
     void AdvancedGridLayout::set_row_stretch(const i32 index, const f32 stretch)
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
         m_row_stretch.at(index) = stretch;
     }
 
     void AdvancedGridLayout::set_col_stretch(const i32 index, const f32 stretch)
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
         m_col_stretch.at(index) = stretch;
     }
 
     void AdvancedGridLayout::set_anchor(const Widget* widget, const Anchor& anchor)
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
         m_anchor[widget] = anchor;
     }
 
     Anchor AdvancedGridLayout::anchor(const Widget* widget) const
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
 
         const auto it{ m_anchor.find(widget) };
         runtime_assert(it != m_anchor.end(), "Widget was not registered with the grid layout!");

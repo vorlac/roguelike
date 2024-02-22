@@ -108,9 +108,9 @@ namespace rl::ui {
         nvg::font_size(context, this->font_size());
         nvg::font_face(context, Font::Name::Sans);
 
-        f32 text_bounds{ nvg::text_bounds(context, 0.0f, 0.0f, m_caption.c_str(), nullptr,
-                                          nullptr) };
-        return ds::dims<f32>{
+        const f32 text_bounds{ nvg::text_bounds(context, 0.0f, 0.0f, m_caption.c_str(), nullptr,
+                                                nullptr) };
+        return ds::dims{
             text_bounds + 1.8f * this->font_size(),
             this->font_size() * 1.3f,
         };
@@ -129,11 +129,11 @@ namespace rl::ui {
         nvg::text(context, m_pos.x + 1.6f * this->font_size(), m_pos.y + m_size.height * 0.5f,
                   m_caption.c_str(), nullptr);
 
-        nvg::NVGpaint bg{ nvg::box_gradient(context, m_pos.x + 1.5f, m_pos.y + 1.5f,
-                                            m_size.height - 2.0f, m_size.height - 2.0f, 3, 3.0f,
-                                            m_pushed ? ds::color<f32>{ 0, 0, 0, 100 }.nvg()
-                                                     : ds::color<f32>{ 0, 0, 0, 32 }.nvg(),
-                                            ds::color<f32>{ 0, 0, 0, 180 }) };
+        const nvg::NVGpaint bg{ nvg::box_gradient(
+            context, m_pos.x + 1.5f, m_pos.y + 1.5f, m_size.height - 2.0f, m_size.height - 2.0f, 3,
+            3.0f,
+            m_pushed ? ds::color<f32>{ 0, 0, 0, 100 }.nvg() : ds::color<f32>{ 0, 0, 0, 32 }.nvg(),
+            ds::color<f32>{ 0, 0, 0, 180 }) };
 
         nvg::begin_path(context);
         nvg::rounded_rect(context, m_pos.x + 1.0f, m_pos.y + 1.0f, m_size.height - 2.0f,

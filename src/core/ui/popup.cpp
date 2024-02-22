@@ -9,72 +9,72 @@ namespace rl::ui {
         : Dialog{ parent, "" }
         , m_parent_dialog{ parent_dialog }
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
     }
 
     void Popup::set_anchor_pos(ds::point<f32> anchor_pos)
     {
-        scoped_log("anchro_pos={}", anchor_pos);
+        scoped_logger(log_level::debug, "anchro_pos={}", anchor_pos);
         m_anchor_pos = anchor_pos;
     }
 
     ds::point<f32> Popup::anchor_pos() const
     {
-        scoped_log("m_anchor_pos={}", m_anchor_pos);
+        scoped_logger(log_level::debug, "m_anchor_pos={}", m_anchor_pos);
         return m_anchor_pos;
     }
 
     void Popup::set_anchor_offset(f32 anchor_offset)
     {
-        scoped_log("anchor_offset={}", anchor_offset);
+        scoped_logger(log_level::debug, "anchor_offset={}", anchor_offset);
         m_anchor_offset = anchor_offset;
     }
 
     f32 Popup::anchor_offset() const
     {
-        scoped_log("m_anchor_offset={}", m_anchor_offset);
+        scoped_logger(log_level::debug, "m_anchor_offset={}", m_anchor_offset);
         return m_anchor_offset;
     }
 
     void Popup::set_anchor_size(f32 anchor_size)
     {
-        scoped_log("anchor_size={}", anchor_size);
+        scoped_logger(log_level::debug, "anchor_size={}", anchor_size);
         m_anchor_size = anchor_size;
     }
 
     f32 Popup::anchor_size() const
     {
-        scoped_log("m_anchor_size={}", m_anchor_size);
+        scoped_logger(log_level::debug, "m_anchor_size={}", m_anchor_size);
         return m_anchor_size;
     }
 
     void Popup::set_side(Popup::Side popup_side)
     {
-        scoped_log("side={}", popup_side);
+        scoped_logger(log_level::debug, "side={}", popup_side);
         m_side = popup_side;
     }
 
     Popup::Side Popup::side() const
     {
-        scoped_log("side={}", m_side);
+        scoped_logger(log_level::debug, "side={}", m_side);
         return m_side;
     }
 
     Dialog* Popup::parent_window()
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
         return m_parent_dialog;
     }
 
     const Dialog* Popup::parent_window() const
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
         return m_parent_dialog;
     }
 
     void Popup::perform_layout()
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
         if (m_layout != nullptr || m_children.size() != 1)
             Widget::perform_layout();
         else
@@ -91,7 +91,7 @@ namespace rl::ui {
 
     void Popup::refresh_relative_placement()
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
         if (m_parent_dialog == nullptr)
             return;
 
@@ -103,7 +103,7 @@ namespace rl::ui {
 
     void Popup::draw()
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
         this->refresh_relative_placement();
         if (!m_visible)
             return;

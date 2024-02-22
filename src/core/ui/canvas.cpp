@@ -310,20 +310,19 @@ namespace rl::ui {
 
     void Canvas::move_dialog_to_front(Dialog* dialog)
     {
-        bool changed{ false };
         const auto removal_iterator{ std::ranges::remove(m_children, dialog).begin() };
         m_children.erase(removal_iterator, m_children.end());
         m_children.push_back(dialog);
 
-        do
+        bool changed{ true };
+        while (changed)
         {
-            // Brute force topological sort (no problem for a few windows..)
+            changed = false;
             size_t base_idx{ 0 };
             for (size_t idx = 0; idx < m_children.size(); ++idx)
                 if (m_children[idx] == dialog)
                     base_idx = idx;
 
-            changed = false;
             for (size_t idx = 0; idx < m_children.size(); ++idx)
             {
                 const auto popup_wnd{ dynamic_cast<Popup*>(m_children[idx]) };
@@ -335,14 +334,13 @@ namespace rl::ui {
                 }
             }
         }
-        while (changed);
     }
 
     void Canvas::dispose_dialog(const Dialog* dialog)
     {
-        const bool match_found = std::ranges::find_if(m_focus_path, [&](const Widget* w) {
-                                     return w == dialog;
-                                 }) != m_focus_path.end();
+        const bool match_found{ std::ranges::find_if(m_focus_path, [&](const Widget* w) {
+                                    return w == dialog;
+                                }) != m_focus_path.end() };
         if (match_found)
             m_focus_path.clear();
 

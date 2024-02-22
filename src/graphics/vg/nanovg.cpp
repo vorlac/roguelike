@@ -1412,6 +1412,20 @@ namespace rl::nvg {
             const float det = xform[0] * xform[3] - xform[2] * xform[1];
             return det < 0;
         }
+
+        static void nvg_isect_rects(float* dst, const float ax, const float ay, const float aw,
+                                    const float ah, const float bx, const float by, const float bw,
+                                    const float bh)
+        {
+            const float minx = detail::nvg_max(ax, bx);
+            const float miny = detail::nvg_max(ay, by);
+            const float maxx = detail::nvg_min(ax + aw, bx + bw);
+            const float maxy = detail::nvg_min(ay + ah, by + bh);
+            dst[0] = minx;
+            dst[1] = miny;
+            dst[2] = detail::nvg_max(0.0f, maxx - minx);
+            dst[3] = detail::nvg_max(0.0f, maxy - miny);
+        }
     }
 
     NVGcontext* create_internal(const NVGparams* params)
@@ -2153,20 +2167,6 @@ namespace rl::nvg {
         state->scissor.extent[1] = h * 0.5f;
     }
 
-    static void nvg_isect_rects(float* dst, const float ax, const float ay, const float aw,
-                                const float ah, const float bx, const float by, const float bw,
-                                const float bh)
-    {
-        const float minx = detail::nvg_max(ax, bx);
-        const float miny = detail::nvg_max(ay, by);
-        const float maxx = detail::nvg_min(ax + aw, bx + bw);
-        const float maxy = detail::nvg_min(ay + ah, by + bh);
-        dst[0] = minx;
-        dst[1] = miny;
-        dst[2] = detail::nvg_max(0.0f, maxx - minx);
-        dst[3] = detail::nvg_max(0.0f, maxy - miny);
-    }
-
     void intersect_scissor(NVGcontext* ctx, const float x, const float y, const float w,
                            const float h)
     {
@@ -2192,7 +2192,8 @@ namespace rl::nvg {
         const float tey = ex * detail::nvg_absf(pxform[1]) + ey * detail::nvg_absf(pxform[3]);
 
         // Intersect rects.
-        nvg_isect_rects(rect, pxform[4] - tex, pxform[5] - tey, tex * 2, tey * 2, x, y, w, h);
+        detail::nvg_isect_rects(rect, pxform[4] - tex, pxform[5] - tey, tex * 2, tey * 2, x, y, w,
+                                h);
 
         scissor(ctx, rect[0], rect[1], rect[2], rect[3]);
     }
@@ -2282,11 +2283,7 @@ namespace rl::nvg {
             switch (cmd)
             {
                 case NVGcommands::MoveTo:
-                    transform_point(&vals[i + 1], &vals[i + 2], state->xform, vals[i + 1],
-                                    vals[i + 2]);
-                    i += 3;
-                    break;
-
+                    [[fallthrough]];
                 case NVGcommands::LineTo:
                     transform_point(&vals[i + 1], &vals[i + 2], state->xform, vals[i + 1],
                                     vals[i + 2]);

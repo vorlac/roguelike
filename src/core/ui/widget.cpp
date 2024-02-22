@@ -19,8 +19,7 @@ namespace rl::ui {
     Widget::Widget(Widget* parent)
         : m_parent{ parent }
     {
-        scoped_log();
-
+        scoped_trace(log_level::debug);
         if (parent != nullptr)
             parent->add_child(this);
     }
@@ -28,7 +27,7 @@ namespace rl::ui {
     Widget::Widget(Widget* parent, const std::unique_ptr<NVGRenderer>& vg_renderer)
         : m_parent{ parent }
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
         runtime_assert(m_renderer == nullptr, "widget vectorized renderer already set");
         if (m_renderer == nullptr)
             m_renderer = vg_renderer.get();
@@ -39,7 +38,7 @@ namespace rl::ui {
 
     Widget::~Widget()
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
         for (const auto child : m_children)
             if (child != nullptr)
                 child->release_ref();
@@ -47,55 +46,55 @@ namespace rl::ui {
 
     Widget* Widget::parent()
     {
-        scoped_log();
+        scoped_trace(log_level::trace);
         return m_parent;
     }
 
     const Widget* Widget::parent() const
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
         return m_parent;
     }
 
     void Widget::set_parent(Widget* parent)
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
         m_parent = parent;
     }
 
     Layout* Widget::layout()
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
         return m_layout;
     }
 
     const Layout* Widget::layout() const
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
         return m_layout.get();
     }
 
     void Widget::set_layout(Layout* layout)
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
         m_layout = layout;
     }
 
     Theme* Widget::theme()
     {
-        scoped_log();
+        scoped_trace(log_level::trace);
         return m_theme;
     }
 
     const Theme* Widget::theme() const
     {
-        scoped_log();
+        scoped_trace(log_level::trace);
         return m_theme.get();
     }
 
     void Widget::set_theme(Theme* theme)
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
         if (m_theme.get() == theme)
             return;
 
@@ -111,13 +110,13 @@ namespace rl::ui {
 
     void Widget::set_position(const ds::point<f32>& pos)
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
         m_pos = pos;
     }
 
     ds::point<f32> Widget::abs_position() const
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
         return m_parent != nullptr                   //
                  ? m_parent->abs_position() + m_pos  //
                  : m_pos;                            //
@@ -140,7 +139,7 @@ namespace rl::ui {
 
     void Widget::set_width(const f32 width)
     {
-        scoped_log();
+        scoped_log("width={}", width);
         m_size.width = width;
     }
 
@@ -151,13 +150,13 @@ namespace rl::ui {
 
     void Widget::set_height(const f32 height)
     {
-        scoped_log();
+        scoped_log("height={}", height);
         m_size.height = height;
     }
 
     void Widget::set_fixed_size(const ds::dims<f32>& fixed_size)
     {
-        scoped_log();
+        scoped_log("fixed_size={}", fixed_size);
         m_fixed_size = fixed_size;
     }
 
@@ -178,25 +177,25 @@ namespace rl::ui {
 
     void Widget::set_fixed_width(const f32 width)
     {
-        scoped_log();
+        scoped_log("fixed_width={}", width);
         m_fixed_size.width = width;
     }
 
     void Widget::set_fixed_height(f32 height)
     {
-        scoped_log("height={}", height);
+        scoped_log("fixed_height={}", height);
         m_fixed_size.height = height;
     }
 
     bool Widget::visible() const
     {
-        scoped_log("m_visible={}", m_visible);
+        scoped_logger(log_level::trace, "m_visible={}", m_visible);
         return m_visible;
     }
 
     void Widget::set_visible(bool visible)
     {
-        scoped_log("visible={}", visible);
+        scoped_logger(log_level::trace, "visible={}", visible);
         m_visible = visible;
     }
 
@@ -214,7 +213,7 @@ namespace rl::ui {
 
     bool Widget::visible_recursive() const
     {
-        scoped_log();
+        scoped_trace(log_level::debug);
         bool visible{ true };
 
         const Widget* widget{ this };
@@ -229,19 +228,19 @@ namespace rl::ui {
 
     i32 Widget::child_count() const
     {
-        scoped_log("{}", m_children.size());
+        scoped_logger(log_level::debug, "{}", m_children.size());
         return static_cast<i32>(m_children.size());
     }
 
     Widget* Widget::child_at(i32 index)
     {
-        scoped_log("idx={} cnt={}", index, m_children.size());
+        scoped_logger(log_level::debug, "idx={} cnt={}", index, m_children.size());
         return m_children[static_cast<size_t>(index)];
     }
 
     const Widget* Widget::child_at(i32 index) const
     {
-        scoped_log("idx={} cnt={}", index, m_children.size());
+        scoped_logger(log_level::debug, "idx={} cnt={}", index, m_children.size());
         return m_children[static_cast<size_t>(index)];
     }
 
@@ -297,8 +296,8 @@ namespace rl::ui {
             {
                 if (!child->visible())
                     continue;
-                if (child->contains(pt - m_pos))
-                    return child->find_widget(pt - m_pos);
+                if (child->contains(pt - LocalTransform::absolute_pos))
+                    return child->find_widget(pt - LocalTransform::absolute_pos);
             }
         }
 
@@ -309,13 +308,15 @@ namespace rl::ui {
     {
         scoped_trace(log_level::debug);
 
-        LocalTransform transform{ this };
-        for (const auto child : std::ranges::reverse_view{ m_children })
         {
-            if (!child->visible())
-                continue;
-            if (child->contains(pt - m_pos))
-                return child->find_widget(pt - m_pos);
+            LocalTransform transform{ this };
+            for (const auto child : std::ranges::reverse_view{ m_children })
+            {
+                if (!child->visible())
+                    continue;
+                if (child->contains(pt - LocalTransform::absolute_pos))
+                    return child->find_widget(pt - LocalTransform::absolute_pos);
+            }
         }
 
         return this->contains(pt) ? this : nullptr;
@@ -363,7 +364,7 @@ namespace rl::ui {
         {
             if (!child->visible())
                 continue;
-            if (!child->contains(mouse_pos - m_pos))
+            if (!child->contains(mouse_pos - LocalTransform::absolute_pos))
                 continue;
             if (!child->on_mouse_button_pressed(mouse, kb))
                 continue;
@@ -394,7 +395,7 @@ namespace rl::ui {
         {
             if (!child->visible())
                 continue;
-            if (!child->contains(mouse_pos - m_pos))
+            if (!child->contains(mouse_pos - LocalTransform::absolute_pos))
                 continue;
             if (!child->on_mouse_button_released(mouse, kb))
                 continue;
@@ -420,7 +421,7 @@ namespace rl::ui {
         {
             if (!child->visible())
                 continue;
-            if (!child->contains(mouse_pos - m_pos))
+            if (!child->contains(mouse_pos - LocalTransform::absolute_pos))
                 continue;
             if (!child->on_mouse_scroll(mouse, kb))
                 continue;
@@ -446,9 +447,10 @@ namespace rl::ui {
             if (!child->visible())
                 continue;
 
-            const ds::point mouse_pos{ mouse.pos() };
-            const bool contained{ child->contains(mouse_pos - m_pos) };
-            const bool prev_contained{ child->contains(mouse_pos - m_pos - mouse.pos_delta()) };
+            const ds::point local_mouse_pos{ mouse.pos() - LocalTransform::absolute_pos };
+            const bool contained{ child->contains(local_mouse_pos - LocalTransform::absolute_pos) };
+            const bool prev_contained{ child->contains(
+                local_mouse_pos - LocalTransform::absolute_pos - mouse.pos_delta()) };
 
             if (contained && !prev_contained)
                 handled |= child->on_mouse_entered(mouse);
@@ -568,7 +570,7 @@ namespace rl::ui {
 
     const std::string& Widget::tooltip() const
     {
-        scoped_log("m_tooltip={}", m_tooltip);
+        scoped_logger(log_level::debug, "m_tooltip={}", m_tooltip);
         return m_tooltip;
     }
 
