@@ -290,16 +290,14 @@ namespace rl::ui {
     {
         scoped_trace(log_level::debug);
 
+        LocalTransform transform{ this };
+        const ds::point local_mouse_pos{ pt - LocalTransform::absolute_pos };
+        for (const auto child : std::ranges::reverse_view{ m_children })
         {
-            LocalTransform transform{ this };
-            const ds::point local_mouse_pos{ pt - LocalTransform::absolute_pos };
-            for (const auto child : std::ranges::reverse_view{ m_children })
-            {
-                if (!child->visible())
-                    continue;
-                if (child->contains(local_mouse_pos))
-                    return child->find_widget(local_mouse_pos);
-            }
+            if (!child->visible())
+                continue;
+            if (child->contains(local_mouse_pos))
+                return child->find_widget(local_mouse_pos);
         }
 
         return this->contains(pt) ? this : nullptr;
@@ -738,7 +736,7 @@ namespace rl::ui {
         return m_theme->icon_scale * m_icon_extra_scale;
     }
 
-    std::string Widget::name() const
+    const std::string_view Widget::name() const
     {
         return typeid(*this).name();
     }

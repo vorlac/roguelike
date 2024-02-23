@@ -30,18 +30,21 @@
   #include "utils/fs.hpp"
   #include "utils/numeric.hpp"
 
-  #define scoped_trace(dbg)                                                                         \
-      std::string _f{ fmt::to_string(fmt::format("{}", name() + "::" + std::string{ __func__ })) }; \
+  #define scoped_trace(dbg)                                                             \
+      std::string _f{ fmt::to_string(                                                   \
+          fmt::format("{}", std::string{ name() } + "::" + std::string{ __func__ })) }; \
       rl::ScopedLogger _lg(std::move(_f), dbg)
 
-  #define scoped_logger(dbg, ...)                                                                   \
-      std::string _f{ fmt::to_string(fmt::format("{}", name() + "::" + std::string{ __func__ })) }; \
-      __VA_OPT__(std::string _o{ fmt::format(" => {}", fmt::format(__VA_ARGS__)) }; _f = _f + _o;)  \
+  #define scoped_logger(dbg, ...)                                                              \
+      std::string _f{ fmt::to_string(                                                          \
+          fmt::format("{}", std::string{ name() } + "::" + std::string{ __func__ })) };        \
+      __VA_OPT__(std::string _o{ fmt::format(" => {}", fmt::format(__VA_ARGS__)) }; _f += _o;) \
       rl::ScopedLogger _lg(std::move(_f), dbg)
 
-  #define scoped_log(...)                                                                           \
-      std::string _f{ fmt::to_string(fmt::format("{}", name() + "::" + std::string{ __func__ })) }; \
-      __VA_OPT__(std::string _o{ fmt::format(" => {}", fmt::format(__VA_ARGS__)) }; _f = _f + _o;)  \
+  #define scoped_log(...)                                                                      \
+      std::string _f{ fmt::to_string(                                                          \
+          fmt::format("{}", std::string{ name() } + "::" + std::string{ __func__ })) };        \
+      __VA_OPT__(std::string _o{ fmt::format(" => {}", fmt::format(__VA_ARGS__)) }; _f += _o;) \
       rl::ScopedLogger _lg(std::move(_f))
 
   #define diag_log(...)                                  \

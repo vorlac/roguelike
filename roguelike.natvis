@@ -267,20 +267,14 @@
     <!--  rl::ui::Widget -->
     <!-- - - - - - - - - -->
     <Type Name="rl::ui::Widget" Inheritable="true">
-        <DisplayString>
-            Widget[{m_size}]
+        <DisplayString S>
+          {this->name(),sb} | dims:{m_size}
         </DisplayString>
-        <Expand HideRawView="false">
-            <Item Name="[parent]">m_parent,na</Item>
-            <Item Name="[nvg_ctx]">m_nvg_context,na</Item>
-            <Item Name="[pos]">m_pos</Item>
-            <Item Name="[size]">m_size</Item>
-        </Expand>
     </Type>
 
-    <!-- - - - - - - - - -->
-    <!--  rl::ui::Label -->
-    <!-- - - - - - - - - -->
+    <!-- - - - - - - - - --><!--
+    --><!--  rl::ui::Label --><!--
+    --><!-- - - - - - - - - --><!--
     <Type Name="rl::ui::Label" Inheritable="true">
         <DisplayString>
             Label[{m_caption}] refs:{m_references}
@@ -294,9 +288,9 @@
         </Expand>
     </Type>
 
-    <!-- - - - - - - - - -->
-    <!--  rl::ui::Button -->
-    <!-- - - - - - - - - -->
+    --><!-- - - - - - - - - --><!--
+    --><!--  rl::ui::Button --><!--
+    --><!-- - - - - - - - - --><!--
     <Type Name="rl::ui::Button" Inheritable="true">
         <DisplayString>
             ui::Button:[{m_callback}] refs:{m_references}
@@ -306,9 +300,9 @@
         </Expand>
     </Type>
 
-    <!-- - - - - - - - - -->
-    <!--  rl::ui::Dialog -->
-    <!-- - - - - - - - - -->
+    --><!-- - - - - - - - - --><!--
+    --><!--  rl::ui::Dialog --><!--
+    --><!-- - - - - - - - - --><!--
     <Type Name="rl::ui::Dialog" Inheritable="true">
         <DisplayString>
             ui::Dialog:[{m_title}] refs:{m_references}
@@ -316,7 +310,7 @@
         <Expand HideRawView="false">
             <Item Name="[title]">m_title</Item>
         </Expand>
-    </Type>
+    </Type>-->
 
     <!-- - - - - - - - - - - - - - - -  -->
     <!-- rl::GLRenderer::Properties- -->
