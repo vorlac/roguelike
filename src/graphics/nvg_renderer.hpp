@@ -35,13 +35,13 @@ namespace rl {
         void save_state() const;
         void restore_state() const;
 
-        nvg::NVGpaint create_box_gradient(ds::rect<f32>&& rect, f32 box_corner_radius,
-                                          f32 outer_blur, ds::color<f32>&& inner_color,
-                                          ds::color<f32>&& outer_gradient_color) const;
+        nvg::PaintStyle create_box_gradient(ds::rect<f32>&& rect, f32 box_corner_radius,
+                                            f32 outer_blur, ds::color<f32>&& inner_color,
+                                            ds::color<f32>&& outer_gradient_color) const;
 
         void load_fonts(const std::vector<FontInfo>& fonts);
         void set_text_properties(const std::string_view& font_name, f32 font_size,
-                                 ui::Text::Alignment alignment) const;
+                                 nvg::Align alignment) const;
 
         [[nodiscard]]
         ui::Font::ID load_font(const std::string_view& font_name,
@@ -53,19 +53,19 @@ namespace rl {
         [[nodiscard]]
         ds::dims<f32> get_text_size(
             const std::string& text, const std::string_view& font_name, f32 font_size,
-            ui::Text::Alignment alignment = ui::Text::Alignment::HCenterVMiddle) const;
+            nvg::Align alignment = nvg::Align::NVGAlignCenter | nvg::Align::NVGAlignMiddle) const;
 
         [[nodiscard]]
         ds::rect<f32> get_text_box_rect(
             const std::string& text, const ds::point<f32>& pos, const std::string_view& font_name,
             f32 font_size, f32 fold_width,
-            ui::Text::Alignment alignment = ui::Text::Alignment::HLeftVTop) const;
+            nvg::Align alignment = nvg::Align::NVGAlignLeft | nvg::Align::NVGAlignTop) const;
 
         void draw_rect_outline(const ds::rect<f32>& rect, f32 stroke_width,
                                const ds::color<f32>& color, ui::Outline type) const;
 
         [[nodiscard]]
-        nvg::NVGcontext* context() const;
+        nvg::Context* context() const;
 
     public:
         template <std::invocable TCallable>
@@ -98,7 +98,7 @@ namespace rl {
         bool m_depth_buffer{ false };
         bool m_stencil_buffer{ false };
         bool m_float_buffer{ false };
-        std::unique_ptr<nvg::NVGcontext> m_nvg_context{ nullptr };
+        std::unique_ptr<nvg::Context> m_nvg_context{ nullptr };
         ui::Font::Map m_font_map{};
     };
 }

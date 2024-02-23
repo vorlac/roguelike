@@ -99,14 +99,14 @@ namespace rl::ui {
         m_renderer->scoped_draw([&] {
             nvg::begin_path(context);
             nvg::rounded_rect(context, m_pos.x, m_pos.y, m_size.width, m_size.height, corner_radius);
-            nvg::fill_color(context, m_mouse_focus ? m_theme->dialog_fill_focused.nvg()
-                                                   : m_theme->dialog_fill_unfocused.nvg());
+            nvg::fill_color(context, m_mouse_focus ? m_theme->dialog_fill_focused
+                                                   : m_theme->dialog_fill_unfocused);
             nvg::fill(context);
 
             // Dialog shadow
-            const nvg::NVGpaint shadow_paint{ nvg::box_gradient(
+            const nvg::PaintStyle shadow_paint{ nvg::box_gradient(
                 context, m_pos.x, m_pos.y, m_size.width, m_size.height, corner_radius * 2.0f,
-                drop_shadow_size * 2.0f, m_theme->dialog_shadow.nvg(), m_theme->transparent.nvg()) };
+                drop_shadow_size * 2.0f, m_theme->dialog_shadow, m_theme->transparent) };
 
             m_renderer->scoped_draw([&] {
                 nvg::reset_scissor(context);
@@ -116,17 +116,16 @@ namespace rl::ui {
                           m_size.height + 2.0f * drop_shadow_size);
                 nvg::rounded_rect(context, m_pos.x, m_pos.y, m_size.width, m_size.height,
                                   corner_radius);
-                nvg::path_winding(context, nvg::NVGsolidity::NVGHole);
+                nvg::path_winding(context, nvg::Solidity::NVGHole);
                 nvg::fill_paint(context, shadow_paint);
                 nvg::fill(context);
             });
 
             if (!m_title.empty())
             {
-                const nvg::NVGpaint header_paint{ nvg::linear_gradient(
+                const nvg::PaintStyle header_paint{ nvg::linear_gradient(
                     context, m_pos.x, m_pos.y, m_pos.x, m_pos.y + header_height,
-                    m_theme->dialog_header_gradient_top.nvg(),
-                    m_theme->dialog_header_gradient_bot.nvg()) };
+                    m_theme->dialog_header_gradient_top, m_theme->dialog_header_gradient_bot) };
 
                 nvg::begin_path(context);
                 nvg::rounded_rect(context, m_pos.x, m_pos.y, m_size.width, header_height,
@@ -138,7 +137,7 @@ namespace rl::ui {
                 nvg::begin_path(context);
                 nvg::rounded_rect(context, m_pos.x, m_pos.y, m_size.width, header_height,
                                   corner_radius);
-                nvg::stroke_color(context, m_theme->dialog_header_sep_top.nvg());
+                nvg::stroke_color(context, m_theme->dialog_header_sep_top);
 
                 nvg::save(context);
                 nvg::intersect_scissor(context, m_pos.x, m_pos.y, m_size.width, 0.5f);
@@ -148,23 +147,23 @@ namespace rl::ui {
                 nvg::begin_path(context);
                 nvg::move_to(context, m_pos.x + 0.5f, m_pos.y + header_height - 1.5f);
                 nvg::line_to(context, m_pos.x + m_size.width - 0.5f, m_pos.y + header_height - 1.5f);
-                nvg::stroke_color(context, m_theme->dialog_header_sep_bot.nvg());
+                nvg::stroke_color(context, m_theme->dialog_header_sep_bot);
                 nvg::stroke(context);
 
                 nvg::font_size(context, m_theme->tooltip_font_size);
                 nvg::font_face(context, m_theme->tooltip_font_name.data());
-                nvg::text_align(context, Text::Alignment::HCenterVMiddle);
+                nvg::text_align(context, nvg::Align::NVGAlignCenter | nvg::Align::NVGAlignMiddle);
 
                 // header text shadow
                 nvg::font_blur(context, 2.0f);
-                nvg::fill_color(context, m_theme->text_shadow.nvg());
+                nvg::fill_color(context, m_theme->text_shadow);
                 nvg::text(context, m_pos.x + (m_size.width / 2.0f),
                           m_pos.y + (header_height / 2.0f), m_title.c_str());
 
                 // Header text
                 nvg::font_blur(context, 0.0f);
-                nvg::fill_color(context, m_focused ? m_theme->dialog_title_focused.nvg()
-                                                   : m_theme->dialog_title_unfocused.nvg());
+                nvg::fill_color(context, m_focused ? m_theme->dialog_title_focused
+                                                   : m_theme->dialog_title_unfocused);
                 nvg::text(context, m_pos.x + (m_size.width / 2.0f),
                           m_pos.y + (header_height / 2.0f) - 1.0f, m_title.c_str());
             }

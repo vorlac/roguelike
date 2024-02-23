@@ -32,7 +32,7 @@ namespace rl::inline utils {
         // clang-format on
     };
 
-    template <rl::numeric T = f64, auto FixedStep = 30, auto VDuration = TimeDuration::Second>
+    template <rl::numeric T = f32, auto FixedStep = 30, auto VDuration = TimeDuration::Second>
         requires std::same_as<decltype(VDuration), TimeDuration>
     struct Timer
     {

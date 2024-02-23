@@ -131,7 +131,7 @@ namespace rl::ui {
                 image_rect.pt.y = 0;
             }
 
-            const nvg::NVGpaint img_paint{ nvg::image_pattern(
+            const nvg::PaintStyle img_paint{ nvg::image_pattern(
                 context, p.x + image_rect.pt.x, p.y + image_rect.pt.y, image_rect.size.width,
                 image_rect.size.height, 0, m_images[i].first, m_mouse_index == i ? 1.0f : 0.7f) };
 
@@ -140,7 +140,7 @@ namespace rl::ui {
             nvg::fill_paint(context, img_paint);
             nvg::fill(context);
 
-            const nvg::NVGpaint shadow_paint{ nvg::box_gradient(
+            const nvg::PaintStyle shadow_paint{ nvg::box_gradient(
                 context, p.x - 1, p.y, m_thumb_size.width + 2.0f, m_thumb_size.height + 2.0f, 5, 3,
                 ds::color<f32>{ 0, 0, 0, 128 }, ds::color<f32>{ 0, 0, 0, 0 }) };
             nvg::begin_path(context);

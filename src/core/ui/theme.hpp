@@ -47,29 +47,6 @@ namespace rl::ui {
 
     struct Text
     {
-        enum Alignment {
-            HorizLeft = nvg::NVGAlignLeft,         // Default, align text horizontally to left.
-            HorizCenter = nvg::NVGAlignCenter,     // Align text horizontally to center.
-            HorizRight = nvg::NVGAlignRight,       // Align text horizontally to right.
-            VertTop = nvg::NVGAlignTop,            // Align text vertically to top.
-            VertMiddle = nvg::NVGAlignMiddle,      // Align text vertically to middle.
-            VertBottom = nvg::NVGAlignBottom,      // Align text vertically to bottom.
-            VertBaseline = nvg::NVGAlignBaseline,  // Align text vertically to baseline.
-
-            HCenterVMiddle = HorizCenter | VertMiddle,
-            HLeftVTop = HorizLeft | VertTop,
-            HMiddleVTop = HorizCenter | VertTop,
-            HMiddleVBot = HorizCenter | VertBottom,
-            HMiddleVBase = HorizCenter | VertBaseline,
-            HLeftVMiddle = HorizLeft | VertMiddle,
-            HRightVMiddle = HorizRight | VertMiddle,
-        };
-
-        friend Alignment operator|(const Alignment a1, const Alignment a2)
-        {
-            return static_cast<Alignment>(std::to_underlying(a1) | std::to_underlying(a2));
-        }
-
         struct Properties
         {
             f32 font_size{ 18.0f };
@@ -82,14 +59,14 @@ namespace rl::ui {
             ds::color<f32> border_color{ Colors::Transparent };
 
             ds::vector2<f32> margins{ 10.0f, 10.0f };
-            Alignment alignment{ HorizCenter | VertMiddle };
+            nvg::Align alignment{ nvg::Align::NVGAlignCenter | nvg::Align::NVGAlignMiddle };
         };
     };
 
     class Theme final : public ds::refcounted
     {
     public:
-        explicit Theme(const nvg::NVGcontext* nvg_context)
+        explicit Theme(const nvg::Context* nvg_context)
             : font_sans_regular{ nvg::create_font_mem(
                   nvg_context, Font::Name::Sans,
                   std::basic_string_view<u8>{ roboto_regular_ttf, roboto_regular_ttf_size }) }

@@ -75,9 +75,9 @@ namespace rl::ui {
 
     public:
         // Performs applies all Layout computations for the given widget.
-        virtual void perform_layout(nvg::NVGcontext* nvc, Widget* w) const = 0;
+        virtual void perform_layout(nvg::Context* nvc, Widget* w) const = 0;
         // Compute the preferred size for a given Layout and widget
-        virtual ds::dims<f32> preferred_size(nvg::NVGcontext* nvc, const Widget* w) const = 0;
+        virtual ds::dims<f32> preferred_size(nvg::Context* nvc, const Widget* w) const = 0;
 
     protected:
         std::string name() const
@@ -109,8 +109,8 @@ namespace rl::ui {
         void set_alignment(Alignment alignment);
 
     public:
-        virtual void perform_layout(nvg::NVGcontext* nvg_context, Widget* widget) const override;
-        virtual ds::dims<f32> preferred_size(nvg::NVGcontext* nvg_context,
+        virtual void perform_layout(nvg::Context* nvg_context, Widget* widget) const override;
+        virtual ds::dims<f32> preferred_size(nvg::Context* nvg_context,
                                              const Widget* widget) const override;
 
     protected:
@@ -148,8 +148,8 @@ namespace rl::ui {
         void set_group_spacing(f32 group_spacing);
 
     public:
-        virtual void perform_layout(nvg::NVGcontext* nvg_context, Widget* widget) const override;
-        virtual ds::dims<f32> preferred_size(nvg::NVGcontext* nvg_context,
+        virtual void perform_layout(nvg::Context* nvg_context, Widget* widget) const override;
+        virtual ds::dims<f32> preferred_size(nvg::Context* nvg_context,
                                              const Widget* widget) const override;
 
     protected:
@@ -192,12 +192,12 @@ namespace rl::ui {
         void set_row_alignment(const std::vector<Alignment>& value);
 
     public:
-        virtual void perform_layout(nvg::NVGcontext* nvg_context, Widget* widget) const override;
-        virtual ds::dims<f32> preferred_size(nvg::NVGcontext* nvg_context,
+        virtual void perform_layout(nvg::Context* nvg_context, Widget* widget) const override;
+        virtual ds::dims<f32> preferred_size(nvg::Context* nvg_context,
                                              const Widget* widget) const override;
 
     protected:
-        void compute_layout(nvg::NVGcontext* nvg_context, const Widget* widget,
+        void compute_layout(nvg::Context* nvg_context, const Widget* widget,
                             std::array<std::vector<f32>, 2>& grid) const;
 
     protected:
@@ -234,12 +234,12 @@ namespace rl::ui {
         void set_anchor(const Widget* widget, const Anchor& anchor);
 
     public:
-        virtual void perform_layout(nvg::NVGcontext* nvg_context, Widget* widget) const override;
-        virtual ds::dims<f32> preferred_size(nvg::NVGcontext* nvg_context,
+        virtual void perform_layout(nvg::Context* nvg_context, Widget* widget) const override;
+        virtual ds::dims<f32> preferred_size(nvg::Context* nvg_context,
                                              const Widget* widget) const override;
 
     protected:
-        void compute_layout(nvg::NVGcontext* nvg_context, const Widget* widget,
+        void compute_layout(nvg::Context* nvg_context, const Widget* widget,
                             std::array<std::vector<f32>, 2>& grid_cell_sizes) const;
 
     protected:

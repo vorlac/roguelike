@@ -123,16 +123,14 @@ namespace rl::ui {
         auto&& context{ m_renderer->context() };
         nvg::font_size(context, this->font_size());
         nvg::font_face(context, Font::Name::Sans);
-        nvg::fill_color(context,
-                        m_enabled ? m_theme->text_color.nvg() : m_theme->disabled_text_color.nvg());
-        nvg::text_align(context, nvg::NVGAlignLeft | nvg::NVGAlignMiddle);
+        nvg::fill_color(context, m_enabled ? m_theme->text_color : m_theme->disabled_text_color);
+        nvg::text_align(context, nvg::Align::NVGAlignLeft | nvg::Align::NVGAlignMiddle);
         nvg::text(context, m_pos.x + 1.6f * this->font_size(), m_pos.y + m_size.height * 0.5f,
                   m_caption.c_str(), nullptr);
 
-        const nvg::NVGpaint bg{ nvg::box_gradient(
+        const nvg::PaintStyle bg{ nvg::box_gradient(
             context, m_pos.x + 1.5f, m_pos.y + 1.5f, m_size.height - 2.0f, m_size.height - 2.0f, 3,
-            3.0f,
-            m_pushed ? ds::color<f32>{ 0, 0, 0, 100 }.nvg() : ds::color<f32>{ 0, 0, 0, 32 }.nvg(),
+            3.0f, m_pushed ? ds::color<f32>{ 0, 0, 0, 100 } : ds::color<f32>{ 0, 0, 0, 32 },
             ds::color<f32>{ 0, 0, 0, 180 }) };
 
         nvg::begin_path(context);
@@ -145,9 +143,8 @@ namespace rl::ui {
         {
             nvg::font_size(context, this->icon_scale() * m_size.height);
             nvg::font_face(context, Font::Name::Icons);
-            nvg::fill_color(context, m_enabled ? m_theme->icon_color.nvg()
-                                               : m_theme->disabled_text_color.nvg());
-            nvg::text_align(context, nvg::NVGAlignCenter | nvg::NVGAlignMiddle);
+            nvg::fill_color(context, m_enabled ? m_theme->icon_color : m_theme->disabled_text_color);
+            nvg::text_align(context, nvg::Align::NVGAlignCenter | nvg::Align::NVGAlignMiddle);
             nvg::text(context, m_pos.x + m_size.height * 0.5f + 1, m_pos.y + m_size.height * 0.5f,
                       rl::utf8(m_theme->check_box_icon).data(), nullptr);
         }

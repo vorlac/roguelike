@@ -81,7 +81,7 @@ namespace rl::ui {
                            std::min(1.0f, this->height() / m_child_preferred_height) };
 
         m_scroll = std::max(
-            0.0f, std::min(1.0f, m_scroll + mouse_delta.y / (m_size.height - 8.0f - scrollh)));
+            0.0f, std::min(1.0f, m_scroll + (mouse_delta.y / (m_size.height - 8.0f - scrollh))));
 
         m_update_layout = true;
         return true;
@@ -98,7 +98,7 @@ namespace rl::ui {
 
         if (lmb_just_pressed && !m_children.empty() && m_child_preferred_height > m_size.height &&
             mouse_pos.x > m_pos.x + m_size.width - 13.0f &&
-            mouse_pos.x < m_pos.x + m_size.width - 4)
+            mouse_pos.x < m_pos.x + m_size.width - 4.0f)
         {
             const f32 scrollh{ this->height() *
                                std::min(1.0f, this->height() / m_child_preferred_height) };
@@ -147,7 +147,7 @@ namespace rl::ui {
             return Widget::on_mouse_scroll(mouse, kb);
 
         Widget* child{ m_children.front() };
-        const f32 scroll_amount{ (mouse.wheel_delta().y) * m_size.height * 0.2f };
+        const f32 scroll_amount{ mouse.wheel_delta().y * m_size.height * 0.2f };
 
         m_scroll = std::max(0.0f,
                             std::min(1.0f, m_scroll + (scroll_amount / m_child_preferred_height)));
@@ -177,7 +177,7 @@ namespace rl::ui {
             yoffset = -m_scroll * (m_child_preferred_height - m_size.height);
 
         auto&& context{ m_renderer->context() };
-        child->set_position({ 0.0f, yoffset });
+        child->set_position(ds::point{ 0.0f, yoffset });
         m_child_preferred_height = child->preferred_size().height;
         const f32 scrollh{ this->height() *
                            math::min(1.0f, this->height() / m_child_preferred_height) };
@@ -211,7 +211,7 @@ namespace rl::ui {
             },
         };
 
-        nvg::NVGpaint paint{ m_renderer->create_box_gradient(
+        nvg::PaintStyle paint{ m_renderer->create_box_gradient(
             std::forward<ds::rect<f32>>(panel_rect), 3.0f, 4.0f, ds::color<f32>{ 0, 0, 0, 32 },
             ds::color<f32>{ 0, 0, 0, 92 }) };
 
@@ -221,11 +221,24 @@ namespace rl::ui {
             nvg::fill_paint(context, paint);
             nvg::fill(context);
 
-            paint = nvg::box_gradient(
-                context, m_pos.x + m_size.width - 12.0f - OUTLINE_SIZE,
-                m_pos.y + 4.0f + (m_size.height - 8.0f - scrollh) * m_scroll - OUTLINE_SIZE, 8.0f,
-                scrollh, 3.0f, 4.0f, ds::color<f32>{ 220, 220, 220, 100 },
+            paint = m_renderer->create_box_gradient(
+                ds::rect{
+                    ds::point{
+                        m_pos.x + m_size.width - 12.0f - OUTLINE_SIZE,
+                        m_pos.y + 4.0f + (m_size.height - 8.0f - scrollh) * m_scroll - OUTLINE_SIZE,
+                    },
+                    ds::dims{
+                        8.0f,
+                        scrollh,
+                    },
+                },
+                3.0f, 4.0f, ds::color<f32>{ 220, 220, 220, 100 },
                 ds::color<f32>{ 128, 128, 128, 100 });
+            // paint = nvg::box_gradient(
+            //     context, m_pos.x + m_size.width - 12.0f - OUTLINE_SIZE,
+            //     m_pos.y + 4.0f + (m_size.height - 8.0f - scrollh) * m_scroll -
+            //     OUTLINE_SIZE, 8.0f, scrollh, 3.0f, 4.0f, ds::color<f32>{ 220, 220, 220,
+            //     100 }, ds::color<f32>{ 128, 128, 128, 100 });
 
             // subpath
             m_renderer->draw_path(false, [&] {

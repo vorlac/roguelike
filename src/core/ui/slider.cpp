@@ -162,10 +162,10 @@ namespace rl::ui {
             center.y + 0.5f,
         };
 
-        nvg::NVGpaint bg{ nvg::box_gradient(
-            context, start_x, center.y - 3.0f + 1.0f, width_x, 6.0f, 3.0f, 3.0f,
-            ds::color<f32>{ 0, 0, 0, m_enabled ? 32 : 10 }.nvg(),
-            ds::color<f32>{ 0, 0, 0, m_enabled ? 128 : 210 }.nvg()) };
+        nvg::PaintStyle bg{ nvg::box_gradient(context, start_x, center.y - 3.0f + 1.0f, width_x,
+                                              6.0f, 3.0f, 3.0f,
+                                              ds::color<f32>{ 0, 0, 0, m_enabled ? 32 : 10 },
+                                              ds::color<f32>{ 0, 0, 0, m_enabled ? 128 : 210 }) };
 
         nvg::begin_path(context);
         nvg::rounded_rect(context, start_x, center.y - 3.0f + 1.0f, width_x, 6.0f, 2.0f);
@@ -179,13 +179,13 @@ namespace rl::ui {
                               center.y - kshadow + 1.0f,
                               width_x * (m_highlighted_range.second - m_highlighted_range.first),
                               kshadow * 2.0f, 2.0f);
-            nvg::fill_color(context, m_highlight_color.nvg());
+            nvg::fill_color(context, m_highlight_color);
             nvg::fill(context);
         }
 
-        nvg::NVGpaint knob_shadow{
+        nvg::PaintStyle knob_shadow{
             nvg::radial_gradient(context, knob_pos.x, knob_pos.y, kr - kshadow, kr + kshadow,
-                                 ds::color<f32>{ 0, 0, 0, 64 }, m_theme->transparent.nvg()),
+                                 ds::color<f32>{ 0, 0, 0, 64 }, m_theme->transparent),
         };
 
         nvg::begin_path(context);
@@ -196,22 +196,22 @@ namespace rl::ui {
         nvg::fill_paint(context, knob_shadow);
         nvg::fill(context);
 
-        nvg::NVGpaint knob{ nvg::linear_gradient(context, m_pos.x, center.y - kr, m_pos.x,
-                                                 center.y + kr, m_theme->border_light.nvg(),
-                                                 m_theme->border_medium.nvg()) };
-        nvg::NVGpaint knob_reverse{ nvg::linear_gradient(
-            context, m_pos.x, center.y - kr, m_pos.x, center.y + kr, m_theme->border_medium.nvg(),
-            m_theme->border_light.nvg()) };
+        nvg::PaintStyle knob{ nvg::linear_gradient(context, m_pos.x, center.y - kr, m_pos.x,
+                                                   center.y + kr, m_theme->border_light,
+                                                   m_theme->border_medium) };
+        nvg::PaintStyle knob_reverse{ nvg::linear_gradient(context, m_pos.x, center.y - kr, m_pos.x,
+                                                           center.y + kr, m_theme->border_medium,
+                                                           m_theme->border_light) };
 
         nvg::begin_path(context);
         nvg::circle(context, knob_pos.x, knob_pos.y, kr);
-        nvg::stroke_color(context, m_theme->border_dark.nvg());
+        nvg::stroke_color(context, m_theme->border_dark);
         nvg::fill_paint(context, knob);
         nvg::stroke(context);
         nvg::fill(context);
         nvg::begin_path(context);
         nvg::circle(context, knob_pos.x, knob_pos.y, kr / 2.0f);
-        nvg::fill_color(context, ds::color<f32>{ 150, 150, 150, m_enabled ? 255 : 100 }.nvg());
+        nvg::fill_color(context, ds::color<f32>{ 150, 150, 150, m_enabled ? 255 : 100 });
         nvg::stroke_paint(context, knob_reverse);
         nvg::stroke(context);
         nvg::fill(context);

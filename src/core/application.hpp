@@ -216,34 +216,35 @@ namespace rl {
 
             dialog->center();
 
-            // vbo.bind_buffers();
-
             m_timer.reset();
             while (!this->should_exit())
             {
-                m_timer.tick([&]() {
-                    this->handle_events();
-                    this->update();
+                const f32 start{ m_timer.elapsed() };
+                this->handle_events();
+                this->update();
 
-                    elapsed_time = m_timer.elapsed();
-                    framerate = static_cast<f32>(++frame_count) / elapsed_time;
-                    elapsed_str = fmt::format("{:>6.3f} sec", elapsed_time);
-                    fps_str = fmt::format("{:>6.3f} fps", framerate);
-                    form->refresh();
+                elapsed_time = m_timer.elapsed();
+                framerate = static_cast<f32>(++frame_count) / elapsed_time;
+                elapsed_str = fmt::format("{:>6.3f} sec", elapsed_time);
+                fps_str = fmt::format("{:>6.3f} fps", framerate);
+                form->refresh();
 
-                    this->render();
-                });
-
-                // vbo.update_buffers(renderer->get_viewport());
-                // vbo.draw_triangles();
-
-                // if constexpr (io::logging::main_loop)
-                //     this->print_loop_stats(delta_time);
+                this->render();
+                std::this_thread::sleep_for(
+                    std::chrono::duration<f32>((1.0f / 30.0f) - (m_timer.elapsed() - start)));
             }
 
             ret &= this->teardown();
             return ret;
         }
+
+        // vbo.bind_buffers();
+        // while() {
+        //     vbo.update_buffers(renderer->get_viewport());
+        //     vbo.draw_triangles();
+        //     if constexpr (io::logging::main_loop)
+        //         this->print_loop_stats(delta_time);
+        // }
 
     private:
         void render() const

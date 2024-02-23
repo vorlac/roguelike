@@ -116,9 +116,9 @@ namespace rl::ui {
         nvg::reset_scissor(context);
 
         // Draw a drop shadow
-        nvg::NVGpaint shadow_paint = nvg::box_gradient(
+        nvg::PaintStyle shadow_paint = nvg::box_gradient(
             context, m_pos.x, m_pos.y, m_size.width, m_size.height, corner_radius * 2.0f,
-            drop_shadow_size * 2.0f, m_theme->drop_shadow.nvg(), m_theme->transparent.nvg());
+            drop_shadow_size * 2.0f, m_theme->drop_shadow, m_theme->transparent);
 
         nvg::begin_path(context);
         nvg::rect(context, m_pos.x - drop_shadow_size, m_pos.y - drop_shadow_size,
@@ -145,7 +145,7 @@ namespace rl::ui {
         nvg::line_to(context, base.x - (1.0f * sign), base.y - m_anchor_size);
         nvg::line_to(context, base.x - (1.0f * sign), base.y + m_anchor_size);
 
-        nvg::fill_color(context, m_theme->dialog_popup_fill.nvg());
+        nvg::fill_color(context, m_theme->dialog_popup_fill);
         nvg::fill(context);
         nvg::restore(context);
 

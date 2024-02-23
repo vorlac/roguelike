@@ -24,7 +24,7 @@ namespace rl::ui {
         scoped_trace(log_level::debug);
     }
 
-    ds::dims<f32> BoxLayout::preferred_size(nvg::NVGcontext* nvg_context, const Widget* widget) const
+    ds::dims<f32> BoxLayout::preferred_size(nvg::Context* nvg_context, const Widget* widget) const
     {
         scoped_trace(log_level::debug);
 
@@ -68,7 +68,7 @@ namespace rl::ui {
         return size + ds::dims{ 0.0f, y_offset };
     }
 
-    void BoxLayout::perform_layout(nvg::NVGcontext* nvg_context, Widget* widget) const
+    void BoxLayout::perform_layout(nvg::Context* nvg_context, Widget* widget) const
     {
         scoped_trace(log_level::debug);
 
@@ -196,8 +196,7 @@ namespace rl::ui {
 
     //======================================================================
 
-    ds::dims<f32> GroupLayout::preferred_size(nvg::NVGcontext* nvg_context,
-                                              const Widget* widget) const
+    ds::dims<f32> GroupLayout::preferred_size(nvg::Context* nvg_context, const Widget* widget) const
     {
         scoped_trace(log_level::debug);
 
@@ -239,7 +238,7 @@ namespace rl::ui {
         return ds::dims{ width, height };
     }
 
-    void GroupLayout::perform_layout(nvg::NVGcontext* nvg_context, Widget* widget) const
+    void GroupLayout::perform_layout(nvg::Context* nvg_context, Widget* widget) const
     {
         scoped_trace(log_level::debug);
 
@@ -343,8 +342,7 @@ namespace rl::ui {
 
     //==================================================================
 
-    ds::dims<f32> GridLayout::preferred_size(nvg::NVGcontext* nvg_context,
-                                             const Widget* widget) const
+    ds::dims<f32> GridLayout::preferred_size(nvg::Context* nvg_context, const Widget* widget) const
     {
         scoped_trace(log_level::debug);
 
@@ -365,7 +363,7 @@ namespace rl::ui {
         return pref_size;
     }
 
-    void GridLayout::compute_layout(nvg::NVGcontext* nvg_context, const Widget* widget,
+    void GridLayout::compute_layout(nvg::Context* nvg_context, const Widget* widget,
                                     std::array<std::vector<f32>, 2>& grid) const
     {
         scoped_trace(log_level::debug);
@@ -431,7 +429,7 @@ namespace rl::ui {
         }
     }
 
-    void GridLayout::perform_layout(nvg::NVGcontext* nvg_context, Widget* widget) const
+    void GridLayout::perform_layout(nvg::Context* nvg_context, Widget* widget) const
     {
         scoped_trace(log_level::debug);
 
@@ -696,7 +694,7 @@ namespace rl::ui {
         m_row_stretch.resize(m_rows.size(), 0.0f);
     }
 
-    ds::dims<f32> AdvancedGridLayout::preferred_size(nvg::NVGcontext* nvg_context,
+    ds::dims<f32> AdvancedGridLayout::preferred_size(nvg::Context* nvg_context,
                                                      const Widget* widget) const
     {
         scoped_trace(log_level::debug);
@@ -722,7 +720,7 @@ namespace rl::ui {
         return size + extra;
     }
 
-    void AdvancedGridLayout::perform_layout(nvg::NVGcontext* nvg_context, Widget* widget) const
+    void AdvancedGridLayout::perform_layout(nvg::Context* nvg_context, Widget* widget) const
     {
         scoped_trace(log_level::debug);
 
@@ -807,7 +805,7 @@ namespace rl::ui {
         }
     }
 
-    void AdvancedGridLayout::compute_layout(nvg::NVGcontext* nvg_context, const Widget* widget,
+    void AdvancedGridLayout::compute_layout(nvg::Context* nvg_context, const Widget* widget,
                                             std::array<std::vector<f32>, 2>& grid_cell_sizes) const
     {
         scoped_trace(log_level::debug);

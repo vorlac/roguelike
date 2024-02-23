@@ -27,7 +27,7 @@ namespace rl::ui {
         Widget::draw();
 
         auto&& context{ m_renderer->context() };
-        nvg::NVGpaint paint{ nvg::box_gradient(
+        nvg::PaintStyle paint{ nvg::box_gradient(
             context, m_pos.x + 1.0f, m_pos.y + 1.0f, m_size.width - 2.0f, m_size.height, 3.0f, 4.0f,
             ds::color<f32>{ 0, 0, 0, 32 }, ds::color<f32>{ 0, 0, 0, 92 }) };
 

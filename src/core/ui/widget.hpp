@@ -100,7 +100,7 @@ namespace rl::ui {
 
     public:
         // TODO: get rid of this
-        static nvg::NVGcontext* context()
+        static nvg::Context* context()
         {
             return m_renderer->context();
         }

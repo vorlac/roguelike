@@ -4,7 +4,6 @@
 
 #include <fmt/color.h>
 
-#include "graphics/vg/nanovg.hpp"
 #include "sdl/defs.hpp"
 #include "utils/concepts.hpp"
 #include "utils/memory.hpp"
@@ -118,25 +117,6 @@ namespace rl::ds {
                 static_cast<u8>(rl::random<0, 128>::value()),
                 255,
             };
-        }
-
-        [[nodiscard]]
-        constexpr nvg::NVGcolor nvg() const
-            requires rl::integer<T>
-        {
-            return nvg::NVGcolor{
-                std::clamp(static_cast<T>(r) / 255.0f, 0.0f, 255.0f),
-                std::clamp(static_cast<T>(g) / 255.0f, 0.0f, 255.0f),
-                std::clamp(static_cast<T>(b) / 255.0f, 0.0f, 255.0f),
-                std::clamp(static_cast<T>(a) / 255.0f, 0.0f, 255.0f),
-            };
-        }
-
-        [[nodiscard]]
-        constexpr nvg::NVGcolor nvg() const
-            requires rl::floating_point<T>
-        {
-            return nvg::NVGcolor{ r, g, b, a };
         }
 
     public:
@@ -323,10 +303,10 @@ namespace rl::ds {
             };
         }
 
-        consteval operator const nvg::NVGcolor()
+        consteval operator const ds::color<f32>()
             requires std::same_as<T, f32>
         {
-            return nvg::NVGcolor{ {
+            return ds::color<f32>{ {
                 std::forward<f32>(this->r),
                 std::forward<f32>(this->g),
                 std::forward<f32>(this->b),
@@ -334,10 +314,10 @@ namespace rl::ds {
             } };
         }
 
-        constexpr operator const nvg::NVGcolor() const
+        constexpr operator const ds::color<f32>() const
             requires std::same_as<T, f32>
         {
-            return nvg::NVGcolor{ {
+            return ds::color<f32>{ {
                 std::forward<const f32>(this->r),
                 std::forward<const f32>(this->g),
                 std::forward<const f32>(this->b),
@@ -345,10 +325,10 @@ namespace rl::ds {
             } };
         }
 
-        constexpr operator nvg::NVGcolor()
+        constexpr operator ds::color<f32>()
             requires std::same_as<T, u8>
         {
-            return nvg::NVGcolor{ {
+            return ds::color<f32>{ {
                 std::clamp(static_cast<u8>(this->r) / 255.0f, 0.0f, 1.0f),
                 std::clamp(static_cast<u8>(this->g) / 255.0f, 0.0f, 1.0f),
                 std::clamp(static_cast<u8>(this->b) / 255.0f, 0.0f, 1.0f),
@@ -356,10 +336,10 @@ namespace rl::ds {
             } };
         }
 
-        constexpr operator nvg::NVGcolor() const
+        constexpr operator ds::color<f32>() const
             requires std::same_as<T, u8>
         {
-            return nvg::NVGcolor{ {
+            return ds::color<f32>{ {
                 std::clamp(static_cast<u8>(this->r) / 255.0f, 0.0f, 1.0f),
                 std::clamp(static_cast<u8>(this->g) / 255.0f, 0.0f, 1.0f),
                 std::clamp(static_cast<u8>(this->b) / 255.0f, 0.0f, 1.0f),

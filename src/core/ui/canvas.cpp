@@ -89,7 +89,7 @@ namespace rl::ui {
 
                 nvg::font_face(context, Font::Name::Sans);
                 nvg::font_size(context, 20.0f);
-                nvg::text_align(context, Text::Alignment::HLeftVTop);
+                nvg::text_align(context, nvg::Align::NVGAlignLeft | nvg::Align::NVGAlignTop);
                 nvg::text_line_height(context, 1.125f);
                 nvg::text_bounds(context, pos.x, pos.y, widget->tooltip().c_str(), nullptr,
                                  bounds.data());
@@ -97,7 +97,7 @@ namespace rl::ui {
                 f32 height{ (bounds[2] - bounds[0]) / 2.0f };
                 if (height > (tooltip_width / 2.0f))
                 {
-                    nvg::text_align(context, Text::Alignment::HMiddleVTop);
+                    nvg::text_align(context, nvg::Align::NVGAlignCenter | nvg::Align::NVGAlignTop);
                     nvg::text_box_bounds(context, pos.x, pos.y, tooltip_width,
                                          widget->tooltip().c_str(), nullptr, bounds.data());
 

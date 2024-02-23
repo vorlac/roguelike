@@ -286,19 +286,19 @@ namespace rl::ui {
     {
         Widget::draw();
 
-        nvg::NVGcolor grad_top{ m_theme->button_gradient_top_unfocused.nvg() };
-        nvg::NVGcolor grad_bot{ m_theme->button_gradient_bot_unfocused.nvg() };
+        ds::color grad_top{ m_theme->button_gradient_top_unfocused };
+        ds::color grad_bot{ m_theme->button_gradient_bot_unfocused };
 
         auto&& context{ m_renderer->context() };
         if (m_pressed || (m_mouse_focus && this->has_property(Property::StandardMenu)))
         {
-            grad_top = m_theme->button_gradient_top_pushed.nvg();
-            grad_bot = m_theme->button_gradient_bot_pushed.nvg();
+            grad_top = m_theme->button_gradient_top_pushed;
+            grad_bot = m_theme->button_gradient_bot_pushed;
         }
         else if (m_mouse_focus && m_enabled)
         {
-            grad_top = m_theme->button_gradient_top_focused.nvg();
-            grad_bot = m_theme->button_gradient_bot_focused.nvg();
+            grad_top = m_theme->button_gradient_top_focused;
+            grad_bot = m_theme->button_gradient_bot_focused;
         }
 
         nvg::begin_path(context);
@@ -307,7 +307,7 @@ namespace rl::ui {
 
         if (math::is_equal(m_background_color.a, 0.0f))
         {
-            nvg::fill_color(context, m_background_color.nvg());
+            nvg::fill_color(context, m_background_color);
             nvg::fill(context);
 
             if (m_pressed)
@@ -320,8 +320,8 @@ namespace rl::ui {
             }
         }
 
-        const nvg::NVGpaint bg{ nvg::linear_gradient(context, m_pos.x, m_pos.y, m_pos.x,
-                                                     m_pos.y + m_size.height, grad_top, grad_bot) };
+        const nvg::PaintStyle bg{ nvg::linear_gradient(
+            context, m_pos.x, m_pos.y, m_pos.x, m_pos.y + m_size.height, grad_top, grad_bot) };
         nvg::fill_paint(context, bg);
         nvg::fill(context);
 
@@ -330,13 +330,13 @@ namespace rl::ui {
         nvg::rounded_rect(context, m_pos.x + 0.5f, m_pos.y + (m_pressed ? 0.5f : 1.5f),
                           m_size.width - 1.0f, m_size.height - 1.0f - (m_pressed ? 0.0f : 1.0f),
                           m_theme->button_corner_radius);
-        nvg::stroke_color(context, m_theme->border_light.nvg());
+        nvg::stroke_color(context, m_theme->border_light);
         nvg::stroke(context);
 
         nvg::begin_path(context);
         nvg::rounded_rect(context, m_pos.x + 0.5f, m_pos.y + 0.5f, m_size.width - 1.0f,
                           m_size.height - 2.0f, m_theme->button_corner_radius);
-        nvg::stroke_color(context, m_theme->border_dark.nvg());
+        nvg::stroke_color(context, m_theme->border_dark);
         nvg::stroke(context);
 
         f32 font_size{ m_font_size < 0.0f ? m_theme->button_font_size : m_font_size };
@@ -354,10 +354,9 @@ namespace rl::ui {
             center.y - 1.0f,
         };
 
-        nvg::NVGcolor text_color{ m_text_color.a == 0.0f ? m_theme->text_color.nvg()
-                                                         : m_text_color.nvg() };
+        ds::color text_color{ m_text_color.a == 0.0f ? m_theme->text_color : m_text_color };
         if (!m_enabled)
-            text_color = m_theme->disabled_text_color.nvg();
+            text_color = m_theme->disabled_text_color;
 
         if (m_icon != Icon::None)
         {
@@ -383,7 +382,7 @@ namespace rl::ui {
                 icon_size.width += m_size.height * 0.15f;
 
             nvg::fill_color(context, text_color);
-            nvg::text_align(context, Text::Alignment::HLeftVMiddle);
+            nvg::text_align(context, nvg::Align::NVGAlignLeft | nvg::Align::NVGAlignMiddle);
             ds::point icon_pos{ center };
 
             icon_pos.y -= 1;
@@ -409,7 +408,7 @@ namespace rl::ui {
                 nvg::text(context, icon_pos.x, icon_pos.y + 1.0f, icon.data(), nullptr);
             else
             {
-                const nvg::NVGpaint img_paint{
+                const nvg::PaintStyle img_paint{
                     nvg::image_pattern(context, icon_pos.x, icon_pos.y - (icon_size.height / 2.0f),
                                        icon_size.width, icon_size.height, 0.0f, m_icon,
                                        m_enabled ? 0.5f : 0.25f),
@@ -421,8 +420,8 @@ namespace rl::ui {
 
         nvg::font_size(context, font_size);
         nvg::font_face(context, Font::Name::SansBold);
-        nvg::text_align(context, Text::HLeftVMiddle);
-        nvg::fill_color(context, m_theme->text_shadow_color.nvg());
+        nvg::text_align(context, nvg::Align::NVGAlignLeft | nvg::Align::NVGAlignMiddle);
+        nvg::fill_color(context, m_theme->text_shadow_color);
         nvg::text(context, text_pos.x, text_pos.y, m_text.c_str(), nullptr);
         nvg::fill_color(context, text_color);
         nvg::text(context, text_pos.x, text_pos.y + 1.0f, m_text.c_str(), nullptr);

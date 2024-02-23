@@ -11,28 +11,12 @@
 #include "graphics/nvg_renderer.hpp"
 #include "graphics/vg/nanovg.hpp"
 #include "graphics/vg/nanovg_gl.hpp"
-#include "graphics/vg/nanovg_gl_utils.hpp"
 
 namespace rl {
 
-    struct Property
-    {
-        enum Flags {
-            // Flag indicating if geometry based anti-aliasing is used.
-            // May not be needed when using MSAA.
-            AntiAlias = nvg::NVGcreateFlags::NVG_ANTIALIAS,
-            // Flag indicating if strokes should be drawn using stencil buffer. The rendering
-            // will be a little slower, but path overlaps (i.e. self-intersecting or sharp
-            // turns) will be drawn just once.
-            StencilStrokes = nvg::NVGcreateFlags::NVG_STENCIL_STROKES,
-            // Flag indicating that additional debug checks are done.
-            Debug = nvg::NVGcreateFlags::NVG_DEBUG,
-        };
-    };
-
     namespace detail {
-        static nvg::NVGcontext* create_nanovg_context(bool& stencil_buf, bool& depth_buf,
-                                                      bool& float_buf)
+        static nvg::Context* create_nanovg_context(bool& stencil_buf, bool& depth_buf,
+                                                   bool& float_buf)
         {
             constexpr u8 float_mode{ 0 };
             i32 depth_bits{ 0 };
@@ -51,12 +35,16 @@ namespace rl {
             depth_buf = depth_bits > 0;
             float_buf = float_mode != 0;
 
-            i32 nvg_flags{ Property::AntiAlias };
-            if (stencil_buf)
-                nvg_flags |= Property::StencilStrokes;
-            nvg_flags |= Property::Debug;
+            constexpr nvg::gl::CreateFlags nvg_flags{
+                std::to_underlying(nvg::gl::CreateFlags::AntiAlias) |
+                std::to_underlying(nvg::gl::CreateFlags::StencilStrokes) |
+                std::to_underlying(nvg::gl::CreateFlags::StencilStrokes)
+            };
+            // if (stencil_buf)
+            //     nvg_flags |= nvg::gl::CreateFlags::StencilStrokes;
+            // nvg_flags |= nvg::gl::CreateFlags::Debug;
 
-            nvg::NVGcontext* nvg_context{ nvg::nvg_create_gl3(nvg_flags) };
+            nvg::Context* nvg_context{ nvg::gl::create_gl_context(nvg_flags) };
             runtime_assert(nvg_context != nullptr, "Failed to create NVG context");
             return nvg_context;
         };
@@ -91,7 +79,7 @@ namespace rl {
         });
     }
 
-    nvg::NVGcontext* NVGRenderer::context() const
+    nvg::Context* NVGRenderer::context() const
     {
         return m_nvg_context.get();
     }
@@ -126,7 +114,7 @@ namespace rl {
         nvg::restore(m_nvg_context.get());
     }
 
-    nvg::NVGpaint NVGRenderer::create_box_gradient(
+    nvg::PaintStyle NVGRenderer::create_box_gradient(
         ds::rect<f32>&& rect, const f32 corner_radius, const f32 outer_blur,
         ds::color<f32>&& inner_color, ds::color<f32>&& outer_gradient_color) const
     {
@@ -154,7 +142,7 @@ namespace rl {
     void NVGRenderer::flush(const ds::dims<f32>& viewport, const f32 pixel_ratio) const
     {
         // Flush all queued up NanoVG rendering commands
-        const nvg::NVGparams* params{ nvg::internal_params(m_nvg_context.get()) };
+        const nvg::Params* params{ nvg::internal_params(m_nvg_context.get()) };
         params->render_flush(params->user_ptr);
         params->render_viewport(params->user_ptr, static_cast<f32>(viewport.width),
                                 static_cast<f32>(viewport.height), pixel_ratio);
@@ -170,7 +158,7 @@ namespace rl {
     }
 
     void NVGRenderer::set_text_properties(const std::string_view& font_name, const f32 font_size,
-                                          const ui::Text::Alignment alignment) const
+                                          const nvg::Align alignment) const
     {
         nvg::font_face(m_nvg_context.get(), font_name.data());
         nvg::font_size(m_nvg_context.get(), font_size);
@@ -185,7 +173,7 @@ namespace rl {
 
     ds::rect<f32> NVGRenderer::get_text_box_rect(
         const std::string& text, const ds::point<f32>& pos, const std::string_view& font_name,
-        const f32 font_size, const f32 fold_width, const ui::Text::Alignment alignment) const
+        const f32 font_size, const f32 fold_width, const nvg::Align alignment) const
     {
         std::array<f32, 4> bounds{ 0.0f };
         this->set_text_properties(font_name, font_size, alignment);
@@ -206,7 +194,7 @@ namespace rl {
 
     ds::dims<f32> NVGRenderer::get_text_size(const std::string& text,
                                              const std::string_view& font_name, const f32 font_size,
-                                             const ui::Text::Alignment alignment) const
+                                             const nvg::Align alignment) const
     {
         this->set_text_properties(font_name, font_size, alignment);
 
@@ -240,7 +228,7 @@ namespace rl {
                 break;
         }
 
-        nvg::stroke_color(m_nvg_context.get(), color.nvg());
+        nvg::stroke_color(m_nvg_context.get(), color);
         nvg::stroke(m_nvg_context.get());
     }
 }

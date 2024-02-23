@@ -1,6 +1,8 @@
 #pragma once
 
+#include <concepts>
 #include <cstdint>
+#include <type_traits>
 
 namespace rl {
     using f32 = float;
@@ -25,4 +27,41 @@ namespace rl {
     using u16_fast = uint_fast16_t;
     using u32_fast = uint_fast32_t;
     using u64_fast = uint_fast64_t;
+
 }
+
+namespace rl {
+    template <typename TEnum>
+        requires std::is_scoped_enum_v<TEnum>
+    constexpr TEnum operator|(const TEnum lhs, const TEnum rhs)
+    {
+        return static_cast<TEnum>(static_cast<std::underlying_type_t<TEnum>>(lhs) |
+                                  static_cast<std::underlying_type_t<TEnum>>(rhs));
+    }
+
+    template <typename TEnum>
+        requires std::is_scoped_enum_v<TEnum>
+    constexpr TEnum operator&(const TEnum lhs, const TEnum rhs)
+    {
+        return static_cast<TEnum>(static_cast<std::underlying_type_t<TEnum>>(lhs) &
+                                  static_cast<std::underlying_type_t<TEnum>>(rhs));
+    }
+
+    template <typename TEnum, typename TUnderlying>
+        requires std::is_scoped_enum_v<TEnum> &&
+                 std::same_as<std::underlying_type_t<TEnum>, TUnderlying>
+    constexpr auto operator==(const TEnum lhs, const TUnderlying rhs)
+        -> std::underlying_type_t<TEnum>
+    {
+        return static_cast<std::underlying_type_t<TEnum>>(lhs) == rhs;
+    }
+
+    template <typename TEnum, typename TUnderlying>
+        requires std::is_scoped_enum_v<TEnum> &&
+                 std::same_as<std::underlying_type_t<TEnum>, TUnderlying>
+    constexpr auto operator!=(const TEnum lhs, const TUnderlying rhs)
+        -> std::underlying_type_t<TEnum>
+    {
+        return !(lhs == rhs);
+    }
+};
