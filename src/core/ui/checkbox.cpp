@@ -76,11 +76,10 @@ namespace rl::ui {
 
     bool CheckBox::on_mouse_button_released(const Mouse& mouse, const Keyboard& kb)
     {
-        Widget::on_mouse_button_pressed(mouse, kb);
+        Widget::on_mouse_button_released(mouse, kb);
 
         if (!m_enabled)
             return false;
-
         if (!mouse.is_button_released(Mouse::Button::Left))
             return false;
 

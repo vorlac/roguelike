@@ -23,7 +23,7 @@ namespace rl::ui {
     public:
         Canvas(const ds::rect<f32>& rect, const Mouse& mouse, const Keyboard& kb,
                const std::unique_ptr<NVGRenderer>& nvg_renderer);
-        ~Canvas() override;
+        virtual ~Canvas() override;
 
         bool redraw();
         bool draw_widgets();
@@ -50,29 +50,27 @@ namespace rl::ui {
         static PixelFormat pixel_format();
 
     public:
-        bool update();
+        bool update() const;
         bool draw_all();
-        bool draw_setup();
-        bool draw_contents();
-        bool draw_teardown();
+        bool draw_setup() const;
+        bool draw_contents() const;
+        bool draw_teardown() const;
 
         bool on_moved(const ds::point<f32>& pt);
         bool on_resized(const ds::dims<f32>& size);
 
-        bool on_key_pressed(const Keyboard& kb) override;
-        bool on_key_released(const Keyboard& kb) override;
-        bool on_character_input(const Keyboard& kb) override;
+        virtual bool on_key_pressed(const Keyboard& kb) override;
+        virtual bool on_key_released(const Keyboard& kb) override;
+        virtual bool on_character_input(const Keyboard& kb) override;
 
-        bool on_mouse_entered(const Mouse& mouse) override;
-        bool on_mouse_exited(const Mouse& mouse) override;
-        bool on_mouse_scroll(const Mouse& mouse, const Keyboard& kb) override;
-        bool on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb) override;
-        bool on_mouse_button_released(const Mouse& mouse, const Keyboard& kb) override;
-        bool on_mouse_move(const Mouse& mouse, const Keyboard& kb) override;
-        bool on_mouse_drag(const Mouse& mouse, const Keyboard& kb) override;
+        virtual bool on_mouse_scroll(const Mouse& mouse, const Keyboard& kb) override;
+        virtual bool on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb) override;
+        virtual bool on_mouse_button_released(const Mouse& mouse, const Keyboard& kb) override;
+        virtual bool on_mouse_move(const Mouse& mouse, const Keyboard& kb) override;
+        virtual bool on_mouse_drag(const Mouse& mouse, const Keyboard& kb) override;
 
-        bool on_focus_gained() override;
-        bool on_focus_lost() override;
+        virtual bool on_focus_gained() override;
+        virtual bool on_focus_lost() override;
 
     protected:
         ds::dims<i32> m_framebuf_size{ 0, 0 };

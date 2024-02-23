@@ -436,11 +436,13 @@ namespace rl {
         scoped_trace(log_level::trace);
 
         m_mouse.process_motion(e.motion);
-        // update button states from pressed to held if the
-        // button that was pressed last frame is still dowwn
         if (m_mouse.is_button_pressed(Mouse::Button::Left))
-            this->mouse_button_pressed_event_callback(e);
-
+        {
+            // update button states from pressed to held if the
+            // button that was pressed last frame is still down
+            m_mouse.process_button_down(Mouse::Button::Left);
+            // this->mouse_button_pressed_event_callback(e);
+        }
         m_gui_canvas->on_mouse_move(m_mouse, m_keyboard);
     }
 
@@ -555,13 +557,13 @@ namespace rl {
         return m_pixel_ratio > 0.0f && m_pixel_density > 0.0f;
     }
 
-    void MainWindow::window_focus_gained_event_callback(const SDL3::SDL_Event& e)
+    void MainWindow::window_focus_gained_event_callback(const SDL3::SDL_Event& e) const
     {
         scoped_log();
         m_gui_canvas->on_focus_gained();
     }
 
-    void MainWindow::window_focus_lost_event_callback(const SDL3::SDL_Event& e)
+    void MainWindow::window_focus_lost_event_callback(const SDL3::SDL_Event& e) const
     {
         scoped_log();
         m_gui_canvas->on_focus_lost();

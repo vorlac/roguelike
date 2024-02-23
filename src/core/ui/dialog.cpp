@@ -7,14 +7,15 @@
 #include "ds/point.hpp"
 #include "ds/vector2d.hpp"
 #include "graphics/vg/nanovg.hpp"
+#include "graphics/vg/nanovg_state.hpp"
 #include "utils/io.hpp"
 #include "utils/logging.hpp"
 
 namespace rl::ui {
 
-    Dialog::Dialog(Widget* parent, const std::string& title)
+    Dialog::Dialog(Widget* parent, std::string title)
         : Widget{ parent }
-        , m_title{ title }
+        , m_title{ std::move(title) }
     {
         scoped_log();
     }
@@ -74,7 +75,7 @@ namespace rl::ui {
         while (owner->parent() != nullptr)
             owner = owner->parent();
 
-        static_cast<Canvas*>(owner)->center_dialog(this);
+        dynamic_cast<Canvas*>(owner)->center_dialog(this);
     }
 
     f32 Dialog::header_height() const
@@ -191,18 +192,15 @@ namespace rl::ui {
         scoped_logger(log_level::debug, "pt:{}, rel:{}", mouse.pos(), mouse.pos_delta());
         if (m_drag && mouse.is_button_held(Mouse::Button::Left))
         {
-            {
-                diag_log("m_pos_1={} mouse_delta={}", m_pos, mouse.pos_delta());
-                m_pos += mouse.pos_delta();
-                m_pos.x = std::max(m_pos.x, 0.0f);
-                m_pos.y = std::max(m_pos.y, 0.0f);
-            }
-            {
-                const ds::dims relative_size{ this->parent()->size() - m_size };
-                diag_log("m_pos_2={} rel_size={}", m_pos, relative_size);
-                m_pos.x = std::min(m_pos.x, relative_size.width);
-                m_pos.y = std::min(m_pos.y, relative_size.height);
-            }
+            diag_log("m_pos_1={} mouse_delta={}", m_pos, mouse.pos_delta());
+            m_pos += mouse.pos_delta();
+            m_pos.x = std::max(m_pos.x, 0.0f);
+            m_pos.y = std::max(m_pos.y, 0.0f);
+
+            const ds::dims relative_size{ this->parent()->size() - m_size };
+            diag_log("m_pos_2={} rel_size={}", m_pos, relative_size);
+            m_pos.x = std::min(m_pos.x, relative_size.width);
+            m_pos.y = std::min(m_pos.y, relative_size.height);
 
             diag_log("m_pos_3={}", m_pos);
             return true;
@@ -313,8 +311,7 @@ namespace rl::ui {
 
     void Dialog::refresh_relative_placement()
     {
-        // helper to maintain nested window position values,
-        // overridden in Popup
-        return;
+        // helper to maintain nested window
+        // position values, Popup overrides
     }
 }

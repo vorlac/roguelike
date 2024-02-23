@@ -17,7 +17,7 @@ namespace rl {
             friend class Popup;
 
         public:
-            explicit Dialog(Widget* parent, const std::string& title = "Untitled Dialog");
+            explicit Dialog(Widget* parent, std::string title = "Untitled Dialog");
 
             void dispose();
             void center();

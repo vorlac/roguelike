@@ -253,8 +253,8 @@ namespace rl {
         void keyboard_key_pressed_event_callback(const SDL3::SDL_Event& e);
         void keyboard_key_released_event_callback(const SDL3::SDL_Event& e);
         void keyboard_char_event_callback(const SDL3::SDL_Event& e);
-        void window_focus_gained_event_callback(const SDL3::SDL_Event& e);
-        void window_focus_lost_event_callback(const SDL3::SDL_Event& e);
+        void window_focus_gained_event_callback(const SDL3::SDL_Event& e) const;
+        void window_focus_lost_event_callback(const SDL3::SDL_Event& e) const;
         void window_resized_event_callback(const SDL3::SDL_Event& e);
         void window_moved_event_callback(const SDL3::SDL_Event& e);
 

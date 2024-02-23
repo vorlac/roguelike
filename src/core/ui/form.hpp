@@ -12,6 +12,7 @@
 #include "core/ui/vscrollpanel.hpp"
 #include "ds/dims.hpp"
 #include "ds/shared.hpp"
+#include "utils/math.hpp"
 
 namespace rl::ui {
     namespace detail {
@@ -34,13 +35,13 @@ namespace rl::ui {
             runtime_assert(m_ui_canvas != nullptr, "invalid dialog");
 
             m_dialog = new Dialog{ m_ui_canvas, title };
-            m_dialog->set_layout(new GridLayout{ Orientation::Horizontal, 2.0, Alignment::Center });
+            m_dialog->set_layout(new ui::BoxLayout{ Orientation::Horizontal });
 
             m_scroll = new VScrollPanel{ m_dialog };
             m_scroll->set_fixed_height(300);
             m_container = new Widget{ m_scroll };
 
-            m_layout = new AdvancedGridLayout{ { 0, 0, 0, 0 }, {} };
+            m_layout = new AdvancedGridLayout{ { 10, 0, 10, 0 }, {} };
             m_layout->set_margin(10.0f);
 
             m_container->set_layout(m_layout);
@@ -106,8 +107,8 @@ namespace rl::ui {
 
             ds::dims<f32> fs{ widget->fixed_size() };
             widget->set_fixed_size({
-                fs.width != 0.0f ? fs.width : m_fixed_size.width,
-                fs.height != 0.0f ? fs.height : m_fixed_size.height,
+                math::is_equal(fs.width, 0.0f) ? m_fixed_size.width : fs.width,
+                math::is_equal(fs.height, 0.0f) ? m_fixed_size.height : fs.height,
             });
 
             m_refresh_callbacks.push_back(refresh);

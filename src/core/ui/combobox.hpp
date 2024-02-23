@@ -16,15 +16,14 @@ namespace rl {
         {
         public:
             explicit ComboBox(Widget* parent);
-            ComboBox(Widget* parent, const std::vector<std::string>& items);
-            ComboBox(Widget* parent, const std::vector<std::string>& items,
-                     const std::vector<std::string>& items_short);
+            ComboBox(Widget* parent, std::vector<std::string>&& items);
+            ComboBox(Widget* parent, std::vector<std::string>&& items,
+                     std::vector<std::string>&& items_short);
 
             void set_selected_index(i32 idx);
             void set_callback(const std::function<void(i32)>& callback);
-            void set_items(const std::vector<std::string>& items);
-            void set_items(const std::vector<std::string>& items,
-                           const std::vector<std::string>& items_short);
+            void set_items(std::vector<std::string>&& items);
+            void set_items(std::vector<std::string>&& items, std::vector<std::string>&& items_short);
 
             i32 item_count() const;
             i32 selected_index() const;

@@ -29,7 +29,10 @@ namespace rl::ui {
         Widget() = delete;
         Widget(Widget&& other) = delete;
         Widget(const Widget& other) = delete;
+        Widget& operator=(const Widget& other) = delete;
+        Widget& operator=(Widget&& other) noexcept = delete;
 
+    public:
         explicit Widget(Widget* parent);
         virtual ~Widget() override;
 
@@ -137,9 +140,6 @@ namespace rl::ui {
         f32 icon_scale() const;
         virtual std::string name() const;
 
-        //=============!!!INCONCISTENT WITH nanogui!!======================================
-        // request_focus();
-        // request_focus();
     protected:
         Widget* m_parent{ nullptr };
         ds::shared<Theme> m_theme{ nullptr };
@@ -157,7 +157,6 @@ namespace rl::ui {
         ds::point<f32> m_pos{ 0.0f, 0.0f };
         ds::dims<f32> m_size{ 0.0f, 0.0f };
         ds::dims<f32> m_fixed_size{ 0.0f, 0.0f };
-        ds::dims<f32> m_framebuf_size{ 0.0f, 0.0f };
 
         Mouse::Cursor::ID m_cursor{ Mouse::Cursor::Arrow };
         std::vector<Widget*> m_children{};

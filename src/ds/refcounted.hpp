@@ -21,19 +21,20 @@ namespace rl::ds {
         {
         }
 
-        virtual constexpr refcounted& operator=(const refcounted&) noexcept
+        constexpr refcounted& operator=(const refcounted&) noexcept
         {
             return *this;
         }
 
-        virtual constexpr refcounted& operator=(refcounted&&) noexcept
+        constexpr refcounted& operator=(refcounted&&) noexcept
         {
             return *this;
         }
 
         void acquire_ref() const noexcept
         {
-            m_references.fetch_add(1, std::memory_order_relaxed);
+            // m_references.fetch_add(1, std::memory_order_relaxed);
+            ++m_references;
         }
 
         void release_ref() const noexcept
@@ -43,6 +44,7 @@ namespace rl::ds {
         }
 
     private:
-        mutable std::atomic<u32> m_references{ 1 };
+        // mutable std::atomic<u32> m_references{ 1 };
+        mutable u32 m_references{ 1 };
     };
 }

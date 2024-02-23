@@ -78,13 +78,13 @@ namespace rl::ui {
         bool copy_selection();
         bool delete_selection();
         void paste_from_clipboard();
-        bool check_format(const std::string& input, const std::string& format);
+        bool check_format(const std::string& input, const std::string& format) const;
         void update_cursor(f32 last_x, const nvg::GlyphPosition* glyphs, i32 size);
 
         f32 cursor_index_to_position(i32 index, f32 last_x, const nvg::GlyphPosition* glyphs,
-                                     i32 size);
+                                     i32 size) const;
         i32 position_to_cursor_index(f32 pos_x, f32 last_x, const nvg::GlyphPosition* glyphs,
-                                     i32 size);
+                                     i32 size) const;
 
         // The location (if any) for the spin area.
         enum class SpinArea {

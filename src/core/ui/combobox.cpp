@@ -14,19 +14,20 @@ namespace rl::ui {
     {
     }
 
-    ComboBox::ComboBox(Widget* parent, const std::vector<std::string>& items)
+    ComboBox::ComboBox(Widget* parent, std::vector<std::string>&& items)
         : PopupButton{ parent }
         , m_container{ this->popup() }
     {
-        this->set_items(items);
+        this->set_items(std::move(items));
     }
 
-    ComboBox::ComboBox(Widget* parent, const std::vector<std::string>& items,
-                       const std::vector<std::string>& items_short)
+    ComboBox::ComboBox(Widget* parent, std::vector<std::string>&& items,
+                       std::vector<std::string>&& items_short)
         : PopupButton{ parent }
         , m_container{ this->popup() }
     {
-        this->set_items(items, items_short);
+        this->set_items(std::forward<decltype(items)>(items),
+                        std::forward<decltype(items_short)>(items_short));
     }
 
     i32 ComboBox::selected_index() const
@@ -77,13 +78,13 @@ namespace rl::ui {
         return static_cast<i32>(m_items.size());
     }
 
-    void ComboBox::set_items(const std::vector<std::string>& items)
+    void ComboBox::set_items(std::vector<std::string>&& items)
     {
-        this->set_items(items, items);
+        this->set_items(std::forward<decltype(items)>(items), std::forward<decltype(items)>(items));
     }
 
-    void ComboBox::set_items(const std::vector<std::string>& items,
-                             const std::vector<std::string>& items_short)
+    void ComboBox::set_items(std::vector<std::string>&& items,
+                             std::vector<std::string>&& items_short)
     {
         runtime_assert(items.size() == items_short.size(), "item counts mismatch: {} vs {}",
                        items.size(), items_short.size());

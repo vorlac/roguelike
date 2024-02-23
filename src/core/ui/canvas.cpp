@@ -37,7 +37,7 @@ namespace rl::ui {
                 SDL3::SDL_DestroyCursor(m_cursors[static_cast<std::size_t>(i)]);
     }
 
-    bool Canvas::update()
+    bool Canvas::update() const
     {
         for (const auto& update_widget_func : m_update_callbacks)
             update_widget_func();
@@ -45,12 +45,12 @@ namespace rl::ui {
         return !m_update_callbacks.empty();
     }
 
-    bool Canvas::draw_setup()
+    bool Canvas::draw_setup() const
     {
         return true;
     }
 
-    bool Canvas::draw_contents()
+    bool Canvas::draw_contents() const
     {
         this->update();
         return true;
@@ -148,7 +148,7 @@ namespace rl::ui {
         return true;
     }
 
-    bool Canvas::draw_teardown()
+    bool Canvas::draw_teardown() const
     {
         // moved to Window::render_end()
         return true;
@@ -289,14 +289,14 @@ namespace rl::ui {
 
         m_focus_path.clear();
 
-        const Widget* dialog{ nullptr };
+        const Dialog* dialog{ nullptr };
         while (widget != nullptr)
         {
             m_focus_path.push_back(widget);
 
-            const Canvas* as_canvas{ dynamic_cast<Canvas*>(widget) };
-            if (as_canvas != nullptr)
-                dialog = as_canvas;
+            const Dialog* as_dialog{ dynamic_cast<Dialog*>(widget) };
+            if (as_dialog != nullptr)
+                dialog = as_dialog;
 
             widget = widget->parent();
         }
@@ -304,8 +304,8 @@ namespace rl::ui {
         for (const auto focus_widget : std::ranges::reverse_view{ m_focus_path })
             focus_widget->on_focus_gained();
 
-        // if (window != nullptr)
-        //     this->move_dialog_to_front(static_cast<Dialog*>(dialog));
+        // if (dialog != nullptr)
+        //     this->move_dialog_to_front(dialog);
     }
 
     void Canvas::move_dialog_to_front(Dialog* dialog)
@@ -424,7 +424,7 @@ namespace rl::ui {
         }
 
         m_redraw |= Widget::on_mouse_button_pressed(mouse, kb);
-        return m_redraw;
+        return false;
     }
 
     bool Canvas::on_mouse_button_released(const Mouse& mouse, const Keyboard& kb)
@@ -463,7 +463,7 @@ namespace rl::ui {
         }
 
         m_redraw |= Widget::on_mouse_button_released(mouse, kb);
-        return m_redraw;
+        return false;
     }
 
     bool Canvas::on_mouse_drag(const Mouse& mouse, const Keyboard& kb)
@@ -487,7 +487,6 @@ namespace rl::ui {
 
     bool Canvas::on_mouse_move(const Mouse& mouse, const Keyboard& kb)
     {
-        bool ret{ false };
         const ds::point mouse_pos{ mouse.pos() };
         m_last_interaction = m_timer.elapsed();
 
@@ -495,7 +494,7 @@ namespace rl::ui {
         const ds::point pnt{ mouse_pos / m_pixel_ratio };
 
         if (m_drag_active)
-            ret = m_drag_widget->on_mouse_drag(mouse, kb);
+            m_drag_widget->on_mouse_drag(mouse, kb);
         else
         {
             const Widget* widget{ this->find_widget(pnt) };
@@ -509,7 +508,7 @@ namespace rl::ui {
         }
 
         m_redraw |= Widget::on_mouse_move(mouse, kb);
-        return m_redraw;
+        return false;
     }
 
     bool Canvas::on_mouse_scroll(const Mouse& mouse, const Keyboard& kb)
@@ -526,19 +525,7 @@ namespace rl::ui {
         }
 
         m_redraw |= Widget::on_mouse_scroll(mouse, kb);
-        return m_redraw;
-    }
-
-    bool Canvas::on_mouse_entered(const Mouse& mouse)
-    {
-        scoped_log("entered_pos={}", mouse.pos());
-        return Widget::on_mouse_entered(mouse);
-    }
-
-    bool Canvas::on_mouse_exited(const Mouse& mouse)
-    {
-        scoped_log("exit_pos={}", mouse.pos());
-        return Widget::on_mouse_exited(mouse);
+        return false;
     }
 
     bool Canvas::on_focus_gained()

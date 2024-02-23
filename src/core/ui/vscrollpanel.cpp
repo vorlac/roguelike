@@ -1,5 +1,6 @@
 #include "core/ui/theme.hpp"
 #include "core/ui/vscrollpanel.hpp"
+#include "graphics/vg/nanovg_state.hpp"
 #include "utils/logging.hpp"
 #include "utils/math.hpp"
 
@@ -32,7 +33,7 @@ namespace rl::ui {
         if (m_children.empty())
             return;
 
-        runtime_assert(m_children.size() == 1, "vertical scroll panel should only have 1 child");
+        runtime_assert(m_children.size() <= 1, "vertical scroll panel should only have 1 child");
 
         Widget* child{ m_children.front() };
         m_child_preferred_height = child->preferred_size().height;
@@ -73,42 +74,54 @@ namespace rl::ui {
     {
         scoped_log();
 
-        if (m_children.empty() || m_child_preferred_height <= m_size.height)
-            return Widget::on_mouse_drag(mouse, kb);
+        const auto mouse_delta{ mouse.pos_delta() };
+        if (!m_children.empty() && m_child_preferred_height > m_size.height)
+        {
+            const float scrollh{ m_size.height *
+                                 std::min(1.0f, m_size.height / m_child_preferred_height) };
+            m_scroll = std::max(
+                0.0f, std::min(1.0f, m_scroll + mouse_delta.y / (m_size.height - 8.0f - scrollh)));
 
-        auto&& mouse_delta{ mouse.pos_delta() };
-        const f32 scrollh{ this->height() *
-                           std::min(1.0f, this->height() / m_child_preferred_height) };
+            m_update_layout = true;
+            return true;
+        }
 
-        m_scroll = std::max(
-            0.0f, std::min(1.0f, m_scroll + (mouse_delta.y / (m_size.height - 8.0f - scrollh))));
-
-        m_update_layout = true;
-        return true;
+        return Widget::on_mouse_drag(mouse, kb);
     }
 
     bool VScrollPanel::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb)
     {
+        scoped_log();
+
+        LocalTransform transform{ this };
         if (Widget::on_mouse_button_pressed(mouse, kb))
             return true;
 
-        scoped_log();
-        const auto&& mouse_pos{ mouse.pos() };
+        constexpr static f32 SCROLLBAR_WIDTH{ 8.0f };
+        constexpr static f32 SCROLLBAR_MARGIN{ 4.0f };
+        constexpr static f32 SCROLLBAR_BORDER{ 1.0f };
+
+        const ds::point mouse_pos{ mouse.pos() };
+        const ds::point local_mouse_pos{ mouse_pos - LocalTransform::absolute_pos };
+        const ds::rect scroll_bar_rect{
+            ds::point{ m_pos.x + m_size.width - (SCROLLBAR_WIDTH + SCROLLBAR_MARGIN), m_pos.y },
+            ds::dims{ SCROLLBAR_WIDTH, m_size.height }
+        };
+
         const bool lmb_just_pressed{ mouse.is_button_pressed(Mouse::Button::Left) };
-
         if (lmb_just_pressed && !m_children.empty() && m_child_preferred_height > m_size.height &&
-            mouse_pos.x > m_pos.x + m_size.width - 13.0f &&
-            mouse_pos.x < m_pos.x + m_size.width - 4.0f)
+            scroll_bar_rect.contains(local_mouse_pos))
         {
-            const f32 scrollh{ this->height() *
-                               std::min(1.0f, this->height() / m_child_preferred_height) };
+            const f32 scrollh{ m_size.height *
+                               std::min(1.0f, m_size.height / m_child_preferred_height) };
 
-            const f32 start{ m_pos.y + 4.0f + 1.0f + (m_size.height - 8.0f - scrollh) * m_scroll };
+            const f32 start{ m_pos.y + SCROLLBAR_MARGIN + SCROLLBAR_BORDER +
+                             (m_size.height - SCROLLBAR_WIDTH - scrollh) * m_scroll };
 
             f32 delta{ 0.0f };
-            if (mouse_pos.y < start)
+            if (local_mouse_pos.y < start)
                 delta = -m_size.height / m_child_preferred_height;
-            else if (mouse_pos.y > start + scrollh)
+            else if (local_mouse_pos.y > start + scrollh)
                 delta = m_size.height / m_child_preferred_height;
 
             m_scroll = std::max(0.0f, std::min(1.0f, m_scroll + delta * 0.98f));
@@ -127,8 +140,6 @@ namespace rl::ui {
     bool VScrollPanel::on_mouse_button_released(const Mouse& mouse, const Keyboard& kb)
     {
         scoped_log();
-        if (Widget::on_mouse_button_released(mouse, kb))
-            return true;
 
         if (Widget::on_mouse_button_released(mouse, kb))
         {
@@ -170,7 +181,7 @@ namespace rl::ui {
 
         scoped_trace(log_level::trace);
 
-        Widget* child{ m_children[0] };
+        Widget* child{ m_children.front() };
 
         f32 yoffset{ 0.0f };
         if (m_child_preferred_height > m_size.height)
@@ -179,8 +190,8 @@ namespace rl::ui {
         auto&& context{ m_renderer->context() };
         child->set_position(ds::point{ 0.0f, yoffset });
         m_child_preferred_height = child->preferred_size().height;
-        const f32 scrollh{ this->height() *
-                           math::min(1.0f, this->height() / m_child_preferred_height) };
+        const f32 scrollh{ m_size.height *
+                           math::min(1.0f, m_size.height / m_child_preferred_height) };
 
         if (m_update_layout)
         {
@@ -211,17 +222,19 @@ namespace rl::ui {
             },
         };
 
-        nvg::PaintStyle paint{ m_renderer->create_box_gradient(
-            std::forward<ds::rect<f32>>(panel_rect), 3.0f, 4.0f, ds::color<f32>{ 0, 0, 0, 32 },
-            ds::color<f32>{ 0, 0, 0, 92 }) };
+        nvg::PaintStyle brush{
+            m_renderer->create_box_gradient(std::forward<ds::rect<f32>>(panel_rect), 3.0f, 4.0f,
+                                            ds::color<f32>{ 0, 0, 0, 32 },
+                                            ds::color<f32>{ 0, 0, 0, 92 }),
+        };
 
         m_renderer->draw_path(false, [&] {
             nvg::rounded_rect(context, m_pos.x + m_size.width - 12.0f, m_pos.y + 4.0f, 8.0f,
                               m_size.height - 8.0f, 3.0f);
-            nvg::fill_paint(context, paint);
+            nvg::fill_paint(context, brush);
             nvg::fill(context);
 
-            paint = m_renderer->create_box_gradient(
+            brush = m_renderer->create_box_gradient(
                 ds::rect{
                     ds::point{
                         m_pos.x + m_size.width - 12.0f - OUTLINE_SIZE,
@@ -234,11 +247,6 @@ namespace rl::ui {
                 },
                 3.0f, 4.0f, ds::color<f32>{ 220, 220, 220, 100 },
                 ds::color<f32>{ 128, 128, 128, 100 });
-            // paint = nvg::box_gradient(
-            //     context, m_pos.x + m_size.width - 12.0f - OUTLINE_SIZE,
-            //     m_pos.y + 4.0f + (m_size.height - 8.0f - scrollh) * m_scroll -
-            //     OUTLINE_SIZE, 8.0f, scrollh, 3.0f, 4.0f, ds::color<f32>{ 220, 220, 220,
-            //     100 }, ds::color<f32>{ 128, 128, 128, 100 });
 
             // subpath
             m_renderer->draw_path(false, [&] {
@@ -247,7 +255,7 @@ namespace rl::ui {
                     m_pos.y + 4.0f + OUTLINE_SIZE + (m_size.height - 8.0f - scrollh) * m_scroll,
                     8.0f - 2.0f, scrollh - 2.0f, 2.0f);
 
-                nvg::fill_paint(context, paint);
+                nvg::fill_paint(context, brush);
                 nvg::fill(context);
             });
         });

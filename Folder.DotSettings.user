@@ -30,8 +30,10 @@
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=DB94C55F_002D6B9A_002D4AAE_002D80D7_002D29FD8153E6B5_002Fd_003Atools/@EntryIndexedValue">ExplicitlyExcluded</s:String>
 	<s:Boolean x:Key="/Default/CodeInspection/Highlighting/CalculateInheritedTypeMembers/@EntryValue">False</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeInspection/Highlighting/ColorUsageHighlightingEnabled/@EntryValue">False</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/Highlighting/ConditionElementsHighlightingEnabled/@EntryValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeInspection/Highlighting/IdentifierHighlightingEnabled/@EntryValue">True</s:Boolean>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=CppClangTidyClangDiagnosticSignConversion/@EntryIndexedValue">HINT</s:String>
+	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=CppClangTidyClangDiagnosticUnknownPragmas/@EntryIndexedValue">DO_NOT_SHOW</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=CppClangTidyClangDiagnosticUnsafeBufferUsage/@EntryIndexedValue">DO_NOT_SHOW</s:String>
 	<s:Boolean x:Key="/Default/CodeInspection/Highlighting/PrimaryParametersCaptureHighlightingEnabled/@EntryValue">False</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeInspection/Highlighting/ShowGlobalImports/@EntryValue">False</s:Boolean>
@@ -78,7 +80,7 @@
 	<s:Boolean x:Key="/Default/Environment/CppEnableCppCli/IsEnabled/@EntryValue">False</s:Boolean>
 	<s:String x:Key="/Default/Environment/Editor/MatchingBraceHighlighting/Style/@EntryValue">OUTLINE</s:String>
 	<s:Boolean x:Key="/Default/Environment/Editor/StructuralNavigationIsEnabled/@EntryValue">False</s:Boolean>
-	<s:String x:Key="/Default/Environment/ErrorStripe/ErrorStripeLayoutSinceVs12/@EntryValue">Original</s:String>
+	<s:String x:Key="/Default/Environment/ErrorStripe/ErrorStripeLayoutSinceVs12/@EntryValue">Vs12EnhancedScrollbar</s:String>
 	<s:String x:Key="/Default/Environment/ErrorStripe/ErrorStripeWidth/@EntryValue">Narrow</s:String>
 	<s:Boolean x:Key="/Default/Environment/ExcludedFiles/FilesAndFoldersThirdParty/=DB94C55F_002D6B9A_002D4AAE_002D80D7_002D29FD8153E6B5_002Fd_003A_002Eout/@EntryIndexedValue">False</s:Boolean>
 	<s:Boolean x:Key="/Default/Environment/ExcludedFiles/FilesAndFoldersThirdParty/=DB94C55F_002D6B9A_002D4AAE_002D80D7_002D29FD8153E6B5_002Fd_003Aextern_002Fd_003Aglad/@EntryIndexedValue">True</s:Boolean>
@@ -132,14 +134,14 @@
 	<s:Boolean x:Key="/Default/Environment/SearchAndNavigation/FileAndDirsToSkip/=DB94C55F_002D6B9A_002D4AAE_002D80D7_002D29FD8153E6B5_002Fd_003Adocs/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/Environment/SearchAndNavigation/FileAndDirsToSkip/=DB94C55F_002D6B9A_002D4AAE_002D80D7_002D29FD8153E6B5_002Fd_003Alog/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/Environment/SearchAndNavigation/FileAndDirsToSkip/=DB94C55F_002D6B9A_002D4AAE_002D80D7_002D29FD8153E6B5_002Fd_003Atools/@EntryIndexedValue">True</s:Boolean>
-	<s:Boolean x:Key="/Default/Environment/SearchAndNavigation/MergeOccurrences/@EntryValue">False</s:Boolean>
-	
+	<s:Boolean x:Key="/Default/Environment/SearchAndNavigation/MergeOccurrences/@EntryValue">True</s:Boolean>
+
 	<s:Boolean x:Key="/Default/Environment/SearchAndNavigation/UseReSharperMouseBackForwardNavigation/@EntryValue">False</s:Boolean>
 	<s:String x:Key="/Default/Environment/UserInterface/ThemedIcon/IconThemeSelection/@EntryValue">GrayDark</s:String>
 	<s:String x:Key="/Default/Environment/UserInterface/ThemedIcon/IconThemeSelectionExtensionForFluentDesign/@EntryValue">Never</s:String>
 	<s:String x:Key="/Default/Environment/UserInterface/ThemedIcon/PsiSymbolIcon/PsiSymbolIconThemeSelection/@EntryValue">SymbolsVs11Gray</s:String>
 	<s:Boolean x:Key="/Default/GrammarAndSpelling/Enabled/@EntryValue">False</s:Boolean>
 	<s:Boolean x:Key="/Default/Housekeeping/ProjectModelSynchronizer/ReadProjectModelFromDisk/@EntryValue">False</s:Boolean>
-	<s:String x:Key="/Default/Housekeeping/ProjectModelSynchronizer/UseMsbuildStrategy/@EntryValue">ALWAYS</s:String>
+	<s:String x:Key="/Default/Housekeeping/ProjectModelSynchronizer/UseMsbuildStrategy/@EntryValue">NEVER</s:String>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=nanovg/@EntryIndexedValue">True</s:Boolean>
 </wpf:ResourceDictionary>

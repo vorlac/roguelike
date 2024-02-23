@@ -94,7 +94,7 @@ namespace rl {
 
                 form->add_group("Enum");
                 form->add_variable<ui::Axis>("Axis", eval, true)
-                    ->set_items({
+                    ->set_items(std::vector<std::string>{
                         "Horizontal",
                         "Vertical",
                         "AAAAAAAAAAAAAAAA",
@@ -122,7 +122,6 @@ namespace rl {
                 scoped_log();
 
                 gui->set_layout(layout);
-
                 layout->set_col_stretch(1, 0.5f);
 
                 const auto title_label{ new ui::Label{
@@ -219,7 +218,6 @@ namespace rl {
             m_timer.reset();
             while (!this->should_exit())
             {
-                const f32 start{ m_timer.elapsed() };
                 this->handle_events();
                 this->update();
 
@@ -230,8 +228,9 @@ namespace rl {
                 form->refresh();
 
                 this->render();
-                std::this_thread::sleep_for(
-                    std::chrono::duration<f32>((1.0f / 30.0f) - (m_timer.elapsed() - start)));
+
+                using namespace std::chrono_literals;
+                std::this_thread::sleep_for(30ms);
             }
 
             ret &= this->teardown();

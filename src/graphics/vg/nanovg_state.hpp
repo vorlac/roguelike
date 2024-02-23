@@ -36,25 +36,33 @@ namespace rl {
                 absolute_pos += widget->position();
                 nvg::translate(ui::Widget::context(), widget->position());
                 scope_stack.push_back(widget);
+                m_added_to_stack = true;
             }
         }
 
         [[nodiscard]]
-        ds::point<f32> abs_local_position() const
+        static ds::point<f32> abs_local_position()
         {
             return absolute_pos;
         }
 
         ~LocalTransform()
         {
-            const ui::Widget* widget{ scope_stack.back() };
-            absolute_pos -= widget->position();
-            nvg::translate(ui::Widget::context(), -widget->position());
-            scope_stack.pop_back();
+            if (m_added_to_stack)
+            {
+                const ui::Widget* widget{ scope_stack.back() };
+                absolute_pos -= widget->position();
+                nvg::translate(ui::Widget::context(), -widget->position());
+                scope_stack.pop_back();
+            }
         }
 
+    public:
         static inline std::vector scope_stack{ std::vector<const ui::Widget*>(128) };
         static inline ds::point<f32> absolute_pos{ 0.0f, 0.0f };
+
+    private:
+        bool m_added_to_stack{ false };
     };
 
 }

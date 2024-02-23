@@ -257,8 +257,8 @@ namespace rl::ui {
 
     ds::dims<f32> Widget::preferred_size() const
     {
-        auto&& context{ m_renderer->context() };
-        auto&& ret{ (m_layout != nullptr ? m_layout->preferred_size(context, this) : m_size) };
+        const auto context{ m_renderer->context() };
+        auto ret{ (m_layout != nullptr ? m_layout->preferred_size(context, this) : m_size) };
         scoped_logger(log_level::trace, "{}", ret);
         return ret;
     }
@@ -266,7 +266,7 @@ namespace rl::ui {
     void Widget::perform_layout()
     {
         scoped_trace(log_level::trace);
-        auto&& context{ m_renderer->context() };
+        const auto context{ m_renderer->context() };
         if (m_layout != nullptr)
             m_layout->perform_layout(context, this);
         else
@@ -292,12 +292,13 @@ namespace rl::ui {
 
         {
             LocalTransform transform{ this };
+            const ds::point local_mouse_pos{ pt - LocalTransform::absolute_pos };
             for (const auto child : std::ranges::reverse_view{ m_children })
             {
                 if (!child->visible())
                     continue;
-                if (child->contains(pt - LocalTransform::absolute_pos))
-                    return child->find_widget(pt - LocalTransform::absolute_pos);
+                if (child->contains(local_mouse_pos))
+                    return child->find_widget(local_mouse_pos);
             }
         }
 
@@ -310,12 +311,13 @@ namespace rl::ui {
 
         {
             LocalTransform transform{ this };
+            const ds::point local_mouse_pos{ pt - LocalTransform::absolute_pos };
             for (const auto child : std::ranges::reverse_view{ m_children })
             {
                 if (!child->visible())
                     continue;
-                if (child->contains(pt - LocalTransform::absolute_pos))
-                    return child->find_widget(pt - LocalTransform::absolute_pos);
+                if (child->contains(local_mouse_pos))
+                    return child->find_widget(local_mouse_pos);
             }
         }
 
@@ -324,7 +326,6 @@ namespace rl::ui {
 
     bool Widget::on_mouse_entered(const Mouse& mouse)
     {
-        // TODO: THIS IS GETTING SKIPPED
         scoped_logger(log_level::warn, "enter_pos={}", mouse.pos());
         m_mouse_focus = true;
         return false;
@@ -332,7 +333,6 @@ namespace rl::ui {
 
     bool Widget::on_mouse_exited(const Mouse& mouse)
     {
-        // TODO: THIS IS GETTING SKIPPED
         scoped_logger(log_level::warn, "exit_pos={}", mouse.pos());
         m_mouse_focus = false;
         return false;
@@ -355,29 +355,30 @@ namespace rl::ui {
     bool Widget::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb)
     {
         scoped_log("btn={}", mouse.button_pressed());
-
         bool handled{ false };
-        const auto&& mouse_pos{ mouse.pos() };
 
         LocalTransform transform{ this };
+        const ds::point local_mouse_pos{ mouse.pos() - LocalTransform::absolute_pos };
         for (const auto child : std::ranges::reverse_view{ m_children })
         {
             if (!child->visible())
                 continue;
-            if (!child->contains(mouse_pos - LocalTransform::absolute_pos))
+            if (!child->contains(local_mouse_pos))
                 continue;
             if (!child->on_mouse_button_pressed(mouse, kb))
                 continue;
 
-            handled = true;
-            diag_log("btn pressed handled:{} mouse_pos={} rel={}, abs={}", this->name(),
-                     mouse.pos(), ds::rect{ m_pos, m_size },
-                     ds::rect{ this->abs_position(), m_size });
+            diag_log("mouse press: handled={}", this->name());
+            diag_log("mouse press: abs_mouse={}", mouse.pos());
+            diag_log("mouse press: local_mouse={}", local_mouse_pos);
+            diag_log("mouse press: rel_pos={}", ds::rect{ m_pos, m_size });
+            diag_log("mouse press: abs_pos={}", ds::rect{ this->abs_position(), m_size });
 
+            handled = true;
             break;
         }
 
-        if (!handled && mouse.is_button_pressed(Mouse::Button::Left) && !m_focused)
+        if (!m_focused && !handled && mouse.is_button_pressed(Mouse::Button::Left))
             this->request_focus();
 
         return handled;
@@ -386,23 +387,24 @@ namespace rl::ui {
     bool Widget::on_mouse_button_released(const Mouse& mouse, const Keyboard& kb)
     {
         scoped_log("btn={}", mouse.button_released());
-
         bool handled{ false };
-        auto&& mouse_pos{ mouse.pos() };
 
         LocalTransform transform{ this };
+        const ds::point local_mouse_pos{ mouse.pos() - LocalTransform::absolute_pos };
         for (const auto child : std::ranges::reverse_view{ m_children })
         {
             if (!child->visible())
                 continue;
-            if (!child->contains(mouse_pos - LocalTransform::absolute_pos))
+            if (!child->contains(local_mouse_pos))
                 continue;
             if (!child->on_mouse_button_released(mouse, kb))
                 continue;
 
+            diag_log("mouse rel: handled={}", this->name());
+            diag_log("mouse rel: mouse_pos={}", mouse.pos());
+            diag_log("mouse rel: rel_pos={}", ds::rect{ m_pos, m_size });
+            diag_log("mouse rel: abs_pos={}", ds::rect{ this->abs_position(), m_size });
             handled = true;
-            diag_log("btn rel handled:{} mouse_pos={} rel={}, abs={}", this->name(), mouse.pos(),
-                     ds::rect{ m_pos, m_size }, ds::rect{ this->abs_position(), m_size });
             break;
         }
 
@@ -412,24 +414,25 @@ namespace rl::ui {
     bool Widget::on_mouse_scroll(const Mouse& mouse, const Keyboard& kb)
     {
         scoped_logger(log_level::trace, "pos={} wheel={}", mouse.pos(), mouse.wheel());
-
         bool handled{ false };
-        auto&& mouse_pos{ mouse.pos() };
 
         LocalTransform transform{ this };
+        const ds::point local_mouse_pos{ mouse.pos() - LocalTransform::absolute_pos };
         for (const auto child : std::ranges::reverse_view{ m_children })
         {
             if (!child->visible())
                 continue;
-            if (!child->contains(mouse_pos - LocalTransform::absolute_pos))
+            if (!child->contains(local_mouse_pos))
                 continue;
             if (!child->on_mouse_scroll(mouse, kb))
                 continue;
 
+            diag_log("mouse scroll: handled={}", this->name());
+            diag_log("mouse scroll: mouse_pos={}", mouse.pos());
+            diag_log("mouse scroll: local_mouse_pos={}", local_mouse_pos);
+            diag_log("mouse scroll: rel_pos={}", ds::rect{ m_pos, m_size });
+            diag_log("mouse scroll: abs_pos={}", ds::rect{ this->abs_position(), m_size });
             handled = true;
-            diag_log("mouse scroll handled:{} mouse_pos={} rel={}, abs={}", this->name(),
-                     mouse.pos(), ds::rect{ m_pos, m_size },
-                     ds::rect{ this->abs_position(), m_size });
             break;
         }
 
@@ -439,18 +442,17 @@ namespace rl::ui {
     bool Widget::on_mouse_move(const Mouse& mouse, const Keyboard& kb)
     {
         scoped_logger(log_level::trace, "pos={}", mouse.pos());
-
         bool handled{ false };
+
         LocalTransform transform{ this };
+        const ds::point local_mouse_pos{ mouse.pos() - LocalTransform::absolute_pos };
         for (const auto child : std::ranges::reverse_view{ m_children })
         {
             if (!child->visible())
                 continue;
 
-            const ds::point local_mouse_pos{ mouse.pos() - LocalTransform::absolute_pos };
-            const bool contained{ child->contains(local_mouse_pos - LocalTransform::absolute_pos) };
-            const bool prev_contained{ child->contains(
-                local_mouse_pos - LocalTransform::absolute_pos - mouse.pos_delta()) };
+            const bool contained{ child->contains(local_mouse_pos) };
+            const bool prev_contained{ child->contains(local_mouse_pos - mouse.pos_delta()) };
 
             if (contained && !prev_contained)
                 handled |= child->on_mouse_entered(mouse);
@@ -466,33 +468,29 @@ namespace rl::ui {
 
     bool Widget::on_mouse_drag(const Mouse& mouse, const Keyboard& kb)
     {
-        scoped_log("noop");
-        // do nothing,
-        // derived objects should implement
+        // do nothing, derived classess
+        // should implement/override
         return false;
     }
 
     bool Widget::on_key_pressed(const Keyboard& kb)
     {
-        scoped_log("noop");
-        // do nothing,
-        // derived objects should implement
+        // do nothing, derived classess
+        // should implement/override
         return false;
     }
 
     bool Widget::on_key_released(const Keyboard& kb)
     {
-        scoped_log("noop");
-        // do nothing,
-        // derived objects should implement
+        // do nothing, derived classess
+        // should implement/override
         return false;
     }
 
     bool Widget::on_character_input(const Keyboard& kb)
     {
-        scoped_log("noop");
-        // do nothing,
-        // derived objects should implement
+        // do nothing, derived classess
+        // should implement/override
         return false;
     }
 
@@ -619,10 +617,7 @@ namespace rl::ui {
     bool Widget::contains(const ds::point<f32>& pt) const
     {
         // Check if the widget contains a certain position
-        // const ds::rect widget_rect2{ nvg::transform_point(m_renderer->context(), m_pos), m_size
-        // }; const ds::rect widget_rect{ this->abs_position(), m_size };
         const ds::rect widget_rect{ m_pos, m_size };
-        // const auto trans_point{ nvg::transform_point(m_renderer->context(), pt) };
         return widget_rect.contains(pt);
     }
 
@@ -675,6 +670,7 @@ namespace rl::ui {
     void Widget::request_focus()
     {
         scoped_log();
+
         Widget* widget{ this };
         while (widget->parent() != nullptr)
             widget = widget->parent();
