@@ -37,14 +37,12 @@ namespace rl::ui {
             m_dialog = new Dialog{ m_ui_canvas, title };
             m_dialog->set_layout(new ui::BoxLayout{ Orientation::Horizontal });
 
-            m_scroll = new VScrollPanel{ m_dialog };
-            m_scroll->set_fixed_height(300);
-            m_container = new Widget{ m_scroll };
-
             m_layout = new AdvancedGridLayout{ { 10, 0, 10, 0 }, {} };
             m_layout->set_margin(10.0f);
 
-            m_container->set_layout(m_layout);
+            m_scroll = new VScrollPanel{ m_dialog };
+            m_scroll->set_fixed_height(300);
+            m_scroll->container()->set_layout(m_layout);
 
             m_dialog->set_position(pos);
             m_dialog->set_visible(true);
@@ -54,9 +52,9 @@ namespace rl::ui {
 
         Label* add_group(const std::string& caption)
         {
-            const Theme* theme{ m_container->theme() };
+            const Theme* theme{ m_scroll->theme() };
             const auto label{ new Label{
-                m_container,
+                m_scroll,
                 caption,
                 theme->form_group_font_name,
                 theme->form_group_font_size,
@@ -75,15 +73,15 @@ namespace rl::ui {
                                             const std::function<void(const T&)>& setter,
                                             const std::function<T()>& getter, bool editable = true)
         {
-            const Theme* theme{ m_container->theme() };
+            const Theme* theme{ m_scroll->theme() };
             const Label* label = new Label{
-                m_container,
+                m_scroll,
                 label_text,
                 theme->form_label_font_name,
                 theme->form_label_font_size,
             };
 
-            auto widget{ new detail::FormWidget<T>{ m_container } };
+            auto widget{ new detail::FormWidget<T>{ m_scroll } };
             auto refresh = [widget, getter] {
                 T value{ getter() };
                 T current{ widget->value() };
@@ -139,8 +137,8 @@ namespace rl::ui {
 
         Button* add_button(const std::string& label, const std::function<void()>& cb)
         {
-            const Theme* theme{ m_container->theme() };
-            const auto button{ new Button{ m_container, label } };
+            const Theme* theme{ m_scroll->theme() };
+            const auto button{ new Button{ m_scroll, label } };
 
             button->set_callback(cb);
             if (m_layout->row_count() > 0)
@@ -154,7 +152,7 @@ namespace rl::ui {
 
         void add_widget(const std::string& label_text, const Widget* widget)
         {
-            const Theme* theme{ m_container->theme() };
+            const Theme* theme{ m_scroll->theme() };
             m_layout->append_row(0);
 
             if (label_text.empty())
@@ -162,7 +160,7 @@ namespace rl::ui {
             else
             {
                 const Label* label = new Label{
-                    m_container,
+                    m_scroll,
                     label_text,
                     theme->form_label_font_name,
                     theme->form_label_font_size,

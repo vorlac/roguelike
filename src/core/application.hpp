@@ -226,7 +226,7 @@ namespace rl {
                 elapsed_str = fmt::format("{:>6.3f} sec", elapsed_time);
                 fps_str = fmt::format("{:>6.3f} fps", framerate);
                 form->refresh();
-
+                gui->redraw();
                 this->render();
 
                 using namespace std::chrono_literals;

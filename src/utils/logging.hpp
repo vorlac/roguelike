@@ -134,13 +134,12 @@ namespace rl {
 
     public:
         ScopedLogger(ScopedLogger&& logger) = delete;
-
         ScopedLogger(const ScopedLogger& logger) = delete;
         ScopedLogger& operator=(ScopedLogger&& logger) = delete;
         ScopedLogger& operator=(const ScopedLogger& logger) = delete;
 
     private:
-        constexpr static inline bool PRINT_TO_VS_DEBUG_OUTPUT{ true };
+        constexpr static inline bool PRINT_TO_VS_DEBUG_OUTPUT{ false };
         constexpr static inline i32 BYTES_PER_KB{ 1024 };
         constexpr static inline i32 BYTES_PER_MB{ 1024 * BYTES_PER_KB };
         constexpr static inline i32 MAX_LOGFILE_SIZE{ 15 * BYTES_PER_MB };

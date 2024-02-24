@@ -436,14 +436,15 @@ namespace rl {
         scoped_trace(log_level::trace);
 
         m_mouse.process_motion(e.motion);
+
         if (m_mouse.is_button_pressed(Mouse::Button::Left))
         {
             // update button states from pressed to held if the
             // button that was pressed last frame is still down
             m_mouse.process_button_down(Mouse::Button::Left);
-            // this->mouse_button_pressed_event_callback(e);
         }
-        m_gui_canvas->on_mouse_move(m_mouse, m_keyboard);
+
+        m_gui_canvas->on_mouse_move_event(m_mouse, m_keyboard);
     }
 
     void MainWindow::mouse_wheel_event_callback(const SDL3::SDL_Event& e)
@@ -451,7 +452,7 @@ namespace rl {
         scoped_log();
 
         m_mouse.process_wheel(e.wheel);
-        m_gui_canvas->on_mouse_scroll(m_mouse, m_keyboard);
+        m_gui_canvas->on_mouse_scroll_event(m_mouse, m_keyboard);
     }
 
     void MainWindow::mouse_button_pressed_event_callback(const SDL3::SDL_Event& e)
@@ -460,7 +461,7 @@ namespace rl {
 
         const Mouse::Button::ID button_pressed{ e.button.button };
         m_mouse.process_button_down(button_pressed);
-        m_gui_canvas->on_mouse_button_pressed(m_mouse, m_keyboard);
+        m_gui_canvas->on_mouse_button_pressed_event(m_mouse, m_keyboard);
     }
 
     void MainWindow::mouse_button_released_event_callback(const SDL3::SDL_Event& e)
@@ -469,14 +470,14 @@ namespace rl {
 
         const Mouse::Button::ID button_released{ e.button.button };
         m_mouse.process_button_up(button_released);
-        m_gui_canvas->on_mouse_button_released(m_mouse, m_keyboard);
+        m_gui_canvas->on_mouse_button_released_event(m_mouse, m_keyboard);
     }
 
     void MainWindow::keyboard_key_pressed_event_callback(const SDL3::SDL_Event& e)
     {
         scoped_log();
 
-        const auto pressed_button{ static_cast<Keyboard::Scancode::ID>(e.key.keysym.scancode) };
+        const Keyboard::Scancode::ID pressed_button{ e.key.keysym.scancode };
         m_keyboard.process_button_down(pressed_button);
         m_gui_canvas->on_key_pressed(m_keyboard);
     }
@@ -485,9 +486,9 @@ namespace rl {
     {
         scoped_log();
 
-        const auto released_button{ static_cast<Keyboard::Scancode::ID>(e.key.keysym.scancode) };
+        const Keyboard::Scancode::ID released_button{ e.key.keysym.scancode };
         m_keyboard.process_button_up(released_button);
-        m_gui_canvas->on_key_pressed(m_keyboard);
+        m_gui_canvas->on_key_released(m_keyboard);
     }
 
     void MainWindow::keyboard_char_event_callback(const SDL3::SDL_Event& e)

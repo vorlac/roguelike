@@ -28,7 +28,7 @@ namespace rl::ui {
         bool redraw();
         bool draw_widgets();
 
-        void set_visible(bool visible);
+        virtual void set_visible(bool visible) override;
         void center_dialog(Dialog* dialog) const;
         void move_dialog_to_front(Dialog* dialog);
         void update_focus(Widget* widget);
@@ -63,14 +63,14 @@ namespace rl::ui {
         virtual bool on_key_released(const Keyboard& kb) override;
         virtual bool on_character_input(const Keyboard& kb) override;
 
-        virtual bool on_mouse_scroll(const Mouse& mouse, const Keyboard& kb) override;
-        virtual bool on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb) override;
-        virtual bool on_mouse_button_released(const Mouse& mouse, const Keyboard& kb) override;
-        virtual bool on_mouse_move(const Mouse& mouse, const Keyboard& kb) override;
-        virtual bool on_mouse_drag(const Mouse& mouse, const Keyboard& kb) override;
+        bool on_mouse_scroll_event(const Mouse& mouse, const Keyboard& kb);
+        bool on_mouse_button_pressed_event(const Mouse& mouse, const Keyboard& kb);
+        bool on_mouse_button_released_event(const Mouse& mouse, const Keyboard& kb);
+        bool on_mouse_move_event(const Mouse& mouse, const Keyboard& kb);
+        // virtual bool on_mouse_drag(const Mouse& mouse, const Keyboard& kb) override;
 
-        virtual bool on_focus_gained() override;
-        virtual bool on_focus_lost() override;
+        // virtual bool on_focus_gained() override;
+        // virtual bool on_focus_lost() override;
 
     protected:
         ds::dims<i32> m_framebuf_size{ 0, 0 };

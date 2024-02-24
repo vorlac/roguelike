@@ -255,13 +255,11 @@ namespace rl::ui {
 
         if (m_button_panel != nullptr)
             m_button_panel->hide();
-
-        auto&& context{ m_renderer->context() };
         const ds::dims result{ Widget::preferred_size() };
-
         if (m_button_panel != nullptr)
             m_button_panel->show();
 
+        auto&& context{ m_renderer->context() };
         nvg::font_size(context, m_theme->dialog_title_font_size);
         nvg::font_face(context, m_theme->dialog_title_font_name.data());
 
@@ -291,14 +289,13 @@ namespace rl::ui {
             m_button_panel->hide();
 
             Widget::perform_layout();
-            for (auto bp_child : m_button_panel->children())
+            for (const auto bp_child : m_button_panel->children())
             {
                 bp_child->set_fixed_size({ 22.0f, 22.0f });
                 bp_child->set_font_size(15.0f);
             }
 
             m_button_panel->show();
-
             m_button_panel->set_size(ds::dims{ this->width(), 22.0f });
             m_button_panel->set_position(ds::point{
                 this->width() - (m_button_panel->preferred_size().width + 5.0f),

@@ -38,8 +38,8 @@ namespace rl::ui {
 
         using refcounted::operator=;
 
-        bool show();
-        bool hide();
+        void show();
+        void hide();
         bool visible() const;
         bool visible_recursive() const;
         bool has_font_size() const;
@@ -79,11 +79,6 @@ namespace rl::ui {
         const std::vector<Widget*>& children() const;
         const std::string& tooltip() const;
 
-        void request_focus();
-        void remove_child_at(i32 index);
-        void remove_child(const Widget* widget);
-        void add_child(Widget* widget);
-
         void set_parent(Widget* parent);
         void set_layout(Layout* layout);
         void set_position(const ds::point<f32>& pos);
@@ -93,13 +88,18 @@ namespace rl::ui {
         void set_fixed_size(const ds::dims<f32>& fixed_size);
         void set_fixed_width(f32 width);
         void set_fixed_height(f32 height);
-        void set_visible(bool visible);  // virtual?
+        virtual void set_visible(bool visible);
         void set_enabled(bool enabled);
         void set_focused(bool focused);
         void set_tooltip(const std::string& tooltip);
         void set_font_size(f32 font_size);
         void set_icon_extra_scale(f32 scale);
         void set_cursor(Mouse::Cursor::ID cursor);
+
+        void request_focus();
+        void remove_child_at(i32 index);
+        void remove_child(const Widget* widget);
+        virtual void add_child(Widget* widget);
 
     public:
         // TODO: get rid of this

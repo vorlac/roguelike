@@ -5,6 +5,7 @@
 #include "core/mouse.hpp"
 #include "core/ui/canvas.hpp"
 #include "core/ui/popup.hpp"
+#include "graphics/vg/nanovg_state.hpp"
 #include "utils/io.hpp"
 #include "utils/logging.hpp"
 #include "utils/math.hpp"
@@ -25,7 +26,6 @@ namespace rl::ui {
 
         Widget::set_theme(new Theme{ nvg_renderer->context() });
         this->set_visible(true);
-        this->on_mouse_move({}, {});
 
         m_last_interaction = m_timer.elapsed();
     }
@@ -144,7 +144,7 @@ namespace rl::ui {
 
     bool Canvas::redraw()
     {
-        m_redraw |= true;
+        m_redraw = true;
         return true;
     }
 
@@ -156,12 +156,17 @@ namespace rl::ui {
 
     bool Canvas::draw_all()
     {
-        bool ret = true;
-        ret &= this->draw_setup();
-        ret &= this->draw_contents();
-        ret &= this->draw_widgets();
-        ret &= this->draw_teardown();
-        return ret;
+        if (m_redraw)
+        {
+            m_redraw = false;
+            this->draw_setup();
+            this->draw_contents();
+            this->draw_widgets();
+            this->draw_teardown();
+            return true;
+        }
+
+        return false;
     }
 
     void Canvas::set_visible(const bool visible)
@@ -286,17 +291,14 @@ namespace rl::ui {
 
             focus_widget->on_focus_lost();
         }
-
         m_focus_path.clear();
 
-        const Dialog* dialog{ nullptr };
+        const Widget* dialog{ nullptr };
         while (widget != nullptr)
         {
             m_focus_path.push_back(widget);
-
-            const Dialog* as_dialog{ dynamic_cast<Dialog*>(widget) };
-            if (as_dialog != nullptr)
-                dialog = as_dialog;
+            if (dynamic_cast<Dialog*>(widget) != nullptr)
+                dialog = widget;
 
             widget = widget->parent();
         }
@@ -384,10 +386,49 @@ namespace rl::ui {
         });
 
         this->perform_layout();
-        return this->redraw();
+        if (m_resize_callback != nullptr)
+            m_resize_callback(m_size);
+
+        this->redraw();
+        // this->draw_all();
+        return true;
     }
 
-    bool Canvas::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb)
+    bool Canvas::on_mouse_move_event(const Mouse& mouse, const Keyboard& kb)
+    {
+        const ds::point mouse_pos{ mouse.pos() };
+        m_last_interaction = m_timer.elapsed();
+
+        scoped_logger(log_level::trace, "move_pos={}", mouse.pos());
+        const ds::point scaled_pos{ mouse_pos / m_pixel_ratio };
+        // pnt -= { 1.0f, 2.0f };
+
+        bool handled{ false };
+        if (m_drag_active)
+        {
+            LocalTransform transform{ m_drag_widget->parent() };
+            handled = m_drag_widget->on_mouse_drag(mouse, kb);
+        }
+        else
+        {
+            const Widget* widget{ this->find_widget(scaled_pos) };
+            if (widget != nullptr && widget->cursor() != m_cursor)
+            {
+                m_cursor = widget->cursor();
+                SDL3::SDL_Cursor* widget_cursor{ m_cursors[m_cursor] };
+                runtime_assert(widget_cursor != nullptr, "invalid cursor");
+                SDL3::SDL_SetCursor(widget_cursor);
+            }
+        }
+
+        if (!handled)
+            handled = Widget::on_mouse_move(mouse, kb);
+
+        m_redraw |= handled;
+        return false;
+    }
+
+    bool Canvas::on_mouse_button_pressed_event(const Mouse& mouse, const Keyboard& kb)
     {
         scoped_log("btn_pressed={}", mouse.button_pressed());
         const ds::point mouse_pos{ mouse.pos() };
@@ -395,11 +436,10 @@ namespace rl::ui {
         m_last_interaction = m_timer.elapsed();
         if (m_focus_path.size() > 1)
         {
-            const Widget* w{ m_focus_path[m_focus_path.size() - 2] };
-            const auto dialog{ dynamic_cast<const Dialog*>(w) };
+            const Dialog* dialog{ dynamic_cast<Dialog*>(m_focus_path[m_focus_path.size() - 2]) };
             if (dialog != nullptr && dialog->modal())
                 if (!dialog->contains(mouse_pos))
-                    return true;
+                    return false;
         }
 
         const auto drop_widget{ this->find_widget(mouse_pos) };
@@ -427,7 +467,7 @@ namespace rl::ui {
         return false;
     }
 
-    bool Canvas::on_mouse_button_released(const Mouse& mouse, const Keyboard& kb)
+    bool Canvas::on_mouse_button_released_event(const Mouse& mouse, const Keyboard& kb)
     {
         scoped_log("btn={}", mouse.button_released());
 
@@ -436,8 +476,7 @@ namespace rl::ui {
 
         if (m_focus_path.size() > 1)
         {
-            const Widget* w{ m_focus_path[m_focus_path.size() - 2] };
-            const auto dialog{ dynamic_cast<const Dialog*>(w) };
+            const Dialog* dialog{ dynamic_cast<Dialog*>(m_focus_path[m_focus_path.size() - 2]) };
             if (dialog != nullptr && dialog->modal())
                 if (!dialog->contains(mouse_pos))
                     return true;
@@ -445,9 +484,12 @@ namespace rl::ui {
 
         const Widget* drop_widget{ this->find_widget(mouse_pos) };
         if (m_drag_active && drop_widget != m_drag_widget)
+        {
+            LocalTransform transform{ m_drag_widget->parent() };
             m_redraw |= m_drag_widget->on_mouse_button_released(mouse, kb);
+        }
 
-        if (m_drag_active && drop_widget != nullptr && m_cursor != drop_widget->cursor())
+        if (drop_widget != nullptr && m_cursor != drop_widget->cursor())
         {
             m_cursor = drop_widget->cursor();
             SDL3::SDL_Cursor* widget_cursor{ m_cursors[m_cursor] };
@@ -466,59 +508,14 @@ namespace rl::ui {
         return false;
     }
 
-    bool Canvas::on_mouse_drag(const Mouse& mouse, const Keyboard& kb)
-    {
-        scoped_logger(log_level::debug, "drag_pos={}", mouse.pos());
-        if (m_drag_active && mouse.is_button_held(Mouse::Button::Left))
-        {
-            m_pos += mouse.pos_delta();
-            m_pos.x = std::max(m_pos.x, 0.0f);
-            m_pos.y = std::max(m_pos.y, 0.0f);
-
-            const auto relative_size{ this->parent()->size() - m_size };
-            m_pos.x = std::min(m_pos.x, relative_size.width);
-            m_pos.y = std::min(m_pos.y, relative_size.height);
-
-            return true;
-        }
-
-        return false;
-    }
-
-    bool Canvas::on_mouse_move(const Mouse& mouse, const Keyboard& kb)
-    {
-        const ds::point mouse_pos{ mouse.pos() };
-        m_last_interaction = m_timer.elapsed();
-
-        scoped_logger(log_level::trace, "move_pos={}", mouse.pos());
-        const ds::point pnt{ mouse_pos / m_pixel_ratio };
-
-        if (m_drag_active)
-            m_drag_widget->on_mouse_drag(mouse, kb);
-        else
-        {
-            const Widget* widget{ this->find_widget(pnt) };
-            if (widget != nullptr && widget->cursor() != m_cursor)
-            {
-                m_cursor = widget->cursor();
-                SDL3::SDL_Cursor* widget_cursor{ m_cursors[m_cursor] };
-                runtime_assert(widget_cursor != nullptr, "invalid cursor");
-                SDL3::SDL_SetCursor(widget_cursor);
-            }
-        }
-
-        m_redraw |= Widget::on_mouse_move(mouse, kb);
-        return false;
-    }
-
-    bool Canvas::on_mouse_scroll(const Mouse& mouse, const Keyboard& kb)
+    bool Canvas::on_mouse_scroll_event(const Mouse& mouse, const Keyboard& kb)
     {
         scoped_log("move_pos={}", mouse.wheel());
 
         m_last_interaction = m_timer.elapsed();
         if (m_focus_path.size() > 1)
         {
-            const auto dialog{ dynamic_cast<Dialog*>(m_focus_path[m_focus_path.size() - 2]) };
+            const Dialog* dialog{ dynamic_cast<Dialog*>(m_focus_path[m_focus_path.size() - 2]) };
             if (dialog != nullptr && dialog->modal())
                 if (!dialog->contains(mouse.pos()))
                     return true;
@@ -526,18 +523,6 @@ namespace rl::ui {
 
         m_redraw |= Widget::on_mouse_scroll(mouse, kb);
         return false;
-    }
-
-    bool Canvas::on_focus_gained()
-    {
-        scoped_log();
-        return Widget::on_focus_gained();
-    }
-
-    bool Canvas::on_focus_lost()
-    {
-        scoped_log();
-        return Widget::on_focus_lost();
     }
 
     bool Canvas::on_key_pressed(const Keyboard& kb)

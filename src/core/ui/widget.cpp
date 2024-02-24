@@ -199,16 +199,14 @@ namespace rl::ui {
         m_visible = visible;
     }
 
-    bool Widget::show()
+    void Widget::show()
     {
         this->set_visible(true);
-        return true;
     }
 
-    bool Widget::hide()
+    void Widget::hide()
     {
         this->set_visible(false);
-        return true;
     }
 
     bool Widget::visible_recursive() const
@@ -288,7 +286,7 @@ namespace rl::ui {
 
     Widget* Widget::find_widget(const ds::point<f32>& pt)
     {
-        scoped_trace(log_level::debug);
+        scoped_trace(log_level::info);
 
         LocalTransform transform{ this };
         const ds::point local_mouse_pos{ pt - LocalTransform::absolute_pos };
@@ -305,18 +303,16 @@ namespace rl::ui {
 
     const Widget* Widget::find_widget(const ds::point<f32>& pt) const
     {
-        scoped_trace(log_level::debug);
+        scoped_trace(log_level::info);
 
+        LocalTransform transform{ this };
+        const ds::point local_mouse_pos{ pt - LocalTransform::absolute_pos };
+        for (const auto child : std::ranges::reverse_view{ m_children })
         {
-            LocalTransform transform{ this };
-            const ds::point local_mouse_pos{ pt - LocalTransform::absolute_pos };
-            for (const auto child : std::ranges::reverse_view{ m_children })
-            {
-                if (!child->visible())
-                    continue;
-                if (child->contains(local_mouse_pos))
-                    return child->find_widget(local_mouse_pos);
-            }
+            if (!child->visible())
+                continue;
+            if (child->contains(local_mouse_pos))
+                return child->find_widget(local_mouse_pos);
         }
 
         return this->contains(pt) ? this : nullptr;
@@ -353,11 +349,10 @@ namespace rl::ui {
     bool Widget::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb)
     {
         scoped_log("btn={}", mouse.button_pressed());
-        bool handled{ false };
 
         LocalTransform transform{ this };
         const ds::point local_mouse_pos{ mouse.pos() - LocalTransform::absolute_pos };
-        for (const auto child : std::ranges::reverse_view{ m_children })
+        for (auto child : std::ranges::reverse_view{ m_children })
         {
             if (!child->visible())
                 continue;
@@ -366,30 +361,27 @@ namespace rl::ui {
             if (!child->on_mouse_button_pressed(mouse, kb))
                 continue;
 
-            diag_log("mouse press: handled={}", this->name());
+            diag_log("mouse press: handled={}", child->name());
             diag_log("mouse press: abs_mouse={}", mouse.pos());
             diag_log("mouse press: local_mouse={}", local_mouse_pos);
             diag_log("mouse press: rel_pos={}", ds::rect{ m_pos, m_size });
             diag_log("mouse press: abs_pos={}", ds::rect{ this->abs_position(), m_size });
-
-            handled = true;
-            break;
+            return true;
         }
 
-        if (!m_focused && !handled && mouse.is_button_pressed(Mouse::Button::Left))
+        if (!m_focused && mouse.is_button_pressed(Mouse::Button::Left))
             this->request_focus();
 
-        return handled;
+        return false;
     }
 
     bool Widget::on_mouse_button_released(const Mouse& mouse, const Keyboard& kb)
     {
         scoped_log("btn={}", mouse.button_released());
-        bool handled{ false };
 
         LocalTransform transform{ this };
         const ds::point local_mouse_pos{ mouse.pos() - LocalTransform::absolute_pos };
-        for (const auto child : std::ranges::reverse_view{ m_children })
+        for (auto child : std::ranges::reverse_view{ m_children })
         {
             if (!child->visible())
                 continue;
@@ -402,17 +394,15 @@ namespace rl::ui {
             diag_log("mouse rel: mouse_pos={}", mouse.pos());
             diag_log("mouse rel: rel_pos={}", ds::rect{ m_pos, m_size });
             diag_log("mouse rel: abs_pos={}", ds::rect{ this->abs_position(), m_size });
-            handled = true;
-            break;
+            return true;
         }
 
-        return handled;
+        return false;
     }
 
     bool Widget::on_mouse_scroll(const Mouse& mouse, const Keyboard& kb)
     {
         scoped_logger(log_level::trace, "pos={} wheel={}", mouse.pos(), mouse.wheel());
-        bool handled{ false };
 
         LocalTransform transform{ this };
         const ds::point local_mouse_pos{ mouse.pos() - LocalTransform::absolute_pos };
@@ -430,11 +420,10 @@ namespace rl::ui {
             diag_log("mouse scroll: local_mouse_pos={}", local_mouse_pos);
             diag_log("mouse scroll: rel_pos={}", ds::rect{ m_pos, m_size });
             diag_log("mouse scroll: abs_pos={}", ds::rect{ this->abs_position(), m_size });
-            handled = true;
-            break;
+            return true;
         }
 
-        return handled;
+        return false;
     }
 
     bool Widget::on_mouse_move(const Mouse& mouse, const Keyboard& kb)
@@ -512,7 +501,7 @@ namespace rl::ui {
     void Widget::remove_child(const Widget* widget)
     {
         scoped_log("{}", widget->name());
-        const size_t child_count{ m_children.size() };
+        const std::size_t child_count{ m_children.size() };
         std::erase(m_children, widget);
 
         runtime_assert(m_children.size() != child_count, "didn't find widget to delete");
@@ -525,7 +514,7 @@ namespace rl::ui {
         runtime_assert(index >= 0 && index < static_cast<i32>(m_children.size()),
                        "widget child remove idx out of bounds");
 
-        const Widget* widget{ m_children[static_cast<std::size_t>(index)] };
+        Widget* widget{ m_children[static_cast<std::size_t>(index)] };
         m_children.erase(m_children.begin() + index);
         widget->release_ref();
     }
@@ -639,6 +628,7 @@ namespace rl::ui {
     Dialog* Widget::dialog()
     {
         scoped_trace(log_level::trace);
+
         Widget* widget{ this };
         while (widget != nullptr)
         {

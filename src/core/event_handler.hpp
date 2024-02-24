@@ -58,7 +58,7 @@ namespace rl {
                     case Keyboard::Event::KeyDown:
                     {
                         window->keyboard_key_pressed_event_callback(e);
-                        const auto key = static_cast<Keyboard::Scancode::ID>(e.key.keysym.scancode);
+                        const Keyboard::Scancode::ID key{ e.key.keysym.scancode };
                         if (key == Keyboard::Scancode::Escape) [[unlikely]]
                             m_quit = true;
                         break;
@@ -66,12 +66,12 @@ namespace rl {
                     case Keyboard::Event::KeyUp:
                         window->keyboard_key_released_event_callback(e);
                         break;
-                    case Keyboard::Event::TextEditing:
-                        window->keyboard_char_event_callback(e);
-                        break;
-                    case Keyboard::Event::TextInput:
-                        window->keyboard_char_event_callback(e);
-                        break;
+                    // case Keyboard::Event::TextEditing:
+                    //     window->keyboard_char_event_callback(e);
+                    //     break;
+                    // case Keyboard::Event::TextInput:
+                    //     window->keyboard_char_event_callback(e);
+                    //     break;
 
                     // MainWindow events
                     case MainWindow::Event::Shown:
