@@ -201,45 +201,16 @@ namespace rl::ui {
         m_update_callbacks.push_back(refresh_func);
     }
 
-    // Return the component format underlying the screen
     ComponentFormat Canvas::component_format()
     {
-        // Signed and unsigned integer formats
-        // ====================================
-        // UInt8  = (uint8_t) VariableType::UInt8,
-        // Int8   = (uint8_t) VariableType::Int8,
-        // UInt16 = (uint16_t) VariableType::UInt16,
-        // Int16  = (uint16_t) VariableType::Int16,
-        // UInt32 = (uint32_t) VariableType::UInt32,
-        // Int32  = (uint32_t) VariableType::Int32,
-
-        // Floating point formats
-        // ====================================
-        // Float16  = (uint16_t) VariableType::Float16,
-        // Float32  = (uint32_t) VariableType::Float32
+        // Return the component format underlying the screen
         runtime_assert(false, "not implemented");
         return 0;
     }
 
-    // Return the pixel format underlying the screen
     PixelFormat Canvas::pixel_format()
     {
-        // Single-channel bitmap
-        //   R,
-        // Two-channel bitmap
-        //   RA,
-        // RGB bitmap
-        //   RGB,
-        // RGB bitmap + alpha channel
-        //   RGBA,
-        // BGR bitmap
-        //   BGR,
-        // BGR bitmap + alpha channel
-        //   BGRA,
-        // Depth map
-        //   Depth,
-        // Combined depth + stencil map
-        //   DepthStencil
+        // Return the pixel format underlying the screen
         runtime_assert(false, "not implemented");
         return 0;
     }
@@ -293,12 +264,13 @@ namespace rl::ui {
         }
         m_focus_path.clear();
 
-        const Widget* dialog{ nullptr };
+        Dialog* dialog{ nullptr };
         while (widget != nullptr)
         {
             m_focus_path.push_back(widget);
-            if (dynamic_cast<Dialog*>(widget) != nullptr)
-                dialog = widget;
+            Dialog* dlg{ dynamic_cast<Dialog*>(widget) };
+            if (dlg != nullptr)
+                dialog = dlg;
 
             widget = widget->parent();
         }
@@ -306,8 +278,9 @@ namespace rl::ui {
         for (const auto focus_widget : std::ranges::reverse_view{ m_focus_path })
             focus_widget->on_focus_gained();
 
-        // if (dialog != nullptr)
-        //     this->move_dialog_to_front(dialog);
+        // TODO: test code below, used to crash
+        if (dialog != nullptr)
+            this->move_dialog_to_front(dialog);
     }
 
     void Canvas::move_dialog_to_front(Dialog* dialog)
@@ -327,10 +300,10 @@ namespace rl::ui {
 
             for (size_t idx = 0; idx < m_children.size(); ++idx)
             {
-                const auto popup_wnd{ dynamic_cast<Popup*>(m_children[idx]) };
-                if (popup_wnd != nullptr && popup_wnd->parent_window() == dialog && idx < base_idx)
+                const auto popup{ dynamic_cast<Popup*>(m_children[idx]) };
+                if (popup != nullptr && popup->parent_window() == dialog && idx < base_idx)
                 {
-                    this->move_dialog_to_front(dialog);
+                    this->move_dialog_to_front(popup);
                     changed = true;
                     break;
                 }
@@ -390,7 +363,6 @@ namespace rl::ui {
             m_resize_callback(m_size);
 
         this->redraw();
-        // this->draw_all();
         return true;
     }
 

@@ -116,7 +116,7 @@ namespace rl {
 
     nvg::PaintStyle NVGRenderer::create_box_gradient(
         ds::rect<f32>&& rect, const f32 corner_radius, const f32 outer_blur,
-        ds::color<f32>&& inner_color, ds::color<f32>&& outer_gradient_color) const
+        const ds::color<f32>& inner_color, const ds::color<f32>& outer_gradient_color) const
     {
         // Creates and returns a box gradient.
         // Box gradient is a feathered rounded rectangle, it is useful for rendering drop shadows or
@@ -126,9 +126,7 @@ namespace rl {
         // color and ocol the outer color of the gradient. The gradient is transformed by the
         // current transform when it is passed to FillPaint() or StrokePaint().
         return nvg::box_gradient(m_nvg_context.get(), std::forward<ds::rect<f32>>(rect),
-                                 corner_radius, outer_blur,
-                                 std::forward<ds::color<f32>>(inner_color),
-                                 std::forward<ds::color<f32>>(outer_gradient_color));
+                                 corner_radius, outer_blur, inner_color, outer_gradient_color);
     }
 
     ui::Font::ID NVGRenderer::load_font(const std::string_view& font_name,

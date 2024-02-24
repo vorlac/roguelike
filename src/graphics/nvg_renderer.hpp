@@ -35,9 +35,9 @@ namespace rl {
         void save_state() const;
         void restore_state() const;
 
-        nvg::PaintStyle create_box_gradient(ds::rect<f32>&& rect, f32 box_corner_radius,
-                                            f32 outer_blur, ds::color<f32>&& inner_color,
-                                            ds::color<f32>&& outer_gradient_color) const;
+        nvg::PaintStyle create_box_gradient(ds::rect<f32>&& rect, f32 corner_radius, f32 outer_blur,
+                                            const ds::color<f32>& inner_color,
+                                            const ds::color<f32>& outer_gradient_color) const;
 
         void load_fonts(const std::vector<FontInfo>& fonts);
         void set_text_properties(const std::string_view& font_name, f32 font_size,

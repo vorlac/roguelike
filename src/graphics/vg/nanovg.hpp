@@ -368,6 +368,7 @@ namespace rl::nvg {
 
     // Sets current fill style to a paint, which can be a one of the gradients or a pattern.
     void fill_paint(Context* ctx, const PaintStyle& paint);
+    void fill_paint(Context* ctx, PaintStyle&& paint);
 
     // Sets the miter limit of the stroke style.
     // Miter limit controls when a sharp corner is beveled.
@@ -537,8 +538,8 @@ namespace rl::nvg {
     PaintStyle box_gradient(Context* ctx, float x, float y, float w, float h, float r, float f,
                             const ds::color<f32>& icol, const ds::color<f32>& ocol);
 
-    PaintStyle box_gradient(Context* ctx, const ds::rect<f32>& rect, f32 corner_radius,
-                            f32 feather_blur, const ds::color<f32>& inner_color,
+    PaintStyle box_gradient(Context* ctx, ds::rect<f32>&& rect, f32 corner_radius, f32 feather_blur,
+                            const ds::color<f32>& inner_color,
                             const ds::color<f32>& outer_gradient_color);
 
     // Creates and returns a radial gradient. Parameters (cx,cy) specify the center, inr and

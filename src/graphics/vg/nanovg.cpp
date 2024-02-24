@@ -2050,9 +2050,18 @@ namespace rl::nvg {
         detail::set_paint_color(&state->fill, color);
     }
 
+    void fill_paint(Context* ctx, PaintStyle&& paint)
+    {
+        State* state{ detail::get_state(ctx) };
+        state->fill = std::move(paint);
+        transform_multiply(state->fill.xform, state->xform);
+    }
+
+    // TODO: clean up
+    // near identical clone of above
     void fill_paint(Context* ctx, const PaintStyle& paint)
     {
-        State* state = detail::get_state(ctx);
+        State* state{ detail::get_state(ctx) };
         state->fill = paint;
         transform_multiply(state->fill.xform, state->xform);
     }
@@ -2208,7 +2217,7 @@ namespace rl::nvg {
         return p;
     }
 
-    PaintStyle box_gradient(Context* ctx, const ds::rect<f32>& rect, const f32 corner_radius,
+    PaintStyle box_gradient(Context* ctx, ds::rect<f32>&& rect, const f32 corner_radius,
                             const f32 feather_blur, const ds::color<f32>& inner_color,
                             const ds::color<f32>& outer_gradient_color)
     {
