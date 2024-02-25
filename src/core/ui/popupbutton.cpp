@@ -1,7 +1,9 @@
 #include "core/ui/canvas.hpp"
 #include "core/ui/popupbutton.hpp"
 #include "core/ui/theme.hpp"
+#include "graphics/vg/nanovg_state.hpp"
 #include "utils/logging.hpp"
+#include "utils/math.hpp"
 #include "utils/unicode.hpp"
 
 namespace rl::ui {
@@ -18,13 +20,12 @@ namespace rl::ui {
             this->canvas(),
             this->dialog(),
         };
-
-        m_popup->set_visible(false);
-        // TODO: why?.. necessary?
-        m_popup->set_size(ds::dims{
+        m_popup->set_size({
             750.0f,
             300.0f,
         });
+        m_popup->set_visible(false);
+        // TODO: why?.. necessary?
     }
 
     void PopupButton::set_chevron_icon(const Icon::ID icon)
@@ -69,22 +70,24 @@ namespace rl::ui {
             m_pressed = false;
 
         m_popup->set_visible(m_pressed);
+
         Button::draw();
 
         if (m_chevron_icon != Icon::None)
         {
+            auto&& context{ m_renderer->context() };
             const f32 text_size{ m_font_size < 0.0f ? m_theme->button_font_size : m_font_size };
             const std::string icon{ utf8(m_chevron_icon) };
-            const ds::color<f32>& text_color{ m_text_color.a == 0.0f ? m_theme->text_color
-                                                                     : m_text_color };
-            auto&& context{ m_renderer->context() };
-            font_face(context, Font::Name::Icons);
+            const ds::color<f32>& text_color{ math::is_equal(m_text_color.a, 0.0f)
+                                                  ? m_theme->text_color
+                                                  : m_text_color };
+
+            nvg::font_face(context, Font::Name::Icons);
             nvg::font_size(context, text_size * this->icon_scale());
             nvg::fill_color(context, m_enabled ? text_color : m_theme->disabled_text_color);
             nvg::text_align(context, nvg::Align::NVGAlignLeft | nvg::Align::NVGAlignMiddle);
 
-            const f32 icon_width{ nvg::text_bounds(context, 0.0f, 0.0f, icon.data(), nullptr,
-                                                   nullptr) };
+            const f32 icon_width{ nvg::text_bounds(context, 0.0f, 0.0f, icon.data()) };
 
             ds::point icon_pos{ 0.0f, m_pos.y + m_size.height * 0.5f - 1.0f };
             if (m_popup->side() == Popup::Side::Right)
@@ -92,7 +95,7 @@ namespace rl::ui {
             else
                 icon_pos.x = m_pos.x + 8.0f;
 
-            nvg::text(context, icon_pos.x, icon_pos.y, icon.data(), nullptr);
+            nvg::text(context, icon_pos.x, icon_pos.y, icon.data());
         }
     }
 
@@ -104,6 +107,7 @@ namespace rl::ui {
         const Dialog* parent_dialog{ this->dialog() };
         if (parent_dialog != nullptr)
         {
+            LocalTransform transform{ this };
             const f32 anchor_size{ m_popup->anchor_size() };
             const f32 pos_y{ m_pos.y - parent_dialog->position().y + (m_size.height / 2.0f) };
             if (m_popup->side() == Popup::Side::Right)
@@ -112,6 +116,7 @@ namespace rl::ui {
                     parent_dialog->width() + anchor_size,
                     pos_y,
                 };
+
                 m_popup->set_anchor_pos(anchor_pos);
             }
             else

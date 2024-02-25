@@ -18,6 +18,8 @@
   #include <utility>
   #include <xstring>
 
+  #include <fmt/color.h>
+  #include <fmt/compile.h>
   #include <fmt/core.h>
   #include <spdlog/common.h>
   #include <spdlog/pattern_formatter.h>
@@ -27,6 +29,7 @@
   #include <spdlog/sinks/stdout_color_sinks.h>
   #include <spdlog/spdlog.h>
 
+  #include "ds/color.hpp"
   #include "utils/fs.hpp"
   #include "utils/numeric.hpp"
 
@@ -103,7 +106,8 @@ namespace rl {
                 fs::to_absolute("../../../log/roguelike_trace.log"), ScopedLogger::MAX_LOGFILE_SIZE,
                 ScopedLogger::MAX_LOGFILE_COUNT, true);
 
-            stdout_sink->set_pattern("[%^%L%$] %v");
+            // stdout_sink->set_pattern("[%^%L%$] %v");
+            stdout_sink->set_pattern("[%L] %^%v%$");
             stdout_sink->set_level(STD_OUT_LEVEL);
 
             logfile_sink->set_pattern("%^[%I:%M:%S.%e %p] [%L]%$ %v");

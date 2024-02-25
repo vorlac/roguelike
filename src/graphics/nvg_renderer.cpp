@@ -24,7 +24,6 @@ namespace rl {
 
             // TODO: look into why this returns an error code?..
             // glGetBooleanv(GL_RGBA_FLOAT_MODE_ARB, &float_mode);
-
             glGetFramebufferAttachmentParameteriv(
                 GL_DRAW_FRAMEBUFFER, GL_DEPTH, GL_FRAMEBUFFER_ATTACHMENT_DEPTH_SIZE, &depth_bits);
 

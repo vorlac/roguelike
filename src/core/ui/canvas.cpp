@@ -201,35 +201,35 @@ namespace rl::ui {
         m_update_callbacks.push_back(refresh_func);
     }
 
-    ComponentFormat Canvas::component_format()
+    ComponentFormat Canvas::component_format() const
     {
         // Return the component format underlying the screen
         runtime_assert(false, "not implemented");
         return 0;
     }
 
-    PixelFormat Canvas::pixel_format()
+    PixelFormat Canvas::pixel_format() const
     {
         // Return the pixel format underlying the screen
         runtime_assert(false, "not implemented");
         return 0;
     }
 
-    bool Canvas::has_depth_buffer()
+    bool Canvas::has_depth_buffer() const
     {
         // Does the framebuffer have a depth buffer
         // TODO: call opengl to confirm for debug builds
         return true;
     }
 
-    bool Canvas::has_stencil_buffer()
+    bool Canvas::has_stencil_buffer() const
     {
         // Does the framebuffer have a stencil buffer
         // TODO: call opengl to confirm for debug builds
         return true;
     }
 
-    bool Canvas::has_float_buffer()
+    bool Canvas::has_float_buffer() const
     {
         // Does the framebuffer use a floating point representation
         // TODO: call opengl to confirm for debug builds
@@ -241,7 +241,7 @@ namespace rl::ui {
         return m_title;
     }
 
-    bool Canvas::tooltip_fade_in_progress() const
+    bool Canvas::tooltip_fade_in_progress()
     {
         // Is a tooltip currently fading in?
         const f32 elapsed{ m_timer.elapsed() - m_last_interaction };
@@ -289,8 +289,8 @@ namespace rl::ui {
         m_children.erase(removal_iterator, m_children.end());
         m_children.push_back(dialog);
 
-        bool changed{ true };
-        while (changed)
+        bool changed{ false };
+        do
         {
             changed = false;
             size_t base_idx{ 0 };
@@ -301,7 +301,7 @@ namespace rl::ui {
             for (size_t idx = 0; idx < m_children.size(); ++idx)
             {
                 const auto popup{ dynamic_cast<Popup*>(m_children[idx]) };
-                if (popup != nullptr && popup->parent_window() == dialog && idx < base_idx)
+                if (popup != nullptr && popup->parent_dialog() == dialog && idx < base_idx)
                 {
                     this->move_dialog_to_front(popup);
                     changed = true;
@@ -309,6 +309,7 @@ namespace rl::ui {
                 }
             }
         }
+        while (changed);
     }
 
     void Canvas::dispose_dialog(const Dialog* dialog)

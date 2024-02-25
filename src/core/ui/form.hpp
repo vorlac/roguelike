@@ -16,7 +16,7 @@
 
 namespace rl::ui {
     namespace detail {
-        template <typename T, typename sfinae = std::true_type>
+        template <typename T, typename U = std::true_type>
         class FormWidget
         {
         };
@@ -37,7 +37,7 @@ namespace rl::ui {
             m_dialog = new Dialog{ m_ui_canvas, title };
             m_dialog->set_layout(new ui::BoxLayout{ Orientation::Horizontal });
 
-            m_layout = new AdvancedGridLayout{ { 10, 0, 10, 0 }, {} };
+            m_layout = new AdvancedGridLayout{ { 0, 0, 0, 0 }, {} };
             m_layout->set_margin(10.0f);
 
             m_scroll = new VScrollPanel{ m_dialog };
@@ -234,7 +234,7 @@ namespace rl::ui {
                 return this->checked();
             }
 
-            virtual const std::string_view name() const override
+            virtual std::string_view name() const override
             {
                 return "class rl::ui::FormWidget[CheckBox]";
             }
@@ -262,7 +262,7 @@ namespace rl::ui {
 
             void set_callback(const std::function<void(const T&)>& cb)
             {
-                ComboBox::set_callback([cb](i32 v) {
+                ComboBox::set_callback([cb](u32 v) {
                     cb(static_cast<T>(v));
                 });
             }
@@ -272,7 +272,7 @@ namespace rl::ui {
                 this->set_enabled(e);
             }
 
-            virtual const std::string_view name() const override
+            virtual std::string_view name() const override
             {
                 return Widget::name();  //"class rl::ui::FormWidget[ComboBox]";
             }
@@ -288,7 +288,7 @@ namespace rl::ui {
                 this->set_alignment(TextBox::Alignment::Right);
             }
 
-            virtual const std::string_view name() const override
+            virtual std::string_view name() const override
             {
                 return Widget::name();  //"class rl::ui::FormWidget[IntBox]";
             }
@@ -304,7 +304,8 @@ namespace rl::ui {
                 this->set_alignment(TextBox::Alignment::Right);
             }
 
-            [[nodiscard]] virtual const std::string_view name() const override
+            [[nodiscard]]
+            virtual std::string_view name() const override
             {
                 return Widget::name();  //"class rl::ui::FormWidget[FloatBox]";
             }
@@ -328,7 +329,7 @@ namespace rl::ui {
                 });
             }
 
-            virtual const std::string_view name() const override
+            virtual std::string_view name() const override
             {
                 return Widget::name();  //"class rl::ui::FormWidget[TextBox]";
             }

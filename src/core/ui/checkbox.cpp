@@ -5,6 +5,7 @@
 #include "ds/color.hpp"
 #include "ds/dims.hpp"
 #include "graphics/vg/nanovg.hpp"
+#include "graphics/vg/nanovg_state.hpp"
 #include "utils/unicode.hpp"
 
 namespace rl::ui {
@@ -85,7 +86,8 @@ namespace rl::ui {
 
         if (m_pushed)
         {
-            if (this->contains(mouse.pos()))
+            const ds::point local_mouse_pos{ mouse.pos() - LocalTransform::absolute_pos };
+            if (this->contains(local_mouse_pos))
             {
                 m_checked = !m_checked;
                 if (m_toggled_callback != nullptr)

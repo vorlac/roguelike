@@ -27,14 +27,14 @@ namespace rl::ui {
     {
         // Return the current scroll amount as a value between 0 and 1. 0 means
         // scrolled to the top and 1 to the bottom.
-        return m_scroll;
+        return m_scrollbar_pos;
     }
 
     void VScrollPanel::set_scroll(const f32 scroll)
     {
         // Set the scroll amount to a value between 0 and 1. 0 means scrolled to
         // the top and 1 to the bottom.
-        m_scroll = scroll;
+        m_scrollbar_pos = scroll;
     }
 
     Widget* VScrollPanel::container() const
@@ -56,7 +56,7 @@ namespace rl::ui {
         if (m_cont_prefsize.height > m_size.height)
         {
             m_container->set_position(
-                { 0.0f, -m_scroll * (m_cont_prefsize.height - m_size.height) });
+                { 0.0f, -m_scrollbar_pos * (m_cont_prefsize.height - m_size.height) });
             m_container->set_size(
                 { m_size.width - (Margin + ScrollbarWidth), m_cont_prefsize.height });
         }
@@ -64,7 +64,7 @@ namespace rl::ui {
         {
             m_container->set_position({ 0.0f, 0.0f });
             m_container->set_size(m_size);
-            m_scroll = 0;
+            m_scrollbar_pos = 0;
         }
 
         m_container->perform_layout();
@@ -89,8 +89,8 @@ namespace rl::ui {
         {
             const float scrollh{ m_size.height *
                                  std::min(1.0f, m_size.height / m_cont_prefsize.height) };
-            m_scroll = std::max(
-                0.0f, std::min(1.0f, m_scroll +
+            m_scrollbar_pos = std::max(
+                0.0f, std::min(1.0f, m_scrollbar_pos +
                                          mouse_delta.y / (m_size.height - (Margin * 2) - scrollh)));
 
             m_update_layout = true;
@@ -125,7 +125,7 @@ namespace rl::ui {
             const f32 scrollh{ m_size.height *
                                std::min(1.0f, m_size.height / m_cont_prefsize.height) };
             const f32 start{ m_pos.y + Margin + ScrollbarBorder +
-                             (m_size.height - ScrollbarWidth - scrollh) * m_scroll };
+                             (m_size.height - ScrollbarWidth - scrollh) * m_scrollbar_pos };
 
             f32 delta{ 0.0f };
             if (local_mouse_pos.y < start)
@@ -133,9 +133,9 @@ namespace rl::ui {
             else if (local_mouse_pos.y > start + scrollh)
                 delta = m_size.height / m_cont_prefsize.height;
 
-            m_scroll = std::max(0.0f, std::min(1.0f, m_scroll + delta * 0.98f));
+            m_scrollbar_pos = std::max(0.0f, std::min(1.0f, m_scrollbar_pos + delta * 0.98f));
             m_container->set_position(
-                { 0.0f, -m_scroll * (m_cont_prefsize.height - m_size.height) });
+                { 0.0f, -m_scrollbar_pos * (m_cont_prefsize.height - m_size.height) });
 
             m_prev_click_location = Component::ScrollBar;
             m_update_layout = true;
@@ -149,11 +149,10 @@ namespace rl::ui {
     {
         scoped_log();
 
-        LocalTransform transform{ this };
-        if (m_container->on_mouse_button_released(mouse, kb))
         {
-            diag_log("Mouse Released");
-            return true;
+            LocalTransform transform{ this };
+            if (m_container->on_mouse_button_released(mouse, kb))
+                return true;
         }
 
         return false;
@@ -168,12 +167,12 @@ namespace rl::ui {
 
         const f32 scroll_amount{ mouse.wheel_delta().y * m_size.height * 0.2f };
 
-        m_scroll = std::max(0.0f,
-                            std::min(1.0f, m_scroll + (scroll_amount / m_cont_prefsize.height)));
+        m_scrollbar_pos = std::max(
+            0.0f, std::min(1.0f, m_scrollbar_pos + (scroll_amount / m_cont_prefsize.height)));
 
         m_container->set_position({
             0.0f,
-            m_scroll * (m_cont_prefsize.height - m_size.height),
+            m_scrollbar_pos * (m_cont_prefsize.height - m_size.height),
         });
 
         {
@@ -194,7 +193,7 @@ namespace rl::ui {
 
         f32 y_offset{ 0.0f };
         if (m_cont_prefsize.height > m_size.height)
-            y_offset = -m_scroll * (m_cont_prefsize.height - m_size.height);
+            y_offset = -m_scrollbar_pos * (m_cont_prefsize.height - m_size.height);
 
         auto&& context{ m_renderer->context() };
         m_container->set_position(ds::point{ 0.0f, y_offset });
@@ -242,14 +241,14 @@ namespace rl::ui {
                 auto scrollbar_rect = ds::rect{
                     ds::point{ m_pos.x + m_size.width - (Margin + ScrollbarWidth) - OutlineSize,
                                m_pos.y + Margin +
-                                   (m_size.height - Margin * 2.0f - scrollh) * m_scroll -
+                                   (m_size.height - Margin * 2.0f - scrollh) * m_scrollbar_pos -
                                    OutlineSize },
                     ds::dims{ ScrollbarWidth, scrollh },
                 };
                 auto scrollbar_border_rect = ds::rect{
                     ds::point{ m_pos.x + m_size.width - (Margin + ScrollbarWidth) + OutlineSize,
                                m_pos.y + Margin + OutlineSize +
-                                   (m_size.height - Margin * 2.0f - scrollh) * m_scroll },
+                                   (m_size.height - Margin * 2.0f - scrollh) * m_scrollbar_pos },
                     ds::dims{ ScrollbarWidth - Margin / 2.0f, scrollh - Margin / 2.0f },
                 };
 

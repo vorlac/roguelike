@@ -21,56 +21,50 @@ namespace rl::ui {
     class Canvas final : public Widget
     {
     public:
-        Canvas(const ds::rect<f32>& rect, const Mouse& mouse, const Keyboard& kb,
-               const std::unique_ptr<NVGRenderer>& nvg_renderer);
+        explicit Canvas(const ds::rect<f32>& rect, const Mouse& mouse, const Keyboard& kb,
+                        const std::unique_ptr<NVGRenderer>& nvg_renderer);
+
         virtual ~Canvas() override;
 
+        bool draw_all();
         bool redraw();
         bool draw_widgets();
+        bool update() const;
+        bool draw_setup() const;
+        bool draw_contents() const;
+        bool draw_teardown() const;
 
-        virtual void set_visible(bool visible) override;
+        bool has_depth_buffer() const;
+        bool has_stencil_buffer() const;
+        bool has_float_buffer() const;
+        bool tooltip_fade_in_progress();
+
+        bool on_moved(const ds::point<f32>& pt);
+        bool on_resized(const ds::dims<f32>& size);
+        bool on_mouse_scroll_event(const Mouse& mouse, const Keyboard& kb);
+        bool on_mouse_button_pressed_event(const Mouse& mouse, const Keyboard& kb);
+        bool on_mouse_button_released_event(const Mouse& mouse, const Keyboard& kb);
+        bool on_mouse_move_event(const Mouse& mouse, const Keyboard& kb);
+
         void center_dialog(Dialog* dialog) const;
         void move_dialog_to_front(Dialog* dialog);
         void update_focus(Widget* widget);
         void dispose_dialog(const Dialog* dialog);
         void set_resize_callback(const std::function<void(ds::dims<f32>)>& callback);
         void add_update_callback(const std::function<void()>& refresh_func);
-        const std::function<void(ds::dims<f32>)>& resize_callback() const;
-
-        std::string title() const;
-        ds::dims<i32> frame_buffer_size() const;
-
-        static bool has_depth_buffer();
-        static bool has_stencil_buffer();
-        static bool has_float_buffer();
-        bool tooltip_fade_in_progress() const;
 
         using Widget::perform_layout;
-        static ComponentFormat component_format();
-        static PixelFormat pixel_format();
+        const std::function<void(ds::dims<f32>)>& resize_callback() const;
+        ds::dims<i32> frame_buffer_size() const;
+        ComponentFormat component_format() const;
+        PixelFormat pixel_format() const;
+        std::string title() const;
 
     public:
-        bool update() const;
-        bool draw_all();
-        bool draw_setup() const;
-        bool draw_contents() const;
-        bool draw_teardown() const;
-
-        bool on_moved(const ds::point<f32>& pt);
-        bool on_resized(const ds::dims<f32>& size);
-
+        virtual void set_visible(bool visible) override;
         virtual bool on_key_pressed(const Keyboard& kb) override;
         virtual bool on_key_released(const Keyboard& kb) override;
         virtual bool on_character_input(const Keyboard& kb) override;
-
-        bool on_mouse_scroll_event(const Mouse& mouse, const Keyboard& kb);
-        bool on_mouse_button_pressed_event(const Mouse& mouse, const Keyboard& kb);
-        bool on_mouse_button_released_event(const Mouse& mouse, const Keyboard& kb);
-        bool on_mouse_move_event(const Mouse& mouse, const Keyboard& kb);
-        // virtual bool on_mouse_drag(const Mouse& mouse, const Keyboard& kb) override;
-
-        // virtual bool on_focus_gained() override;
-        // virtual bool on_focus_lost() override;
 
     protected:
         ds::dims<i32> m_framebuf_size{ 0, 0 };

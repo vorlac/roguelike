@@ -97,6 +97,7 @@ namespace rl::ui {
         void set_cursor(Mouse::Cursor::ID cursor);
 
         void request_focus();
+        ds::rect<f32> bounding_rect() const;
         void remove_child_at(i32 index);
         void remove_child(const Widget* widget);
         virtual void add_child(Widget* widget);
@@ -134,11 +135,11 @@ namespace rl::ui {
         virtual ds::dims<f32> preferred_size() const;
 
     public:
-        virtual void draw_mouse_intersection(const ds::point<f32>& pt);
+        virtual bool draw_mouse_intersection(const ds::point<f32>& pt);
 
     protected:
         f32 icon_scale() const;
-        virtual const std::string_view name() const;
+        virtual std::string_view name() const;
 
     protected:
         Widget* m_parent{ nullptr };
@@ -162,7 +163,7 @@ namespace rl::ui {
         std::vector<Widget*> m_children{};
         std::string m_tooltip{};
 
-        mutable Timer<f32> m_timer{};
+        Timer<f32> m_timer{};
 
     private:
         constexpr static bool DiagnosticsEnabled{ false };

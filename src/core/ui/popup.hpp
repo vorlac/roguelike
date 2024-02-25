@@ -18,8 +18,8 @@ namespace rl::ui {
         f32 anchor_offset() const;
         f32 anchor_size() const;
         Side side() const;
-        Dialog* parent_window();
-        const Dialog* parent_window() const;
+        Dialog* parent_dialog();
+        const Dialog* parent_dialog() const;
         ds::point<f32> anchor_pos() const;
 
         void set_anchor_pos(ds::point<f32> anchor_pos);

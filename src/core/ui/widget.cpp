@@ -286,7 +286,7 @@ namespace rl::ui {
 
     Widget* Widget::find_widget(const ds::point<f32>& pt)
     {
-        scoped_trace(log_level::info);
+        scoped_trace(log_level::debug);
 
         LocalTransform transform{ this };
         const ds::point local_mouse_pos{ pt - LocalTransform::absolute_pos };
@@ -303,7 +303,7 @@ namespace rl::ui {
 
     const Widget* Widget::find_widget(const ds::point<f32>& pt) const
     {
-        scoped_trace(log_level::info);
+        scoped_trace(log_level::debug);
 
         LocalTransform transform{ this };
         const ds::point local_mouse_pos{ pt - LocalTransform::absolute_pos };
@@ -352,7 +352,7 @@ namespace rl::ui {
 
         LocalTransform transform{ this };
         const ds::point local_mouse_pos{ mouse.pos() - LocalTransform::absolute_pos };
-        for (auto child : std::ranges::reverse_view{ m_children })
+        for (const auto child : std::ranges::reverse_view{ m_children })
         {
             if (!child->visible())
                 continue;
@@ -381,7 +381,7 @@ namespace rl::ui {
 
         LocalTransform transform{ this };
         const ds::point local_mouse_pos{ mouse.pos() - LocalTransform::absolute_pos };
-        for (auto child : std::ranges::reverse_view{ m_children })
+        for (const auto child : std::ranges::reverse_view{ m_children })
         {
             if (!child->visible())
                 continue;
@@ -514,7 +514,7 @@ namespace rl::ui {
         runtime_assert(index >= 0 && index < static_cast<i32>(m_children.size()),
                        "widget child remove idx out of bounds");
 
-        Widget* widget{ m_children[static_cast<std::size_t>(index)] };
+        const Widget* widget{ m_children[static_cast<std::size_t>(index)] };
         m_children.erase(m_children.begin() + index);
         widget->release_ref();
     }
@@ -666,35 +666,50 @@ namespace rl::ui {
         dynamic_cast<Canvas*>(widget)->update_focus(this);
     }
 
-    void Widget::draw_mouse_intersection(const ds::point<f32>& pt)
+    ds::rect<f32> Widget::bounding_rect() const
     {
-        scoped_trace(log_level::trace);
+        // LocalTransform::absolute_pos;
+        return ds::rect{ LocalTransform::absolute_pos, m_size };
+    }
 
+    bool Widget::draw_mouse_intersection(const ds::point<f32>& pt)
+    {
+        scoped_log();
         {
             LocalTransform transform{ this };
+            const ds::point local_mouse_pos{ pt - LocalTransform::absolute_pos };
             for (const auto child : std::ranges::reverse_view{ m_children })
             {
                 if (!child->visible())
                     continue;
+                if (!child->contains(local_mouse_pos))
+                    continue;
+                if (!child->draw_mouse_intersection(local_mouse_pos))
+                    continue;
 
-                child->draw_mouse_intersection(pt - m_pos);
+                m_renderer->draw_rect_outline(this->bounding_rect(), 1.0f, rl::Colors::Yellow,
+                                              Outline::Inner);
+
+                diag_log("dgb outline: handled={}", this->name());
+                diag_log("dgb outline: rel_pos={}", ds::rect{ m_pos, m_size });
+                diag_log("dgb outline: abs_pos={}", ds::rect{ this->abs_position(), m_size });
+                const ds::rect<f32> widget_rect{ child->bounding_rect() };
+                return true;
             }
         }
-
         if (this->contains(pt))
         {
-            const ds::rect widget_rect{
-                m_pos,
-                m_size,
-            };
-
+            const ds::rect widget_rect{ m_pos, m_size };
             m_renderer->draw_rect_outline(widget_rect, 1.0f, rl::Colors::Yellow, Outline::Inner);
         }
+
+        return false;
     }
 
     void Widget::draw()
     {
         scoped_trace(log_level::trace);
+
         if constexpr (Widget::DiagnosticsEnabled)
         {
             m_renderer->draw_rect_outline(ds::rect{ m_pos, m_size }, 1.0f, rl::Colors::Grey,
@@ -704,9 +719,8 @@ namespace rl::ui {
         if (m_children.empty())
             return;
 
-        auto&& context{ m_renderer->context() };
-
         LocalTransform transform{ this };
+        auto&& context{ m_renderer->context() };
         for (auto child : m_children)
         {
             if (!child->visible())
@@ -726,7 +740,7 @@ namespace rl::ui {
         return m_theme->icon_scale * m_icon_extra_scale;
     }
 
-    const std::string_view Widget::name() const
+    std::string_view Widget::name() const
     {
         return typeid(*this).name();
     }

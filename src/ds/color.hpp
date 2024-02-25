@@ -303,18 +303,22 @@ namespace rl::ds {
             };
         }
 
-        consteval operator const ds::color<f32>()
+        [[nodiscard]]
+        consteval
+        operator const ds::color<f32>()
             requires std::same_as<T, f32>
         {
-            return ds::color<f32>{ {
+            return ds::color<f32>{
                 std::forward<f32>(this->r),
                 std::forward<f32>(this->g),
                 std::forward<f32>(this->b),
                 std::forward<f32>(this->a),
-            } };
+            };
         }
 
-        constexpr operator const ds::color<f32>() const
+        [[nodiscard]]
+        constexpr
+        operator const ds::color<f32>() const
             requires std::same_as<T, f32>
         {
             return ds::color<f32>{ {
@@ -325,35 +329,37 @@ namespace rl::ds {
             } };
         }
 
-        constexpr operator ds::color<f32>()
+        [[nodiscard]] constexpr operator ds::color<f32>()
             requires std::same_as<T, u8>
         {
-            return ds::color<f32>{ {
+            return ds::color<f32>{
                 std::clamp(static_cast<u8>(this->r) / 255.0f, 0.0f, 1.0f),
                 std::clamp(static_cast<u8>(this->g) / 255.0f, 0.0f, 1.0f),
                 std::clamp(static_cast<u8>(this->b) / 255.0f, 0.0f, 1.0f),
                 std::clamp(static_cast<u8>(this->a) / 255.0f, 0.0f, 1.0f),
-            } };
+            };
         }
 
-        constexpr operator ds::color<f32>() const
+        [[nodiscard]] constexpr operator ds::color<f32>() const
             requires std::same_as<T, u8>
         {
-            return ds::color<f32>{ {
+            return ds::color<f32>{
                 std::clamp(static_cast<u8>(this->r) / 255.0f, 0.0f, 1.0f),
                 std::clamp(static_cast<u8>(this->g) / 255.0f, 0.0f, 1.0f),
                 std::clamp(static_cast<u8>(this->b) / 255.0f, 0.0f, 1.0f),
                 std::clamp(static_cast<u8>(this->a) / 255.0f, 0.0f, 1.0f),
-            } };
+            };
         }
 
-        explicit constexpr operator fmt::rgb() const
+        [[nodiscard]] consteval operator fmt::rgb() const
             requires std::same_as<T, u8>
         {
             return fmt::rgb{ r, g, b };
         }
 
-        explicit constexpr operator fmt::text_style() const
+        [[nodiscard]]
+        explicit constexpr
+        operator fmt::text_style() const
         {
             return fmt::fg(static_cast<fmt::rgb>(*this));
         }

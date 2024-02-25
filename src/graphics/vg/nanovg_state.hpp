@@ -17,19 +17,6 @@ namespace rl {
     public:
         explicit LocalTransform(const ui::Widget* widget) noexcept
         {
-#ifndef NDEBUG
-            // TODO: remove this after more testing
-            const bool already_in_local_space{
-                std::ranges::find_if(scope_stack,
-                                     [&](const ui::Widget* w) {
-                                         return w == widget;
-                                     }) != scope_stack.end(),
-            };
-
-            runtime_assert(
-                already_in_local_space != (scope_stack.empty() || scope_stack.back() != widget),
-                "????");
-#endif
             runtime_assert(widget != nullptr, "invalid reference to UI element");
             if (scope_stack.empty() || scope_stack.back() != widget)
             {
@@ -38,12 +25,6 @@ namespace rl {
                 scope_stack.push_back(widget);
                 m_added_to_stack = true;
             }
-        }
-
-        [[nodiscard]]
-        static ds::point<f32> abs_local_position()
-        {
-            return absolute_pos;
         }
 
         ~LocalTransform()

@@ -37,7 +37,7 @@ namespace rl::ui {
         virtual void draw() override;
 
     protected:
-        f32 m_scroll{ 0.0f };
+        f32 m_scrollbar_pos{ 0.0f };
         bool m_update_layout{ false };
         Widget* m_container{ nullptr };
         ds::dims<f32> m_cont_prefsize{ 0.0f, 0.0f };
