@@ -45,9 +45,9 @@ namespace rl::ui {
         return m_text;
     }
 
-    void Button::set_caption(const std::string& caption)
+    void Button::set_text(const std::string& text)
     {
-        m_text = caption;
+        m_text = text;
     }
 
     ds::color<f32> Button::background_color() const

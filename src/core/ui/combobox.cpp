@@ -45,7 +45,7 @@ namespace rl::ui {
         dynamic_cast<Button*>(children[static_cast<u32>(idx)])->set_pressed(true);
         m_selected_index = idx;
 
-        this->set_caption(m_items_short[static_cast<u32>(idx)]);
+        this->set_text(m_items_short[static_cast<u32>(idx)]);
     }
 
     const std::function<void(u32)>& ComboBox::callback() const
@@ -118,7 +118,7 @@ namespace rl::ui {
             button->set_callback([this, index] {
                 m_selected_index = static_cast<i32>(index);
 
-                this->set_caption(m_items_short[index]);
+                this->set_text(m_items_short[index]);
                 this->set_pressed(false);
                 this->popup()->set_visible(false);
 
@@ -148,7 +148,8 @@ namespace rl::ui {
 
             return true;
         }
-        else if (mouse_wheel.y > 0)
+
+        if (mouse_wheel.y > 0)
         {
             this->set_selected_index(std::max(m_selected_index - 1, 0));
             if (m_callback != nullptr)

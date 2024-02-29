@@ -44,7 +44,7 @@ namespace rl::ui {
 
         bool has_property(Button::Property prop) const;
         void set_property(Button::Property prop);
-        void set_caption(const std::string& caption);
+        void set_text(const std::string& text);
         void set_background_color(const ds::color<f32>& bg_color);
         void set_text_color(const ds::color<f32>& text_color);
         void set_icon(Icon::ID icon);

@@ -222,8 +222,8 @@ namespace rl::ui {
             ds::dims ps{ c->preferred_size() };
             ds::dims fs{ c->fixed_size() };
             const ds::dims target_size{
-                std::fabs(fs.width) > std::numeric_limits<f32>::epsilon() ? fs.width : ps.width,
-                std::fabs(fs.height) > std::numeric_limits<f32>::epsilon() ? fs.height : ps.height,
+                math::is_equal(fs.width, 0.0f) ? ps.width : fs.width,
+                math::is_equal(fs.height, 0.0f) ? ps.height : fs.height,
             };
 
             const bool indent_cur{ indent && label == nullptr };
@@ -235,6 +235,7 @@ namespace rl::ui {
         }
 
         height += m_margin;
+
         return ds::dims{ width, height };
     }
 
@@ -243,15 +244,13 @@ namespace rl::ui {
         scoped_trace(log_level::debug);
 
         f32 height{ m_margin };
-        const f32 available_width{ (std::fabs(widget->fixed_width()) >
-                                            std::numeric_limits<f32>::epsilon()
-                                        ? widget->fixed_width()
-                                        : widget->width()) -
-                                   (2.0f * m_margin) };
+        const f32 available_width{ math::is_equal(widget->fixed_width(), 0.0f)
+                                       ? widget->width() - 2.0f * m_margin
+                                       : widget->fixed_width() };
 
         const auto dialog{ dynamic_cast<const Dialog*>(widget) };
         if (dialog != nullptr && !dialog->title().empty())
-            height += dialog->header_height() - (m_margin / 2.0f);
+            height += dialog->header_height() - m_margin / 2.0f;
 
         bool indent{ false };
         bool first_child{ true };
@@ -274,8 +273,8 @@ namespace rl::ui {
             };
 
             const ds::dims target_size{
-                std::fabs(fs.width) > std::numeric_limits<f32>::epsilon() ? fs.width : ps.width,
-                std::fabs(fs.height) > std::numeric_limits<f32>::epsilon() ? fs.height : ps.height,
+                math::is_equal(fs.width, 0.0f) ? ps.width : fs.width,
+                math::is_equal(fs.height, 0.0f) ? ps.height : fs.height,
             };
 
             child->set_position({

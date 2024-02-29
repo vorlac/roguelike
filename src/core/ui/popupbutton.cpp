@@ -12,6 +12,7 @@ namespace rl::ui {
         : Button{ parent, std::forward<std::string>(caption), button_icon }
     {
         scoped_log();
+
         this->set_icon_extra_scale(0.8f);
         this->set_chevron_icon(m_theme->popup_chevron_right_icon);
         this->set_property(Property::TogglePopupMenu);
@@ -20,12 +21,14 @@ namespace rl::ui {
             this->canvas(),
             this->dialog(),
         };
+
+        // TODO: why?.. necessary?
         m_popup->set_size({
             750.0f,
             300.0f,
         });
+
         m_popup->set_visible(false);
-        // TODO: why?.. necessary?
     }
 
     void PopupButton::set_chevron_icon(const Icon::ID icon)
