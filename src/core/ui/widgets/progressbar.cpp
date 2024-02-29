@@ -1,4 +1,4 @@
-#include "core/ui/progressbar.hpp"
+#include "core/ui/widgets/progressbar.hpp"
 
 namespace rl::ui {
 

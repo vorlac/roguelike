@@ -1,7 +1,7 @@
 #include "core/assert.hpp"
 #include "core/keyboard.hpp"
 #include "core/mouse.hpp"
-#include "core/ui/imagepanel.hpp"
+#include "core/ui/widgets/imagepanel.hpp"
 
 namespace rl::ui {
 

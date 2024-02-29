@@ -1,7 +1,8 @@
 #include "core/keyboard.hpp"
 #include "core/mouse.hpp"
-#include "core/ui/slider.hpp"
 #include "core/ui/theme.hpp"
+#include "core/ui/widgets/slider.hpp"
+#include "utils/math.hpp"
 
 namespace rl::ui {
 
@@ -82,7 +83,7 @@ namespace rl::ui {
 
         auto&& mouse_pos{ mouse.pos() };
         const f32 kr{ m_size.height * 0.4f };
-        const f32 kshadow{ 3.0f };
+        constexpr f32 kshadow{ 3.0f };
         const f32 start_x{ kr + kshadow + m_pos.x - 1.0f };
         const f32 width_x{ m_size.width - 2.0f * (kr + kshadow) };
         const f32 old_value{ m_value };
@@ -92,7 +93,7 @@ namespace rl::ui {
         value = value * (m_range.second - m_range.first) + m_range.first;
         m_value = std::min(std::max(value, m_range.first), m_range.second);
 
-        if (m_callback != nullptr && m_value != old_value)
+        if (m_callback != nullptr && !math::is_equal(m_value, old_value))
             m_callback(m_value);
 
         return true;
@@ -105,7 +106,7 @@ namespace rl::ui {
 
         auto&& mouse_pos{ mouse.pos() };
         const f32 kr{ m_size.height * 0.4f };
-        const f32 kshadow{ 3.0f };
+        constexpr f32 kshadow{ 3.0f };
         const f32 start_x{ kr + kshadow + m_pos.x - 1.0f };
         const f32 width_x{ m_size.width - 2.0f * (kr + kshadow) };
         const f32 old_value{ m_value };
@@ -115,7 +116,7 @@ namespace rl::ui {
         value = value * (m_range.second - m_range.first) + m_range.first;
         m_value = std::min(std::max(value, m_range.first), m_range.second);
 
-        if (m_callback != nullptr && m_value != old_value)
+        if (m_callback != nullptr && !math::is_equal(m_value, old_value))
             m_callback(m_value);
 
         return true;
@@ -126,9 +127,9 @@ namespace rl::ui {
         if (!m_enabled)
             return false;
 
-        auto&& mouse_pos{ mouse.pos() };
+        const auto mouse_pos{ mouse.pos() };
         const f32 kr{ m_size.height * 0.4f };
-        const f32 kshadow{ 3.0f };
+        constexpr f32 kshadow{ 3.0f };
         const f32 start_x{ kr + kshadow + m_pos.x - 1.0f };
         const f32 width_x{ m_size.width - 2.0f * (kr + kshadow) };
         const f32 old_value{ m_value };
@@ -138,7 +139,7 @@ namespace rl::ui {
         value = value * (m_range.second - m_range.first) + m_range.first;
         m_value = std::min(std::max(value, m_range.first), m_range.second);
 
-        if (m_callback != nullptr && m_value != old_value)
+        if (m_callback != nullptr && !math::is_equal(m_value, old_value))
             m_callback(m_value);
 
         if (m_final_callback != nullptr)
@@ -149,30 +150,30 @@ namespace rl::ui {
 
     void Slider::draw()
     {
-        auto&& context{ m_renderer->context() };
-        ds::point<f32> center{ ds::rect{ m_pos, m_size }.centroid() };
-        f32 kr{ m_size.height * 0.4f };
-        f32 kshadow{ 3.0f };
+        const auto context{ m_renderer->context() };
+        const ds::point center{ ds::rect{ m_pos, m_size }.centroid() };
+        const f32 kr{ m_size.height * 0.4f };
+        constexpr f32 kshadow{ 3.0f };
 
-        f32 start_x{ kr + kshadow + m_pos.x };
-        f32 width_x{ m_size.width - 2.0f * (kr + kshadow) };
+        const f32 start_x{ kr + kshadow + m_pos.x };
+        const f32 width_x{ m_size.width - 2.0f * (kr + kshadow) };
 
-        ds::vector2<f32> knob_pos{
+        const ds::vector2 knob_pos{
             start_x + (m_value - m_range.first) / (m_range.second - m_range.first) * width_x,
             center.y + 0.5f,
         };
 
-        nvg::PaintStyle bg{ nvg::box_gradient(context, start_x, center.y - 3.0f + 1.0f, width_x,
-                                              6.0f, 3.0f, 3.0f,
-                                              ds::color<f32>{ 0, 0, 0, m_enabled ? 32 : 10 },
-                                              ds::color<f32>{ 0, 0, 0, m_enabled ? 128 : 210 }) };
+        const nvg::PaintStyle bg{ nvg::box_gradient(
+            context, start_x, center.y - 3.0f + 1.0f, width_x, 6.0f, 3.0f, 3.0f,
+            ds::color<f32>{ 0, 0, 0, m_enabled ? 32 : 10 },
+            ds::color<f32>{ 0, 0, 0, m_enabled ? 128 : 210 }) };
 
         nvg::begin_path(context);
         nvg::rounded_rect(context, start_x, center.y - 3.0f + 1.0f, width_x, 6.0f, 2.0f);
         nvg::fill_paint(context, bg);
         nvg::fill(context);
 
-        if (m_highlighted_range.second != m_highlighted_range.first)
+        if (!math::is_equal(m_highlighted_range.second, m_highlighted_range.first))
         {
             nvg::begin_path(context);
             nvg::rounded_rect(context, start_x + m_highlighted_range.first * m_size.width,
@@ -183,7 +184,7 @@ namespace rl::ui {
             nvg::fill(context);
         }
 
-        nvg::PaintStyle knob_shadow{
+        const nvg::PaintStyle knob_shadow{
             nvg::radial_gradient(context, knob_pos.x, knob_pos.y, kr - kshadow, kr + kshadow,
                                  ds::color<f32>{ 0, 0, 0, 64 }, m_theme->transparent),
         };
@@ -196,12 +197,12 @@ namespace rl::ui {
         nvg::fill_paint(context, knob_shadow);
         nvg::fill(context);
 
-        nvg::PaintStyle knob{ nvg::linear_gradient(context, m_pos.x, center.y - kr, m_pos.x,
-                                                   center.y + kr, m_theme->border_light,
-                                                   m_theme->border_medium) };
-        nvg::PaintStyle knob_reverse{ nvg::linear_gradient(context, m_pos.x, center.y - kr, m_pos.x,
-                                                           center.y + kr, m_theme->border_medium,
-                                                           m_theme->border_light) };
+        const nvg::PaintStyle knob{ nvg::linear_gradient(context, m_pos.x, center.y - kr, m_pos.x,
+                                                         center.y + kr, m_theme->border_light,
+                                                         m_theme->border_medium) };
+        const nvg::PaintStyle knob_reverse{ nvg::linear_gradient(
+            context, m_pos.x, center.y - kr, m_pos.x, center.y + kr, m_theme->border_medium,
+            m_theme->border_light) };
 
         nvg::begin_path(context);
         nvg::circle(context, knob_pos.x, knob_pos.y, kr);

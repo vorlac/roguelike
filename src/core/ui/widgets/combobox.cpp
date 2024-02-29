@@ -1,11 +1,13 @@
+#include <memory>
+#include <string>
 #include <vector>
 
 #include "core/keyboard.hpp"
 #include "core/mouse.hpp"
-#include "core/ui/combobox.hpp"
-#include "core/ui/layout.hpp"
-#include "core/ui/vscrollpanel.hpp"
+#include "core/ui/layouts/layout.hpp"
 #include "core/ui/widget.hpp"
+#include "core/ui/widgets/combobox.hpp"
+#include "core/ui/widgets/vscrollpanel.hpp"
 
 namespace rl::ui {
     ComboBox::ComboBox(Widget* parent)
@@ -26,8 +28,8 @@ namespace rl::ui {
         : PopupButton{ parent }
         , m_item_container{ this->popup() }
     {
-        this->set_items(std::forward<decltype(items)>(items),
-                        std::forward<decltype(items_short)>(items_short));
+        using items_t = decltype(items);
+        this->set_items(std::forward<items_t>(items), std::forward<items_t>(items_short));
     }
 
     i32 ComboBox::selected_index() const
@@ -108,12 +110,12 @@ namespace rl::ui {
             });
         }
 
-        m_item_container->set_layout(new GroupLayout{ 0 });
+        m_item_container->set_layout(new GroupLayout{ 5.0f });
 
         u32 index{ 0 };
         for (const auto& str : items)
         {
-            const auto button{ new Button{ m_item_container, str } };
+            auto button{ new Button{ m_item_container, std::move(str) } };
             button->set_property(Button::Property::Radio);
             button->set_callback([this, index] {
                 m_selected_index = static_cast<i32>(index);

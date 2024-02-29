@@ -2122,6 +2122,13 @@ namespace rl::nvg {
         ctx->params.render_get_texture_size(ctx->params.user_ptr, image, w, h);
     }
 
+    ds::dims<f32> image_size(const Context* ctx, const int32_t image)
+    {
+        ds::dims size{ 0.0f, 0.0f };
+        ctx->params.render_get_texture_size(ctx->params.user_ptr, image, &size.width, &size.height);
+        return size;
+    }
+
     void delete_image(const Context* ctx, const int32_t image)
     {
         ctx->params.render_delete_texture(ctx->params.user_ptr, image);
@@ -3310,7 +3317,7 @@ namespace rl::nvg {
         return nrows;
     }
 
-    float text_bounds(Context* ctx, const float x, const float y, const char* string,
+    float text_bounds(Context* ctx, const float x, const float y, const char* text,
                       const char* end /*= nullptr*/, float* bounds /*= nullptr*/)
     {
         const State* state = detail::get_state(ctx);
@@ -3326,7 +3333,7 @@ namespace rl::nvg {
         fons_set_align(ctx->fs, std::to_underlying(state->text_align));
         fons_set_font(ctx->fs, state->font_id);
 
-        const float width = fons_text_bounds(ctx->fs, x * scale, y * scale, string, end, bounds);
+        const float width = fons_text_bounds(ctx->fs, x * scale, y * scale, text, end, bounds);
         if (bounds != nullptr)
         {
             // Use line bounds for height.
@@ -3337,6 +3344,11 @@ namespace rl::nvg {
             bounds[3] *= invscale;
         }
         return width * invscale;
+    }
+
+    float text_bounds(Context* ctx, ds::point<f32>&& pos, std::string&& text)
+    {
+        return nvg::text_bounds(ctx, pos.x, pos.y, text.data());
     }
 
     void text_box_bounds(Context* ctx, const float x, float y, const float break_row_width,

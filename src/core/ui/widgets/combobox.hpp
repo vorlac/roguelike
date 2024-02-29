@@ -2,7 +2,7 @@
 
 #include <functional>
 
-#include "core/ui/popupbutton.hpp"
+#include "core/ui/widgets/popupbutton.hpp"
 
 namespace rl {
     class Mouse;

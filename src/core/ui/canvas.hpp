@@ -21,6 +21,13 @@ namespace rl::ui {
     class Canvas final : public Widget
     {
     public:
+        Canvas() = delete;
+        Canvas(Canvas&&) = delete;
+        Canvas(const Canvas&) = delete;
+        Canvas& operator=(Canvas&&) = delete;
+        Canvas& operator=(const Canvas&) = delete;
+
+    public:
         explicit Canvas(const ds::rect<f32>& rect, const Mouse& mouse, const Keyboard& kb,
                         const std::unique_ptr<NVGRenderer>& nvg_renderer);
 
@@ -39,8 +46,8 @@ namespace rl::ui {
         bool has_float_buffer() const;
         bool tooltip_fade_in_progress();
 
-        bool on_moved(const ds::point<f32>& pt);
-        bool on_resized(const ds::dims<f32>& size);
+        bool on_moved(ds::point<f32>&& pt);
+        bool on_resized(ds::dims<f32>&& size);
         bool on_mouse_scroll_event(const Mouse& mouse, const Keyboard& kb);
         bool on_mouse_button_pressed_event(const Mouse& mouse, const Keyboard& kb);
         bool on_mouse_button_released_event(const Mouse& mouse, const Keyboard& kb);

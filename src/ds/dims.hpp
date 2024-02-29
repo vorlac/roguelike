@@ -18,14 +18,9 @@ namespace rl::ds {
     template <rl::numeric T>
     struct dims
     {
-        T width{ static_cast<T>(0) };
-        T height{ static_cast<T>(0) };
-
-        constexpr dims()
-            : width{ static_cast<T>(0) }
-            , height{ static_cast<T>(0) }
-        {
-        }
+    public:
+        constexpr dims() = default;
+        constexpr ~dims() = default;
 
         constexpr dims(T w, T h)
             : width{ w }
@@ -46,14 +41,14 @@ namespace rl::ds {
         }
 
         constexpr dims(dims<T>&& other) noexcept
-            : width{ std::forward<T>(other.width) }
-            , height{ std::forward<T>(other.height) }
+            : width{ std::move(other.width) }
+            , height{ std::move(other.height) }
         {
         }
 
         consteval dims(vector2<T>&& other) noexcept
-            : width{ std::forward<T>(other.x) }
-            , height{ std::forward<T>(other.y) }
+            : width{ std::move(other.x) }
+            , height{ std::move(other.y) }
         {
         }
 
@@ -246,6 +241,10 @@ namespace rl::ds {
             this->height *= cast::to<T>(val);
             return *this;
         }
+
+    public:
+        T width{ static_cast<T>(0) };
+        T height{ static_cast<T>(0) };
     };
 
     template <rl::numeric T>

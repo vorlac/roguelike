@@ -8,6 +8,7 @@
 #include "core/ui/widget.hpp"
 #include "ds/color.hpp"
 #include "ds/dims.hpp"
+#include "ds/margin.hpp"
 #include "ds/point.hpp"
 #include "utils/numeric.hpp"
 
@@ -79,5 +80,8 @@ namespace rl::ui {
         ds::color<f32> m_text_color{ Colors::Transparent };
         std::function<void(bool)> m_change_callback;
         std::function<void()> m_callback;
+
+    private:
+        constexpr static inline ds::margin MARGIN{ 10.0f, 5.0f };
     };
 }

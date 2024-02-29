@@ -1,5 +1,5 @@
-#include "core/ui/popup.hpp"
 #include "core/ui/theme.hpp"
+#include "core/ui/widgets/popup.hpp"
 #include "graphics/vg/nanovg.hpp"
 #include "utils/logging.hpp"
 
@@ -79,9 +79,9 @@ namespace rl::ui {
             Widget::perform_layout();  // NOLINT(bugprone-parent-virtual-call)
         else
         {
-            auto&& first_child{ m_children.front() };
-            first_child->set_position({ 0.0f, 0.0f });
-            first_child->set_size(m_size);
+            const auto first_child{ m_children.front() };
+            first_child->set_position(ds::point{ 0.0f, 0.0f });
+            first_child->set_size(std::forward<decltype(m_size)>(m_size));
             first_child->perform_layout();
         }
 
@@ -107,14 +107,14 @@ namespace rl::ui {
         if (!m_visible)
             return;
 
-        auto&& context{ m_renderer->context() };
+        const auto context{ m_renderer->context() };
         const f32 drop_shadow_size{ m_theme->dialog_drop_shadow_size };
         const f32 corner_radius{ m_theme->dialog_corner_radius };
 
         m_renderer->scoped_draw([&] {
             nvg::reset_scissor(context);
 
-            // Draw a drop shadow
+            // Draw drop shadow behind window
             m_renderer->draw_path(false, [&] {
                 nvg::PaintStyle shadow_paint{ nvg::box_gradient(
                     context, m_pos.x, m_pos.y, m_size.width, m_size.height, corner_radius * 2.0f,

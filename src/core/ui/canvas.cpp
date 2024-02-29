@@ -4,7 +4,7 @@
 #include "core/keyboard.hpp"
 #include "core/mouse.hpp"
 #include "core/ui/canvas.hpp"
-#include "core/ui/popup.hpp"
+#include "core/ui/widgets/popup.hpp"
 #include "graphics/vg/nanovg_state.hpp"
 #include "utils/io.hpp"
 #include "utils/logging.hpp"
@@ -331,23 +331,23 @@ namespace rl::ui {
         if (dialog->size() == ds::dims<f32>::zero())
         {
             auto&& pref_size{ dialog->preferred_size() };
-            dialog->set_size(pref_size);
+            dialog->set_size(std::move(pref_size));
             dialog->perform_layout();
         }
 
         const ds::dims offset{ ((m_size - dialog->size()) / 2.0f) - m_pos };
-        const ds::point position{ offset.width, offset.height };
-        dialog->set_position(position);
+        ds::point<f32>&& position{ offset.width, offset.height };
+        dialog->set_position(std::move(position));
     }
 
-    bool Canvas::on_moved(const ds::point<f32>& pt)
+    bool Canvas::on_moved(ds::point<f32>&& pt)
     {
         scoped_log("{} => {}", ds::rect{ m_pos, m_size }, ds::rect{ pt, m_size });
         this->set_position(std::forward<decltype(pt)>(pt));
         return true;
     }
 
-    bool Canvas::on_resized(const ds::dims<f32>& size)
+    bool Canvas::on_resized(ds::dims<f32>&& size)
     {
         scoped_log("{} => {}", ds::rect{ m_pos, m_size }, ds::rect{ m_pos, size / m_pixel_ratio });
 

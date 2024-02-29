@@ -510,6 +510,7 @@ namespace rl::nvg {
 
     // Returns the dimensions of a created image.
     void image_size(const Context* ctx, int32_t image, float* w, float* h);
+    ds::dims<f32> image_size(const Context* ctx, int32_t image);
 
     // Deletes created image.
     void delete_image(const Context* ctx, int32_t image);
@@ -635,8 +636,8 @@ namespace rl::nvg {
     void rect(Context* ctx, float x, float y, float w, float h);
 
     // Creates new rounded rectangle shaped sub-path.
-    void rounded_rect(Context* ctx, float x, float y, float w, float h, float r);
     void rounded_rect(Context* ctx, const ds::rect<f32>& rect, float radius);
+    void rounded_rect(Context* ctx, float x, float y, float w, float h, float r);
 
     // Creates new rounded rectangle shaped sub-path with varying radii for each corner.
     void rounded_rect_varying(Context* ctx, float x, float y, float w, float h, float rad_top_left,
@@ -761,7 +762,8 @@ namespace rl::nvg {
     // if the bounding box of the text should be returned. The bounds value are [xmin,ymin,
     // xmax,ymax] Returns the horizontal advance of the measured text (i.e. where the next
     // character should drawn). Measured values are returned in local coordinate space.
-    float text_bounds(Context* ctx, float x, float y, const char* string, const char* end = nullptr,
+    float text_bounds(Context* ctx, ds::point<f32>&& pos, std::string&& text);
+    float text_bounds(Context* ctx, float x, float y, const char* text, const char* end = nullptr,
                       float* bounds = nullptr);
 
     // Measures the specified multi-text string. Parameter bounds should be a pointer to

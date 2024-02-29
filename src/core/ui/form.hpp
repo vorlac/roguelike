@@ -3,13 +3,13 @@
 
 #include "core/assert.hpp"
 #include "core/ui/canvas.hpp"
-#include "core/ui/checkbox.hpp"
-#include "core/ui/combobox.hpp"
-#include "core/ui/dialog.hpp"
-#include "core/ui/label.hpp"
-#include "core/ui/layout.hpp"
-#include "core/ui/textbox.hpp"
-#include "core/ui/vscrollpanel.hpp"
+#include "core/ui/layouts/layout.hpp"
+#include "core/ui/widgets/checkbox.hpp"
+#include "core/ui/widgets/combobox.hpp"
+#include "core/ui/widgets/dialog.hpp"
+#include "core/ui/widgets/label.hpp"
+#include "core/ui/widgets/textbox.hpp"
+#include "core/ui/widgets/vscrollpanel.hpp"
 #include "ds/dims.hpp"
 #include "ds/shared.hpp"
 #include "utils/math.hpp"
@@ -135,10 +135,10 @@ namespace rl::ui {
                 editable);
         }
 
-        Button* add_button(const std::string& label, const std::function<void()>& cb)
+        Button* add_button(std::string&& label, const std::function<void()>& cb)
         {
             const Theme* theme{ m_scroll->theme() };
-            const auto button{ new Button{ m_scroll, label } };
+            const auto button{ new Button{ m_scroll, std::move(label) } };
 
             button->set_callback(cb);
             if (m_layout->row_count() > 0)

@@ -2,7 +2,7 @@
 #include <utility>
 
 #include "core/ui/canvas.hpp"
-#include "core/ui/dialog.hpp"
+#include "core/ui/widgets/dialog.hpp"
 #include "ds/dims.hpp"
 #include "ds/point.hpp"
 #include "ds/vector2d.hpp"

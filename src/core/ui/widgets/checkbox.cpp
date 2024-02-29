@@ -1,7 +1,7 @@
 #include "core/keyboard.hpp"
 #include "core/mouse.hpp"
-#include "core/ui/checkbox.hpp"
 #include "core/ui/widget.hpp"
+#include "core/ui/widgets/checkbox.hpp"
 #include "ds/color.hpp"
 #include "ds/dims.hpp"
 #include "graphics/vg/nanovg.hpp"

@@ -525,7 +525,7 @@ namespace rl {
             m_window_rect.size,
         });
 
-        m_gui_canvas->on_resized(render_size);
+        m_gui_canvas->on_resized(std::move(render_size));
         this->render();
     }
 
@@ -542,8 +542,8 @@ namespace rl {
         m_framebuf_size = framebuf_size;
         m_window_rect.pt = window_pos;
         m_window_rect.size = ds::dims{
-            static_cast<i32>(static_cast<f32>(window_size.width) / m_pixel_ratio),
-            static_cast<i32>(static_cast<f32>(window_size.height) / m_pixel_ratio),
+            static_cast<i32>(window_size.width / m_pixel_ratio),
+            static_cast<i32>(window_size.height / m_pixel_ratio),
         };
     }
 

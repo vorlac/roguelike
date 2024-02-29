@@ -1,5 +1,5 @@
 #include "core/ui/theme.hpp"
-#include "core/ui/vscrollpanel.hpp"
+#include "core/ui/widgets/vscrollpanel.hpp"
 #include "ds/color.hpp"
 #include "graphics/vg/nanovg_state.hpp"
 #include "utils/logging.hpp"
@@ -63,7 +63,7 @@ namespace rl::ui {
         else
         {
             m_container->set_position({ 0.0f, 0.0f });
-            m_container->set_size(m_size);
+            m_container->set_size(std::forward<decltype(m_size)>(m_size));
             m_scrollbar_pos = 0;
         }
 

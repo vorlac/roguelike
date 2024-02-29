@@ -1,11 +1,11 @@
 #include <numeric>
 #include <utility>
 
-#include "core/ui/dialog.hpp"
-#include "core/ui/label.hpp"
-#include "core/ui/layout.hpp"
+#include "core/ui/layouts/layout.hpp"
 #include "core/ui/theme.hpp"
 #include "core/ui/widget.hpp"
+#include "core/ui/widgets/dialog.hpp"
+#include "core/ui/widgets/label.hpp"
 #include "ds/dims.hpp"
 #include "graphics/vg/nanovg.hpp"
 #include "utils/io.hpp"
@@ -62,7 +62,7 @@ namespace rl::ui {
 
             first_child = false;
             size.width += target_size.width;
-            size.height = std::max(size.height, target_size.height + (2.0f * m_margin));
+            size.height = std::max(size.height, target_size.height + (m_margin * 2.0f));
         }
 
         return size + ds::dims{ 0.0f, y_offset };
@@ -96,7 +96,7 @@ namespace rl::ui {
         }
 
         bool first_child{ true };
-        for (auto& child : widget->children())
+        for (const auto child : widget->children())
         {
             if (!child->visible())
                 continue;
@@ -140,10 +140,11 @@ namespace rl::ui {
                     break;
             }
 
-            child->set_position(pos);
-            child->set_size(target_size);
-            child->perform_layout();
             position += target_size.width;
+
+            child->set_position(std::move(pos));
+            child->set_size(std::move(target_size));
+            child->perform_layout();
         }
     }
 
@@ -272,7 +273,7 @@ namespace rl::ui {
                 child->preferred_size().height,
             };
 
-            const ds::dims target_size{
+            ds::dims target_size{
                 math::is_equal(fs.width, 0.0f) ? ps.width : fs.width,
                 math::is_equal(fs.height, 0.0f) ? ps.height : fs.height,
             };
@@ -282,7 +283,7 @@ namespace rl::ui {
                 height,
             });
 
-            child->set_size(target_size);
+            child->set_size(std::move(target_size));
             child->perform_layout();
 
             height += target_size.height;
@@ -790,15 +791,15 @@ namespace rl::ui {
                         break;
                 }
 
-                ds::point pos{ child->position() };
-                ds::dims size{ child->size() };
+                auto&& pos{ child->position() };
+                auto&& size{ child->size() };
                 f32& item_axis_pos{ axis == Axis::Horizontal ? pos.x : pos.y };
                 f32& item_axis_size{ axis == Axis::Horizontal ? size.width : size.height };
                 item_axis_pos = item_pos;
                 item_axis_size = target_size;
 
-                child->set_position(pos);
-                child->set_size(size);
+                child->set_position(std::move(pos));
+                child->set_size(std::move(size));
                 child->perform_layout();
             }
         }

@@ -4,9 +4,9 @@
 #include "core/main_window.hpp"
 #include "core/mouse.hpp"
 #include "core/ui/canvas.hpp"
-#include "core/ui/dialog.hpp"
-#include "core/ui/layout.hpp"
+#include "core/ui/layouts/layout.hpp"
 #include "core/ui/theme.hpp"
+#include "core/ui/widgets/dialog.hpp"
 #include "ds/refcounted.hpp"
 #include "ds/shared.hpp"
 #include "graphics/nvg_renderer.hpp"
@@ -108,10 +108,10 @@ namespace rl::ui {
         return m_pos;
     }
 
-    void Widget::set_position(const ds::point<f32>& pos)
+    void Widget::set_position(ds::point<f32>&& pos)
     {
         scoped_trace(log_level::debug);
-        m_pos = pos;
+        m_pos = std::move(pos);
     }
 
     ds::point<f32> Widget::abs_position() const
@@ -127,9 +127,9 @@ namespace rl::ui {
         return m_size;
     }
 
-    void Widget::set_size(const ds::dims<f32>& size)
+    void Widget::set_size(ds::dims<f32>&& size)
     {
-        m_size = size;
+        m_size = std::move(size);
     }
 
     f32 Widget::width() const
@@ -265,23 +265,22 @@ namespace rl::ui {
     {
         scoped_trace(log_level::trace);
         const auto context{ m_renderer->context() };
+
+        for (const auto child : m_children)
+        {
+            auto&& pref{ child->preferred_size() };
+            auto&& fix{ child->fixed_size() };
+
+            child->set_size({
+                math::is_equal(fix.width, 0.0f) ? pref.width : fix.width,
+                math::is_equal(fix.height, 0.0f) ? pref.height : fix.height,
+            });
+
+            child->perform_layout();
+        }
+
         if (m_layout != nullptr)
             m_layout->perform_layout(context, this);
-        else
-        {
-            for (const auto child : m_children)
-            {
-                auto&& pref{ child->preferred_size() };
-                auto&& fix{ child->fixed_size() };
-
-                child->set_size({
-                    math::is_equal(fix.width, 0.0f) ? fix.width : pref.width,
-                    math::is_equal(fix.height, 0.0f) ? fix.height : pref.height,
-                });
-
-                child->perform_layout();
-            }
-        }
     }
 
     Widget* Widget::find_widget(const ds::point<f32>& pt)
@@ -668,13 +667,12 @@ namespace rl::ui {
 
     ds::rect<f32> Widget::bounding_rect() const
     {
-        // LocalTransform::absolute_pos;
         return ds::rect{ LocalTransform::absolute_pos, m_size };
     }
 
     bool Widget::draw_mouse_intersection(const ds::point<f32>& pt)
     {
-        scoped_log();
+        scoped_trace(log_level::trace);
 
         if (this->contains(pt))
         {

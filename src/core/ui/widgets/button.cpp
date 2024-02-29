@@ -4,9 +4,9 @@
 
 #include "core/keyboard.hpp"
 #include "core/mouse.hpp"
-#include "core/ui/button.hpp"
-#include "core/ui/popupbutton.hpp"
 #include "core/ui/theme.hpp"
+#include "core/ui/widgets/button.hpp"
+#include "core/ui/widgets/popupbutton.hpp"
 #include "graphics/vg/nanovg.hpp"
 #include "utils/logging.hpp"
 #include "utils/math.hpp"
@@ -15,7 +15,7 @@
 namespace rl::ui {
     Button::Button(Widget* parent, std::string text, const Icon::ID icon)
         : Widget{ parent }
-        , m_text{ std::forward<std::string>(text) }
+        , m_text{ std::move(text) }
         , m_icon{ icon }
     {
         if (m_theme != nullptr)
@@ -27,7 +27,7 @@ namespace rl::ui {
 
     bool Button::has_property(const Button::Property prop) const
     {
-        return (std::to_underlying(m_props) & std::to_underlying(prop)) != 0;
+        return (m_props & prop) != 0;
     }
 
     void Button::set_property(const Button::Property prop)
@@ -133,7 +133,7 @@ namespace rl::ui {
     ds::dims<f32> Button::preferred_size() const
     {
         // TODO: check font size here
-        auto&& context{ m_renderer->context() };
+        const auto context{ m_renderer->context() };
         const f32 font_size{ m_font_size < 0.0f ? m_theme->button_font_size : m_font_size };
 
         nvg::font_size(context, font_size);
@@ -142,30 +142,28 @@ namespace rl::ui {
         ds::dims icon_size{ 0.0f, font_size };
         const f32 text_width{ nvg::text_bounds(context, 0.0f, 0.0f, m_text.c_str()) };
 
-        if (m_icon != Icon::None)
+        if (m_icon != Icon::ID::None)
         {
             if (Icon::is_font(m_icon))
             {
                 icon_size.height *= this->icon_scale();
                 nvg::font_size(context, icon_size.height);
                 nvg::font_face(context, Font::Name::Icons);
-                icon_size.width = nvg::text_bounds(context, 0.0f, 0.0f, utf8(m_icon).data()) +
+                icon_size.width = nvg::text_bounds(context, ds::point{ 0.0f, 0.0f },
+                                                   std::forward<std::string>(utf8(m_icon))) +
                                   m_size.height * 0.15f;
             }
             else
             {
                 icon_size.height *= 0.9f;
-                ds::dims image_size{ 0.0f, 0.0f };
-                nvg::image_size(context, std::to_underlying(m_icon), &image_size.width,
-                                &image_size.height);
-
+                const ds::dims image_size{ nvg::image_size(context, m_icon) };
                 icon_size.width = image_size.width * icon_size.height / image_size.height;
             }
         }
 
         return ds::dims{
-            text_width + icon_size.width + 20.0f,
-            font_size + 10.0f,
+            text_width + icon_size.width + (MARGIN.horizontal * 2.0f),
+            font_size + (MARGIN.vertical * 2.0f),
         };
     }
 
@@ -189,11 +187,10 @@ namespace rl::ui {
         // case the button causes the parent window to be destructed
         ds::shared self{ this };
 
-        const bool lmb_and_menu_btn{ button == Mouse::Button::Left &&
-                                     !this->has_property(Property::StandardMenu) };
-
-        const bool rmb_and_not_menu_btn{ button == Mouse::Button::Right &&
-                                         this->has_property(Property::StandardMenu) };
+        bool lmb_and_menu_btn{ button == Mouse::Button::Left &&
+                               !this->has_property(Property::StandardMenu) };
+        bool rmb_and_not_menu_btn{ button == Mouse::Button::Right &&
+                                   this->has_property(Property::StandardMenu) };
 
         diag_log("enabled={} && (lmb_menu={} || rmb_not_menu={})", m_enabled, lmb_and_menu_btn,
                  rmb_and_not_menu_btn);
@@ -207,6 +204,7 @@ namespace rl::ui {
                 {
                     diag_log("radio button");
                     if (m_button_group.empty())
+                    {
                         for (const auto widget : parent()->children())
                         {
                             const auto btn{ dynamic_cast<Button*>(widget) };
@@ -218,6 +216,7 @@ namespace rl::ui {
                                     btn->m_change_callback(false);
                             }
                         }
+                    }
                     else
                     {
                         for (const auto btn : m_button_group)
@@ -264,6 +263,7 @@ namespace rl::ui {
                 diag_log("change callback invoked");
                 m_change_callback(m_pressed);
             }
+
             return true;
         }
         return false;
@@ -289,7 +289,7 @@ namespace rl::ui {
         ds::color grad_top{ m_theme->button_gradient_top_unfocused };
         ds::color grad_bot{ m_theme->button_gradient_bot_unfocused };
 
-        auto&& context{ m_renderer->context() };
+        auto context{ m_renderer->context() };
         if (m_pressed || (m_mouse_focus && this->has_property(Property::StandardMenu)))
         {
             grad_top = m_theme->button_gradient_top_pushed;

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "core/ui/button.hpp"
-#include "core/ui/popup.hpp"
+#include "core/ui/widgets/button.hpp"
+#include "core/ui/widgets/popup.hpp"
 
 namespace rl::ui {
 
@@ -33,5 +33,4 @@ namespace rl::ui {
         Popup* m_popup{ nullptr };
         Icon::ID m_chevron_icon{ Icon::None };
     };
-
 }

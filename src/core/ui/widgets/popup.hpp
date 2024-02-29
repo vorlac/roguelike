@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core/ui/dialog.hpp"
+#include "core/ui/widgets/dialog.hpp"
 #include "utils/numeric.hpp"
 
 namespace rl::ui {

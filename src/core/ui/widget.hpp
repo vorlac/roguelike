@@ -4,7 +4,7 @@
 
 #include "core/keyboard.hpp"
 #include "core/mouse.hpp"
-#include "core/ui/layout.hpp"
+#include "core/ui/layouts/layout.hpp"
 #include "core/ui/theme.hpp"
 #include "ds/dims.hpp"
 #include "ds/point.hpp"
@@ -81,8 +81,8 @@ namespace rl::ui {
 
         void set_parent(Widget* parent);
         void set_layout(Layout* layout);
-        void set_position(const ds::point<f32>& pos);
-        void set_size(const ds::dims<f32>& size);
+        void set_position(ds::point<f32>&& pos);
+        void set_size(ds::dims<f32>&& size);
         void set_width(f32 width);
         void set_height(f32 height);
         void set_fixed_size(const ds::dims<f32>& fixed_size);
