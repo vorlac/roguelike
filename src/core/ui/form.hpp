@@ -104,7 +104,7 @@ namespace rl::ui {
             widget->set_editable(editable);
 
             ds::dims<f32> fs{ widget->fixed_size() };
-            widget->set_fixed_size({
+            widget->set_fixed_size(ds::dims{
                 math::is_equal(fs.width, 0.0f) ? m_fixed_size.width : fs.width,
                 math::is_equal(fs.height, 0.0f) ? m_fixed_size.height : fs.height,
             });

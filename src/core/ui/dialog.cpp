@@ -105,11 +105,11 @@ namespace rl::ui {
             nvg::fill(context);
 
             // Dialog shadow
-            const nvg::PaintStyle shadow_paint{ nvg::box_gradient(
-                context, m_pos.x, m_pos.y, m_size.width, m_size.height, corner_radius * 2.0f,
-                drop_shadow_size * 2.0f, m_theme->dialog_shadow, m_theme->transparent) };
-
             m_renderer->scoped_draw([&] {
+                const nvg::PaintStyle shadow_paint{ nvg::box_gradient(
+                    context, m_pos.x, m_pos.y, m_size.width, m_size.height, corner_radius * 2.0f,
+                    drop_shadow_size * 2.0f, m_theme->dialog_shadow, m_theme->transparent) };
+
                 nvg::reset_scissor(context);
                 nvg::begin_path(context);
                 nvg::rect(context, m_pos.x - drop_shadow_size, m_pos.y - drop_shadow_size,

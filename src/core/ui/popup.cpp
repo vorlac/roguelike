@@ -111,42 +111,46 @@ namespace rl::ui {
         const f32 drop_shadow_size{ m_theme->dialog_drop_shadow_size };
         const f32 corner_radius{ m_theme->dialog_corner_radius };
 
-        nvg::save(context);
-        nvg::reset_scissor(context);
+        m_renderer->scoped_draw([&] {
+            nvg::reset_scissor(context);
 
-        // Draw a drop shadow
-        nvg::PaintStyle shadow_paint{ nvg::box_gradient(
-            context, m_pos.x, m_pos.y, m_size.width, m_size.height, corner_radius * 2.0f,
-            drop_shadow_size * 2.0f, m_theme->drop_shadow, m_theme->transparent) };
+            // Draw a drop shadow
+            m_renderer->draw_path(false, [&] {
+                nvg::PaintStyle shadow_paint{ nvg::box_gradient(
+                    context, m_pos.x, m_pos.y, m_size.width, m_size.height, corner_radius * 2.0f,
+                    drop_shadow_size * 2.0f, m_theme->drop_shadow, m_theme->transparent) };
 
-        nvg::begin_path(context);
-        nvg::rect(context, m_pos.x - drop_shadow_size, m_pos.y - drop_shadow_size,
-                  m_size.width + (2.0f * drop_shadow_size),
-                  m_size.height + (2.0f * drop_shadow_size));
-        nvg::rounded_rect(context, m_pos.x, m_pos.y, m_size.width, m_size.height, corner_radius);
-        nvg::path_winding(context, nvg::NVGHole);
-        nvg::fill_paint(context, std::move(shadow_paint));
-        nvg::fill(context);
+                nvg::rect(context, m_pos.x - drop_shadow_size, m_pos.y - drop_shadow_size,
+                          m_size.width + (2.0f * drop_shadow_size),
+                          m_size.height + (2.0f * drop_shadow_size));
+                nvg::rounded_rect(context, m_pos.x, m_pos.y, m_size.width, m_size.height,
+                                  corner_radius);
+                nvg::path_winding(context, nvg::NVGHole);
+                nvg::fill_paint(context, std::move(shadow_paint));
+                nvg::fill(context);
 
-        // Draw window
-        nvg::begin_path(context);
-        nvg::rounded_rect(context, m_pos.x, m_pos.y, m_size.width, m_size.height, corner_radius);
-        ds::point base{ ds::point{ 0.0f, m_anchor_offset } + m_pos };
+                // Draw window
+                m_renderer->draw_path(false, [&] {
+                    nvg::rounded_rect(context, m_pos.x, m_pos.y, m_size.width, m_size.height,
+                                      corner_radius);
+                    ds::point base{ ds::point{ 0.0f, m_anchor_offset } + m_pos };
 
-        f32 sign = -1.0f;
-        if (m_side == Side::Left)
-        {
-            base.x += m_size.width;
-            sign = 1.0f;
-        }
+                    f32 sign = -1.0f;
+                    if (m_side == Side::Left)
+                    {
+                        base.x += m_size.width;
+                        sign = 1.0f;
+                    }
 
-        nvg::move_to(context, base.x + m_anchor_size * sign, base.y);
-        nvg::line_to(context, base.x - (1.0f * sign), base.y - m_anchor_size);
-        nvg::line_to(context, base.x - (1.0f * sign), base.y + m_anchor_size);
+                    nvg::move_to(context, base.x + m_anchor_size * sign, base.y);
+                    nvg::line_to(context, base.x - (1.0f * sign), base.y - m_anchor_size);
+                    nvg::line_to(context, base.x - (1.0f * sign), base.y + m_anchor_size);
 
-        nvg::fill_color(context, m_theme->dialog_popup_fill);
-        nvg::fill(context);
-        nvg::restore(context);
+                    nvg::fill_color(context, m_theme->dialog_popup_fill);
+                    nvg::fill(context);
+                });
+            });
+        });
 
         Widget::draw();  // NOLINT(bugprone-parent-virtual-call)
     }

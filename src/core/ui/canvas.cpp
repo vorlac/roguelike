@@ -374,7 +374,6 @@ namespace rl::ui {
 
         scoped_logger(log_level::trace, "move_pos={}", mouse.pos());
         const ds::point scaled_pos{ mouse_pos / m_pixel_ratio };
-        // pnt -= { 1.0f, 2.0f };
 
         bool handled{ false };
         if (m_drag_active)

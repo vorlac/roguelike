@@ -675,32 +675,31 @@ namespace rl::ui {
     bool Widget::draw_mouse_intersection(const ds::point<f32>& pt)
     {
         scoped_log();
-        {
-            LocalTransform transform{ this };
-            const ds::point local_mouse_pos{ pt - LocalTransform::absolute_pos };
-            for (const auto child : std::ranges::reverse_view{ m_children })
-            {
-                if (!child->visible())
-                    continue;
-                if (!child->contains(local_mouse_pos))
-                    continue;
-                if (!child->draw_mouse_intersection(local_mouse_pos))
-                    continue;
 
-                m_renderer->draw_rect_outline(this->bounding_rect(), 1.0f, rl::Colors::Yellow,
-                                              Outline::Inner);
-
-                diag_log("dgb outline: handled={}", this->name());
-                diag_log("dgb outline: rel_pos={}", ds::rect{ m_pos, m_size });
-                diag_log("dgb outline: abs_pos={}", ds::rect{ this->abs_position(), m_size });
-                const ds::rect<f32> widget_rect{ child->bounding_rect() };
-                return true;
-            }
-        }
         if (this->contains(pt))
         {
             const ds::rect widget_rect{ m_pos, m_size };
             m_renderer->draw_rect_outline(widget_rect, 1.0f, rl::Colors::Yellow, Outline::Inner);
+        }
+
+        LocalTransform transform{ this };
+        const ds::point local_mouse_pos{ pt - m_pos };
+        for (const auto child : std::ranges::reverse_view{ m_children })
+        {
+            if (!child->visible())
+                continue;
+            if (!child->contains(local_mouse_pos))
+                continue;
+            if (!child->draw_mouse_intersection(local_mouse_pos))
+                continue;
+
+            m_renderer->draw_rect_outline(this->bounding_rect(), 1.0f, rl::Colors::Yellow,
+                                          Outline::Inner);
+
+            diag_log("dgb outline: handled={}", this->name());
+            diag_log("dgb outline: rel_pos={}", ds::rect{ m_pos, m_size });
+            diag_log("dgb outline: abs_pos={}", ds::rect{ this->abs_position(), m_size });
+            return true;
         }
 
         return false;
@@ -720,15 +719,15 @@ namespace rl::ui {
             return;
 
         LocalTransform transform{ this };
-        auto&& context{ m_renderer->context() };
         for (auto child : m_children)
         {
             if (!child->visible())
                 continue;
 
-            m_renderer->scoped_draw([&]() {
-                nvg::intersect_scissor(context, child->m_pos.x, child->m_pos.y, child->m_size.width,
-                                       child->m_size.height);
+            m_renderer->scoped_draw([&] {
+                // TODO: put this back after fixing popup window
+                // nvg::intersect_scissor(context, child->m_pos.x, child->m_pos.y,
+                // child->m_size.width, child->m_size.height);
                 child->draw();
             });
         }

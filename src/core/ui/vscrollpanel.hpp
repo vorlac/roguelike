@@ -28,8 +28,10 @@ namespace rl::ui {
     public:
         virtual bool on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb) override;
         virtual bool on_mouse_button_released(const Mouse& mouse, const Keyboard& kb) override;
+        virtual bool on_mouse_move(const Mouse& mouse, const Keyboard& kb) override;
         virtual bool on_mouse_scroll(const Mouse& mouse, const Keyboard& kb) override;
         virtual bool on_mouse_drag(const Mouse& mouse, const Keyboard& kb) override;
+        virtual bool draw_mouse_intersection(const ds::point<f32>& pt) override;
 
         virtual ds::dims<f32> preferred_size() const override;
         virtual void add_child(Widget* child) override;

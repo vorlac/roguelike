@@ -102,14 +102,16 @@ namespace rl::ui {
     void PopupButton::perform_layout()
     {
         scoped_trace(log_level::trace);
+
         Widget::perform_layout();
 
         const Dialog* parent_dialog{ this->dialog() };
         if (parent_dialog != nullptr)
         {
-            LocalTransform transform{ this };
             const f32 anchor_size{ m_popup->anchor_size() };
-            const f32 pos_y{ m_pos.y - parent_dialog->position().y + (m_size.height / 2.0f) };
+            const f32 pos_y{ this->abs_position().y - parent_dialog->position().y +
+                             (m_size.height / 2.0f) };
+
             if (m_popup->side() == Popup::Side::Right)
             {
                 const ds::point anchor_pos{
@@ -133,7 +135,7 @@ namespace rl::ui {
                 (m_size.height / 2.0f) - anchor_size,
             };
 
-            m_popup->set_position({ this->position() + offset });
+            m_popup->set_position({ LocalTransform::absolute_pos + offset });
         }
     }
 

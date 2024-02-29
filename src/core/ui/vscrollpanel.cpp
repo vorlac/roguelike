@@ -100,6 +100,21 @@ namespace rl::ui {
         return m_container->on_mouse_drag(mouse, kb);
     }
 
+    bool VScrollPanel::draw_mouse_intersection(const ds::point<f32>& pt)
+    {
+        scoped_logger(log_level::trace, "pos={}", pt);
+
+        if (this->contains(pt))
+        {
+            const ds::rect widget_rect{ m_pos, m_size };
+            m_renderer->draw_rect_outline(widget_rect, 2.0f, rl::Colors::Green, Outline::Inner);
+        }
+
+        LocalTransform transform{ this };
+        const ds::point local_mouse_pos{ pt - m_pos };
+        return m_container->draw_mouse_intersection(local_mouse_pos);
+    }
+
     bool VScrollPanel::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb)
     {
         scoped_log();
@@ -158,6 +173,13 @@ namespace rl::ui {
         return false;
     }
 
+    bool VScrollPanel::on_mouse_move(const Mouse& mouse, const Keyboard& kb)
+    {
+        scoped_logger(log_level::trace, "pos={}", mouse.pos());
+        LocalTransform transform{ this };
+        return m_container->on_mouse_move(mouse, kb);
+    }
+
     bool VScrollPanel::on_mouse_scroll(const Mouse& mouse, const Keyboard& kb)
     {
         scoped_log();
@@ -207,9 +229,8 @@ namespace rl::ui {
         }
 
         m_renderer->scoped_draw([&] {
-            nvg::translate(context, m_pos.x, m_pos.y);
+            LocalTransform transform{ this };
             nvg::intersect_scissor(context, 0.0f, 0.0f, m_size.width, m_size.height);
-
             if (m_container->visible())
                 m_container->draw();
         });
@@ -218,12 +239,12 @@ namespace rl::ui {
             return;
 
         m_renderer->draw_path(false, [&] {
-            auto scrollbar_bg_rect = ds::rect{
+            ds::rect scrollbar_bg_rect{
                 ds::point{ m_pos.x + m_size.width - (Margin + ScrollbarWidth) + OutlineSize,
                            m_pos.y + Margin + OutlineSize },
                 ds::dims{ ScrollbarWidth, m_size.height - Margin * 2.0f },
             };
-            auto widget_body_rect = ds::rect{
+            ds::rect widget_body_rect{
                 ds::point{ m_pos.x + m_size.width - (Margin + ScrollbarWidth), m_pos.y + Margin },
                 ds::dims{ ScrollbarWidth, m_size.height - Margin * 2.0f },
             };
