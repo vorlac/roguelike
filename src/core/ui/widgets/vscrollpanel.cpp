@@ -13,8 +13,9 @@ namespace rl::ui {
     {
         m_container->acquire_ref();
         m_container->set_parent(this);
-        m_container->set_theme(m_theme);
         m_container->set_visible(true);
+        m_container->set_theme(m_theme);
+        m_container->set_layout(m_layout);
     }
 
     void VScrollPanel::add_child(Widget* child)
@@ -55,10 +56,15 @@ namespace rl::ui {
         m_cont_prefsize = m_container->preferred_size();
         if (m_cont_prefsize.height > m_size.height)
         {
-            m_container->set_position(
-                { 0.0f, -m_scrollbar_pos * (m_cont_prefsize.height - m_size.height) });
-            m_container->set_size(
-                { m_size.width - (Margin + ScrollbarWidth), m_cont_prefsize.height });
+            m_container->set_position({
+                0.0f,
+                -m_scrollbar_pos * (m_cont_prefsize.height - m_size.height),
+            });
+
+            m_container->set_size({
+                m_size.width - (Margin + ScrollbarWidth),
+                m_cont_prefsize.height,
+            });
         }
         else
         {
@@ -80,11 +86,63 @@ namespace rl::ui {
         return m_container->preferred_size() + ds::dims{ Margin + ScrollbarWidth, 0.0f };
     }
 
+    Widget* VScrollPanel::find_widget(const ds::point<f32>& pt)
+    {
+        scoped_trace(log_level::debug);
+
+        // TODO: WTF is going on...
+
+        {
+            // broken mouse cursors & alignments in dialog with this one...
+            // m_container->perform_layout();
+            //  const ds::point local_mouse_pos{ pt - m_pos };
+            // Widget::perform_layout();
+            LocalTransform transform{ this };
+            // Widget* widget{ m_container->find_widget(this->abs_position() - pt) };
+            this->perform_layout();
+            Widget* widget{ m_container->find_widget(pt - m_pos) };
+            //  Widget* widget{ m_container->find_widget(pt - m_pos) };
+            //  Widget* widget{ m_container->find_widget(pt - m_pos) };
+            return widget;
+        }
+
+        //{
+        //    // broken mouse cursors & alignments in dialog with this one...
+        //    LocalTransform transform{ this };
+        //    const ds::point local_mouse_pos{ pt - m_pos };
+        //    Widget* widget{ Widget::find_widget(local_mouse_pos) };
+        //    return widget;
+        //}
+
+        //{
+        //    // broken mouse cursors & alignments in dialog with this one...
+        //    // scroll bar works, but button deselection doesn't
+        //    LocalTransform transform{ this };
+        //    const ds::point local_mouse_pos{ pt };
+        //    Widget* widget{ Widget::find_widget(local_mouse_pos) };
+        //    return widget;
+        //}
+
+        //{
+        //    // broken cursor and layout PLUS scrollbar doesn't work with mouse
+        //    LocalTransform transform{ this };
+        //    const ds::point local_mouse_pos{ pt - LocalTransform::absolute_pos };
+        //    Widget* widget{ Widget::find_widget(local_mouse_pos) };
+        //    return widget;
+        //}
+
+        //{
+        //    LocalTransform transform{ this };
+        //    Widget* widget{ Widget::find_widget(pt) };
+        //    return widget;
+        //}
+    }
+
     bool VScrollPanel::on_mouse_drag(const Mouse& mouse, const Keyboard& kb)
     {
         scoped_log();
 
-        auto&& mouse_delta{ mouse.pos_delta() };
+        const auto mouse_delta{ mouse.pos_delta() };
         if (m_prev_click_location == Component::ScrollBar && m_cont_prefsize.height > m_size.height)
         {
             const float scrollh{ m_size.height *
@@ -97,6 +155,8 @@ namespace rl::ui {
             return true;
         }
 
+        // LocalTransform transform{ this };
+        LocalTransform transform{ this };
         return m_container->on_mouse_drag(mouse, kb);
     }
 
@@ -162,20 +222,16 @@ namespace rl::ui {
 
     bool VScrollPanel::on_mouse_button_released(const Mouse& mouse, const Keyboard& kb)
     {
-        scoped_log();
+        scoped_logger(log_level::trace, "pos={}", mouse.pos());
 
-        {
-            LocalTransform transform{ this };
-            if (m_container->on_mouse_button_released(mouse, kb))
-                return true;
-        }
-
-        return false;
+        LocalTransform transform{ this };
+        return m_container->on_mouse_button_released(mouse, kb);
     }
 
     bool VScrollPanel::on_mouse_move(const Mouse& mouse, const Keyboard& kb)
     {
         scoped_logger(log_level::trace, "pos={}", mouse.pos());
+
         LocalTransform transform{ this };
         return m_container->on_mouse_move(mouse, kb);
     }

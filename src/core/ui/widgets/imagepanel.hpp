@@ -17,7 +17,7 @@ namespace rl {
             using Images = std::vector<std::pair<i32, std::string>>;
 
         public:
-            ImagePanel(Widget* parent);
+            explicit ImagePanel(Widget* parent);
 
             void set_images(const Images& data);
             const Images& images() const;

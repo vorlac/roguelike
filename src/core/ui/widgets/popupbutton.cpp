@@ -138,7 +138,7 @@ namespace rl::ui {
                 (m_size.height / 2.0f) - anchor_size,
             };
 
-            m_popup->set_position({ LocalTransform::absolute_pos + offset });
+            m_popup->set_position(ds::point{ m_pos + offset });
         }
     }
 

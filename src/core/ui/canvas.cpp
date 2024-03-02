@@ -314,9 +314,9 @@ namespace rl::ui {
 
     void Canvas::dispose_dialog(const Dialog* dialog)
     {
-        const bool match_found{ std::ranges::find_if(m_focus_path, [&](const Widget* w) {
-                                    return w == dialog;
-                                }) != m_focus_path.end() };
+        bool match_found{ std::ranges::find_if(m_focus_path, [&](const Widget* w) {
+                              return w == dialog;
+                          }) != m_focus_path.end() };
         if (match_found)
             m_focus_path.clear();
 
@@ -383,7 +383,7 @@ namespace rl::ui {
         }
         else
         {
-            const Widget* widget{ this->find_widget(scaled_pos) };
+            Widget* widget{ this->find_widget(scaled_pos) };
             if (widget != nullptr && widget->cursor() != m_cursor)
             {
                 m_cursor = widget->cursor();
@@ -408,13 +408,15 @@ namespace rl::ui {
         m_last_interaction = m_timer.elapsed();
         if (m_focus_path.size() > 1)
         {
-            const Dialog* dialog{ dynamic_cast<Dialog*>(m_focus_path[m_focus_path.size() - 2]) };
+            Dialog* dialog{ dynamic_cast<Dialog*>(m_focus_path[m_focus_path.size() - 2]) };
             if (dialog != nullptr && dialog->modal())
+            {
                 if (!dialog->contains(mouse_pos))
                     return false;
+            }
         }
 
-        const auto drop_widget{ this->find_widget(mouse_pos) };
+        auto drop_widget{ this->find_widget(mouse_pos) };
         if (drop_widget != nullptr && m_cursor != drop_widget->cursor())
         {
             m_cursor = drop_widget->cursor();
@@ -448,13 +450,15 @@ namespace rl::ui {
 
         if (m_focus_path.size() > 1)
         {
-            const Dialog* dialog{ dynamic_cast<Dialog*>(m_focus_path[m_focus_path.size() - 2]) };
+            Dialog* dialog{ dynamic_cast<Dialog*>(m_focus_path[m_focus_path.size() - 2]) };
             if (dialog != nullptr && dialog->modal())
+            {
                 if (!dialog->contains(mouse_pos))
                     return true;
+            }
         }
 
-        const Widget* drop_widget{ this->find_widget(mouse_pos) };
+        Widget* drop_widget{ this->find_widget(mouse_pos) };
         if (m_drag_active && drop_widget != m_drag_widget)
         {
             LocalTransform transform{ m_drag_widget->parent() };

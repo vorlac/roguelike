@@ -4,6 +4,8 @@
 
 #include "core/keyboard.hpp"
 #include "core/mouse.hpp"
+#include "core/ui/layouts/box_layout.hpp"
+#include "core/ui/layouts/group_layout.hpp"
 #include "core/ui/layouts/layout.hpp"
 #include "core/ui/widget.hpp"
 #include "core/ui/widgets/combobox.hpp"

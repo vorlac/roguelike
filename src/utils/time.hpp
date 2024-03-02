@@ -1,6 +1,5 @@
 #pragma once
 
-#include <array>
 #include <chrono>
 #include <concepts>
 #include <type_traits>
@@ -201,7 +200,7 @@ namespace rl::inline utils {
         f64 m_fps_cur_count{ 0.0 };
         f64 m_fps_cur_timer{ 0.0 };
 
-        const TimeDuration m_duration_unit{ VDuration };
+        constexpr static inline TimeDuration m_duration_unit{ VDuration };
         const u64 m_perf_counter_freq{ SDL3::SDL_GetPerformanceFrequency() };
     };
 }

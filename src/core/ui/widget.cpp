@@ -264,37 +264,41 @@ namespace rl::ui {
     void Widget::perform_layout()
     {
         scoped_trace(log_level::trace);
-        const auto context{ m_renderer->context() };
 
         for (const auto child : m_children)
         {
-            auto&& pref{ child->preferred_size() };
-            auto&& fix{ child->fixed_size() };
+            auto ps{ child->preferred_size() };
+            auto fs{ child->fixed_size() };
 
             child->set_size({
-                math::is_equal(fix.width, 0.0f) ? pref.width : fix.width,
-                math::is_equal(fix.height, 0.0f) ? pref.height : fix.height,
+                math::is_equal(fs.width, 0.0f) ? ps.width : fs.width,
+                math::is_equal(fs.height, 0.0f) ? ps.height : fs.height,
             });
 
             child->perform_layout();
         }
 
         if (m_layout != nullptr)
+        {
+            const auto context{ m_renderer->context() };
             m_layout->perform_layout(context, this);
+        }
     }
 
     Widget* Widget::find_widget(const ds::point<f32>& pt)
     {
         scoped_trace(log_level::debug);
 
-        LocalTransform transform{ this };
-        const ds::point local_mouse_pos{ pt - LocalTransform::absolute_pos };
-        for (const auto child : std::ranges::reverse_view{ m_children })
         {
-            if (!child->visible())
-                continue;
-            if (child->contains(local_mouse_pos))
-                return child->find_widget(local_mouse_pos);
+            LocalTransform transform{ this };
+            const ds::point local_mouse_pos{ pt - m_pos };
+            for (const auto child : std::ranges::reverse_view{ m_children })
+            {
+                if (!child->visible())
+                    continue;
+                if (child->contains(pt - m_pos))
+                    return child->find_widget(local_mouse_pos);
+            }
         }
 
         return this->contains(pt) ? this : nullptr;
@@ -304,14 +308,16 @@ namespace rl::ui {
     {
         scoped_trace(log_level::debug);
 
-        LocalTransform transform{ this };
-        const ds::point local_mouse_pos{ pt - LocalTransform::absolute_pos };
-        for (const auto child : std::ranges::reverse_view{ m_children })
         {
-            if (!child->visible())
-                continue;
-            if (child->contains(local_mouse_pos))
-                return child->find_widget(local_mouse_pos);
+            LocalTransform transform{ this };
+            const ds::point local_mouse_pos{ pt - m_pos };
+            for (const auto child : std::ranges::reverse_view{ m_children })
+            {
+                if (!child->visible())
+                    continue;
+                if (child->contains(pt - m_pos))
+                    return child->find_widget(local_mouse_pos);
+            }
         }
 
         return this->contains(pt) ? this : nullptr;
@@ -667,7 +673,8 @@ namespace rl::ui {
 
     ds::rect<f32> Widget::bounding_rect() const
     {
-        return ds::rect{ LocalTransform::absolute_pos, m_size };
+        // return ds::rect{ LocalTransform::absolute_pos, m_size };
+        return ds::rect{ m_pos, m_size };
     }
 
     bool Widget::draw_mouse_intersection(const ds::point<f32>& pt)

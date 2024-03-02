@@ -69,9 +69,10 @@ namespace rl::gl {
                 const f32 xv{ static_cast<f32>(rl::random<0U, 2000U>::value()) };
                 const f32 yv{ static_cast<f32>(rl::random<0U, 2000U>::value()) };
 
-                m_rect_colors_data.emplace_back((rl::random<0, 500>::value() + 250.0f) / 1000.0f,
-                                                (rl::random<0, 500>::value() + 250.0f) / 1000.0f,
-                                                (rl::random<0, 500>::value() + 250.0f) / 1000.0f);
+                m_rect_colors_data.emplace_back(
+                    static_cast<f32>(rl::random<0, 500>::value() + 250) / 1000.0f,
+                    static_cast<f32>(rl::random<0, 500>::value() + 250) / 1000.0f,
+                    static_cast<f32>(rl::random<0, 500>::value() + 250) / 1000.0f);
 
                 m_rect_velocities_data.emplace_back((xv - 1000.0f) / 10.0f, (yv - 1000.0f) / 10.0f);
 
@@ -80,10 +81,10 @@ namespace rl::gl {
                     500.0f,
                 };
 
-                const f32 outer{ 500.0f };
-                const f32 inner{ 250.0f };
-                const f32 rand1{ (rand() % 1000) / 1000.0f };
-                const f32 rand2{ (rand() % 1000) / 1000.0f };
+                constexpr f32 outer{ 500.0f };
+                constexpr f32 inner{ 250.0f };
+                const f32 rand1{ static_cast<f32>(rl::random<0, 1000>::value()) / 1000.0f };
+                const f32 rand2{ static_cast<f32>(rl::random<0, 1000>::value()) / 1000.0f };
                 const f32 rad{ std::sqrt(rand1 * (outer * outer - inner * inner) + inner * inner) };
 
                 const f32 theta{ f32(rand2 * 2.0f * std::numbers::pi) };

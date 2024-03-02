@@ -62,7 +62,6 @@ namespace rl::ui {
         Layout* layout();
         Theme* theme();
         Widget* child_at(i32 index);
-        Widget* find_widget(const ds::point<f32>& pt);
         Mouse::Cursor::ID cursor() const;
         ds::point<f32> position() const;
         ds::point<f32> abs_position() const;
@@ -88,7 +87,6 @@ namespace rl::ui {
         void set_fixed_size(const ds::dims<f32>& fixed_size);
         void set_fixed_width(f32 width);
         void set_fixed_height(f32 height);
-        virtual void set_visible(bool visible);
         void set_enabled(bool enabled);
         void set_focused(bool focused);
         void set_tooltip(const std::string& tooltip);
@@ -97,10 +95,9 @@ namespace rl::ui {
         void set_cursor(Mouse::Cursor::ID cursor);
 
         void request_focus();
-        ds::rect<f32> bounding_rect() const;
         void remove_child_at(i32 index);
         void remove_child(const Widget* widget);
-        virtual void add_child(Widget* widget);
+        ds::rect<f32> bounding_rect() const;
 
     public:
         // TODO: get rid of this
@@ -110,9 +107,6 @@ namespace rl::ui {
         }
 
     public:
-        virtual bool on_focus_gained();
-        virtual bool on_focus_lost();
-
         virtual bool on_key_pressed(const Keyboard& kb);
         virtual bool on_key_released(const Keyboard& kb);
         virtual bool on_character_input(const Keyboard& kb);
@@ -120,26 +114,28 @@ namespace rl::ui {
         virtual bool on_mouse_entered(const Mouse& mouse);
         virtual bool on_mouse_exited(const Mouse& mouse);
         virtual bool on_mouse_scroll(const Mouse& mouse, const Keyboard& kb);
-
         virtual bool on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb);
         virtual bool on_mouse_button_released(const Mouse& mouse, const Keyboard& kb);
-
         virtual bool on_mouse_move(const Mouse& mouse, const Keyboard& kb);
         virtual bool on_mouse_drag(const Mouse& mouse, const Keyboard& kb);
 
-    public:
-        virtual void draw();
+        virtual bool on_focus_gained();
+        virtual bool on_focus_lost();
+
+        virtual void set_visible(bool visible);
         virtual void set_theme(Theme* theme);
+        virtual void add_child(Widget* widget);
         virtual void add_child(i32 index, Widget* widget);
         virtual void perform_layout();
-        virtual ds::dims<f32> preferred_size() const;
+        virtual void draw();
 
-    public:
+        virtual ds::dims<f32> preferred_size() const;
+        virtual Widget* find_widget(const ds::point<f32>& pt);
         virtual bool draw_mouse_intersection(const ds::point<f32>& pt);
+        virtual std::string_view name() const;
 
     protected:
         f32 icon_scale() const;
-        virtual std::string_view name() const;
 
     protected:
         Widget* m_parent{ nullptr };

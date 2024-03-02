@@ -10,8 +10,8 @@
             (x:{x,g}, y:{y,g})
         </DisplayString>
         <Expand HideRawView="true">
-            <Item Name="[x]">x</Item>
-            <Item Name="[y]">y</Item>
+            <Item Name="[x]">x,g</Item>
+            <Item Name="[y]">y,g</Item>
         </Expand>
     </Type>
 
@@ -23,22 +23,39 @@
             [w:{width,g} x h:{height,g}]
         </DisplayString>
         <Expand HideRawView="true">
-            <Item Name="[width]">width</Item>
-            <Item Name="[height]">height</Item>
-            <Item Name="Area">width * height,f</Item>
+            <Item Name="[width]">width,g</Item>
+            <Item Name="[height]">height,g</Item>
+            <Item Name="Area">width * height,g</Item>
         </Expand>
     </Type>
 
+    <!-- - - - - - - - - -->
+    <!-- rl::ds::margin<T> -->
+    <!-- - - - - - - - - -->
+    <Type Name="rl::ds::margin&lt;*&gt;">
+        <DisplayString>
+            [horiz:{horizontal,g}, vert:{vertical,g}]
+        </DisplayString>
+        <Expand HideRawView="true">
+            <Item Name="horizontal">horizontal</Item>
+            <Item Name="vertical">vertical</Item>
+            <Item Name="[left]">horizontal/2.0,g</Item>
+            <Item Name="[right]">horizontal/2.0,g</Item>
+            <Item Name="[top]">vertical/2.0,g</Item>
+            <Item Name="[bottom]">vertical/2.0,g</Item>
+        </Expand>
+    </Type>
+  
     <!-- - - - - - - - - -->
     <!-- rl::ds::rect<T> -->
     <!-- - - - - - - - - -->
     <Type Name="rl::ds::rect&lt;*&gt;">
         <DisplayString>
-            pt:{{ {pt.x,g}, {pt.y,g} }} size:[ {size.width,g} x {size.height,g} ]
+            pt:({pt.x,g}, {pt.y,g}) size:[{size.width,g} x {size.height,g}]
         </DisplayString>
         <Expand HideRawView="true">
-            <Item Name="[pt]">pt</Item>
-            <Item Name="[size]">size</Item>
+            <Item Name="[pt]">pt,g</Item>
+            <Item Name="[size]">size,g</Item>
         </Expand>
     </Type>
 
@@ -86,23 +103,23 @@
     <!-- - - - - - - - - - - - -->
     <!-- rl::ds::refcounted- - -->
     <!-- - - - - - - - - - - - -->
-    <Type Name="rl::ds::refcounted" Inheritable="true">
+    <!--<Type Name="rl::ds::refcounted" Inheritable="true">
         <DisplayString>
             refs:{m_references}
         </DisplayString>
-    </Type>
+    </Type>-->
 
     <!-- - - - - - - - - - - -->
     <!-- rl::ds::shared<T> - -->
     <!-- - - - - - - - - - - -->
-    <Type Name="rl::ds::shared&lt;*&gt;">
+    <!--<Type Name="rl::ds::shared&lt;*&gt;">
         <DisplayString>
             data:{m_data}
         </DisplayString>
         <Expand HideRawView="true">
             <Item Name="[object]">m_data</Item>
         </Expand>
-    </Type>
+    </Type>-->
 
     <!-- - - - - - - - - -->
     <!-- rl::ui::theme - -->
@@ -266,9 +283,9 @@
     <!-- - - - - - - - - -->
     <!--  rl::ui::Widget -->
     <!-- - - - - - - - - -->
-    <Type Name="rl::ui::Widget" Inheritable="true">
-        <DisplayString S>
-          {this->name(),sb} | dims:{m_size}
+    <Type Name="rl::ui::Widget" Inheritable="true" ExcludeView="view,address;rl::ui::Widget*,a">
+        <DisplayString>
+          {this->name(),sb}[] => {m_pos} {m_size}
         </DisplayString>
     </Type>
 

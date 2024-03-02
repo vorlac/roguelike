@@ -31,12 +31,14 @@ namespace rl::ui {
         virtual bool on_mouse_move(const Mouse& mouse, const Keyboard& kb) override;
         virtual bool on_mouse_scroll(const Mouse& mouse, const Keyboard& kb) override;
         virtual bool on_mouse_drag(const Mouse& mouse, const Keyboard& kb) override;
-        virtual bool draw_mouse_intersection(const ds::point<f32>& pt) override;
 
-        virtual ds::dims<f32> preferred_size() const override;
+        virtual void draw() override;
+        virtual bool draw_mouse_intersection(const ds::point<f32>& pt) override;
         virtual void add_child(Widget* child) override;
         virtual void perform_layout() override;
-        virtual void draw() override;
+
+        virtual Widget* find_widget(const ds::point<f32>& pt) override;
+        virtual ds::dims<f32> preferred_size() const override;
 
     protected:
         f32 m_scrollbar_pos{ 0.0f };

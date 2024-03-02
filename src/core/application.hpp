@@ -76,44 +76,6 @@ namespace rl {
             const auto form{ new ui::FormHelper(gui) };
             auto dialog = ds::shared{ form->add_dialog(ds::point{ 10, 10 }, "Nested Dialog Test") };
 
-            // auto floating_form_gui = [&] {
-            //     scoped_log();
-
-            //    form->add_group("Group 1");
-            //    form->add_variable<bool>("checkbox", bval);
-            //    form->add_variable<std::string>("string", sval);
-
-            //    form->add_group("Dynamic Fields");
-            //    form->add_variable<f32>("fps", framerate)
-            //        ->set_alignment(ui::TextBox::Alignment::Left);
-
-            //    form->add_variable<u64>("frame count", frame_count)
-            //        ->set_alignment(ui::TextBox::Alignment::Center);
-
-            //    form->add_variable<f32>("elapsed time", elapsed_time)
-            //        ->set_alignment(ui::TextBox::Alignment::Right);
-
-            //    form->add_group("Enum");
-            //    form->add_variable<ui::Axis>("Axis", eval, true)
-            //        ->set_items({
-            //            "Horizontal",
-            //            "Vertical",
-            //            "AAAAAAAAAAAAAAAA",
-            //            "BBBB",
-            //            "CCC",
-            //            "DDDD",
-            //            "EEEE",
-            //            "FFFF",
-            //        });
-
-            //    form->add_group("Other Group");
-            //    form->add_button("Push Button", [&] {
-            //        diag_log("Button pressed.\n");
-            //    });
-
-            //    dialog->center();
-            //};
-
             std::string elapsed_str{ fmt::to_string(
                 fmt::format("{:0>6.3f} sec", m_timer.elapsed())) };
             std::string fps_str{ fmt::format("{:0>6.3f} fps", framerate) };
@@ -319,7 +281,7 @@ namespace rl {
             return m_event_handler.quit_triggered();
         }
 
-        bool init_subsystem(const Subsystem::ID flags)
+        bool init_subsystem(const Subsystem::ID flags) const
         {
             const i32 result = SDL3::SDL_Init(flags);
             runtime_assert(result == 0, "failed to init subsystem");

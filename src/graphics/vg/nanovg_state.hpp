@@ -39,7 +39,7 @@ namespace rl {
         }
 
     public:
-        static inline std::vector scope_stack{ std::vector<const ui::Widget*>(128) };
+        static inline std::vector<const ui::Widget*> scope_stack{};
         static inline ds::point<f32> absolute_pos{ 0.0f, 0.0f };
 
     private:

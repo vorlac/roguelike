@@ -135,7 +135,7 @@ QualifierAlignment: Custom
 QualifierOrder: ["constexpr", "static", "inline", "volatile", "const", "type"]
 ReferenceAlignment: Pointer
 ReflowComments: true
-RemoveBracesLLVM: true
+RemoveBracesLLVM: false
 RemoveParentheses: Leave
 RequiresClausePosition: OwnLine
 SeparateDefinitionBlocks: Always # Leave

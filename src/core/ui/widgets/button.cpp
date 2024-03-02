@@ -169,36 +169,37 @@ namespace rl::ui {
 
     bool Button::on_mouse_entered(const Mouse& mouse)
     {
-        return Widget::on_mouse_entered(mouse);
+        Widget::on_mouse_entered(mouse);
+        return true;
     }
 
     bool Button::on_mouse_exited(const Mouse& mouse)
     {
-        return Widget::on_mouse_exited(mouse);
+        Widget::on_mouse_exited(mouse);
+        return true;
     }
 
     bool Button::handle_mouse_button_event(const ds::point<f32>& pt, const Mouse::Button::ID button,
-                                           const bool button_just_pressed,
+                                           const bool button_pressed,
                                            Keyboard::Scancode::ID keys_down)
     {
-        scoped_log("pt={} btn={} just_pressed={}", pt, button, button_just_pressed);
+        scoped_log("pt={} btn={} pressed={}", pt, button, button_pressed);
 
         // Temporarily increase the reference count of the button in
         // case the button causes the parent window to be destructed
         ds::shared self{ this };
 
-        bool lmb_and_menu_btn{ button == Mouse::Button::Left &&
-                               !this->has_property(Property::StandardMenu) };
-        bool rmb_and_not_menu_btn{ button == Mouse::Button::Right &&
-                                   this->has_property(Property::StandardMenu) };
+        bool process_button_event{
+            (button == Mouse::Button::Left && !this->has_property(Property::StandardMenu)) ||
+            (button == Mouse::Button::Right && this->has_property(Property::StandardMenu))
+        };
 
-        diag_log("enabled={} && (lmb_menu={} || rmb_not_menu={})", m_enabled, lmb_and_menu_btn,
-                 rmb_and_not_menu_btn);
+        diag_log("enabled={} process={}", m_enabled, process_button_event);
 
-        if (m_enabled && (lmb_and_menu_btn || rmb_and_not_menu_btn))
+        if (m_enabled && process_button_event)
         {
             const bool pushed_backup{ m_pressed };
-            if (button_just_pressed)
+            if (button_pressed)
             {
                 if (this->has_property(Property::Radio))
                 {
@@ -220,12 +221,14 @@ namespace rl::ui {
                     else
                     {
                         for (const auto btn : m_button_group)
+                        {
                             if (btn != this && btn->has_property(Property::Radio) && btn->m_pressed)
                             {
                                 btn->m_pressed = false;
                                 if (btn->m_change_callback != nullptr)
                                     btn->m_change_callback(false);
                             }
+                        }
                     }
                 }
 
@@ -254,6 +257,7 @@ namespace rl::ui {
                 diag_log("standard menu button");
                 if (m_callback != nullptr && this->contains(pt))
                     m_callback();
+
                 if (this->has_property(Property::StandardPush))
                     m_pressed = false;
             }
@@ -266,6 +270,7 @@ namespace rl::ui {
 
             return true;
         }
+
         return false;
     }
 

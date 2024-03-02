@@ -436,7 +436,6 @@ namespace rl {
         scoped_trace(log_level::trace);
 
         m_mouse.process_motion(e.motion);
-
         if (m_mouse.is_button_pressed(Mouse::Button::Left))
         {
             // update button states from pressed to held if the

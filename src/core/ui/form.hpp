@@ -12,6 +12,8 @@
 #include "core/ui/widgets/vscrollpanel.hpp"
 #include "ds/dims.hpp"
 #include "ds/shared.hpp"
+#include "layouts/advanced_grid_layout.hpp"
+#include "layouts/box_layout.hpp"
 #include "utils/math.hpp"
 
 namespace rl::ui {

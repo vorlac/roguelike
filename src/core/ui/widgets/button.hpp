@@ -67,7 +67,7 @@ namespace rl::ui {
 
     private:
         bool handle_mouse_button_event(const ds::point<f32>& pt, Mouse::Button::ID button,
-                                       bool button_just_pressed, Keyboard::Scancode::ID keys_down);
+                                       bool button_pressed, Keyboard::Scancode::ID keys_down);
 
     protected:
         bool m_pressed{ false };

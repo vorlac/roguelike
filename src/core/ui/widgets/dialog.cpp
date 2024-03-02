@@ -2,12 +2,12 @@
 #include <utility>
 
 #include "core/ui/canvas.hpp"
+#include "core/ui/layouts/box_layout.hpp"
 #include "core/ui/widgets/dialog.hpp"
 #include "ds/dims.hpp"
 #include "ds/point.hpp"
 #include "ds/vector2d.hpp"
 #include "graphics/vg/nanovg.hpp"
-#include "graphics/vg/nanovg_state.hpp"
 #include "utils/io.hpp"
 #include "utils/logging.hpp"
 
@@ -49,9 +49,13 @@ namespace rl::ui {
         scoped_log();
         if (m_button_panel == nullptr)
         {
-            m_button_panel = new Widget(this);
-            m_button_panel->set_layout(
-                new BoxLayout{ Orientation::Horizontal, Alignment::Center, 0.0f, 4.0f });
+            m_button_panel = new Widget{ this };
+            m_button_panel->set_layout(new BoxLayout{
+                Orientation::Horizontal,
+                Alignment::Center,
+                0.0f,
+                4.0f,
+            });
         }
 
         return m_button_panel;
@@ -190,7 +194,7 @@ namespace rl::ui {
     bool Dialog::on_mouse_drag(const Mouse& mouse, const Keyboard& kb)
     {
         scoped_logger(log_level::debug, "pt:{}, rel:{}", mouse.pos(), mouse.pos_delta());
-        if (m_drag && mouse.is_button_held(Mouse::Button::Left))
+        if (m_drag && mouse.is_button_down(Mouse::Button::Left))
         {
             diag_log("m_pos_1={} mouse_delta={}", m_pos, mouse.pos_delta());
             m_pos += mouse.pos_delta();
@@ -264,12 +268,12 @@ namespace rl::ui {
         nvg::font_face(context, m_theme->dialog_title_font_name.data());
 
         // [xmin, ymin, xmax, ymax]
-        std::array<f32, 4> bounds = {};
+        std::array<f32, 4> bounds{};
         nvg::text_bounds(context, 0, 0, m_title.c_str(), nullptr, bounds.data());
 
         constexpr static f32 TEXT_SIZE_WIDTH_PADDING{ 20.0f };
         ds::rect bounding_rect{
-            ds::point<f32>::zero(),
+            ds::point{ 0.0f, 0.0f },
             ds::dims{
                 std::max(result.width, bounds[2] - bounds[0] + TEXT_SIZE_WIDTH_PADDING),
                 std::max(result.height, bounds[3] - bounds[1]),
@@ -291,12 +295,18 @@ namespace rl::ui {
             Widget::perform_layout();
             for (const auto bp_child : m_button_panel->children())
             {
-                bp_child->set_fixed_size({ 22.0f, 22.0f });
+                bp_child->set_fixed_size({
+                    22.0f,
+                    22.0f,
+                });
                 bp_child->set_font_size(15.0f);
             }
 
             m_button_panel->show();
-            m_button_panel->set_size(ds::dims{ this->width(), 22.0f });
+            m_button_panel->set_size(ds::dims{
+                this->width(),
+                22.0f,
+            });
             m_button_panel->set_position(ds::point{
                 this->width() - (m_button_panel->preferred_size().width + 5.0f),
                 3.0f,
