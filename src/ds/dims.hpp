@@ -1,14 +1,12 @@
 #pragma once
 
-#include <cmath>
-#include <memory>
 #include <utility>
 
 #include <fmt/format.h>
 
 #include "utils/concepts.hpp"
 #include "utils/conversions.hpp"
-#include "utils/memory.hpp"
+#include "utils/math.hpp"
 
 namespace rl::ds {
 #pragma pack(4)
@@ -34,7 +32,7 @@ namespace rl::ds {
         {
         }
 
-        constexpr dims(const vector2<T>& other)
+        explicit constexpr dims(const vector2<T>& other)
             : width{ other.x }
             , height{ other.y }
         {
@@ -46,7 +44,7 @@ namespace rl::ds {
         {
         }
 
-        consteval dims(vector2<T>&& other) noexcept
+        explicit consteval dims(vector2<T>&& other) noexcept
             : width{ std::move(other.x) }
             , height{ std::move(other.y) }
         {
@@ -68,14 +66,15 @@ namespace rl::ds {
             };
         }
 
+        [[nodiscard]]
         constexpr T area() const
         {
             return width * height;
         }
 
         template <typename I>
-        explicit constexpr operator ds::dims<I>()
             requires rl::floating_point<T>
+        explicit constexpr operator ds::dims<I>()
         {
             return ds::dims<I>{
                 static_cast<I>(width),
@@ -84,8 +83,8 @@ namespace rl::ds {
         }
 
         template <typename F>
-        explicit constexpr operator ds::dims<F>()
             requires rl::integer<T>
+        explicit constexpr operator ds::dims<F>()
         {
             return ds::dims<F>{
                 static_cast<F>(width),
@@ -133,7 +132,15 @@ namespace rl::ds {
             };
         }
 
-        constexpr dims<T> operator+(vector2<T>&& other) noexcept
+        constexpr dims<T> operator+(const vector2<T>& other) const noexcept
+        {
+            return dims<T>{
+                static_cast<T>(this->width + other.x),
+                static_cast<T>(this->height + other.y),
+            };
+        }
+
+        constexpr dims<T> operator+(vector2<T>&& other) const noexcept
         {
             return dims<T>{
                 static_cast<T>(this->width + other.x),
@@ -149,6 +156,22 @@ namespace rl::ds {
         }
 
         constexpr dims<T> operator-(const dims<T>& other) const
+        {
+            return {
+                this->width - other.width,
+                this->height - other.height,
+            };
+        }
+
+        constexpr dims<T> operator-(const vector2<T>& other) const
+        {
+            return {
+                this->width - other.x,
+                this->height - other.y,
+            };
+        }
+
+        constexpr dims<T> operator-(dims<T>&& other) const noexcept
         {
             return {
                 this->width - other.width,
@@ -232,6 +255,16 @@ namespace rl::ds {
             return dims<T>{
                 static_cast<T>(this->width * vec.x),
                 static_cast<T>(this->height * vec.y),
+            };
+        }
+
+        template <rl::integer I>
+            requires rl::floating_point<T>
+        constexpr dims<T> operator*(vector2<I>&& vec) const noexcept
+        {
+            return dims<T>{
+                this->width * static_cast<T>(vec.x),
+                this->height * static_cast<T>(vec.y),
             };
         }
 

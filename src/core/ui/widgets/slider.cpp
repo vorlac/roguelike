@@ -93,7 +93,7 @@ namespace rl::ui {
         value = value * (m_range.second - m_range.first) + m_range.first;
         m_value = std::min(std::max(value, m_range.first), m_range.second);
 
-        if (m_callback != nullptr && !math::is_equal(m_value, old_value))
+        if (m_callback != nullptr && m_value != old_value)
             m_callback(m_value);
 
         return true;
@@ -116,7 +116,7 @@ namespace rl::ui {
         value = value * (m_range.second - m_range.first) + m_range.first;
         m_value = std::min(std::max(value, m_range.first), m_range.second);
 
-        if (m_callback != nullptr && !math::is_equal(m_value, old_value))
+        if (m_callback != nullptr && m_value != old_value)
             m_callback(m_value);
 
         return true;
@@ -139,7 +139,7 @@ namespace rl::ui {
         value = value * (m_range.second - m_range.first) + m_range.first;
         m_value = std::min(std::max(value, m_range.first), m_range.second);
 
-        if (m_callback != nullptr && !math::is_equal(m_value, old_value))
+        if (m_callback != nullptr && m_value != old_value)
             m_callback(m_value);
 
         if (m_final_callback != nullptr)
@@ -173,7 +173,7 @@ namespace rl::ui {
         nvg::fill_paint(context, bg);
         nvg::fill(context);
 
-        if (!math::is_equal(m_highlighted_range.second, m_highlighted_range.first))
+        if (m_highlighted_range.second != m_highlighted_range.first)
         {
             nvg::begin_path(context);
             nvg::rounded_rect(context, start_x + m_highlighted_range.first * m_size.width,

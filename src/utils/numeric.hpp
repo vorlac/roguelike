@@ -31,6 +31,7 @@ namespace rl {
 }
 
 namespace rl {
+
     template <typename TEnum>
         requires std::is_scoped_enum_v<TEnum>
     constexpr TEnum operator|(const TEnum lhs, const TEnum rhs)
@@ -50,17 +51,31 @@ namespace rl {
     template <typename TEnum, typename TUnderlying>
         requires std::is_scoped_enum_v<TEnum> &&
                  std::same_as<std::underlying_type_t<TEnum>, TUnderlying>
-    constexpr auto operator==(const TEnum lhs, const TUnderlying rhs)
-        -> std::underlying_type_t<TEnum>
+    constexpr bool operator==(const TUnderlying lhs, const TEnum rhs)
     {
-        return static_cast<std::underlying_type_t<TEnum>>(lhs) == rhs;
+        return lhs == static_cast<std::underlying_type_t<TEnum>>(rhs);
     }
 
     template <typename TEnum, typename TUnderlying>
         requires std::is_scoped_enum_v<TEnum> &&
                  std::same_as<std::underlying_type_t<TEnum>, TUnderlying>
-    constexpr auto operator!=(const TEnum lhs, const TUnderlying rhs)
-        -> std::underlying_type_t<TEnum>
+    constexpr bool operator==(const TEnum lhs, const TUnderlying rhs)
+    {
+        return static_cast<std::underlying_type_t<TEnum>>(rhs) == lhs;
+    }
+
+    template <typename TEnum, typename TUnderlying>
+        requires std::is_scoped_enum_v<TEnum> &&
+                 std::same_as<std::underlying_type_t<TEnum>, TUnderlying>
+    constexpr bool operator!=(const TUnderlying lhs, const TEnum rhs)
+    {
+        return !(lhs == rhs);
+    }
+
+    template <typename TEnum, typename TUnderlying>
+        requires std::is_scoped_enum_v<TEnum> &&
+                 std::same_as<std::underlying_type_t<TEnum>, TUnderlying>
+    constexpr bool operator!=(const TEnum lhs, const TUnderlying rhs)
     {
         return !(lhs == rhs);
     }

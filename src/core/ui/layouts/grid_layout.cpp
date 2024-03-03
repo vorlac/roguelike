@@ -163,8 +163,8 @@ namespace rl::ui {
         const ds::point start{ start_offset.width, start_offset.height };
         ds::point pos{ start };
 
-        i32& axis1_pos{ axis1 == std::to_underlying(Orientation::Horizontal) ? pos.x : pos.y };
-        i32& axis2_pos{ axis2 == std::to_underlying(Orientation::Horizontal) ? pos.x : pos.y };
+        i32& axis1_pos{ axis1 == Orientation::Horizontal ? pos.x : pos.y };
+        i32& axis2_pos{ axis2 == Orientation::Horizontal ? pos.x : pos.y };
 
         i32 child_idx{ 0 };
         for (i32 i2 = 0; i2 < static_cast<i32>(dim[axis2]); i2++)
@@ -193,14 +193,14 @@ namespace rl::ui {
                                                                                : ps.height,
                 };
 
-                ds::point item_pos{ pos };
+                ds::point<f32> item_pos{ pos };
                 for (i32 j = 0; j < 2; j++)
                 {
                     const i32 axis_idx{ (axis1 + j) % 2 };
                     const i32 item_idx{ j == 0 ? i1 : i2 };
                     const Alignment align{ this->alignment(static_cast<Axis>(axis_idx), item_idx) };
 
-                    i32& item_axis_pos{ axis_idx == Axis::Horizontal ? item_pos.x : item_pos.y };
+                    f32& item_axis_pos{ axis_idx == Axis::Horizontal ? item_pos.x : item_pos.y };
                     f32& target_axis_size{ axis_idx == std::to_underlying(Orientation::Horizontal)
                                                ? target_size.width
                                                : target_size.height };
@@ -213,16 +213,14 @@ namespace rl::ui {
                         case Alignment::Minimum:
                             break;
                         case Alignment::Center:
-                            item_axis_pos += static_cast<i32>(
-                                (grid[axis_idx][item_idx] - target_axis_size) / 2.0f);
+                            item_axis_pos += (grid[axis_idx][item_idx] - target_axis_size) / 2.0f;
                             break;
                         case Alignment::Maximum:
-                            item_axis_pos += static_cast<i32>(
-                                grid[axis_idx][item_idx] - target_axis_size);
+                            item_axis_pos += grid[axis_idx][item_idx] - target_axis_size;
                             break;
                         case Alignment::Fill:
-                            target_axis_size = fs_axis_size ? fs_axis_size
-                                                            : grid[axis_idx][item_idx];
+                            target_axis_size = (fs_axis_size != 0.0f) ? fs_axis_size
+                                                                      : grid[axis_idx][item_idx];
                             break;
                         case Alignment::Unknown:
                             assert_cond(false);
@@ -230,7 +228,7 @@ namespace rl::ui {
                     }
                 }
 
-                child->set_position(item_pos);
+                child->set_position(std::move(item_pos));
                 child->set_size(std::move(target_size));
                 child->perform_layout();
 

@@ -11,6 +11,8 @@
 
 namespace rl::ds {
 #pragma pack(4)
+    template <rl::numeric T>
+    using point = vector2<T>;
 
     template <rl::numeric T>
     struct vector2
@@ -32,8 +34,17 @@ namespace rl::ds {
         }
 
         template <rl::integer I>
-        constexpr vector2(const vector2<I>& other) noexcept
             requires rl::floating_point<T>
+        explicit constexpr vector2(const vector2<I>& other)
+            : x{ static_cast<T>(other.x) }
+            , y{ static_cast<T>(other.y) }
+            , z{ static_cast<T>(0) }
+        {
+        }
+
+        template <rl::integer I>
+            requires rl::floating_point<T>
+        explicit constexpr vector2(vector2<I>&& other) noexcept
             : x{ static_cast<T>(other.x) }
             , y{ static_cast<T>(other.y) }
             , z{ static_cast<T>(0) }
@@ -41,13 +52,6 @@ namespace rl::ds {
         }
 
         constexpr vector2(const vector2<T>& other) noexcept
-            : x{ static_cast<T>(other.x) }
-            , y{ static_cast<T>(other.y) }
-            , z{ static_cast<T>(0) }
-        {
-        }
-
-        constexpr vector2(const vector2<T>&& other) noexcept
             : x{ static_cast<T>(other.x) }
             , y{ static_cast<T>(other.y) }
             , z{ static_cast<T>(0) }
@@ -267,6 +271,15 @@ namespace rl::ds {
             return *this;
         }
 
+        template <rl::integer I>
+            requires rl::floating_point<T>
+        constexpr vector2<T>& operator=(vector2<I>&& other) noexcept
+        {
+            this->x = static_cast<T>(other.x);
+            this->y = static_cast<T>(other.y);
+            return *this;
+        }
+
         constexpr vector2<T>& operator=(vector2<T>&& other) noexcept
         {
             this->x = other.x;
@@ -282,7 +295,15 @@ namespace rl::ds {
             };
         }
 
-        constexpr vector2<T> operator+(vector2<T>&& other) noexcept
+        constexpr vector2<T> operator+(const vector2<T>& other) const
+        {
+            return vector2<T>{
+                this->x + other.x,
+                this->y + other.y,
+            };
+        }
+
+        constexpr vector2<T> operator+(vector2<T>&& other) const noexcept
         {
             return vector2<T>{
                 this->x + std::move(other.x),
@@ -356,6 +377,16 @@ namespace rl::ds {
             return vector2<T>{
                 x * other.x,
                 y * other.y,
+            };
+        }
+
+        template <rl::integer I>
+            requires rl::floating_point<T>
+        constexpr vector2<T> operator*(vector2<I>&& other) const noexcept
+        {
+            return vector2<T>{
+                x * static_cast<T>(other.x),
+                y * static_cast<T>(other.y),
             };
         }
 

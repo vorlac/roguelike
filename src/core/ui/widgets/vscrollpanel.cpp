@@ -9,13 +9,9 @@ namespace rl::ui {
 
     VScrollPanel::VScrollPanel(Widget* parent)
         : Widget{ parent }
-        , m_container{ new Widget{ nullptr } }
     {
-        m_container->acquire_ref();
-        m_container->set_parent(this);
-        m_container->set_visible(true);
-        m_container->set_theme(m_theme);
-        m_container->set_layout(m_layout);
+        m_container = new ScrollableContainer{ nullptr };
+        Widget::add_child(0, m_container);
     }
 
     void VScrollPanel::add_child(Widget* child)
@@ -26,22 +22,22 @@ namespace rl::ui {
 
     f32 VScrollPanel::scroll() const
     {
-        // Return the current scroll amount as a value between 0 and 1. 0 means
-        // scrolled to the top and 1 to the bottom.
+        // Return the current scroll amount as a value between 0 and 1.
+        // 0 means scrolled to the top and 1 to the bottom.
         return m_scrollbar_pos;
     }
 
     void VScrollPanel::set_scroll(const f32 scroll)
     {
-        // Set the scroll amount to a value between 0 and 1. 0 means scrolled to
-        // the top and 1 to the bottom.
+        // Set the scroll amount to a value between 0 and 1.
+        // 0 means scrolled to the top and 1 to the bottom.
         m_scrollbar_pos = scroll;
     }
 
     Widget* VScrollPanel::container() const
     {
-        // Set the scroll amount to a value between 0 and 1. 0 means scrolled to
-        // the top and 1 to the bottom.
+        // Set the scroll amount to a value between 0 and 1.
+        // 0 means scrolled to the top and 1 to the bottom.
         return m_container;
     }
 
@@ -56,6 +52,11 @@ namespace rl::ui {
         m_cont_prefsize = m_container->preferred_size();
         if (m_cont_prefsize.height > m_size.height)
         {
+            m_scroll_bar_rect = ds::rect{
+                ds::point{ m_pos.x + m_size.width - (ScrollbarWidth + Margin), m_pos.y },
+                ds::dims{ ScrollbarWidth, m_size.height }
+            };
+
             m_container->set_position({
                 0.0f,
                 -m_scrollbar_pos * (m_cont_prefsize.height - m_size.height),
@@ -89,53 +90,10 @@ namespace rl::ui {
     Widget* VScrollPanel::find_widget(const ds::point<f32>& pt)
     {
         scoped_trace(log_level::debug);
+        if (m_scroll_bar_rect.contains(pt))
+            return this;
 
-        // TODO: WTF is going on...
-
-        {
-            // broken mouse cursors & alignments in dialog with this one...
-            // m_container->perform_layout();
-            //  const ds::point local_mouse_pos{ pt - m_pos };
-            // Widget::perform_layout();
-            LocalTransform transform{ this };
-            // Widget* widget{ m_container->find_widget(this->abs_position() - pt) };
-            this->perform_layout();
-            Widget* widget{ m_container->find_widget(pt - m_pos) };
-            //  Widget* widget{ m_container->find_widget(pt - m_pos) };
-            //  Widget* widget{ m_container->find_widget(pt - m_pos) };
-            return widget;
-        }
-
-        //{
-        //    // broken mouse cursors & alignments in dialog with this one...
-        //    LocalTransform transform{ this };
-        //    const ds::point local_mouse_pos{ pt - m_pos };
-        //    Widget* widget{ Widget::find_widget(local_mouse_pos) };
-        //    return widget;
-        //}
-
-        //{
-        //    // broken mouse cursors & alignments in dialog with this one...
-        //    // scroll bar works, but button deselection doesn't
-        //    LocalTransform transform{ this };
-        //    const ds::point local_mouse_pos{ pt };
-        //    Widget* widget{ Widget::find_widget(local_mouse_pos) };
-        //    return widget;
-        //}
-
-        //{
-        //    // broken cursor and layout PLUS scrollbar doesn't work with mouse
-        //    LocalTransform transform{ this };
-        //    const ds::point local_mouse_pos{ pt - LocalTransform::absolute_pos };
-        //    Widget* widget{ Widget::find_widget(local_mouse_pos) };
-        //    return widget;
-        //}
-
-        //{
-        //    LocalTransform transform{ this };
-        //    Widget* widget{ Widget::find_widget(pt) };
-        //    return widget;
-        //}
+        return m_container->find_widget(pt - m_pos);
     }
 
     bool VScrollPanel::on_mouse_drag(const Mouse& mouse, const Keyboard& kb)
@@ -145,19 +103,18 @@ namespace rl::ui {
         const auto mouse_delta{ mouse.pos_delta() };
         if (m_prev_click_location == Component::ScrollBar && m_cont_prefsize.height > m_size.height)
         {
-            const float scrollh{ m_size.height *
-                                 std::min(1.0f, m_size.height / m_cont_prefsize.height) };
+            const float scrollbar_height{ m_size.height *
+                                          std::min(1.0f, m_size.height / m_cont_prefsize.height) };
             m_scrollbar_pos = std::max(
-                0.0f, std::min(1.0f, m_scrollbar_pos +
-                                         mouse_delta.y / (m_size.height - (Margin * 2) - scrollh)));
-
+                0.0f,
+                std::min(1.0f, m_scrollbar_pos + mouse_delta.y / (m_size.height - (Margin * 2) -
+                                                                  scrollbar_height)));
             m_update_layout = true;
             return true;
         }
 
-        // LocalTransform transform{ this };
         LocalTransform transform{ this };
-        return m_container->on_mouse_drag(mouse, kb);
+        return Widget::on_mouse_drag(mouse, kb);
     }
 
     bool VScrollPanel::draw_mouse_intersection(const ds::point<f32>& pt)
@@ -179,45 +136,36 @@ namespace rl::ui {
     {
         scoped_log();
 
-        {
-            LocalTransform transform{ this };
-            m_prev_click_location = Component::Body;
-            if (m_container->on_mouse_button_pressed(mouse, kb))
-                return true;
-        }
-
+        m_prev_click_location = Component::None;
         const ds::point mouse_pos{ mouse.pos() };
         const ds::point local_mouse_pos{ mouse_pos - LocalTransform::absolute_pos };
-        const ds::rect scroll_bar_rect{
-            ds::point{ m_pos.x + m_size.width - (ScrollbarWidth + Margin), m_pos.y },
-            ds::dims{ ScrollbarWidth, m_size.height }
-        };
 
         const bool lmb_just_pressed{ mouse.is_button_pressed(Mouse::Button::Left) };
         if (lmb_just_pressed && m_container != nullptr && m_cont_prefsize.height > m_size.height &&
-            scroll_bar_rect.contains(local_mouse_pos))
+            m_scroll_bar_rect.contains(local_mouse_pos))
         {
-            const f32 scrollh{ m_size.height *
-                               std::min(1.0f, m_size.height / m_cont_prefsize.height) };
+            m_prev_click_location = Component::ScrollBar;
+            const f32 scrollbar_height{ m_size.height *
+                                        std::min(1.0f, m_size.height / m_cont_prefsize.height) };
             const f32 start{ m_pos.y + Margin + ScrollbarBorder +
-                             (m_size.height - ScrollbarWidth - scrollh) * m_scrollbar_pos };
+                             (m_size.height - ScrollbarWidth - scrollbar_height) * m_scrollbar_pos };
 
             f32 delta{ 0.0f };
             if (local_mouse_pos.y < start)
                 delta = -m_size.height / m_cont_prefsize.height;
-            else if (local_mouse_pos.y > start + scrollh)
+            else if (local_mouse_pos.y > start + scrollbar_height)
                 delta = m_size.height / m_cont_prefsize.height;
 
-            m_scrollbar_pos = std::max(0.0f, std::min(1.0f, m_scrollbar_pos + delta * 0.98f));
+            m_scrollbar_pos = std::max(0.0f, std::min(1.0f, m_scrollbar_pos + delta));
             m_container->set_position(
                 { 0.0f, -m_scrollbar_pos * (m_cont_prefsize.height - m_size.height) });
 
-            m_prev_click_location = Component::ScrollBar;
             m_update_layout = true;
             return true;
         }
 
-        return false;
+        LocalTransform transform{ this };
+        return m_container->on_mouse_button_pressed(mouse, kb);
     }
 
     bool VScrollPanel::on_mouse_button_released(const Mouse& mouse, const Keyboard& kb)
@@ -273,10 +221,11 @@ namespace rl::ui {
         if (m_cont_prefsize.height > m_size.height)
             y_offset = -m_scrollbar_pos * (m_cont_prefsize.height - m_size.height);
 
-        auto&& context{ m_renderer->context() };
-        m_container->set_position(ds::point{ 0.0f, y_offset });
+        const auto context{ m_renderer->context() };
+        m_container->set_position({ 0.0f, y_offset });
         m_cont_prefsize = m_container->preferred_size();
-        const f32 scrollh{ m_size.height * math::min(1.0f, m_size.height / m_cont_prefsize.height) };
+        const f32 scrollbar_height{ m_size.height *
+                                    math::min(1.0f, m_size.height / m_cont_prefsize.height) };
 
         if (m_update_layout)
         {
@@ -318,15 +267,17 @@ namespace rl::ui {
                 auto scrollbar_rect = ds::rect{
                     ds::point{ m_pos.x + m_size.width - (Margin + ScrollbarWidth) - OutlineSize,
                                m_pos.y + Margin +
-                                   (m_size.height - Margin * 2.0f - scrollh) * m_scrollbar_pos -
+                                   (m_size.height - Margin * 2.0f - scrollbar_height) *
+                                       m_scrollbar_pos -
                                    OutlineSize },
-                    ds::dims{ ScrollbarWidth, scrollh },
+                    ds::dims{ ScrollbarWidth, scrollbar_height },
                 };
                 auto scrollbar_border_rect = ds::rect{
                     ds::point{ m_pos.x + m_size.width - (Margin + ScrollbarWidth) + OutlineSize,
                                m_pos.y + Margin + OutlineSize +
-                                   (m_size.height - Margin * 2.0f - scrollh) * m_scrollbar_pos },
-                    ds::dims{ ScrollbarWidth - Margin / 2.0f, scrollh - Margin / 2.0f },
+                                   (m_size.height - Margin * 2.0f - scrollbar_height) *
+                                       m_scrollbar_pos },
+                    ds::dims{ ScrollbarWidth - Margin / 2.0f, scrollbar_height - Margin / 2.0f },
                 };
 
                 nvg::PaintStyle bgbrush{ m_renderer->create_box_gradient(

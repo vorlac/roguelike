@@ -1469,7 +1469,7 @@ namespace rl::nvg {
                 }
 
                 const int32_t val = static_cast<int32_t>(vals[0]);
-                if (Commands::Close != val && Commands::Winding != val)
+                if (val != Commands::Close && val != Commands::Winding)
                 {
                     ctx->commandx = vals[nvals - 2];
                     ctx->commandy = vals[nvals - 1];

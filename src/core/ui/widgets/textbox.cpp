@@ -18,6 +18,7 @@ SDL_C_LIB_BEGIN
 SDL_C_LIB_END
 
 namespace rl::ui {
+    using rl::operator==;
 
     TextBox::TextBox(Widget* parent, const std::string& value)
         : Widget{ parent }
@@ -197,7 +198,7 @@ namespace rl::ui {
 
         if (m_editable && this->focused())
             m_valid_format ? nvg::fill_paint(context, fg1) : nvg::fill_paint(context, fg2);
-        else if (m_spinnable && !math::is_equal(m_mouse_down_pos.x, -1.0f))
+        else if (m_spinnable && m_mouse_down_pos.x != -1.0f)
             nvg::fill_paint(context, fg1);
         else
             nvg::fill_paint(context, bg);
@@ -267,7 +268,7 @@ namespace rl::ui {
             nvg::font_size(context, (m_font_size < 0.0f ? m_theme->button_font_size : m_font_size) *
                                         this->icon_scale());
 
-            bool spinning = !math::is_equal(m_mouse_down_pos.x, -1.0f);
+            bool spinning = m_mouse_down_pos.x != -1.0f;
 
             {
                 // up button
@@ -809,7 +810,7 @@ namespace rl::ui {
     void TextBox::update_cursor(const f32 last_x, const nvg::GlyphPosition* glyphs, const i32 size)
     {
         // handle mouse cursor events
-        if (!math::is_equal(m_mouse_down_pos.x, -1.0f))
+        if (m_mouse_down_pos.x != -1.0f)
         {
             if ((m_mouse_down_modifier & Keyboard::Scancode::LShift) == 0)
                 m_selection_pos = -1;
@@ -819,7 +820,7 @@ namespace rl::ui {
             m_cursor_pos = this->position_to_cursor_index(m_mouse_down_pos.x, last_x, glyphs, size);
             m_mouse_down_pos = { -1, -1 };
         }
-        else if (m_mouse_drag_pos.x != -1)
+        else if (m_mouse_drag_pos.x != -1.0f)
         {
             if (m_selection_pos == -1)
                 m_selection_pos = m_cursor_pos;

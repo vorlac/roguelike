@@ -56,8 +56,8 @@ namespace rl::ui {
             const ds::dims ps{ child->preferred_size() };
             const ds::dims fs{ child->fixed_size() };
             const ds::dims target_size{
-                math::is_equal(fs.width, 0.0f) ? ps.width : fs.width,
-                math::is_equal(fs.height, 0.0f) ? ps.height : fs.height,
+                fs.width == 0.0f ? ps.width : fs.width,
+                fs.height == 0.0f ? ps.height : fs.height,
             };
 
             first_child = false;

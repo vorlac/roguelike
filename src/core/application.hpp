@@ -74,7 +74,8 @@ namespace rl {
             const std::unique_ptr<OpenGLRenderer>& renderer{ m_main_window->glrenderer() };
             gl::InstancedVertexBuffer vbo{ renderer->get_viewport() };
             const auto form{ new ui::FormHelper(gui) };
-            auto dialog = ds::shared{ form->add_dialog(ds::point{ 10, 10 }, "Nested Dialog Test") };
+            auto dialog = ds::shared{ form->add_dialog(ds::point{ 10.0f, 10.0f },
+                                                       "Nested Dialog Test") };
 
             std::string elapsed_str{ fmt::to_string(
                 fmt::format("{:0>6.3f} sec", m_timer.elapsed())) };

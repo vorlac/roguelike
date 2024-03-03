@@ -12,6 +12,17 @@ namespace rl::ui {
 
     class VScrollPanel final : public Widget
     {
+        class ScrollableContainer final : public Widget
+        {
+        public:
+            using Widget::Widget;
+
+            virtual bool on_mouse_drag(const Mouse& mouse, const Keyboard& kb) override
+            {
+                return this->parent()->on_mouse_drag(mouse, kb);
+            }
+        };
+
         enum class Component {
             None,
             Body,
@@ -41,12 +52,13 @@ namespace rl::ui {
         virtual ds::dims<f32> preferred_size() const override;
 
     protected:
-        f32 m_scrollbar_pos{ 0.0f };
-        bool m_update_layout{ false };
-        Widget* m_container{ nullptr };
+        ScrollableContainer* m_container{ new ScrollableContainer{ nullptr } };
+        ds::rect<f32> m_scroll_bar_rect{ ds::point{ 0.0f, 0.0f }, ds::dims{ 0.0f, 0.0f } };
         ds::dims<f32> m_cont_prefsize{ 0.0f, 0.0f };
         ScrollMode m_scrollmode{ ScrollMode::ScrollbarOnly };
         Component m_prev_click_location{ Component::None };
+        f32 m_scrollbar_pos{ 0.0f };
+        bool m_update_layout{ false };
 
         constexpr static inline ds::color<f32> ScrollbarColor{ 220, 220, 220, 100 };
         constexpr static inline ds::color<f32> ScrollbarShadowColor{ 128, 128, 128, 100 };

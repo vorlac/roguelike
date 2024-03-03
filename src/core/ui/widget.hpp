@@ -80,7 +80,7 @@ namespace rl::ui {
 
         void set_parent(Widget* parent);
         void set_layout(Layout* layout);
-        void set_position(ds::point<f32>&& pos);
+        void set_position(ds::point<f32>&& pos) noexcept;
         void set_size(ds::dims<f32>&& size);
         void set_width(f32 width);
         void set_height(f32 height);

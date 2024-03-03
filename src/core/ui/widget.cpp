@@ -108,7 +108,7 @@ namespace rl::ui {
         return m_pos;
     }
 
-    void Widget::set_position(ds::point<f32>&& pos)
+    void Widget::set_position(ds::point<f32>&& pos) noexcept
     {
         scoped_trace(log_level::debug);
         m_pos = std::move(pos);
@@ -117,9 +117,9 @@ namespace rl::ui {
     ds::point<f32> Widget::abs_position() const
     {
         scoped_trace(log_level::debug);
-        return m_parent != nullptr                   //
-                 ? m_parent->abs_position() + m_pos  //
-                 : m_pos;                            //
+        return m_parent != nullptr  //
+                 ? m_parent->abs_position() + m_pos
+                 : m_pos;
     }
 
     ds::dims<f32> Widget::size() const
@@ -271,8 +271,8 @@ namespace rl::ui {
             auto fs{ child->fixed_size() };
 
             child->set_size({
-                math::is_equal(fs.width, 0.0f) ? ps.width : fs.width,
-                math::is_equal(fs.height, 0.0f) ? ps.height : fs.height,
+                fs.width == 0.0f ? ps.width : fs.width,
+                fs.height == 0.0f ? ps.height : fs.height,
             });
 
             child->perform_layout();

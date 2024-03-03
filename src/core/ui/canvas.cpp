@@ -82,9 +82,12 @@ namespace rl::ui {
             {
                 constexpr f32 tooltip_width{ 150.0f };
                 std::array<f32, 4> bounds = { 0.0f };
-                ds::point pos{
+                ds::point<f32> pos{
                     widget->position() +
-                        ds::point{ (widget->width() / 2.0f), widget->height() + 10.0f },
+                        ds::point<f32>{
+                            (widget->width() / 2.0f),
+                            widget->height() + 10.0f,
+                        },
                 };
 
                 nvg::font_face(context, Font::Name::Sans);
@@ -335,7 +338,7 @@ namespace rl::ui {
             dialog->perform_layout();
         }
 
-        const ds::dims offset{ ((m_size - dialog->size()) / 2.0f) - m_pos };
+        const ds::dims<f32> offset{ (((m_size - dialog->size()) / 2.0f) - m_pos) };
         ds::point<f32>&& position{ offset.width, offset.height };
         dialog->set_position(std::move(position));
     }
@@ -351,7 +354,7 @@ namespace rl::ui {
     {
         scoped_log("{} => {}", ds::rect{ m_pos, m_size }, ds::rect{ m_pos, size / m_pixel_ratio });
 
-        if (math::is_equal(size.area(), 0.0f))
+        if (size.area() == 0.0f)
             return false;
 
         this->set_size({

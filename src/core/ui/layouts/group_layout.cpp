@@ -10,7 +10,6 @@
 #include "graphics/vg/nanovg.hpp"
 #include "utils/io.hpp"
 #include "utils/logging.hpp"
-#include "utils/math.hpp"
 #include "utils/numeric.hpp"
 
 namespace rl::ui {
@@ -40,8 +39,8 @@ namespace rl::ui {
             ds::dims ps{ c->preferred_size() };
             ds::dims fs{ c->fixed_size() };
             const ds::dims target_size{
-                math::is_equal(fs.width, 0.0f) ? ps.width : fs.width,
-                math::is_equal(fs.height, 0.0f) ? ps.height : fs.height,
+                fs.width == 0.0f ? ps.width : fs.width,
+                fs.height == 0.0f ? ps.height : fs.height,
             };
 
             const bool indent_cur{ indent && label == nullptr };
@@ -62,9 +61,8 @@ namespace rl::ui {
         scoped_trace(log_level::debug);
 
         f32 height{ m_margin };
-        const f32 available_width{ math::is_equal(widget->fixed_width(), 0.0f)
-                                       ? widget->width() - 2.0f * m_margin
-                                       : widget->fixed_width() };
+        const f32 available_width{ widget->fixed_width() == 0.0f ? widget->width() - 2.0f * m_margin
+                                                                 : widget->fixed_width() };
 
         const auto dialog{ dynamic_cast<const Dialog*>(widget) };
         if (dialog != nullptr && !dialog->title().empty())
@@ -91,8 +89,8 @@ namespace rl::ui {
             };
 
             ds::dims target_size{
-                math::is_equal(fs.width, 0.0f) ? ps.width : fs.width,
-                math::is_equal(fs.height, 0.0f) ? ps.height : fs.height,
+                fs.width == 0.0f ? ps.width : fs.width,
+                fs.height == 0.0f ? ps.height : fs.height,
             };
 
             child->set_position({
@@ -100,7 +98,7 @@ namespace rl::ui {
                 height,
             });
 
-            child->set_size(std::move(target_size));
+            child->set_size(std::forward<ds::dims<f32>>(target_size));
             child->perform_layout();
 
             height += target_size.height;

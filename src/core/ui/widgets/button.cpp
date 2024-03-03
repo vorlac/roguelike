@@ -310,7 +310,7 @@ namespace rl::ui {
         nvg::rounded_rect(context, m_pos.x + 1.0f, m_pos.y + 1.0f, m_size.width - 2.0f,
                           m_size.height - 2.0f, m_theme->button_corner_radius - 1.0f);
 
-        if (math::is_equal(m_background_color.a, 0.0f))
+        if (m_background_color.a == 0.0f)
         {
             nvg::fill_color(context, m_background_color);
             nvg::fill(context);
