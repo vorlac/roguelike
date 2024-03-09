@@ -32,63 +32,66 @@ namespace rl::nvg {
         Xor,
     };
 
-    enum TextureProperty {
+    enum class TextureProperty {
+        None = 0,
         Alpha = 1 << 0,
         RGBA = 1 << 1,
     };
 
-    enum ShapeWinding {
-        Solid_CounterClockwise = 1,  // ShapeWinding for solid shapes
-        Hole_Clockwise = 2,          // ShapeWinding for holes
+    enum class ShapeWinding {
+        None = 0,
+        CounterClockwise = 1,  // ShapeWinding for solid shapes
+        Clockwise = 2,         // ShapeWinding for holes
     };
 
-    enum Solidity {
-        NVGSolid = 1,  // CCW
-        NVGHole = 2,   // CW
+    enum class Solidity {
+        Solid = 1,  // CCW
+        Hole = 2,   // CW
     };
 
-    enum LineCap {
-        NVGButt,
-        NVGRound,
-        NVGSquare,
-        NVGBevel,
-        NVGMiter,
+    enum class LineCap {
+        Butt,
+        Round,
+        Square,
+        Bevel,
+        Miter,
     };
 
     enum class Align {
-        // Horizontal align
-        NVGAlignLeft = 1 << 0,    // Default, align text horizontally to left.
-        NVGAlignCenter = 1 << 1,  // Align text horizontally to center.
-        NVGAlignRight = 1 << 2,   // Align text horizontally to right.
-
-        // Vertical align
-        NVGAlignTop = 1 << 3,       // Align text vertically to top.
-        NVGAlignMiddle = 1 << 4,    // Align text vertically to middle.
-        NVGAlignBottom = 1 << 5,    // Align text vertically to bottom.
-        NVGAlignBaseline = 1 << 6,  // Default, align text vertically to baseline.
+        None = 0,
+        HLeft = 1 << 0,      // Default, align text horizontally to left.
+        HCenter = 1 << 1,    // Align text horizontally to center.
+        HRight = 1 << 2,     // Align text horizontally to right.
+        VTop = 1 << 3,       // Align text vertically to top.
+        VMiddle = 1 << 4,    // Align text vertically to middle.
+        VBottom = 1 << 5,    // Align text vertically to bottom.
+        VBaseline = 1 << 6,  // Default, align text vertically to baseline.
     };
 
-    enum BlendFactor {
-        NVGZero = 1 << 0,
-        NVGOne = 1 << 1,
-        NVGSrcColor = 1 << 2,
-        NVGOneMinusSrcColor = 1 << 3,
-        NVGDstColor = 1 << 4,
-        NVGOneMinusDstColor = 1 << 5,
-        NVGSrcAlpha = 1 << 6,
-        NVGOneMinusSrcAlpha = 1 << 7,
-        NVGDstAlpha = 1 << 8,
-        NVGOneMinusDstAlpha = 1 << 9,
-        NVGSrcAlphaSaturate = 1 << 10,
+    enum class BlendFactor {
+        Zero = 1 << 0,
+        One = 1 << 1,
+        SrcColor = 1 << 2,
+        OneMinusSrcColor = 1 << 3,
+        DstColor = 1 << 4,
+        OneMinusDstColor = 1 << 5,
+        SrcAlpha = 1 << 6,
+        OneMinusSrcAlpha = 1 << 7,
+        DstAlpha = 1 << 8,
+        OneMinusDstAlpha = 1 << 9,
+        SrcAlphaSaturate = 1 << 10,
     };
 
-    enum ImageFlags {
+    enum class ImageFlags {
+        None = 0,
         NVGImageGenerateMipmaps = 1 << 0,  // Generate mipmaps during creation of the image.
         NVGImageRepeatX = 1 << 1,          // Repeat image in X direction.
         NVGImageRepeatY = 1 << 2,          // Repeat image in Y direction.
         NVGImageFlipY = 1 << 3,            // Flips (inverses) image in Y direction when rendered.
         NVGImagePreMultiplied = 1 << 4,    // Image data has pre-multiplied alpha.
         NVGImageNearest = 1 << 5,          // Image interpolation is Nearest instead Linear
+
+        NoDelete = 1 << 16,  // OpenGL only
     };
 
     enum {
@@ -121,16 +124,16 @@ namespace rl::nvg {
         int32_t nfill{ 0 };
         Vertex* stroke{ nullptr };
         int32_t nstroke{ 0 };
-        int32_t winding{ 0 };
+        ShapeWinding winding{ ShapeWinding::None };
         int32_t convex{ 0 };
     };
 
     struct CompositeOperationState
     {
-        int32_t src_rgb{ 0 };
-        int32_t dst_rgb{ 0 };
-        int32_t src_alpha{ 0 };
-        int32_t dst_alpha{ 0 };
+        BlendFactor src_rgb{};
+        BlendFactor dst_rgb{};
+        BlendFactor src_alpha{};
+        BlendFactor dst_alpha{};
     };
 
     struct PaintStyle
@@ -152,8 +155,8 @@ namespace rl::nvg {
         PaintStyle stroke{};
         float stroke_width{ 0.0f };
         float miter_limit{ 0.0f };
-        int32_t line_join{ 0 };
-        int32_t line_cap{ 0 };
+        LineCap line_join{ LineCap::Butt };
+        LineCap line_cap{ LineCap::Butt };
         float alpha{ 0.0f };
         float xform[6]{};
         ScissorParams scissor{};
@@ -168,11 +171,11 @@ namespace rl::nvg {
     struct Params
     {
         void* user_ptr{ nullptr };
-        int32_t edge_anti_alias{ 0 };
+        bool edge_anti_alias{ false };
 
         int32_t (*render_create)(void* uptr);
-        int32_t (*render_create_texture)(void* uptr, int32_t type, int32_t w, int32_t h,
-                                         int32_t image_flags, const uint8_t* data);
+        int32_t (*render_create_texture)(void* uptr, TextureProperty type, int32_t w, int32_t h,
+                                         ImageFlags image_flags, const uint8_t* data);
         int32_t (*render_delete_texture)(void* uptr, int32_t image);
         int32_t (*render_update_texture)(void* uptr, int32_t image, int32_t x, int32_t y, int32_t w,
                                          int32_t h, const uint8_t* data);
@@ -295,12 +298,13 @@ namespace rl::nvg {
 
     // Sets the composite operation with custom pixel arithmetic. The parameters should be one
     // of NVGBlendFactor.
-    void global_composite_blend_func(Context* ctx, int32_t sfactor, int32_t dfactor);
+    void global_composite_blend_func(Context* ctx, BlendFactor sfactor, BlendFactor dfactor);
 
     // Sets the composite operation with custom pixel arithmetic for RGB and alpha components
     // separately. The parameters should be one of NVGblendFactor.
-    void global_composite_blend_func_separate(Context* ctx, int32_t src_rgb, int32_t dst_rgb,
-                                              int32_t src_alpha, int32_t dst_alpha);
+    void global_composite_blend_func_separate(Context* ctx, BlendFactor src_rgb,
+                                              BlendFactor dst_rgb, BlendFactor src_alpha,
+                                              BlendFactor dst_alpha);
 
     //
     // Color utils
@@ -379,11 +383,11 @@ namespace rl::nvg {
 
     // Sets how the end of the line (cap) is drawn,
     // Can be one of: NVG_BUTT (default), NVG_ROUND, NVG_SQUARE.
-    void line_cap(Context* ctx, int32_t cap);
+    void line_cap(Context* ctx, LineCap cap);
 
     // Sets how sharp path corners are drawn.
     // Can be one of NVG_MITER (default), NVG_ROUND, NVG_BEVEL.
-    void line_join(Context* ctx, int32_t join);
+    void line_join(Context* ctx, LineCap join);
 
     // Sets the transparency applied to all rendered shapes.
     // Already transparent paths will get proportionally more transparent as well.
@@ -490,19 +494,19 @@ namespace rl::nvg {
 
     // Creates image by loading it from the disk from specified file name.
     // Returns handle to the image.
-    int32_t create_image(const Context* ctx, const char* filename, int32_t image_flags);
+    int32_t create_image(const Context* ctx, const char* filename, ImageFlags image_flags);
 
     // Creates image by loading it from the specified chunk of memory.
     // Returns handle to the image.
-    int32_t create_image_mem(const Context* ctx, int32_t imageFlags, const uint8_t* data,
+    int32_t create_image_mem(const Context* ctx, ImageFlags image_flags, const uint8_t* data,
                              int32_t ndata);
 
     // Creates image from specified image data.
     // Returns handle to the image.
-    int32_t create_image_rgba(const Context* ctx, int32_t w, int32_t h, int32_t imageFlags,
+    int32_t create_image_rgba(const Context* ctx, int32_t w, int32_t h, ImageFlags image_flags,
                               const uint8_t* data);
 
-    int32_t create_image_alpha(const Context* ctx, int32_t w, int32_t h, int32_t imageFlags,
+    int32_t create_image_alpha(const Context* ctx, int32_t w, int32_t h, ImageFlags image_flags,
                                const uint8_t* data);
 
     // Updates image data specified by image handle.
@@ -622,14 +626,14 @@ namespace rl::nvg {
     void close_path(Context* ctx);
 
     // Sets the current sub-path winding, see ShapeWinding and Solidity.
-    void path_winding(Context* ctx, int32_t dir);
+    void path_winding(Context* ctx, Solidity dir);
 
     // Creates new circle arc shaped sub-path. The arc center is at cx,cy, the arc radius is r,
-    // and the arc is drawn from angle a0 to a1, and swept in direction dir (Solid_CounterClockwise,
-    // or Hole_Clockwise). Angles are specified in radians.
-    void arc(Context* ctx, float cx, float cy, float r, float a0, float a1, int32_t dir);
+    // and the arc is drawn from angle a0 to a1, and swept in direction dir (CounterClockwise,
+    // or Clockwise). Angles are specified in radians.
+    void arc(Context* ctx, float cx, float cy, float r, float a0, float a1, ShapeWinding dir);
 
-    void barc(Context* ctx, float cx, float cy, float r, float a0, float a1, int32_t dir,
+    void barc(Context* ctx, float cx, float cy, float r, float a0, float a1, ShapeWinding dir,
               int32_t join);
 
     // Creates new rectangle shaped sub-path.
@@ -745,6 +749,7 @@ namespace rl::nvg {
     // Sets the font face based on specified name of current text style.
     void font_face(Context* ctx, const char* font);
     void font_face(Context* ctx, const std::string_view& font);
+    void font_face(Context* ctx, const std::string& font);
 
     // Draws text string at specified location. If end is specified only the sub-string up to
     // the end is drawn.

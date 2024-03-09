@@ -1,6 +1,4 @@
-﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml"
-    xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
 	<s:String x:Key="/Default/CodeEditing/CppCodeGeneration/EmptyCtorsAndDtorsBodyKind/@EntryValue">Empty</s:String>
 	<s:String x:Key="/Default/CodeEditing/CppCodeGeneration/FunctionImplementationKind/@EntryValue">ReturnDefaultValue</s:String>
 	<s:String x:Key="/Default/CodeEditing/GenerateMemberBody/AccessorImplementationKind/@EntryValue">BackingField</s:String>
@@ -149,5 +147,17 @@
 	<s:Boolean x:Key="/Default/GrammarAndSpelling/Enabled/@EntryValue">False</s:Boolean>
 	<s:Boolean x:Key="/Default/Housekeeping/ProjectModelSynchronizer/ReadProjectModelFromDisk/@EntryValue">False</s:Boolean>
 	<s:String x:Key="/Default/Housekeeping/ProjectModelSynchronizer/UseMsbuildStrategy/@EntryValue">NEVER</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/CppDkmDebugger/CppStepIntoFilter/=214EB90B552CEA4F861EEC267CF8093B/IsEnabled/@EntryValue">False</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/CppDkmDebugger/CppStepIntoFilter/=451D243F6895C54E83010905E0C4B91C/IsEnabled/@EntryValue">False</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/CppDkmDebugger/CppStepIntoFilter/=4ECCD633907EB6429C0AC4387729DE9F/IsEnabled/@EntryValue">False</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/CppDkmDebugger/CppStepIntoFilter/=50099EDDB4AA9B469D6F3693FDFC23C0/IsEnabled/@EntryValue">False</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/CppDkmDebugger/CppStepIntoFilter/=50B5C4185FB3B847BE1B8581921A0B09/IsEnabled/@EntryValue">False</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/CppDkmDebugger/CppStepIntoFilter/=690CC5EEB00ACE4D8F2AEF372343F3AD/IsEnabled/@EntryValue">False</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/CppDkmDebugger/CppStepIntoFilter/=6BE5924E8915CC49AB533F903D36393E/IsEnabled/@EntryValue">False</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/CppDkmDebugger/CppStepIntoFilter/=6DA6DB51504E4E459EC252222B8084FC/IsEnabled/@EntryValue">False</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/CppDkmDebugger/CppStepIntoFilter/=747141718287DD4EA75C9D4EC9346190/IsEnabled/@EntryValue">False</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/CppDkmDebugger/CppStepIntoFilter/=BC89ACF250EC0F40A804BFACA3704E17/IsEnabled/@EntryValue">False</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/CppDkmDebugger/CppStepIntoFilter/=CA8D4BEBB5D691408788EF479FE4F627/IsEnabled/@EntryValue">False</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/CppDkmDebugger/CppStepIntoFilter/=FC1F9EBFB0603B42A810DEA809093964/IsEnabled/@EntryValue">False</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=nanovg/@EntryIndexedValue">True</s:Boolean>
 </wpf:ResourceDictionary>

@@ -52,6 +52,7 @@ namespace rl {
             Widget* m_button_panel{ nullptr };
             bool m_modal{ false };
             bool m_drag{ false };
+            bool m_resizable{ true };
         };
     }
 }

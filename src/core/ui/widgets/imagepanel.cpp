@@ -147,7 +147,7 @@ namespace rl::ui {
             nvg::rect(context, p.x - 5.0f, p.y - 5.0f, m_thumb_size.width + 10,
                       m_thumb_size.height + 10);
             nvg::rounded_rect(context, p.x, p.y, m_thumb_size.width, m_thumb_size.height, 6);
-            nvg::path_winding(context, nvg::NVGHole);
+            nvg::path_winding(context, nvg::Solidity::Hole);
             nvg::fill_paint(context, shadow_paint);
             nvg::fill(context);
 

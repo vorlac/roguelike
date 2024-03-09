@@ -125,7 +125,7 @@ namespace rl::ui {
         nvg::font_size(context, this->font_size());
         nvg::font_face(context, Font::Name::Sans);
         nvg::fill_color(context, m_enabled ? m_theme->text_color : m_theme->disabled_text_color);
-        nvg::text_align(context, nvg::Align::NVGAlignLeft | nvg::Align::NVGAlignMiddle);
+        nvg::text_align(context, nvg::Align::HLeft | nvg::Align::VMiddle);
         nvg::text(context, m_pos.x + 1.6f * this->font_size(), m_pos.y + m_size.height * 0.5f,
                   m_caption.c_str(), nullptr);
 
@@ -145,7 +145,7 @@ namespace rl::ui {
             nvg::font_size(context, this->icon_scale() * m_size.height);
             nvg::font_face(context, Font::Name::Icons);
             nvg::fill_color(context, m_enabled ? m_theme->icon_color : m_theme->disabled_text_color);
-            nvg::text_align(context, nvg::Align::NVGAlignCenter | nvg::Align::NVGAlignMiddle);
+            nvg::text_align(context, nvg::Align::HCenter | nvg::Align::VMiddle);
             nvg::text(context, m_pos.x + m_size.height * 0.5f + 1, m_pos.y + m_size.height * 0.5f,
                       rl::utf8(m_theme->check_box_icon).data(), nullptr);
         }

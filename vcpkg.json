@@ -4,10 +4,10 @@
     "name": "roguelike",
     "version": "0.1.0",
     "dependencies": [
-      "nanobench",
-      "parallel-hashmap",
-      "glm",
-      "fmt",
-      "spdlog"
+        "nanobench",
+        "parallel-hashmap",
+        "glm",
+        "fmt",
+        "spdlog"
     ]
 }

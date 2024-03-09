@@ -19,7 +19,7 @@ namespace rl::nvg::gl {
     };
 
     // These are additional flags on top of nvg::ImageFlags.
-    enum GLImageFlags {
+    enum class GLImageFlags {
         ImageNoDelete = 1 << 16,  // Do not delete GL texture handle.
     };
 

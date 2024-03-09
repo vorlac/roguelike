@@ -1,4 +1,4 @@
-﻿cmake_minimum_required(VERSION 3.22)
+﻿cmake_minimum_required(VERSION 3.23)
 set(CMAKE_MESSAGE_LOG_LEVEL STATUS)
 
 list(APPEND CMAKE_MODULE_PATH
@@ -128,7 +128,7 @@ target_compile_options(${PROJECT_NAME}
 			#/fsanitize=fuzzer
 		    ## /fsanitize=address
             # /Z7 # embed debug info into .o files instead of pdb (for ccache)
-            /Zi # enable edit and continue
+            # /Zi # enable edit and continue
         >
 
         $<$<CONFIG:Release>:
@@ -220,16 +220,6 @@ if (AUTOFORMAT_SRC_ON_CONFIGURE MATCHES ON)
   include(clang-format)
 endif()
 
-set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-  PROPERTY VS_STARTUP_PROJECT
-    ${PROJECT_NAME}
-)
-
-set_property(
-  TARGET ${PROJECT_NAME}
-    PROPERTY VS_DEBUGGER_ENVIRONMENT
-    "PATH=${CMAKE_CURRENT_INSTALL_DIR}/${PROJECT_NAME}${CMAKE_EXECUTABLE_SUFFIX}"
-)
 
 # permissions fix to allow this on windows:
 # 1. Open gpedit.msc
@@ -246,5 +236,28 @@ add_custom_command(TARGET ${PROJECT_NAME}
       ${CMAKE_CURRENT_SOURCE_DIR}/src/graphics/gl/shaders
       $<TARGET_FILE_DIR:${PROJECT_NAME}>/shaders
 )
+
+# file(GLOB_RECURSE
+#   headers_list
+#     "${CMAKE_CURRENT_SOURCE_DIR}/extern/glad/*.h"
+#     "${CMAKE_CURRENT_SOURCE_DIR}/src/*.hpp"
+# )
+#
+# target_sources(${PROJECT_NAME}
+#   PUBLIC
+#     FILE_SET test_headers
+# 	TYPE HEADERS
+# 	BASE_DIRS
+# 	  "${CMAKE_CURRENT_SOURCE_DIR}/src"
+# 	  "${CMAKE_CURRENT_SOURCE_DIR}/extern"
+# 	FILES
+# 	  ${headers_list}
+# )
+#
+# install(TARGETS ${PROJECT_NAME}
+#   FILE_SET test_headers
+#   DESTINATION
+#     "${CMAKE_CURRENT_SOURCE_DIR}/install_test/"
+# )
 
 include(cmake-utils)

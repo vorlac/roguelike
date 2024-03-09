@@ -80,7 +80,7 @@ namespace rl::ui {
         if (m_fixed_size.width > 0.0f)
         {
             std::array<f32, 4> bounds{ 0.0f };
-            nvg::text_align(context, nvg::Align::NVGAlignLeft | nvg::Align::NVGAlignTop);
+            nvg::text_align(context, nvg::Align::HLeft | nvg::Align::VTop);
             nvg::text_box_bounds(context, m_pos.x, m_pos.y, m_fixed_size.width, m_text.c_str(),
                                  nullptr, bounds.data());
 
@@ -92,7 +92,7 @@ namespace rl::ui {
         }
         else
         {
-            nvg::text_align(context, nvg::Align::NVGAlignLeft | nvg::Align::NVGAlignMiddle);
+            nvg::text_align(context, nvg::Align::HLeft | nvg::Align::VMiddle);
             const f32 text_width{ nvg::text_bounds(context, 0.0f, 0.0f, m_text.c_str()) };
             return ds::dims<f32>{
                 text_width + 2.0f,
@@ -112,12 +112,12 @@ namespace rl::ui {
 
         if (m_fixed_size.width > 0)
         {
-            nvg::text_align(context, nvg::Align::NVGAlignLeft | nvg::Align::NVGAlignTop);
+            nvg::text_align(context, nvg::Align::HLeft | nvg::Align::VTop);
             nvg::text_box(context, m_pos.x, m_pos.y, m_fixed_size.width, m_text.c_str());
         }
         else
         {
-            nvg::text_align(context, nvg::Align::NVGAlignLeft | nvg::Align::NVGAlignMiddle);
+            nvg::text_align(context, nvg::Align::HLeft | nvg::Align::VMiddle);
             nvg::text(context, m_pos.x, m_pos.y + m_size.height * 0.5f, m_text.c_str());
         }
     }

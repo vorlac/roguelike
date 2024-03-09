@@ -47,8 +47,8 @@ namespace rl::nvg::gl {
         GLuint tex{ 0 };
         int32_t width{ 0 };
         int32_t height{ 0 };
-        int32_t type{ 0 };
-        int32_t flags{ 0 };
+        TextureProperty type{ TextureProperty::None };
+        ImageFlags flags{ ImageFlags::None };
     };
 
     struct GLBlend
@@ -234,7 +234,8 @@ namespace rl::nvg::gl {
                 {
                     if (gl->textures[i].id == id)
                     {
-                        if (gl->textures[i].tex != 0 && (gl->textures[i].flags & ImageNoDelete) == 0)
+                        if (gl->textures[i].tex != 0 &&
+                            (gl->textures[i].flags & ImageFlags::NoDelete) == 0)
                             glDeleteTextures(1, &gl->textures[i].tex);
                         memset(&gl->textures[i], 0, sizeof(gl->textures[i]));
                         return 1;
@@ -347,8 +348,8 @@ namespace rl::nvg::gl {
                 shader->loc[LocFrag] = glGetUniformBlockIndex(shader->prog, "frag");
             }
 
-            int32_t render_create_texture(void* uptr, int32_t type, int32_t w, int32_t h,
-                                          int32_t image_flags, const uint8_t* data);
+            int32_t render_create_texture(void* uptr, TextureProperty type, int32_t w, int32_t h,
+                                          ImageFlags image_flags, const uint8_t* data);
 
             int32_t render_create(void* uptr)
             {
@@ -483,7 +484,8 @@ namespace rl::nvg::gl {
 
                 // Some platforms does not allow to have samples to unset textures.
                 // Create empty one which is bound when there's no texture specified.
-                gl->dummy_tex = render_create_texture(gl, Alpha, 1, 1, 0, nullptr);
+                gl->dummy_tex = render_create_texture(gl, TextureProperty::Alpha, 1, 1,
+                                                      ImageFlags::None, nullptr);
 
                 check_error(gl, "create done");
 
@@ -492,8 +494,8 @@ namespace rl::nvg::gl {
                 return 1;
             }
 
-            int32_t render_create_texture(void* uptr, const int32_t type, const int32_t w,
-                                          const int32_t h, const int32_t image_flags,
+            int32_t render_create_texture(void* uptr, const TextureProperty type, const int32_t w,
+                                          const int32_t h, const ImageFlags image_flags,
                                           const uint8_t* data)
             {
                 const auto gl = static_cast<GLContext*>(uptr);
@@ -514,35 +516,37 @@ namespace rl::nvg::gl {
                 glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
                 glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
 
-                if (type == RGBA)
+                if (type == TextureProperty::RGBA)
                     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE,
                                  data);
                 else
                     glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, w, h, 0, GL_RED, GL_UNSIGNED_BYTE, data);
 
-                if (image_flags & NVGImageGenerateMipmaps)
-                    if (image_flags & NVGImageNearest)
+                if ((image_flags & ImageFlags::NVGImageGenerateMipmaps) != 0)
+                {
+                    if ((image_flags & ImageFlags::NVGImageNearest) != 0)
                         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
                                         GL_NEAREST_MIPMAP_NEAREST);
                     else
                         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
                                         GL_LINEAR_MIPMAP_LINEAR);
-                else if (image_flags & NVGImageNearest)
+                }
+                else if ((image_flags & ImageFlags::NVGImageNearest) != 0)
                     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
                 else
                     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-                if (image_flags & NVGImageNearest)
+                if ((image_flags & ImageFlags::NVGImageNearest) != 0)
                     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
                 else
                     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-                if (image_flags & NVGImageRepeatX)
+                if ((image_flags & ImageFlags::NVGImageRepeatX) != 0)
                     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
                 else
                     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 
-                if (image_flags & NVGImageRepeatY)
+                if ((image_flags & ImageFlags::NVGImageRepeatY) != 0)
                     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
                 else
                     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -553,7 +557,7 @@ namespace rl::nvg::gl {
                 glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
 
                 // The new way to build mipmaps on GLES and GL3
-                if (image_flags & NVGImageGenerateMipmaps)
+                if ((image_flags & ImageFlags::NVGImageGenerateMipmaps) != 0)
                     glGenerateMipmap(GL_TEXTURE_2D);
 
                 check_error(gl, "create tex");
@@ -585,7 +589,7 @@ namespace rl::nvg::gl {
                 glPixelStorei(GL_UNPACK_SKIP_PIXELS, x);
                 glPixelStorei(GL_UNPACK_SKIP_ROWS, y);
 
-                if (tex->type == RGBA)
+                if (tex->type == TextureProperty::RGBA)
                     glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, w, h, GL_RGBA, GL_UNSIGNED_BYTE, data);
                 else
                     glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, w, h, GL_RED, GL_UNSIGNED_BYTE, data);
@@ -679,7 +683,7 @@ namespace rl::nvg::gl {
                     const GLTexture* tex = find_texture(gl, paint->image);
                     if (tex == nullptr)
                         return 0;
-                    if ((tex->flags & NVGImageFlipY) != 0)
+                    if ((tex->flags & ImageFlags::NVGImageFlipY) != 0)
                     {
                         float m1[6], m2[6];
                         transform_translate(m1, 0.0f, frag->extent[1] * 0.5f);
@@ -696,8 +700,9 @@ namespace rl::nvg::gl {
                     }
                     frag->type = SVGShaderFillimg;
 
-                    if (tex->type == RGBA)
-                        frag->tex_type = (tex->flags & NVGImagePreMultiplied) ? 0 : 1;
+                    if (tex->type == TextureProperty::RGBA)
+                        frag->tex_type = (tex->flags & ImageFlags::NVGImagePreMultiplied) != 0 ? 0
+                                                                                               : 1;
                     else
                         frag->tex_type = 2;
                 }
@@ -880,29 +885,29 @@ namespace rl::nvg::gl {
                 gl->nuniforms = 0;
             }
 
-            GLenum convert_blend_func_factor(const int32_t factor)
+            GLenum convert_blend_func_factor(const BlendFactor factor)
             {
-                if (factor == NVGZero)
+                if (factor == BlendFactor::Zero)
                     return GL_ZERO;
-                if (factor == NVGOne)
+                if (factor == BlendFactor::One)
                     return GL_ONE;
-                if (factor == NVGSrcColor)
+                if (factor == BlendFactor::SrcColor)
                     return GL_SRC_COLOR;
-                if (factor == NVGOneMinusSrcColor)
+                if (factor == BlendFactor::OneMinusSrcColor)
                     return GL_ONE_MINUS_SRC_COLOR;
-                if (factor == NVGDstColor)
+                if (factor == BlendFactor::DstColor)
                     return GL_DST_COLOR;
-                if (factor == NVGOneMinusDstColor)
+                if (factor == BlendFactor::OneMinusDstColor)
                     return GL_ONE_MINUS_DST_COLOR;
-                if (factor == NVGSrcAlpha)
+                if (factor == BlendFactor::SrcAlpha)
                     return GL_SRC_ALPHA;
-                if (factor == NVGOneMinusSrcAlpha)
+                if (factor == BlendFactor::OneMinusSrcAlpha)
                     return GL_ONE_MINUS_SRC_ALPHA;
-                if (factor == NVGDstAlpha)
+                if (factor == BlendFactor::DstAlpha)
                     return GL_DST_ALPHA;
-                if (factor == NVGOneMinusDstAlpha)
+                if (factor == BlendFactor::OneMinusDstAlpha)
                     return GL_ONE_MINUS_DST_ALPHA;
-                if (factor == NVGSrcAlphaSaturate)
+                if (factor == BlendFactor::SrcAlphaSaturate)
                     return GL_SRC_ALPHA_SATURATE;
                 return GL_INVALID_ENUM;
             }
@@ -1350,7 +1355,8 @@ namespace rl::nvg::gl {
                     glDeleteBuffers(1, &gl->vert_buf);
 
                 for (int32_t i = 0; i < gl->ntextures; i++)
-                    if (gl->textures[i].tex != 0 && (gl->textures[i].flags & ImageNoDelete) == 0)
+                    if (gl->textures[i].tex != 0 &&
+                        (gl->textures[i].flags & ImageFlags::NoDelete) == 0)
                         glDeleteTextures(1, &gl->textures[i].tex);
                 free(gl->textures);
 
@@ -1376,7 +1382,7 @@ namespace rl::nvg::gl {
 
             params = {
                 .user_ptr = gl,
-                .edge_anti_alias = ((flags & CreateFlags::AntiAlias) != 0),
+                .edge_anti_alias = (flags & CreateFlags::AntiAlias) != 0,
                 .render_create = detail::render_create,
                 .render_create_texture = detail::render_create_texture,
                 .render_delete_texture = detail::render_delete_texture,
@@ -1409,7 +1415,7 @@ namespace rl::nvg::gl {
     }
 
     int32_t create_image_from_handle(Context* ctx, const uint32_t texture_id, const int32_t w,
-                                     const int32_t h, const int32_t image_flags)
+                                     const int32_t h, const ImageFlags image_flags)
     {
         const auto gl = static_cast<GLContext*>(internal_params(ctx)->user_ptr);
         GLTexture* tex = detail::alloc_texture(gl);
@@ -1417,7 +1423,7 @@ namespace rl::nvg::gl {
         if (tex == nullptr)
             return 0;
 
-        tex->type = RGBA;
+        tex->type = TextureProperty::RGBA;
         tex->tex = texture_id;
         tex->flags = image_flags;
         tex->width = w;

@@ -254,7 +254,7 @@ namespace rl::ui {
                 ds::dims{ ScrollbarWidth, m_size.height - Margin * 2.0f },
             };
 
-            nvg::PaintStyle brush{ m_renderer->create_box_gradient(
+            nvg::PaintStyle brush{ m_renderer->create_rect_gradient_paint_style(
                 std::move(scrollbar_bg_rect), ScrollBarBackgroundRadius, ShadowBlur,
                 ScrollGuideColor, ScrollGuideShadowColor) };
 
@@ -280,7 +280,7 @@ namespace rl::ui {
                     ds::dims{ ScrollbarWidth - Margin / 2.0f, scrollbar_height - Margin / 2.0f },
                 };
 
-                nvg::PaintStyle bgbrush{ m_renderer->create_box_gradient(
+                nvg::PaintStyle bgbrush{ m_renderer->create_rect_gradient_paint_style(
                     std::move(scrollbar_rect), ScrollBarBackgroundRadius, ShadowBlur,
                     ScrollbarColor, ScrollbarShadowColor) };
 

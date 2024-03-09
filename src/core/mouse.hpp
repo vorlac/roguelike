@@ -1,4 +1,5 @@
 #pragma once
+#include <array>
 
 #include "ds/point.hpp"
 #include "sdl/defs.hpp"
@@ -89,19 +90,24 @@ namespace rl {
         };
 
     public:
+        Mouse();
+        ~Mouse();
+
         [[nodiscard]] ds::point<f32> pos() const;
         [[nodiscard]] ds::vector2<f32> wheel() const;
         [[nodiscard]] ds::vector2<f32> pos_delta() const;
         [[nodiscard]] ds::vector2<f32> wheel_delta() const;
         [[nodiscard]] Mouse::Button::ID button_pressed() const;
         [[nodiscard]] Mouse::Button::ID button_released() const;
+        [[nodiscard]] Mouse::Cursor::ID active_cursor() const;
 
+        [[nodiscard]] bool set_cursor(Mouse::Cursor::ID cursor_id) const;
         [[nodiscard]] bool is_button_pressed(Mouse::Button::ID button) const;
         [[nodiscard]] bool is_button_released(Mouse::Button::ID button) const;
         [[nodiscard]] bool is_button_held(Mouse::Button::ID button) const;
         [[nodiscard]] bool is_button_down(Mouse::Button::ID button) const;
-        [[nodiscard]] bool all_buttons_down(std::vector<Mouse::Button::ID> buttons) const;
-        [[nodiscard]] bool any_buttons_down(std::vector<Mouse::Button::ID> buttons) const;
+        [[nodiscard]] bool all_buttons_down(std::vector<Mouse::Button::ID>&& buttons) const;
+        [[nodiscard]] bool any_buttons_down(std::vector<Mouse::Button::ID>&& buttons) const;
 
         [[nodiscard]] std::string get_button_state(Mouse::Button::ID button) const;
         [[nodiscard]] std::string name() const;
@@ -122,6 +128,9 @@ namespace rl {
         ds::point<f32> m_prev_cursor_pos{ 0.0f, 0.0f };
         ds::vector2<f32> m_wheel_position{ 0.0f, 0.0f };
         ds::vector2<f32> m_prev_wheel_pos{ 0.0f, 0.0f };
+        // TODO: fixme
+        mutable Mouse::Cursor::ID m_active_cursor{ Cursor::Arrow };
+        std::array<SDL3::SDL_Cursor*, Cursor::CursorCount> m_system_cursors{};
     };
 }
 
@@ -134,7 +143,7 @@ namespace rl {
                            mouse.get_button_state(Mouse::Button::Middle), mouse.wheel());
     }
 
-    constexpr inline auto format_as(const Mouse::Button::ID btn)
+    constexpr auto format_as(const Mouse::Button::ID btn)
     {
         switch (btn)
         {

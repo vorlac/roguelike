@@ -194,8 +194,8 @@ namespace rl::nvg {
 
             constexpr CompositeOperationState composite_operation_state(const CompositeOperation op)
             {
-                int32_t sfactor;
-                int32_t dfactor;
+                BlendFactor sfactor{};
+                BlendFactor dfactor{};
 
                 switch (op)
                 {
@@ -203,68 +203,68 @@ namespace rl::nvg {
                         [[fallthrough]];
                     case CompositeOperation::Copy:
                     {
-                        sfactor = NVGOne;
-                        dfactor = NVGZero;
+                        sfactor = BlendFactor::One;
+                        dfactor = BlendFactor::Zero;
                         break;
                     }
                     case CompositeOperation::SourceOver:
                     {
-                        sfactor = NVGOne;
-                        dfactor = NVGOneMinusSrcAlpha;
+                        sfactor = BlendFactor::One;
+                        dfactor = BlendFactor::OneMinusSrcAlpha;
                         break;
                     }
                     case CompositeOperation::SourceIn:
                     {
-                        sfactor = BlendFactor::NVGDstAlpha;
-                        dfactor = BlendFactor::NVGZero;
+                        sfactor = BlendFactor::DstAlpha;
+                        dfactor = BlendFactor::Zero;
                         break;
                     }
                     case CompositeOperation::SourceOut:
                     {
-                        sfactor = BlendFactor::NVGOneMinusDstAlpha;
-                        dfactor = BlendFactor::NVGZero;
+                        sfactor = BlendFactor::OneMinusDstAlpha;
+                        dfactor = BlendFactor::Zero;
                         break;
                     }
                     case CompositeOperation::Atop:
                     {
-                        sfactor = BlendFactor::NVGDstAlpha;
-                        dfactor = BlendFactor::NVGOneMinusSrcAlpha;
+                        sfactor = BlendFactor::DstAlpha;
+                        dfactor = BlendFactor::OneMinusSrcAlpha;
                         break;
                     }
                     case CompositeOperation::DestinationOver:
                     {
-                        sfactor = BlendFactor::NVGOneMinusDstAlpha;
-                        dfactor = BlendFactor::NVGOne;
+                        sfactor = BlendFactor::OneMinusDstAlpha;
+                        dfactor = BlendFactor::One;
                         break;
                     }
                     case CompositeOperation::DestinationIn:
                     {
-                        sfactor = BlendFactor::NVGZero;
-                        dfactor = BlendFactor::NVGSrcAlpha;
+                        sfactor = BlendFactor::Zero;
+                        dfactor = BlendFactor::SrcAlpha;
                         break;
                     }
                     case CompositeOperation::DestinationOut:
                     {
-                        sfactor = BlendFactor::NVGZero;
-                        dfactor = BlendFactor::NVGOneMinusSrcAlpha;
+                        sfactor = BlendFactor::Zero;
+                        dfactor = BlendFactor::OneMinusSrcAlpha;
                         break;
                     }
                     case CompositeOperation::DestinationAtop:
                     {
-                        sfactor = BlendFactor::NVGOneMinusDstAlpha;
-                        dfactor = BlendFactor::NVGSrcAlpha;
+                        sfactor = BlendFactor::OneMinusDstAlpha;
+                        dfactor = BlendFactor::SrcAlpha;
                         break;
                     }
                     case CompositeOperation::Lighter:
                     {
-                        sfactor = BlendFactor::NVGOne;
-                        dfactor = BlendFactor::NVGOne;
+                        sfactor = BlendFactor::One;
+                        dfactor = BlendFactor::One;
                         break;
                     }
                     case CompositeOperation::Xor:
                     {
-                        sfactor = BlendFactor::NVGOneMinusDstAlpha;
-                        dfactor = BlendFactor::NVGOneMinusSrcAlpha;
+                        sfactor = BlendFactor::OneMinusDstAlpha;
+                        dfactor = BlendFactor::OneMinusSrcAlpha;
                         break;
                     }
                 }
@@ -312,7 +312,7 @@ namespace rl::nvg {
                 NVGpath* path{ &ctx->cache->paths[ctx->cache->npaths] };
                 std::memset(path, 0, sizeof(*path));
                 path->first = ctx->cache->npoints;
-                path->winding = Solid_CounterClockwise;
+                path->winding = ShapeWinding::CounterClockwise;
 
                 ctx->cache->npaths++;
             }
@@ -378,7 +378,7 @@ namespace rl::nvg {
                 path->closed = 1;
             }
 
-            void path_winding_internal(const Context* ctx, const int32_t winding)
+            void path_winding_internal(const Context* ctx, const ShapeWinding winding)
             {
                 NVGpath* path = detail::last_path(ctx);
                 if (path == nullptr)
@@ -545,7 +545,7 @@ namespace rl::nvg {
                             break;
                         case Commands::Winding:
                             detail::path_winding_internal(
-                                ctx, static_cast<int32_t>(ctx->commands[i + 1]));
+                                ctx, static_cast<ShapeWinding>(ctx->commands[i + 1]));
                             i += 2;
                             break;
                         default:
@@ -577,9 +577,9 @@ namespace rl::nvg {
                     if (path->count > 2)
                     {
                         const float area = detail::poly_area(pts, path->count);
-                        if (path->winding == Solid_CounterClockwise && area < 0.0f)
+                        if (path->winding == ShapeWinding::CounterClockwise && area < 0.0f)
                             detail::poly_reverse(pts, path->count);
-                        if (path->winding == Hole_Clockwise && area > 0.0f)
+                        if (path->winding == ShapeWinding::Clockwise && area > 0.0f)
                             detail::poly_reverse(pts, path->count);
                     }
 
@@ -928,7 +928,7 @@ namespace rl::nvg {
                 return dst;
             }
 
-            void calculate_joins(const Context* ctx, const float w, const int32_t line_join,
+            void calculate_joins(const Context* ctx, const float w, const LineCap line_join,
                                  const float miter_limit)
             {
                 const PathCache* cache{ ctx->cache };
@@ -988,8 +988,8 @@ namespace rl::nvg {
 
                         // Check to see if the corner needs to be beveled.
                         if (p1->flags & NvgPtCorner)
-                            if (dmr2 * miter_limit * miter_limit < 1.0f || line_join == NVGBevel ||
-                                line_join == NVGRound)
+                            if (dmr2 * miter_limit * miter_limit < 1.0f ||
+                                line_join == LineCap::Bevel || line_join == LineCap::Round)
                                 p1->flags |= NvgPtBevel;
 
                         if ((p1->flags & (NvgPtBevel | NvgPrInnerbevel)) != 0)
@@ -1003,7 +1003,7 @@ namespace rl::nvg {
             }
 
             int32_t expand_stroke(const Context* ctx, float w, const float fringe,
-                                  const int32_t line_cap, const int32_t line_join,
+                                  const LineCap line_cap, const LineCap line_join,
                                   const float miter_limit)
             {
                 const PathCache* cache = ctx->cache;
@@ -1034,7 +1034,7 @@ namespace rl::nvg {
                 {
                     const NVGpath* path = &cache->paths[i];
                     const int32_t loop = path->closed == 0 ? 0 : 1;
-                    if (line_join == NVGRound)
+                    if (line_join == LineCap::Round)
                         cverts += (path->count + path->nbevel * (ncap + 2) + 1) * 2;  // plus one
                                                                                       // for loop
                     else
@@ -1042,7 +1042,7 @@ namespace rl::nvg {
                     if (loop == 0)
                     {
                         // space for caps
-                        if (line_cap == NVGRound)
+                        if (line_cap == LineCap::Round)
                             cverts += (ncap * 2 + 2) * 2;
                         else
                             cverts += (3 + 3) * 2;
@@ -1093,11 +1093,11 @@ namespace rl::nvg {
                         dx = p1->x - p0->x;
                         dy = p1->y - p0->y;
                         detail::normalize(&dx, &dy);
-                        if (line_cap == NVGButt)
+                        if (line_cap == LineCap::Butt)
                             dst = detail::butt_cap_start(dst, p0, dx, dy, w, -aa * 0.5f, aa, u0, u1);
-                        else if (line_cap == NVGButt || line_cap == NVGSquare)
+                        else if (line_cap == LineCap::Butt || line_cap == LineCap::Square)
                             dst = detail::butt_cap_start(dst, p0, dx, dy, w, w - aa, aa, u0, u1);
-                        else if (line_cap == NVGRound)
+                        else if (line_cap == LineCap::Round)
                             dst = detail::round_cap_start(dst, p0, dx, dy, w, ncap, aa, u0, u1);
                     }
 
@@ -1105,7 +1105,7 @@ namespace rl::nvg {
                     {
                         if ((p1->flags & (NvgPtBevel | NvgPrInnerbevel)) != 0)
                         {
-                            if (line_join == NVGRound)
+                            if (line_join == LineCap::Round)
                                 dst = detail::round_join(dst, p0, p1, w, w, u0, u1, ncap, aa);
                             else
                                 dst = detail::bevel_join(dst, p0, p1, w, w, u0, u1, aa);
@@ -1134,11 +1134,11 @@ namespace rl::nvg {
                         dx = p1->x - p0->x;
                         dy = p1->y - p0->y;
                         detail::normalize(&dx, &dy);
-                        if (line_cap == NVGButt)
+                        if (line_cap == LineCap::Butt)
                             dst = detail::butt_cap_end(dst, p1, dx, dy, w, -aa * 0.5f, aa, u0, u1);
-                        else if (line_cap == NVGButt || line_cap == NVGSquare)
+                        else if (line_cap == LineCap::Butt || line_cap == LineCap::Square)
                             dst = detail::butt_cap_end(dst, p1, dx, dy, w, w - aa, aa, u0, u1);
-                        else if (line_cap == NVGRound)
+                        else if (line_cap == LineCap::Round)
                             dst = detail::round_cap_end(dst, p1, dx, dy, w, ncap, aa, u0, u1);
                     }
 
@@ -1150,7 +1150,7 @@ namespace rl::nvg {
                 return 1;
             }
 
-            int32_t expand_fill(const Context* ctx, const float w, const int32_t lineJoin,
+            int32_t expand_fill(const Context* ctx, const float w, const LineCap lineJoin,
                                 const float miterLimit)
             {
                 const PathCache* cache = ctx->cache;
@@ -1382,8 +1382,8 @@ namespace rl::nvg {
                         iw = ih = NvgMaxFontimageSize;
 
                     ctx->font_images[ctx->font_image_idx + 1] = ctx->params.render_create_texture(
-                        ctx->params.user_ptr, Alpha, static_cast<int32_t>(iw),
-                        static_cast<int32_t>(ih), 0, nullptr);
+                        ctx->params.user_ptr, TextureProperty::Alpha, static_cast<int32_t>(iw),
+                        static_cast<int32_t>(ih), ImageFlags::None, nullptr);
                 }
 
                 ++ctx->font_image_idx;
@@ -1560,8 +1560,8 @@ namespace rl::nvg {
                         {
                             // Create font texture
                             ctx->font_images[0] = ctx->params.render_create_texture(
-                                ctx->params.user_ptr, Alpha, font_params.width, font_params.height,
-                                0, nullptr);
+                                ctx->params.user_ptr, TextureProperty::Alpha, font_params.width,
+                                font_params.height, ImageFlags::None, nullptr);
 
                             if (ctx->font_images[0] != 0)
                             {
@@ -1895,8 +1895,7 @@ namespace rl::nvg {
     void reset(Context* ctx)
     {
         State* state{ detail::get_state(ctx) };
-        std::memset(state, 0, sizeof(State));
-        //*state = State{};
+        *state = {};
 
         detail::set_paint_color(&state->fill, ds::color<f32>{ 255, 255, 255, 255 });
         detail::set_paint_color(&state->stroke, ds::color<f32>{ 0, 0, 0, 255 });
@@ -1907,8 +1906,8 @@ namespace rl::nvg {
         state->shape_anti_alias = true;
         state->stroke_width = 1.0f;
         state->miter_limit = 10.0f;
-        state->line_cap = NVGButt;
-        state->line_join = NVGMiter;
+        state->line_cap = LineCap::Butt;
+        state->line_join = LineCap::Miter;
         state->alpha = 1.0f;
 
         transform_identity(state->xform);
@@ -1920,7 +1919,7 @@ namespace rl::nvg {
         state->letter_spacing = 0.0f;
         state->line_height = 1.0f;
         state->font_blur = 0.0f;
-        state->text_align = Align::NVGAlignLeft | Align::NVGAlignBaseline;
+        state->text_align = Align::HLeft | Align::VBaseline;
         state->font_id = 0;
     }
 
@@ -1943,13 +1942,13 @@ namespace rl::nvg {
         state->miter_limit = limit;
     }
 
-    void line_cap(Context* ctx, const int32_t cap)
+    void line_cap(Context* ctx, const LineCap cap)
     {
         State* state = detail::get_state(ctx);
         state->line_cap = cap;
     }
 
-    void line_join(Context* ctx, const int32_t join)
+    void line_join(Context* ctx, const LineCap join)
     {
         State* state = detail::get_state(ctx);
         state->line_join = join;
@@ -2067,7 +2066,7 @@ namespace rl::nvg {
     }
 
 #ifndef NO_STB
-    int32_t create_image(const Context* ctx, const char* filename, const int32_t image_flags)
+    int32_t create_image(const Context* ctx, const char* filename, const ImageFlags image_flags)
     {
         int32_t w, h, n;
         stb::stbi_set_unpremultiply_on_load(1);
@@ -2081,7 +2080,7 @@ namespace rl::nvg {
         return image;
     }
 
-    int32_t create_image_mem(const Context* ctx, const int32_t imageFlags, const uint8_t* data,
+    int32_t create_image_mem(const Context* ctx, const ImageFlags image_flags, const uint8_t* data,
                              const int32_t ndata)
     {
         int32_t w, h, n;
@@ -2089,23 +2088,24 @@ namespace rl::nvg {
         if (img == nullptr)
             //		printf("Failed to load %s - %s\n", filename, stbi_failure_reason());
             return 0;
-        const int32_t image = create_image_rgba(ctx, w, h, imageFlags, img);
+        const int32_t image = create_image_rgba(ctx, w, h, image_flags, img);
         stb::stbi_image_free(img);
         return image;
     }
 #endif
 
     int32_t create_image_rgba(const Context* ctx, const int32_t w, const int32_t h,
-                              const int32_t imageFlags, const uint8_t* data)
+                              const ImageFlags image_flags, const uint8_t* data)
     {
-        return ctx->params.render_create_texture(ctx->params.user_ptr, RGBA, w, h, imageFlags, data);
+        return ctx->params.render_create_texture(ctx->params.user_ptr, TextureProperty::RGBA, w, h,
+                                                 image_flags, data);
     }
 
     int32_t create_image_alpha(const Context* ctx, const int32_t w, const int32_t h,
-                               const int32_t imageFlags, const uint8_t* data)
+                               const ImageFlags image_flags, const uint8_t* data)
     {
-        return ctx->params.render_create_texture(ctx->params.user_ptr, Alpha, w, h, imageFlags,
-                                                 data);
+        return ctx->params.render_create_texture(ctx->params.user_ptr, TextureProperty::Alpha, w, h,
+                                                 image_flags, data);
     }
 
     void update_image(const Context* ctx, const int32_t image, const uint8_t* data)
@@ -2326,14 +2326,15 @@ namespace rl::nvg {
         state->composite_operation = detail::composite_operation_state(op);
     }
 
-    void global_composite_blend_func(Context* ctx, const int32_t sfactor, const int32_t dfactor)
+    void global_composite_blend_func(Context* ctx, const BlendFactor sfactor,
+                                     const BlendFactor dfactor)
     {
         global_composite_blend_func_separate(ctx, sfactor, dfactor, sfactor, dfactor);
     }
 
-    void global_composite_blend_func_separate(Context* ctx, const int32_t src_rgb,
-                                              const int32_t dst_rgb, const int32_t src_alpha,
-                                              const int32_t dst_alpha)
+    void global_composite_blend_func_separate(
+        Context* ctx, const BlendFactor src_rgb, const BlendFactor dst_rgb,
+        const BlendFactor src_alpha, const BlendFactor dst_alpha)
     {
         CompositeOperationState op;
         op.src_rgb = src_rgb;
@@ -2392,8 +2393,6 @@ namespace rl::nvg {
     {
         const float x0 = ctx->commandx;
         const float y0 = ctx->commandy;
-        float dx0, dy0, dx1, dy1, cx, cy, a0, a1;
-        int32_t dir;
 
         if (ctx->ncommands == 0)
             return;
@@ -2409,10 +2408,10 @@ namespace rl::nvg {
         }
 
         // Calculate tangential circle to lines (x0,y0)-(x1,y1) and (x1,y1)-(x2,y2).
-        dx0 = x0 - x1;
-        dy0 = y0 - y1;
-        dx1 = x2 - x1;
-        dy1 = y2 - y1;
+        float dx0 = x0 - x1;
+        float dy0 = y0 - y1;
+        float dx1 = x2 - x1;
+        float dy1 = y2 - y1;
         detail::normalize(&dx0, &dy0);
         detail::normalize(&dx1, &dy1);
         const float a = detail::acosf(dx0 * dx1 + dy0 * dy1);
@@ -2426,13 +2425,18 @@ namespace rl::nvg {
             return;
         }
 
+        float cx{ 0.0f };
+        float cy{ 0.0f };
+        float a0{ 0.0f };
+        float a1{ 0.0f };
+        ShapeWinding dir{ ShapeWinding::None };
         if (detail::cross(dx0, dy0, dx1, dy1) > 0.0f)
         {
             cx = x1 + dx0 * d + dy0 * radius;
             cy = y1 + dy0 * d + -dx0 * radius;
             a0 = detail::atan2f(dx0, -dy0);
             a1 = detail::atan2f(-dx1, dy1);
-            dir = Hole_Clockwise;
+            dir = ShapeWinding::Clockwise;
             //		printf("CW c=(%f, %f) a0=%f° a1=%f°\n", cx, cy,
             // a0/std::numbers::pi_v<f32>*180.0f,
             // a1/std::numbers::pi_v<f32>*180.0f);
@@ -2443,7 +2447,7 @@ namespace rl::nvg {
             cy = y1 + dy0 * d + dx0 * radius;
             a0 = detail::atan2f(-dx0, dy0);
             a1 = detail::atan2f(dx1, -dy1);
-            dir = Solid_CounterClockwise;
+            dir = ShapeWinding::CounterClockwise;
             //		printf("CCW c=(%f, %f) a0=%f° a1=%f°\n", cx, cy,
             // a0/std::numbers::pi_v<f32>*180.0f,
             // a1/std::numbers::pi_v<f32>*180.0f);
@@ -2458,14 +2462,14 @@ namespace rl::nvg {
         detail::append_commands(ctx, vals, std::size(vals));
     }
 
-    void path_winding(Context* ctx, const int32_t dir)
+    void path_winding(Context* ctx, const Solidity dir)
     {
         float vals[] = { static_cast<float>(Commands::Winding), static_cast<float>(dir) };
         detail::append_commands(ctx, vals, std::size(vals));
     }
 
     void barc(Context* ctx, const float cx, const float cy, const float r, const float a0,
-              const float a1, const int32_t dir, const int32_t join)
+              const float a1, const ShapeWinding dir, const int32_t join)
     {
         float px = 0.0f;
         float py = 0.0f;
@@ -2477,7 +2481,7 @@ namespace rl::nvg {
 
         // Clamp angles
         float da = a1 - a0;
-        if (dir == Hole_Clockwise)
+        if (dir == ShapeWinding::Clockwise)
         {
             if (detail::absf(da) >= std::numbers::pi_v<f32> * 2)
                 da = std::numbers::pi_v<f32> * 2;
@@ -2503,7 +2507,7 @@ namespace rl::nvg {
         const float hda = da / static_cast<float>(ndivs) / 2.0f;
         float kappa = detail::absf(4.0f / 3.0f * (1.0f - detail::cosf(hda)) / detail::sinf(hda));
 
-        if (dir == Solid_CounterClockwise)
+        if (dir == ShapeWinding::CounterClockwise)
             kappa = -kappa;
 
         int32_t nvals = 0;
@@ -2544,7 +2548,7 @@ namespace rl::nvg {
     }
 
     void arc(Context* ctx, const float cx, const float cy, const float r, const float a0,
-             const float a1, const int32_t dir)
+             const float a1, const ShapeWinding dir)
     {
         barc(ctx, cx, cy, r, a0, a1, dir, 1);
     }
@@ -2558,6 +2562,7 @@ namespace rl::nvg {
             static_cast<f32>(Commands::LineTo), x + w, y,
             static_cast<f32>(Commands::Close),
         };
+
         detail::append_commands(ctx, vals.data(), std::size(vals));
     }
 
@@ -2721,9 +2726,9 @@ namespace rl::nvg {
 
         detail::flatten_paths(ctx);
         if (ctx->params.edge_anti_alias && state->shape_anti_alias)
-            detail::expand_fill(ctx, ctx->fringe_width, NVGMiter, 2.4f);
+            detail::expand_fill(ctx, ctx->fringe_width, LineCap::Miter, 2.4f);
         else
-            detail::expand_fill(ctx, 0.0f, NVGMiter, 2.4f);
+            detail::expand_fill(ctx, 0.0f, LineCap::Miter, 2.4f);
 
         // Apply global alpha
         fill_paint.inner_color.a *= state->alpha;
@@ -2900,6 +2905,12 @@ namespace rl::nvg {
         state->font_id = fons_get_font_by_name(ctx->fs, font.data());
     }
 
+    void font_face(Context* ctx, const std::string& font)
+    {
+        State* state{ detail::get_state(ctx) };
+        state->font_id = fons_get_font_by_name(ctx->fs, font.c_str());
+    }
+
     float text(Context* ctx, float x, float y, const char* string, const char* end /*= nullptr*/)
     {
         State* state = detail::get_state(ctx);
@@ -3004,10 +3015,9 @@ namespace rl::nvg {
         State* state = detail::get_state(ctx);
         TextRow rows[2];
         const Align old_align = state->text_align;
-        const Align haling = state->text_align &
-                             (Align::NVGAlignLeft | Align::NVGAlignCenter | Align::NVGAlignRight);
-        const Align valign = state->text_align & (Align::NVGAlignTop | Align::NVGAlignMiddle |
-                                                  Align::NVGAlignBottom | Align::NVGAlignBaseline);
+        const Align haling = state->text_align & (Align::HLeft | Align::HCenter | Align::HRight);
+        const Align valign = state->text_align &
+                             (Align::VTop | Align::VMiddle | Align::VBottom | Align::VBaseline);
         float lineh = 0;
 
         if (state->font_id == FONS_INVALID)
@@ -3015,7 +3025,7 @@ namespace rl::nvg {
 
         text_metrics(ctx, nullptr, nullptr, &lineh);
 
-        state->text_align = Align::NVGAlignLeft | valign;
+        state->text_align = Align::HLeft | valign;
 
         int32_t nrows;
         while ((nrows = text_break_lines(ctx, string, end, break_row_width, rows, 2)))
@@ -3023,12 +3033,12 @@ namespace rl::nvg {
             for (int32_t i = 0; i < nrows; i++)
             {
                 const TextRow* row = &rows[i];
-                if ((haling & Align::NVGAlignLeft) != 0)
+                if ((haling & Align::HLeft) != 0)
                     text(ctx, x, y, row->start, row->end);
-                else if ((haling & Align::NVGAlignCenter) != 0)
+                else if ((haling & Align::HCenter) != 0)
                     text(ctx, x + break_row_width * 0.5f - row->width * 0.5f, y, row->start,
                          row->end);
-                else if ((haling & Align::NVGAlignRight) != 0)
+                else if ((haling & Align::HRight) != 0)
                     text(ctx, x + break_row_width - row->width, y, row->start, row->end);
                 y += lineh * state->line_height;
             }
@@ -3359,10 +3369,9 @@ namespace rl::nvg {
         const float scale = detail::get_font_scale(state) * ctx->device_px_ratio;
         const float invscale = 1.0f / scale;
         const Align old_align = state->text_align;
-        const Align haling = state->text_align &
-                             (Align::NVGAlignLeft | Align::NVGAlignCenter | Align::NVGAlignRight);
-        const Align valign = state->text_align & (Align::NVGAlignTop | Align::NVGAlignMiddle |
-                                                  Align::NVGAlignBottom | Align::NVGAlignBaseline);
+        const Align haling = state->text_align & (Align::HLeft | Align::HCenter | Align::HRight);
+        const Align valign = state->text_align &
+                             (Align::VTop | Align::VMiddle | Align::VBottom | Align::VBaseline);
         float lineh = 0, rminy = 0, rmaxy = 0;
         float maxx, maxy;
 
@@ -3375,7 +3384,7 @@ namespace rl::nvg {
 
         text_metrics(ctx, nullptr, nullptr, &lineh);
 
-        state->text_align = Align::NVGAlignLeft | valign;
+        state->text_align = Align::HLeft | valign;
 
         float minx = maxx = x;
         float miny = maxy = y;
@@ -3398,11 +3407,11 @@ namespace rl::nvg {
                 float dx = 0;
 
                 // Horizontal bounds
-                if ((haling & Align::NVGAlignLeft) != 0)
+                if ((haling & Align::HLeft) != 0)
                     dx = 0;
-                else if ((haling & Align::NVGAlignCenter) != 0)
+                else if ((haling & Align::HCenter) != 0)
                     dx = break_row_width * 0.5f - row->width * 0.5f;
-                else if ((haling & Align::NVGAlignRight) != 0)
+                else if ((haling & Align::HRight) != 0)
                     dx = break_row_width - row->width;
 
                 const float rminx = x + row->min_x + dx;

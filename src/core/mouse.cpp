@@ -5,6 +5,41 @@
 #include "utils/logging.hpp"
 
 namespace rl {
+    Mouse::Mouse()
+    {
+        for (u32 i = Cursor::Arrow; i < Cursor::CursorCount; ++i)
+            m_system_cursors[static_cast<std::size_t>(i)] = SDL3::SDL_CreateSystemCursor(
+                static_cast<Cursor::type>(i));
+    }
+
+    Mouse::~Mouse()
+    {
+        for (u32 i = Mouse::Cursor::Arrow; i < Mouse::Cursor::CursorCount; ++i)
+            if (m_system_cursors[i] != nullptr)
+                SDL3::SDL_DestroyCursor(m_system_cursors[i]);
+    }
+
+    bool Mouse::set_cursor(const Mouse::Cursor::ID cursor_id) const
+    {
+        if (m_active_cursor == cursor_id)
+            return false;
+
+        runtime_assert(cursor_id < m_system_cursors.size(), "invalid cursor idx");
+        SDL3::SDL_Cursor* cursor{ m_system_cursors[cursor_id] };
+        runtime_assert(cursor != nullptr, "invalid cursor");
+
+        const i32 result{ SDL3::SDL_SetCursor(cursor) };
+        sdl_assert(result == 0, "failed to set cursor: {}", std::to_underlying(cursor_id));
+
+        if (result == 0)
+            m_active_cursor = cursor_id;
+        return result == 0;
+    }
+
+    Mouse::Cursor::ID Mouse::active_cursor() const
+    {
+        return m_active_cursor;
+    }
 
     void Mouse::process_button_down(const Mouse::Button::ID mouse_button)
     {
@@ -112,20 +147,23 @@ namespace rl {
         return 0 != (m_buttons_held & SDL_BUTTON(button));
     }
 
-    bool Mouse::all_buttons_down(std::vector<Mouse::Button::ID> buttons) const
+    bool Mouse::all_buttons_down(std::vector<Mouse::Button::ID>&& buttons) const
     {
         bool ret{ true };
+
         for (auto&& button : buttons)
             ret &= this->is_button_down(button);
 
         return ret;
     }
 
-    bool Mouse::any_buttons_down(std::vector<Mouse::Button::ID> buttons) const
+    bool Mouse::any_buttons_down(std::vector<Mouse::Button::ID>&& buttons) const
     {
         for (auto&& button : buttons)
+        {
             if (this->is_button_down(button))
                 return true;
+        }
 
         return false;
     }

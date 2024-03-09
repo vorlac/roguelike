@@ -31,8 +31,6 @@ namespace rl::ui {
         explicit Canvas(const ds::rect<f32>& rect, const Mouse& mouse, const Keyboard& kb,
                         const std::unique_ptr<NVGRenderer>& nvg_renderer);
 
-        virtual ~Canvas() override;
-
         bool draw_all();
         bool redraw();
         bool draw_widgets();
@@ -92,6 +90,5 @@ namespace rl::ui {
 
         std::function<void(ds::dims<f32>)> m_resize_callback;
         std::vector<std::function<void()>> m_update_callbacks;
-        std::array<SDL3::SDL_Cursor*, Mouse::Cursor::CursorCount> m_cursors{};
     };
 }

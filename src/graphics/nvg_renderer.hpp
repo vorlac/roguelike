@@ -9,7 +9,7 @@
 
 #include "core/ui/theme.hpp"
 #include "ds/dims.hpp"
-#include "ds/point.hpp"
+#include "ds/line.hpp"
 #include "ds/rect.hpp"
 #include "graphics/vg/nanovg.hpp"
 #include "utils/numeric.hpp"
@@ -34,10 +34,18 @@ namespace rl {
 
         void save_state() const;
         void restore_state() const;
+        void reset_scissor() const;
 
-        nvg::PaintStyle create_box_gradient(ds::rect<f32>&& rect, f32 corner_radius, f32 outer_blur,
-                                            const ds::color<f32>& inner_color,
-                                            const ds::color<f32>& outer_gradient_color) const;
+        void set_fill_paint_style(nvg::PaintStyle&& paint_style) const;
+        void fill_current_path(nvg::PaintStyle&& paint_style) const;
+
+        nvg::PaintStyle create_rect_gradient_paint_style(
+            ds::rect<f32>&& rect, f32 corner_radius, f32 outer_blur,
+            const ds::color<f32>& inner_color, const ds::color<f32>& outer_gradient_color) const;
+
+        nvg::PaintStyle create_linear_gradient_paint_style(
+            ds::line<f32>&& line, const ds::color<f32>& inner_color,
+            const ds::color<f32>& outer_gradient_color) const;
 
         void load_fonts(const std::vector<FontInfo>& fonts);
         void set_text_properties(const std::string_view& font_name, f32 font_size,
@@ -53,16 +61,17 @@ namespace rl {
         [[nodiscard]]
         ds::dims<f32> get_text_size(
             const std::string& text, const std::string_view& font_name, f32 font_size,
-            nvg::Align alignment = nvg::Align::NVGAlignCenter | nvg::Align::NVGAlignMiddle) const;
+            nvg::Align alignment = nvg::Align::HCenter | nvg::Align::VMiddle) const;
 
         [[nodiscard]]
         ds::rect<f32> get_text_box_rect(
             const std::string& text, const ds::point<f32>& pos, const std::string_view& font_name,
             f32 font_size, f32 fold_width,
-            nvg::Align alignment = nvg::Align::NVGAlignLeft | nvg::Align::NVGAlignTop) const;
+            nvg::Align alignment = nvg::Align::HLeft | nvg::Align::VTop) const;
 
         void draw_rect_outline(const ds::rect<f32>& rect, f32 stroke_width,
                                const ds::color<f32>& color, ui::Outline type) const;
+        void draw_rounded_rect(const ds::rect<f32>& rect, f32 corner_radius) const;
 
         [[nodiscard]]
         nvg::Context* context() const;

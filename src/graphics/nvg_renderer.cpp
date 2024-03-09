@@ -8,6 +8,7 @@
 
 #include "core/ui/theme.hpp"
 #include "ds/dims.hpp"
+#include "ds/line.hpp"
 #include "graphics/nvg_renderer.hpp"
 #include "graphics/vg/nanovg.hpp"
 #include "graphics/vg/nanovg_gl.hpp"
@@ -113,7 +114,12 @@ namespace rl {
         nvg::restore(m_nvg_context.get());
     }
 
-    nvg::PaintStyle NVGRenderer::create_box_gradient(
+    void NVGRenderer::reset_scissor() const
+    {
+        nvg::reset_scissor(m_nvg_context.get());
+    }
+
+    nvg::PaintStyle NVGRenderer::create_rect_gradient_paint_style(
         ds::rect<f32>&& rect, const f32 corner_radius, const f32 outer_blur,
         const ds::color<f32>& inner_color, const ds::color<f32>& outer_gradient_color) const
     {
@@ -126,6 +132,21 @@ namespace rl {
         // current transform when it is passed to FillPaint() or StrokePaint().
         return nvg::box_gradient(m_nvg_context.get(), std::forward<ds::rect<f32>>(rect),
                                  corner_radius, outer_blur, inner_color, outer_gradient_color);
+    }
+
+    nvg::PaintStyle NVGRenderer::create_linear_gradient_paint_style(
+        ds::line<f32>&& line, const ds::color<f32>& inner_color,
+        const ds::color<f32>& outer_gradient_color) const
+    {
+        // Creates and returns a box gradient.
+        // Box gradient is a feathered rounded rectangle, it is useful for rendering drop shadows or
+        // highlights for boxes. Parameters (x,y) define the top-left corner of the rectangle, (w,h)
+        // define the size of the rectangle, r defines the corner radius, and f feather. Feather
+        // defines how blurry the border of the rectangle is. Parameter icol specifies the inner
+        // color and ocol the outer color of the gradient. The gradient is transformed by the
+        // current transform when it is passed to FillPaint() or StrokePaint().
+        return nvg::linear_gradient(m_nvg_context.get(), line.start.x, line.start.y, line.end.x,
+                                    line.end.y, inner_color, outer_gradient_color);
     }
 
     ui::Font::ID NVGRenderer::load_font(const std::string_view& font_name,
@@ -152,6 +173,17 @@ namespace rl {
             const auto handle{ this->load_font(font_name, font_ttf) };
             m_font_map[font_name] = handle;
         }
+    }
+
+    void NVGRenderer::set_fill_paint_style(nvg::PaintStyle&& paint_style) const
+    {
+        nvg::fill_paint(m_nvg_context.get(), std::move(paint_style));
+    }
+
+    void NVGRenderer::fill_current_path(nvg::PaintStyle&& paint_style) const
+    {
+        nvg::fill_paint(m_nvg_context.get(), std::move(paint_style));
+        nvg::fill(m_nvg_context.get());
     }
 
     void NVGRenderer::set_text_properties(const std::string_view& font_name, const f32 font_size,
@@ -195,8 +227,7 @@ namespace rl {
     {
         this->set_text_properties(font_name, font_size, alignment);
 
-        const f32 width{ nvg::text_bounds(m_nvg_context.get(), 0.0f, 0.0f, text.data(), nullptr,
-                                          nullptr) };
+        const f32 width{ nvg::text_bounds(m_nvg_context.get(), 0.0f, 0.0f, text.data()) };
 
         constexpr static f32 width_buffer{ 2.0f };
         return ds::dims{
@@ -227,5 +258,11 @@ namespace rl {
 
         nvg::stroke_color(m_nvg_context.get(), color);
         nvg::stroke(m_nvg_context.get());
+    }
+
+    void NVGRenderer::draw_rounded_rect(const ds::rect<f32>& rect, const f32 corner_radius) const
+    {
+        nvg::rounded_rect(m_nvg_context.get(), rect.pt.x, rect.pt.y, rect.size.width,
+                          rect.size.height, corner_radius);
     }
 }

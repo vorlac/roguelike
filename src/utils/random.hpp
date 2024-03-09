@@ -1,12 +1,8 @@
 #pragma once
 
-#include <cmath>
+#include <concepts>
 #include <limits>
-#include <numbers>
 #include <random>
-#include <vector>
-
-#include "utils/concepts.hpp"
 
 namespace rl {
 
@@ -37,10 +33,9 @@ namespace rl {
         }
 
     private:
-        using type = decltype(RangeStart);
         static inline std::random_device m_random_device{};
         static inline std::mt19937 m_engine{};
-        static inline std::uniform_int_distribution<random::type> m_dist{ RangeStart, RangeEnd };
+        static inline std::uniform_int_distribution<numeric_type> m_dist{ RangeStart, RangeEnd };
         static inline bool m_seeded{ rl::random<RangeStart, RangeEnd>::seed() };
     };
 

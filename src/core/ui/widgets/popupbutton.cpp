@@ -87,7 +87,7 @@ namespace rl::ui {
             nvg::font_face(context, Font::Name::Icons);
             nvg::font_size(context, text_size * this->icon_scale());
             nvg::fill_color(context, m_enabled ? text_color : m_theme->disabled_text_color);
-            nvg::text_align(context, nvg::Align::NVGAlignLeft | nvg::Align::NVGAlignMiddle);
+            nvg::text_align(context, nvg::Align::HLeft | nvg::Align::VMiddle);
 
             const f32 icon_width{ nvg::text_bounds(context, 0.0f, 0.0f, icon.data()) };
 

@@ -7,7 +7,6 @@
 #include "core/ui/layouts/layout.hpp"
 #include "core/ui/theme.hpp"
 #include "ds/dims.hpp"
-#include "ds/point.hpp"
 #include "ds/refcounted.hpp"
 #include "ds/shared.hpp"
 #include "ds/vector2d.hpp"
@@ -159,7 +158,7 @@ namespace rl::ui {
         std::vector<Widget*> m_children{};
         std::string m_tooltip{};
 
-        Timer<f32> m_timer{};
+        Timer<> m_timer{};
 
     private:
         constexpr static bool DiagnosticsEnabled{ false };

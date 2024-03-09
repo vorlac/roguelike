@@ -59,7 +59,7 @@ namespace rl::ui {
             ds::color<f32> border_color{ Colors::Transparent };
 
             ds::vector2<f32> margins{ 10.0f, 10.0f };
-            nvg::Align alignment{ nvg::Align::NVGAlignCenter | nvg::Align::NVGAlignMiddle };
+            nvg::Align alignment{ nvg::Align::HCenter | nvg::Align::VMiddle };
         };
     };
 

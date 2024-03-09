@@ -253,7 +253,7 @@ namespace rl::ui {
             color.a = m_enabled ? 0.25f : 0.125f;
 
             nvg::fill_color(context, color);
-            nvg::text_align(context, nvg::Align::NVGAlignRight | nvg::Align::NVGAlignMiddle);
+            nvg::text_align(context, nvg::Align::HRight | nvg::Align::VMiddle);
             nvg::text(context, m_pos.x + m_size.width - x_spacing, draw_pos.y, m_units.c_str());
 
             unit_width += 2;
@@ -278,7 +278,7 @@ namespace rl::ui {
                                              : m_theme->disabled_text_color);
 
                 auto icon{ utf8(std::to_underlying(m_theme->text_box_up_icon)) };
-                nvg::text_align(context, nvg::Align::NVGAlignLeft | nvg::Align::NVGAlignMiddle);
+                nvg::text_align(context, nvg::Align::HLeft | nvg::Align::VMiddle);
 
                 ds::point icon_pos{
                     m_pos.x + 4.0f,
@@ -296,7 +296,7 @@ namespace rl::ui {
                                              : m_theme->disabled_text_color);
 
                 auto&& icon{ utf8(m_theme->text_box_down_icon) };
-                nvg::text_align(context, nvg::Align::NVGAlignLeft | nvg::Align::NVGAlignMiddle);
+                nvg::text_align(context, nvg::Align::HLeft | nvg::Align::VMiddle);
 
                 ds::point icon_pos{
                     m_pos.x + 4.0f,
@@ -313,15 +313,15 @@ namespace rl::ui {
         switch (m_alignment)
         {
             case Alignment::Left:
-                nvg::text_align(context, nvg::Align::NVGAlignLeft | nvg::Align::NVGAlignMiddle);
+                nvg::text_align(context, nvg::Align::HLeft | nvg::Align::VMiddle);
                 draw_pos.x += x_spacing + spin_arrows_width;
                 break;
             case Alignment::Right:
-                nvg::text_align(context, nvg::Align::NVGAlignRight | nvg::Align::NVGAlignMiddle);
+                nvg::text_align(context, nvg::Align::HRight | nvg::Align::VMiddle);
                 draw_pos.x += m_size.width - unit_width - x_spacing;
                 break;
             case Alignment::Center:
-                nvg::text_align(context, nvg::Align::NVGAlignCenter | nvg::Align::NVGAlignMiddle);
+                nvg::text_align(context, nvg::Align::HCenter | nvg::Align::VMiddle);
                 draw_pos.x += m_size.width * 0.5f;
                 break;
         }

@@ -387,7 +387,7 @@ namespace rl::ui {
                 icon_size.width += m_size.height * 0.15f;
 
             nvg::fill_color(context, text_color);
-            nvg::text_align(context, nvg::Align::NVGAlignLeft | nvg::Align::NVGAlignMiddle);
+            nvg::text_align(context, nvg::Align::HLeft | nvg::Align::VMiddle);
             ds::point icon_pos{ center };
 
             icon_pos.y -= 1;
@@ -425,7 +425,7 @@ namespace rl::ui {
 
         nvg::font_size(context, font_size);
         nvg::font_face(context, Font::Name::SansBold);
-        nvg::text_align(context, nvg::Align::NVGAlignLeft | nvg::Align::NVGAlignMiddle);
+        nvg::text_align(context, nvg::Align::HLeft | nvg::Align::VMiddle);
         nvg::fill_color(context, m_theme->text_shadow_color);
         nvg::text(context, text_pos.x, text_pos.y, m_text.c_str(), nullptr);
         nvg::fill_color(context, text_color);

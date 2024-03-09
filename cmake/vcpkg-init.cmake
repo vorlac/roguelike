@@ -10,10 +10,6 @@ if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/extern/vcpkg/ports")
     )
 endif()
 
-if (ASAN_ENABLED MATCHES ON)
-	set(VCPKG_TARGET_TRIPLET "x64-windows")
-endif()
-
 # VCPKG toolchain file
 if(NOT CMAKE_TOOLCHAIN_FILE)
     set(toolchain_file_path "${CMAKE_CURRENT_SOURCE_DIR}/extern/vcpkg/scripts/buildsystems/vcpkg.cmake")

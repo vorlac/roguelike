@@ -596,7 +596,7 @@ namespace rl::ui {
 
     Mouse::Cursor::ID Widget::cursor() const
     {
-        scoped_logger(log_level::debug, "{}", static_cast<i32>(m_cursor));
+        scoped_logger(log_level::debug, "{}", std::to_underlying(m_cursor));
         return m_cursor;
     }
 

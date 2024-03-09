@@ -8,9 +8,9 @@
 #include "graphics/vg/nanovg_state.hpp"
 #include "utils/io.hpp"
 #include "utils/logging.hpp"
-#include "utils/math.hpp"
 
 namespace rl::ui {
+
     Canvas::Canvas(const ds::rect<f32>& rect, const Mouse& mouse, const Keyboard& kb,
                    const std::unique_ptr<NVGRenderer>& nvg_renderer)
         : Widget{ nullptr, nvg_renderer }
@@ -20,21 +20,10 @@ namespace rl::ui {
         m_pos = ds::point{ 0.0f, 0.0f };
         m_size = rect.size;
 
-        for (i32 i = Mouse::Cursor::Arrow; i < Mouse::Cursor::CursorCount; ++i)
-            m_cursors[static_cast<std::size_t>(i)] = SDL3::SDL_CreateSystemCursor(
-                static_cast<Mouse::Cursor::type>(i));
-
         Widget::set_theme(new Theme{ nvg_renderer->context() });
         this->set_visible(true);
 
         m_last_interaction = m_timer.elapsed();
-    }
-
-    Canvas::~Canvas()
-    {
-        for (i32 i = Mouse::Cursor::Arrow; i < Mouse::Cursor::CursorCount; ++i)
-            if (m_cursors[i] != nullptr)
-                SDL3::SDL_DestroyCursor(m_cursors[static_cast<std::size_t>(i)]);
     }
 
     bool Canvas::update() const
@@ -92,7 +81,7 @@ namespace rl::ui {
 
                 nvg::font_face(context, Font::Name::Sans);
                 nvg::font_size(context, 20.0f);
-                nvg::text_align(context, nvg::Align::NVGAlignLeft | nvg::Align::NVGAlignTop);
+                nvg::text_align(context, nvg::Align::HLeft | nvg::Align::VTop);
                 nvg::text_line_height(context, 1.125f);
                 nvg::text_bounds(context, pos.x, pos.y, widget->tooltip().c_str(), nullptr,
                                  bounds.data());
@@ -100,7 +89,7 @@ namespace rl::ui {
                 f32 height{ (bounds[2] - bounds[0]) / 2.0f };
                 if (height > (tooltip_width / 2.0f))
                 {
-                    nvg::text_align(context, nvg::Align::NVGAlignCenter | nvg::Align::NVGAlignTop);
+                    nvg::text_align(context, nvg::Align::HCenter | nvg::Align::VTop);
                     nvg::text_box_bounds(context, pos.x, pos.y, tooltip_width,
                                          widget->tooltip().c_str(), nullptr, bounds.data());
 
@@ -281,7 +270,6 @@ namespace rl::ui {
         for (const auto focus_widget : std::ranges::reverse_view{ m_focus_path })
             focus_widget->on_focus_gained();
 
-        // TODO: test code below, used to crash
         if (dialog != nullptr)
             this->move_dialog_to_front(dialog);
     }
@@ -317,9 +305,9 @@ namespace rl::ui {
 
     void Canvas::dispose_dialog(const Dialog* dialog)
     {
-        bool match_found{ std::ranges::find_if(m_focus_path, [&](const Widget* w) {
-                              return w == dialog;
-                          }) != m_focus_path.end() };
+        const bool match_found{ std::ranges::find_if(m_focus_path, [&](const Widget* w) {
+                                    return w == dialog;
+                                }) != m_focus_path.end() };
         if (match_found)
             m_focus_path.clear();
 
@@ -386,14 +374,9 @@ namespace rl::ui {
         }
         else
         {
-            Widget* widget{ this->find_widget(scaled_pos) };
-            if (widget != nullptr && widget->cursor() != m_cursor)
-            {
-                m_cursor = widget->cursor();
-                SDL3::SDL_Cursor* widget_cursor{ m_cursors[m_cursor] };
-                runtime_assert(widget_cursor != nullptr, "invalid cursor");
-                SDL3::SDL_SetCursor(widget_cursor);
-            }
+            const Widget* widget{ this->find_widget(scaled_pos) };
+            if (widget != nullptr && widget->cursor() != m_mouse.active_cursor())
+                bool updated_cursor{ m_mouse.set_cursor(widget->cursor()) };
         }
 
         if (!handled)
@@ -411,7 +394,7 @@ namespace rl::ui {
         m_last_interaction = m_timer.elapsed();
         if (m_focus_path.size() > 1)
         {
-            Dialog* dialog{ dynamic_cast<Dialog*>(m_focus_path[m_focus_path.size() - 2]) };
+            const Dialog* dialog{ dynamic_cast<Dialog*>(m_focus_path[m_focus_path.size() - 2]) };
             if (dialog != nullptr && dialog->modal())
             {
                 if (!dialog->contains(mouse_pos))
@@ -419,14 +402,9 @@ namespace rl::ui {
             }
         }
 
-        auto drop_widget{ this->find_widget(mouse_pos) };
-        if (drop_widget != nullptr && m_cursor != drop_widget->cursor())
-        {
-            m_cursor = drop_widget->cursor();
-            SDL3::SDL_Cursor* widget_cursor{ m_cursors[m_cursor] };
-            runtime_assert(widget_cursor != nullptr, "invalid cursor");
-            SDL3::SDL_SetCursor(widget_cursor);
-        }
+        const auto drop_widget{ this->find_widget(mouse_pos) };
+        if (drop_widget != nullptr && drop_widget->cursor() != m_mouse.active_cursor())
+            bool cursor_updated{ m_mouse.set_cursor(drop_widget->cursor()) };
 
         const bool drag_btn_pressed{ mouse.is_button_pressed(Mouse::Button::Left) };
         if (!m_drag_active && drag_btn_pressed)
@@ -453,7 +431,7 @@ namespace rl::ui {
 
         if (m_focus_path.size() > 1)
         {
-            Dialog* dialog{ dynamic_cast<Dialog*>(m_focus_path[m_focus_path.size() - 2]) };
+            const Dialog* dialog{ dynamic_cast<Dialog*>(m_focus_path[m_focus_path.size() - 2]) };
             if (dialog != nullptr && dialog->modal())
             {
                 if (!dialog->contains(mouse_pos))
@@ -461,20 +439,15 @@ namespace rl::ui {
             }
         }
 
-        Widget* drop_widget{ this->find_widget(mouse_pos) };
+        const Widget* drop_widget{ this->find_widget(mouse_pos) };
         if (m_drag_active && drop_widget != m_drag_widget)
         {
             LocalTransform transform{ m_drag_widget->parent() };
             m_redraw |= m_drag_widget->on_mouse_button_released(mouse, kb);
         }
 
-        if (drop_widget != nullptr && m_cursor != drop_widget->cursor())
-        {
-            m_cursor = drop_widget->cursor();
-            SDL3::SDL_Cursor* widget_cursor{ m_cursors[m_cursor] };
-            runtime_assert(widget_cursor != nullptr, "invalid cursor");
-            SDL3::SDL_SetCursor(widget_cursor);
-        }
+        if (drop_widget != nullptr && drop_widget->cursor() != m_mouse.active_cursor())
+            bool cursor_updated{ m_mouse.set_cursor(drop_widget->cursor()) };
 
         const bool drag_btn_released{ mouse.is_button_released(Mouse::Button::Left) };
         if (m_drag_active && drag_btn_released)
