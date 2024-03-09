@@ -5,7 +5,6 @@
 #include "core/ui/layouts/box_layout.hpp"
 #include "core/ui/widgets/dialog.hpp"
 #include "ds/dims.hpp"
-#include "ds/line.hpp"
 #include "ds/vector2d.hpp"
 #include "graphics/vg/nanovg.hpp"
 #include "utils/io.hpp"
@@ -99,7 +98,7 @@ namespace rl::ui {
         auto&& context{ m_renderer->context() };
         const f32 drop_shadow_size{ m_theme->dialog_drop_shadow_size };
         const f32 corner_radius{ m_theme->dialog_corner_radius };
-        const f32 header_height{ this->header_height() };
+        f32 header_height{ this->header_height() };
 
         m_renderer->scoped_draw([&] {
             m_renderer->draw_path(false, [&] {
@@ -138,7 +137,13 @@ namespace rl::ui {
                         m_theme->dialog_header_gradient_top, m_theme->dialog_header_gradient_bot) };
 
                     m_renderer->draw_rounded_rect(
-                        ds::rect{ m_pos, ds::dims{ m_size.width, header_height } }, corner_radius);
+                        ds::rect<f32>{
+                            m_pos.x,
+                            m_pos.y,
+                            m_size.width,
+                            header_height,
+                        },
+                        corner_radius);
                     // m_renderer->set_fill_paint_style(std::move(header_paint));
                     m_renderer->fill_current_path(std::move(header_style));
                 });
@@ -189,13 +194,129 @@ namespace rl::ui {
     {
         scoped_log();
         Widget::on_mouse_entered(mouse);
+
+        if (m_resizable)
+        {
+            auto movement_delta{ mouse.pos_delta() };
+            if (!movement_delta.is_zero())
+            {
+                const ds::rect dialog_rect{ m_pos, m_size };
+                const ds::point local_mouse_pos{ mouse.pos() /*- m_pos*/ };
+
+                const ds::rect top{ dialog_rect.top(5.0f) };
+                const ds::rect bot{ dialog_rect.bottom(5.0f) };
+                if (top.contains(local_mouse_pos) || bot.contains(local_mouse_pos))
+                {
+                    mouse.set_cursor(Mouse::Cursor::SizeNS);
+                    if (top.contains(local_mouse_pos))
+                        m_resize_hover = Direction::North;
+                    else
+                        m_resize_hover = Direction::South;
+                    return true;
+                }
+
+                const ds::rect lft{ dialog_rect.left(5.0f) };
+                const ds::rect rgt{ dialog_rect.right(5.0f) };
+                if (lft.contains(local_mouse_pos) || rgt.contains(local_mouse_pos))
+                {
+                    mouse.set_cursor(Mouse::Cursor::SizeWE);
+                    if (lft.contains(local_mouse_pos))
+                        m_resize_hover = Direction::West;
+                    else
+                        m_resize_hover = Direction::East;
+                    return true;
+                }
+
+                ds::rect bot_left{ dialog_rect.bot_left(5.0f) };
+                ds::rect top_right{ dialog_rect.top_right(5.0f) };
+                if (bot_left.contains(local_mouse_pos) || top_right.contains(local_mouse_pos))
+                {
+                    mouse.set_cursor(Mouse::Cursor::SizeNESW);
+                    if (bot_left.contains(local_mouse_pos))
+                        m_resize_hover = Direction::NorthEast;
+                    else
+                        m_resize_hover = Direction::SouthWest;
+                    return true;
+                }
+
+                ds::rect top_left{ dialog_rect.top_left(5.0f) };
+                ds::rect bot_right{ dialog_rect.bot_right(5.0f) };
+                if (top_left.contains(local_mouse_pos) || bot_right.contains(local_mouse_pos))
+                {
+                    mouse.set_cursor(Mouse::Cursor::SizeNWSE);
+                    if (top_left.contains(local_mouse_pos))
+                        m_resize_hover = Direction::SouthEast;
+                    else
+                        m_resize_hover = Direction::NorthWest;
+                    return true;
+                }
+            }
+        }
         return true;
     }
 
     bool Dialog::on_mouse_exited(const Mouse& mouse)
     {
         scoped_log();
-        Widget::on_mouse_exited(mouse);
+        Widget::on_mouse_entered(mouse);
+
+        if (m_resizable)
+        {
+            auto movement_delta{ mouse.pos_delta() };
+            if (!movement_delta.is_zero())
+            {
+                const ds::rect dialog_rect{ m_pos, m_size };
+                const ds::point local_mouse_pos{ mouse.pos() /*- m_pos*/ };
+
+                const ds::rect top{ dialog_rect.top(5.0f) };
+                const ds::rect bot{ dialog_rect.bottom(5.0f) };
+                if (top.contains(local_mouse_pos) || bot.contains(local_mouse_pos))
+                {
+                    mouse.set_cursor(Mouse::Cursor::SizeNS);
+                    if (top.contains(local_mouse_pos))
+                        m_resize_hover = Direction::North;
+                    else
+                        m_resize_hover = Direction::South;
+                    return true;
+                }
+
+                const ds::rect lft{ dialog_rect.left(5.0f) };
+                const ds::rect rgt{ dialog_rect.right(5.0f) };
+                if (lft.contains(local_mouse_pos) || rgt.contains(local_mouse_pos))
+                {
+                    mouse.set_cursor(Mouse::Cursor::SizeWE);
+                    if (lft.contains(local_mouse_pos))
+                        m_resize_hover = Direction::West;
+                    else
+                        m_resize_hover = Direction::East;
+                    return true;
+                }
+
+                ds::rect bot_left{ dialog_rect.bot_left(5.0f) };
+                ds::rect top_right{ dialog_rect.top_right(5.0f) };
+                if (bot_left.contains(local_mouse_pos) || top_right.contains(local_mouse_pos))
+                {
+                    mouse.set_cursor(Mouse::Cursor::SizeNESW);
+                    if (bot_left.contains(local_mouse_pos))
+                        m_resize_hover = Direction::SouthWest;
+                    else
+                        m_resize_hover = Direction::NorthEast;
+                    return true;
+                }
+
+                ds::rect top_left{ dialog_rect.top_left(5.0f) };
+                ds::rect bot_right{ dialog_rect.bot_right(5.0f) };
+                if (top_left.contains(local_mouse_pos) || bot_right.contains(local_mouse_pos))
+                {
+                    mouse.set_cursor(Mouse::Cursor::SizeNWSE);
+                    if (top_left.contains(local_mouse_pos))
+                        m_resize_hover = Direction::NorthWest;
+                    else
+                        m_resize_hover = Direction::SouthEast;
+                    return true;
+                }
+            }
+        }
         return true;
     }
 

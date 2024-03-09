@@ -66,12 +66,12 @@ namespace rl {
         bool swap_buffers(const MainWindow& window) const;
 
         ds::dims<i32> get_output_size() const;
-        ds::rect<i32> get_viewport() const;
+        ds::rect<f32> get_viewport() const;
 
-        bool set_viewport(const ds::rect<i32>& rect);
+        bool set_viewport(const ds::rect<i32>& rect) const;
         bool set_draw_color(ds::color<f32> c) const;
-        bool set_target();
-        bool set_draw_blend_mode(const SDL3::SDL_BlendMode blend_mode);
+        bool set_target() const;
+        bool set_draw_blend_mode(SDL3::SDL_BlendMode blend_mode) const;
 
     private:
         explicit OpenGLRenderer() = delete;

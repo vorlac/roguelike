@@ -101,16 +101,16 @@ namespace rl {
         [[nodiscard]] Mouse::Button::ID button_released() const;
         [[nodiscard]] Mouse::Cursor::ID active_cursor() const;
 
-        [[nodiscard]] bool set_cursor(Mouse::Cursor::ID cursor_id) const;
-        [[nodiscard]] bool is_button_pressed(Mouse::Button::ID button) const;
-        [[nodiscard]] bool is_button_released(Mouse::Button::ID button) const;
-        [[nodiscard]] bool is_button_held(Mouse::Button::ID button) const;
-        [[nodiscard]] bool is_button_down(Mouse::Button::ID button) const;
-        [[nodiscard]] bool all_buttons_down(std::vector<Mouse::Button::ID>&& buttons) const;
-        [[nodiscard]] bool any_buttons_down(std::vector<Mouse::Button::ID>&& buttons) const;
-
         [[nodiscard]] std::string get_button_state(Mouse::Button::ID button) const;
         [[nodiscard]] std::string name() const;
+
+        bool set_cursor(Mouse::Cursor::ID cursor_id) const;
+        bool is_button_pressed(Mouse::Button::ID button) const;
+        bool is_button_released(Mouse::Button::ID button) const;
+        bool is_button_held(Mouse::Button::ID button) const;
+        bool is_button_down(Mouse::Button::ID button) const;
+        bool all_buttons_down(std::vector<Mouse::Button::ID>&& buttons) const;
+        bool any_buttons_down(std::vector<Mouse::Button::ID>&& buttons) const;
 
     protected:
         void process_button_down(Mouse::Button::ID mouse_button);
@@ -128,6 +128,7 @@ namespace rl {
         ds::point<f32> m_prev_cursor_pos{ 0.0f, 0.0f };
         ds::vector2<f32> m_wheel_position{ 0.0f, 0.0f };
         ds::vector2<f32> m_prev_wheel_pos{ 0.0f, 0.0f };
+
         // TODO: fixme
         mutable Mouse::Cursor::ID m_active_cursor{ Cursor::Arrow };
         std::array<SDL3::SDL_Cursor*, Cursor::CursorCount> m_system_cursors{};

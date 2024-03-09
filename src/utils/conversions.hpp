@@ -1,33 +1,149 @@
 #pragma once
 
-#include <concepts>
 #include <limits>
-#include <string>
 #include <typeinfo>
 
 #include "core/assert.hpp"
 #include "utils/concepts.hpp"
+#include "utils/math.hpp"
 #include "utils/numeric.hpp"
+
+namespace rl {
+    template <rl::floating_point A, rl::floating_point B>
+    constexpr bool operator==(const A& lhs, const B& rhs)
+    {
+        if constexpr (rl::lower_precision<A, B>)
+        {
+            using lp_float_t = traits::float_traits<A>;
+            return rl::math::abs(lhs - rhs) <= lp_float_t::eps * rl::math::abs(lhs + rhs) ||
+                   rl::math::abs(lhs - rhs) < lp_float_t::min;
+        }
+        else
+        {
+            using lp_float_t = traits::float_traits<B>;
+            return rl::math::abs(lhs - rhs) <= lp_float_t::eps * rl::math::abs(lhs + rhs) ||
+                   rl::math::abs(lhs - rhs) < lp_float_t::min;
+        }
+    }
+
+    template <typename T>
+        requires std::same_as<T, float>
+    constexpr bool operator==(const T lhs, const T rhs)
+    {
+        using lp_float_t = rl::traits::float_traits<T>;
+        return rl::math::abs(lhs - rhs) <= lp_float_t::eps * rl::math::abs(lhs + rhs) ||
+               rl::math::abs(lhs - rhs) < lp_float_t::min;
+    }
+
+    template <typename T>
+        requires std::same_as<T, float>
+    constexpr bool operator!=(const T a, const T b)
+    {
+        return !(a == b);
+    }
+}
+
+namespace rl {
+    // scoped enum conversions
+
+    template <typename TEnum>
+        requires std::is_scoped_enum_v<TEnum>
+    constexpr TEnum operator|(const TEnum lhs, const TEnum rhs)
+    {
+        return static_cast<TEnum>(std::to_underlying(lhs) | std::to_underlying(rhs));
+    }
+
+    template <typename TEnum, typename TUnderlying>
+        requires std::is_scoped_enum_v<TEnum> &&
+                 std::same_as<std::underlying_type_t<TEnum>, TUnderlying>
+    constexpr bool operator|(const TUnderlying lhs, const TEnum rhs)
+    {
+        return lhs | std::to_underlying(rhs);
+    }
+
+    template <typename TEnum>
+        requires std::is_scoped_enum_v<TEnum>
+    constexpr TEnum& operator|=(TEnum& lhs, const TEnum rhs)
+    {
+        lhs = (lhs | rhs);
+        return lhs;
+    }
+
+    template <typename TEnum>
+        requires std::is_scoped_enum_v<TEnum>
+    constexpr TEnum operator&(const TEnum lhs, const TEnum rhs)
+    {
+        return static_cast<TEnum>(std::to_underlying(lhs) & std::to_underlying(rhs));
+    }
+
+    template <typename TEnum, typename TUnderlying>
+        requires std::is_scoped_enum_v<TEnum> &&
+                 std::same_as<std::underlying_type_t<TEnum>, TUnderlying>
+    constexpr bool operator&(const TUnderlying lhs, const TEnum rhs)
+    {
+        return lhs & std::to_underlying(rhs);
+    }
+
+    template <typename TEnum>
+        requires std::is_scoped_enum_v<TEnum>
+    constexpr TEnum operator&=(const TEnum lhs, const TEnum rhs)
+    {
+        TEnum ret{ static_cast<TEnum>(std::to_underlying(lhs) & std::to_underlying(rhs)) };
+        return ret;
+    }
+
+    template <typename TEnum, typename TUnderlying>
+        requires std::is_scoped_enum_v<TEnum> &&
+                 std::same_as<std::underlying_type_t<TEnum>, TUnderlying>
+    constexpr bool operator==(const TUnderlying lhs, const TEnum rhs)
+    {
+        return lhs == std::to_underlying(rhs);
+    }
+
+    template <typename TEnum, typename TUnderlying>
+        requires std::is_scoped_enum_v<TEnum> &&
+                 std::same_as<std::underlying_type_t<TEnum>, TUnderlying>
+    constexpr bool operator==(const TEnum lhs, const TUnderlying rhs)
+    {
+        return std::to_underlying(lhs) == rhs;
+    }
+
+    template <typename TEnum, typename TUnderlying>
+        requires std::is_scoped_enum_v<TEnum> &&
+                 std::same_as<std::underlying_type_t<TEnum>, TUnderlying>
+    constexpr bool operator!=(const TUnderlying lhs, const TEnum rhs)
+    {
+        return !(lhs == rhs);
+    }
+
+    template <typename TEnum, typename TUnderlying>
+        requires std::is_scoped_enum_v<TEnum> &&
+                 std::same_as<std::underlying_type_t<TEnum>, TUnderlying>
+    constexpr bool operator!=(const TEnum lhs, const TUnderlying rhs)
+    {
+        return !(lhs == rhs);
+    }
+};
 
 namespace rl::inline cast {
     template <typename To, typename From>
     struct within_bounds
     {
-        constexpr static inline bool value(From val)
+        constexpr static bool value(From val)
             requires rl::signed_integer<To> && rl::unsigned_integer<From>
         {
             return static_cast<i64>(val) <= std::numeric_limits<To>::max() &&
                    static_cast<i64>(val) >= std::numeric_limits<To>::min();
         }
 
-        constexpr static inline bool value(From val)
+        constexpr static bool value(From val)
             requires rl::unsigned_integer<To> && rl::signed_integer<From>
         {
             return static_cast<u64>(val) <= std::numeric_limits<To>::max() &&
                    static_cast<u64>(val) >= std::numeric_limits<To>::min();
         }
 
-        constexpr static inline bool value(From val)
+        constexpr static bool value(From val)
         {
             return val <= std::numeric_limits<To>::max() &&  //
                    val >= std::numeric_limits<To>::lowest();
@@ -36,14 +152,14 @@ namespace rl::inline cast {
 
     // widening  conversions
     template <rl::numeric To, rl::numeric From>
-    constexpr inline To to(const From val)
+    constexpr To to(const From val)
     {
         return static_cast<To>(val);
     }
 
     // floating point to integer conversion
     template <rl::integer To, rl::floating_point From>
-    constexpr inline To to(const From val)
+    constexpr To to(const From val)
     {
         return static_cast<To>(val >= static_cast<From>(0.0)       //
                                    ? val + static_cast<From>(0.5)  //
@@ -53,7 +169,7 @@ namespace rl::inline cast {
     // narrowing integer conversion
     template <rl::integer To, rl::integer From>
         requires(!rl::higher_max<To, From> || !rl::lower_min<To, From>)
-    constexpr inline To to(const From in)
+    constexpr To to(const From in)
     {
         const bool value_in_bounds{ within_bounds<To, From>::value(in) };
         runtime_assert(value_in_bounds,
@@ -66,7 +182,7 @@ namespace rl::inline cast {
     // narrowing floating point conversion
     template <rl::floating_point To, rl::floating_point From>
         requires(!rl::higher_max<To, From> || !rl::lower_min<To, From>)
-    constexpr inline To to(const From in)
+    constexpr To to(const From in)
     {
         const bool value_in_bounds{ within_bounds<To, From>::value(in) };
         runtime_assert(value_in_bounds,

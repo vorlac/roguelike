@@ -91,35 +91,44 @@ namespace rl {
 
     bool OpenGLRenderer::set_draw_color(ds::color<f32> c) const
     {
-        const i32 result = 0;
+        constexpr i32 result = 0;
         runtime_assert(false, "not implemented");
         return result == 0;
     }
 
-    bool OpenGLRenderer::set_target()
+    bool OpenGLRenderer::set_target() const
     {
-        const i32 result = 0;
+        constexpr i32 result = 0;
         runtime_assert(false, "not implemented");
         return result == 0;
     }
 
-    bool OpenGLRenderer::set_draw_blend_mode(const SDL3::SDL_BlendMode blend_mode)
+    bool OpenGLRenderer::set_draw_blend_mode(const SDL3::SDL_BlendMode blend_mode) const
     {
-        const i32 result = 0;
+        constexpr i32 result = 0;
         runtime_assert(false, "not implemented");
         return result == 0;
     }
 
-    ds::rect<i32> OpenGLRenderer::get_viewport() const
+    ds::rect<f32> OpenGLRenderer::get_viewport() const
     {
-        std::array<i32, 4> buff{ 0, 0, 0, 0 };
-        glGetIntegerv(GL_VIEWPORT, static_cast<i32*>(buff.data()));
-        ds::rect<i32> rect{ { buff[0], buff[1] }, { buff[2], buff[3] } };
+        std::array buff{ 0, 0, 0, 0 };
+        glGetIntegerv(GL_VIEWPORT, buff.data());
+        ds::rect rect{
+            ds::point{
+                static_cast<f32>(buff[0]),
+                static_cast<f32>(buff[1]),
+            },
+            ds::dims{
+                static_cast<f32>(buff[2]),
+                static_cast<f32>(buff[3]),
+            },
+        };
         sdl_assert(!rect.is_empty(), "failed to get viewport");
         return rect;
     }
 
-    bool OpenGLRenderer::set_viewport(const ds::rect<i32>& rect)
+    bool OpenGLRenderer::set_viewport(const ds::rect<i32>& rect) const
     {
         runtime_assert(!rect.is_empty(), "invalid viewport rect being set");
         glViewport(rect.pt.x, rect.pt.y, rect.size.width, rect.size.height);

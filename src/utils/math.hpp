@@ -47,38 +47,3 @@ namespace rl::math {
         return val < 0 ? -val : val;
     }
 }
-
-namespace rl {
-    template <rl::floating_point A, rl::floating_point B>
-    constexpr bool operator==(const A& lhs, const B& rhs)
-    {
-        if constexpr (rl::lower_precision<A, B>)
-        {
-            using lp_float_t = traits::float_traits<A>;
-            return rl::math::abs(lhs - rhs) <= lp_float_t::eps * rl::math::abs(lhs + rhs) ||
-                   rl::math::abs(lhs - rhs) < lp_float_t::min;
-        }
-        else
-        {
-            using lp_float_t = traits::float_traits<B>;
-            return rl::math::abs(lhs - rhs) <= lp_float_t::eps * rl::math::abs(lhs + rhs) ||
-                   rl::math::abs(lhs - rhs) < lp_float_t::min;
-        }
-    }
-
-    template <typename T>
-        requires std::same_as<T, float>
-    constexpr bool operator==(const T lhs, const T rhs)
-    {
-        using lp_float_t = rl::traits::float_traits<T>;
-        return rl::math::abs(lhs - rhs) <= lp_float_t::eps * rl::math::abs(lhs + rhs) ||
-               rl::math::abs(lhs - rhs) < lp_float_t::min;
-    }
-
-    template <typename T>
-        requires std::same_as<T, float>
-    constexpr bool operator!=(const T a, const T b)
-    {
-        return !(a == b);
-    }
-}

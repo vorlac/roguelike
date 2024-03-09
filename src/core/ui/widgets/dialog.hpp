@@ -53,6 +53,7 @@ namespace rl {
             bool m_modal{ false };
             bool m_drag{ false };
             bool m_resizable{ true };
+            Direction m_resize_hover{ Direction::None };
         };
     }
 }

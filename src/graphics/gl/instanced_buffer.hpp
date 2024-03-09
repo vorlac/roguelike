@@ -31,11 +31,11 @@ namespace rl::gl {
             return "InstancedVertexBuffer";
         }
 
-        explicit InstancedVertexBuffer(const ds::rect<f32>& viewport_rect)
+        explicit InstancedVertexBuffer(ds::rect<f32>&& viewport_rect)
         {
             scoped_log();
 
-            auto&& window_rect{ viewport_rect.inflated(-450.0f) };
+            auto&& window_rect{ viewport_rect.expanded(-450.0f) };
 
             // create vertex array object
             glGenVertexArrays(1, &m_vao_id);
@@ -46,7 +46,7 @@ namespace rl::gl {
             glGenBuffers(1, &m_vbo_positions_id);
 
             // compile shaders
-            bool shaders_valid = m_shader.compile();
+            const bool shaders_valid = m_shader.compile();
             runtime_assert(shaders_valid, "Failed to compile shaders");
 
             ds::point<f32> centroid{ viewport_rect.centroid() };

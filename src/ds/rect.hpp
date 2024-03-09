@@ -1,15 +1,12 @@
 #pragma once
 
 #include <array>
-#include <memory>
 #include <type_traits>
 #include <utility>
 #include <vector>
 
 #include "ds/color.hpp"
 #include "ds/dims.hpp"
-#include "ds/point.hpp"
-#include "ds/triangle.hpp"
 #include "ds/vector2d.hpp"
 #include "sdl/defs.hpp"
 #include "utils/concepts.hpp"
@@ -22,7 +19,7 @@ SDL_C_LIB_END
 namespace rl::ds {
 #pragma pack(4)
 
-    enum Side : i8_fast {
+    enum class Side : i8_fast {
         Top = 1 << 0,
         Bottom = 1 << 1,
         Left = 1 << 2,
@@ -45,8 +42,10 @@ namespace rl::ds {
     class rect
     {
     public:
+        constexpr ~rect() = default;
+
         // Default construct a 'null' rect
-        explicit constexpr rect()
+        constexpr rect()
             : pt{ ds::point<T>::null() }
             , size{ ds::dims<T>::null() }
         {
@@ -54,16 +53,16 @@ namespace rl::ds {
 
         // copy construct rect<T> from 'other' l-value rect<T>
         constexpr rect(const rect<T>& other)
-            : pt{ other.pt }
-            , size{ other.size }
+            : pt{ std::forward<T>(other.pt) }
+            , size{ std::forward<T>(other.size) }
         {
         }
 
         // copy construct rect<floating_point>
         // from l-value rect<integer>
         template <rl::integer I>
-        constexpr rect(const rect<I>& other)
             requires rl::floating_point<T>
+        constexpr rect(const rect<I>& other)
             : pt{ static_cast<T>(other.pt.x), static_cast<T>(other.pt.y) }
             , size{ static_cast<T>(other.size.width), static_cast<T>(other.size.height) }
         {
@@ -71,8 +70,8 @@ namespace rl::ds {
 
         // construct rect<T> from other r-value rect<T>
         constexpr rect(rect<T>&& other) noexcept
-            : pt{ std::forward<point<T>>(other.pt) }
-            , size{ std::forward<dims<T>>(other.size) }
+            : pt{ std::move(other.pt) }
+            , size{ std::move(other.size) }
         {
         }
 
@@ -311,9 +310,95 @@ namespace rl::ds {
             };
         }
 
+        // Gets the center point of the rectangle
+        [[nodiscard]]
+        constexpr rect<T> expanded(T amount) const noexcept
+        {
+            return rect<T>{
+                (pt - (amount / static_cast<T>(2))),
+                (size + amount),
+            };
+        }
+
+        [[nodiscard]]
+        constexpr rect<T> top(T expand) const noexcept
+        {
+            return rect<T>{
+                { this->pt.x + expand, this->pt.y - expand },
+                { this->size.width - expand * 2, expand * 2 },
+            };
+        }
+
+        [[nodiscard]]
+        constexpr rect<T> bottom(T expand) const noexcept
+        {
+            return rect<T>{
+                { pt.x + expand, (pt.y + this->size.height) - expand },
+                { this->size.width - expand * 2, expand * 2 },
+            };
+        }
+
+        [[nodiscard]]
+        constexpr rect<T> left(T expand) const noexcept
+        {
+            return rect<T>{
+                { this->pt.x - expand, pt.y + expand },
+                { expand * 2, this->size.height - expand * 2 },
+            };
+        }
+
+        [[nodiscard]]
+        constexpr rect<T> right(T expand) const noexcept
+        {
+            return rect<T>{
+                { (this->pt.x + this->size.width) - expand, pt.y + expand },
+                { expand * 2, this->size.height - expand * 2 },
+            };
+        }
+
+        [[nodiscard]]
+        constexpr rect<T> top_left(T expand) const noexcept
+        {
+            const ds::point ret{ this->top_left() };
+            return rect<T>{
+                { ret - expand },
+                { expand * 2, expand * 2 },
+            };
+        }
+
+        [[nodiscard]]
+        constexpr rect<T> top_right(T expand) const noexcept
+        {
+            const ds::point ret{ this->top_right() };
+            return rect<T>{
+                { ret - expand },
+                { expand * 2, expand * 2 },
+            };
+        }
+
+        [[nodiscard]]
+        constexpr rect<T> bot_left(T expand) const noexcept
+        {
+            const ds::point ret{ this->bot_left() };
+            return rect<T>{
+                { ret - expand },
+                { expand * 2, expand * 2 },
+            };
+        }
+
+        [[nodiscard]]
+        constexpr rect<T> bot_right(T expand) const noexcept
+        {
+            const ds::point ret{ this->bot_right() };
+            return rect<T>{
+                { ret - expand },
+                { expand * 2, expand * 2 },
+            };
+        }
+
         // Gets the top left point of the rectangle
         [[nodiscard]]
-        constexpr point<T> top_left() const
+        constexpr point<T> top_left() const noexcept
         {
             return point<T>{
                 pt.x,
@@ -323,7 +408,7 @@ namespace rl::ds {
 
         // Gets the top right point of the rectangle
         [[nodiscard]]
-        constexpr point<T> top_right() const
+        constexpr point<T> top_right() const noexcept
         {
             return point<T>{
                 pt.x + size.width,
@@ -333,7 +418,7 @@ namespace rl::ds {
 
         // Gets the bottom left point of the rectangle
         [[nodiscard]]
-        constexpr point<T> bot_left() const
+        constexpr point<T> bot_left() const noexcept
         {
             return point<T>{
                 pt.x,
@@ -343,31 +428,21 @@ namespace rl::ds {
 
         // Gets the bottom right point of the rectangle
         [[nodiscard]]
-        constexpr point<T> bot_right() const
+        constexpr point<T> bot_right() const noexcept
         {
             return point<T>{
-                pt.x + size.width,
-                pt.y + size.height,
+                (pt.x + size.width),
+                (pt.y + size.height),
             };
         }
 
         // Gets the center point of the rectangle
         [[nodiscard]]
-        constexpr point<T> centroid() const
+        constexpr point<T> centroid() const noexcept
         {
             return point<T>{
                 static_cast<T>(pt.x + (size.width / 2)),
                 static_cast<T>(pt.y + (size.height / 2)),
-            };
-        }
-
-        // Gets the center point of the rectangle
-        [[nodiscard]]
-        constexpr rect<T> inflated(const T amount) const
-        {
-            return rect<T>{
-                pt - (amount / static_cast<T>(2)),
-                size + amount,
             };
         }
 
@@ -427,7 +502,7 @@ namespace rl::ds {
         [[nodiscard]]
         constexpr bool touches(const ds::rect<T>& other) const
         {
-            return this->overlaps(other) && not this->intersects(other);
+            return this->overlaps(other) && not this->overlaps(other);
         }
 
         // Returns a quadrant of the rectangle
@@ -482,7 +557,7 @@ namespace rl::ds {
 
         // Returns a new rect scaled by the ratio, expanded / shrunk from the centroid
         [[nodiscard]]
-        constexpr rect<T> scaled(ds::vector2<f32> ratio) const
+        constexpr rect<T> scaled(ds::vector2<f32>&& ratio) const
         {
             ds::dims<T> scaled_size{
                 T(cast::to<f32>(this->size.width) * ratio.x),
@@ -556,8 +631,8 @@ namespace rl::ds {
         // Copy assignment
         constexpr rect<T>& operator=(const rect<T>& other)
         {
-            this->pt = other.pt;
-            this->size = other.size;
+            this->pt = std::forward<ds::point<T>>(other.pt);
+            this->size = std::forward<ds::dims<T>>(other.size);
             return *this;
         }
 
