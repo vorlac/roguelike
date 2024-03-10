@@ -313,14 +313,14 @@ namespace rl::ds {
         {
             Side overlap{ Side::None };
 
-            const rect bigger{ this->expanded(buffer_size / 2.0f) };
-            const rect smaller{ this->expanded(-buffer_size / 2.0f) };
+            const rect bigger{ this->expanded(buffer_size) };
+            const rect smaller{ this->expanded(-buffer_size) };
 
             if (bigger.contains(pnt) && !smaller.contains(pnt))
             {
                 // pnt is below the top line of bigger and
                 // pnt is above top line of smaller
-                if (pnt.y < smaller.pt.y && pnt.y > bigger.pt.x)
+                if (pnt.y < smaller.pt.y && pnt.y > bigger.pt.y)
                     overlap |= Side::Top;
 
                 // pnt is below bottom line of smaller and

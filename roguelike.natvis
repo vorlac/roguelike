@@ -51,7 +51,7 @@
     <!-- - - - - - - - - -->
     <Type Name="rl::ds::rect&lt;*&gt;">
         <DisplayString>
-            pt:({pt.x,g}, {pt.y,g}) size:[{size.width,g} x {size.height,g}]
+            TL:{pt,g} BR:({pt.x + size.width,g},{pt.y + size.height,g}) | [{size.width,g} x {size.height,g}]
         </DisplayString>
         <Expand HideRawView="true">
             <Item Name="[pt]">pt,g</Item>
