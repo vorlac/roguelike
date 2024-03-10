@@ -71,9 +71,9 @@ namespace rl::ui {
     ds::dims<f32> Label::preferred_size() const
     {
         if (m_text.empty())
-            return ds::dims<f32>::zero();
+            return { 0.0f, 0.0f };
 
-        auto&& context{ m_renderer->context() };
+        const auto context{ m_renderer->context() };
         nvg::font_face(context, m_font);
         nvg::font_size(context, this->font_size());
 
@@ -81,8 +81,8 @@ namespace rl::ui {
         {
             std::array<f32, 4> bounds{ 0.0f };
             nvg::text_align(context, nvg::Align::HLeft | nvg::Align::VTop);
-            nvg::text_box_bounds(context, m_pos.x, m_pos.y, m_fixed_size.width, m_text.c_str(),
-                                 nullptr, bounds.data());
+            nvg::text_box_bounds(context, m_rect.pt.x, m_rect.pt.y, m_fixed_size.width,
+                                 m_text.c_str(), nullptr, bounds.data());
 
             const f32 textbox_height{ bounds[3] - bounds[1] };
             return ds::dims<f32>{
@@ -94,7 +94,7 @@ namespace rl::ui {
         {
             nvg::text_align(context, nvg::Align::HLeft | nvg::Align::VMiddle);
             const f32 text_width{ nvg::text_bounds(context, 0.0f, 0.0f, m_text.c_str()) };
-            return ds::dims<f32>{
+            return {
                 text_width + 2.0f,
                 this->font_size(),
             };
@@ -113,12 +113,12 @@ namespace rl::ui {
         if (m_fixed_size.width > 0)
         {
             nvg::text_align(context, nvg::Align::HLeft | nvg::Align::VTop);
-            nvg::text_box(context, m_pos.x, m_pos.y, m_fixed_size.width, m_text.c_str());
+            nvg::text_box(context, m_rect.pt.x, m_rect.pt.y, m_fixed_size.width, m_text.c_str());
         }
         else
         {
             nvg::text_align(context, nvg::Align::HLeft | nvg::Align::VMiddle);
-            nvg::text(context, m_pos.x, m_pos.y + m_size.height * 0.5f, m_text.c_str());
+            nvg::text(context, m_rect.pt.x, m_rect.pt.y + m_rect.size.height * 0.5f, m_text.c_str());
         }
     }
 }

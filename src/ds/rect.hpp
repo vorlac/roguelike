@@ -11,6 +11,7 @@
 #include "sdl/defs.hpp"
 #include "utils/concepts.hpp"
 #include "utils/numeric.hpp"
+#include "utils/properties.hpp"
 
 SDL_C_LIB_BEGIN
 #include <SDL3/SDL_rect.h>
@@ -18,25 +19,6 @@ SDL_C_LIB_END
 
 namespace rl::ds {
 #pragma pack(4)
-
-    enum class Side : i8_fast {
-        Top = 1 << 0,
-        Bottom = 1 << 1,
-        Left = 1 << 2,
-        Right = 1 << 3,
-    };
-
-    enum Quad : i8_fast {
-        TopLeft = (Side::Top | Side::Left),
-        BottomLeft = (Side::Bottom | Side::Left),
-        TopRight = (Side::Top | Side::Right),
-        BottomRight = (Side::Bottom | Side::Right),
-    };
-
-    enum Axis : i8_fast {
-        Horizontal = 1,  // x axis
-        Vertical = 2,    // y axis
-    };
 
     template <rl::numeric T>
     class rect
@@ -315,9 +297,51 @@ namespace rl::ds {
         constexpr rect<T> expanded(T amount) const noexcept
         {
             return rect<T>{
-                (pt - (amount / static_cast<T>(2))),
-                (size + amount),
+                ds::point{
+                    this->pt.x - amount,
+                    this->pt.y - amount,
+                },
+                ds::dims{
+                    this->size.width + (amount * 2),
+                    this->size.height + (amount * 2),
+                },
             };
+        }
+
+        [[nodiscard]]
+        constexpr Side edge_overlap(T buffer_size, const ds::point<T>& pnt) const noexcept
+        {
+            Side overlap{ Side::None };
+
+            const rect bigger{ this->expanded(buffer_size / 2.0f) };
+            const rect smaller{ this->expanded(-buffer_size / 2.0f) };
+
+            if (bigger.contains(pnt) && !smaller.contains(pnt))
+            {
+                // pnt is below the top line of bigger and
+                // pnt is above top line of smaller
+                if (pnt.y < smaller.pt.y && pnt.y > bigger.pt.x)
+                    overlap |= Side::Top;
+
+                // pnt is below bottom line of smaller and
+                // pnt is above bottom line of bigger
+                if (pnt.y > (smaller.pt.y + smaller.size.height) &&
+                    pnt.y < (bigger.pt.y + bigger.size.height))
+                    overlap |= Side::Bottom;
+
+                // pnt is to the right of bigger's left line and
+                // pnt is to the left of smaller's left line
+                if (pnt.x > bigger.pt.x && pnt.x < smaller.pt.x)
+                    overlap |= Side::Left;
+
+                // pnt is to the right of smaller's right line and
+                // pnt in to the left of bigger's right line
+                if (pnt.x > (smaller.pt.x + smaller.size.width) &&
+                    pnt.x < (bigger.pt.x + bigger.size.width))
+                    overlap |= Side::Right;
+            }
+
+            return overlap;
         }
 
         [[nodiscard]]
@@ -494,8 +518,8 @@ namespace rl::ds {
         {
             return (pnt.x == this->pt.x && this->pt.y <= pnt.y &&
                     pnt.y <= this->pt.y + this->size.width) ||  //
-                   (pnt = this->pt.y && this->pt.x <= pnt.x &&
-                          pnt.x <= this->pt.x + this->size.height);
+                   (pnt.y == this->pt.y && this->pt.x <= pnt.x &&
+                    pnt.x <= this->pt.x + this->size.height);
         }
 
         // Checks if the this rect externally touches the other rect
@@ -572,11 +596,11 @@ namespace rl::ds {
         // returns two halves of a rectange,
         // split either horizontally or vertically
         [[nodiscard]]
-        constexpr std::array<rect<T>, 2> split(ds::Axis axis) const
+        constexpr std::array<rect<T>, 2> split(Axis axis) const
         {
             switch (axis)
             {
-                case ds::Axis::Horizontal:
+                case Axis::Horizontal:
                 {
                     // split the rect in half using a
                     // horizontal line as the slice point
@@ -595,7 +619,7 @@ namespace rl::ds {
                         },
                     };
                 }
-                case ds::Axis::Vertical:
+                case Axis::Vertical:
                 {
                     // split the rect in half using a
                     // vertical line as the slice point

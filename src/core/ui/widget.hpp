@@ -44,6 +44,7 @@ namespace rl::ui {
         bool has_font_size() const;
         bool enabled() const;
         bool focused() const;
+        bool resizable() const;
         bool contains(const ds::point<f32>& pt) const;
 
         f32 width() const;
@@ -61,25 +62,27 @@ namespace rl::ui {
         Layout* layout();
         Theme* theme();
         Widget* child_at(i32 index);
+        Side resize_side() const;
         Mouse::Cursor::ID cursor() const;
-        ds::point<f32> position() const;
+        ds::rect<f32> resize_rect() const;
         ds::point<f32> abs_position() const;
-        ds::dims<f32> fixed_size() const;
-        ds::dims<f32> size() const;
-
+        const ds::point<f32>& position() const;
+        const ds::dims<f32>& fixed_size() const;
+        const ds::dims<f32>& size() const;
+        const ds::rect<f32>& rect() const;
         const Canvas* canvas() const;
         const Dialog* dialog() const;
         const Widget* parent() const;
         const Layout* layout() const;
         const Theme* theme() const;
         const Widget* child_at(i32 index) const;
-        const Widget* find_widget(const ds::point<f32>& pt) const;
         const std::vector<Widget*>& children() const;
         const std::string& tooltip() const;
 
         void set_parent(Widget* parent);
         void set_layout(Layout* layout);
         void set_position(ds::point<f32>&& pos) noexcept;
+        void set_rect(ds::rect<f32>&& rect) noexcept;
         void set_size(ds::dims<f32>&& size);
         void set_width(f32 width);
         void set_height(f32 height);
@@ -96,9 +99,7 @@ namespace rl::ui {
         void request_focus();
         void remove_child_at(i32 index);
         void remove_child(const Widget* widget);
-        ds::rect<f32> bounding_rect() const;
 
-    public:
         // TODO: get rid of this
         static nvg::Context* context()
         {
@@ -128,10 +129,10 @@ namespace rl::ui {
         virtual void perform_layout();
         virtual void draw();
 
+        virtual std::string_view name() const;
         virtual ds::dims<f32> preferred_size() const;
         virtual Widget* find_widget(const ds::point<f32>& pt);
         virtual bool draw_mouse_intersection(const ds::point<f32>& pt);
-        virtual std::string_view name() const;
 
     protected:
         f32 icon_scale() const;
@@ -145,22 +146,23 @@ namespace rl::ui {
         bool m_enabled{ true };
         bool m_visible{ true };
         bool m_focused{ false };
+        bool m_resizable{ false };
         bool m_mouse_focus{ false };
 
         f32 m_font_size{ -1.0f };
         f32 m_icon_extra_scale{ 1.0f };
 
-        ds::point<f32> m_pos{ 0.0f, 0.0f };
-        ds::dims<f32> m_size{ 0.0f, 0.0f };
+        ds::rect<f32> m_rect{ { 0.0f, 0.0f }, { 0.0f, 0.0f } };
         ds::dims<f32> m_fixed_size{ 0.0f, 0.0f };
 
+        Side m_resize_grab_point_side{ Side::None };
         Mouse::Cursor::ID m_cursor{ Mouse::Cursor::Arrow };
         std::vector<Widget*> m_children{};
         std::string m_tooltip{};
+        Timer<f32> m_timer{};
 
-        Timer<> m_timer{};
-
-    private:
+    protected:
+        constexpr static inline f32 RESIZE_SELECT_BUFFER{ 10.0f };
         constexpr static bool DiagnosticsEnabled{ false };
     };
 }

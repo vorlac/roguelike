@@ -90,6 +90,12 @@ namespace rl {
         };
 
     public:
+        Mouse(Mouse&&) = delete;
+        Mouse(const Mouse&) = delete;
+        Mouse& operator=(const Mouse&) = delete;
+        Mouse& operator=(Mouse&&) noexcept = delete;
+
+    public:
         Mouse();
         ~Mouse();
 
@@ -104,7 +110,10 @@ namespace rl {
         [[nodiscard]] std::string get_button_state(Mouse::Button::ID button) const;
         [[nodiscard]] std::string name() const;
 
+        bool hide_cursor() const;
+        bool show_cursor() const;
         bool set_cursor(Mouse::Cursor::ID cursor_id) const;
+        bool set_cursor(Side side) const;
         bool is_button_pressed(Mouse::Button::ID button) const;
         bool is_button_released(Mouse::Button::ID button) const;
         bool is_button_held(Mouse::Button::ID button) const;

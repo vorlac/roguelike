@@ -13,6 +13,7 @@
 #include "utils/unicode.hpp"
 
 namespace rl::ui {
+
     Button::Button(Widget* parent, std::string text, const Icon::ID icon)
         : Widget{ parent }
         , m_text{ std::move(text) }
@@ -151,7 +152,7 @@ namespace rl::ui {
                 nvg::font_face(context, Font::Name::Icons);
                 icon_size.width = nvg::text_bounds(context, ds::point{ 0.0f, 0.0f },
                                                    std::forward<std::string>(utf8(m_icon))) +
-                                  m_size.height * 0.15f;
+                                  m_rect.size.height * 0.15f;
             }
             else
             {
@@ -307,8 +308,8 @@ namespace rl::ui {
         }
 
         nvg::begin_path(context);
-        nvg::rounded_rect(context, m_pos.x + 1.0f, m_pos.y + 1.0f, m_size.width - 2.0f,
-                          m_size.height - 2.0f, m_theme->button_corner_radius - 1.0f);
+        nvg::rounded_rect(context, m_rect.pt.x + 1.0f, m_rect.pt.y + 1.0f, m_rect.size.width - 2.0f,
+                          m_rect.size.height - 2.0f, m_theme->button_corner_radius - 1.0f);
 
         if (m_background_color.a == 0.0f)
         {
@@ -326,21 +327,23 @@ namespace rl::ui {
         }
 
         const nvg::PaintStyle bg{ nvg::linear_gradient(
-            context, m_pos.x, m_pos.y, m_pos.x, m_pos.y + m_size.height, grad_top, grad_bot) };
+            context, m_rect.pt.x, m_rect.pt.y, m_rect.pt.x, m_rect.pt.y + m_rect.size.height,
+            grad_top, grad_bot) };
         nvg::fill_paint(context, bg);
         nvg::fill(context);
 
         nvg::begin_path(context);
         nvg::stroke_width(context, 1.0f);
-        nvg::rounded_rect(context, m_pos.x + 0.5f, m_pos.y + (m_pressed ? 0.5f : 1.5f),
-                          m_size.width - 1.0f, m_size.height - 1.0f - (m_pressed ? 0.0f : 1.0f),
+        nvg::rounded_rect(context, m_rect.pt.x + 0.5f, m_rect.pt.y + (m_pressed ? 0.5f : 1.5f),
+                          m_rect.size.width - 1.0f,
+                          m_rect.size.height - 1.0f - (m_pressed ? 0.0f : 1.0f),
                           m_theme->button_corner_radius);
         nvg::stroke_color(context, m_theme->border_light);
         nvg::stroke(context);
 
         nvg::begin_path(context);
-        nvg::rounded_rect(context, m_pos.x + 0.5f, m_pos.y + 0.5f, m_size.width - 1.0f,
-                          m_size.height - 2.0f, m_theme->button_corner_radius);
+        nvg::rounded_rect(context, m_rect.pt.x + 0.5f, m_rect.pt.y + 0.5f, m_rect.size.width - 1.0f,
+                          m_rect.size.height - 2.0f, m_theme->button_corner_radius);
         nvg::stroke_color(context, m_theme->border_dark);
         nvg::stroke(context);
 
@@ -350,8 +353,8 @@ namespace rl::ui {
         f32 text_width{ nvg::text_bounds(context, 0.0f, 0.0f, m_text.c_str(), nullptr, nullptr) };
 
         ds::point center{
-            m_pos.x + m_size.width * 0.5f,
-            m_pos.y + m_size.height * 0.5f,
+            m_rect.pt.x + m_rect.size.width * 0.5f,
+            m_rect.pt.y + m_rect.size.height * 0.5f,
         };
 
         ds::point text_pos{
@@ -384,7 +387,7 @@ namespace rl::ui {
             }
 
             if (!m_text.empty())
-                icon_size.width += m_size.height * 0.15f;
+                icon_size.width += m_rect.size.height * 0.15f;
 
             nvg::fill_color(context, text_color);
             nvg::text_align(context, nvg::Align::HLeft | nvg::Align::VMiddle);
@@ -402,10 +405,10 @@ namespace rl::ui {
                     icon_pos.x += text_width * 0.5f;
                     break;
                 case Icon::Placement::Left:
-                    icon_pos.x = m_pos.x + 8.0f;
+                    icon_pos.x = m_rect.pt.x + 8.0f;
                     break;
                 case Icon::Placement::Right:
-                    icon_pos.x = m_pos.x + m_size.width - icon_size.width - 8.0f;
+                    icon_pos.x = m_rect.pt.x + m_rect.size.width - icon_size.width - 8.0f;
                     break;
             }
 

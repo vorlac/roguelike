@@ -51,9 +51,8 @@ namespace rl {
             std::string m_title{};
             Widget* m_button_panel{ nullptr };
             bool m_modal{ false };
-            bool m_drag{ false };
-            bool m_resizable{ true };
-            Direction m_resize_hover{ Direction::None };
+            bool m_drag_move{ false };
+            bool m_drag_resize{ false };
         };
     }
 }

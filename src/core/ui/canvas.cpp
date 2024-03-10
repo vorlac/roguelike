@@ -17,8 +17,8 @@ namespace rl::ui {
         , m_mouse{ mouse }
         , m_keyboard{ kb }
     {
-        m_pos = ds::point{ 0.0f, 0.0f };
-        m_size = rect.size;
+        m_rect.pt = { 0.0f, 0.0f };
+        m_rect.size = rect.size;
 
         Widget::set_theme(new Theme{ nvg_renderer->context() });
         this->set_visible(true);
@@ -49,7 +49,7 @@ namespace rl::ui {
     {
         auto&& context{ m_renderer->context() };
         constexpr static f32 PIXEL_RATIO{ 1.0f };
-        nvg::begin_frame(context, m_size.width, m_size.height, PIXEL_RATIO);
+        nvg::begin_frame(context, m_rect.size.width, m_rect.size.height, PIXEL_RATIO);
 
         this->draw();
 
@@ -71,9 +71,9 @@ namespace rl::ui {
             {
                 constexpr f32 tooltip_width{ 150.0f };
                 std::array<f32, 4> bounds = { 0.0f };
-                ds::point<f32> pos{
+                ds::point pos{
                     widget->position() +
-                        ds::point<f32>{
+                        ds::point{
                             (widget->width() / 2.0f),
                             widget->height() + 10.0f,
                         },
@@ -267,7 +267,7 @@ namespace rl::ui {
             widget = widget->parent();
         }
 
-        for (const auto focus_widget : std::ranges::reverse_view{ m_focus_path })
+        for (Widget* focus_widget : std::ranges::reverse_view{ m_focus_path })
             focus_widget->on_focus_gained();
 
         if (dialog != nullptr)
@@ -280,8 +280,8 @@ namespace rl::ui {
         m_children.erase(removal_iterator, m_children.end());
         m_children.push_back(dialog);
 
-        bool changed{ false };
-        do
+        bool changed{ true };
+        while (changed)
         {
             changed = false;
             size_t base_idx{ 0 };
@@ -300,17 +300,19 @@ namespace rl::ui {
                 }
             }
         }
-        while (changed);
     }
 
     void Canvas::dispose_dialog(const Dialog* dialog)
     {
-        const bool match_found{ std::ranges::find_if(m_focus_path, [&](const Widget* w) {
-                                    return w == dialog;
-                                }) != m_focus_path.end() };
+        const bool match_found{
+            std::ranges::find_if(m_focus_path,
+                                 [&](const Widget* w) {
+                                     return w == dialog;
+                                 }) != m_focus_path.end(),
+        };
+
         if (match_found)
             m_focus_path.clear();
-
         if (m_drag_widget == dialog)
             m_drag_widget = nullptr;
 
@@ -326,21 +328,22 @@ namespace rl::ui {
             dialog->perform_layout();
         }
 
-        const ds::dims<f32> offset{ (((m_size - dialog->size()) / 2.0f) - m_pos) };
+        const ds::dims offset{ (((m_rect.size - dialog->size()) / 2.0f) - m_rect.pt) };
         ds::point<f32>&& position{ offset.width, offset.height };
         dialog->set_position(std::move(position));
     }
 
     bool Canvas::on_moved(ds::point<f32>&& pt)
     {
-        scoped_log("{} => {}", ds::rect{ m_pos, m_size }, ds::rect{ pt, m_size });
+        scoped_log("{} => {}", m_rect, ds::rect{ pt, m_rect.size });
         this->set_position(std::forward<decltype(pt)>(pt));
         return true;
     }
 
     bool Canvas::on_resized(ds::dims<f32>&& size)
     {
-        scoped_log("{} => {}", ds::rect{ m_pos, m_size }, ds::rect{ m_pos, size / m_pixel_ratio });
+        scoped_log("{} => {}", ds::rect{ m_rect.pt, m_rect.size },
+                   ds::rect{ m_rect.pt, size / m_pixel_ratio });
 
         if (size.area() == 0.0f)
             return false;
@@ -352,7 +355,7 @@ namespace rl::ui {
 
         this->perform_layout();
         if (m_resize_callback != nullptr)
-            m_resize_callback(m_size);
+            m_resize_callback(m_rect.size);
 
         this->redraw();
         return true;
@@ -372,11 +375,25 @@ namespace rl::ui {
             LocalTransform transform{ m_drag_widget->parent() };
             handled = m_drag_widget->on_mouse_drag(mouse, kb);
         }
+        else if (m_resize_active && mouse.is_button_held(Mouse::Button::Left))
+        {
+            runtime_assert(m_resize_widget != nullptr, "resizing without active resize widget");
+            handled = m_resize_widget->on_mouse_drag(mouse, kb);
+        }
         else
         {
+            // first check to see if the mouse is hovering over
+            // the border of a dialog that's resizeable
+
             const Widget* widget{ this->find_widget(scaled_pos) };
-            if (widget != nullptr && widget->cursor() != m_mouse.active_cursor())
-                bool updated_cursor{ m_mouse.set_cursor(widget->cursor()) };
+            if (widget != nullptr)
+            {
+                const auto resize_grab{ widget->resize_side() };
+                if (widget->resizable() && resize_grab != Side::None)
+                    mouse.set_cursor(resize_grab);
+                else if (widget->cursor() != m_mouse.active_cursor())
+                    m_mouse.set_cursor(widget->cursor());
+            }
         }
 
         if (!handled)
@@ -402,9 +419,9 @@ namespace rl::ui {
             }
         }
 
-        const auto drop_widget{ this->find_widget(mouse_pos) };
+        auto drop_widget{ this->find_widget(mouse_pos) };
         if (drop_widget != nullptr && drop_widget->cursor() != m_mouse.active_cursor())
-            bool cursor_updated{ m_mouse.set_cursor(drop_widget->cursor()) };
+            m_mouse.set_cursor(drop_widget->cursor());
 
         const bool drag_btn_pressed{ mouse.is_button_pressed(Mouse::Button::Left) };
         if (!m_drag_active && drag_btn_pressed)
@@ -447,7 +464,7 @@ namespace rl::ui {
         }
 
         if (drop_widget != nullptr && drop_widget->cursor() != m_mouse.active_cursor())
-            bool cursor_updated{ m_mouse.set_cursor(drop_widget->cursor()) };
+            m_mouse.set_cursor(drop_widget->cursor());
 
         const bool drag_btn_released{ mouse.is_button_released(Mouse::Button::Left) };
         if (m_drag_active && drag_btn_released)

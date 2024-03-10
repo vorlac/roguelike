@@ -27,25 +27,27 @@ namespace rl::ui {
         Widget::draw();
 
         auto&& context{ m_renderer->context() };
-        nvg::PaintStyle paint{ nvg::box_gradient(
-            context, m_pos.x + 1.0f, m_pos.y + 1.0f, m_size.width - 2.0f, m_size.height, 3.0f, 4.0f,
-            ds::color<f32>{ 0, 0, 0, 32 }, ds::color<f32>{ 0, 0, 0, 92 }) };
+        nvg::PaintStyle paint{ nvg::box_gradient(context, m_rect.pt.x + 1.0f, m_rect.pt.y + 1.0f,
+                                                 m_rect.size.width - 2.0f, m_rect.size.height, 3.0f,
+                                                 4.0f, ds::color<f32>{ 0, 0, 0, 32 },
+                                                 ds::color<f32>{ 0, 0, 0, 92 }) };
 
         nvg::begin_path(context);
-        nvg::rounded_rect(context, m_pos.x, m_pos.y, m_size.width, m_size.height, 3.0f);
+        nvg::rounded_rect(context, m_rect.pt.x, m_rect.pt.y, m_rect.size.width, m_rect.size.height,
+                          3.0f);
         nvg::fill_paint(context, paint);
         nvg::fill(context);
 
         const f32 value{ std::min(std::max(0.0f, m_value), 1.0f) };
-        const f32 bar_pos{ std::round((m_size.width - 2.0f) * value) };
+        const f32 bar_pos{ std::round((m_rect.size.width - 2.0f) * value) };
 
-        paint = nvg::box_gradient(context, m_pos.x, m_pos.y, bar_pos + 1.5f, m_size.height - 1.0f,
-                                  3.0f, 4.0f, ds::color<f32>{ 220, 220, 220, 100 },
-                                  ds::color<f32>{ 128, 128, 128, 100 });
+        paint = nvg::box_gradient(
+            context, m_rect.pt.x, m_rect.pt.y, bar_pos + 1.5f, m_rect.size.height - 1.0f, 3.0f,
+            4.0f, ds::color<f32>{ 220, 220, 220, 100 }, ds::color<f32>{ 128, 128, 128, 100 });
 
         nvg::begin_path(context);
-        nvg::rounded_rect(context, m_pos.x + 1.0f, m_pos.y + 1.0f, bar_pos, m_size.height - 2.0f,
-                          3.0f);
+        nvg::rounded_rect(context, m_rect.pt.x + 1.0f, m_rect.pt.y + 1.0f, bar_pos,
+                          m_rect.size.height - 2.0f, 3.0f);
         nvg::fill_paint(context, paint);
         nvg::fill(context);
     }

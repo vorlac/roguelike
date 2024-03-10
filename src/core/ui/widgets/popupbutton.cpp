@@ -43,7 +43,7 @@ namespace rl::ui {
         return m_chevron_icon;
     }
 
-    Popup::Side PopupButton::side() const
+    Side PopupButton::side() const
     {
         scoped_logger(log_level::debug, "{}", m_popup->side());
         return m_popup->side();
@@ -91,11 +91,11 @@ namespace rl::ui {
 
             const f32 icon_width{ nvg::text_bounds(context, 0.0f, 0.0f, icon.data()) };
 
-            ds::point icon_pos{ 0.0f, m_pos.y + m_size.height * 0.5f - 1.0f };
-            if (m_popup->side() == Popup::Side::Right)
-                icon_pos.x = m_pos.x + m_size.width - icon_width - 8.0f;
+            ds::point icon_pos{ 0.0f, m_rect.pt.y + m_rect.size.height * 0.5f - 1.0f };
+            if (m_popup->side() == Side::Right)
+                icon_pos.x = m_rect.pt.x + m_rect.size.width - icon_width - 8.0f;
             else
-                icon_pos.x = m_pos.x + 8.0f;
+                icon_pos.x = m_rect.pt.x + 8.0f;
 
             nvg::text(context, icon_pos.x, icon_pos.y, icon.data());
         }
@@ -112,9 +112,9 @@ namespace rl::ui {
         {
             const f32 anchor_size{ m_popup->anchor_size() };
             const f32 pos_y{ this->abs_position().y - parent_dialog->position().y +
-                             (m_size.height / 2.0f) };
+                             (m_rect.size.height / 2.0f) };
 
-            if (m_popup->side() == Popup::Side::Right)
+            if (m_popup->side() == Side::Right)
             {
                 const ds::point anchor_pos{
                     parent_dialog->width() + anchor_size,
@@ -134,14 +134,14 @@ namespace rl::ui {
             const f32 anchor_size{ m_popup->anchor_size() };
             const ds::point offset{
                 this->width() + anchor_size + 1.0f,
-                (m_size.height / 2.0f) - anchor_size,
+                (m_rect.size.height / 2.0f) - anchor_size,
             };
 
-            m_popup->set_position(ds::point{ m_pos + offset });
+            m_popup->set_position(ds::point{ m_rect.pt + offset });
         }
     }
 
-    void PopupButton::set_side(const Popup::Side side)
+    void PopupButton::set_side(const Side side)
     {
         scoped_trace(log_level::debug);
         const Icon::ID right_icon{ m_theme->popup_chevron_right_icon };
@@ -149,12 +149,12 @@ namespace rl::ui {
 
         switch (m_popup->side())
         {
-            case Popup::Side::Right:
+            case Side::Right:
                 if (m_chevron_icon == right_icon)
                     this->set_chevron_icon(left_icon);
                 break;
 
-            case Popup::Side::Left:
+            case Side::Left:
                 if (m_chevron_icon == left_icon)
                     this->set_chevron_icon(right_icon);
                 break;

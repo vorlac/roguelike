@@ -103,55 +103,66 @@ namespace rl::ui {
             child->set_theme(theme);
     }
 
-    ds::point<f32> Widget::position() const
+    const ds::point<f32>& Widget::position() const
     {
-        return m_pos;
+        return m_rect.pt;
     }
 
     void Widget::set_position(ds::point<f32>&& pos) noexcept
     {
         scoped_trace(log_level::debug);
-        m_pos = std::move(pos);
+        m_rect.pt = std::move(pos);
+    }
+
+    void Widget::set_rect(ds::rect<f32>&& rect) noexcept
+    {
+        scoped_trace(log_level::debug);
+        m_rect = std::move(rect);
     }
 
     ds::point<f32> Widget::abs_position() const
     {
         scoped_trace(log_level::debug);
         return m_parent != nullptr  //
-                 ? m_parent->abs_position() + m_pos
-                 : m_pos;
+                 ? m_parent->abs_position() + m_rect.pt
+                 : m_rect.pt;
     }
 
-    ds::dims<f32> Widget::size() const
+    const ds::dims<f32>& Widget::size() const
     {
-        return m_size;
+        return m_rect.size;
+    }
+
+    const ds::rect<f32>& Widget::rect() const
+    {
+        return m_rect;
     }
 
     void Widget::set_size(ds::dims<f32>&& size)
     {
-        m_size = std::move(size);
+        m_rect.size = std::move(size);
     }
 
     f32 Widget::width() const
     {
-        return m_size.width;
+        return m_rect.size.width;
     }
 
     void Widget::set_width(const f32 width)
     {
         scoped_log("width={}", width);
-        m_size.width = width;
+        m_rect.size.width = width;
     }
 
     f32 Widget::height() const
     {
-        return m_size.height;
+        return m_rect.size.height;
     }
 
     void Widget::set_height(const f32 height)
     {
         scoped_log("height={}", height);
-        m_size.height = height;
+        m_rect.size.height = height;
     }
 
     void Widget::set_fixed_size(const ds::dims<f32>& fixed_size)
@@ -160,7 +171,7 @@ namespace rl::ui {
         m_fixed_size = fixed_size;
     }
 
-    ds::dims<f32> Widget::fixed_size() const
+    const ds::dims<f32>& Widget::fixed_size() const
     {
         return m_fixed_size;
     }
@@ -236,6 +247,11 @@ namespace rl::ui {
         return m_children[static_cast<size_t>(index)];
     }
 
+    Side Widget::resize_side() const
+    {
+        return m_resize_grab_point_side;
+    }
+
     const Widget* Widget::child_at(i32 index) const
     {
         scoped_logger(log_level::debug, "idx={} cnt={}", index, m_children.size());
@@ -256,7 +272,7 @@ namespace rl::ui {
     ds::dims<f32> Widget::preferred_size() const
     {
         const auto context{ m_renderer->context() };
-        auto ret{ (m_layout != nullptr ? m_layout->preferred_size(context, this) : m_size) };
+        auto ret{ (m_layout != nullptr ? m_layout->preferred_size(context, this) : m_rect.size) };
         scoped_logger(log_level::trace, "{}", ret);
         return ret;
     }
@@ -291,36 +307,32 @@ namespace rl::ui {
 
         {
             LocalTransform transform{ this };
-            const ds::point local_mouse_pos{ pt - m_pos };
+            const ds::point local_mouse_pos{ pt - m_rect.pt };
             for (const auto child : std::ranges::reverse_view{ m_children })
             {
                 if (!child->visible())
                     continue;
-                if (child->contains(pt - m_pos))
+                if (child->resizable() && child->resize_rect().contains(pt - m_rect.pt))
+                {
+                    // if the child is resizable and the larger resize rect (for grab points)
+                    // contains the mouse, but the smaller inner rect doesn't then favor resizing
+                    // over recursively going deeper into the tree of widgets for more children
+                    if (!child->rect().expanded(-RESIZE_SELECT_BUFFER).contains(pt - m_rect.pt))
+                        return child;
+
+                    // otherwise continue searching for a better match
+                    return child->find_widget(local_mouse_pos);
+                }
+
+                // recurse deeper if the child rect contains the cursor
+                if (child->contains(pt - m_rect.pt))
                     return child->find_widget(local_mouse_pos);
             }
         }
 
-        return this->contains(pt) ? this : nullptr;
-    }
-
-    const Widget* Widget::find_widget(const ds::point<f32>& pt) const
-    {
-        scoped_trace(log_level::debug);
-
-        {
-            LocalTransform transform{ this };
-            const ds::point local_mouse_pos{ pt - m_pos };
-            for (const auto child : std::ranges::reverse_view{ m_children })
-            {
-                if (!child->visible())
-                    continue;
-                if (child->contains(pt - m_pos))
-                    return child->find_widget(local_mouse_pos);
-            }
-        }
-
-        return this->contains(pt) ? this : nullptr;
+        m_resize_grab_point_side = m_resizable ? m_rect.edge_overlap(RESIZE_SELECT_BUFFER, pt)
+                                               : Side::None;
+        return this->contains(pt) || m_resize_grab_point_side != Side::None ? this : nullptr;
     }
 
     bool Widget::on_mouse_entered(const Mouse& mouse)
@@ -369,8 +381,8 @@ namespace rl::ui {
             diag_log("mouse press: handled={}", child->name());
             diag_log("mouse press: abs_mouse={}", mouse.pos());
             diag_log("mouse press: local_mouse={}", local_mouse_pos);
-            diag_log("mouse press: rel_pos={}", ds::rect{ m_pos, m_size });
-            diag_log("mouse press: abs_pos={}", ds::rect{ this->abs_position(), m_size });
+            diag_log("mouse press: rel_pos={}", ds::rect{ m_rect.pt, m_rect.size });
+            diag_log("mouse press: abs_pos={}", ds::rect{ this->abs_position(), m_rect.size });
             return true;
         }
 
@@ -397,8 +409,8 @@ namespace rl::ui {
 
             diag_log("mouse rel: handled={}", this->name());
             diag_log("mouse rel: mouse_pos={}", mouse.pos());
-            diag_log("mouse rel: rel_pos={}", ds::rect{ m_pos, m_size });
-            diag_log("mouse rel: abs_pos={}", ds::rect{ this->abs_position(), m_size });
+            diag_log("mouse rel: rel_pos={}", ds::rect{ m_rect.pt, m_rect.size });
+            diag_log("mouse rel: abs_pos={}", ds::rect{ this->abs_position(), m_rect.size });
             return true;
         }
 
@@ -423,8 +435,8 @@ namespace rl::ui {
             diag_log("mouse scroll: handled={}", this->name());
             diag_log("mouse scroll: mouse_pos={}", mouse.pos());
             diag_log("mouse scroll: local_mouse_pos={}", local_mouse_pos);
-            diag_log("mouse scroll: rel_pos={}", ds::rect{ m_pos, m_size });
-            diag_log("mouse scroll: abs_pos={}", ds::rect{ this->abs_position(), m_size });
+            diag_log("mouse scroll: rel_pos={}", ds::rect{ m_rect.pt, m_rect.size });
+            diag_log("mouse scroll: abs_pos={}", ds::rect{ this->abs_position(), m_rect.size });
             return true;
         }
 
@@ -438,7 +450,7 @@ namespace rl::ui {
 
         LocalTransform transform{ this };
         const ds::point local_mouse_pos{ mouse.pos() - LocalTransform::absolute_pos };
-        for (const auto child : std::ranges::reverse_view{ m_children })
+        for (Widget* child : std::ranges::reverse_view{ m_children })
         {
             if (!child->visible())
                 continue;
@@ -552,6 +564,11 @@ namespace rl::ui {
         return m_focused;
     }
 
+    bool Widget::resizable() const
+    {
+        return m_resizable;
+    }
+
     void Widget::set_focused(bool focused)
     {
         scoped_log("focused={}", focused);
@@ -600,6 +617,11 @@ namespace rl::ui {
         return m_cursor;
     }
 
+    ds::rect<f32> Widget::resize_rect() const
+    {
+        return m_rect.expanded(RESIZE_SELECT_BUFFER);
+    }
+
     void Widget::set_cursor(const Mouse::Cursor::ID cursor)
     {
         scoped_log("{}", static_cast<i32>(cursor));
@@ -609,7 +631,7 @@ namespace rl::ui {
     bool Widget::contains(const ds::point<f32>& pt) const
     {
         // Check if the widget contains a certain position
-        const ds::rect widget_rect{ m_pos, m_size };
+        const ds::rect widget_rect{ m_rect.pt, m_rect.size };
         return widget_rect.contains(pt);
     }
 
@@ -671,24 +693,18 @@ namespace rl::ui {
         dynamic_cast<Canvas*>(widget)->update_focus(this);
     }
 
-    ds::rect<f32> Widget::bounding_rect() const
-    {
-        // return ds::rect{ LocalTransform::absolute_pos, m_size };
-        return ds::rect{ m_pos, m_size };
-    }
-
     bool Widget::draw_mouse_intersection(const ds::point<f32>& pt)
     {
         scoped_trace(log_level::trace);
 
         if (this->contains(pt))
         {
-            const ds::rect widget_rect{ m_pos, m_size };
+            const ds::rect widget_rect{ m_rect.pt, m_rect.size };
             m_renderer->draw_rect_outline(widget_rect, 1.0f, rl::Colors::Yellow, Outline::Inner);
         }
 
         LocalTransform transform{ this };
-        const ds::point local_mouse_pos{ pt - m_pos };
+        const ds::point local_mouse_pos{ pt - m_rect.pt };
         for (const auto child : std::ranges::reverse_view{ m_children })
         {
             if (!child->visible())
@@ -698,12 +714,11 @@ namespace rl::ui {
             if (!child->draw_mouse_intersection(local_mouse_pos))
                 continue;
 
-            m_renderer->draw_rect_outline(this->bounding_rect(), 1.0f, rl::Colors::Yellow,
-                                          Outline::Inner);
+            m_renderer->draw_rect_outline(this->rect(), 1.0f, rl::Colors::Yellow, Outline::Inner);
 
             diag_log("dgb outline: handled={}", this->name());
-            diag_log("dgb outline: rel_pos={}", ds::rect{ m_pos, m_size });
-            diag_log("dgb outline: abs_pos={}", ds::rect{ this->abs_position(), m_size });
+            diag_log("dgb outline: rel_pos={}", ds::rect{ m_rect.pt, m_rect.size });
+            diag_log("dgb outline: abs_pos={}", ds::rect{ this->abs_position(), m_rect.size });
             return true;
         }
 
@@ -716,8 +731,8 @@ namespace rl::ui {
 
         if constexpr (Widget::DiagnosticsEnabled)
         {
-            m_renderer->draw_rect_outline(ds::rect{ m_pos, m_size }, 1.0f, rl::Colors::Grey,
-                                          Outline::Outer);
+            m_renderer->draw_rect_outline(ds::rect{ m_rect.pt, m_rect.size }, 1.0f,
+                                          rl::Colors::Grey, Outline::Outer);
         }
 
         if (m_children.empty())
@@ -731,8 +746,8 @@ namespace rl::ui {
 
             m_renderer->scoped_draw([&] {
                 // TODO: put this back after fixing popup window
-                // nvg::intersect_scissor(context, child->m_pos.x, child->m_pos.y,
-                // child->m_size.width, child->m_size.height);
+                // nvg::intersect_scissor(context, child->m_rect.pt.x, child->m_rect.pt.y,
+                // child->m_rect.size.width, child->m_rect.size.height);
                 child->draw();
             });
         }

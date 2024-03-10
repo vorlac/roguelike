@@ -177,24 +177,24 @@ namespace rl::ui {
 
         auto&& context{ m_renderer->context() };
         nvg::PaintStyle bg{
-            nvg::box_gradient(context, m_pos.x + 1.0f, m_pos.y + 1.0f + 1.0f, m_size.width - 2.0f,
-                              m_size.height - 2.0f, 3.0f, 4.0f, ds::color<f32>{ 255, 255, 255, 32 },
-                              ds::color<f32>{ 32, 32, 32, 32 }),
+            nvg::box_gradient(context, m_rect.pt.x + 1.0f, m_rect.pt.y + 1.0f + 1.0f,
+                              m_rect.size.width - 2.0f, m_rect.size.height - 2.0f, 3.0f, 4.0f,
+                              ds::color<f32>{ 255, 255, 255, 32 }, ds::color<f32>{ 32, 32, 32, 32 }),
         };
         nvg::PaintStyle fg1{
-            nvg::box_gradient(context, m_pos.x + 1.0f, m_pos.y + 1.0f + 1.0f, m_size.width - 2.0f,
-                              m_size.height - 2.0f, 3.0f, 4.0f, ds::color<f32>{ 150, 150, 150, 32 },
-                              ds::color<f32>{ 32, 32, 32, 32 }),
+            nvg::box_gradient(context, m_rect.pt.x + 1.0f, m_rect.pt.y + 1.0f + 1.0f,
+                              m_rect.size.width - 2.0f, m_rect.size.height - 2.0f, 3.0f, 4.0f,
+                              ds::color<f32>{ 150, 150, 150, 32 }, ds::color<f32>{ 32, 32, 32, 32 }),
         };
         nvg::PaintStyle fg2{
-            nvg::box_gradient(context, m_pos.x + 1.0f, m_pos.y + 1.0f + 1.0f, m_size.width - 2.0f,
-                              m_size.height - 2.0f, 3.0f, 4.0f, ds::color<f32>{ 255, 0, 0, 100 },
-                              ds::color<f32>{ 255, 0, 0, 50 }),
+            nvg::box_gradient(context, m_rect.pt.x + 1.0f, m_rect.pt.y + 1.0f + 1.0f,
+                              m_rect.size.width - 2.0f, m_rect.size.height - 2.0f, 3.0f, 4.0f,
+                              ds::color<f32>{ 255, 0, 0, 100 }, ds::color<f32>{ 255, 0, 0, 50 }),
         };
 
         nvg::begin_path(context);
-        nvg::rounded_rect(context, m_pos.x + 1.0f, m_pos.y + 1.0f + 1.0f, m_size.width - 2.0f,
-                          m_size.height - 2.0f, 3.0f);
+        nvg::rounded_rect(context, m_rect.pt.x + 1.0f, m_rect.pt.y + 1.0f + 1.0f,
+                          m_rect.size.width - 2.0f, m_rect.size.height - 2.0f, 3.0f);
 
         if (m_editable && this->focused())
             m_valid_format ? nvg::fill_paint(context, fg1) : nvg::fill_paint(context, fg2);
@@ -206,8 +206,8 @@ namespace rl::ui {
         nvg::fill(context);
 
         nvg::begin_path(context);
-        nvg::rounded_rect(context, m_pos.x + 0.5f, m_pos.y + 0.5f, m_size.width - 1.0f,
-                          m_size.height - 1.0f, 2.5f);
+        nvg::rounded_rect(context, m_rect.pt.x + 0.5f, m_rect.pt.y + 0.5f, m_rect.size.width - 1.0f,
+                          m_rect.size.height - 1.0f, 2.5f);
         nvg::stroke_color(context, ds::color<f32>{ 0, 0, 0, 48 });
         nvg::stroke(context);
 
@@ -215,11 +215,11 @@ namespace rl::ui {
         nvg::font_face(context, Font::Name::Sans);
 
         ds::point draw_pos{
-            m_pos.x,
-            m_pos.y + m_size.height * 0.5f + 1.0f,
+            m_rect.pt.x,
+            m_rect.pt.y + m_rect.size.height * 0.5f + 1.0f,
         };
 
-        f32 x_spacing{ m_size.height * 0.3f };
+        f32 x_spacing{ m_rect.size.height * 0.3f };
         f32 unit_width{ 0 };
 
         if (m_units_image > 0)
@@ -229,16 +229,16 @@ namespace rl::ui {
 
             nvg::image_size(context, m_units_image, &w, &h);
 
-            f32 unit_height{ m_size.height * 0.4f };
+            f32 unit_height{ m_rect.size.height * 0.4f };
             unit_width = w * unit_height / h;
 
             nvg::PaintStyle img_paint{ nvg::image_pattern(
-                context, m_pos.x + m_size.width - x_spacing - unit_width,
+                context, m_rect.pt.x + m_rect.size.width - x_spacing - unit_width,
                 draw_pos.y - unit_height * 0.5f, unit_width, unit_height, 0.0f, m_units_image,
                 m_enabled ? 0.7f : 0.35f) };
 
             nvg::begin_path(context);
-            nvg::rect(context, m_pos.x + m_size.width - x_spacing - unit_width,
+            nvg::rect(context, m_rect.pt.x + m_rect.size.width - x_spacing - unit_width,
                       draw_pos.y - unit_height * 0.5f, unit_width, unit_height);
             nvg::fill_paint(context, img_paint);
             nvg::fill(context);
@@ -254,7 +254,8 @@ namespace rl::ui {
 
             nvg::fill_color(context, color);
             nvg::text_align(context, nvg::Align::HRight | nvg::Align::VMiddle);
-            nvg::text(context, m_pos.x + m_size.width - x_spacing, draw_pos.y, m_units.c_str());
+            nvg::text(context, m_rect.pt.x + m_rect.size.width - x_spacing, draw_pos.y,
+                      m_units.c_str());
 
             unit_width += 2;
         }
@@ -281,8 +282,8 @@ namespace rl::ui {
                 nvg::text_align(context, nvg::Align::HLeft | nvg::Align::VMiddle);
 
                 ds::point icon_pos{
-                    m_pos.x + 4.0f,
-                    m_pos.y + m_size.height / 2.0f - x_spacing / 2.0f,
+                    m_rect.pt.x + 4.0f,
+                    m_rect.pt.y + m_rect.size.height / 2.0f - x_spacing / 2.0f,
                 };
 
                 nvg::text(context, icon_pos.x, icon_pos.y, icon.data(), nullptr);
@@ -299,8 +300,8 @@ namespace rl::ui {
                 nvg::text_align(context, nvg::Align::HLeft | nvg::Align::VMiddle);
 
                 ds::point icon_pos{
-                    m_pos.x + 4.0f,
-                    m_pos.y + (m_size.height / 2.0f) + (x_spacing / 2.0f + 1.5f),
+                    m_rect.pt.x + 4.0f,
+                    m_rect.pt.y + (m_rect.size.height / 2.0f) + (x_spacing / 2.0f + 1.5f),
                 };
 
                 nvg::text(context, icon_pos.x, icon_pos.y, icon.data());
@@ -318,11 +319,11 @@ namespace rl::ui {
                 break;
             case Alignment::Right:
                 nvg::text_align(context, nvg::Align::HRight | nvg::Align::VMiddle);
-                draw_pos.x += m_size.width - unit_width - x_spacing;
+                draw_pos.x += m_rect.size.width - unit_width - x_spacing;
                 break;
             case Alignment::Center:
                 nvg::text_align(context, nvg::Align::HCenter | nvg::Align::VMiddle);
-                draw_pos.x += m_size.width * 0.5f;
+                draw_pos.x += m_rect.size.width * 0.5f;
                 break;
         }
 
@@ -332,10 +333,11 @@ namespace rl::ui {
                                      : m_theme->disabled_text_color);
 
         // clip visible text area
-        f32 clip_x{ m_pos.x + x_spacing + spin_arrows_width - 1.0f };
-        f32 clip_y{ m_pos.y + 1.0f };
-        f32 clip_width{ m_size.width - unit_width - spin_arrows_width - 2.0f * x_spacing + 2.0f };
-        f32 clip_height{ m_size.height - 3.0f };
+        f32 clip_x{ m_rect.pt.x + x_spacing + spin_arrows_width - 1.0f };
+        f32 clip_y{ m_rect.pt.y + 1.0f };
+        f32 clip_width{ m_rect.size.width - unit_width - spin_arrows_width - 2.0f * x_spacing +
+                        2.0f };
+        f32 clip_height{ m_rect.size.height - 3.0f };
 
         nvg::save(context);
         nvg::intersect_scissor(context, clip_x, clip_y, clip_width, clip_height);
@@ -877,16 +879,17 @@ namespace rl::ui {
 
     TextBox::SpinArea TextBox::spin_area(const ds::point<f32>& pos) const
     {
-        if ((0 <= pos.x - m_pos.x) && (pos.x - m_pos.x < 14.f))
+        if ((0 <= pos.x - m_rect.pt.x) && (pos.x - m_rect.pt.x < 14.f))
         {
             // on scrolling arrows
-            if (m_size.height >= pos.y - m_pos.y && pos.y - m_pos.y <= m_size.height / 2.0f)
+            if (m_rect.size.height >= pos.y - m_rect.pt.y &&
+                pos.y - m_rect.pt.y <= m_rect.size.height / 2.0f)
             {
                 // top part
                 return SpinArea::Top;
             }
 
-            if (0.0f <= pos.y - m_pos.y && pos.y - m_pos.y > m_size.height / 2.0f)
+            if (0.0f <= pos.y - m_rect.pt.y && pos.y - m_rect.pt.y > m_rect.size.height / 2.0f)
             {
                 // bottom part
                 return SpinArea::Bottom;

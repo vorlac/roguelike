@@ -74,7 +74,6 @@ namespace rl::ui {
     protected:
         ds::dims<i32> m_framebuf_size{ 0, 0 };
         std::vector<Widget*> m_focus_path{};
-        Widget* m_drag_widget{ nullptr };
         std::string m_title{};
 
         f32 m_last_interaction{ 0.0f };
@@ -83,7 +82,12 @@ namespace rl::ui {
 
         bool m_redraw{ true };
         bool m_process_events{ true };
+
         bool m_drag_active{ false };
+        Widget* m_drag_widget{ nullptr };
+
+        bool m_resize_active{ false };
+        Widget* m_resize_widget{ nullptr };
 
         const Mouse& m_mouse{};
         const Keyboard& m_keyboard{};

@@ -16,6 +16,7 @@ namespace rl::ui {
         : Widget{ parent }
         , m_title{ std::move(title) }
     {
+        m_resizable = true;
         scoped_log();
     }
 
@@ -98,13 +99,12 @@ namespace rl::ui {
         auto&& context{ m_renderer->context() };
         const f32 drop_shadow_size{ m_theme->dialog_drop_shadow_size };
         const f32 corner_radius{ m_theme->dialog_corner_radius };
-        f32 header_height{ this->header_height() };
+        const f32 header_height{ this->header_height() };
 
         m_renderer->scoped_draw([&] {
             m_renderer->draw_path(false, [&] {
-                // nvg::begin_path(context);
-                nvg::rounded_rect(context, m_pos.x, m_pos.y, m_size.width, m_size.height,
-                                  corner_radius);
+                nvg::rounded_rect(context, m_rect.pt.x, m_rect.pt.y, m_rect.size.width,
+                                  m_rect.size.height, corner_radius);
                 nvg::fill_color(context, m_mouse_focus ? m_theme->dialog_fill_focused
                                                        : m_theme->dialog_fill_unfocused);
                 nvg::fill(context);
@@ -115,14 +115,16 @@ namespace rl::ui {
                 m_renderer->reset_scissor();
                 m_renderer->draw_path(false, [&] {
                     const nvg::PaintStyle shadow_paint{ nvg::box_gradient(
-                        context, m_pos.x, m_pos.y, m_size.width, m_size.height, corner_radius * 2.0f,
-                        drop_shadow_size * 2.0f, m_theme->dialog_shadow, m_theme->transparent) };
+                        context, m_rect.pt.x, m_rect.pt.y, m_rect.size.width, m_rect.size.height,
+                        corner_radius * 2.0f, drop_shadow_size * 2.0f, m_theme->dialog_shadow,
+                        m_theme->transparent) };
 
-                    nvg::rect(context, m_pos.x - drop_shadow_size, m_pos.y - drop_shadow_size,
-                              m_size.width + 2.0f * drop_shadow_size,
-                              m_size.height + 2.0f * drop_shadow_size);
-                    nvg::rounded_rect(context, m_pos.x, m_pos.y, m_size.width, m_size.height,
-                                      corner_radius);
+                    nvg::rect(context, m_rect.pt.x - drop_shadow_size,
+                              m_rect.pt.y - drop_shadow_size,
+                              m_rect.size.width + 2.0f * drop_shadow_size,
+                              m_rect.size.height + 2.0f * drop_shadow_size);
+                    nvg::rounded_rect(context, m_rect.pt.x, m_rect.pt.y, m_rect.size.width,
+                                      m_rect.size.height, corner_radius);
                     nvg::path_winding(context, nvg::Solidity::Hole);
                     nvg::fill_paint(context, shadow_paint);
                     nvg::fill(context);
@@ -133,37 +135,39 @@ namespace rl::ui {
             {
                 m_renderer->draw_path(false, [&] {
                     nvg::PaintStyle header_style{ nvg::linear_gradient(
-                        context, m_pos.x, m_pos.y, m_pos.x, m_pos.y + header_height,
+                        context, m_rect.pt.x, m_rect.pt.y, m_rect.pt.x, m_rect.pt.y + header_height,
                         m_theme->dialog_header_gradient_top, m_theme->dialog_header_gradient_bot) };
 
                     m_renderer->draw_rounded_rect(
                         ds::rect<f32>{
-                            m_pos.x,
-                            m_pos.y,
-                            m_size.width,
+                            m_rect.pt.x,
+                            m_rect.pt.y,
+                            m_rect.size.width,
                             header_height,
                         },
                         corner_radius);
-                    // m_renderer->set_fill_paint_style(std::move(header_paint));
+
                     m_renderer->fill_current_path(std::move(header_style));
                 });
 
                 m_renderer->draw_path(false, [&] {
                     m_renderer->draw_rounded_rect(
-                        ds::rect{ m_pos, ds::dims{ m_size.width, header_height } }, corner_radius);
+                        ds::rect{ m_rect.pt, ds::dims{ m_rect.size.width, header_height } },
+                        corner_radius);
 
                     nvg::stroke_color(context, m_theme->dialog_header_sep_top);
 
                     m_renderer->scoped_draw([&] {
-                        nvg::intersect_scissor(context, m_pos.x, m_pos.y, m_size.width, 0.5f);
+                        nvg::intersect_scissor(context, m_rect.pt.x, m_rect.pt.y, m_rect.size.width,
+                                               0.5f);
                         nvg::stroke(context);
                     });
                 });
 
                 m_renderer->draw_path(false, [&] {
-                    nvg::move_to(context, m_pos.x + 0.5f, m_pos.y + header_height - 1.5f);
-                    nvg::line_to(context, m_pos.x + m_size.width - 0.5f,
-                                 m_pos.y + header_height - 1.5f);
+                    nvg::move_to(context, m_rect.pt.x + 0.5f, m_rect.pt.y + header_height - 1.5f);
+                    nvg::line_to(context, m_rect.pt.x + m_rect.size.width - 0.5f,
+                                 m_rect.pt.y + header_height - 1.5f);
                     nvg::stroke_color(context, m_theme->dialog_header_sep_bot);
                     nvg::stroke(context);
                 });
@@ -175,15 +179,15 @@ namespace rl::ui {
                 // header text shadow
                 nvg::font_blur(context, 2.0f);
                 nvg::fill_color(context, m_theme->text_shadow);
-                nvg::text(context, m_pos.x + (m_size.width / 2.0f),
-                          m_pos.y + (header_height / 2.0f), m_title.c_str());
+                nvg::text(context, m_rect.pt.x + (m_rect.size.width / 2.0f),
+                          m_rect.pt.y + (header_height / 2.0f), m_title.c_str());
 
                 // Header text
                 nvg::font_blur(context, 0.0f);
                 nvg::fill_color(context, m_focused ? m_theme->dialog_title_focused
                                                    : m_theme->dialog_title_unfocused);
-                nvg::text(context, m_pos.x + (m_size.width / 2.0f),
-                          m_pos.y + (header_height / 2.0f) - 1.0f, m_title.c_str());
+                nvg::text(context, m_rect.pt.x + (m_rect.size.width / 2.0f),
+                          m_rect.pt.y + (header_height / 2.0f) - 1.0f, m_title.c_str());
             }
         });
 
@@ -197,61 +201,14 @@ namespace rl::ui {
 
         if (m_resizable)
         {
-            auto movement_delta{ mouse.pos_delta() };
-            if (!movement_delta.is_zero())
-            {
-                const ds::rect dialog_rect{ m_pos, m_size };
-                const ds::point local_mouse_pos{ mouse.pos() /*- m_pos*/ };
+            const Side border_grab{ m_rect.edge_overlap(RESIZE_SELECT_BUFFER, mouse.pos()) };
+            // TODO: debug - remove later
+            if (m_resize_grab_point_side != border_grab)
+                int [[maybe_unused]] breakhere = 123;
 
-                const ds::rect top{ dialog_rect.top(5.0f) };
-                const ds::rect bot{ dialog_rect.bottom(5.0f) };
-                if (top.contains(local_mouse_pos) || bot.contains(local_mouse_pos))
-                {
-                    mouse.set_cursor(Mouse::Cursor::SizeNS);
-                    if (top.contains(local_mouse_pos))
-                        m_resize_hover = Direction::North;
-                    else
-                        m_resize_hover = Direction::South;
-                    return true;
-                }
-
-                const ds::rect lft{ dialog_rect.left(5.0f) };
-                const ds::rect rgt{ dialog_rect.right(5.0f) };
-                if (lft.contains(local_mouse_pos) || rgt.contains(local_mouse_pos))
-                {
-                    mouse.set_cursor(Mouse::Cursor::SizeWE);
-                    if (lft.contains(local_mouse_pos))
-                        m_resize_hover = Direction::West;
-                    else
-                        m_resize_hover = Direction::East;
-                    return true;
-                }
-
-                ds::rect bot_left{ dialog_rect.bot_left(5.0f) };
-                ds::rect top_right{ dialog_rect.top_right(5.0f) };
-                if (bot_left.contains(local_mouse_pos) || top_right.contains(local_mouse_pos))
-                {
-                    mouse.set_cursor(Mouse::Cursor::SizeNESW);
-                    if (bot_left.contains(local_mouse_pos))
-                        m_resize_hover = Direction::NorthEast;
-                    else
-                        m_resize_hover = Direction::SouthWest;
-                    return true;
-                }
-
-                ds::rect top_left{ dialog_rect.top_left(5.0f) };
-                ds::rect bot_right{ dialog_rect.bot_right(5.0f) };
-                if (top_left.contains(local_mouse_pos) || bot_right.contains(local_mouse_pos))
-                {
-                    mouse.set_cursor(Mouse::Cursor::SizeNWSE);
-                    if (top_left.contains(local_mouse_pos))
-                        m_resize_hover = Direction::SouthEast;
-                    else
-                        m_resize_hover = Direction::NorthWest;
-                    return true;
-                }
-            }
+            m_resize_grab_point_side = border_grab;
         }
+
         return true;
     }
 
@@ -262,80 +219,33 @@ namespace rl::ui {
 
         if (m_resizable)
         {
-            auto movement_delta{ mouse.pos_delta() };
-            if (!movement_delta.is_zero())
-            {
-                const ds::rect dialog_rect{ m_pos, m_size };
-                const ds::point local_mouse_pos{ mouse.pos() /*- m_pos*/ };
+            const Side border_grab{ m_rect.edge_overlap(RESIZE_SELECT_BUFFER, mouse.pos()) };
+            // TODO: debug - remove later
+            if (m_resize_grab_point_side != border_grab)
+                int [[maybe_unused]] breakhere = 123;
 
-                const ds::rect top{ dialog_rect.top(5.0f) };
-                const ds::rect bot{ dialog_rect.bottom(5.0f) };
-                if (top.contains(local_mouse_pos) || bot.contains(local_mouse_pos))
-                {
-                    mouse.set_cursor(Mouse::Cursor::SizeNS);
-                    if (top.contains(local_mouse_pos))
-                        m_resize_hover = Direction::North;
-                    else
-                        m_resize_hover = Direction::South;
-                    return true;
-                }
-
-                const ds::rect lft{ dialog_rect.left(5.0f) };
-                const ds::rect rgt{ dialog_rect.right(5.0f) };
-                if (lft.contains(local_mouse_pos) || rgt.contains(local_mouse_pos))
-                {
-                    mouse.set_cursor(Mouse::Cursor::SizeWE);
-                    if (lft.contains(local_mouse_pos))
-                        m_resize_hover = Direction::West;
-                    else
-                        m_resize_hover = Direction::East;
-                    return true;
-                }
-
-                ds::rect bot_left{ dialog_rect.bot_left(5.0f) };
-                ds::rect top_right{ dialog_rect.top_right(5.0f) };
-                if (bot_left.contains(local_mouse_pos) || top_right.contains(local_mouse_pos))
-                {
-                    mouse.set_cursor(Mouse::Cursor::SizeNESW);
-                    if (bot_left.contains(local_mouse_pos))
-                        m_resize_hover = Direction::SouthWest;
-                    else
-                        m_resize_hover = Direction::NorthEast;
-                    return true;
-                }
-
-                ds::rect top_left{ dialog_rect.top_left(5.0f) };
-                ds::rect bot_right{ dialog_rect.bot_right(5.0f) };
-                if (top_left.contains(local_mouse_pos) || bot_right.contains(local_mouse_pos))
-                {
-                    mouse.set_cursor(Mouse::Cursor::SizeNWSE);
-                    if (top_left.contains(local_mouse_pos))
-                        m_resize_hover = Direction::NorthWest;
-                    else
-                        m_resize_hover = Direction::SouthEast;
-                    return true;
-                }
-            }
+            m_resize_grab_point_side = border_grab;
         }
+
         return true;
     }
 
     bool Dialog::on_mouse_drag(const Mouse& mouse, const Keyboard& kb)
     {
         scoped_logger(log_level::debug, "pt:{}, rel:{}", mouse.pos(), mouse.pos_delta());
-        if (m_drag && mouse.is_button_down(Mouse::Button::Left))
+        if (m_drag_move && mouse.is_button_down(Mouse::Button::Left))
         {
-            diag_log("m_pos_1={} mouse_delta={}", m_pos, mouse.pos_delta());
-            m_pos += mouse.pos_delta();
-            m_pos.x = std::max(m_pos.x, 0.0f);
-            m_pos.y = std::max(m_pos.y, 0.0f);
+            diag_log("m_pos_1={} mouse_delta={}", m_rect.pt, mouse.pos_delta());
+            m_rect.pt += mouse.pos_delta();
+            m_rect.pt.x = std::max(m_rect.pt.x, 0.0f);
+            m_rect.pt.y = std::max(m_rect.pt.y, 0.0f);
 
-            const ds::dims relative_size{ this->parent()->size() - m_size };
-            diag_log("m_pos_2={} rel_size={}", m_pos, relative_size);
-            m_pos.x = std::min(m_pos.x, relative_size.width);
-            m_pos.y = std::min(m_pos.y, relative_size.height);
+            const ds::dims relative_size{ this->parent()->size() - m_rect.size };
+            diag_log("m_pos_2={} rel_size={}", m_rect.pt, relative_size);
+            m_rect.pt.x = std::min(m_rect.pt.x, relative_size.width);
+            m_rect.pt.y = std::min(m_rect.pt.y, relative_size.height);
 
-            diag_log("m_pos_3={}", m_pos);
+            diag_log("m_pos_3={}", m_rect.pt);
             return true;
         }
 
@@ -348,11 +258,23 @@ namespace rl::ui {
         if (Widget::on_mouse_button_pressed(mouse, kb))
             return true;
 
+        if (!m_drag_resize)
+        {
+            const Side border_grab{ m_rect.edge_overlap(RESIZE_SELECT_BUFFER, mouse.pos()) };
+            // TODO: debug - remove later
+            if (m_resize_grab_point_side != border_grab)
+                int [[maybe_unused]] breakhere = 123;
+
+            m_resize_grab_point_side = border_grab;
+            m_drag_resize = m_resize_grab_point_side != Side::None;
+        }
+
         if (mouse.is_button_pressed(Mouse::Button::Left))
         {
-            const f32 offset_height{ mouse.pos().y - m_pos.y };
-            m_drag = offset_height < m_theme->dialog_header_height;
-            diag_log("Dialog::m_drag={} offset_height={}", m_drag, offset_height);
+            m_resize_grab_point_side = Side::None;
+            const f32 offset_height{ mouse.pos().y - m_rect.pt.y };
+            m_drag_move = offset_height < m_theme->dialog_header_height;
+            diag_log("Dialog::m_drag_move={} offset_height={}", m_drag_move, offset_height);
             return true;
         }
 
@@ -367,8 +289,10 @@ namespace rl::ui {
 
         if (mouse.is_button_released(Mouse::Button::Left))
         {
-            m_drag = false;
-            diag_log("Dialog::m_drag={}", m_drag);
+            m_drag_move = false;
+            m_drag_resize = false;
+            diag_log("Dialog::m_drag_move={}", m_drag_move);
+            diag_log("Dialog::m_drag_resize={}", m_drag_move);
             return true;
         }
 

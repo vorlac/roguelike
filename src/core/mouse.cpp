@@ -24,7 +24,7 @@ namespace rl {
         if (m_active_cursor == cursor_id)
             return false;
 
-        runtime_assert(cursor_id < m_system_cursors.size(), "invalid cursor idx");
+        runtime_assert(static_cast<u64>(cursor_id) < m_system_cursors.size(), "invalid cursor idx");
         SDL3::SDL_Cursor* cursor{ m_system_cursors[cursor_id] };
         runtime_assert(cursor != nullptr, "invalid cursor");
 
@@ -33,6 +33,42 @@ namespace rl {
 
         if (result == 0)
             m_active_cursor = cursor_id;
+        return result == 0;
+    }
+
+    bool Mouse::set_cursor(const Side side) const
+    {
+        switch (side)
+        {
+            case Side::Top:
+            case Side::Bottom:
+                return this->set_cursor(Mouse::Cursor::SizeNS);
+            case Side::Left:
+            case Side::Right:
+                return this->set_cursor(Mouse::Cursor::SizeWE);
+            case Side::TopRight:
+            case Side::BottomLeft:
+                return this->set_cursor(Mouse::Cursor::SizeNESW);
+            case Side::TopLeft:
+            case Side::BottomRight:
+                return this->set_cursor(Mouse::Cursor::SizeNWSE);
+            case Side::None:
+            default:
+                return this->set_cursor(Mouse::Cursor::Arrow);
+        }
+    }
+
+    bool Mouse::hide_cursor() const
+    {
+        const i32 result{ SDL3::SDL_HideCursor() };
+        sdl_assert(result == 0, "failed to hide mouse cursor");
+        return result == 0;
+    }
+
+    bool Mouse::show_cursor() const
+    {
+        const i32 result{ SDL3::SDL_ShowCursor() };
+        sdl_assert(result == 0, "failed to show mouse cursor");
         return result == 0;
     }
 

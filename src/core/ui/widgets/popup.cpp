@@ -48,13 +48,13 @@ namespace rl::ui {
         return m_anchor_size;
     }
 
-    void Popup::set_side(Popup::Side popup_side)
+    void Popup::set_side(Side popup_side)
     {
         scoped_logger(log_level::debug, "side={}", popup_side);
         m_side = popup_side;
     }
 
-    Popup::Side Popup::side() const
+    Side Popup::side() const
     {
         scoped_logger(log_level::debug, "side={}", m_side);
         return m_side;
@@ -81,12 +81,12 @@ namespace rl::ui {
         {
             const auto first_child{ m_children.front() };
             first_child->set_position(ds::point{ 0.0f, 0.0f });
-            first_child->set_size(std::forward<decltype(m_size)>(m_size));
+            first_child->set_size(std::forward<decltype(m_rect.size)>(m_rect.size));
             first_child->perform_layout();
         }
 
         if (m_side == Side::Left)
-            m_anchor_pos.x -= m_size.width;
+            m_anchor_pos.x -= m_rect.size.width;
     }
 
     void Popup::refresh_relative_placement()
@@ -97,7 +97,7 @@ namespace rl::ui {
 
         m_parent_dialog->refresh_relative_placement();
         m_visible &= m_parent_dialog->visible_recursive();
-        m_pos = m_parent_dialog->position() + m_anchor_pos - ds::point{ 0.0f, m_anchor_offset };
+        m_rect.pt = m_parent_dialog->position() + m_anchor_pos - ds::point{ 0.0f, m_anchor_offset };
     }
 
     void Popup::draw()
@@ -117,28 +117,29 @@ namespace rl::ui {
             // Draw drop shadow behind window
             m_renderer->draw_path(false, [&] {
                 nvg::PaintStyle shadow_paint{ nvg::box_gradient(
-                    context, m_pos.x, m_pos.y, m_size.width, m_size.height, corner_radius * 2.0f,
-                    drop_shadow_size * 2.0f, m_theme->drop_shadow, m_theme->transparent) };
+                    context, m_rect.pt.x, m_rect.pt.y, m_rect.size.width, m_rect.size.height,
+                    corner_radius * 2.0f, drop_shadow_size * 2.0f, m_theme->drop_shadow,
+                    m_theme->transparent) };
 
-                nvg::rect(context, m_pos.x - drop_shadow_size, m_pos.y - drop_shadow_size,
-                          m_size.width + (2.0f * drop_shadow_size),
-                          m_size.height + (2.0f * drop_shadow_size));
-                nvg::rounded_rect(context, m_pos.x, m_pos.y, m_size.width, m_size.height,
-                                  corner_radius);
+                nvg::rect(context, m_rect.pt.x - drop_shadow_size, m_rect.pt.y - drop_shadow_size,
+                          m_rect.size.width + (2.0f * drop_shadow_size),
+                          m_rect.size.height + (2.0f * drop_shadow_size));
+                nvg::rounded_rect(context, m_rect.pt.x, m_rect.pt.y, m_rect.size.width,
+                                  m_rect.size.height, corner_radius);
                 nvg::path_winding(context, nvg::Solidity::Hole);
                 nvg::fill_paint(context, std::move(shadow_paint));
                 nvg::fill(context);
 
                 // Draw window
                 m_renderer->draw_path(false, [&] {
-                    nvg::rounded_rect(context, m_pos.x, m_pos.y, m_size.width, m_size.height,
-                                      corner_radius);
-                    ds::point base{ ds::point{ 0.0f, m_anchor_offset } + m_pos };
+                    nvg::rounded_rect(context, m_rect.pt.x, m_rect.pt.y, m_rect.size.width,
+                                      m_rect.size.height, corner_radius);
+                    ds::point base{ ds::point{ 0.0f, m_anchor_offset } + m_rect.pt };
 
                     f32 sign = -1.0f;
                     if (m_side == Side::Left)
                     {
-                        base.x += m_size.width;
+                        base.x += m_rect.size.width;
                         sign = 1.0f;
                     }
 

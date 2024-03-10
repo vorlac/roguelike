@@ -126,27 +126,29 @@ namespace rl::ui {
         nvg::font_face(context, Font::Name::Sans);
         nvg::fill_color(context, m_enabled ? m_theme->text_color : m_theme->disabled_text_color);
         nvg::text_align(context, nvg::Align::HLeft | nvg::Align::VMiddle);
-        nvg::text(context, m_pos.x + 1.6f * this->font_size(), m_pos.y + m_size.height * 0.5f,
-                  m_caption.c_str(), nullptr);
+        nvg::text(context, m_rect.pt.x + 1.6f * this->font_size(),
+                  m_rect.pt.y + m_rect.size.height * 0.5f, m_caption.c_str(), nullptr);
 
         const nvg::PaintStyle bg{ nvg::box_gradient(
-            context, m_pos.x + 1.5f, m_pos.y + 1.5f, m_size.height - 2.0f, m_size.height - 2.0f, 3,
-            3.0f, m_pushed ? ds::color<f32>{ 0, 0, 0, 100 } : ds::color<f32>{ 0, 0, 0, 32 },
+            context, m_rect.pt.x + 1.5f, m_rect.pt.y + 1.5f, m_rect.size.height - 2.0f,
+            m_rect.size.height - 2.0f, 3, 3.0f,
+            m_pushed ? ds::color<f32>{ 0, 0, 0, 100 } : ds::color<f32>{ 0, 0, 0, 32 },
             ds::color<f32>{ 0, 0, 0, 180 }) };
 
         nvg::begin_path(context);
-        nvg::rounded_rect(context, m_pos.x + 1.0f, m_pos.y + 1.0f, m_size.height - 2.0f,
-                          m_size.height - 2.0f, 3);
+        nvg::rounded_rect(context, m_rect.pt.x + 1.0f, m_rect.pt.y + 1.0f,
+                          m_rect.size.height - 2.0f, m_rect.size.height - 2.0f, 3);
         nvg::fill_paint(context, bg);
         nvg::fill(context);
 
         if (m_checked)
         {
-            nvg::font_size(context, this->icon_scale() * m_size.height);
+            nvg::font_size(context, this->icon_scale() * m_rect.size.height);
             nvg::font_face(context, Font::Name::Icons);
             nvg::fill_color(context, m_enabled ? m_theme->icon_color : m_theme->disabled_text_color);
             nvg::text_align(context, nvg::Align::HCenter | nvg::Align::VMiddle);
-            nvg::text(context, m_pos.x + m_size.height * 0.5f + 1, m_pos.y + m_size.height * 0.5f,
+            nvg::text(context, m_rect.pt.x + m_rect.size.height * 0.5f + 1,
+                      m_rect.pt.y + m_rect.size.height * 0.5f,
                       rl::utf8(m_theme->check_box_icon).data(), nullptr);
         }
     }

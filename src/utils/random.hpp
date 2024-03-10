@@ -15,7 +15,7 @@ namespace rl {
 
     public:
         constexpr static auto value()
-            requires rl::integer<numeric_type>
+            requires std::integral<numeric_type>
         {
             return m_dist(m_engine);
         }

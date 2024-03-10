@@ -8,11 +8,6 @@ namespace rl::ui {
     class Popup final : public Dialog
     {
     public:
-        enum class Side {
-            Left = 0,
-            Right
-        };
-
         explicit Popup(Widget* parent, Dialog* parent_dialog = nullptr);
 
         f32 anchor_offset() const;
@@ -37,21 +32,6 @@ namespace rl::ui {
         ds::point<f32> m_anchor_pos{ 0.0f, 0.0f };
         f32 m_anchor_offset{ 30.0f };
         f32 m_anchor_size{ 15.0f };
-        Popup::Side m_side{ Popup::Side::Right };
+        Side m_side{ Side::Right };
     };
-}
-
-namespace rl::ui {
-    constexpr auto format_as(const Popup::Side side)
-    {
-        switch (side)
-        {
-            case Popup::Side::Left:
-                return "Left";
-            case Popup::Side::Right:
-                return "Right";
-            default:
-                return "Invalid";
-        }
-    }
 }

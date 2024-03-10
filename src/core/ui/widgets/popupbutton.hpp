@@ -6,7 +6,6 @@
 namespace rl::ui {
 
     // Button which launches a popup widget.
-    //
     // This class overrides widget::m_icon_extra_scale to be 0.8, which
     // affects all subclasses of this widget. Subclasses must explicitly set
     // a different value if needed (e.g., in their constructor).
@@ -17,11 +16,11 @@ namespace rl::ui {
                              Icon::ID button_icon = Icon::None);
 
         void set_chevron_icon(Icon::ID icon);
-        void set_side(Popup::Side side);
+        void set_side(Side side);
 
         Popup* popup();
         Icon::ID chevron_icon() const;
-        Popup::Side side() const;
+        Side side() const;
         const Popup* popup() const;
 
     public:

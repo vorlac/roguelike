@@ -123,8 +123,8 @@ namespace rl::ui {
                         break;
                 }
 
-                auto&& pos{ child->position() };
-                auto&& size{ child->size() };
+                auto pos{ child->position() };
+                auto size{ child->size() };
                 f32& item_axis_pos{ axis == Axis::Horizontal ? pos.x : pos.y };
                 f32& item_axis_size{ axis == Axis::Horizontal ? size.width : size.height };
                 item_axis_pos = item_pos;
