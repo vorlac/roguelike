@@ -162,7 +162,7 @@ namespace rl::ui {
         Timer<f32> m_timer{};
 
     protected:
-        constexpr static inline f32 RESIZE_SELECT_BUFFER{ 10.0f };
+        constexpr static inline f32 RESIZE_SELECT_BUFFER{ 5.0f };
         constexpr static bool DiagnosticsEnabled{ false };
     };
 }

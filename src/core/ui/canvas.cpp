@@ -363,41 +363,51 @@ namespace rl::ui {
 
     bool Canvas::on_mouse_move_event(const Mouse& mouse, const Keyboard& kb)
     {
-        const ds::point mouse_pos{ mouse.pos() };
         m_last_interaction = m_timer.elapsed();
 
+        const ds::point mouse_pos{ mouse.pos() };
+        const Widget* widget{ this->find_widget(mouse.pos()) };
         scoped_logger(log_level::trace, "move_pos={}", mouse.pos());
-        const ds::point scaled_pos{ mouse_pos / m_pixel_ratio };
 
         bool handled{ false };
-        if (m_drag_active)
+        if (widget != nullptr)
         {
-            LocalTransform transform{ m_drag_widget->parent() };
-            handled = m_drag_widget->on_mouse_drag(mouse, kb);
-        }
-        else if (m_resize_active && mouse.is_button_held(Mouse::Button::Left))
-        {
-            runtime_assert(m_resize_widget != nullptr, "resizing without active resize widget");
-            handled = m_resize_widget->on_mouse_drag(mouse, kb);
-        }
-        else
-        {
-            // first check to see if the mouse is hovering over
-            // the border of a dialog that's resizeable
+            const auto resize_grab{ widget->resize_side() };
+            runtime_assert(
+                ((m_drag_active != m_resize_active) || (!m_drag_active && !m_resize_active)),
+                "dragging and resizing are both enabled");
 
-            const Widget* widget{ this->find_widget(scaled_pos) };
-            if (widget != nullptr)
-            {
-                const auto resize_grab{ widget->resize_side() };
-                if (widget->resizable() && resize_grab != Side::None)
-                    mouse.set_cursor(resize_grab);
-                else if (widget->cursor() != m_mouse.active_cursor())
-                    m_mouse.set_cursor(widget->cursor());
-            }
+            //// first check for resizable events that can be acted on
+            // if (m_resize_active && mouse.is_button_held(Mouse::Button::Left))
+            //{
+            //     // if resizing is currently active, continue until the mouse is released
+            //     runtime_assert(m_resize_widget != nullptr, "resizing without active resize
+            //     widget"); handled |= m_resize_widget->on_mouse_drag(mouse, kb);
+            // }
+            // else
+            //{
+            //  handle mouse cursor style updates...
+            if (widget->resizable() && resize_grab != Side::None)
+                mouse.set_cursor(resize_grab);
+            else if (widget->cursor() != m_mouse.active_cursor())
+                m_mouse.set_cursor(widget->cursor());
+            //}
+        }
+
+        // check for any widgets being resized or dragged..
+        if (m_resize_active)
+        {
+            LocalTransform transform{ m_resize_widget };
+            handled |= m_resize_widget->on_mouse_drag(mouse, kb);
+        }
+        else if (m_drag_active)
+        {
+            LocalTransform transform{ m_drag_widget };
+            handled |= m_drag_widget->on_mouse_drag(mouse, kb);
         }
 
         if (!handled)
-            handled = Widget::on_mouse_move(mouse, kb);
+            handled |= Widget::on_mouse_move(mouse, kb);
 
         m_redraw |= handled;
         return false;
@@ -405,10 +415,11 @@ namespace rl::ui {
 
     bool Canvas::on_mouse_button_pressed_event(const Mouse& mouse, const Keyboard& kb)
     {
+        bool drag_btn_pressed{ mouse.is_button_pressed(Mouse::Button::Left) };
         scoped_log("btn_pressed={}", mouse.button_pressed());
-        const ds::point mouse_pos{ mouse.pos() };
 
         m_last_interaction = m_timer.elapsed();
+        const ds::point mouse_pos{ mouse.pos() };
         if (m_focus_path.size() > 1)
         {
             const Dialog* dialog{ dynamic_cast<Dialog*>(m_focus_path[m_focus_path.size() - 2]) };
@@ -419,20 +430,39 @@ namespace rl::ui {
             }
         }
 
-        auto drop_widget{ this->find_widget(mouse_pos) };
-        if (drop_widget != nullptr && drop_widget->cursor() != m_mouse.active_cursor())
-            m_mouse.set_cursor(drop_widget->cursor());
-
-        const bool drag_btn_pressed{ mouse.is_button_pressed(Mouse::Button::Left) };
-        if (!m_drag_active && drag_btn_pressed)
+        auto clicked_widget{ this->find_widget(mouse_pos) };
+        if (drag_btn_pressed && clicked_widget != nullptr)
         {
-            m_drag_widget = this->find_widget(mouse_pos);
-            if (m_drag_widget == this)
+            auto resize_grab{ clicked_widget->resize_side() };
+            if (!m_resize_active && resize_grab != Side::None && clicked_widget->resizable())
+            {
+                // handle mouse cursor style updates...
+                runtime_assert(m_drag_widget == nullptr && !m_drag_active,
+                               "dragging is actice when enabling resizing");
+
+                m_drag_active = false;
+                m_resize_active = true;
                 m_drag_widget = nullptr;
 
-            m_drag_active = m_drag_widget != nullptr;
-            if (!m_drag_active)
-                this->update_focus(nullptr);
+                m_resize_widget = clicked_widget;
+                if (m_drag_widget == this)
+                    this->update_focus(nullptr);
+            }
+            else if (!m_drag_active)
+            {
+                m_resize_active = false;
+                m_drag_widget = clicked_widget;
+
+                // TODO: check this for both above
+                if (m_drag_widget == this)
+                    m_drag_widget = nullptr;
+
+                m_drag_active = m_drag_widget != nullptr;
+                if (!m_drag_active)
+                    this->update_focus(nullptr);
+            }
+            else if (clicked_widget->cursor() != m_mouse.active_cursor())
+                m_mouse.set_cursor(clicked_widget->cursor());
         }
 
         m_redraw |= Widget::on_mouse_button_pressed(mouse, kb);
@@ -470,7 +500,9 @@ namespace rl::ui {
         if (m_drag_active && drag_btn_released)
         {
             m_drag_active = false;
+            m_resize_active = false;
             m_drag_widget = nullptr;
+            m_resize_widget = nullptr;
         }
 
         m_redraw |= Widget::on_mouse_button_released(mouse, kb);
