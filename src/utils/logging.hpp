@@ -63,8 +63,8 @@ namespace rl {
 
     class ScopedLogger
     {
-        constexpr static inline log_level LOGFILE_LEVEL{ log_level::info };
-        constexpr static inline log_level STD_OUT_LEVEL{ log_level::info };
+        constexpr static inline log_level LOGFILE_LEVEL{ log_level::critical };
+        constexpr static inline log_level STD_OUT_LEVEL{ log_level::critical };
 
     public:
         explicit ScopedLogger(std::string&& str)
@@ -156,7 +156,7 @@ namespace rl {
         static inline thread_local u32 m_depth{ 0 };
 
         std::string m_log_str{};
-        log_level m_level{ log_level::info };
+        log_level m_level{ log_level::err };
     };
 }
 

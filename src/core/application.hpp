@@ -5,6 +5,8 @@
 #include <string_view>
 #include <vector>
 
+#include <cpptrace/cpptrace.hpp>
+
 #include "core/assert.hpp"
 #include "core/event_handler.hpp"
 #include "core/main_window.hpp"
@@ -59,6 +61,7 @@ namespace rl {
 
         bool run()
         {
+            cpptrace::generate_trace().print();
             scoped_log();
 
             bool ret{ this->setup() };

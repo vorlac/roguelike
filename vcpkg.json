@@ -8,6 +8,7 @@
         "parallel-hashmap",
         "glm",
         "fmt",
-        "spdlog"
+        "spdlog",
+        "cpptrace"
     ]
 }

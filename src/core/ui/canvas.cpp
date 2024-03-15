@@ -529,10 +529,11 @@ namespace rl::ui {
                 assert_msg("Invalid/unhandled UI Canvas mouse mode");
                 [[fallthrough]];
             case MouseMode::Propagate:
-                m_active_dialog = nullptr;
-                m_mouse_mode = MouseMode::Propagate;
                 break;
         }
+
+        m_active_dialog = nullptr;
+        m_mouse_mode = MouseMode::Propagate;
 
         m_redraw |= Widget::on_mouse_button_released(mouse, kb);
         return false;

@@ -56,6 +56,7 @@ find_package(glm CONFIG REQUIRED)
 find_package(fmt CONFIG REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
 find_package(nanobench CONFIG REQUIRED)
+find_package(cpptrace CONFIG REQUIRED)
 
 # SDL3 build options
 set(SDL_LIBC OFF)
@@ -209,7 +210,7 @@ target_link_libraries(${PROJECT_NAME}
   PRIVATE nanobench::nanobench
   PRIVATE SDL3::SDL3-static
   PRIVATE glm::glm
-  # PUBLIC Tracy::TracyClient
+  PRIVATE cpptrace::cpptrace
 )
 
 if (ENABLE_CCACHE MATCHES ON)
