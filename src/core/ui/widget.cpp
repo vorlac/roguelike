@@ -249,7 +249,7 @@ namespace rl::ui {
 
     Side Widget::resize_side() const
     {
-        return m_resize_grab_point_side;
+        return m_resize_grab_location;
     }
 
     const Widget* Widget::child_at(i32 index) const
@@ -281,7 +281,7 @@ namespace rl::ui {
     {
         scoped_trace(log_level::trace);
 
-        for (const auto child : m_children)
+        for (auto&& child : m_children)
         {
             auto ps{ child->preferred_size() };
             auto fs{ child->fixed_size() };
@@ -308,7 +308,7 @@ namespace rl::ui {
         {
             LocalTransform transform{ this };
             const ds::point local_mouse_pos{ pt - m_rect.pt };
-            for (const auto child : std::ranges::reverse_view{ m_children })
+            for (auto&& child : std::ranges::reverse_view{ m_children })
             {
                 if (!child->visible())
                     continue;
@@ -330,9 +330,9 @@ namespace rl::ui {
             }
         }
 
-        m_resize_grab_point_side = m_resizable ? m_rect.edge_overlap(RESIZE_SELECT_BUFFER, pt)
-                                               : Side::None;
-        return this->contains(pt) || m_resize_grab_point_side != Side::None ? this : nullptr;
+        m_resize_grab_location = m_resizable ? m_rect.edge_overlap(RESIZE_SELECT_BUFFER, pt)
+                                             : Side::None;
+        return this->contains(pt) || m_resize_grab_location != Side::None ? this : nullptr;
     }
 
     bool Widget::on_mouse_entered(const Mouse& mouse)
@@ -423,7 +423,7 @@ namespace rl::ui {
 
         LocalTransform transform{ this };
         const ds::point local_mouse_pos{ mouse.pos() - LocalTransform::absolute_pos };
-        for (const auto child : std::ranges::reverse_view{ m_children })
+        for (auto&& child : std::ranges::reverse_view{ m_children })
         {
             if (!child->visible())
                 continue;
@@ -450,7 +450,7 @@ namespace rl::ui {
 
         LocalTransform transform{ this };
         const ds::point local_mouse_pos{ mouse.pos() - LocalTransform::absolute_pos };
-        for (Widget* child : std::ranges::reverse_view{ m_children })
+        for (auto&& child : std::ranges::reverse_view{ m_children })
         {
             if (!child->visible())
                 continue;
@@ -659,7 +659,7 @@ namespace rl::ui {
         Widget* widget{ this };
         while (widget != nullptr)
         {
-            const auto dialog{ dynamic_cast<Dialog*>(widget) };
+            auto dialog{ dynamic_cast<Dialog*>(widget) };
             if (dialog != nullptr)
                 return dialog;
 
@@ -690,7 +690,9 @@ namespace rl::ui {
         while (widget->parent() != nullptr)
             widget = widget->parent();
 
-        dynamic_cast<Canvas*>(widget)->update_focus(this);
+        Canvas* canvas{ dynamic_cast<Canvas*>(widget) };
+        runtime_assert(canvas != nullptr, "failed to get top level UI canvas");
+        canvas->update_focus(this);
     }
 
     bool Widget::draw_mouse_intersection(const ds::point<f32>& pt)

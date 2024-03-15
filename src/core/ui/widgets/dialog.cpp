@@ -20,9 +20,8 @@ namespace rl::ui {
         scoped_log();
     }
 
-    const std::string& Dialog::title() const
+    std::string Dialog::title() const
     {
-        scoped_log();
         return m_title;
     }
 
@@ -32,16 +31,14 @@ namespace rl::ui {
         m_title = title;
     }
 
-    bool Dialog::modal() const
+    Dialog::Mode Dialog::mode() const
     {
-        scoped_log();
-        return m_modal;
+        return m_mode;
     }
 
-    void Dialog::set_modal(const bool modal)
+    void Dialog::set_mode(Dialog::Mode mode)
     {
-        scoped_log();
-        m_modal = modal;
+        m_mode = mode;
     }
 
     Widget* Dialog::button_panel()
@@ -203,10 +200,10 @@ namespace rl::ui {
         {
             const Side border_grab{ m_rect.edge_overlap(RESIZE_SELECT_BUFFER, mouse.pos()) };
             // TODO: debug - remove later
-            if (m_resize_grab_point_side != border_grab)
+            if (m_resize_grab_location != border_grab)
                 int [[maybe_unused]] breakhere = 123;
 
-            m_resize_grab_point_side = border_grab;
+            m_resize_grab_location = border_grab;
         }
 
         return true;
@@ -221,10 +218,10 @@ namespace rl::ui {
         {
             const Side border_grab{ m_rect.edge_overlap(RESIZE_SELECT_BUFFER, mouse.pos()) };
             // TODO: debug - remove later
-            if (m_resize_grab_point_side != border_grab)
+            if (m_resize_grab_location != border_grab)
                 int [[maybe_unused]] breakhere = 123;
 
-            m_resize_grab_point_side = border_grab;
+            m_resize_grab_location = border_grab;
         }
 
         return true;
@@ -233,20 +230,64 @@ namespace rl::ui {
     bool Dialog::on_mouse_drag(const Mouse& mouse, const Keyboard& kb)
     {
         scoped_logger(log_level::debug, "pt:{}, rel:{}", mouse.pos(), mouse.pos_delta());
-        if (m_drag_move && mouse.is_button_down(Mouse::Button::Left))
+
+        switch (m_mode)
         {
-            diag_log("m_pos_1={} mouse_delta={}", m_rect.pt, mouse.pos_delta());
-            m_rect.pt += mouse.pos_delta();
-            m_rect.pt.x = std::max(m_rect.pt.x, 0.0f);
-            m_rect.pt.y = std::max(m_rect.pt.y, 0.0f);
+            case Dialog::Mode::Move:
+            {
+                const bool move_btn_down{ mouse.is_button_down(Mouse::Button::Left) };
+                if (move_btn_down)
+                {
+                    diag_log("m_pos_1={} mouse_delta={}", m_rect.pt, mouse.pos_delta());
+                    m_rect.pt += mouse.pos_delta();
+                    m_rect.pt.x = std::max(m_rect.pt.x, 0.0f);
+                    m_rect.pt.y = std::max(m_rect.pt.y, 0.0f);
 
-            const ds::dims relative_size{ this->parent()->size() - m_rect.size };
-            diag_log("m_pos_2={} rel_size={}", m_rect.pt, relative_size);
-            m_rect.pt.x = std::min(m_rect.pt.x, relative_size.width);
-            m_rect.pt.y = std::min(m_rect.pt.y, relative_size.height);
+                    const ds::dims relative_size{ this->parent()->size() - m_rect.size };
+                    diag_log("m_pos_2={} rel_size={}", m_rect.pt, relative_size);
+                    m_rect.pt.x = std::min(m_rect.pt.x, relative_size.width);
+                    m_rect.pt.y = std::min(m_rect.pt.y, relative_size.height);
 
-            diag_log("m_pos_3={}", m_rect.pt);
-            return true;
+                    diag_log("m_pos_3={}", m_rect.pt);
+                    return true;
+                }
+                break;
+            }
+            case Dialog::Mode::Resizing:
+            {
+                const bool resize_btn_down{ mouse.is_button_down(Mouse::Button::Left) };
+                if (resize_btn_down)
+                {
+                    switch (m_resize_grab_location)
+                    {
+                        case Side::None:
+                            break;
+
+                        case Side::Top:
+                            m_rect.pt.y += mouse.pos_delta().y;
+                            break;
+                        case Side::Left:
+                            m_rect.pt.x += mouse.pos_delta().y;
+                            break;
+
+                        case Side::Bottom:
+                            m_rect.size.height += mouse.pos_delta().y;
+                            break;
+                        case Side::Right:
+                            m_rect.size.width += mouse.pos_delta().y;
+                            break;
+                    }
+                }
+                break;
+            }
+
+            default:
+                assert_msg("Invalid/unsupported Dialog::Mode");
+                [[fallthrough]];
+            case Dialog::Mode::None:
+                [[fallthrough]];
+            case Dialog::Mode::Modal:
+                break;
         }
 
         return false;
@@ -258,24 +299,29 @@ namespace rl::ui {
         if (Widget::on_mouse_button_pressed(mouse, kb))
             return true;
 
-        if (!m_drag_resize)
+        switch (m_mode)
         {
-            const Side border_grab{ m_rect.edge_overlap(RESIZE_SELECT_BUFFER, mouse.pos()) };
-            // TODO: debug - remove later
-            if (m_resize_grab_point_side != border_grab)
-                int [[maybe_unused]] breakhere = 123;
-
-            m_resize_grab_point_side = border_grab;
-            m_drag_resize = m_resize_grab_point_side != Side::None;
-        }
-
-        if (mouse.is_button_pressed(Mouse::Button::Left))
-        {
-            m_resize_grab_point_side = Side::None;
-            const f32 offset_height{ mouse.pos().y - m_rect.pt.y };
-            m_drag_move = offset_height < m_theme->dialog_header_height;
-            diag_log("Dialog::m_drag_move={} offset_height={}", m_drag_move, offset_height);
-            return true;
+            case Dialog::Mode::Move:
+            {
+                const f32 offset_height{ mouse.pos().y - m_rect.pt.y };
+                if (offset_height < m_theme->dialog_header_height)
+                    return true;
+                return false;
+            }
+            case Dialog::Mode::Resizing:
+            {
+                runtime_assert(m_resize_grab_location != Side::None,
+                               "dialog resizing without grab location");
+                return m_resize_grab_location != Side::None;
+            }
+            case Dialog::Mode::None:
+            {
+                const Side border_grab{ m_rect.edge_overlap(RESIZE_SELECT_BUFFER, mouse.pos()) };
+                m_resize_grab_location = border_grab;
+                return true;
+            }
+            case Dialog::Mode::Modal:
+                return false;
         }
 
         return false;
@@ -287,16 +333,29 @@ namespace rl::ui {
         if (Widget::on_mouse_button_released(mouse, kb))
             return true;
 
-        if (mouse.is_button_released(Mouse::Button::Left))
+        switch (m_mode)
         {
-            m_drag_move = false;
-            m_drag_resize = false;
-            diag_log("Dialog::m_drag_move={}", m_drag_move);
-            diag_log("Dialog::m_drag_resize={}", m_drag_move);
-            return true;
-        }
+            case Dialog::Mode::Resizing:
+            {
+                bool resize_btn_released{ mouse.is_button_released(Mouse::Button::Left) };
+                m_mode = resize_btn_released ? Dialog::Mode::None : m_mode;
+                return m_mode != Dialog::Mode::None;
+            }
+            case Dialog::Mode::Move:
+            {
+                bool move_btn_released{ mouse.is_button_released(Mouse::Button::Left) };
+                m_mode = move_btn_released ? Dialog::Mode::None : m_mode;
+                return m_mode != Dialog::Mode::None;
+            }
 
-        return false;
+            default:
+                assert_msg("Unknown/invalid Dialog::Mode");
+            case Dialog::Mode::Modal:
+                [[fallthrough]];
+            case Dialog::Mode::None:
+                m_mode = Dialog::Mode::None;
+                return false;
+        }
     }
 
     bool Dialog::on_mouse_scroll(const Mouse& mouse, const Keyboard& kb)
@@ -316,7 +375,7 @@ namespace rl::ui {
         if (m_button_panel != nullptr)
             m_button_panel->show();
 
-        auto&& context{ m_renderer->context() };
+        auto context{ m_renderer->context() };
         nvg::font_size(context, m_theme->dialog_title_font_size);
         nvg::font_face(context, m_theme->dialog_title_font_name.data());
 

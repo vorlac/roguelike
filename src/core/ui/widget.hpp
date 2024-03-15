@@ -155,7 +155,7 @@ namespace rl::ui {
         ds::rect<f32> m_rect{ { 0.0f, 0.0f }, { 0.0f, 0.0f } };
         ds::dims<f32> m_fixed_size{ 0.0f, 0.0f };
 
-        Side m_resize_grab_point_side{ Side::None };
+        Side m_resize_grab_location{ Side::None };
         Mouse::Cursor::ID m_cursor{ Mouse::Cursor::Arrow };
         std::vector<Widget*> m_children{};
         std::string m_tooltip{};

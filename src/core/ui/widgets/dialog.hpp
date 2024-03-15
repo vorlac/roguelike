@@ -14,22 +14,28 @@ namespace rl {
 
         class Dialog : public Widget
         {
+        public:
             friend class Popup;
+
+            enum class Mode {
+                None,     // constant positionioning
+                Modal,    // scopes all GUI focus/input
+                Move,     // being moved or can be moved
+                Resizing  // being resized or can be resized
+            };
 
         public:
             explicit Dialog(Widget* parent, std::string title = "Untitled Dialog");
 
-            void dispose();
-            void center();
+            Dialog::Mode mode() const;
+            std::string title() const;
             f32 header_height() const;
-
-            bool modal() const;
-            const std::string& title() const;
-
             Widget* button_panel();
 
             void set_title(const std::string& title);
-            void set_modal(bool modal);
+            void set_mode(Dialog::Mode mode);
+            void dispose();
+            void center();
 
         public:
             virtual bool on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb) override;
@@ -50,9 +56,10 @@ namespace rl {
         protected:
             std::string m_title{};
             Widget* m_button_panel{ nullptr };
-            bool m_modal{ false };
-            bool m_drag_move{ false };
-            bool m_drag_resize{ false };
+            Mode m_mode{ Mode::None };
+            // bool m_modal{ false };
+            // bool m_drag_move{ false };
+            // bool m_drag_resize{ false };
         };
     }
 }

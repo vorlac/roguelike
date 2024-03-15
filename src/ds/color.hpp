@@ -280,7 +280,7 @@ namespace rl::ds {
 
     public:
         [[nodiscard]]
-        consteval color<f32> to_f32() const
+        constexpr color<f32> to_f32()
             requires std::same_as<T, u8>
         {
             return color<f32>{
@@ -292,7 +292,7 @@ namespace rl::ds {
         }
 
         [[nodiscard]]
-        consteval color<u8> to_u8() const
+        constexpr color<u8> to_u8()
             requires std::same_as<T, f32>
         {
             return color<u8>{
@@ -303,30 +303,26 @@ namespace rl::ds {
             };
         }
 
-        [[nodiscard]]
-        consteval
-        operator const ds::color<f32>()
+        [[nodiscard]] constexpr operator ds::color<u8>()
             requires std::same_as<T, f32>
         {
-            return ds::color<f32>{
-                std::forward<f32>(this->r),
-                std::forward<f32>(this->g),
-                std::forward<f32>(this->b),
-                std::forward<f32>(this->a),
+            return color<u8>{
+                static_cast<u8>(std::clamp(static_cast<f32>(this->r * 255.0f), 0.0f, 255.0f)),
+                static_cast<u8>(std::clamp(static_cast<f32>(this->g * 255.0f), 0.0f, 255.0f)),
+                static_cast<u8>(std::clamp(static_cast<f32>(this->b * 255.0f), 0.0f, 255.0f)),
+                static_cast<u8>(std::clamp(static_cast<f32>(this->a * 255.0f), 0.0f, 255.0f)),
             };
         }
 
-        [[nodiscard]]
-        constexpr
-        operator const ds::color<f32>() const
+        [[nodiscard]] constexpr operator ds::color<u8>() const
             requires std::same_as<T, f32>
         {
-            return ds::color<f32>{ {
-                std::forward<const f32>(this->r),
-                std::forward<const f32>(this->g),
-                std::forward<const f32>(this->b),
-                std::forward<const f32>(this->a),
-            } };
+            return color<u8>{
+                static_cast<u8>(std::clamp(static_cast<f32>(this->r * 255.0f), 0.0f, 255.0f)),
+                static_cast<u8>(std::clamp(static_cast<f32>(this->g * 255.0f), 0.0f, 255.0f)),
+                static_cast<u8>(std::clamp(static_cast<f32>(this->b * 255.0f), 0.0f, 255.0f)),
+                static_cast<u8>(std::clamp(static_cast<f32>(this->a * 255.0f), 0.0f, 255.0f)),
+            };
         }
 
         [[nodiscard]] constexpr operator ds::color<f32>()

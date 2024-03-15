@@ -6,7 +6,6 @@
 
 #include "core/ui/widget.hpp"
 #include "ds/dims.hpp"
-#include "ds/point.hpp"
 #include "sdl/defs.hpp"
 #include "utils/numeric.hpp"
 #include "utils/time.hpp"
@@ -27,9 +26,17 @@ namespace rl::ui {
         Canvas& operator=(Canvas&&) = delete;
         Canvas& operator=(const Canvas&) = delete;
 
+        enum class MouseMode {
+            Propagate,  // Propagate mouse inputs to children widgets
+            Ignore,     // Ignore all mouse inputs
+            Resize,     // Resize floating children dialogs
+            Drag        // Drag child widgets
+        };
+
     public:
         explicit Canvas(const ds::rect<f32>& rect, const Mouse& mouse, const Keyboard& kb,
                         const std::unique_ptr<NVGRenderer>& nvg_renderer);
+        virtual ~Canvas() override = default;
 
         bool draw_all();
         bool redraw();
@@ -57,6 +64,7 @@ namespace rl::ui {
         void dispose_dialog(const Dialog* dialog);
         void set_resize_callback(const std::function<void(ds::dims<f32>)>& callback);
         void add_update_callback(const std::function<void()>& refresh_func);
+        void set_mouse_mode(MouseMode mouse_mode);
 
         using Widget::perform_layout;
         const std::function<void(ds::dims<f32>)>& resize_callback() const;
@@ -94,5 +102,9 @@ namespace rl::ui {
 
         std::function<void(ds::dims<f32>)> m_resize_callback;
         std::vector<std::function<void()>> m_update_callbacks;
+
+    private:
+        MouseMode m_mouse_mode{ MouseMode::Propagate };
+        Dialog* m_active_dialog{ nullptr };
     };
 }

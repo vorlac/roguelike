@@ -6,7 +6,7 @@ cmake-build-*/
 
 export.cfg
 export_presets.cfg
-.sconsign.dblite
+D0_Snippets.as
 
 imgui.ini
 *.translation
