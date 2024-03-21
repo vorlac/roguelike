@@ -36,7 +36,7 @@ namespace rl::ui {
         return m_mode;
     }
 
-    void Dialog::set_mode(Dialog::Mode mode)
+    void Dialog::set_mode(const Dialog::Mode mode)
     {
         m_mode = mode;
     }
@@ -191,40 +191,14 @@ namespace rl::ui {
         Widget::draw();
     }
 
-    bool Dialog::on_mouse_entered(const Mouse& mouse)
+    void Dialog::set_resize_grab_pos(const Side side)
     {
-        scoped_log();
-        Widget::on_mouse_entered(mouse);
-
-        if (m_resizable)
-        {
-            const Side border_grab{ m_rect.edge_overlap(RESIZE_SELECT_BUFFER, mouse.pos()) };
-            // TODO: debug - remove later
-            if (m_resize_grab_location != border_grab)
-                int [[maybe_unused]] breakhere = 123;
-
-            m_resize_grab_location = border_grab;
-        }
-
-        return true;
+        m_resize_grab_location = side;
     }
 
-    bool Dialog::on_mouse_exited(const Mouse& mouse)
+    Side Dialog::resize_side() const
     {
-        scoped_log();
-        Widget::on_mouse_entered(mouse);
-
-        if (m_resizable)
-        {
-            const Side border_grab{ m_rect.edge_overlap(RESIZE_SELECT_BUFFER, mouse.pos()) };
-            // TODO: debug - remove later
-            if (m_resize_grab_location != border_grab)
-                int [[maybe_unused]] breakhere = 123;
-
-            m_resize_grab_location = border_grab;
-        }
-
-        return true;
+        return m_resize_grab_location;
     }
 
     bool Dialog::on_mouse_drag(const Mouse& mouse, const Keyboard& kb)
@@ -258,23 +232,56 @@ namespace rl::ui {
                 const bool resize_btn_down{ mouse.is_button_down(Mouse::Button::Left) };
                 if (resize_btn_down)
                 {
+                    const auto delta{ mouse.pos_delta() };
                     switch (m_resize_grab_location)
                     {
-                        case Side::None:
-                            break;
-
                         case Side::Top:
-                            m_rect.pt.y += mouse.pos_delta().y;
-                            break;
-                        case Side::Left:
-                            m_rect.pt.x += mouse.pos_delta().y;
-                            break;
-
+                            m_rect.pt.y += delta.y;
+                            m_rect.size.height -= delta.y;
+                            this->perform_layout();
+                            return true;
                         case Side::Bottom:
-                            m_rect.size.height += mouse.pos_delta().y;
-                            break;
+                            m_rect.size.height += delta.y;
+                            this->perform_layout();
+                            return true;
+                        case Side::Left:
+                            m_rect.pt.x += delta.x;
+                            m_rect.size.width -= delta.x;
+                            this->perform_layout();
+                            return true;
                         case Side::Right:
-                            m_rect.size.width += mouse.pos_delta().y;
+                            m_rect.size.width += delta.x;
+                            this->perform_layout();
+                            return true;
+                        case Side::TopLeft:
+                            m_rect.pt.x += delta.x;
+                            m_rect.pt.y += delta.y;
+                            m_rect.size.width -= delta.x;
+                            m_rect.size.height -= delta.y;
+                            this->perform_layout();
+                            return true;
+                        case Side::TopRight:
+                            m_rect.pt.y += delta.y;
+                            m_rect.size.width += delta.x;
+                            m_rect.size.height -= delta.y;
+                            this->perform_layout();
+                            return true;
+                        case Side::BottomLeft:
+                            m_rect.pt.x += delta.x;
+                            m_rect.size.width -= delta.x;
+                            m_rect.size.height += delta.y;
+                            this->perform_layout();
+                            return true;
+                        case Side::BottomRight:
+                            m_rect.size.width += delta.x;
+                            m_rect.size.height += delta.y;
+                            this->perform_layout();
+                            return true;
+
+                        default:
+                            assert_msg("Invalid/unhandled resize grab location");
+                            [[fallthrough]];
+                        case Side::None:
                             break;
                     }
                 }
@@ -310,15 +317,16 @@ namespace rl::ui {
             }
             case Dialog::Mode::Resizing:
             {
+                // m_resize_grab_location = m_rect.edge_overlap(RESIZE_GRAB_BUFFER, mouse.pos());
                 runtime_assert(m_resize_grab_location != Side::None,
                                "dialog resizing without grab location");
                 return m_resize_grab_location != Side::None;
             }
             case Dialog::Mode::None:
             {
-                const Side border_grab{ m_rect.edge_overlap(RESIZE_SELECT_BUFFER, mouse.pos()) };
-                m_resize_grab_location = border_grab;
-                return true;
+                // const Side border_grab{ m_rect.edge_overlap(RESIZE_GRAB_BUFFER, mouse.pos()) };
+                // m_resize_grab_location = border_grab;
+                return false;
             }
             case Dialog::Mode::Modal:
                 return false;
@@ -329,33 +337,14 @@ namespace rl::ui {
 
     bool Dialog::on_mouse_button_released(const Mouse& mouse, const Keyboard& kb)
     {
+        m_mode = Dialog::Mode::None;
+        m_resize_grab_location = Side::None;
+
         scoped_log("btn={}", mouse.button_released());
         if (Widget::on_mouse_button_released(mouse, kb))
             return true;
 
-        switch (m_mode)
-        {
-            case Dialog::Mode::Resizing:
-            {
-                bool resize_btn_released{ mouse.is_button_released(Mouse::Button::Left) };
-                m_mode = resize_btn_released ? Dialog::Mode::None : m_mode;
-                return m_mode != Dialog::Mode::None;
-            }
-            case Dialog::Mode::Move:
-            {
-                bool move_btn_released{ mouse.is_button_released(Mouse::Button::Left) };
-                m_mode = move_btn_released ? Dialog::Mode::None : m_mode;
-                return m_mode != Dialog::Mode::None;
-            }
-
-            default:
-                assert_msg("Unknown/invalid Dialog::Mode");
-            case Dialog::Mode::Modal:
-                [[fallthrough]];
-            case Dialog::Mode::None:
-                m_mode = Dialog::Mode::None;
-                return false;
-        }
+        return false;
     }
 
     bool Dialog::on_mouse_scroll(const Mouse& mouse, const Keyboard& kb)
@@ -394,6 +383,22 @@ namespace rl::ui {
 
         return bounding_rect.size;
     }
+
+    // bool Dialog::contains(const ds::point<f32>& pt)
+    //{
+    //     if (!m_rect.contains(pt))
+    //         return false;
+
+    //    const auto edge_overlap{ m_rect.edge_overlap(RESIZE_GRAB_BUFFER, pt) };
+    //    if (edge_overlap != Side::None && this->mode() == Dialog::Mode::None)
+    //    {
+    //        // m_resize_grab_location = edge_overlap;
+    //        return true;
+    //    }
+
+    //    // m_resize_grab_location = Side::None;
+    //    return false;
+    //}
 
     void Dialog::perform_layout()
     {

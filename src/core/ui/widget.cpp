@@ -247,11 +247,6 @@ namespace rl::ui {
         return m_children[static_cast<size_t>(index)];
     }
 
-    Side Widget::resize_side() const
-    {
-        return m_resize_grab_location;
-    }
-
     const Widget* Widget::child_at(i32 index) const
     {
         scoped_logger(log_level::debug, "idx={} cnt={}", index, m_children.size());
@@ -317,7 +312,7 @@ namespace rl::ui {
                     // if the child is resizable and the larger resize rect (for grab points)
                     // contains the mouse, but the smaller inner rect doesn't then favor resizing
                     // over recursively going deeper into the tree of widgets for more children
-                    if (!child->rect().expanded(-RESIZE_SELECT_BUFFER).contains(pt - m_rect.pt))
+                    if (!child->rect().expanded(-RESIZE_GRAB_BUFFER).contains(pt - m_rect.pt))
                         return child;
 
                     // otherwise continue searching for a better match
@@ -330,9 +325,7 @@ namespace rl::ui {
             }
         }
 
-        m_resize_grab_location = m_resizable ? m_rect.edge_overlap(RESIZE_SELECT_BUFFER, pt)
-                                             : Side::None;
-        return this->contains(pt) || m_resize_grab_location != Side::None ? this : nullptr;
+        return this->contains(pt) ? this : nullptr;
     }
 
     bool Widget::on_mouse_entered(const Mouse& mouse)
@@ -619,7 +612,7 @@ namespace rl::ui {
 
     ds::rect<f32> Widget::resize_rect() const
     {
-        return m_rect.expanded(RESIZE_SELECT_BUFFER);
+        return m_rect.expanded(RESIZE_GRAB_BUFFER);
     }
 
     void Widget::set_cursor(const Mouse::Cursor::ID cursor)
@@ -628,7 +621,7 @@ namespace rl::ui {
         m_cursor = cursor;
     }
 
-    bool Widget::contains(const ds::point<f32>& pt) const
+    bool Widget::contains(const ds::point<f32>& pt)
     {
         // Check if the widget contains a certain position
         const ds::rect widget_rect{ m_rect.pt, m_rect.size };

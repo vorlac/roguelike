@@ -1,15 +1,12 @@
 #pragma once
 
+#include <concepts>
+#include <iostream>
 #include <memory>
-#include <stack>
-#include <type_traits>
-#include <utility>
 #include <variant>
 #include <vector>
 
-#include "core/state/states.hpp"
-
-namespace rl {
+namespace rl::crtp::example {
     template <typename... TVisitorFunction>
     struct variant_visitor : TVisitorFunction...
     {
@@ -26,77 +23,49 @@ namespace rl {
     variant_visitor(TVisitorFunction...)
         -> variant_visitor<std::remove_reference_t<TVisitorFunction>...>;
 
-    template <typename... T>
-    using static_polymophic_t = std::variant<T...>;
+    // clang-format off
 
-    using gamestate_vec = std::vector<      //
-        static_polymophic_t<                //
-            TeardownState, PauseMenuState,  //
-            GameplayState, LoadLevelState,  //
-            MainMenuState, GameInitState>>;
+    struct A {
+        int a{};
+    };
+    struct B {
+        int b{};
+    };
+    struct C {
+        int c{};
+    };
+    struct D {
+        int d{};
+    };
 
-    using gamestate_stack = std::stack<     //
-        static_polymophic_t<                //
-            TeardownState, PauseMenuState,  //
-            GameplayState, LoadLevelState,  //
-            MainMenuState, GameInitState>,
-        gamestate_vec>;
-}
+    // clang-format on
 
-namespace rl::example {
-    static void example()
+    int test()
     {
-        gamestate_vec states = {
-            GameInitState{},
-            PauseMenuState{},
-            GameplayState{},
-            PauseMenuState{},
+        using variant_t = std::variant<A, B, C, D>;
+        std::vector<variant_t> variants = {
+            A{ .a = 123 }, B{ .b = 234 }, D{ .d = 987 },
+            C{ .c = 457 }, A{ .a = 647 }, D{ .d = 666 },
         };
 
-        struct A
+        for (auto&& var : variants)
         {
-            int a{};
-        };
-
-        struct B
-        {
-            int b{};
-        };
-
-        struct C
-        {
-            int c{};
-        };
-
-        struct D
-        {
-            int d{};
-        };
-
-        std::vector<std::variant<A, B, C, D>> variants = {
-            A{ .a = 123 },
-            B{ .b = 234 },
-            D{ .d = 987 },
-        };
-
-        for (auto& var : variants)
-        {
-            std::visit(  //
-                variant_visitor{
-                    [](A& a_variant) {
-                        std::cout << "A: " << a_variant.a << std::endl;
-                    },
-                    [](B& b_variant) {
-                        std::cout << "B: " << b_variant.b << std::endl;
-                    },
-                    [](auto& other) {
-                        if constexpr (std::same_as<decltype(other), C>)
-                            std::cout << "C: " << other.c << std::endl;
-                        if constexpr (std::same_as<decltype(other), D>)
-                            std::cout << "D: " << other.d << std::endl;
-                    },
-                },
-                var);
+            std::visit(variant_visitor{
+                           [](A& a_variant) {
+                               std::cout << "A: " << a_variant.a << std::endl;
+                           },
+                           [](B& b_variant) {
+                               std::cout << "B: " << b_variant.b << std::endl;
+                           },
+                           [](auto& other) {
+                               using other_t = std::remove_cvref_t<decltype(other)>;
+                               if constexpr (std::same_as<other_t, C>)
+                                   std::cout << "C: " << other.c << std::endl;
+                               if constexpr (std::same_as<other_t, D>)
+                                   std::cout << "D: " << other.d << std::endl;
+                           },
+                       },
+                       var);
         }
     }
 }

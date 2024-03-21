@@ -29,21 +29,21 @@ namespace rl {
 
             Dialog::Mode mode() const;
             std::string title() const;
+            Side resize_side() const;
             f32 header_height() const;
             Widget* button_panel();
 
+            void center();
+            void set_resize_grab_pos(Side side);
             void set_title(const std::string& title);
             void set_mode(Dialog::Mode mode);
             void dispose();
-            void center();
 
         public:
             virtual bool on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb) override;
             virtual bool on_mouse_button_released(const Mouse& mouse, const Keyboard& kb) override;
             virtual bool on_mouse_scroll(const Mouse& mouse, const Keyboard& kb) override;
             virtual bool on_mouse_drag(const Mouse& mouse, const Keyboard& kb) override;
-            virtual bool on_mouse_entered(const Mouse& mouse) override;
-            virtual bool on_mouse_exited(const Mouse& mouse) override;
 
         public:
             virtual void draw() override;
@@ -57,9 +57,8 @@ namespace rl {
             std::string m_title{};
             Widget* m_button_panel{ nullptr };
             Mode m_mode{ Mode::None };
+            Side m_resize_grab_location{ Side::None };
             // bool m_modal{ false };
-            // bool m_drag_move{ false };
-            // bool m_drag_resize{ false };
         };
     }
 }

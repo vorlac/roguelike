@@ -35,8 +35,8 @@ namespace rl::ds {
 
         // copy construct rect<T> from 'other' l-value rect<T>
         constexpr rect(const rect<T>& other)
-            : pt{ std::forward<T>(other.pt) }
-            , size{ std::forward<T>(other.size) }
+            : pt{ other.pt }
+            , size{ other.size }
         {
         }
 

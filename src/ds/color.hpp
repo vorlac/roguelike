@@ -27,19 +27,19 @@ namespace rl::ds {
 
         constexpr color(T fr, T fg, T fb, T fa = 1.0f)
             requires std::same_as<T, f32>
-            : r{ std::forward<T>(fr) }
-            , g{ std::forward<T>(fg) }
-            , b{ std::forward<T>(fb) }
-            , a{ std::forward<T>(fa) }
+            : r{ std::move(fr) }
+            , g{ std::move(fg) }
+            , b{ std::move(fb) }
+            , a{ std::move(fa) }
         {
         }
 
         constexpr color(T ir, T ig, T ib, T ia = 255)
             requires std::same_as<T, u8>
-            : r{ std::forward<T>(ir) }
-            , g{ std::forward<T>(ig) }
-            , b{ std::forward<T>(ib) }
-            , a{ std::forward<T>(ia) }
+            : r{ std::move(ir) }
+            , g{ std::move(ig) }
+            , b{ std::move(ib) }
+            , a{ std::move(ia) }
         {
         }
 

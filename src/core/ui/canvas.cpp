@@ -313,8 +313,12 @@ namespace rl::ui {
                                 }) != m_focus_path.end() };
         if (match_found)
             m_focus_path.clear();
-        if (m_drag_widget == dialog)
-            m_drag_widget = nullptr;
+
+        if (m_active_dialog == dialog)
+        {
+            m_active_dialog = nullptr;
+            m_active_widget = nullptr;
+        }
 
         this->remove_child(dialog);
     }
@@ -365,6 +369,7 @@ namespace rl::ui {
     {
         bool handled{ false };
 
+        auto mouse_pos{ mouse.pos() };
         m_last_interaction = m_timer.elapsed();
         if (m_mouse_mode != MouseMode::Ignore)
         {
@@ -384,12 +389,27 @@ namespace rl::ui {
                 }
                 case MouseMode::Propagate:
                 {
-                    Widget* widget{ this->find_widget(mouse.pos()) };
+                    m_active_dialog = nullptr;
+                    Widget* widget{ this->find_widget(mouse_pos) };
                     if (widget != nullptr)
                     {
-                        const auto resize_grab{ widget->resize_side() };
-                        if (widget->resizable() && resize_grab != Side::None)
-                            mouse.set_cursor(resize_grab);
+                        Dialog* dialog{ dynamic_cast<Dialog*>(widget) };
+                        if (dialog == widget)
+                        {
+                            m_active_dialog = dialog;
+                            if (dialog->mode() == Dialog::Mode::Modal &&
+                                !dialog->contains(mouse_pos))
+                                return false;
+
+                            auto dialog_rect{ dialog->rect() };
+                            Side grab_pos{ dialog_rect.edge_overlap(RESIZE_GRAB_BUFFER, mouse_pos) };
+                            dialog->set_resize_grab_pos(grab_pos);
+
+                            if (dialog->resizable() && grab_pos != Side::None)
+                                mouse.set_cursor(grab_pos);
+                            else if (dialog->cursor() != m_mouse.active_cursor())
+                                m_mouse.set_cursor(dialog->cursor());
+                        }
                         else if (widget->cursor() != m_mouse.active_cursor())
                             m_mouse.set_cursor(widget->cursor());
                     }
@@ -415,8 +435,6 @@ namespace rl::ui {
 
     bool Canvas::on_mouse_button_pressed_event(const Mouse& mouse, const Keyboard& kb)
     {
-        scoped_log("btn_pressed={}", mouse.button_pressed());
-
         m_active_dialog = nullptr;
         m_last_interaction = m_timer.elapsed();
         if (m_mouse_mode == MouseMode::Ignore)
@@ -437,32 +455,62 @@ namespace rl::ui {
             }
         }
 
-        bool interact_btn_pressed{ mouse.is_button_pressed(Mouse::Button::Left) };
-        if (interact_btn_pressed && m_active_dialog != nullptr)
+        switch (m_mouse_mode)
         {
-            m_mouse_mode = MouseMode::Propagate;
-            if (this == static_cast<Widget*>(m_active_dialog))
+            case MouseMode::Propagate:
             {
-                m_active_dialog = nullptr;
-                this->update_focus(nullptr);
-            }
-            else
-            {
-                auto resize_grab_location{ m_active_dialog->resize_side() };
-                if (resize_grab_location != Side::None && m_active_dialog->resizable())
+                m_active_widget = find_widget(mouse_pos);
+                m_active_dialog = dynamic_cast<Dialog*>(m_active_widget);
+
+                if (m_active_dialog != nullptr)
                 {
-                    m_mouse_mode = MouseMode::Resize;
-                    m_active_dialog->set_mode(Dialog::Mode::Resizing);
+                    bool drag_btn_pressed{ mouse.is_button_pressed(Mouse::Button::Left) };
+                    bool resize_btn_pressed{ mouse.is_button_pressed(Mouse::Button::Left) };
+
+                    if (resize_btn_pressed)
+                    {
+                        if (m_active_dialog != nullptr)
+                        {
+                            auto dialog_rect{ m_active_dialog->rect() };
+                            Side grab_pos{ dialog_rect.edge_overlap(RESIZE_GRAB_BUFFER, mouse_pos) };
+                            m_active_dialog->set_resize_grab_pos(grab_pos);
+                            if (grab_pos == Side::None)
+                                m_active_dialog->set_mode(Dialog::Mode::None);
+                            else
+                            {
+                                m_mouse_mode = MouseMode::Resize;
+                                m_active_dialog->set_mode(Dialog::Mode::Resizing);
+                                m_redraw |= m_active_dialog->on_mouse_button_pressed(mouse, kb);
+                            }
+                        }
+                    }
+
+                    if (!m_redraw && drag_btn_pressed)
+                    {
+                        m_mouse_mode = MouseMode::Drag;
+                        m_active_dialog->set_mode(Dialog::Mode::Move);
+                        m_redraw |= m_active_dialog->on_mouse_button_pressed(mouse, kb);
+                    }
+
+                    if (!m_redraw && m_active_dialog != nullptr)
+                        m_active_dialog->set_mode(Dialog::Mode::None);
                 }
-                else
-                {
-                    m_mouse_mode = MouseMode::Drag;
-                    m_active_dialog->set_mode(Dialog::Mode::Move);
-                }
+
+                break;
             }
+            case MouseMode::Drag:
+                [[fallthrough]];
+            case MouseMode::Resize:
+                [[fallthrough]];
+            default:
+                assert_msg("Invalid/unhandled canvas mouse mode");
+                [[fallthrough]];
+            case MouseMode::Ignore:
+                break;
         }
 
         m_redraw |= Widget::on_mouse_button_pressed(mouse, kb);
+
         return false;
     }
 
@@ -477,7 +525,7 @@ namespace rl::ui {
 
         if (m_focus_path.size() > 1)
         {
-            const Dialog* dialog{ dynamic_cast<Dialog*>(m_focus_path[m_focus_path.size() - 2]) };
+            Dialog* dialog{ dynamic_cast<Dialog*>(m_focus_path[m_focus_path.size() - 2]) };
             if (dialog != nullptr && dialog->mode() == Dialog::Mode::Modal)
             {
                 if (!dialog->contains(mouse_pos))
@@ -528,6 +576,7 @@ namespace rl::ui {
             default:
                 assert_msg("Invalid/unhandled UI Canvas mouse mode");
                 [[fallthrough]];
+            case MouseMode::Ignore:
             case MouseMode::Propagate:
                 break;
         }
@@ -546,7 +595,7 @@ namespace rl::ui {
         m_last_interaction = m_timer.elapsed();
         if (m_focus_path.size() > 1)
         {
-            const Dialog* dialog{ dynamic_cast<Dialog*>(m_focus_path[m_focus_path.size() - 2]) };
+            Dialog* dialog{ dynamic_cast<Dialog*>(m_focus_path[m_focus_path.size() - 2]) };
             if (dialog != nullptr && dialog->mode() == Dialog::Mode::Modal)
                 if (!dialog->contains(mouse.pos()))
                     return true;

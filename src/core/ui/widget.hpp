@@ -45,7 +45,6 @@ namespace rl::ui {
         bool enabled() const;
         bool focused() const;
         bool resizable() const;
-        bool contains(const ds::point<f32>& pt) const;
 
         f32 width() const;
         f32 height() const;
@@ -62,7 +61,6 @@ namespace rl::ui {
         Layout* layout();
         Theme* theme();
         Widget* child_at(i32 index);
-        Side resize_side() const;
         Mouse::Cursor::ID cursor() const;
         ds::rect<f32> resize_rect() const;
         ds::point<f32> abs_position() const;
@@ -132,6 +130,7 @@ namespace rl::ui {
         virtual std::string_view name() const;
         virtual ds::dims<f32> preferred_size() const;
         virtual Widget* find_widget(const ds::point<f32>& pt);
+        virtual bool contains(const ds::point<f32>& pt);
         virtual bool draw_mouse_intersection(const ds::point<f32>& pt);
 
     protected:
@@ -155,14 +154,13 @@ namespace rl::ui {
         ds::rect<f32> m_rect{ { 0.0f, 0.0f }, { 0.0f, 0.0f } };
         ds::dims<f32> m_fixed_size{ 0.0f, 0.0f };
 
-        Side m_resize_grab_location{ Side::None };
         Mouse::Cursor::ID m_cursor{ Mouse::Cursor::Arrow };
         std::vector<Widget*> m_children{};
         std::string m_tooltip{};
         Timer<f32> m_timer{};
 
     protected:
-        constexpr static inline f32 RESIZE_SELECT_BUFFER{ 5.0f };
+        constexpr static inline f32 RESIZE_GRAB_BUFFER{ 5.0f };
         constexpr static bool DiagnosticsEnabled{ false };
     };
 }

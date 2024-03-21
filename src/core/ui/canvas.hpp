@@ -91,12 +91,6 @@ namespace rl::ui {
         bool m_redraw{ true };
         bool m_process_events{ true };
 
-        bool m_drag_active{ false };
-        Widget* m_drag_widget{ nullptr };
-
-        bool m_resize_active{ false };
-        Widget* m_resize_widget{ nullptr };
-
         const Mouse& m_mouse{};
         const Keyboard& m_keyboard{};
 
@@ -106,5 +100,6 @@ namespace rl::ui {
     private:
         MouseMode m_mouse_mode{ MouseMode::Propagate };
         Dialog* m_active_dialog{ nullptr };
+        Widget* m_active_widget{ nullptr };
     };
 }
