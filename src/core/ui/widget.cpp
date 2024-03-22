@@ -645,7 +645,7 @@ namespace rl::ui {
         return nullptr;
     }
 
-    Dialog* Widget::dialog()
+    ScrollableDialog* Widget::dialog()
     {
         scoped_trace(log_level::trace);
 
@@ -669,7 +669,7 @@ namespace rl::ui {
         return const_cast<Widget*>(this)->canvas();
     }
 
-    const Dialog* Widget::dialog() const
+    const ScrollableDialog* Widget::dialog() const
     {
         scoped_trace(log_level::trace);
         return const_cast<Widget*>(this)->dialog();

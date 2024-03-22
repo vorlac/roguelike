@@ -1,20 +1,21 @@
 #pragma once
 
 #include "core/ui/widgets/dialog.hpp"
+#include "scroll_dialog.hpp"
 #include "utils/numeric.hpp"
 
 namespace rl::ui {
 
-    class Popup final : public Dialog
+    class Popup final : public ScrollableDialog
     {
     public:
-        explicit Popup(Widget* parent, Dialog* parent_dialog = nullptr);
+        explicit Popup(Widget* parent, ScrollableDialog* parent_dialog = nullptr);
 
         f32 anchor_offset() const;
         f32 anchor_size() const;
         Side side() const;
-        Dialog* parent_dialog();
-        const Dialog* parent_dialog() const;
+        ScrollableDialog* parent_dialog();
+        const ScrollableDialog* parent_dialog() const;
         ds::point<f32> anchor_pos() const;
 
         void set_anchor_pos(ds::point<f32> anchor_pos);
@@ -28,7 +29,7 @@ namespace rl::ui {
         virtual void refresh_relative_placement() override;
 
     protected:
-        Dialog* m_parent_dialog{ nullptr };
+        ScrollableDialog* m_parent_dialog{ nullptr };
         ds::point<f32> m_anchor_pos{ 0.0f, 0.0f };
         f32 m_anchor_offset{ 30.0f };
         f32 m_anchor_size{ 15.0f };

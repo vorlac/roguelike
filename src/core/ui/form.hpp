@@ -9,7 +9,7 @@
 #include "core/ui/widgets/dialog.hpp"
 #include "core/ui/widgets/label.hpp"
 #include "core/ui/widgets/textbox.hpp"
-#include "core/ui/widgets/vscrollpanel.hpp"
+#include "core/ui/widgets/vertical_scroll_panel.hpp"
 #include "ds/dims.hpp"
 #include "ds/shared.hpp"
 #include "layouts/advanced_grid_layout.hpp"
@@ -42,7 +42,7 @@ namespace rl::ui {
             m_layout = new AdvancedGridLayout{ { 0, 0, 0, 0 }, {} };
             m_layout->set_margin(10.0f);
 
-            m_scroll = new VScrollPanel{ m_dialog };
+            m_scroll = new VerticalScrollPanel{ m_dialog };
             m_scroll->set_fixed_height(300);
             m_scroll->container()->set_layout(m_layout);
 
@@ -203,7 +203,7 @@ namespace rl::ui {
     protected:
         ds::shared<Canvas> m_ui_canvas{ nullptr };
         ds::shared<Dialog> m_dialog{ nullptr };
-        ds::shared<VScrollPanel> m_scroll{ nullptr };
+        ds::shared<VerticalScrollPanel> m_scroll{ nullptr };
         ds::shared<Widget> m_container{ nullptr };
         ds::shared<AdvancedGridLayout> m_layout{ nullptr };
         std::vector<std::function<void()>> m_refresh_callbacks;

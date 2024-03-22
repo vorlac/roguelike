@@ -15,7 +15,7 @@
 #include "utils/time.hpp"
 
 namespace rl::ui {
-    class Dialog;
+    class ScrollableDialog;
     class Canvas;
 
     class Widget : public ds::refcounted
@@ -56,7 +56,7 @@ namespace rl::ui {
         i32 child_count() const;
 
         Canvas* canvas();
-        Dialog* dialog();
+        ScrollableDialog* dialog();
         Widget* parent();
         Layout* layout();
         Theme* theme();
@@ -69,7 +69,7 @@ namespace rl::ui {
         const ds::dims<f32>& size() const;
         const ds::rect<f32>& rect() const;
         const Canvas* canvas() const;
-        const Dialog* dialog() const;
+        const ScrollableDialog* dialog() const;
         const Widget* parent() const;
         const Layout* layout() const;
         const Theme* theme() const;

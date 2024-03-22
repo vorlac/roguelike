@@ -10,7 +10,7 @@ namespace rl::ui {
         Any
     };
 
-    class VScrollPanel final : public Widget
+    class VerticalScrollPanel final : public Widget
     {
         class ScrollableContainer final : public Widget
         {
@@ -30,7 +30,7 @@ namespace rl::ui {
         };
 
     public:
-        explicit VScrollPanel(Widget* parent);
+        explicit VerticalScrollPanel(Widget* parent);
 
         f32 scroll() const;
         void set_scroll(f32 scroll);

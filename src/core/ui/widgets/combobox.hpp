@@ -10,7 +10,7 @@ namespace rl {
 
     namespace ui {
         class Widget;
-        class VScrollPanel;
+        class VerticalScrollPanel;
 
         class ComboBox : public PopupButton
         {
@@ -36,7 +36,7 @@ namespace rl {
             virtual bool on_mouse_scroll(const Mouse& mouse, const Keyboard& kb) override;
 
         protected:
-            VScrollPanel* m_vscroll_panel{ nullptr };
+            VerticalScrollPanel* m_vscroll_panel{ nullptr };
             Widget* m_item_container{ nullptr };
             std::vector<std::string> m_items{};
             std::vector<std::string> m_items_short{};

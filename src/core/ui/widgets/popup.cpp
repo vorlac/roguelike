@@ -1,12 +1,13 @@
 #include "core/ui/theme.hpp"
 #include "core/ui/widgets/popup.hpp"
 #include "graphics/vg/nanovg.hpp"
+#include "scroll_dialog.hpp"
 #include "utils/logging.hpp"
 
 namespace rl::ui {
 
-    Popup::Popup(Widget* parent, Dialog* parent_dialog)
-        : Dialog{ parent, "" }
+    Popup::Popup(Widget* parent, ScrollableDialog* parent_dialog)
+        : ScrollableDialog{ parent, "" }
         , m_parent_dialog{ parent_dialog }
     {
         scoped_trace(log_level::debug);
@@ -60,13 +61,13 @@ namespace rl::ui {
         return m_side;
     }
 
-    Dialog* Popup::parent_dialog()
+    ScrollableDialog* Popup::parent_dialog()
     {
         scoped_trace(log_level::debug);
         return m_parent_dialog;
     }
 
-    const Dialog* Popup::parent_dialog() const
+    const ScrollableDialog* Popup::parent_dialog() const
     {
         scoped_trace(log_level::debug);
         return m_parent_dialog;

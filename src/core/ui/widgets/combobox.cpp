@@ -9,7 +9,7 @@
 #include "core/ui/layouts/layout.hpp"
 #include "core/ui/widget.hpp"
 #include "core/ui/widgets/combobox.hpp"
-#include "core/ui/widgets/vscrollpanel.hpp"
+#include "core/ui/widgets/vertical_scroll_panel.hpp"
 
 namespace rl::ui {
     ComboBox::ComboBox(Widget* parent)
@@ -103,7 +103,7 @@ namespace rl::ui {
 
         if (m_vscroll_panel == nullptr && items.size() > 8)
         {
-            m_vscroll_panel = new VScrollPanel{ m_popup };
+            m_vscroll_panel = new VerticalScrollPanel{ m_popup };
             m_vscroll_panel->set_fixed_height(300);
             m_item_container = new Widget{ m_vscroll_panel };
             m_popup->set_layout(new BoxLayout{

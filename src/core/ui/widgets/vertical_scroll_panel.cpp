@@ -1,47 +1,47 @@
 #include "core/ui/theme.hpp"
-#include "core/ui/widgets/vscrollpanel.hpp"
 #include "ds/color.hpp"
 #include "graphics/vg/nanovg_state.hpp"
 #include "utils/logging.hpp"
 #include "utils/math.hpp"
+#include "vertical_scroll_panel.hpp"
 
 namespace rl::ui {
 
-    VScrollPanel::VScrollPanel(Widget* parent)
+    VerticalScrollPanel::VerticalScrollPanel(Widget* parent)
         : Widget{ parent }
     {
         m_container = new ScrollableContainer{ nullptr };
         Widget::add_child(0, m_container);
     }
 
-    void VScrollPanel::add_child(Widget* child)
+    void VerticalScrollPanel::add_child(Widget* child)
     {
         runtime_assert(m_container != nullptr, "vscroll container not set up yet");
         m_container->add_child(child);
     }
 
-    f32 VScrollPanel::scroll() const
+    f32 VerticalScrollPanel::scroll() const
     {
         // Return the current scroll amount as a value between 0 and 1.
         // 0 means scrolled to the top and 1 to the bottom.
         return m_scrollbar_pos;
     }
 
-    void VScrollPanel::set_scroll(const f32 scroll)
+    void VerticalScrollPanel::set_scroll(const f32 scroll)
     {
         // Set the scroll amount to a value between 0 and 1.
         // 0 means scrolled to the top and 1 to the bottom.
         m_scrollbar_pos = scroll;
     }
 
-    Widget* VScrollPanel::container() const
+    Widget* VerticalScrollPanel::container() const
     {
         // Set the scroll amount to a value between 0 and 1.
         // 0 means scrolled to the top and 1 to the bottom.
         return m_container;
     }
 
-    void VScrollPanel::perform_layout()
+    void VerticalScrollPanel::perform_layout()
     {
         scoped_log();
 
@@ -81,7 +81,7 @@ namespace rl::ui {
         m_container->perform_layout();
     }
 
-    ds::dims<f32> VScrollPanel::preferred_size() const
+    ds::dims<f32> VerticalScrollPanel::preferred_size() const
     {
         scoped_log();
 
@@ -91,7 +91,7 @@ namespace rl::ui {
         return m_container->preferred_size() + ds::dims{ Margin + ScrollbarWidth, 0.0f };
     }
 
-    Widget* VScrollPanel::find_widget(const ds::point<f32>& pt)
+    Widget* VerticalScrollPanel::find_widget(const ds::point<f32>& pt)
     {
         scoped_trace(log_level::debug);
         if (m_scroll_bar_rect.contains(pt))
@@ -100,7 +100,7 @@ namespace rl::ui {
         return m_container->find_widget(pt - m_rect.pt);
     }
 
-    bool VScrollPanel::on_mouse_drag(const Mouse& mouse, const Keyboard& kb)
+    bool VerticalScrollPanel::on_mouse_drag(const Mouse& mouse, const Keyboard& kb)
     {
         scoped_log();
 
@@ -123,7 +123,7 @@ namespace rl::ui {
         return Widget::on_mouse_drag(mouse, kb);
     }
 
-    bool VScrollPanel::draw_mouse_intersection(const ds::point<f32>& pt)
+    bool VerticalScrollPanel::draw_mouse_intersection(const ds::point<f32>& pt)
     {
         scoped_logger(log_level::trace, "pos={}", pt);
 
@@ -138,7 +138,7 @@ namespace rl::ui {
         return m_container->draw_mouse_intersection(local_mouse_pos);
     }
 
-    bool VScrollPanel::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb)
+    bool VerticalScrollPanel::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb)
     {
         scoped_log();
 
@@ -177,7 +177,7 @@ namespace rl::ui {
         return m_container->on_mouse_button_pressed(mouse, kb);
     }
 
-    bool VScrollPanel::on_mouse_button_released(const Mouse& mouse, const Keyboard& kb)
+    bool VerticalScrollPanel::on_mouse_button_released(const Mouse& mouse, const Keyboard& kb)
     {
         scoped_logger(log_level::trace, "pos={}", mouse.pos());
 
@@ -185,7 +185,7 @@ namespace rl::ui {
         return m_container->on_mouse_button_released(mouse, kb);
     }
 
-    bool VScrollPanel::on_mouse_move(const Mouse& mouse, const Keyboard& kb)
+    bool VerticalScrollPanel::on_mouse_move(const Mouse& mouse, const Keyboard& kb)
     {
         scoped_logger(log_level::trace, "pos={}", mouse.pos());
 
@@ -193,7 +193,7 @@ namespace rl::ui {
         return m_container->on_mouse_move(mouse, kb);
     }
 
-    bool VScrollPanel::on_mouse_scroll(const Mouse& mouse, const Keyboard& kb)
+    bool VerticalScrollPanel::on_mouse_scroll(const Mouse& mouse, const Keyboard& kb)
     {
         scoped_log();
 
@@ -219,7 +219,7 @@ namespace rl::ui {
         return true;
     }
 
-    void VScrollPanel::draw()
+    void VerticalScrollPanel::draw()
     {
         if (m_container == nullptr)
             return;
