@@ -755,7 +755,7 @@ namespace rl::ui {
     {
         if (m_selection_pos > -1)
         {
-            const Dialog* dialog{ this->dialog() };
+            const ScrollableDialog* dialog{ this->dialog() };
             if (dialog == nullptr)
                 return false;
 
@@ -774,7 +774,7 @@ namespace rl::ui {
 
     void TextBox::paste_from_clipboard()
     {
-        const Dialog* dialog{ this->dialog() };
+        const ScrollableDialog* dialog{ this->dialog() };
         if (dialog == nullptr)
             return;
 

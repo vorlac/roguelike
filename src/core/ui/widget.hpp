@@ -15,7 +15,7 @@
 #include "utils/time.hpp"
 
 namespace rl::ui {
-    class Dialog;
+    class ScrollableDialog;
     class Canvas;
 
     class Widget : public ds::refcounted
@@ -52,14 +52,16 @@ namespace rl::ui {
         f32 fixed_height() const;
         f32 font_size() const;
         f32 icon_extra_scale() const;
+        // TODO: change to size_t
         i32 child_index(const Widget* widget) const;
         i32 child_count() const;
 
         Canvas* canvas();
-        Dialog* dialog();
+        ScrollableDialog* dialog();
         Widget* parent();
         Layout* layout();
         Theme* theme();
+        // TODO: change to size_t
         Widget* child_at(i32 index);
         Mouse::Cursor::ID cursor() const;
         ds::rect<f32> resize_rect() const;
@@ -69,7 +71,7 @@ namespace rl::ui {
         const ds::dims<f32>& size() const;
         const ds::rect<f32>& rect() const;
         const Canvas* canvas() const;
-        const Dialog* dialog() const;
+        const ScrollableDialog* dialog() const;
         const Widget* parent() const;
         const Layout* layout() const;
         const Theme* theme() const;
@@ -95,6 +97,7 @@ namespace rl::ui {
         void set_cursor(Mouse::Cursor::ID cursor);
 
         void request_focus();
+        // TODO: change to size_t
         void remove_child_at(i32 index);
         void remove_child(const Widget* widget);
 

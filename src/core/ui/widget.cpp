@@ -237,20 +237,17 @@ namespace rl::ui {
 
     i32 Widget::child_count() const
     {
-        scoped_logger(log_level::debug, "{}", m_children.size());
         return static_cast<i32>(m_children.size());
     }
 
-    Widget* Widget::child_at(i32 index)
+    Widget* Widget::child_at(const i32 index)
     {
-        scoped_logger(log_level::debug, "idx={} cnt={}", index, m_children.size());
-        return m_children[static_cast<size_t>(index)];
+        return m_children[index];
     }
 
-    const Widget* Widget::child_at(i32 index) const
+    const Widget* Widget::child_at(const i32 index) const
     {
-        scoped_logger(log_level::debug, "idx={} cnt={}", index, m_children.size());
-        return m_children[static_cast<size_t>(index)];
+        return m_children[index];
     }
 
     const std::vector<Widget*>& Widget::children() const
@@ -276,7 +273,7 @@ namespace rl::ui {
     {
         scoped_trace(log_level::trace);
 
-        for (auto&& child : m_children)
+        for (const auto child : m_children)
         {
             auto ps{ child->preferred_size() };
             auto fs{ child->fixed_size() };
@@ -298,8 +295,6 @@ namespace rl::ui {
 
     Widget* Widget::find_widget(const ds::point<f32>& pt)
     {
-        scoped_trace(log_level::debug);
-
         {
             LocalTransform transform{ this };
             const ds::point local_mouse_pos{ pt - m_rect.pt };
@@ -330,36 +325,30 @@ namespace rl::ui {
 
     bool Widget::on_mouse_entered(const Mouse& mouse)
     {
-        scoped_logger(log_level::warn, "enter_pos={}", mouse.pos());
         m_mouse_focus = true;
         return false;
     }
 
     bool Widget::on_mouse_exited(const Mouse& mouse)
     {
-        scoped_logger(log_level::warn, "exit_pos={}", mouse.pos());
         m_mouse_focus = false;
         return false;
     }
 
     bool Widget::on_focus_gained()
     {
-        scoped_trace(log_level::debug);
         m_focused = true;
         return false;
     }
 
     bool Widget::on_focus_lost()
     {
-        scoped_trace(log_level::debug);
         m_focused = false;
         return false;
     }
 
     bool Widget::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb)
     {
-        scoped_log("btn={}", mouse.button_pressed());
-
         LocalTransform transform{ this };
         const ds::point local_mouse_pos{ mouse.pos() - LocalTransform::absolute_pos };
         for (const auto child : std::ranges::reverse_view{ m_children })
@@ -371,11 +360,6 @@ namespace rl::ui {
             if (!child->on_mouse_button_pressed(mouse, kb))
                 continue;
 
-            diag_log("mouse press: handled={}", child->name());
-            diag_log("mouse press: abs_mouse={}", mouse.pos());
-            diag_log("mouse press: local_mouse={}", local_mouse_pos);
-            diag_log("mouse press: rel_pos={}", ds::rect{ m_rect.pt, m_rect.size });
-            diag_log("mouse press: abs_pos={}", ds::rect{ this->abs_position(), m_rect.size });
             return true;
         }
 
@@ -400,10 +384,6 @@ namespace rl::ui {
             if (!child->on_mouse_button_released(mouse, kb))
                 continue;
 
-            diag_log("mouse rel: handled={}", this->name());
-            diag_log("mouse rel: mouse_pos={}", mouse.pos());
-            diag_log("mouse rel: rel_pos={}", ds::rect{ m_rect.pt, m_rect.size });
-            diag_log("mouse rel: abs_pos={}", ds::rect{ this->abs_position(), m_rect.size });
             return true;
         }
 
@@ -412,8 +392,6 @@ namespace rl::ui {
 
     bool Widget::on_mouse_scroll(const Mouse& mouse, const Keyboard& kb)
     {
-        scoped_logger(log_level::trace, "pos={} wheel={}", mouse.pos(), mouse.wheel());
-
         LocalTransform transform{ this };
         const ds::point local_mouse_pos{ mouse.pos() - LocalTransform::absolute_pos };
         for (auto&& child : std::ranges::reverse_view{ m_children })
@@ -425,11 +403,6 @@ namespace rl::ui {
             if (!child->on_mouse_scroll(mouse, kb))
                 continue;
 
-            diag_log("mouse scroll: handled={}", this->name());
-            diag_log("mouse scroll: mouse_pos={}", mouse.pos());
-            diag_log("mouse scroll: local_mouse_pos={}", local_mouse_pos);
-            diag_log("mouse scroll: rel_pos={}", ds::rect{ m_rect.pt, m_rect.size });
-            diag_log("mouse scroll: abs_pos={}", ds::rect{ this->abs_position(), m_rect.size });
             return true;
         }
 
@@ -438,7 +411,6 @@ namespace rl::ui {
 
     bool Widget::on_mouse_move(const Mouse& mouse, const Keyboard& kb)
     {
-        scoped_logger(log_level::trace, "pos={}", mouse.pos());
         bool handled{ false };
 
         LocalTransform transform{ this };
@@ -493,7 +465,6 @@ namespace rl::ui {
 
     void Widget::add_child(const i32 index, Widget* widget)
     {
-        scoped_log();
         runtime_assert(index <= child_count(), "child widget index out of bounds");
         m_children.insert(m_children.begin() + index, widget);
 
@@ -520,18 +491,16 @@ namespace rl::ui {
 
     void Widget::remove_child_at(const i32 index)
     {
-        scoped_log();
-        runtime_assert(index >= 0 && index < static_cast<i32>(m_children.size()),
+        runtime_assert(index >= 0 && index < m_children.size(),
                        "widget child remove idx out of bounds");
 
-        const Widget* widget{ m_children[static_cast<std::size_t>(index)] };
+        const Widget* widget{ m_children[index] };
         m_children.erase(m_children.begin() + index);
         widget->release_ref();
     }
 
     i32 Widget::child_index(const Widget* widget) const
     {
-        scoped_log();
         const auto w{ std::ranges::find(m_children, widget) };
         if (w == m_children.end())
             return -1;
@@ -645,14 +614,14 @@ namespace rl::ui {
         return nullptr;
     }
 
-    Dialog* Widget::dialog()
+    ScrollableDialog* Widget::dialog()
     {
         scoped_trace(log_level::trace);
 
         Widget* widget{ this };
         while (widget != nullptr)
         {
-            auto dialog{ dynamic_cast<Dialog*>(widget) };
+            auto dialog{ dynamic_cast<ScrollableDialog*>(widget) };
             if (dialog != nullptr)
                 return dialog;
 
@@ -669,7 +638,7 @@ namespace rl::ui {
         return const_cast<Widget*>(this)->canvas();
     }
 
-    const Dialog* Widget::dialog() const
+    const ScrollableDialog* Widget::dialog() const
     {
         scoped_trace(log_level::trace);
         return const_cast<Widget*>(this)->dialog();
@@ -677,8 +646,6 @@ namespace rl::ui {
 
     void Widget::request_focus()
     {
-        scoped_log();
-
         Widget* widget{ this };
         while (widget->parent() != nullptr)
             widget = widget->parent();

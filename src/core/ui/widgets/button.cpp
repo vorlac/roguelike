@@ -9,7 +9,6 @@
 #include "core/ui/widgets/popupbutton.hpp"
 #include "graphics/vg/nanovg.hpp"
 #include "utils/logging.hpp"
-#include "utils/math.hpp"
 #include "utils/unicode.hpp"
 
 namespace rl::ui {

@@ -9,7 +9,7 @@
 #include "core/ui/layouts/layout.hpp"
 #include "core/ui/widget.hpp"
 #include "core/ui/widgets/combobox.hpp"
-#include "core/ui/widgets/vscrollpanel.hpp"
+#include "core/ui/widgets/vertical_scroll_panel.hpp"
 
 namespace rl::ui {
     ComboBox::ComboBox(Widget* parent)
@@ -18,20 +18,20 @@ namespace rl::ui {
     {
     }
 
-    ComboBox::ComboBox(Widget* parent, std::vector<std::string>&& items)
+    ComboBox::ComboBox(Widget* parent, const std::vector<std::string>& items)
         : PopupButton{ parent }
         , m_item_container{ this->popup() }
     {
-        this->set_items(std::move(items));
+        this->set_items(items);
     }
 
-    ComboBox::ComboBox(Widget* parent, std::vector<std::string>&& items,
-                       std::vector<std::string>&& items_short)
+    ComboBox::ComboBox(Widget* parent, const std::vector<std::string>& items,
+                       const std::vector<std::string>& items_short)
         : PopupButton{ parent }
         , m_item_container{ this->popup() }
     {
         using items_t = decltype(items);
-        this->set_items(std::forward<items_t>(items), std::forward<items_t>(items_short));
+        this->set_items(std::move(items), std::move(items_short));
     }
 
     i32 ComboBox::selected_index() const
@@ -81,7 +81,7 @@ namespace rl::ui {
         return static_cast<i32>(m_items.size());
     }
 
-    void ComboBox::set_items(std::vector<std::string>&& items)
+    void ComboBox::set_items(const std::vector<std::string>& items)
     {
         this->set_items(items, items);
     }
@@ -103,7 +103,7 @@ namespace rl::ui {
 
         if (m_vscroll_panel == nullptr && items.size() > 8)
         {
-            m_vscroll_panel = new VScrollPanel{ m_popup };
+            m_vscroll_panel = new VerticalScrollPanel{ m_popup };
             m_vscroll_panel->set_fixed_height(300);
             m_item_container = new Widget{ m_vscroll_panel };
             m_popup->set_layout(new BoxLayout{
@@ -117,7 +117,7 @@ namespace rl::ui {
         u32 index{ 0 };
         for (const auto& str : items)
         {
-            auto button{ new Button{ m_item_container, std::move(str) } };
+            auto button{ new Button{ m_item_container, str } };
             button->set_property(Button::Property::Radio);
             button->set_callback([this, index] {
                 m_selected_index = static_cast<i32>(index);
@@ -141,7 +141,7 @@ namespace rl::ui {
         this->set_pressed(false);
         this->popup()->set_visible(false);
 
-        auto&& mouse_wheel{ mouse.wheel_delta() };
+        const auto mouse_wheel{ mouse.wheel_delta() };
         if (mouse_wheel.y < 0)
         {
             this->set_selected_index(

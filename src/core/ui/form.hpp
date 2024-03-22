@@ -9,7 +9,7 @@
 #include "core/ui/widgets/dialog.hpp"
 #include "core/ui/widgets/label.hpp"
 #include "core/ui/widgets/textbox.hpp"
-#include "core/ui/widgets/vscrollpanel.hpp"
+#include "core/ui/widgets/vertical_scroll_panel.hpp"
 #include "ds/dims.hpp"
 #include "ds/shared.hpp"
 #include "layouts/advanced_grid_layout.hpp"
@@ -32,19 +32,15 @@ namespace rl::ui {
         {
         }
 
-        Dialog* add_dialog(ds::point<f32>&& pos, const std::string& title = "Untitled")
+        ScrollableDialog* add_dialog(ds::point<f32>&& pos, const std::string& title = "Untitled")
         {
             runtime_assert(m_ui_canvas != nullptr, "invalid dialog");
 
-            m_dialog = new Dialog{ m_ui_canvas, title };
+            m_dialog = new ScrollableDialog{ m_ui_canvas, title };
             m_dialog->set_layout(new ui::BoxLayout{ Orientation::Horizontal });
 
             m_layout = new AdvancedGridLayout{ { 0, 0, 0, 0 }, {} };
             m_layout->set_margin(10.0f);
-
-            m_scroll = new VScrollPanel{ m_dialog };
-            m_scroll->set_fixed_height(300);
-            m_scroll->container()->set_layout(m_layout);
 
             m_dialog->set_position(std::move(pos));
             m_dialog->set_visible(true);
@@ -54,9 +50,9 @@ namespace rl::ui {
 
         Label* add_group(const std::string& caption)
         {
-            const Theme* theme{ m_scroll->theme() };
+            const Theme* theme{ m_dialog->theme() };
             const auto label{ new Label{
-                m_scroll,
+                m_dialog,
                 caption,
                 theme->form_group_font_name,
                 theme->form_group_font_size,
@@ -75,15 +71,15 @@ namespace rl::ui {
                                             const std::function<void(const T&)>& setter,
                                             const std::function<T()>& getter, bool editable = true)
         {
-            const Theme* theme{ m_scroll->theme() };
+            const Theme* theme{ m_dialog->theme() };
             const Label* label = new Label{
-                m_scroll,
+                m_dialog,
                 label_text,
                 theme->form_label_font_name,
                 theme->form_label_font_size,
             };
 
-            auto widget{ new detail::FormWidget<T>{ m_scroll } };
+            auto widget{ new detail::FormWidget<T>{ m_dialog } };
             auto refresh = [widget, getter] {
                 T value{ getter() };
                 T current{ widget->value() };
@@ -139,8 +135,8 @@ namespace rl::ui {
 
         Button* add_button(std::string&& label, const std::function<void()>& cb)
         {
-            const Theme* theme{ m_scroll->theme() };
-            const auto button{ new Button{ m_scroll, std::move(label) } };
+            const Theme* theme{ m_dialog->theme() };
+            const auto button{ new Button{ m_dialog, std::move(label) } };
 
             button->set_callback(cb);
             if (m_layout->row_count() > 0)
@@ -154,7 +150,7 @@ namespace rl::ui {
 
         void add_widget(const std::string& label_text, const Widget* widget)
         {
-            const Theme* theme{ m_scroll->theme() };
+            const Theme* theme{ m_dialog->theme() };
             m_layout->append_row(0);
 
             if (label_text.empty())
@@ -162,7 +158,7 @@ namespace rl::ui {
             else
             {
                 const Label* label = new Label{
-                    m_scroll,
+                    m_dialog,
                     label_text,
                     theme->form_label_font_name,
                     theme->form_label_font_size,
@@ -178,12 +174,12 @@ namespace rl::ui {
                 callback();
         }
 
-        Dialog* dialog()
+        ScrollableDialog* dialog()
         {
             return m_dialog;
         }
 
-        void set_dialog(Dialog* dialog)
+        void set_dialog(ScrollableDialog* dialog)
         {
             m_dialog = dialog;
             m_layout = dynamic_cast<AdvancedGridLayout*>(dialog->layout());
@@ -202,8 +198,8 @@ namespace rl::ui {
 
     protected:
         ds::shared<Canvas> m_ui_canvas{ nullptr };
-        ds::shared<Dialog> m_dialog{ nullptr };
-        ds::shared<VScrollPanel> m_scroll{ nullptr };
+        ds::shared<ScrollableDialog> m_dialog{ nullptr };
+        // ds::shared<VerticalScrollPanel> m_dialog{ nullptr };
         ds::shared<Widget> m_container{ nullptr };
         ds::shared<AdvancedGridLayout> m_layout{ nullptr };
         std::vector<std::function<void()>> m_refresh_callbacks;

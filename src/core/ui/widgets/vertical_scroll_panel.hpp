@@ -10,7 +10,7 @@ namespace rl::ui {
         Any
     };
 
-    class VScrollPanel final : public Widget
+    class VerticalScrollPanel final : public Widget
     {
         class ScrollableContainer final : public Widget
         {
@@ -30,7 +30,7 @@ namespace rl::ui {
         };
 
     public:
-        explicit VScrollPanel(Widget* parent);
+        explicit VerticalScrollPanel(Widget* parent);
 
         f32 scroll() const;
         void set_scroll(f32 scroll);
@@ -45,7 +45,6 @@ namespace rl::ui {
 
         virtual void draw() override;
         virtual bool draw_mouse_intersection(const ds::point<f32>& pt) override;
-        virtual void add_child(Widget* child) override;
         virtual void perform_layout() override;
 
         virtual Widget* find_widget(const ds::point<f32>& pt) override;

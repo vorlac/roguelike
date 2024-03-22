@@ -9,6 +9,8 @@
 #include "sdl/defs.hpp"
 #include "utils/numeric.hpp"
 #include "utils/time.hpp"
+#include "widgets/dialog.hpp"
+#include "widgets/scroll_dialog.hpp"
 
 namespace rl::ui {
     using WindowID = SDL3::SDL_WindowID;
@@ -58,10 +60,41 @@ namespace rl::ui {
         bool on_mouse_button_released_event(const Mouse& mouse, const Keyboard& kb);
         bool on_mouse_move_event(const Mouse& mouse, const Keyboard& kb);
 
-        void center_dialog(Dialog* dialog) const;
-        void move_dialog_to_front(Dialog* dialog);
+        template <rl::any_of<Dialog, ScrollableDialog> TDialog>
+        void dispose_dialog(TDialog* dialog)
+        {
+            const bool match_found{ std::ranges::find_if(m_focus_path, [&](const Widget* w) {
+                                        return w == dialog;
+                                    }) != m_focus_path.end() };
+            if (match_found)
+                m_focus_path.clear();
+
+            if (m_active_dialog == static_cast<Widget*>(dialog))
+            {
+                m_active_dialog = nullptr;
+                m_active_widget = nullptr;
+            }
+
+            this->remove_child(dialog);
+        }
+
+        template <rl::any_of<Dialog, ScrollableDialog> TDialog>
+        void center_dialog(TDialog* dialog) const
+        {
+            if (dialog->size() == ds::dims<f32>::zero())
+            {
+                auto&& pref_size{ dialog->preferred_size() };
+                dialog->set_size(std::move(pref_size));
+                dialog->perform_layout();
+            }
+
+            const ds::dims offset{ (((m_rect.size - dialog->size()) / 2.0f) - m_rect.pt) };
+            ds::point position{ offset.width, offset.height };
+            dialog->set_position(std::move(position));
+        }
+
+        void move_dialog_to_front(ScrollableDialog* dialog);
         void update_focus(Widget* widget);
-        void dispose_dialog(const Dialog* dialog);
         void set_resize_callback(const std::function<void(ds::dims<f32>)>& callback);
         void add_update_callback(const std::function<void()>& refresh_func);
         void set_mouse_mode(MouseMode mouse_mode);
@@ -99,7 +132,7 @@ namespace rl::ui {
 
     private:
         MouseMode m_mouse_mode{ MouseMode::Propagate };
-        Dialog* m_active_dialog{ nullptr };
+        ScrollableDialog* m_active_dialog{ nullptr };
         Widget* m_active_widget{ nullptr };
     };
 }

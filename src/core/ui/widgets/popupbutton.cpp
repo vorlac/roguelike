@@ -107,7 +107,7 @@ namespace rl::ui {
 
         Widget::perform_layout();
 
-        const Dialog* parent_dialog{ this->dialog() };
+        ScrollableDialog* parent_dialog{ this->dialog() };
         if (parent_dialog != nullptr)
         {
             const f32 anchor_size{ m_popup->anchor_size() };
