@@ -76,9 +76,8 @@ namespace rl {
         return static_cast<TEnum>(std::to_underlying(lhs) & std::to_underlying(rhs));
     }
 
-    template <typename TEnum, typename TUnderlying>
-        requires std::is_scoped_enum_v<TEnum> &&
-                 std::same_as<std::underlying_type_t<TEnum>, TUnderlying>
+    template <typename TEnum, rl::integer TUnderlying>
+        requires std::is_scoped_enum_v<TEnum>
     constexpr bool operator&(const TUnderlying lhs, const TEnum rhs)
     {
         return lhs & std::to_underlying(rhs);
@@ -92,33 +91,29 @@ namespace rl {
         return ret;
     }
 
-    template <typename TEnum, typename TUnderlying>
-        requires std::is_scoped_enum_v<TEnum> &&
-                 std::same_as<std::underlying_type_t<TEnum>, TUnderlying>
+    template <typename TEnum, rl::integer TUnderlying>
+        requires std::is_scoped_enum_v<TEnum>
     constexpr bool operator==(const TUnderlying lhs, const TEnum rhs)
     {
         return lhs == std::to_underlying(rhs);
     }
 
-    template <typename TEnum, typename TUnderlying>
-        requires std::is_scoped_enum_v<TEnum> &&
-                 std::same_as<std::underlying_type_t<TEnum>, TUnderlying>
+    template <typename TEnum, rl::integer TUnderlying>
+        requires std::is_scoped_enum_v<TEnum>
     constexpr bool operator==(const TEnum lhs, const TUnderlying rhs)
     {
         return std::to_underlying(lhs) == rhs;
     }
 
-    template <typename TEnum, typename TUnderlying>
-        requires std::is_scoped_enum_v<TEnum> &&
-                 std::same_as<std::underlying_type_t<TEnum>, TUnderlying>
+    template <typename TEnum, rl::integer TUnderlying>
+        requires std::is_scoped_enum_v<TEnum>
     constexpr bool operator!=(const TUnderlying lhs, const TEnum rhs)
     {
         return !(lhs == rhs);
     }
 
-    template <typename TEnum, typename TUnderlying>
-        requires std::is_scoped_enum_v<TEnum> &&
-                 std::same_as<std::underlying_type_t<TEnum>, TUnderlying>
+    template <typename TEnum, rl::integer TUnderlying>
+        requires std::is_scoped_enum_v<TEnum>
     constexpr bool operator!=(const TEnum lhs, const TUnderlying rhs)
     {
         return !(lhs == rhs);

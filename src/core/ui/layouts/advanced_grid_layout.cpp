@@ -20,8 +20,6 @@ namespace rl::ui {
         , m_rows(rows)
         , m_margin(margin)
     {
-        scoped_trace(log_level::debug);
-
         m_col_stretch.resize(m_cols.size(), 0.0f);
         m_row_stretch.resize(m_rows.size(), 0.0f);
     }
@@ -29,8 +27,6 @@ namespace rl::ui {
     ds::dims<f32> AdvancedGridLayout::preferred_size(nvg::Context* nvg_context,
                                                      const Widget* widget) const
     {
-        scoped_trace(log_level::debug);
-
         // Compute minimum row / column sizes
         std::array<std::vector<f32>, 2> grid{ { {}, {} } };
         this->compute_layout(nvg_context, widget, grid);
@@ -54,8 +50,6 @@ namespace rl::ui {
 
     void AdvancedGridLayout::perform_layout(nvg::Context* nvg_context, Widget* widget) const
     {
-        scoped_trace(log_level::debug);
-
         std::array<std::vector<f32>, 2> grid{ { {}, {} } };
         this->compute_layout(nvg_context, widget, grid);
 
@@ -140,8 +134,6 @@ namespace rl::ui {
     void AdvancedGridLayout::compute_layout(nvg::Context* nvg_context, const Widget* widget,
                                             std::array<std::vector<f32>, 2>& grid_cell_sizes) const
     {
-        scoped_trace(log_level::debug);
-
         const ds::dims fs_w{ widget->fixed_size() };
         ds::dims container_size{
             std::fabs(fs_w.width) > std::numeric_limits<f32>::epsilon() ? fs_w.width
@@ -239,64 +231,53 @@ namespace rl::ui {
 
     f32 AdvancedGridLayout::margin() const
     {
-        scoped_trace(log_level::debug);
         return m_margin;
     }
 
     void AdvancedGridLayout::set_margin(const f32 margin)
     {
-        scoped_trace(log_level::debug);
         m_margin = margin;
     }
 
     u32 AdvancedGridLayout::col_count() const
     {
-        scoped_trace(log_level::debug);
         return static_cast<u32>(m_cols.size());
     }
 
     u32 AdvancedGridLayout::row_count() const
     {
-        scoped_trace(log_level::debug);
         return static_cast<u32>(m_rows.size());
     }
 
     void AdvancedGridLayout::append_row(const f32 size, const f32 stretch)
     {
-        scoped_trace(log_level::debug);
         m_rows.push_back(size);
         m_row_stretch.push_back(stretch);
     }
 
     void AdvancedGridLayout::append_col(const f32 size, const f32 stretch)
     {
-        scoped_trace(log_level::debug);
         m_cols.push_back(size);
         m_col_stretch.push_back(stretch);
     }
 
     void AdvancedGridLayout::set_row_stretch(const i32 index, const f32 stretch)
     {
-        scoped_trace(log_level::debug);
         m_row_stretch.at(index) = stretch;
     }
 
     void AdvancedGridLayout::set_col_stretch(const i32 index, const f32 stretch)
     {
-        scoped_trace(log_level::debug);
         m_col_stretch.at(index) = stretch;
     }
 
     void AdvancedGridLayout::set_anchor(const Widget* widget, const Anchor& anchor)
     {
-        scoped_trace(log_level::debug);
         m_anchor[widget] = anchor;
     }
 
     Anchor AdvancedGridLayout::anchor(const Widget* widget) const
     {
-        scoped_trace(log_level::debug);
-
         const auto it{ m_anchor.find(widget) };
         runtime_assert(it != m_anchor.end(), "Widget was not registered with the grid layout!");
         return it->second;

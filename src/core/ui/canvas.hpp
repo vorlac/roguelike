@@ -9,6 +9,8 @@
 #include "sdl/defs.hpp"
 #include "utils/numeric.hpp"
 #include "utils/time.hpp"
+#include "widgets/dialog.hpp"
+#include "widgets/scroll_dialog.hpp"
 
 namespace rl::ui {
     using WindowID = SDL3::SDL_WindowID;
@@ -58,10 +60,11 @@ namespace rl::ui {
         bool on_mouse_button_released_event(const Mouse& mouse, const Keyboard& kb);
         bool on_mouse_move_event(const Mouse& mouse, const Keyboard& kb);
 
-        void center_dialog(Dialog* dialog) const;
-        void move_dialog_to_front(Dialog* dialog);
+        void center_dialog(ScrollableDialog* dialog) const;
+        void dispose_dialog(ScrollableDialog* dialog);
+
+        void move_dialog_to_front(ScrollableDialog* dialog);
         void update_focus(Widget* widget);
-        void dispose_dialog(const Dialog* dialog);
         void set_resize_callback(const std::function<void(ds::dims<f32>)>& callback);
         void add_update_callback(const std::function<void()>& refresh_func);
         void set_mouse_mode(MouseMode mouse_mode);
@@ -99,7 +102,7 @@ namespace rl::ui {
 
     private:
         MouseMode m_mouse_mode{ MouseMode::Propagate };
-        Dialog* m_active_dialog{ nullptr };
+        ScrollableDialog* m_active_dialog{ nullptr };
         Widget* m_active_widget{ nullptr };
     };
 }

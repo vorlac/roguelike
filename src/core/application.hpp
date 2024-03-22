@@ -61,9 +61,6 @@ namespace rl {
 
         bool run()
         {
-            cpptrace::generate_trace().print();
-            scoped_log();
-
             bool ret{ this->setup() };
             bool bval{ true };
 
@@ -76,143 +73,149 @@ namespace rl {
             const auto gui{ m_main_window->gui() };
             const std::unique_ptr<OpenGLRenderer>& renderer{ m_main_window->glrenderer() };
             gl::InstancedVertexBuffer vbo{ renderer->get_viewport() };
-            const auto form{ new ui::FormHelper(gui) };
-            auto dialog = ds::shared{ form->add_dialog(ds::point{ 10.0f, 10.0f },
-                                                       "Nested Dialog Test") };
 
-            std::string elapsed_str{ fmt::to_string(
-                fmt::format("{:0>6.3f} sec", m_timer.elapsed())) };
-            std::string fps_str{ fmt::format("{:0>6.3f} fps", framerate) };
-            const auto layout{ new ui::AdvancedGridLayout({ 0, 10, 0 }, {}, 30) };
+            auto&& dialog{ new ui::ScrollableDialog{ gui, "asdfasdf" } };
+            dialog->set_position({ 10.0f, 10.0f });
+            dialog->set_visible(true);
 
-            auto full_window_menu = [&] {
-                scoped_log();
+            // const auto form{ new ui::FormHelper(gui) };
+            // auto dialog = ds::shared{ form->add_dialog(ds::point{ 10.0f, 10.0f },
+            //                                            "Nested Dialog Test") };
 
-                gui->set_layout(layout);
-                layout->set_col_stretch(1, 0.5f);
+            // std::string elapsed_str{ fmt::to_string(
+            //     fmt::format("{:0>6.3f} sec", m_timer.elapsed())) };
+            // std::string fps_str{ fmt::format("{:0>6.3f} fps", framerate) };
+            // const auto layout{ new ui::AdvancedGridLayout({ 0, 10, 0 }, {}, 30) };
 
-                const auto title_label{ new ui::Label{
-                    gui,
-                    "GUI Canvas Span Label",
-                    ui::Font::Name::SansBold,
-                    40,
-                } };
-                layout->append_row(0);
-                const auto push_button{ new ui::Button{
-                    gui,
-                    "Push Button",
-                    ui::Icon::Microscope,
-                } };
-                layout->append_row(0);
-                const auto timer_desc_label{ new ui::Label{
-                    gui,
-                    "Timer: ",
-                    ui::Font::Name::Sans,
-                    32,
-                } };
-                layout->append_row(0);
-                const auto timer_value_label{ new ui::Label{
-                    gui,
-                    "",
-                    ui::Font::Name::Mono,
-                    32,
-                } };
-                layout->append_row(0);
-                const auto stats_desc_label{ new ui::Label{
-                    gui,
-                    "Stats: ",
-                    ui::Font::Name::Sans,
-                    32,
-                } };
-                layout->append_row(0);
-                const auto stats_value_label{ new ui::Label{
-                    gui,
-                    "",
-                    ui::Font::Name::Mono,
-                    32,
-                } };
-                layout->append_row(0);
+            // auto full_window_menu = [&] {
+            //     scoped_log();
 
-                gui->add_update_callback([=, &elapsed_str] {
-                    timer_value_label->set_text(elapsed_str);
-                });
+            //    gui->set_layout(layout);
+            //    layout->set_col_stretch(1, 0.5f);
 
-                gui->add_update_callback([=, &fps_str] {
-                    stats_value_label->set_text(fps_str);
-                });
+            //    const auto title_label{ new ui::Label{
+            //        gui,
+            //        "GUI Canvas Span Label",
+            //        ui::Font::Name::SansBold,
+            //        40,
+            //    } };
+            //    layout->append_row(0);
+            //    const auto push_button{ new ui::Button{
+            //        gui,
+            //        "Push Button",
+            //        ui::Icon::Microscope,
+            //    } };
+            //    layout->append_row(0);
+            //    const auto timer_desc_label{ new ui::Label{
+            //        gui,
+            //        "Timer: ",
+            //        ui::Font::Name::Sans,
+            //        32,
+            //    } };
+            //    layout->append_row(0);
+            //    const auto timer_value_label{ new ui::Label{
+            //        gui,
+            //        "",
+            //        ui::Font::Name::Mono,
+            //        32,
+            //    } };
+            //    layout->append_row(0);
+            //    const auto stats_desc_label{ new ui::Label{
+            //        gui,
+            //        "Stats: ",
+            //        ui::Font::Name::Sans,
+            //        32,
+            //    } };
+            //    layout->append_row(0);
+            //    const auto stats_value_label{ new ui::Label{
+            //        gui,
+            //        "",
+            //        ui::Font::Name::Mono,
+            //        32,
+            //    } };
+            //    layout->append_row(0);
 
-                push_button->set_tooltip("Microscope Button");
-                push_button->set_callback([&] {
-                    scoped_log("Push Button Callback Invoked");
-                });
+            //    gui->add_update_callback([=, &elapsed_str] {
+            //        timer_value_label->set_text(elapsed_str);
+            //    });
 
-                layout->set_anchor(push_button, ui::Anchor(0, layout->row_count() - 1, 1, 1));
-                layout->set_anchor(title_label,
-                                   ui::Anchor{ 1, layout->row_count() - 1, 2, 1,
-                                               ui::Alignment::Center, ui::Alignment::Fill });
+            //    gui->add_update_callback([=, &fps_str] {
+            //        stats_value_label->set_text(fps_str);
+            //    });
 
-                layout->append_row(20);
-                layout->append_row(0);
-                layout->set_anchor(timer_desc_label, ui::Anchor(0, layout->row_count() - 1));
-                layout->set_anchor(timer_value_label, ui::Anchor(2, layout->row_count() - 1));
-                layout->append_row(10);
-                layout->append_row(0);
-                layout->set_anchor(stats_desc_label, ui::Anchor(0, layout->row_count() - 1));
-                layout->set_anchor(stats_value_label, ui::Anchor(2, layout->row_count() - 1));
-                layout->append_row(10);
-                layout->append_row(0);
+            //    push_button->set_tooltip("Microscope Button");
+            //    push_button->set_callback([&] {
+            //        scoped_log("Push Button Callback Invoked");
+            //    });
 
-                timer_desc_label->set_tooltip("Timer Label");
-                timer_value_label->set_tooltip("Elapsed Time");
+            //    layout->set_anchor(push_button, ui::Anchor(0, layout->row_count() - 1, 1, 1));
+            //    layout->set_anchor(title_label,
+            //                       ui::Anchor{ 1, layout->row_count() - 1, 2, 1,
+            //                                   ui::Alignment::Center, ui::Alignment::Fill });
 
-                stats_desc_label->set_tooltip("Stats Label");
-                stats_value_label->set_tooltip("Average FPS");
-                stats_desc_label->set_callback([&] {
-                    scoped_log("Button Pressed Callback Invoked");
-                });
-            };
+            //    layout->append_row(20);
+            //    layout->append_row(0);
+            //    layout->set_anchor(timer_desc_label, ui::Anchor(0, layout->row_count() - 1));
+            //    layout->set_anchor(timer_value_label, ui::Anchor(2, layout->row_count() - 1));
+            //    layout->append_row(10);
+            //    layout->append_row(0);
+            //    layout->set_anchor(stats_desc_label, ui::Anchor(0, layout->row_count() - 1));
+            //    layout->set_anchor(stats_value_label, ui::Anchor(2, layout->row_count() - 1));
+            //    layout->append_row(10);
+            //    layout->append_row(0);
 
-            //////////////////////////////////
+            //    timer_desc_label->set_tooltip("Timer Label");
+            //    timer_value_label->set_tooltip("Elapsed Time");
 
-            form->add_group("Group 1");
-            form->add_variable<bool>("checkbox", bval);
-            form->add_variable<std::string>("string", sval);
+            //    stats_desc_label->set_tooltip("Stats Label");
+            //    stats_value_label->set_tooltip("Average FPS");
+            //    stats_desc_label->set_callback([&] {
+            //        scoped_log("Button Pressed Callback Invoked");
+            //    });
+            //};
 
-            form->add_group("Dynamic Fields");
-            form->add_variable<f32>("fps", framerate)->set_alignment(ui::TextBox::Alignment::Left);
+            ////////////////////////////////////
 
-            form->add_variable<u64>("frame count", frame_count)
-                ->set_alignment(ui::TextBox::Alignment::Center);
+            // form->add_group("Group 1");
+            // form->add_variable<bool>("checkbox", bval);
+            // form->add_variable<std::string>("string", sval);
 
-            form->add_variable<f32>("elapsed time", elapsed_time)
-                ->set_alignment(ui::TextBox::Alignment::Right);
+            // form->add_group("Dynamic Fields");
+            // form->add_variable<f32>("fps",
+            // framerate)->set_alignment(ui::TextBox::Alignment::Left);
 
-            form->add_group("Enum");
-            form->add_variable<ui::Axis>("Axis", eval, true)
-                ->set_items({
-                    "Horizontal",
-                    "Vertical",
-                    "AAAAAAAAAAAAAAAA",
-                    "BBBB",
-                    "CCC",
-                    "DDDD",
-                    "EEEE",
-                    "FFFF",
-                });
+            // form->add_variable<u64>("frame count", frame_count)
+            //     ->set_alignment(ui::TextBox::Alignment::Center);
 
-            form->add_group("Other Group");
-            form->add_button("Push Button", [&] {
-                diag_log("Button pressed.\n");
-            });
+            // form->add_variable<f32>("elapsed time", elapsed_time)
+            //     ->set_alignment(ui::TextBox::Alignment::Right);
 
-            dialog->center();
+            // form->add_group("Enum");
+            // form->add_variable<ui::Axis>("Axis", eval, true)
+            //     ->set_items({
+            //         "Horizontal",
+            //         "Vertical",
+            //         "AAAAAAAAAAAAAAAA",
+            //         "BBBB",
+            //         "CCC",
+            //         "DDDD",
+            //         "EEEE",
+            //         "FFFF",
+            //     });
 
-            //////////////////////////////////
-            // floating_form_gui();
-            full_window_menu();
+            // form->add_group("Other Group");
+            // form->add_button("Push Button", [&] {
+            //     diag_log("Button pressed.\n");
+            // });
+
+            // dialog->center();
+
+            ////////////////////////////////////
+            //// floating_form_gui();
+            // full_window_menu();
 
             gui->set_visible(true);
-            form->refresh();
+            // form->refresh();
             gui->update();
             gui->perform_layout();
 
@@ -224,12 +227,12 @@ namespace rl {
                 this->handle_events();
                 this->update();
 
-                elapsed_time = m_timer.elapsed();
-                framerate = static_cast<f32>(++frame_count) / elapsed_time;
-                elapsed_str = fmt::format("{:>6.3f} sec", elapsed_time);
-                fps_str = fmt::format("{:>6.3f} fps", framerate);
-                form->refresh();
-                gui->redraw();
+                // elapsed_time = m_timer.elapsed();
+                // framerate = static_cast<f32>(++frame_count) / elapsed_time;
+                // elapsed_str = fmt::format("{:>6.3f} sec", elapsed_time);
+                // fps_str = fmt::format("{:>6.3f} fps", framerate);
+                // form->refresh();
+                // gui->redraw();
                 this->render();
 
                 using namespace std::chrono_literals;

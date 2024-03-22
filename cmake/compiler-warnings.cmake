@@ -1,16 +1,18 @@
-string(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UPPERCASE)
-
-if (NOT MSVC)
-    option(${PROJECT_NAME_UPPERCASE}_WARN_EVERYTHING "Turn on all warnings (not recommended - used for lib development)" OFF)
-endif()
-
-option(${PROJECT_NAME_UPPERCASE}_WARNING_AS_ERROR "Treat warnings as errors" ON)
-
-# Add warnings based on compiler
-# Set some helper variables for readability
 set(compiler_is_clang "$<OR:$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:Clang>>")
 set(compiler_is_gnu "$<CXX_COMPILER_ID:GNU>")
 set(compiler_is_msvc "$<CXX_COMPILER_ID:MSVC>")
+
+string(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UPPERCASE)
+
+option(${PROJECT_NAME_UPPERCASE}_WARN_EVERYTHING 
+  "Turn on all warnings (not recommended - used for lib development)" 
+     OFF
+)
+
+option(${PROJECT_NAME_UPPERCASE}_WARNING_AS_ERROR 
+  "Treat warnings as errors" 
+     ON
+)
 
 target_compile_options(${PROJECT_NAME}
     PRIVATE
@@ -42,15 +44,15 @@ target_compile_options(${PROJECT_NAME}
             -Wall
             -Wcast-align
             -Wctor-dtor-privacy
-            -Wextra
+            #-Wextra
             -Wformat=2
             -Wnon-virtual-dtor
             -Wnull-dereference
             -Woverloaded-virtual
-            -Wpedantic
-            -Wshadow
-            -Wunused
-            -Wwrite-strings
+            #-Wpedantic
+            #-Wshadow
+            #-Wunused
+            #-Wwrite-strings
 
             # Disable warnings which bleed through from godot-cpp's macros.
             -Wno-unused-parameter
@@ -85,6 +87,8 @@ target_compile_options(${PROJECT_NAME}
 			-Wno-strict-prototypes
 			-Wno-language-extension-token
 			-Wno-unused-macros
+            -Wno-covered-switch-default
+            -Wno-ctad-maybe-unsupported
         >
 
         # Clang only
@@ -111,12 +115,12 @@ function(set_warn_everything)
         PRIVATE
             # Clang and GNU
             $<$<OR:${compiler_is_clang},${compiler_is_gnu}>:
-                -Weverything
-                -Wno-c++98-compat
-                -Wno-c++98-compat-pedantic
-                -Wno-padded
+                #-Weverything
+                #-Wno-c++98-compat
+                #-Wno-c++98-compat-pedantic
+                #-Wno-padded
 				# prints extra hardening suggestions for unsafe buffer access
-				-fsafe-buffer-usage-suggestions
+				#-fsafe-buffer-usage-suggestions
             >
    )
 endfunction()
@@ -126,23 +130,15 @@ if (NOT MSVC AND ${PROJECT_NAME_UPPERCASE}_WARN_EVERYTHING)
 endif()
 
 # Treat warnings as errors
-function(set_warning_as_error)
+function(enable_warnings_as_errors)
     message(STATUS "[${PROJECT_NAME}] Treating warnings as errors")
 
-    if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.24")
-        set_target_properties(${PROJECT_NAME}
-            PROPERTIES
-                COMPILE_WARNING_AS_ERROR ON
-       )
-    else()
-        target_compile_options(${PROJECT_NAME}
-            PRIVATE
-            $<${compiler_is_msvc}:/WX>
-            $<$<OR:${compiler_is_clang},${compiler_is_gnu}>:-Werror>
-       )
-    endif()
+    set_target_properties(${PROJECT_NAME}
+        PROPERTIES
+            COMPILE_WARNING_AS_ERROR ON
+    )
 endfunction()
 
 if (${PROJECT_NAME_UPPERCASE}_WARNING_AS_ERROR)
-    set_warning_as_error()
+    enable_warnings_as_errors()
 endif()

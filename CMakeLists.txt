@@ -119,7 +119,7 @@ target_compile_definitions(${PROJECT_NAME}
 target_compile_options(${PROJECT_NAME}
   PRIVATE
     $<${compiler_is_msvc}:
-        /std:c++latest
+        #/std:c++latest
         /Zc:preprocessor
         /utf-8
         /EHsc
@@ -154,13 +154,14 @@ target_compile_options(${PROJECT_NAME}
     >
 
     $<${compiler_is_clang}:
+        #-std=c++23
         -march=native
         -flto
         -DNDEBUG
     >
 
     $<${compiler_is_gnu}:
-        -std=c++23
+        #-std=c++23
     >
 )
 

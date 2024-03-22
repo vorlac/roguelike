@@ -1,3 +1,4 @@
+#include <tuple>
 #include <utility>
 
 #include "core/assert.hpp"
@@ -6,8 +7,11 @@
 #include "core/ui/canvas.hpp"
 #include "core/ui/widgets/popup.hpp"
 #include "graphics/vg/nanovg_state.hpp"
+#include "utils/conversions.hpp"
 #include "utils/io.hpp"
 #include "utils/logging.hpp"
+#include "utils/properties.hpp"
+#include "widgets/scroll_dialog.hpp"
 
 namespace rl::ui {
 
@@ -249,6 +253,37 @@ namespace rl::ui {
         return widget != nullptr && !widget->tooltip().empty();
     }
 
+    void Canvas::dispose_dialog(ScrollableDialog* dialog)
+    {
+        const bool match_found{ std::ranges::find_if(m_focus_path, [&](const Widget* w) {
+                                    return w == dialog;
+                                }) != m_focus_path.end() };
+        if (match_found)
+            m_focus_path.clear();
+
+        if (m_active_dialog == static_cast<Widget*>(dialog))
+        {
+            m_active_dialog = nullptr;
+            m_active_widget = nullptr;
+        }
+
+        this->remove_child(dialog);
+    }
+
+    void Canvas::center_dialog(ScrollableDialog* dialog) const
+    {
+        if (dialog->size() == ds::dims<f32>::zero())
+        {
+            auto pref_size{ dialog->preferred_size() };
+            dialog->set_size(std::move(pref_size));
+            dialog->perform_layout();
+        }
+
+        const ds::dims offset{ (((m_rect.size - dialog->size()) / 2.0f) - m_rect.pt) };
+        ds::point position{ offset.width, offset.height };
+        dialog->set_position(std::move(position));
+    }
+
     void Canvas::update_focus(Widget* widget)
     {
         for (const auto focus_widget : m_focus_path)
@@ -260,11 +295,11 @@ namespace rl::ui {
         }
         m_focus_path.clear();
 
-        Dialog* dialog{ nullptr };
+        ScrollableDialog* dialog{ nullptr };
         while (widget != nullptr)
         {
             m_focus_path.push_back(widget);
-            Dialog* dlg{ dynamic_cast<Dialog*>(widget) };
+            ScrollableDialog* dlg{ dynamic_cast<ScrollableDialog*>(widget) };
             if (dlg != nullptr)
                 dialog = dlg;
 
@@ -278,7 +313,7 @@ namespace rl::ui {
         //     this->move_dialog_to_front(dialog);
     }
 
-    void Canvas::move_dialog_to_front(Dialog* dialog)
+    void Canvas::move_dialog_to_front(ScrollableDialog* dialog)
     {
         const auto removal_iterator{ std::ranges::remove(m_children, dialog).begin() };
         m_children.erase(removal_iterator, m_children.end());
@@ -304,37 +339,6 @@ namespace rl::ui {
                 }
             }
         }
-    }
-
-    void Canvas::dispose_dialog(const Dialog* dialog)
-    {
-        const bool match_found{ std::ranges::find_if(m_focus_path, [&](const Widget* w) {
-                                    return w == dialog;
-                                }) != m_focus_path.end() };
-        if (match_found)
-            m_focus_path.clear();
-
-        if (m_active_dialog == dialog)
-        {
-            m_active_dialog = nullptr;
-            m_active_widget = nullptr;
-        }
-
-        this->remove_child(dialog);
-    }
-
-    void Canvas::center_dialog(Dialog* dialog) const
-    {
-        if (dialog->size() == ds::dims<f32>::zero())
-        {
-            auto&& pref_size{ dialog->preferred_size() };
-            dialog->set_size(std::move(pref_size));
-            dialog->perform_layout();
-        }
-
-        const ds::dims offset{ (((m_rect.size - dialog->size()) / 2.0f) - m_rect.pt) };
-        ds::point position{ offset.width, offset.height };
-        dialog->set_position(std::move(position));
     }
 
     bool Canvas::on_moved(ds::point<f32>&& pt)
@@ -393,18 +397,22 @@ namespace rl::ui {
                     Widget* widget{ this->find_widget(mouse_pos) };
                     if (widget != nullptr)
                     {
-                        Dialog* dialog{ dynamic_cast<Dialog*>(widget) };
+                        ScrollableDialog* dialog{ dynamic_cast<ScrollableDialog*>(widget) };
                         if (dialog == widget)
                         {
+                            auto [mode, component, grab_pos] = dialog->check_interaction(mouse_pos);
+                            // if the dialog is resizable and the mouse is at grab location
+                            if ((mode & Interaction::Resize) != 0)
+                            {
+                                handled |= false;
+                            }
+                            // if the dialog is moveable and the cursor is over the header
+                            if ((mode & Interaction::Move) != 0)
+                            {
+                                handled |= false;
+                            }
+
                             m_active_dialog = dialog;
-                            if (dialog->mode() == Dialog::Mode::Modal &&
-                                !dialog->contains(mouse_pos))
-                                return false;
-
-                            auto dialog_rect{ dialog->rect() };
-                            Side grab_pos{ dialog_rect.edge_overlap(RESIZE_GRAB_BUFFER, mouse_pos) };
-                            dialog->set_resize_grab_pos(grab_pos);
-
                             if (dialog->resizable() && grab_pos != Side::None)
                                 mouse.set_cursor(grab_pos);
                             else if (dialog->cursor() != m_mouse.active_cursor())
@@ -444,13 +452,15 @@ namespace rl::ui {
         if (m_focus_path.size() > 1)
         {
             // Since Dialogs are always direct children of the Canvas and the tree is represented
-            // where the root (Canvas) is the last item in the list, if a Dialog is focused, then
-            // it will always be the 2nd to last item in the m_focus_path vector.
-            Dialog* dialog{ dynamic_cast<Dialog*>(m_focus_path[m_focus_path.size() - 2]) };
+            // where the root (Canvas) is the last item in the list, if a ScrollableDialog is
+            // focused, then it will always be the 2nd to last item in the m_focus_path vector.
+            ScrollableDialog* dialog{ dynamic_cast<ScrollableDialog*>(
+                m_focus_path[m_focus_path.size() - 2]) };
             if (dialog != nullptr)
             {
                 m_active_dialog = dialog;
-                if (dialog->mode() == Dialog::Mode::Modal && !dialog->contains(mouse_pos))
+                auto [mode, component, grab_pos] = dialog->check_interaction(mouse_pos);
+                if (mode == Interaction::Modal && !dialog->contains(mouse_pos))
                     return false;
             }
         }
@@ -460,40 +470,28 @@ namespace rl::ui {
             case MouseMode::Propagate:
             {
                 m_active_widget = find_widget(mouse_pos);
-                m_active_dialog = dynamic_cast<Dialog*>(m_active_widget);
+                m_active_dialog = dynamic_cast<ScrollableDialog*>(m_active_widget);
 
                 if (m_active_dialog != nullptr)
                 {
                     bool drag_btn_pressed{ mouse.is_button_pressed(Mouse::Button::Left) };
                     bool resize_btn_pressed{ mouse.is_button_pressed(Mouse::Button::Left) };
 
-                    if (resize_btn_pressed)
+                    if (resize_btn_pressed && m_active_dialog != nullptr)
                     {
-                        if (m_active_dialog != nullptr)
+                        auto [mode, comp, grab_pos] = m_active_dialog->check_interaction(mouse_pos);
+                        if (grab_pos != Side::None)
                         {
-                            auto dialog_rect{ m_active_dialog->rect() };
-                            Side grab_pos{ dialog_rect.edge_overlap(RESIZE_GRAB_BUFFER, mouse_pos) };
-                            m_active_dialog->set_resize_grab_pos(grab_pos);
-                            if (grab_pos == Side::None)
-                                m_active_dialog->set_mode(Dialog::Mode::None);
-                            else
-                            {
-                                m_mouse_mode = MouseMode::Resize;
-                                m_active_dialog->set_mode(Dialog::Mode::Resizing);
-                                m_redraw |= m_active_dialog->on_mouse_button_pressed(mouse, kb);
-                            }
+                            m_mouse_mode = MouseMode::Resize;
+                            m_redraw |= m_active_dialog->on_mouse_button_pressed(mouse, kb);
                         }
                     }
 
                     if (!m_redraw && drag_btn_pressed)
                     {
                         m_mouse_mode = MouseMode::Drag;
-                        m_active_dialog->set_mode(Dialog::Mode::Move);
                         m_redraw |= m_active_dialog->on_mouse_button_pressed(mouse, kb);
                     }
-
-                    if (!m_redraw && m_active_dialog != nullptr)
-                        m_active_dialog->set_mode(Dialog::Mode::None);
                 }
 
                 break;
@@ -525,8 +523,8 @@ namespace rl::ui {
 
         if (m_focus_path.size() > 1)
         {
-            Dialog* dialog{ dynamic_cast<Dialog*>(m_focus_path[m_focus_path.size() - 2]) };
-            if (dialog != nullptr && dialog->mode() == Dialog::Mode::Modal)
+            auto dialog{ dynamic_cast<ScrollableDialog*>(m_focus_path[m_focus_path.size() - 2]) };
+            if (dialog != nullptr && dialog->mode_active(Interaction::Modal))
             {
                 if (!dialog->contains(mouse_pos))
                     return true;
@@ -595,8 +593,8 @@ namespace rl::ui {
         m_last_interaction = m_timer.elapsed();
         if (m_focus_path.size() > 1)
         {
-            Dialog* dialog{ dynamic_cast<Dialog*>(m_focus_path[m_focus_path.size() - 2]) };
-            if (dialog != nullptr && dialog->mode() == Dialog::Mode::Modal)
+            auto dialog{ dynamic_cast<ScrollableDialog*>(m_focus_path[m_focus_path.size() - 2]) };
+            if (dialog != nullptr && dialog->mode_active(Interaction::Modal))
                 if (!dialog->contains(mouse.pos()))
                     return true;
         }

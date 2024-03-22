@@ -58,27 +58,6 @@ namespace rl::ui {
         return m_button_panel;
     }
 
-    void Dialog::dispose()
-    {
-        scoped_log();
-        Widget* owner{ this };
-        while (owner->parent() != nullptr)
-            owner = owner->parent();
-
-        dynamic_cast<Canvas*>(owner)->dispose_dialog(this);
-    }
-
-    void Dialog::center()
-    {
-        scoped_log();
-
-        Widget* owner{ this };
-        while (owner->parent() != nullptr)
-            owner = owner->parent();
-
-        dynamic_cast<Canvas*>(owner)->center_dialog(this);
-    }
-
     f32 Dialog::header_height() const
     {
         scoped_logger(log_level::debug, "{}", m_title.empty() ? 0 : m_theme->dialog_header_height);
