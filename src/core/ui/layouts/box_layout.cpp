@@ -21,13 +21,10 @@ namespace rl::ui {
         , m_orientation{ orientation }
         , m_alignment{ alignment }
     {
-        scoped_trace(log_level::debug);
     }
 
     ds::dims<f32> BoxLayout::preferred_size(nvg::Context* nvg_context, const Widget* widget) const
     {
-        scoped_trace(log_level::debug);
-
         ds::dims size{
             2.0f * m_margin,
             2.0f * m_margin,
@@ -68,10 +65,8 @@ namespace rl::ui {
         return size + ds::dims{ 0.0f, y_offset };
     }
 
-    void BoxLayout::perform_layout(nvg::Context* nvg_context, Widget* widget) const
+    void BoxLayout::perform_layout(nvg::Context* nvg_context, const Widget* widget) const
     {
-        scoped_trace(log_level::debug);
-
         const ds::dims fs_w{ widget->fixed_size() };
         ds::dims container_size{
             std::fabs(fs_w.width) > std::numeric_limits<f32>::epsilon() ? fs_w.width
@@ -150,25 +145,21 @@ namespace rl::ui {
 
     Orientation BoxLayout::orientation() const
     {
-        scoped_trace(log_level::debug);
         return m_orientation;
     }
 
     void BoxLayout::set_orientation(const Orientation orientation)
     {
-        scoped_trace(log_level::debug);
         m_orientation = orientation;
     }
 
     Alignment BoxLayout::alignment() const
     {
-        scoped_trace(log_level::debug);
         return m_alignment;
     }
 
     void BoxLayout::set_alignment(const Alignment alignment)
     {
-        scoped_trace(log_level::debug);
         m_alignment = alignment;
     }
 
@@ -179,19 +170,16 @@ namespace rl::ui {
 
     void BoxLayout::set_margin(const f32 margin)
     {
-        scoped_trace(log_level::debug);
         m_margin = margin;
     }
 
     f32 BoxLayout::spacing() const
     {
-        scoped_trace(log_level::debug);
         return m_spacing;
     }
 
     void BoxLayout::set_spacing(const f32 spacing)
     {
-        scoped_trace(log_level::debug);
         m_spacing = spacing;
     }
 }

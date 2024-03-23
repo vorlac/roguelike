@@ -13,7 +13,6 @@
 #include "core/renderer.hpp"
 #include "core/state/fsm.hpp"
 #include "core/ui/gui.hpp"
-#include "core/ui/widgets/button.hpp"
 #include "graphics/gl/instanced_buffer.hpp"
 #include "sdl/defs.hpp"
 #include "utils/logging.hpp"
@@ -68,13 +67,13 @@ namespace rl {
             f32 framerate{ 0.0f };
             f32 elapsed_time{ 0.0f };
             std::string sval{ "asdsad" };
-            ui::Axis eval{ ui::Horizontal };
+            Axis eval{ Axis::Horizontal };
 
             const auto gui{ m_main_window->gui() };
             const std::unique_ptr<OpenGLRenderer>& renderer{ m_main_window->glrenderer() };
             gl::InstancedVertexBuffer vbo{ renderer->get_viewport() };
 
-            auto&& dialog{ new ui::ScrollableDialog{ gui, "asdfasdf" } };
+            ui::ScrollableDialog* dialog{ new ui::ScrollableDialog(gui, "asdfasdf") };
             dialog->set_position({ 10.0f, 10.0f });
             dialog->set_visible(true);
 
@@ -191,7 +190,7 @@ namespace rl {
             //     ->set_alignment(ui::TextBox::Alignment::Right);
 
             // form->add_group("Enum");
-            // form->add_variable<ui::Axis>("Axis", eval, true)
+            // form->add_variable<Axis>("Axis", eval, true)
             //     ->set_items({
             //         "Horizontal",
             //         "Vertical",

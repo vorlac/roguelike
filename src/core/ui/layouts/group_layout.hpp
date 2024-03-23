@@ -1,9 +1,6 @@
 #pragma once
 
 #include "core/ui/layouts/layout.hpp"
-#include "ds/dims.hpp"
-#include "graphics/vg/nanovg.hpp"
-#include "utils/numeric.hpp"
 
 namespace rl::ui {
     class Widget;
@@ -36,7 +33,7 @@ namespace rl::ui {
         void set_group_spacing(f32 group_spacing);
 
     public:
-        virtual void perform_layout(nvg::Context* nvg_context, Widget* widget) const override;
+        virtual void perform_layout(nvg::Context* nvg_context, const Widget* widget) const override;
         virtual ds::dims<f32> preferred_size(nvg::Context* nvg_context,
                                              const Widget* widget) const override;
 

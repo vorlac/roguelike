@@ -1,19 +1,17 @@
 #pragma once
 
 #include <string>
+#include <tuple>
 #include <utility>
 
 #include "core/ui/widget.hpp"
-#include "ds/dims.hpp"
-#include "utils/numeric.hpp"
-#include "utils/properties.hpp"
+#include "ds/color.hpp"
 
 namespace rl {
     class Keyboard;
     class Mouse;
 
     namespace ui {
-        class Popup;
 
         class ScrollableDialog : public Widget
         {
@@ -31,10 +29,9 @@ namespace rl {
             void enable_interaction(Interaction inter);
             void disable_interaction(Interaction inter);
             bool mode_active(Interaction inter) const;
-
-        private:
-            f32 scroll_pos() const;
             f32 header_height() const;
+
+            f32 scroll_pos() const;
             Widget* button_panel() const;
             void set_scroll_pos(f32 pos);
 
@@ -51,13 +48,13 @@ namespace rl {
             virtual void refresh_relative_placement();
 
         protected:
-            std::string m_title{};
             bool m_header_visible{ false };
             bool m_scrollbar_visible{ false };
             f32 m_scrollbar_position{ 0.0f };
             Widget* m_button_panel{ nullptr };
             Interaction m_enabled_interactions{ Interaction::All };
             Interaction m_active_interactions{ Interaction::None };
+            std::string m_title{};
 
         private:
             constexpr static inline ds::color<f32> SDScrollbarColor{ 220, 220, 220, 100 };

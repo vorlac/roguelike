@@ -1,3 +1,4 @@
+#include <memory>
 #include <ranges>
 
 #include "core/keyboard.hpp"
@@ -6,20 +7,17 @@
 #include "core/ui/canvas.hpp"
 #include "core/ui/layouts/layout.hpp"
 #include "core/ui/theme.hpp"
-#include "core/ui/widgets/dialog.hpp"
-#include "ds/refcounted.hpp"
+#include "core/ui/widget.hpp"
+#include "core/ui/widgets/scroll_dialog.hpp"
 #include "ds/shared.hpp"
 #include "graphics/nvg_renderer.hpp"
 #include "graphics/vg/nanovg_state.hpp"
-#include "utils/logging.hpp"
-#include "utils/math.hpp"
 
 namespace rl::ui {
 
     Widget::Widget(Widget* parent)
         : m_parent{ parent }
     {
-        scoped_trace(log_level::debug);
         if (parent != nullptr)
             parent->add_child(this);
     }
@@ -27,7 +25,6 @@ namespace rl::ui {
     Widget::Widget(Widget* parent, const std::unique_ptr<NVGRenderer>& vg_renderer)
         : m_parent{ parent }
     {
-        scoped_trace(log_level::debug);
         runtime_assert(m_renderer == nullptr, "widget vectorized renderer already set");
         if (m_renderer == nullptr)
             m_renderer = vg_renderer.get();
@@ -38,7 +35,6 @@ namespace rl::ui {
 
     Widget::~Widget()
     {
-        scoped_trace(log_level::debug);
         for (const auto child : m_children)
             if (child != nullptr)
                 child->release_ref();
@@ -46,60 +42,51 @@ namespace rl::ui {
 
     Widget* Widget::parent()
     {
-        scoped_trace(log_level::trace);
         return m_parent;
     }
 
     const Widget* Widget::parent() const
     {
-        scoped_trace(log_level::debug);
         return m_parent;
     }
 
     void Widget::set_parent(Widget* parent)
     {
-        scoped_trace(log_level::debug);
         m_parent = parent;
     }
 
     Layout* Widget::layout()
     {
-        scoped_trace(log_level::debug);
         return m_layout;
     }
 
-    const Layout* Widget::layout() const
-    {
-        scoped_trace(log_level::debug);
-        return m_layout.get();
-    }
+    // const Layout* Widget::layout() const
+    //{
+    //     return m_layout.get();
+    // }
 
     void Widget::set_layout(Layout* layout)
     {
-        scoped_trace(log_level::debug);
         m_layout = layout;
-    }
-
-    Theme* Widget::theme()
-    {
-        scoped_trace(log_level::trace);
-        return m_theme;
     }
 
     const Theme* Widget::theme() const
     {
-        scoped_trace(log_level::trace);
         return m_theme.get();
     }
 
+    // Theme* Widget::theme()
+    //{
+    //     return m_theme.get();
+    // }
+
     void Widget::set_theme(Theme* theme)
     {
-        scoped_trace(log_level::debug);
         if (m_theme.get() == theme)
             return;
 
         m_theme = theme;
-        for (const auto child : m_children)
+        for (auto child : m_children)
             child->set_theme(theme);
     }
 
@@ -110,19 +97,16 @@ namespace rl::ui {
 
     void Widget::set_position(ds::point<f32>&& pos) noexcept
     {
-        scoped_trace(log_level::debug);
         m_rect.pt = std::move(pos);
     }
 
     void Widget::set_rect(ds::rect<f32>&& rect) noexcept
     {
-        scoped_trace(log_level::debug);
         m_rect = std::move(rect);
     }
 
     ds::point<f32> Widget::abs_position() const
     {
-        scoped_trace(log_level::debug);
         return m_parent != nullptr  //
                  ? m_parent->abs_position() + m_rect.pt
                  : m_rect.pt;
@@ -150,7 +134,6 @@ namespace rl::ui {
 
     void Widget::set_width(const f32 width)
     {
-        scoped_log("width={}", width);
         m_rect.size.width = width;
     }
 
@@ -161,13 +144,11 @@ namespace rl::ui {
 
     void Widget::set_height(const f32 height)
     {
-        scoped_log("height={}", height);
         m_rect.size.height = height;
     }
 
     void Widget::set_fixed_size(const ds::dims<f32>& fixed_size)
     {
-        scoped_log("fixed_size={}", fixed_size);
         m_fixed_size = fixed_size;
     }
 
@@ -188,25 +169,21 @@ namespace rl::ui {
 
     void Widget::set_fixed_width(const f32 width)
     {
-        scoped_log("fixed_width={}", width);
         m_fixed_size.width = width;
     }
 
-    void Widget::set_fixed_height(f32 height)
+    void Widget::set_fixed_height(const f32 height)
     {
-        scoped_log("fixed_height={}", height);
         m_fixed_size.height = height;
     }
 
     bool Widget::visible() const
     {
-        scoped_logger(log_level::trace, "m_visible={}", m_visible);
         return m_visible;
     }
 
-    void Widget::set_visible(bool visible)
+    void Widget::set_visible(const bool visible)
     {
-        scoped_logger(log_level::trace, "visible={}", visible);
         m_visible = visible;
     }
 
@@ -222,7 +199,6 @@ namespace rl::ui {
 
     bool Widget::visible_recursive() const
     {
-        scoped_trace(log_level::debug);
         bool visible{ true };
 
         const Widget* widget{ this };
@@ -263,16 +239,12 @@ namespace rl::ui {
 
     ds::dims<f32> Widget::preferred_size() const
     {
-        const auto context{ m_renderer->context() };
-        auto ret{ (m_layout != nullptr ? m_layout->preferred_size(context, this) : m_rect.size) };
-        scoped_logger(log_level::trace, "{}", ret);
-        return ret;
+        auto context{ m_renderer->context() };
+        return m_layout != nullptr ? m_layout->preferred_size(context, this) : m_rect.size;
     }
 
     void Widget::perform_layout()
     {
-        scoped_trace(log_level::trace);
-
         for (const auto child : m_children)
         {
             auto ps{ child->preferred_size() };
@@ -371,8 +343,6 @@ namespace rl::ui {
 
     bool Widget::on_mouse_button_released(const Mouse& mouse, const Keyboard& kb)
     {
-        scoped_log("btn={}", mouse.button_released());
-
         LocalTransform transform{ this };
         const ds::point local_mouse_pos{ mouse.pos() - LocalTransform::absolute_pos };
         for (const auto child : std::ranges::reverse_view{ m_children })
@@ -475,13 +445,11 @@ namespace rl::ui {
 
     void Widget::add_child(Widget* widget)
     {
-        scoped_log("{}", widget->name());
         this->add_child(this->child_count(), widget);
     }
 
     void Widget::remove_child(const Widget* widget)
     {
-        scoped_log("{}", widget->name());
         const std::size_t child_count{ m_children.size() };
         std::erase(m_children, widget);
 
@@ -510,19 +478,16 @@ namespace rl::ui {
 
     bool Widget::enabled() const
     {
-        scoped_log("enabled={}", m_enabled);
         return m_enabled;
     }
 
-    void Widget::set_enabled(bool enabled)
+    void Widget::set_enabled(const bool enabled)
     {
-        scoped_log("enabled={}", enabled);
         m_enabled = enabled;
     }
 
     bool Widget::focused() const
     {
-        scoped_logger(log_level::trace, "m_focused={}", m_focused);
         return m_focused;
     }
 
@@ -531,51 +496,43 @@ namespace rl::ui {
         return m_resizable;
     }
 
-    void Widget::set_focused(bool focused)
+    void Widget::set_focused(const bool focused)
     {
-        scoped_log("focused={}", focused);
         m_focused = focused;
     }
 
     const std::string& Widget::tooltip() const
     {
-        scoped_logger(log_level::debug, "m_tooltip={}", m_tooltip);
         return m_tooltip;
     }
 
     void Widget::set_tooltip(const std::string& tooltip)
     {
-        scoped_log("tooltip={}", tooltip);
         m_tooltip = tooltip;
     }
 
-    void Widget::set_font_size(f32 font_size)
+    void Widget::set_font_size(const f32 font_size)
     {
-        scoped_log("font_size={}", font_size);
         m_font_size = font_size;
     }
 
     bool Widget::has_font_size() const
     {
-        scoped_logger(log_level::debug, "m_icon_extra_scale={}", m_icon_extra_scale);
         return m_font_size > 0;
     }
 
     f32 Widget::icon_extra_scale() const
     {
-        scoped_log("m_icon_extra_scale={}", m_icon_extra_scale);
         return m_icon_extra_scale;
     }
 
-    void Widget::set_icon_extra_scale(f32 scale)
+    void Widget::set_icon_extra_scale(const f32 scale)
     {
-        scoped_log("scale={}", scale);
         m_icon_extra_scale = scale;
     }
 
     Mouse::Cursor::ID Widget::cursor() const
     {
-        scoped_logger(log_level::debug, "{}", std::to_underlying(m_cursor));
         return m_cursor;
     }
 
@@ -586,7 +543,6 @@ namespace rl::ui {
 
     void Widget::set_cursor(const Mouse::Cursor::ID cursor)
     {
-        scoped_log("{}", static_cast<i32>(cursor));
         m_cursor = cursor;
     }
 
@@ -599,7 +555,6 @@ namespace rl::ui {
 
     Canvas* Widget::canvas()
     {
-        scoped_trace(log_level::trace);
         Widget* widget{ this };
         while (widget != nullptr)
         {
@@ -610,14 +565,11 @@ namespace rl::ui {
             widget = widget->parent();
         }
 
-        assert_msg("failed to get GUI canvas that owns widget");
         return nullptr;
     }
 
     ScrollableDialog* Widget::dialog()
     {
-        scoped_trace(log_level::trace);
-
         Widget* widget{ this };
         while (widget != nullptr)
         {
@@ -628,19 +580,16 @@ namespace rl::ui {
             widget = widget->parent();
         }
 
-        runtime_assert(false, "failed to get dialog that owns widget");
         return nullptr;
     }
 
     const Canvas* Widget::canvas() const
     {
-        scoped_trace(log_level::trace);
         return const_cast<Widget*>(this)->canvas();
     }
 
     const ScrollableDialog* Widget::dialog() const
     {
-        scoped_trace(log_level::trace);
         return const_cast<Widget*>(this)->dialog();
     }
 
@@ -657,8 +606,6 @@ namespace rl::ui {
 
     bool Widget::draw_mouse_intersection(const ds::point<f32>& pt)
     {
-        scoped_trace(log_level::trace);
-
         if (this->contains(pt))
         {
             const ds::rect widget_rect{ m_rect.pt, m_rect.size };
@@ -678,9 +625,6 @@ namespace rl::ui {
 
             m_renderer->draw_rect_outline(this->rect(), 1.0f, rl::Colors::Yellow, Outline::Inner);
 
-            diag_log("dgb outline: handled={}", this->name());
-            diag_log("dgb outline: rel_pos={}", ds::rect{ m_rect.pt, m_rect.size });
-            diag_log("dgb outline: abs_pos={}", ds::rect{ this->abs_position(), m_rect.size });
             return true;
         }
 
@@ -689,8 +633,6 @@ namespace rl::ui {
 
     void Widget::draw()
     {
-        scoped_trace(log_level::trace);
-
         if constexpr (Widget::DiagnosticsEnabled)
         {
             m_renderer->draw_rect_outline(ds::rect{ m_rect.pt, m_rect.size }, 1.0f,

@@ -1,14 +1,17 @@
 
+#include <array>
 #include <numeric>
 #include <utility>
+#include <vector>
 
 #include "core/ui/layouts/advanced_grid_layout.hpp"
+#include "core/ui/layouts/layout.hpp"
 #include "core/ui/theme.hpp"
 #include "core/ui/widget.hpp"
 #include "core/ui/widgets/dialog.hpp"
 #include "core/ui/widgets/label.hpp"
+#include "core/ui/widgets/scroll_dialog.hpp"
 #include "ds/dims.hpp"
-#include "graphics/vg/nanovg.hpp"
 #include "utils/io.hpp"
 #include "utils/logging.hpp"
 #include "utils/numeric.hpp"
@@ -32,8 +35,10 @@ namespace rl::ui {
         this->compute_layout(nvg_context, widget, grid);
 
         const ds::dims size{
-            std::accumulate(grid[Axis::Horizontal].begin(), grid[Axis::Horizontal].end(), 0.0f),
-            std::accumulate(grid[Axis::Vertical].begin(), grid[Axis::Vertical].end(), 0.0f),
+            std::accumulate(grid[std::to_underlying(Axis::Horizontal)].begin(),
+                            grid[std::to_underlying(Axis::Horizontal)].end(), 0.0f),
+            std::accumulate(grid[std::to_underlying(Axis::Vertical)].begin(),
+                            grid[std::to_underlying(Axis::Vertical)].end(), 0.0f),
         };
 
         ds::dims extra{
@@ -41,41 +46,45 @@ namespace rl::ui {
             2.0f * m_margin,
         };
 
-        const auto dialog{ dynamic_cast<const Dialog*>(widget) };
+        const auto dialog{ dynamic_cast<const ScrollableDialog*>(widget) };
         if (dialog != nullptr && !dialog->title().empty())
             extra.height += widget->theme()->dialog_header_height - m_margin / 2.0f;
 
         return size + extra;
     }
 
-    void AdvancedGridLayout::perform_layout(nvg::Context* nvg_context, Widget* widget) const
+    void AdvancedGridLayout::perform_layout(nvg::Context* nvg_context, const Widget* widget) const
     {
         std::array<std::vector<f32>, 2> grid{ { {}, {} } };
         this->compute_layout(nvg_context, widget, grid);
 
-        grid[Axis::Horizontal].insert(grid[Axis::Horizontal].begin(), m_margin);
+        grid[std::to_underlying(Axis::Horizontal)].insert(
+            grid[std::to_underlying(Axis::Horizontal)].begin(), m_margin);
 
-        const auto dialog{ dynamic_cast<const Dialog*>(widget) };
+        const auto dialog{ dynamic_cast<const ScrollableDialog*>(widget) };
         if (dialog == nullptr || dialog->title().empty())
-            grid[Axis::Vertical].insert(grid[Axis::Vertical].begin(), m_margin);
+            grid[std::to_underlying(Axis::Vertical)].insert(
+                grid[std::to_underlying(Axis::Vertical)].begin(), m_margin);
         else if (dialog != nullptr)
-            grid[Axis::Vertical].insert(grid[Axis::Vertical].begin(),
-                                        dialog->header_height() + m_margin / 2.0f);
+            grid[std::to_underlying(Axis::Vertical)].insert(
+                grid[std::to_underlying(Axis::Vertical)].begin(),
+                dialog->header_height() + m_margin / 2.0f);
         else
         {
-            grid[Axis::Vertical].insert(grid[Axis::Vertical].begin(),
-                                        widget->theme()->dialog_header_height + m_margin / 2.0f);
+            grid[std::to_underlying(Axis::Vertical)].insert(
+                grid[std::to_underlying(Axis::Vertical)].begin(),
+                widget->theme()->dialog_header_height + m_margin / 2.0f);
         }
 
-        for (const Axis axis : { Axis::Horizontal, Axis::Vertical })
+        for (Axis axis : { Axis::Horizontal, Axis::Vertical })
         {
-            std::vector<f32>& axis_grids{ grid[axis] };
+            std::vector<f32>& axis_grids{ grid[std::to_underlying(axis)] };
             for (size_t i = 1; i < axis_grids.size(); ++i)
                 axis_grids[i] += axis_grids[i - 1];
 
             for (Widget* child : widget->children())
             {
-                const Dialog* child_dialog{ dynamic_cast<Dialog*>(child) };
+                const ScrollableDialog* child_dialog{ dynamic_cast<ScrollableDialog*>(child) };
                 if (!child->visible() || child_dialog != nullptr)
                     continue;
 
@@ -97,7 +106,7 @@ namespace rl::ui {
                 const f32 fs{ axis == Axis::Horizontal ? widget_fs.width : widget_fs.height };
 
                 f32 target_size{ std::fabs(fs) > std::numeric_limits<f32>::epsilon() ? fs : ps };
-                switch (anchor.align[axis])
+                switch (anchor.align[std::to_underlying(axis)])
                 {
                     case Alignment::Minimum:
                         break;
@@ -147,14 +156,14 @@ namespace rl::ui {
             m_margin * 2.0f,
         };
 
-        const auto dialog{ dynamic_cast<const Dialog*>(widget) };
+        const auto dialog{ dynamic_cast<const ScrollableDialog*>(widget) };
         if (dialog != nullptr && !dialog->title().empty())
             extra.height += dialog->header_height() - (m_margin / 2.0f);
 
         container_size -= extra;
         for (const Axis axis : { Axis::Horizontal, Axis::Vertical })
         {
-            std::vector<f32>& grid{ grid_cell_sizes[axis] };
+            std::vector<f32>& grid{ grid_cell_sizes[std::to_underlying(axis)] };
             const bool col_axis{ axis == Axis::Horizontal };
             const std::vector<f32>& sizes{ col_axis ? m_cols : m_rows };
             const std::vector<f32>& stretch{ col_axis ? m_col_stretch : m_row_stretch };
@@ -165,7 +174,7 @@ namespace rl::ui {
                 for (const auto& [layout_widget, widget_anchor] : m_anchor)
                 {
                     const Widget* w{ layout_widget };
-                    const auto anchor_window{ dynamic_cast<const Dialog*>(w) };
+                    const auto anchor_window{ dynamic_cast<const ScrollableDialog*>(w) };
                     if (!w->visible() || anchor_window != nullptr)
                         continue;
 
@@ -189,7 +198,7 @@ namespace rl::ui {
                                                : ps };
 
                     runtime_assert(axis_anchor_pos + axis_anchor_size <= grid.size(),
-                                   "Advanced grid layout: widget is out of bounds: {}", anchor);
+                                   "Advanced grid layout: widget is out of bounds");
 
                     f32 current_size{ 0.0f };
                     f32 total_stretch{ 0.0f };
@@ -207,7 +216,7 @@ namespace rl::ui {
                         continue;
 
                     runtime_assert(total_stretch != 0,
-                                   "Advanced grid layout: no space to place widget: {}", anchor);
+                                   "Advanced grid layout: no space to place widget");
 
                     const f32 amt{ (target_size - current_size) / total_stretch };
                     for (u32 i = axis_anchor_pos; i < axis_anchor_pos + axis_anchor_size; ++i)

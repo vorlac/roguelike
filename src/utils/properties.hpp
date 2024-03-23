@@ -4,7 +4,7 @@
 
 // clang-format off
 
-namespace rl::ui {
+namespace rl {
     enum class Interaction : i16_fast {
         None      = 0x00,  // constant positionioning
 
@@ -27,9 +27,25 @@ namespace rl::ui {
         Edge,
     };
 
-}
+    enum class Alignment : i16_fast{
+        Unknown = -1,  // Invalid / uninitialized alignment
+        Minimum = 0,   // Take only as much space as is required.
+        Center,        // Center align.
+        Maximum,       // Take as much space as is allowed.
+        Fill           // Fill according to preferred sizes.
+    };
 
-namespace rl {
+    enum class Orientation : i16_fast{
+        Unknown = -1,    // Invalid / uninitialized orientation
+        Horizontal = 0,  // Layout expands on horizontal axis.
+        Vertical         // Layout expands on vertical axis.
+    };
+
+    enum class Axis : i16_fast {
+        Horizontal = 1 << 0,  // x axis
+        Vertical   = 1 << 1,  // y axis
+    };
+
     enum class Side : i16_fast {
         None        = 0,
         Left        = 1 << 0,
@@ -49,11 +65,6 @@ namespace rl {
         BottomRight = Side::Bottom | Side::Right,
     };
 
-    enum class Axis : i16_fast {
-        Horizontal = 1 << 0,  // x axis
-        Vertical   = 1 << 1,  // y axis
-    };
-
     enum class Direction : i16_fast {
         None      = 0,
         North     = 1 << 0,
@@ -65,12 +76,15 @@ namespace rl {
         NorthWest = North | West,
         SouthWest = South | West,
     };
+
+
 }
 
 // clang-format on
 
 namespace rl {
-    constexpr auto format_as(const Side side)
+
+    constexpr auto format_as(Side side)
     {
         switch (side)
         {
@@ -95,5 +109,52 @@ namespace rl {
             default:
                 return "Invalid";
         }
+    }
+
+    constexpr auto format_as(Alignment alignment)
+    {
+        switch (alignment)
+        {
+            case Alignment::Unknown:
+                return "Unknown";
+            case Alignment::Minimum:
+                return "Minimum";
+            case Alignment::Center:
+                return "Center";
+            case Alignment::Maximum:
+                return "Maximum";
+            case Alignment::Fill:
+                return "Fill";
+        }
+
+        return "Unknown";
+    }
+
+    constexpr auto format_as(Orientation orientation)
+    {
+        switch (orientation)
+        {
+            case Orientation::Unknown:
+                return "Unknown";
+            case Orientation::Horizontal:
+                return "Horizontal";
+            case Orientation::Vertical:
+                return "Vertical";
+        }
+
+        return "Unknown";
+    }
+
+    constexpr auto format_as(Axis axis)
+    {
+        switch (axis)
+        {
+            case Axis::Horizontal:
+                return "Horizontal";
+            case Axis::Vertical:
+                return "Vertical";
+        }
+
+        return "Unknown";
     }
 }

@@ -1,10 +1,13 @@
 #pragma once
+#include "ds/dims.hpp"
+#include "parallel_hashmap/phmap_base.h"
+#include "utils/properties.hpp"
+
+namespace rl::nvg {
+    struct Context;
+}
 
 #include "core/ui/layouts/layout.hpp"
-#include "ds/color.hpp"
-#include "ds/dims.hpp"
-#include "graphics/vg/nanovg.hpp"
-#include "utils/numeric.hpp"
 
 namespace rl::ui {
     class Widget;
@@ -32,7 +35,7 @@ namespace rl::ui {
         void set_alignment(Alignment alignment);
 
     public:
-        virtual void perform_layout(nvg::Context* nvg_context, Widget* widget) const override;
+        virtual void perform_layout(nvg::Context* nvg_context, const Widget* widget) const override;
         virtual ds::dims<f32> preferred_size(nvg::Context* nvg_context,
                                              const Widget* widget) const override;
 

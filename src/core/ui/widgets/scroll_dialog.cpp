@@ -4,9 +4,6 @@
 
 #include "core/ui/canvas.hpp"
 #include "core/ui/widgets/scroll_dialog.hpp"
-#include "ds/dims.hpp"
-#include "ds/point.hpp"
-#include "ds/rect.hpp"
 
 namespace rl::ui {
 

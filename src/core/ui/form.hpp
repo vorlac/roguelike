@@ -1,20 +1,19 @@
 #pragma once
+#include <memory>
 #include <string>
 
 #include "core/assert.hpp"
 #include "core/ui/canvas.hpp"
-#include "core/ui/layouts/layout.hpp"
+// #include "core/ui/layouts/layout.hpp"
+#include "core/ui/layouts/advanced_grid_layout.hpp"
+#include "core/ui/layouts/box_layout.hpp"
+#include "core/ui/theme.hpp"
 #include "core/ui/widgets/checkbox.hpp"
 #include "core/ui/widgets/combobox.hpp"
-#include "core/ui/widgets/dialog.hpp"
 #include "core/ui/widgets/label.hpp"
+#include "core/ui/widgets/scroll_dialog.hpp"
 #include "core/ui/widgets/textbox.hpp"
-#include "core/ui/widgets/vertical_scroll_panel.hpp"
-#include "ds/dims.hpp"
-#include "ds/shared.hpp"
-#include "layouts/advanced_grid_layout.hpp"
-#include "layouts/box_layout.hpp"
-#include "utils/math.hpp"
+#include "ds/vector2d.hpp"
 
 namespace rl::ui {
     namespace detail {
@@ -37,10 +36,10 @@ namespace rl::ui {
             runtime_assert(m_ui_canvas != nullptr, "invalid dialog");
 
             m_dialog = new ScrollableDialog{ m_ui_canvas, title };
-            m_dialog->set_layout(new ui::BoxLayout{ Orientation::Horizontal });
+            m_dialog->set_layout(new BoxLayout{ Orientation::Horizontal });
 
-            m_layout = new AdvancedGridLayout{ { 0, 0, 0, 0 }, {} };
-            m_layout->set_margin(10.0f);
+            m_layout = new AdvancedGridLayout({ 0, 0, 0, 0 }, {}, 10.0f);
+            // m_layout->set_margin(10.0f);
 
             m_dialog->set_position(std::move(pos));
             m_dialog->set_visible(true);

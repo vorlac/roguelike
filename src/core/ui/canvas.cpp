@@ -1,3 +1,5 @@
+#include <memory>
+#include <ranges>
 #include <tuple>
 #include <utility>
 
@@ -5,11 +7,11 @@
 #include "core/keyboard.hpp"
 #include "core/mouse.hpp"
 #include "core/ui/canvas.hpp"
+#include "core/ui/widget.hpp"
 #include "core/ui/widgets/popup.hpp"
+#include "ds/rect.hpp"
 #include "graphics/vg/nanovg_state.hpp"
 #include "utils/conversions.hpp"
-#include "utils/io.hpp"
-#include "utils/logging.hpp"
 #include "utils/properties.hpp"
 #include "widgets/scroll_dialog.hpp"
 
@@ -255,13 +257,13 @@ namespace rl::ui {
 
     void Canvas::dispose_dialog(ScrollableDialog* dialog)
     {
-        const bool match_found{ std::ranges::find_if(m_focus_path, [&](const Widget* w) {
-                                    return w == dialog;
-                                }) != m_focus_path.end() };
+        bool match_found{ std::ranges::find_if(m_focus_path, [&](const Widget* w) {
+                              return w == dialog;
+                          }) != m_focus_path.end() };
         if (match_found)
             m_focus_path.clear();
 
-        if (m_active_dialog == static_cast<Widget*>(dialog))
+        if (m_active_dialog == dialog)
         {
             m_active_dialog = nullptr;
             m_active_widget = nullptr;
@@ -279,7 +281,7 @@ namespace rl::ui {
             dialog->perform_layout();
         }
 
-        const ds::dims offset{ (((m_rect.size - dialog->size()) / 2.0f) - m_rect.pt) };
+        ds::dims offset{ (((m_rect.size - dialog->size()) / 2.0f) - m_rect.pt) };
         ds::point position{ offset.width, offset.height };
         dialog->set_position(std::move(position));
     }
@@ -343,16 +345,12 @@ namespace rl::ui {
 
     bool Canvas::on_moved(ds::point<f32>&& pt)
     {
-        scoped_log("{} => {}", m_rect, ds::rect{ pt, m_rect.size });
         this->set_position(std::forward<decltype(pt)>(pt));
         return true;
     }
 
     bool Canvas::on_resized(ds::dims<f32>&& size)
     {
-        scoped_log("{} => {}", ds::rect{ m_rect.pt, m_rect.size },
-                   ds::rect{ m_rect.pt, size / m_pixel_ratio });
-
         if (size.area() == 0.0f)
             return false;
 
@@ -430,8 +428,6 @@ namespace rl::ui {
                     assert_msg("Unhandled/invalid Canvas mouse mode");
                     break;
             }
-
-            scoped_logger(log_level::trace, "move_pos={}", mouse.pos());
         }
 
         if (!handled)
@@ -514,7 +510,6 @@ namespace rl::ui {
 
     bool Canvas::on_mouse_button_released_event(const Mouse& mouse, const Keyboard& kb)
     {
-        scoped_log("btn={}", mouse.button_released());
         if (m_mouse_mode == MouseMode::Ignore)
             return true;
 
@@ -588,8 +583,6 @@ namespace rl::ui {
 
     bool Canvas::on_mouse_scroll_event(const Mouse& mouse, const Keyboard& kb)
     {
-        scoped_log("move_pos={}", mouse.wheel());
-
         m_last_interaction = m_timer.elapsed();
         if (m_focus_path.size() > 1)
         {
@@ -605,7 +598,6 @@ namespace rl::ui {
 
     bool Canvas::on_key_pressed(const Keyboard& kb)
     {
-        scoped_log();
         m_last_interaction = m_timer.elapsed();
         m_redraw |= Widget::on_key_pressed(kb);
         return m_redraw;
@@ -613,7 +605,6 @@ namespace rl::ui {
 
     bool Canvas::on_key_released(const Keyboard& kb)
     {
-        scoped_log();
         m_last_interaction = m_timer.elapsed();
         m_redraw |= Widget::on_key_released(kb);
         return m_redraw;
@@ -621,7 +612,6 @@ namespace rl::ui {
 
     bool Canvas::on_character_input(const Keyboard& kb)
     {
-        scoped_log();
         m_last_interaction = m_timer.elapsed();
         m_redraw |= Widget::on_character_input(kb);
         return m_redraw;

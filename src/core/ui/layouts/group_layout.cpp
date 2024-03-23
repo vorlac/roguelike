@@ -56,7 +56,7 @@ namespace rl::ui {
         return ds::dims{ width, height };
     }
 
-    void GroupLayout::perform_layout(nvg::Context* nvg_context, Widget* widget) const
+    void GroupLayout::perform_layout(nvg::Context* nvg_context, const Widget* widget) const
     {
         scoped_trace(log_level::debug);
 

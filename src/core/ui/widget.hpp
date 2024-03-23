@@ -1,22 +1,21 @@
 #pragma once
 
+#include <memory>
+#include <string>
 #include <vector>
 
 #include "core/keyboard.hpp"
 #include "core/mouse.hpp"
-#include "core/ui/layouts/layout.hpp"
-#include "core/ui/theme.hpp"
-#include "ds/dims.hpp"
-#include "ds/refcounted.hpp"
-#include "ds/shared.hpp"
 #include "ds/vector2d.hpp"
 #include "graphics/nvg_renderer.hpp"
-#include "utils/numeric.hpp"
 #include "utils/time.hpp"
 
 namespace rl::ui {
     class ScrollableDialog;
     class Canvas;
+    class Layout;
+
+    // class Theme;
 
     class Widget : public ds::refcounted
     {
@@ -60,21 +59,21 @@ namespace rl::ui {
         ScrollableDialog* dialog();
         Widget* parent();
         Layout* layout();
-        Theme* theme();
-        // TODO: change to size_t
+
+        //  TODO: change to size_t
         Widget* child_at(i32 index);
         Mouse::Cursor::ID cursor() const;
         ds::rect<f32> resize_rect() const;
         ds::point<f32> abs_position() const;
+
         const ds::point<f32>& position() const;
         const ds::dims<f32>& fixed_size() const;
         const ds::dims<f32>& size() const;
         const ds::rect<f32>& rect() const;
+        const Theme* theme() const;
         const Canvas* canvas() const;
         const ScrollableDialog* dialog() const;
         const Widget* parent() const;
-        const Layout* layout() const;
-        const Theme* theme() const;
         const Widget* child_at(i32 index) const;
         const std::vector<Widget*>& children() const;
         const std::string& tooltip() const;
@@ -140,9 +139,9 @@ namespace rl::ui {
         f32 icon_scale() const;
 
     protected:
-        Widget* m_parent{ nullptr };
-        ds::shared<Theme> m_theme{ nullptr };
-        ds::shared<Layout> m_layout{ nullptr };
+        Widget* m_parent{};
+        ds::shared<Theme> m_theme{};
+        Layout* m_layout{};
         static inline rl::NVGRenderer* m_renderer{ nullptr };
 
         bool m_enabled{ true };

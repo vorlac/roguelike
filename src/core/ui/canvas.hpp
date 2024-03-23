@@ -4,13 +4,19 @@
 #include <string>
 #include <vector>
 
-#include "core/ui/widget.hpp"
 #include "ds/dims.hpp"
 #include "sdl/defs.hpp"
 #include "utils/numeric.hpp"
 #include "utils/time.hpp"
-#include "widgets/dialog.hpp"
-#include "widgets/scroll_dialog.hpp"
+#include "widget.hpp"
+
+namespace rl {
+    class NVGRenderer;
+}
+
+SDL_C_LIB_BEGIN
+#include <SDL3/SDL_video.h>
+SDL_C_LIB_END
 
 namespace rl::ui {
     using WindowID = SDL3::SDL_WindowID;
@@ -18,6 +24,7 @@ namespace rl::ui {
 
     using PixelFormat = i32;
     using ComponentFormat = i32;
+    class ScrollableWidget;
 
     class Canvas final : public Widget
     {

@@ -1,13 +1,10 @@
 #pragma once
 
+#include <array>
 #include <vector>
 
 #include "core/ui/layouts/layout.hpp"
-#include "ds/dims.hpp"
-#include "ds/rect.hpp"
-#include "ds/vector2d.hpp"
-#include "graphics/vg/nanovg.hpp"
-#include "utils/numeric.hpp"
+#include "utils/properties.hpp"
 
 namespace rl::ui {
     class Widget;
@@ -45,7 +42,7 @@ namespace rl::ui {
         void set_row_alignment(const std::vector<Alignment>& value);
 
     public:
-        virtual void perform_layout(nvg::Context* nvg_context, Widget* widget) const override;
+        virtual void perform_layout(nvg::Context* nvg_context, const Widget* widget) const override;
         virtual ds::dims<f32> preferred_size(nvg::Context* nvg_context,
                                              const Widget* widget) const override;
 

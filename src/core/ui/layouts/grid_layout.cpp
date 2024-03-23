@@ -1,22 +1,17 @@
-#include <numeric>
+
+#include <array>
+#include <cmath>
 #include <utility>
+#include <vector>
 
 #include "core/ui/layouts/grid_layout.hpp"
-#include "core/ui/theme.hpp"
-#include "core/ui/widget.hpp"
-#include "core/ui/widgets/dialog.hpp"
-#include "core/ui/widgets/label.hpp"
-#include "ds/dims.hpp"
-#include "graphics/vg/nanovg.hpp"
-#include "utils/io.hpp"
-#include "utils/logging.hpp"
+#include "core/ui/widgets/scroll_dialog.hpp"
 #include "utils/numeric.hpp"
+#include "utils/properties.hpp"
 
 namespace rl::ui {
     ds::dims<f32> GridLayout::preferred_size(nvg::Context* nvg_context, const Widget* widget) const
     {
-        scoped_trace(log_level::debug);
-
         std::array<std::vector<f32>, 2> grid{ { {}, {} } };
         this->compute_layout(nvg_context, widget, grid);
 
@@ -27,7 +22,7 @@ namespace rl::ui {
                 std::max(static_cast<f32>(grid[1].size()) - 1.0f, 0.0f) * m_spacing.y,
         };
 
-        const auto dialog{ dynamic_cast<const Dialog*>(widget) };
+        const ScrollableDialog* dialog{ dynamic_cast<const ScrollableDialog*>(widget) };
         if (dialog != nullptr && !dialog->title().empty())
             pref_size.height += dialog->header_height() - (m_margin / 2.0f);
 
@@ -37,14 +32,12 @@ namespace rl::ui {
     void GridLayout::compute_layout(nvg::Context* nvg_context, const Widget* widget,
                                     std::array<std::vector<f32>, 2>& grid) const
     {
-        scoped_trace(log_level::debug);
-
         const i32 axis1{ std::to_underlying(m_orientation) };
         const i32 axis2{ (axis1 + 1) % 2 };
         const i32 num_children{ widget->child_count() };
 
         i32 visible_children{ 0 };
-        for (auto&& w : widget->children())
+        for (auto w : widget->children())
             visible_children += w->visible() ? 1 : 0;
 
         const ds::dims dim{
@@ -87,12 +80,10 @@ namespace rl::ui {
                                                                                : ps.height,
                 };
 
-                auto& target_size_axis1{ axis1 == std::to_underlying(Axis::Horizontal)
-                                             ? target_size.width
-                                             : target_size.height };
-                auto& target_size_axis2{ axis2 == std::to_underlying(Axis::Horizontal)
-                                             ? target_size.width
-                                             : target_size.height };
+                auto& target_size_axis1{ axis1 == Axis::Horizontal ? target_size.width
+                                                                   : target_size.height };
+                auto& target_size_axis2{ axis2 == Axis::Horizontal ? target_size.width
+                                                                   : target_size.height };
 
                 grid[axis1][i1] = std::max(grid[axis1][i1], target_size_axis1);
                 grid[axis2][i2] = std::max(grid[axis2][i2], target_size_axis2);
@@ -100,12 +91,10 @@ namespace rl::ui {
         }
     }
 
-    void GridLayout::perform_layout(nvg::Context* nvg_context, Widget* widget) const
+    void GridLayout::perform_layout(nvg::Context* nvg_context, const Widget* widget) const
     {
-        scoped_trace(log_level::debug);
-
-        const ds::dims fs_w{ widget->fixed_size() };
-        const ds::dims container_size{
+        ds::dims fs_w{ widget->fixed_size() };
+        ds::dims container_size{
             std::fabs(fs_w.width) > std::numeric_limits<f32>::epsilon() ? fs_w.width
                                                                         : widget->width(),
             std::fabs(fs_w.height) > std::numeric_limits<f32>::epsilon() ? fs_w.height
@@ -115,13 +104,13 @@ namespace rl::ui {
         std::array<std::vector<f32>, 2> grid{ { {}, {} } };
         this->compute_layout(nvg_context, widget, grid);
 
-        const std::array dim = {
-            static_cast<f32>(grid[Axis::Horizontal].size()),
-            static_cast<f32>(grid[Axis::Vertical].size()),
+        const std::array dim{
+            static_cast<f32>(grid[std::to_underlying(Axis::Horizontal)].size()),
+            static_cast<f32>(grid[std::to_underlying(Axis::Vertical)].size()),
         };
 
         ds::dims extra{ 0.0f, 0.0f };
-        const auto dialog{ dynamic_cast<const Dialog*>(widget) };
+        const auto dialog{ dynamic_cast<const ScrollableDialog*>(widget) };
         if (dialog != nullptr && !dialog->title().empty())
             extra.height += dialog->header_height() - (m_margin / 2.0f);
 
@@ -242,32 +231,26 @@ namespace rl::ui {
 
     Orientation GridLayout::orientation() const
     {
-        scoped_trace(log_level::debug);
         return m_orientation;
     }
 
     void GridLayout::set_orientation(const Orientation orientation)
     {
-        scoped_trace(log_level::debug);
         m_orientation = orientation;
     }
 
     f32 GridLayout::resolution() const
     {
-        scoped_trace(log_level::debug);
         return m_resolution;
     }
 
     void GridLayout::set_resolution(const f32 resolution)
     {
-        scoped_trace(log_level::debug);
         m_resolution = resolution;
     }
 
     f32 GridLayout::spacing(const Axis axis) const
     {
-        scoped_trace(log_level::debug);
-
         switch (axis)
         {
             case Axis::Horizontal:
@@ -282,8 +265,6 @@ namespace rl::ui {
 
     void GridLayout::set_spacing(const Axis axis, const f32 spacing)
     {
-        scoped_trace(log_level::debug);
-
         switch (axis)
         {
             case Axis::Horizontal:
@@ -300,53 +281,46 @@ namespace rl::ui {
 
     void GridLayout::set_spacing(const f32 spacing)
     {
-        scoped_trace(log_level::debug);
         m_spacing = ds::vector2{ spacing, spacing };
     }
 
     f32 GridLayout::margin() const
     {
-        scoped_trace(log_level::debug);
         return m_margin;
     }
 
-    void GridLayout::set_margin(const f32 margin)
+    void GridLayout::set_margin(f32 margin)
     {
-        scoped_trace(log_level::debug);
         m_margin = margin;
     }
 
-    Alignment GridLayout::alignment(const Axis axis, const i32 item) const
+    Alignment GridLayout::alignment(Axis axis, i32 item) const
     {
-        scoped_trace(log_level::debug);
-        if (item < static_cast<i32>(m_alignment[axis].size()))
-            return m_alignment[axis][item];
+        i32 axis_idx = std::to_underlying(axis);
+        if (item < static_cast<i32>(m_alignment[axis_idx].size()))
+            return m_alignment[axis_idx][item];
         else
-            return m_default_alignment[axis];
+            return m_default_alignment[axis_idx];
     }
 
-    void GridLayout::set_col_alignment(const Alignment value)
+    void GridLayout::set_col_alignment(Alignment value)
     {
-        scoped_trace(log_level::debug);
-        m_default_alignment[Axis::Horizontal] = value;
+        m_default_alignment[std::to_underlying(Axis::Horizontal)] = value;
     }
 
-    void GridLayout::set_row_alignment(const Alignment value)
+    void GridLayout::set_row_alignment(Alignment value)
     {
-        scoped_trace(log_level::debug);
-        m_default_alignment[Axis::Vertical] = value;
+        m_default_alignment[std::to_underlying(Axis::Vertical)] = value;
     }
 
     void GridLayout::set_col_alignment(const std::vector<Alignment>& value)
     {
-        scoped_trace(log_level::debug);
-        m_alignment[Axis::Horizontal] = value;
+        m_alignment[std::to_underlying(Axis::Horizontal)] = value;
     }
 
     void GridLayout::set_row_alignment(const std::vector<Alignment>& value)
     {
-        scoped_trace(log_level::debug);
-        m_alignment[Axis::Vertical] = value;
+        m_alignment[std::to_underlying(Axis::Vertical)] = value;
     }
 
 }
