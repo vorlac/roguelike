@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include <tuple>
 #include <utility>
@@ -16,22 +17,29 @@ namespace rl {
         class ScrollableDialog : public Widget
         {
         public:
-            explicit ScrollableDialog(Widget* parent, std::string title = "");
+            template <typename TContainer = std::vector<std::vector<Widget*>>>
+            ScrollableDialog(Widget* parent, std::string title, TContainer&& widgets = {})
+                : Widget{ parent }
+                , m_title{ std::move(title) }
+            {
+                if (!widgets.empty())
+                    m_layout->set_widget_table(this, std::forward<TContainer>(widgets));
+            }
 
-            std::string title() const;
             std::tuple<Interaction, Component, Side> check_interaction(
                 const ds::point<f32>& pt) const;
 
             void center();
             void dispose();
             void set_title(std::string title);
-            bool interaction_enabled(Interaction inter) const;
             void enable_interaction(Interaction inter);
-            void disable_interaction(Interaction inter);
+            void disable_interaction(Interaction inter) const;
+            bool interaction_enabled(Interaction inter) const;
             bool mode_active(Interaction inter) const;
-            f32 header_height() const;
 
             f32 scroll_pos() const;
+            f32 header_height() const;
+            std::string title() const;
             Widget* button_panel() const;
             void set_scroll_pos(f32 pos);
 
@@ -43,9 +51,8 @@ namespace rl {
 
             virtual void draw() override;
             virtual void perform_layout() override;
-            virtual ds::dims<f32> preferred_size() const override;
-
             virtual void refresh_relative_placement();
+            virtual ds::dims<f32> preferred_size() const override;
 
         protected:
             bool m_header_visible{ false };

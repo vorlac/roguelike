@@ -47,12 +47,12 @@ namespace rl::ui {
         if (m_button_panel == nullptr)
         {
             m_button_panel = new Widget{ this };
-            m_button_panel->set_layout(new BoxLayout{
-                Orientation::Horizontal,
-                Alignment::Center,
-                0.0f,
-                4.0f,
-            });
+            // m_button_panel->set_layout(new BoxLayout{
+            //     Orientation::Horizontal,
+            //     Alignment::Center,
+            //     0.0f,
+            //     4.0f,
+            // });
         }
 
         return m_button_panel;

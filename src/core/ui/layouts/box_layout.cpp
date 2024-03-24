@@ -130,7 +130,7 @@ namespace rl::ui {
                                            ? fs.height
                                            : (container_size.height - m_margin * 2.0f);
                     break;
-                case Alignment::Unknown:
+                case Alignment::None:
                     assert_cond(false);
                     break;
             }

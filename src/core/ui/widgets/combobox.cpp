@@ -106,13 +106,13 @@ namespace rl::ui {
             m_vscroll_panel = new VerticalScrollPanel{ m_popup };
             m_vscroll_panel->set_fixed_height(300);
             m_item_container = new Widget{ m_vscroll_panel };
-            m_popup->set_layout(new BoxLayout{
-                Orientation::Horizontal,
-                Alignment::Center,
-            });
+            // m_popup->set_layout(new BoxLayout{
+            //     Orientation::Horizontal,
+            //     Alignment::Center,
+            // });
         }
 
-        m_item_container->set_layout(new GroupLayout{ 5.0f });
+        // m_item_container->set_layout(new GroupLayout{ 5.0f });
 
         u32 index{ 0 };
         for (const auto& str : items)

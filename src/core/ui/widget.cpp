@@ -55,17 +55,12 @@ namespace rl::ui {
         m_parent = parent;
     }
 
-    Layout* Widget::layout()
+    DynamicLayout* Widget::layout() const
     {
         return m_layout;
     }
 
-    // const Layout* Widget::layout() const
-    //{
-    //     return m_layout.get();
-    // }
-
-    void Widget::set_layout(Layout* layout)
+    void Widget::set_layout(DynamicLayout* layout)
     {
         m_layout = layout;
     }
@@ -74,11 +69,6 @@ namespace rl::ui {
     {
         return m_theme.get();
     }
-
-    // Theme* Widget::theme()
-    //{
-    //     return m_theme.get();
-    // }
 
     void Widget::set_theme(Theme* theme)
     {

@@ -36,7 +36,7 @@ namespace rl::ui {
             runtime_assert(m_ui_canvas != nullptr, "invalid dialog");
 
             m_dialog = new ScrollableDialog{ m_ui_canvas, title };
-            m_dialog->set_layout(new BoxLayout{ Orientation::Horizontal });
+            // m_dialog->set_layout(new BoxLayout{ Orientation::Horizontal });
 
             m_layout = new AdvancedGridLayout({ 0, 0, 0, 0 }, {}, 10.0f);
             // m_layout->set_margin(10.0f);

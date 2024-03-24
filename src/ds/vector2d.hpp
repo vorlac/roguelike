@@ -134,18 +134,18 @@ namespace rl::ds {
             return (pt - *this).angle();
         }
 
-        constexpr Direction dir()
+        constexpr CompassDirection dir()
         {
-            Direction ret{ Direction::None };
+            CompassDirection ret{ CompassDirection::None };
             if (this->x > 0)
-                ret |= Direction::East;
+                ret |= CompassDirection::East;
             else if (this->x < 0)
-                ret |= Direction::West;
+                ret |= CompassDirection::West;
 
             if (this->y > 0)
-                ret |= Direction::South;
+                ret |= CompassDirection::South;
             else if (this->y < 0)
-                ret |= Direction::North;
+                ret |= CompassDirection::North;
 
             return ret;
         }

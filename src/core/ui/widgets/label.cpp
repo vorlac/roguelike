@@ -7,10 +7,16 @@
 #include "graphics/vg/nanovg.hpp"
 
 namespace rl::ui {
+    Label::Label(const std::string& text)
+        : Widget{ nullptr }
+        , m_text{ text }
+    {
+    }
 
-    Label::Label(Widget* parent, std::string text, const std::string_view& font, const f32 font_size)
+    Label::Label(Widget* parent, const std::string& text, const std::string_view& font,
+                 const f32 font_size)
         : Widget{ parent }
-        , m_text{ std::move(text) }
+        , m_text{ text }
         , m_font{ font }
     {
         if (m_theme != nullptr)
@@ -23,17 +29,17 @@ namespace rl::ui {
             m_font_size = font_size;
     }
 
-    std::string Label::text() const
+    const std::string& Label::text() const
     {
         return m_text;
     }
 
-    const std::string_view& Label::font() const
+    const std::string& Label::font() const
     {
         return m_font;
     }
 
-    ds::color<f32> Label::color() const
+    const ds::color<f32>& Label::color() const
     {
         return m_color;
     }

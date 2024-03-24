@@ -144,9 +144,9 @@ namespace rl::ui {
             }
         }
 
-        const i32 num_children{ widget->child_count() };
-        const i32 axis1{ std::to_underlying(m_orientation) };
-        const i32 axis2{ (axis1 + 1) % 2 };
+        const u32 num_children{ static_cast<u32>(widget->child_count()) };
+        const u32 axis1{ static_cast<u32>(m_orientation) };
+        const u32 axis2{ (axis1 + 1) % 2 };
 
         const ds::dims<i32> start_offset{ extra + m_margin };
         const ds::point start{ start_offset.width, start_offset.height };
@@ -155,14 +155,14 @@ namespace rl::ui {
         i32& axis1_pos{ axis1 == Orientation::Horizontal ? pos.x : pos.y };
         i32& axis2_pos{ axis2 == Orientation::Horizontal ? pos.x : pos.y };
 
-        i32 child_idx{ 0 };
-        for (i32 i2 = 0; i2 < static_cast<i32>(dim[axis2]); i2++)
+        u32 child_idx{ 0 };
+        for (u32 i2 = 0; i2 < static_cast<u32>(dim[axis2]); i2++)
         {
             const i32& s{ m_orientation == Orientation::Horizontal ? start.x : start.y };
             i32& p{ m_orientation == Orientation::Horizontal ? pos.x : pos.y };
 
             p = s;
-            for (i32 i1 = 0; i1 < static_cast<i32>(dim[axis1]); i1++)
+            for (u32 i1 = 0; i1 < static_cast<u32>(dim[axis1]); i1++)
             {
                 Widget* child{ nullptr };
                 do
@@ -183,20 +183,17 @@ namespace rl::ui {
                 };
 
                 ds::point<f32> item_pos{ pos };
-                for (i32 j = 0; j < 2; j++)
+                for (u32 j = 0; j < 2; j++)
                 {
-                    const i32 axis_idx{ (axis1 + j) % 2 };
-                    const i32 item_idx{ j == 0 ? i1 : i2 };
+                    const u32 axis_idx{ (axis1 + j) % 2 };
+                    const u32 item_idx{ j == 0 ? i1 : i2 };
                     const Alignment align{ this->alignment(static_cast<Axis>(axis_idx), item_idx) };
 
                     f32& item_axis_pos{ axis_idx == Axis::Horizontal ? item_pos.x : item_pos.y };
-                    f32& target_axis_size{ axis_idx == std::to_underlying(Orientation::Horizontal)
+                    f32& fs_axis_size{ axis_idx == Orientation::Horizontal ? fs.width : fs.height };
+                    f32& target_axis_size{ axis_idx == Orientation::Horizontal
                                                ? target_size.width
                                                : target_size.height };
-                    f32& fs_axis_size{ axis_idx == std::to_underlying(Orientation::Horizontal)
-                                           ? fs.width
-                                           : fs.height };
-
                     switch (align)
                     {
                         case Alignment::Minimum:
@@ -211,7 +208,7 @@ namespace rl::ui {
                             target_axis_size = (fs_axis_size != 0.0f) ? fs_axis_size
                                                                       : grid[axis_idx][item_idx];
                             break;
-                        case Alignment::Unknown:
+                        case Alignment::None:
                             assert_cond(false);
                             break;
                     }

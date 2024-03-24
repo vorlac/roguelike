@@ -121,7 +121,7 @@ namespace rl::ui {
                                         ? fs
                                         : cell_size;
                         break;
-                    case Alignment::Unknown:
+                    case Alignment::None:
                         assert_cond(false);
                         break;
                 }

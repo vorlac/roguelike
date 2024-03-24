@@ -1,8 +1,11 @@
 #pragma once
 
+#include <array>
 #include <memory>
 #include <string>
 #include <string_view>
+#include <tuple>
+#include <utility>
 #include <vector>
 
 #include <cpptrace/cpptrace.hpp>
@@ -43,12 +46,6 @@ namespace rl {
         };
 
     public:
-        Application(Application&& other) = delete;
-        Application(const Application& other) = delete;
-        Application& operator=(const Application& other) = delete;
-        Application& operator=(Application&& other) = delete;
-
-    public:
         Application()
         {
             this->init_subsystem(Subsystem::All);
@@ -56,168 +53,31 @@ namespace rl {
             m_event_handler = EventHandler{ m_main_window };
         }
 
+        Application(Application&& other) = delete;
+        Application(const Application& other) = delete;
+        Application& operator=(const Application& other) = delete;
+        Application& operator=(Application&& other) = delete;
+
         ~Application() = default;
 
+    public:
         bool run()
         {
             bool ret{ this->setup() };
-            bool bval{ true };
 
-            u64 frame_count{ 0 };
-            f32 framerate{ 0.0f };
-            f32 elapsed_time{ 0.0f };
-            std::string sval{ "asdsad" };
-            Axis eval{ Axis::Horizontal };
+            auto dialog = new ui::ScrollableDialog{
+                m_main_window->gui(),
+                "asdfasdf",
+                {
+                    { new ui::Label{ "A" }, new ui::Label{ "1" } },
+                    { new ui::Label{ "B" }, new ui::Label{ "2" } },
+                    { new ui::Label{ "C" }, new ui::Label{ "3" } },
+                    { new ui::Label{ "D" }, new ui::Label{ "4" } },
+                }
+            };
 
-            const auto gui{ m_main_window->gui() };
-            const std::unique_ptr<OpenGLRenderer>& renderer{ m_main_window->glrenderer() };
-            gl::InstancedVertexBuffer vbo{ renderer->get_viewport() };
-
-            ui::ScrollableDialog* dialog{ new ui::ScrollableDialog(gui, "asdfasdf") };
-            dialog->set_position({ 10.0f, 10.0f });
-            dialog->set_visible(true);
-
-            // const auto form{ new ui::FormHelper(gui) };
-            // auto dialog = ds::shared{ form->add_dialog(ds::point{ 10.0f, 10.0f },
-            //                                            "Nested Dialog Test") };
-
-            // std::string elapsed_str{ fmt::to_string(
-            //     fmt::format("{:0>6.3f} sec", m_timer.elapsed())) };
-            // std::string fps_str{ fmt::format("{:0>6.3f} fps", framerate) };
-            // const auto layout{ new ui::AdvancedGridLayout({ 0, 10, 0 }, {}, 30) };
-
-            // auto full_window_menu = [&] {
-            //     scoped_log();
-
-            //    gui->set_layout(layout);
-            //    layout->set_col_stretch(1, 0.5f);
-
-            //    const auto title_label{ new ui::Label{
-            //        gui,
-            //        "GUI Canvas Span Label",
-            //        ui::Font::Name::SansBold,
-            //        40,
-            //    } };
-            //    layout->append_row(0);
-            //    const auto push_button{ new ui::Button{
-            //        gui,
-            //        "Push Button",
-            //        ui::Icon::Microscope,
-            //    } };
-            //    layout->append_row(0);
-            //    const auto timer_desc_label{ new ui::Label{
-            //        gui,
-            //        "Timer: ",
-            //        ui::Font::Name::Sans,
-            //        32,
-            //    } };
-            //    layout->append_row(0);
-            //    const auto timer_value_label{ new ui::Label{
-            //        gui,
-            //        "",
-            //        ui::Font::Name::Mono,
-            //        32,
-            //    } };
-            //    layout->append_row(0);
-            //    const auto stats_desc_label{ new ui::Label{
-            //        gui,
-            //        "Stats: ",
-            //        ui::Font::Name::Sans,
-            //        32,
-            //    } };
-            //    layout->append_row(0);
-            //    const auto stats_value_label{ new ui::Label{
-            //        gui,
-            //        "",
-            //        ui::Font::Name::Mono,
-            //        32,
-            //    } };
-            //    layout->append_row(0);
-
-            //    gui->add_update_callback([=, &elapsed_str] {
-            //        timer_value_label->set_text(elapsed_str);
-            //    });
-
-            //    gui->add_update_callback([=, &fps_str] {
-            //        stats_value_label->set_text(fps_str);
-            //    });
-
-            //    push_button->set_tooltip("Microscope Button");
-            //    push_button->set_callback([&] {
-            //        scoped_log("Push Button Callback Invoked");
-            //    });
-
-            //    layout->set_anchor(push_button, ui::Anchor(0, layout->row_count() - 1, 1, 1));
-            //    layout->set_anchor(title_label,
-            //                       ui::Anchor{ 1, layout->row_count() - 1, 2, 1,
-            //                                   ui::Alignment::Center, ui::Alignment::Fill });
-
-            //    layout->append_row(20);
-            //    layout->append_row(0);
-            //    layout->set_anchor(timer_desc_label, ui::Anchor(0, layout->row_count() - 1));
-            //    layout->set_anchor(timer_value_label, ui::Anchor(2, layout->row_count() - 1));
-            //    layout->append_row(10);
-            //    layout->append_row(0);
-            //    layout->set_anchor(stats_desc_label, ui::Anchor(0, layout->row_count() - 1));
-            //    layout->set_anchor(stats_value_label, ui::Anchor(2, layout->row_count() - 1));
-            //    layout->append_row(10);
-            //    layout->append_row(0);
-
-            //    timer_desc_label->set_tooltip("Timer Label");
-            //    timer_value_label->set_tooltip("Elapsed Time");
-
-            //    stats_desc_label->set_tooltip("Stats Label");
-            //    stats_value_label->set_tooltip("Average FPS");
-            //    stats_desc_label->set_callback([&] {
-            //        scoped_log("Button Pressed Callback Invoked");
-            //    });
-            //};
-
-            ////////////////////////////////////
-
-            // form->add_group("Group 1");
-            // form->add_variable<bool>("checkbox", bval);
-            // form->add_variable<std::string>("string", sval);
-
-            // form->add_group("Dynamic Fields");
-            // form->add_variable<f32>("fps",
-            // framerate)->set_alignment(ui::TextBox::Alignment::Left);
-
-            // form->add_variable<u64>("frame count", frame_count)
-            //     ->set_alignment(ui::TextBox::Alignment::Center);
-
-            // form->add_variable<f32>("elapsed time", elapsed_time)
-            //     ->set_alignment(ui::TextBox::Alignment::Right);
-
-            // form->add_group("Enum");
-            // form->add_variable<Axis>("Axis", eval, true)
-            //     ->set_items({
-            //         "Horizontal",
-            //         "Vertical",
-            //         "AAAAAAAAAAAAAAAA",
-            //         "BBBB",
-            //         "CCC",
-            //         "DDDD",
-            //         "EEEE",
-            //         "FFFF",
-            //     });
-
-            // form->add_group("Other Group");
-            // form->add_button("Push Button", [&] {
-            //     diag_log("Button pressed.\n");
-            // });
-
-            // dialog->center();
-
-            ////////////////////////////////////
-            //// floating_form_gui();
-            // full_window_menu();
-
-            gui->set_visible(true);
-            // form->refresh();
-            gui->update();
-            gui->perform_layout();
-
+            dialog->set_position(ds::point{ 10.0f, 10.0f });
+            dialog->set_fixed_height(300);
             dialog->center();
 
             m_timer.reset();
@@ -225,13 +85,6 @@ namespace rl {
             {
                 this->handle_events();
                 this->update();
-
-                // elapsed_time = m_timer.elapsed();
-                // framerate = static_cast<f32>(++frame_count) / elapsed_time;
-                // elapsed_str = fmt::format("{:>6.3f} sec", elapsed_time);
-                // fps_str = fmt::format("{:>6.3f} fps", framerate);
-                // form->refresh();
-                // gui->redraw();
                 this->render();
 
                 using namespace std::chrono_literals;
@@ -242,15 +95,6 @@ namespace rl {
             return ret;
         }
 
-        // vbo.bind_buffers();
-        // while() {
-        //     vbo.update_buffers(renderer->get_viewport());
-        //     vbo.draw_triangles();
-        //     if constexpr (io::logging::main_loop)
-        //         this->print_loop_stats(delta_time);
-        // }
-
-    private:
         void render() const
         {
             m_main_window->render();
@@ -259,12 +103,6 @@ namespace rl {
         bool setup() const
         {
             return true;
-        }
-
-        [[nodiscard]]
-        bool quit() const
-        {
-            return this->teardown();
         }
 
         bool teardown() const
@@ -285,6 +123,12 @@ namespace rl {
         bool should_exit() const
         {
             return m_event_handler.quit_triggered();
+        }
+
+        [[nodiscard]]
+        bool quit() const
+        {
+            return this->teardown();
         }
 
         bool init_subsystem(const Subsystem::ID flags) const

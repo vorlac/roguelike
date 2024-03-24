@@ -30,7 +30,6 @@ namespace rl::ui {
         virtual ds::dims<f32> preferred_size(nvg::Context* nvg_context,
                                              const Widget* widget) const override;
 
-    protected:
         void compute_layout(nvg::Context* nvg_context, const Widget* widget,
                             std::array<std::vector<f32>, 2>& grid_cell_sizes) const;
 

@@ -58,7 +58,7 @@ namespace rl::ui {
         // The spacing used for each dimension.
         ds::vector2<f32> m_spacing{ 0.0f, 0.0f };
         //  The Orientation of the GridLayout.
-        Orientation m_orientation{ Orientation::Unknown };
+        Orientation m_orientation{ Orientation::None };
         // The default Alignment of the GridLayout.
         std::array<Alignment, 2> m_default_alignment{ { {}, {} } };
         // The actual Alignment being used for each column/row

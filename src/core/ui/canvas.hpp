@@ -50,7 +50,7 @@ namespace rl::ui {
         bool draw_all();
         bool redraw();
         bool draw_widgets();
-        bool update() const;
+        bool update() ;
         bool draw_setup() const;
         bool draw_contents() const;
         bool draw_teardown() const;

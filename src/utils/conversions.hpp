@@ -95,14 +95,14 @@ namespace rl {
         requires std::is_scoped_enum_v<TEnum>
     constexpr bool operator==(const TUnderlying lhs, const TEnum rhs)
     {
-        return lhs == std::to_underlying(rhs);
+        return static_cast<std::underlying_type_t<TEnum>>(lhs) == std::to_underlying(rhs);
     }
 
     template <typename TEnum, rl::integer TUnderlying>
         requires std::is_scoped_enum_v<TEnum>
     constexpr bool operator==(const TEnum lhs, const TUnderlying rhs)
     {
-        return std::to_underlying(lhs) == rhs;
+        return std::to_underlying(lhs) == static_cast<std::underlying_type_t<TEnum>>(rhs);
     }
 
     template <typename TEnum, rl::integer TUnderlying>

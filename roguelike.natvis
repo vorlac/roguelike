@@ -277,7 +277,7 @@
     <!-- - - - - - - - - -->
     <Type Name="rl::ui::Label" Inheritable="true">
         <DisplayString>
-            Label[{m_caption}] refs:{m_references}
+            Label[{m_text}] refs:{m_references}
         </DisplayString>
         <Expand HideRawView="false">
             <Item Name="[widget]">(rl::ui::Widget*)this,nand</Item>

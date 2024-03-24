@@ -5,40 +5,42 @@
 // clang-format off
 
 namespace rl {
+    // Defines the different types of mouse
+    // interaction states for the main Canvas
     enum class Interaction : i16_fast {
-        None      = 0x00,  // constant positionioning
-
-        Propagate = 0x01,  // pass unhandled events to children
-        Move      = 0x02,  // being moved or can be moved
-        Drag      = 0x04,  // grbbed & dragging a widget
-        Resize    = 0x08,  // being resized or can be resized
-        Dock      = 0x10,  // dock to a side of the screen
-        Merge     = 0x20,  // merge dialog into another as tabs
-        Modal     = 0x40,  // blocks all events outside of scope
-
-        All       = 0xFF,  // all ui interactions
+        None      = 0x0000,  // constant positionioning
+        Propagate = 1 << 0,  // pass unhandled events to children
+        Move      = 1 << 1,  // being moved or can be moved
+        Drag      = 1 << 2,  // grbbed & dragging a widget
+        Resize    = 1 << 3,  // being resized or can be resized
+        Dock      = 1 << 4,  // dock to a side of the screen
+        Merge     = 1 << 5,  // merge dialog into another as tabs
+        Modal     = 1 << 6,  // blocks all events outside of scope
+        All       = 0xFFFF,  // All Interactions Modes
     };
 
+    // Defines each potential UI widget component
+    // Typically used for event/mouse handling
     enum class Component : i16_fast {
-        None,
-        Header,
-        Body,
-        Scrollbar,
-        Edge,
+        None      = 0x0000,
+        Header    = 1 << 0,
+        Body      = 1 << 1,
+        Scrollbar = 1 << 2,
+        Edge      = 1 << 3,
     };
 
     enum class Alignment : i16_fast{
-        Unknown = -1,  // Invalid / uninitialized alignment
-        Minimum = 0,   // Take only as much space as is required.
-        Center,        // Center align.
-        Maximum,       // Take as much space as is allowed.
-        Fill           // Fill according to preferred sizes.
+        None    = 0x0000,  // Invalid / uninitialized alignment
+        Minimum = 1 << 0,  // Take only as much space as is required.
+        Center  = 1 << 1,  // Center align.
+        Maximum = 1 << 2,  // Take as much space as is allowed.
+        Fill    = 1 << 3,  // Fill according to preferred sizes.
     };
 
     enum class Orientation : i16_fast{
-        Unknown = -1,    // Invalid / uninitialized orientation
-        Horizontal = 0,  // Layout expands on horizontal axis.
-        Vertical         // Layout expands on vertical axis.
+        None       = 0x0000,  // Invalid / uninitialized orientation
+        Horizontal = 1 << 0,  // Layout expands on horizontal axis.
+        Vertical   = 1 << 1,  // Layout expands on vertical axis.
     };
 
     enum class Axis : i16_fast {
@@ -47,7 +49,7 @@ namespace rl {
     };
 
     enum class Side : i16_fast {
-        None        = 0,
+        None        = 0x0000,
         Left        = 1 << 0,
         Right       = 1 << 1,
         Top         = 1 << 2,
@@ -58,6 +60,14 @@ namespace rl {
         BottomRight = Bottom | Right,
     };
 
+    enum class Direction : i16_fast {
+        None  = 0x0000,
+        Up    = 1 << 0,
+        Down  = 1 << 1,
+        Left  = 1 << 2,
+        Right = 1 << 3,
+    };
+
     enum class Quad : i16_fast {
         TopLeft     = Side::Top    | Side::Left,
         TopRight    = Side::Top    | Side::Right,
@@ -65,8 +75,8 @@ namespace rl {
         BottomRight = Side::Bottom | Side::Right,
     };
 
-    enum class Direction : i16_fast {
-        None      = 0,
+    enum class CompassDirection : i16_fast {
+        None      = 0x0000,
         North     = 1 << 0,
         South     = 1 << 1,
         East      = 1 << 2,
@@ -76,15 +86,13 @@ namespace rl {
         NorthWest = North | West,
         SouthWest = South | West,
     };
-
-
 }
 
 // clang-format on
 
 namespace rl {
 
-    constexpr auto format_as(Side side)
+    constexpr auto format_as(const Side side)
     {
         switch (side)
         {
@@ -111,12 +119,12 @@ namespace rl {
         }
     }
 
-    constexpr auto format_as(Alignment alignment)
+    constexpr auto format_as(const Alignment alignment)
     {
         switch (alignment)
         {
-            case Alignment::Unknown:
-                return "Unknown";
+            case Alignment::None:
+                return "None";
             case Alignment::Minimum:
                 return "Minimum";
             case Alignment::Center:
@@ -130,12 +138,12 @@ namespace rl {
         return "Unknown";
     }
 
-    constexpr auto format_as(Orientation orientation)
+    constexpr auto format_as(const Orientation orientation)
     {
         switch (orientation)
         {
-            case Orientation::Unknown:
-                return "Unknown";
+            case Orientation::None:
+                return "None";
             case Orientation::Horizontal:
                 return "Horizontal";
             case Orientation::Vertical:
@@ -145,7 +153,7 @@ namespace rl {
         return "Unknown";
     }
 
-    constexpr auto format_as(Axis axis)
+    constexpr auto format_as(const Axis axis)
     {
         switch (axis)
         {

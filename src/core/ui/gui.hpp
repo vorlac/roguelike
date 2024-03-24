@@ -5,6 +5,7 @@
 #include "core/ui/icons.hpp"
 #include "core/ui/layouts/advanced_grid_layout.hpp"
 #include "core/ui/layouts/box_layout.hpp"
+#include "core/ui/layouts/dynamic_layout.hpp"
 #include "core/ui/layouts/grid_layout.hpp"
 #include "core/ui/layouts/group_layout.hpp"
 #include "core/ui/theme.hpp"

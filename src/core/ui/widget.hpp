@@ -8,14 +8,13 @@
 #include "core/mouse.hpp"
 #include "ds/vector2d.hpp"
 #include "graphics/nvg_renderer.hpp"
+#include "layouts/dynamic_layout.hpp"
 #include "utils/time.hpp"
 
 namespace rl::ui {
     class ScrollableDialog;
     class Canvas;
     class Layout;
-
-    // class Theme;
 
     class Widget : public ds::refcounted
     {
@@ -56,9 +55,9 @@ namespace rl::ui {
         i32 child_count() const;
 
         Canvas* canvas();
-        ScrollableDialog* dialog();
         Widget* parent();
-        Layout* layout();
+        DynamicLayout* layout() const;
+        ScrollableDialog* dialog();
 
         //  TODO: change to size_t
         Widget* child_at(i32 index);
@@ -79,7 +78,7 @@ namespace rl::ui {
         const std::string& tooltip() const;
 
         void set_parent(Widget* parent);
-        void set_layout(Layout* layout);
+        void set_layout(DynamicLayout* layout);
         void set_position(ds::point<f32>&& pos) noexcept;
         void set_rect(ds::rect<f32>&& rect) noexcept;
         void set_size(ds::dims<f32>&& size);
@@ -140,8 +139,9 @@ namespace rl::ui {
 
     protected:
         Widget* m_parent{};
-        ds::shared<Theme> m_theme{};
-        Layout* m_layout{};
+        ds::shared<Theme> m_theme{ nullptr };
+        DynamicLayout* m_layout{ new DynamicLayout{} };
+
         static inline rl::NVGRenderer* m_renderer{ nullptr };
 
         bool m_enabled{ true };

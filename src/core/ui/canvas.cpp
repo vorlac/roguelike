@@ -32,11 +32,12 @@ namespace rl::ui {
         m_last_interaction = m_timer.elapsed();
     }
 
-    bool Canvas::update() const
+    bool Canvas::update()
     {
         for (const auto& update_widget_func : m_update_callbacks)
             update_widget_func();
 
+        this->perform_layout();
         return !m_update_callbacks.empty();
     }
 
@@ -47,7 +48,6 @@ namespace rl::ui {
 
     bool Canvas::draw_contents() const
     {
-        this->update();
         return true;
     }
 
@@ -157,6 +157,7 @@ namespace rl::ui {
         if (m_redraw)
         {
             m_redraw = false;
+            this->update();
             this->draw_setup();
             this->draw_contents();
             this->draw_widgets();
