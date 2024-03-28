@@ -65,25 +65,33 @@ namespace rl {
         {
             bool ret{ this->setup() };
 
-            auto dialog = new ui::ScrollableDialog{
-                m_main_window->gui(),
-                "asdfasdf",
-                {
-                    { new ui::Label{ "A" }, new ui::Label{ "1" } },
-                    { new ui::Label{ "B" }, new ui::Label{ "2" } },
-                    { new ui::Label{ "C" }, new ui::Label{ "3" } },
-                    { new ui::Label{ "D" }, new ui::Label{ "4" } },
-                }
-            };
+            auto layout_l{ new ui::NewBoxLayout<Orientation::Vertical>() };
+            layout_l->add_widget(new ui::Label{ "A" });
+            layout_l->add_widget(new ui::Label{ "B" });
+            layout_l->add_widget(new ui::Label{ "C" });
 
-            dialog->set_position(ds::point{ 10.0f, 10.0f });
-            dialog->set_fixed_height(300);
-            dialog->center();
+            auto layout_r{ new ui::NewBoxLayout<Orientation::Vertical>() };
+            layout_r->add_widget(new ui::Label{ "1" });
+            layout_r->add_widget(new ui::Button{ "ButtonMcButtonFace" });
+            layout_r->add_widget(new ui::Label{ "3" });
+
+            auto horiz_layout{ new ui::NewBoxLayout<Orientation::Horizontal>() };
+            horiz_layout->add_layout(layout_l);
+            horiz_layout->add_layout(layout_r);
+
+            auto dialog = new ui::Widget{ m_main_window->gui() };
+            dialog->set_layout(horiz_layout);
+            dialog->set_position({ 100.0f, 100.0f });
+            // dialog->set_fixed_height(300);
+            // dialog->center();
+            // dialog->perform_layout();
 
             m_timer.reset();
             while (!this->should_exit())
             {
                 this->handle_events();
+                // dialog->perform_layout();
+                // dialog->layout()->apply_layout();
                 this->update();
                 this->render();
 
@@ -117,6 +125,7 @@ namespace rl {
 
         void update() const
         {
+            m_main_window->gui()->perform_layout();
         }
 
         [[nodiscard]]

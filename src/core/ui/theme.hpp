@@ -96,6 +96,7 @@ namespace rl::ui {
 
         std::string form_group_font_name{ Font::Name::Mono };
         std::string form_label_font_name{ Font::Name::Sans };
+        std::string form_button_font_name{ Font::Name::Sans };
         std::string tooltip_font_name{ Font::Name::SansBold };
         std::string dialog_title_font_name{ Font::Name::SansBold };
 

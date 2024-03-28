@@ -40,8 +40,8 @@ namespace rl::inline constraint {
     concept negative_numeric = ((numeric<decltype(N)> && N < 0) || ...);
 
     template <auto A, auto B>
-    concept equal = (std::same_as<decltype(A), decltype(B)> && numeric<decltype(A)> &&
-                     numeric<decltype(B)> && A == B);
+    concept equal_v = (std::same_as<decltype(A), decltype(B)> && numeric<decltype(A)> &&
+                       numeric<decltype(B)> && A == B);
 
     template <auto A, auto B>
     concept greater_than = (std::same_as<decltype(A), decltype(B)> && numeric<decltype(A)> &&
@@ -52,10 +52,10 @@ namespace rl::inline constraint {
                          numeric<decltype(B)> && A < B);
 
     template <auto A, auto B>
-    concept greater_than_or_eq = (greater_than<A, B> || equal<A, B>);
+    concept greater_than_or_eq = (greater_than<A, B> || equal_v<A, B>);
 
     template <auto A, auto B>
-    concept less_than_or_eq = (greater_than<A, B> || equal<A, B>);
+    concept less_than_or_eq = (greater_than<A, B> || equal_v<A, B>);
 
     template <auto... N>
     concept positive_floating_point = ((positive_numeric<N> && floating_point<decltype(N)>) || ...);

@@ -32,12 +32,11 @@ namespace rl::ui {
         m_last_interaction = m_timer.elapsed();
     }
 
-    bool Canvas::update()
+    bool Canvas::update() const
     {
         for (const auto& update_widget_func : m_update_callbacks)
             update_widget_func();
 
-        this->perform_layout();
         return !m_update_callbacks.empty();
     }
 
@@ -352,7 +351,7 @@ namespace rl::ui {
 
     bool Canvas::on_resized(ds::dims<f32>&& size)
     {
-        if (size.area() == 0.0f)
+        if (math::equal(size.area(), 0.0f))
             return false;
 
         this->set_size({

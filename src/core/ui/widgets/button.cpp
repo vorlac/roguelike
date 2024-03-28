@@ -12,6 +12,11 @@
 #include "utils/unicode.hpp"
 
 namespace rl::ui {
+    Button::Button(const std::string_view text, const Icon::ID icon)
+        : Widget{ nullptr }
+        , m_text{ text }
+    {
+    }
 
     Button::Button(Widget* parent, std::string text, const Icon::ID icon)
         : Widget{ parent }
@@ -136,8 +141,8 @@ namespace rl::ui {
         const auto context{ m_renderer->context() };
         const f32 font_size{ m_font_size < 0.0f ? m_theme->button_font_size : m_font_size };
 
-        nvg::font_size(context, font_size);
-        nvg::font_face(context, Font::Name::SansBold);
+        m_renderer->set_text_properties(m_theme->form_button_font_name, font_size,
+                                        nvg::Align::HCenter | nvg::Align::VMiddle);
 
         ds::dims icon_size{ 0.0f, font_size };
         const f32 text_width{ nvg::text_bounds(context, 0.0f, 0.0f, m_text.c_str()) };
@@ -310,7 +315,7 @@ namespace rl::ui {
         nvg::rounded_rect(context, m_rect.pt.x + 1.0f, m_rect.pt.y + 1.0f, m_rect.size.width - 2.0f,
                           m_rect.size.height - 2.0f, m_theme->button_corner_radius - 1.0f);
 
-        if (m_background_color.a == 0.0f)
+        if (math::equal(m_background_color.a, 0.0f))
         {
             nvg::fill_color(context, m_background_color);
             nvg::fill(context);
@@ -361,7 +366,8 @@ namespace rl::ui {
             center.y - 1.0f,
         };
 
-        ds::color text_color{ m_text_color.a == 0.0f ? m_theme->text_color : m_text_color };
+        ds::color text_color{ math::equal(m_text_color.a, 0.0f) ? m_theme->text_color
+                                                                : m_text_color };
         if (!m_enabled)
             text_color = m_theme->disabled_text_color;
 

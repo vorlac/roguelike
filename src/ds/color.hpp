@@ -1,5 +1,6 @@
 #pragma once
 #include <algorithm>
+#include <array>
 #include <concepts>
 
 #include <fmt/color.h>
@@ -388,6 +389,10 @@ namespace rl {
         constexpr static inline ds::color<f32> Purple{ 182, 173, 219, 255 };
         constexpr static inline ds::color<f32> Cyan{ 131, 178, 182, 255 };
         constexpr static inline ds::color<f32> Background{ 39, 43, 51, 255 };
+
+        constexpr static inline std::array List{
+            Red, Yellow, Green, Cyan, Blue, Purple,
+        };
     };
 }
 

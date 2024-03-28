@@ -23,7 +23,7 @@ namespace rl::ui {
     {
     }
 
-    ds::dims<f32> BoxLayout::preferred_size(nvg::Context* nvg_context, const Widget* widget) const
+    ds::dims<f32> BoxLayout::computed_size(nvg::Context* nvg_context, const Widget* widget) const
     {
         ds::dims size{
             2.0f * m_margin,
@@ -53,8 +53,8 @@ namespace rl::ui {
             const ds::dims ps{ child->preferred_size() };
             const ds::dims fs{ child->fixed_size() };
             const ds::dims target_size{
-                fs.width == 0.0f ? ps.width : fs.width,
-                fs.height == 0.0f ? ps.height : fs.height,
+                math::equal(fs.width, 0.0f) ? ps.width : fs.width,
+                math::equal(fs.height, 0.0f) ? ps.height : fs.height,
             };
 
             first_child = false;
@@ -65,7 +65,7 @@ namespace rl::ui {
         return size + ds::dims{ 0.0f, y_offset };
     }
 
-    void BoxLayout::perform_layout(nvg::Context* nvg_context, const Widget* widget) const
+    void BoxLayout::apply_layout(nvg::Context* nvg_context, const Widget* widget) const
     {
         const ds::dims fs_w{ widget->fixed_size() };
         ds::dims container_size{
@@ -103,8 +103,8 @@ namespace rl::ui {
             const ds::dims ps{ child->preferred_size() };
             const ds::dims fs{ child->fixed_size() };
             ds::dims target_size{
-                std::fabs(fs.width) > std::numeric_limits<f32>::epsilon() ? fs.width : ps.width,
-                std::fabs(fs.height) > std::numeric_limits<f32>::epsilon() ? fs.height : ps.height,
+                math::equal(fs.width, 0.0f) ? ps.width : fs.width,
+                math::equal(fs.height, 0.0f) ? ps.height : fs.height,
             };
 
             ds::point pos{

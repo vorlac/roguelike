@@ -27,8 +27,8 @@ namespace rl::ui {
         m_row_stretch.resize(m_rows.size(), 0.0f);
     }
 
-    ds::dims<f32> AdvancedGridLayout::preferred_size(nvg::Context* nvg_context,
-                                                     const Widget* widget) const
+    ds::dims<f32> AdvancedGridLayout::computed_size(nvg::Context* nvg_context,
+                                                    const Widget* widget) const
     {
         // Compute minimum row / column sizes
         std::array<std::vector<f32>, 2> grid{ { {}, {} } };
@@ -53,7 +53,7 @@ namespace rl::ui {
         return size + extra;
     }
 
-    void AdvancedGridLayout::perform_layout(nvg::Context* nvg_context, const Widget* widget) const
+    void AdvancedGridLayout::apply_layout(nvg::Context* nvg_context, const Widget* widget) const
     {
         std::array<std::vector<f32>, 2> grid{ { {}, {} } };
         this->compute_layout(nvg_context, widget, grid);
@@ -215,7 +215,7 @@ namespace rl::ui {
                     if (target_size <= current_size)
                         continue;
 
-                    runtime_assert(total_stretch != 0,
+                    runtime_assert(math::not_equal(total_stretch, 0.0f),
                                    "Advanced grid layout: no space to place widget");
 
                     const f32 amt{ (target_size - current_size) / total_stretch };
@@ -229,7 +229,7 @@ namespace rl::ui {
             const f32 axis_container_size{ axis == Axis::Horizontal ? container_size.width
                                                                     : container_size.height };
 
-            if (current_size >= axis_container_size || total_stretch == 0.0f)
+            if (current_size >= axis_container_size || math::equal(total_stretch, 0.0f))
                 continue;
 
             const f32 amt{ (axis_container_size - current_size) / total_stretch };

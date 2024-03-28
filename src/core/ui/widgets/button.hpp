@@ -30,7 +30,8 @@ namespace rl::ui {
         };
 
     public:
-        explicit Button(Widget* parent, std::string text = "Untitled", Icon::ID icon = Icon::None);
+        explicit Button(std::string_view text, Icon::ID icon = Icon::None);
+        explicit Button(Widget* parent, std::string text, Icon::ID icon = Icon::None);
 
         bool pressed() const;
         Icon::ID icon() const;

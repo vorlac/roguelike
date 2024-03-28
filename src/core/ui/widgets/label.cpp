@@ -80,8 +80,11 @@ namespace rl::ui {
             return { 0.0f, 0.0f };
 
         const auto context{ m_renderer->context() };
-        nvg::font_face(context, m_font);
-        nvg::font_size(context, this->font_size());
+        m_renderer->set_text_properties(m_theme->form_label_font_name,
+                                        m_theme->form_label_font_size,
+                                        nvg::Align::HLeft | nvg::Align::VMiddle);
+        // nvg::font_face(context, m_theme->form_label_font_name);
+        // nvg::font_size(context, m_theme->form_label_font_size);
 
         if (m_fixed_size.width > 0.0f)
         {

@@ -42,9 +42,9 @@ namespace rl::ui {
         void set_row_alignment(const std::vector<Alignment>& value);
 
     public:
-        virtual void perform_layout(nvg::Context* nvg_context, const Widget* widget) const override;
-        virtual ds::dims<f32> preferred_size(nvg::Context* nvg_context,
-                                             const Widget* widget) const override;
+        virtual void apply_layout(nvg::Context* nvg_context, const Widget* widget) const override;
+        virtual ds::dims<f32> computed_size(nvg::Context* nvg_context,
+                                            const Widget* widget) const override;
 
     protected:
         void compute_layout(nvg::Context* nvg_context, const Widget* widget,

@@ -7,39 +7,37 @@
 #include "utils/concepts.hpp"
 #include "utils/math.hpp"
 #include "utils/numeric.hpp"
+#include "utils/numeric_traits.hpp"
 
-namespace rl {
+namespace rl::math {
+
     template <rl::floating_point A, rl::floating_point B>
-    constexpr bool operator==(const A& lhs, const B& rhs)
+    constexpr bool equal(const A& lhs, const B& rhs)
     {
         if constexpr (rl::lower_precision<A, B>)
         {
-            using lp_float_t = traits::float_traits<A>;
+            using lp_float_t = rl::traits::float_traits<A>;
             return rl::math::abs(lhs - rhs) <= lp_float_t::eps * rl::math::abs(lhs + rhs) ||
                    rl::math::abs(lhs - rhs) < lp_float_t::min;
         }
         else
         {
-            using lp_float_t = traits::float_traits<B>;
+            using lp_float_t = rl::traits::float_traits<B>;
             return rl::math::abs(lhs - rhs) <= lp_float_t::eps * rl::math::abs(lhs + rhs) ||
                    rl::math::abs(lhs - rhs) < lp_float_t::min;
         }
     }
 
-    template <typename T>
-        requires std::same_as<T, float>
-    constexpr bool operator==(const T lhs, const T rhs)
+    template <rl::integer A, rl::integer B>
+    constexpr bool equal(const A& lhs, const B& rhs)
     {
-        using lp_float_t = rl::traits::float_traits<T>;
-        return rl::math::abs(lhs - rhs) <= lp_float_t::eps * rl::math::abs(lhs + rhs) ||
-               rl::math::abs(lhs - rhs) < lp_float_t::min;
+        return lhs == rhs;
     }
 
-    template <typename T>
-        requires std::same_as<T, float>
-    constexpr bool operator!=(const T a, const T b)
+    template <rl::numeric A, rl::numeric B>
+    constexpr bool not_equal(const A& lhs, const B& rhs)
     {
-        return !(a == b);
+        return !equal(lhs, rhs);
     }
 }
 

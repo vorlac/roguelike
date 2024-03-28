@@ -1,16 +1,20 @@
 
+#include <algorithm>
 #include <array>
 #include <cmath>
+#include <functional>
+#include <numeric>
 #include <utility>
 #include <vector>
 
 #include "core/ui/layouts/grid_layout.hpp"
 #include "core/ui/widgets/scroll_dialog.hpp"
+#include "ds/dims.hpp"
 #include "utils/numeric.hpp"
 #include "utils/properties.hpp"
 
 namespace rl::ui {
-    ds::dims<f32> GridLayout::preferred_size(nvg::Context* nvg_context, const Widget* widget) const
+    ds::dims<f32> GridLayout::computed_size(nvg::Context* nvg_context, const Widget* widget) const
     {
         std::array<std::vector<f32>, 2> grid{ { {}, {} } };
         this->compute_layout(nvg_context, widget, grid);
@@ -91,7 +95,7 @@ namespace rl::ui {
         }
     }
 
-    void GridLayout::perform_layout(nvg::Context* nvg_context, const Widget* widget) const
+    void GridLayout::apply_layout(nvg::Context* nvg_context, const Widget* widget) const
     {
         ds::dims fs_w{ widget->fixed_size() };
         ds::dims container_size{

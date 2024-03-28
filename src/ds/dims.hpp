@@ -6,6 +6,7 @@
 
 #include "utils/concepts.hpp"
 #include "utils/conversions.hpp"
+#include "utils/math.hpp"
 
 namespace rl::ds {
 #pragma pack(4)
@@ -105,9 +106,20 @@ namespace rl::ds {
             return *this;
         }
 
+        [[nodiscard]]
+        dims<T> merged(const dims<T>& other) const
+        {
+            dims ret{ *this };
+            if (math::equal(this->width, 0.0f))
+                ret.width = other.width;
+            if (math::equal(this->height, 0.0f))
+                ret.height = other.height;
+            return ret;
+        }
+
         constexpr bool operator==(const dims<T>& other) const
         {
-            return this->height == other.height && this->width == other.width;
+            return math::equal(this->height, other.height) && math::equal(this->width, other.width);
         }
 
         constexpr bool operator!=(const dims<T>& other) const
@@ -151,6 +163,13 @@ namespace rl::ds {
         {
             this->width += val;
             this->height += val;
+            return *this;
+        }
+
+        constexpr dims<T>& operator+=(const dims<T>& val)
+        {
+            this->width += val.width;
+            this->height += val.height;
             return *this;
         }
 

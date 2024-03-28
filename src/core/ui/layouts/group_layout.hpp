@@ -33,9 +33,9 @@ namespace rl::ui {
         void set_group_spacing(f32 group_spacing);
 
     public:
-        virtual void perform_layout(nvg::Context* nvg_context, const Widget* widget) const override;
-        virtual ds::dims<f32> preferred_size(nvg::Context* nvg_context,
-                                             const Widget* widget) const override;
+        virtual void apply_layout(nvg::Context* nvg_context, const Widget* widget) const override;
+        virtual ds::dims<f32> computed_size(nvg::Context* nvg_context,
+                                            const Widget* widget) const override;
 
     protected:
         f32 m_margin{ 15.0f };

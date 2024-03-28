@@ -102,8 +102,8 @@ namespace rl::ui {
 
             ds::dims<f32> fs{ widget->fixed_size() };
             widget->set_fixed_size(ds::dims{
-                fs.width == 0.0f ? m_fixed_size.width : fs.width,
-                fs.height == 0.0f ? m_fixed_size.height : fs.height,
+                math::equal(fs.width, 0.0f) ? m_fixed_size.width : fs.width,
+                math::equal(fs.height, 0.0f) ? m_fixed_size.height : fs.height,
             });
 
             m_refresh_callbacks.push_back(refresh);

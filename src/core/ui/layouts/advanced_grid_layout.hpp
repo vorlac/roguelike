@@ -1,5 +1,6 @@
 #pragma once
 #include <array>
+#include <unordered_map>
 #include <vector>
 
 #include "core/ui/layouts/anchor.hpp"
@@ -26,9 +27,9 @@ namespace rl::ui {
         void set_col_stretch(i32 index, f32 stretch);
         void set_anchor(const Widget* widget, const Anchor& anchor);
 
-        virtual void perform_layout(nvg::Context* nvg_context, const Widget* widget) const override;
-        virtual ds::dims<f32> preferred_size(nvg::Context* nvg_context,
-                                             const Widget* widget) const override;
+        virtual void apply_layout(nvg::Context* nvg_context, const Widget* widget) const override;
+        virtual ds::dims<f32> computed_size(nvg::Context* nvg_context,
+                                            const Widget* widget) const override;
 
         void compute_layout(nvg::Context* nvg_context, const Widget* widget,
                             std::array<std::vector<f32>, 2>& grid_cell_sizes) const;

@@ -15,10 +15,10 @@ namespace rl::ui {
     class Canvas;
 
     // clang-format off
-    struct CellProperties
-    {
-        Alignment alignment{ Alignment::Fill };
-    };
+    //struct CellProperties
+    //{
+    //    Alignment alignment{ Alignment::Fill };
+    //};
 
     enum class ColumnProperty {
         MinWidth       = 1 << 0,  // The min column width
@@ -32,66 +32,72 @@ namespace rl::ui {
 
     // clang-format on
 
-    class DynamicLayout : public Layout
-    {
-    public:
-        enum class Properties {
-            Column
-        };
+    // class DynamicLayout : public Layout
+    //{
+    // public:
+    //     enum class Properties {
+    //         Column
+    //     };
 
-    public:
-        explicit DynamicLayout() = default;
+    // public:
+    //     explicit DynamicLayout() = default;
 
-        // init emptry columns x rows sized layout table
-        explicit DynamicLayout(const u32 columns, const u32 rows)
-        {
-            m_grid.reserve(columns);
-            for (auto&& [col_idx, row] : std::ranges::views::enumerate(m_grid))
-            {
-                row.resize(rows, nullptr);
-                m_grid[col_idx] = std::move(row);
-            }
-        }
+    //    // init emptry columns x rows sized layout table
+    //    explicit DynamicLayout(const u32 columns, const u32 rows)
+    //    {
+    //        m_grid.reserve(columns);
+    //        for (auto&& [col_idx, row] : std::ranges::views::enumerate(m_grid))
+    //        {
+    //            row.resize(rows, nullptr);
+    //            m_grid[col_idx] = std::move(row);
+    //        }
+    //    }
 
-        template <typename TParent>
-            requires std::derived_from<std::remove_pointer_t<TParent>, Widget>
-        explicit DynamicLayout(TParent parent, const std::vector<std::vector<Widget*>>& layout_table)
-        {
-            this->set_widget_table(parent, layout_table);
-        }
+    //    template <typename TParent>
+    //        requires std::derived_from<std::remove_pointer_t<TParent>, Widget>
+    //    explicit DynamicLayout(TParent parent, const std::vector<std::vector<Widget*>>&
+    //    layout_table)
+    //    {
+    //        this->set_widget_table(parent, layout_table);
+    //    }
 
-    public:
-        template <typename TParent>
-            requires std::derived_from<std::remove_pointer_t<TParent>, Widget>
-        bool set_widget_table(TParent parent, const std::vector<std::vector<Widget*>>& layout_table)
-        {
-            m_grid.clear();
-            for (const auto& row : layout_table)
-            {
-                for (const auto& w : row)
-                {
-                    if (w != nullptr)
-                        parent->add_child(w);
-                }
-                m_grid.push_back(row);
-            }
+    // public:
+    //     template <typename TParent>
+    //         requires std::derived_from<std::remove_pointer_t<TParent>, Widget>
+    //     bool set_widget_table(TParent parent, const std::vector<std::vector<Widget*>>&
+    //     layout_table)
+    //     {
+    //         m_grid.clear();
+    //         for (const auto& row : layout_table)
+    //         {
+    //             ++m_row_count;
+    //             u32 col_count{ 0 };
+    //             for (const auto& w : row)
+    //             {
+    //                 if (col_count)
+    //                     if (w != nullptr)
+    //                         parent->add_child(w);
+    //             }
+    //             m_grid.push_back(row);
+    //         }
 
-            return !m_grid.empty();
-        }
+    //        return !m_grid.empty();
+    //    }
 
-        // Performs applies all Layout computations for the given widget.
-        virtual void perform_layout(nvg::Context* nvc, const Widget* w) const override
-        {
-        }
+    //    // Performs applies all Layout computations for the given widget.
+    //    virtual void apply_layout(nvg::Context* nvc, const Widget* w) const override
+    //    {
+    //    }
 
-        // Compute the preferred size for a given Layout and widget
-        virtual ds::dims<f32> preferred_size(nvg::Context* nvc, const Widget* w) const override
-        {
-            return {};
-        }
+    //    // Compute the preferred size for a given Layout and widget
+    //    virtual ds::dims<f32> computed_size(nvg::Context* nvc, const Widget* w) const override
+    //    {
+    //        return {};
+    //    }
 
-    private:
-        std::vector<std::vector<Widget*>> m_grid{};
-    };
-
+    // private:
+    //     std::vector<std::vector<Widget*>> m_grid{};
+    //     u32 m_col_count{ 0 };
+    //     u32 m_row_count{ 0 };
+    // };
 }

@@ -408,6 +408,7 @@ namespace rl {
         sdl_assert(result == 0, "failed to make context current");
 
         this->clear();
+        this->gui()->redraw();  // TODO: remove!
         this->gui()->draw_all();
         this->swap_buffers();
         return result == 0;

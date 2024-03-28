@@ -6,6 +6,7 @@
 #include <string>
 #include <string_view>
 
+#include "core/ui/theme.hpp"
 #include "core/ui/widget.hpp"
 #include "ds/color.hpp"
 #include "ds/dims.hpp"
@@ -36,8 +37,6 @@ namespace rl::ui {
         virtual void draw() override;
 
     protected:
-        // static inline std::array m_arr = { 1, 2, 3, 4 };
-
         std::string m_text{};
         std::string m_font{};
         ds::color<f32> m_color{ rl::Colors::Yellow };

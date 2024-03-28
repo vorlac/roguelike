@@ -17,13 +17,10 @@ namespace rl {
         class ScrollableDialog : public Widget
         {
         public:
-            template <typename TContainer = std::vector<std::vector<Widget*>>>
-            ScrollableDialog(Widget* parent, std::string title, TContainer&& widgets = {})
+            explicit ScrollableDialog(Widget* parent, std::string title = "")
                 : Widget{ parent }
                 , m_title{ std::move(title) }
             {
-                if (!widgets.empty())
-                    m_layout->set_widget_table(this, std::forward<TContainer>(widgets));
             }
 
             std::tuple<Interaction, Component, Side> check_interaction(

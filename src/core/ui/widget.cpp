@@ -62,6 +62,9 @@ namespace rl::ui {
 
     void Widget::set_layout(DynamicLayout* layout)
     {
+        layout->set_owner(this);
+        for (Widget* w : layout->widgets())
+            this->add_child(w);
         m_layout = layout;
     }
 
@@ -230,7 +233,7 @@ namespace rl::ui {
     ds::dims<f32> Widget::preferred_size() const
     {
         auto context{ m_renderer->context() };
-        return m_layout != nullptr ? m_layout->preferred_size(context, this) : m_rect.size;
+        return m_layout != nullptr ? m_layout->computed_size() : m_rect.size;
     }
 
     void Widget::perform_layout()
@@ -241,8 +244,8 @@ namespace rl::ui {
             auto fs{ child->fixed_size() };
 
             child->set_size({
-                fs.width == 0.0f ? ps.width : fs.width,
-                fs.height == 0.0f ? ps.height : fs.height,
+                math::equal(fs.width, 0.0f) ? ps.width : fs.width,
+                math::equal(fs.height, 0.0f) ? ps.height : fs.height,
             });
 
             child->perform_layout();
@@ -251,7 +254,7 @@ namespace rl::ui {
         if (m_layout != nullptr)
         {
             const auto context{ m_renderer->context() };
-            m_layout->perform_layout(context, this);
+            m_layout->apply_layout();
         }
     }
 

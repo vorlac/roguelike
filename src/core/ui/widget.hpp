@@ -14,7 +14,6 @@
 namespace rl::ui {
     class ScrollableDialog;
     class Canvas;
-    class Layout;
 
     class Widget : public ds::refcounted
     {
@@ -105,6 +104,11 @@ namespace rl::ui {
             return m_renderer->context();
         }
 
+        static NVGRenderer* renderer()
+        {
+            return m_renderer;
+        }
+
     public:
         virtual bool on_key_pressed(const Keyboard& kb);
         virtual bool on_key_released(const Keyboard& kb);
@@ -140,7 +144,7 @@ namespace rl::ui {
     protected:
         Widget* m_parent{};
         ds::shared<Theme> m_theme{ nullptr };
-        DynamicLayout* m_layout{ new DynamicLayout{} };
+        DynamicLayout* m_layout{ nullptr };
 
         static inline rl::NVGRenderer* m_renderer{ nullptr };
 
