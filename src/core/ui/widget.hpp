@@ -154,11 +154,11 @@ namespace rl::ui {
         bool m_resizable{ false };
         bool m_mouse_focus{ false };
 
-        f32 m_font_size{ -1.0f };
-        f32 m_icon_extra_scale{ 1.0f };
-
         ds::rect<f32> m_rect{ { 0.0f, 0.0f }, { 0.0f, 0.0f } };
         ds::dims<f32> m_fixed_size{ 0.0f, 0.0f };
+
+        f32 m_font_size{ -1.0f };
+        f32 m_icon_extra_scale{ 1.0f };
 
         Mouse::Cursor::ID m_cursor{ Mouse::Cursor::Arrow };
         std::vector<Widget*> m_children{};

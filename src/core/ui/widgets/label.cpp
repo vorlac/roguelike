@@ -7,10 +7,13 @@
 #include "graphics/vg/nanovg.hpp"
 
 namespace rl::ui {
-    Label::Label(const std::string& text)
+
+    Label::Label(const std::string& text, const std::string_view& font, const f32 font_size)
         : Widget{ nullptr }
         , m_text{ text }
+        , m_font{ font }
     {
+        m_font_size = font_size;
     }
 
     Label::Label(Widget* parent, const std::string& text, const std::string_view& font,
@@ -69,7 +72,7 @@ namespace rl::ui {
         Widget::set_theme(theme);
         if (m_theme != nullptr)
         {
-            m_font_size = m_theme->standard_font_size;
+            m_font_size = m_theme->form_label_font_size;
             m_color = m_theme->text_color;
         }
     }
@@ -83,8 +86,6 @@ namespace rl::ui {
         m_renderer->set_text_properties(m_theme->form_label_font_name,
                                         m_theme->form_label_font_size,
                                         nvg::Align::HLeft | nvg::Align::VMiddle);
-        // nvg::font_face(context, m_theme->form_label_font_name);
-        // nvg::font_size(context, m_theme->form_label_font_size);
 
         if (m_fixed_size.width > 0.0f)
         {

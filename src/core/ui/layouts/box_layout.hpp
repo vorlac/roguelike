@@ -82,27 +82,19 @@ namespace rl::ui {
                     };
 
                     props.rect = ds::rect{
-                        curr_pos -
-                            ds::vector2{
-                                props.outer_margin.left,
-                                props.outer_margin.top,
-                            },
+                        curr_pos,
                         widget_rect.size +
                             ds::vector2{ props.outer_margin.left, props.outer_margin.top } +
                             ds::vector2{ props.outer_margin.right, props.outer_margin.bottom },
                     };
 
-                    // Widget::renderer()->draw_rect_outline(m_layout_rect, depth + 1.0f,
-                    //                                       Colors::List[depth],
-                    //                                       Outline::Inner);
-
                     if constexpr (NewBoxLayout::orientation == Orientation::Vertical)
                     {
-                        m_layout_rect.size.height += props.rect.size.height;
-                        if (props.rect.pt.x < m_layout_rect.pt.x)
-                            m_layout_rect.pt.x = props.rect.pt.x;
-                        if (props.rect.size.width > m_layout_rect.size.width)
-                            m_layout_rect.size.width = props.rect.size.width;
+                        // m_layout_rect.size.height += props.rect.size.height;
+                        // if (props.rect.pt.x < m_layout_rect.pt.x)
+                        //     m_layout_rect.pt.x = props.rect.pt.x;
+                        // if (props.rect.size.width > m_layout_rect.size.width)
+                        //     m_layout_rect.size.width = props.rect.size.width;
 
                         // assign widget positions from top to bottom
                         curr_pos.y += props.rect.size.height;
@@ -110,22 +102,37 @@ namespace rl::ui {
                     }
                     else if constexpr (NewBoxLayout::orientation == Orientation::Horizontal)
                     {
-                        m_layout_rect.size.width += props.rect.size.width;
-                        if (props.rect.pt.y < m_layout_rect.pt.y)
-                            m_layout_rect.pt.y = props.rect.pt.y;
-                        if (props.rect.size.height > m_layout_rect.size.height)
-                            m_layout_rect.size.height = props.rect.size.height;
+                        // m_layout_rect.size.width += props.rect.size.width;
+                        // if (props.rect.pt.y < m_layout_rect.pt.y)
+                        //     m_layout_rect.pt.y = props.rect.pt.y;
+                        // if (props.rect.size.height > m_layout_rect.size.height)
+                        //     m_layout_rect.size.height = props.rect.size.height;
 
                         // assign widget positions from left to right
                         curr_pos.x += props.rect.size.width;
                         widget->set_rect(std::move(widget_rect));
                     }
+
+                    m_layout_rect.expand(props.rect);
                 }
             }
+
+            ds::rect test{
+                ds::point{
+                    0.0f,
+                    0.0f,
+                },
+                this->computed_size(),
+            };
+            runtime_assert(test.contains(m_layout_rect) || test == m_layout_rect, "rect mismatch");
         }
 
-        /*return Widget::renderer()->draw_rect_outline(m_layout_rect, depth + 1.0f,
-           Colors::White, Outline::Inner);*/
+        // Widget::renderer()->draw_rect_outline(m_layout_rect, depth + 1.0f,
+        //                                       Colors::List[depth],
+        //                                       Outline::Inner);
+
+        // return Widget::renderer()->draw_rect_outline(m_layout_rect, depth + 1.0f,
+        //    Colors::White, Outline::Inner);
 
         virtual ds::dims<f32> computed_size() const override
         {

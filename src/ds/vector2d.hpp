@@ -72,6 +72,11 @@ namespace rl::ds {
             return vector2<T>{};
         }
 
+        constexpr bool is_null() const
+        {
+            return *this == point<T>::null();
+        }
+
         consteval static vector2<T> zero()
         {
             return vector2<T>{ 0, 0 };
@@ -80,14 +85,15 @@ namespace rl::ds {
         [[nodiscard]] constexpr bool is_zero() const
             requires rl::integer<T>
         {
-            return this->operator==(vector2<T>::zero());
+            return math::equal(this->x, 0) &&  //
+                   math::equal(this->y, 0);
         }
 
         [[nodiscard]] constexpr bool is_zero() const
             requires rl::floating_point<T>
         {
-            return x == 0 &&  //
-                   y == 0;
+            return math::equal(x, 0) &&  //
+                   math::equal(y, 0);
         }
 
         [[nodiscard]] constexpr f32 length() const
@@ -217,7 +223,8 @@ namespace rl::ds {
 
         constexpr bool operator==(const vector2<T>& other) const
         {
-            return x == other.x && y == other.y;
+            return math::equal(x, other.x) &&  //
+                   math::equal(y, other.y);
         }
 
         constexpr bool operator==(const vector2<T>& other) const
@@ -229,7 +236,8 @@ namespace rl::ds {
 
         constexpr bool operator!=(const vector2<T>& other) const
         {
-            return x != other.x || y != other.y;
+            return math::not_equal(x, other.x) ||  //
+                   math::not_equal(y, other.y);
         }
 
         constexpr vector2<T> lerp(const vector2<T>& to, const f32 weight) const

@@ -27,16 +27,14 @@ namespace rl::math {
         return (val * std::to_underlying(unit_in)) / std::to_underlying(unit_out);
     }
 
-    template <rl::numeric A, rl::numeric B>
-        requires std::same_as<A, B>
-    constexpr auto max(const A a, const B b)
+    template <rl::numeric T>
+    constexpr T max(const T& a, const T& b)
     {
         return a > b ? a : b;
     }
 
-    template <rl::numeric A, rl::numeric B>
-        requires std::same_as<A, B>
-    constexpr auto min(const A a, const B b)
+    template <rl::numeric T>
+    constexpr T min(const T& a, const T& b)
     {
         return a < b ? a : b;
     }

@@ -65,15 +65,19 @@ namespace rl {
         {
             bool ret{ this->setup() };
 
+            const auto theme{ m_main_window->gui()->theme() };
+            const auto label_font{ theme->form_group_font_name };
+            const auto label_size{ theme->form_group_font_size };
+
             auto layout_l{ new ui::NewBoxLayout<Orientation::Vertical>() };
-            layout_l->add_widget(new ui::Label{ "A" });
-            layout_l->add_widget(new ui::Label{ "B" });
-            layout_l->add_widget(new ui::Label{ "C" });
+            layout_l->add_widget(new ui::Label{ "A", label_font, label_size });
+            layout_l->add_widget(new ui::Label{ "B", label_font, label_size });
+            layout_l->add_widget(new ui::Label{ "C", label_font, label_size });
 
             auto layout_r{ new ui::NewBoxLayout<Orientation::Vertical>() };
-            layout_r->add_widget(new ui::Label{ "1" });
+            layout_r->add_widget(new ui::Label{ "1", label_font, label_size });
             layout_r->add_widget(new ui::Button{ "ButtonMcButtonFace" });
-            layout_r->add_widget(new ui::Label{ "3" });
+            layout_r->add_widget(new ui::Label{ "3", label_font, label_size });
 
             auto horiz_layout{ new ui::NewBoxLayout<Orientation::Horizontal>() };
             horiz_layout->add_layout(layout_l);
@@ -158,22 +162,12 @@ namespace rl {
         }
 
     private:
-        static std::string name()
-        {
-            return "Application";
-        }
-
         void print_loop_stats(const f32 delta_time)
         {
-            f32 elapsed_time{ m_timer.elapsed() };
-            u64 iterations{ m_timer.tick_count() };
+            const f32 elapsed_time{ m_timer.elapsed() };
+            const u64 iterations{ m_timer.tick_count() };
             if (iterations % 60 != 0)
                 return;
-
-            scoped_log(
-                " {:>14.6f} s || {:>10L} u ][ {:>10.4f} ms | {:>10.4f} fps ][ {:>10.4f} avg fps ]",
-                elapsed_time, iterations, delta_time * 1000.0f, 1.0f / delta_time,
-                static_cast<f32>(iterations) / elapsed_time);
         }
 
     private:

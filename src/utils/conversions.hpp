@@ -17,14 +17,14 @@ namespace rl::math {
         if constexpr (rl::lower_precision<A, B>)
         {
             using lp_float_t = rl::traits::float_traits<A>;
-            return rl::math::abs(lhs - rhs) <= lp_float_t::eps * rl::math::abs(lhs + rhs) ||
-                   rl::math::abs(lhs - rhs) < lp_float_t::min;
+            return math::abs(lhs - rhs) <= lp_float_t::eps * math::abs(lhs + rhs) ||
+                   math::abs(lhs - rhs) < lp_float_t::min;
         }
         else
         {
             using lp_float_t = rl::traits::float_traits<B>;
-            return rl::math::abs(lhs - rhs) <= lp_float_t::eps * rl::math::abs(lhs + rhs) ||
-                   rl::math::abs(lhs - rhs) < lp_float_t::min;
+            return math::abs(lhs - rhs) <= lp_float_t::eps * math::abs(lhs + rhs) ||
+                   math::abs(lhs - rhs) < lp_float_t::min;
         }
     }
 
@@ -37,7 +37,7 @@ namespace rl::math {
     template <rl::numeric A, rl::numeric B>
     constexpr bool not_equal(const A& lhs, const B& rhs)
     {
-        return !equal(lhs, rhs);
+        return !math::equal(lhs, rhs);
     }
 }
 
