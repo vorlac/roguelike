@@ -227,11 +227,12 @@ namespace rl::ds {
         constexpr rect<T> expanded(const rect<T>& other) const
         {
             const T min_x{ math::min(this->pt.x, other.pt.x) };
-            const T max_x{ math::max(this->pt.x + this->size.width, other.pt.x + other.size.width) };
+            const T max_x{ math::max((this->pt.x + this->size.width),
+                                     (other.pt.x + other.size.width)) };
 
             const T min_y{ math::min(this->pt.y, other.pt.y) };
-            const T max_y{ math::max(this->pt.y + this->size.height,
-                                     other.pt.y + other.size.height) };
+            const T max_y{ math::max((this->pt.y + this->size.height),
+                                     (other.pt.y + other.size.height)) };
 
             return rect<T>{
                 point{
@@ -244,6 +245,16 @@ namespace rl::ds {
                 },
             };
         }
+
+        // // expand current rect by some margin on all sides
+        // constexpr rect<T>& expand(const margin<T>& margin)
+        // {
+        //     this->pt.x -= margin.left;
+        //     this->pt.y += margin.bottom;
+        //     this->size.width += (margin.left + margin.right);
+        //     this->size.height += (margin.top + margin.bottom);
+        //     return *this;
+        // }
 
         // expand current rect to include rect other
         constexpr rect<T>& expand(const rect<T>& other)
@@ -433,10 +444,10 @@ namespace rl::ds {
 
         // Checks if the rect shares any space with pt
         [[nodiscard]]
-        constexpr bool overlaps(const point<T>& point) const
+        constexpr bool overlaps(const point<T>& pnt) const
         {
-            return (point.x >= this->pt.x && point.x <= this->pt.x + this->size.width) &&
-                   (point.y >= this->pt.y && point.y <= this->pt.y + this->size.height);
+            return (pnt.x >= this->pt.x && pnt.x <= this->pt.x + this->size.width) &&
+                   (pnt.y >= this->pt.y && pnt.y <= this->pt.y + this->size.height);
         }
 
         // Checks if the rects share any space with each other

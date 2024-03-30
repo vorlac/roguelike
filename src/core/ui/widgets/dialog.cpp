@@ -45,15 +45,7 @@ namespace rl::ui {
     {
         scoped_log();
         if (m_button_panel == nullptr)
-        {
             m_button_panel = new Widget{ this };
-            // m_button_panel->set_layout(new BoxLayout{
-            //     Orientation::Horizontal,
-            //     Alignment::Center,
-            //     0.0f,
-            //     4.0f,
-            // });
-        }
 
         return m_button_panel;
     }
@@ -148,22 +140,22 @@ namespace rl::ui {
                     nvg::stroke(context);
                 });
 
-                nvg::font_size(context, m_theme->tooltip_font_size);
-                nvg::font_face(context, m_theme->tooltip_font_name.data());
-                nvg::text_align(context, nvg::Align::HCenter | nvg::Align::VMiddle);
+                nvg::set_font_size(context, m_theme->tooltip_font_size);
+                nvg::set_font_face(context, m_theme->tooltip_font_name.data());
+                nvg::set_text_align(context, nvg::Align::HCenter | nvg::Align::VMiddle);
 
                 // header text shadow
-                nvg::font_blur(context, 2.0f);
+                nvg::font_blur_(context, 2.0f);
                 nvg::fill_color(context, m_theme->text_shadow);
-                nvg::text(context, m_rect.pt.x + (m_rect.size.width / 2.0f),
-                          m_rect.pt.y + (header_height / 2.0f), m_title.c_str());
+                nvg::text_(context, m_rect.pt.x + (m_rect.size.width / 2.0f),
+                           m_rect.pt.y + (header_height / 2.0f), m_title.c_str());
 
                 // Header text
-                nvg::font_blur(context, 0.0f);
+                nvg::font_blur_(context, 0.0f);
                 nvg::fill_color(context, m_focused ? m_theme->dialog_title_focused
                                                    : m_theme->dialog_title_unfocused);
-                nvg::text(context, m_rect.pt.x + (m_rect.size.width / 2.0f),
-                          m_rect.pt.y + (header_height / 2.0f) - 1.0f, m_title.c_str());
+                nvg::text_(context, m_rect.pt.x + (m_rect.size.width / 2.0f),
+                           m_rect.pt.y + (header_height / 2.0f) - 1.0f, m_title.c_str());
             }
         });
 
@@ -344,12 +336,12 @@ namespace rl::ui {
             m_button_panel->show();
 
         auto context{ m_renderer->context() };
-        nvg::font_size(context, m_theme->dialog_title_font_size);
-        nvg::font_face(context, m_theme->dialog_title_font_name.data());
+        nvg::set_font_size(context, m_theme->dialog_title_font_size);
+        nvg::set_font_face(context, m_theme->dialog_title_font_name.data());
 
         // [xmin, ymin, xmax, ymax]
         std::array<f32, 4> bounds{};
-        nvg::text_bounds(context, 0, 0, m_title.c_str(), nullptr, bounds.data());
+        nvg::text_bounds_(context, 0, 0, m_title.c_str(), nullptr, bounds.data());
 
         constexpr static f32 TEXT_SIZE_WIDTH_PADDING{ 20.0f };
         ds::rect bounding_rect{
@@ -362,22 +354,6 @@ namespace rl::ui {
 
         return bounding_rect.size;
     }
-
-    // bool Dialog::contains(const ds::point<f32>& pt)
-    //{
-    //     if (!m_rect.contains(pt))
-    //         return false;
-
-    //    const auto edge_overlap{ m_rect.edge_overlap(RESIZE_GRAB_BUFFER, pt) };
-    //    if (edge_overlap != Side::None && this->mode() == Dialog::Mode::None)
-    //    {
-    //        // m_resize_grab_location = edge_overlap;
-    //        return true;
-    //    }
-
-    //    // m_resize_grab_location = Side::None;
-    //    return false;
-    //}
 
     void Dialog::perform_layout()
     {

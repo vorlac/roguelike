@@ -1,7 +1,7 @@
 #include <numeric>
 #include <utility>
 
-#include "core/ui/layouts/box_layout.hpp"
+#include "core/ui/layouts/old_box_layout.hpp"
 #include "core/ui/theme.hpp"
 #include "core/ui/widget.hpp"
 #include "core/ui/widgets/dialog.hpp"
@@ -14,8 +14,8 @@
 #include "utils/numeric.hpp"
 
 namespace rl::ui {
-    BoxLayout::BoxLayout(const Orientation orientation, const Alignment alignment, const f32 margin,
-                         const f32 spacing)
+    OldBoxLayout::OldBoxLayout(const Arrangement orientation, const Alignment alignment,
+                               const f32 margin, const f32 spacing)
         : m_margin{ margin }
         , m_spacing{ spacing }
         , m_orientation{ orientation }
@@ -23,7 +23,7 @@ namespace rl::ui {
     {
     }
 
-    ds::dims<f32> BoxLayout::computed_size(nvg::Context* nvg_context, const Widget* widget) const
+    ds::dims<f32> OldBoxLayout::computed_size(nvg::Context* nvg_context, const Widget* widget) const
     {
         ds::dims size{
             2.0f * m_margin,
@@ -35,7 +35,7 @@ namespace rl::ui {
         if (dialog != nullptr && !dialog->title().empty())
         {
             const auto header_size{ dialog->header_height() };
-            if (m_orientation == Orientation::Vertical)
+            if (m_orientation == Arrangement::Vertical)
                 size.height += header_size - (m_margin / 2.0f);
             else
                 y_offset = header_size;
@@ -65,7 +65,7 @@ namespace rl::ui {
         return size + ds::dims{ 0.0f, y_offset };
     }
 
-    void BoxLayout::apply_layout(nvg::Context* nvg_context, const Widget* widget) const
+    void OldBoxLayout::apply_layout(nvg::Context* nvg_context, const Widget* widget) const
     {
         const ds::dims fs_w{ widget->fixed_size() };
         ds::dims container_size{
@@ -81,7 +81,7 @@ namespace rl::ui {
         const auto dialog{ dynamic_cast<const Dialog*>(widget) };
         if (dialog != nullptr && !dialog->title().empty())
         {
-            if (m_orientation == Orientation::Vertical)
+            if (m_orientation == Arrangement::Vertical)
                 position += dialog->header_height() - (m_margin / 2.0f);
             else
             {
@@ -143,42 +143,42 @@ namespace rl::ui {
         }
     }
 
-    Orientation BoxLayout::orientation() const
+    Arrangement OldBoxLayout::orientation() const
     {
         return m_orientation;
     }
 
-    void BoxLayout::set_orientation(const Orientation orientation)
+    void OldBoxLayout::set_orientation(const Arrangement orientation)
     {
         m_orientation = orientation;
     }
 
-    Alignment BoxLayout::alignment() const
+    Alignment OldBoxLayout::alignment() const
     {
         return m_alignment;
     }
 
-    void BoxLayout::set_alignment(const Alignment alignment)
+    void OldBoxLayout::set_alignment(const Alignment alignment)
     {
         m_alignment = alignment;
     }
 
-    f32 BoxLayout::margin() const
+    f32 OldBoxLayout::margin() const
     {
         return m_margin;
     }
 
-    void BoxLayout::set_margin(const f32 margin)
+    void OldBoxLayout::set_margin(const f32 margin)
     {
         m_margin = margin;
     }
 
-    f32 BoxLayout::spacing() const
+    f32 OldBoxLayout::spacing() const
     {
         return m_spacing;
     }
 
-    void BoxLayout::set_spacing(const f32 spacing)
+    void OldBoxLayout::set_spacing(const f32 spacing)
     {
         m_spacing = spacing;
     }

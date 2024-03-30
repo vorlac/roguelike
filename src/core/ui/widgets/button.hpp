@@ -7,7 +7,6 @@
 #include "core/mouse.hpp"
 #include "core/ui/widget.hpp"
 #include "ds/color.hpp"
-#include "ds/dims.hpp"
 #include "ds/margin.hpp"
 #include "ds/point.hpp"
 #include "utils/numeric.hpp"
@@ -83,6 +82,6 @@ namespace rl::ui {
         std::function<void()> m_callback;
 
     private:
-        constexpr static inline ds::margin MARGIN{ 10.0f, 5.0f };
+        constexpr static inline ds::margin INNER_PADDING{ 2.5f, 2.5f, 5.0f, 5.0f };
     };
 }

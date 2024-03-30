@@ -66,12 +66,6 @@ namespace rl {
                     case Keyboard::Event::KeyUp:
                         window->keyboard_key_released_event_callback(e);
                         break;
-                    // case Keyboard::Event::TextEditing:
-                    //     window->keyboard_char_event_callback(e);
-                    //     break;
-                    // case Keyboard::Event::TextInput:
-                    //     window->keyboard_char_event_callback(e);
-                    //     break;
 
                     // MainWindow events
                     case MainWindow::Event::Shown:

@@ -105,12 +105,11 @@ namespace rl::ui {
         if (m_fixed_size != ds::dims<f32>::zero())
             return m_fixed_size;
 
-        auto&& context{ m_renderer->context() };
-        nvg::font_size(context, this->font_size());
-        nvg::font_face(context, Font::Name::Sans);
+        auto context{ m_renderer->context() };
+        nvg::set_font_size(context, this->font_size());
+        nvg::set_font_face(context, font::style::Sans);
 
-        const f32 text_bounds{ nvg::text_bounds(context, 0.0f, 0.0f, m_caption.c_str(), nullptr,
-                                                nullptr) };
+        const f32 text_bounds{ nvg::text_bounds_(context, 0.0f, 0.0f, m_caption.c_str()) };
         return ds::dims{
             text_bounds + 1.8f * this->font_size(),
             this->font_size() * 1.3f,
@@ -121,13 +120,13 @@ namespace rl::ui {
     {
         Widget::draw();
 
-        auto&& context{ m_renderer->context() };
-        nvg::font_size(context, this->font_size());
-        nvg::font_face(context, Font::Name::Sans);
+        auto context{ m_renderer->context() };
+        nvg::set_font_size(context, this->font_size());
+        nvg::set_font_face(context, font::style::Sans);
         nvg::fill_color(context, m_enabled ? m_theme->text_color : m_theme->disabled_text_color);
-        nvg::text_align(context, nvg::Align::HLeft | nvg::Align::VMiddle);
-        nvg::text(context, m_rect.pt.x + 1.6f * this->font_size(),
-                  m_rect.pt.y + m_rect.size.height * 0.5f, m_caption.c_str(), nullptr);
+        nvg::set_text_align(context, nvg::Align::HLeft | nvg::Align::VMiddle);
+        nvg::text_(context, m_rect.pt.x + 1.6f * this->font_size(),
+                   m_rect.pt.y + m_rect.size.height * 0.5f, m_caption.c_str(), nullptr);
 
         const nvg::PaintStyle bg{ nvg::box_gradient(
             context, m_rect.pt.x + 1.5f, m_rect.pt.y + 1.5f, m_rect.size.height - 2.0f,
@@ -143,13 +142,13 @@ namespace rl::ui {
 
         if (m_checked)
         {
-            nvg::font_size(context, this->icon_scale() * m_rect.size.height);
-            nvg::font_face(context, Font::Name::Icons);
+            nvg::set_font_size(context, this->icon_scale() * m_rect.size.height);
+            nvg::set_font_face(context, font::style::Icons);
             nvg::fill_color(context, m_enabled ? m_theme->icon_color : m_theme->disabled_text_color);
-            nvg::text_align(context, nvg::Align::HCenter | nvg::Align::VMiddle);
-            nvg::text(context, m_rect.pt.x + m_rect.size.height * 0.5f + 1,
-                      m_rect.pt.y + m_rect.size.height * 0.5f,
-                      rl::utf8(m_theme->check_box_icon).data(), nullptr);
+            nvg::set_text_align(context, nvg::Align::HCenter | nvg::Align::VMiddle);
+            nvg::text_(context, m_rect.pt.x + m_rect.size.height * 0.5f + 1,
+                       m_rect.pt.y + m_rect.size.height * 0.5f,
+                       rl::utf8(m_theme->check_box_icon).data(), nullptr);
         }
     }
 }

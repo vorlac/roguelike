@@ -1,104 +1,21 @@
 #pragma once
 
-#include <string>
-
-#include <parallel_hashmap/phmap.h>
-
 #include "core/ui/icons.hpp"
 #include "ds/color.hpp"
 #include "ds/refcounted.hpp"
-#include "ds/shared.hpp"
-#include "ds/vector2d.hpp"
-#include "graphics/vg/nanovg.hpp"
-#include "resources/fonts.hpp"
+#include "graphics/text.hpp"
 #include "utils/numeric.hpp"
 
 namespace rl::ui {
 
-    enum class Outline {
-        Inner,
-        Outer
-    };
-
-    struct LineProperties
-    {
-    };
-
-    struct Font
-    {
-        using ID = i32;
-        using Map = phmap::flat_hash_map<std::string, ID>;
-
-        constexpr static inline i32 InvalidHandle{ -1 };
-
-        enum class Source {
-            Memory,
-            Disk,
-        };
-
-        struct Name
-        {
-            constexpr static inline std::string_view Sans{ "sans" };
-            constexpr static inline std::string_view SansBold{ "sans_bold" };
-            constexpr static inline std::string_view Icons{ "icons" };
-            constexpr static inline std::string_view Mono{ "mono" };
-        };
-    };
-
-    struct Text
-    {
-        struct Properties
-        {
-            f32 font_size{ 18.0f };
-            f32 border_thickness{ 1.0f };
-            f32 border_blur{ 2.0f };
-
-            std::string font{ Font::Name::SansBold };
-
-            ds::color<f32> color{ Colors::White };
-            ds::color<f32> border_color{ Colors::Transparent };
-
-            ds::vector2<f32> margins{ 10.0f, 10.0f };
-            nvg::Align alignment{ nvg::Align::HCenter | nvg::Align::VMiddle };
-        };
-    };
-
     class Theme final : public ds::refcounted
     {
     public:
-        explicit Theme(const nvg::Context* nvg_context)
-            : font_sans_regular{ nvg::create_font_mem(
-                  nvg_context, Font::Name::Sans,
-                  std::basic_string_view<u8>{ roboto_regular_ttf, roboto_regular_ttf_size }) }
-            , font_sans_bold{ nvg::create_font_mem(
-                  nvg_context, Font::Name::SansBold,
-                  std::basic_string_view<u8>{ roboto_bold_ttf, roboto_bold_ttf_size }) }
-            , font_icons{ nvg::create_font_mem(
-                  nvg_context, Font::Name::Icons,
-                  std::basic_string_view{ fontawesome_solid_ttf, fontawesome_solid_ttf_size }) }
-            , font_mono_regular{ nvg::create_font_mem(
-                  nvg_context, Font::Name::Mono,
-                  std::basic_string_view<u8>{ fira_code_bold_ttf, fira_code_bold_ttf_size }) }
-        {
-            bool font_load_success{ true };
-
-            font_load_success &= font_sans_regular != Font::InvalidHandle;
-            font_load_success &= font_sans_bold != Font::InvalidHandle;
-            font_load_success &= font_icons != Font::InvalidHandle;
-            font_load_success &= font_mono_regular != Font::InvalidHandle;
-            runtime_assert(font_load_success, "Failed to load fonts");
-        }
-
-        i32 font_sans_regular{ Font::InvalidHandle };
-        i32 font_sans_bold{ Font::InvalidHandle };
-        i32 font_icons{ Font::InvalidHandle };
-        i32 font_mono_regular{ Font::InvalidHandle };
-
-        std::string form_group_font_name{ Font::Name::Mono };
-        std::string form_label_font_name{ Font::Name::Sans };
-        std::string form_button_font_name{ Font::Name::Sans };
-        std::string tooltip_font_name{ Font::Name::SansBold };
-        std::string dialog_title_font_name{ Font::Name::SansBold };
+        std::string_view form_group_font_name{ font::style::Mono };
+        std::string_view form_label_font_name{ font::style::Sans };
+        std::string_view form_button_font_name{ font::style::Sans };
+        std::string_view tooltip_font_name{ font::style::SansBold };
+        std::string_view dialog_title_font_name{ font::style::SansBold };
 
         f32 icon_scale{ 1.0f };
         f32 tab_border_width{ 0.75f };
@@ -109,7 +26,7 @@ namespace rl::ui {
         f32 text_box_font_size{ 20.0f };
         f32 dialog_title_font_size{ 24.0f };
         f32 form_group_font_size{ 24.0f };
-        f32 form_label_font_size{ 18.0f };
+        f32 form_label_font_size{ 38.0f };
         f32 form_widget_font_size{ 18.0f };
         f32 form_pre_group_spacing{ 15.0f };
         f32 form_post_group_spacing{ 15.0f };
@@ -128,7 +45,7 @@ namespace rl::ui {
         f32 tab_button_horizontal_padding{ 10.0f };
         f32 tab_button_vertical_padding{ 2.0f };
 
-        constexpr static inline ds::color<f32> drop_shadow{ 0, 0, 0, 128 };
+        ds::color<f32> drop_shadow{ 0, 0, 0, 128 };
         ds::color<f32> text_shadow{ 0, 0, 0, 128 };
         ds::color<f32> dialog_shadow{ 0, 0, 0, 128 };
         ds::color<f32> transparent{ 0, 0, 0, 0 };
@@ -140,7 +57,7 @@ namespace rl::ui {
         ds::color<f32> text_shadow_color{ Colors::Black };
         ds::color<f32> icon_color{ Colors::LightGrey };
 
-        ds::color<f32> button_gradient_top_focused{ 64, 64, 64, 255 };
+        ds::color<f32> button_gradient_top_focused{ 64, 64, 64 };
         ds::color<f32> button_gradient_bot_focused{ 48, 48, 48, 255 };
         ds::color<f32> button_gradient_top_unfocused{ 74, 74, 74, 255 };
         ds::color<f32> button_gradient_bot_unfocused{ 58, 58, 58, 255 };

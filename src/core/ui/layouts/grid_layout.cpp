@@ -156,14 +156,14 @@ namespace rl::ui {
         const ds::point start{ start_offset.width, start_offset.height };
         ds::point pos{ start };
 
-        i32& axis1_pos{ axis1 == Orientation::Horizontal ? pos.x : pos.y };
-        i32& axis2_pos{ axis2 == Orientation::Horizontal ? pos.x : pos.y };
+        i32& axis1_pos{ axis1 == Arrangement::Horizontal ? pos.x : pos.y };
+        i32& axis2_pos{ axis2 == Arrangement::Horizontal ? pos.x : pos.y };
 
         u32 child_idx{ 0 };
         for (u32 i2 = 0; i2 < static_cast<u32>(dim[axis2]); i2++)
         {
-            const i32& s{ m_orientation == Orientation::Horizontal ? start.x : start.y };
-            i32& p{ m_orientation == Orientation::Horizontal ? pos.x : pos.y };
+            const i32& s{ m_orientation == Arrangement::Horizontal ? start.x : start.y };
+            i32& p{ m_orientation == Arrangement::Horizontal ? pos.x : pos.y };
 
             p = s;
             for (u32 i1 = 0; i1 < static_cast<u32>(dim[axis1]); i1++)
@@ -194,8 +194,8 @@ namespace rl::ui {
                     const Alignment align{ this->alignment(static_cast<Axis>(axis_idx), item_idx) };
 
                     f32& item_axis_pos{ axis_idx == Axis::Horizontal ? item_pos.x : item_pos.y };
-                    f32& fs_axis_size{ axis_idx == Orientation::Horizontal ? fs.width : fs.height };
-                    f32& target_axis_size{ axis_idx == Orientation::Horizontal
+                    f32& fs_axis_size{ axis_idx == Arrangement::Horizontal ? fs.width : fs.height };
+                    f32& target_axis_size{ axis_idx == Arrangement::Horizontal
                                                ? target_size.width
                                                : target_size.height };
                     switch (align)
@@ -230,12 +230,12 @@ namespace rl::ui {
         }
     }
 
-    Orientation GridLayout::orientation() const
+    Arrangement GridLayout::orientation() const
     {
         return m_orientation;
     }
 
-    void GridLayout::set_orientation(const Orientation orientation)
+    void GridLayout::set_orientation(const Arrangement orientation)
     {
         m_orientation = orientation;
     }

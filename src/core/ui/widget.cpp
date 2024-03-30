@@ -55,27 +55,26 @@ namespace rl::ui {
         m_parent = parent;
     }
 
-    DynamicLayout* Widget::layout() const
+    Layout* Widget::layout() const
     {
         return m_layout;
     }
 
-    void Widget::set_layout(DynamicLayout* layout)
+    void Widget::assign_layout(Layout* layout)
     {
         layout->set_owner(this);
-        for (Widget* w : layout->widgets())
-            this->add_child(w);
+        this->add_child(layout->layout_panel());
         m_layout = layout;
     }
 
     const Theme* Widget::theme() const
     {
-        return m_theme.get();
+        return m_theme;
     }
 
     void Widget::set_theme(Theme* theme)
     {
-        if (m_theme.get() == theme)
+        if (m_theme == theme)
             return;
 
         m_theme = theme;
@@ -88,12 +87,12 @@ namespace rl::ui {
         return m_rect.pt;
     }
 
-    void Widget::set_position(ds::point<f32>&& pos) noexcept
+    void Widget::set_position(ds::point<f32> pos) noexcept
     {
         m_rect.pt = std::move(pos);
     }
 
-    void Widget::set_rect(ds::rect<f32>&& rect) noexcept
+    void Widget::set_rect(ds::rect<f32> rect) noexcept
     {
         m_rect = std::move(rect);
     }
@@ -113,11 +112,6 @@ namespace rl::ui {
     const ds::rect<f32>& Widget::rect() const
     {
         return m_rect;
-    }
-
-    void Widget::set_size(ds::dims<f32>&& size)
-    {
-        m_rect.size = std::move(size);
     }
 
     f32 Widget::width() const
@@ -168,6 +162,11 @@ namespace rl::ui {
     void Widget::set_fixed_height(const f32 height)
     {
         m_fixed_size.height = height;
+    }
+
+    void Widget::set_size(ds::dims<f32> size) noexcept
+    {
+        m_rect.size = std::move(size);
     }
 
     bool Widget::visible() const
@@ -226,36 +225,25 @@ namespace rl::ui {
 
     f32 Widget::font_size() const
     {
-        return (m_font_size < 0.0f && m_theme != nullptr) ? m_theme->standard_font_size
-                                                          : m_font_size;
+        return m_theme != nullptr && math::equal(m_font_size, -1.0f)  //
+                 ? m_theme->standard_font_size                        //
+                 : m_font_size;
     }
 
     ds::dims<f32> Widget::preferred_size() const
     {
-        auto context{ m_renderer->context() };
-        return m_layout != nullptr ? m_layout->computed_size() : m_rect.size;
+        return m_layout != nullptr            //
+                 ? m_layout->computed_size()  //
+                 : m_rect.size;
     }
 
     void Widget::perform_layout()
     {
-        for (const auto child : m_children)
-        {
-            auto ps{ child->preferred_size() };
-            auto fs{ child->fixed_size() };
-
-            child->set_size({
-                math::equal(fs.width, 0.0f) ? ps.width : fs.width,
-                math::equal(fs.height, 0.0f) ? ps.height : fs.height,
-            });
-
+        for (Widget* child : m_children)
             child->perform_layout();
-        }
 
         if (m_layout != nullptr)
-        {
-            const auto context{ m_renderer->context() };
             m_layout->apply_layout();
-        }
     }
 
     Widget* Widget::find_widget(const ds::point<f32>& pt)
@@ -452,7 +440,7 @@ namespace rl::ui {
 
     void Widget::remove_child_at(const i32 index)
     {
-        runtime_assert(index >= 0 && index < m_children.size(),
+        runtime_assert(index >= 0 && index < static_cast<i32>(m_children.size()),
                        "widget child remove idx out of bounds");
 
         const Widget* widget{ m_children[index] };
@@ -502,6 +490,16 @@ namespace rl::ui {
     void Widget::set_tooltip(const std::string& tooltip)
     {
         m_tooltip = tooltip;
+    }
+
+    const std::string& Widget::name() const
+    {
+        return m_name;
+    }
+
+    void Widget::set_name(const std::string& name)
+    {
+        m_name = name;
     }
 
     void Widget::set_font_size(const f32 font_size)
@@ -641,7 +639,7 @@ namespace rl::ui {
             if (!child->visible())
                 continue;
 
-            m_renderer->scoped_draw([&] {
+            m_renderer->scoped_draw([child] {
                 // TODO: put this back after fixing popup window
                 // nvg::intersect_scissor(context, child->m_rect.pt.x, child->m_rect.pt.y,
                 // child->m_rect.size.width, child->m_rect.size.height);
@@ -654,10 +652,5 @@ namespace rl::ui {
     {
         runtime_assert(m_theme != nullptr, "theme not set");
         return m_theme->icon_scale * m_icon_extra_scale;
-    }
-
-    std::string_view Widget::name() const
-    {
-        return typeid(*this).name();
     }
 }

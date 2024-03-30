@@ -17,7 +17,7 @@ namespace rl {
     bool Keyboard::is_button_released(const Keyboard::Scancode::ID key) const
     {
         const bool ret = m_released[static_cast<std::size_t>(key)];
-        m_released[static_cast<std::size_t>(key)] = false;
+        m_released[key] = false;
         return ret;
     }
 
@@ -46,12 +46,6 @@ namespace rl {
         return std::ranges::any_of(keys, [&](const Keyboard::Scancode::ID key) {
             return this->is_button_down(key);
         });
-
-        // for (auto&& key : keys)
-        //     if (this->is_button_down(key))
-        //         return true;
-
-        // return false;
     }
 
     std::string Keyboard::get_key_state(const Keyboard::Scancode::ID key) const
@@ -108,5 +102,16 @@ namespace rl {
         m_composition = std::string{ composition };
         m_cursor_pos = start;
         m_text_length = length;
+    }
+}
+
+namespace rl {
+    auto format_as(const Keyboard& kb)
+    {
+        return fmt::format("KB[W={} A={}, S={}, D={}]",
+                           kb.get_key_state(Keyboard::Scancode::W),  //
+                           kb.get_key_state(Keyboard::Scancode::A),  //
+                           kb.get_key_state(Keyboard::Scancode::S),  //
+                           kb.get_key_state(Keyboard::Scancode::D));
     }
 }

@@ -453,28 +453,28 @@ namespace rl {
 
     void MainWindow::mouse_button_pressed_event_callback(const SDL3::SDL_Event& e)
     {
-        const Mouse::Button::ID button_pressed{ e.button.button };
+        Mouse::Button::ID button_pressed{ e.button.button };
         m_mouse.process_button_down(button_pressed);
         m_gui_canvas->on_mouse_button_pressed_event(m_mouse, m_keyboard);
     }
 
     void MainWindow::mouse_button_released_event_callback(const SDL3::SDL_Event& e)
     {
-        const Mouse::Button::ID button_released{ e.button.button };
+        Mouse::Button::ID button_released{ e.button.button };
         m_mouse.process_button_up(button_released);
         m_gui_canvas->on_mouse_button_released_event(m_mouse, m_keyboard);
     }
 
     void MainWindow::keyboard_key_pressed_event_callback(const SDL3::SDL_Event& e)
     {
-        const Keyboard::Scancode::ID pressed_button{ e.key.keysym.scancode };
+        auto pressed_button{ static_cast<Keyboard::Scancode::ID>(e.key.keysym.scancode) };
         m_keyboard.process_button_down(pressed_button);
         m_gui_canvas->on_key_pressed(m_keyboard);
     }
 
     void MainWindow::keyboard_key_released_event_callback(const SDL3::SDL_Event& e)
     {
-        const Keyboard::Scancode::ID released_button{ e.key.keysym.scancode };
+        auto released_button{ static_cast<Keyboard::Scancode::ID>(e.key.keysym.scancode) };
         m_keyboard.process_button_up(released_button);
         m_gui_canvas->on_key_released(m_keyboard);
     }

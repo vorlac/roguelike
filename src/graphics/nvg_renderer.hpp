@@ -15,12 +15,8 @@
 #include "utils/numeric.hpp"
 
 namespace rl {
-
     class NVGRenderer
     {
-    public:
-        using FontInfo = std::pair<std::string, std::basic_string_view<u8>>;
-
     public:
         NVGRenderer();
 
@@ -47,19 +43,19 @@ namespace rl {
             ds::line<f32>&& line, const ds::color<f32>& inner_color,
             const ds::color<f32>& outer_gradient_color) const;
 
-        void load_fonts(const std::vector<FontInfo>& fonts);
-        void set_text_properties(const std::string_view& font_name, f32 font_size,
-                                 nvg::Align alignment) const;
+        void load_fonts(const std::vector<font::Data>& fonts);
+        void set_text_properties_(const std::string_view& font_name, f32 font_size,
+                                  nvg::Align alignment) const;
 
         [[nodiscard]]
-        ui::Font::ID load_font(const std::string_view& font_name,
+        font::handle load_font(const std::string_view& font_name,
                                const std::basic_string_view<u8>& font_ttf) const;
 
         [[nodiscard]]
-        ds::dims<f32> get_text_size(const std::string& text) const;
+        ds::dims<f32> get_text_size_(const std::string& text) const;
 
         [[nodiscard]]
-        ds::dims<f32> get_text_size(
+        ds::dims<f32> get_text_size_(
             const std::string& text, const std::string_view& font_name, f32 font_size,
             nvg::Align alignment = nvg::Align::HCenter | nvg::Align::VMiddle) const;
 
@@ -70,7 +66,7 @@ namespace rl {
             nvg::Align alignment = nvg::Align::HLeft | nvg::Align::VTop) const;
 
         void draw_rect_outline(const ds::rect<f32>& rect, f32 stroke_width,
-                               const ds::color<f32>& color, ui::Outline type) const;
+                               const ds::color<f32>& color, Outline type) const;
         void draw_rounded_rect(const ds::rect<f32>& rect, f32 corner_radius) const;
 
         [[nodiscard]]
@@ -108,6 +104,6 @@ namespace rl {
         bool m_stencil_buffer{ false };
         bool m_float_buffer{ false };
         std::unique_ptr<nvg::Context> m_nvg_context{ nullptr };
-        ui::Font::Map m_font_map{};
+        font::Map m_font_map{};
     };
 }

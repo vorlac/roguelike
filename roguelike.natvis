@@ -1,13 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+    <!-- - - - - - - - - - - - - - -->
+    <!--  rl::utils::timer<T, S> - -->
+    <!-- - - - - - - - - - - - - - -->
+    <Type Name="rl::Timer&lt;*,*,*&gt;">
+        <DisplayString>
+            {this}
+        </DisplayString>
+    </Type>
+  
     <!-- - - - - - - - - - - -->
     <!-- rl::ds::vector2<T>  -->
     <!-- rl::ds::point<T>    -->
     <!-- - - - - - - - - - - -->
     <Type Name="rl::ds::vector2&lt;*&gt;">
-        <AlternativeType Name="rl::ds::point&lt;*&gt;" />
+        <AlternativeType Name="rl::ds::point&lt;*&gt; "/>
         <DisplayString>
-            (x:{x,g}, y:{y,g})
+            pt:{{x:{x,g}, y:{y,g}}}
         </DisplayString>
         <Expand HideRawView="true">
             <Item Name="[x]">x,g</Item>
@@ -20,7 +29,7 @@
     <!-- - - - - - - - - -->
     <Type Name="rl::ds::dims&lt;*&gt;">
         <DisplayString>
-            [w:{width,g} x h:{height,g}]
+            dims:[{width,g}w x {height,g}h]
         </DisplayString>
         <Expand HideRawView="true">
             <Item Name="[width]">width,g</Item>
@@ -29,49 +38,10 @@
         </Expand>
     </Type>
 
-    <!-- - - - - - - - - -->
-    <!-- rl::ds::margin<T> -->
-    <!-- - - - - - - - - -->
-    <Type Name="rl::ds::margin&lt;*&gt;">
-        <DisplayString>
-            [horiz:{horizontal,g}, vert:{vertical,g}]
-        </DisplayString>
-        <Expand HideRawView="true">
-            <Item Name="horizontal">horizontal</Item>
-            <Item Name="vertical">vertical</Item>
-            <Item Name="[left]">horizontal/2.0,g</Item>
-            <Item Name="[right]">horizontal/2.0,g</Item>
-            <Item Name="[top]">vertical/2.0,g</Item>
-            <Item Name="[bottom]">vertical/2.0,g</Item>
-        </Expand>
-    </Type>
-  
-    <!-- - - - - - - - - -->
-    <!-- rl::ds::rect<T> -->
-    <!-- - - - - - - - - -->
-    <Type Name="rl::ds::rect&lt;*&gt;">
-        <DisplayString>
-            TL:{pt,g} BR:({pt.x + size.width,g},{pt.y + size.height,g}) | [{size.width,g} x {size.height,g}]
-        </DisplayString>
-        <Expand HideRawView="true">
-            <Item Name="[pt]">pt,g</Item>
-            <Item Name="[size]">size,g</Item>
-        </Expand>
-    </Type>
-
-    <!-- - - - - - - - - - - - - - -->
-    <!--  rl::utils::timer<T, S> - -->
-    <!-- - - - - - - - - - - - - - -->
-    <Type Name="rl::utils::Timer&lt;*,*&gt;">
-        <DisplayString>
-            delta:[{m_start_timestamp - m_delta_timestamp}]
-        </DisplayString>
-    </Type>
-
     <!-- - - - - - - - - - - -->
     <!--  rl::ds::color<T> - -->
     <!-- - - - - - - - - - - -->
-    <Type Name="rl::ds::color&lt;*&gt;" Inheritable="true">
+    <Type Name="rl::ds::color&lt;*&gt;">
         <DisplayString>
             r:{r,nvog} g:{g,nvog} b:{b,nvog} a:{a,nvog}
         </DisplayString>
@@ -82,26 +52,81 @@
             <Item Name="[alpha]">a,nvog</Item>
         </Expand>
     </Type>
-
-    <!-- - - - - - - - - - - - -->
-    <!-- rl::ds::refcounted- - -->
-    <!-- - - - - - - - - - - - -->
-    <Type Name="rl::ds::refcounted" Inheritable="true">
+  
+    <!-- - - - - - - - - -->
+    <!-- rl::ds::rect<T> -->
+    <!-- - - - - - - - - -->
+    <Type Name="rl::ds::rect&lt;*&gt;">
         <DisplayString>
-            refs:{m_references}
-        </DisplayString>
-    </Type>
-
-    <!-- - - - - - - - - - - -->
-    <!-- rl::ds::shared<T> - -->
-    <!-- - - - - - - - - - - -->
-    <Type Name="rl::ds::shared&lt;*&gt;">
-        <DisplayString>
-            data:{m_data}
+            tl=({pt.x,g}, {pt.y,g}) || br=({pt.x + size.width,g}, {pt.y + size.height,g}) || {size}
         </DisplayString>
         <Expand HideRawView="true">
-            <Item Name="[object]">m_data</Item>
+            <Item Name="[pt]">pt,g</Item>
+            <Item Name="[size]">size,g</Item>
         </Expand>
+    </Type>
+  
+    <!-- - - - - - - - - -->
+    <!-- rl::ds::margin<T> -->
+    <!-- - - - - - - - - -->
+    <Type Name="rl::ui::Margin">
+        <DisplayString>
+            ]] l:{left,g} | r:{right,g} | t:{top,g} | b:{bottom,g} [[
+        </DisplayString>
+        <Expand HideRawView="true">
+            <Item Name="[left]">left,g</Item>
+            <Item Name="[right]">right,g</Item>
+            <Item Name="[top]">top,g</Item>
+            <Item Name="[bottom]">bottom,g</Item>
+        </Expand>
+    </Type>
+  
+    <!-- - - - - - - - - -->
+    <!-- rl::ds::Padding -->
+    <!-- - - - - - - - - -->
+    <Type Name="rl::ui::Padding">
+        <DisplayString>
+            [[ l:{left,g} | r:{right,g} | t:{top,g} | b:{bottom,g} ]]
+        </DisplayString>
+        <Expand HideRawView="true">
+            <Item Name="[left]">left,02g</Item>
+            <Item Name="[right]">right,02g</Item>
+            <Item Name="[top]">top,02g</Item>
+            <Item Name="[bottom]">bottom,2g</Item>
+        </Expand>
+    </Type>
+  
+    <!-- - - - - - - - - -->
+    <!-- rl::ds::Spacing -->
+    <!-- - - - - - - - - -->
+    <Type Name="rl::ui::Spacing">
+        <DisplayString>
+            {this}
+        </DisplayString>
+        <Expand HideRawView="true">
+            <Item Name="[left]">left,g</Item>
+            <Item Name="[right]">right,g</Item>
+            <Item Name="[top]">top,g</Item>
+            <Item Name="[bottom]">bottom,g</Item>
+        </Expand>
+    </Type>
+  
+    <!-- - - - - - - - - -->
+    <!-- rl::ds::CellProperties -->
+    <!-- - - - - - - - - -->
+    <Type Name="rl::ui::CellProperties">
+        <DisplayString>
+            {this->first}, {this->second}
+        </DisplayString>
+    </Type>
+  
+    <!-- - - - - - - - - -->
+    <!-- rl::ds::shared<T> -->
+    <!-- - - - - - - - - -->
+    <Type Name="rl::ds::shared&lt;*&gt;">
+        <DisplayString>
+            {*m_data}
+        </DisplayString>
     </Type>
 
     <!-- - - - - - - - - -->
@@ -109,19 +134,14 @@
     <!-- - - - - - - - - -->
     <Type Name="rl::ui::Theme">
         <DisplayString>
-            refcount:{m_references,nvog}
+            Default Theme
         </DisplayString>
-        <Expand HideRawView="true">
-            <Item Name="refcount">m_references</Item>
+        <Expand HideRawView="false">
             <Synthetic Name="fonts">
                 <DisplayString>
                     Size:{standard_font_size}
                 </DisplayString>
                 <Expand>
-                    <Item Name="Sans Regular">font_sans_regular</Item>
-                    <Item Name="Sans Bold">font_sans_bold</Item>
-                    <Item Name="Mono Regular">font_mono_regular</Item>
-                    <Item Name="Icons Font">font_icons</Item>
                     <Item Name="Standard Font Size">standard_font_size</Item>
                 </Expand>
             </Synthetic>
@@ -262,56 +282,7 @@
 
         </Expand>
     </Type>
-
-    <!-- - - - - - - - - -->
-    <!--  rl::ui::Widget -->
-    <!-- - - - - - - - - -->
-    <Type Name="rl::ui::Widget" Inheritable="true" ExcludeView="view,address;rl::ui::Widget*,a">
-        <DisplayString>
-          {this->name(),sb}[] => {m_rect}
-        </DisplayString>
-    </Type>
-
-    <!-- - - - - - - - - -->
-    <!--  rl::ui::Label  -->
-    <!-- - - - - - - - - -->
-    <Type Name="rl::ui::Label" Inheritable="true">
-        <DisplayString>
-            Label[{m_text}] refs:{m_references}
-        </DisplayString>
-        <Expand HideRawView="false">
-            <Item Name="[widget]">(rl::ui::Widget*)this,nand</Item>
-            <Item Name="[font]">m_font</Item>
-            <Item Name="[caption]">m_text</Item>
-            <Item Name="[color]">m_color</Item>
-            <Item Name="[callback]">m_callback</Item>
-        </Expand>
-    </Type>
-
-    <!-- - - - - - - - - -->
-    <!--  rl::ui::Button -->
-    <!-- - - - - - - - - -->
-    <Type Name="rl::ui::Button" Inheritable="true">
-        <DisplayString>
-            ui::Button:[{m_callback}] refs:{m_references}
-        </DisplayString>
-        <Expand HideRawView="false">
-            <Item Name="[title]">m_callback</Item>
-        </Expand>
-    </Type>
-
-    <!-- - - - - - - - - -->
-    <!--  rl::ui::Dialog -->
-    <!-- - - - - - - - - -->
-    <Type Name="rl::ui::Dialog" Inheritable="true">
-        <DisplayString>
-            ui::Dialog:[{m_title}] refs:{m_references}
-        </DisplayString>
-        <Expand HideRawView="false">
-            <Item Name="[title]">m_title</Item>
-        </Expand>
-    </Type>
-
+  
     <!-- - - - - - - - - - - - - - - -->
     <!-- rl::GLRenderer::Properties  -->
     <!-- - - - - - - - - - - - - - - -->

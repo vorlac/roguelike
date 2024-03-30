@@ -23,11 +23,12 @@ namespace rl::ui {
         , m_mouse{ mouse }
         , m_keyboard{ kb }
     {
-        m_rect.pt = { 0.0f, 0.0f };
-        m_rect.size = rect.size;
+        this->set_rect({
+            ds::point{ 0.0f, 0.0f },
+            rect.size,
+        });
 
-        Widget::set_theme(new Theme{ nvg_renderer->context() });
-        this->set_visible(true);
+        Widget::set_theme(new Theme{});
 
         m_last_interaction = m_timer.elapsed();
     }
@@ -84,19 +85,19 @@ namespace rl::ui {
                         },
                 };
 
-                nvg::font_face(context, Font::Name::Sans);
-                nvg::font_size(context, 20.0f);
-                nvg::text_align(context, nvg::Align::HLeft | nvg::Align::VTop);
-                nvg::text_line_height(context, 1.125f);
-                nvg::text_bounds(context, pos.x, pos.y, widget->tooltip().c_str(), nullptr,
-                                 bounds.data());
+                nvg::set_font_face(context, font::style::Sans);
+                nvg::set_font_size(context, 20.0f);
+                nvg::set_text_align(context, nvg::Align::HLeft | nvg::Align::VTop);
+                nvg::text_line_height_(context, 1.125f);
+                nvg::text_bounds_(context, pos.x, pos.y, widget->tooltip().c_str(), nullptr,
+                                  bounds.data());
 
                 f32 height{ (bounds[2] - bounds[0]) / 2.0f };
                 if (height > (tooltip_width / 2.0f))
                 {
-                    nvg::text_align(context, nvg::Align::HCenter | nvg::Align::VTop);
-                    nvg::text_box_bounds(context, pos.x, pos.y, tooltip_width,
-                                         widget->tooltip().c_str(), nullptr, bounds.data());
+                    nvg::set_text_align(context, nvg::Align::HCenter | nvg::Align::VTop);
+                    nvg::text_box_bounds_(context, pos.x, pos.y, tooltip_width,
+                                          widget->tooltip().c_str(), nullptr, bounds.data());
 
                     height = (bounds[2] - bounds[0]) / 2;
                 }
@@ -128,9 +129,9 @@ namespace rl::ui {
                 nvg::fill(context);
 
                 nvg::fill_color(context, rl::Colors::White);
-                nvg::font_blur(context, 0.0f);
-                nvg::text_box(context, pos.x - height, pos.y, tooltip_width,
-                              widget->tooltip().c_str(), nullptr);
+                nvg::font_blur_(context, 0.0f);
+                nvg::text_box_(context, pos.x - height, pos.y, tooltip_width,
+                               widget->tooltip().c_str(), nullptr);
             }
         }
 

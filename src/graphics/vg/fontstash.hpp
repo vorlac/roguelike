@@ -15,6 +15,8 @@ constexpr int32_t FONS_MAX_STATES{ 20 };
 constexpr int32_t FONS_MAX_FALLBACKS{ 20 };
 
 namespace rl::nvg {
+    enum class Align;
+
     struct FONSttFontImpl
     {
         stb::stbtt_fontinfo font;
@@ -57,7 +59,7 @@ namespace rl::nvg {
     struct FONSstate
     {
         int32_t font;
-        int32_t align;
+        Align align;
         float size;
         uint32_t color;
         float blur;
@@ -202,7 +204,7 @@ namespace rl::nvg {
     int32_t fons_get_font_by_name(const FONScontext* s, const char* name);
 
     // State handling
-    void fons_push_state(FONScontext* s);
+    void fons_push_state(FONScontext* stash);
     void fons_pop_state(FONScontext* stash);
     void fons_clear_state(FONScontext* stash);
 
@@ -211,7 +213,7 @@ namespace rl::nvg {
     void fons_set_color(FONScontext* stash, uint32_t color);
     void fons_set_spacing(FONScontext* stash, float spacing);
     void fons_set_blur(FONScontext* stash, float blur);
-    void fons_set_align(FONScontext* stash, int32_t align);
+    void fons_set_align(FONScontext* stash, Align align);
     void fons_set_font(FONScontext* stash, int32_t font);
 
     // Draw text
@@ -233,7 +235,7 @@ namespace rl::nvg {
     int32_t fons_validate_texture(FONScontext* s, int32_t* dirty);
 
     // Draws the stash texture for debugging
-    void fons_draw_debug(FONScontext* s, float x, float y);
+    void fons_draw_debug(FONScontext* stash, float x, float y);
 
     int32_t fons_add_fallback_font(const FONScontext* stash, int32_t base, int32_t fallback);
     void fons_reset_fallback_font(const FONScontext* stash, int32_t base);

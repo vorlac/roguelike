@@ -1,10 +1,7 @@
 #pragma once
 
-#include <array>
 #include <functional>
-#include <memory>
 #include <string>
-#include <string_view>
 
 #include "core/ui/theme.hpp"
 #include "core/ui/widget.hpp"
@@ -16,9 +13,9 @@ namespace rl::ui {
     class Label final : public Widget
     {
     public:
-        explicit Label(const std::string& text, const std::string_view& font, const f32 font_size);
-        explicit Label(Widget* parent, const std::string& text,
-                       const std::string_view& font = Font::Name::Mono, f32 font_size = -1.0f);
+        explicit Label(std::string text, const std::string_view& font, const f32 font_size);
+        explicit Label(Widget* parent, std::string text,
+                       const std::string_view& font = font::style::Mono, f32 font_size = -1.0f);
 
         const std::string& font() const;
         const std::string& text() const;

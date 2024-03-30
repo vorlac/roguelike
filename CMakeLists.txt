@@ -70,10 +70,6 @@ set(SDL_TEST_LIBRARY OFF)
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl)
 
-# option(TRACY_ENABLE "" ON)
-# option(TRACY_ON_DEMAND "" ON)
-# add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/tracy)
-
 file(GLOB_RECURSE
   roguelike_sources
   CONFIGURE_DEPENDS
@@ -119,15 +115,15 @@ target_compile_definitions(${PROJECT_NAME}
 target_compile_options(${PROJECT_NAME}
   PRIVATE
     $<${compiler_is_msvc}:
-        #/std:c++latest
+        # /std:c++latest
         /Zc:preprocessor
         /utf-8
         /EHsc
         /nologo
 
         $<$<CONFIG:Debug>:
-			#/fsanitize=fuzzer
-		    ## /fsanitize=address
+			# /fsanitize=fuzzer
+		    # /fsanitize=address
             # /Z7 # embed debug info into .o files instead of pdb (for ccache)
             # /Zi # enable edit and continue
         >
@@ -136,12 +132,12 @@ target_compile_options(${PROJECT_NAME}
             /O2 # maximize speed
             /Oi # generate intrinsics
             /Oy # frame pointer omission
-            #/Gw # optimize global data
-            #/GS- # disable buffer security checks
-            #/GA # optimize for windows application
+            /Gw # optimize global data
+            # /GS- # disable buffer security checks
+            # /GA # optimize for windows application
             /GL # whole program optimization
-            #/fp:fast # prefer fast over accurate floating point math
-            #/favor:INTEL64
+            # /fp:fast # prefer fast over accurate floating point math
+            # /favor:INTEL64
 
             #/Ox # enable most speed optimizations
             #/Ot # favor fast code
@@ -154,14 +150,14 @@ target_compile_options(${PROJECT_NAME}
     >
 
     $<${compiler_is_clang}:
-        #-std=c++23
+        # -std=c++23
         -march=native
         -flto
         -DNDEBUG
     >
 
     $<${compiler_is_gnu}:
-        #-std=c++23
+        # -std=c++23
     >
 )
 
@@ -179,7 +175,7 @@ target_link_options(${PROJECT_NAME}
 
         $<$<CONFIG:Debug>:
             /opt:ref # eliminate unreferenced functions/data
-			## /INFERASANLIBS
+			# /INFERASANLIBS
             # /natvis:<path> # link natvis into pdb
             # /libpath:dir # additional lib paths
             # /wholearchive # include all library object files in binary

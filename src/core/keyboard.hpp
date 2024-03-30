@@ -23,7 +23,7 @@ namespace rl {
 
     public:
         // clang-format off
-        
+
         // Keyboard Specific Event Identifiers
         struct Event
         {
@@ -587,12 +587,5 @@ namespace rl {
 }
 
 namespace rl {
-    inline auto format_as(const Keyboard& kb)
-    {
-        return fmt::format("KB[W={} A={}, S={}, D={}]",
-                           kb.get_key_state(Keyboard::Scancode::W),  //
-                           kb.get_key_state(Keyboard::Scancode::A),  //
-                           kb.get_key_state(Keyboard::Scancode::S),  //
-                           kb.get_key_state(Keyboard::Scancode::D));
-    }
+    auto format_as(const Keyboard& kb);
 }

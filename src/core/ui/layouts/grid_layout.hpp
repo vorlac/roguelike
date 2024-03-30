@@ -9,10 +9,10 @@
 namespace rl::ui {
     class Widget;
 
-    class GridLayout final : public Layout
+    class GridLayout final : public OldLayout
     {
     public:
-        explicit GridLayout(const Orientation orientation = Orientation::Horizontal,  //
+        explicit GridLayout(const Arrangement orientation = Arrangement::Horizontal,  //
                             const f32 resolution = 2.0f,                              //
                             const Alignment alignment = Alignment::Center,            //
                             const f32 margin = 0.0f,                                  //
@@ -28,14 +28,14 @@ namespace rl::ui {
         f32 margin() const;
         f32 resolution() const;
         f32 spacing(Axis axis) const;
-        Orientation orientation() const;
+        Arrangement orientation() const;
         Alignment alignment(Axis axis, i32 item) const;
 
         void set_margin(f32 margin);
         void set_resolution(f32 resolution);
         void set_spacing(f32 spacing);
         void set_spacing(Axis axis, f32 spacing);
-        void set_orientation(Orientation orientation);
+        void set_orientation(Arrangement orientation);
         void set_col_alignment(Alignment value);
         void set_row_alignment(Alignment value);
         void set_col_alignment(const std::vector<Alignment>& value);
@@ -58,7 +58,7 @@ namespace rl::ui {
         // The spacing used for each dimension.
         ds::vector2<f32> m_spacing{ 0.0f, 0.0f };
         //  The Orientation of the GridLayout.
-        Orientation m_orientation{ Orientation::None };
+        Arrangement m_orientation{ Arrangement::None };
         // The default Alignment of the GridLayout.
         std::array<Alignment, 2> m_default_alignment{ { {}, {} } };
         // The actual Alignment being used for each column/row

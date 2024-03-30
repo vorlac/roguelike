@@ -4,7 +4,6 @@
 
 #include "core/assert.hpp"
 #include "core/ui/canvas.hpp"
-// #include "core/ui/layouts/layout.hpp"
 #include "core/ui/layouts/advanced_grid_layout.hpp"
 #include "core/ui/layouts/box_layout.hpp"
 #include "core/ui/theme.hpp"
@@ -13,6 +12,7 @@
 #include "core/ui/widgets/label.hpp"
 #include "core/ui/widgets/scroll_dialog.hpp"
 #include "core/ui/widgets/textbox.hpp"
+#include "ds/shared.hpp"
 #include "ds/vector2d.hpp"
 
 namespace rl::ui {
@@ -230,11 +230,6 @@ namespace rl::ui {
             {
                 return this->checked();
             }
-
-            virtual std::string_view name() const override
-            {
-                return "class rl::ui::FormWidget[CheckBox]";
-            }
         };
 
         template <typename T>
@@ -268,11 +263,6 @@ namespace rl::ui {
             {
                 this->set_enabled(e);
             }
-
-            virtual std::string_view name() const override
-            {
-                return Widget::name();  //"class rl::ui::FormWidget[ComboBox]";
-            }
         };
 
         template <typename T>
@@ -284,11 +274,6 @@ namespace rl::ui {
             {
                 this->set_alignment(TextBox::Alignment::Right);
             }
-
-            virtual std::string_view name() const override
-            {
-                return Widget::name();  //"class rl::ui::FormWidget[IntBox]";
-            }
         };
 
         template <typename T>
@@ -299,12 +284,6 @@ namespace rl::ui {
                 : FloatBox<T>{ p }
             {
                 this->set_alignment(TextBox::Alignment::Right);
-            }
-
-            [[nodiscard]]
-            virtual std::string_view name() const override
-            {
-                return Widget::name();  //"class rl::ui::FormWidget[FloatBox]";
             }
         };
 
@@ -324,11 +303,6 @@ namespace rl::ui {
                     cb(str);
                     return true;
                 });
-            }
-
-            virtual std::string_view name() const override
-            {
-                return Widget::name();  //"class rl::ui::FormWidget[TextBox]";
             }
         };
     }

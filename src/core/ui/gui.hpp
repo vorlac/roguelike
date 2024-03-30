@@ -8,6 +8,7 @@
 #include "core/ui/layouts/dynamic_layout.hpp"
 #include "core/ui/layouts/grid_layout.hpp"
 #include "core/ui/layouts/group_layout.hpp"
+#include "core/ui/layouts/old_box_layout.hpp"
 #include "core/ui/theme.hpp"
 #include "core/ui/widget.hpp"
 #include "core/ui/widgets/button.hpp"

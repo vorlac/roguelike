@@ -13,7 +13,7 @@
 #endif
 
 namespace rl::nvg {
-    constexpr int32_t MaxNVGStates{ 64 };
+    constexpr i32 MaxNVGStates{ 64 };
     // Length proportional to radius of a
     // cubic bezier handle for 90deg arcs.
     constexpr float NVGKappa90{ 0.5522847493f };
@@ -116,16 +116,16 @@ namespace rl::nvg {
 
     struct NVGpath
     {
-        int32_t first{ 0 };
-        int32_t count{ 0 };
+        i32 first{ 0 };
+        i32 count{ 0 };
         uint8_t closed{ 0 };
-        int32_t nbevel{ 0 };
+        i32 nbevel{ 0 };
         Vertex* fill{ nullptr };
-        int32_t nfill{ 0 };
+        i32 nfill{ 0 };
         Vertex* stroke{ nullptr };
-        int32_t nstroke{ 0 };
+        i32 nstroke{ 0 };
         ShapeWinding winding{ ShapeWinding::None };
-        int32_t convex{ 0 };
+        i32 convex{ 0 };
     };
 
     struct CompositeOperationState
@@ -144,7 +144,7 @@ namespace rl::nvg {
         float feather{ 0.0f };
         ds::color<f32> inner_color{ 0.0f, 0.0f, 0.0f, 0.0f };
         ds::color<f32> outer_color{ 0.0f, 0.0f, 0.0f, 0.0f };
-        int32_t image{ 0 };
+        i32 image{ 0 };
     };
 
     struct State
@@ -164,8 +164,8 @@ namespace rl::nvg {
         float letter_spacing{ 0.0f };
         float line_height{ 0.0f };
         float font_blur{ 0.0f };
-        Align text_align{};
-        int32_t font_id{ 0 };
+        Align text_align{ Align::None };
+        i32 font_id{ 0 };
     };
 
     struct Params
@@ -173,13 +173,13 @@ namespace rl::nvg {
         void* user_ptr{ nullptr };
         bool edge_anti_alias{ false };
 
-        int32_t (*render_create)(void* uptr);
-        int32_t (*render_create_texture)(void* uptr, TextureProperty type, int32_t w, int32_t h,
-                                         ImageFlags image_flags, const uint8_t* data);
-        int32_t (*render_delete_texture)(void* uptr, int32_t image);
-        int32_t (*render_update_texture)(void* uptr, int32_t image, int32_t x, int32_t y, int32_t w,
-                                         int32_t h, const uint8_t* data);
-        int32_t (*render_get_texture_size)(void* uptr, int32_t image, float* w, float* h);
+        i32 (*render_create)(void* uptr);
+        i32 (*render_create_texture)(void* uptr, TextureProperty type, i32 w, i32 h,
+                                     ImageFlags image_flags, const uint8_t* data);
+        i32 (*render_delete_texture)(void* uptr, i32 image);
+        i32 (*render_update_texture)(void* uptr, i32 image, i32 x, i32 y, i32 w, i32 h,
+                                     const uint8_t* data);
+        i32 (*render_get_texture_size)(void* uptr, i32 image, float* w, float* h);
 
         void (*render_viewport)(void* uptr, float width, float height, float device_pixel_ratio);
         void (*render_cancel)(void* uptr);
@@ -187,14 +187,14 @@ namespace rl::nvg {
         void (*render_fill)(void* uptr, const PaintStyle* paint,
                             CompositeOperationState composite_operation,
                             const ScissorParams* scissor, float fringe, const float* bounds,
-                            const NVGpath* paths, int32_t npaths);
+                            const NVGpath* paths, i32 npaths);
         void (*render_stroke)(void* uptr, const PaintStyle* paint,
                               CompositeOperationState composite_operation,
                               const ScissorParams* scissor, float fringe, float stroke_width,
-                              const NVGpath* paths, int32_t npaths);
+                              const NVGpath* paths, i32 npaths);
         void (*render_triangles)(
             void* uptr, const PaintStyle* paint, CompositeOperationState composite_operation,
-            const ScissorParams* scissor, const Vertex* verts, int32_t nverts, float fringe);
+            const ScissorParams* scissor, const Vertex* verts, i32 nverts, float fringe);
 
         void (*render_delete)(void* uptr);
     };
@@ -214,14 +214,14 @@ namespace rl::nvg {
     struct PathCache
     {
         Point* points{ nullptr };
-        int32_t npoints{ 0 };
-        int32_t cpoints{ 0 };
+        i32 npoints{ 0 };
+        i32 cpoints{ 0 };
         NVGpath* paths{ nullptr };
-        int32_t npaths{ 0 };
-        int32_t cpaths{ 0 };
+        i32 npaths{ 0 };
+        i32 cpaths{ 0 };
         Vertex* verts{ nullptr };
-        int32_t nverts{ 0 };
-        int32_t cverts{ 0 };
+        i32 nverts{ 0 };
+        i32 cverts{ 0 };
         float bounds[4]{};
     };
 
@@ -229,24 +229,24 @@ namespace rl::nvg {
     {
         Params params{};
         float* commands{ nullptr };
-        int32_t ccommands{ 0 };
-        int32_t ncommands{ 0 };
+        i32 ccommands{ 0 };
+        i32 ncommands{ 0 };
         float commandx{ 0.0f };
         float commandy{ 0.0f };
         State states[MaxNVGStates]{};
-        int32_t nstates{ 0 };
+        i32 nstates{ 0 };
         PathCache* cache{ nullptr };
         float tess_tol{ 0.0f };
         float dist_tol{ 0.0f };
         float fringe_width{ 0.0f };
         float device_px_ratio{ 0.0f };
         FONScontext* fs{ nullptr };
-        int32_t font_images[NvgMaxFontimages]{};
-        int32_t font_image_idx{ 0 };
-        int32_t draw_call_count{ 0 };
-        int32_t fill_tri_count{ 0 };
-        int32_t stroke_tri_count{ 0 };
-        int32_t text_tri_count{ 0 };
+        i32 font_images[NvgMaxFontimages]{};
+        i32 font_image_idx{ 0 };
+        i32 draw_call_count{ 0 };
+        i32 fill_tri_count{ 0 };
+        i32 stroke_tri_count{ 0 };
+        i32 text_tri_count{ 0 };
     };
 
     struct GlyphPosition
@@ -475,7 +475,7 @@ namespace rl::nvg {
 
     // Sets the destination to inverse of specified transform.
     // Returns 1 if the inverse could be calculated, else 0.
-    int32_t transform_inverse(float* dst, const float* src);
+    i32 transform_inverse(float* dst, const float* src);
 
     // Transform a point by given transform.
     void transform_point(float* dstx, float* dsty, const float* xform, float srcx, float srcy);
@@ -494,30 +494,27 @@ namespace rl::nvg {
 
     // Creates image by loading it from the disk from specified file name.
     // Returns handle to the image.
-    int32_t create_image(const Context* ctx, const char* filename, ImageFlags image_flags);
+    i32 create_image(const Context* ctx, const char* filename, ImageFlags image_flags);
 
-    // Creates image by loading it from the specified chunk of memory.
-    // Returns handle to the image.
-    int32_t create_image_mem(const Context* ctx, ImageFlags image_flags, const uint8_t* data,
-                             int32_t ndata);
+    // Creates image by loading it from the specified chunk of memory. Returns handle to the image.
+    i32 create_image_mem(const Context* ctx, ImageFlags image_flags, const uint8_t* data, i32 ndata);
 
-    // Creates image from specified image data.
-    // Returns handle to the image.
-    int32_t create_image_rgba(const Context* ctx, int32_t w, int32_t h, ImageFlags image_flags,
-                              const uint8_t* data);
+    // Creates image from specified image data. Returns handle to the image.
+    i32 create_image_rgba(const Context* ctx, i32 w, i32 h, ImageFlags image_flags,
+                          const uint8_t* data);
 
-    int32_t create_image_alpha(const Context* ctx, int32_t w, int32_t h, ImageFlags image_flags,
-                               const uint8_t* data);
+    i32 create_image_alpha(const Context* ctx, i32 w, i32 h, ImageFlags image_flags,
+                           const uint8_t* data);
 
     // Updates image data specified by image handle.
-    void update_image(const Context* ctx, int32_t image, const uint8_t* data);
+    void update_image(const Context* ctx, i32 image, const uint8_t* data);
 
     // Returns the dimensions of a created image.
-    void image_size(const Context* ctx, int32_t image, float* w, float* h);
-    ds::dims<f32> image_size(const Context* ctx, int32_t image);
+    void image_size(const Context* ctx, i32 image, float* w, float* h);
+    ds::dims<f32> image_size(const Context* ctx, i32 image);
 
     // Deletes created image.
-    void delete_image(const Context* ctx, int32_t image);
+    void delete_image(const Context* ctx, i32 image);
 
     //
     // Paints
@@ -560,7 +557,7 @@ namespace rl::nvg {
     // corner, image is handle to the image to render. The gradient is transformed by the
     // current transform when it is passed to FillPaint() or StrokePaint().
     PaintStyle image_pattern(Context* ctx, float cx, float cy, float w, float h, float angle,
-                             int32_t image, float alpha);
+                             i32 image, float alpha);
 
     //
     // Scissoring
@@ -634,7 +631,7 @@ namespace rl::nvg {
     void arc(Context* ctx, float cx, float cy, float r, float a0, float a1, ShapeWinding dir);
 
     void barc(Context* ctx, float cx, float cy, float r, float a0, float a1, ShapeWinding dir,
-              int32_t join);
+              i32 join);
 
     // Creates new rectangle shaped sub-path.
     void rect(Context* ctx, float x, float y, float w, float h);
@@ -694,104 +691,104 @@ namespace rl::nvg {
 
     // Creates font by loading it from the disk from specified file name.
     // Returns handle to the font.
-    int32_t create_font(const Context* ctx, const char* name, const char* filename);
+    i32 create_font(const Context* ctx, const char* name, const char* filename);
 
     // fontIndex specifies which font face to load from a .ttf/.ttc file.
-    int32_t create_font_at_index(const Context* ctx, const char* name, const char* filename,
-                                 int32_t font_index);
+    i32 create_font_at_index(const Context* ctx, const char* name, const char* filename,
+                             i32 font_index);
 
     // Creates font by loading it from the specified memory chunk.
     // Returns handle to the font.
-    int32_t create_font_mem(const Context* ctx, const char* name, uint8_t* data, int32_t ndata,
-                            int32_t free_data);
-    int32_t create_font_mem(const Context* ctx, const std::string_view& name,
-                            const std::basic_string_view<u8>& font_data) noexcept;
+    i32 create_font_mem(const Context* ctx, const char* name, uint8_t* data, i32 ndata,
+                        i32 free_data);
+    i32 create_font_mem(const Context* ctx, const std::string_view& name,
+                        const std::basic_string_view<u8>& font_data) noexcept;
 
     // fontIndex specifies which font face to load from a .ttf/.ttc file.
-    int32_t create_font_mem_at_index(const Context* ctx, const char* name, uint8_t* data,
-                                     int32_t ndata, int32_t free_data, int32_t font_index);
+    i32 create_font_mem_at_index(const Context* ctx, const char* name, uint8_t* data, i32 ndata,
+                                 i32 free_data, i32 font_index);
 
     // Finds a loaded font of specified name, and returns handle to it, or -1 if the font is not
     // found.
-    int32_t find_font(const Context* ctx, const char* name);
+    i32 find_font_(const Context* ctx, const char* name);
 
     // Adds a fallback font by handle.
-    int32_t add_fallback_font_id(const Context* ctx, int32_t base_font, int32_t fallback_font);
+    i32 add_fallback_font_id(const Context* ctx, i32 base_font, i32 fallback_font);
 
     // Adds a fallback font by name.
-    int32_t add_fallback_font(const Context* ctx, const char* base_font, const char* fallback_font);
+    i32 add_fallback_font(const Context* ctx, const char* base_font, const char* fallback_font);
 
     // Resets fallback fonts by handle.
-    void reset_fallback_fonts_id(const Context* ctx, int32_t base_font);
+    void reset_fallback_fonts_id(const Context* ctx, i32 base_font);
 
     // Resets fallback fonts by name.
     void reset_fallback_fonts(const Context* ctx, const char* base_font);
 
     // Sets the font size of current text style.
-    void font_size(Context* ctx, float size);
+    void set_font_size(Context* ctx, float size);
 
     // Sets the blur of current text style.
-    void font_blur(Context* ctx, float blur);
+    void font_blur_(Context* ctx, float blur);
 
     // Sets the letter spacing of current text style.
-    void text_letter_spacing(Context* ctx, float spacing);
+    void text_letter_spacing_(Context* ctx, float spacing);
 
     // Sets the proportional line height of current text style. The line height is specified as
     // multiple of font size.
-    void text_line_height(Context* ctx, float line_height);
+    void text_line_height_(Context* ctx, float line_height);
 
     // Sets the text align of current text style, see Align for options.
-    void text_align(Context* ctx, Align align);
+    void set_text_align(Context* ctx, Align align);
 
     // Sets the font face based on specified id of current text style.
-    void font_face_id(Context* ctx, int32_t font);
+    void font_face_id_(Context* ctx, i32 font);
 
     // Sets the font face based on specified name of current text style.
-    void font_face(Context* ctx, const char* font);
-    void font_face(Context* ctx, const std::string_view& font);
-    void font_face(Context* ctx, const std::string& font);
+    void set_font_face(Context* ctx, const char* font);
+    void set_font_face(Context* ctx, const std::string_view& font);
+    void set_font_face(Context* ctx, const std::string& font);
 
     // Draws text string at specified location. If end is specified only the sub-string up to
     // the end is drawn.
-    float text(Context* ctx, float x, float y, const char* string, const char* end = nullptr);
+    float text_(Context* ctx, float x, float y, const char* string, const char* end = nullptr);
 
     // Draws multi-line text string at specified location wrapped at the specified width. If end
     // is specified only the sub-string up to the end is drawn. White space is stripped at the
     // beginning of the rows, the text is split at word boundaries or when new-line characters
     // are encountered. Words longer than the max width are slit at nearest character (i.e. no
     // hyphenation).
-    void text_box(Context* ctx, float x, float y, float break_row_width, const char* string,
-                  const char* end = nullptr);
+    void text_box_(Context* ctx, float x, float y, float break_row_width, const char* string,
+                   const char* end = nullptr);
 
     // Measures the specified text string. Parameter bounds should be a pointer to float[4],
     // if the bounding box of the text should be returned. The bounds value are [xmin,ymin,
     // xmax,ymax] Returns the horizontal advance of the measured text (i.e. where the next
     // character should drawn). Measured values are returned in local coordinate space.
-    float text_bounds(Context* ctx, ds::point<f32>&& pos, std::string&& text);
-    float text_bounds(Context* ctx, float x, float y, const char* text, const char* end = nullptr,
-                      float* bounds = nullptr);
+    float text_bounds_(Context* ctx, ds::point<f32>&& pos, std::string&& text);
+    float text_bounds_(Context* ctx, float x, float y, const char* text, const char* end = nullptr,
+                       float* bounds = nullptr);
 
     // Measures the specified multi-text string. Parameter bounds should be a pointer to
     // float[4], if the bounding box of the text should be returned. The bounds value are
     // [xmin,ymin, xmax,ymax] Measured values are returned in local coordinate space.
-    void text_box_bounds(Context* ctx, float x, float y, float break_row_width, const char* string,
-                         const char* end, float* bounds);
+    void text_box_bounds_(Context* ctx, float x, float y, float break_row_width, const char* string,
+                          const char* end, float* bounds);
 
     // Calculates the glyph x positions of the specified text. If end is specified only the
     // sub-string will be used. Measured values are returned in local coordinate space.
-    int32_t text_glyph_positions(Context* ctx, float x, float y, const char* string,
-                                 const char* end, GlyphPosition* positions, int32_t max_positions);
+    i32 text_glyph_positions_(Context* ctx, float x, float y, const char* string, const char* end,
+                              GlyphPosition* positions, i32 max_positions);
 
     // Returns the vertical metrics based on the current text style.
     // Measured values are returned in local coordinate space.
-    void text_metrics(Context* ctx, float* ascender, float* descender, float* lineh);
+    void text_metrics_(Context* ctx, float* ascender, float* descender, float* lineh);
 
     // Breaks the specified text into lines. If end is specified only the sub-string will be
     // used. White space is stripped at the beginning of the rows, the text is split at word
     // boundaries or when new-line characters are encountered. Words longer than the max width
     // are slit at nearest character (i.e. no hyphenation).
-    int32_t text_break_lines(Context* ctx, const char* string, const char* end,
-                             float break_row_width, TextRow* rows, int32_t max_rows);
+    i32 text_break_lines_(Context* ctx, const char* string, const char* end, float break_row_width,
+                          TextRow* rows, i32 max_rows);
 
     // Constructor and destructor, called by the render back-end.
     Context* create_internal(const Params* params);

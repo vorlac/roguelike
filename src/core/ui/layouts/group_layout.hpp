@@ -10,7 +10,7 @@ namespace rl::ui {
     // vertically. All widgets are indented on the horizontal axis except for
     // Label widgets, which are not indented. This creates a pleasing layout where a number of
     // widgets are grouped under some high-level heading.
-    class GroupLayout final : public Layout
+    class GroupLayout final : public OldLayout
     {
     public:
         explicit GroupLayout(const f32 margin = 15.0f, const f32 spacing = 6.0f,

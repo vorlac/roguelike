@@ -5,7 +5,6 @@
 #include <vector>
 
 #include "ds/dims.hpp"
-#include "sdl/defs.hpp"
 #include "utils/numeric.hpp"
 #include "utils/time.hpp"
 #include "widget.hpp"
@@ -13,10 +12,6 @@
 namespace rl {
     class NVGRenderer;
 }
-
-SDL_C_LIB_BEGIN
-#include <SDL3/SDL_video.h>
-SDL_C_LIB_END
 
 namespace rl::ui {
     using WindowID = SDL3::SDL_WindowID;
@@ -29,18 +24,18 @@ namespace rl::ui {
     class Canvas final : public Widget
     {
     public:
-        Canvas() = delete;
-        Canvas(Canvas&&) = delete;
-        Canvas(const Canvas&) = delete;
-        Canvas& operator=(Canvas&&) = delete;
-        Canvas& operator=(const Canvas&) = delete;
-
         enum class MouseMode {
             Propagate,  // Propagate mouse inputs to children widgets
             Ignore,     // Ignore all mouse inputs
             Resize,     // Resize floating children dialogs
             Drag        // Drag child widgets
         };
+
+        Canvas() = delete;
+        Canvas(Canvas&&) = delete;
+        Canvas(const Canvas&) = delete;
+        Canvas& operator=(Canvas&&) = delete;
+        Canvas& operator=(const Canvas&) = delete;
 
     public:
         explicit Canvas(const ds::rect<f32>& rect, const Mouse& mouse, const Keyboard& kb,

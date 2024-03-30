@@ -85,20 +85,19 @@ namespace rl::ui {
                                                   ? m_theme->text_color
                                                   : m_text_color };
 
-            nvg::font_face(context, Font::Name::Icons);
-            nvg::font_size(context, text_size * this->icon_scale());
+            nvg::set_font_face(context, font::style::Icons);
+            nvg::set_font_size(context, text_size * this->icon_scale());
             nvg::fill_color(context, m_enabled ? text_color : m_theme->disabled_text_color);
-            nvg::text_align(context, nvg::Align::HLeft | nvg::Align::VMiddle);
+            nvg::set_text_align(context, nvg::Align::HLeft | nvg::Align::VMiddle);
 
-            const f32 icon_width{ nvg::text_bounds(context, 0.0f, 0.0f, icon.data()) };
-
+            const f32 icon_width{ nvg::text_bounds_(context, 0.0f, 0.0f, icon.data()) };
             ds::point icon_pos{ 0.0f, m_rect.pt.y + m_rect.size.height * 0.5f - 1.0f };
             if (m_popup->side() == Side::Right)
                 icon_pos.x = m_rect.pt.x + m_rect.size.width - icon_width - 8.0f;
             else
                 icon_pos.x = m_rect.pt.x + 8.0f;
 
-            nvg::text(context, icon_pos.x, icon_pos.y, icon.data());
+            nvg::text_(context, icon_pos.x, icon_pos.y, icon.data());
         }
     }
 
@@ -154,10 +153,19 @@ namespace rl::ui {
                 if (m_chevron_icon == right_icon)
                     this->set_chevron_icon(left_icon);
                 break;
-
             case Side::Left:
                 if (m_chevron_icon == left_icon)
                     this->set_chevron_icon(right_icon);
+                break;
+
+            case Side::None:
+            case Side::Top:
+            case Side::Bottom:
+            case Side::TopLeft:
+            case Side::TopRight:
+            case Side::BottomLeft:
+            case Side::BottomRight:
+            default:
                 break;
         }
 

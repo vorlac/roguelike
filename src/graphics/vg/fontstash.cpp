@@ -3,14 +3,16 @@
 
 #include "graphics/stb/stb_truetype.hpp"
 #include "graphics/vg/fontstash.hpp"
+#include "nanovg.hpp"
+#include "utils/conversions.hpp"
 
 namespace rl::nvg {
     using namespace rl::stb;
 
-    constexpr int32_t FONS_UTF8_ACCEPT{ 0 };
+    constexpr i32 FONS_UTF8_ACCEPT{ 0 };
 
     namespace {
-        uint32_t fons_hashint(uint32_t a)
+        u32 fons_hashint(u32 a)
         {
             a += ~(a << 15);
             a ^= (a >> 10);
@@ -21,32 +23,32 @@ namespace rl::nvg {
             return a;
         }
 
-        int32_t fons_mini(const int32_t a, const int32_t b)
+        i32 fons_mini(const i32 a, const i32 b)
         {
             return a < b ? a : b;
         }
 
-        int32_t fons_maxi(const int32_t a, const int32_t b)
+        i32 fons_maxi(const i32 a, const i32 b)
         {
             return a > b ? a : b;
         }
 
-        int32_t fons_tt_init(FONScontext* context)
+        i32 fons_tt_init(FONScontext* context)
         {
             return 1;
         }
 
-        int32_t fons_tt_done(FONScontext* context)
+        i32 fons_tt_done(FONScontext* context)
         {
             return 1;
         }
 
-        int32_t fons_tt_load_font(FONScontext* context, FONSttFontImpl* font, const uint8_t* data,
-                                  int32_t data_size, const int32_t font_index)
+        i32 fons_tt_load_font(FONScontext* context, FONSttFontImpl* font, const u8* data,
+                              i32 data_size, const i32 font_index)
         {
-            int32_t stb_error;
+            i32 stb_error;
             font->font.userdata = context;
-            const int32_t offset = stbtt_GetFontOffsetForIndex(data, font_index);
+            const i32 offset = stbtt_GetFontOffsetForIndex(data, font_index);
             if (offset == -1)
                 stb_error = 0;
             else
@@ -54,49 +56,48 @@ namespace rl::nvg {
             return stb_error;
         }
 
-        void fons_tt_get_font_v_metrics(const FONSttFontImpl* font, int32_t* ascent,
-                                        int32_t* descent, int32_t* lineGap)
+        void fons_tt_get_font_v_metrics(const FONSttFontImpl* font, i32* ascent, i32* descent,
+                                        i32* lineGap)
         {
             stbtt_GetFontVMetrics(&font->font, ascent, descent, lineGap);
         }
 
-        float fons_tt_get_pixel_height_scale(const FONSttFontImpl* font, const float size)
+        f32 fons_tt_get_pixel_height_scale(const FONSttFontImpl* font, const f32 size)
         {
             return stbtt_ScaleForMappingEmToPixels(&font->font, size);
         }
 
-        int32_t fons_tt_get_glyph_index(const FONSttFontImpl* font, const int32_t codepoint)
+        i32 fons_tt_get_glyph_index(const FONSttFontImpl* font, const i32 codepoint)
         {
             return stbtt_FindGlyphIndex(&font->font, codepoint);
         }
 
-        int32_t fons_tt_build_glyph_bitmap(
-            const FONSttFontImpl* font, const int32_t glyph, float size, const float scale,
-            int32_t* advance, int32_t* lsb, int32_t* x0, int32_t* y0, int32_t* x1, int32_t* y1)
+        i32 fons_tt_build_glyph_bitmap(const FONSttFontImpl* font, const i32 glyph, f32 size,
+                                       const f32 scale, i32* advance, i32* lsb, i32* x0, i32* y0,
+                                       i32* x1, i32* y1)
         {
             stbtt_GetGlyphHMetrics(&font->font, glyph, advance, lsb);
             stbtt_GetGlyphBitmapBox(&font->font, glyph, scale, scale, x0, y0, x1, y1);
             return 1;
         }
 
-        void fons_tt_render_glyph_bitmap(const FONSttFontImpl* font, uint8_t* output,
-                                         const int32_t out_width, const int32_t out_height,
-                                         const int32_t outStride, const float scaleX,
-                                         const float scale_y, const int32_t glyph)
+        void fons_tt_render_glyph_bitmap(
+            const FONSttFontImpl* font, u8* output, const i32 out_width, const i32 out_height,
+            const i32 outStride, const f32 scaleX, const f32 scale_y, const i32 glyph)
         {
             stbtt_MakeGlyphBitmap(&font->font, output, out_width, out_height, outStride, scaleX,
                                   scale_y, glyph);
         }
 
-        int32_t fons_tt_get_glyph_kern_advance(const FONSttFontImpl* font, const int32_t glyph1,
-                                               const int32_t glyph2)
+        i32 fons_tt_get_glyph_kern_advance(const FONSttFontImpl* font, const i32 glyph1,
+                                           const i32 glyph2)
         {
             return stbtt_GetGlyphKernAdvance(&font->font, glyph1, glyph2);
         }
 
-        uint32_t fons_decutf8(uint32_t* state, uint32_t* codep, const uint32_t byte)
+        u32 fons_decutf8(u32* state, u32* codep, const u32 byte)
         {
-            constexpr static uint8_t utf8d[] = {
+            constexpr static u8 utf8d[] = {
                 // The first part of the table maps bytes to character classes that
                 // to reduce the size of the transition table and create bitmasks.
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -120,7 +121,7 @@ namespace rl::nvg {
                 12, 12
             };
 
-            const uint32_t type = utf8d[byte];
+            const u32 type = utf8d[byte];
 
             *codep = (*state != FONS_UTF8_ACCEPT) ? (byte & 0x3fu) | (*codep << 6)
                                                   : (0xff >> type) & (byte);
@@ -139,7 +140,7 @@ namespace rl::nvg {
             free(atlas);
         }
 
-        FONSatlas* fons_alloc_atlas(const int32_t w, const int32_t h, const int32_t nnodes)
+        FONSatlas* fons_alloc_atlas(const i32 w, const i32 h, const i32 nnodes)
         {
             // Allocate memory for the font stash.
             const auto atlas = static_cast<FONSatlas*>(std::malloc(sizeof(FONSatlas)));
@@ -176,8 +177,8 @@ namespace rl::nvg {
             return nullptr;
         }
 
-        int32_t fons_atlas_insert_node(FONSatlas* atlas, const int32_t idx, const int32_t x,
-                                       const int32_t y, const int32_t w)
+        i32 fons_atlas_insert_node(FONSatlas* atlas, const i32 idx, const i32 x, const i32 y,
+                                   const i32 w)
         {
             // Insert node
             if (atlas->nnodes + 1 > atlas->cnodes)
@@ -190,7 +191,7 @@ namespace rl::nvg {
                     return 0;
             }
 
-            for (int32_t i = atlas->nnodes; i > idx; i--)
+            for (i32 i = atlas->nnodes; i > idx; i--)
                 atlas->nodes[i] = atlas->nodes[i - 1];
 
             atlas->nodes[idx].x = static_cast<int16_t>(x);
@@ -201,18 +202,18 @@ namespace rl::nvg {
             return 1;
         }
 
-        void fons_atlas_remove_node(FONSatlas* atlas, const int32_t idx)
+        void fons_atlas_remove_node(FONSatlas* atlas, const i32 idx)
         {
             if (atlas->nnodes == 0)
                 return;
 
-            for (int32_t i = idx; i < atlas->nnodes - 1; i++)
+            for (i32 i = idx; i < atlas->nnodes - 1; i++)
                 atlas->nodes[i] = atlas->nodes[i + 1];
 
             atlas->nnodes--;
         }
 
-        void fons_atlas_expand(FONSatlas* atlas, const int32_t w, const int32_t h)
+        void fons_atlas_expand(FONSatlas* atlas, const i32 w, const i32 h)
         {
             // Insert node for empty space
             if (w > atlas->width)
@@ -222,7 +223,7 @@ namespace rl::nvg {
             atlas->height = h;
         }
 
-        void fons_atlas_reset(FONSatlas* atlas, const int32_t w, const int32_t h)
+        void fons_atlas_reset(FONSatlas* atlas, const i32 w, const i32 h)
         {
             atlas->width = w;
             atlas->height = h;
@@ -235,10 +236,10 @@ namespace rl::nvg {
             atlas->nnodes++;
         }
 
-        int32_t fons_atlas_add_skyline_level(FONSatlas* atlas, const int32_t idx, const int32_t x,
-                                             const int32_t y, const int32_t w, const int32_t h)
+        i32 fons_atlas_add_skyline_level(FONSatlas* atlas, const i32 idx, const i32 x, const i32 y,
+                                         const i32 w, const i32 h)
         {
-            int32_t i;
+            i32 i;
 
             // Insert new node
             if (fons_atlas_insert_node(atlas, idx, x, y + h, w) == 0)
@@ -249,8 +250,8 @@ namespace rl::nvg {
             {
                 if (atlas->nodes[i].x < atlas->nodes[i - 1].x + atlas->nodes[i - 1].width)
                 {
-                    const int32_t shrink = atlas->nodes[i - 1].x + atlas->nodes[i - 1].width -
-                                           atlas->nodes[i].x;
+                    const i32 shrink = atlas->nodes[i - 1].x + atlas->nodes[i - 1].width -
+                                       atlas->nodes[i].x;
                     atlas->nodes[i].x += static_cast<int16_t>(shrink);
                     atlas->nodes[i].width -= static_cast<int16_t>(shrink);
                     if (atlas->nodes[i].width > 0)
@@ -281,18 +282,17 @@ namespace rl::nvg {
             return 1;
         }
 
-        int32_t fons_atlas_rect_fits(const FONSatlas* atlas, int32_t i, const int32_t w,
-                                     const int32_t h)
+        i32 fons_atlas_rect_fits(const FONSatlas* atlas, i32 i, const i32 w, const i32 h)
         {
             // Checks if there is enough space at the location of skyline span 'i',
             // and return the max height of all skyline spans under that at that location,
             // (think tetris block being dropped at that position). Or -1 if no space found.
-            const int32_t x = atlas->nodes[i].x;
-            int32_t y = atlas->nodes[i].y;
+            const i32 x = atlas->nodes[i].x;
+            i32 y = atlas->nodes[i].y;
             if (x + w > atlas->width)
                 return -1;
 
-            int32_t spaceLeft = w;
+            i32 spaceLeft = w;
             while (spaceLeft > 0)
             {
                 if (i == atlas->nnodes)
@@ -309,16 +309,15 @@ namespace rl::nvg {
             return y;
         }
 
-        int32_t fons_atlas_add_rect(FONSatlas* atlas, const int32_t rw, const int32_t rh,
-                                    int32_t* rx, int32_t* ry)
+        i32 fons_atlas_add_rect(FONSatlas* atlas, const i32 rw, const i32 rh, i32* rx, i32* ry)
         {
-            int32_t besth = atlas->height, bestw = atlas->width, besti = -1;
-            int32_t bestx = -1, besty = -1;
+            i32 besth = atlas->height, bestw = atlas->width, besti = -1;
+            i32 bestx = -1, besty = -1;
 
             // Bottom left fit heuristic.
-            for (int32_t i = 0; i < atlas->nnodes; i++)
+            for (i32 i = 0; i < atlas->nnodes; i++)
             {
-                const int32_t y = fons_atlas_rect_fits(atlas, i, rw, rh);
+                const i32 y = fons_atlas_rect_fits(atlas, i, rw, rh);
                 if (y != -1)
                 {
                     if (y + rh < besth || (y + rh == besth && atlas->nodes[i].width < bestw))
@@ -345,17 +344,17 @@ namespace rl::nvg {
             return 1;
         }
 
-        void fons_add_white_rect(FONScontext* stash, const int32_t w, const int32_t h)
+        void fons_add_white_rect(FONScontext* stash, const i32 w, const i32 h)
         {
-            int32_t gx, gy;
+            i32 gx, gy;
             if (fons_atlas_add_rect(stash->atlas, w, h, &gx, &gy) == 0)
                 return;
 
             // Rasterize
-            uint8_t* dst = &stash->tex_data[gx + gy * stash->params.width];
-            for (int32_t y = 0; y < h; y++)
+            u8* dst = &stash->tex_data[gx + gy * stash->params.width];
+            for (i32 y = 0; y < h; y++)
             {
-                for (int32_t x = 0; x < w; x++)
+                for (i32 x = 0; x < w; x++)
                     dst[x] = 0xff;
                 dst += stash->params.width;
             }
@@ -374,56 +373,54 @@ namespace rl::nvg {
 #define APREC 16
 #define ZPREC 7
 
-        void fons_blur_cols(uint8_t* dst, const int32_t w, const int32_t h, const int32_t dstStride,
-                            const int32_t alpha)
+        void fons_blur_cols(u8* dst, const i32 w, const i32 h, const i32 dstStride, const i32 alpha)
         {
-            int32_t x;
-            for (int32_t y = 0; y < h; y++)
+            i32 x;
+            for (i32 y = 0; y < h; y++)
             {
-                int32_t z = 0;  // force zero border
+                i32 z = 0;  // force zero border
                 for (x = 1; x < w; x++)
                 {
-                    z += (alpha * ((static_cast<int32_t>(dst[x]) << ZPREC) - z)) >> APREC;
-                    dst[x] = static_cast<uint8_t>(z >> ZPREC);
+                    z += (alpha * ((static_cast<i32>(dst[x]) << ZPREC) - z)) >> APREC;
+                    dst[x] = static_cast<u8>(z >> ZPREC);
                 }
                 dst[w - 1] = 0;  // force zero border
                 z = 0;
                 for (x = w - 2; x >= 0; x--)
                 {
-                    z += (alpha * ((static_cast<int32_t>(dst[x]) << ZPREC) - z)) >> APREC;
-                    dst[x] = static_cast<uint8_t>(z >> ZPREC);
+                    z += (alpha * ((static_cast<i32>(dst[x]) << ZPREC) - z)) >> APREC;
+                    dst[x] = static_cast<u8>(z >> ZPREC);
                 }
                 dst[0] = 0;  // force zero border
                 dst += dstStride;
             }
         }
 
-        void fons_blur_rows(uint8_t* dst, const int32_t w, const int32_t h, const int32_t dstStride,
-                            const int32_t alpha)
+        void fons_blur_rows(u8* dst, const i32 w, const i32 h, const i32 dstStride, const i32 alpha)
         {
-            int32_t y;
-            for (int32_t x = 0; x < w; x++)
+            i32 y;
+            for (i32 x = 0; x < w; x++)
             {
-                int32_t z = 0;  // force zero border
+                i32 z = 0;  // force zero border
                 for (y = dstStride; y < h * dstStride; y += dstStride)
                 {
-                    z += (alpha * ((static_cast<int32_t>(dst[y]) << ZPREC) - z)) >> APREC;
-                    dst[y] = static_cast<uint8_t>(z >> ZPREC);
+                    z += (alpha * ((static_cast<i32>(dst[y]) << ZPREC) - z)) >> APREC;
+                    dst[y] = static_cast<u8>(z >> ZPREC);
                 }
                 dst[(h - 1) * dstStride] = 0;  // force zero border
                 z = 0;
                 for (y = (h - 2) * dstStride; y >= 0; y -= dstStride)
                 {
-                    z += (alpha * ((static_cast<int32_t>(dst[y]) << ZPREC) - z)) >> APREC;
-                    dst[y] = static_cast<uint8_t>(z >> ZPREC);
+                    z += (alpha * ((static_cast<i32>(dst[y]) << ZPREC) - z)) >> APREC;
+                    dst[y] = static_cast<u8>(z >> ZPREC);
                 }
                 dst[0] = 0;  // force zero border
                 dst++;
             }
         }
 
-        void fons_blur(const FONScontext* stash, uint8_t* dst, const int32_t w, const int32_t h,
-                       const int32_t dstStride, const int32_t blur)
+        void fons_blur(const FONScontext* stash, u8* dst, const i32 w, const i32 h,
+                       const i32 dstStride, const i32 blur)
         {
             (void)stash;
 
@@ -431,9 +428,8 @@ namespace rl::nvg {
                 return;
             // Calculate the alpha such that 90% of the kernel is within the radius. (Kernel extends
             // to infinity)
-            const float sigma = static_cast<float>(blur) * 0.57735f;  // 1 / sqrt(3)
-            const int32_t alpha = static_cast<int32_t>(
-                (1 << APREC) * (1.0f - expf(-2.3f / (sigma + 1.0f))));
+            const f32 sigma = static_cast<f32>(blur) * 0.57735f;  // 1 / sqrt(3)
+            const i32 alpha = static_cast<i32>((1 << APREC) * (1.0f - expf(-2.3f / (sigma + 1.0f))));
             fons_blur_rows(dst, w, h, dstStride, alpha);
             fons_blur_cols(dst, w, h, dstStride, alpha);
             fons_blur_rows(dst, w, h, dstStride, alpha);
@@ -456,33 +452,33 @@ namespace rl::nvg {
             return &font->glyphs[font->nglyphs - 1];
         }
 
-        FONSglyph* fons_get_glyph(FONScontext* stash, FONSfont* font, const uint32_t codepoint,
-                                  const int16_t isize, int16_t iblur, const int32_t bitmapOption)
+        FONSglyph* fons_get_glyph(FONScontext* stash, FONSfont* font, const u32 codepoint,
+                                  const int16_t isize, int16_t iblur, const i32 bitmapOption)
         {
-            int32_t advance;
-            int32_t lsb;
-            int32_t x0;
-            int32_t y0;
-            int32_t x1;
-            int32_t y1;
-            int32_t gx;
-            int32_t gy;
+            i32 advance;
+            i32 lsb;
+            i32 x0;
+            i32 y0;
+            i32 x1;
+            i32 y1;
+            i32 gx;
+            i32 gy;
             FONSglyph* glyph = nullptr;
-            const float size = isize / 10.0f;
+            const f32 size = isize / 10.0f;
             const FONSfont* render_font = font;
 
             if (isize < 2)
                 return nullptr;
             if (iblur > 20)
                 iblur = 20;
-            const int32_t pad = iblur + 2;
+            const i32 pad = iblur + 2;
 
             // Reset allocator.
             stash->nscratch = 0;
 
             // Find code point and size.
-            const uint32_t h = fons_hashint(codepoint) & (FONS_HASH_LUT_SIZE - 1);
-            int32_t i = font->lut[h];
+            const u32 h = fons_hashint(codepoint) & (FONS_HASH_LUT_SIZE - 1);
+            i32 i = font->lut[h];
             while (i != -1)
             {
                 if (font->glyphs[i].codepoint == codepoint && font->glyphs[i].size == isize &&
@@ -499,15 +495,15 @@ namespace rl::nvg {
             }
 
             // Create a new glyph or rasterize bitmap data for a cached glyph.
-            int32_t g = fons_tt_get_glyph_index(&font->font, codepoint);
+            i32 g = fons_tt_get_glyph_index(&font->font, codepoint);
             // Try to find the glyph in fallback fonts.
             if (g == 0)
             {
                 for (i = 0; i < font->nfallbacks; ++i)
                 {
                     const FONSfont* fallbackFont = stash->fonts[font->fallbacks[i]];
-                    const int32_t fallback_index = fons_tt_get_glyph_index(&fallbackFont->font,
-                                                                           codepoint);
+                    const i32 fallback_index = fons_tt_get_glyph_index(&fallbackFont->font,
+                                                                       codepoint);
                     if (fallback_index != 0)
                     {
                         g = fallback_index;
@@ -519,17 +515,17 @@ namespace rl::nvg {
                 // In that case the glyph index 'g' is 0, and we'll proceed below and cache empty
                 // glyph.
             }
-            const float scale = fons_tt_get_pixel_height_scale(&render_font->font, size);
+            const f32 scale = fons_tt_get_pixel_height_scale(&render_font->font, size);
             fons_tt_build_glyph_bitmap(&render_font->font, g, size, scale, &advance, &lsb, &x0, &y0,
                                        &x1, &y1);
-            const int32_t gw = x1 - x0 + pad * 2;
-            const int32_t gh = y1 - y0 + pad * 2;
+            const i32 gw = x1 - x0 + pad * 2;
+            const i32 gh = y1 - y0 + pad * 2;
 
             // Determines the spot to draw glyph in the atlas.
             if (bitmapOption == FonsGlyphBitmapRequired)
             {
                 // Find free spot for the rect in the atlas
-                int32_t added = fons_atlas_add_rect(stash->atlas, gw, gh, &gx, &gy);
+                i32 added = fons_atlas_add_rect(stash->atlas, gw, gh, &gx, &gy);
                 if (added == 0 && stash->handle_error != nullptr)
                 {
                     // Atlas is full, let the user to resize the atlas (or not), and try again.
@@ -572,29 +568,28 @@ namespace rl::nvg {
                 return glyph;
 
             // Rasterize
-            uint8_t*
-                dst = &stash->tex_data[(glyph->x0 + pad) + (glyph->y0 + pad) * stash->params.width];
+            u8* dst = &stash->tex_data[(glyph->x0 + pad) + (glyph->y0 + pad) * stash->params.width];
             fons_tt_render_glyph_bitmap(&render_font->font, dst, gw - pad * 2, gh - pad * 2,
                                         stash->params.width, scale, scale, g);
 
             // Make sure there is one pixel empty border.
             dst = &stash->tex_data[glyph->x0 + glyph->y0 * stash->params.width];
-            for (int32_t y = 0; y < gh; y++)
+            for (i32 y = 0; y < gh; y++)
             {
                 dst[y * stash->params.width] = 0;
                 dst[gw - 1 + y * stash->params.width] = 0;
             }
-            for (int32_t x = 0; x < gw; x++)
+            for (i32 x = 0; x < gw; x++)
             {
                 dst[x] = 0;
                 dst[x + (gh - 1) * stash->params.width] = 0;
             }
 
             // Debug code to color the glyph background
-            /*	uint8_t* fdst = &stash->texData[glyph->x0 + glyph->y0 * stash->params.width];
+            /*	u8* fdst = &stash->texData[glyph->x0 + glyph->y0 * stash->params.width];
                 for (y = 0; y < gh; y++) {
                     for (x = 0; x < gw; x++) {
-                        int32_t a = (int32_t)fdst[x+y*stash->params.width] + 20;
+                        i32 a = (i32)fdst[x+y*stash->params.width] + 20;
                         if (a > 255) a = 255;
                         fdst[x+y*stash->params.width] = a;
                     }
@@ -604,7 +599,7 @@ namespace rl::nvg {
             if (iblur > 0)
             {
                 stash->nscratch = 0;
-                uint8_t* bdst = &stash->tex_data[glyph->x0 + glyph->y0 * stash->params.width];
+                u8* bdst = &stash->tex_data[glyph->x0 + glyph->y0 * stash->params.width];
                 fons_blur(stash, bdst, gw, gh, stash->params.width, iblur);
             }
 
@@ -616,29 +611,29 @@ namespace rl::nvg {
             return glyph;
         }
 
-        void fons_getQuad(const FONScontext* stash, FONSfont* font, const int32_t prevGlyphIndex,
-                          const FONSglyph* glyph, const float scale, const float spacing, float* x,
-                          const float* y, FONSquad* q)
+        void fons_getQuad(const FONScontext* stash, FONSfont* font, const i32 prevGlyphIndex,
+                          const FONSglyph* glyph, const f32 scale, const f32 spacing, f32* x,
+                          const f32* y, FONSquad* q)
         {
-            float rx, ry;
+            f32 rx, ry;
 
             if (prevGlyphIndex != -1)
             {
-                const float adv = fons_tt_get_glyph_kern_advance(&font->font, prevGlyphIndex,
-                                                                 glyph->index) *
-                                  scale;
-                *x += static_cast<int32_t>(adv + spacing + 0.5f);
+                const f32 adv = fons_tt_get_glyph_kern_advance(&font->font, prevGlyphIndex,
+                                                               glyph->index) *
+                                scale;
+                *x += static_cast<i32>(adv + spacing + 0.5f);
             }
 
             // Each glyph has 2px border to allow good interpolation,
             // one pixel to prevent leaking, and one to allow good interpolation for rendering.
             // Inset the texture region by one pixel for correct interpolation.
-            const float xoff = static_cast<int16_t>(glyph->xoff + 1);
-            const float yoff = static_cast<int16_t>(glyph->yoff + 1);
-            const float x0 = static_cast<float>(glyph->x0 + 1);
-            const float y0 = static_cast<float>(glyph->y0 + 1);
-            const float x1 = static_cast<float>(glyph->x1 - 1);
-            const float y1 = static_cast<float>(glyph->y1 - 1);
+            const f32 xoff = static_cast<int16_t>(glyph->xoff + 1);
+            const f32 yoff = static_cast<int16_t>(glyph->yoff + 1);
+            const f32 x0 = static_cast<f32>(glyph->x0 + 1);
+            const f32 y0 = static_cast<f32>(glyph->y0 + 1);
+            const f32 x1 = static_cast<f32>(glyph->x1 - 1);
+            const f32 y1 = static_cast<f32>(glyph->y1 - 1);
 
             if (stash->params.flags & FonsZeroTopleft)
             {
@@ -671,7 +666,7 @@ namespace rl::nvg {
                 q->t1 = y1 * stash->ith;
             }
 
-            *x += static_cast<int32_t>(glyph->xadv / 10.0f + 0.5f);
+            *x += static_cast<i32>(glyph->xadv / 10.0f + 0.5f);
         }
 
         void fons_flush(FONScontext* stash)
@@ -700,8 +695,8 @@ namespace rl::nvg {
             }
         }
 
-        __inline void fons_vertex(FONScontext* stash, const float x, const float y, const float s,
-                                  const float t, const uint32_t c)
+        __inline void fons_vertex(FONScontext* stash, const f32 x, const f32 y, const f32 s,
+                                  const f32 t, const u32 c)
         {
             stash->verts[stash->nverts * 2 + 0] = x;
             stash->verts[stash->nverts * 2 + 1] = y;
@@ -711,32 +706,30 @@ namespace rl::nvg {
             stash->nverts++;
         }
 
-        float fons_get_vert_align(const FONScontext* stash, const FONSfont* font,
-                                  const int32_t align, const int16_t isize)
+        f32 fons_get_vert_align(const FONScontext* stash, const FONSfont* font, const Align align,
+                                const int16_t isize)
         {
             if (stash->params.flags & FonsZeroTopleft)
             {
-                if (align & FonsAlignTop)
-                    return font->ascender * static_cast<float>(isize) / 10.0f;
-                if (align & FonsAlignMiddle)
-                    return (font->ascender + font->descender) / 2.0f * static_cast<float>(isize) /
-                           10.0f;
-                if (align & FonsAlignBaseline)
+                if ((align & Align::VTop) != 0)
+                    return font->ascender * static_cast<f32>(isize) / 10.0f;
+                if ((align & Align::VMiddle) != 0)
+                    return (font->ascender + font->descender) / 2 * static_cast<f32>(isize) / 10.0f;
+                if ((align & Align::VBaseline) != 0)
                     return 0.0f;
-                if (align & FonsAlignBottom)
-                    return font->descender * static_cast<float>(isize) / 10.0f;
+                if ((align & Align::VBottom) != 0)
+                    return font->descender * static_cast<f32>(isize) / 10.0f;
             }
             else
             {
-                if (align & FonsAlignTop)
-                    return -font->ascender * static_cast<float>(isize) / 10.0f;
-                if (align & FonsAlignMiddle)
-                    return -(font->ascender + font->descender) / 2.0f * static_cast<float>(isize) /
-                           10.0f;
-                if (align & FonsAlignBaseline)
+                if ((align & Align::VTop) != 0)
+                    return -font->ascender * static_cast<f32>(isize) / 10.0f;
+                if ((align & Align::VMiddle) != 0)
+                    return -(font->ascender + font->descender) / 2 * static_cast<f32>(isize) / 10.f;
+                if ((align & Align::VBaseline) != 0)
                     return 0.0f;
-                if (align & FonsAlignBottom)
-                    return -font->descender * static_cast<float>(isize) / 10.0f;
+                if ((align & Align::VBottom) != 0)
+                    return -font->descender * static_cast<f32>(isize) / 10.0f;
             }
             return 0.0;
         }
@@ -752,7 +745,7 @@ namespace rl::nvg {
             free(font);
         }
 
-        int32_t fons_alloc_font(FONScontext* stash)
+        i32 fons_alloc_font(FONScontext* stash)
         {
             if (stash->nfonts + 1 > stash->cfonts)
             {
@@ -797,7 +790,7 @@ namespace rl::nvg {
             stash->params = *params;
 
             // Allocate scratch buffer.
-            stash->scratch = static_cast<uint8_t*>(std::malloc(FONS_SCRATCH_BUF_SIZE));
+            stash->scratch = static_cast<u8*>(std::malloc(FONS_SCRATCH_BUF_SIZE));
             if (stash->scratch != nullptr)
             {
                 // Initialize implementation library
@@ -819,9 +812,9 @@ namespace rl::nvg {
                             stash->nfonts = 0;
 
                             // Create texture for the cache.
-                            stash->itw = 1.0f / static_cast<float>(stash->params.width);
-                            stash->ith = 1.0f / static_cast<float>(stash->params.height);
-                            stash->tex_data = static_cast<uint8_t*>(
+                            stash->itw = 1.0f / static_cast<f32>(stash->params.width);
+                            stash->ith = 1.0f / static_cast<f32>(stash->params.height);
+                            stash->tex_data = static_cast<u8*>(
                                 std::malloc(stash->params.width * stash->params.height));
                             if (stash->tex_data != nullptr)
                             {
@@ -850,53 +843,52 @@ namespace rl::nvg {
         return nullptr;
     }
 
-    int32_t fons_add_fallback_font(const FONScontext* stash, const int32_t base,
-                                   const int32_t fallback)
+    i32 fons_add_fallback_font(const FONScontext* stash, const i32 base, const i32 fallback)
     {
-        FONSfont* baseFont = stash->fonts[base];
-        if (baseFont->nfallbacks < FONS_MAX_FALLBACKS)
+        FONSfont* base_font = stash->fonts[base];
+        if (base_font->nfallbacks < FONS_MAX_FALLBACKS)
         {
-            baseFont->fallbacks[baseFont->nfallbacks++] = fallback;
+            base_font->fallbacks[base_font->nfallbacks++] = fallback;
             return 1;
         }
         return 0;
     }
 
-    void fons_reset_fallback_font(const FONScontext* stash, const int32_t base)
+    void fons_reset_fallback_font(const FONScontext* stash, const i32 base)
     {
         FONSfont* base_font = stash->fonts[base];
         base_font->nfallbacks = 0;
         base_font->nglyphs = 0;
-        for (int32_t& i : base_font->lut)
+        for (i32& i : base_font->lut)
             i = -1;
     }
 
-    void fons_set_size(FONScontext* stash, const float size)
+    void fons_set_size(FONScontext* stash, const f32 size)
     {
         fons_get_state(stash)->size = size;
     }
 
-    void fons_set_color(FONScontext* stash, const uint32_t color)
+    void fons_set_color(FONScontext* stash, const u32 color)
     {
         fons_get_state(stash)->color = color;
     }
 
-    void fons_set_spacing(FONScontext* stash, const float spacing)
+    void fons_set_spacing(FONScontext* stash, const f32 spacing)
     {
         fons_get_state(stash)->spacing = spacing;
     }
 
-    void fons_set_blur(FONScontext* stash, const float blur)
+    void fons_set_blur(FONScontext* stash, const f32 blur)
     {
         fons_get_state(stash)->blur = blur;
     }
 
-    void fons_set_align(FONScontext* stash, const int32_t align)
+    void fons_set_align(FONScontext* stash, const Align align)
     {
         fons_get_state(stash)->align = align;
     }
 
-    void fons_set_font(FONScontext* stash, const int32_t font)
+    void fons_set_font(FONScontext* stash, const i32 font)
     {
         fons_get_state(stash)->font = font;
     }
@@ -934,23 +926,22 @@ namespace rl::nvg {
         state->font = 0;
         state->blur = 0;
         state->spacing = 0;
-        state->align = FonsAlignLeft | FonsAlignBaseline;
+        state->align = Align::HLeft | Align::VBaseline;
     }
 
-    int32_t fons_add_font(FONScontext* stash, const char* name, const char* path,
-                          const int32_t font_index)
+    i32 fons_add_font(FONScontext* stash, const char* name, const char* path, const i32 font_index)
     {
-        uint8_t* data = nullptr;
-        int32_t status = -1;
+        u8* data = nullptr;
+        i32 status = -1;
 
         // Read in the font data.
         FILE* fp = std::fopen(path, "rb");
         if (fp != nullptr)
         {
             status = std::fseek(fp, 0, SEEK_END);
-            const int32_t data_size = static_cast<int32_t>(ftell(fp));
+            const i32 data_size = static_cast<i32>(ftell(fp));
             status = std::fseek(fp, 0, SEEK_SET);
-            data = static_cast<uint8_t*>(std::malloc(data_size));
+            data = static_cast<u8*>(std::malloc(data_size));
             if (data != nullptr)
             {
                 const size_t readed = std::fread(data, 1, data_size, fp);
@@ -969,13 +960,12 @@ namespace rl::nvg {
         return FONS_INVALID;
     }
 
-    int32_t fons_add_font_mem(FONScontext* stash, const char* name, uint8_t* data,
-                              const int32_t data_size, const int32_t free_data,
-                              const int32_t font_index)
+    i32 fons_add_font_mem(FONScontext* stash, const char* name, u8* data, const i32 data_size,
+                          const i32 free_data, const i32 font_index)
     {
-        int32_t ascent, descent, line_gap;
+        i32 ascent, descent, line_gap;
 
-        const int32_t idx = fons_alloc_font(stash);
+        const i32 idx = fons_alloc_font(stash);
         if (idx == FONS_INVALID)
             return FONS_INVALID;
 
@@ -985,13 +975,13 @@ namespace rl::nvg {
         font->name[sizeof(font->name) - 1] = '\0';
 
         // Init hash lookup.
-        for (int32_t& i : font->lut)
+        for (i32& i : font->lut)
             i = -1;
 
         // Read in the font data.
         font->data_size = data_size;
         font->data = data;
-        font->free_data = static_cast<uint8_t>(free_data);
+        font->free_data = static_cast<u8>(free_data);
 
         // Init font
         stash->nscratch = 0;
@@ -1001,9 +991,9 @@ namespace rl::nvg {
             // by multiplying the lineh by font size.
             fons_tt_get_font_v_metrics(&font->font, &ascent, &descent, &line_gap);
             ascent += line_gap;
-            const int32_t fh = ascent - descent;
-            font->ascender = static_cast<float>(ascent) / static_cast<float>(fh);
-            font->descender = static_cast<float>(descent) / static_cast<float>(fh);
+            const i32 fh = ascent - descent;
+            font->ascender = static_cast<f32>(ascent) / static_cast<f32>(fh);
+            font->descender = static_cast<f32>(descent) / static_cast<f32>(fh);
             font->lineh = font->ascender - font->descender;
 
             return idx;
@@ -1014,25 +1004,25 @@ namespace rl::nvg {
         return FONS_INVALID;
     }
 
-    int32_t fons_get_font_by_name(const FONScontext* s, const char* name)
+    i32 fons_get_font_by_name(const FONScontext* s, const char* name)
     {
-        for (int32_t i = 0; i < s->nfonts; i++)
+        for (i32 i = 0; i < s->nfonts; i++)
             if (std::strcmp(s->fonts[i]->name, name) == 0)
                 return i;
 
         return FONS_INVALID;
     }
 
-    float fons_draw_text(FONScontext* stash, float x, float y, const char* str, const char* end)
+    f32 fons_draw_text(FONScontext* stash, f32 x, f32 y, const char* str, const char* end)
     {
         const FONSstate* state = fons_get_state(stash);
-        uint32_t codepoint;
-        uint32_t utf8_state = 0;
+        u32 codepoint;
+        u32 utf8_state = 0;
         FONSquad q;
-        int32_t prevGlyphIndex = -1;
+        i32 prevGlyphIndex = -1;
         const int16_t isize = static_cast<int16_t>(state->size * 10.0f);
         const int16_t iblur = static_cast<int16_t>(state->blur);
-        float width;
+        f32 width;
 
         if (stash == nullptr)
             return x;
@@ -1042,33 +1032,34 @@ namespace rl::nvg {
         if (font->data == nullptr)
             return x;
 
-        const float scale = fons_tt_get_pixel_height_scale(&font->font,
-                                                           static_cast<float>(isize) / 10.0f);
+        const f32 scale = fons_tt_get_pixel_height_scale(&font->font,
+                                                         static_cast<f32>(isize) / 10.0f);
 
         if (end == nullptr)
             end = str + std::strlen(str);
 
         // Align horizontally
-        if (state->align & FonsAlignLeft)
+        if ((state->align & Align::HLeft) != 0)
         {
             // empty
         }
-        else if (state->align & FonsAlignRight)
+        else if ((state->align & Align::HRight) != 0)
         {
             width = fons_text_bounds(stash, x, y, str, end, nullptr);
             x -= width;
         }
-        else if (state->align & FonsAlignCenter)
+        else if ((state->align & Align::HCenter) != 0)
         {
             width = fons_text_bounds(stash, x, y, str, end, nullptr);
             x -= width * 0.5f;
         }
+
         // Align vertically.
         y += fons_get_vert_align(stash, font, state->align, isize);
 
         for (; str != end; ++str)
         {
-            if (fons_decutf8(&utf8_state, &codepoint, *reinterpret_cast<const uint8_t*>(str)))
+            if (fons_decutf8(&utf8_state, &codepoint, *reinterpret_cast<const u8*>(str)))
                 continue;
 
             const FONSglyph* glyph = fons_get_glyph(stash, font, codepoint, isize, iblur,
@@ -1076,7 +1067,6 @@ namespace rl::nvg {
             if (glyph != nullptr)
             {
                 fons_getQuad(stash, font, prevGlyphIndex, glyph, scale, state->spacing, &x, &y, &q);
-
                 if (stash->nverts + 6 > FONS_VERTEX_COUNT)
                     fons_flush(stash);
 
@@ -1096,11 +1086,11 @@ namespace rl::nvg {
         return x;
     }
 
-    int32_t fons_text_iter_init(FONScontext* stash, FONStextIter* iter, float x, float y,
-                                const char* str, const char* end, const int32_t bitmap_option)
+    i32 fons_text_iter_init(FONScontext* stash, FONStextIter* iter, f32 x, f32 y, const char* str,
+                            const char* end, const i32 bitmap_option)
     {
         const FONSstate* state = fons_get_state(stash);
-        float width;
+        f32 width;
 
         memset(iter, 0, sizeof(*iter));
 
@@ -1115,23 +1105,24 @@ namespace rl::nvg {
         iter->isize = static_cast<int16_t>(state->size * 10.0f);
         iter->iblur = static_cast<int16_t>(state->blur);
         iter->scale = fons_tt_get_pixel_height_scale(&iter->font->font,
-                                                     static_cast<float>(iter->isize) / 10.0f);
+                                                     static_cast<f32>(iter->isize) / 10.0f);
 
         // Align horizontally
-        if (state->align & FonsAlignLeft)
+        if ((state->align & Align::HLeft) != 0)
         {
             // empty
         }
-        else if (state->align & FonsAlignRight)
+        else if ((state->align & Align::HRight) != 0)
         {
             width = fons_text_bounds(stash, x, y, str, end, nullptr);
             x -= width;
         }
-        else if (state->align & FonsAlignCenter)
+        else if ((state->align & Align::HCenter) != 0)
         {
             width = fons_text_bounds(stash, x, y, str, end, nullptr);
             x -= width * 0.5f;
         }
+
         // Align vertically.
         y += fons_get_vert_align(stash, iter->font, state->align, iter->isize);
 
@@ -1151,7 +1142,7 @@ namespace rl::nvg {
         return 1;
     }
 
-    int32_t fons_text_iter_next(FONScontext* stash, FONStextIter* iter, FONSquad* quad)
+    i32 fons_text_iter_next(FONScontext* stash, FONStextIter* iter, FONSquad* quad)
     {
         const char* str = iter->next;
         iter->str = iter->next;
@@ -1161,8 +1152,9 @@ namespace rl::nvg {
 
         for (; str != iter->end; str++)
         {
-            if (fons_decutf8(&iter->utf8_state, &iter->codepoint, *(const uint8_t*)str))
+            if (fons_decutf8(&iter->utf8_state, &iter->codepoint, *reinterpret_cast<const u8*>(str)))
                 continue;
+
             str++;
             // Get glyph and quad
             iter->x = iter->nextx;
@@ -1182,12 +1174,12 @@ namespace rl::nvg {
         return 1;
     }
 
-    void fons_draw_debug(FONScontext* stash, const float x, const float y)
+    void fons_draw_debug(FONScontext* stash, const f32 x, const f32 y)
     {
-        const float w = static_cast<float>(stash->params.width);
-        const float h = static_cast<float>(stash->params.height);
-        const float u = w == 0 ? 0 : (1.0f / w);
-        const float v = h == 0 ? 0 : (1.0f / h);
+        const f32 w{ static_cast<f32>(stash->params.width) };
+        const f32 h{ static_cast<f32>(stash->params.height) };
+        const f32 u{ math::equal(w, 0.0f) ? 0 : (1.0f / w) };
+        const f32 v{ math::equal(h, 0.0f) ? 0 : (1.0f / h) };
 
         if (stash->nverts + 6 + 6 > FONS_VERTEX_COUNT)
             fons_flush(stash);
@@ -1211,16 +1203,16 @@ namespace rl::nvg {
         fons_vertex(stash, x + w, y + h, 1, 1, 0xffffffff);
 
         // Drawbug draw atlas
-        for (int32_t i = 0; i < stash->atlas->nnodes; i++)
+        for (i32 i = 0; i < stash->atlas->nnodes; i++)
         {
             const FONSatlasNode* n = &stash->atlas->nodes[i];
 
             if (stash->nverts + 6 > FONS_VERTEX_COUNT)
                 fons_flush(stash);
 
-            const float nx = static_cast<float>(n->x);
-            const float ny = static_cast<float>(n->y);
-            const float nw = static_cast<float>(n->width);
+            const f32 nx = static_cast<f32>(n->x);
+            const f32 ny = static_cast<f32>(n->y);
+            const f32 nw = static_cast<f32>(n->width);
 
             fons_vertex(stash, x + nx + 0, y + ny + 0, u, v, 0xc00000ff);
             fons_vertex(stash, x + nx + nw, y + ny + 1, u, v, 0xc00000ff);
@@ -1234,17 +1226,17 @@ namespace rl::nvg {
         fons_flush(stash);
     }
 
-    float fons_text_bounds(FONScontext* stash, float x, float y, const char* str, const char* end,
-                           float* bounds)
+    f32 fons_text_bounds(FONScontext* stash, f32 x, f32 y, const char* str, const char* end,
+                         f32* bounds)
     {
         const FONSstate* state = fons_get_state(stash);
-        uint32_t codepoint;
-        uint32_t utf8_state = 0;
+        u32 codepoint;
+        u32 utf8_state = 0;
         FONSquad q;
-        int32_t prev_glyph_index = -1;
+        i32 prev_glyph_index = -1;
         const int16_t isize = static_cast<int16_t>(state->size * 10.0f);
         const int16_t iblur = static_cast<int16_t>(state->blur);
-        float maxx, maxy;
+        f32 maxx, maxy;
 
         if (stash == nullptr)
             return 0;
@@ -1254,22 +1246,22 @@ namespace rl::nvg {
         if (font->data == nullptr)
             return 0;
 
-        const float scale = fons_tt_get_pixel_height_scale(&font->font,
-                                                           static_cast<float>(isize) / 10.0f);
+        const f32 scale = fons_tt_get_pixel_height_scale(&font->font,
+                                                         static_cast<f32>(isize) / 10.0f);
 
         // Align vertically.
         y += fons_get_vert_align(stash, font, state->align, isize);
 
-        float minx = maxx = x;
-        float miny = maxy = y;
-        const float startx = x;
+        f32 minx = maxx = x;
+        f32 miny = maxy = y;
+        const f32 startx = x;
 
         if (end == nullptr)
             end = str + strlen(str);
 
         for (; str != end; ++str)
         {
-            if (fons_decutf8(&utf8_state, &codepoint, *reinterpret_cast<const uint8_t*>(str)))
+            if (fons_decutf8(&utf8_state, &codepoint, *reinterpret_cast<const u8*>(str)))
                 continue;
 
             const FONSglyph* glyph = fons_get_glyph(stash, font, codepoint, isize, iblur,
@@ -1303,19 +1295,19 @@ namespace rl::nvg {
             prev_glyph_index = glyph != nullptr ? glyph->index : -1;
         }
 
-        const float advance = x - startx;
+        const f32 advance = x - startx;
 
         // Align horizontally
-        if (state->align & FonsAlignLeft)
+        if ((state->align & Align::HLeft) != 0)
         {
             // empty
         }
-        else if (state->align & FonsAlignRight)
+        else if ((state->align & Align::HRight) != 0)
         {
             minx -= advance;
             maxx -= advance;
         }
-        else if (state->align & FonsAlignCenter)
+        else if ((state->align & Align::HCenter) != 0)
         {
             minx -= advance * 0.5f;
             maxx -= advance * 0.5f;
@@ -1332,7 +1324,7 @@ namespace rl::nvg {
         return advance;
     }
 
-    void fons_vert_metrics(FONScontext* stash, float* ascender, float* descender, float* lineh)
+    void fons_vert_metrics(FONScontext* stash, f32* ascender, f32* descender, f32* lineh)
     {
         const FONSstate* state = fons_get_state(stash);
 
@@ -1353,7 +1345,7 @@ namespace rl::nvg {
             *lineh = font->lineh * isize / 10.0f;
     }
 
-    void fons_line_bounds(FONScontext* stash, float y, float* miny, float* maxy)
+    void fons_line_bounds(FONScontext* stash, f32 y, f32* miny, f32* maxy)
     {
         const FONSstate* state = fons_get_state(stash);
 
@@ -1371,17 +1363,17 @@ namespace rl::nvg {
 
         if (stash->params.flags & FonsZeroTopleft)
         {
-            *miny = y - font->ascender * static_cast<float>(isize) / 10.0f;
-            *maxy = *miny + font->lineh * static_cast<float>(isize) / 10.0f;
+            *miny = y - font->ascender * static_cast<f32>(isize) / 10.0f;
+            *maxy = *miny + font->lineh * static_cast<f32>(isize) / 10.0f;
         }
         else
         {
-            *maxy = y + font->descender * static_cast<float>(isize) / 10.0f;
-            *miny = *maxy - font->lineh * static_cast<float>(isize) / 10.0f;
+            *maxy = y + font->descender * static_cast<f32>(isize) / 10.0f;
+            *miny = *maxy - font->lineh * static_cast<f32>(isize) / 10.0f;
         }
     }
 
-    const uint8_t* fons_get_texture_data(const FONScontext* stash, int32_t* width, int32_t* height)
+    const u8* fons_get_texture_data(const FONScontext* stash, i32* width, i32* height)
     {
         if (width != nullptr)
             *width = stash->params.width;
@@ -1391,7 +1383,7 @@ namespace rl::nvg {
         return stash->tex_data;
     }
 
-    int32_t fons_validate_texture(FONScontext* stash, int32_t* dirty)
+    i32 fons_validate_texture(FONScontext* stash, i32* dirty)
     {
         if (stash->dirty_rect[0] < stash->dirty_rect[2] &&
             stash->dirty_rect[1] < stash->dirty_rect[3])
@@ -1418,7 +1410,7 @@ namespace rl::nvg {
         if (stash->params.render_delete)
             stash->params.render_delete(stash->params.user_ptr);
 
-        for (int32_t i = 0; i < stash->nfonts; ++i)
+        for (i32 i = 0; i < stash->nfonts; ++i)
             fons_free_font(stash->fonts[i]);
 
         if (stash->atlas)
@@ -1434,8 +1426,8 @@ namespace rl::nvg {
         free(stash);
     }
 
-    void fons_set_error_callback(
-        FONScontext* stash, void (*callback)(void* uptr, int32_t error, int32_t val), void* uptr)
+    void fons_set_error_callback(FONScontext* stash,
+                                 void (*callback)(void* uptr, i32 error, i32 val), void* uptr)
     {
         if (stash == nullptr)
             return;
@@ -1443,7 +1435,7 @@ namespace rl::nvg {
         stash->error_uptr = uptr;
     }
 
-    void fons_get_atlas_size(const FONScontext* stash, int32_t* width, int32_t* height)
+    void fons_get_atlas_size(const FONScontext* stash, i32* width, i32* height)
     {
         if (stash == nullptr)
             return;
@@ -1452,10 +1444,10 @@ namespace rl::nvg {
         *height = stash->params.height;
     }
 
-    int32_t fons_expand_atlas(FONScontext* stash, int32_t width, int32_t height)
+    i32 fons_expand_atlas(FONScontext* stash, i32 width, i32 height)
     {
-        int32_t i;
-        int32_t maxy = 0;
+        i32 i;
+        i32 maxy = 0;
         if (stash == nullptr)
             return 0;
 
@@ -1475,14 +1467,14 @@ namespace rl::nvg {
                 return 0;
         }
         // Copy old texture data over.
-        const auto data = static_cast<uint8_t*>(std::malloc(width * height));
+        const auto data = static_cast<u8*>(std::malloc(width * height));
         if (data == nullptr)
             return 0;
 
         for (i = 0; i < stash->params.height; i++)
         {
-            uint8_t* dst = &data[i * width];
-            const uint8_t* src = &stash->tex_data[i * stash->params.width];
+            u8* dst = &data[i * width];
+            const u8* src = &stash->tex_data[i * stash->params.width];
             memcpy(dst, src, stash->params.width);
             if (width > stash->params.width)
                 memset(dst + stash->params.width, 0, width - stash->params.width);
@@ -1506,13 +1498,13 @@ namespace rl::nvg {
 
         stash->params.width = width;
         stash->params.height = height;
-        stash->itw = 1.0f / static_cast<float>(stash->params.width);
-        stash->ith = 1.0f / static_cast<float>(stash->params.height);
+        stash->itw = 1.0f / static_cast<f32>(stash->params.width);
+        stash->ith = 1.0f / static_cast<f32>(stash->params.height);
 
         return 1;
     }
 
-    int32_t fons_reset_atlas(FONScontext* stash, const int32_t width, const int32_t height)
+    i32 fons_reset_atlas(FONScontext* stash, const i32 width, const i32 height)
     {
         if (stash == nullptr)
             return 0;
@@ -1531,7 +1523,7 @@ namespace rl::nvg {
         fons_atlas_reset(stash->atlas, width, height);
 
         // Clear texture data.
-        stash->tex_data = static_cast<uint8_t*>(realloc(stash->tex_data, width * height));
+        stash->tex_data = static_cast<u8*>(realloc(stash->tex_data, width * height));
         if (stash->tex_data == nullptr)
             return 0;
         memset(stash->tex_data, 0, width * height);
@@ -1543,18 +1535,18 @@ namespace rl::nvg {
         stash->dirty_rect[3] = 0;
 
         // Reset cached glyphs
-        for (int32_t i = 0; i < stash->nfonts; i++)
+        for (i32 i = 0; i < stash->nfonts; i++)
         {
             FONSfont* font = stash->fonts[i];
             font->nglyphs = 0;
-            for (int32_t& j : font->lut)
+            for (i32& j : font->lut)
                 j = -1;
         }
 
         stash->params.width = width;
         stash->params.height = height;
-        stash->itw = 1.0f / static_cast<float>(stash->params.width);
-        stash->ith = 1.0f / static_cast<float>(stash->params.height);
+        stash->itw = 1.0f / static_cast<f32>(stash->params.width);
+        stash->ith = 1.0f / static_cast<f32>(stash->params.height);
 
         // Add white rect at 0,0 for debug drawing.
         fons_add_white_rect(stash, 2, 2);

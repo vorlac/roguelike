@@ -37,7 +37,7 @@ namespace rl {
         Fill    = 1 << 3,  // Fill according to preferred sizes.
     };
 
-    enum class Orientation : i16_fast{
+    enum class Arrangement : i16_fast{
         None       = 0x0000,  // Invalid / uninitialized orientation
         Horizontal = 1 << 0,  // Layout expands on horizontal axis.
         Vertical   = 1 << 1,  // Layout expands on vertical axis.
@@ -46,6 +46,11 @@ namespace rl {
     enum class Axis : i16_fast {
         Horizontal = 1 << 0,  // x axis
         Vertical   = 1 << 1,  // y axis
+    };
+
+    enum class Outline {
+        Inner  = 1 << 0,
+        Outer  = 1 << 1,
     };
 
     enum class Side : i16_fast {
@@ -138,15 +143,15 @@ namespace rl {
         return "Unknown";
     }
 
-    constexpr auto format_as(const Orientation orientation)
+    constexpr auto format_as(const Arrangement orientation)
     {
         switch (orientation)
         {
-            case Orientation::None:
+            case Arrangement::None:
                 return "None";
-            case Orientation::Horizontal:
+            case Arrangement::Horizontal:
                 return "Horizontal";
-            case Orientation::Vertical:
+            case Arrangement::Vertical:
                 return "Vertical";
         }
 

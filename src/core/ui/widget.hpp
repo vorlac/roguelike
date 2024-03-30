@@ -6,14 +6,15 @@
 
 #include "core/keyboard.hpp"
 #include "core/mouse.hpp"
+#include "ds/refcounted.hpp"
 #include "ds/vector2d.hpp"
 #include "graphics/nvg_renderer.hpp"
-#include "layouts/dynamic_layout.hpp"
 #include "utils/time.hpp"
 
 namespace rl::ui {
     class ScrollableDialog;
     class Canvas;
+    class Layout;
 
     class Widget : public ds::refcounted
     {
@@ -31,8 +32,6 @@ namespace rl::ui {
     public:
         explicit Widget(Widget* parent);
         virtual ~Widget() override;
-
-        using refcounted::operator=;
 
         void show();
         void hide();
@@ -55,7 +54,7 @@ namespace rl::ui {
 
         Canvas* canvas();
         Widget* parent();
-        DynamicLayout* layout() const;
+        Layout* layout() const;
         ScrollableDialog* dialog();
 
         //  TODO: change to size_t
@@ -75,12 +74,13 @@ namespace rl::ui {
         const Widget* child_at(i32 index) const;
         const std::vector<Widget*>& children() const;
         const std::string& tooltip() const;
+        const std::string& name() const;
 
+        void assign_layout(Layout* layout);
         void set_parent(Widget* parent);
-        void set_layout(DynamicLayout* layout);
-        void set_position(ds::point<f32>&& pos) noexcept;
-        void set_rect(ds::rect<f32>&& rect) noexcept;
-        void set_size(ds::dims<f32>&& size);
+        void set_position(ds::point<f32> pos) noexcept;
+        void set_rect(ds::rect<f32> rect) noexcept;
+        void set_size(ds::dims<f32> size) noexcept;
         void set_width(f32 width);
         void set_height(f32 height);
         void set_fixed_size(const ds::dims<f32>& fixed_size);
@@ -89,6 +89,7 @@ namespace rl::ui {
         void set_enabled(bool enabled);
         void set_focused(bool focused);
         void set_tooltip(const std::string& tooltip);
+        void set_name(const std::string& name);
         void set_font_size(f32 font_size);
         void set_icon_extra_scale(f32 scale);
         void set_cursor(Mouse::Cursor::ID cursor);
@@ -132,7 +133,6 @@ namespace rl::ui {
         virtual void perform_layout();
         virtual void draw();
 
-        virtual std::string_view name() const;
         virtual ds::dims<f32> preferred_size() const;
         virtual Widget* find_widget(const ds::point<f32>& pt);
         virtual bool contains(const ds::point<f32>& pt);
@@ -143,8 +143,8 @@ namespace rl::ui {
 
     protected:
         Widget* m_parent{};
-        ds::shared<Theme> m_theme{ nullptr };
-        DynamicLayout* m_layout{ nullptr };
+        Theme* m_theme{ nullptr };
+        Layout* m_layout{ nullptr };
 
         static inline rl::NVGRenderer* m_renderer{ nullptr };
 
@@ -165,8 +165,11 @@ namespace rl::ui {
         std::string m_tooltip{};
         Timer<f32> m_timer{};
 
+        std::string m_name{};
+
     protected:
         constexpr static inline f32 RESIZE_GRAB_BUFFER{ 5.0f };
         constexpr static bool DiagnosticsEnabled{ false };
+        constexpr static inline const Theme DEFAULT_THEME{ Theme{} };
     };
 }

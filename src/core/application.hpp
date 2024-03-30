@@ -8,12 +8,9 @@
 #include <utility>
 #include <vector>
 
-#include <cpptrace/cpptrace.hpp>
-
 #include "core/assert.hpp"
 #include "core/event_handler.hpp"
 #include "core/main_window.hpp"
-#include "core/renderer.hpp"
 #include "core/state/fsm.hpp"
 #include "core/ui/gui.hpp"
 #include "graphics/gl/instanced_buffer.hpp"
@@ -66,29 +63,24 @@ namespace rl {
             bool ret{ this->setup() };
 
             const auto theme{ m_main_window->gui()->theme() };
-            const auto label_font{ theme->form_group_font_name };
-            const auto label_size{ theme->form_group_font_size };
+            const auto label_font{ theme->form_label_font_name };
+            const auto label_size{ theme->form_label_font_size };
 
-            auto layout_l{ new ui::NewBoxLayout<Orientation::Vertical>() };
+            auto layout_l{ new ui::BoxLayout<Arrangement::Vertical>("ABC Vertical") };
             layout_l->add_widget(new ui::Label{ "A", label_font, label_size });
             layout_l->add_widget(new ui::Label{ "B", label_font, label_size });
             layout_l->add_widget(new ui::Label{ "C", label_font, label_size });
 
-            auto layout_r{ new ui::NewBoxLayout<Orientation::Vertical>() };
+            auto layout_r{ new ui::BoxLayout<Arrangement::Vertical>("123 Vertical") };
             layout_r->add_widget(new ui::Label{ "1", label_font, label_size });
-            layout_r->add_widget(new ui::Button{ "ButtonMcButtonFace" });
+            layout_r->add_widget(new ui::Label{ "2", label_font, label_size });
             layout_r->add_widget(new ui::Label{ "3", label_font, label_size });
 
-            auto horiz_layout{ new ui::NewBoxLayout<Orientation::Horizontal>() };
-            horiz_layout->add_layout(layout_l);
-            horiz_layout->add_layout(layout_r);
+            auto horiz_layout{ new ui::BoxLayout<Arrangement::Horizontal>("ABC123 Combined Horiz") };
+            horiz_layout->add_nested_layout(layout_l, {});
+            horiz_layout->add_nested_layout(layout_r, {});
 
-            auto dialog = new ui::Widget{ m_main_window->gui() };
-            dialog->set_layout(horiz_layout);
-            dialog->set_position({ 100.0f, 100.0f });
-            // dialog->set_fixed_height(300);
-            // dialog->center();
-            // dialog->perform_layout();
+            m_main_window->gui()->assign_layout(horiz_layout);
 
             m_timer.reset();
             while (!this->should_exit())

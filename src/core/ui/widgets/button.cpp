@@ -7,6 +7,7 @@
 #include "core/ui/theme.hpp"
 #include "core/ui/widgets/button.hpp"
 #include "core/ui/widgets/popupbutton.hpp"
+#include "ds/shared.hpp"
 #include "graphics/vg/nanovg.hpp"
 #include "utils/logging.hpp"
 #include "utils/unicode.hpp"
@@ -141,21 +142,21 @@ namespace rl::ui {
         const auto context{ m_renderer->context() };
         const f32 font_size{ m_font_size < 0.0f ? m_theme->button_font_size : m_font_size };
 
-        m_renderer->set_text_properties(m_theme->form_button_font_name, font_size,
-                                        nvg::Align::HCenter | nvg::Align::VMiddle);
+        m_renderer->set_text_properties_(m_theme->form_button_font_name, font_size,
+                                         nvg::Align::HCenter | nvg::Align::VMiddle);
 
         ds::dims icon_size{ 0.0f, font_size };
-        const f32 text_width{ nvg::text_bounds(context, 0.0f, 0.0f, m_text.c_str()) };
+        const f32 text_width{ nvg::text_bounds_(context, 0.0f, 0.0f, m_text.c_str()) };
 
         if (m_icon != Icon::ID::None)
         {
             if (Icon::is_font(m_icon))
             {
                 icon_size.height *= this->icon_scale();
-                nvg::font_size(context, icon_size.height);
-                nvg::font_face(context, Font::Name::Icons);
-                icon_size.width = nvg::text_bounds(context, ds::point{ 0.0f, 0.0f },
-                                                   std::forward<std::string>(utf8(m_icon))) +
+                nvg::set_font_size(context, icon_size.height);
+                nvg::set_font_face(context, font::style::Icons);
+                icon_size.width = nvg::text_bounds_(context, ds::point{ 0.0f, 0.0f },
+                                                    std::forward<std::string>(utf8(m_icon))) +
                                   m_rect.size.height * 0.15f;
             }
             else
@@ -167,8 +168,8 @@ namespace rl::ui {
         }
 
         return ds::dims{
-            text_width + icon_size.width + (MARGIN.horizontal * 2.0f),
-            font_size + (MARGIN.vertical * 2.0f),
+            text_width + icon_size.width + INNER_PADDING.horizontal(),
+            font_size + INNER_PADDING.vertical(),
         };
     }
 
@@ -333,6 +334,7 @@ namespace rl::ui {
         const nvg::PaintStyle bg{ nvg::linear_gradient(
             context, m_rect.pt.x, m_rect.pt.y, m_rect.pt.x, m_rect.pt.y + m_rect.size.height,
             grad_top, grad_bot) };
+
         nvg::fill_paint(context, bg);
         nvg::fill(context);
 
@@ -342,6 +344,7 @@ namespace rl::ui {
                           m_rect.size.width - 1.0f,
                           m_rect.size.height - 1.0f - (m_pressed ? 0.0f : 1.0f),
                           m_theme->button_corner_radius);
+
         nvg::stroke_color(context, m_theme->border_light);
         nvg::stroke(context);
 
@@ -351,10 +354,10 @@ namespace rl::ui {
         nvg::stroke_color(context, m_theme->border_dark);
         nvg::stroke(context);
 
-        f32 font_size{ m_font_size < 0.0f ? m_theme->button_font_size : m_font_size };
-        nvg::font_size(context, font_size);
-        nvg::font_face(context, Font::Name::SansBold);
-        f32 text_width{ nvg::text_bounds(context, 0.0f, 0.0f, m_text.c_str(), nullptr, nullptr) };
+        f32 font_size{ math::equal(m_font_size, -1.0f) ? m_theme->button_font_size : m_font_size };
+        nvg::set_font_size(context, font_size);
+        nvg::set_font_face(context, font::style::SansBold);
+        f32 text_width{ nvg::text_bounds_(context, 0.0f, 0.0f, m_text.c_str(), nullptr, nullptr) };
 
         ds::point center{
             m_rect.pt.x + m_rect.size.width * 0.5f,
@@ -379,9 +382,9 @@ namespace rl::ui {
             if (Icon::is_font(m_icon))
             {
                 icon_size.height *= this->icon_scale();
-                nvg::font_size(context, icon_size.height);
-                nvg::font_face(context, Font::Name::Icons);
-                icon_size.width = nvg::text_bounds(context, 0, 0, icon.data(), nullptr, nullptr);
+                nvg::set_font_size(context, icon_size.height);
+                nvg::set_font_face(context, font::style::Icons);
+                icon_size.width = nvg::text_bounds_(context, 0, 0, icon.data());
             }
             else
             {
@@ -395,7 +398,7 @@ namespace rl::ui {
                 icon_size.width += m_rect.size.height * 0.15f;
 
             nvg::fill_color(context, text_color);
-            nvg::text_align(context, nvg::Align::HLeft | nvg::Align::VMiddle);
+            nvg::set_text_align(context, nvg::Align::HLeft | nvg::Align::VMiddle);
             ds::point icon_pos{ center };
 
             icon_pos.y -= 1;
@@ -418,7 +421,7 @@ namespace rl::ui {
             }
 
             if (Icon::is_font(m_icon))
-                nvg::text(context, icon_pos.x, icon_pos.y + 1.0f, icon.data(), nullptr);
+                nvg::text_(context, icon_pos.x, icon_pos.y + 1.0f, icon.data(), nullptr);
             else
             {
                 const nvg::PaintStyle img_paint{
@@ -431,12 +434,12 @@ namespace rl::ui {
             }
         }
 
-        nvg::font_size(context, font_size);
-        nvg::font_face(context, Font::Name::SansBold);
-        nvg::text_align(context, nvg::Align::HLeft | nvg::Align::VMiddle);
+        nvg::set_font_size(context, font_size);
+        nvg::set_font_face(context, font::style::SansBold);
+        nvg::set_text_align(context, nvg::Align::HLeft | nvg::Align::VMiddle);
         nvg::fill_color(context, m_theme->text_shadow_color);
-        nvg::text(context, text_pos.x, text_pos.y, m_text.c_str(), nullptr);
+        nvg::text_(context, text_pos.x, text_pos.y, m_text.c_str(), nullptr);
         nvg::fill_color(context, text_color);
-        nvg::text(context, text_pos.x, text_pos.y + 1.0f, m_text.c_str(), nullptr);
+        nvg::text_(context, text_pos.x, text_pos.y + 1.0f, m_text.c_str(), nullptr);
     }
 }

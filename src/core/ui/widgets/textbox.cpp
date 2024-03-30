@@ -162,10 +162,10 @@ namespace rl::ui {
             uw = img_size.width * uh / img_size.height;
         }
         else if (!m_units.empty())
-            uw = nvg::text_bounds(context, 0.0f, 0.0f, m_units.c_str());
+            uw = nvg::text_bounds_(context, 0.0f, 0.0f, m_units.c_str());
 
         const f32 sw{ m_spinnable ? 14.0f : 0.0f };
-        const f32 ts{ nvg::text_bounds(context, 0, 0, m_value.c_str()) };
+        const f32 ts{ nvg::text_bounds_(context, 0, 0, m_value.c_str()) };
         size.width = size.height + ts + uw + sw;
 
         return size;
@@ -198,7 +198,7 @@ namespace rl::ui {
 
         if (m_editable && this->focused())
             m_valid_format ? nvg::fill_paint(context, fg1) : nvg::fill_paint(context, fg2);
-        else if (m_spinnable && m_mouse_down_pos.x != -1.0f)
+        else if (m_spinnable && math::not_equal(m_mouse_down_pos.x, -1.0f))
             nvg::fill_paint(context, fg1);
         else
             nvg::fill_paint(context, bg);
@@ -211,8 +211,8 @@ namespace rl::ui {
         nvg::stroke_color(context, ds::color<f32>{ 0, 0, 0, 48 });
         nvg::stroke(context);
 
-        nvg::font_size(context, this->font_size());
-        nvg::font_face(context, Font::Name::Sans);
+        nvg::set_font_size(context, this->font_size());
+        nvg::set_font_face(context, font::style::Sans);
 
         ds::point draw_pos{
             m_rect.pt.x,
@@ -247,15 +247,15 @@ namespace rl::ui {
         }
         else if (!m_units.empty())
         {
-            unit_width = nvg::text_bounds(context, 0.0f, 0.0f, m_units.c_str(), nullptr, nullptr);
+            unit_width = nvg::text_bounds_(context, 0.0f, 0.0f, m_units.c_str(), nullptr, nullptr);
 
             ds::color<f32> color{ 255, 255, 255 };
             color.a = m_enabled ? 0.25f : 0.125f;
 
             nvg::fill_color(context, color);
-            nvg::text_align(context, nvg::Align::HRight | nvg::Align::VMiddle);
-            nvg::text(context, m_rect.pt.x + m_rect.size.width - x_spacing, draw_pos.y,
-                      m_units.c_str());
+            nvg::set_text_align(context, nvg::Align::HRight | nvg::Align::VMiddle);
+            nvg::text_(context, m_rect.pt.x + m_rect.size.width - x_spacing, draw_pos.y,
+                       m_units.c_str());
 
             unit_width += 2;
         }
@@ -265,11 +265,12 @@ namespace rl::ui {
         {
             spin_arrows_width = 14.0f;
 
-            nvg::font_face(context, "icons");
-            nvg::font_size(context, (m_font_size < 0.0f ? m_theme->button_font_size : m_font_size) *
-                                        this->icon_scale());
+            nvg::set_font_face(context, "icons");
+            nvg::set_font_size(context,
+                               (m_font_size < 0.0f ? m_theme->button_font_size : m_font_size) *
+                                   this->icon_scale());
 
-            bool spinning = m_mouse_down_pos.x != -1.0f;
+            bool spinning{ math::not_equal(m_mouse_down_pos.x, -1.0f) };
 
             {
                 // up button
@@ -279,14 +280,14 @@ namespace rl::ui {
                                              : m_theme->disabled_text_color);
 
                 auto icon{ utf8(std::to_underlying(m_theme->text_box_up_icon)) };
-                nvg::text_align(context, nvg::Align::HLeft | nvg::Align::VMiddle);
+                nvg::set_text_align(context, nvg::Align::HLeft | nvg::Align::VMiddle);
 
                 ds::point icon_pos{
                     m_rect.pt.x + 4.0f,
                     m_rect.pt.y + m_rect.size.height / 2.0f - x_spacing / 2.0f,
                 };
 
-                nvg::text(context, icon_pos.x, icon_pos.y, icon.data(), nullptr);
+                nvg::text_(context, icon_pos.x, icon_pos.y, icon.data(), nullptr);
             }
 
             {
@@ -297,37 +298,37 @@ namespace rl::ui {
                                              : m_theme->disabled_text_color);
 
                 auto&& icon{ utf8(m_theme->text_box_down_icon) };
-                nvg::text_align(context, nvg::Align::HLeft | nvg::Align::VMiddle);
+                nvg::set_text_align(context, nvg::Align::HLeft | nvg::Align::VMiddle);
 
                 ds::point icon_pos{
                     m_rect.pt.x + 4.0f,
                     m_rect.pt.y + (m_rect.size.height / 2.0f) + (x_spacing / 2.0f + 1.5f),
                 };
 
-                nvg::text(context, icon_pos.x, icon_pos.y, icon.data());
+                nvg::text_(context, icon_pos.x, icon_pos.y, icon.data());
             }
 
-            nvg::font_size(context, this->font_size());
-            nvg::font_face(context, Font::Name::Sans);
+            nvg::set_font_size(context, this->font_size());
+            nvg::set_font_face(context, font::style::Sans);
         }
 
         switch (m_alignment)
         {
             case Alignment::Left:
-                nvg::text_align(context, nvg::Align::HLeft | nvg::Align::VMiddle);
+                nvg::set_text_align(context, nvg::Align::HLeft | nvg::Align::VMiddle);
                 draw_pos.x += x_spacing + spin_arrows_width;
                 break;
             case Alignment::Right:
-                nvg::text_align(context, nvg::Align::HRight | nvg::Align::VMiddle);
+                nvg::set_text_align(context, nvg::Align::HRight | nvg::Align::VMiddle);
                 draw_pos.x += m_rect.size.width - unit_width - x_spacing;
                 break;
             case Alignment::Center:
-                nvg::text_align(context, nvg::Align::HCenter | nvg::Align::VMiddle);
+                nvg::set_text_align(context, nvg::Align::HCenter | nvg::Align::VMiddle);
                 draw_pos.x += m_rect.size.width * 0.5f;
                 break;
         }
 
-        nvg::font_size(context, this->font_size());
+        nvg::set_font_size(context, this->font_size());
         nvg::fill_color(context, m_enabled && (!m_committed || !m_value.empty())
                                      ? m_theme->text_color
                                      : m_theme->disabled_text_color);
@@ -347,8 +348,8 @@ namespace rl::ui {
 
         if (m_committed)
         {
-            nvg::text(context, draw_pos.x, draw_pos.y,
-                      m_value.empty() ? m_placeholder.c_str() : m_value.c_str(), nullptr);
+            nvg::text_(context, draw_pos.x, draw_pos.y,
+                       m_value.empty() ? m_placeholder.c_str() : m_value.c_str(), nullptr);
         }
         else
         {
@@ -356,15 +357,15 @@ namespace rl::ui {
             nvg::GlyphPosition glyphs[max_glyphs];
 
             std::array<f32, 4> text_bound = { 0.0f };
-            nvg::text_bounds(context, draw_pos.x, draw_pos.y, m_value_temp.c_str(), nullptr,
-                             text_bound.data());
+            nvg::text_bounds_(context, draw_pos.x, draw_pos.y, m_value_temp.c_str(), nullptr,
+                              text_bound.data());
 
             f32 lineh{ text_bound[3] - text_bound[1] };
 
             // find cursor positions
-            i32 nglyphs{ nvg::text_glyph_positions(context, draw_pos.x, draw_pos.y,
-                                                   m_value_temp.c_str(), nullptr, glyphs,
-                                                   max_glyphs) };
+            i32 nglyphs{ nvg::text_glyph_positions_(context, draw_pos.x, draw_pos.y,
+                                                    m_value_temp.c_str(), nullptr, glyphs,
+                                                    max_glyphs) };
 
             this->update_cursor(text_bound[2], glyphs, nglyphs);
 
@@ -383,22 +384,22 @@ namespace rl::ui {
             draw_pos.x = old_draw_pos.x + m_text_offset;
 
             // draw text with offset
-            nvg::text(context, draw_pos.x, draw_pos.y, m_value_temp.c_str(), nullptr);
-            nvg::text_bounds(context, draw_pos.x, draw_pos.y, m_value_temp.c_str(), nullptr,
-                             text_bound.data());
+            nvg::text_(context, draw_pos.x, draw_pos.y, m_value_temp.c_str(), nullptr);
+            nvg::text_bounds_(context, draw_pos.x, draw_pos.y, m_value_temp.c_str(), nullptr,
+                              text_bound.data());
 
             // recompute cursor positions
-            nglyphs = nvg::text_glyph_positions(context, draw_pos.x, draw_pos.y,
-                                                m_value_temp.c_str(), nullptr, glyphs, max_glyphs);
+            nglyphs = nvg::text_glyph_positions_(context, draw_pos.x, draw_pos.y,
+                                                 m_value_temp.c_str(), nullptr, glyphs, max_glyphs);
 
             if (m_cursor_pos > -1)
             {
                 if (m_selection_pos > -1)
                 {
-                    f32 caretx{ cursor_index_to_position(m_cursor_pos, text_bound[2], glyphs,
-                                                         nglyphs) };
-                    f32 selx{ cursor_index_to_position(m_selection_pos, text_bound[2], glyphs,
-                                                       nglyphs) };
+                    f32 caretx{ this->cursor_index_to_position(m_cursor_pos, text_bound[2], glyphs,
+                                                               nglyphs) };
+                    f32 selx{ this->cursor_index_to_position(m_selection_pos, text_bound[2], glyphs,
+                                                             nglyphs) };
                     if (caretx > selx)
                         std::swap(caretx, selx);
 
@@ -812,7 +813,7 @@ namespace rl::ui {
     void TextBox::update_cursor(const f32 last_x, const nvg::GlyphPosition* glyphs, const i32 size)
     {
         // handle mouse cursor events
-        if (m_mouse_down_pos.x != -1.0f)
+        if (math::not_equal(m_mouse_down_pos.x, -1.0f))
         {
             if ((m_mouse_down_modifier & Keyboard::Scancode::LShift) == 0)
                 m_selection_pos = -1;
@@ -822,7 +823,7 @@ namespace rl::ui {
             m_cursor_pos = this->position_to_cursor_index(m_mouse_down_pos.x, last_x, glyphs, size);
             m_mouse_down_pos = { -1, -1 };
         }
-        else if (m_mouse_drag_pos.x != -1.0f)
+        else if (math::not_equal(m_mouse_drag_pos.x, -1.0f))
         {
             if (m_selection_pos == -1)
                 m_selection_pos = m_cursor_pos;
@@ -844,7 +845,6 @@ namespace rl::ui {
                                           const nvg::GlyphPosition* glyphs, const i32 size) const
     {
         f32 pos{ 0.0f };
-
         if (index != size)
             pos = glyphs[index].x;
         else
