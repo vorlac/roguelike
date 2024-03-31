@@ -8,26 +8,19 @@
 
 namespace rl::ui {
 
-    Label::Label(std::string text, const std::string_view& font, const f32 font_size)
-        : Widget{ nullptr }
-        , m_text{ std::move(text) }
-        , m_font{ font }
+    Label::Label(std::string text, const f32 font_size /*= -1.0f*/)
+        : Label{ nullptr, std::move(text), font_size }
     {
-        m_font_size = font_size;
     }
 
-    Label::Label(Widget* parent, std::string text, const std::string_view& font, const f32 font_size)
+    Label::Label(Widget* parent, std::string text, const f32 font_size /*= -1.0f*/)
         : Widget{ parent }
         , m_text{ std::move(text) }
-        , m_font{ font }
     {
-        if (m_theme != nullptr)
-        {
-            m_font_size = m_theme->standard_font_size;
-            m_color = m_theme->text_color;
-        }
-
-        if (font_size >= 0.0f)
+        m_text_color = m_theme->label_font_color;
+        m_text_font = m_theme->label_font_name;
+        m_font_size = m_theme->form_label_font_size;
+        if (math::not_equal(m_font_size, -1.0f))
             m_font_size = font_size;
     }
 
@@ -38,12 +31,12 @@ namespace rl::ui {
 
     const std::string& Label::font() const
     {
-        return m_font;
+        return m_text_font;
     }
 
     const ds::color<f32>& Label::color() const
     {
-        return m_color;
+        return m_text_color;
     }
 
     void Label::set_text(const std::string& text)
@@ -53,12 +46,12 @@ namespace rl::ui {
 
     void Label::set_font(const std::string& font)
     {
-        m_font = font;
+        m_text_font = font;
     }
 
     void Label::set_color(const ds::color<f32>& color)
     {
-        m_color = color;
+        m_text_color = color;
     }
 
     void Label::set_callback(const std::function<void()>& callable)
@@ -72,7 +65,7 @@ namespace rl::ui {
         if (m_theme != nullptr)
         {
             m_font_size = m_theme->form_label_font_size;
-            m_color = m_theme->text_color;
+            m_text_color = m_theme->text_color;
         }
     }
 
@@ -82,8 +75,7 @@ namespace rl::ui {
             return { 0.0f, 0.0f };
 
         const auto context{ m_renderer->context() };
-        m_renderer->set_text_properties_(m_theme->form_label_font_name,
-                                         m_theme->form_label_font_size,
+        m_renderer->set_text_properties_(m_text_font, m_font_size,
                                          nvg::Align::HLeft | nvg::Align::VMiddle);
 
         if (m_fixed_size.width > 0.0f)
@@ -102,6 +94,7 @@ namespace rl::ui {
 
         nvg::set_text_align(context, nvg::Align::HLeft | nvg::Align::VMiddle);
         const f32 text_width{ nvg::text_bounds_(context, 0.0f, 0.0f, m_text.c_str()) };
+
         return {
             text_width + 2.0f,
             this->font_size(),
@@ -113,9 +106,9 @@ namespace rl::ui {
         ui::Widget::draw();
 
         auto context{ m_renderer->context() };
-        nvg::set_font_face(context, m_font);
+        nvg::set_font_face(context, m_text_font);
         nvg::set_font_size(context, this->font_size());
-        nvg::fill_color(context, m_color);
+        nvg::fill_color(context, m_text_color);
 
         if (m_fixed_size.width > 0)
         {

@@ -72,7 +72,7 @@ namespace rl {
 
     bool OpenGLRenderer::swap_buffers(const rl::MainWindow& window) const
     {
-        const i32 result = SDL3::SDL_GL_SwapWindow(window.sdl_handle());
+        const i32 result{ SDL3::SDL_GL_SwapWindow(window.sdl_handle()) };
         sdl_assert(result == 0, "OpenGL renderer buffer swap failed");
         return result == 0;
     }
@@ -84,28 +84,27 @@ namespace rl {
 
     ds::dims<i32> OpenGLRenderer::get_output_size() const
     {
-        ds::dims<i32> s{ 0, 0 };
         runtime_assert(false, "not implemented");
-        return s;
+        return ds::dims<i32>{ 0, 0 };
     }
 
     bool OpenGLRenderer::set_draw_color(ds::color<f32> c) const
     {
-        constexpr i32 result = 0;
+        constexpr i32 result{ 0 };
         runtime_assert(false, "not implemented");
         return result == 0;
     }
 
     bool OpenGLRenderer::set_target() const
     {
-        constexpr i32 result = 0;
+        constexpr i32 result{ 0 };
         runtime_assert(false, "not implemented");
         return result == 0;
     }
 
     bool OpenGLRenderer::set_draw_blend_mode(const SDL3::SDL_BlendMode blend_mode) const
     {
-        constexpr i32 result = 0;
+        constexpr i32 result{ 0 };
         runtime_assert(false, "not implemented");
         return result == 0;
     }
@@ -114,18 +113,12 @@ namespace rl {
     {
         std::array buff{ 0, 0, 0, 0 };
         glGetIntegerv(GL_VIEWPORT, buff.data());
-        ds::rect rect{
-            ds::point{
-                static_cast<f32>(buff[0]),
-                static_cast<f32>(buff[1]),
-            },
-            ds::dims{
-                static_cast<f32>(buff[2]),
-                static_cast<f32>(buff[3]),
-            },
+        runtime_assert(buff[2] > 0 && buff[3] > 0, "failed to get viewport");
+
+        return ds::rect<f32>{
+            ds::point{ buff[0], buff[1] },
+            ds::dims{ buff[2], buff[3] },
         };
-        sdl_assert(!rect.is_empty(), "failed to get viewport");
-        return rect;
     }
 
     bool OpenGLRenderer::set_viewport(const ds::rect<i32>& rect) const

@@ -13,9 +13,8 @@ namespace rl::ui {
     class Label final : public Widget
     {
     public:
-        explicit Label(std::string text, const std::string_view& font, const f32 font_size);
-        explicit Label(Widget* parent, std::string text,
-                       const std::string_view& font = font::style::Mono, f32 font_size = -1.0f);
+        explicit Label(std::string text, f32 font_size = -1.0f);
+        explicit Label(Widget* parent, std::string text, f32 font_size = -1.0f);
 
         const std::string& font() const;
         const std::string& text() const;
@@ -33,8 +32,8 @@ namespace rl::ui {
 
     protected:
         std::string m_text{};
-        std::string m_font{};
-        ds::color<f32> m_color{ rl::Colors::White };
+        std::string m_text_font{};
+        ds::color<f32> m_text_color{ rl::Colors::White };
         std::function<void()> m_callback;
     };
 }

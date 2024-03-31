@@ -142,7 +142,7 @@ namespace rl::ui {
         const auto context{ m_renderer->context() };
         const f32 font_size{ m_font_size < 0.0f ? m_theme->button_font_size : m_font_size };
 
-        m_renderer->set_text_properties_(m_theme->form_button_font_name, font_size,
+        m_renderer->set_text_properties_(m_theme->button_font_name, font_size,
                                          nvg::Align::HCenter | nvg::Align::VMiddle);
 
         ds::dims icon_size{ 0.0f, font_size };

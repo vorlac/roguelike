@@ -62,19 +62,15 @@ namespace rl {
         {
             bool ret{ this->setup() };
 
-            const auto theme{ m_main_window->gui()->theme() };
-            const auto label_font{ theme->form_label_font_name };
-            const auto label_size{ theme->form_label_font_size };
-
             auto layout_l{ new ui::BoxLayout<Arrangement::Vertical>("ABC Vertical") };
-            layout_l->add_widget(new ui::Label{ "A", label_font, label_size });
-            layout_l->add_widget(new ui::Label{ "B", label_font, label_size });
-            layout_l->add_widget(new ui::Label{ "C", label_font, label_size });
+            layout_l->add_widget(new ui::Label{ "A" });
+            layout_l->add_widget(new ui::Label{ "B" });
+            layout_l->add_widget(new ui::Label{ "C" });
 
             auto layout_r{ new ui::BoxLayout<Arrangement::Vertical>("123 Vertical") };
-            layout_r->add_widget(new ui::Label{ "1", label_font, label_size });
-            layout_r->add_widget(new ui::Label{ "2", label_font, label_size });
-            layout_r->add_widget(new ui::Label{ "3", label_font, label_size });
+            layout_r->add_widget(new ui::Label{ "1" });
+            layout_r->add_widget(new ui::Label{ "2" });
+            layout_r->add_widget(new ui::Label{ "3" });
 
             auto horiz_layout{ new ui::BoxLayout<Arrangement::Horizontal>("ABC123 Combined Horiz") };
             horiz_layout->add_nested_layout(layout_l, {});

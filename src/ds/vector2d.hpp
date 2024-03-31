@@ -57,8 +57,8 @@ namespace rl::ds {
         template <rl::integer I>
             requires rl::floating_point<T>
         constexpr vector2(vector2<I>&& other) noexcept
-            : x{ std::move(other.x) }
-            , y{ std::move(other.y) }
+            : x{ static_cast<T>(other.x) }
+            , y{ static_cast<T>(other.y) }
         {
         }
 
@@ -69,9 +69,10 @@ namespace rl::ds {
 
         constexpr static vector2<T> null()
         {
-            return vector2<T>{};
+            return vector2{};
         }
 
+        [[nodiscard]]
         constexpr bool is_null() const
         {
             return *this == point<T>::null();
@@ -79,38 +80,34 @@ namespace rl::ds {
 
         consteval static vector2<T> zero()
         {
-            return vector2<T>{ 0, 0 };
+            return vector2{ 0, 0 };
         }
 
-        [[nodiscard]] constexpr bool is_zero() const
+        [[nodiscard]]
+        constexpr bool is_zero() const
             requires rl::integer<T>
         {
             return math::equal(this->x, 0) &&  //
                    math::equal(this->y, 0);
         }
 
-        [[nodiscard]] constexpr bool is_zero() const
-            requires rl::floating_point<T>
-        {
-            return math::equal(x, 0) &&  //
-                   math::equal(y, 0);
-        }
-
-        [[nodiscard]] constexpr f32 length() const
+        [[nodiscard]]
+        constexpr f32 length() const
         {
             return std::sqrt(this->length_squared());
         }
 
-        [[nodiscard]] constexpr f32 length_squared() const
+        [[nodiscard]]
+        constexpr f32 length_squared() const
         {
-            return x * x + y * y;
+            return (x * x) + (y * y);
         }
 
         constexpr vector2<T> clamped_length(const f32 maxlen) const
         {
-            vector2<T> ret{ *this };
+            vector2 ret{ *this };
 
-            const f32 len = this->length();
+            const f32 len{ this->length() };
             if (len > 0.0f && maxlen < len)
             {
                 ret /= len;
@@ -143,6 +140,7 @@ namespace rl::ds {
         constexpr CompassDirection dir()
         {
             CompassDirection ret{ CompassDirection::None };
+
             if (this->x > 0)
                 ret |= CompassDirection::East;
             else if (this->x < 0)
@@ -168,20 +166,21 @@ namespace rl::ds {
             return *this;
         }
 
-        constexpr vector2 normalized() const
+        constexpr vector2<T> normalized() const
         {
-            vector2<T> ret{ x, y };
+            vector2 ret{ x, y };
             return ret.normalize();
         }
 
-        [[nodiscard]] constexpr f32 angle() const
+        [[nodiscard]]
+        constexpr f32 angle() const
         {
             return std::atan2f(y, x);
         }
 
-        constexpr static vector2 from_angle(const f32 angle)
+        constexpr static vector2<T> from_angle(const f32 angle)
         {
-            return {
+            return vector2{
                 std::cosf(angle),
                 std::sinf(angle),
             };
@@ -207,7 +206,7 @@ namespace rl::ds {
             f32 s{ std::sin(radians) };
             f32 c{ std::cos(radians) };
 
-            return {
+            return vector2{
                 (x * c) - (y * s),
                 (x * s) + (y * c),
             };
@@ -215,7 +214,7 @@ namespace rl::ds {
 
         constexpr vector2 clamp(const vector2& min, const vector2& max) const
         {
-            return {
+            return vector2{
                 std::clamp(x, min.x, max.x),
                 std::clamp(y, min.y, max.y),
             };
@@ -230,8 +229,8 @@ namespace rl::ds {
         constexpr bool operator==(const vector2<T>& other) const
             requires rl::floating_point<T>
         {
-            return std::abs(x - other.x) <= std::numeric_limits<T>::epsilon() &&
-                   std::abs(y - other.y) <= std::numeric_limits<T>::epsilon();
+            return math::equal(x, other.x) &&  //
+                   math::equal(y, other.y);
         }
 
         constexpr bool operator!=(const vector2<T>& other) const
@@ -262,7 +261,7 @@ namespace rl::ds {
 
             const f32 start_length{ std::sqrt(start_len_sq) };
             const f32 result_length{ std::lerp(start_length, std::sqrt(end_len_sq), weight) };
-            const f32 angle = this->angle_to(to);
+            const f32 angle{ this->angle_to(to) };
 
             return this->rotated(angle * weight) * (result_length / start_length);
         }
@@ -317,7 +316,7 @@ namespace rl::ds {
 
         constexpr vector2<T> operator+(const T& other)
         {
-            return vector2<T>{
+            return vector2{
                 this->x + other,
                 this->y + other,
             };
@@ -325,7 +324,7 @@ namespace rl::ds {
 
         constexpr vector2<T> operator+(const vector2<T>& other) const
         {
-            return vector2<T>{
+            return vector2{
                 this->x + other.x,
                 this->y + other.y,
             };
@@ -333,7 +332,7 @@ namespace rl::ds {
 
         constexpr vector2<T> operator+(vector2<T>&& other) const noexcept
         {
-            return vector2<T>{
+            return vector2{
                 this->x + std::move(other.x),
                 this->y + std::move(other.y),
             };
@@ -357,7 +356,7 @@ namespace rl::ds {
         template <typename V>
         constexpr vector2<T> operator-(const vector2<V>& other) const
         {
-            return vector2<T>{
+            return vector2{
                 x - static_cast<T>(other.x),
                 y - static_cast<T>(other.y),
             };
@@ -365,7 +364,7 @@ namespace rl::ds {
 
         constexpr vector2<T> operator-(const T& other) const
         {
-            return vector2<T>{
+            return vector2{
                 x - static_cast<T>(other),
                 y - static_cast<T>(other),
             };
@@ -373,7 +372,7 @@ namespace rl::ds {
 
         constexpr vector2<T> operator-(const dims<T>& other) const
         {
-            return vector2<T>{
+            return vector2{
                 x - other.width,
                 y - other.height,
             };
@@ -402,7 +401,7 @@ namespace rl::ds {
 
         constexpr vector2<T> operator*(const vector2<T>& other) const
         {
-            return vector2<T>{
+            return vector2{
                 x * other.x,
                 y * other.y,
             };
@@ -412,7 +411,7 @@ namespace rl::ds {
             requires rl::floating_point<T>
         constexpr vector2<T> operator*(vector2<I>&& other) const noexcept
         {
-            return vector2<T>{
+            return vector2{
                 x * static_cast<T>(other.x),
                 y * static_cast<T>(other.y),
             };
@@ -420,7 +419,7 @@ namespace rl::ds {
 
         constexpr vector2<T> operator*(const T val) const
         {
-            return vector2<T>{
+            return vector2{
                 static_cast<T>(x * val),
                 static_cast<T>(y * val),
             };
@@ -435,7 +434,7 @@ namespace rl::ds {
 
         constexpr vector2<T> operator/(const vector2<T>& other) const
         {
-            return vector2<T>{
+            return vector2{
                 x / other.x,
                 y / other.y,
             };
@@ -443,7 +442,7 @@ namespace rl::ds {
 
         constexpr vector2<T> operator/(dims<T>&& other) noexcept
         {
-            return vector2<T>{
+            return vector2{
                 static_cast<T>(this->x / std::move(other.width)),
                 static_cast<T>(this->y / std::move(other.height)),
             };
@@ -451,7 +450,7 @@ namespace rl::ds {
 
         constexpr vector2<T> operator/(const f32& val) const
         {
-            return vector2<T>{
+            return vector2{
                 x / val,
                 y / val,
             };
@@ -466,10 +465,7 @@ namespace rl::ds {
 
         constexpr vector2<T> operator-() const
         {
-            return vector2<T>{
-                -x,
-                -y,
-            };
+            return vector2{ -x, -y };
         }
 
         T x{ 0 };

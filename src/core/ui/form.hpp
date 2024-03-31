@@ -50,12 +50,7 @@ namespace rl::ui {
         Label* add_group(const std::string& caption)
         {
             const Theme* theme{ m_dialog->theme() };
-            const auto label{ new Label{
-                m_dialog,
-                caption,
-                theme->form_group_font_name,
-                theme->form_group_font_size,
-            } };
+            const auto label{ new Label{ m_dialog, caption } };
 
             m_layout->append_row(theme->form_pre_group_spacing);
             m_layout->append_row(0);
@@ -71,12 +66,7 @@ namespace rl::ui {
                                             const std::function<T()>& getter, bool editable = true)
         {
             const Theme* theme{ m_dialog->theme() };
-            const Label* label = new Label{
-                m_dialog,
-                label_text,
-                theme->form_label_font_name,
-                theme->form_label_font_size,
-            };
+            const Label* label = new Label{ m_dialog, label_text };
 
             auto widget{ new detail::FormWidget<T>{ m_dialog } };
             auto refresh = [widget, getter] {
@@ -156,12 +146,7 @@ namespace rl::ui {
                 m_layout->set_anchor(widget, Anchor{ 1, m_layout->row_count() - 1, 3, 1 });
             else
             {
-                const Label* label = new Label{
-                    m_dialog,
-                    label_text,
-                    theme->form_label_font_name,
-                    theme->form_label_font_size,
-                };
+                const Label* label = new Label{ m_dialog, label_text };
                 m_layout->set_anchor(label, Anchor{ 1, m_layout->row_count() - 1 });
                 m_layout->set_anchor(widget, Anchor{ 3, m_layout->row_count() - 1 });
             }

@@ -15,10 +15,11 @@ SDL_C_LIB_END
 
 #ifdef NDEBUG
 
-  #define runtime_assert(...) static_cast<void>(0)
-  #define sdl_assert(...)     static_cast<void>(0)
-  #define assert_cond(...)    static_cast<void>(0)
-  #define assert_msg(...)     static_cast<void>(0)
+  #define runtime_assert(...)         static_cast<void>(0)
+  #define sdl_assert(...)             static_cast<void>(0)
+  #define assert_cond(...)            static_cast<void>(0)
+  #define assert_msg(...)             static_cast<void>(0)
+  #define variable_arg_assert_example static_cast<void>(0)
 
 #else
 
@@ -49,7 +50,7 @@ SDL_C_LIB_END
                                                        std::views::transform([](auto r__) {         \
                                                          return std::string_view(r__);              \
                                                        }),                                          \
-                                                   "\n               "))));                         \
+                                                   "\n             "))));                           \
               __debugbreak();                                                                       \
           }                                                                                         \
       }                                                                                             \
@@ -100,7 +101,7 @@ SDL_C_LIB_END
       }                                                                                            \
       while (0)
 
-  #define VA_ASSERT(cond, ...)                                                   \
+  #define variable_arg_assert_example(cond, ...)                                 \
       do                                                                         \
       {                                                                          \
           if (!(cond)) [[unlikely]]                                              \

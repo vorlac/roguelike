@@ -18,19 +18,18 @@ namespace rl::ui {
     Widget::Widget(Widget* parent)
         : m_parent{ parent }
     {
+        if (m_theme == nullptr)
+            m_theme = new Theme{};
         if (parent != nullptr)
             parent->add_child(this);
     }
 
     Widget::Widget(Widget* parent, const std::unique_ptr<NVGRenderer>& vg_renderer)
-        : m_parent{ parent }
+        : Widget{ parent }
     {
         runtime_assert(m_renderer == nullptr, "widget vectorized renderer already set");
         if (m_renderer == nullptr)
             m_renderer = vg_renderer.get();
-
-        if (parent != nullptr)
-            parent->add_child(this);
     }
 
     Widget::~Widget()
@@ -89,12 +88,12 @@ namespace rl::ui {
 
     void Widget::set_position(ds::point<f32> pos) noexcept
     {
-        m_rect.pt = std::move(pos);
+        m_rect.pt = pos;
     }
 
     void Widget::set_rect(ds::rect<f32> rect) noexcept
     {
-        m_rect = std::move(rect);
+        m_rect = rect;
     }
 
     ds::point<f32> Widget::abs_position() const
@@ -255,6 +254,7 @@ namespace rl::ui {
             {
                 if (!child->visible())
                     continue;
+
                 if (child->resizable() && child->resize_rect().contains(pt - m_rect.pt))
                 {
                     // if the child is resizable and the larger resize rect (for grab points)

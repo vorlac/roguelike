@@ -16,6 +16,8 @@
 
 namespace rl::ds {
 #pragma pack(4)
+    template <rl::numeric T>
+    struct margin;
 
     template <rl::numeric T>
     class rect
@@ -31,7 +33,7 @@ namespace rl::ds {
         }
 
         // copy construct rect<T> from 'other' l-value rect<T>
-        constexpr rect(const rect<T>& other)
+        constexpr explicit rect(const rect<T>& other)
             : pt{ other.pt }
             , size{ other.size }
         {
@@ -41,7 +43,7 @@ namespace rl::ds {
         // from l-value rect<integer>
         template <rl::integer I>
             requires rl::floating_point<T>
-        constexpr rect(const rect<I>& other)
+        explicit constexpr rect(const rect<I>& other)
             : pt{ static_cast<T>(other.pt.x), static_cast<T>(other.pt.y) }
             , size{ static_cast<T>(other.size.width), static_cast<T>(other.size.height) }
         {
@@ -62,9 +64,9 @@ namespace rl::ds {
         }
 
         // construct rect from r-value (top left) point<T> and dims<T> size
-        constexpr rect(point<T>&& pnt, dims<T>&& dims)
-            : pt{ pnt }
-            , size{ dims }
+        constexpr rect(point<T>&& pnt, dims<T>&& dims) noexcept
+            : pt{ std::move(pnt) }
+            , size{ std::move(dims) }
         {
         }
 
@@ -96,7 +98,7 @@ namespace rl::ds {
         //   Initialized as: rect<T>{ point<T>::null(), dims<T>::null() }
         constexpr static rect<T> null()
         {
-            return rect<T>{
+            return rect{
                 point<T>::null(),
                 dims<T>::null(),
             };
@@ -131,16 +133,6 @@ namespace rl::ds {
         // Checks if the rectangle has no area
         [[nodiscard]]
         constexpr bool is_empty() const
-            requires rl::floating_point<T>
-        {
-            constexpr T epsilon{ std::numeric_limits<T>::epsilon() };
-            return std::abs(this->area()) <= epsilon;
-        }
-
-        // Checks if the rectangle has no area
-        [[nodiscard]]
-        constexpr bool is_empty() const
-            requires rl::integer<T>
         {
             return math::equal(this->area(), 0);
         }
@@ -263,7 +255,7 @@ namespace rl::ds {
             return *this;
         }
 
-        // Gets the center point of the rectangle
+        // Expands a rect by the amount on all sides
         [[nodiscard]]
         constexpr rect<T> expanded(T amount) const noexcept
 
@@ -276,6 +268,40 @@ namespace rl::ds {
                 dims{
                     this->size.width + (amount * 2),
                     this->size.height + (amount * 2),
+                },
+            };
+        }
+
+        // Expands a rect by the specific amounts on each side
+        [[nodiscard]]
+        constexpr rect<T> expanded(T top, T bottom, T left, T right) const noexcept
+
+        {
+            return rect{
+                point{
+                    this->pt.x - left,
+                    this->pt.y - top,
+                },
+                dims{
+                    this->size.width + (left + right),
+                    this->size.height + (top + bottom),
+                },
+            };
+        }
+
+        // Expands a rect by the specific amounts on each side
+        [[nodiscard]]
+        constexpr rect<T> expanded(ds::margin<T> expansion) const noexcept
+
+        {
+            return rect{
+                point{
+                    this->pt.x - expansion.left,
+                    this->pt.y - expansion.top,
+                },
+                dims{
+                    this->size.width + (expansion.left + expansion.right),
+                    this->size.height + (expansion.top + expansion.bottom),
                 },
             };
         }
@@ -626,8 +652,8 @@ namespace rl::ds {
         // Copy assignment
         constexpr rect<T>& operator=(const rect<T>& other)
         {
-            this->pt = std::forward<point<T>>(other.pt);
-            this->size = std::forward<dims<T>>(other.size);
+            this->pt = other.pt;
+            this->size = other.size;
             return *this;
         }
 

@@ -34,10 +34,10 @@ namespace rl::inline constraint {
                         integer<std::type_identity_t<T>>)&&...);
 
     template <auto... N>
-    concept positive_numeric = ((numeric<decltype(N)> && N > 0) || ...);
+    concept positive_numeric_v = ((numeric<decltype(N)> && N > 0) && ...);
 
     template <auto... N>
-    concept negative_numeric = ((numeric<decltype(N)> && N < 0) || ...);
+    concept negative_numeric_v = ((numeric<decltype(N)> && N < 0) && ...);
 
     template <auto A, auto B>
     concept equal_v = (std::same_as<decltype(A), decltype(B)> && numeric<decltype(A)> &&
@@ -58,16 +58,18 @@ namespace rl::inline constraint {
     concept less_than_or_eq = (greater_than<A, B> || equal_v<A, B>);
 
     template <auto... N>
-    concept positive_floating_point = ((positive_numeric<N> && floating_point<decltype(N)>) || ...);
+    concept positive_floating_point = ((positive_numeric_v<N> && floating_point<decltype(N)>) ||
+                                       ...);
 
     template <auto... N>
-    concept negative_floating_point = ((negative_numeric<N> && floating_point<decltype(N)>) || ...);
+    concept negative_floating_point = ((negative_numeric_v<N> && floating_point<decltype(N)>) ||
+                                       ...);
 
     template <auto... N>
-    concept positive_integer = ((positive_numeric<N> && integer<decltype(N)>) || ...);
+    concept positive_integer = ((positive_numeric_v<N> && integer<decltype(N)>) || ...);
 
     template <auto... N>
-    concept negative_integer = ((negative_numeric<N> && integer<decltype(N)>) || ...);
+    concept negative_integer = ((negative_numeric_v<N> && integer<decltype(N)>) || ...);
 
     template <typename L, typename R>
     concept higher_precision = (floating_point<L, R> && greater_than<std::numeric_limits<L>::max(),
