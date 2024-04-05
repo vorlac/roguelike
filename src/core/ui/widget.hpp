@@ -169,7 +169,7 @@ namespace rl::ui {
 
     protected:
         constexpr static inline f32 RESIZE_GRAB_BUFFER{ 5.0f };
-        constexpr static bool DiagnosticsEnabled{ false };
+        constexpr static bool DiagnosticsEnabled{ true };
         constexpr static inline const Theme DEFAULT_THEME{ Theme{} };
     };
 }

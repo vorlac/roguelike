@@ -3,7 +3,6 @@
 #include "core/ui/theme.hpp"
 #include "core/ui/widgets/label.hpp"
 #include "ds/dims.hpp"
-#include "ds/shared.hpp"
 #include "graphics/vg/nanovg.hpp"
 
 namespace rl::ui {

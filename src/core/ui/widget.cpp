@@ -1,5 +1,6 @@
 #include <memory>
 #include <ranges>
+#include <utility>
 
 #include "core/keyboard.hpp"
 #include "core/main_window.hpp"
@@ -37,6 +38,9 @@ namespace rl::ui {
         for (const auto child : m_children)
             if (child != nullptr)
                 child->release_ref();
+
+        // if (m_layout != nullptr)
+        //     m_layout->release_ref();
     }
 
     Widget* Widget::parent()
@@ -61,9 +65,8 @@ namespace rl::ui {
 
     void Widget::assign_layout(Layout* layout)
     {
-        layout->set_owner(this);
-        this->add_child(layout->layout_panel());
-        m_layout = layout;
+        runtime_assert(m_layout == nullptr, "overwriting existing layout");
+        this->add_child(layout);
     }
 
     const Theme* Widget::theme() const
@@ -88,12 +91,12 @@ namespace rl::ui {
 
     void Widget::set_position(ds::point<f32> pos) noexcept
     {
-        m_rect.pt = pos;
+        m_rect.pt = std::move(pos);
     }
 
     void Widget::set_rect(ds::rect<f32> rect) noexcept
     {
-        m_rect = rect;
+        m_rect = std::move(rect);
     }
 
     ds::point<f32> Widget::abs_position() const
@@ -239,7 +242,11 @@ namespace rl::ui {
     void Widget::perform_layout()
     {
         for (Widget* child : m_children)
+        {
             child->perform_layout();
+            // if (child->m_layout != nullptr)
+            //     child->m_layout->apply_layout();
+        }
 
         if (m_layout != nullptr)
             m_layout->apply_layout();

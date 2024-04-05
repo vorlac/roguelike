@@ -19,18 +19,10 @@ namespace rl::ui {
     class BoxLayout final : public Layout
     {
     public:
-        friend class Widget;
         constexpr static inline Arrangement orientation = VOrientation;
+        using Layout::Layout;
 
     public:
-        constexpr BoxLayout() = default;
-
-        constexpr explicit BoxLayout(std::string&& name)
-        {
-            m_layout_panel->set_name(name);
-            m_layout_panel->set_tooltip(name);
-        }
-
         u64 columns() const
             requires std::same_as<VOrientation, Arrangement::Horizontal>
         {
@@ -101,23 +93,31 @@ namespace rl::ui {
                     curr_widget_pos.x += width_offset;
                 }
 
+                // offset the widget's local position, relative to
+                // parent layout widget, by it's top & left margin
+                widget_bounding_rect.pt.x += m_outer_margin.left;
+                widget_bounding_rect.pt.y += m_outer_margin.top;
+
+                // assign the current child's position and dimensions
                 widget->set_rect(std::move(widget_bounding_rect));
+
+                // grow the current layout's position and dimensions
+                // so that it includes the newly computed child rect
                 layout_rect.expand(widget_margins_rect);
             }
 
-            // curr_rect.size.width += m_outer_margin.vertical();
-            // curr_rect.size.height += m_outer_margin.horizontal();
+            // increase the total dimensions by the layout widget's
+            // absolute vertical and hotizontal outer margin values
+            layout_rect.size.width += m_outer_margin.vertical();
+            layout_rect.size.height += m_outer_margin.horizontal();
 
-            m_layout_panel->set_rect(std::move(layout_rect));
+            // assign the newly computed rect for the layout widget
+            this->set_rect(std::move(layout_rect));
         }
 
         virtual ds::dims<f32> computed_size() const override
-
         {
-            ds::dims<f32> size{};
-            for (auto&& props : m_cell_data | std::views::values)
-                size += props.rect.size;
-            return size;
+            return this->size();
         }
     };
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core/ui/widgets/panel.hpp"
+#include "core/ui/widget.hpp"
 #include "ds/margin.hpp"
 #include "ds/refcounted.hpp"
 #include "graphics/vg/nanovg.hpp"
@@ -53,49 +53,26 @@ namespace rl::ui {
         ds::rect<f32> rect{ 0.0f, 0.0f, 0.0f, 0.0f };
     };
 
-    class Layout : public ds::refcounted
+    class Layout : public Widget
     {
     public:
-        constexpr Layout() = default;
-
-        constexpr virtual ~Layout() override
+        explicit Layout(std::string&& name)
+            : Widget(nullptr)
         {
-            m_layout_panel = nullptr;
+            this->set_name(name);
+            this->set_tooltip(name);
+            m_layout = this;
         }
 
-        Widget* owner() const
+        void add_widget(Widget* widget, CellProperties properties = {})
         {
-            return m_layout_owner;
-        }
-
-        void set_owner(Widget* widget)
-        {
-            m_layout_owner = widget;
-        }
-
-        Panel* layout_panel() const
-        {
-            return m_layout_panel;
-        }
-
-        void add_widget(Widget* widget, CellProperties properties)
-        {
-            m_layout_panel->add_child(widget);
+            this->add_child(widget);
             m_cell_data.emplace_back(widget, std::move(properties));
         }
 
-        void add_widget(Widget* widget)
+        void add_nested_layout(Layout* layout, CellProperties properties = {})
         {
-            this->add_widget(widget, {});
-        }
-
-        void add_nested_layout(Layout* layout, CellProperties properties)
-        {
-            // assign the nested layout
-            m_layout_panel->assign_layout(layout);
-            // add the nested inner layout's panel as the widget being arranged
-            // by the one it was passed into (`this` in the current call's scope).
-            this->add_widget(layout->layout_panel(), std::move(properties));
+            this->add_widget(layout, std::move(properties));
         }
 
         auto widgets() const
@@ -110,13 +87,6 @@ namespace rl::ui {
         virtual ds::dims<f32> computed_size() const = 0;
 
     protected:
-        // the parent widget this layout will be arranging
-        Widget* m_layout_owner{ nullptr };
-
-        // empty panel widget used as a simple container
-        // for widgets being managed by this layout
-        Panel* m_layout_panel{ new Panel{ nullptr } };
-
         std::vector<std::pair<Widget*, CellProperties>> m_cell_data{};
         ds::margin<f32> m_outer_margin{ 10.0f, 10.0f, 10.0f, 10.0f };
     };

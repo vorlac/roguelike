@@ -73,8 +73,8 @@ namespace rl {
             layout_r->add_widget(new ui::Label{ "3" });
 
             auto horiz_layout{ new ui::BoxLayout<Arrangement::Horizontal>("ABC123 Combined Horiz") };
-            horiz_layout->add_nested_layout(layout_l, {});
-            horiz_layout->add_nested_layout(layout_r, {});
+            horiz_layout->add_nested_layout(layout_l);
+            horiz_layout->add_nested_layout(layout_r);
 
             m_main_window->gui()->assign_layout(horiz_layout);
 
@@ -82,8 +82,6 @@ namespace rl {
             while (!this->should_exit())
             {
                 this->handle_events();
-                // dialog->perform_layout();
-                // dialog->layout()->apply_layout();
                 this->update();
                 this->render();
 
