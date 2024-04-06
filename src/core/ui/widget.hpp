@@ -49,44 +49,42 @@ namespace rl::ui {
         f32 fixed_height() const;
         f32 font_size() const;
         f32 icon_extra_scale() const;
-        // TODO: change to size_t
-        i32 child_index(const Widget* widget) const;
-        i32 child_count() const;
+        u64 child_index(const Widget* widget) const;
+        u64 child_count() const;
 
         Canvas* canvas();
         Widget* parent();
         Layout* layout();
         ScrollableDialog* dialog();
 
-        //  TODO: change to size_t
-        Widget* child_at(i32 index);
+        Widget* child_at(u64 index);
         Mouse::Cursor::ID cursor() const;
         ds::rect<f32> resize_rect() const;
         ds::point<f32> abs_position() const;
 
-        const ds::point<f32>& position() const;
-        const ds::dims<f32>& fixed_size() const;
-        const ds::dims<f32>& min_size() const;
-        const ds::dims<f32>& max_size() const;
-        const ds::dims<f32>& size() const;
+        ds::point<f32> position() const;
+        ds::dims<f32> fixed_size() const;
+        ds::dims<f32> min_size() const;
+        ds::dims<f32> max_size() const;
+        ds::dims<f32> size() const;
         const ds::rect<f32>& rect() const;
         const Theme* theme() const;
         const Canvas* canvas() const;
         const ScrollableDialog* dialog() const;
         const Widget* parent() const;
-        const Widget* child_at(i32 index) const;
+        const Widget* child_at(u64 index) const;
         const std::vector<Widget*>& children() const;
         const std::string& tooltip() const;
         const std::string& name() const;
 
         void assign_layout(Layout* layout);
         void set_parent(Widget* parent);
-        void set_position(const ds::point<f32>& pos);
-        void set_rect(const ds::rect<f32>& rect);
-        void set_size(const ds::dims<f32>& size);
+        void set_position(ds::point<f32> pos);
+        void set_rect(ds::rect<f32> rect);
+        void set_size(ds::dims<f32> size);
         void set_width(f32 width);
         void set_height(f32 height);
-        void set_fixed_size(const ds::dims<f32>& fixed_size);
+        void set_fixed_size(ds::dims<f32> fixed_size);
         void set_fixed_width(f32 width);
         void set_fixed_height(f32 height);
         void set_enabled(bool enabled);
@@ -100,8 +98,7 @@ namespace rl::ui {
         void set_max_size(ds::dims<f32> max_size);
 
         void request_focus();
-        // TODO: change to size_t
-        void remove_child_at(i32 index);
+        void remove_child_at(u64 index);
         void remove_child(const Widget* widget);
 
         // TODO: get rid of this
@@ -134,14 +131,14 @@ namespace rl::ui {
         virtual void set_visible(bool visible);
         virtual void set_theme(Theme* theme);
         virtual void add_child(Widget* widget);
-        virtual void add_child(i32 index, Widget* widget);
+        virtual void add_child(u64 index, Widget* widget);
         virtual void perform_layout();
         virtual void draw();
 
         virtual ds::dims<f32> preferred_size() const;
-        virtual Widget* find_widget(const ds::point<f32>& pt);
-        virtual bool contains(const ds::point<f32>& pt);
-        virtual bool draw_mouse_intersection(const ds::point<f32>& pt);
+        virtual Widget* find_widget(ds::point<f32> pt);
+        virtual bool contains(ds::point<f32> pt);
+        virtual bool draw_mouse_intersection(ds::point<f32> pt);
 
     protected:
         f32 icon_scale() const;

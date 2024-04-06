@@ -12,7 +12,7 @@ namespace rl::ui {
 
     struct CellProperties
     {
-        Alignment alignment{ Alignment::Fill };
+        Placement_OldAlignment alignment{ Placement_OldAlignment::Fill };
 
         // the gap of space measured from the inner text/icon/etc
         // drawn in a widget to the outer border of the widget
@@ -51,12 +51,6 @@ namespace rl::ui {
 
         // the layout cell's rectangle (debug only)
         ds::rect<f32> rect{ 0.0f, 0.0f, 0.0f, 0.0f };
-    };
-
-    enum class SizePolicy {
-        FixedSize,
-        Minimum,
-        Prefered,
     };
 
     class Layout : public Widget
@@ -98,6 +92,11 @@ namespace rl::ui {
             return m_size_policy;
         }
 
+        Alignment alignment() const
+        {
+            return m_alignment;
+        }
+
         const ds::margin<f32>& outer_margin() const
         {
             return m_outer_margin;
@@ -112,6 +111,7 @@ namespace rl::ui {
     protected:
         SizePolicy m_size_policy{ SizePolicy::Prefered };
         std::vector<std::pair<Widget*, CellProperties>> m_cell_data{};
+        Alignment m_alignment{ Alignment::None };
     };
 
     class OldLayout : public ds::refcounted

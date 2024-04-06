@@ -161,20 +161,19 @@ namespace rl::ui {
     class OldBoxLayout final : public OldLayout
     {
     public:
-        explicit OldBoxLayout(Arrangement orientation,                  // horizontal or vertical
-                              Alignment alignment = Alignment::Center,  // min, middle, max, full
-                              f32 margin = 0.0f,                        // the widget margins
-                              f32 spacing = 0.0f);                      // the widget spacing
+        explicit OldBoxLayout(Alignment orientation,
+                              Placement_OldAlignment alignment = Placement_OldAlignment::Center,
+                              f32 margin = 0.0f, f32 spacing = 0.0f);
 
         f32 margin() const;
         f32 spacing() const;
-        Alignment alignment() const;
-        Arrangement orientation() const;
+        Placement_OldAlignment alignment() const;
+        Alignment orientation() const;
 
         void set_margin(f32 margin);
         void set_spacing(f32 spacing);
-        void set_orientation(Arrangement orientation);
-        void set_alignment(Alignment alignment);
+        void set_orientation(Alignment orientation);
+        void set_alignment(Placement_OldAlignment alignment);
 
     public:
         virtual void apply_layout(nvg::Context* nvg_context, const Widget* widget) const override;
@@ -184,7 +183,7 @@ namespace rl::ui {
     protected:
         f32 m_margin{ 0.0f };
         f32 m_spacing{ 0.0f };
-        Arrangement m_orientation{};
-        Alignment m_alignment{};
+        Alignment m_orientation{};
+        Placement_OldAlignment m_alignment{};
     };
 }

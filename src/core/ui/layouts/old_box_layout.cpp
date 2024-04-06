@@ -14,7 +14,7 @@
 #include "utils/numeric.hpp"
 
 namespace rl::ui {
-    OldBoxLayout::OldBoxLayout(const Arrangement orientation, const Alignment alignment,
+    OldBoxLayout::OldBoxLayout(const Alignment orientation, const Placement_OldAlignment alignment,
                                const f32 margin, const f32 spacing)
         : m_margin{ margin }
         , m_spacing{ spacing }
@@ -35,7 +35,7 @@ namespace rl::ui {
         if (dialog != nullptr && !dialog->title().empty())
         {
             const auto header_size{ dialog->header_height() };
-            if (m_orientation == Arrangement::Vertical)
+            if (m_orientation == Alignment::Vertical)
                 size.height += header_size - (m_margin / 2.0f);
             else
                 y_offset = header_size;
@@ -81,7 +81,7 @@ namespace rl::ui {
         const auto dialog{ dynamic_cast<const Dialog*>(widget) };
         if (dialog != nullptr && !dialog->title().empty())
         {
-            if (m_orientation == Arrangement::Vertical)
+            if (m_orientation == Alignment::Vertical)
                 position += dialog->header_height() - (m_margin / 2.0f);
             else
             {
@@ -115,22 +115,22 @@ namespace rl::ui {
             pos.x = position;
             switch (m_alignment)
             {
-                case Alignment::Minimum:
+                case Placement_OldAlignment::Minimum:
                     pos.y += m_margin;
                     break;
-                case Alignment::Center:
+                case Placement_OldAlignment::Center:
                     pos.y += (container_size.height - target_size.height) / 2.0f;
                     break;
-                case Alignment::Maximum:
+                case Placement_OldAlignment::Maximum:
                     pos.y += container_size.height - target_size.height - m_margin * 2.0f;
                     break;
-                case Alignment::Fill:
+                case Placement_OldAlignment::Fill:
                     pos.y += m_margin;
                     target_size.height = std::fabs(fs.height) > std::numeric_limits<f32>::epsilon()
                                            ? fs.height
                                            : (container_size.height - m_margin * 2.0f);
                     break;
-                case Alignment::None:
+                case Placement_OldAlignment::None:
                     assert_cond(false);
                     break;
             }
@@ -138,27 +138,27 @@ namespace rl::ui {
             position += target_size.width;
 
             child->set_position(std::move(pos));
-            child->set_size(std::move(target_size));
+            child->set_size(target_size);
             child->perform_layout();
         }
     }
 
-    Arrangement OldBoxLayout::orientation() const
+    Alignment OldBoxLayout::orientation() const
     {
         return m_orientation;
     }
 
-    void OldBoxLayout::set_orientation(const Arrangement orientation)
+    void OldBoxLayout::set_orientation(const Alignment orientation)
     {
         m_orientation = orientation;
     }
 
-    Alignment OldBoxLayout::alignment() const
+    Placement_OldAlignment OldBoxLayout::alignment() const
     {
         return m_alignment;
     }
 
-    void OldBoxLayout::set_alignment(const Alignment alignment)
+    void OldBoxLayout::set_alignment(const Placement_OldAlignment alignment)
     {
         m_alignment = alignment;
     }

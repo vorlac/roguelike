@@ -10,6 +10,7 @@
 #include "core/ui/layouts/grid_layout.hpp"
 #include "core/ui/widgets/scroll_dialog.hpp"
 #include "ds/dims.hpp"
+#include "utils/conversions.hpp"
 #include "utils/numeric.hpp"
 #include "utils/properties.hpp"
 
@@ -36,9 +37,9 @@ namespace rl::ui {
     void GridLayout::compute_layout(nvg::Context* nvg_context, const Widget* widget,
                                     std::array<std::vector<f32>, 2>& grid) const
     {
-        const i32 axis1{ std::to_underlying(m_orientation) };
-        const i32 axis2{ (axis1 + 1) % 2 };
-        const i32 num_children{ widget->child_count() };
+        const u32 axis1{ static_cast<u32>(m_orientation) };
+        const u32 axis2{ (axis1 + 1) % 2 };
+        const u64 num_children{ widget->child_count() };
 
         i32 visible_children{ 0 };
         for (auto w : widget->children())
@@ -156,14 +157,14 @@ namespace rl::ui {
         ds::point start{ start_offset.width, start_offset.height };
         ds::point pos{ start };
 
-        i32& axis1_pos{ axis1 == Arrangement::Horizontal ? pos.x : pos.y };
-        i32& axis2_pos{ axis2 == Arrangement::Horizontal ? pos.x : pos.y };
+        i32& axis1_pos{ axis1 == Alignment::Horizontal ? pos.x : pos.y };
+        i32& axis2_pos{ axis2 == Alignment::Horizontal ? pos.x : pos.y };
 
         u32 child_idx{ 0 };
         for (u32 i2 = 0; i2 < static_cast<u32>(dim[axis2]); i2++)
         {
-            const i32& s{ m_orientation == Arrangement::Horizontal ? start.x : start.y };
-            i32& p{ m_orientation == Arrangement::Horizontal ? pos.x : pos.y };
+            const i32& s{ m_orientation == Alignment::Horizontal ? start.x : start.y };
+            i32& p{ m_orientation == Alignment::Horizontal ? pos.x : pos.y };
 
             p = s;
             for (u32 i1 = 0; i1 < static_cast<u32>(dim[axis1]); i1++)
@@ -186,33 +187,37 @@ namespace rl::ui {
                                                                                : ps.height,
                 };
 
-                ds::point<f32> item_pos{ pos };
+                ds::point item_pos{
+                    static_cast<f32>(pos.x),
+                    static_cast<f32>(pos.y),
+                };
+
                 for (u32 j = 0; j < 2; j++)
                 {
                     const u32 axis_idx{ (axis1 + j) % 2 };
                     const u32 item_idx{ j == 0 ? i1 : i2 };
-                    const Alignment align{ this->alignment(static_cast<Axis>(axis_idx), item_idx) };
+                    const Placement_OldAlignment align{ this->alignment(static_cast<Axis>(axis_idx),
+                                                                        item_idx) };
 
                     f32& item_axis_pos{ axis_idx == Axis::Horizontal ? item_pos.x : item_pos.y };
-                    f32& fs_axis_size{ axis_idx == Arrangement::Horizontal ? fs.width : fs.height };
-                    f32& target_axis_size{ axis_idx == Arrangement::Horizontal
-                                               ? target_size.width
-                                               : target_size.height };
+                    f32& fs_axis_size{ axis_idx == Alignment::Horizontal ? fs.width : fs.height };
+                    f32& target_axis_size{ axis_idx == Alignment::Horizontal ? target_size.width
+                                                                             : target_size.height };
                     switch (align)
                     {
-                        case Alignment::Minimum:
+                        case Placement_OldAlignment::Minimum:
                             break;
-                        case Alignment::Center:
+                        case Placement_OldAlignment::Center:
                             item_axis_pos += (grid[axis_idx][item_idx] - target_axis_size) / 2.0f;
                             break;
-                        case Alignment::Maximum:
+                        case Placement_OldAlignment::Maximum:
                             item_axis_pos += grid[axis_idx][item_idx] - target_axis_size;
                             break;
-                        case Alignment::Fill:
+                        case Placement_OldAlignment::Fill:
                             target_axis_size = (fs_axis_size != 0.0f) ? fs_axis_size
                                                                       : grid[axis_idx][item_idx];
                             break;
-                        case Alignment::None:
+                        case Placement_OldAlignment::None:
                             assert_cond(false);
                             break;
                     }
@@ -230,12 +235,12 @@ namespace rl::ui {
         }
     }
 
-    Arrangement GridLayout::orientation() const
+    Alignment GridLayout::orientation() const
     {
         return m_orientation;
     }
 
-    void GridLayout::set_orientation(const Arrangement orientation)
+    void GridLayout::set_orientation(const Alignment orientation)
     {
         m_orientation = orientation;
     }
@@ -295,7 +300,7 @@ namespace rl::ui {
         m_margin = margin;
     }
 
-    Alignment GridLayout::alignment(Axis axis, i32 item) const
+    Placement_OldAlignment GridLayout::alignment(Axis axis, i32 item) const
     {
         i32 axis_idx = std::to_underlying(axis);
         if (item < static_cast<i32>(m_alignment[axis_idx].size()))
@@ -304,22 +309,22 @@ namespace rl::ui {
             return m_default_alignment[axis_idx];
     }
 
-    void GridLayout::set_col_alignment(Alignment value)
+    void GridLayout::set_col_alignment(Placement_OldAlignment value)
     {
         m_default_alignment[std::to_underlying(Axis::Horizontal)] = value;
     }
 
-    void GridLayout::set_row_alignment(Alignment value)
+    void GridLayout::set_row_alignment(Placement_OldAlignment value)
     {
         m_default_alignment[std::to_underlying(Axis::Vertical)] = value;
     }
 
-    void GridLayout::set_col_alignment(const std::vector<Alignment>& value)
+    void GridLayout::set_col_alignment(const std::vector<Placement_OldAlignment>& value)
     {
         m_alignment[std::to_underlying(Axis::Horizontal)] = value;
     }
 
-    void GridLayout::set_row_alignment(const std::vector<Alignment>& value)
+    void GridLayout::set_row_alignment(const std::vector<Placement_OldAlignment>& value)
     {
         m_alignment[std::to_underlying(Axis::Vertical)] = value;
     }

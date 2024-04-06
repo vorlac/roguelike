@@ -53,7 +53,7 @@ namespace rl::ui {
 
     bool Canvas::draw_widgets()
     {
-        auto&& context{ m_renderer->context() };
+        const auto context{ m_renderer->context() };
         constexpr static f32 PIXEL_RATIO{ 1.0f };
         nvg::begin_frame(context, m_rect.size.width, m_rect.size.height, PIXEL_RATIO);
 
@@ -75,9 +75,10 @@ namespace rl::ui {
             const Widget* widget{ this->find_widget(m_mouse.pos()) };
             if (widget != nullptr && !widget->tooltip().empty())
             {
-                constexpr f32 tooltip_width{ 150.0f };
+                // TODO: add to theme style sheet
+                constexpr static f32 TOOLTIP_WIDTH{ 150.0f };
                 std::array<f32, 4> bounds = { 0.0f };
-                ds::point pos{
+                ds::point<f32> pos{
                     widget->position() +
                         ds::point{
                             (widget->width() / 2.0f),
@@ -93,10 +94,10 @@ namespace rl::ui {
                                   bounds.data());
 
                 f32 height{ (bounds[2] - bounds[0]) / 2.0f };
-                if (height > (tooltip_width / 2.0f))
+                if (height > (TOOLTIP_WIDTH / 2.0f))
                 {
                     nvg::set_text_align(context, nvg::Align::HCenter | nvg::Align::VTop);
-                    nvg::text_box_bounds_(context, pos.x, pos.y, tooltip_width,
+                    nvg::text_box_bounds_(context, pos.x, pos.y, TOOLTIP_WIDTH,
                                           widget->tooltip().c_str(), nullptr, bounds.data());
 
                     height = (bounds[2] - bounds[0]) / 2;
@@ -130,7 +131,7 @@ namespace rl::ui {
 
                 nvg::fill_color(context, rl::Colors::White);
                 nvg::font_blur_(context, 0.0f);
-                nvg::text_box_(context, pos.x - height, pos.y, tooltip_width,
+                nvg::text_box_(context, pos.x - height, pos.y, TOOLTIP_WIDTH,
                                widget->tooltip().c_str(), nullptr);
             }
         }

@@ -12,83 +12,37 @@
 
 namespace rl::ds {
 #pragma pack(4)
-
     template <rl::numeric T>
     using point = vector2<T>;
 
     template <rl::numeric T>
     struct vector2
     {
-        constexpr ~vector2() = default;
-
-        constexpr vector2()
-            : x{ std::numeric_limits<T>::max() }
-            , y{ std::numeric_limits<T>::max() }
-        {
-        }
-
-        constexpr vector2(const T tx, const T ty, const T tz = 0)
-            : x{ static_cast<T>(tx) }
-            , y{ static_cast<T>(ty) }
-            , z{ static_cast<T>(tz) }
-        {
-        }
-
-        constexpr vector2(const vector2<T>& other)
-            : x{ static_cast<T>(other.x) }
-            , y{ static_cast<T>(other.y) }
-        {
-        }
-
-        constexpr vector2(vector2<T>&& other) noexcept
-            : x{ std::move(other.x) }
-            , y{ std::move(other.y) }
-        {
-        }
-
-        template <rl::integer I>
-            requires rl::floating_point<T>
-        constexpr vector2(const vector2<I>& other)
-            : x{ static_cast<T>(other.x) }
-            , y{ static_cast<T>(other.y) }
-        {
-        }
-
-        template <rl::integer I>
-            requires rl::floating_point<T>
-        constexpr vector2(vector2<I>&& other) noexcept
-            : x{ static_cast<T>(other.x) }
-            , y{ static_cast<T>(other.y) }
-        {
-        }
-
-        constexpr T* ptr()
-        {
-            return &x;
-        }
-
-        constexpr static vector2<T> null()
-        {
-            return vector2{};
-        }
-
         [[nodiscard]]
-        constexpr bool is_null() const
-        {
-            return *this == point<T>::null();
-        }
-
         consteval static vector2<T> zero()
         {
-            return vector2{ 0, 0 };
+            return vector2{
+                static_cast<T>(0),
+                static_cast<T>(0),
+            };
         }
 
         [[nodiscard]]
-        constexpr bool is_zero() const
-            requires rl::integer<T>
+        consteval static vector2<T> null()
         {
-            return math::equal(this->x, 0) &&  //
-                   math::equal(this->y, 0);
+            return vector2{
+                std::numeric_limits<T>::max(),
+                std::numeric_limits<T>::max(),
+            };
+        }
+
+        [[nodiscard]]
+        constexpr static vector2<T> from_angle(const f32 angle)
+        {
+            return vector2{
+                std::cosf(angle),
+                std::sinf(angle),
+            };
         }
 
         [[nodiscard]]
@@ -103,6 +57,7 @@ namespace rl::ds {
             return (x * x) + (y * y);
         }
 
+        [[nodiscard]]
         constexpr vector2<T> clamped_length(const f32 maxlen) const
         {
             vector2 ret{ *this };
@@ -117,26 +72,31 @@ namespace rl::ds {
             return ret;
         }
 
+        [[nodiscard]]
         constexpr f32 distance_squared(const vector2<T>& other) const
         {
             return ((x - other.x) * (x - other.x)) + ((y - other.y) * (y - other.y));
         }
 
+        [[nodiscard]]
         constexpr f32 distance(const vector2<T>& other) const
         {
             return sqrt(this->distance_squared(other));
         }
 
+        [[nodiscard]]
         constexpr f32 angle_to_vec(const vector2<T>& other) const
         {
             return atan2(this->cross_product(other), this->dot_product(other));
         }
 
+        [[nodiscard]]
         constexpr f32 angle_to_point(const vector2<T>& pt) const
         {
             return (pt - *this).angle();
         }
 
+        [[nodiscard]]
         constexpr CompassDirection dir()
         {
             CompassDirection ret{ CompassDirection::None };
@@ -154,7 +114,8 @@ namespace rl::ds {
             return ret;
         }
 
-        constexpr const vector2& normalize()
+        [[nodiscard]]
+        constexpr const vector2<T>& normalize()
         {
             const f32 len_sq{ this->length_squared() };
             if (len_sq != 0.0f)
@@ -166,93 +127,75 @@ namespace rl::ds {
             return *this;
         }
 
+        [[nodiscard]]
         constexpr vector2<T> normalized() const
         {
-            vector2 ret{ x, y };
+            vector2 ret{ this->x, this->y };
             return ret.normalize();
         }
 
         [[nodiscard]]
         constexpr f32 angle() const
         {
-            return std::atan2f(y, x);
+            return std::atan2f(this->y, this->x);
         }
 
-        constexpr static vector2<T> from_angle(const f32 angle)
-        {
-            return vector2{
-                std::cosf(angle),
-                std::sinf(angle),
-            };
-        }
-
-        constexpr f32 angle_to(const vector2& pt) const
+        [[nodiscard]]
+        constexpr f32 angle_to(const vector2<T>& pt) const
         {
             return (pt - *this).angle();
         }
 
-        constexpr f32 dot_product(const vector2& other) const
+        [[nodiscard]]
+        constexpr f32 dot_product(const vector2<T>& other) const
         {
-            return (x * other.x) + (y * other.y);
+            return (this->x * other.x) + (this->y * other.y);
         }
 
-        constexpr f32 cross_product(const vector2& other) const
+        [[nodiscard]]
+        constexpr f32 cross_product(const vector2<T> other) const
         {
-            return (x * other.y) - (y * other.x);
+            return (this->x * other.y) - (this->y * other.x);
         }
 
+        [[nodiscard]]
         constexpr vector2 rotated(const f32 radians) const
         {
             f32 s{ std::sin(radians) };
             f32 c{ std::cos(radians) };
 
             return vector2{
-                (x * c) - (y * s),
-                (x * s) + (y * c),
+                (this->x * c) - (this->y * s),
+                (this->x * s) + (this->y * c),
             };
         }
 
-        constexpr vector2 clamp(const vector2& min, const vector2& max) const
+        [[nodiscard]]
+        constexpr vector2 clamp(vector2<T> min, vector2<T> max) const
         {
             return vector2{
-                std::clamp(x, min.x, max.x),
-                std::clamp(y, min.y, max.y),
+                std::clamp(this->x, min.x, max.x),
+                std::clamp(this->y, min.y, max.y),
             };
         }
 
-        constexpr bool operator==(const vector2<T>& other) const
+        [[nodiscard]]
+        constexpr vector2<T> lerp(const vector2<T> to, const f32 weight) const
         {
-            return math::equal(x, other.x) &&  //
-                   math::equal(y, other.y);
-        }
-
-        constexpr bool operator==(const vector2<T>& other) const
-            requires rl::floating_point<T>
-        {
-            return math::equal(x, other.x) &&  //
-                   math::equal(y, other.y);
-        }
-
-        constexpr bool operator!=(const vector2<T>& other) const
-        {
-            return math::not_equal(x, other.x) ||  //
-                   math::not_equal(y, other.y);
-        }
-
-        constexpr vector2<T> lerp(const vector2<T>& to, const f32 weight) const
-        {
-            vector2<T> ret{ *this };
+            vector2 ret{ *this };
             ret.x = std::lerp(ret.x, to.x, weight);
             ret.y = std::lerp(ret.y, to.y, weight);
             return ret;
         }
 
-        constexpr vector2<T> slerp(const vector2<T>& to, const f32 weight) const
+        [[nodiscard]]
+        constexpr vector2<T> slerp(const vector2<T> to, const f32 weight) const
         {
-            f32 start_len_sq{ this->length_squared() };
-            f32 end_len_sq{ to.length_squared() };
+            const f32 start_len_sq{ this->length_squared() };
+            const f32 end_len_sq{ to.length_squared() };
 
-            if (start_len_sq == T(0) || end_len_sq == T(0)) [[unlikely]]
+            if (math::equal(start_len_sq, static_cast<T>(0)) ||
+                math::equal(end_len_sq, static_cast<T>(0))) [[unlikely]]
             {
                 // zero length vectors have no angle, so the best
                 // we can do is either lerp or throw an error.
@@ -266,55 +209,54 @@ namespace rl::ds {
             return this->rotated(angle * weight) * (result_length / start_length);
         }
 
-        constexpr vector2<T> move_towards(const vector2<T>& target, const f32 delta) const
+        [[nodiscard]]
+        constexpr vector2<T> move_towards(const vector2<T> target, const f32 delta) const
         {
-            vector2<T> vec_delta{ target - *this };
-
-            const f32 vd_len = vec_delta.length();
+            const vector2 vec_delta{ target - *this };
+            const f32 vd_len{ vec_delta.length() };
             return vd_len <= delta || vd_len < std::numeric_limits<f32>::epsilon()
                      ? target
                      : (*this + vec_delta) / (vd_len * delta);
         }
 
-        constexpr vector2<T> slide(const vector2<T>& normal) const
+        [[nodiscard]]
+        constexpr vector2<T> slide(const vector2<T> normal) const
         {
-            return { *this - (normal * this->dot_product(normal)) };
+            return *this - (normal * this->dot_product(normal));
         }
 
-        constexpr vector2<T> reflect(const vector2<T>& normal) const
+        [[nodiscard]]
+        constexpr vector2<T> reflect(const vector2<T> normal) const
         {
-            return { (cast::to<T>(2.0) * normal * this->dot_product(normal)) - *this };
+            return (cast::to<T>(2.0) * normal * this->dot_product(normal)) - *this;
         }
 
-        constexpr vector2<T> bounce(const vector2<T>& normal) const
+        [[nodiscard]]
+        constexpr vector2<T> bounce(const vector2<T> normal) const
         {
             return -this->reflect(normal);
         }
 
-        constexpr vector2<T>& operator=(const vector2<T>& other)
+    public:
+        [[nodiscard]] constexpr bool operator==(vector2<T> other) const
         {
-            this->x = other.x;
-            this->y = other.y;
-            return *this;
+            return math::equal(this->x, other.x) && math::equal(this->y, other.y);
         }
 
-        template <rl::integer I>
-            requires rl::floating_point<T>
-        constexpr vector2<T>& operator=(vector2<I>&& other) noexcept
+        [[nodiscard]] constexpr bool operator!=(vector2<T> other) const
         {
-            this->x = static_cast<T>(other.x);
-            this->y = static_cast<T>(other.y);
-            return *this;
+            return math::not_equal(this->x, other.x) || math::not_equal(this->y, other.y);
         }
 
-        constexpr vector2<T>& operator=(vector2<T>&& other) noexcept
+        [[nodiscard]] constexpr vector2<T> operator-() const noexcept
         {
-            this->x = other.x;
-            this->y = other.y;
-            return *this;
+            return vector2{
+                -this->x,
+                -this->y,
+            };
         }
 
-        constexpr vector2<T> operator+(const T& other)
+        [[nodiscard]] constexpr vector2<T> operator+(T other) const noexcept
         {
             return vector2{
                 this->x + other,
@@ -322,7 +264,31 @@ namespace rl::ds {
             };
         }
 
-        constexpr vector2<T> operator+(const vector2<T>& other) const
+        [[nodiscard]] constexpr vector2<T> operator-(T other) const noexcept
+        {
+            return vector2{
+                this->x - other,
+                this->y - other,
+            };
+        }
+
+        [[nodiscard]] constexpr vector2<T> operator*(T other) const noexcept
+        {
+            return vector2{
+                this->x * other,
+                this->y * other,
+            };
+        }
+
+        [[nodiscard]] constexpr vector2<T> operator/(T other) const noexcept
+        {
+            return vector2{
+                this->x / other,
+                this->y / other,
+            };
+        }
+
+        [[nodiscard]] constexpr vector2<T> operator+(vector2<T> other) const noexcept
         {
             return vector2{
                 this->x + other.x,
@@ -330,154 +296,159 @@ namespace rl::ds {
             };
         }
 
-        constexpr vector2<T> operator+(vector2<T>&& other) const noexcept
+        [[nodiscard]] constexpr vector2<T> operator-(vector2<T> other) const noexcept
         {
             return vector2{
-                this->x + std::move(other.x),
-                this->y + std::move(other.y),
+                this->x - other.x,
+                this->y - other.y,
             };
         }
 
-        constexpr vector2<T> operator+(dims<T>&& other) const noexcept
+        [[nodiscard]] constexpr vector2<T> operator*(vector2<T> other) const noexcept
         {
             return vector2{
-                static_cast<T>(this->x + std::move(other.width)),
-                static_cast<T>(this->y + std::move(other.height)),
+                this->x * other.x,
+                this->y * other.y,
             };
         }
 
-        constexpr vector2<T> operator+=(const vector2<T>& other)
+        [[nodiscard]] constexpr vector2<T> operator/(vector2<T> other) const noexcept
         {
-            x += other.x;
-            y += other.y;
+            return vector2{
+                this->x / other.x,
+                this->y / other.y,
+            };
+        }
+
+        [[nodiscard]] constexpr vector2<T> operator+(dims<T> other) const noexcept
+        {
+            return vector2{
+                static_cast<T>(this->x + other.width),
+                static_cast<T>(this->y + other.height),
+            };
+        }
+
+        [[nodiscard]] constexpr vector2<T> operator-(dims<T> other) const noexcept
+        {
+            return vector2{
+                this->x - other.width,
+                this->y - other.height,
+            };
+        }
+
+        [[nodiscard]] constexpr vector2<T> operator*(dims<T> other) const noexcept
+        {
+            return vector2{
+                this->x * other.width,
+                this->y * other.height,
+            };
+        }
+
+        [[nodiscard]] constexpr vector2<T> operator/(dims<T> other) const noexcept
+        {
+            return vector2{
+                this->x / other.width,
+                this->y / other.height,
+            };
+        }
+
+        constexpr vector2<T>& operator+=(T val) noexcept
+        {
+            this->x += val;
+            this->y += val;
             return *this;
         }
 
-        template <typename V>
-        constexpr vector2<T> operator-(const vector2<V>& other) const
+        constexpr vector2<T>& operator-=(T val) noexcept
         {
-            return vector2{
-                x - static_cast<T>(other.x),
-                y - static_cast<T>(other.y),
-            };
-        }
-
-        constexpr vector2<T> operator-(const T& other) const
-        {
-            return vector2{
-                x - static_cast<T>(other),
-                y - static_cast<T>(other),
-            };
-        }
-
-        constexpr vector2<T> operator-(const dims<T>& other) const
-        {
-            return vector2{
-                x - other.width,
-                y - other.height,
-            };
-        }
-
-        constexpr vector2<T>& operator-=(const T& other)
-        {
-            x -= other;
-            y -= other;
+            this->x -= val;
+            this->y -= val;
             return *this;
         }
 
-        constexpr vector2<T>& operator-=(const vector2<T>& other)
+        constexpr vector2<T>& operator*=(T val) noexcept
         {
-            x -= other.x;
-            y -= other.y;
+            this->x *= val;
+            this->y *= val;
             return *this;
         }
 
-        constexpr vector2<T> operator-=(const dims<T>& other) const
+        constexpr vector2<T>& operator/=(T val) noexcept
         {
-            x -= other.width;
-            y -= other.height;
+            this->x /= val;
+            this->y /= val;
             return *this;
         }
 
-        constexpr vector2<T> operator*(const vector2<T>& other) const
+        constexpr vector2<T> operator+=(vector2<T> other) noexcept
         {
-            return vector2{
-                x * other.x,
-                y * other.y,
-            };
-        }
-
-        template <rl::integer I>
-            requires rl::floating_point<T>
-        constexpr vector2<T> operator*(vector2<I>&& other) const noexcept
-        {
-            return vector2{
-                x * static_cast<T>(other.x),
-                y * static_cast<T>(other.y),
-            };
-        }
-
-        constexpr vector2<T> operator*(const T val) const
-        {
-            return vector2{
-                static_cast<T>(x * val),
-                static_cast<T>(y * val),
-            };
-        }
-
-        constexpr vector2<T> operator*=(const f32 val)
-        {
-            x *= val;
-            y *= val;
+            this->x += other.x;
+            this->y += other.y;
             return *this;
         }
 
-        constexpr vector2<T> operator/(const vector2<T>& other) const
+        constexpr vector2<T> operator-=(vector2<T> other) noexcept
         {
-            return vector2{
-                x / other.x,
-                y / other.y,
-            };
-        }
-
-        constexpr vector2<T> operator/(dims<T>&& other) noexcept
-        {
-            return vector2{
-                static_cast<T>(this->x / std::move(other.width)),
-                static_cast<T>(this->y / std::move(other.height)),
-            };
-        }
-
-        constexpr vector2<T> operator/(const f32& val) const
-        {
-            return vector2{
-                x / val,
-                y / val,
-            };
-        }
-
-        constexpr vector2<T> operator/=(const f32& val)
-        {
-            x /= val;
-            y /= val;
+            this->x -= other.x;
+            this->y -= other.y;
             return *this;
         }
 
-        constexpr vector2<T> operator-() const
+        constexpr vector2<T> operator*=(vector2<T> other) noexcept
         {
-            return vector2{ -x, -y };
+            this->x *= other.x;
+            this->y *= other.y;
+            return *this;
         }
 
-        T x{ 0 };
-        T y{ 0 };
-        T z{ 0 };
+        constexpr vector2<T>& operator/=(vector2<T> other) noexcept
+        {
+            this->x /= other.x;
+            this->y /= other.y;
+            return *this;
+        }
+
+        constexpr vector2<T>& operator+=(dims<T> other) noexcept
+        {
+            this->x += other.width;
+            this->y += other.height;
+            return *this;
+        }
+
+        constexpr vector2<T>& operator-=(dims<T> other) noexcept
+        {
+            this->x -= other.width;
+            this->y -= other.height;
+            return *this;
+        }
+
+        constexpr vector2<T>& operator*=(dims<T> other) noexcept
+        {
+            this->x *= other.width;
+            this->y *= other.height;
+            return *this;
+        }
+
+        constexpr vector2<T>& operator/=(dims<T> other) noexcept
+        {
+            this->x /= other.width;
+            this->y /= other.height;
+            return *this;
+        }
+
+    public:
+        T x{ static_cast<T>(0) };
+        T y{ static_cast<T>(0) };
+        T z{ static_cast<T>(0) };
     };
 
+#pragma pack()
+}
+
+namespace rl::ds {
     template <rl::numeric T>
-    constexpr auto format_as(const ds::vector2<T>& vec)
+    constexpr auto format_as(const vector2<T>& vec)
     {
         return fmt::format("(x={}, y={})", vec.x, vec.y);
     }
-
-#pragma pack()
 }

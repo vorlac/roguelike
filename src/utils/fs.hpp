@@ -7,13 +7,13 @@
 
 namespace rl::fs {
 
-    inline std::filesystem::path absolute(std::filesystem::path&& file_path)
+    inline std::filesystem::path absolute(std::filesystem::path file_path)
     {
         std::filesystem::path preferred{ std::move(file_path.make_preferred()) };
-        return std::filesystem::absolute(std::move(preferred)).make_preferred();
+        return std::filesystem::absolute(preferred).make_preferred();
     }
 
-    inline auto to_absolute(std::filesystem::path&& file_path)
+    inline auto to_absolute(std::filesystem::path file_path)
     {
         return fs::absolute(std::move(file_path)).string();
     }

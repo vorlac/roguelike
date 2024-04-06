@@ -169,7 +169,7 @@ namespace rl {
             Properties::Flags::Resizable | Properties::Flags::OpenGL
         };
 
-        constexpr static inline ds::point<i32> DEFAULT_POSITION = {
+        constexpr static inline ds::point<i32> DEFAULT_POSITION{
             SDL_WINDOWPOS_CENTERED_MASK,
             SDL_WINDOWPOS_CENTERED_MASK,
         };

@@ -108,20 +108,20 @@ namespace rl::ui {
                 f32 target_size{ std::fabs(fs) > std::numeric_limits<f32>::epsilon() ? fs : ps };
                 switch (anchor.align[std::to_underlying(axis)])
                 {
-                    case Alignment::Minimum:
+                    case Placement_OldAlignment::Minimum:
                         break;
-                    case Alignment::Center:
+                    case Placement_OldAlignment::Center:
                         item_pos += (cell_size - target_size) / 2.0f;
                         break;
-                    case Alignment::Maximum:
+                    case Placement_OldAlignment::Maximum:
                         item_pos += cell_size - target_size;
                         break;
-                    case Alignment::Fill:
+                    case Placement_OldAlignment::Fill:
                         target_size = std::fabs(fs) > std::numeric_limits<f32>::epsilon()
                                         ? fs
                                         : cell_size;
                         break;
-                    case Alignment::None:
+                    case Placement_OldAlignment::None:
                         assert_cond(false);
                         break;
                 }

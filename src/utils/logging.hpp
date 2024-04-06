@@ -18,8 +18,6 @@
   #include <utility>
   #include <xstring>
 
-  #include <fmt/color.h>
-  #include <fmt/compile.h>
   #include <fmt/core.h>
   #include <spdlog/common.h>
   #include <spdlog/pattern_formatter.h>

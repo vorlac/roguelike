@@ -29,7 +29,13 @@ namespace rl {
         Edge      = 1 << 3,
     };
 
-    enum class Alignment : i16_fast{
+    enum class SizePolicy : i16_fast {
+        FixedSize,
+        Minimum,
+        Prefered,
+    };
+
+    enum class Placement_OldAlignment : i16_fast {
         None    = 0x0000,  // Invalid / uninitialized alignment
         Minimum = 1 << 0,  // Take only as much space as is required.
         Center  = 1 << 1,  // Center align.
@@ -37,10 +43,11 @@ namespace rl {
         Fill    = 1 << 3,  // Fill according to preferred sizes.
     };
 
-    enum class Arrangement : i16_fast{
+    enum class Alignment : i16_fast {
         None       = 0x0000,  // Invalid / uninitialized orientation
         Horizontal = 1 << 0,  // Layout expands on horizontal axis.
         Vertical   = 1 << 1,  // Layout expands on vertical axis.
+        Grid       = 1 << 2,  // Layout expands in 2D grid.
     };
 
     enum class Axis : i16_fast {
@@ -124,34 +131,34 @@ namespace rl {
         }
     }
 
-    constexpr auto format_as(const Alignment alignment)
+    constexpr auto format_as(const Placement_OldAlignment alignment)
     {
         switch (alignment)
         {
-            case Alignment::None:
+            case Placement_OldAlignment::None:
                 return "None";
-            case Alignment::Minimum:
+            case Placement_OldAlignment::Minimum:
                 return "Minimum";
-            case Alignment::Center:
+            case Placement_OldAlignment::Center:
                 return "Center";
-            case Alignment::Maximum:
+            case Placement_OldAlignment::Maximum:
                 return "Maximum";
-            case Alignment::Fill:
+            case Placement_OldAlignment::Fill:
                 return "Fill";
         }
 
         return "Unknown";
     }
 
-    constexpr auto format_as(const Arrangement orientation)
+    constexpr auto format_as(const Alignment orientation)
     {
         switch (orientation)
         {
-            case Arrangement::None:
+            case Alignment::None:
                 return "None";
-            case Arrangement::Horizontal:
+            case Alignment::Horizontal:
                 return "Horizontal";
-            case Arrangement::Vertical:
+            case Alignment::Vertical:
                 return "Vertical";
         }
 

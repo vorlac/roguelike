@@ -5,7 +5,6 @@
 #include "core/keyboard.hpp"
 #include "core/mouse.hpp"
 #include "core/ui/layouts/box_layout.hpp"
-#include "core/ui/layouts/group_layout.hpp"
 #include "core/ui/layouts/layout.hpp"
 #include "core/ui/widget.hpp"
 #include "core/ui/widgets/combobox.hpp"
@@ -30,8 +29,7 @@ namespace rl::ui {
         : PopupButton{ parent }
         , m_item_container{ this->popup() }
     {
-        using items_t = decltype(items);
-        this->set_items(std::move(items), std::move(items_short));
+        this->set_items(items, items_short);
     }
 
     i32 ComboBox::selected_index() const

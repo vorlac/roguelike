@@ -101,15 +101,18 @@ namespace rl::ui {
 
     void ImagePanel::draw()
     {
-        const ds::dims<i32> grid{ this->grid_size() };
-        auto&& context{ m_renderer->context() };
+        const ds::dims grid{ this->grid_size() };
+        const auto context{ m_renderer->context() };
 
-        for (auto i = 0; i < m_images.size(); ++i)
+        for (auto i = 0; i < static_cast<i32>(m_images.size()); ++i)
         {
-            const ds::point<f32> p{
+            ds::point<f32> p{
                 m_rect.pt + m_margin +
-                    ds::dims<f32>{ m_thumb_size + m_spacing } *
-                        ds::vector2{ i % grid.width, i / grid.height },
+                    ds::dims{ m_thumb_size + m_spacing } *
+                        ds::vector2{
+                            static_cast<f32>(i % grid.width),
+                            static_cast<f32>(i / grid.height),
+                        },
             };
 
             ds::dims<f32> image_size{ 0.0f, 0.0f };

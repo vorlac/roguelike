@@ -133,10 +133,10 @@ namespace rl {
         u32 m_buttons_held{ 0 };
         u32 m_buttons_pressed{ 0 };
         u32 m_buttons_released{ 0 };
-        ds::point<f32> m_cursor_position{ 0.0f, 0.0f };
-        ds::point<f32> m_prev_cursor_pos{ 0.0f, 0.0f };
-        ds::vector2<f32> m_wheel_position{ 0.0f, 0.0f };
-        ds::vector2<f32> m_prev_wheel_pos{ 0.0f, 0.0f };
+        ds::point<f32> m_cursor_position{ ds::point<f32>::zero() };
+        ds::point<f32> m_prev_cursor_pos{ ds::point<f32>::zero() };
+        ds::vector2<f32> m_wheel_position{ ds::vector2<f32>::zero() };
+        ds::vector2<f32> m_prev_wheel_pos{ ds::vector2<f32>::zero() };
 
         // TODO: fixme
         mutable Mouse::Cursor::ID m_active_cursor{ Cursor::Arrow };

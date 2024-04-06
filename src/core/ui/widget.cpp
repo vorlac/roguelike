@@ -84,19 +84,19 @@ namespace rl::ui {
             child->set_theme(theme);
     }
 
-    const ds::point<f32>& Widget::position() const
+    ds::point<f32> Widget::position() const
     {
         return m_rect.pt;
     }
 
-    void Widget::set_position(const ds::point<f32>& pos)
+    void Widget::set_position(const ds::point<f32> pos)
     {
         m_rect.pt = pos;
     }
 
-    void Widget::set_rect(const ds::rect<f32>& rect)
+    void Widget::set_rect(ds::rect<f32> rect)
     {
-        m_rect = rect;
+        m_rect = std::move(rect);
     }
 
     ds::point<f32> Widget::abs_position() const
@@ -106,7 +106,7 @@ namespace rl::ui {
                  : m_rect.pt;
     }
 
-    const ds::dims<f32>& Widget::size() const
+    ds::dims<f32> Widget::size() const
     {
         return m_rect.size;
     }
@@ -136,22 +136,22 @@ namespace rl::ui {
         m_rect.size.height = height;
     }
 
-    void Widget::set_fixed_size(const ds::dims<f32>& fixed_size)
+    void Widget::set_fixed_size(const ds::dims<f32> fixed_size)
     {
         m_fixed_size = fixed_size;
     }
 
-    const ds::dims<f32>& Widget::fixed_size() const
+    ds::dims<f32> Widget::fixed_size() const
     {
         return m_fixed_size;
     }
 
-    const ds::dims<f32>& Widget::min_size() const
+    ds::dims<f32> Widget::min_size() const
     {
         return m_min_size;
     }
 
-    const ds::dims<f32>& Widget::max_size() const
+    ds::dims<f32> Widget::max_size() const
     {
         return m_max_size;
     }
@@ -176,7 +176,7 @@ namespace rl::ui {
         m_fixed_size.height = height;
     }
 
-    void Widget::set_size(const ds::dims<f32>& size)
+    void Widget::set_size(const ds::dims<f32> size)
     {
         m_rect.size = size;
     }
@@ -215,17 +215,17 @@ namespace rl::ui {
         return visible;
     }
 
-    i32 Widget::child_count() const
+    u64 Widget::child_count() const
     {
-        return static_cast<i32>(m_children.size());
+        return m_children.size();
     }
 
-    Widget* Widget::child_at(const i32 index)
+    Widget* Widget::child_at(const u64 index)
     {
         return m_children[index];
     }
 
-    const Widget* Widget::child_at(const i32 index) const
+    const Widget* Widget::child_at(const u64 index) const
     {
         return m_children[index];
     }
@@ -259,7 +259,15 @@ namespace rl::ui {
                     : m_parent->max_size()                     //
             };
 
-            const ds::dims max_size{ widget_upper_limit_size - m_outer_margin };
+            ds::dims max_size{ widget_upper_limit_size - m_outer_margin };
+            if (m_layout != nullptr && m_layout->size_policy() == SizePolicy::Prefered)
+            {
+                Alignment alignment{ m_layout->alignment() };
+                if (alignment == Alignment::Horizontal)
+                    max_size.width /= static_cast<f32>(m_children.size());
+                else if (alignment == Alignment::Vertical)
+                    max_size.height /= static_cast<f32>(m_children.size());
+            }
             this->set_max_size(max_size);
         }
 
@@ -270,12 +278,12 @@ namespace rl::ui {
             m_layout->apply_layout();
     }
 
-    Widget* Widget::find_widget(const ds::point<f32>& pt)
+    Widget* Widget::find_widget(const ds::point<f32> pt)
     {
         {
             LocalTransform transform{ this };
             const ds::point local_mouse_pos{ pt - m_rect.pt };
-            for (auto&& child : std::ranges::reverse_view{ m_children })
+            for (Widget* child : std::ranges::reverse_view{ m_children })
             {
                 if (!child->visible())
                     continue;
@@ -351,7 +359,7 @@ namespace rl::ui {
     {
         LocalTransform transform{ this };
         const ds::point local_mouse_pos{ mouse.pos() - LocalTransform::absolute_pos };
-        for (const auto child : std::ranges::reverse_view{ m_children })
+        for (Widget* child : std::ranges::reverse_view{ m_children })
         {
             if (!child->visible())
                 continue;
@@ -370,7 +378,7 @@ namespace rl::ui {
     {
         LocalTransform transform{ this };
         const ds::point local_mouse_pos{ mouse.pos() - LocalTransform::absolute_pos };
-        for (auto&& child : std::ranges::reverse_view{ m_children })
+        for (Widget* child : std::ranges::reverse_view{ m_children })
         {
             if (!child->visible())
                 continue;
@@ -391,7 +399,7 @@ namespace rl::ui {
 
         LocalTransform transform{ this };
         const ds::point local_mouse_pos{ mouse.pos() - LocalTransform::absolute_pos };
-        for (auto&& child : std::ranges::reverse_view{ m_children })
+        for (Widget* child : std::ranges::reverse_view{ m_children })
         {
             if (!child->visible())
                 continue;
@@ -439,10 +447,10 @@ namespace rl::ui {
         return false;
     }
 
-    void Widget::add_child(const i32 index, Widget* widget)
+    void Widget::add_child(const u64 index, Widget* widget)
     {
-        runtime_assert(index <= child_count(), "child widget index out of bounds");
-        m_children.insert(m_children.begin() + index, widget);
+        runtime_assert(index <= this->child_count(), "child widget index out of bounds");
+        m_children.insert(m_children.begin() + static_cast<i32>(index), widget);
 
         widget->acquire_ref();
         widget->set_parent(this);
@@ -463,23 +471,22 @@ namespace rl::ui {
         widget->release_ref();
     }
 
-    void Widget::remove_child_at(const i32 index)
+    void Widget::remove_child_at(const u64 index)
     {
-        runtime_assert(index >= 0 && index < static_cast<i32>(m_children.size()),
-                       "widget child remove idx out of bounds");
+        runtime_assert(index < m_children.size(), "widget child remove idx out of bounds");
 
-        const Widget* widget{ m_children[index] };
-        m_children.erase(m_children.begin() + index);
+        Widget* widget{ m_children[index] };
+        m_children.erase(m_children.begin() + static_cast<ptrdiff_t>(index));
         widget->release_ref();
     }
 
-    i32 Widget::child_index(const Widget* widget) const
+    u64 Widget::child_index(const Widget* widget) const
     {
-        const auto w{ std::ranges::find(m_children, widget) };
+        auto w{ std::ranges::find(m_children, widget) };
         if (w == m_children.end())
-            return -1;
+            return std::numeric_limits<u64>::max();
 
-        return static_cast<i32>(w - m_children.begin());
+        return static_cast<u64>(w - m_children.begin());
     }
 
     bool Widget::enabled() const
@@ -572,7 +579,7 @@ namespace rl::ui {
         m_max_size = max_size;
     }
 
-    bool Widget::contains(const ds::point<f32>& pt)
+    bool Widget::contains(const ds::point<f32> pt)
     {
         // Check if the widget contains a certain position
         const ds::rect widget_rect{ m_rect.pt, m_rect.size };
@@ -630,7 +637,7 @@ namespace rl::ui {
         canvas->update_focus(this);
     }
 
-    bool Widget::draw_mouse_intersection(const ds::point<f32>& pt)
+    bool Widget::draw_mouse_intersection(const ds::point<f32> pt)
     {
         if (this->contains(pt))
         {
@@ -640,7 +647,7 @@ namespace rl::ui {
 
         LocalTransform transform{ this };
         const ds::point local_mouse_pos{ pt - m_rect.pt };
-        for (const auto child : std::ranges::reverse_view{ m_children })
+        for (Widget* child : std::ranges::reverse_view{ m_children })
         {
             if (!child->visible())
                 continue;
@@ -649,8 +656,7 @@ namespace rl::ui {
             if (!child->draw_mouse_intersection(local_mouse_pos))
                 continue;
 
-            m_renderer->draw_rect_outline(this->rect(), 1.0f, rl::Colors::Yellow, Outline::Inner);
-
+            m_renderer->draw_rect_outline(m_rect, 1.0f, rl::Colors::Yellow, Outline::Inner);
             return true;
         }
 

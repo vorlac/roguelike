@@ -33,9 +33,7 @@ namespace rl::gl {
 
         explicit InstancedVertexBuffer(ds::rect<f32>&& viewport_rect)
         {
-            scoped_log();
-
-            auto&& window_rect{ viewport_rect.expanded(-450.0f) };
+            ds::rect window_rect{ viewport_rect.expanded(-450.0f) };
 
             // create vertex array object
             glGenVertexArrays(1, &m_vao_id);
@@ -49,20 +47,9 @@ namespace rl::gl {
             const bool shaders_valid = m_shader.compile();
             runtime_assert(shaders_valid, "Failed to compile shaders");
 
-            ds::point<f32> centroid{ viewport_rect.centroid() };
-            auto colors_size_mb = math::to_bytes(sizeof(f32) * 4 * m_rect_count, math::Units::Byte,
-                                                 math::Units::Megabyte);
-            auto positions_size_mb = math::to_bytes(sizeof(f32) * 3 * m_rect_count,
-                                                    math::Units::Byte, math::Units::Megabyte);
-
             m_rect_colors_data.reserve(m_rect_count);
             m_rect_positions_data.reserve(m_rect_count);
             m_rect_velocities_data.reserve(m_rect_count);
-
-            ds::color<u8> rect_color = ds::color<u8>::rand();
-
-            diag_log("InstancedVertexBuffer Spawning {} Rectangles (clr:{}MB, pos:{}MB)",
-                     m_rect_count, colors_size_mb, positions_size_mb);
 
             for (size_t i = 0; i < m_rect_count; ++i)
             {
@@ -76,19 +63,14 @@ namespace rl::gl {
 
                 m_rect_velocities_data.emplace_back((xv - 1000.0f) / 10.0f, (yv - 1000.0f) / 10.0f);
 
-                const ds::circle<f32> spawn{
-                    viewport_rect.centroid(),
-                    500.0f,
-                };
-
                 constexpr f32 outer{ 500.0f };
                 constexpr f32 inner{ 250.0f };
                 const f32 rand1{ static_cast<f32>(rl::random<0, 1000>::value()) / 1000.0f };
                 const f32 rand2{ static_cast<f32>(rl::random<0, 1000>::value()) / 1000.0f };
                 const f32 rad{ std::sqrt(rand1 * (outer * outer - inner * inner) + inner * inner) };
+                const f32 theta{ rand2 * 2.0f * std::numbers::pi_v<f32> };
 
-                const f32 theta{ f32(rand2 * 2.0f * std::numbers::pi) };
-
+                const ds::circle spawn{ viewport_rect.centroid(), 500.0f };
                 m_rect_positions_data.emplace_back(spawn.centroid.x + rad * std::cos(theta),
                                                    spawn.centroid.y + rad * std::sin(theta));
             }
@@ -98,23 +80,23 @@ namespace rl::gl {
         {
             constexpr static auto top_bottom_collision = [](const ds::point<f32>& pos,
                                                             const ds::rect<f32>& window_rect) {
-                const bool top_collision = pos.y <= 0.0f;
-                const bool bottom_collision = pos.y + m_rect_size.height >= window_rect.size.height;
+                const bool top_collision{ pos.y <= 0.0f };
+                const bool bottom_collision{ pos.y + m_rect_size.height >= window_rect.size.height };
                 return top_collision || bottom_collision;
             };
 
             constexpr static auto left_right_collision = [](const ds::point<f32>& pos,
                                                             const ds::rect<f32>& window_rect) {
-                bool left_collision = pos.x <= 0.0f;
-                bool right_collision = pos.x + m_rect_size.width >= window_rect.size.width;
+                bool left_collision{ pos.x <= 0.0f };
+                bool right_collision{ pos.x + m_rect_size.width >= window_rect.size.width };
                 return left_collision || right_collision;
             };
 
-            f32 delta_time = m_timer.delta();
+            f32 delta_time{ m_timer.delta() };
             for (u32 i = 0; i < m_rect_count; ++i)
             {
-                auto& pos = m_rect_positions_data[i];
-                auto& vel = m_rect_velocities_data[i];
+                auto& pos{ m_rect_positions_data[i] };
+                auto& vel{ m_rect_velocities_data[i] };
 
                 pos.x += vel.x * delta_time;
                 pos.y += vel.y * delta_time;
@@ -152,7 +134,7 @@ namespace rl::gl {
             }
         }
 
-        void bind_buffers()
+        void bind_buffers() const
         {
             // bind the VAO vertex array
             glBindVertexArray(m_vao_id);

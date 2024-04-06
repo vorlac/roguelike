@@ -44,10 +44,10 @@ namespace rl::ui {
         virtual bool on_mouse_drag(const Mouse& mouse, const Keyboard& kb) override;
 
         virtual void draw() override;
-        virtual bool draw_mouse_intersection(const ds::point<f32>& pt) override;
+        virtual bool draw_mouse_intersection(ds::point<f32> pt) override;
         virtual void perform_layout() override;
 
-        virtual Widget* find_widget(const ds::point<f32>& pt) override;
+        virtual Widget* find_widget(ds::point<f32> pt) override;
         virtual ds::dims<f32> preferred_size() const override;
 
     protected:

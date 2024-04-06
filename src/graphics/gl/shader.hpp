@@ -15,13 +15,10 @@
 #include <glm/fwd.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/string_cast.hpp>
-#include <glm/matrix.hpp>
 
 #include "core/assert.hpp"
 #include "utils/concepts.hpp"
 #include "utils/fs.hpp"
-#include "utils/io.hpp"
-#include "utils/logging.hpp"
 #include "utils/numeric.hpp"
 
 namespace rl::gl {
@@ -41,6 +38,7 @@ namespace rl::gl {
             static inline const std::filesystem::path GLSL_SHADER_DIR{ fs::absolute("shaders/") };
 
             explicit constexpr GLSL() = default;
+            constexpr ~GLSL() = default;
 
             explicit GLSL(const std::filesystem::path& glsl_path)
                 : m_path{ fs::absolute(
@@ -58,32 +56,21 @@ namespace rl::gl {
                 }
             }
 
-            static std::string name()
-            {
-                return "GLSL";
-            }
-
             u32 compile()
             {
-                scoped_log();
-
-                diag_log("Compiling shader: {}", m_path);
-                const u32 shader_id = glCreateShader(std::to_underlying(shader_type));
-                const char* glsl = m_glsl.c_str();
+                const u32 shader_id{ glCreateShader(std::to_underlying(shader_type)) };
+                const char* glsl{ m_glsl.c_str() };
                 glShaderSource(shader_id, 1, &glsl, nullptr);
                 glCompileShader(shader_id);
 
-                i32 success = 0;
+                i32 success{ 0 };
                 glGetShaderiv(shader_id, GL_COMPILE_STATUS, &success);
                 if (success != 0)
-                {
                     m_id = shader_id;
-                    diag_log("Success. Shader ID: {}", m_id);
-                }
                 else
                 {
-                    char error_msg[512] = { 0 };
-                    glGetShaderInfoLog(shader_id, 512, NULL, error_msg);
+                    char error_msg[512]{};
+                    glGetShaderInfoLog(shader_id, 512, nullptr, error_msg);
                     runtime_assert(success != 0, "Shader ({}) compilation failed:\n{}",
                                    m_path.filename(), error_msg);
                 }
@@ -91,7 +78,8 @@ namespace rl::gl {
                 return m_id;
             }
 
-            [[nodiscard]] u32 id() const
+            [[nodiscard]]
+            u32 id() const
             {
                 return m_id;
             }
@@ -122,38 +110,34 @@ namespace rl::gl {
 
         bool compile()
         {
-            scoped_log();
-
             const u32 vert_shader_id{ m_vertex_shader.compile() };
             const u32 frag_shader_id{ m_fragment_shader.compile() };
             if (vert_shader_id == 0 || frag_shader_id == 0)
                 return false;
 
             m_shader_id = glCreateProgram();
-
             glAttachShader(m_shader_id, frag_shader_id);
             glAttachShader(m_shader_id, vert_shader_id);
             glLinkProgram(m_shader_id);
 
-            diag_log("Linking shaders...");
-
-            i32 success = 0;
+            i32 success{ 0 };
             glGetProgramiv(m_shader_id, GL_LINK_STATUS, &success);
-            if (success != 0)
-                diag_log("Success. Shader Program ID: {}", m_shader_id);
-            else
+
+            constexpr static i32 COMPILATION_FAILURE{ 0 };
+            if (success == COMPILATION_FAILURE)
             {
-                char error_msg[256] = { 0 };
+                char error_msg[256]{};
                 glGetProgramInfoLog(m_shader_id, 255, nullptr, error_msg);
-                runtime_assert(success != 0, "Failed to build shader program (ID {}):\n{}",
-                               m_shader_id, error_msg);
+                runtime_assert(false, "Failed to build shader program (ID {}):\n{}", m_shader_id,
+                               error_msg);
                 return false;
             }
+
+            fmt::print("Success. Shader Program ID: {}\n", m_shader_id);
 
             glUseProgram(m_shader_id);
             glDeleteShader(vert_shader_id);
             glDeleteShader(frag_shader_id);
-
             return true;
         }
 
@@ -184,9 +168,9 @@ namespace rl::gl {
 
         void set_transform() const
         {
-            glm::mat4 model = glm::identity<glm::mat4>();
-            glm::mat4 view = glm::identity<glm::mat4>();
-            const glm::mat4 projection = glm::ortho(0.0f, 1920.0f, 1080.0f, 0.0f, 0.1f, 100.0f);
+            glm::mat4 model{ glm::identity<glm::mat4>() };
+            glm::mat4 view{ glm::identity<glm::mat4>() };
+            glm::mat4 projection{ glm::ortho(0.0f, 1920.0f, 1080.0f, 0.0f, 0.1f, 100.0f) };
 
             model = glm::scale(model, glm::vec3(1.0f));
             model = glm::rotate(model, glm::radians(0.0f), glm::vec3(0.0f, 0.0f, 1.0f));

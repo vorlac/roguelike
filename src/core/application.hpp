@@ -62,17 +62,17 @@ namespace rl {
         {
             bool ret{ this->setup() };
 
-            const auto layout_l{ new ui::BoxLayout<Arrangement::Vertical>("ABC Vertical") };
+            const auto layout_l{ new ui::BoxLayout<Alignment::Vertical>("ABC Vertical") };
             layout_l->add_widget(new ui::Label{ "A" });
             layout_l->add_widget(new ui::Label{ "B" });
             layout_l->add_widget(new ui::Label{ "C" });
 
-            const auto layout_r{ new ui::BoxLayout<Arrangement::Vertical>("123 Vertical") };
+            const auto layout_r{ new ui::BoxLayout<Alignment::Vertical>("123 Vertical") };
             layout_r->add_widget(new ui::Label{ "1" });
             layout_r->add_widget(new ui::Label{ "2" });
             layout_r->add_widget(new ui::Label{ "3" });
 
-            const auto horiz_layout{ new ui::BoxLayout<Arrangement::Horizontal>("ABC123 Horiz") };
+            const auto horiz_layout{ new ui::BoxLayout<Alignment::Horizontal>("ABC123 Horiz") };
             horiz_layout->add_nested_layout(layout_l);
             horiz_layout->add_nested_layout(layout_r);
 
@@ -132,7 +132,7 @@ namespace rl {
 
         bool init_subsystem(const Subsystem::ID flags) const
         {
-            const i32 result = SDL3::SDL_Init(flags);
+            const i32 result{ SDL3::SDL_Init(flags) };
             runtime_assert(result == 0, "failed to init subsystem");
             return result == 0;
         }

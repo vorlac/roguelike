@@ -300,8 +300,8 @@ namespace rl::ds {
                     this->pt.y - expansion.top,
                 },
                 dims{
-                    this->size.width + (expansion.left + expansion.right),
-                    this->size.height + (expansion.top + expansion.bottom),
+                    this->size.width + expansion.horizontal(),
+                    this->size.height + expansion.vertical(),
                 },
             };
         }
@@ -487,7 +487,7 @@ namespace rl::ds {
 
         // Checks if the rect fully contains the point
         [[nodiscard]]
-        constexpr bool contains(const point<T>& point) const
+        constexpr bool contains(point<T> point) const
         {
             return (point.x > this->pt.x && point.x < this->pt.x + this->size.width) &&
                    (point.y > this->pt.y && point.y < this->pt.y + this->size.height);
