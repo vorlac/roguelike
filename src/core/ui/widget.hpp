@@ -6,6 +6,7 @@
 
 #include "core/keyboard.hpp"
 #include "core/mouse.hpp"
+#include "ds/margin.hpp"
 #include "ds/refcounted.hpp"
 #include "ds/vector2d.hpp"
 #include "graphics/nvg_renderer.hpp"
@@ -54,7 +55,7 @@ namespace rl::ui {
 
         Canvas* canvas();
         Widget* parent();
-        Layout* layout() const;
+        Layout* layout();
         ScrollableDialog* dialog();
 
         //  TODO: change to size_t
@@ -65,6 +66,8 @@ namespace rl::ui {
 
         const ds::point<f32>& position() const;
         const ds::dims<f32>& fixed_size() const;
+        const ds::dims<f32>& min_size() const;
+        const ds::dims<f32>& max_size() const;
         const ds::dims<f32>& size() const;
         const ds::rect<f32>& rect() const;
         const Theme* theme() const;
@@ -78,9 +81,9 @@ namespace rl::ui {
 
         void assign_layout(Layout* layout);
         void set_parent(Widget* parent);
-        void set_position(ds::point<f32> pos) noexcept;
-        void set_rect(ds::rect<f32> rect) noexcept;
-        void set_size(ds::dims<f32> size) noexcept;
+        void set_position(const ds::point<f32>& pos);
+        void set_rect(const ds::rect<f32>& rect);
+        void set_size(const ds::dims<f32>& size);
         void set_width(f32 width);
         void set_height(f32 height);
         void set_fixed_size(const ds::dims<f32>& fixed_size);
@@ -93,6 +96,8 @@ namespace rl::ui {
         void set_font_size(f32 font_size);
         void set_icon_extra_scale(f32 scale);
         void set_cursor(Mouse::Cursor::ID cursor);
+        void set_min_size(ds::dims<f32> min_size);
+        void set_max_size(ds::dims<f32> max_size);
 
         void request_focus();
         // TODO: change to size_t
@@ -154,8 +159,16 @@ namespace rl::ui {
         bool m_resizable{ false };
         bool m_mouse_focus{ false };
 
-        ds::rect<f32> m_rect{ { 0.0f, 0.0f }, { 0.0f, 0.0f } };
-        ds::dims<f32> m_fixed_size{ 0.0f, 0.0f };
+        ds::rect<f32> m_rect{
+            ds::point<f32>::zero(),
+            ds::dims<f32>::zero(),
+        };
+
+        ds::dims<f32> m_fixed_size{ ds::dims<f32>::zero() };
+        ds::dims<f32> m_min_size{ ds::dims<f32>::null() };
+        ds::dims<f32> m_max_size{ ds::dims<f32>::null() };
+        ds::margin<f32> m_outer_margin{ ds::margin<f32>::zero() };
+        ds::margin<f32> m_inner_padding{ ds::margin<f32>::zero() };
 
         f32 m_font_size{ -1.0f };
         f32 m_icon_extra_scale{ 1.0f };

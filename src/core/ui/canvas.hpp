@@ -55,8 +55,8 @@ namespace rl::ui {
         bool has_float_buffer() const;
         bool tooltip_fade_in_progress();
 
-        bool on_moved(ds::point<f32>&& pt);
-        bool on_resized(ds::dims<f32>&& size);
+        bool on_moved(const ds::point<f32>& pt);
+        bool on_resized(ds::dims<f32> size);
         bool on_mouse_scroll_event(const Mouse& mouse, const Keyboard& kb);
         bool on_mouse_button_pressed_event(const Mouse& mouse, const Keyboard& kb);
         bool on_mouse_button_released_event(const Mouse& mouse, const Keyboard& kb);

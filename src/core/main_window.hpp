@@ -206,8 +206,8 @@ namespace rl {
         DisplayID get_display_id();
         WindowID window_id() const;
         WindowID get_window_id();
-        ds::dims<i32> get_size();
-        ds::dims<i32> get_render_size();
+        const ds::dims<i32>& get_size();
+        const ds::dims<i32>& get_render_size();
 
         bool is_valid() const;
         bool input_grabbed() const;

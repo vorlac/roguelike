@@ -290,7 +290,7 @@ namespace rl::ui {
 
     ds::dims<f32> ScrollableDialog::preferred_size() const
     {
-        return {};
+        return ds::dims<f32>::zero();
     }
 
     void ScrollableDialog::refresh_relative_placement()

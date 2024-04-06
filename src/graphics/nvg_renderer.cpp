@@ -201,7 +201,7 @@ namespace rl {
     ds::dims<f32> NVGRenderer::get_text_size_(const std::string& text) const
     {
         assert_cond(false);
-        return {};
+        return ds::dims<f32>::zero();
     }
 
     ds::rect<f32> NVGRenderer::get_text_box_rect(

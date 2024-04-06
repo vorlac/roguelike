@@ -90,7 +90,7 @@ namespace rl::ui {
 
     ds::dims<f32> ImagePanel::preferred_size() const
     {
-        const ds::dims<f32> grid{ this->grid_size() };
+        ds::dims<f32> grid{ static_cast<ds::dims<f32>>(this->grid_size()) };
         return ds::dims<f32>{
             (m_thumb_size.width * grid.width) + ((grid.width - 1.0f) * m_spacing.x) +
                 (m_margin.x * 2.0f),

@@ -99,8 +99,8 @@ namespace rl {
         Mouse();
         ~Mouse();
 
-        [[nodiscard]] ds::point<f32> pos() const;
-        [[nodiscard]] ds::vector2<f32> wheel() const;
+        [[nodiscard]] const ds::point<f32>& pos() const;
+        [[nodiscard]] const ds::vector2<f32>& wheel() const;
         [[nodiscard]] ds::vector2<f32> pos_delta() const;
         [[nodiscard]] ds::vector2<f32> wheel_delta() const;
         [[nodiscard]] Mouse::Button::ID button_pressed() const;

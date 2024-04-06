@@ -58,7 +58,7 @@ namespace rl::ui {
         m_parent = parent;
     }
 
-    Layout* Widget::layout() const
+    Layout* Widget::layout()
     {
         return m_layout;
     }
@@ -80,7 +80,7 @@ namespace rl::ui {
             return;
 
         m_theme = theme;
-        for (auto child : m_children)
+        for (Widget* child : m_children)
             child->set_theme(theme);
     }
 
@@ -89,14 +89,14 @@ namespace rl::ui {
         return m_rect.pt;
     }
 
-    void Widget::set_position(ds::point<f32> pos) noexcept
+    void Widget::set_position(const ds::point<f32>& pos)
     {
-        m_rect.pt = std::move(pos);
+        m_rect.pt = pos;
     }
 
-    void Widget::set_rect(ds::rect<f32> rect) noexcept
+    void Widget::set_rect(const ds::rect<f32>& rect)
     {
-        m_rect = std::move(rect);
+        m_rect = rect;
     }
 
     ds::point<f32> Widget::abs_position() const
@@ -146,6 +146,16 @@ namespace rl::ui {
         return m_fixed_size;
     }
 
+    const ds::dims<f32>& Widget::min_size() const
+    {
+        return m_min_size;
+    }
+
+    const ds::dims<f32>& Widget::max_size() const
+    {
+        return m_max_size;
+    }
+
     f32 Widget::fixed_width() const
     {
         return m_fixed_size.width;
@@ -166,9 +176,9 @@ namespace rl::ui {
         m_fixed_size.height = height;
     }
 
-    void Widget::set_size(ds::dims<f32> size) noexcept
+    void Widget::set_size(const ds::dims<f32>& size)
     {
-        m_rect.size = std::move(size);
+        m_rect.size = size;
     }
 
     bool Widget::visible() const
@@ -241,12 +251,20 @@ namespace rl::ui {
 
     void Widget::perform_layout()
     {
-        for (Widget* child : m_children)
+        if (m_parent != nullptr)
         {
-            child->perform_layout();
-            // if (child->m_layout != nullptr)
-            //     child->m_layout->apply_layout();
+            const ds::dims<f32>& widget_upper_limit_size{
+                m_parent->max_size() == ds::dims<f32>::null()  //
+                    ? m_parent->size()                         //
+                    : m_parent->max_size()                     //
+            };
+
+            const ds::dims max_size{ widget_upper_limit_size - m_outer_margin };
+            this->set_max_size(max_size);
         }
+
+        for (Widget* child : m_children)
+            child->perform_layout();
 
         if (m_layout != nullptr)
             m_layout->apply_layout();
@@ -542,6 +560,16 @@ namespace rl::ui {
     void Widget::set_cursor(const Mouse::Cursor::ID cursor)
     {
         m_cursor = cursor;
+    }
+
+    void Widget::set_min_size(const ds::dims<f32> min_size)
+    {
+        m_min_size = min_size;
+    }
+
+    void Widget::set_max_size(const ds::dims<f32> max_size)
+    {
+        m_max_size = max_size;
     }
 
     bool Widget::contains(const ds::point<f32>& pt)

@@ -115,9 +115,15 @@ namespace rl {
         glGetIntegerv(GL_VIEWPORT, buff.data());
         runtime_assert(buff[2] > 0 && buff[3] > 0, "failed to get viewport");
 
-        return ds::rect<f32>{
-            ds::point{ buff[0], buff[1] },
-            ds::dims{ buff[2], buff[3] },
+        return ds::rect{
+            ds::point{
+                static_cast<f32>(buff[0]),
+                static_cast<f32>(buff[1]),
+            },
+            ds::dims{
+                static_cast<f32>(buff[2]),
+                static_cast<f32>(buff[3]),
+            },
         };
     }
 

@@ -344,13 +344,13 @@ namespace rl::ui {
         }
     }
 
-    bool Canvas::on_moved(ds::point<f32>&& pt)
+    bool Canvas::on_moved(const ds::point<f32>& pt)
     {
-        this->set_position(std::forward<decltype(pt)>(pt));
+        this->set_position(pt);
         return true;
     }
 
-    bool Canvas::on_resized(ds::dims<f32>&& size)
+    bool Canvas::on_resized(ds::dims<f32> size)
     {
         if (math::equal(size.area(), 0.0f))
             return false;
@@ -372,7 +372,7 @@ namespace rl::ui {
     {
         bool handled{ false };
 
-        auto mouse_pos{ mouse.pos() };
+        const auto& mouse_pos{ mouse.pos() };
         m_last_interaction = m_timer.elapsed();
         if (m_mouse_mode != MouseMode::Ignore)
         {

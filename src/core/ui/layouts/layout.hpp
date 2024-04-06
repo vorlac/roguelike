@@ -53,15 +53,23 @@ namespace rl::ui {
         ds::rect<f32> rect{ 0.0f, 0.0f, 0.0f, 0.0f };
     };
 
+    enum class SizePolicy {
+        FixedSize,
+        Minimum,
+        Prefered,
+    };
+
     class Layout : public Widget
     {
     public:
-        explicit Layout(std::string&& name)
+        explicit Layout(const std::string& name)
             : Widget(nullptr)
         {
             this->set_name(name);
             this->set_tooltip(name);
+
             m_layout = this;
+            m_layout->m_outer_margin = { 10.0f, 10.0f, 10.0f, 10.0f };
         }
 
         void add_widget(Widget* widget, CellProperties properties = {})
@@ -80,6 +88,21 @@ namespace rl::ui {
             return m_cell_data | std::ranges::views::keys;
         }
 
+        void set_size_policy(SizePolicy policy)
+        {
+            m_size_policy = policy;
+        }
+
+        SizePolicy size_policy() const
+        {
+            return m_size_policy;
+        }
+
+        const ds::margin<f32>& outer_margin() const
+        {
+            return m_outer_margin;
+        }
+
     public:
         // Performs applies all Layout computations for the given widget.
         virtual void apply_layout(u32 depth = 0) = 0;
@@ -87,8 +110,8 @@ namespace rl::ui {
         virtual ds::dims<f32> computed_size() const = 0;
 
     protected:
+        SizePolicy m_size_policy{ SizePolicy::Prefered };
         std::vector<std::pair<Widget*, CellProperties>> m_cell_data{};
-        ds::margin<f32> m_outer_margin{ 10.0f, 10.0f, 10.0f, 10.0f };
     };
 
     class OldLayout : public ds::refcounted

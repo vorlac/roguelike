@@ -349,7 +349,7 @@ namespace rl {
         return opacity;
     }
 
-    ds::dims<i32> MainWindow::get_size()
+    const ds::dims<i32>& MainWindow::get_size()
     {
         auto& size = m_window_rect.size;
         const i32 result{ SDL3::SDL_GetWindowSize(m_sdl_window, &size.width, &size.height) };
@@ -357,18 +357,15 @@ namespace rl {
         return m_window_rect.size;
     }
 
-    ds::dims<i32> MainWindow::get_render_size()
+    const ds::dims<i32>& MainWindow::get_render_size()
     {
-        auto& size = m_framebuf_size;
+        ds::dims<i32>& size{ m_framebuf_size };
         const i32 result{ SDL3::SDL_GetWindowSizeInPixels(m_sdl_window, &size.width, &size.height) };
         sdl_assert(result == 0, "failed to set render size");
-
         m_pixel_ratio = SDL3::SDL_GetWindowDisplayScale(m_sdl_window);
         sdl_assert(m_pixel_ratio != 0.0f, "failed to get pixel ratio [window:{}]", m_window_id);
-
         m_pixel_density = SDL3::SDL_GetWindowPixelDensity(m_sdl_window);
         sdl_assert(m_pixel_density != 0.0f, "failed to get pixel density [window:{}]", m_window_id);
-
         return m_framebuf_size;
     }
 
@@ -496,16 +493,15 @@ namespace rl {
 
     void MainWindow::window_resized_event_callback(const SDL3::SDL_Event& e)
     {
-        ds::dims window_size{ this->get_size() };
+        const ds::dims<i32>& window_size{ this->get_size() };
+        const ds::dims<i32>& framebuf_size{ this->get_render_size() };
 
-        scoped_log("size={}", window_size);
-        const ds::dims framebuf_size{ this->get_render_size() };
-        ds::dims render_size{ window_size / m_pixel_ratio };
+        ds::dims render_size{ static_cast<ds::dims<f32>>(window_size) / m_pixel_ratio };
         runtime_assert(framebuf_size.area() > 0 && window_size.area() > 0,
                        "invalid window size/location");
 
         m_framebuf_size = framebuf_size;
-        m_window_rect.size = static_cast<ds::dims<i32>>(render_size);
+        m_window_rect.size = render_size;
         m_gl_renderer->set_viewport({
             ds::point{ 0, 0 },
             m_window_rect.size,

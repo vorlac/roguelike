@@ -86,7 +86,7 @@ namespace rl {
         // clear it from pressed
         m_buttons_pressed |= SDL_BUTTON(mouse_button);
         // clear it from released
-        m_buttons_released = 0;  //&= ~SDL_BUTTON(mouse_button);
+        m_buttons_released = 0;
     }
 
     void Mouse::process_button_up(const Mouse::Button::ID mouse_button)
@@ -133,12 +133,12 @@ namespace rl {
             m_wheel_position.y -= new_wheel_pos.y;
     }
 
-    ds::point<f32> Mouse::pos() const
+    const ds::point<f32>& Mouse::pos() const
     {
         return m_cursor_position;
     }
 
-    ds::vector2<f32> Mouse::wheel() const
+    const ds::vector2<f32>& Mouse::wheel() const
     {
         return m_wheel_position;
     }

@@ -152,8 +152,8 @@ namespace rl::ui {
         const u32 axis1{ static_cast<u32>(m_orientation) };
         const u32 axis2{ (axis1 + 1) % 2 };
 
-        const ds::dims<i32> start_offset{ extra + m_margin };
-        const ds::point start{ start_offset.width, start_offset.height };
+        ds::dims<i32> start_offset{ ds::dims<i32>(extra + m_margin) };
+        ds::point start{ start_offset.width, start_offset.height };
         ds::point pos{ start };
 
         i32& axis1_pos{ axis1 == Arrangement::Horizontal ? pos.x : pos.y };
