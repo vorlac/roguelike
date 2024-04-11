@@ -12,6 +12,5 @@ int main(const int argc, char** argv)
         ret = game.run();
     }
 
-    SDL3::SDL_Quit();
     return ret;
 }

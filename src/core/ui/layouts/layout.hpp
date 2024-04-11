@@ -44,7 +44,8 @@ namespace rl::ui {
         // |  [ text ]  |
         // |            |
         // +------------+
-        ds::margin<f32> outer_margin{ 10.0f, 10.0f, 10.0f, 10.0f };
+        ds::margin<f32> outer_margin{ 20.0f, 20.0f, 20.0f, 20.0f };
+        ds::margin<f32> inner_margin{ 20.0f, 20.0f, 20.0f, 20.0f };
 
         // how much a widget should stretch
         f32 stretch_factor{ 0.0f };
@@ -63,18 +64,23 @@ namespace rl::ui {
             this->set_tooltip(name);
 
             m_layout = this;
-            m_layout->m_outer_margin = { 10.0f, 10.0f, 10.0f, 10.0f };
         }
 
-        void add_widget(Widget* widget, CellProperties properties = {})
+        void add_widget(Widget* widget, const CellProperties& properties = {
+                                            .outer_margin = { 20.0f, 20.0f, 20.0f, 20.0f },
+                                            .inner_margin = { 20.0f, 20.0f, 20.0f, 20.0f },
+                                        })
         {
             this->add_child(widget);
-            m_cell_data.emplace_back(widget, std::move(properties));
+            m_cell_data.emplace_back(widget, properties);
         }
 
-        void add_nested_layout(Layout* layout, CellProperties properties = {})
+        void add_nested_layout(Layout* layout, const CellProperties& properties = {
+                                                   .outer_margin = { 20.0f, 20.0f, 20.0f, 20.0f },
+                                                   .inner_margin = { 20.0f, 20.0f, 20.0f, 20.0f },
+                                               })
         {
-            this->add_widget(layout, std::move(properties));
+            this->add_widget(layout, properties);
         }
 
         auto widgets() const
@@ -82,7 +88,7 @@ namespace rl::ui {
             return m_cell_data | std::ranges::views::keys;
         }
 
-        void set_size_policy(SizePolicy policy)
+        void set_size_policy(const SizePolicy policy)
         {
             m_size_policy = policy;
         }
@@ -102,6 +108,11 @@ namespace rl::ui {
             return m_outer_margin;
         }
 
+        ds::margin<f32> inner_margin() const
+        {
+            return m_inner_margin;
+        }
+
     public:
         // Performs applies all Layout computations for the given widget.
         virtual void apply_layout(u32 depth = 0) = 0;
@@ -112,6 +123,9 @@ namespace rl::ui {
         SizePolicy m_size_policy{ SizePolicy::Prefered };
         std::vector<std::pair<Widget*, CellProperties>> m_cell_data{};
         Alignment m_alignment{ Alignment::None };
+        ds::margin<f32> m_outer_margin{ 20.0f, 20.0f, 20.0f, 20.0f };
+        ds::margin<f32> m_inner_margin{ 20.0f, 20.0f, 20.0f, 20.0f };
+        ds::margin<f32> m_inner_padding{ 20.0f, 20.0f, 20.0f, 20.0f };
     };
 
     class OldLayout : public ds::refcounted

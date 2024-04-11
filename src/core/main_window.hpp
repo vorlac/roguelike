@@ -174,10 +174,7 @@ namespace rl {
             SDL_WINDOWPOS_CENTERED_MASK,
         };
 
-        constexpr static inline ds::dims<i32> DEFAULT_SIZE = {
-            1920,
-            1080,
-        };
+        constexpr static inline ds::dims<i32> DEFAULT_SIZE{ 1920, 1080 };
 
     public:
         explicit MainWindow(const std::string& title, const ds::dims<i32>& dims = DEFAULT_SIZE,

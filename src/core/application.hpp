@@ -55,7 +55,10 @@ namespace rl {
         Application& operator=(const Application& other) = delete;
         Application& operator=(Application&& other) = delete;
 
-        ~Application() = default;
+        ~Application()
+        {
+            SDL3::SDL_Quit();
+        }
 
     public:
         bool run()

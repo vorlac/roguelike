@@ -80,7 +80,7 @@ namespace rl::ui {
         void assign_layout(Layout* layout);
         void set_parent(Widget* parent);
         void set_position(ds::point<f32> pos);
-        void set_rect(ds::rect<f32> rect);
+        void set_rect(const ds::rect<f32>& rect);
         void set_size(ds::dims<f32> size);
         void set_width(f32 width);
         void set_height(f32 height);
@@ -164,8 +164,6 @@ namespace rl::ui {
         ds::dims<f32> m_fixed_size{ ds::dims<f32>::zero() };
         ds::dims<f32> m_min_size{ ds::dims<f32>::null() };
         ds::dims<f32> m_max_size{ ds::dims<f32>::null() };
-        ds::margin<f32> m_outer_margin{ ds::margin<f32>::zero() };
-        ds::margin<f32> m_inner_padding{ ds::margin<f32>::zero() };
 
         f32 m_font_size{ -1.0f };
         f32 m_icon_extra_scale{ 1.0f };

@@ -131,7 +131,7 @@ namespace rl::ds {
 
         //////////////////////////////////////////////////
 
-        constexpr dims<T> operator+(const dims<T>& other) const
+        constexpr dims<T> operator+(dims<T> other) const
         {
             return dims{
                 static_cast<T>(this->width + other.width),
@@ -139,7 +139,7 @@ namespace rl::ds {
             };
         }
 
-        constexpr dims<T> operator-(const dims<T>& other) const
+        constexpr dims<T> operator-(dims<T> other) const
         {
             return dims{
                 this->width - other.width,
@@ -147,7 +147,7 @@ namespace rl::ds {
             };
         }
 
-        constexpr dims<T> operator*(const dims<T>& other) const
+        constexpr dims<T> operator*(dims<T> other) const
         {
             return dims{
                 this->width * other.width,
@@ -155,7 +155,7 @@ namespace rl::ds {
             };
         }
 
-        constexpr dims<T> operator/(const dims<T>& other) const
+        constexpr dims<T> operator/(dims<T> other) const
         {
             return dims{
                 this->width / other.width,
@@ -165,7 +165,7 @@ namespace rl::ds {
 
         //////////////////////////////////////////////////
 
-        constexpr dims<T> operator+(const vector2<T>& other) const
+        constexpr dims<T> operator+(vector2<T> other) const
         {
             return dims{
                 this->width + other.x,
@@ -173,7 +173,7 @@ namespace rl::ds {
             };
         }
 
-        constexpr dims<T> operator-(const vector2<T>& other) const
+        constexpr dims<T> operator-(vector2<T> other) const
         {
             return dims{
                 this->width - other.x,
@@ -181,7 +181,7 @@ namespace rl::ds {
             };
         }
 
-        constexpr dims<T> operator*(const vector2<T>& other) const
+        constexpr dims<T> operator*(vector2<T> other) const
         {
             return dims{
                 this->width * other.x,
@@ -189,7 +189,7 @@ namespace rl::ds {
             };
         }
 
-        constexpr dims<T> operator/(const vector2<T>& other) const
+        constexpr dims<T> operator/(vector2<T> other) const
         {
             return dims{
                 this->width / other.x,
@@ -199,7 +199,7 @@ namespace rl::ds {
 
         //////////////////////////////////////////////////
 
-        constexpr dims<T> operator+(const margin<T>& other) const
+        constexpr dims<T> operator+(margin<T> other) const
         {
             return dims{
                 this->width + other.horizontal(),
@@ -207,7 +207,7 @@ namespace rl::ds {
             };
         }
 
-        constexpr dims<T> operator-(const margin<T>& other) const
+        constexpr dims<T> operator-(margin<T> other) const
         {
             return dims{
                 this->width - other.horizontal(),
@@ -254,21 +254,21 @@ namespace rl::ds {
             return *this;
         }
 
-        constexpr dims<T>& operator-=(const dims<T>& other)
+        constexpr dims<T>& operator-=(dims<T> other)
         {
             this->width -= other.width;
             this->height -= other.height;
             return *this;
         }
 
-        constexpr dims<T>& operator*=(const dims<T>& other)
+        constexpr dims<T>& operator*=(dims<T> other)
         {
             this->width *= other.width;
             this->height *= other.height;
             return *this;
         }
 
-        constexpr dims<T>& operator/=(const dims<T>& other)
+        constexpr dims<T>& operator/=(dims<T> other)
         {
             this->width /= other.width;
             this->height /= other.height;
@@ -277,14 +277,14 @@ namespace rl::ds {
 
         //////////////////////////////////////////////////
 
-        constexpr dims<T>& operator+=(const margin<T>& other)
+        constexpr dims<T>& operator+=(margin<T> other)
         {
             this->width += other.horizontal();
             this->height += other.vertical();
             return *this;
         }
 
-        constexpr dims<T>& operator-=(const margin<T>& other)
+        constexpr dims<T>& operator-=(margin<T> other)
         {
             this->width -= other.horizontal();
             this->height -= other.vertical();

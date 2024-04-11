@@ -23,80 +23,8 @@ namespace rl::ds {
     class rect
     {
     public:
-        constexpr ~rect() = default;
-
-        // Default construct a 'null' rect
-        constexpr rect()
-            : pt{ point<T>::null() }
-            , size{ dims<T>::null() }
-        {
-        }
-
-        // copy construct rect<T> from 'other' l-value rect<T>
-        constexpr explicit rect(const rect<T>& other)
-            : pt{ other.pt }
-            , size{ other.size }
-        {
-        }
-
-        // copy construct rect<floating_point>
-        // from l-value rect<integer>
-        template <rl::integer I>
-            requires rl::floating_point<T>
-        explicit constexpr rect(const rect<I>& other)
-            : pt{ static_cast<T>(other.pt.x), static_cast<T>(other.pt.y) }
-            , size{ static_cast<T>(other.size.width), static_cast<T>(other.size.height) }
-        {
-        }
-
-        // construct rect<T> from other r-value rect<T>
-        constexpr rect(rect<T>&& other) noexcept
-            : pt{ std::move(other.pt) }
-            , size{ std::move(other.size) }
-        {
-        }
-
-        // construct rect<T> from (top left point) x and y, and width and height
-        constexpr rect(const T x, const T y, const T width, const T height)
-            : pt{ x, y }
-            , size{ width, height }
-        {
-        }
-
-        // construct rect from r-value (top left) point<T> and dims<T> size
-        constexpr rect(point<T>&& pnt, dims<T>&& dims) noexcept
-            : pt{ std::move(pnt) }
-            , size{ std::move(dims) }
-        {
-        }
-
-        template <rl::integer I>
-            requires rl::floating_point<T>
-        constexpr rect(const point<T>& pnt, dims<I>&& dims)
-            : pt{ pnt }
-            , size{ static_cast<T>(dims.width), static_cast<T>(dims.height) }
-        {
-        }
-
-        // construct rect from l-value (top left) point<T> and dims<T> size
-        constexpr rect(const point<T>& pnt, const dims<T>& dims)
-            : pt{ pnt }
-            , size{ dims }
-        {
-        }
-
-        // 'null' representation of a rect<T>
-        // Returns:
-        //   rect<T>{
-        //     point<T>{
-        //       .x = std::numeric_limits<T>::max()
-        //       .y = std::numeric_limits<T>::max() },
-        //     size<T>{
-        //       .width  = 0
-        //       .height = 0 } }
-        //
-        //   Initialized as: rect<T>{ point<T>::null(), dims<T>::null() }
-        constexpr static rect<T> null()
+        [[nodiscard]]
+        consteval static rect<T> null()
         {
             return rect{
                 point<T>::null(),
@@ -104,22 +32,22 @@ namespace rl::ds {
             };
         }
 
-        // 'zero' representation of a rect<T>
-        // Returns:
-        //   rect<T>{
-        //     point<T>{
-        //       .x = 0
-        //       .y = 0 },
-        //     size<T>{
-        //       .width  = 0
-        //       .height = 0 } }
-        //
-        //   Initialized as: rect<T>{ point<T>::zero(), dims<T>::zero() }
-        constexpr static rect<T> zero()
+        [[nodiscard]]
+        consteval static rect<T> zero()
         {
-            return rect<T>{
+            return rect{
                 point<T>::zero(),
                 dims<T>::zero(),
+            };
+        }
+
+        template <rl::floating_point F>
+        [[nodiscard]] explicit operator rect<F>()
+            requires rl::integer<T>
+        {
+            return rect<F>{
+                static_cast<point<F>>(this->pt),
+                static_cast<dims<F>>(this->size),
             };
         }
 
@@ -237,16 +165,6 @@ namespace rl::ds {
                 },
             };
         }
-
-        // // expand current rect by some margin on all sides
-        // constexpr rect<T>& expand(const margin<T>& margin)
-        // {
-        //     this->pt.x -= margin.left;
-        //     this->pt.y += margin.bottom;
-        //     this->size.width += (margin.left + margin.right);
-        //     this->size.height += (margin.top + margin.bottom);
-        //     return *this;
-        // }
 
         // expand current rect to include rect other
         constexpr rect<T>& expand(const rect<T>& other)
@@ -642,27 +560,10 @@ namespace rl::ds {
         }
 
     public:
-        // Copy assignment
         constexpr bool operator==(const rect<T>& other) const
         {
             return (this->pt == other.pt) &&  //
                    (this->size == other.size);
-        }
-
-        // Copy assignment
-        constexpr rect<T>& operator=(const rect<T>& other)
-        {
-            this->pt = other.pt;
-            this->size = other.size;
-            return *this;
-        }
-
-        // Move assignment
-        constexpr rect<T>& operator=(rect<T>&& other) noexcept
-        {
-            this->pt = std::move(other.pt);
-            this->size = std::move(other.size);
-            return *this;
         }
 
         // Moves the rectangle by the magnitude of the vector

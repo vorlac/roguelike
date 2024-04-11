@@ -248,6 +248,16 @@ namespace rl::ds {
             return math::not_equal(this->x, other.x) || math::not_equal(this->y, other.y);
         }
 
+        template <rl::floating_point F>
+        explicit operator vector2<F>()
+            requires rl::integer<T>
+        {
+            return vector2<F>{
+                static_cast<F>(this->x),
+                static_cast<F>(this->y),
+            };
+        }
+
         [[nodiscard]] constexpr vector2<T> operator-() const noexcept
         {
             return vector2{

@@ -42,16 +42,10 @@ namespace rl::ui {
         virtual void apply_layout(const u32 depth = 0) override
         {
             SizePolicy size_policy{ this->size_policy() };
-            ds::point<f32> curr_widget_pos{ ds::point<f32>::zero() };
+            ds::point curr_widget_pos{ ds::point<f32>::zero() };
             ds::dims cell_size{ m_max_size };
 
-            ds::rect<f32> layout_rect{
-                ds::point{
-                    m_outer_margin.left,
-                    m_outer_margin.top,
-                },
-                cell_size,
-            };
+            ds::rect<f32> layout_rect{ m_rect };
 
             // first process and/or recompute the sizes of
             // each cell that contains a widget in the layout
@@ -73,17 +67,21 @@ namespace rl::ui {
                 if (size_policy == SizePolicy::Prefered)
                 {
                     widget_margins_rect = ds::rect{
-                        curr_widget_pos,
-                        cell_size,
+                        curr_widget_pos +
+                            ds::vector2{
+                                m_inner_margin.left,
+                                m_inner_margin.top,
+                            },
+                        cell_size - m_inner_margin,
                     };
 
                     widget_bounding_rect = ds::rect{
-                        curr_widget_pos +
-                            ds::vector2<f32>{
+                        widget_margins_rect.pt +
+                            ds::vector2{
                                 props.outer_margin.left,
                                 props.outer_margin.top,
                             },
-                        cell_size - props.outer_margin,
+                        widget_margins_rect.size - props.outer_margin,
                     };
                 }
                 else
@@ -98,8 +96,8 @@ namespace rl::ui {
                     widget_bounding_rect = ds::rect<f32>{
                         curr_widget_pos +
                             ds::vector2<f32>{
-                                props.outer_margin.left,
-                                props.outer_margin.top,
+                                m_inner_margin.left,
+                                m_inner_margin.top,
                             },
                         widget_actual_size,
                     };
@@ -107,69 +105,59 @@ namespace rl::ui {
                     widget_margins_rect = widget_bounding_rect.expanded(props.outer_margin);
                 }
 
-                // compute the rect representing the widget's rect including external margins
-                if (m_alignment == Alignment::Vertical)
+                if (size_policy == SizePolicy::Prefered)
                 {
-                    // assign positions from top to bottom
-                    if (size_policy == SizePolicy::Prefered)
+                    if (m_alignment == Alignment::Vertical)
+                        curr_widget_pos.y += widget_margins_rect.size.height +
+                                             props.outer_margin.vertical();
+                    else if (m_alignment == Alignment::Horizontal)
+                        curr_widget_pos.x += widget_margins_rect.size.width +
+                                             props.outer_margin.horizontal();
+                }
+                else
+                {
+                    // compute the rect representing the widget's rect including external margins
+                    if (m_alignment == Alignment::Vertical)
                     {
-                        // layout_rect.size.height += cell_size.height;
-                        curr_widget_pos.y += cell_size.height;
-                    }
-                    else
-                    {
+                        // assign positions from top to bottom
                         f32 height_offset{ widget_bounding_rect.size.height +
                                            props.outer_margin.vertical() };
                         layout_rect.size.height += height_offset;
                         curr_widget_pos.y += height_offset;
                     }
-                }
 
-                if (m_alignment == Alignment::Horizontal)
-                {
-                    // assign positions from top to bottom
-                    if (size_policy == SizePolicy::Prefered)
+                    if (m_alignment == Alignment::Horizontal)
                     {
-                        // layout_rect.size.width += cell_size.width;
-                        curr_widget_pos.x += cell_size.width;
-                    }
-                    else
-                    {
+                        // assign positions from top to bottom
                         f32 width_offset{ widget_bounding_rect.size.width +
                                           props.outer_margin.horizontal() };
                         layout_rect.size.width += width_offset;
                         curr_widget_pos.x += width_offset;
                     }
-                }
 
-                if (size_policy != SizePolicy::Prefered)
-                {
-                    //  offset the widget's local position, relative to
-                    //  parent layout widget, by it's top & left margin
+                    // offset the widget's local position, relative to
+                    // parent layout widget, by it's top & left margin
                     widget_bounding_rect.pt.x += m_outer_margin.left;
                     widget_bounding_rect.pt.y += m_outer_margin.top;
                 }
 
                 // assign the current child's position and dimensions
-                widget->set_rect(std::move(widget_bounding_rect));
+                widget->set_rect(widget_bounding_rect);
 
-                // if (size_policy != SizePolicy::Prefered)
-                //{
-                //   grow the current layout's position and dimensions
-                //   so that it includes the newly computed child rect
+                // grow the current layout's position and dimensions
+                // so that it includes the newly computed child rect
                 layout_rect.expand(widget_margins_rect);
-                //}
             }
 
-            // if (size_policy != SizePolicy::Prefered)
-            //{
-            //  increase the total dimensions by the layout widget's
-            //  absolute vertical and hotizontal outer margin values
-            layout_rect.size.width += m_outer_margin.vertical();
-            layout_rect.size.height += m_outer_margin.horizontal();
-            // assign the newly computed rect for the layout widget
-            //}
+            if (size_policy != SizePolicy::Prefered)
+            {
+                //  increase the total dimensions by the layout widget's
+                //  absolute vertical and hotizontal outer margin values
+                layout_rect.size.width += m_outer_margin.vertical();
+                layout_rect.size.height += m_outer_margin.horizontal();
+            }
 
+            // assign the newly computed rect for the layout widget
             this->set_rect(std::move(layout_rect));
         }
 
