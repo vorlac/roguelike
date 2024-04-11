@@ -176,7 +176,6 @@ namespace rl::ds {
         // Expands a rect by the amount on all sides
         [[nodiscard]]
         constexpr rect<T> expanded(T amount) const noexcept
-
         {
             return rect<T>{
                 point{
@@ -193,7 +192,6 @@ namespace rl::ds {
         // Expands a rect by the specific amounts on each side
         [[nodiscard]]
         constexpr rect<T> expanded(T top, T bottom, T left, T right) const noexcept
-
         {
             return rect{
                 point{
@@ -210,7 +208,6 @@ namespace rl::ds {
         // Expands a rect by the specific amounts on each side
         [[nodiscard]]
         constexpr rect<T> expanded(ds::margin<T> expansion) const noexcept
-
         {
             return rect{
                 point{
@@ -523,6 +520,7 @@ namespace rl::ds {
                         this->size.width,
                         this->size.height / T(2),
                     };
+
                     return std::array{
                         rect<T>{
                             point<T>(this->pt),
@@ -542,6 +540,7 @@ namespace rl::ds {
                         this->size.width / T(2),
                         this->size.height,
                     };
+
                     return std::array{
                         rect<T>{ this->pt, half_size },
                         rect<T>{
@@ -567,17 +566,32 @@ namespace rl::ds {
         }
 
         // Moves the rectangle by the magnitude of the vector
-        constexpr const rect<T>& operator+=(const vector2<T>& vec)
+        constexpr const rect<T>& operator+=(vector2<T> vec)
         {
             this->pt += vec;
             return *this;
         }
 
-        // Returns a rectangle that's been moved by the magnitude of the vector
-        constexpr rect<T> operator+(const vector2<T>& vec) const
+        // Moves the rectangle by the magnitude of the vector
+        constexpr rect<T> operator-=(vector2<T> vec)
         {
-            rect<T> ret{ *this };
+            this->pt -= vec;
+            return *this;
+        }
+
+        // Returns a rectangle that's been moved by the magnitude of the vector
+        constexpr rect<T> operator+(vector2<T> vec) const
+        {
+            rect ret{ *this };
             ret += vec;
+            return ret;
+        }
+
+        // Returns a rectangle that's been moved by the magnitude of the vector
+        constexpr rect<T> operator-(vector2<T> vec) const
+        {
+            rect ret{ *this };
+            ret -= vec;
             return ret;
         }
 

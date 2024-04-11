@@ -278,10 +278,10 @@ namespace rl::ui {
             const ds::margin parent_inner_margin{ parent_layout != nullptr
                                                       ? parent_layout->inner_margin()
                                                       : ds::margin<f32>::zero() };
-            const ds::margin outer_margin{ m_layout->outer_margin() };
+            // const ds::margin outer_margin{ m_layout->outer_margin() };
 
             // compute the rect of available space after accounting for the layout's margins
-            ds::dims max_size{ parent_size - parent_inner_margin - outer_margin };
+            ds::dims max_size{ parent_size };
             if (m_layout->size_policy() == SizePolicy::Prefered)
             {
                 const Alignment alignment{ m_layout->alignment() };
@@ -292,13 +292,16 @@ namespace rl::ui {
                 else if (alignment == Alignment::Vertical)
                     max_size.height /= child_count;
 
-                ds::rect layout_bounds{
-                    m_rect.pt +
-                        ds::vector2<f32>{ parent_inner_margin.left, parent_inner_margin.top } +
-                        ds::vector2<f32>{ outer_margin.top, outer_margin.left },
+                max_size -= parent_inner_margin;
+                const ds::rect layout_bounds{
+                    ds::vector2{
+                        parent_inner_margin.left,
+                        parent_inner_margin.top,
+                    },
                     max_size,
                 };
 
+                // layout_bounds.size -= outer_margin;
                 m_layout->set_rect(layout_bounds);
             }
 

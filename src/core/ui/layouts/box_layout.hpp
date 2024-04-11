@@ -41,11 +41,11 @@ namespace rl::ui {
 
         virtual void apply_layout(const u32 depth = 0) override
         {
-            SizePolicy size_policy{ this->size_policy() };
+            ds::rect layout_rect{ m_rect };
             ds::point curr_widget_pos{ ds::point<f32>::zero() };
-            ds::dims cell_size{ m_max_size };
 
-            ds::rect<f32> layout_rect{ m_rect };
+            const SizePolicy size_policy{ this->size_policy() };
+            const ds::dims cell_size{ m_rect.size };
 
             // first process and/or recompute the sizes of
             // each cell that contains a widget in the layout
@@ -69,10 +69,10 @@ namespace rl::ui {
                     widget_margins_rect = ds::rect{
                         curr_widget_pos +
                             ds::vector2{
-                                m_inner_margin.left,
-                                m_inner_margin.top,
+                                m_outer_margin.left,
+                                m_outer_margin.top,
                             },
-                        cell_size - m_inner_margin,
+                        cell_size - m_outer_margin,
                     };
 
                     widget_bounding_rect = ds::rect{
@@ -120,8 +120,8 @@ namespace rl::ui {
                     if (m_alignment == Alignment::Vertical)
                     {
                         // assign positions from top to bottom
-                        f32 height_offset{ widget_bounding_rect.size.height +
-                                           props.outer_margin.vertical() };
+                        const f32 height_offset{ widget_bounding_rect.size.height +
+                                                 props.outer_margin.vertical() };
                         layout_rect.size.height += height_offset;
                         curr_widget_pos.y += height_offset;
                     }
@@ -129,8 +129,8 @@ namespace rl::ui {
                     if (m_alignment == Alignment::Horizontal)
                     {
                         // assign positions from top to bottom
-                        f32 width_offset{ widget_bounding_rect.size.width +
-                                          props.outer_margin.horizontal() };
+                        const f32 width_offset{ widget_bounding_rect.size.width +
+                                                props.outer_margin.horizontal() };
                         layout_rect.size.width += width_offset;
                         curr_widget_pos.x += width_offset;
                     }
@@ -149,13 +149,13 @@ namespace rl::ui {
                 layout_rect.expand(widget_margins_rect);
             }
 
-            if (size_policy != SizePolicy::Prefered)
-            {
-                //  increase the total dimensions by the layout widget's
-                //  absolute vertical and hotizontal outer margin values
-                layout_rect.size.width += m_outer_margin.vertical();
-                layout_rect.size.height += m_outer_margin.horizontal();
-            }
+            // if (size_policy != SizePolicy::Prefered)
+            //{
+            //     //  increase the total dimensions by the layout widget's
+            //     //  absolute vertical and hotizontal outer margin values
+            //     layout_rect.size.width += m_outer_margin.vertical();
+            //     layout_rect.size.height += m_outer_margin.horizontal();
+            // }
 
             // assign the newly computed rect for the layout widget
             this->set_rect(std::move(layout_rect));
