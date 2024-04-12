@@ -5,10 +5,8 @@
       "isDefaultConfiguration": true,
       "name": "roguelike",
       "project": "CMakeLists.txt",
-      "args": [
-        "--console=info",
-        "--log=error"
-      ]
+      "externalConsole": false,
+      "args": []
     }
   ]
 }

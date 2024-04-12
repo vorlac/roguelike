@@ -255,4 +255,5 @@ add_custom_command(TARGET ${PROJECT_NAME}
       $<TARGET_FILE_DIR:${PROJECT_NAME}>/shaders
 )
 
+include(ide-config)
 include(cmake-utils)

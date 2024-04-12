@@ -3001,9 +3001,10 @@ namespace rl::nvg {
 
         state->text_align = Align::HLeft | valign;
 
-        i32 nrows{ text_break_lines_(ctx, string, end, break_row_width, rows, 2) };
-        while (nrows > 0)
+        i32 nrows{ 0 };
+        do
         {
+            nrows = text_break_lines_(ctx, string, end, break_row_width, rows, 2);
             for (i32 i = 0; i < nrows; i++)
             {
                 const TextRow* row = &rows[i];
@@ -3014,10 +3015,14 @@ namespace rl::nvg {
                           row->end);
                 else if ((haling & Align::HRight) != 0)
                     text_(ctx, x + break_row_width - row->width, y, row->start, row->end);
+
                 y += lineh * state->line_height;
             }
-            string = rows[nrows - 1].next;
+
+            if (nrows > 0)
+                string = rows[nrows - 1].next;
         }
+        while (nrows > 0);
 
         state->text_align = old_align;
     }

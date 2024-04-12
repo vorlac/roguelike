@@ -44,15 +44,17 @@ namespace rl::nvg {
         }
 
         i32 fons_tt_load_font(FONScontext* context, FONSttFontImpl* font, const u8* data,
-                              const i32 font_index)
+                              i32 /*data_size*/, const i32 font_index)
         {
             i32 stb_error;
             font->font.userdata = context;
             const i32 offset = stbtt_get_font_offset_for_index(data, font_index);
+
             if (offset == -1)
                 stb_error = 0;
             else
                 stb_error = stbtt_init_font(&font->font, data, offset);
+
             return stb_error;
         }
 
@@ -72,8 +74,9 @@ namespace rl::nvg {
             return stbtt_find_glyph_index(&font->font, codepoint);
         }
 
-        i32 fons_tt_build_glyph_bitmap(const FONSttFontImpl* font, const i32 glyph, const f32 scale,
-                                       i32* advance, i32* lsb, i32* x0, i32* y0, i32* x1, i32* y1)
+        i32 fons_tt_build_glyph_bitmap(const FONSttFontImpl* font, const i32 glyph, f32 /*size*/,
+                                       const f32 scale, i32* advance, i32* lsb, i32* x0, i32* y0,
+                                       i32* x1, i32* y1)
         {
             stbtt_GetGlyphHMetrics(&font->font, glyph, advance, lsb);
             stbtt_GetGlyphBitmapBox(&font->font, glyph, scale, scale, x0, y0, x1, y1);
@@ -515,8 +518,8 @@ namespace rl::nvg {
                 // glyph.
             }
             const f32 scale = fons_tt_get_pixel_height_scale(&render_font->font, size);
-            fons_tt_build_glyph_bitmap(&render_font->font, g, scale, &advance, &lsb, &x0, &y0, &x1,
-                                       &y1);
+            fons_tt_build_glyph_bitmap(&render_font->font, g, size, scale, &advance, &lsb, &x0, &y0,
+                                       &x1, &y1);
             const i32 gw = x1 - x0 + pad * 2;
             const i32 gh = y1 - y0 + pad * 2;
 
@@ -737,11 +740,13 @@ namespace rl::nvg {
         {
             if (font == nullptr)
                 return;
+
             if (font->glyphs)
-                free(font->glyphs);
+                std::free(font->glyphs);
             if (font->free_data && font->data)
-                free(font->data);
-            free(font);
+                std::free(font->data);
+
+            std::free(font);
         }
 
         i32 fons_alloc_font(FONScontext* stash)
@@ -759,10 +764,11 @@ namespace rl::nvg {
             const auto font = static_cast<FONSfont*>(std::malloc(sizeof(FONSfont)));
             if (font != nullptr)
             {
-                memset(font, 0, sizeof(FONSfont));
+                std::memset(font, 0, sizeof(FONSfont));
 
                 font->glyphs = static_cast<FONSglyph*>(
                     std::malloc(sizeof(FONSglyph) * FONS_INIT_GLYPHS));
+
                 if (font->glyphs != nullptr)
                 {
                     font->cglyphs = FONS_INIT_GLYPHS;
@@ -784,7 +790,7 @@ namespace rl::nvg {
         const auto stash = static_cast<FONScontext*>(std::malloc(sizeof(FONScontext)));
         if (stash != nullptr)
         {
-            memset(stash, 0, sizeof(FONScontext));
+            std::memset(stash, 0, sizeof(FONScontext));
 
             stash->params = *params;
 
@@ -804,6 +810,7 @@ namespace rl::nvg {
                         // Allocate space for fonts.
                         stash->fonts = static_cast<FONSfont**>(
                             std::malloc(sizeof(FONSfont*) * FONS_INIT_FONTS));
+
                         if (stash->fonts != nullptr)
                         {
                             memset(stash->fonts, 0, sizeof(FONSfont*) * FONS_INIT_FONTS);
@@ -815,10 +822,11 @@ namespace rl::nvg {
                             stash->ith = 1.0f / static_cast<f32>(stash->params.height);
                             stash->tex_data = static_cast<u8*>(
                                 std::malloc(stash->params.width * stash->params.height));
+
                             if (stash->tex_data != nullptr)
                             {
-                                memset(stash->tex_data, 0,
-                                       stash->params.width * stash->params.height);
+                                std::memset(stash->tex_data, 0,
+                                            stash->params.width * stash->params.height);
 
                                 stash->dirty_rect[0] = stash->params.width;
                                 stash->dirty_rect[1] = stash->params.height;
@@ -827,10 +835,8 @@ namespace rl::nvg {
 
                                 // Add white rect at 0,0 for debug drawing.
                                 fons_add_white_rect(stash, 2, 2);
-
                                 fons_push_state(stash);
                                 fons_clear_state(stash);
-
                                 return stash;
                             }
                         }
@@ -838,6 +844,7 @@ namespace rl::nvg {
                 }
             }
         }
+
         fons_delete_internal(stash);
         return nullptr;
     }
@@ -938,7 +945,7 @@ namespace rl::nvg {
         if (fp != nullptr)
         {
             status = std::fseek(fp, 0, SEEK_END);
-            const i32 data_size = static_cast<i32>(ftell(fp));
+            i32 data_size = static_cast<i32>(std::ftell(fp));
             status = std::fseek(fp, 0, SEEK_SET);
             data = static_cast<u8*>(std::malloc(data_size));
             if (data != nullptr)
@@ -984,7 +991,7 @@ namespace rl::nvg {
 
         // Init font
         stash->nscratch = 0;
-        if (fons_tt_load_font(stash, &font->font, data, font_index))
+        if (fons_tt_load_font(stash, &font->font, data, data_size, font_index))
         {
             // Store normalized line height. The real line height is got
             // by multiplying the lineh by font size.
@@ -1422,7 +1429,8 @@ namespace rl::nvg {
             free(stash->scratch);
 
         fons_tt_done(stash);
-        free(stash);
+
+        std::free(stash);
     }
 
     void fons_set_error_callback(FONScontext* stash,

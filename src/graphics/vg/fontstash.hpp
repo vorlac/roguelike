@@ -199,8 +199,8 @@ namespace rl::nvg {
     // Add fonts
     int32_t fons_add_font(FONScontext* stash, const char* name, const char* path,
                           int32_t font_index);
-    int32_t fons_add_font_mem(FONScontext* s, const char* name, uint8_t* data, int32_t data_size,
-                              int32_t free_data, int32_t font_index);
+    int32_t fons_add_font_mem(FONScontext* stash, const char* name, u8* data, i32 data_size,
+                              i32 free_data, i32 font_index);
     int32_t fons_get_font_by_name(const FONScontext* s, const char* name);
 
     // State handling

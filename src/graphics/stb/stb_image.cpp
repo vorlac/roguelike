@@ -18,7 +18,6 @@
   #define STBI_ASSERT(x) assert(x)
 #endif
 
-#include "../../../extern/vcpkg/packages/directx-headers_x64-windows/include/directx/d3dx12_state_object.h"
 #include "graphics/stb/stb_image.hpp"
 #include "utils/numeric.hpp"
 
@@ -2902,13 +2901,13 @@ namespace rl::stb {
         }
         else if (z->scan_n == 1)
         {
-            int n = z->order[0];
+            const int n = z->order[0];
             // non-interleaved data, we just need to process one block at a time,
             // in trivial scanline order
             // number of blocks to do just depends on how many actual "pixels" this
             // component has, independent of interleaved MCU blocking and such
-            int w = (z->img_comp[n].x + 7) >> 3;
-            int h = (z->img_comp[n].y + 7) >> 3;
+            const int w = (z->img_comp[n].x + 7) >> 3;
+            const int h = (z->img_comp[n].y + 7) >> 3;
             for (int j = 0; j < h; ++j)
             {
                 for (int i = 0; i < w; ++i)
@@ -4282,11 +4281,11 @@ namespace rl::stb {
         z->maxcode[16] = 0x10000;  // sentinel
         for (i = 0; i < num; ++i)
         {
-            int s = sizelist[i];
+            const int s = sizelist[i];
             if (s)
             {
                 int c = next_code[s] - z->firstcode[s] + z->firstsymbol[s];
-                StbiUint16 fastv = static_cast<StbiUint16>((s << 9) | i);
+                const StbiUint16 fastv = static_cast<StbiUint16>((s << 9) | i);
                 z->size[c] = static_cast<stbi_uc>(s);
                 z->value[c] = static_cast<StbiUint16>(i);
                 if (s <= STBI__ZFAST_BITS)
