@@ -278,10 +278,10 @@ namespace rl::ui {
             const ds::margin parent_inner_margin{ parent_layout != nullptr
                                                       ? parent_layout->inner_margin()
                                                       : ds::margin<f32>::zero() };
-            // const ds::margin outer_margin{ m_layout->outer_margin() };
+            const ds::margin outer_margin{ m_layout->outer_margin() };
 
             // compute the rect of available space after accounting for the layout's margins
-            ds::dims max_size{ parent_size };
+            ds::dims max_size{ parent_size - parent_inner_margin };
             if (m_layout->size_policy() == SizePolicy::Prefered)
             {
                 const Alignment alignment{ m_layout->alignment() };
