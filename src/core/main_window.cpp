@@ -295,7 +295,7 @@ namespace rl {
 
     ds::point<i32> MainWindow::get_position() const
     {
-        ds::point pos{ 0, 0 };
+        ds::point<i32> pos{ 0, 0 };
         const i32 result{ SDL3::SDL_GetWindowPosition(m_sdl_window, &pos.x, &pos.y) };
         sdl_assert(result == 0, "failed to get pos");
         return pos;
@@ -303,7 +303,7 @@ namespace rl {
 
     ds::dims<i32> MainWindow::get_min_size() const
     {
-        ds::dims size{ 0, 0 };
+        ds::dims<i32> size{ 0, 0 };
         const i32 result{ SDL3::SDL_GetWindowMinimumSize(m_sdl_window, &size.width, &size.height) };
         sdl_assert(result == 0, "failed to get min size");
         return size;
@@ -311,7 +311,7 @@ namespace rl {
 
     ds::dims<i32> MainWindow::get_max_size() const
     {
-        ds::dims size{ 0, 0 };
+        ds::dims<i32> size{ 0, 0 };
         const i32 result{ SDL3::SDL_GetWindowMaximumSize(m_sdl_window, &size.width, &size.height) };
         sdl_assert(result == 0, "failed to get max size");
         return size;
@@ -411,17 +411,17 @@ namespace rl {
         return result == 0;
     }
 
-    void MainWindow::mouse_entered_event_callback(const SDL3::SDL_Event& e)
+    void MainWindow::mouse_entered_event_callback(const SDL3::SDL_Event&)
     {
-        ds::point delta{ 0.0f, 0.0f };
+        ds::point<f32> delta{ 0.0f, 0.0f };
         SDL3::SDL_GetRelativeMouseState(&delta.x, &delta.y);
         m_mouse.process_motion_delta(std::move(delta));
         m_gui_canvas->on_mouse_entered(m_mouse);
     }
 
-    void MainWindow::mouse_exited_event_callback(const SDL3::SDL_Event& e)
+    void MainWindow::mouse_exited_event_callback(const SDL3::SDL_Event&)
     {
-        ds::point delta{ 0.0f, 0.0f };
+        ds::point<f32> delta{ 0.0f, 0.0f };
         SDL3::SDL_GetRelativeMouseState(&delta.x, &delta.y);
         m_mouse.process_motion_delta(delta);
         m_gui_canvas->on_mouse_exited(m_mouse);
@@ -491,7 +491,7 @@ namespace rl {
         m_gui_canvas->on_character_input(m_keyboard);
     }
 
-    void MainWindow::window_resized_event_callback(const SDL3::SDL_Event& e)
+    void MainWindow::window_resized_event_callback(const SDL3::SDL_Event&)
     {
         const ds::dims<i32>& window_size{ this->get_size() };
         const ds::dims<i32>& framebuf_size{ this->get_render_size() };
@@ -502,34 +502,33 @@ namespace rl {
 
         m_framebuf_size = framebuf_size;
         m_window_rect.size = render_size;
-        m_gl_renderer->set_viewport({
-            ds::point{ 0, 0 },
+        m_gl_renderer->set_viewport(ds::rect{
+            ds::point<i32>{ 0, 0 },
             m_window_rect.size,
         });
 
-        m_gui_canvas->on_resized(std::move(render_size));
+        m_gui_canvas->on_resized(render_size);
         this->render();
     }
 
-    void MainWindow::window_moved_event_callback(const SDL3::SDL_Event& e)
+    void MainWindow::window_moved_event_callback(const SDL3::SDL_Event&)
     {
-        ds::point window_pos{ this->get_position() };
+        ds::point<i32> window_pos{ this->get_position() };
 
-        scoped_log("mod_pos={}", window_pos);
-        const ds::dims window_size{ this->get_size() };
-        const ds::dims framebuf_size{ this->get_render_size() };
+        const ds::dims<i32> window_size{ this->get_size() };
+        const ds::dims<i32> framebuf_size{ this->get_render_size() };
         runtime_assert(framebuf_size.area() > 0 && window_size.area() > 0,
                        "invalid window size/location");
 
         m_framebuf_size = framebuf_size;
         m_window_rect.pt = window_pos;
-        m_window_rect.size = ds::dims{
-            static_cast<i32>(window_size.width / m_pixel_ratio),
-            static_cast<i32>(window_size.height / m_pixel_ratio),
+        m_window_rect.size = ds::dims<i32>{
+            static_cast<i32>(static_cast<f32>(window_size.width) / m_pixel_ratio),
+            static_cast<i32>(static_cast<f32>(window_size.height) / m_pixel_ratio),
         };
     }
 
-    bool MainWindow::window_pixel_size_changed_event_callback(const SDL3::SDL_Event& e)
+    bool MainWindow::window_pixel_size_changed_event_callback(const SDL3::SDL_Event&)
     {
         m_pixel_ratio = SDL3::SDL_GetWindowDisplayScale(m_sdl_window);
         sdl_assert(m_pixel_ratio != 0.0f, "failed to get pixel ratio [window:{}]", m_window_id);
@@ -538,82 +537,82 @@ namespace rl {
         return m_pixel_ratio > 0.0f && m_pixel_density > 0.0f;
     }
 
-    void MainWindow::window_focus_gained_event_callback(const SDL3::SDL_Event& e) const
+    void MainWindow::window_focus_gained_event_callback(const SDL3::SDL_Event&) const
     {
         m_gui_canvas->on_focus_gained();
     }
 
-    void MainWindow::window_focus_lost_event_callback(const SDL3::SDL_Event& e) const
+    void MainWindow::window_focus_lost_event_callback(const SDL3::SDL_Event&) const
     {
         m_gui_canvas->on_focus_lost();
     }
 
-    bool MainWindow::window_shown_event_callback(const SDL3::SDL_Event& e) const
+    bool MainWindow::window_shown_event_callback(const SDL3::SDL_Event&) const
     {
         return true;
     }
 
-    bool MainWindow::window_occluded_event_callback(const SDL3::SDL_Event& e) const
+    bool MainWindow::window_occluded_event_callback(const SDL3::SDL_Event&) const
     {
         return true;
     }
 
-    bool MainWindow::window_hidden_event_callback(const SDL3::SDL_Event& e) const
+    bool MainWindow::window_hidden_event_callback(const SDL3::SDL_Event&) const
     {
         return true;
     }
 
-    bool MainWindow::window_exposed_event_callback(const SDL3::SDL_Event& e) const
+    bool MainWindow::window_exposed_event_callback(const SDL3::SDL_Event&) const
     {
         return true;
     }
 
-    bool MainWindow::window_minimized_event_callback(const SDL3::SDL_Event& e) const
+    bool MainWindow::window_minimized_event_callback(const SDL3::SDL_Event&) const
     {
         return true;
     }
 
-    bool MainWindow::window_maximized_event_callback(const SDL3::SDL_Event& e) const
+    bool MainWindow::window_maximized_event_callback(const SDL3::SDL_Event&) const
     {
         return true;
     }
 
-    bool MainWindow::window_restored_event_callback(const SDL3::SDL_Event& e) const
+    bool MainWindow::window_restored_event_callback(const SDL3::SDL_Event&) const
     {
         return true;
     }
 
-    bool MainWindow::window_close_requested_event_callback(const SDL3::SDL_Event& e) const
+    bool MainWindow::window_close_requested_event_callback(const SDL3::SDL_Event&) const
     {
         return true;
     }
 
-    bool MainWindow::window_take_focus_event_callback(const SDL3::SDL_Event& e) const
+    bool MainWindow::window_take_focus_event_callback(const SDL3::SDL_Event&) const
     {
         return true;
     }
 
-    bool MainWindow::window_hit_test_event_callback(const SDL3::SDL_Event& e) const
+    bool MainWindow::window_hit_test_event_callback(const SDL3::SDL_Event&) const
     {
         return true;
     }
 
-    bool MainWindow::window_icc_profile_changed_callback(const SDL3::SDL_Event& e) const
+    bool MainWindow::window_icc_profile_changed_callback(const SDL3::SDL_Event&) const
     {
         return true;
     }
 
-    bool MainWindow::window_display_changed_event_callback(const SDL3::SDL_Event& e) const
+    bool MainWindow::window_display_changed_event_callback(const SDL3::SDL_Event&) const
     {
         return true;
     }
 
-    bool MainWindow::window_display_scale_changed_event_callback(const SDL3::SDL_Event& e) const
+    bool MainWindow::window_display_scale_changed_event_callback(const SDL3::SDL_Event&) const
     {
         return true;
     }
 
-    bool MainWindow::window_destroyed_event_callback(const SDL3::SDL_Event& e) const
+    bool MainWindow::window_destroyed_event_callback(const SDL3::SDL_Event&) const
     {
         return true;
     }

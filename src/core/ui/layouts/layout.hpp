@@ -51,7 +51,7 @@ namespace rl::ui {
         f32 stretch_factor{ 0.0f };
 
         // the layout cell's rectangle (debug only)
-        ds::rect<f32> rect{ 0.0f, 0.0f, 0.0f, 0.0f };
+        ds::rect<f32> rect{ ds::rect<f32>::zero() };
     };
 
     class Layout : public Widget
@@ -113,19 +113,35 @@ namespace rl::ui {
             return m_inner_margin;
         }
 
+        void inner_margin(const ds::margin<f32> margin)
+        {
+            m_inner_margin = margin;
+        }
+
+        void outer_margin(const ds::margin<f32> margin)
+        {
+            m_outer_margin = margin;
+        }
+
+        void set_margins(const ds::margin<f32> inner, const ds::margin<f32> outer)
+        {
+            this->inner_margin(inner);
+            this->inner_margin(outer);
+        }
+
     public:
         // Performs applies all Layout computations for the given widget.
-        virtual void apply_layout(u32 depth = 0) = 0;
+        virtual void apply_layout() = 0;
         // Compute the preferred size for a given Layout and widget
         virtual ds::dims<f32> computed_size() const = 0;
 
     protected:
+        Alignment m_alignment{ Alignment::None };
         SizePolicy m_size_policy{ SizePolicy::Prefered };
         std::vector<std::pair<Widget*, CellProperties>> m_cell_data{};
-        Alignment m_alignment{ Alignment::None };
-        ds::margin<f32> m_outer_margin{ 20.0f, 20.0f, 20.0f, 20.0f };
-        ds::margin<f32> m_inner_margin{ 20.0f, 20.0f, 20.0f, 20.0f };
-        ds::margin<f32> m_inner_padding{ 20.0f, 20.0f, 20.0f, 20.0f };
+        ds::margin<f32> m_outer_margin{ ds::margin<f32>::init(20.0f) };
+        ds::margin<f32> m_inner_margin{ ds::margin<f32>::init(20.0f) };
+        ds::margin<f32> m_inner_padding{ ds::margin<f32>::init(20.0f) };
     };
 
     class OldLayout : public ds::refcounted

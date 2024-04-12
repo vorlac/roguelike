@@ -33,33 +33,33 @@ namespace rl::nvg {
             return a > b ? a : b;
         }
 
-        i32 fons_tt_init(FONScontext* context)
+        i32 fons_tt_init(FONScontext*)
         {
             return 1;
         }
 
-        i32 fons_tt_done(FONScontext* context)
+        i32 fons_tt_done(FONScontext*)
         {
             return 1;
         }
 
         i32 fons_tt_load_font(FONScontext* context, FONSttFontImpl* font, const u8* data,
-                              i32 data_size, const i32 font_index)
+                              const i32 font_index)
         {
             i32 stb_error;
             font->font.userdata = context;
-            const i32 offset = stbtt_GetFontOffsetForIndex(data, font_index);
+            const i32 offset = stbtt_get_font_offset_for_index(data, font_index);
             if (offset == -1)
                 stb_error = 0;
             else
-                stb_error = stbtt_InitFont(&font->font, data, offset);
+                stb_error = stbtt_init_font(&font->font, data, offset);
             return stb_error;
         }
 
         void fons_tt_get_font_v_metrics(const FONSttFontImpl* font, i32* ascent, i32* descent,
-                                        i32* lineGap)
+                                        i32* line_gap)
         {
-            stbtt_GetFontVMetrics(&font->font, ascent, descent, lineGap);
+            stbtt_GetFontVMetrics(&font->font, ascent, descent, line_gap);
         }
 
         f32 fons_tt_get_pixel_height_scale(const FONSttFontImpl* font, const f32 size)
@@ -69,12 +69,11 @@ namespace rl::nvg {
 
         i32 fons_tt_get_glyph_index(const FONSttFontImpl* font, const i32 codepoint)
         {
-            return stbtt_FindGlyphIndex(&font->font, codepoint);
+            return stbtt_find_glyph_index(&font->font, codepoint);
         }
 
-        i32 fons_tt_build_glyph_bitmap(const FONSttFontImpl* font, const i32 glyph, f32 size,
-                                       const f32 scale, i32* advance, i32* lsb, i32* x0, i32* y0,
-                                       i32* x1, i32* y1)
+        i32 fons_tt_build_glyph_bitmap(const FONSttFontImpl* font, const i32 glyph, const f32 scale,
+                                       i32* advance, i32* lsb, i32* x0, i32* y0, i32* x1, i32* y1)
         {
             stbtt_GetGlyphHMetrics(&font->font, glyph, advance, lsb);
             stbtt_GetGlyphBitmapBox(&font->font, glyph, scale, scale, x0, y0, x1, y1);
@@ -83,9 +82,9 @@ namespace rl::nvg {
 
         void fons_tt_render_glyph_bitmap(
             const FONSttFontImpl* font, u8* output, const i32 out_width, const i32 out_height,
-            const i32 outStride, const f32 scaleX, const f32 scale_y, const i32 glyph)
+            const i32 out_stride, const f32 scale_x, const f32 scale_y, const i32 glyph)
         {
-            stbtt_MakeGlyphBitmap(&font->font, output, out_width, out_height, outStride, scaleX,
+            stbtt_MakeGlyphBitmap(&font->font, output, out_width, out_height, out_stride, scale_x,
                                   scale_y, glyph);
         }
 
@@ -420,7 +419,7 @@ namespace rl::nvg {
         }
 
         void fons_blur(const FONScontext* stash, u8* dst, const i32 w, const i32 h,
-                       const i32 dstStride, const i32 blur)
+                       const i32 dst_stride, const i32 blur)
         {
             (void)stash;
 
@@ -430,10 +429,10 @@ namespace rl::nvg {
             // to infinity)
             const f32 sigma = static_cast<f32>(blur) * 0.57735f;  // 1 / sqrt(3)
             const i32 alpha = static_cast<i32>((1 << APREC) * (1.0f - expf(-2.3f / (sigma + 1.0f))));
-            fons_blur_rows(dst, w, h, dstStride, alpha);
-            fons_blur_cols(dst, w, h, dstStride, alpha);
-            fons_blur_rows(dst, w, h, dstStride, alpha);
-            fons_blur_cols(dst, w, h, dstStride, alpha);
+            fons_blur_rows(dst, w, h, dst_stride, alpha);
+            fons_blur_cols(dst, w, h, dst_stride, alpha);
+            fons_blur_rows(dst, w, h, dst_stride, alpha);
+            fons_blur_cols(dst, w, h, dst_stride, alpha);
             //	fons__blurrows(dst, w, h, dstStride, alpha);
             //	fons__blurcols(dst, w, h, dstStride, alpha);
         }
@@ -444,7 +443,7 @@ namespace rl::nvg {
             {
                 font->cglyphs = font->cglyphs == 0 ? 8 : font->cglyphs * 2;
                 font->glyphs = static_cast<FONSglyph*>(
-                    realloc(font->glyphs, sizeof(FONSglyph) * font->cglyphs));
+                    std::realloc(font->glyphs, sizeof(FONSglyph) * font->cglyphs));
                 if (font->glyphs == nullptr)
                     return nullptr;
             }
@@ -464,7 +463,7 @@ namespace rl::nvg {
             i32 gx;
             i32 gy;
             FONSglyph* glyph = nullptr;
-            const f32 size = isize / 10.0f;
+            const f32 size = static_cast<f32>(isize / 10.0f);
             const FONSfont* render_font = font;
 
             if (isize < 2)
@@ -495,7 +494,7 @@ namespace rl::nvg {
             }
 
             // Create a new glyph or rasterize bitmap data for a cached glyph.
-            i32 g = fons_tt_get_glyph_index(&font->font, codepoint);
+            i32 g = fons_tt_get_glyph_index(&font->font, static_cast<i32>(codepoint));
             // Try to find the glyph in fallback fonts.
             if (g == 0)
             {
@@ -503,7 +502,7 @@ namespace rl::nvg {
                 {
                     const FONSfont* fallbackFont = stash->fonts[font->fallbacks[i]];
                     const i32 fallback_index = fons_tt_get_glyph_index(&fallbackFont->font,
-                                                                       codepoint);
+                                                                       static_cast<i32>(codepoint));
                     if (fallback_index != 0)
                     {
                         g = fallback_index;
@@ -516,8 +515,8 @@ namespace rl::nvg {
                 // glyph.
             }
             const f32 scale = fons_tt_get_pixel_height_scale(&render_font->font, size);
-            fons_tt_build_glyph_bitmap(&render_font->font, g, size, scale, &advance, &lsb, &x0, &y0,
-                                       &x1, &y1);
+            fons_tt_build_glyph_bitmap(&render_font->font, g, scale, &advance, &lsb, &x0, &y0, &x1,
+                                       &y1);
             const i32 gw = x1 - x0 + pad * 2;
             const i32 gh = y1 - y0 + pad * 2;
 
@@ -985,7 +984,7 @@ namespace rl::nvg {
 
         // Init font
         stash->nscratch = 0;
-        if (fons_tt_load_font(stash, &font->font, data, data_size, font_index))
+        if (fons_tt_load_font(stash, &font->font, data, font_index))
         {
             // Store normalized line height. The real line height is got
             // by multiplying the lineh by font size.

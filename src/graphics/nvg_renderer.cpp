@@ -179,12 +179,12 @@ namespace rl {
         }
     }
 
-    void NVGRenderer::set_fill_paint_style(nvg::PaintStyle&& paint_style) const
+    void NVGRenderer::set_fill_paint_style(nvg::PaintStyle paint_style) const
     {
         nvg::fill_paint(m_nvg_context.get(), std::move(paint_style));
     }
 
-    void NVGRenderer::fill_current_path(nvg::PaintStyle&& paint_style) const
+    void NVGRenderer::fill_current_path(nvg::PaintStyle paint_style) const
     {
         nvg::fill_paint(m_nvg_context.get(), std::move(paint_style));
         nvg::fill(m_nvg_context.get());
@@ -198,7 +198,7 @@ namespace rl {
         nvg::set_text_align(m_nvg_context.get(), alignment);
     }
 
-    ds::dims<f32> NVGRenderer::get_text_size_(const std::string& text) const
+    ds::dims<f32> NVGRenderer::get_text_size_(const std::string&) const
     {
         assert_cond(false);
         return ds::dims<f32>::zero();

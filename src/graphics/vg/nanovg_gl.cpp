@@ -741,8 +741,7 @@ namespace rl::nvg::gl {
                 check_error(gl, "tex paint tex");
             }
 
-            void render_viewport(void* uptr, const float width, const float height,
-                                 float device_pixel_ratio)
+            void render_viewport(void* uptr, const float width, const float height, f32)
             {
                 const auto gl = static_cast<GLContext*>(uptr);
                 gl->view[0] = width;

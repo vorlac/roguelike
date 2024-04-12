@@ -81,7 +81,7 @@ namespace rl::ui {
         else
         {
             const auto first_child{ m_children.front() };
-            first_child->set_position(ds::point{ 0.0f, 0.0f });
+            first_child->set_position(ds::point<f32>::zero());
             first_child->set_size(std::forward<decltype(m_rect.size)>(m_rect.size));
             first_child->perform_layout();
         }
@@ -98,7 +98,8 @@ namespace rl::ui {
 
         m_parent_dialog->refresh_relative_placement();
         m_visible &= m_parent_dialog->visible_recursive();
-        m_rect.pt = m_parent_dialog->position() + m_anchor_pos - ds::point{ 0.0f, m_anchor_offset };
+        m_rect.pt = m_parent_dialog->position() + m_anchor_pos -
+                    ds::point<f32>{ 0.0f, m_anchor_offset };
     }
 
     void Popup::draw()
@@ -135,7 +136,7 @@ namespace rl::ui {
                 m_renderer->draw_path(false, [&] {
                     nvg::rounded_rect(context, m_rect.pt.x, m_rect.pt.y, m_rect.size.width,
                                       m_rect.size.height, corner_radius);
-                    ds::point base{ ds::point{ 0.0f, m_anchor_offset } + m_rect.pt };
+                    ds::point<f32> base{ ds::point<f32>{ 0.0f, m_anchor_offset } + m_rect.pt };
 
                     f32 sign = -1.0f;
                     if (m_side == Side::Left)

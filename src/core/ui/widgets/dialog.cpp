@@ -17,7 +17,6 @@ namespace rl::ui {
         , m_title{ std::move(title) }
     {
         m_resizable = true;
-        scoped_log();
     }
 
     std::string Dialog::title() const
@@ -27,7 +26,6 @@ namespace rl::ui {
 
     void Dialog::set_title(const std::string& title)
     {
-        scoped_log();
         m_title = title;
     }
 
@@ -43,7 +41,6 @@ namespace rl::ui {
 
     Widget* Dialog::button_panel()
     {
-        scoped_log();
         if (m_button_panel == nullptr)
             m_button_panel = new Widget{ this };
 
@@ -52,8 +49,6 @@ namespace rl::ui {
 
     f32 Dialog::header_height() const
     {
-        scoped_logger(log_level::debug, "{}", m_title.empty() ? 0 : m_theme->dialog_header_height);
-
         if (!m_title.empty())
             return m_theme->dialog_header_height;
 
@@ -62,8 +57,6 @@ namespace rl::ui {
 
     void Dialog::draw()
     {
-        scoped_trace(log_level::trace);
-
         auto&& context{ m_renderer->context() };
         const f32 drop_shadow_size{ m_theme->dialog_drop_shadow_size };
         const f32 corner_radius{ m_theme->dialog_corner_radius };
@@ -108,10 +101,8 @@ namespace rl::ui {
 
                     m_renderer->draw_rounded_rect(
                         ds::rect<f32>{
-                            m_rect.pt.x,
-                            m_rect.pt.y,
-                            m_rect.size.width,
-                            header_height,
+                            ds::point<f32>{ m_rect.pt },
+                            ds::dims<f32>{ m_rect.size.width, header_height },
                         },
                         corner_radius);
 
@@ -172,10 +163,8 @@ namespace rl::ui {
         return m_resize_grab_location;
     }
 
-    bool Dialog::on_mouse_drag(const Mouse& mouse, const Keyboard& kb)
+    bool Dialog::on_mouse_drag(const Mouse& mouse, const Keyboard&)
     {
-        scoped_logger(log_level::debug, "pt:{}, rel:{}", mouse.pos(), mouse.pos_delta());
-
         switch (m_mode)
         {
             case Dialog::Mode::Move:
@@ -183,17 +172,14 @@ namespace rl::ui {
                 const bool move_btn_down{ mouse.is_button_down(Mouse::Button::Left) };
                 if (move_btn_down)
                 {
-                    diag_log("m_pos_1={} mouse_delta={}", m_rect.pt, mouse.pos_delta());
                     m_rect.pt += mouse.pos_delta();
                     m_rect.pt.x = std::max(m_rect.pt.x, 0.0f);
                     m_rect.pt.y = std::max(m_rect.pt.y, 0.0f);
 
                     const ds::dims relative_size{ this->parent()->size() - m_rect.size };
-                    diag_log("m_pos_2={} rel_size={}", m_rect.pt, relative_size);
                     m_rect.pt.x = std::min(m_rect.pt.x, relative_size.width);
                     m_rect.pt.y = std::min(m_rect.pt.y, relative_size.height);
 
-                    diag_log("m_pos_3={}", m_rect.pt);
                     return true;
                 }
                 break;
@@ -273,7 +259,6 @@ namespace rl::ui {
 
     bool Dialog::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb)
     {
-        scoped_log("btn={}", mouse.button_pressed());
         if (Widget::on_mouse_button_pressed(mouse, kb))
             return true;
 
@@ -311,7 +296,6 @@ namespace rl::ui {
         m_mode = Dialog::Mode::None;
         m_resize_grab_location = Side::None;
 
-        scoped_log("btn={}", mouse.button_released());
         if (Widget::on_mouse_button_released(mouse, kb))
             return true;
 
@@ -320,18 +304,17 @@ namespace rl::ui {
 
     bool Dialog::on_mouse_scroll(const Mouse& mouse, const Keyboard& kb)
     {
-        scoped_logger(log_level::debug, "pos:{} wheel:{}", mouse.pos(), mouse.wheel());
         Widget::on_mouse_scroll(mouse, kb);
         return true;
     }
 
     ds::dims<f32> Dialog::preferred_size() const
     {
-        scoped_trace(log_level::debug);
-
         if (m_button_panel != nullptr)
             m_button_panel->hide();
+
         const ds::dims result{ Widget::preferred_size() };
+
         if (m_button_panel != nullptr)
             m_button_panel->show();
 
@@ -344,9 +327,9 @@ namespace rl::ui {
         nvg::text_bounds_(context, 0, 0, m_title.c_str(), nullptr, bounds.data());
 
         constexpr static f32 TEXT_SIZE_WIDTH_PADDING{ 20.0f };
-        ds::rect bounding_rect{
-            ds::point{ 0.0f, 0.0f },
-            ds::dims{
+        ds::rect<f32> bounding_rect{
+            ds::point<f32>::zero(),
+            ds::dims<f32>{
                 std::max(result.width, bounds[2] - bounds[0] + TEXT_SIZE_WIDTH_PADDING),
                 std::max(result.height, bounds[3] - bounds[1]),
             },
@@ -367,22 +350,14 @@ namespace rl::ui {
             Widget::perform_layout();
             for (const auto bp_child : m_button_panel->children())
             {
-                bp_child->set_fixed_size({
-                    22.0f,
-                    22.0f,
-                });
+                bp_child->set_fixed_size(ds::dims<f32>{ 22.0f, 22.0f });
                 bp_child->set_font_size(15.0f);
             }
 
             m_button_panel->show();
-            m_button_panel->set_size(ds::dims{
-                this->width(),
-                22.0f,
-            });
-            m_button_panel->set_position(ds::point{
-                this->width() - (m_button_panel->preferred_size().width + 5.0f),
-                3.0f,
-            });
+            m_button_panel->set_size(ds::dims<f32>{ this->width(), 22.0f });
+            m_button_panel->set_position(ds::point<f32>{
+                this->width() - (m_button_panel->preferred_size().width + 5.0f), 3.0f });
 
             m_button_panel->perform_layout();
         }

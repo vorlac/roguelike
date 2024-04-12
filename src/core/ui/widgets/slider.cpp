@@ -76,7 +76,7 @@ namespace rl::ui {
         return ds::dims{ 70.0f, 16.0f };
     }
 
-    bool Slider::on_mouse_drag(const Mouse& mouse, const Keyboard& kb)
+    bool Slider::on_mouse_drag(const Mouse& mouse, const Keyboard&)
     {
         if (!m_enabled)
             return false;
@@ -93,13 +93,13 @@ namespace rl::ui {
         value = value * (m_range.second - m_range.first) + m_range.first;
         m_value = std::min(std::max(value, m_range.first), m_range.second);
 
-        if (m_callback != nullptr && m_value != old_value)
+        if (m_callback != nullptr && math::not_equal(m_value, old_value))
             m_callback(m_value);
 
         return true;
     }
 
-    bool Slider::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb)
+    bool Slider::on_mouse_button_pressed(const Mouse& mouse, const Keyboard&)
     {
         if (!m_enabled)
             return false;
@@ -116,13 +116,13 @@ namespace rl::ui {
         value = value * (m_range.second - m_range.first) + m_range.first;
         m_value = std::min(std::max(value, m_range.first), m_range.second);
 
-        if (m_callback != nullptr && m_value != old_value)
+        if (m_callback != nullptr && math::not_equal(m_value, old_value))
             m_callback(m_value);
 
         return true;
     }
 
-    bool Slider::on_mouse_button_released(const Mouse& mouse, const Keyboard& kb)
+    bool Slider::on_mouse_button_released(const Mouse& mouse, const Keyboard&)
     {
         if (!m_enabled)
             return false;
@@ -139,7 +139,7 @@ namespace rl::ui {
         value = value * (m_range.second - m_range.first) + m_range.first;
         m_value = std::min(std::max(value, m_range.first), m_range.second);
 
-        if (m_callback != nullptr && m_value != old_value)
+        if (m_callback != nullptr && math::not_equal(m_value, old_value))
             m_callback(m_value);
 
         if (m_final_callback != nullptr)
@@ -151,14 +151,14 @@ namespace rl::ui {
     void Slider::draw()
     {
         const auto context{ m_renderer->context() };
-        const ds::point center{ ds::rect{ m_rect.pt, m_rect.size }.centroid() };
+        const ds::point<f32> center{ ds::rect{ m_rect.pt, m_rect.size }.centroid() };
         const f32 kr{ m_rect.size.height * 0.4f };
         constexpr f32 kshadow{ 3.0f };
 
         const f32 start_x{ kr + kshadow + m_rect.pt.x };
         const f32 width_x{ m_rect.size.width - 2.0f * (kr + kshadow) };
 
-        const ds::vector2 knob_pos{
+        const ds::vector2<f32> knob_pos{
             start_x + (m_value - m_range.first) / (m_range.second - m_range.first) * width_x,
             center.y + 0.5f,
         };
@@ -173,7 +173,7 @@ namespace rl::ui {
         nvg::fill_paint(context, bg);
         nvg::fill(context);
 
-        if (m_highlighted_range.second != m_highlighted_range.first)
+        if (math::not_equal(m_highlighted_range.second, m_highlighted_range.first))
         {
             nvg::begin_path(context);
             nvg::rounded_rect(context, start_x + m_highlighted_range.first * m_rect.size.width,

@@ -34,7 +34,7 @@ namespace rl::ui {
         return pref_size;
     }
 
-    void GridLayout::compute_layout(nvg::Context* nvg_context, const Widget* widget,
+    void GridLayout::compute_layout(nvg::Context*, const Widget* widget,
                                     std::array<std::vector<f32>, 2>& grid) const
     {
         const u32 axis1{ static_cast<u32>(m_orientation) };
@@ -57,7 +57,7 @@ namespace rl::ui {
 
         const auto dim_axis2{ static_cast<i32>(axis2 == Axis::Horizontal ? dim.width : dim.height) };
 
-        i32 child{ 0 };
+        u64 child{ 0 };
         for (i32 i2 = 0; i2 < dim_axis2; i2++)
         {
             const i32 dim_axis1{ static_cast<i32>(axis1 == Axis::Horizontal ? dim.width
@@ -154,8 +154,8 @@ namespace rl::ui {
         const u32 axis2{ (axis1 + 1) % 2 };
 
         ds::dims<i32> start_offset{ ds::dims<i32>(extra + m_margin) };
-        ds::point start{ start_offset.width, start_offset.height };
-        ds::point pos{ start };
+        ds::point<i32> start{ start_offset.width, start_offset.height };
+        ds::point<i32> pos{ start };
 
         i32& axis1_pos{ axis1 == Alignment::Horizontal ? pos.x : pos.y };
         i32& axis2_pos{ axis2 == Alignment::Horizontal ? pos.x : pos.y };
@@ -179,15 +179,15 @@ namespace rl::ui {
                 }
                 while (!child->visible());
 
-                const ds::dims ps{ child->preferred_size() };
-                ds::dims fs{ child->fixed_size() };
-                ds::dims target_size{
+                const ds::dims<f32> ps{ child->preferred_size() };
+                ds::dims<f32> fs{ child->fixed_size() };
+                ds::dims<f32> target_size{
                     std::fabs(fs.width) > std::numeric_limits<f32>::epsilon() ? fs.width : ps.width,
                     std::fabs(fs.height) > std::numeric_limits<f32>::epsilon() ? fs.height
                                                                                : ps.height,
                 };
 
-                ds::point item_pos{
+                ds::point<f32> item_pos{
                     static_cast<f32>(pos.x),
                     static_cast<f32>(pos.y),
                 };
@@ -196,10 +196,10 @@ namespace rl::ui {
                 {
                     const u32 axis_idx{ (axis1 + j) % 2 };
                     const u32 item_idx{ j == 0 ? i1 : i2 };
-                    const Placement_OldAlignment align{ this->alignment(static_cast<Axis>(axis_idx),
-                                                                        item_idx) };
+                    const Placement_OldAlignment align{ this->alignment(
+                        static_cast<Axis>(axis_idx), static_cast<u32>(item_idx)) };
 
-                    f32& item_axis_pos{ axis_idx == Axis::Horizontal ? item_pos.x : item_pos.y };
+                    f32& item_axis_pos{ (axis_idx == Axis::Horizontal ? item_pos.x : item_pos.y) };
                     f32& fs_axis_size{ axis_idx == Alignment::Horizontal ? fs.width : fs.height };
                     f32& target_axis_size{ axis_idx == Alignment::Horizontal ? target_size.width
                                                                              : target_size.height };
@@ -223,8 +223,8 @@ namespace rl::ui {
                     }
                 }
 
-                child->set_position(std::move(item_pos));
-                child->set_size(std::move(target_size));
+                child->set_position(item_pos);
+                child->set_size(target_size);
                 child->perform_layout();
 
                 axis1_pos += static_cast<i32>(

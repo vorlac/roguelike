@@ -86,7 +86,7 @@ namespace rl::ui {
 
         if (m_pushed)
         {
-            const ds::point local_mouse_pos{ mouse.pos() - LocalTransform::absolute_pos };
+            const ds::point<f32> local_mouse_pos{ mouse.pos() - LocalTransform::absolute_pos };
             if (this->contains(local_mouse_pos))
             {
                 m_checked = !m_checked;

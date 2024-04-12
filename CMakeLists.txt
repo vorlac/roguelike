@@ -10,6 +10,16 @@ set(ENABLE_CCACHE
     "Enables ccache"
 )
 
+set(ENABLE_ALL_WARNINGS
+  OFF CACHE FORCE BOOL
+    "Enable all warnings"
+)
+
+set(ENABLE_WARNINGS_AS_ERRORS
+  ON CACHE FORCE BOOL
+    "Treat all warnings as errors"
+)
+
 set(AUTOFORMAT_SRC_ON_CONFIGURE
   ON CACHE FORCE BOOL
     "Enables clang-format to autoformat all sources within src/"
@@ -52,12 +62,6 @@ set(compiler_is_clang "$<OR:$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:Clan
 set(FORCE_STATIC_VCRT ON)
 set(BUILD_SHARED_LIBS OFF)
 
-find_package(glm CONFIG REQUIRED)
-find_package(fmt CONFIG REQUIRED)
-find_package(spdlog CONFIG REQUIRED)
-find_package(nanobench CONFIG REQUIRED)
-find_package(cpptrace CONFIG REQUIRED)
-
 # SDL3 build options
 set(SDL_LIBC OFF)
 set(SDL_VULKAN OFF)
@@ -67,6 +71,11 @@ set(SDL_STATIC ON)
 # SDL3 test program targets
 set(SDL_TESTS OFF)
 set(SDL_TEST_LIBRARY OFF)
+
+find_package(glm CONFIG REQUIRED)
+find_package(fmt CONFIG REQUIRED)
+find_package(spdlog CONFIG REQUIRED)
+find_package(nanobench CONFIG REQUIRED)
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl)
 
@@ -111,6 +120,13 @@ target_compile_definitions(${PROJECT_NAME}
             _NO_DEBUG_HEAP=1
         >
     >
+
+    $<${compiler_is_gnu}:
+		$<$<CONFIG:Debug>:
+			_GLIBCXX_DEBUG
+			_GLIBCXX_DEBUG_BACKTRACE
+		>
+	>
 )
 
 target_compile_options(${PROJECT_NAME}
@@ -151,7 +167,6 @@ target_compile_options(${PROJECT_NAME}
     >
 
     $<${compiler_is_clang}:
-        # -std=c++23
         -march=native
         -flto
         -DNDEBUG
@@ -184,9 +199,14 @@ target_link_options(${PROJECT_NAME}
     >
 
     $<$<NOT:${compiler_is_msvc}>:
-        $<$<CONFIG:Release>:
-            -fomit-frame-pointer
-        >
+		$<${compiler_is_gnu}:
+			$<$<CONFIG:Release>:
+				-fomit-frame-pointer
+			>
+			$<$<CONFIG:Debug>:
+				-lstdc++exp
+			>
+		>
 
         -static-libgcc
         -static-libstdc++
@@ -208,7 +228,6 @@ target_link_libraries(${PROJECT_NAME}
   PRIVATE nanobench::nanobench
   PRIVATE SDL3::SDL3-static
   PRIVATE glm::glm
-  PRIVATE cpptrace::cpptrace
 )
 
 if (ENABLE_CCACHE MATCHES ON)

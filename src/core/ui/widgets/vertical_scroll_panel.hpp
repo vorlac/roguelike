@@ -52,8 +52,8 @@ namespace rl::ui {
 
     protected:
         ScrollableContainer* m_container{ new ScrollableContainer{ nullptr } };
-        ds::rect<f32> m_scroll_bar_rect{ ds::point{ 0.0f, 0.0f }, ds::dims{ 0.0f, 0.0f } };
-        ds::dims<f32> m_cont_prefsize{ 0.0f, 0.0f };
+        ds::rect<f32> m_scroll_bar_rect{ ds::point<f32>::zero(), ds::dims<f32>::zero() };
+        ds::dims<f32> m_cont_prefsize{ ds::dims<f32>::zero() };
         ScrollMode m_scrollmode{ ScrollMode::ScrollbarOnly };
         Component m_prev_click_location{ Component::None };
         f32 m_scrollbar_pos{ 0.0f };

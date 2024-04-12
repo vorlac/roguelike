@@ -20,6 +20,9 @@ namespace rl::ds {
     struct margin;
 
     template <rl::numeric T>
+    margin(T) -> margin<T>;
+
+    template <rl::numeric T>
     class rect
     {
     public:
@@ -155,11 +158,11 @@ namespace rl::ds {
                                      (other.pt.y + other.size.height)) };
 
             return rect<T>{
-                point{
+                point<T>{
                     min_x,
                     min_y,
                 },
-                dims{
+                dims<T>{
                     max_x - min_x,
                     max_y - min_y,
                 },
@@ -178,11 +181,11 @@ namespace rl::ds {
         constexpr rect<T> expanded(T amount) const noexcept
         {
             return rect<T>{
-                point{
+                point<T>{
                     this->pt.x - amount,
                     this->pt.y - amount,
                 },
-                dims{
+                dims<T>{
                     this->size.width + (amount * 2),
                     this->size.height + (amount * 2),
                 },
@@ -193,12 +196,12 @@ namespace rl::ds {
         [[nodiscard]]
         constexpr rect<T> expanded(T top, T bottom, T left, T right) const noexcept
         {
-            return rect{
-                point{
+            return rect<T>{
+                point<T>{
                     this->pt.x - left,
                     this->pt.y - top,
                 },
-                dims{
+                dims<T>{
                     this->size.width + (left + right),
                     this->size.height + (top + bottom),
                 },
@@ -209,12 +212,12 @@ namespace rl::ds {
         [[nodiscard]]
         constexpr rect<T> expanded(ds::margin<T> expansion) const noexcept
         {
-            return rect{
-                point{
+            return rect<T>{
+                point<T>{
                     this->pt.x - expansion.left,
                     this->pt.y - expansion.top,
                 },
-                dims{
+                dims<T>{
                     this->size.width + expansion.horizontal(),
                     this->size.height + expansion.vertical(),
                 },
@@ -261,8 +264,8 @@ namespace rl::ds {
         constexpr rect<T> top(T expand) const noexcept
         {
             return rect<T>{
-                { this->pt.x + expand, this->pt.y - expand },
-                { this->size.width - expand * 2, expand * 2 },
+                ds::point<T>{ this->pt.x + expand, this->pt.y - expand },
+                ds::dims<T>{ this->size.width - expand * 2, expand * 2 },
             };
         }
 
@@ -270,8 +273,8 @@ namespace rl::ds {
         constexpr rect<T> bottom(T expand) const noexcept
         {
             return rect<T>{
-                { pt.x + expand, (pt.y + this->size.height) - expand },
-                { this->size.width - expand * 2, expand * 2 },
+                ds::point<T>{ pt.x + expand, (pt.y + this->size.height) - expand },
+                ds::dims<T>{ this->size.width - expand * 2, expand * 2 },
             };
         }
 
@@ -279,8 +282,8 @@ namespace rl::ds {
         constexpr rect<T> left(T expand) const noexcept
         {
             return rect<T>{
-                { this->pt.x - expand, pt.y + expand },
-                { expand * 2, this->size.height - expand * 2 },
+                ds::point<T>{ this->pt.x - expand, pt.y + expand },
+                ds::dims<T>{ expand * 2, this->size.height - expand * 2 },
             };
         }
 
@@ -288,48 +291,48 @@ namespace rl::ds {
         constexpr rect<T> right(T expand) const noexcept
         {
             return rect<T>{
-                { (this->pt.x + this->size.width) - expand, pt.y + expand },
-                { expand * 2, this->size.height - expand * 2 },
+                ds::point<T>{ (this->pt.x + this->size.width) - expand, pt.y + expand },
+                ds::dims<T>{ expand * 2, this->size.height - expand * 2 },
             };
         }
 
         [[nodiscard]]
         constexpr rect<T> top_left(T expand) const noexcept
         {
-            const point ret{ this->top_left() };
+            const point<T> ret{ this->top_left() };
             return rect<T>{
-                { ret - expand },
-                { expand * 2, expand * 2 },
+                ds::point<T>{ ret - expand },
+                ds::dims<T>{ expand * 2, expand * 2 },
             };
         }
 
         [[nodiscard]]
         constexpr rect<T> top_right(T expand) const noexcept
         {
-            const point ret{ this->top_right() };
+            const point<T> ret{ this->top_right() };
             return rect<T>{
-                { ret - expand },
-                { expand * 2, expand * 2 },
+                ds::point<T>{ ret - expand },
+                ds::dims<T>{ expand * 2, expand * 2 },
             };
         }
 
         [[nodiscard]]
         constexpr rect<T> bot_left(T expand) const noexcept
         {
-            const point ret{ this->bot_left() };
+            const point<T> ret{ this->bot_left() };
             return rect<T>{
-                { ret - expand },
-                { expand * 2, expand * 2 },
+                ds::point<T>{ ret - expand },
+                ds::dims<T>{ expand * 2, expand * 2 },
             };
         }
 
         [[nodiscard]]
         constexpr rect<T> bot_right(T expand) const noexcept
         {
-            const point ret{ this->bot_right() };
+            const point<T> ret{ this->bot_right() };
             return rect<T>{
-                { ret - expand },
-                { expand * 2, expand * 2 },
+                ds::point<T>{ ret - expand },
+                ds::dims<T>{ expand * 2, expand * 2 },
             };
         }
 
@@ -337,40 +340,28 @@ namespace rl::ds {
         [[nodiscard]]
         constexpr point<T> top_left() const noexcept
         {
-            return point<T>{
-                pt.x,
-                pt.y,
-            };
+            return point<T>{ pt.x, pt.y };
         }
 
         // Gets the top right point of the rectangle
         [[nodiscard]]
         constexpr point<T> top_right() const noexcept
         {
-            return point<T>{
-                pt.x + size.width,
-                pt.y,
-            };
+            return point<T>{ pt.x + size.width, pt.y };
         }
 
         // Gets the bottom left point of the rectangle
         [[nodiscard]]
         constexpr point<T> bot_left() const noexcept
         {
-            return point<T>{
-                pt.x,
-                pt.y + size.height,
-            };
+            return point<T>{ pt.x, pt.y + size.height };
         }
 
         // Gets the bottom right point of the rectangle
         [[nodiscard]]
         constexpr point<T> bot_right() const noexcept
         {
-            return point<T>{
-                (pt.x + size.width),
-                (pt.y + size.height),
-            };
+            return point<T>{ pt.x + size.width, pt.y + size.height };
         }
 
         // Gets the center point of the rectangle

@@ -29,7 +29,7 @@ namespace rl::ui {
         };
 
     public:
-        explicit Button(std::string_view text, Icon::ID icon = Icon::None);
+        explicit Button(const std::string_view& text, Icon::ID icon = Icon::None);
         explicit Button(Widget* parent, std::string text, Icon::ID icon = Icon::None);
 
         bool pressed() const;
@@ -66,7 +66,7 @@ namespace rl::ui {
         virtual ds::dims<f32> preferred_size() const override;
 
     private:
-        bool handle_mouse_button_event(const ds::point<f32>& pt, Mouse::Button::ID button,
+        bool handle_mouse_button_event(ds::point<f32> pt, Mouse::Button::ID button,
                                        bool button_pressed, Keyboard::Scancode::ID keys_down);
 
     protected:
@@ -82,6 +82,8 @@ namespace rl::ui {
         std::function<void()> m_callback;
 
     private:
-        constexpr static inline ds::margin INNER_PADDING{ 2.5f, 2.5f, 5.0f, 5.0f };
+        constexpr static inline ds::margin<f32> INNER_PADDING{
+            ds::margin<f32>::init(2.5f, 2.5f, 5.0f, 5.0f),
+        };
     };
 }

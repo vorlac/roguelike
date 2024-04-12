@@ -61,12 +61,12 @@ namespace rl::ui {
         // above the scrollbar when it's visible
         if (m_scrollbar_visible)
         {
-            const ds::rect scrollbar_rect{
-                ds::point{
+            const ds::rect<f32> scrollbar_rect{
+                ds::point<f32>{
                     m_rect.pt.x + m_rect.size.width - (SDScrollbarWidth + SDMargin),
                     m_rect.pt.y,
                 },
-                ds::dims{
+                ds::dims<f32>{
                     SDScrollbarWidth,
                     m_rect.size.height,
                 },
@@ -164,22 +164,22 @@ namespace rl::ui {
         dynamic_cast<Canvas*>(owner)->dispose_dialog(this);
     }
 
-    bool ScrollableDialog::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb)
+    bool ScrollableDialog::on_mouse_button_pressed(const Mouse&, const Keyboard&)
     {
         return false;
     }
 
-    bool ScrollableDialog::on_mouse_button_released(const Mouse& mouse, const Keyboard& kb)
+    bool ScrollableDialog::on_mouse_button_released(const Mouse&, const Keyboard&)
     {
         return false;
     }
 
-    bool ScrollableDialog::on_mouse_scroll(const Mouse& mouse, const Keyboard& kb)
+    bool ScrollableDialog::on_mouse_scroll(const Mouse&, const Keyboard&)
     {
         return false;
     }
 
-    bool ScrollableDialog::on_mouse_drag(const Mouse& mouse, const Keyboard& kb)
+    bool ScrollableDialog::on_mouse_drag(const Mouse&, const Keyboard&)
     {
         return false;
     }
@@ -230,10 +230,8 @@ namespace rl::ui {
 
                     m_renderer->draw_rounded_rect(
                         ds::rect<f32>{
-                            m_rect.pt.x,
-                            m_rect.pt.y,
-                            m_rect.size.width,
-                            header_height,
+                            ds::point<f32>{ m_rect.pt },
+                            ds::dims<f32>{ m_rect.size.width, header_height },
                         },
                         corner_radius);
 

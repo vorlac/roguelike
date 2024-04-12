@@ -23,7 +23,7 @@ namespace rl::ui {
     {
     }
 
-    ds::dims<f32> OldBoxLayout::computed_size(nvg::Context* nvg_context, const Widget* widget) const
+    ds::dims<f32> OldBoxLayout::computed_size(nvg::Context*, const Widget* widget) const
     {
         ds::dims size{
             2.0f * m_margin,
@@ -65,7 +65,7 @@ namespace rl::ui {
         return size + ds::dims{ 0.0f, y_offset };
     }
 
-    void OldBoxLayout::apply_layout(nvg::Context* nvg_context, const Widget* widget) const
+    void OldBoxLayout::apply_layout(nvg::Context*, const Widget* widget) const
     {
         const ds::dims fs_w{ widget->fixed_size() };
         ds::dims container_size{
@@ -107,7 +107,7 @@ namespace rl::ui {
                 math::equal(fs.height, 0.0f) ? ps.height : fs.height,
             };
 
-            ds::point pos{
+            ds::point<f32> pos{
                 0.0f,
                 y_offset,
             };
@@ -137,7 +137,7 @@ namespace rl::ui {
 
             position += target_size.width;
 
-            child->set_position(std::move(pos));
+            child->set_position(pos);
             child->set_size(target_size);
             child->perform_layout();
         }

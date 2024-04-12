@@ -74,13 +74,13 @@ namespace rl::ui {
                  : -1;
     }
 
-    bool ImagePanel::on_mouse_move(const Mouse& mouse, const Keyboard& kb)
+    bool ImagePanel::on_mouse_move(const Mouse& mouse, const Keyboard&)
     {
         m_mouse_index = this->index_for_position(mouse.pos());
         return true;
     }
 
-    bool ImagePanel::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb)
+    bool ImagePanel::on_mouse_button_pressed(const Mouse& mouse, const Keyboard&)
     {
         const i32 index{ this->index_for_position(mouse.pos()) };
         if (index >= 0 && index < static_cast<i32>(m_images.size()) && m_callback != nullptr)
@@ -115,10 +115,10 @@ namespace rl::ui {
                         },
             };
 
-            ds::dims<f32> image_size{ 0.0f, 0.0f };
+            ds::dims<f32> image_size{ ds::dims<f32>::zero() };
             nvg::image_size(context, m_images[i].first, &image_size.width, &image_size.height);
 
-            ds::rect<f32> image_rect{ 0, 0, 0, 0 };
+            ds::rect<f32> image_rect{ ds::rect<f32>::zero() };
             if (image_size.width < image_size.height)
             {
                 image_rect.size.width = m_thumb_size.width;

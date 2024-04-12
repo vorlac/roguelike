@@ -69,15 +69,18 @@ namespace rl {
             layout_l->add_widget(new ui::Label{ "A" });
             layout_l->add_widget(new ui::Label{ "B" });
             layout_l->add_widget(new ui::Label{ "C" });
+            // layout_l->set_margins(ds::margin<f32>::zero(), ds::margin<f32>::zero());
 
             const auto layout_r{ new ui::BoxLayout<Alignment::Vertical>("123 Vertical") };
             layout_r->add_widget(new ui::Label{ "1" });
             layout_r->add_widget(new ui::Label{ "2" });
             layout_r->add_widget(new ui::Label{ "3" });
+            // layout_r->set_margins(ds::margin<f32>::zero(), ds::margin<f32>::zero());
 
             const auto horiz_layout{ new ui::BoxLayout<Alignment::Horizontal>("ABC123 Horiz") };
             horiz_layout->add_nested_layout(layout_l);
             horiz_layout->add_nested_layout(layout_r);
+            // horiz_layout->set_margins(ds::margin<f32>::zero(), ds::margin<f32>::init(5.0f));
 
             m_main_window->gui()->assign_layout(horiz_layout);
 
@@ -148,15 +151,6 @@ namespace rl {
         Application& sdl()
         {
             return *this;
-        }
-
-    private:
-        void print_loop_stats(const f32 delta_time)
-        {
-            const f32 elapsed_time{ m_timer.elapsed() };
-            const u64 iterations{ m_timer.tick_count() };
-            if (iterations % 60 != 0)
-                return;
         }
 
     private:

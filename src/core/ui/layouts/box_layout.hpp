@@ -27,22 +27,22 @@ namespace rl::ui {
 
     public:
         u64 columns() const
-            requires std::same_as<VOrientation, Alignment::Horizontal>
+            requires rl::equal_v<VOrientation, Alignment::Horizontal>
         {
             return m_cell_data.size();
         }
 
         u64 rows() const
-            requires std::same_as<VOrientation, Alignment::Vertical>
+            requires rl::equal_v<VOrientation, Alignment::Vertical>
         {
             return m_cell_data.size();
         }
 
-        virtual void apply_layout(const u32 depth = 0) override
+        virtual void apply_layout() override
         {
-            ds::point curr_widget_pos{ ds::point<f32>::zero() };
+            ds::point<f32> curr_widget_pos{ ds::point<f32>::zero() };
 
-            const SizePolicy size_policy{ this->size_policy() };
+            // const SizePolicy size_policy{ this->size_policy() };
             const ds::dims cell_size{ m_max_size };
 
             ds::rect layout_rect{ m_rect };
@@ -53,24 +53,24 @@ namespace rl::ui {
             for (auto&& [widget, props] : m_cell_data)
             {
                 // compute the widget's layout cell position and size
-                ds::rect widget_bounding_rect{ ds::rect<f32>::zero() };
-                ds::rect widget_margins_rect{ ds::rect<f32>::zero() };
+                ds::rect<f32> widget_bounding_rect{ ds::rect<f32>::zero() };
+                ds::rect<f32> widget_margins_rect{ ds::rect<f32>::zero() };
 
-                widget_margins_rect = ds::rect{
+                widget_margins_rect = ds::rect<f32>{
                     layout_rect.pt +
-                        ds::point{
+                        ds::point<f32>{
                             curr_widget_pos.x,
                             curr_widget_pos.y,
                         },
-                    ds::dims{ cell_size },
+                    ds::dims<f32>{ cell_size },
                 };
 
-                widget_bounding_rect = ds::rect{
-                    ds::point{
+                widget_bounding_rect = ds::rect<f32>{
+                    ds::point<f32>{
                         widget_margins_rect.pt.x + props.inner_margin.left,
                         widget_margins_rect.pt.y + props.inner_margin.top,
                     },
-                    ds::dims{ widget_margins_rect.size - props.outer_margin },
+                    ds::dims<f32>{ widget_margins_rect.size - props.outer_margin },
                 };
 
                 if (m_alignment == Alignment::Vertical)

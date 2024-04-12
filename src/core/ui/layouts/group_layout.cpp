@@ -13,7 +13,7 @@
 #include "utils/numeric.hpp"
 
 namespace rl::ui {
-    ds::dims<f32> GroupLayout::computed_size(nvg::Context* nvg_context, const Widget* widget) const
+    ds::dims<f32> GroupLayout::computed_size(nvg::Context*, const Widget* widget) const
     {
         f32 height{ m_margin };
         f32 width{ 2.0f * m_margin };
@@ -54,7 +54,7 @@ namespace rl::ui {
         return ds::dims{ width, height };
     }
 
-    void GroupLayout::apply_layout(nvg::Context* nvg_context, const Widget* widget) const
+    void GroupLayout::apply_layout(nvg::Context*, const Widget* widget) const
     {
         f32 height{ m_margin };
         const f32 available_width{ math::equal(widget->fixed_width(), 0.0f)

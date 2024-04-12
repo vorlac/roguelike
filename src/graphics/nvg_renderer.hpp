@@ -32,8 +32,8 @@ namespace rl {
         void restore_state() const;
         void reset_scissor() const;
 
-        void set_fill_paint_style(nvg::PaintStyle&& paint_style) const;
-        void fill_current_path(nvg::PaintStyle&& paint_style) const;
+        void set_fill_paint_style(nvg::PaintStyle paint_style) const;
+        void fill_current_path(nvg::PaintStyle paint_style) const;
 
         nvg::PaintStyle create_rect_gradient_paint_style(
             ds::rect<f32>&& rect, f32 corner_radius, f32 outer_blur,

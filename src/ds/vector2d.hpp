@@ -12,6 +12,7 @@
 
 namespace rl::ds {
 #pragma pack(4)
+
     template <rl::numeric T>
     using point = vector2<T>;
 

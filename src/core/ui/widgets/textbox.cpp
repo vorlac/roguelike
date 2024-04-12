@@ -7,19 +7,16 @@
 #include "core/ui/theme.hpp"
 #include "core/ui/widgets/textbox.hpp"
 #include "graphics/vg/nanovg.hpp"
-#include "graphics/vg/nanovg_state.hpp"
 #include "sdl/defs.hpp"
 #include "utils/math.hpp"
 #include "utils/numeric.hpp"
 #include "utils/unicode.hpp"
 
 SDL_C_LIB_BEGIN
-#include <SDL3/SDL_Clipboard.h>
+#include <SDL3/SDL_clipboard.h>
 SDL_C_LIB_END
 
 namespace rl::ui {
-    using rl::operator==;
-
     TextBox::TextBox(Widget* parent, const std::string& value)
         : Widget{ parent }
         , m_value{ value }
@@ -214,7 +211,7 @@ namespace rl::ui {
         nvg::set_font_size(context, this->font_size());
         nvg::set_font_face(context, font::style::Sans);
 
-        ds::point draw_pos{
+        ds::point<f32> draw_pos{
             m_rect.pt.x,
             m_rect.pt.y + m_rect.size.height * 0.5f + 1.0f,
         };
@@ -232,15 +229,16 @@ namespace rl::ui {
             f32 unit_height{ m_rect.size.height * 0.4f };
             unit_width = w * unit_height / h;
 
-            nvg::PaintStyle img_paint{ nvg::image_pattern(
-                context, m_rect.pt.x + m_rect.size.width - x_spacing - unit_width,
-                draw_pos.y - unit_height * 0.5f, unit_width, unit_height, 0.0f, m_units_image,
-                m_enabled ? 0.7f : 0.35f) };
+            nvg::PaintStyle img_paint{
+                nvg::image_pattern(context, m_rect.pt.x + m_rect.size.width - x_spacing - unit_width,
+                                   draw_pos.y - unit_height * 0.5f, unit_width, unit_height, 0.0f,
+                                   m_units_image, m_enabled ? 0.7f : 0.35f),
+            };
 
             nvg::begin_path(context);
             nvg::rect(context, m_rect.pt.x + m_rect.size.width - x_spacing - unit_width,
                       draw_pos.y - unit_height * 0.5f, unit_width, unit_height);
-            nvg::fill_paint(context, img_paint);
+            nvg::fill_paint(context, std::move(img_paint));
             nvg::fill(context);
 
             unit_width += 2;
@@ -282,7 +280,7 @@ namespace rl::ui {
                 auto icon{ utf8(std::to_underlying(m_theme->text_box_up_icon)) };
                 nvg::set_text_align(context, nvg::Align::HLeft | nvg::Align::VMiddle);
 
-                ds::point icon_pos{
+                ds::point<f32> icon_pos{
                     m_rect.pt.x + 4.0f,
                     m_rect.pt.y + m_rect.size.height / 2.0f - x_spacing / 2.0f,
                 };
@@ -300,7 +298,7 @@ namespace rl::ui {
                 auto&& icon{ utf8(m_theme->text_box_down_icon) };
                 nvg::set_text_align(context, nvg::Align::HLeft | nvg::Align::VMiddle);
 
-                ds::point icon_pos{
+                ds::point<f32> icon_pos{
                     m_rect.pt.x + 4.0f,
                     m_rect.pt.y + (m_rect.size.height / 2.0f) + (x_spacing / 2.0f + 1.5f),
                 };
@@ -343,8 +341,8 @@ namespace rl::ui {
         nvg::save(context);
         nvg::intersect_scissor(context, clip_x, clip_y, clip_width, clip_height);
 
-        ds::point old_draw_pos{ draw_pos };
-        draw_pos.x += static_cast<i32>(m_text_offset);
+        ds::point<f32> old_draw_pos{ draw_pos };
+        draw_pos.x += m_text_offset;
 
         if (m_committed)
         {
@@ -507,7 +505,7 @@ namespace rl::ui {
         return false;
     }
 
-    bool TextBox::on_mouse_button_released(const Mouse& mouse, const Keyboard& kb)
+    bool TextBox::on_mouse_button_released(const Mouse&, const Keyboard&)
     {
         if (m_editable && this->focused())
         {
@@ -526,10 +524,8 @@ namespace rl::ui {
         return false;
     }
 
-    bool TextBox::on_mouse_move(const Mouse& mouse, const Keyboard& kb)
+    bool TextBox::on_mouse_move(const Mouse& mouse, const Keyboard&)
     {
-        const ds::point local_mouse_pos{ mouse.pos() - LocalTransform::absolute_pos };
-
         m_mouse_pos = mouse.pos();
 
         if (!m_editable)
@@ -543,7 +539,7 @@ namespace rl::ui {
         return m_editable;
     }
 
-    bool TextBox::on_mouse_drag(const Mouse& mouse, const Keyboard& kb)
+    bool TextBox::on_mouse_drag(const Mouse& mouse, const Keyboard&)
     {
         m_mouse_pos = mouse.pos();
         m_mouse_drag_pos = mouse.pos();
@@ -710,7 +706,7 @@ namespace rl::ui {
         return false;
     }
 
-    bool TextBox::on_key_released(const Keyboard& kb)
+    bool TextBox::on_key_released(const Keyboard&)
     {
         if (m_editable && this->focused())
             return true;

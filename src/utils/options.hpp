@@ -7,7 +7,7 @@
 #include "utils/io.hpp"
 
 namespace rl {
-    static bool parse_args(int argc, auto argv)
+    static bool parse_args(const i32 /*argc*/, char** /*argv[]*/)
     {
         // auto args = argparse::ArgumentParser{
         //     "roguelike",

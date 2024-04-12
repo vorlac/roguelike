@@ -58,7 +58,7 @@ namespace rl {
                     case Keyboard::Event::KeyDown:
                     {
                         window->keyboard_key_pressed_event_callback(e);
-                        const Keyboard::Scancode::ID key{ e.key.keysym.scancode };
+                        auto key{ static_cast<Keyboard::Scancode::ID>(e.key.keysym.scancode) };
                         if (key == Keyboard::Scancode::Escape) [[unlikely]]
                             m_quit = true;
                         break;
@@ -134,12 +134,7 @@ namespace rl {
 
                     // Display events
                     case MainWindow::DisplayEvent::ContentScaleChanged:
-                    {
-                        const MainWindow::DisplayEvent::Data& window_event{ e.display };
-                        const DisplayID id{ window_event.displayID };
-                        // window->on_display_content_scale_changed(id);
                         break;
-                    }
 
                     // System events
                     case System::Event::ClipboardUpdate:

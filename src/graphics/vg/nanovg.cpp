@@ -8,14 +8,7 @@
 #include "graphics/stb/stb_image.hpp"
 #include "graphics/vg/nanovg.hpp"
 
-#ifdef _MSC_VER
-  #pragma warning(disable : 4100)  // unreferenced formal parameter
-  #pragma warning(disable : 4706)  // assignment within conditional expression
-  #pragma warning(disable : 4267)
-#endif
-
 namespace rl::nvg {
-
     enum InitSize {
         NvgInitCommandsSize = 256,
         NvgInitPointsSize = 128,
@@ -93,12 +86,6 @@ namespace rl::nvg {
             constexpr auto max(const T a, const T b)
             {
                 return a > b ? a : b;
-            }
-
-            template <typename T>
-            constexpr i32 clampi(const T a, const T mn, const T mx)
-            {
-                return a < mn ? mn : a > mx ? mx : a;
             }
 
             constexpr f32 absf(const f32 a)
@@ -483,7 +470,7 @@ namespace rl::nvg {
                     return;
                 }
 
-                /*	if (_absf(x1+x3-x2-x2) + _absf(y1+y3-y2-y2) + _absf(x2+x4-x3-x3) +
+                /*  if (_absf(x1+x3-x2-x2) + _absf(y1+y3-y2-y2) + _absf(x2+x4-x3-x3) +
                    _absf(y2+y4-y3-y3) < ctx->tessTol) { _addPoint(ctx, x4, y4, type); return;
                     }*/
 
@@ -499,7 +486,7 @@ namespace rl::nvg {
             void flatten_paths(Context* ctx)
             {
                 PathCache* cache = ctx->cache;
-                //	State* state = _getState(ctx);
+                //  State* state = _getState(ctx);
                 const Point* last{ nullptr };
                 Point* pts{ nullptr };
                 f32* p;
@@ -717,7 +704,7 @@ namespace rl::nvg {
             }
 
             Vertex* bevel_join(Vertex* dst, const Point* p0, const Point* p1, const f32 lw,
-                               const f32 rw, const f32 lu, const f32 ru, f32 fringe)
+                               const f32 rw, const f32 lu, const f32 ru, f32)
             {
                 f32 rx0, ry0, rx1, ry1;
                 f32 lx0, ly0, lx1, ly1;
@@ -869,7 +856,7 @@ namespace rl::nvg {
             }
 
             Vertex* round_cap_start(Vertex* dst, const Point* p, const f32 dx, const f32 dy,
-                                    const f32 w, const i32 ncap, f32 aa, const f32 u0, const f32 u1)
+                                    const f32 w, const i32 ncap, f32, const f32 u0, const f32 u1)
             {
                 const f32 px{ p->x };
                 const f32 py{ p->y };
@@ -896,7 +883,7 @@ namespace rl::nvg {
             }
 
             Vertex* round_cap_end(Vertex* dst, const Point* p, const f32 dx, const f32 dy,
-                                  const f32 w, const i32 ncap, f32 aa, const f32 u0, const f32 u1)
+                                  const f32 w, const i32 ncap, f32, const f32 u0, const f32 u1)
             {
                 const f32 px{ p->x };
                 const f32 py{ p->y };
@@ -1681,7 +1668,7 @@ namespace rl::nvg {
 
     ds::color<f32> lerp_rgba(const ds::color<f32>& c0, const ds::color<f32>& c1, f32 u)
     {
-        ds::color cint{ 0.0f, 0.0f, 0.0f, 0.0f };
+        ds::color<f32> cint{ 0, 0, 0 };
 
         u = std::clamp(u, 0.0f, 1.0f);
         const f32 oneminu{ 1.0f - u };
@@ -1849,7 +1836,7 @@ namespace rl::nvg {
     {
         f32 xform[6] = {};
         nvg::current_transform(ctx, xform);
-        return ds::point{
+        return ds::point<f32>{
             src_pt.x * xform[0] + src_pt.y * xform[2] + xform[4],
             src_pt.x * xform[1] + src_pt.y * xform[3] + xform[5],
         };
@@ -2065,7 +2052,7 @@ namespace rl::nvg {
         stb::stbi_convert_iphone_png_to_rgb(1);
         u8* img = stb::stbi_load(filename, &w, &h, &n, 4);
         if (img == nullptr)
-            //		printf("Failed to load %s - %s\n", filename, stbi_failure_reason());
+            //      printf("Failed to load %s - %s\n", filename, stbi_failure_reason());
             return 0;
         const i32 image = create_image_rgba(ctx, w, h, image_flags, img);
         stb::stbi_image_free(img);
@@ -2078,7 +2065,7 @@ namespace rl::nvg {
         i32 w, h, n;
         u8* img = stb::stbi_load_from_memory(data, ndata, &w, &h, &n, 4);
         if (img == nullptr)
-            //		printf("Failed to load %s - %s\n", filename, stbi_failure_reason());
+            //      printf("Failed to load %s - %s\n", filename, stbi_failure_reason());
             return 0;
         const i32 image = create_image_rgba(ctx, w, h, image_flags, img);
         stb::stbi_image_free(img);
@@ -2126,7 +2113,7 @@ namespace rl::nvg {
         ctx->params.render_delete_texture(ctx->params.user_ptr, image);
     }
 
-    PaintStyle linear_gradient(Context* ctx, const f32 sx, const f32 sy, const f32 ex, const f32 ey,
+    PaintStyle linear_gradient(Context*, const f32 sx, const f32 sy, const f32 ex, const f32 ey,
                                const ds::color<f32>& inner_color, const ds::color<f32>& outer_color)
     {
         PaintStyle p{};
@@ -2168,9 +2155,8 @@ namespace rl::nvg {
         return p;
     }
 
-    PaintStyle radial_gradient(Context* ctx, const f32 cx, const f32 cy, const f32 inr,
-                               const f32 outr, const ds::color<f32>& inner_color,
-                               const ds::color<f32>& outer_color)
+    PaintStyle radial_gradient(Context*, const f32 cx, const f32 cy, const f32 inr, const f32 outr,
+                               const ds::color<f32>& inner_color, const ds::color<f32>& outer_color)
     {
         const f32 r = (inr + outr) * 0.5f;
         const f32 f = outr - inr;
@@ -2194,7 +2180,7 @@ namespace rl::nvg {
         return p;
     }
 
-    PaintStyle box_gradient(Context* ctx, const f32 x, const f32 y, const f32 w, const f32 h,
+    PaintStyle box_gradient(Context*, const f32 x, const f32 y, const f32 w, const f32 h,
                             const f32 r, const f32 f, const ds::color<f32>& icol,
                             const ds::color<f32>& ocol)
     {
@@ -2215,7 +2201,7 @@ namespace rl::nvg {
         return p;
     }
 
-    PaintStyle box_gradient(Context* ctx, ds::rect<f32>&& rect, const f32 corner_radius,
+    PaintStyle box_gradient(Context*, ds::rect<f32>&& rect, const f32 corner_radius,
                             const f32 feather_blur, const ds::color<f32>& inner_color,
                             const ds::color<f32>& outer_gradient_color)
     {
@@ -2235,7 +2221,7 @@ namespace rl::nvg {
         return paint;
     }
 
-    PaintStyle image_pattern(Context* ctx, const f32 cx, const f32 cy, const f32 w, const f32 h,
+    PaintStyle image_pattern(Context*, const f32 cx, const f32 cy, const f32 w, const f32 h,
                              const f32 angle, const i32 image, const f32 alpha)
     {
         PaintStyle p{};
@@ -2355,8 +2341,8 @@ namespace rl::nvg {
         detail::append_commands(ctx, vals.data(), static_cast<i32>(vals.size()));
     }
 
-    void bezier_to(Context* ctx, const f32 c1_x, const f32 c1_y, const f32 c2_x, const f32 c2_y,
-                   const f32 x, const f32 y)
+    void bezier_to(Context* ctx, const f32, const f32, const f32, const f32, const f32 x,
+                   const f32 y)
     {
         auto vals = std::array{ static_cast<f32>(Commands::Bezierto), x, y };
         detail::append_commands(ctx, vals.data(), static_cast<i32>(vals.size()));
@@ -2407,7 +2393,7 @@ namespace rl::nvg {
         const f32 a = detail::acosf(dx0 * dx1 + dy0 * dy1);
         const f32 d = radius / detail::tanf(a / 2.0f);
 
-        //	printf("a=%f° d=%f\n", a/std::numbers::pi_v<f32>*180.0f, d);
+        //  printf("a=%f° d=%f\n", a/std::numbers::pi_v<f32>*180.0f, d);
 
         if (d > 10000.0f)
         {
@@ -2427,7 +2413,7 @@ namespace rl::nvg {
             a0 = detail::atan2f(dx0, -dy0);
             a1 = detail::atan2f(-dx1, dy1);
             dir = ShapeWinding::Clockwise;
-            //		printf("CW c=(%f, %f) a0=%f° a1=%f°\n", cx, cy,
+            //      printf("CW c=(%f, %f) a0=%f° a1=%f°\n", cx, cy,
             // a0/std::numbers::pi_v<f32>*180.0f,
             // a1/std::numbers::pi_v<f32>*180.0f);
         }
@@ -2438,7 +2424,7 @@ namespace rl::nvg {
             a0 = detail::atan2f(-dx0, dy0);
             a1 = detail::atan2f(dx1, -dy1);
             dir = ShapeWinding::CounterClockwise;
-            //		printf("CCW c=(%f, %f) a0=%f° a1=%f°\n", cx, cy,
+            //      printf("CCW c=(%f, %f) a0=%f° a1=%f°\n", cx, cy,
             // a0/std::numbers::pi_v<f32>*180.0f,
             // a1/std::numbers::pi_v<f32>*180.0f);
         }
@@ -2449,13 +2435,13 @@ namespace rl::nvg {
     void close_path(Context* ctx)
     {
         f32 vals[]{ static_cast<f32>(Commands::Close) };
-        detail::append_commands(ctx, vals, std::size(vals));
+        detail::append_commands(ctx, vals, static_cast<i32>(std::size(vals)));
     }
 
     void path_winding(Context* ctx, const Solidity dir)
     {
         f32 vals[] = { static_cast<f32>(Commands::Winding), static_cast<f32>(dir) };
-        detail::append_commands(ctx, vals, std::size(vals));
+        detail::append_commands(ctx, vals, static_cast<i32>(std::size(vals)));
     }
 
     void barc(Context* ctx, const f32 cx, const f32 cy, const f32 r, const f32 a0, const f32 a1,
@@ -2553,7 +2539,7 @@ namespace rl::nvg {
             static_cast<f32>(Commands::Close),
         };
 
-        detail::append_commands(ctx, vals.data(), std::size(vals));
+        detail::append_commands(ctx, vals.data(), static_cast<i32>(std::size(vals)));
     }
 
     void rounded_rect(Context* ctx, const f32 x, const f32 y, const f32 w, const f32 h, const f32 r)
@@ -2636,7 +2622,7 @@ namespace rl::nvg {
             static_cast<f32>(Commands::Close),
         };
 
-        detail::append_commands(ctx, vals.data(), vals.size());
+        detail::append_commands(ctx, vals.data(), static_cast<i32>(vals.size()));
     }
 
     void ellipse(Context* ctx, const f32 cx, const f32 cy, const f32 rx, const f32 ry)
@@ -2676,7 +2662,7 @@ namespace rl::nvg {
             static_cast<f32>(Commands::Close),
         };
 
-        detail::append_commands(ctx, vals.data(), std::size(vals));
+        detail::append_commands(ctx, vals.data(), static_cast<i32>(std::size(vals)));
     }
 
     void circle(Context* ctx, const f32 cx, const f32 cy, const f32 r)
@@ -3015,8 +3001,8 @@ namespace rl::nvg {
 
         state->text_align = Align::HLeft | valign;
 
-        i32 nrows{ 0 };
-        while ((nrows = text_break_lines_(ctx, string, end, break_row_width, rows, 2)))
+        i32 nrows{ text_break_lines_(ctx, string, end, break_row_width, rows, 2) };
+        while (nrows > 0)
         {
             for (i32 i = 0; i < nrows; i++)
             {
@@ -3390,8 +3376,8 @@ namespace rl::nvg {
         rminy *= invscale;
         rmaxy *= invscale;
 
-        i32 nrows;
-        while ((nrows = text_break_lines_(ctx, string, end, break_row_width, rows, 2)))
+        i32 nrows = text_break_lines_(ctx, string, end, break_row_width, rows, 2);
+        while (nrows > 0)
         {
             for (i32 i = 0; i < nrows; i++)
             {

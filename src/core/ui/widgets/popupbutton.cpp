@@ -91,7 +91,7 @@ namespace rl::ui {
             nvg::set_text_align(context, nvg::Align::HLeft | nvg::Align::VMiddle);
 
             const f32 icon_width{ nvg::text_bounds_(context, 0.0f, 0.0f, icon.data()) };
-            ds::point icon_pos{ 0.0f, m_rect.pt.y + m_rect.size.height * 0.5f - 1.0f };
+            ds::point<f32> icon_pos{ 0.0f, m_rect.pt.y + m_rect.size.height * 0.5f - 1.0f };
             if (m_popup->side() == Side::Right)
                 icon_pos.x = m_rect.pt.x + m_rect.size.width - icon_width - 8.0f;
             else
@@ -116,7 +116,7 @@ namespace rl::ui {
 
             if (m_popup->side() == Side::Right)
             {
-                const ds::point anchor_pos{
+                const ds::point<f32> anchor_pos{
                     parent_dialog->width() + anchor_size,
                     pos_y,
                 };
@@ -125,19 +125,19 @@ namespace rl::ui {
             }
             else
             {
-                const ds::point anchor_pos{ -anchor_size, pos_y };
+                const ds::point<f32> anchor_pos{ -anchor_size, pos_y };
                 m_popup->set_anchor_pos(anchor_pos);
             }
         }
         else
         {
             const f32 anchor_size{ m_popup->anchor_size() };
-            const ds::point offset{
+            const ds::point<f32> offset{
                 this->width() + anchor_size + 1.0f,
                 (m_rect.size.height / 2.0f) - anchor_size,
             };
 
-            m_popup->set_position(ds::point{ m_rect.pt + offset });
+            m_popup->set_position(ds::point<f32>{ m_rect.pt + offset });
         }
     }
 

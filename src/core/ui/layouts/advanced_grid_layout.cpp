@@ -140,7 +140,7 @@ namespace rl::ui {
         }
     }
 
-    void AdvancedGridLayout::compute_layout(nvg::Context* nvg_context, const Widget* widget,
+    void AdvancedGridLayout::compute_layout(nvg::Context*, const Widget* widget,
                                             std::array<std::vector<f32>, 2>& grid_cell_sizes) const
     {
         const ds::dims fs_w{ widget->fixed_size() };

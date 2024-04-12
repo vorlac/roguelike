@@ -294,9 +294,9 @@ namespace rl {
         WindowID m_window_id{ 0 };
         DisplayID m_display_id{ 0 };
         Properties m_properties{ Properties::None };
-        ds::rect<i32> m_window_rect{ 0, 0, 0, 0 };
+        ds::rect<i32> m_window_rect{ ds::rect<i32>::zero() };
         ui::Canvas* m_gui_canvas{ nullptr };
-        ds::dims<i32> m_framebuf_size{ 0, 0 };
+        ds::dims<i32> m_framebuf_size{ ds::dims<i32>::zero() };
 
         f32 m_pixel_ratio{ 1.0f };
         f32 m_pixel_density{ 1.0f };

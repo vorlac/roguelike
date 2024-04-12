@@ -13,9 +13,10 @@
 #include "utils/unicode.hpp"
 
 namespace rl::ui {
-    Button::Button(const std::string_view text, const Icon::ID icon)
+    Button::Button(const std::string_view& text, const Icon::ID icon)
         : Widget{ nullptr }
         , m_text{ text }
+        , m_icon{ icon }
     {
     }
 
@@ -155,7 +156,7 @@ namespace rl::ui {
                 icon_size.height *= this->icon_scale();
                 nvg::set_font_size(context, icon_size.height);
                 nvg::set_font_face(context, font::style::Icons);
-                icon_size.width = nvg::text_bounds_(context, ds::point{ 0.0f, 0.0f },
+                icon_size.width = nvg::text_bounds_(context, ds::point<f32>::zero(),
                                                     std::forward<std::string>(utf8(m_icon))) +
                                   m_rect.size.height * 0.15f;
             }
@@ -185,12 +186,9 @@ namespace rl::ui {
         return true;
     }
 
-    bool Button::handle_mouse_button_event(const ds::point<f32>& pt, const Mouse::Button::ID button,
-                                           const bool button_pressed,
-                                           Keyboard::Scancode::ID keys_down)
+    bool Button::handle_mouse_button_event(ds::point<f32> pt, const Mouse::Button::ID button,
+                                           const bool button_pressed, Keyboard::Scancode::ID)
     {
-        scoped_log("pt={} btn={} pressed={}", pt, button, button_pressed);
-
         // Temporarily increase the reference count of the button in
         // case the button causes the parent window to be destructed
         ds::shared self{ this };
@@ -200,8 +198,6 @@ namespace rl::ui {
             (button == Mouse::Button::Right && this->has_property(Property::StandardMenu))
         };
 
-        diag_log("enabled={} process={}", m_enabled, process_button_event);
-
         if (m_enabled && process_button_event)
         {
             const bool pushed_backup{ m_pressed };
@@ -209,7 +205,6 @@ namespace rl::ui {
             {
                 if (this->has_property(Property::Radio))
                 {
-                    diag_log("radio button");
                     if (m_button_group.empty())
                     {
                         for (const auto widget : parent()->children())
@@ -240,7 +235,6 @@ namespace rl::ui {
 
                 if (this->has_property(Property::PopupMenu))
                 {
-                    diag_log("popup button");
                     for (const auto widget : this->parent()->children())
                     {
                         const auto btn{ dynamic_cast<Button*>(widget) };
@@ -260,7 +254,6 @@ namespace rl::ui {
             }
             else if (m_pressed || this->has_property(Property::StandardMenu))
             {
-                diag_log("standard menu button");
                 if (m_callback != nullptr && this->contains(pt))
                     m_callback();
 
@@ -270,7 +263,6 @@ namespace rl::ui {
 
             if (pushed_backup != m_pressed && m_change_callback != nullptr)
             {
-                diag_log("change callback invoked");
                 m_change_callback(m_pressed);
             }
 
@@ -359,12 +351,12 @@ namespace rl::ui {
         nvg::set_font_face(context, font::style::SansBold);
         f32 text_width{ nvg::text_bounds_(context, 0.0f, 0.0f, m_text.c_str(), nullptr, nullptr) };
 
-        ds::point center{
+        ds::point<f32> center{
             m_rect.pt.x + m_rect.size.width * 0.5f,
             m_rect.pt.y + m_rect.size.height * 0.5f,
         };
 
-        ds::point text_pos{
+        ds::point<f32> text_pos{
             center.x - text_width * 0.5f,
             center.y - 1.0f,
         };
@@ -399,7 +391,7 @@ namespace rl::ui {
 
             nvg::fill_color(context, text_color);
             nvg::set_text_align(context, nvg::Align::HLeft | nvg::Align::VMiddle);
-            ds::point icon_pos{ center };
+            ds::point<f32> icon_pos{ center };
 
             icon_pos.y -= 1;
             switch (m_icon_placement)

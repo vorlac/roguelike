@@ -23,8 +23,8 @@ namespace rl::ui {
         , m_mouse{ mouse }
         , m_keyboard{ kb }
     {
-        this->set_rect({
-            ds::point{ 0.0f, 0.0f },
+        this->set_rect(ds::rect{
+            ds::point<f32>{ 0.0f, 0.0f },
             rect.size,
         });
 
@@ -80,7 +80,7 @@ namespace rl::ui {
                 std::array<f32, 4> bounds = { 0.0f };
                 ds::point<f32> pos{
                     widget->position() +
-                        ds::point{
+                        ds::point<f32>{
                             (widget->width() / 2.0f),
                             widget->height() + 10.0f,
                         },
@@ -279,13 +279,13 @@ namespace rl::ui {
         if (dialog->size() == ds::dims<f32>::zero())
         {
             auto pref_size{ dialog->preferred_size() };
-            dialog->set_size(std::move(pref_size));
+            dialog->set_size(pref_size);
             dialog->perform_layout();
         }
 
-        ds::dims offset{ (((m_rect.size - dialog->size()) / 2.0f) - m_rect.pt) };
-        ds::point position{ offset.width, offset.height };
-        dialog->set_position(std::move(position));
+        ds::dims<f32> offset{ (((m_rect.size - dialog->size()) / 2.0f) - m_rect.pt) };
+        ds::point<f32> position{ offset.width, offset.height };
+        dialog->set_position(position);
     }
 
     void Canvas::update_focus(Widget* widget)
@@ -351,7 +351,7 @@ namespace rl::ui {
         return true;
     }
 
-    bool Canvas::on_resized(ds::dims<f32> size)
+    bool Canvas::on_resized(const ds::dims<f32> size)
     {
         if (math::equal(size.area(), 0.0f))
             return false;
@@ -446,7 +446,7 @@ namespace rl::ui {
         if (m_mouse_mode == MouseMode::Ignore)
             return true;
 
-        const ds::point mouse_pos{ mouse.pos() };
+        const ds::point<f32> mouse_pos{ mouse.pos() };
         if (m_focus_path.size() > 1)
         {
             // Since Dialogs are always direct children of the Canvas and the tree is represented
@@ -515,7 +515,7 @@ namespace rl::ui {
         if (m_mouse_mode == MouseMode::Ignore)
             return true;
 
-        const ds::point mouse_pos{ mouse.pos() };
+        const ds::point<f32> mouse_pos{ mouse.pos() };
         m_last_interaction = m_timer.elapsed();
 
         if (m_focus_path.size() > 1)

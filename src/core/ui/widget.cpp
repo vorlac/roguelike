@@ -327,7 +327,7 @@ namespace rl::ui {
     {
         {
             LocalTransform transform{ this };
-            const ds::point local_mouse_pos{ pt - m_rect.pt };
+            const ds::point<f32> local_mouse_pos{ pt - m_rect.pt };
             for (Widget* child : std::ranges::reverse_view{ m_children })
             {
                 if (!child->visible())
@@ -355,13 +355,13 @@ namespace rl::ui {
         return this->contains(pt) ? this : nullptr;
     }
 
-    bool Widget::on_mouse_entered(const Mouse& mouse)
+    bool Widget::on_mouse_entered(const Mouse&)
     {
         m_mouse_focus = true;
         return false;
     }
 
-    bool Widget::on_mouse_exited(const Mouse& mouse)
+    bool Widget::on_mouse_exited(const Mouse&)
     {
         m_mouse_focus = false;
         return false;
@@ -382,7 +382,7 @@ namespace rl::ui {
     bool Widget::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb)
     {
         LocalTransform transform{ this };
-        const ds::point local_mouse_pos{ mouse.pos() - LocalTransform::absolute_pos };
+        const ds::point<f32> local_mouse_pos{ mouse.pos() - LocalTransform::absolute_pos };
         for (const auto child : std::ranges::reverse_view{ m_children })
         {
             if (!child->visible())
@@ -404,7 +404,7 @@ namespace rl::ui {
     bool Widget::on_mouse_button_released(const Mouse& mouse, const Keyboard& kb)
     {
         LocalTransform transform{ this };
-        const ds::point local_mouse_pos{ mouse.pos() - LocalTransform::absolute_pos };
+        const ds::point<f32> local_mouse_pos{ mouse.pos() - LocalTransform::absolute_pos };
         for (Widget* child : std::ranges::reverse_view{ m_children })
         {
             if (!child->visible())
@@ -423,7 +423,7 @@ namespace rl::ui {
     bool Widget::on_mouse_scroll(const Mouse& mouse, const Keyboard& kb)
     {
         LocalTransform transform{ this };
-        const ds::point local_mouse_pos{ mouse.pos() - LocalTransform::absolute_pos };
+        const ds::point<f32> local_mouse_pos{ mouse.pos() - LocalTransform::absolute_pos };
         for (Widget* child : std::ranges::reverse_view{ m_children })
         {
             if (!child->visible())
@@ -444,7 +444,7 @@ namespace rl::ui {
         bool handled{ false };
 
         LocalTransform transform{ this };
-        const ds::point local_mouse_pos{ mouse.pos() - LocalTransform::absolute_pos };
+        const ds::point<f32> local_mouse_pos{ mouse.pos() - LocalTransform::absolute_pos };
         for (Widget* child : std::ranges::reverse_view{ m_children })
         {
             if (!child->visible())
@@ -465,28 +465,28 @@ namespace rl::ui {
         return handled;
     }
 
-    bool Widget::on_mouse_drag(const Mouse& mouse, const Keyboard& kb)
+    bool Widget::on_mouse_drag(const Mouse&, const Keyboard&)
     {
         // do nothing, derived classess
         // should implement/override
         return false;
     }
 
-    bool Widget::on_key_pressed(const Keyboard& kb)
+    bool Widget::on_key_pressed(const Keyboard&)
     {
         // do nothing, derived classess
         // should implement/override
         return false;
     }
 
-    bool Widget::on_key_released(const Keyboard& kb)
+    bool Widget::on_key_released(const Keyboard&)
     {
         // do nothing, derived classess
         // should implement/override
         return false;
     }
 
-    bool Widget::on_character_input(const Keyboard& kb)
+    bool Widget::on_character_input(const Keyboard&)
     {
         // do nothing, derived classess
         // should implement/override
@@ -692,7 +692,7 @@ namespace rl::ui {
         }
 
         LocalTransform transform{ this };
-        const ds::point local_mouse_pos{ pt - m_rect.pt };
+        const ds::point<f32> local_mouse_pos{ pt - m_rect.pt };
         for (Widget* child : std::ranges::reverse_view{ m_children })
         {
             if (!child->visible())

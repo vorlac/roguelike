@@ -44,18 +44,18 @@ namespace rl::ui {
         m_cont_prefsize = m_container->preferred_size();
         if (m_cont_prefsize.height > m_rect.size.height)
         {
-            m_scroll_bar_rect = ds::rect{
-                ds::point{ m_rect.pt.x + m_rect.size.width - (ScrollbarWidth + Margin),
-                           m_rect.pt.y },
-                ds::dims{ ScrollbarWidth, m_rect.size.height },
+            m_scroll_bar_rect = ds::rect<f32>{
+                ds::point<f32>{ m_rect.pt.x + m_rect.size.width - (ScrollbarWidth + Margin),
+                                m_rect.pt.y },
+                ds::dims<f32>{ ScrollbarWidth, m_rect.size.height },
             };
 
             m_container->set_rect({
-                ds::point{
+                ds::point<f32>{
                     0.0f,
                     -m_scrollbar_pos * (m_cont_prefsize.height - m_rect.size.height),
                 },
-                ds::dims{
+                ds::dims<f32>{
                     m_rect.size.width - (Margin + ScrollbarWidth),
                     m_cont_prefsize.height,
                 },
@@ -113,22 +113,22 @@ namespace rl::ui {
 
     bool VerticalScrollPanel::draw_mouse_intersection(ds::point<f32> pt)
     {
-        ds::point local_pos{ pt - m_rect.pt };
-        if (this->contains(std::move(pt)))
+        ds::point<f32> local_pos{ pt - m_rect.pt };
+        if (this->contains(pt))
         {
-            const ds::rect widget_rect{ m_rect.pt, m_rect.size };
+            const ds::rect<f32> widget_rect{ m_rect.pt, m_rect.size };
             m_renderer->draw_rect_outline(widget_rect, 2.0f, rl::Colors::Green, Outline::Inner);
         }
 
         LocalTransform transform{ this };
-        return m_container->draw_mouse_intersection(std::move(local_pos));
+        return m_container->draw_mouse_intersection(local_pos);
     }
 
     bool VerticalScrollPanel::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb)
     {
         m_prev_click_location = Component::None;
-        const ds::point mouse_pos{ mouse.pos() };
-        const ds::point local_mouse_pos{ mouse_pos - LocalTransform::absolute_pos };
+        const ds::point<f32> mouse_pos{ mouse.pos() };
+        const ds::point<f32> local_mouse_pos{ mouse_pos - LocalTransform::absolute_pos };
 
         const bool lmb_just_pressed{ mouse.is_button_pressed(Mouse::Button::Left) };
         if (lmb_just_pressed && m_container != nullptr &&
@@ -150,8 +150,10 @@ namespace rl::ui {
                 delta = m_rect.size.height / m_cont_prefsize.height;
 
             m_scrollbar_pos = std::max(0.0f, std::min(1.0f, m_scrollbar_pos + delta));
-            m_container->set_position(
-                { 0.0f, -m_scrollbar_pos * (m_cont_prefsize.height - m_rect.size.height) });
+            m_container->set_position(ds::point<f32>{
+                0.0f,
+                -m_scrollbar_pos * (m_cont_prefsize.height - m_rect.size.height),
+            });
 
             m_update_layout = true;
             return true;
@@ -163,16 +165,12 @@ namespace rl::ui {
 
     bool VerticalScrollPanel::on_mouse_button_released(const Mouse& mouse, const Keyboard& kb)
     {
-        scoped_logger(log_level::trace, "pos={}", mouse.pos());
-
         LocalTransform transform{ this };
         return m_container->on_mouse_button_released(mouse, kb);
     }
 
     bool VerticalScrollPanel::on_mouse_move(const Mouse& mouse, const Keyboard& kb)
     {
-        scoped_logger(log_level::trace, "pos={}", mouse.pos());
-
         LocalTransform transform{ this };
         return m_container->on_mouse_move(mouse, kb);
     }
@@ -202,8 +200,6 @@ namespace rl::ui {
         if (m_container == nullptr)
             return;
 
-        scoped_trace(log_level::trace);
-
         f32 y_offset{ 0.0f };
         if (m_cont_prefsize.height > m_rect.size.height)
             y_offset = -m_scrollbar_pos * (m_cont_prefsize.height - m_rect.size.height);
@@ -231,43 +227,63 @@ namespace rl::ui {
             return;
 
         m_renderer->draw_path(false, [&] {
-            ds::rect scrollbar_bg_rect{
-                ds::point{ m_rect.pt.x + m_rect.size.width - (Margin + ScrollbarWidth) + OutlineSize,
-                           m_rect.pt.y + Margin + OutlineSize },
-                ds::dims{ ScrollbarWidth, m_rect.size.height - Margin * 2.0f },
+            ds::rect<f32> scrollbar_bg_rect{
+                ds::point<f32>{
+                    m_rect.pt.x + m_rect.size.width - (Margin + ScrollbarWidth) + OutlineSize,
+                    m_rect.pt.y + Margin + OutlineSize,
+                },
+                ds::dims<f32>{
+                    ScrollbarWidth,
+                    m_rect.size.height - Margin * 2.0f,
+                },
             };
             ds::rect widget_body_rect{
-                ds::point{ m_rect.pt.x + m_rect.size.width - (Margin + ScrollbarWidth),
-                           m_rect.pt.y + Margin },
-                ds::dims{ ScrollbarWidth, m_rect.size.height - Margin * 2.0f },
+                ds::point<f32>{
+                    m_rect.pt.x + m_rect.size.width - (Margin + ScrollbarWidth),
+                    m_rect.pt.y + Margin,
+                },
+                ds::dims<f32>{
+                    ScrollbarWidth,
+                    m_rect.size.height - Margin * 2.0f,
+                },
             };
 
-            nvg::PaintStyle brush{ m_renderer->create_rect_gradient_paint_style(
-                std::move(scrollbar_bg_rect), ScrollBarBackgroundRadius, ShadowBlur,
-                ScrollGuideColor, ScrollGuideShadowColor) };
+            nvg::PaintStyle brush{
+                m_renderer->create_rect_gradient_paint_style(
+                    std::move(scrollbar_bg_rect), ScrollBarBackgroundRadius, ShadowBlur,
+                    ScrollGuideColor, ScrollGuideShadowColor),
+            };
 
-            nvg::rounded_rect(context, std::move(widget_body_rect), ScrollBarBackgroundRadius);
+            nvg::rounded_rect(context, widget_body_rect, ScrollBarBackgroundRadius);
             nvg::fill_paint(context, std::move(brush));
             nvg::fill(context);
 
             // subpath
             m_renderer->draw_path(false, [&] {
-                auto scrollbar_rect = ds::rect{
-                    ds::point{ m_rect.pt.x + m_rect.size.width - (Margin + ScrollbarWidth) -
-                                   OutlineSize,
-                               m_rect.pt.y + Margin +
-                                   (m_rect.size.height - Margin * 2.0f - scrollbar_height) *
-                                       m_scrollbar_pos -
-                                   OutlineSize },
-                    ds::dims{ ScrollbarWidth, scrollbar_height },
+                auto scrollbar_rect = ds::rect<f32>{
+                    ds::point<f32>{
+                        m_rect.pt.x + m_rect.size.width - (Margin + ScrollbarWidth) - OutlineSize,
+                        m_rect.pt.y + Margin +
+                            (m_rect.size.height - Margin * 2.0f - scrollbar_height) *
+                                m_scrollbar_pos -
+                            OutlineSize,
+                    },
+                    ds::dims<f32>{
+                        ScrollbarWidth,
+                        scrollbar_height,
+                    },
                 };
-                auto scrollbar_border_rect = ds::rect{
-                    ds::point{ m_rect.pt.x + m_rect.size.width - (Margin + ScrollbarWidth) +
-                                   OutlineSize,
-                               m_rect.pt.y + Margin + OutlineSize +
-                                   (m_rect.size.height - Margin * 2.0f - scrollbar_height) *
-                                       m_scrollbar_pos },
-                    ds::dims{ ScrollbarWidth - Margin / 2.0f, scrollbar_height - Margin / 2.0f },
+                auto scrollbar_border_rect = ds::rect<f32>{
+                    ds::point<f32>{
+                        m_rect.pt.x + m_rect.size.width - (Margin + ScrollbarWidth) + OutlineSize,
+                        m_rect.pt.y + Margin + OutlineSize +
+                            (m_rect.size.height - Margin * 2.0f - scrollbar_height) *
+                                m_scrollbar_pos,
+                    },
+                    ds::dims<f32>{
+                        ScrollbarWidth - Margin / 2.0f,
+                        scrollbar_height - Margin / 2.0f,
+                    },
                 };
 
                 nvg::PaintStyle bgbrush{ m_renderer->create_rect_gradient_paint_style(

@@ -88,7 +88,7 @@ namespace rl {
         return ds::dims<i32>{ 0, 0 };
     }
 
-    bool OpenGLRenderer::set_draw_color(ds::color<f32> c) const
+    bool OpenGLRenderer::set_draw_color(ds::color<f32>) const
     {
         constexpr i32 result{ 0 };
         runtime_assert(false, "not implemented");
@@ -102,7 +102,7 @@ namespace rl {
         return result == 0;
     }
 
-    bool OpenGLRenderer::set_draw_blend_mode(const SDL3::SDL_BlendMode blend_mode) const
+    bool OpenGLRenderer::set_draw_blend_mode(const SDL3::SDL_BlendMode) const
     {
         constexpr i32 result{ 0 };
         runtime_assert(false, "not implemented");
@@ -115,12 +115,12 @@ namespace rl {
         glGetIntegerv(GL_VIEWPORT, buff.data());
         runtime_assert(buff[2] > 0 && buff[3] > 0, "failed to get viewport");
 
-        return ds::rect{
-            ds::point{
+        return ds::rect<f32>{
+            ds::point<f32>{
                 static_cast<f32>(buff[0]),
                 static_cast<f32>(buff[1]),
             },
-            ds::dims{
+            ds::dims<f32>{
                 static_cast<f32>(buff[2]),
                 static_cast<f32>(buff[3]),
             },

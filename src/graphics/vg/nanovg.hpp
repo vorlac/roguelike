@@ -16,7 +16,7 @@ namespace rl::nvg {
     constexpr i32 MaxNVGStates{ 64 };
     // Length proportional to radius of a
     // cubic bezier handle for 90deg arcs.
-    constexpr float NVGKappa90{ 0.5522847493f };
+    constexpr f32 NVGKappa90{ 0.5522847493f };
 
     enum class CompositeOperation {
         SourceOver,
@@ -102,16 +102,16 @@ namespace rl::nvg {
 
     struct ScissorParams
     {
-        float xform[6]{};
-        float extent[2]{};
+        f32 xform[6]{};
+        f32 extent[2]{};
     };
 
     struct Vertex
     {
-        float x{ 0.0f };
-        float y{ 0.0f };
-        float u{ 0.0f };
-        float v{ 0.0f };
+        f32 x{ 0.0f };
+        f32 y{ 0.0f };
+        f32 u{ 0.0f };
+        f32 v{ 0.0f };
     };
 
     struct NVGpath
@@ -138,10 +138,10 @@ namespace rl::nvg {
 
     struct PaintStyle
     {
-        float xform[6]{};
-        float extent[2]{};
-        float radius{ 0.0f };
-        float feather{ 0.0f };
+        f32 xform[6]{};
+        f32 extent[2]{};
+        f32 radius{ 0.0f };
+        f32 feather{ 0.0f };
         ds::color<f32> inner_color{ 0.0f, 0.0f, 0.0f, 0.0f };
         ds::color<f32> outer_color{ 0.0f, 0.0f, 0.0f, 0.0f };
         i32 image{ 0 };
@@ -153,17 +153,17 @@ namespace rl::nvg {
         bool shape_anti_alias{ false };
         PaintStyle fill{};
         PaintStyle stroke{};
-        float stroke_width{ 0.0f };
-        float miter_limit{ 0.0f };
+        f32 stroke_width{ 0.0f };
+        f32 miter_limit{ 0.0f };
         LineCap line_join{ LineCap::Butt };
         LineCap line_cap{ LineCap::Butt };
-        float alpha{ 0.0f };
-        float xform[6]{};
+        f32 alpha{ 0.0f };
+        f32 xform[6]{};
         ScissorParams scissor{};
-        float font_size{ 0.0f };
-        float letter_spacing{ 0.0f };
-        float line_height{ 0.0f };
-        float font_blur{ 0.0f };
+        f32 font_size{ 0.0f };
+        f32 letter_spacing{ 0.0f };
+        f32 line_height{ 0.0f };
+        f32 font_blur{ 0.0f };
         Align text_align{ Align::None };
         i32 font_id{ 0 };
     };
@@ -179,35 +179,35 @@ namespace rl::nvg {
         i32 (*render_delete_texture)(void* uptr, i32 image);
         i32 (*render_update_texture)(void* uptr, i32 image, i32 x, i32 y, i32 w, i32 h,
                                      const uint8_t* data);
-        i32 (*render_get_texture_size)(void* uptr, i32 image, float* w, float* h);
+        i32 (*render_get_texture_size)(void* uptr, i32 image, f32* w, f32* h);
 
-        void (*render_viewport)(void* uptr, float width, float height, float device_pixel_ratio);
+        void (*render_viewport)(void* uptr, f32 width, f32 height, f32 device_pixel_ratio);
         void (*render_cancel)(void* uptr);
         void (*render_flush)(void* uptr);
         void (*render_fill)(void* uptr, const PaintStyle* paint,
                             CompositeOperationState composite_operation,
-                            const ScissorParams* scissor, float fringe, const float* bounds,
+                            const ScissorParams* scissor, f32 fringe, const f32* bounds,
                             const NVGpath* paths, i32 npaths);
         void (*render_stroke)(void* uptr, const PaintStyle* paint,
                               CompositeOperationState composite_operation,
-                              const ScissorParams* scissor, float fringe, float stroke_width,
+                              const ScissorParams* scissor, f32 fringe, f32 stroke_width,
                               const NVGpath* paths, i32 npaths);
         void (*render_triangles)(
             void* uptr, const PaintStyle* paint, CompositeOperationState composite_operation,
-            const ScissorParams* scissor, const Vertex* verts, i32 nverts, float fringe);
+            const ScissorParams* scissor, const Vertex* verts, i32 nverts, f32 fringe);
 
         void (*render_delete)(void* uptr);
     };
 
     struct Point
     {
-        float x{ 0.0f };
-        float y{ 0.0f };
-        float dx{ 0.0f };
-        float dy{ 0.0f };
-        float len{ 0.0f };
-        float dmx{ 0.0f };
-        float dmy{ 0.0f };
+        f32 x{ 0.0f };
+        f32 y{ 0.0f };
+        f32 dx{ 0.0f };
+        f32 dy{ 0.0f };
+        f32 len{ 0.0f };
+        f32 dmx{ 0.0f };
+        f32 dmy{ 0.0f };
         uint8_t flags{ 0 };
     };
 
@@ -222,24 +222,24 @@ namespace rl::nvg {
         Vertex* verts{ nullptr };
         i32 nverts{ 0 };
         i32 cverts{ 0 };
-        float bounds[4]{};
+        f32 bounds[4]{};
     };
 
     struct Context
     {
         Params params{};
-        float* commands{ nullptr };
+        f32* commands{ nullptr };
         i32 ccommands{ 0 };
         i32 ncommands{ 0 };
-        float commandx{ 0.0f };
-        float commandy{ 0.0f };
+        f32 commandx{ 0.0f };
+        f32 commandy{ 0.0f };
         State states[MaxNVGStates]{};
         i32 nstates{ 0 };
         PathCache* cache{ nullptr };
-        float tess_tol{ 0.0f };
-        float dist_tol{ 0.0f };
-        float fringe_width{ 0.0f };
-        float device_px_ratio{ 0.0f };
+        f32 tess_tol{ 0.0f };
+        f32 dist_tol{ 0.0f };
+        f32 fringe_width{ 0.0f };
+        f32 device_px_ratio{ 0.0f };
         FONScontext* fs{ nullptr };
         i32 font_images[NvgMaxFontimages]{};
         i32 font_image_idx{ 0 };
@@ -252,9 +252,9 @@ namespace rl::nvg {
     struct GlyphPosition
     {
         const char* str{ nullptr };  // Position of the glyph in the input string.
-        float x{ 0.0f };             // The x-coordinate of the logical glyph position.
-        float min_x{ 0.0f };
-        float max_x{ 0.0f };
+        f32 x{ 0.0f };               // The x-coordinate of the logical glyph position.
+        f32 min_x{ 0.0f };
+        f32 max_x{ 0.0f };
     };
 
     struct TextRow
@@ -263,9 +263,9 @@ namespace rl::nvg {
         const char* end{ nullptr };    // Pointer to the input text where the row ends (one past the
                                        // last character).
         const char* next{ nullptr };   // Pointer to the beginning of the next row.
-        float width{ 0.0f };           // Logical width of the row.
-        float min_x{ 0.0f };
-        float max_x{ 0.0f };
+        f32 width{ 0.0f };             // Logical width of the row.
+        f32 min_x{ 0.0f };
+        f32 max_x{ 0.0f };
         // because of kerning and some parts over extending.
     };
 
@@ -277,8 +277,7 @@ namespace rl::nvg {
     // For example, GLFW returns two dimension for an opened window: window size and
     // frame buffer size. In that case you would set windowWidth/Height to the window size
     // devicePixelRatio to: frameBufferWidth / windowWidth.
-    void begin_frame(Context* ctx, float window_width, float window_height,
-                     float device_pixel_ratio);
+    void begin_frame(Context* ctx, f32 window_width, f32 window_height, f32 device_pixel_ratio);
 
     // Cancels drawing the current frame.
     void cancel_frame(const Context* ctx);
@@ -315,21 +314,21 @@ namespace rl::nvg {
     // ds::color<f32> rgb(uint8_t r, uint8_t g, uint8_t b);
 
     // Linearly interpolates from color c0 to c1, and returns resulting color value.
-    ds::color<f32> lerp_rgba(const ds::color<f32>& c0, const ds::color<f32>& c1, float u);
+    ds::color<f32> lerp_rgba(const ds::color<f32>& c0, const ds::color<f32>& c1, f32 u);
 
     // Sets transparency of a color value.
     ds::color<f32> trans_rgba(ds::color<f32> c0, uint8_t a);
 
     // Sets transparency of a color value.
-    ds::color<f32> trans_rgba_f(ds::color<f32> c0, float a);
+    ds::color<f32> trans_rgba_f(ds::color<f32> c0, f32 a);
 
     // Returns color value specified by hue, saturation and lightness.
     // HSL values are all in range [0..1], alpha will be set to 255.
-    ds::color<f32> hsl(float h, float s, float l);
+    ds::color<f32> hsl(f32 h, f32 s, f32 l);
 
     // Returns color value specified by hue, saturation and lightness and alpha.
     // HSL values are all in range [0..1], alpha in range [0..255]
-    ds::color<f32> hsla(float h, float s, float l, uint8_t a);
+    ds::color<f32> hsla(f32 h, f32 s, f32 l, uint8_t a);
 
     //
     // State Handling
@@ -376,10 +375,10 @@ namespace rl::nvg {
 
     // Sets the miter limit of the stroke style.
     // Miter limit controls when a sharp corner is beveled.
-    void miter_limit(Context* ctx, float limit);
+    void miter_limit(Context* ctx, f32 limit);
 
     // Sets the stroke width of the stroke style.
-    void stroke_width(Context* ctx, float width);
+    void stroke_width(Context* ctx, f32 width);
 
     // Sets how the end of the line (cap) is drawn,
     // Can be one of: NVG_BUTT (default), NVG_ROUND, NVG_SQUARE.
@@ -391,7 +390,7 @@ namespace rl::nvg {
 
     // Sets the transparency applied to all rendered shapes.
     // Already transparent paths will get proportionally more transparent as well.
-    void global_alpha(Context* ctx, float alpha);
+    void global_alpha(Context* ctx, f32 alpha);
 
     //
     // Transforms
@@ -419,71 +418,71 @@ namespace rl::nvg {
     //   [a c e]
     //   [b d f]
     //   [0 0 1]
-    void transform(Context* ctx, float a, float b, float c, float d, float e, float f);
+    void transform(Context* ctx, f32 a, f32 b, f32 c, f32 d, f32 e, f32 f);
 
     // Translates current coordinate system.
-    void translate(Context* ctx, float x, float y);
+    void translate(Context* ctx, f32 x, f32 y);
     void translate(Context* ctx, const ds::vector2<f32>& local_offset);
 
     // Rotates current coordinate system. Angle is specified in radians.
-    void rotate(Context* ctx, float angle);
+    void rotate(Context* ctx, f32 angle);
 
     // Skews the current coordinate system along X axis. Angle is specified in radians.
-    void skew_x(Context* ctx, float angle);
+    void skew_x(Context* ctx, f32 angle);
 
     // Skews the current coordinate system along Y axis. Angle is specified in radians.
-    void skew_y(Context* ctx, float angle);
+    void skew_y(Context* ctx, f32 angle);
 
     // Scales the current coordinate system.
-    void scale(Context* ctx, float x, float y);
+    void scale(Context* ctx, f32 x, f32 y);
 
     // Stores the top part (a-f) of the current transformation matrix in to the specified
     // buffer.
     //   [a c e]
     //   [b d f]
     //   [0 0 1]
-    // There should be space for 6 floats in the return buffer for the values a-f.
-    void current_transform(Context* ctx, float* xform);
+    // There should be space for 6 f32s in the return buffer for the values a-f.
+    void current_transform(Context* ctx, f32* xform);
 
     // The following functions can be used to make calculations on 2x3 transformation matrices.
-    // A 2x3 matrix is represented as float[6].
+    // A 2x3 matrix is represented as f32[6].
 
     // Sets the transform to identity matrix.
-    void transform_identity(float* dst);
+    void transform_identity(f32* dst);
 
     // Sets the transform to translation matrix matrix.
-    void transform_translate(float* dst, float tx, float ty);
-    void transform_translate(float* t, const ds::vector2<f32>& translation);
+    void transform_translate(f32* dst, f32 tx, f32 ty);
+    void transform_translate(f32* t, const ds::vector2<f32>& translation);
 
     // Sets the transform to scale matrix.
-    void transform_scale(float* dst, float sx, float sy);
+    void transform_scale(f32* dst, f32 sx, f32 sy);
 
     // Sets the transform to rotate matrix. Angle is specified in radians.
-    void transform_rotate(float* dst, float a);
+    void transform_rotate(f32* dst, f32 a);
 
     // Sets the transform to skew-x matrix. Angle is specified in radians.
-    void transform_skew_x(float* dst, float a);
+    void transform_skew_x(f32* dst, f32 a);
 
     // Sets the transform to skew-y matrix. Angle is specified in radians.
-    void transform_skew_y(float* dst, float a);
+    void transform_skew_y(f32* dst, f32 a);
 
     // Sets the transform to the result of multiplication of two transforms, of A = A*B.
-    void transform_multiply(float* dst, const float* src);
+    void transform_multiply(f32* dst, const f32* src);
 
     // Sets the transform to the result of multiplication of two transforms, of A = B*A.
-    void transform_premultiply(float* dst, const float* src);
+    void transform_premultiply(f32* dst, const f32* src);
 
     // Sets the destination to inverse of specified transform.
     // Returns 1 if the inverse could be calculated, else 0.
-    i32 transform_inverse(float* dst, const float* src);
+    i32 transform_inverse(f32* dst, const f32* src);
 
     // Transform a point by given transform.
-    void transform_point(float* dstx, float* dsty, const float* xform, float srcx, float srcy);
+    void transform_point(f32* dstx, f32* dsty, const f32* xform, f32 srcx, f32 srcy);
     ds::point<f32> transform_point(Context* ctx, const ds::point<f32>& src_pt);
 
     // Converts degrees to radians and vice versa.
-    float deg_to_rad(float deg);
-    float rad_to_deg(float rad);
+    f32 deg_to_rad(f32 deg);
+    f32 rad_to_deg(f32 rad);
 
     //
     // Images
@@ -510,7 +509,7 @@ namespace rl::nvg {
     void update_image(const Context* ctx, i32 image, const uint8_t* data);
 
     // Returns the dimensions of a created image.
-    void image_size(const Context* ctx, i32 image, float* w, float* h);
+    void image_size(const Context* ctx, i32 image, f32* w, f32* h);
     ds::dims<f32> image_size(const Context* ctx, i32 image);
 
     // Deletes created image.
@@ -526,7 +525,7 @@ namespace rl::nvg {
     // end coordinates of the linear gradient, icol specifies the start color and ocol the end
     // color. The gradient is transformed by the current transform when it is passed to
     // FillPaint() or StrokePaint().
-    PaintStyle linear_gradient(Context* ctx, float sx, float sy, float ex, float ey,
+    PaintStyle linear_gradient(Context* ctx, f32 sx, f32 sy, f32 ex, f32 ey,
                                const ds::color<f32>& inner_color,
                                const ds::color<f32>& outer_color);
 
@@ -537,7 +536,7 @@ namespace rl::nvg {
     // Parameter icol specifies the inner color and ocol the outer color of the gradient. The
     // gradient is transformed by the current transform when it is passed to FillPaint() or
     // StrokePaint().
-    PaintStyle box_gradient(Context* ctx, float x, float y, float w, float h, float r, float f,
+    PaintStyle box_gradient(Context* ctx, f32 x, f32 y, f32 w, f32 h, f32 r, f32 f,
                             const ds::color<f32>& icol, const ds::color<f32>& ocol);
 
     PaintStyle box_gradient(Context* ctx, ds::rect<f32>&& rect, f32 corner_radius, f32 feather_blur,
@@ -548,7 +547,7 @@ namespace rl::nvg {
     // outr specify the inner and outer radius of the gradient, inner_color specifies the start
     // color and outer_color the end color. The gradient is transformed by the current transform
     // when it is passed to FillPaint() or StrokePaint().
-    PaintStyle radial_gradient(Context* ctx, float cx, float cy, float inr, float outr,
+    PaintStyle radial_gradient(Context* ctx, f32 cx, f32 cy, f32 inr, f32 outr,
                                const ds::color<f32>& inner_color,
                                const ds::color<f32>& outer_color);
 
@@ -556,8 +555,8 @@ namespace rl::nvg {
     // the image pattern, (ex,ey) the size of one image, angle rotation around the top-left
     // corner, image is handle to the image to render. The gradient is transformed by the
     // current transform when it is passed to FillPaint() or StrokePaint().
-    PaintStyle image_pattern(Context* ctx, float cx, float cy, float w, float h, float angle,
-                             i32 image, float alpha);
+    PaintStyle image_pattern(Context* ctx, f32 cx, f32 cy, f32 w, f32 h, f32 angle, i32 image,
+                             f32 alpha);
 
     //
     // Scissoring
@@ -567,7 +566,7 @@ namespace rl::nvg {
 
     // Sets the current scissor rectangle.
     // The scissor rectangle is transformed by the current transform.
-    void scissor(Context* ctx, float x, float y, float w, float h);
+    void scissor(Context* ctx, f32 x, f32 y, f32 w, f32 h);
 
     // Intersects current scissor rectangle with the specified rectangle.
     // The scissor rectangle is transformed by the current transform.
@@ -575,7 +574,7 @@ namespace rl::nvg {
     // the current one, the intersection will be done between the specified
     // rectangle and the previous scissor rectangle transformed in the current
     // transform space. The resulting shape is always rectangle.
-    void intersect_scissor(Context* ctx, float x, float y, float w, float h);
+    void intersect_scissor(Context* ctx, f32 x, f32 y, f32 w, f32 h);
 
     // Reset and disables scissoring.
     void reset_scissor(Context* ctx);
@@ -602,22 +601,22 @@ namespace rl::nvg {
     void begin_path(Context* ctx);
 
     // Starts new sub-path with specified point as first point.
-    void move_to(Context* ctx, float x, float y);
+    void move_to(Context* ctx, f32 x, f32 y);
 
     // Adds line segment from the last point in the path to the specified point.
-    void line_to(Context* ctx, float x, float y);
+    void line_to(Context* ctx, f32 x, f32 y);
 
     // Adds cubic bezier segment from last point in the path via two control points to the
     // specified point.
-    void bezier_to(Context* ctx, float c1_x, float c1_y, float c2_x, float c2_y, float x, float y);
+    void bezier_to(Context* ctx, f32 c1_x, f32 c1_y, f32 c2_x, f32 c2_y, f32 x, f32 y);
 
     // Adds quadratic bezier segment from last point in the path via a control point to the
     // specified point.
-    void quad_to(Context* ctx, float cx, float cy, float x, float y);
+    void quad_to(Context* ctx, f32 cx, f32 cy, f32 x, f32 y);
 
     // Adds an arc segment at the corner defined by the last path point, and two specified
     // points.
-    void arc_to(Context* ctx, float x1, float y1, float x2, float y2, float radius);
+    void arc_to(Context* ctx, f32 x1, f32 y1, f32 x2, f32 y2, f32 radius);
 
     // Closes current sub-path with a line segment.
     void close_path(Context* ctx);
@@ -628,27 +627,26 @@ namespace rl::nvg {
     // Creates new circle arc shaped sub-path. The arc center is at cx,cy, the arc radius is r,
     // and the arc is drawn from angle a0 to a1, and swept in direction dir (CounterClockwise,
     // or Clockwise). Angles are specified in radians.
-    void arc(Context* ctx, float cx, float cy, float r, float a0, float a1, ShapeWinding dir);
+    void arc(Context* ctx, f32 cx, f32 cy, f32 r, f32 a0, f32 a1, ShapeWinding dir);
 
-    void barc(Context* ctx, float cx, float cy, float r, float a0, float a1, ShapeWinding dir,
-              i32 join);
+    void barc(Context* ctx, f32 cx, f32 cy, f32 r, f32 a0, f32 a1, ShapeWinding dir, i32 join);
 
     // Creates new rectangle shaped sub-path.
-    void rect(Context* ctx, float x, float y, float w, float h);
+    void rect(Context* ctx, f32 x, f32 y, f32 w, f32 h);
 
     // Creates new rounded rectangle shaped sub-path.
-    void rounded_rect(Context* ctx, const ds::rect<f32>& rect, float radius);
-    void rounded_rect(Context* ctx, float x, float y, float w, float h, float r);
+    void rounded_rect(Context* ctx, const ds::rect<f32>& rect, f32 radius);
+    void rounded_rect(Context* ctx, f32 x, f32 y, f32 w, f32 h, f32 r);
 
     // Creates new rounded rectangle shaped sub-path with varying radii for each corner.
-    void rounded_rect_varying(Context* ctx, float x, float y, float w, float h, float rad_top_left,
-                              float rad_top_right, float rad_bottom_right, float rad_bottom_left);
+    void rounded_rect_varying(Context* ctx, f32 x, f32 y, f32 w, f32 h, f32 rad_top_left,
+                              f32 rad_top_right, f32 rad_bottom_right, f32 rad_bottom_left);
 
     // Creates new ellipse shaped sub-path.
-    void ellipse(Context* ctx, float cx, float cy, float rx, float ry);
+    void ellipse(Context* ctx, f32 cx, f32 cy, f32 rx, f32 ry);
 
     // Creates new circle shaped sub-path.
-    void circle(Context* ctx, float cx, float cy, float r);
+    void circle(Context* ctx, f32 cx, f32 cy, f32 r);
 
     // Fills the current path with current fill style.
     void fill(Context* ctx);
@@ -725,17 +723,17 @@ namespace rl::nvg {
     void reset_fallback_fonts(const Context* ctx, const char* base_font);
 
     // Sets the font size of current text style.
-    void set_font_size(Context* ctx, float size);
+    void set_font_size(Context* ctx, f32 size);
 
     // Sets the blur of current text style.
-    void font_blur_(Context* ctx, float blur);
+    void font_blur_(Context* ctx, f32 blur);
 
     // Sets the letter spacing of current text style.
-    void text_letter_spacing_(Context* ctx, float spacing);
+    void text_letter_spacing_(Context* ctx, f32 spacing);
 
     // Sets the proportional line height of current text style. The line height is specified as
     // multiple of font size.
-    void text_line_height_(Context* ctx, float line_height);
+    void text_line_height_(Context* ctx, f32 line_height);
 
     // Sets the text align of current text style, see Align for options.
     void set_text_align(Context* ctx, Align align);
@@ -750,44 +748,44 @@ namespace rl::nvg {
 
     // Draws text string at specified location. If end is specified only the sub-string up to
     // the end is drawn.
-    float text_(Context* ctx, float x, float y, const char* string, const char* end = nullptr);
+    f32 text_(Context* ctx, f32 x, f32 y, const char* string, const char* end = nullptr);
 
     // Draws multi-line text string at specified location wrapped at the specified width. If end
     // is specified only the sub-string up to the end is drawn. White space is stripped at the
     // beginning of the rows, the text is split at word boundaries or when new-line characters
     // are encountered. Words longer than the max width are slit at nearest character (i.e. no
     // hyphenation).
-    void text_box_(Context* ctx, float x, float y, float break_row_width, const char* string,
+    void text_box_(Context* ctx, f32 x, f32 y, f32 break_row_width, const char* string,
                    const char* end = nullptr);
 
-    // Measures the specified text string. Parameter bounds should be a pointer to float[4],
+    // Measures the specified text string. Parameter bounds should be a pointer to f32[4],
     // if the bounding box of the text should be returned. The bounds value are [xmin,ymin,
     // xmax,ymax] Returns the horizontal advance of the measured text (i.e. where the next
     // character should drawn). Measured values are returned in local coordinate space.
-    float text_bounds_(Context* ctx, ds::point<f32>&& pos, std::string&& text);
-    float text_bounds_(Context* ctx, float x, float y, const char* text, const char* end = nullptr,
-                       float* bounds = nullptr);
+    f32 text_bounds_(Context* ctx, ds::point<f32>&& pos, std::string&& text);
+    f32 text_bounds_(Context* ctx, f32 x, f32 y, const char* text, const char* end = nullptr,
+                     f32* bounds = nullptr);
 
     // Measures the specified multi-text string. Parameter bounds should be a pointer to
-    // float[4], if the bounding box of the text should be returned. The bounds value are
+    // f32[4], if the bounding box of the text should be returned. The bounds value are
     // [xmin,ymin, xmax,ymax] Measured values are returned in local coordinate space.
-    void text_box_bounds_(Context* ctx, float x, float y, float break_row_width, const char* string,
-                          const char* end, float* bounds);
+    void text_box_bounds_(Context* ctx, f32 x, f32 y, f32 break_row_width, const char* string,
+                          const char* end, f32* bounds);
 
     // Calculates the glyph x positions of the specified text. If end is specified only the
     // sub-string will be used. Measured values are returned in local coordinate space.
-    i32 text_glyph_positions_(Context* ctx, float x, float y, const char* string, const char* end,
+    i32 text_glyph_positions_(Context* ctx, f32 x, f32 y, const char* string, const char* end,
                               GlyphPosition* positions, i32 max_positions);
 
     // Returns the vertical metrics based on the current text style.
     // Measured values are returned in local coordinate space.
-    void text_metrics_(Context* ctx, float* ascender, float* descender, float* lineh);
+    void text_metrics_(Context* ctx, f32* ascender, f32* descender, f32* lineh);
 
     // Breaks the specified text into lines. If end is specified only the sub-string will be
     // used. White space is stripped at the beginning of the rows, the text is split at word
     // boundaries or when new-line characters are encountered. Words longer than the max width
     // are slit at nearest character (i.e. no hyphenation).
-    i32 text_break_lines_(Context* ctx, const char* string, const char* end, float break_row_width,
+    i32 text_break_lines_(Context* ctx, const char* string, const char* end, f32 break_row_width,
                           TextRow* rows, i32 max_rows);
 
     // Constructor and destructor, called by the render back-end.

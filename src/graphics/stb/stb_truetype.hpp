@@ -1,269 +1,6 @@
-// stb_truetype.h - v1.26 - public domain
-// authored from 2009-2021 by Sean Barrett / RAD Game Tools
-//
-// =======================================================================
-//
-//    NO SECURITY GUARANTEE -- DO NOT USE THIS ON UNTRUSTED FONT FILES
-//
-// This library does no range checking of the offsets found in the file,
-// meaning an attacker can use it to read arbitrary memory.
-//
-// =======================================================================
-//
-//   This library processes TrueType files:
-//        parse files
-//        extract glyph metrics
-//        extract glyph shapes
-//        render glyphs to one-channel bitmaps with antialiasing (box filter)
-//        render glyphs to one-channel SDF bitmaps (signed-distance field/function)
-//
-//   Todo:
-//        non-MS cmaps
-//        crashproof on bad data
-//        hinting? (no longer patented)
-//        cleartype-style AA?
-//        optimize: use simple memory allocator for intermediates
-//        optimize: build edge-list directly from curves
-//        optimize: rasterize directly from curves?
-//
-// ADDITIONAL CONTRIBUTORS
-//
-//   Mikko Mononen: compound shape support, more cmap formats
-//   Tor Andersson: kerning, subpixel rendering
-//   Dougall Johnson: OpenType / Type 2 font handling
-//   Daniel Ribeiro Maciel: basic GPOS-based kerning
-//
-//   Misc other:
-//       Ryan Gordon
-//       Simon Glass
-//       github:IntellectualKitty
-//       Imanol Celaya
-//       Daniel Ribeiro Maciel
-//
-//   Bug/warning reports/fixes:
-//       "Zer" on mollyrocket       Fabian "ryg" Giesen   github:NiLuJe
-//       Cass Everitt               Martins Mozeiko       github:aloucks
-//       stoiko (Haemimont Games)   Cap Petschulat        github:oyvindjam
-//       Brian Hook                 Omar Cornut           github:vassvik
-//       Walter van Niftrik         Ryan Griege
-//       David Gow                  Peter LaValle
-//       David Given                Sergey Popov
-//       Ivan-Assen Ivanov          Giumo X. Clanjor
-//       Anthony Pesch              Higor Euripedes
-//       Johan Duparc               Thomas Fields
-//       Hou Qiming                 Derek Vinyard
-//       Rob Loach                  Cort Stratton
-//       Kenney Phillis Jr.         Brian Costabile
-//       Ken Voskuil (kaesve)
-//
-// VERSION HISTORY
-//
-//   1.26 (2021-08-28) fix broken rasterizer
-//   1.25 (2021-07-11) many fixes
-//   1.24 (2020-02-05) fix warning
-//   1.23 (2020-02-02) query SVG data for glyphs; query whole kerning table (but only kern not GPOS)
-//   1.22 (2019-08-11) minimize missing-glyph duplication; fix kerning if both 'GPOS' and 'kern' are
-//   defined 1.21 (2019-02-25) fix warning 1.20 (2019-02-07) PackFontRange skips missing codepoints;
-//   GetScaleFontVMetrics() 1.19 (2018-02-11) GPOS kerning, STBTT_fmod 1.18 (2018-01-29) add missing
-//   function 1.17 (2017-07-23) make more arguments const; doc fix 1.16 (2017-07-12) SDF support
-//   1.15 (2017-03-03) make more arguments const
-//   1.14 (2017-01-16) num-fonts-in-TTC function
-//   1.13 (2017-01-02) support OpenType fonts, certain Apple fonts
-//   1.12 (2016-10-25) suppress warnings about casting away const with -Wcast-qual
-//   1.11 (2016-04-02) fix unused-variable warning
-//   1.10 (2016-04-02) user-defined fabs(); rare memory leak; remove duplicate typedef
-//   1.09 (2016-01-16) warning fix; avoid crash on outofmem; use allocation userdata properly
-//   1.08 (2015-09-13) document stbtt_Rasterize(); fixes for vertical & horizontal edges
-//   1.07 (2015-08-01) allow PackFontRanges to accept arrays of sparse codepoints;
-//                     variant PackFontRanges to pack and render in separate phases;
-//                     fix stbtt_GetFontOFfsetForIndex (never worked for non-0 input?);
-//                     fixed an assert() bug in the new rasterizer
-//                     replace assert() with STBTT_assert() in new rasterizer
-//
-//   Full history can be found at the end of this file.
-//
-// LICENSE
-//
-//   See end of file for license information.
-//
-// USAGE
-//
-//   Include this file in whatever places need to refer to it. In ONE C/C++
-//   file, write:
-//      #define STB_TRUETYPE_IMPLEMENTATION
-//   before the #include of this file. This expands out the actual
-//   implementation into that C/C++ file.
-//
-//   To make the implementation private to the file that generates the implementation,
-//      #define STBTT_STATIC
-//
-//   Simple 3D API (don't ship this, but it's fine for tools and quick start)
-//           stbtt_BakeFontBitmap()               -- bake a font to a bitmap for use as texture
-//           stbtt_GetBakedQuad()                 -- compute quad to draw for a given char
-//
-//   Improved 3D API (more shippable):
-//           #include "stb_rect_pack.h"           -- optional, but you really want it
-//           stbtt_PackBegin()
-//           stbtt_PackSetOversampling()          -- for improved quality on small fonts
-//           stbtt_PackFontRanges()               -- pack and renders
-//           stbtt_PackEnd()
-//           stbtt_GetPackedQuad()
-//
-//   "Load" a font file from a memory buffer (you have to keep the buffer loaded)
-//           stbtt_InitFont()
-//           stbtt_GetFontOffsetForIndex()        -- indexing for TTC font collections
-//           stbtt_GetNumberOfFonts()             -- number of fonts for TTC font collections
-//
-//   Render a unicode codepoint to a bitmap
-//           stbtt_GetCodepointBitmap()           -- allocates and returns a bitmap
-//           stbtt_MakeCodepointBitmap()          -- renders into bitmap you provide
-//           stbtt_GetCodepointBitmapBox()        -- how big the bitmap must be
-//
-//   Character advance/positioning
-//           stbtt_GetCodepointHMetrics()
-//           stbtt_GetFontVMetrics()
-//           stbtt_GetFontVMetricsOS2()
-//           stbtt_GetCodepointKernAdvance()
-//
-//   Starting with version 1.06, the rasterizer was replaced with a new,
-//   faster and generally-more-precise rasterizer. The new rasterizer more
-//   accurately measures pixel coverage for anti-aliasing, except in the case
-//   where multiple shapes overlap, in which case it overestimates the AA pixel
-//   coverage. Thus, anti-aliasing of intersecting shapes may look wrong. If
-//   this turns out to be a problem, you can re-enable the old rasterizer with
-//        #define STBTT_RASTERIZER_VERSION 1
-//   which will incur about a 15% speed hit.
-//
-// ADDITIONAL DOCUMENTATION
-//
-//   Immediately after this block comment are a series of sample programs.
-//
-//   After the sample programs is the "header file" section. This section
-//   includes documentation for each API function.
-//
-//   Some important concepts to understand to use this library:
-//
-//      Codepoint
-//         Characters are defined by unicode codepoints, e.g. 65 is
-//         uppercase A, 231 is lowercase c with a cedilla, 0x7e30 is
-//         the hiragana for "ma".
-//
-//      Glyph
-//         A visual character shape (every codepoint is rendered as
-//         some glyph)
-//
-//      Glyph index
-//         A font-specific integer ID representing a glyph
-//
-//      Baseline
-//         Glyph shapes are defined relative to a baseline, which is the
-//         bottom of uppercase characters. Characters extend both above
-//         and below the baseline.
-//
-//      Current Point
-//         As you draw text to the screen, you keep track of a "current point"
-//         which is the origin of each character. The current point's vertical
-//         position is the baseline. Even "baked fonts" use this model.
-//
-//      Vertical Font Metrics
-//         The vertical qualities of the font, used to vertically position
-//         and space the characters. See docs for stbtt_GetFontVMetrics.
-//
-//      Font Size in Pixels or Points
-//         The preferred interface for specifying font sizes in stb_truetype
-//         is to specify how tall the font's vertical extent should be in pixels.
-//         If that sounds good enough, skip the next paragraph.
-//
-//         Most font APIs instead use "points", which are a common typographic
-//         measurement for describing font size, defined as 72 points per inch.
-//         stb_truetype provides a point API for compatibility. However, true
-//         "per inch" conventions don't make much sense on computer displays
-//         since different monitors have different number of pixels per
-//         inch. For example, Windows traditionally uses a convention that
-//         there are 96 pixels per inch, thus making 'inch' measurements have
-//         nothing to do with inches, and thus effectively defining a point to
-//         be 1.333 pixels. Additionally, the TrueType font data provides
-//         an explicit scale factor to scale a given font's glyphs to points,
-//         but the author has observed that this scale factor is often wrong
-//         for non-commercial fonts, thus making fonts scaled in points
-//         according to the TrueType spec incoherently sized in practice.
-//
-// DETAILED USAGE:
-//
-//  Scale:
-//    Select how high you want the font to be, in points or pixels.
-//    Call ScaleForPixelHeight or ScaleForMappingEmToPixels to compute
-//    a scale factor SF that will be used by all other functions.
-//
-//  Baseline:
-//    You need to select a y-coordinate that is the baseline of where
-//    your text will appear. Call GetFontBoundingBox to get the baseline-relative
-//    bounding box for all characters. SF*-y0 will be the distance in pixels
-//    that the worst-case character could extend above the baseline, so if
-//    you want the top edge of characters to appear at the top of the
-//    screen where y=0, then you would set the baseline to SF*-y0.
-//
-//  Current point:
-//    Set the current point where the first character will appear. The
-//    first character could extend left of the current point; this is font
-//    dependent. You can either choose a current point that is the leftmost
-//    point and hope, or add some padding, or check the bounding box or
-//    left-side-bearing of the first character to be displayed and set
-//    the current point based on that.
-//
-//  Displaying a character:
-//    Compute the bounding box of the character. It will contain signed values
-//    relative to <current_point, baseline>. I.e. if it returns x0,y0,x1,y1,
-//    then the character should be displayed in the rectangle from
-//    <current_point+SF*x0, baseline+SF*y0> to <current_point+SF*x1,baseline+SF*y1).
-//
-//  Advancing for the next character:
-//    Call GlyphHMetrics, and compute 'current_point += SF * advance'.
-//
-//
-// ADVANCED USAGE
-//
-//   Quality:
-//
-//    - Use the functions with Subpixel at the end to allow your characters
-//      to have subpixel positioning. Since the font is anti-aliased, not
-//      hinted, this is very import for quality. (This is not possible with
-//      baked fonts.)
-//
-//    - Kerning is now supported, and if you're supporting subpixel rendering
-//      then kerning is worth using to give your text a polished look.
-//
-//   Performance:
-//
-//    - Convert Unicode codepoints to glyph indexes and operate on the glyphs;
-//      if you don't do this, stb_truetype is forced to do the conversion on
-//      every call.
-//
-//    - There are a lot of memory allocations. We should modify it to take
-//      a temp buffer and allocate from the temp buffer (without freeing),
-//      should help performance a lot.
-//
-// NOTES
-//
-//   The system uses the raw data found in the .ttf file without changing it
-//   and without building auxiliary data structures. This is a bit inefficient
-//   on little-endian systems (the data is big-endian), but assuming you're
-//   caching the bitmaps or glyph shapes this shouldn't be a big deal.
-//
-//   It appears to be very hard to programmatically determine what font a
-//   given file is in a general way. I provide an API for this, but I don't
-//   recommend it.
-//
-//
-// PERFORMANCE MEASUREMENTS FOR 1.06:
-//
-//                      32-bit     64-bit
-//   Previous release:  8.83 s     7.68 s
-//   Pool allocations:  7.72 s     6.34 s
-//   Inline sort     :  6.54 s     5.65 s
-//   New rasterizer  :  5.63 s     5.00 s
-
 #pragma once
+
+#include "utils/numeric.hpp"
 
 using stbtt_uint8 = unsigned char;
 using stbtt_int8 = signed char;
@@ -371,16 +108,16 @@ namespace rl::stb {
         float xoff, yoff, xadvance;
     };
 
-    int stbtt_BakeFontBitmap(const unsigned char* data, int offset,  // font location
-                                                                     // (use offset=0
-                                                                     // for plain
-                                                                     // .ttf)
-                             float pixel_height,                     // height of font in pixels
-                             unsigned char* pixels, int pw, int ph,  // bitmap to be
-                                                                     // filled in
-                             int first_char, int num_chars,          // characters to bake
-                             stbtt_bakedchar* chardata);             // you allocate this, it's
-                                                                     // num_chars long
+    int stbtt_bake_font_bitmap(const unsigned char* data, int offset,  // font location
+                                                                       // (use offset=0
+                                                                       // for plain
+                                                                       // .ttf)
+                               float pixel_height,                     // height of font in pixels
+                               unsigned char* pixels, int pw, int ph,  // bitmap to be
+                                                                       // filled in
+                               int first_char, int num_chars,          // characters to bake
+                               stbtt_bakedchar* chardata);             // you allocate this, it's
+                                                                       // num_chars long
 
     // if return is positive, the first unused row of the bitmap
     // if return is negative, returns the negative of the number of characters that fit
@@ -413,8 +150,8 @@ namespace rl::stb {
     //
     // It's inefficient; you might want to c&p it and optimize it.
 
-    void stbtt_GetScaledFontVMetrics(const unsigned char* fontdata, int index, float size,
-                                     float* ascent, float* descent, float* lineGap);
+    void stbtt_get_scaled_font_v_metrics(const unsigned char* fontdata, int index, float size,
+                                         float* ascent, float* descent, float* lineGap);
 
     // Query the font vertical metrics without having to create a font first.
 
@@ -438,8 +175,8 @@ namespace rl::stb {
     typedef struct stbrp_rect stbrp_rect;
 #endif
 
-    int stbtt_PackBegin(stbtt_pack_context* spc, unsigned char* pixels, int width, int height,
-                        int stride_in_bytes, int padding, void* alloc_context);
+    int stbtt_pack_begin(stbtt_pack_context* spc, unsigned char* pixels, int width, int height,
+                         int stride_in_bytes, int padding, void* alloc_context);
     // Initializes a packing context stored in the passed-in stbtt_pack_context.
     // Future calls using this context will pack characters into the bitmap passed
     // in here: a 1-channel bitmap that is width * height. stride_in_bytes is
@@ -455,9 +192,9 @@ namespace rl::stb {
 
 #define STBTT_POINT_SIZE(x) (-(x))
 
-    int stbtt_PackFontRange(stbtt_pack_context* spc, const unsigned char* fontdata, int font_index,
-                            float font_size, int first_unicode_char_in_range,
-                            int num_chars_in_range, stbtt_packedchar* chardata_for_range);
+    int stbtt_pack_font_range(stbtt_pack_context* spc, const unsigned char* fontdata,
+                              int font_index, float font_size, int first_unicode_char_in_range,
+                              int num_chars_in_range, stbtt_packedchar* chardata_for_range);
 
     // Creates character bitmaps from the font_index'th font found in fontdata (use
     // font_index=0 if you don't know what that is). It creates num_chars_in_range
@@ -484,15 +221,15 @@ namespace rl::stb {
         unsigned char h_oversample, v_oversample;  // don't set these, they're used internally
     };
 
-    int stbtt_PackFontRanges(stbtt_pack_context* spc, const unsigned char* fontdata, int font_index,
-                             stbtt_pack_range* ranges, int num_ranges);
+    int stbtt_pack_font_ranges(stbtt_pack_context* spc, const unsigned char* fontdata,
+                               int font_index, stbtt_pack_range* ranges, int num_ranges);
     // Creates character bitmaps from multiple ranges of characters stored in
     // ranges. This will usually create a better-packed bitmap than multiple
     // calls to stbtt_PackFontRange. Note that you can call this multiple
     // times within a single PackBegin/PackEnd.
 
-    void stbtt_PackSetOversampling(stbtt_pack_context* spc, unsigned int h_oversample,
-                                   unsigned int v_oversample);
+    void stbtt_pack_set_oversampling(stbtt_pack_context* spc, unsigned int h_oversample,
+                                     unsigned int v_oversample);
     // Oversampling a font increases the quality by allowing higher-quality subpixel
     // positioning, and is especially valuable at smaller text sizes.
     //
@@ -508,30 +245,31 @@ namespace rl::stb {
     // To use with PackFontRangesGather etc., you must set it before calls
     // call to PackFontRangesGatherRects.
 
-    void stbtt_PackSetSkipMissingCodepoints(stbtt_pack_context* spc, int skip);
+    void stbtt_pack_set_skip_missing_codepoints(stbtt_pack_context* spc, int skip);
     // If skip != 0, this tells stb_truetype to skip any codepoints for which
     // there is no corresponding glyph. If skip=0, which is the default, then
     // codepoints without a glyph recived the font's "missing character" glyph,
     // typically an empty box by convention.
 
-    void stbtt_GetPackedQuad(const stbtt_packedchar* chardata, int pw,
-                             int ph,                    // same
-                                                        // data as
-                                                        // above
-                             int char_index,            // character to display
-                             float* xpos, float* ypos,  // pointers to current
-                                                        // position in screen pixel
-                                                        // space
-                             stbtt_aligned_quad* q,     // output: quad to draw
-                             int align_to_integer);
+    void stbtt_get_packed_quad(const stbtt_packedchar* chardata, int pw,
+                               int ph,                    // same
+                                                          // data as
+                                                          // above
+                               int char_index,            // character to display
+                               float* xpos, float* ypos,  // pointers to current
+                                                          // position in screen pixel
+                                                          // space
+                               stbtt_aligned_quad* q,     // output: quad to draw
+                               int align_to_integer);
 
-    int stbtt_PackFontRangesGatherRects(stbtt_pack_context* spc, const stbtt_fontinfo* info,
-                                        stbtt_pack_range* ranges, int num_ranges,
-                                        stbrp_rect* rects);
-    void stbtt_PackFontRangesPackRects(stbtt_pack_context* spc, stbrp_rect* rects, int num_rects);
-    int stbtt_PackFontRangesRenderIntoRects(stbtt_pack_context* spc, const stbtt_fontinfo* info,
+    int stbtt_pack_font_ranges_gather_rects(stbtt_pack_context* spc, const stbtt_fontinfo* info,
                                             stbtt_pack_range* ranges, int num_ranges,
                                             stbrp_rect* rects);
+    void stbtt_pack_font_ranges_pack_rects(stbtt_pack_context* spc, stbrp_rect* rects,
+                                           int num_rects);
+    int stbtt_pack_font_ranges_render_into_rects(
+        stbtt_pack_context* spc, const stbtt_fontinfo* info, stbtt_pack_range* ranges,
+        int num_ranges, stbrp_rect* rects);
 
     // Calling these functions in sequence is roughly equivalent to calling
     // stbtt_PackFontRanges(). If you more control over the packing of multiple
@@ -565,14 +303,14 @@ namespace rl::stb {
     //
     //
 
-    int stbtt_GetNumberOfFonts(const unsigned char* data);
+    int stbtt_get_number_of_fonts(const unsigned char* data);
     // This function will determine the number of fonts in a font file.  TrueType
     // collection (.ttc) files may contain multiple fonts, while TrueType font
     // (.ttf) files only contain one font. The number of fonts can be used for
     // indexing with the previous function where the index is between zero and one
     // less than the total fonts. If an error occurs, -1 is returned.
 
-    int stbtt_GetFontOffsetForIndex(const unsigned char* data, int index);
+    int stbtt_get_font_offset_for_index(const unsigned char* data, int index);
 
     // Each .ttf/.ttc file may have more than one font. Each font has a sequential
     // index number starting from 0. Call this function to get the font offset for
@@ -603,7 +341,7 @@ namespace rl::stb {
         stbtt_buf fdselect;     // map from glyph to fontdict
     };
 
-    int stbtt_InitFont(stbtt_fontinfo* info, const unsigned char* data, int offset);
+    int stbtt_init_font(stbtt_fontinfo* info, const unsigned char* data, int offset);
     // Given an offset into the file that defines a font, this function builds
     // the necessary cached info for the rest of the system. You must allocate
     // the stbtt_fontinfo yourself, and stbtt_InitFont will fill it out. You don't
@@ -614,7 +352,7 @@ namespace rl::stb {
     //
     // CHARACTER TO GLYPH-INDEX CONVERSIOn
 
-    int stbtt_FindGlyphIndex(const stbtt_fontinfo* info, int unicode_codepoint);
+    int stbtt_find_glyph_index(const stbtt_fontinfo* info, int unicode_codepoint);
     // If you're going to perform multiple operations on the same character
     // and you want a speed-up, call this function with the character you're
     // going to process, then use glyph-based functions instead of the
@@ -667,15 +405,15 @@ namespace rl::stb {
     int stbtt_GetCodepointKernAdvance(const stbtt_fontinfo* info, int ch1, int ch2);
     // an additional amount to add to the 'advance' value between ch1 and ch2
 
-    int stbtt_GetCodepointBox(const stbtt_fontinfo* info, int codepoint, int* x0, int* y0, int* x1,
-                              int* y1);
+    int stbtt_get_codepoint_box(const stbtt_fontinfo* info, int codepoint, int* x0, int* y0,
+                                int* x1, int* y1);
     // Gets the bounding box of the visible part of the glyph, in unscaled coordinates
 
     void stbtt_GetGlyphHMetrics(const stbtt_fontinfo* info, int glyph_index, int* advanceWidth,
                                 int* leftSideBearing);
     int stbtt_GetGlyphKernAdvance(const stbtt_fontinfo* info, int glyph1, int glyph2);
-    int stbtt_GetGlyphBox(const stbtt_fontinfo* info, int glyph_index, int* x0, int* y0, int* x1,
-                          int* y1);
+    int stbtt_get_glyph_box(const stbtt_fontinfo* info, int glyph_index, int* x0, int* y0, int* x1,
+                            int* y1);
 
     // as above, but takes one or more glyph indices for greater efficiency
 
@@ -721,11 +459,11 @@ namespace rl::stb {
     } stbtt_vertex;
 #endif
 
-    int stbtt_IsGlyphEmpty(const stbtt_fontinfo* info, int glyph_index);
+    int stbtt_is_glyph_empty(const stbtt_fontinfo* info, int glyph_index);
     // returns non-zero if nothing is drawn for this glyph
 
-    int stbtt_GetCodepointShape(const stbtt_fontinfo* info, int unicode_codepoint,
-                                stbtt_vertex** vertices);
+    int stbtt_get_codepoint_shape(const stbtt_fontinfo* info, int unicode_codepoint,
+                                  stbtt_vertex** vertices);
     int stbtt_GetGlyphShape(const stbtt_fontinfo* info, int glyph_index, stbtt_vertex** vertices);
     // returns # of vertices and fills *vertices with the pointer to them
     //   these are expressed in "unscaled" coordinates
@@ -855,16 +593,16 @@ namespace rl::stb {
     //
     // Signed Distance Function (or Field) rendering
 
-    void stbtt_FreeSDF(unsigned char* bitmap, void* userdata);
+    void stbtt_free_sdf(unsigned char* bitmap, void* userdata);
     // frees the SDF bitmap allocated below
 
     unsigned char* stbtt_GetGlyphSDF(
         const stbtt_fontinfo* info, float scale, int glyph, int padding, unsigned char onedge_value,
         float pixel_dist_scale, int* width, int* height, int* xoff, int* yoff);
-    unsigned char* stbtt_GetCodepointSDF(const stbtt_fontinfo* info, float scale, int codepoint,
-                                         int padding, unsigned char onedge_value,
-                                         float pixel_dist_scale, int* width, int* height, int* xoff,
-                                         int* yoff);
+    unsigned char* stbtt_get_codepoint_sdf(const stbtt_fontinfo* info, float scale, int codepoint,
+                                           int padding, unsigned char onedge_value,
+                                           float pixel_dist_scale, int* width, int* height,
+                                           int* xoff, int* yoff);
     // These functions compute a discretized SDF field for a single character, suitable for
     // storing in a single-channel texture, sampling with bilinear filtering, and testing
     // against larger than some threshold to produce scalable fonts.
@@ -937,7 +675,7 @@ namespace rl::stb {
     //             from the file yourself and do your own comparisons on them.
     //             You have to have called stbtt_InitFont() first.
 
-    int stbtt_FindMatchingFont(const unsigned char* fontdata, const char* name, int flags);
+    int stbtt_find_matching_font(const unsigned char* fontdata, const char* name, int flags);
 // returns the offset (not index) of the font that matches, or -1 if none
 //   if you use STBTT_MACSTYLE_DONTCARE, use a font name like "Arial Bold".
 //   if you use any other flag, use a font name like "Arial"; this checks
@@ -948,12 +686,12 @@ namespace rl::stb {
 #define STBTT_MACSTYLE_UNDERSCORE 4
 #define STBTT_MACSTYLE_NONE       8  // <= not same as 0, this makes us check the bitfield is 0
 
-    int stbtt_CompareUTF8toUTF16_bigendian(const char* s1, int len1, const char* s2, int len2);
+    int stbtt_compare_utf8_to_utf16_bigendian(const char* s1, int len1, const char* s2, int len2);
     // returns 1/0 whether the first string interpreted as utf8 is identical to
     // the second string interpreted as big-endian utf16... useful for strings from next func
 
-    const char* stbtt_GetFontNameString(const stbtt_fontinfo* font, int* length, int platformID,
-                                        int encodingID, int languageID, int nameID);
+    const char* stbtt_get_font_name_string(const stbtt_fontinfo* font, int* length, int platformID,
+                                           int encodingID, int languageID, int nameID);
 
     // returns the string (which may be big-endian double byte, e.g. for unicode)
     // and puts the length in bytes in *length.
@@ -1027,4 +765,6 @@ namespace rl::stb {
         STBTT_MAC_LANG_ITALIAN = 3,
         STBTT_MAC_LANG_CHINESE_TRAD = 19
     };
+
+    u8* stbi_load(const char* filename, i32* p, i32* h, i32* n, int i);
 }

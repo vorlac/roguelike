@@ -2,18 +2,6 @@ set(compiler_is_clang "$<OR:$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:Clan
 set(compiler_is_gnu "$<CXX_COMPILER_ID:GNU>")
 set(compiler_is_msvc "$<CXX_COMPILER_ID:MSVC>")
 
-string(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UPPERCASE)
-
-option(${PROJECT_NAME_UPPERCASE}_WARN_EVERYTHING 
-  "Turn on all warnings (not recommended - used for lib development)" 
-     OFF
-)
-
-option(${PROJECT_NAME_UPPERCASE}_WARNING_AS_ERROR 
-  "Treat warnings as errors" 
-     ON
-)
-
 target_compile_options(${PROJECT_NAME}
     PRIVATE
         # MSVC only
@@ -25,18 +13,9 @@ target_compile_options(${PROJECT_NAME}
             # Treat all warning as errors
             /WX
 
-            # Disable warnings which bleed through from godot-cpp's macros.
-            /wd4514 # unreferenced inline function has been removed
-            /wd4866 # compiler may not enforce left-to-right evaluation order for call
-            /wd4189 # local variable is initialized but not referenced
-
-            # coming from argparse...
-            /wd5045 # compiler will insert Spectre mitigation for memory load if /Qspectre switch specified
-            # sdl/tests/data/images.hpp
-			/wd4125 # decimal digit terminates octal escape sequence
-			/wd4100 # formal parameter unused
-			/wd4505 # unreferenced function with internal linkage has been removed (temp - undo afteer RendererGL is working)
-			/wd4634 # invalid comment docstring
+            # # Disable warnings which bleed through from godot-cpp's macros.
+            # /wd4189 # local variable is initialized but not referenced
+			# /wd4100 # formal parameter unused
 		>
 
         # Clang and GNU
@@ -89,6 +68,7 @@ target_compile_options(${PROJECT_NAME}
 			-Wno-unused-macros
             -Wno-covered-switch-default
             -Wno-ctad-maybe-unsupported
+            -Wno-disabled-macro-expansion
         >
 
         # Clang only
@@ -106,39 +86,34 @@ target_compile_options(${PROJECT_NAME}
         >
 )
 
-# Turn on (almost) all warnings on Clang, Apple Clang, and GNU.
-# Useful for internal development, but too noisy for general development.
-function(set_warn_everything)
-    message(STATUS "[${PROJECT_NAME}] Turning on (almost) all warnings")
+if (ENABLE_ALL_WARNINGS MATCHES ON)
+    message(NOTICE "[${PROJECT_NAME}] Enabling ALL warnings")
 
     target_compile_options(${PROJECT_NAME}
         PRIVATE
-            # Clang and GNU
-            $<$<OR:${compiler_is_clang},${compiler_is_gnu}>:
-                #-Weverything
-                #-Wno-c++98-compat
-                #-Wno-c++98-compat-pedantic
-                #-Wno-padded
-				# prints extra hardening suggestions for unsafe buffer access
-				#-fsafe-buffer-usage-suggestions
-            >
-   )
-endfunction()
+            $<${compiler_is_msvc}:
+				/Wall
+			>
 
-if (NOT MSVC AND ${PROJECT_NAME_UPPERCASE}_WARN_EVERYTHING)
-    set_warn_everything()
+			$<${compiler_is_gnu}:
+				-fsafe-buffer-usage-suggestions
+			>
+
+            $<$<OR:${compiler_is_clang},${compiler_is_gnu}>:
+                -Weverything
+                -Wno-c++98-compat
+                -Wno-c++98-compat-pedantic
+                -Wno-padded
+            >
+	)
 endif()
 
-# Treat warnings as errors
-function(enable_warnings_as_errors)
-    message(STATUS "[${PROJECT_NAME}] Treating warnings as errors")
+
+if (ENABLE_WARNINGS_AS_ERRORS MATCHES ON)
+    message(NOTICE "[${PROJECT_NAME}] Warnings being treated as errors")
 
     set_target_properties(${PROJECT_NAME}
-        PROPERTIES
-            COMPILE_WARNING_AS_ERROR ON
+      PROPERTIES
+        COMPILE_WARNING_AS_ERROR ON
     )
-endfunction()
-
-if (${PROJECT_NAME_UPPERCASE}_WARNING_AS_ERROR)
-    enable_warnings_as_errors()
 endif()

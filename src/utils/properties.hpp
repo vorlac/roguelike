@@ -1,5 +1,8 @@
 #pragma once
 
+#include <utility>
+
+#include "utils/conversions.hpp"
 #include "utils/numeric.hpp"
 
 // clang-format off
@@ -55,7 +58,7 @@ namespace rl {
         Vertical   = 1 << 1,  // y axis
     };
 
-    enum class Outline {
+    enum class Outline : i16_fast {
         Inner  = 1 << 0,
         Outer  = 1 << 1,
     };
@@ -81,10 +84,10 @@ namespace rl {
     };
 
     enum class Quad : i16_fast {
-        TopLeft     = Side::Top    | Side::Left,
-        TopRight    = Side::Top    | Side::Right,
-        BottomLeft  = Side::Bottom | Side::Left,
-        BottomRight = Side::Bottom | Side::Right,
+        TopLeft     = std::to_underlying(Side::Top    | Side::Left),
+        TopRight    = std::to_underlying(Side::Top    | Side::Right),
+        BottomLeft  = std::to_underlying(Side::Bottom | Side::Left),
+        BottomRight = std::to_underlying(Side::Bottom | Side::Right),
     };
 
     enum class CompassDirection : i16_fast {
@@ -160,6 +163,8 @@ namespace rl {
                 return "Horizontal";
             case Alignment::Vertical:
                 return "Vertical";
+            case Alignment::Grid:
+                return "Grid";
         }
 
         return "Unknown";

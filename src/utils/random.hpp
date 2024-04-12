@@ -20,9 +20,9 @@ namespace rl {
             return m_dist(m_engine);
         }
 
-        constexpr static auto value()
+        constexpr static decltype(auto) value()
         {
-            return static_cast<auto>(m_dist(m_engine));
+            return m_dist(m_engine);
         }
 
     private:

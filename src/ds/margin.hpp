@@ -43,6 +43,28 @@ namespace rl::ds {
         }
 
         [[nodiscard]]
+        consteval static margin<T> init(T val)
+        {
+            return margin{
+                static_cast<T>(val),
+                static_cast<T>(val),
+                static_cast<T>(val),
+                static_cast<T>(val),
+            };
+        }
+
+        [[nodiscard]]
+        consteval static margin<T> init(T top, T bot, T lft, T rgt)
+        {
+            return margin{
+                static_cast<T>(top),
+                static_cast<T>(bot),
+                static_cast<T>(lft),
+                static_cast<T>(rgt),
+            };
+        }
+
+        [[nodiscard]]
         constexpr T vertical() const
         {
             return static_cast<T>(top + bottom);

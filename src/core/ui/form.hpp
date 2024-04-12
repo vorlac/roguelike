@@ -139,7 +139,6 @@ namespace rl::ui {
 
         void add_widget(const std::string& label_text, const Widget* widget)
         {
-            const Theme* theme{ m_dialog->theme() };
             m_layout->append_row(0);
 
             if (label_text.empty())
