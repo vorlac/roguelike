@@ -263,9 +263,9 @@ namespace rl::ui {
                 const Layout* parent_layout{ m_parent->layout() };
                 if (parent_layout != nullptr)
                 {
-                    const ds::dims<f32>& parent_layout_rect{ parent_layout->size() };
-                    if (parent_layout_rect.is_valid())
-                        max_size = parent_layout_rect;
+                    const ds::dims<f32>& parent_layout_size{ parent_layout->size() };
+                    if (parent_layout_size.is_valid())
+                        max_size = parent_layout_size;
                 }
 
                 const ds::rect<f32>& parent_rect{ m_parent->rect() };
@@ -280,30 +280,29 @@ namespace rl::ui {
             if (max_size.is_null() && m_rect.is_valid())
                 max_size = m_rect.size;
 
-            max_size -= inner;
             runtime_assert(max_size.is_valid(), "couldn't determine upper bound for size");
 
-            const f32 child_count{ static_cast<f32>(m_children.size()) };
-            if (m_layout->size_policy() == SizePolicy::Prefered && child_count > 1)
+            if (m_layout->size_policy() == SizePolicy::Prefered)
             {
                 const Alignment alignment{ m_layout->alignment() };
+                const f32 child_count{ static_cast<f32>(m_children.size()) };
+
                 if (alignment == Alignment::Horizontal)
                     max_size.width /= child_count;
                 else if (alignment == Alignment::Vertical)
                     max_size.height /= child_count;
 
-                const ds::rect<f32> layout_rect{
-                    inner.offset(),
-                    max_size - inner,
+                max_size -= outer;
+                ds::rect layout_rect{
+                    ds::point<f32>::zero(),
+                    max_size - outer,
                 };
 
                 m_layout->set_rect(layout_rect);
             }
-
             this->set_max_size(max_size);
         }
 
-        LocalTransform transform{ this };
         // recursively call after size info is computed
         // in case we have to work top down instead of bottom
         // up to compute the sizes of all children widgets
@@ -331,9 +330,8 @@ namespace rl::ui {
                 if (child->resizable() && child->resize_rect().contains(pt - m_rect.pt))
                 {
                     // if the child is resizable and the larger resize rect (for grab points)
-                    // contains the mouse, but the smaller inner rect doesn't then favor
-                    // resizing over recursively going deeper into the tree of widgets for more
-                    // children
+                    // contains the mouse, but the smaller inner rect doesn't then favor resizing
+                    // over recursively going deeper into the tree of widgets for more children
                     if (!child->rect().expanded(-RESIZE_GRAB_BUFFER).contains(pt - m_rect.pt))
                         return child;
 

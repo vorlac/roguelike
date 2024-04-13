@@ -88,7 +88,7 @@ namespace rl::nvg {
         NVGImageRepeatX = 1 << 1,          // Repeat image in X direction.
         NVGImageRepeatY = 1 << 2,          // Repeat image in Y direction.
         NVGImageFlipY = 1 << 3,            // Flips (inverses) image in Y direction when rendered.
-        PreMultiplied = 1 << 4,    // Image data has pre-multiplied alpha.
+        PreMultiplied = 1 << 4,            // Image data has pre-multiplied alpha.
         NVGImageNearest = 1 << 5,          // Image interpolation is Nearest instead Linear
 
         NoDelete = 1 << 16,  // OpenGL only
