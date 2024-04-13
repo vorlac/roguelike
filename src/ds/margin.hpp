@@ -8,13 +8,9 @@
 
 #include "utils/concepts.hpp"
 #include "utils/conversions.hpp"
-#include "utils/memory.hpp"
 
 namespace rl::ds {
 #pragma pack(4)
-
-    // template <rl::numeric T>
-    // struct point;
 
     template <rl::numeric T>
     struct margin
@@ -62,6 +58,12 @@ namespace rl::ds {
                 static_cast<T>(lft),
                 static_cast<T>(rgt),
             };
+        }
+
+        [[nodiscard]]
+        constexpr point<T> offset() const
+        {
+            return point<T>{ left, top };
         }
 
         [[nodiscard]]

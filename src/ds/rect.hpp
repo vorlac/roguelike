@@ -7,6 +7,7 @@
 
 #include "ds/color.hpp"
 #include "ds/dims.hpp"
+#include "ds/line.hpp"
 #include "ds/vector2d.hpp"
 #include "utils/concepts.hpp"
 #include "utils/conversions.hpp"
@@ -65,21 +66,27 @@ namespace rl::ds {
         [[nodiscard]]
         constexpr bool is_empty() const
         {
-            return math::equal(this->area(), 0);
+            return math::equal(this->area(), static_cast<T>(0));
         }
 
         // Checks if the rectangle has a negative width or height
         [[nodiscard]]
         constexpr bool is_invalid() const
         {
-            return this->size.height < T(0) || this->size.width < T(0);
+            return this->size.is_invalid() || this->pt == point<T>::null();
+        }
+
+        [[nodiscard]]
+        constexpr bool is_valid() const
+        {
+            return !this->is_invalid();
         }
 
         // Checks if the rectangle has invalid coordinates and is empty
         [[nodiscard]]
         constexpr bool is_null() const
         {
-            return this->is_empty() && pt->is_null();
+            return *this == ds::rect<T>::null();
         }
 
         // Generates an array of vertices representing the rect to be used in an OpenGL VBO

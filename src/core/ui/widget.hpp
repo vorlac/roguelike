@@ -6,7 +6,7 @@
 
 #include "core/keyboard.hpp"
 #include "core/mouse.hpp"
-#include "ds/margin.hpp"
+#include "ds/rect.hpp"
 #include "ds/refcounted.hpp"
 #include "ds/vector2d.hpp"
 #include "graphics/nvg_renderer.hpp"
@@ -178,6 +178,6 @@ namespace rl::ui {
     protected:
         constexpr static inline f32 RESIZE_GRAB_BUFFER{ 5.0f };
         constexpr static bool DiagnosticsEnabled{ true };
-        constexpr static inline const Theme DEFAULT_THEME{ Theme{} };
+        constexpr static inline Theme DEFAULT_THEME{ Theme{} };
     };
 }

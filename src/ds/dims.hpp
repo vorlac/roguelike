@@ -22,7 +22,7 @@ namespace rl::ds {
         [[nodiscard]]
         consteval static dims<T> null()
         {
-            return dims{
+            return dims<T>{
                 static_cast<T>(-1),
                 static_cast<T>(-1),
             };
@@ -31,16 +31,40 @@ namespace rl::ds {
         [[nodiscard]]
         consteval static dims<T> zero()
         {
-            return dims{
+            return dims<T>{
                 static_cast<T>(0),
                 static_cast<T>(0),
             };
         }
 
         [[nodiscard]]
+        constexpr bool is_null() const
+        {
+            return *this == dims<T>::null();
+        }
+
+        [[nodiscard]]
+        constexpr bool is_empty() const
+        {
+            return *this == dims<T>::zero();
+        }
+
+        [[nodiscard]]
+        constexpr bool is_invalid() const
+        {
+            return this->width < 0 || this->height < 0 || this->is_null();
+        }
+
+        [[nodiscard]]
+        constexpr bool is_valid() const
+        {
+            return this->area() > static_cast<T>(0);
+        }
+
+        [[nodiscard]]
         constexpr T area() const
         {
-            return width * height;
+            return this->width * this->height;
         }
 
         template <rl::integer I>

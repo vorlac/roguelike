@@ -252,36 +252,36 @@ namespace rl::ui {
 
     void Widget::perform_layout()
     {
-        // TODO: simplify this
         if (m_layout != nullptr)
         {
-            const Layout* parent_layout{
-                m_parent != nullptr       //
-                    ? m_parent->layout()  //
-                    : nullptr             //
-            };
+            ds::dims<f32> max_size{ ds::dims<f32>::null() };
+            const ds::margin outer{ m_layout->outer_margin() };
+            const ds::margin inner{ m_layout->inner_margin() };
 
-            // get the parent's max_size if it's set, otherwise grab
-            // it's current size to see how much space is available
-            const ds::dims<f32>& parent_size{
-                parent_layout != nullptr                                                    //
-                    ? parent_layout->size()                                                 //
-                    : m_parent != nullptr && m_parent->max_size() == ds::dims<f32>::null()  //
-                          ? m_parent->size()                                                //
-                          : m_parent != nullptr                                             //
-                                ? m_parent->max_size()                                      //
-                                : this->size()                                              //
-            };
+            if (m_parent != nullptr)
+            {
+                const Layout* parent_layout{ m_parent->layout() };
+                if (parent_layout != nullptr)
+                {
+                    const ds::dims<f32>& parent_layout_size{ parent_layout->size() };
+                    if (parent_layout_size.is_valid())
+                        max_size = parent_layout_size;
+                }
 
-            // grab the margins from the layout to if/how it affects
-            // the available space in the parent widget for all children
-            const ds::margin parent_inner_margin{ parent_layout != nullptr
-                                                      ? parent_layout->inner_margin()
-                                                      : ds::margin<f32>::zero() };
-            const ds::margin outer_margin{ m_layout->outer_margin() };
+                const ds::rect<f32>& parent_rect{ m_parent->rect() };
+                if (max_size.is_null() && parent_rect.is_valid())
+                    max_size = parent_rect.size;
 
-            // compute the rect of available space after accounting for the layout's margins
-            ds::dims max_size{ parent_size - parent_inner_margin };
+                const ds::dims<f32> parent_max_size{ m_parent->max_size() };
+                if (max_size.is_null() && parent_max_size.is_valid())
+                    max_size = parent_max_size;
+            }
+
+            if (max_size.is_null() && m_rect.is_valid())
+                max_size = m_rect.size;
+
+            runtime_assert(max_size.is_valid(), "couldn't determine upper bound for size");
+
             if (m_layout->size_policy() == SizePolicy::Prefered)
             {
                 const Alignment alignment{ m_layout->alignment() };
@@ -292,20 +292,14 @@ namespace rl::ui {
                 else if (alignment == Alignment::Vertical)
                     max_size.height /= child_count;
 
-                max_size -= parent_inner_margin;
-                const ds::rect layout_bounds{
-                    ds::vector2{
-                        parent_inner_margin.left,
-                        parent_inner_margin.top,
-                    },
-                    max_size,
+                max_size -= outer;
+                ds::rect layout_rect{
+                    ds::point<f32>::zero(),
+                    max_size - outer,
                 };
 
-                // layout_bounds.size -= outer_margin;
-                m_layout->set_rect(layout_bounds);
+                m_layout->set_rect(layout_rect);
             }
-
-            // update the actual widget's max size
             this->set_max_size(max_size);
         }
 
@@ -336,9 +330,8 @@ namespace rl::ui {
                 if (child->resizable() && child->resize_rect().contains(pt - m_rect.pt))
                 {
                     // if the child is resizable and the larger resize rect (for grab points)
-                    // contains the mouse, but the smaller inner rect doesn't then favor
-                    // resizing over recursively going deeper into the tree of widgets for more
-                    // children
+                    // contains the mouse, but the smaller inner rect doesn't then favor resizing
+                    // over recursively going deeper into the tree of widgets for more children
                     if (!child->rect().expanded(-RESIZE_GRAB_BUFFER).contains(pt - m_rect.pt))
                         return child;
 
