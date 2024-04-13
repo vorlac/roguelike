@@ -415,7 +415,7 @@ namespace rl {
     {
         ds::point<f32> delta{ 0.0f, 0.0f };
         SDL3::SDL_GetRelativeMouseState(&delta.x, &delta.y);
-        m_mouse.process_motion_delta(std::move(delta));
+        m_mouse.process_motion_delta(delta);
         m_gui_canvas->on_mouse_entered(m_mouse);
     }
 
