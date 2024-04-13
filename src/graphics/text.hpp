@@ -17,7 +17,8 @@ namespace rl {
             Disk,
         };
 
-        constexpr static inline i32 INVALID_FONT_HANDLE{ -1 };
+        constexpr static inline f32 InvalidSize{ -1.0f };
+        constexpr static inline i32 InvalidHandle{ -1 };
 
         namespace style {
             constexpr static inline std::string_view Sans{ "sans" };

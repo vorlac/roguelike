@@ -65,16 +65,17 @@ namespace rl {
         {
             bool ret{ this->setup() };
 
+            const auto text_alignment{ nvg::Align::VMiddle | nvg::Align::HCenter };
             const auto layout_l{ new ui::BoxLayout<Alignment::Vertical>("ABC Vertical") };
-            layout_l->add_widget(new ui::Label{ "A" });
-            layout_l->add_widget(new ui::Label{ "B" });
-            layout_l->add_widget(new ui::Label{ "C" });
+            layout_l->add_widget(new ui::Label{ "A", font::InvalidSize, text_alignment });
+            layout_l->add_widget(new ui::Label{ "B", font::InvalidSize, text_alignment });
+            layout_l->add_widget(new ui::Label{ "C", font::InvalidSize, text_alignment });
             // layout_l->set_margins(ds::margin<f32>::zero(), ds::margin<f32>::zero());
 
             const auto layout_r{ new ui::BoxLayout<Alignment::Vertical>("123 Vertical") };
-            layout_r->add_widget(new ui::Label{ "1" });
-            layout_r->add_widget(new ui::Label{ "2" });
-            layout_r->add_widget(new ui::Label{ "3" });
+            layout_r->add_widget(new ui::Label{ "1", font::InvalidSize, text_alignment });
+            layout_r->add_widget(new ui::Label{ "2", font::InvalidSize, text_alignment });
+            layout_r->add_widget(new ui::Label{ "3", font::InvalidSize, text_alignment });
             // layout_r->set_margins(ds::margin<f32>::zero(), ds::margin<f32>::zero());
 
             const auto horiz_layout{ new ui::BoxLayout<Alignment::Horizontal>("ABC123 Horiz") };

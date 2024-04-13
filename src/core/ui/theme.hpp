@@ -26,11 +26,12 @@ namespace rl::ui {
         f32 text_box_font_size{ 20.0f };
         f32 dialog_title_font_size{ 24.0f };
         f32 form_group_font_size{ 24.0f };
-        f32 form_label_font_size{ 38.0f };
         f32 form_widget_font_size{ 18.0f };
         f32 form_pre_group_spacing{ 15.0f };
         f32 form_post_group_spacing{ 15.0f };
         f32 form_variable_spacing{ 10.0f };
+
+        f32 label_font_size{ 38.0f };
 
         f32 dialog_corner_radius{ 5.0f };
         f32 dialog_header_height{ 40.0f };

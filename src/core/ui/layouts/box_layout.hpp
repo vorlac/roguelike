@@ -18,7 +18,6 @@ namespace rl::ui {
     class BoxLayout final : public Layout
     {
     public:
-        // using Layout::arrangement;
         constexpr explicit BoxLayout(const std::string& name)
             : Layout{ name }
         {
@@ -44,7 +43,7 @@ namespace rl::ui {
             ds::point<f32> curr_widget_pos{ ds::point<f32>::zero() };
             ds::rect<f32> layout_rect{ curr_widget_pos + m_outer_margin.offset(), cell_size };
 
-            for (auto&& [widget, cell] : m_cell_data)
+            for (auto& widget : m_cell_data | std::views::keys)
             {
                 ds::rect<f32> widget_margins_rect{
                     curr_widget_pos + m_outer_margin.offset(),

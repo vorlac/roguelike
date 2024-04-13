@@ -113,7 +113,6 @@ namespace rl::ds {
         //     clr - The color to pack into the return array for this rect.
         constexpr auto triangles(const color<f32>& clr)
             -> std::array<std::pair<point<f32>, color<f32>>, 6>
-
         {
             point<T> tl{ pt.x, pt.y + size.height };
             point<T> bl{ pt.x, pt.y };
@@ -368,22 +367,27 @@ namespace rl::ds {
         [[nodiscard]]
         constexpr point<T> bot_right() const noexcept
         {
-            return point<T>{ pt.x + size.width, pt.y + size.height };
+            return point<T>{
+                pt.x + size.width,
+                pt.y + size.height,
+            };
         }
 
         // Gets the center point of the rectangle
         [[nodiscard]]
         constexpr point<T> centroid() const noexcept
         {
+            // return (this->pt + this->bot_right()) / 2.0f;
             return point<T>{
-                static_cast<T>(pt.x + (size.width / 2)),
-                static_cast<T>(pt.y + (size.height / 2)),
+                pt.x + (size.width / 2.0f),
+                pt.y + (size.height / 2.0f),
             };
         }
 
         // Checks if the rect shares any space with pt
         [[nodiscard]]
         constexpr bool overlaps(const point<T>& pnt) const
+
         {
             return (pnt.x >= this->pt.x && pnt.x <= this->pt.x + this->size.width) &&
                    (pnt.y >= this->pt.y && pnt.y <= this->pt.y + this->size.height);

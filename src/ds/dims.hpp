@@ -69,7 +69,7 @@ namespace rl::ds {
 
         template <rl::integer I>
             requires rl::floating_point<T>
-        constexpr operator dims<I>() const
+        [[nodiscard]] constexpr operator dims<I>() const
         {
             return dims<I>{
                 static_cast<I>(this->width),
@@ -79,7 +79,7 @@ namespace rl::ds {
 
         template <rl::floating_point F>
             requires rl::integer<T>
-        constexpr operator dims<F>() const
+        [[nodiscard]] constexpr operator dims<F>() const
         {
             return dims<F>{
                 static_cast<F>(this->width),
@@ -98,8 +98,6 @@ namespace rl::ds {
             return ret;
         }
 
-        //////////////////////////////////////////////////
-
         constexpr bool operator==(const dims<T>& other) const
         {
             return math::equal(this->height, other.height) &&  //
@@ -110,8 +108,6 @@ namespace rl::ds {
         {
             return !this->operator==(other);
         }
-
-        //////////////////////////////////////////////////
 
         template <rl::numeric V>
             requires rl::floating_point<T> || rl::integer<T, V>
@@ -153,8 +149,6 @@ namespace rl::ds {
             };
         }
 
-        //////////////////////////////////////////////////
-
         constexpr dims<T> operator+(dims<T> other) const
         {
             return dims{
@@ -186,8 +180,6 @@ namespace rl::ds {
                 this->height / other.height,
             };
         }
-
-        //////////////////////////////////////////////////
 
         constexpr dims<T> operator+(vector2<T> other) const
         {
@@ -221,8 +213,6 @@ namespace rl::ds {
             };
         }
 
-        //////////////////////////////////////////////////
-
         constexpr dims<T> operator+(margin<T> other) const
         {
             return dims{
@@ -238,8 +228,6 @@ namespace rl::ds {
                 this->height - other.vertical(),
             };
         }
-
-        //////////////////////////////////////////////////
 
         constexpr dims<T>& operator+=(T val)
         {
@@ -269,8 +257,6 @@ namespace rl::ds {
             return *this;
         }
 
-        //////////////////////////////////////////////////
-
         constexpr dims<T>& operator+=(const dims<T>& other)
         {
             this->width += other.width;
@@ -299,8 +285,6 @@ namespace rl::ds {
             return *this;
         }
 
-        //////////////////////////////////////////////////
-
         constexpr dims<T>& operator+=(margin<T> other)
         {
             this->width += other.horizontal();
@@ -314,8 +298,6 @@ namespace rl::ds {
             this->height -= other.vertical();
             return *this;
         }
-
-        //////////////////////////////////////////////////
 
         constexpr dims<T>& operator+=(const vector2<T>& other)
         {
@@ -345,28 +327,18 @@ namespace rl::ds {
             return *this;
         }
 
-        //////////////////////////////////////////////////
-
-        // template <rl::integer I>
-        //     requires rl::floating_point<T>
-        // constexpr operator dims<I>() const
-        //{
-        //     return dims{
-        //         static_cast<T>(this->width),
-        //         static_cast<T>(this->height),
-        //     };
-        // }
-
     public:
-        T width{ static_cast<T>(0) };
-        T height{ static_cast<T>(0) };
+        T width{ 0 };
+        T height{ 0 };
     };
 
+#pragma pack()
+}
+
+namespace rl::ds {
     template <rl::numeric T>
     constexpr auto format_as(const dims<T>& size)
     {
         return fmt::format("(w={}, h={})", size.width, size.height);
     }
-
-#pragma pack()
 }

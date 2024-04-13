@@ -13,9 +13,8 @@
 #include "graphics/vg/nanovg_gl.hpp"
 
 namespace rl {
-    namespace detail {
-        static nvg::Context* create_nanovg_context(bool& stencil_buf, bool& depth_buf,
-                                                   bool& float_buf)
+    namespace {
+        nvg::Context* create_nvg_context(bool& stencil_buf, bool& depth_buf, bool& float_buf)
         {
             constexpr u8 float_mode{ 0 };
             i32 depth_bits{ 0 };
@@ -23,6 +22,7 @@ namespace rl {
 
             // TODO: look into why this returns an error code?..
             // glGetBooleanv(GL_RGBA_FLOAT_MODE_ARB, &float_mode);
+
             glGetFramebufferAttachmentParameteriv(
                 GL_DRAW_FRAMEBUFFER, GL_DEPTH, GL_FRAMEBUFFER_ATTACHMENT_DEPTH_SIZE, &depth_bits);
 
@@ -34,7 +34,6 @@ namespace rl {
             float_buf = float_mode != 0;
 
             constexpr nvg::gl::CreateFlags nvg_flags{ nvg::gl::CreateFlags::AntiAlias |
-                                                      nvg::gl::CreateFlags::StencilStrokes |
                                                       nvg::gl::CreateFlags::StencilStrokes };
             // if (stencil_buf)
             //     nvg_flags |= nvg::gl::CreateFlags::StencilStrokes;
@@ -47,8 +46,7 @@ namespace rl {
     }
 
     NVGRenderer::NVGRenderer()
-        : m_nvg_context{ detail::create_nanovg_context(m_stencil_buffer, m_depth_buffer,
-                                                       m_float_buffer) }
+        : m_nvg_context{ create_nvg_context(m_stencil_buffer, m_depth_buffer, m_float_buffer) }
     {
         this->load_fonts({
             font::Data{
@@ -158,7 +156,7 @@ namespace rl {
         // Creates font by loading it from the specified memory chunk.
         // Returns handle to the font.
         font::handle fh{ nvg::create_font_mem(m_nvg_context.get(), font_name, font_ttf) };
-        runtime_assert(fh != font::INVALID_FONT_HANDLE, "failed to load font: {}", font_name);
+        runtime_assert(fh != font::InvalidHandle, "failed to load font: {}", font_name);
         return fh;
     }
 
@@ -208,7 +206,7 @@ namespace rl {
         const std::string& text, const ds::point<f32>& pos, const std::string_view& font_name,
         const f32 font_size, const f32 fold_width, const nvg::Align alignment) const
     {
-        std::array<f32, 4> bounds{ 0.0f };
+        std::array<f32, 4> bounds{};
         this->set_text_properties_(font_name, font_size, alignment);
         // Measures the specified multi-text string. Parameter bounds should be a pointer to
         // float[4], if the bounding box of the text should be returned. The bounds value are
@@ -218,7 +216,7 @@ namespace rl {
 
         return ds::rect{
             pos,
-            ds::dims{
+            ds::dims<f32>{
                 fold_width,
                 bounds[3] - bounds[1],
             },

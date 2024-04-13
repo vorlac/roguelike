@@ -261,7 +261,6 @@ namespace rl::ui {
             // layouts, will dynamically size themselves using this value as an upper bound.
             ds::dims<f32> max_size{ ds::dims<f32>::null() };
             const ds::margin outer{ m_layout->outer_margin() };
-            const ds::margin inner{ m_layout->inner_margin() };
 
             if (m_parent != nullptr)
             {

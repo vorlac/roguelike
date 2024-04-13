@@ -118,7 +118,7 @@ namespace rl::nvg {
     {
         i32 first{ 0 };
         i32 count{ 0 };
-        uint8_t closed{ 0 };
+        u8 closed{ 0 };
         i32 nbevel{ 0 };
         Vertex* fill{ nullptr };
         i32 nfill{ 0 };
@@ -168,36 +168,29 @@ namespace rl::nvg {
         i32 font_id{ 0 };
     };
 
+    // clang-format off
+
     struct Params
     {
         void* user_ptr{ nullptr };
         bool edge_anti_alias{ false };
 
         i32 (*render_create)(void* uptr);
-        i32 (*render_create_texture)(void* uptr, TextureProperty type, i32 w, i32 h,
-                                     ImageFlags image_flags, const uint8_t* data);
+        i32 (*render_create_texture)(void* uptr, TextureProperty type, i32 w, i32 h, ImageFlags image_flags, const u8* data);
         i32 (*render_delete_texture)(void* uptr, i32 image);
-        i32 (*render_update_texture)(void* uptr, i32 image, i32 x, i32 y, i32 w, i32 h,
-                                     const uint8_t* data);
+        i32 (*render_update_texture)(void* uptr, i32 image, i32 x, i32 y, i32 w, i32 h, const u8* data);
         i32 (*render_get_texture_size)(void* uptr, i32 image, f32* w, f32* h);
 
         void (*render_viewport)(void* uptr, f32 width, f32 height, f32 device_pixel_ratio);
         void (*render_cancel)(void* uptr);
         void (*render_flush)(void* uptr);
-        void (*render_fill)(void* uptr, const PaintStyle* paint,
-                            CompositeOperationState composite_operation,
-                            const ScissorParams* scissor, f32 fringe, const f32* bounds,
-                            const NVGpath* paths, i32 npaths);
-        void (*render_stroke)(void* uptr, const PaintStyle* paint,
-                              CompositeOperationState composite_operation,
-                              const ScissorParams* scissor, f32 fringe, f32 stroke_width,
-                              const NVGpath* paths, i32 npaths);
-        void (*render_triangles)(
-            void* uptr, const PaintStyle* paint, CompositeOperationState composite_operation,
-            const ScissorParams* scissor, const Vertex* verts, i32 nverts, f32 fringe);
-
+        void (*render_fill)(void* uptr, const PaintStyle* paint, CompositeOperationState composite_operation, const ScissorParams* scissor, f32 fringe, const f32* bounds, const NVGpath* paths, i32 npaths);
+        void (*render_stroke)(void* uptr, const PaintStyle* paint, CompositeOperationState composite_operation, const ScissorParams* scissor, f32 fringe, f32 stroke_width, const NVGpath* paths, i32 npaths);
+        void (*render_triangles)(void* uptr, const PaintStyle* paint, CompositeOperationState composite_operation, const ScissorParams* scissor, const Vertex* verts, i32 nverts, f32 fringe);
         void (*render_delete)(void* uptr);
     };
+
+    // clang-format on
 
     struct Point
     {
@@ -208,7 +201,7 @@ namespace rl::nvg {
         f32 len{ 0.0f };
         f32 dmx{ 0.0f };
         f32 dmy{ 0.0f };
-        uint8_t flags{ 0 };
+        u8 flags{ 0 };
     };
 
     struct PathCache
@@ -311,13 +304,13 @@ namespace rl::nvg {
     // Colors in NanoVG are stored as unsigned ints in ABGR format.
 
     // Returns a color value from red, green, blue values. Alpha will be set to 255 (1.0f).
-    // ds::color<f32> rgb(uint8_t r, uint8_t g, uint8_t b);
+    // ds::color<f32> rgb(u8 r, u8 g, u8 b);
 
     // Linearly interpolates from color c0 to c1, and returns resulting color value.
     ds::color<f32> lerp_rgba(const ds::color<f32>& c0, const ds::color<f32>& c1, f32 u);
 
     // Sets transparency of a color value.
-    ds::color<f32> trans_rgba(ds::color<f32> c0, uint8_t a);
+    ds::color<f32> trans_rgba(ds::color<f32> c0, u8 a);
 
     // Sets transparency of a color value.
     ds::color<f32> trans_rgba_f(ds::color<f32> c0, f32 a);
@@ -328,7 +321,7 @@ namespace rl::nvg {
 
     // Returns color value specified by hue, saturation and lightness and alpha.
     // HSL values are all in range [0..1], alpha in range [0..255]
-    ds::color<f32> hsla(f32 h, f32 s, f32 l, uint8_t a);
+    ds::color<f32> hsla(f32 h, f32 s, f32 l, u8 a);
 
     //
     // State Handling
@@ -496,17 +489,15 @@ namespace rl::nvg {
     i32 create_image(const Context* ctx, const char* filename, ImageFlags image_flags);
 
     // Creates image by loading it from the specified chunk of memory. Returns handle to the image.
-    i32 create_image_mem(const Context* ctx, ImageFlags image_flags, const uint8_t* data, i32 ndata);
+    i32 create_image_mem(const Context* ctx, ImageFlags image_flags, const u8* data, i32 ndata);
 
     // Creates image from specified image data. Returns handle to the image.
-    i32 create_image_rgba(const Context* ctx, i32 w, i32 h, ImageFlags image_flags,
-                          const uint8_t* data);
+    i32 create_image_rgba(const Context* ctx, i32 w, i32 h, ImageFlags image_flags, const u8* data);
 
-    i32 create_image_alpha(const Context* ctx, i32 w, i32 h, ImageFlags image_flags,
-                           const uint8_t* data);
+    i32 create_image_alpha(const Context* ctx, i32 w, i32 h, ImageFlags image_flags, const u8* data);
 
     // Updates image data specified by image handle.
-    void update_image(const Context* ctx, i32 image, const uint8_t* data);
+    void update_image(const Context* ctx, i32 image, const u8* data);
 
     // Returns the dimensions of a created image.
     void image_size(const Context* ctx, i32 image, f32* w, f32* h);
@@ -697,13 +688,12 @@ namespace rl::nvg {
 
     // Creates font by loading it from the specified memory chunk.
     // Returns handle to the font.
-    i32 create_font_mem(const Context* ctx, const char* name, uint8_t* data, i32 ndata,
-                        i32 free_data);
+    i32 create_font_mem(const Context* ctx, const char* name, u8* data, i32 ndata, i32 free_data);
     i32 create_font_mem(const Context* ctx, const std::string_view& name,
                         const std::basic_string_view<u8>& font_data) noexcept;
 
     // fontIndex specifies which font face to load from a .ttf/.ttc file.
-    i32 create_font_mem_at_index(const Context* ctx, const char* name, uint8_t* data, i32 ndata,
+    i32 create_font_mem_at_index(const Context* ctx, const char* name, u8* data, i32 ndata,
                                  i32 free_data, i32 font_index);
 
     // Finds a loaded font of specified name, and returns handle to it, or -1 if the font is not
