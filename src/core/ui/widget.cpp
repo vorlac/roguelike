@@ -254,6 +254,11 @@ namespace rl::ui {
     {
         if (m_layout != nullptr)
         {
+            // if this widget has a layout attached, attempt to precompute the layout's
+            // preferred/maxium size. This is necessary when the layout is set to specific size
+            // policies (i.e. "preferred") since the layout cells containing each child widget
+            // it's going to arrange (as well as potentially also containing nested layouts)
+            // layouts, will dynamically size themselves using this value as an upper bound.
             ds::dims<f32> max_size{ ds::dims<f32>::null() };
             const ds::margin outer{ m_layout->outer_margin() };
             const ds::margin inner{ m_layout->inner_margin() };
@@ -280,6 +285,9 @@ namespace rl::ui {
             if (max_size.is_null() && m_rect.is_valid())
                 max_size = m_rect.size;
 
+            // TODO: see if min sizes can be precomputed as well to prevent this from being possible
+            // if we're here, but max_size isn't valid (negative dimensions or an area of 0)
+            // then we probably want to skip the size policy widget arrangements below...
             runtime_assert(max_size.is_valid(), "couldn't determine upper bound for size");
 
             if (m_layout->size_policy() == SizePolicy::Prefered)
