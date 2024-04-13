@@ -8,13 +8,15 @@
 #include <vector>
 
 #include "core/ui/theme.hpp"
-#include "ds/dims.hpp"
-#include "ds/line.hpp"
 #include "ds/rect.hpp"
 #include "graphics/vg/nanovg.hpp"
 #include "utils/numeric.hpp"
 
 namespace rl {
+    namespace nvg {
+        struct PaintStyle;
+    }
+
     class NVGRenderer
     {
     public:
@@ -32,8 +34,8 @@ namespace rl {
         void restore_state() const;
         void reset_scissor() const;
 
-        void set_fill_paint_style(nvg::PaintStyle paint_style) const;
-        void fill_current_path(nvg::PaintStyle paint_style) const;
+        void set_fill_paint_style(nvg::PaintStyle&& paint_style) const;
+        void fill_current_path(nvg::PaintStyle&& paint_style) const;
 
         nvg::PaintStyle create_rect_gradient_paint_style(
             ds::rect<f32>&& rect, f32 corner_radius, f32 outer_blur,

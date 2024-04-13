@@ -80,7 +80,7 @@ namespace rl {
             const auto horiz_layout{ new ui::BoxLayout<Alignment::Horizontal>("ABC123 Horiz") };
             horiz_layout->add_nested_layout(layout_l);
             horiz_layout->add_nested_layout(layout_r);
-            // horiz_layout->set_margins(ds::margin<f32>::zero(), ds::margin<f32>::init(5.0f));
+            horiz_layout->set_margins(ds::margin<f32>::zero(), ds::margin<f32>::init(20.0f));
 
             m_main_window->gui()->assign_layout(horiz_layout);
 

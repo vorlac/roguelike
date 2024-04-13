@@ -54,16 +54,16 @@ namespace rl::ui {
             {
                 // compute the widget's layout cell position and size
                 ds::rect<f32> widget_bounding_rect{ ds::rect<f32>::zero() };
-                ds::rect<f32> widget_margins_rect{ ds::rect<f32>::zero() };
+                widget_margins_rect{ ds::rect<f32>::zero() };
 
                 // this represents the maxiumum amount of space a widget
                 // can occupy, including it's inner and outer margins
-                widget_margins_rect = ds::rect{
+                ds::rect<f32> widget_margins_rect{
                     curr_widget_pos,
                     cell_size,
                 };
 
-                widget_bounding_rect = ds::rect{
+                ds::rect<f32> widget_bounding_rect{
                     widget_margins_rect.pt + cell.outer_margin.offset(),
                     widget_margins_rect.size - cell.outer_margin.offset(),
                 };
@@ -94,7 +94,7 @@ namespace rl::ui {
             // layout_rect.size.width += m_outer_margin.right;
             // layout_rect.size.height += m_outer_margin.bottom;
 
-            layout_rect.size += m_inner_margin;
+            // layout_rect.size += m_inner_margin;
 
             // layout_rect.size.height += m_inner_margin.bottom;
             //   assign the newly computed rect for the layout widget
