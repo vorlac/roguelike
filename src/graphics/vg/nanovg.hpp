@@ -6,6 +6,7 @@
 #include "ds/point.hpp"
 #include "ds/rect.hpp"
 #include "graphics/vg/fontstash.hpp"
+#include "utils/properties.hpp"
 
 #ifdef _MSC_VER
   #pragma warning(push)
@@ -57,16 +58,16 @@ namespace rl::nvg {
         Miter,
     };
 
-    enum class Align {
-        None = 0,
-        HLeft = 1 << 0,      // Default, align text horizontally to left.
-        HCenter = 1 << 1,    // Align text horizontally to center.
-        HRight = 1 << 2,     // Align text horizontally to right.
-        VTop = 1 << 3,       // Align text vertically to top.
-        VMiddle = 1 << 4,    // Align text vertically to middle.
-        VBottom = 1 << 5,    // Align text vertically to bottom.
-        VBaseline = 1 << 6,  // Default, align text vertically to baseline.
-    };
+    // enum class Align {
+    //     None = 0,
+    //     HLeft = 1 << 0,      // Default, align text horizontally to left.
+    //     HCenter = 1 << 1,    // Align text horizontally to center.
+    //     HRight = 1 << 2,     // Align text horizontally to right.
+    //     VTop = 1 << 3,       // Align text vertically to top.
+    //     VMiddle = 1 << 4,    // Align text vertically to middle.
+    //     VBottom = 1 << 5,    // Align text vertically to bottom.
+    //     VBaseline = 1 << 6,  // Default, align text vertically to baseline.
+    // };
 
     enum class BlendFactor {
         Zero = 1 << 0,
@@ -233,7 +234,7 @@ namespace rl::nvg {
         f32 dist_tol{ 0.0f };
         f32 fringe_width{ 0.0f };
         f32 device_px_ratio{ 0.0f };
-        FONScontext* fs{ nullptr };
+        font::Context* fs{ nullptr };
         i32 font_images[NvgMaxFontimages]{};
         i32 font_image_idx{ 0 };
         i32 draw_call_count{ 0 };
@@ -252,11 +253,19 @@ namespace rl::nvg {
 
     struct TextRow
     {
-        const char* start{ nullptr };  // Pointer to the input text where the row starts.
-        const char* end{ nullptr };    // Pointer to the input text where the row ends (one past the
-                                       // last character).
-        const char* next{ nullptr };   // Pointer to the beginning of the next row.
-        f32 width{ 0.0f };             // Logical width of the row.
+        // Pointer to the input text where the row starts.
+        const char* start{ nullptr };
+
+        // Pointer to the input text where the
+        // row ends (one past the last character).
+        const char* end{ nullptr };
+
+        // Pointer to the beginning of the next row.
+        const char* next{ nullptr };
+
+        // Logical width of the row.
+        f32 width{ 0.0f };
+
         f32 min_x{ 0.0f };
         f32 max_x{ 0.0f };
         // because of kerning and some parts over extending.
@@ -445,7 +454,7 @@ namespace rl::nvg {
 
     // Sets the transform to translation matrix matrix.
     void transform_translate(f32* dst, f32 tx, f32 ty);
-    void transform_translate(f32* t, const ds::vector2<f32>& translation);
+    void transform_translate(f32* t, ds::vector2<f32> translation);
 
     // Sets the transform to scale matrix.
     void transform_scale(f32* dst, f32 sx, f32 sy);
@@ -471,7 +480,7 @@ namespace rl::nvg {
 
     // Transform a point by given transform.
     void transform_point(f32* dstx, f32* dsty, const f32* xform, f32 srcx, f32 srcy);
-    ds::point<f32> transform_point(Context* ctx, const ds::point<f32>& src_pt);
+    ds::point<f32> transform_point(Context* ctx, ds::point<f32> src_pt);
 
     // Converts degrees to radians and vice versa.
     f32 deg_to_rad(f32 deg);
@@ -623,6 +632,7 @@ namespace rl::nvg {
     void barc(Context* ctx, f32 cx, f32 cy, f32 r, f32 a0, f32 a1, ShapeWinding dir, i32 join);
 
     // Creates new rectangle shaped sub-path.
+    void rect(Context* ctx, ds::rect<f32>&& rect);
     void rect(Context* ctx, f32 x, f32 y, f32 w, f32 h);
 
     // Creates new rounded rectangle shaped sub-path.
@@ -738,29 +748,28 @@ namespace rl::nvg {
 
     // Draws text string at specified location. If end is specified only the sub-string up to
     // the end is drawn.
-    f32 text_(Context* ctx, f32 x, f32 y, const char* string, const char* end = nullptr);
+    f32 draw_text(Context* ctx, ds::point<f32> pos, const std::string& text);
 
     // Draws multi-line text string at specified location wrapped at the specified width. If end
     // is specified only the sub-string up to the end is drawn. White space is stripped at the
     // beginning of the rows, the text is split at word boundaries or when new-line characters
     // are encountered. Words longer than the max width are slit at nearest character (i.e. no
     // hyphenation).
-    void text_box_(Context* ctx, f32 x, f32 y, f32 break_row_width, const char* string,
-                   const char* end = nullptr);
+    void text_box(Context* ctx, ds::point<f32> pos, f32 break_row_width, const std::string& text);
 
     // Measures the specified text string. Parameter bounds should be a pointer to f32[4],
     // if the bounding box of the text should be returned. The bounds value are [xmin,ymin,
     // xmax,ymax] Returns the horizontal advance of the measured text (i.e. where the next
     // character should drawn). Measured values are returned in local coordinate space.
-    f32 text_bounds_(Context* ctx, ds::point<f32>&& pos, std::string&& text);
-    f32 text_bounds_(Context* ctx, f32 x, f32 y, const char* text, const char* end = nullptr,
-                     f32* bounds = nullptr);
+    f32 text_bounds(Context* ctx, ds::point<f32> pos, const std::string& text);
+    f32 text_bounds(Context* ctx, ds::point<f32> pos, const std::string& text,
+                    ds::rect<f32>& bounds);
 
     // Measures the specified multi-text string. Parameter bounds should be a pointer to
     // f32[4], if the bounding box of the text should be returned. The bounds value are
     // [xmin,ymin, xmax,ymax] Measured values are returned in local coordinate space.
-    void text_box_bounds_(Context* ctx, f32 x, f32 y, f32 break_row_width, const char* string,
-                          const char* end, f32* bounds);
+    ds::rect<f32> text_box_bounds(Context* ctx, ds::point<f32> pos, f32 break_row_width,
+                                  const std::string& text);
 
     // Calculates the glyph x positions of the specified text. If end is specified only the
     // sub-string will be used. Measured values are returned in local coordinate space.
@@ -775,8 +784,8 @@ namespace rl::nvg {
     // used. White space is stripped at the beginning of the rows, the text is split at word
     // boundaries or when new-line characters are encountered. Words longer than the max width
     // are slit at nearest character (i.e. no hyphenation).
-    i32 text_break_lines_(Context* ctx, const char* string, const char* end, f32 break_row_width,
-                          TextRow* rows, i32 max_rows);
+    u32 text_break_lines(Context* ctx, const char* str, const char* end, f32 break_row_width,
+                         TextRow* rows, u32 max_rows);
 
     // Constructor and destructor, called by the render back-end.
     Context* create_internal(const Params* params);

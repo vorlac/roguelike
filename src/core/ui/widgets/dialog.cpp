@@ -11,7 +11,6 @@
 #include "utils/logging.hpp"
 
 namespace rl::ui {
-
     Dialog::Dialog(Widget* parent, std::string title)
         : Widget{ parent }
         , m_title{ std::move(title) }
@@ -133,20 +132,28 @@ namespace rl::ui {
 
                 nvg::set_font_size(context, m_theme->tooltip_font_size);
                 nvg::set_font_face(context, m_theme->tooltip_font_name.data());
-                nvg::set_text_align(context, nvg::Align::HCenter | nvg::Align::VMiddle);
+                nvg::set_text_align(context, Align::HCenter | Align::VMiddle);
 
                 // header text shadow
                 nvg::font_blur_(context, 2.0f);
                 nvg::fill_color(context, m_theme->text_shadow);
-                nvg::text_(context, m_rect.pt.x + (m_rect.size.width / 2.0f),
-                           m_rect.pt.y + (header_height / 2.0f), m_title.c_str());
+                nvg::draw_text(context,
+                               ds::point<f32>{
+                                   m_rect.pt.x + (m_rect.size.width / 2.0f),
+                                   m_rect.pt.y + (header_height / 2.0f),
+                               },
+                               m_title);
 
                 // Header text
                 nvg::font_blur_(context, 0.0f);
                 nvg::fill_color(context, m_focused ? m_theme->dialog_title_focused
                                                    : m_theme->dialog_title_unfocused);
-                nvg::text_(context, m_rect.pt.x + (m_rect.size.width / 2.0f),
-                           m_rect.pt.y + (header_height / 2.0f) - 1.0f, m_title.c_str());
+                nvg::draw_text(context,
+                               ds::point<f32>{
+                                   m_rect.pt.x + (m_rect.size.width / 2.0f),
+                                   m_rect.pt.y + (header_height / 2.0f) - 1.0f,
+                               },
+                               m_title);
             }
         });
 
@@ -322,16 +329,15 @@ namespace rl::ui {
         nvg::set_font_size(context, m_theme->dialog_title_font_size);
         nvg::set_font_face(context, m_theme->dialog_title_font_name.data());
 
-        // [xmin, ymin, xmax, ymax]
-        std::array<f32, 4> bounds{};
-        nvg::text_bounds_(context, 0, 0, m_title.c_str(), nullptr, bounds.data());
+        ds::rect bounds{ ds::rect<f32>::zero() };
+        nvg::text_bounds(context, ds::point<f32>::zero(), m_title, bounds);
 
         constexpr static f32 TEXT_SIZE_WIDTH_PADDING{ 20.0f };
         ds::rect<f32> bounding_rect{
             ds::point<f32>::zero(),
             ds::dims<f32>{
-                std::max(result.width, bounds[2] - bounds[0] + TEXT_SIZE_WIDTH_PADDING),
-                std::max(result.height, bounds[3] - bounds[1]),
+                std::max(result.width, bounds.size.width + TEXT_SIZE_WIDTH_PADDING),
+                std::max(result.height, bounds.size.height),
             },
         };
 

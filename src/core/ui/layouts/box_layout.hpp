@@ -59,18 +59,24 @@ namespace rl::ui {
                     curr_widget_pos.y += widget_margins_rect.size.height;
                 else if (m_alignment == Alignment::Horizontal)
                     curr_widget_pos.x += widget_margins_rect.size.width;
-
+                if (widget_bounding_rect.size.width > cell_size.width ||
+                    widget_bounding_rect.size.height > cell_size.height)
+                {
+                    widget->preferred_size();
+                }
                 widget->set_rect(widget_bounding_rect);
                 layout_rect.expand(widget_margins_rect);
             }
 
             layout_rect.size += m_outer_margin;
-            this->set_rect(std::move(layout_rect));
+            this->set_rect(layout_rect);
         }
 
         virtual ds::dims<f32> computed_size() const override
         {
-            return this->size();
+            for (auto& widget : m_cell_data | std::views::keys)
+                widget->preferred_size();
+            return this->preferred_size();
         }
     };
 }

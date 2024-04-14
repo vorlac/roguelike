@@ -2,10 +2,12 @@
 #include <cstdlib>
 #include <numbers>
 #include <print>
+#include <tuple>
 
 #include "ds/color.hpp"
 #include "ds/rect.hpp"
 #include "graphics/stb/stb_image.hpp"
+#include "graphics/text.hpp"
 #include "graphics/vg/nanovg.hpp"
 
 namespace rl::nvg {
@@ -16,7 +18,7 @@ namespace rl::nvg {
         NvgInitVertsSize = 256
     };
 
-    enum NVGcodepointType {
+    enum class CodepointType {
         Space,
         Newline,
         Char,
@@ -1321,14 +1323,14 @@ namespace rl::nvg {
             {
                 i32 dirty[4] = { 0 };
 
-                if (fons_validate_texture(ctx->fs, dirty))
+                if (font::validate_texture(ctx->fs, dirty))
                 {
                     const i32 font_image = ctx->font_images[ctx->font_image_idx];
                     // Update texture
                     if (font_image != 0)
                     {
                         i32 iw, ih;
-                        const u8* data = fons_get_texture_data(ctx->fs, &iw, &ih);
+                        const u8* data = font::get_texture_data(ctx->fs, &iw, &ih);
                         const i32 x = dirty[0];
                         const i32 y = dirty[1];
                         const i32 w = dirty[2] - dirty[0];
@@ -1368,7 +1370,7 @@ namespace rl::nvg {
                 }
 
                 ++ctx->font_image_idx;
-                fons_reset_atlas(ctx->fs, static_cast<i32>(iw), static_cast<i32>(ih));
+                font::reset_atlas(ctx->fs, static_cast<i32>(iw), static_cast<i32>(ih));
 
                 return 1;
             }
@@ -1501,7 +1503,7 @@ namespace rl::nvg {
 
     Context* create_internal(const Params* params)
     {
-        FONSparams font_params{};
+        font::Params font_params{};
         const auto ctx{ static_cast<Context*>(std::malloc(sizeof(Context))) };
         if (ctx != nullptr)
         {
@@ -1528,14 +1530,14 @@ namespace rl::nvg {
                         std::memset(&font_params, 0, sizeof(font_params));
                         font_params.width = NvgInitFontimageSize;
                         font_params.height = NvgInitFontimageSize;
-                        font_params.flags = FonsZeroTopleft;
+                        font_params.flags = font::FonsZeroTopleft;
                         font_params.render_create = nullptr;
                         font_params.render_update = nullptr;
                         font_params.render_draw = nullptr;
                         font_params.render_delete = nullptr;
                         font_params.user_ptr = nullptr;
 
-                        ctx->fs = fons_create_internal(&font_params);
+                        ctx->fs = font::create_internal(&font_params);
                         if (ctx->fs != nullptr)
                         {
                             // Create font texture
@@ -1573,7 +1575,7 @@ namespace rl::nvg {
         if (ctx->cache != nullptr)
             detail::delete_path_cache(ctx->cache);
         if (ctx->fs)
-            fons_delete_internal(ctx->fs);
+            font::delete_internal(ctx->fs);
 
         for (i32& font_image : ctx->font_images)
         {
@@ -1727,7 +1729,7 @@ namespace rl::nvg {
         dst[5] = ty;
     }
 
-    void transform_translate(f32* t, const ds::vector2<f32>& translation)
+    void transform_translate(f32* t, const ds::vector2<f32> translation)
     {
         t[0] = 1.0f;
         t[1] = 0.0f;
@@ -1832,7 +1834,7 @@ namespace rl::nvg {
         *dsty = srcx * xform[1] + srcy * xform[3] + xform[5];
     }
 
-    ds::point<f32> transform_point(Context* ctx, const ds::point<f32>& src_pt)
+    ds::point<f32> transform_point(Context* ctx, ds::point<f32> src_pt)
     {
         f32 xform[6] = {};
         nvg::current_transform(ctx, xform);
@@ -2047,13 +2049,19 @@ namespace rl::nvg {
 #ifndef NO_STB
     i32 create_image(const Context* ctx, const char* filename, const ImageFlags image_flags)
     {
-        i32 w, h, n;
+        i32 w{ 0 };
+        i32 h{ 0 };
+        i32 n{ 0 };
+
         stb::stbi_set_unpremultiply_on_load(1);
         stb::stbi_convert_iphone_png_to_rgb(1);
         u8* img = stb::stbi_load(filename, &w, &h, &n, 4);
         if (img == nullptr)
-            //      printf("Failed to load %s - %s\n", filename, stbi_failure_reason());
+        {
+            assert_msg("Failed to load {} - {}\n", filename, stb::stbi_failure_reason());
             return 0;
+        }
+
         const i32 image = create_image_rgba(ctx, w, h, image_flags, img);
         stb::stbi_image_free(img);
         return image;
@@ -2062,11 +2070,16 @@ namespace rl::nvg {
     i32 create_image_mem(const Context* ctx, const ImageFlags image_flags, const u8* data,
                          const i32 ndata)
     {
-        i32 w, h, n;
+        i32 w{ 0 };
+        i32 h{ 0 };
+        i32 n{ 0 };
         u8* img = stb::stbi_load_from_memory(data, ndata, &w, &h, &n, 4);
         if (img == nullptr)
-            //      printf("Failed to load %s - %s\n", filename, stbi_failure_reason());
+        {
+            assert_msg("Failed to image - {}\n", stb::stbi_failure_reason());
             return 0;
+        }
+
         const i32 image = create_image_rgba(ctx, w, h, image_flags, img);
         stb::stbi_image_free(img);
         return image;
@@ -2529,6 +2542,27 @@ namespace rl::nvg {
         barc(ctx, cx, cy, r, a0, a1, dir, 1);
     }
 
+    void rect(Context* ctx, ds::rect<f32>&& rect)
+    {
+        std::array vals = std::array{
+            static_cast<f32>(Commands::MoveTo),
+            rect.pt.x,
+            rect.pt.y,
+            static_cast<f32>(Commands::LineTo),
+            rect.pt.x,
+            rect.pt.y + rect.size.height,
+            static_cast<f32>(Commands::LineTo),
+            rect.pt.x + rect.size.width,
+            rect.pt.y + rect.size.height,
+            static_cast<f32>(Commands::LineTo),
+            rect.pt.x + rect.size.width,
+            rect.pt.y,
+            static_cast<f32>(Commands::Close),
+        };
+
+        detail::append_commands(ctx, vals.data(), static_cast<i32>(vals.size()));
+    }
+
     void rect(Context* ctx, const f32 x, const f32 y, const f32 w, const f32 h)
     {
         auto vals = std::array{
@@ -2769,19 +2803,19 @@ namespace rl::nvg {
     // Add fonts
     i32 create_font(const Context* ctx, const char* name, const char* filename)
     {
-        return fons_add_font(ctx->fs, name, filename, 0);
+        return font::add_font(ctx->fs, name, filename, 0);
     }
 
     i32 create_font_at_index(const Context* ctx, const char* name, const char* filename,
                              const i32 font_index)
     {
-        return fons_add_font(ctx->fs, name, filename, font_index);
+        return font::add_font(ctx->fs, name, filename, font_index);
     }
 
     i32 create_font_mem(const Context* ctx, const char* name, u8* data, const i32 ndata,
                         const i32 free_data)
     {
-        return fons_add_font_mem(ctx->fs, name, data, ndata, free_data, 0);
+        return font::add_font_mem(ctx->fs, name, data, ndata, free_data, 0);
     }
 
     i32 create_font_mem(const Context* ctx, const std::string_view& name,
@@ -2789,14 +2823,14 @@ namespace rl::nvg {
     {
         constexpr static i32 font_index{ 0 };
         constexpr static i32 dealloc_data{ false };
-        return fons_add_font_mem(ctx->fs, name.data(), const_cast<u8*>(font_data.data()),
-                                 static_cast<i32>(font_data.size()), dealloc_data, font_index);
+        return font::add_font_mem(ctx->fs, name.data(), const_cast<u8*>(font_data.data()),
+                                  static_cast<i32>(font_data.size()), dealloc_data, font_index);
     }
 
     i32 create_font_mem_at_index(const Context* ctx, const char* name, u8* data, const i32 ndata,
                                  const i32 free_data, const i32 font_index)
     {
-        return fons_add_font_mem(ctx->fs, name, data, ndata, free_data, font_index);
+        return font::add_font_mem(ctx->fs, name, data, ndata, free_data, font_index);
     }
 
     i32 find_font_(const Context* ctx, const char* name)
@@ -2804,7 +2838,7 @@ namespace rl::nvg {
         if (name == nullptr)
             return -1;
 
-        return fons_get_font_by_name(ctx->fs, name);
+        return font::get_font_by_name(ctx->fs, name);
     }
 
     i32 add_fallback_font_id(const Context* ctx, const i32 base_font, const i32 fallback_font)
@@ -2812,7 +2846,7 @@ namespace rl::nvg {
         if (base_font == -1 || fallback_font == -1)
             return 0;
 
-        return fons_add_fallback_font(ctx->fs, base_font, fallback_font);
+        return font::add_fallback_font(ctx->fs, base_font, fallback_font);
     }
 
     i32 add_fallback_font(const Context* ctx, const char* base_font, const char* fallback_font)
@@ -2822,7 +2856,7 @@ namespace rl::nvg {
 
     void reset_fallback_fonts_id(const Context* ctx, const i32 base_font)
     {
-        fons_reset_fallback_font(ctx->fs, base_font);
+        font::reset_fallback_font(ctx->fs, base_font);
     }
 
     void reset_fallback_fonts(const Context* ctx, const char* base_font)
@@ -2870,57 +2904,58 @@ namespace rl::nvg {
     void set_font_face(Context* ctx, const char* font)
     {
         State* state = detail::get_state(ctx);
-        state->font_id = fons_get_font_by_name(ctx->fs, font);
+        state->font_id = font::get_font_by_name(ctx->fs, font);
+        runtime_assert(state->font_id != text::font::InvalidHandle, "failed to set font: {}", font);
     }
 
     void set_font_face(Context* ctx, const std::string_view& font)
     {
         State* state{ detail::get_state(ctx) };
-        state->font_id = fons_get_font_by_name(ctx->fs, font.data());
+        state->font_id = font::get_font_by_name(ctx->fs, font.data());
+        runtime_assert(state->font_id != text::font::InvalidHandle, "failed to set font: {}", font);
     }
 
     void set_font_face(Context* ctx, const std::string& font)
     {
         State* state{ detail::get_state(ctx) };
-        state->font_id = fons_get_font_by_name(ctx->fs, font.c_str());
+        state->font_id = font::get_font_by_name(ctx->fs, font.c_str());
     }
 
-    f32 text_(Context* ctx, f32 x, f32 y, const char* string, const char* end /*= nullptr*/)
+    f32 draw_text(Context* ctx, const ds::point<f32> pos, const std::string& text)
     {
         State* state{ detail::get_state(ctx) };
-        FONStextIter iter, prev_iter;
-        FONSquad q;
-        Vertex* verts;
-        f32 scale = detail::get_font_scale(state) * ctx->device_px_ratio;
-        f32 invscale = 1.0f / scale;
-        i32 cverts = 0;
-        i32 nverts = 0;
-        i32 is_flipped = detail::is_transform_flipped(state->xform);
+        if (state->font_id == font::INVALID)
+        {
+            assert_msg("nvg::draw_text: invalid font");
+            return pos.x;
+        }
 
-        if (end == nullptr)
-            end = string + strlen(string);
-
-        if (state->font_id == FONS_INVALID)
-            return x;
-
-        fons_set_size(ctx->fs, state->font_size * scale);
-        fons_set_spacing(ctx->fs, state->letter_spacing * scale);
-        fons_set_blur(ctx->fs, state->font_blur * scale);
-        fons_set_align(ctx->fs, state->text_align);
-        fons_set_font(ctx->fs, state->font_id);
+        f32 scale{ detail::get_font_scale(state) * ctx->device_px_ratio };
+        f32 invscale{ 1.0f / scale };
+        font::set_size(ctx->fs, state->font_size * scale);
+        font::set_spacing(ctx->fs, state->letter_spacing * scale);
+        font::set_blur(ctx->fs, state->font_blur * scale);
+        font::set_align(ctx->fs, state->text_align);
+        font::set_font(ctx->fs, state->font_id);
 
         // conservative estimate
-        cverts = detail::max(2, static_cast<i32>(end - string)) * 6;
-        verts = detail::alloc_temp_verts(ctx, cverts);
+        i32 cverts{ detail::max(2, static_cast<i32>(text.size())) * 6 };
+        Vertex* verts{ detail::alloc_temp_verts(ctx, cverts) };
         if (verts == nullptr)
-            return x;
+            return pos.x;
 
-        fons_text_iter_init(ctx->fs, &iter, x * scale, y * scale, string, end,
-                            FonsGlyphBitmapRequired);
-        prev_iter = iter;
-        while (fons_text_iter_next(ctx->fs, &iter, &q))
+        font::TextIter iter{};
+        const char* str{ text.c_str() };
+        const char* end{ str + std::strlen(str) };
+        font::text_iter_init(ctx->fs, &iter, pos * scale, str, end, font::FonsGlyphBitmapRequired);
+        i32 is_flipped{ detail::is_transform_flipped(state->xform) };
+
+        i32 nverts{ 0 };
+        font::FontQuad q{};
+        font::TextIter prev_iter = iter;
+        while (font::text_iter_next(ctx->fs, &iter, &q))
         {
-            f32 c[4 * 2] = { 0 };
+            f32 c[4 * 2]{};
             if (iter.prev_glyph_index == -1)
             {
                 // can not retrieve glyph?
@@ -2931,25 +2966,29 @@ namespace rl::nvg {
                 }
 
                 if (detail::alloc_text_atlas(ctx) == 0)
-                    break;  // no memory :(
+                {
+                    // no memory :(
+                    assert_msg("allocation for text atlas failed");
+                    break;
+                }
 
                 iter = prev_iter;
-                fons_text_iter_next(ctx->fs, &iter, &q);  // try again
-                if (iter.prev_glyph_index == -1)          // still can not find glyph?
+
+                // try again
+                font::text_iter_next(ctx->fs, &iter, &q);
+                if (iter.prev_glyph_index == -1)
+                {
+                    // still can not find glyph?
+                    assert_msg("nvg::draw_text : failed to find glyph to render");
                     break;
+                }
             }
 
             prev_iter = iter;
             if (is_flipped)
             {
-                f32 tmp;
-
-                tmp = q.y0;
-                q.y0 = q.y1;
-                q.y1 = tmp;
-                tmp = q.t0;
-                q.t0 = q.t1;
-                q.t1 = tmp;
+                std::swap(q.y0, q.y1);
+                std::swap(q.t0, q.t1);
             }
 
             // Transform corners.
@@ -2983,46 +3022,51 @@ namespace rl::nvg {
         return iter.nextx / scale;
     }
 
-    void text_box_(Context* ctx, const f32 x, f32 y, const f32 break_row_width, const char* string,
-                   const char* end /*= nullptr*/)
+    void text_box(Context* ctx, ds::point<f32> pos, const f32 break_row_width,
+                  const std::string& text)
     {
-        State* state = detail::get_state(ctx);
-        TextRow rows[2];
-        const Align old_align = state->text_align;
-        const Align haling = state->text_align & (Align::HLeft | Align::HCenter | Align::HRight);
-        const Align valign = state->text_align &
-                             (Align::VTop | Align::VMiddle | Align::VBottom | Align::VBaseline);
-        f32 lineh = 0;
-
-        if (state->font_id == FONS_INVALID)
+        State* state{ detail::get_state(ctx) };
+        if (state->font_id == font::INVALID)
+        {
+            assert_msg("font not loaded");
             return;
+        }
 
+        Align old_align{ state->text_align };
+        Align haling{ state->text_align & (Align::HLeft | Align::HCenter | Align::HRight) };
+        Align valign{ state->text_align &
+                      (Align::VTop | Align::VMiddle | Align::VBottom | Align::VBaseline) };
+
+        f32 lineh{ 0.0f };
         text_metrics_(ctx, nullptr, nullptr, &lineh);
-
         state->text_align = Align::HLeft | valign;
 
-        i32 nrows{ 0 };
-        do
+        std::array<TextRow, 2> rows{ TextRow{}, TextRow{} };
+        const char* str{ text.c_str() };
+        u32 nrows = text_break_lines(ctx, str, nullptr, break_row_width, rows.data(),
+                                     static_cast<u32>(rows.size()));
+        while (nrows > 0)
         {
-            nrows = text_break_lines_(ctx, string, end, break_row_width, rows, 2);
-            for (i32 i = 0; i < nrows; i++)
+            for (u32 i = 0; i < nrows; i++)
             {
                 const TextRow* row = &rows[i];
-                if ((haling & Align::HLeft) != 0)
-                    text_(ctx, x, y, row->start, row->end);
-                else if ((haling & Align::HCenter) != 0)
-                    text_(ctx, x + break_row_width * 0.5f - row->width * 0.5f, y, row->start,
-                          row->end);
-                else if ((haling & Align::HRight) != 0)
-                    text_(ctx, x + break_row_width - row->width, y, row->start, row->end);
+                std::string row_text{ row->start, row->end };
 
-                y += lineh * state->line_height;
+                if ((haling & Align::HLeft) != 0)
+                    draw_text(ctx, pos, row_text);
+                else if ((haling & Align::HCenter) != 0)
+                    draw_text(ctx, { pos.x + break_row_width * 0.5f - row->width * 0.5f, pos.y },
+                              row_text);
+                else if ((haling & Align::HRight) != 0)
+                    draw_text(ctx, { pos.x + break_row_width - row->width, pos.y }, row_text);
+
+                pos.y += lineh * state->line_height;
             }
 
-            if (nrows > 0)
-                string = rows[nrows - 1].next;
+            str = rows[nrows - 1].next;
+            nrows = text_break_lines(ctx, str, nullptr, break_row_width, rows.data(),
+                                     static_cast<u32>(rows.size()));
         }
-        while (nrows > 0);
 
         state->text_align = old_align;
     }
@@ -3033,11 +3077,11 @@ namespace rl::nvg {
         State* state = detail::get_state(ctx);
         f32 scale = detail::get_font_scale(state) * ctx->device_px_ratio;
         f32 invscale = 1.0f / scale;
-        FONStextIter iter, prev_iter;
-        FONSquad q;
+        font::TextIter iter, prev_iter;
+        font::FontQuad q;
         i32 npos = 0;
 
-        if (state->font_id == FONS_INVALID)
+        if (state->font_id == font::INVALID)
             return 0;
 
         if (end == nullptr)
@@ -3046,46 +3090,45 @@ namespace rl::nvg {
         if (string == end)
             return 0;
 
-        fons_set_size(ctx->fs, state->font_size * scale);
-        fons_set_spacing(ctx->fs, state->letter_spacing * scale);
-        fons_set_blur(ctx->fs, state->font_blur * scale);
-        fons_set_align(ctx->fs, state->text_align);
-        fons_set_font(ctx->fs, state->font_id);
+        font::set_size(ctx->fs, state->font_size * scale);
+        font::set_spacing(ctx->fs, state->letter_spacing * scale);
+        font::set_blur(ctx->fs, state->font_blur * scale);
+        font::set_align(ctx->fs, state->text_align);
+        font::set_font(ctx->fs, state->font_id);
 
-        fons_text_iter_init(ctx->fs, &iter, x * scale, y * scale, string, end,
-                            FonsGlyphBitmapOptional);
+        font::text_iter_init(ctx->fs, &iter, { x * scale, y * scale }, string, end,
+                             font::FonsGlyphBitmapOptional);
         prev_iter = iter;
-        while (fons_text_iter_next(ctx->fs, &iter, &q))
+        while (font::text_iter_next(ctx->fs, &iter, &q))
         {
             if (iter.prev_glyph_index < 0 && detail::alloc_text_atlas(ctx))
             {
                 // can not retrieve glyph?
                 iter = prev_iter;
-                fons_text_iter_next(ctx->fs, &iter, &q);  // try again
+                font::text_iter_next(ctx->fs, &iter, &q);  // try again
             }
+
             prev_iter = iter;
             positions[npos].str = iter.str;
             positions[npos].x = iter.x * invscale;
             positions[npos].min_x = detail::min(iter.x, q.x0) * invscale;
             positions[npos].max_x = detail::max(iter.nextx, q.x1) * invscale;
-            npos++;
-            if (npos >= max_positions)
+            if (++npos >= max_positions)
                 break;
         }
 
         return npos;
     }
 
-    i32 text_break_lines_(Context* ctx, const char* string, const char* end, f32 break_row_width,
-                          TextRow* rows, i32 max_rows)
+    u32 text_break_lines(Context* ctx, const char* str, const char* end, f32 break_row_width,
+                         TextRow* rows, u32 max_rows)
     {
         State* state = detail::get_state(ctx);
         f32 scale = detail::get_font_scale(state) * ctx->device_px_ratio;
         f32 invscale = 1.0f / scale;
-        FONStextIter iter;
-        FONStextIter prev_iter;
-        FONSquad q;
-        i32 nrows = 0;
+
+        font::FontQuad q{};
+        u32 nrows = 0;
         f32 row_start_x = 0;
         f32 row_width = 0;
         f32 row_min_x = 0;
@@ -3098,39 +3141,41 @@ namespace rl::nvg {
         const char* break_end = nullptr;
         f32 break_width = 0;
         f32 break_max_x = 0;
-        i32 type = Space;
-        i32 ptype = Space;
+        CodepointType type = CodepointType::Space;
+        CodepointType ptype = CodepointType::Space;
         u32 pcodepoint = 0;
 
         if (max_rows == 0)
             return 0;
-        if (state->font_id == FONS_INVALID)
+        if (state->font_id == font::INVALID)
+            return 0;
+        if (str == nullptr)
             return 0;
 
         if (end == nullptr)
-            end = string + strlen(string);
-
-        if (string == end)
-            return 0;
-
-        fons_set_size(ctx->fs, state->font_size * scale);
-        fons_set_spacing(ctx->fs, state->letter_spacing * scale);
-        fons_set_blur(ctx->fs, state->font_blur * scale);
-        fons_set_align(ctx->fs, state->text_align);
-        fons_set_font(ctx->fs, state->font_id);
+            end = str + std::strlen(str);
+        font::set_size(ctx->fs, state->font_size * scale);
+        font::set_spacing(ctx->fs, state->letter_spacing * scale);
+        font::set_blur(ctx->fs, state->font_blur * scale);
+        font::set_align(ctx->fs, state->text_align);
+        font::set_font(ctx->fs, state->font_id);
 
         break_row_width *= scale;
 
-        fons_text_iter_init(ctx->fs, &iter, 0, 0, string, end, FonsGlyphBitmapOptional);
+        font::TextIter iter;
+        font::TextIter prev_iter;
+        font::text_iter_init(ctx->fs, &iter, ds::point<f32>::zero(), str, end,
+                             font::FonsGlyphBitmapOptional);
         prev_iter = iter;
-        while (fons_text_iter_next(ctx->fs, &iter, &q))
+        while (font::text_iter_next(ctx->fs, &iter, &q))
         {
             if (iter.prev_glyph_index < 0 && detail::alloc_text_atlas(ctx))
             {
                 // can not retrieve glyph?
                 iter = prev_iter;
-                fons_text_iter_next(ctx->fs, &iter, &q);  // try again
+                font::text_iter_next(ctx->fs, &iter, &q);  // try again
             }
+
             prev_iter = iter;
             switch (iter.codepoint)
             {
@@ -3139,16 +3184,16 @@ namespace rl::nvg {
                 case 12:      // \f
                 case 32:      // space
                 case 0x00a0:  // NBSP
-                    type = Space;
+                    type = CodepointType::Space;
                     break;
                 case 10:  // \n
-                    type = pcodepoint == 13 ? Space : Newline;
+                    type = pcodepoint == 13 ? CodepointType::Space : CodepointType::Newline;
                     break;
                 case 13:  // \r
-                    type = pcodepoint == 10 ? Space : Newline;
+                    type = pcodepoint == 10 ? CodepointType::Space : CodepointType::Newline;
                     break;
                 case 0x0085:  // NEL
-                    type = Newline;
+                    type = CodepointType::Newline;
                     break;
                 default:
                     if ((iter.codepoint >= 0x4E00 && iter.codepoint <= 0x9FFF) ||
@@ -3157,13 +3202,13 @@ namespace rl::nvg {
                         (iter.codepoint >= 0x1100 && iter.codepoint <= 0x11FF) ||
                         (iter.codepoint >= 0x3130 && iter.codepoint <= 0x318F) ||
                         (iter.codepoint >= 0xAC00 && iter.codepoint <= 0xD7AF))
-                        type = CJKChar;
+                        type = CodepointType::CJKChar;
                     else
-                        type = Char;
+                        type = CodepointType::Char;
                     break;
             }
 
-            if (type == Newline)
+            if (type == CodepointType::Newline)
             {
                 // Always handle new lines.
                 rows[nrows].start = row_start != nullptr ? row_start : iter.str;
@@ -3172,14 +3217,16 @@ namespace rl::nvg {
                 rows[nrows].min_x = row_min_x * invscale;
                 rows[nrows].max_x = row_max_x * invscale;
                 rows[nrows].next = iter.next;
-                nrows++;
-                if (nrows >= max_rows)
+                if (++nrows >= max_rows)
                     return nrows;
+
                 // Set null break point
                 break_end = row_start;
                 break_width = 0.0;
                 break_max_x = 0.0;
-                // Indicate to skip the white space at the beginning of the row.
+
+                // Indicate to skip the white
+                // space at the beginning of the row.
                 row_start = nullptr;
                 row_end = nullptr;
                 row_width = 0;
@@ -3188,7 +3235,7 @@ namespace rl::nvg {
             else if (row_start == nullptr)
             {
                 // Skip white space until the beginning of the line
-                if (type == Char || type == CJKChar)
+                if (type == CodepointType::Char || type == CodepointType::CJKChar)
                 {
                     // The current char is the row so far
                     row_start_x = iter.x;
@@ -3211,21 +3258,25 @@ namespace rl::nvg {
                 f32 next_width = iter.nextx - row_start_x;
 
                 // track last non-white space character
-                if (type == Char || type == CJKChar)
+                if (type == CodepointType::Char || type == CodepointType::CJKChar)
                 {
                     row_end = iter.next;
                     row_width = iter.nextx - row_start_x;
                     row_max_x = q.x1 - row_start_x;
                 }
                 // track last end of a word
-                if (((ptype == Char || ptype == CJKChar) && type == Space) || type == CJKChar)
+                if (((ptype == CodepointType::Char || ptype == CodepointType::CJKChar) &&
+                     type == CodepointType::Space) ||
+                    type == CodepointType::CJKChar)
                 {
                     break_end = iter.str;
                     break_width = row_width;
                     break_max_x = row_max_x;
                 }
                 // track last beginning of a word
-                if ((ptype == Space && (type == Char || type == CJKChar)) || type == CJKChar)
+                if ((ptype == CodepointType::Space &&
+                     (type == CodepointType::Char || type == CodepointType::CJKChar)) ||
+                    type == CodepointType::CJKChar)
                 {
                     word_start = iter.str;
                     word_start_x = iter.x;
@@ -3233,7 +3284,8 @@ namespace rl::nvg {
                 }
 
                 // Break to new line when a character is beyond break width.
-                if ((type == Char || type == CJKChar) && next_width > break_row_width)
+                if ((type == CodepointType::Char || type == CodepointType::CJKChar) &&
+                    next_width > break_row_width)
                 {
                     // The run length is too long, need to break to new line.
                     if (break_end == row_start)
@@ -3245,9 +3297,9 @@ namespace rl::nvg {
                         rows[nrows].min_x = row_min_x * invscale;
                         rows[nrows].max_x = row_max_x * invscale;
                         rows[nrows].next = iter.str;
-                        nrows++;
-                        if (nrows >= max_rows)
+                        if (++nrows >= max_rows)
                             return nrows;
+
                         row_start_x = iter.x;
                         row_start = iter.str;
                         row_end = iter.next;
@@ -3268,9 +3320,9 @@ namespace rl::nvg {
                         rows[nrows].min_x = row_min_x * invscale;
                         rows[nrows].max_x = break_max_x * invscale;
                         rows[nrows].next = word_start;
-                        nrows++;
-                        if (nrows >= max_rows)
+                        if (++nrows >= max_rows)
                             return nrows;
+
                         // Update row
                         row_start_x = word_start_x;
                         row_start = word_start;
@@ -3279,6 +3331,7 @@ namespace rl::nvg {
                         row_min_x = word_min_x - row_start_x;
                         row_max_x = q.x1 - row_start_x;
                     }
+
                     // Set null break point
                     break_end = row_start;
                     break_width = 0.0;
@@ -3306,119 +3359,129 @@ namespace rl::nvg {
         return nrows;
     }
 
-    f32 text_bounds_(Context* ctx, const f32 x, const f32 y, const char* text,
-                     const char* end /*= nullptr*/, f32* bounds /*= nullptr*/)
+    f32 text_bounds(Context* ctx, const ds::point<f32> pos, const std::string& text,
+                    ds::rect<f32>& bounds)
     {
         const State* state = detail::get_state(ctx);
         const f32 scale = detail::get_font_scale(state) * ctx->device_px_ratio;
         const f32 invscale = 1.0f / scale;
 
-        if (state->font_id == FONS_INVALID)
+        if (state->font_id == font::INVALID)
             return 0;
 
-        fons_set_size(ctx->fs, state->font_size * scale);
-        fons_set_spacing(ctx->fs, state->letter_spacing * scale);
-        fons_set_blur(ctx->fs, state->font_blur * scale);
-        fons_set_align(ctx->fs, state->text_align);
-        fons_set_font(ctx->fs, state->font_id);
+        font::set_size(ctx->fs, state->font_size * scale);
+        font::set_spacing(ctx->fs, state->letter_spacing * scale);
+        font::set_blur(ctx->fs, state->font_blur * scale);
+        font::set_align(ctx->fs, state->text_align);
+        font::set_font(ctx->fs, state->font_id);
 
-        const f32 width = fons_text_bounds(ctx->fs, x * scale, y * scale, text, end, bounds);
-        if (bounds != nullptr)
+        const f32 width = font::text_bounds(ctx->fs, pos * scale, text.c_str(), nullptr, bounds);
+        if (!bounds.is_null())
         {
+            f32 min_y{ 0.0f };
+            f32 max_y{ 0.0f };
+
             // Use line bounds for height.
-            fons_line_bounds(ctx->fs, y * scale, &bounds[1], &bounds[3]);
-            bounds[0] *= invscale;
-            bounds[1] *= invscale;
-            bounds[2] *= invscale;
-            bounds[3] *= invscale;
+            font::line_bounds(ctx->fs, pos.y * scale, &min_y, &max_y);
+
+            bounds.pt.y = min_y;
+            bounds.size.height = max_y - min_y;
+            bounds *= invscale;
         }
         return width * invscale;
     }
 
-    f32 text_bounds_(Context* ctx, ds::point<f32>&& pos, std::string&& text)
+    f32 text_bounds(Context* ctx, const ds::point<f32> pos, const std::string& text)
     {
-        return nvg::text_bounds_(ctx, pos.x, pos.y, text.data());
+        ds::rect<f32> _ = ds::rect<f32>::null();
+        return nvg::text_bounds(ctx, pos, text, _);
     }
 
-    void text_box_bounds_(Context* ctx, const f32 x, f32 y, const f32 break_row_width,
-                          const char* string, const char* end, f32* bounds)
+    // Measures the specified multi-text string. Parameter bounds should be a pointer to
+    // f32[4], if the bounding box of the text should be returned. The bounds value are
+    // [xmin,ymin, xmax,ymax] Measured values are returned in local coordinate space.
+    ds::rect<f32> text_box_bounds(Context* ctx, ds::point<f32> pos, const f32 break_row_width,
+                                  const std::string& text)
     {
         State* state = detail::get_state(ctx);
-        TextRow rows[2];
-        const f32 scale = detail::get_font_scale(state) * ctx->device_px_ratio;
-        const f32 invscale = 1.0f / scale;
-        const Align old_align = state->text_align;
-        const Align haling = state->text_align & (Align::HLeft | Align::HCenter | Align::HRight);
-        const Align valign = state->text_align &
-                             (Align::VTop | Align::VMiddle | Align::VBottom | Align::VBaseline);
-        f32 lineh = 0;
-        f32 rminy = 0;
-        f32 rmaxy = 0;
-        f32 maxx;
-        f32 maxy;
+        const f32 scale{ detail::get_font_scale(state) * ctx->device_px_ratio };
+        const f32 invscale{ 1.0f / scale };
+        const Align old_align{ state->text_align };
+        const Align h_align{ state->text_align & (Align::HLeft | Align::HCenter | Align::HRight) };
+        const Align v_align{ state->text_align &
+                             (Align::VTop | Align::VMiddle | Align::VBottom | Align::VBaseline) };
 
-        if (state->font_id == FONS_INVALID)
-        {
-            if (bounds != nullptr)
-                bounds[0] = bounds[1] = bounds[2] = bounds[3] = 0.0f;
-            return;
-        }
+        if (state->font_id == font::INVALID)
+            return {};
 
+        f32 lineh{ 0.0f };
         text_metrics_(ctx, nullptr, nullptr, &lineh);
 
-        state->text_align = Align::HLeft | valign;
+        state->text_align = Align::HLeft | v_align;
 
-        f32 minx = maxx = x;
-        f32 miny = maxy = y;
+        font::set_size(ctx->fs, state->font_size * scale);
+        font::set_spacing(ctx->fs, state->letter_spacing * scale);
+        font::set_blur(ctx->fs, state->font_blur * scale);
+        font::set_align(ctx->fs, state->text_align);
+        font::set_font(ctx->fs, state->font_id);
 
-        fons_set_size(ctx->fs, state->font_size * scale);
-        fons_set_spacing(ctx->fs, state->letter_spacing * scale);
-        fons_set_blur(ctx->fs, state->font_blur * scale);
-        fons_set_align(ctx->fs, state->text_align);
-        fons_set_font(ctx->fs, state->font_id);
-        fons_line_bounds(ctx->fs, 0, &rminy, &rmaxy);
+        f32 r_min_y{ 0.0f };
+        f32 r_max_y{ 0.0f };
+        font::line_bounds(ctx->fs, 0, &r_min_y, &r_max_y);
+        r_min_y *= invscale;
+        r_max_y *= invscale;
 
-        rminy *= invscale;
-        rmaxy *= invscale;
+        f32 min_x{ pos.x };
+        f32 max_x{ pos.x };
+        f32 min_y{ pos.y };
+        f32 max_y{ pos.y };
 
-        i32 nrows = text_break_lines_(ctx, string, end, break_row_width, rows, 2);
+        std::array<TextRow, 2> rows{};
+        const char* str{ text.c_str() };
+        u32 nrows = text_break_lines(ctx, str, nullptr, break_row_width, rows.data(),
+                                     static_cast<u32>(rows.size()));
         while (nrows > 0)
         {
-            for (i32 i = 0; i < nrows; i++)
+            for (u32 i = 0; i < nrows; i++)
             {
                 const TextRow* row{ &rows[i] };
 
                 f32 dx = 0;
-                if ((haling & Align::HLeft) != 0)
+                if ((h_align & Align::HLeft) != 0)
                     dx = 0;
-                else if ((haling & Align::HCenter) != 0)
+                else if ((h_align & Align::HCenter) != 0)
                     dx = break_row_width * 0.5f - row->width * 0.5f;
-                else if ((haling & Align::HRight) != 0)
+                else if ((h_align & Align::HRight) != 0)
                     dx = break_row_width - row->width;
 
-                const f32 rminx{ x + row->min_x + dx };
-                const f32 rmaxx{ x + row->max_x + dx };
+                const f32 r_min_x{ pos.x + row->min_x + dx };
+                const f32 r_max_x{ pos.x + row->max_x + dx };
 
-                // Horizontal bounds
-                minx = math::min(minx, rminx);
-                maxx = math::max(maxx, rmaxx);
-                // Vertical bounds
-                miny = math::min(miny, y + rminy);
-                maxy = math::max(maxy, y + rmaxy);
+                min_x = math::min(min_x, r_min_x);
+                max_x = math::max(max_x, r_max_x);
+                min_y = math::min(min_y, pos.y + r_min_y);
+                max_y = math::max(max_y, pos.y + r_max_y);
 
-                y += lineh * state->line_height;
+                pos.y += lineh * state->line_height;
             }
-            string = rows[nrows - 1].next;
+
+            str = rows[nrows - 1].next;
+            nrows = text_break_lines(ctx, str, nullptr, break_row_width, rows.data(),
+                                     static_cast<u32>(rows.size()));
         }
 
         state->text_align = old_align;
-        if (bounds != nullptr)
-        {
-            bounds[0] = minx;
-            bounds[1] = miny;
-            bounds[2] = maxx;
-            bounds[3] = maxy;
-        }
+
+        return ds::rect<f32>{
+            ds::point<f32>{
+                min_x,
+                min_y,
+            },
+            ds::dims<f32>{
+                max_x - min_x,
+                max_y - min_y,
+            },
+        };
     }
 
     void text_metrics_(Context* ctx, f32* ascender, f32* descender, f32* lineh)
@@ -3426,16 +3489,16 @@ namespace rl::nvg {
         const State* state{ detail::get_state(ctx) };
         const f32 scale{ detail::get_font_scale(state) * ctx->device_px_ratio };
         const f32 invscale{ 1.0f / scale };
-        if (state->font_id == FONS_INVALID)
+        if (state->font_id == font::INVALID)
             return;
 
-        fons_set_size(ctx->fs, state->font_size * scale);
-        fons_set_spacing(ctx->fs, state->letter_spacing * scale);
-        fons_set_blur(ctx->fs, state->font_blur * scale);
-        fons_set_align(ctx->fs, state->text_align);
-        fons_set_font(ctx->fs, state->font_id);
+        font::set_size(ctx->fs, state->font_size * scale);
+        font::set_spacing(ctx->fs, state->letter_spacing * scale);
+        font::set_blur(ctx->fs, state->font_blur * scale);
+        font::set_align(ctx->fs, state->text_align);
+        font::set_font(ctx->fs, state->font_id);
 
-        fons_vert_metrics(ctx->fs, ascender, descender, lineh);
+        font::vert_metrics(ctx->fs, ascender, descender, lineh);
         if (ascender != nullptr)
             *ascender *= invscale;
         if (descender != nullptr)

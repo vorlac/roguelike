@@ -4445,20 +4445,21 @@ namespace rl::stb {
         return 1;
     }
 
-    static const int stbi_zlength_base[31] = { 3,  4,   5,   6,   7,   8,   9,   10, 11, 13, 15,
-                                               17, 19,  23,  27,  31,  35,  43,  51, 59, 67, 83,
-                                               99, 115, 131, 163, 195, 227, 258, 0,  0 };
+    constexpr static int stbi_zlength_base[31] = { 3,  4,   5,   6,   7,   8,   9,   10, 11, 13, 15,
+                                                   17, 19,  23,  27,  31,  35,  43,  51, 59, 67, 83,
+                                                   99, 115, 131, 163, 195, 227, 258, 0,  0 };
 
-    static const int stbi_zlength_extra[31] = { 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2,
-                                                3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 0, 0, 0 };
+    constexpr static int stbi_zlength_extra[31] = { 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2,
+                                                    3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 0, 0, 0 };
 
-    static const int stbi_zdist_base[32] = { 1,    2,    3,    4,     5,     7,     9,    13,
-                                             17,   25,   33,   49,    65,    97,    129,  193,
-                                             257,  385,  513,  769,   1025,  1537,  2049, 3073,
-                                             4097, 6145, 8193, 12289, 16385, 24577, 0,    0 };
+    constexpr static int stbi_zdist_base[32] = { 1,    2,    3,    4,     5,     7,     9,    13,
+                                                 17,   25,   33,   49,    65,    97,    129,  193,
+                                                 257,  385,  513,  769,   1025,  1537,  2049, 3073,
+                                                 4097, 6145, 8193, 12289, 16385, 24577, 0,    0 };
 
-    static const int stbi_zdist_extra[32] = { 0, 0, 0, 0, 1, 1, 2, 2,  3,  3,  4,  4,  5,  5,  6,
-                                              6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13 };
+    constexpr static int stbi_zdist_extra[32] = { 0, 0, 0,  0,  1,  1,  2,  2,  3,  3,
+                                                  4, 4, 5,  5,  6,  6,  7,  7,  8,  8,
+                                                  9, 9, 10, 10, 11, 11, 12, 12, 13, 13 };
 
     static int stbi_parse_huffman_block(stbi_zbuf* a)
     {
@@ -4660,7 +4661,7 @@ namespace rl::stb {
         return 1;
     }
 
-    static const stbi_uc stbi_zdefault_length[STBI_ZNSYMS] = {
+    constexpr static stbi_uc stbi_zdefault_length[STBI_ZNSYMS] = {
         8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
         8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
         8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
@@ -4672,9 +4673,9 @@ namespace rl::stb {
         9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 7, 7, 7, 7, 7,
         7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 8, 8, 8, 8, 8, 8, 8, 8
     };
-    static const stbi_uc stbi_zdefault_distance[32] = { 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
-                                                        5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
-                                                        5, 5, 5, 5, 5, 5, 5, 5, 5, 5 };
+    constexpr static stbi_uc stbi_zdefault_distance[32] = { 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
+                                                            5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
+                                                            5, 5, 5, 5, 5, 5, 5, 5, 5, 5 };
 
     /*
     Init algorithm:
@@ -4830,8 +4831,8 @@ namespace rl::stb {
                                          const int ilen)
     {
         stbi_zbuf a;
-        a.zbuffer = (stbi_uc*)ibuffer;
-        a.zbuffer_end = (stbi_uc*)ibuffer + ilen;
+        a.zbuffer = reinterpret_cast<stbi_uc*>(ibuffer);
+        a.zbuffer_end = reinterpret_cast<stbi_uc*>(ibuffer) + ilen;
         if (stbi_do_zlib(&a, obuffer, olen, 0, 0))
             return static_cast<int>(a.zout - a.zout_start);
         else

@@ -53,6 +53,17 @@ namespace rl {
         Grid       = 1 << 2,  // Layout expands in 2D grid.
     };
 
+    enum class Align : i16_fast {
+        None = 0,
+        HLeft = 1 << 0,      // Default, align text horizontally to left.
+        HCenter = 1 << 1,    // Align text horizontally to center.
+        HRight = 1 << 2,     // Align text horizontally to right.
+        VTop = 1 << 3,       // Align text vertically to top.
+        VMiddle = 1 << 4,    // Align text vertically to middle.
+        VBottom = 1 << 5,    // Align text vertically to bottom.
+        VBaseline = 1 << 6,  // Default, align text vertically to baseline.
+    };
+
     enum class Axis : i16_fast {
         Horizontal = 1 << 0,  // x axis
         Vertical   = 1 << 1,  // y axis

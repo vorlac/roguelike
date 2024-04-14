@@ -262,20 +262,24 @@ namespace rl::ui {
 
                 nvg::set_font_size(context, m_theme->tooltip_font_size);
                 nvg::set_font_face(context, m_theme->tooltip_font_name.data());
-                nvg::set_text_align(context, nvg::Align::HCenter | nvg::Align::VMiddle);
+                nvg::set_text_align(context, Align::HCenter | Align::VMiddle);
 
                 // header text shadow
                 nvg::font_blur_(context, 2.0f);
                 nvg::fill_color(context, m_theme->text_shadow);
-                nvg::text_(context, m_rect.pt.x + (m_rect.size.width / 2.0f),
-                           m_rect.pt.y + (header_height / 2.0f), m_title.c_str());
+                nvg::draw_text(context,
+                               { m_rect.pt.x + (m_rect.size.width / 2.0f),
+                                 m_rect.pt.y + (header_height / 2.0f) },
+                               m_title);
 
                 // Header text
                 nvg::font_blur_(context, 0.0f);
                 nvg::fill_color(context, m_focused ? m_theme->dialog_title_focused
                                                    : m_theme->dialog_title_unfocused);
-                nvg::text_(context, m_rect.pt.x + (m_rect.size.width / 2.0f),
-                           m_rect.pt.y + (header_height / 2.0f) - 1.0f, m_title.c_str());
+                nvg::draw_text(context,
+                               { m_rect.pt.x + (m_rect.size.width / 2.0f),
+                                 m_rect.pt.y + (header_height / 2.0f) - 1.0f },
+                               m_title);
             }
         });
 

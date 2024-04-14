@@ -85,19 +85,19 @@ namespace rl::ui {
                                                   ? m_theme->text_color
                                                   : m_text_color };
 
-            nvg::set_font_face(context, font::style::Icons);
+            nvg::set_font_face(context, text::font::style::Icons);
             nvg::set_font_size(context, text_size * this->icon_scale());
             nvg::fill_color(context, m_enabled ? text_color : m_theme->disabled_text_color);
-            nvg::set_text_align(context, nvg::Align::HLeft | nvg::Align::VMiddle);
+            nvg::set_text_align(context, Align::HLeft | Align::VMiddle);
 
-            const f32 icon_width{ nvg::text_bounds_(context, 0.0f, 0.0f, icon.data()) };
+            const f32 icon_width{ nvg::text_bounds(context, ds::point<f32>::zero(), icon) };
             ds::point<f32> icon_pos{ 0.0f, m_rect.pt.y + m_rect.size.height * 0.5f - 1.0f };
             if (m_popup->side() == Side::Right)
                 icon_pos.x = m_rect.pt.x + m_rect.size.width - icon_width - 8.0f;
             else
                 icon_pos.x = m_rect.pt.x + 8.0f;
 
-            nvg::text_(context, icon_pos.x, icon_pos.y, icon.data());
+            nvg::draw_text(context, icon_pos, icon);
         }
     }
 

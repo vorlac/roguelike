@@ -344,6 +344,31 @@ namespace rl::ds {
 
         // Gets the top left point of the rectangle
         [[nodiscard]]
+        constexpr T top() const noexcept
+        {
+            return pt.y;
+        }
+
+        [[nodiscard]]
+        constexpr T bottom() const noexcept
+        {
+            return pt.y + size.height;
+        }
+
+        [[nodiscard]]
+        constexpr T left() const noexcept
+        {
+            return pt.x;
+        }
+
+        [[nodiscard]]
+        constexpr T right() const noexcept
+        {
+            return pt.x + size.width;
+        }
+
+        // Gets the top left point of the rectangle
+        [[nodiscard]]
         constexpr point<T> top_left() const noexcept
         {
             return point<T>{ pt.x, pt.y };
@@ -377,7 +402,6 @@ namespace rl::ds {
         [[nodiscard]]
         constexpr point<T> centroid() const noexcept
         {
-            // return (this->pt + this->bot_right()) / 2.0f;
             return point<T>{
                 pt.x + (size.width / 2.0f),
                 pt.y + (size.height / 2.0f),
@@ -595,6 +619,13 @@ namespace rl::ds {
             rect ret{ *this };
             ret -= vec;
             return ret;
+        }
+
+        constexpr rect<T>& operator*=(T val)
+        {
+            this->pt *= val;
+            this->size *= val;
+            return *this;
         }
 
     public:

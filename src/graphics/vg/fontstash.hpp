@@ -2,241 +2,242 @@
 
 #include <cmath>
 
+#include "ds/point.hpp"
+#include "ds/rect.hpp"
 #include "graphics/stb/stb_truetype.hpp"
+#include "utils/numeric.hpp"
 
-constexpr int32_t FONS_INVALID{ -1 };
-constexpr int32_t FONS_SCRATCH_BUF_SIZE{ 96000 };
-constexpr int32_t FONS_HASH_LUT_SIZE{ 256 };
-constexpr int32_t FONS_INIT_FONTS{ 4 };
-constexpr int32_t FONS_INIT_GLYPHS{ 256 };
-constexpr int32_t FONS_INIT_ATLAS_NODES{ 256 };
-constexpr int32_t FONS_VERTEX_COUNT{ 1024 };
-constexpr int32_t FONS_MAX_STATES{ 20 };
-constexpr int32_t FONS_MAX_FALLBACKS{ 20 };
-
-namespace rl::nvg {
+namespace rl {
     enum class Align;
+}
 
-    struct FONSttFontImpl
+namespace rl::nvg::font {
+    constexpr i32 INVALID{ -1 };
+    constexpr i32 SCRATCH_BUF_SIZE{ 96000 };
+    constexpr i32 HASH_LUT_SIZE{ 256 };
+    constexpr i32 INIT_FONTS{ 4 };
+    constexpr i32 INIT_GLYPHS{ 256 };
+    constexpr i32 INIT_ATLAS_NODES{ 256 };
+    constexpr i32 VERTEX_COUNT{ 1024 };
+    constexpr i32 MAX_STATES{ 20 };
+    constexpr i32 MAX_FALLBACKS{ 20 };
+
+    struct STTFontImpl
     {
-        stb::stbtt_fontinfo font;
+        stb::stbtt_fontinfo font{};
     };
 
-    struct FONSglyph
+    struct Glyph
     {
-        uint32_t codepoint;
-        int32_t index;
-        int32_t next;
-        int16_t size;
-        int16_t blur;
-        int16_t x0;
-        int16_t y0;
-        int16_t x1;
-        int16_t y1;
-        int16_t xadv;
-        int16_t xoff;
-        int16_t yoff;
+        u32 codepoint{ 0 };
+        i32 index{ 0 };
+        i32 next{ 0 };
+        i16 size{ 0 };
+        i16 blur{ 0 };
+        i16 x0{ 0 };
+        i16 y0{ 0 };
+        i16 x1{ 0 };
+        i16 y1{ 0 };
+        i16 x_adv{ 0 };
+        i16 x_off{ 0 };
+        i16 y_off{ 0 };
     };
 
-    struct FONSfont
+    struct Font
     {
-        FONSttFontImpl font;
-        char name[64];
-        uint8_t* data;
-        int32_t data_size;
-        bool free_data;
-        float ascender;
-        float descender;
-        float lineh;
-        FONSglyph* glyphs;
-        int32_t cglyphs;
-        int32_t nglyphs;
-        int32_t lut[FONS_HASH_LUT_SIZE];
-        int32_t fallbacks[FONS_MAX_FALLBACKS];
-        int32_t nfallbacks;
+        STTFontImpl font{};
+        char name[64]{};
+        u8* data{ nullptr };
+        i32 data_size{ 0 };
+        bool free_data{ false };
+        f32 ascender{ 0.0f };
+        f32 descender{ 0.0f };
+        f32 lineh{ 0.0f };
+        Glyph* glyphs{ nullptr };
+        i32 cglyphs{ 0 };
+        i32 nglyphs{ 0 };
+        i32 lut[HASH_LUT_SIZE]{};
+        i32 fallbacks[MAX_FALLBACKS]{};
+        i32 nfallbacks{ 0 };
     };
 
-    struct FONSstate
+    struct State
     {
-        int32_t font;
-        Align align;
-        float size;
-        uint32_t color;
-        float blur;
-        float spacing;
+        i32 font{ 0 };
+        Align align{ 0 };
+        f32 size{ 0 };
+        u32 color{ 0 };
+        f32 blur{ 0 };
+        f32 spacing{ 0 };
     };
 
-    struct FONSatlasNode
+    struct AtlasNode
     {
-        int16_t x;
-        int16_t y;
-        int16_t width;
+        i32 x{ 0 };
+        i32 y{ 0 };
+        i32 width{ 0 };
     };
 
-    struct FONSatlas
+    struct Atlas
     {
-        int32_t width;
-        int32_t height;
-        FONSatlasNode* nodes;
-        int32_t nnodes;
-        int32_t cnodes;
+        i32 width{ 0 };
+        i32 height{ 0 };
+        AtlasNode* nodes{ nullptr };
+        i32 nnodes{ 0 };
+        i32 cnodes{ 0 };
     };
 
-    struct FONSparams
+    struct Params
     {
-        int32_t width;
-        int32_t height;
-        uint8_t flags;
+        i32 width;
+        i32 height;
+        u8 flags;
         void* user_ptr;
-        int32_t (*render_create)(void* uptr, int32_t width, int32_t height);
-        int32_t (*render_resize)(void* uptr, int32_t width, int32_t height);
-        void (*render_update)(void* uptr, int32_t* rect, const uint8_t* data);
-        void (*render_draw)(void* uptr, const float* verts, const float* tcoords,
-                            const uint32_t* colors, int32_t nverts);
+        i32 (*render_create)(void* uptr, i32 width, i32 height);
+        i32 (*render_resize)(void* uptr, i32 width, i32 height);
+        void (*render_update)(void* uptr, i32* rect, const u8* data);
+        void (*render_draw)(void* uptr, const f32* verts, const f32* tcoords, const u32* colors,
+                            i32 nverts);
         void (*render_delete)(void* uptr);
     };
 
-    struct FONScontext
-    {
-        FONSparams params;
-        float itw;
-        float ith;
-        uint8_t* tex_data;
-        int32_t dirty_rect[4];
-        FONSfont** fonts;
-        FONSatlas* atlas;
-        int32_t cfonts;
-        int32_t nfonts;
-        float verts[FONS_VERTEX_COUNT * 2];
-        float tcoords[FONS_VERTEX_COUNT * 2];
-        uint32_t colors[FONS_VERTEX_COUNT];
-        int32_t nverts;
-        uint8_t* scratch;
-        int32_t nscratch;
-        FONSstate states[FONS_MAX_STATES];
-        int32_t nstates;
-        void (*handle_error)(void* uptr, int32_t error, int32_t val);
-        void* error_uptr;
-    };
-
-    enum FONSflags {
-        FonsZeroTopleft = 1,
-        FonsZeroBottomleft = 2,
-    };
-
-    enum FONSalign {
-        // Horizontal align
-        FonsAlignLeft = 1 << 0,  // Default
-        FonsAlignCenter = 1 << 1,
-        FonsAlignRight = 1 << 2,
-        // Vertical align
-        FonsAlignTop = 1 << 3,
-        FonsAlignMiddle = 1 << 4,
-        FonsAlignBottom = 1 << 5,
-        FonsAlignBaseline = 1 << 6,  // Default
-    };
-
-    enum FONSglyphBitmap {
-        FonsGlyphBitmapOptional = 1,
-        FonsGlyphBitmapRequired = 2,
-    };
-
-    enum FONSerrorCode {
+    enum class ErrorCode {
         // Font atlas is full.
         FonsAtlasFull = 1,
-        // Scratch memory used to render glyphs is full, requested size reported in 'val', you may
+        // Scratch memory used to render glyphs is full,
+        // requested size reported in 'val', you may
         // need to bump up FONS_SCRATCH_BUF_SIZE.
         FonsScratchFull = 2,
-        // Calls to fonsPushState has created too large stack, if you need deep state stack bump up
-        // FONS_MAX_STATES.
+        // Calls to fonsPushState has created too large stack,
+        // if you need deep state stack bump up FONS_MAX_STATES.
         FonsStatesOverflow = 3,
         // Trying to pop too many states fonsPopState().
         FonsStatesUnderflow = 4,
     };
 
-    struct FONSquad
+    struct Context
     {
-        float x0, y0, s0, t0;
-        float x1, y1, s1, t1;
+        Params params{};
+        f32 itw{ 0.0f };
+        f32 ith{ 0.0f };
+        u8* tex_data{ nullptr };
+        i32 dirty_rect[4]{};
+        Font** fonts{ nullptr };
+        Atlas* atlas{ nullptr };
+        i32 cfonts{ 0 };
+        i32 nfonts{ 0 };
+        f32 verts[VERTEX_COUNT * 2]{};
+        f32 tcoords[VERTEX_COUNT * 2]{};
+        u32 colors[VERTEX_COUNT]{};
+        i32 nverts{ 0 };
+        u8* scratch{ nullptr };
+        i32 nscratch{ 0 };
+        State states[MAX_STATES]{};
+        i32 nstates{ 0 };
+        void (*handle_error)(void* uptr, ErrorCode error, i32 val);
+        void* error_uptr{ nullptr };
     };
 
-    struct FONStextIter
+    enum FontFlags {
+        FonsZeroTopleft = 1,
+        FonsZeroBottomleft = 2,
+    };
+
+    enum GlyphBitmap {
+        FonsGlyphBitmapOptional = 1,
+        FonsGlyphBitmapRequired = 2,
+    };
+
+    struct FontQuad
     {
-        float x{};
-        float y{};
-        float nextx{};
-        float nexty{};
-        float scale{};
-        float spacing{};
-        uint32_t codepoint{};
-        int16_t isize{};
-        int16_t iblur{};
-        FONSfont* font;
-        int32_t prev_glyph_index;
-        const char* str;
-        const char* next;
-        const char* end;
-        uint32_t utf8_state;
-        int32_t bitmap_option;
+        f32 x0{ 0.0f };
+        f32 y0{ 0.0f };
+        f32 s0{ 0.0f };
+        f32 t0{ 0.0f };
+        f32 x1{ 0.0f };
+        f32 y1{ 0.0f };
+        f32 s1{ 0.0f };
+        f32 t1{ 0.0f };
+    };
+
+    struct TextIter
+    {
+        f32 x{ 0.0f };
+        f32 y{ 0.0f };
+        f32 nextx{ 0.0f };
+        f32 nexty{ 0.0f };
+        f32 scale{ 0.0f };
+        f32 spacing{ 0.0f };
+        u32 codepoint{ 0 };
+        i16 isize{ 0 };
+        i16 iblur{ 0 };
+        Font* font{ nullptr };
+        i32 prev_glyph_index{ 0 };
+        const char* str{ nullptr };
+        const char* next{ nullptr };
+        const char* end{ nullptr };
+        u32 utf8_state{ 0 };
+        i32 bitmap_option{ 0 };
     };
 
     // Constructor and destructor.
-    FONScontext* fons_create_internal(const FONSparams* params);
-    void fons_delete_internal(FONScontext* stash);
+    Context* create_internal(const Params* params);
+    void delete_internal(Context* font_ctx);
 
-    void fons_set_error_callback(
-        FONScontext* s, void (*callback)(void* uptr, int32_t error, int32_t val), void* uptr);
+    void set_error_callback(Context* font_ctx,
+                            void (*callback)(void* uptr, ErrorCode error, i32 val), void* uptr);
 
     // Returns current atlas size.
-    void fons_get_atlas_size(const FONScontext* s, int32_t* width, int32_t* height);
+    void get_atlas_size(const Context* font_ctx, i32* width, i32* height);
 
     // Expands the atlas size.
-    int32_t fons_expand_atlas(FONScontext* s, int32_t width, int32_t height);
+    i32 expand_atlas(Context* font_ctx, i32 width, i32 height);
 
     // Resets the whole stash.
-    int32_t fons_reset_atlas(FONScontext* stash, int32_t width, int32_t height);
+    i32 reset_atlas(Context* font_ctx, i32 width, i32 height);
 
     // Add fonts
-    int32_t fons_add_font(FONScontext* stash, const char* name, const char* path,
-                          int32_t font_index);
-    int32_t fons_add_font_mem(FONScontext* stash, const char* name, u8* data, i32 data_size,
-                              i32 free_data, i32 font_index);
-    int32_t fons_get_font_by_name(const FONScontext* s, const char* name);
+    i32 add_font(Context* font_ctx, const char* name, const char* path, i32 font_index);
+    i32 add_font_mem(Context* font_ctx, const char* name, u8* data, i32 data_size, i32 free_data,
+                     i32 font_index);
+    i32 get_font_by_name(const Context* font_ctx, const char* name);
 
     // State handling
-    void fons_push_state(FONScontext* stash);
-    void fons_pop_state(FONScontext* stash);
-    void fons_clear_state(FONScontext* stash);
+    void push_state(Context* font_ctx);
+    void pop_state(Context* font_ctx);
+    void clear_state(Context* font_ctx);
 
     // State setting
-    void fons_set_size(FONScontext* stash, float size);
-    void fons_set_color(FONScontext* stash, uint32_t color);
-    void fons_set_spacing(FONScontext* stash, float spacing);
-    void fons_set_blur(FONScontext* stash, float blur);
-    void fons_set_align(FONScontext* stash, Align align);
-    void fons_set_font(FONScontext* stash, int32_t font);
+    void set_size(Context* font_ctx, f32 size);
+    void set_color(Context* font_ctx, u32 color);
+    void set_spacing(Context* font_ctx, f32 spacing);
+    void set_blur(Context* font_ctx, f32 blur);
+    void set_align(Context* font_ctx, Align align);
+    void set_font(Context* font_ctx, i32 font);
 
     // Draw text
-    float fons_draw_text(FONScontext* s, float x, float y, const char* string, const char* end);
+    f32 draw_text(Context* font_ctx, f32 x, f32 y, const char* string, const char* end);
 
     // Measure text
-    float fons_text_bounds(FONScontext* stash, float x, float y, const char* str, const char* end,
-                           float* bounds);
-    void fons_line_bounds(FONScontext* s, float y, float* miny, float* maxy);
-    void fons_vert_metrics(FONScontext* s, float* ascender, float* descender, float* lineh);
+    f32 text_bounds(Context* font_ctx, ds::point<f32> pos, const char* str,
+                    const char* end = nullptr);
+    f32 text_bounds(Context* font_ctx, ds::point<f32> pos, const char* str, const char* end,
+                    ds::rect<f32>& bounds);
+    void line_bounds(Context* font_ctx, f32 y, f32* miny, f32* maxy);
+    void vert_metrics(Context* font_ctx, f32* ascender, f32* descender, f32* lineh);
 
     // Text iterator
-    int32_t fons_text_iter_init(FONScontext* stash, FONStextIter* iter, float x, float y,
-                                const char* str, const char* end, int32_t bitmap_option);
-    int32_t fons_text_iter_next(FONScontext* stash, FONStextIter* iter, FONSquad* quad);
+    i32 text_iter_init(Context* font_ctx, TextIter* iter, ds::point<f32> pos,
+                       const char* str, const char* end, i32 bitmap_option);
+    i32 text_iter_next(Context* font_ctx, TextIter* iter, FontQuad* quad);
 
     // Pull texture changes
-    const uint8_t* fons_get_texture_data(const FONScontext* stash, int32_t* width, int32_t* height);
-    int32_t fons_validate_texture(FONScontext* s, int32_t* dirty);
+    const u8* get_texture_data(const Context* font_ctx, i32* width, i32* height);
+    i32 validate_texture(Context* font_ctx, i32* dirty);
 
     // Draws the stash texture for debugging
-    void fons_draw_debug(FONScontext* stash, float x, float y);
+    void draw_debug(Context* font_ctx, f32 x, f32 y);
 
-    int32_t fons_add_fallback_font(const FONScontext* stash, int32_t base, int32_t fallback);
-    void fons_reset_fallback_font(const FONScontext* stash, int32_t base);
+    i32 add_fallback_font(const Context* font_ctx, i32 base, i32 fallback);
+    void reset_fallback_font(const Context* font_ctx, i32 base);
 }

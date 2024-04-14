@@ -77,7 +77,7 @@ namespace rl::ui {
             {
                 // TODO: add to theme style sheet
                 constexpr static f32 TOOLTIP_WIDTH{ 150.0f };
-                std::array<f32, 4> bounds = { 0.0f };
+                ds::rect bounds{ ds::rect<f32>::zero() };
                 ds::point<f32> pos{
                     widget->position() +
                         ds::point<f32>{
@@ -86,31 +86,27 @@ namespace rl::ui {
                         },
                 };
 
-                nvg::set_font_face(context, font::style::Sans);
+                nvg::set_font_face(context, text::font::style::Sans);
                 nvg::set_font_size(context, 20.0f);
-                nvg::set_text_align(context, nvg::Align::HLeft | nvg::Align::VTop);
+                nvg::set_text_align(context, Align::HLeft | Align::VTop);
                 nvg::text_line_height_(context, 1.125f);
-                nvg::text_bounds_(context, pos.x, pos.y, widget->tooltip().c_str(), nullptr,
-                                  bounds.data());
+                nvg::text_bounds(context, pos, widget->tooltip(), bounds);
 
-                f32 height{ (bounds[2] - bounds[0]) / 2.0f };
-                if (height > (TOOLTIP_WIDTH / 2.0f))
+                f32 horiz{ bounds.size.width / 2.0f };
+                if (bounds.size.width / 2.0f > (TOOLTIP_WIDTH / 2.0f))
                 {
-                    nvg::set_text_align(context, nvg::Align::HCenter | nvg::Align::VTop);
-                    nvg::text_box_bounds_(context, pos.x, pos.y, TOOLTIP_WIDTH,
-                                          widget->tooltip().c_str(), nullptr, bounds.data());
-
-                    height = (bounds[2] - bounds[0]) / 2;
+                    nvg::set_text_align(context, Align::HCenter | Align::VTop);
+                    bounds = nvg::text_box_bounds(context, pos, TOOLTIP_WIDTH, widget->tooltip());
+                    horiz = bounds.size.width / 2.0f;
                 }
 
                 f32 shift{ 0.0f };
-                if (pos.x - height - 8.0f < 0.0f)
+                if (pos.x - bounds.size.width - 8.0f < 0.0f)
                 {
                     // Keep tooltips on screen
-                    shift = pos.x - height - 8.0f;
+                    shift = pos.x - bounds.size.width - 8.0f;
                     pos.x -= shift;
-                    bounds[0] -= shift;
-                    bounds[2] -= shift;
+                    bounds.pt.x -= shift;
                 }
 
                 nvg::global_alpha(context,
@@ -118,21 +114,19 @@ namespace rl::ui {
 
                 nvg::begin_path(context);
                 nvg::fill_color(context, rl::Colors::DarkererGrey);
-                nvg::rounded_rect(context, bounds[0] - 4.0f - height, bounds[1] - 4.0f,
-                                  (bounds[2] - bounds[0]) + 8.0f, (bounds[3] - bounds[1]) + 8.0f,
-                                  3.0f);
+                nvg::rounded_rect(context, bounds.pt.x - 4.0f - horiz, bounds.pt.y - 4.0f,
+                                  bounds.size.width + 8.0f, bounds.size.height + 8.0f, 3.0f);
 
-                const f32 px{ ((bounds[2] + bounds[0]) / 2.0f) - height + shift };
+                const f32 px{ (bounds.size.width / 2.0f) - horiz + shift };
 
-                nvg::move_to(context, px, bounds[1] - 10);
-                nvg::line_to(context, px + 7, bounds[1] + 1);
-                nvg::line_to(context, px - 7, bounds[1] + 1);
+                nvg::move_to(context, px, bounds.pt.y - 10);
+                nvg::line_to(context, px + 7, bounds.pt.y + 1);
+                nvg::line_to(context, px - 7, bounds.pt.y + 1);
                 nvg::fill(context);
 
                 nvg::fill_color(context, rl::Colors::White);
                 nvg::font_blur_(context, 0.0f);
-                nvg::text_box_(context, pos.x - height, pos.y, TOOLTIP_WIDTH,
-                               widget->tooltip().c_str(), nullptr);
+                nvg::text_box(context, { pos.x - horiz, pos.y }, TOOLTIP_WIDTH, widget->tooltip());
             }
         }
 
@@ -449,9 +443,10 @@ namespace rl::ui {
         const ds::point<f32> mouse_pos{ mouse.pos() };
         if (m_focus_path.size() > 1)
         {
-            // Since Dialogs are always direct children of the Canvas and the tree is represented
-            // where the root (Canvas) is the last item in the list, if a ScrollableDialog is
-            // focused, then it will always be the 2nd to last item in the m_focus_path vector.
+            // Since Dialogs are always direct children of the Canvas and the tree is
+            // represented where the root (Canvas) is the last item in the list, if a
+            // ScrollableDialog is focused, then it will always be the 2nd to last item in the
+            // m_focus_path vector.
             ScrollableDialog* dialog{ dynamic_cast<ScrollableDialog*>(
                 m_focus_path[m_focus_path.size() - 2]) };
             if (dialog != nullptr)

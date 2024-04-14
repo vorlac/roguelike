@@ -11,11 +11,11 @@ namespace rl::ui {
     class Theme final : public ds::refcounted
     {
     public:
-        std::string_view label_font_name{ font::style::Sans };
-        std::string_view button_font_name{ font::style::Sans };
-        std::string_view tooltip_font_name{ font::style::SansBold };
-        std::string_view dialog_title_font_name{ font::style::SansBold };
-        std::string_view form_group_font_name{ font::style::Mono };
+        std::string_view label_font_name{ text::font::style::Sans };
+        std::string_view button_font_name{ text::font::style::Sans };
+        std::string_view tooltip_font_name{ text::font::style::SansBold };
+        std::string_view dialog_title_font_name{ text::font::style::SansBold };
+        std::string_view form_group_font_name{ text::font::style::Mono };
 
         f32 icon_scale{ 1.0f };
         f32 tab_border_width{ 0.75f };

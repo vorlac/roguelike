@@ -67,8 +67,8 @@ namespace rl::ui {
         }
 
         void add_widget(Widget* widget, const CellProperties& properties = {
-                                            .outer_margin = { 20.0f, 20.0f, 20.0f, 20.0f },
-                                            .inner_margin = { 20.0f, 20.0f, 20.0f, 20.0f },
+                                            .outer_margin = { 2.0f, 2.0f, 2.0f, 2.0f },
+                                            .inner_margin = { 2.0f, 2.0f, 2.0f, 2.0f },
                                         })
         {
             this->add_child(widget);
@@ -76,8 +76,8 @@ namespace rl::ui {
         }
 
         void add_nested_layout(Layout* layout, const CellProperties& properties = {
-                                                   .outer_margin = { 20.0f, 20.0f, 20.0f, 20.0f },
-                                                   .inner_margin = { 20.0f, 20.0f, 20.0f, 20.0f },
+                                                   .outer_margin = { 2.0f, 2.0f, 2.0f, 2.0f },
+                                                   .inner_margin = { 2.0f, 2.0f, 2.0f, 2.0f },
                                                })
         {
             this->add_widget(layout, properties);
@@ -139,9 +139,9 @@ namespace rl::ui {
         Alignment m_alignment{ Alignment::None };
         SizePolicy m_size_policy{ SizePolicy::Prefered };
         std::vector<std::pair<Widget*, CellProperties>> m_cell_data{};
-        ds::margin<f32> m_outer_margin{ ds::margin<f32>::init(20.0f) };
-        ds::margin<f32> m_inner_margin{ ds::margin<f32>::init(20.0f) };
-        ds::margin<f32> m_inner_padding{ ds::margin<f32>::init(20.0f) };
+        ds::margin<f32> m_outer_margin{ ds::margin<f32>::init(5.0f) };
+        ds::margin<f32> m_inner_margin{ ds::margin<f32>::init(5.0f) };
+        ds::margin<f32> m_inner_padding{ ds::margin<f32>::init(5.0f) };
     };
 
     class OldLayout : public ds::refcounted

@@ -65,25 +65,183 @@ namespace rl {
         {
             bool ret{ this->setup() };
 
-            const auto text_alignment{ nvg::Align::VMiddle | nvg::Align::HCenter };
-            const auto layout_l{ new ui::BoxLayout<Alignment::Vertical>("ABC Vertical") };
-            layout_l->add_widget(new ui::Label{ "A", font::InvalidSize, text_alignment });
-            layout_l->add_widget(new ui::Label{ "B", font::InvalidSize, text_alignment });
-            layout_l->add_widget(new ui::Label{ "C", font::InvalidSize, text_alignment });
-            // layout_l->set_margins(ds::margin<f32>::zero(), ds::margin<f32>::zero());
+            constexpr auto font_size{ 20.0f };
+            constexpr auto alignment{ Align::VMiddle | Align::HCenter };
 
-            const auto layout_r{ new ui::BoxLayout<Alignment::Vertical>("123 Vertical") };
-            layout_r->add_widget(new ui::Label{ "1", font::InvalidSize, text_alignment });
-            layout_r->add_widget(new ui::Label{ "2", font::InvalidSize, text_alignment });
-            layout_r->add_widget(new ui::Label{ "3", font::InvalidSize, text_alignment });
-            // layout_r->set_margins(ds::margin<f32>::zero(), ds::margin<f32>::zero());
+            const auto layout_h1{ new ui::BoxLayout<Alignment::Horizontal>("Letters H1") };
+            layout_h1->add_widget(new ui::Label{ "AbC", font_size, alignment });
+            layout_h1->add_widget(new ui::Label{ "B", font_size, alignment });
+            layout_h1->add_widget(new ui::Label{ "C", font_size, alignment });
+            layout_h1->add_widget(new ui::Label{ "D", font_size, alignment });
+            layout_h1->add_widget(new ui::Label{ "E", font_size, alignment });
+            layout_h1->add_widget(new ui::Label{ "F", font_size, alignment });
+            layout_h1->add_widget(new ui::Label{ "G", font_size, alignment });
+            layout_h1->add_widget(new ui::Label{ "H", font_size, alignment });
+            layout_h1->add_widget(new ui::Label{ "I", font_size, alignment });
+            layout_h1->add_widget(new ui::Label{ "J", font_size, alignment });
+            layout_h1->add_widget(new ui::Label{ "K", font_size, alignment });
+            layout_h1->add_widget(new ui::Label{ "L", font_size, alignment });
+            layout_h1->add_widget(new ui::Label{ "M", font_size, alignment });
 
-            const auto horiz_layout{ new ui::BoxLayout<Alignment::Horizontal>("ABC123 Horiz") };
-            horiz_layout->add_nested_layout(layout_l);
-            horiz_layout->add_nested_layout(layout_r);
-            horiz_layout->set_margins(ds::margin<f32>::zero(), ds::margin<f32>::init(20.0f));
+            const auto layout_h2{ new ui::BoxLayout<Alignment::Horizontal>("Letters H2") };
+            layout_h2->add_widget(new ui::Label{ "N", font_size, alignment });
+            layout_h2->add_widget(new ui::Label{ "O", font_size, alignment });
+            layout_h2->add_widget(new ui::Label{ "P", font_size, alignment });
+            layout_h2->add_widget(new ui::Label{ "Q", font_size, alignment });
+            layout_h2->add_widget(new ui::Label{ "R", font_size, alignment });
+            layout_h2->add_widget(new ui::Label{ "S", font_size, alignment });
+            layout_h2->add_widget(new ui::Label{ "T", font_size, alignment });
+            layout_h2->add_widget(new ui::Label{ "U", font_size, alignment });
+            layout_h2->add_widget(new ui::Label{ "V", font_size, alignment });
+            layout_h2->add_widget(new ui::Label{ "W", font_size, alignment });
+            layout_h2->add_widget(new ui::Label{ "X", font_size, alignment });
+            layout_h2->add_widget(new ui::Label{ "Y", font_size, alignment });
+            layout_h2->add_widget(new ui::Label{ "Z", font_size, alignment });
 
-            m_main_window->gui()->assign_layout(horiz_layout);
+            const auto layout_h3{ new ui::BoxLayout<Alignment::Horizontal>("Letters H3") };
+            layout_h3->add_widget(new ui::Label{ "A", font_size, alignment });
+            layout_h3->add_widget(new ui::Label{ "B", font_size, alignment });
+            layout_h3->add_widget(new ui::Label{ "C", font_size, alignment });
+            layout_h3->add_widget(new ui::Label{ "D", font_size, alignment });
+            layout_h3->add_widget(new ui::Label{ "E", font_size, alignment });
+            layout_h3->add_widget(new ui::Label{ "F", font_size, alignment });
+            layout_h3->add_widget(new ui::Label{ "G", font_size, alignment });
+            layout_h3->add_widget(new ui::Label{ "H", font_size, alignment });
+            layout_h3->add_widget(new ui::Label{ "I", font_size, alignment });
+            layout_h3->add_widget(new ui::Label{ "J", font_size, alignment });
+            layout_h3->add_widget(new ui::Label{ "K", font_size, alignment });
+            layout_h3->add_widget(new ui::Label{ "L", font_size, alignment });
+            layout_h3->add_widget(new ui::Label{ "M", font_size, alignment });
+
+            const auto layout_h4{ new ui::BoxLayout<Alignment::Horizontal>("Letters H4") };
+            layout_h4->add_widget(new ui::Label{ "N", font_size, alignment });
+            layout_h4->add_widget(new ui::Label{ "O", font_size, alignment });
+            layout_h4->add_widget(new ui::Label{ "P", font_size, alignment });
+            layout_h4->add_widget(new ui::Label{ "Q", font_size, alignment });
+            layout_h4->add_widget(new ui::Label{ "R", font_size, alignment });
+            layout_h4->add_widget(new ui::Label{ "S", font_size, alignment });
+            layout_h4->add_widget(new ui::Label{ "T", font_size, alignment });
+            layout_h4->add_widget(new ui::Label{ "U", font_size, alignment });
+            layout_h4->add_widget(new ui::Label{ "V", font_size, alignment });
+            layout_h4->add_widget(new ui::Label{ "W", font_size, alignment });
+            layout_h4->add_widget(new ui::Label{ "X", font_size, alignment });
+            layout_h4->add_widget(new ui::Label{ "Y", font_size, alignment });
+            layout_h4->add_widget(new ui::Label{ "Z", font_size, alignment });
+
+            const auto layout_v1{ new ui::BoxLayout<Alignment::Vertical>("Nums V1") };
+            layout_v1->add_widget(new ui::Label{ "1", font_size, alignment });
+            layout_v1->add_widget(new ui::Label{ "2", font_size, alignment });
+            layout_v1->add_widget(new ui::Label{ "3", font_size, alignment });
+            layout_v1->add_widget(new ui::Label{ "4", font_size, alignment });
+            layout_v1->add_widget(new ui::Label{ "5", font_size, alignment });
+
+            const auto layout_v2{ new ui::BoxLayout<Alignment::Vertical>("Nums V2") };
+            layout_v2->add_widget(new ui::Label{ "1", font_size, alignment });
+            layout_v2->add_widget(new ui::Label{ "2", font_size, alignment });
+            layout_v2->add_widget(new ui::Label{ "3", font_size, alignment });
+            layout_v2->add_widget(new ui::Label{ "4", font_size, alignment });
+            layout_v2->add_widget(new ui::Label{ "5", font_size, alignment });
+
+            const auto layout_v3{ new ui::BoxLayout<Alignment::Vertical>("Nums V3") };
+            layout_v3->add_widget(new ui::Label{ "1", font_size, alignment });
+            layout_v3->add_widget(new ui::Label{ "2", font_size, alignment });
+            layout_v3->add_widget(new ui::Label{ "3", font_size, alignment });
+            layout_v3->add_widget(new ui::Label{ "4", font_size, alignment });
+            layout_v3->add_widget(new ui::Label{ "5", font_size, alignment });
+
+            const auto layout_v4{ new ui::BoxLayout<Alignment::Vertical>("Nums V4") };
+            layout_v4->add_widget(new ui::Label{ "1", font_size, alignment });
+            layout_v4->add_widget(new ui::Label{ "2", font_size, alignment });
+            layout_v4->add_widget(new ui::Label{ "3", font_size, alignment });
+            layout_v4->add_widget(new ui::Label{ "4", font_size, alignment });
+            layout_v4->add_widget(new ui::Label{ "5", font_size, alignment });
+
+            const auto layout_v5{ new ui::BoxLayout<Alignment::Vertical>("Nums V5") };
+            layout_v5->add_widget(new ui::Label{ "1", font_size, alignment });
+            layout_v5->add_widget(new ui::Label{ "2", font_size, alignment });
+            layout_v5->add_widget(new ui::Label{ "3", font_size, alignment });
+            layout_v5->add_widget(new ui::Label{ "4", font_size, alignment });
+            layout_v5->add_widget(new ui::Label{ "5", font_size, alignment });
+
+            const auto layout_v6{ new ui::BoxLayout<Alignment::Vertical>("Nums V6") };
+            layout_v6->add_widget(new ui::Label{ "1", font_size, alignment });
+            layout_v6->add_widget(new ui::Label{ "2", font_size, alignment });
+            layout_v6->add_widget(new ui::Label{ "3", font_size, alignment });
+            layout_v6->add_widget(new ui::Label{ "4", font_size, alignment });
+            layout_v6->add_widget(new ui::Label{ "5", font_size, alignment });
+
+            const auto layout_v7{ new ui::BoxLayout<Alignment::Vertical>("Nums V7") };
+            layout_v7->add_widget(new ui::Label{ "1", font_size, alignment });
+            layout_v7->add_widget(new ui::Label{ "2", font_size, alignment });
+            layout_v7->add_widget(new ui::Label{ "3", font_size, alignment });
+            layout_v7->add_widget(new ui::Label{ "4", font_size, alignment });
+            layout_v7->add_widget(new ui::Label{ "5", font_size, alignment });
+
+            const auto layout_v8{ new ui::BoxLayout<Alignment::Vertical>("Nums V8") };
+            layout_v8->add_widget(new ui::Label{ "1", font_size, alignment });
+            layout_v8->add_widget(new ui::Label{ "2", font_size, alignment });
+            layout_v8->add_widget(new ui::Label{ "3", font_size, alignment });
+            layout_v8->add_widget(new ui::Label{ "4", font_size, alignment });
+            layout_v8->add_widget(new ui::Label{ "5", font_size, alignment });
+
+            const auto layout_v9{ new ui::BoxLayout<Alignment::Vertical>("Nums V9") };
+            layout_v9->add_widget(new ui::Label{ "1", font_size, alignment });
+            layout_v9->add_widget(new ui::Label{ "2", font_size, alignment });
+            layout_v9->add_widget(new ui::Label{ "3", font_size, alignment });
+            layout_v9->add_widget(new ui::Label{ "4", font_size, alignment });
+            layout_v9->add_widget(new ui::Label{ "5", font_size, alignment });
+
+            const auto layout_v10{ new ui::BoxLayout<Alignment::Vertical>("Nums V10") };
+            layout_v10->add_widget(new ui::Label{ "1", font_size, alignment });
+            layout_v10->add_widget(new ui::Label{ "2", font_size, alignment });
+            layout_v10->add_widget(new ui::Label{ "3", font_size, alignment });
+            layout_v10->add_widget(new ui::Label{ "4", font_size, alignment });
+            layout_v10->add_widget(new ui::Label{ "5", font_size, alignment });
+
+            const auto layout_v11{ new ui::BoxLayout<Alignment::Vertical>("Nums V11") };
+            layout_v11->add_widget(new ui::Label{ "1", font_size, alignment });
+            layout_v11->add_widget(new ui::Label{ "2", font_size, alignment });
+            layout_v11->add_widget(new ui::Label{ "3", font_size, alignment });
+            layout_v11->add_widget(new ui::Label{ "4", font_size, alignment });
+            layout_v11->add_widget(new ui::Label{ "5", font_size, alignment });
+
+            const auto layout_v12{ new ui::BoxLayout<Alignment::Vertical>("Nums V12") };
+            layout_v12->add_widget(new ui::Label{ "1", font_size, alignment });
+            layout_v12->add_widget(new ui::Label{ "2", font_size, alignment });
+            layout_v12->add_widget(new ui::Label{ "3", font_size, alignment });
+            layout_v12->add_widget(new ui::Label{ "4", font_size, alignment });
+            layout_v12->add_widget(new ui::Label{ "5", font_size, alignment });
+
+            const auto layout_v13{ new ui::BoxLayout<Alignment::Vertical>("Nums V13") };
+            layout_v13->add_widget(new ui::Label{ "1", font_size, alignment });
+            layout_v13->add_widget(new ui::Label{ "2", font_size, alignment });
+            layout_v13->add_widget(new ui::Label{ "3", font_size, alignment });
+            layout_v13->add_widget(new ui::Label{ "4", font_size, alignment });
+            layout_v13->add_widget(new ui::Label{ "5", font_size, alignment });
+
+            const auto horiz_nums_layout{ new ui::BoxLayout<Alignment::Horizontal>("ABC123 Horiz") };
+            horiz_nums_layout->add_nested_layout(layout_v1);
+            horiz_nums_layout->add_nested_layout(layout_v2);
+            horiz_nums_layout->add_nested_layout(layout_v3);
+            horiz_nums_layout->add_nested_layout(layout_v4);
+            horiz_nums_layout->add_nested_layout(layout_v5);
+            horiz_nums_layout->add_nested_layout(layout_v6);
+            horiz_nums_layout->add_nested_layout(layout_v7);
+            horiz_nums_layout->add_nested_layout(layout_v8);
+            horiz_nums_layout->add_nested_layout(layout_v9);
+            horiz_nums_layout->add_nested_layout(layout_v10);
+            horiz_nums_layout->add_nested_layout(layout_v11);
+            horiz_nums_layout->add_nested_layout(layout_v12);
+            horiz_nums_layout->add_nested_layout(layout_v13);
+
+            auto layout_v_letters{ new ui::BoxLayout<Alignment::Vertical>("Letters H2") };
+            layout_v_letters->add_nested_layout(layout_h1);
+            layout_v_letters->add_nested_layout(layout_h2);
+            layout_v_letters->add_nested_layout(layout_h3);
+            layout_v_letters->add_nested_layout(layout_h4);
+            layout_v_letters->add_nested_layout(horiz_nums_layout);
+
+            m_main_window->gui()->assign_layout(layout_v_letters);
 
             m_timer.reset();
             while (!this->should_exit())

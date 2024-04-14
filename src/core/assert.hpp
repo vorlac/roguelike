@@ -116,7 +116,7 @@ SDL_C_LIB_END
       }                                                                          \
       while (0)
 
-  #define assert_msg(message) runtime_assert(false, message)
-  #define assert_cond(cond)   runtime_assert(cond, "condition check failed")
+  #define assert_msg(fmtstr, ...) runtime_assert(false, fmtstr, __VA_ARGS__)
+  #define assert_cond(cond)       runtime_assert(cond, "condition check failed")
 
 #endif

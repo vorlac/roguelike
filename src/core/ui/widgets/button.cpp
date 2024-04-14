@@ -144,10 +144,10 @@ namespace rl::ui {
         const f32 font_size{ m_font_size < 0.0f ? m_theme->button_font_size : m_font_size };
 
         m_renderer->set_text_properties_(m_theme->button_font_name, font_size,
-                                         nvg::Align::HCenter | nvg::Align::VMiddle);
+                                         Align::HCenter | Align::VMiddle);
 
         ds::dims icon_size{ 0.0f, font_size };
-        const f32 text_width{ nvg::text_bounds_(context, 0.0f, 0.0f, m_text.c_str()) };
+        const f32 text_width{ nvg::text_bounds(context, ds::point<f32>::zero(), m_text) };
 
         if (m_icon != Icon::ID::None)
         {
@@ -155,10 +155,9 @@ namespace rl::ui {
             {
                 icon_size.height *= this->icon_scale();
                 nvg::set_font_size(context, icon_size.height);
-                nvg::set_font_face(context, font::style::Icons);
-                icon_size.width = nvg::text_bounds_(context, ds::point<f32>::zero(),
-                                                    std::forward<std::string>(utf8(m_icon))) +
-                                  m_rect.size.height * 0.15f;
+                nvg::set_font_face(context, text::font::style::Icons);
+                icon_size.width = m_rect.size.height * 0.15f +
+                                  nvg::text_bounds(context, ds::point<f32>::zero(), utf8(m_icon));
             }
             else
             {
@@ -348,8 +347,8 @@ namespace rl::ui {
 
         f32 font_size{ math::equal(m_font_size, -1.0f) ? m_theme->button_font_size : m_font_size };
         nvg::set_font_size(context, font_size);
-        nvg::set_font_face(context, font::style::SansBold);
-        f32 text_width{ nvg::text_bounds_(context, 0.0f, 0.0f, m_text.c_str(), nullptr, nullptr) };
+        nvg::set_font_face(context, text::font::style::SansBold);
+        f32 text_width{ nvg::text_bounds(context, ds::point<f32>::zero(), m_text) };
 
         ds::point<f32> center{
             m_rect.pt.x + m_rect.size.width * 0.5f,
@@ -375,8 +374,8 @@ namespace rl::ui {
             {
                 icon_size.height *= this->icon_scale();
                 nvg::set_font_size(context, icon_size.height);
-                nvg::set_font_face(context, font::style::Icons);
-                icon_size.width = nvg::text_bounds_(context, 0, 0, icon.data());
+                nvg::set_font_face(context, text::font::style::Icons);
+                icon_size.width = nvg::text_bounds(context, ds::point<f32>::zero(), icon);
             }
             else
             {
@@ -390,7 +389,7 @@ namespace rl::ui {
                 icon_size.width += m_rect.size.height * 0.15f;
 
             nvg::fill_color(context, text_color);
-            nvg::set_text_align(context, nvg::Align::HLeft | nvg::Align::VMiddle);
+            nvg::set_text_align(context, Align::HLeft | Align::VMiddle);
             ds::point<f32> icon_pos{ center };
 
             icon_pos.y -= 1;
@@ -413,7 +412,7 @@ namespace rl::ui {
             }
 
             if (Icon::is_font(m_icon))
-                nvg::text_(context, icon_pos.x, icon_pos.y + 1.0f, icon.data(), nullptr);
+                nvg::draw_text(context, { icon_pos.x, icon_pos.y + 1.0f }, icon);
             else
             {
                 const nvg::PaintStyle img_paint{
@@ -427,11 +426,11 @@ namespace rl::ui {
         }
 
         nvg::set_font_size(context, font_size);
-        nvg::set_font_face(context, font::style::SansBold);
-        nvg::set_text_align(context, nvg::Align::HLeft | nvg::Align::VMiddle);
+        nvg::set_font_face(context, text::font::style::SansBold);
+        nvg::set_text_align(context, Align::HLeft | Align::VMiddle);
         nvg::fill_color(context, m_theme->text_shadow_color);
-        nvg::text_(context, text_pos.x, text_pos.y, m_text.c_str(), nullptr);
+        nvg::draw_text(context, text_pos, m_text);
         nvg::fill_color(context, text_color);
-        nvg::text_(context, text_pos.x, text_pos.y + 1.0f, m_text.c_str(), nullptr);
+        nvg::draw_text(context, { text_pos.x, text_pos.y + 1.0f }, m_text);
     }
 }

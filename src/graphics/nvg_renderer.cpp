@@ -49,29 +49,29 @@ namespace rl {
         : m_nvg_context{ create_nvg_context(m_stencil_buffer, m_depth_buffer, m_float_buffer) }
     {
         this->load_fonts({
-            font::Data{
-                font::style::Sans,
+            text::font::Data{
+                text::font::style::Sans,
                 std::basic_string_view{
                     roboto_regular_ttf,
                     roboto_regular_ttf_size,
                 },
             },
-            font::Data{
-                font::style::SansBold,
+            text::font::Data{
+                text::font::style::SansBold,
                 std::basic_string_view{
                     roboto_bold_ttf,
                     roboto_bold_ttf_size,
                 },
             },
-            font::Data{
-                font::style::Icons,
+            text::font::Data{
+                text::font::style::Icons,
                 std::basic_string_view{
                     fontawesome_solid_ttf,
                     fontawesome_solid_ttf_size,
                 },
             },
-            font::Data{
-                font::style::Mono,
+            text::font::Data{
+                text::font::style::Mono,
                 std::basic_string_view{
                     fira_code_bold_ttf,
                     fira_code_bold_ttf_size,
@@ -150,13 +150,13 @@ namespace rl {
                                     line.end.y, inner_color, outer_gradient_color);
     }
 
-    font::handle NVGRenderer::load_font(const std::string_view& font_name,
-                                        const std::basic_string_view<u8>& font_ttf) const
+    text::font::handle NVGRenderer::load_font(const std::string_view& font_name,
+                                              const std::basic_string_view<u8>& font_ttf) const
     {
         // Creates font by loading it from the specified memory chunk.
         // Returns handle to the font.
-        font::handle fh{ nvg::create_font_mem(m_nvg_context.get(), font_name, font_ttf) };
-        runtime_assert(fh != font::InvalidHandle, "failed to load font: {}", font_name);
+        text::font::handle fh{ nvg::create_font_mem(m_nvg_context.get(), font_name, font_ttf) };
+        runtime_assert(fh != text::font::InvalidHandle, "failed to load font: {}", font_name);
         return fh;
     }
 
@@ -168,11 +168,11 @@ namespace rl {
         params->render_viewport(params->user_ptr, viewport.width, viewport.height, pixel_ratio);
     }
 
-    void NVGRenderer::load_fonts(const std::vector<font::Data>& fonts)
+    void NVGRenderer::load_fonts(const std::vector<text::font::Data>& fonts)
     {
         for (auto&& [font_name, font_ttf] : fonts)
         {
-            font::handle fh{ this->load_font(font_name, font_ttf) };
+            text::font::handle fh{ this->load_font(font_name, font_ttf) };
             m_font_map[font_name] = fh;
         }
     }
@@ -189,14 +189,14 @@ namespace rl {
     }
 
     void NVGRenderer::set_text_properties_(const std::string_view& font_name, const f32 font_size,
-                                           const nvg::Align alignment) const
+                                           const Align alignment) const
     {
         nvg::set_font_face(m_nvg_context.get(), font_name);
         nvg::set_font_size(m_nvg_context.get(), font_size);
         nvg::set_text_align(m_nvg_context.get(), alignment);
     }
 
-    ds::dims<f32> NVGRenderer::get_text_size_(const std::string&) const
+    ds::dims<f32> NVGRenderer::get_text_size(const std::string&) const
     {
         assert_cond(false);
         return ds::dims<f32>::zero();
@@ -204,31 +204,29 @@ namespace rl {
 
     ds::rect<f32> NVGRenderer::get_text_box_rect(
         const std::string& text, const ds::point<f32>& pos, const std::string_view& font_name,
-        const f32 font_size, const f32 fold_width, const nvg::Align alignment) const
+        const f32 font_size, const f32 fold_width, const Align alignment) const
     {
-        std::array<f32, 4> bounds{};
         this->set_text_properties_(font_name, font_size, alignment);
         // Measures the specified multi-text string. Parameter bounds should be a pointer to
         // float[4], if the bounding box of the text should be returned. The bounds value are
         // [xmin,ymin, xmax,ymax] Measured values are returned in local coordinate space.
-        nvg::text_box_bounds_(m_nvg_context.get(), pos.x, pos.y, fold_width, text.data(), nullptr,
-                              &bounds.front());
+        ds::rect bounds{ nvg::text_box_bounds(m_nvg_context.get(), pos, fold_width, text) };
 
-        return ds::rect{
+        return ds::rect<f32>{
             pos,
             ds::dims<f32>{
                 fold_width,
-                bounds[3] - bounds[1],
+                bounds.size.height,
             },
         };
     }
 
-    ds::dims<f32> NVGRenderer::get_text_size_(const std::string& text,
-                                              const std::string_view& font_name,
-                                              const f32 font_size, const nvg::Align alignment) const
+    ds::dims<f32> NVGRenderer::get_text_size(const std::string& text,
+                                             const std::string_view& font_name, const f32 font_size,
+                                             const Align alignment) const
     {
         this->set_text_properties_(font_name, font_size, alignment);
-        const f32 width{ nvg::text_bounds_(m_nvg_context.get(), 0.0f, 0.0f, text.data()) };
+        const f32 width{ nvg::text_bounds(m_nvg_context.get(), ds::point<f32>::zero(), text) };
 
         constexpr static f32 width_buffer{ 2.0f };
         return ds::dims{
@@ -246,14 +244,21 @@ namespace rl {
         switch (type)
         {
             case Outline::Inner:
-                nvg::rect(m_nvg_context.get(), rect.pt.x + (stroke_width / 2.0f),
-                          rect.pt.y + (stroke_width / 2.0f), rect.size.width - stroke_width,
-                          rect.size.height - stroke_width);
+                nvg::rect(
+                    m_nvg_context.get(),
+                    ds::rect<f32>{
+                        { rect.pt.x + (stroke_width / 2.0f), rect.pt.y + (stroke_width / 2.0f) },
+                        { rect.size.width - stroke_width, rect.size.height - stroke_width },
+                    });
                 break;
+
             case Outline::Outer:
-                nvg::rect(m_nvg_context.get(), rect.pt.x - (stroke_width / 2.0f),
-                          rect.pt.y - (stroke_width / 2.0f), rect.size.width + stroke_width,
-                          rect.size.height + stroke_width);
+                nvg::rect(
+                    m_nvg_context.get(),
+                    ds::rect<f32>{
+                        { rect.pt.x - (stroke_width / 2.0f), rect.pt.y - (stroke_width / 2.0f) },
+                        { rect.size.width + stroke_width, rect.size.height + stroke_width },
+                    });
                 break;
         }
 

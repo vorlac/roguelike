@@ -247,7 +247,9 @@ namespace rl::ui {
     {
         return m_layout != nullptr            //
                  ? m_layout->computed_size()  //
-                 : m_rect.size;
+                 : m_rect.size.is_null()      //
+                       ? this->preferred_size()
+                       : m_rect.size;
     }
 
     void Widget::perform_layout()
@@ -712,10 +714,7 @@ namespace rl::ui {
     void Widget::draw()
     {
         if constexpr (Widget::DiagnosticsEnabled)
-        {
-            m_renderer->draw_rect_outline(ds::rect{ m_rect.pt, m_rect.size }, 1.0f,
-                                          rl::Colors::Grey, Outline::Outer);
-        }
+            m_renderer->draw_rect_outline(m_rect, 1.0f, rl::Colors::Grey, Outline::Outer);
 
         if (m_children.empty())
             return;

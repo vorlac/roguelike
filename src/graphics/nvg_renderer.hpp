@@ -45,27 +45,26 @@ namespace rl {
             ds::line<f32>&& line, const ds::color<f32>& inner_color,
             const ds::color<f32>& outer_gradient_color) const;
 
-        void load_fonts(const std::vector<font::Data>& fonts);
+        void load_fonts(const std::vector<text::font::Data>& fonts);
         void set_text_properties_(const std::string_view& font_name, f32 font_size,
-                                  nvg::Align alignment) const;
+                                  Align alignment) const;
 
         [[nodiscard]]
-        font::handle load_font(const std::string_view& font_name,
-                               const std::basic_string_view<u8>& font_ttf) const;
+        text::font::handle load_font(const std::string_view& font_name,
+                                     const std::basic_string_view<u8>& font_ttf) const;
 
         [[nodiscard]]
-        ds::dims<f32> get_text_size_(const std::string& text) const;
+        ds::dims<f32> get_text_size(const std::string& text) const;
 
         [[nodiscard]]
-        ds::dims<f32> get_text_size_(
-            const std::string& text, const std::string_view& font_name, f32 font_size,
-            nvg::Align alignment = nvg::Align::HCenter | nvg::Align::VMiddle) const;
+        ds::dims<f32> get_text_size(const std::string& text, const std::string_view& font_name,
+                                    f32 font_size,
+                                    Align alignment = Align::HCenter | Align::VMiddle) const;
 
         [[nodiscard]]
         ds::rect<f32> get_text_box_rect(
             const std::string& text, const ds::point<f32>& pos, const std::string_view& font_name,
-            f32 font_size, f32 fold_width,
-            nvg::Align alignment = nvg::Align::HLeft | nvg::Align::VTop) const;
+            f32 font_size, f32 fold_width, Align alignment = Align::HLeft | Align::VTop) const;
 
         void draw_rect_outline(const ds::rect<f32>& rect, f32 stroke_width,
                                const ds::color<f32>& color, Outline type) const;
@@ -106,6 +105,6 @@ namespace rl {
         bool m_stencil_buffer{ false };
         bool m_float_buffer{ false };
         std::unique_ptr<nvg::Context> m_nvg_context{ nullptr };
-        font::Map m_font_map{};
+        text::font::Map m_font_map{};
     };
 }
