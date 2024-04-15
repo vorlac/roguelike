@@ -59,11 +59,20 @@ namespace rl::ui {
                     curr_widget_pos.y += widget_margins_rect.size.height;
                 else if (m_alignment == Alignment::Horizontal)
                     curr_widget_pos.x += widget_margins_rect.size.width;
-                if (widget_bounding_rect.size.width > cell_size.width ||
-                    widget_bounding_rect.size.height > cell_size.height)
+
+                if (widget->child_count() == 0)
                 {
-                    widget->preferred_size();
+                    // TODO: figure out how to handle this properly
+                    // ds::dims preferred_size{ widget->preferred_size() };
+                    // if (m_max_size.width < widget_bounding_rect.size.width)
+                    //     widget->set_fixed_height(preferred_size.width);
+                    // if (m_max_size.height < widget_bounding_rect.size.height)
+                    //     widget->set_fixed_height(preferred_size.height);
+                    auto smaller = math::min(m_max_size.width, m_max_size.height);
+                    if (widget->has_font_size())
+                        widget->set_font_size(smaller);
                 }
+
                 widget->set_rect(widget_bounding_rect);
                 layout_rect.expand(widget_margins_rect);
             }
@@ -74,9 +83,9 @@ namespace rl::ui {
 
         virtual ds::dims<f32> computed_size() const override
         {
-            for (auto& widget : m_cell_data | std::views::keys)
-                widget->preferred_size();
-            return this->preferred_size();
+            // for (auto& widget : m_cell_data | std::views::keys)
+            //     widget->preferred_size();
+            return this->size();
         }
     };
 }

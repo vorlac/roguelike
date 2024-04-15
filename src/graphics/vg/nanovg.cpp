@@ -2978,7 +2978,7 @@ namespace rl::nvg {
                 font::text_iter_next(ctx->fs, &iter, &q);
                 if (iter.prev_glyph_index == -1)
                 {
-                    // still can not find glyph?
+                    // still can not find glyph? font size may be too small or negative
                     assert_msg("nvg::draw_text : failed to find glyph to render");
                     break;
                 }
@@ -3400,6 +3400,7 @@ namespace rl::nvg {
     // Measures the specified multi-text string. Parameter bounds should be a pointer to
     // f32[4], if the bounding box of the text should be returned. The bounds value are
     // [xmin,ymin, xmax,ymax] Measured values are returned in local coordinate space.
+    [[nodiscard]]
     ds::rect<f32> text_box_bounds(Context* ctx, ds::point<f32> pos, const f32 break_row_width,
                                   const std::string& text)
     {

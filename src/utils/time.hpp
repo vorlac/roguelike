@@ -31,7 +31,7 @@ namespace rl::inline utils {
         // clang-format on
     };
 
-    template <rl::numeric T = f32, auto FixedStep = 30, auto VDuration = TimeDuration::Second>
+    template <rl::numeric T = f32, auto FixedStep = 240, auto VDuration = TimeDuration::Second>
         requires std::same_as<decltype(VDuration), TimeDuration>
     struct Timer
     {
@@ -121,12 +121,13 @@ namespace rl::inline utils {
         }
 
         template <std::invocable TCallable>
-        void tick(const TCallable& callable)
+        void tick(TCallable&& callable)
         {
             // Query the current time.
             m_elapsed_time = this->elapsed();
             m_delta_time = m_elapsed_time - m_prev_tick_time;
             m_prev_tick_time = m_elapsed_time;
+            m_fps_cur_timer += m_delta_time;
 
             const u64 last_frame_count{ m_frame_count };
             if (m_delta_time > m_max_delta_time)
@@ -135,7 +136,7 @@ namespace rl::inline utils {
             if (m_fixed_timestep > 0)
             {
                 // Fixed timestep update logic
-                if (std::abs(m_delta_time - m_fixed_timestep) < 1 / 4000)
+                if (std::abs(m_delta_time - m_fixed_timestep) < 1.0f / 4000)
                     m_delta_time = m_fixed_timestep;
 
                 m_leftover_ticks += m_delta_time;
@@ -146,7 +147,7 @@ namespace rl::inline utils {
                     m_leftover_ticks -= m_fixed_timestep;
                     ++m_frame_count;
 
-                    std::invoke(callable);
+                    std::invoke(std::forward<TCallable>(callable));
                 }
             }
             else
@@ -157,7 +158,7 @@ namespace rl::inline utils {
                 m_leftover_ticks = 0;
                 ++m_frame_count;
 
-                std::invoke(callable);
+                std::invoke(std::forward<TCallable>(callable));
             }
 
             // Track the current framerate.

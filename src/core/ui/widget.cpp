@@ -98,6 +98,11 @@ namespace rl::ui {
     void Widget::set_rect(const ds::rect<f32>& rect)
     {
         m_rect = rect;
+        if (m_rect.size.is_invalid())
+        {
+            m_rect.size.width = math::max(1.0f, rect.size.width);
+            m_rect.size.height = math::max(1.0f, rect.size.height);
+        }
     }
 
     ds::point<f32> Widget::abs_position() const
@@ -125,6 +130,8 @@ namespace rl::ui {
     void Widget::set_width(const f32 width)
     {
         m_rect.size.width = width;
+        if (m_rect.size.is_invalid())
+            m_rect.size.width = math::max(1.0f, width);
     }
 
     f32 Widget::height() const
@@ -135,11 +142,18 @@ namespace rl::ui {
     void Widget::set_height(const f32 height)
     {
         m_rect.size.height = height;
+        if (m_rect.size.is_invalid())
+            m_rect.size.height = math::max(1.0f, height);
     }
 
     void Widget::set_fixed_size(const ds::dims<f32> fixed_size)
     {
         m_fixed_size = fixed_size;
+        if (m_fixed_size.is_invalid())
+        {
+            m_fixed_size.width = math::max(1.0f, fixed_size.width);
+            m_fixed_size.height = math::max(1.0f, fixed_size.height);
+        }
     }
 
     ds::dims<f32> Widget::fixed_size() const
@@ -170,16 +184,25 @@ namespace rl::ui {
     void Widget::set_fixed_width(const f32 width)
     {
         m_fixed_size.width = width;
+        if (m_fixed_size.is_invalid())
+            m_fixed_size.width = math::max(1.0f, width);
     }
 
     void Widget::set_fixed_height(const f32 height)
     {
         m_fixed_size.height = height;
+        if (m_fixed_size.is_invalid())
+            m_fixed_size.height = math::max(1.0f, height);
     }
 
     void Widget::set_size(const ds::dims<f32> size)
     {
         m_rect.size = size;
+        if (m_rect.size.is_invalid())
+        {
+            m_rect.size.width = math::max(1.0f, size.width);
+            m_rect.size.height = math::max(1.0f, size.height);
+        }
     }
 
     bool Widget::visible() const
@@ -247,9 +270,7 @@ namespace rl::ui {
     {
         return m_layout != nullptr            //
                  ? m_layout->computed_size()  //
-                 : m_rect.size.is_null()      //
-                       ? this->preferred_size()
-                       : m_rect.size;
+                 : m_rect.size;
     }
 
     void Widget::perform_layout()
@@ -584,12 +605,12 @@ namespace rl::ui {
 
     void Widget::set_font_size(const f32 font_size)
     {
-        m_font_size = font_size;
+        m_font_size = std::max(1.0f, font_size);
     }
 
     bool Widget::has_font_size() const
     {
-        return m_font_size > 0;
+        return m_font_size > 0 && math::not_equal(m_font_size, 0.0f);
     }
 
     f32 Widget::icon_extra_scale() const
@@ -625,6 +646,11 @@ namespace rl::ui {
     void Widget::set_max_size(const ds::dims<f32> max_size)
     {
         m_max_size = max_size;
+        if (m_max_size.is_invalid())
+        {
+            m_max_size.width = math::max(1.0f, max_size.width);
+            m_max_size.height = math::max(1.0f, max_size.height);
+        }
     }
 
     bool Widget::contains(const ds::point<f32> pt)
