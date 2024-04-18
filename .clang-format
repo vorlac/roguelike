@@ -19,7 +19,7 @@ AllowShortFunctionsOnASingleLine: false # [InlineOnly, true]
 AllowShortLambdasOnASingleLine: false
 AllowShortIfStatementsOnASingleLine: false
 AllowShortLoopsOnASingleLine: false
-# AllowShortCompoundRequirementOnASingleLine: true # <== clang-format v18+
+AllowShortCompoundRequirementOnASingleLine: true # clang-format v18 requrired
 AlwaysBreakAfterDefinitionReturnType: false
 AlwaysBreakAfterReturnType: None
 AlwaysBreakBeforeMultilineStrings: true
@@ -33,7 +33,7 @@ BreakBeforeBraces: Custom
 BraceWrapping:
   AfterCaseLabel: true
   AfterClass: true
-  AfterControlStatement: Always
+  AfterControlStatement: false
   AfterEnum: false
   AfterFunction: true
   AfterNamespace: false
@@ -41,7 +41,7 @@ BraceWrapping:
   AfterStruct: true
   AfterUnion: true
   AfterExternBlock: true
-  BeforeCatch: true
+  BeforeCatch: false
   BeforeElse: true
   BeforeLambdaBody: false
   BeforeWhile: true
@@ -49,7 +49,7 @@ BraceWrapping:
   SplitEmptyFunction: true
   SplitEmptyRecord: true
   SplitEmptyNamespace: true
-BreakBeforeBinaryOperators: None
+BreakBeforeBinaryOperators: NonAssignment # None
 BreakBeforeConceptDeclarations: true
 BreakBeforeInheritanceComma: true
 BreakInheritanceList: AfterComma
@@ -57,7 +57,7 @@ BreakBeforeTernaryOperators: true # false
 BreakConstructorInitializersBeforeComma: true
 BreakConstructorInitializers: BeforeColon
 BreakStringLiterals: false
-ColumnLimit: 100
+ColumnLimit: 0
 CommentPragmas: "^ IWYU pragma:"
 CompactNamespaces: false
 ConstructorInitializerIndentWidth: 4

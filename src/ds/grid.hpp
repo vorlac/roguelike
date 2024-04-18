@@ -21,8 +21,7 @@ namespace rl::ds {
         constexpr CellGrid(std::initializer_list<std::vector<T>>&& rows)
         {
             m_height = rows.size();
-            for (auto&& row : rows)
-            {
+            for (auto&& row : rows) {
                 if (m_width == 0)
                     m_width = row.size();
                 for (auto&& val : row)

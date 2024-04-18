@@ -38,8 +38,7 @@ namespace rl {
 
     bool Mouse::set_cursor(const Side side) const
     {
-        switch (side)
-        {
+        switch (side) {
             case Side::Top:
             case Side::Bottom:
                 return this->set_cursor(Mouse::Cursor::SizeNS);
@@ -121,8 +120,7 @@ namespace rl {
         auto new_wheel_pos{ wheel };
 
         m_prev_wheel_pos = m_wheel_position;
-        if (new_wheel_pos.direction == Mouse::Wheel::Direction::Flipped)
-        {
+        if (new_wheel_pos.direction == Mouse::Wheel::Direction::Flipped) {
             new_wheel_pos.x *= -1.0f;
             new_wheel_pos.y *= -1.0f;
         }
@@ -195,8 +193,7 @@ namespace rl {
 
     bool Mouse::any_buttons_down(std::vector<Mouse::Button::ID>&& buttons) const
     {
-        for (auto&& button : buttons)
-        {
+        for (auto&& button : buttons) {
             if (this->is_button_down(button))
                 return true;
         }

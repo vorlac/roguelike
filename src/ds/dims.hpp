@@ -1,6 +1,6 @@
 #pragma once
 
-#include <utility>
+#include <cmath>
 
 #include <fmt/format.h>
 
@@ -52,7 +52,9 @@ namespace rl::ds {
         [[nodiscard]]
         constexpr bool is_invalid() const
         {
-            return this->width < 0 || this->height < 0 || this->is_null();
+            return this->width < 0
+                || this->height < 0
+                || this->is_null();
         }
 
         [[nodiscard]]
@@ -69,17 +71,17 @@ namespace rl::ds {
 
         template <rl::integer I>
             requires rl::floating_point<T>
-        [[nodiscard]] constexpr operator dims<I>() const
+        constexpr operator dims<I>() const
         {
             return dims<I>{
-                static_cast<I>(this->width),
-                static_cast<I>(this->height),
+                std::lroundf(this->width),
+                std::lroundf(this->height),
             };
         }
 
         template <rl::floating_point F>
             requires rl::integer<T>
-        [[nodiscard]] constexpr operator dims<F>() const
+        constexpr operator dims<F>() const
         {
             return dims<F>{
                 static_cast<F>(this->width),
@@ -88,7 +90,7 @@ namespace rl::ds {
         }
 
         [[nodiscard]]
-        dims<T> merged(const dims<T>& other) const
+        dims<T> merged(dims<T> other) const
         {
             dims ret{ *this };
             if (math::equal(this->width, 0.0f))
@@ -98,13 +100,45 @@ namespace rl::ds {
             return ret;
         }
 
-        constexpr bool operator==(const dims<T>& other) const
+        template <rl::floating_point F>
+            requires rl::integer<T>
+        constexpr bool operator==(const dims<F> other) const
         {
-            return math::equal(this->height, other.height) &&  //
-                   math::equal(this->width, other.width);
+            return math::equal(this->height, std::round(other.height))
+                && math::equal(this->width, std::round(other.width));
         }
 
-        constexpr bool operator!=(const dims<T>& other) const
+        template <rl::integer I>
+            requires rl::floating_point<T>
+        constexpr bool operator==(const dims<I> other) const
+        {
+            return math::equal(std::lroundf(this->height), other.height)
+                && math::equal(std::lroundf(this->width), other.width);
+        }
+
+        constexpr bool operator==(const dims<T> other) const
+        {
+            return math::equal(this->height, other.height)
+                && math::equal(this->width, other.width);
+        }
+
+        template <rl::floating_point F>
+            requires rl::integer<T>
+        constexpr bool operator!=(const dims<F> other) const
+        {
+            return math::not_equal(this->height, static_cast<T>(std::lroundf(other.height)))
+                && math::not_equal(this->width, static_cast<T>(std::lroundf(other.width)));
+        }
+
+        template <rl::integer I>
+            requires rl::floating_point<T>
+        constexpr bool operator!=(const dims<I> other) const
+        {
+            return math::not_equal(std::lroundf(this->height), other.height)
+                && math::not_equal(std::lroundf(this->width), other.width);
+        }
+
+        constexpr bool operator!=(const dims<T> other) const
         {
             return !this->operator==(other);
         }
@@ -257,7 +291,7 @@ namespace rl::ds {
             return *this;
         }
 
-        constexpr dims<T>& operator+=(const dims<T>& other)
+        constexpr dims<T>& operator+=(dims<T> other)
         {
             this->width += other.width;
             this->height += other.height;
@@ -299,28 +333,28 @@ namespace rl::ds {
             return *this;
         }
 
-        constexpr dims<T>& operator+=(const vector2<T>& other)
+        constexpr dims<T>& operator+=(vector2<T> other)
         {
             this->width += other.x;
             this->height += other.y;
             return *this;
         }
 
-        constexpr dims<T>& operator-=(const vector2<T>& other)
+        constexpr dims<T>& operator-=(vector2<T> other)
         {
             this->width -= other.x;
             this->height -= other.y;
             return *this;
         }
 
-        constexpr dims<T>& operator*=(const vector2<T>& other)
+        constexpr dims<T>& operator*=(vector2<T> other)
         {
             this->width *= other.x;
             this->height *= other.y;
             return *this;
         }
 
-        constexpr dims<T>& operator/=(const vector2<T>& other)
+        constexpr dims<T>& operator/=(vector2<T> other)
         {
             this->width /= other.x;
             this->height /= other.y;
@@ -337,7 +371,7 @@ namespace rl::ds {
 
 namespace rl::ds {
     template <rl::numeric T>
-    constexpr auto format_as(const dims<T>& size)
+    constexpr auto format_as(dims<T> size)
     {
         return fmt::format("(w={}, h={})", size.width, size.height);
     }

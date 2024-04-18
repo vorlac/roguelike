@@ -1,8 +1,8 @@
 #pragma once
 #include <ranges>
 
-#include "core/ui/widget.hpp"
 #include "graphics/vg/nanovg.hpp"
+#include "ui/widget.hpp"
 
 namespace rl {
     struct LocalTransform final
@@ -18,8 +18,7 @@ namespace rl {
         explicit LocalTransform(const ui::Widget* widget) noexcept
         {
             runtime_assert(widget != nullptr, "invalid reference to UI element");
-            if (scope_stack.empty() || scope_stack.back() != widget)
-            {
+            if (scope_stack.empty() || scope_stack.back() != widget) {
                 absolute_pos += widget->position();
                 nvg::translate(ui::Widget::context(), widget->position());
                 scope_stack.push_back(widget);
@@ -29,8 +28,7 @@ namespace rl {
 
         ~LocalTransform()
         {
-            if (m_added_to_stack)
-            {
+            if (m_added_to_stack) {
                 const ui::Widget* widget{ scope_stack.back() };
                 absolute_pos -= widget->position();
                 nvg::translate(ui::Widget::context(), -widget->position());

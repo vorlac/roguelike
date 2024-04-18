@@ -23,8 +23,7 @@ namespace rl {
 
         seq[n] = '\0';
 
-        switch (n)
-        {
+        switch (n) {
             case 6:
                 seq[5] = 0x80 | (c & 0x3f);
                 c = c >> 6;

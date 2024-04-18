@@ -49,8 +49,7 @@ namespace rl::gl {
         // Defaults to fill
         void set_draw_mode(DrawMode mode = DrawMode::Fill)
         {
-            switch (mode)
-            {
+            switch (mode) {
                 case DrawMode::Wireframe:
                     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
                     break;
@@ -69,18 +68,17 @@ namespace rl::gl {
             // bind the VAO vertex array
             glBindVertexArray(m_vao_id);
 
-            if (!m_rects.empty())
-            {
+            if (!m_rects.empty()) {
                 // (3 floats per point + 4 floats per color) * vertex pair<point, color> count
                 m_buffer_vertex_count = (3 + 4) * 6 * static_cast<i32>(m_rects.size());
                 // bind the VBO vertex buffer
                 glBindBuffer(GL_ARRAY_BUFFER, m_vbo_id);
                 // define info about the VBO vertex buffer, targeting GL_ARRAY_BUFFER
-                glBufferData(GL_ARRAY_BUFFER, sizeof(f32) * m_buffer_vertex_count, m_rects.data(),
-                             GL_STATIC_DRAW);
+                glBufferData(GL_ARRAY_BUFFER, sizeof(f32) * m_buffer_vertex_count,
+                             m_rects.data(), GL_STATIC_DRAW);
             }
 
-            glVertexAttribPointer(     //
+            glVertexAttribPointer(
                 0, 3,                  // index and count of vertices to configure
                 GL_FLOAT,              // data type of vertex data
                 GL_FALSE,              // should vertices be normalized (to 0 or -1 for signed)
@@ -89,13 +87,13 @@ namespace rl::gl {
             );
             glEnableVertexAttribArray(0);
 
-            glVertexAttribPointer(                        //
-                1, 4,                                     //
-                GL_FLOAT,                                 //
-                GL_FALSE,                                 //
-                7 * sizeof(f32),                          //
-                reinterpret_cast<void*>(3 * sizeof(f32))  //
-            );
+            glVertexAttribPointer(
+                1, 4,
+                GL_FLOAT,
+                GL_FALSE,
+                7 * sizeof(f32),
+                reinterpret_cast<void*>(3 * sizeof(f32)));
+
             glEnableVertexAttribArray(1);
 
             // note that this is allowed, the call to glVertexAttribPointer registered VBO

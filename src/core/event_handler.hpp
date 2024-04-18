@@ -36,10 +36,8 @@ namespace rl {
         {
             SDL3::SDL_Event e{};
 
-            while (SDL3::SDL_PollEvent(&e) != 0)
-            {
-                switch (e.type)
-                {
+            while (SDL3::SDL_PollEvent(&e) != 0) {
+                switch (e.type) {
                     // Mouse input events
                     case Mouse::Event::MouseWheel:
                         window->mouse_wheel_event_callback(e);

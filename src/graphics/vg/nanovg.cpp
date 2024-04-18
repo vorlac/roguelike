@@ -102,7 +102,8 @@ namespace rl::nvg {
 
             constexpr f32 clampf(const f32 a, const f32 mn, const f32 mx)
             {
-                return a < mn ? mn : a > mx ? mx : a;
+                return a < mn ? mn : a > mx ? mx
+                                            : a;
             }
 
             constexpr f32 cross(const f32 dx0, const f32 dy0, const f32 dx1, const f32 dy1)
@@ -113,8 +114,7 @@ namespace rl::nvg {
             f32 normalize(f32* x, f32* y)
             {
                 const f32 d = sqrtf(*x * *x + *y * *y);
-                if (d > 1e-6f)
-                {
+                if (d > 1e-6f) {
                     const f32 id = 1.0f / d;
                     *x *= id;
                     *y *= id;
@@ -139,27 +139,23 @@ namespace rl::nvg {
             PathCache* alloc_path_cache()
             {
                 const auto c = static_cast<PathCache*>(std::malloc(sizeof(PathCache)));
-                if (c != nullptr)
-                {
+                if (c != nullptr) {
                     std::memset(c, 0, sizeof(PathCache));
                     c->points = static_cast<Point*>(std::malloc(sizeof(Point) * NvgInitPointsSize));
 
-                    if (c->points != nullptr)
-                    {
+                    if (c->points != nullptr) {
                         c->npoints = 0;
                         c->cpoints = NvgInitPointsSize;
                         c->paths = static_cast<NVGpath*>(
                             std::malloc(sizeof(NVGpath) * NvgInitPathsSize));
 
-                        if (c->paths != nullptr)
-                        {
+                        if (c->paths != nullptr) {
                             c->npaths = 0;
                             c->cpaths = NvgInitPathsSize;
                             c->verts = static_cast<Vertex*>(
                                 std::malloc(sizeof(Vertex) * NvgInitVertsSize));
 
-                            if (c->verts != nullptr)
-                            {
+                            if (c->verts != nullptr) {
                                 c->nverts = 0;
                                 c->cverts = NvgInitVertsSize;
                                 return c;
@@ -181,13 +177,13 @@ namespace rl::nvg {
                 ctx->device_px_ratio = ratio;
             }
 
-            constexpr CompositeOperationState composite_operation_state(const CompositeOperation op)
+            constexpr CompositeOperationState composite_operation_state(
+                const CompositeOperation op)
             {
                 BlendFactor sfactor{};
                 BlendFactor dfactor{};
 
-                switch (op)
-                {
+                switch (op) {
                     default:
                         [[fallthrough]];
                     case CompositeOperation::Copy:
@@ -286,8 +282,7 @@ namespace rl::nvg {
 
             void add_path(const Context* ctx)
             {
-                if (ctx->cache->npaths + 1 > ctx->cache->cpaths)
-                {
+                if (ctx->cache->npaths + 1 > ctx->cache->cpaths) {
                     const i32 cpaths = ctx->cache->npaths + 1 + ctx->cache->cpaths / 2;
                     const auto paths = static_cast<NVGpath*>(realloc(
                         ctx->cache->paths, sizeof(NVGpath) * static_cast<uint64_t>(cpaths)));
@@ -327,18 +322,15 @@ namespace rl::nvg {
                 if (path == nullptr)
                     return;
 
-                if (path->count > 0 && ctx->cache->npoints > 0)
-                {
+                if (path->count > 0 && ctx->cache->npoints > 0) {
                     pt = last_point(ctx);
-                    if (pt_equals(pt->x, pt->y, x, y, ctx->dist_tol))
-                    {
+                    if (pt_equals(pt->x, pt->y, x, y, ctx->dist_tol)) {
                         pt->flags |= flags;
                         return;
                     }
                 }
 
-                if (ctx->cache->npoints + 1 > ctx->cache->cpoints)
-                {
+                if (ctx->cache->npoints + 1 > ctx->cache->cpoints) {
                     const i32 cpoints = ctx->cache->npoints + 1 + ctx->cache->cpoints / 2;
                     const auto points = static_cast<Point*>(realloc(
                         ctx->cache->points, sizeof(Point) * static_cast<uint64_t>(cpoints)));
@@ -383,8 +375,7 @@ namespace rl::nvg {
 
             Vertex* alloc_temp_verts(const Context* ctx, const i32 nverts)
             {
-                if (nverts > ctx->cache->cverts)
-                {
+                if (nverts > ctx->cache->cverts) {
                     const i32 cverts = nverts + 0xff & ~0xff;  // Round up to prevent
                                                                // allocations when
                     // things change just slightly.
@@ -414,8 +405,7 @@ namespace rl::nvg {
             f32 poly_area(const Point* pts, const i32 npts)
             {
                 f32 area = 0;
-                for (i32 i = 2; i < npts; ++i)
-                {
+                for (i32 i = 2; i < npts; ++i) {
                     const Point* a{ &pts[0] };
                     const Point* b{ &pts[i - 1] };
                     const Point* c{ &pts[i] };
@@ -427,8 +417,7 @@ namespace rl::nvg {
             void poly_reverse(Point* pts, const i32 npts)
             {
                 i32 i = 0, j = npts - 1;
-                while (i < j)
-                {
+                while (i < j) {
                     const Point tmp = pts[i];
                     pts[i] = pts[j];
                     pts[j] = tmp;
@@ -466,8 +455,7 @@ namespace rl::nvg {
                 const f32 d2 = absf((x2 - x4) * dy - (y2 - y4) * dx);
                 const f32 d3 = absf((x3 - x4) * dy - (y3 - y4) * dx);
 
-                if ((d2 + d3) * (d2 + d3) < ctx->tess_tol * (dx * dx + dy * dy))
-                {
+                if ((d2 + d3) * (d2 + d3) < ctx->tess_tol * (dx * dx + dy * dy)) {
                     add_point(ctx, x4, y4, type);
                     return;
                 }
@@ -498,11 +486,9 @@ namespace rl::nvg {
 
                 // Flatten
                 i32 i = 0;
-                while (i < ctx->ncommands)
-                {
+                while (i < ctx->ncommands) {
                     const auto cmd = static_cast<Commands>(ctx->commands[i]);
-                    switch (cmd)
-                    {
+                    switch (cmd) {
                         case Commands::MoveTo:
                             add_path(ctx);
                             p = &ctx->commands[i + 1];
@@ -516,8 +502,7 @@ namespace rl::nvg {
                             break;
                         case Commands::Bezierto:
                             last = detail::last_point(ctx);
-                            if (last != nullptr)
-                            {
+                            if (last != nullptr) {
                                 const f32* cp1 = &ctx->commands[i + 1];
                                 const f32* cp2 = &ctx->commands[i + 3];
                                 p = &ctx->commands[i + 5];
@@ -545,8 +530,7 @@ namespace rl::nvg {
                 cache->bounds[2] = cache->bounds[3] = -1e6f;
 
                 // Calculate the direction and length of line segments.
-                for (i32 j = 0; j < cache->npaths; j++)
-                {
+                for (i32 j = 0; j < cache->npaths; j++) {
                     NVGpath* path{ &cache->paths[j] };
                     pts = &cache->points[path->first];
 
@@ -554,16 +538,14 @@ namespace rl::nvg {
                     // path.
                     Point* p0{ &pts[path->count - 1] };
                     Point* p1{ &pts[0] };
-                    if (detail::pt_equals(p0->x, p0->y, p1->x, p1->y, ctx->dist_tol))
-                    {
+                    if (detail::pt_equals(p0->x, p0->y, p1->x, p1->y, ctx->dist_tol)) {
                         path->count--;
                         p0 = &pts[path->count - 1];
                         path->closed = 1;
                     }
 
                     // Enforce winding.
-                    if (path->count > 2)
-                    {
+                    if (path->count > 2) {
                         const f32 area = detail::poly_area(pts, path->count);
                         if (path->winding == ShapeWinding::CounterClockwise && area < 0.0f)
                             detail::poly_reverse(pts, path->count);
@@ -571,8 +553,7 @@ namespace rl::nvg {
                             detail::poly_reverse(pts, path->count);
                     }
 
-                    for (i = 0; i < path->count; i++)
-                    {
+                    for (i = 0; i < path->count; i++) {
                         // Calculate segment direction and length
                         p0->dx = p1->x - p0->x;
                         p0->dy = p1->y - p0->y;
@@ -597,15 +578,13 @@ namespace rl::nvg {
             void choose_bevel(const i32 bevel, const Point* p0, const Point* p1, const f32 w,
                               f32* x0, f32* y0, f32* x1, f32* y1)
             {
-                if (bevel)
-                {
+                if (bevel) {
                     *x0 = p1->x + p0->dy * w;
                     *y0 = p1->y - p0->dx * w;
                     *x1 = p1->x + p1->dy * w;
                     *y1 = p1->y - p1->dx * w;
                 }
-                else
-                {
+                else {
                     *x0 = p1->x + p1->dmx * w;
                     *y0 = p1->y + p1->dmy * w;
                     *x1 = p1->x + p1->dmx * w;
@@ -621,8 +600,7 @@ namespace rl::nvg {
                 const f32 dlx1{ p1->dy };
                 const f32 dly1{ -p1->dx };
 
-                if (p1->flags & NvgPtLeft)
-                {
+                if (p1->flags & NvgPtLeft) {
                     f32 lx0, ly0, lx1, ly1;
                     detail::choose_bevel(p1->flags & NvgPrInnerbevel, p0, p1, lw, &lx0, &ly0, &lx1,
                                          &ly1);
@@ -643,8 +621,7 @@ namespace rl::nvg {
                             ceilf((a0 - a1) / std::numbers::pi_v<f32> * static_cast<f32>(ncap))),
                         2, ncap) };
 
-                    for (i32 i = 0; i < n; i++)
-                    {
+                    for (i32 i = 0; i < n; i++) {
                         const f32 u{ static_cast<f32>(i) / (static_cast<f32>(n) - 1.0f) };
                         const f32 a{ a0 + u * (a1 - a0) };
                         const f32 rx{ p1->x + cosf(a) * rw };
@@ -662,8 +639,7 @@ namespace rl::nvg {
                     detail::vset(dst, p1->x - dlx1 * rw, p1->y - dly1 * rw, ru, 1);
                     dst++;
                 }
-                else
-                {
+                else {
                     f32 rx0, ry0, rx1, ry1;
                     detail::choose_bevel(p1->flags & NvgPrInnerbevel, p0, p1, -rw, &rx0, &ry0, &rx1,
                                          &ry1);
@@ -682,8 +658,7 @@ namespace rl::nvg {
                             (a1 - a0) / std::numbers::pi_v<f32> * static_cast<f32>(ncap))),
                         2, ncap) };
 
-                    for (i32 i = 0; i < n; ++i)
-                    {
+                    for (i32 i = 0; i < n; ++i) {
                         const f32 u = static_cast<f32>(i) / (static_cast<f32>(n) - 1.0f);
                         const f32 a = a0 + u * (a1 - a0);
                         const f32 lx = p1->x + std::cosf(a) * lw;
@@ -715,8 +690,7 @@ namespace rl::nvg {
                 const f32 dlx1{ p1->dy };
                 const f32 dly1{ -p1->dx };
 
-                if (p1->flags & NvgPtLeft)
-                {
+                if (p1->flags & NvgPtLeft) {
                     detail::choose_bevel(p1->flags & NvgPrInnerbevel, p0, p1, lw, &lx0, &ly0, &lx1,
                                          &ly1);
 
@@ -725,8 +699,7 @@ namespace rl::nvg {
                     detail::vset(dst, p1->x - dlx0 * rw, p1->y - dly0 * rw, ru, 1);
                     dst++;
 
-                    if (p1->flags & NvgPtBevel)
-                    {
+                    if (p1->flags & NvgPtBevel) {
                         detail::vset(dst, lx0, ly0, lu, 1);
                         dst++;
                         detail::vset(dst, p1->x - dlx0 * rw, p1->y - dly0 * rw, ru, 1);
@@ -737,8 +710,7 @@ namespace rl::nvg {
                         detail::vset(dst, p1->x - dlx1 * rw, p1->y - dly1 * rw, ru, 1);
                         dst++;
                     }
-                    else
-                    {
+                    else {
                         rx0 = p1->x - p1->dmx * rw;
                         ry0 = p1->y - p1->dmy * rw;
 
@@ -763,8 +735,7 @@ namespace rl::nvg {
                     detail::vset(dst, p1->x - dlx1 * rw, p1->y - dly1 * rw, ru, 1);
                     dst++;
                 }
-                else
-                {
+                else {
                     detail::choose_bevel(p1->flags & NvgPrInnerbevel, p0, p1, -rw, &rx0, &ry0, &rx1,
                                          &ry1);
 
@@ -773,8 +744,7 @@ namespace rl::nvg {
                     detail::vset(dst, rx0, ry0, ru, 1);
                     dst++;
 
-                    if (p1->flags & NvgPtBevel)
-                    {
+                    if (p1->flags & NvgPtBevel) {
                         detail::vset(dst, p1->x + dlx0 * lw, p1->y + dly0 * lw, lu, 1);
                         dst++;
                         detail::vset(dst, rx0, ry0, ru, 1);
@@ -785,8 +755,7 @@ namespace rl::nvg {
                         detail::vset(dst, rx1, ry1, ru, 1);
                         dst++;
                     }
-                    else
-                    {
+                    else {
                         lx0 = p1->x + p1->dmx * lw;
                         ly0 = p1->y + p1->dmy * lw;
 
@@ -838,7 +807,8 @@ namespace rl::nvg {
             }
 
             Vertex* butt_cap_end(Vertex* dst, const Point* p, const f32 dx, const f32 dy,
-                                 const f32 w, const f32 d, const f32 aa, const f32 u0, const f32 u1)
+                                 const f32 w, const f32 d, const f32 aa, const f32 u0,
+                                 const f32 u1)
             {
                 const f32 px = p->x + dx * d;
                 const f32 py = p->y + dy * d;
@@ -865,10 +835,9 @@ namespace rl::nvg {
                 const f32 dlx{ dy };
                 const f32 dly{ -dx };
 
-                for (i32 i = 0; i < ncap; ++i)
-                {
-                    const f32 a = static_cast<f32>(i) / (static_cast<f32>(ncap) - 1.0f) *
-                                  std::numbers::pi_v<f32>;
+                for (i32 i = 0; i < ncap; ++i) {
+                    const f32 a = static_cast<f32>(i) / (static_cast<f32>(ncap) - 1.0f)
+                                * std::numbers::pi_v<f32>;
                     const f32 ax = detail::cosf(a) * w;
                     const f32 ay = detail::sinf(a) * w;
 
@@ -897,10 +866,9 @@ namespace rl::nvg {
                 detail::vset(dst, px - dlx * w, py - dly * w, u1, 1);
                 dst++;
 
-                for (i32 i = 0; i < ncap; i++)
-                {
-                    const f32 a = static_cast<f32>(i) / static_cast<f32>(ncap - 1) *
-                                  std::numbers::pi_v<f32>;
+                for (i32 i = 0; i < ncap; i++) {
+                    const f32 a = static_cast<f32>(i) / static_cast<f32>(ncap - 1)
+                                * std::numbers::pi_v<f32>;
                     const f32 ax = detail::cosf(a) * w;
                     const f32 ay = detail::sinf(a) * w;
 
@@ -922,8 +890,7 @@ namespace rl::nvg {
                     iw = 1.0f / w;
 
                 // Calculate which joins needs extra vertices to append, and gather vertex count.
-                for (i32 i = 0; i < cache->npaths; i++)
-                {
+                for (i32 i = 0; i < cache->npaths; i++) {
                     NVGpath* path = &cache->paths[i];
                     Point* pts = &cache->points[path->first];
                     const Point* p0 = &pts[path->count - 1];
@@ -932,8 +899,7 @@ namespace rl::nvg {
 
                     path->nbevel = 0;
 
-                    for (i32 j = 0; j < path->count; j++)
-                    {
+                    for (i32 j = 0; j < path->count; j++) {
                         const f32 dlx0{ p0->dy };
                         const f32 dly0{ -p0->dx };
                         const f32 dlx1{ p1->dy };
@@ -944,8 +910,7 @@ namespace rl::nvg {
                         p1->dmy = (dly0 + dly1) * 0.5f;
 
                         const f32 dmr2 = p1->dmx * p1->dmx + p1->dmy * p1->dmy;
-                        if (dmr2 > 0.000001f)
-                        {
+                        if (dmr2 > 0.000001f) {
                             f32 scale = 1.0f / dmr2;
                             if (scale > 600.0f)
                                 scale = 600.0f;
@@ -959,8 +924,7 @@ namespace rl::nvg {
 
                         // Keep track of left turns.
                         const f32 cross = p1->dx * p0->dy - p0->dx * p1->dy;
-                        if (cross > 0.0f)
-                        {
+                        if (cross > 0.0f) {
                             nleft++;
                             p1->flags |= NvgPtLeft;
                         }
@@ -972,8 +936,8 @@ namespace rl::nvg {
 
                         // Check to see if the corner needs to be beveled.
                         if (p1->flags & NvgPtCorner)
-                            if (dmr2 * miter_limit * miter_limit < 1.0f ||
-                                line_join == LineCap::Bevel || line_join == LineCap::Round)
+                            if (dmr2 * miter_limit * miter_limit < 1.0f
+                                || line_join == LineCap::Bevel || line_join == LineCap::Round)
                                 p1->flags |= NvgPtBevel;
 
                         if ((p1->flags & (NvgPtBevel | NvgPrInnerbevel)) != 0)
@@ -1003,8 +967,7 @@ namespace rl::nvg {
                 f32 u1 = 1.0f;
                 // Disable the gradient used for antialiasing
                 // when antialiasing is not used.
-                if (aa == 0.0f)
-                {
+                if (aa == 0.0f) {
                     u0 = 0.5f;
                     u1 = 0.5f;
                 }
@@ -1013,8 +976,7 @@ namespace rl::nvg {
 
                 // Calculate max vertex usage.
                 i32 cverts = 0;
-                for (i32 i = 0; i < cache->npaths; ++i)
-                {
+                for (i32 i = 0; i < cache->npaths; ++i) {
                     const NVGpath* path = &cache->paths[i];
                     const i32 loop = path->closed == 0 ? 0 : 1;
                     if (line_join == LineCap::Round)
@@ -1022,8 +984,7 @@ namespace rl::nvg {
                                                                                       // for loop
                     else
                         cverts += (path->count + path->nbevel * 5 + 1) * 2;  // plus one for loop
-                    if (loop == 0)
-                    {
+                    if (loop == 0) {
                         // space for caps
                         if (line_cap == LineCap::Round)
                             cverts += (ncap * 2 + 2) * 2;
@@ -1036,8 +997,7 @@ namespace rl::nvg {
                 if (verts == nullptr)
                     return 0;
 
-                for (i32 i = 0; i < cache->npaths; ++i)
-                {
+                for (i32 i = 0; i < cache->npaths; ++i) {
                     NVGpath* path = &cache->paths[i];
                     Point* pts = &cache->points[path->first];
                     Point* p0;
@@ -1053,16 +1013,14 @@ namespace rl::nvg {
                     Vertex* dst = verts;
                     path->stroke = dst;
 
-                    if (loop)
-                    {
+                    if (loop) {
                         // Looping
                         p0 = &pts[path->count - 1];
                         p1 = &pts[0];
                         s = 0;
                         e = path->count;
                     }
-                    else
-                    {
+                    else {
                         // Add cap
                         p0 = &pts[0];
                         p1 = &pts[1];
@@ -1070,8 +1028,7 @@ namespace rl::nvg {
                         e = path->count - 1;
                     }
 
-                    if (loop == 0)
-                    {
+                    if (loop == 0) {
                         // Add cap
                         dx = p1->x - p0->x;
                         dy = p1->y - p0->y;
@@ -1084,17 +1041,14 @@ namespace rl::nvg {
                             dst = detail::round_cap_start(dst, p0, dx, dy, w, ncap, aa, u0, u1);
                     }
 
-                    for (i32 j = s; j < e; ++j)
-                    {
-                        if ((p1->flags & (NvgPtBevel | NvgPrInnerbevel)) != 0)
-                        {
+                    for (i32 j = s; j < e; ++j) {
+                        if ((p1->flags & (NvgPtBevel | NvgPrInnerbevel)) != 0) {
                             if (line_join == LineCap::Round)
                                 dst = detail::round_join(dst, p0, p1, w, w, u0, u1, ncap, aa);
                             else
                                 dst = detail::bevel_join(dst, p0, p1, w, w, u0, u1, aa);
                         }
-                        else
-                        {
+                        else {
                             detail::vset(dst, p1->x + p1->dmx * w, p1->y + p1->dmy * w, u0, 1);
                             dst++;
                             detail::vset(dst, p1->x - p1->dmx * w, p1->y - p1->dmy * w, u1, 1);
@@ -1103,16 +1057,14 @@ namespace rl::nvg {
                         p0 = p1++;
                     }
 
-                    if (loop)
-                    {
+                    if (loop) {
                         // Loop it
                         detail::vset(dst, verts[0].x, verts[0].y, u0, 1);
                         dst++;
                         detail::vset(dst, verts[1].x, verts[1].y, u1, 1);
                         dst++;
                     }
-                    else
-                    {
+                    else {
                         // Add cap
                         dx = p1->x - p0->x;
                         dy = p1->y - p0->y;
@@ -1145,8 +1097,7 @@ namespace rl::nvg {
 
                 // Calculate max vertex usage.
                 i32 cverts = 0;
-                for (i = 0; i < cache->npaths; i++)
-                {
+                for (i = 0; i < cache->npaths; i++) {
                     const NVGpath* path = &cache->paths[i];
                     cverts += path->count + path->nbevel + 1;
                     if (fringe)
@@ -1159,8 +1110,7 @@ namespace rl::nvg {
 
                 const auto convex = cache->npaths == 1 && cache->paths[0].convex;
 
-                for (i = 0; i < cache->npaths; i++)
-                {
+                for (i = 0; i < cache->npaths; i++) {
                     NVGpath* path = &cache->paths[i];
                     Point* pts = &cache->points[path->first];
                     Point* p0;
@@ -1171,28 +1121,23 @@ namespace rl::nvg {
                     Vertex* dst = verts;
                     path->fill = dst;
 
-                    if (fringe)
-                    {
+                    if (fringe) {
                         // Looping
                         p0 = &pts[path->count - 1];
                         p1 = &pts[0];
-                        for (j = 0; j < path->count; ++j)
-                        {
-                            if (p1->flags & NvgPtBevel)
-                            {
+                        for (j = 0; j < path->count; ++j) {
+                            if (p1->flags & NvgPtBevel) {
                                 const f32 dlx0 = p0->dy;
                                 const f32 dly0 = -p0->dx;
                                 const f32 dlx1 = p1->dy;
                                 const f32 dly1 = -p1->dx;
-                                if (p1->flags & NvgPtLeft)
-                                {
+                                if (p1->flags & NvgPtLeft) {
                                     const f32 lx = p1->x + p1->dmx * woff;
                                     const f32 ly = p1->y + p1->dmy * woff;
                                     detail::vset(dst, lx, ly, 0.5f, 1);
                                     dst++;
                                 }
-                                else
-                                {
+                                else {
                                     const f32 lx0 = p1->x + dlx0 * woff;
                                     const f32 ly0 = p1->y + dly0 * woff;
                                     const f32 lx1 = p1->x + dlx1 * woff;
@@ -1203,8 +1148,7 @@ namespace rl::nvg {
                                     dst++;
                                 }
                             }
-                            else
-                            {
+                            else {
                                 detail::vset(dst, p1->x + p1->dmx * woff, p1->y + p1->dmy * woff,
                                              0.5f, 1);
                                 dst++;
@@ -1213,8 +1157,7 @@ namespace rl::nvg {
                         }
                     }
                     else
-                        for (j = 0; j < path->count; ++j)
-                        {
+                        for (j = 0; j < path->count; ++j) {
                             detail::vset(dst, pts[j].x, pts[j].y, 0.5f, 1);
                             dst++;
                         }
@@ -1223,8 +1166,7 @@ namespace rl::nvg {
                     verts = dst;
 
                     // Calculate fringe
-                    if (fringe)
-                    {
+                    if (fringe) {
                         f32 lw = w + woff;
                         const f32 rw = w - woff;
                         f32 lu = 0;
@@ -1234,8 +1176,7 @@ namespace rl::nvg {
 
                         // Create only half a fringe for convex shapes so that
                         // the shape can be rendered without stenciling.
-                        if (convex)
-                        {
+                        if (convex) {
                             lw = woff;  // This should generate the same vertex as fill inset above.
                             lu = 0.5f;  // Set outline fade at middle.
                         }
@@ -1244,12 +1185,10 @@ namespace rl::nvg {
                         p0 = &pts[path->count - 1];
                         p1 = &pts[0];
 
-                        for (j = 0; j < path->count; ++j)
-                        {
+                        for (j = 0; j < path->count; ++j) {
                             if ((p1->flags & (NvgPtBevel | NvgPrInnerbevel)) != 0)
                                 dst = bevel_join(dst, p0, p1, lw, rw, lu, ru, ctx->fringe_width);
-                            else
-                            {
+                            else {
                                 detail::vset(dst, p1->x + p1->dmx * lw, p1->y + p1->dmy * lw, lu, 1);
                                 dst++;
                                 detail::vset(dst, p1->x - p1->dmx * rw, p1->y - p1->dmy * rw, ru, 1);
@@ -1267,8 +1206,7 @@ namespace rl::nvg {
                         path->nstroke = static_cast<i32>(dst - verts);
                         verts = dst;
                     }
-                    else
-                    {
+                    else {
                         path->stroke = nullptr;
                         path->nstroke = 0;
                     }
@@ -1323,12 +1261,10 @@ namespace rl::nvg {
             {
                 i32 dirty[4] = { 0 };
 
-                if (font::validate_texture(ctx->fs, dirty))
-                {
+                if (font::validate_texture(ctx->fs, dirty)) {
                     const i32 font_image = ctx->font_images[ctx->font_image_idx];
                     // Update texture
-                    if (font_image != 0)
-                    {
+                    if (font_image != 0) {
                         i32 iw, ih;
                         const u8* data = font::get_texture_data(ctx->fs, &iw, &ih);
                         const i32 x = dirty[0];
@@ -1351,8 +1287,7 @@ namespace rl::nvg {
                 // if next fontImage already have a texture
                 if (ctx->font_images[ctx->font_image_idx + 1] != 0)
                     image_size(ctx, ctx->font_images[ctx->font_image_idx + 1], &iw, &ih);
-                else
-                {
+                else {
                     // calculate the new font image size and create it.
                     image_size(ctx, ctx->font_images[ctx->font_image_idx], &iw, &ih);
                     if (iw > ih)
@@ -1360,8 +1295,8 @@ namespace rl::nvg {
                     else
                         iw *= 2;
 
-                    if (iw > static_cast<f32>(NvgMaxFontimageSize) ||
-                        ih > static_cast<f32>(NvgMaxFontimageSize))
+                    if (iw > static_cast<f32>(NvgMaxFontimageSize)
+                        || ih > static_cast<f32>(NvgMaxFontimageSize))
                         iw = ih = NvgMaxFontimageSize;
 
                     ctx->font_images[ctx->font_image_idx + 1] = ctx->params.render_create_texture(
@@ -1437,8 +1372,7 @@ namespace rl::nvg {
             void append_commands(Context* ctx, f32* vals, const i32 nvals)
             {
                 const State* state = detail::get_state(ctx);
-                if (ctx->ncommands + nvals > ctx->ccommands)
-                {
+                if (ctx->ncommands + nvals > ctx->ccommands) {
                     const i32 ccommands = ctx->ncommands + nvals + ctx->ccommands / 2;
                     const auto commands = static_cast<f32*>(
                         realloc(ctx->commands, sizeof(f32) * static_cast<uint64_t>(ccommands)));
@@ -1451,19 +1385,16 @@ namespace rl::nvg {
                 }
 
                 const i32 val = static_cast<i32>(vals[0]);
-                if (val != Commands::Close && val != Commands::Winding)
-                {
+                if (val != Commands::Close && val != Commands::Winding) {
                     ctx->commandx = vals[nvals - 2];
                     ctx->commandy = vals[nvals - 1];
                 }
 
                 // transform commands
                 i32 i = 0;
-                while (i < nvals)
-                {
+                while (i < nvals) {
                     const auto cmd{ static_cast<Commands>(static_cast<i32>(vals[i])) };
-                    switch (cmd)
-                    {
+                    switch (cmd) {
                         case Commands::MoveTo:
                             [[fallthrough]];
                         case Commands::LineTo:
@@ -1505,27 +1436,23 @@ namespace rl::nvg {
     {
         font::Params font_params{};
         const auto ctx{ static_cast<Context*>(std::malloc(sizeof(Context))) };
-        if (ctx != nullptr)
-        {
+        if (ctx != nullptr) {
             *ctx = Context{ .params = *params };
             for (i32& font_image : ctx->font_images)
                 font_image = 0;
 
             ctx->commands = static_cast<f32*>(std::malloc(sizeof(f32) * NvgInitCommandsSize));
-            if (ctx->commands != nullptr)
-            {
+            if (ctx->commands != nullptr) {
                 ctx->ncommands = 0;
                 ctx->ccommands = NvgInitCommandsSize;
 
                 ctx->cache = detail::alloc_path_cache();
-                if (ctx->cache != nullptr)
-                {
+                if (ctx->cache != nullptr) {
                     save(ctx);
                     reset(ctx);
 
                     detail::set_device_pixel_ratio(ctx, 1.0f);
-                    if (ctx->params.render_create(ctx->params.user_ptr) != 0)
-                    {
+                    if (ctx->params.render_create(ctx->params.user_ptr) != 0) {
                         // Init font rendering
                         std::memset(&font_params, 0, sizeof(font_params));
                         font_params.width = NvgInitFontimageSize;
@@ -1538,15 +1465,13 @@ namespace rl::nvg {
                         font_params.user_ptr = nullptr;
 
                         ctx->fs = font::create_internal(&font_params);
-                        if (ctx->fs != nullptr)
-                        {
+                        if (ctx->fs != nullptr) {
                             // Create font texture
                             ctx->font_images[0] = ctx->params.render_create_texture(
                                 ctx->params.user_ptr, TextureProperty::Alpha, font_params.width,
                                 font_params.height, ImageFlags::None, nullptr);
 
-                            if (ctx->font_images[0] != 0)
-                            {
+                            if (ctx->font_images[0] != 0) {
                                 ctx->font_image_idx = 0;
                                 return ctx;
                             }
@@ -1577,10 +1502,8 @@ namespace rl::nvg {
         if (ctx->fs)
             font::delete_internal(ctx->fs);
 
-        for (i32& font_image : ctx->font_images)
-        {
-            if (font_image != 0)
-            {
+        for (i32& font_image : ctx->font_images) {
+            if (font_image != 0) {
                 delete_image(ctx, font_image);
                 font_image = 0;
             }
@@ -1618,8 +1541,7 @@ namespace rl::nvg {
     void end_frame(Context* ctx)
     {
         ctx->params.render_flush(ctx->params.user_ptr);
-        if (ctx->font_image_idx != 0)
-        {
+        if (ctx->font_image_idx != 0) {
             const i32 font_image = ctx->font_images[ctx->font_image_idx];
             ctx->font_images[ctx->font_image_idx] = 0;
 
@@ -1632,10 +1554,8 @@ namespace rl::nvg {
             image_size(ctx, font_image, &iw, &ih);
 
             i32 j = 0;
-            for (i32 i = 0; i < ctx->font_image_idx; i++)
-            {
-                if (ctx->font_images[i] != 0)
-                {
+            for (i32 i = 0; i < ctx->font_image_idx; i++) {
+                if (ctx->font_images[i] != 0) {
                     const i32 image = ctx->font_images[i];
                     ctx->font_images[i] = 0;
 
@@ -1806,11 +1726,10 @@ namespace rl::nvg {
 
     i32 transform_inverse(f32* dst, const f32* src)
     {
-        const double det = static_cast<double>(src[0]) * src[3] -
-                           static_cast<double>(src[2]) * src[1];
+        const double det = static_cast<double>(src[0]) * src[3]
+                         - static_cast<double>(src[2]) * src[1];
 
-        if (det > -1e-6 && det < 1e-6)
-        {
+        if (det > -1e-6 && det < 1e-6) {
             transform_identity(dst);
             return 0;
         }
@@ -2056,8 +1975,7 @@ namespace rl::nvg {
         stb::stbi_set_unpremultiply_on_load(1);
         stb::stbi_convert_iphone_png_to_rgb(1);
         u8* img = stb::stbi_load(filename, &w, &h, &n, 4);
-        if (img == nullptr)
-        {
+        if (img == nullptr) {
             assert_msg("Failed to load {} - {}\n", filename, stb::stbi_failure_reason());
             return 0;
         }
@@ -2074,8 +1992,7 @@ namespace rl::nvg {
         i32 h{ 0 };
         i32 n{ 0 };
         u8* img = stb::stbi_load_from_memory(data, ndata, &w, &h, &n, 4);
-        if (img == nullptr)
-        {
+        if (img == nullptr) {
             assert_msg("Failed to image - {}\n", stb::stbi_failure_reason());
             return 0;
         }
@@ -2127,7 +2044,8 @@ namespace rl::nvg {
     }
 
     PaintStyle linear_gradient(Context*, const f32 sx, const f32 sy, const f32 ex, const f32 ey,
-                               const ds::color<f32>& inner_color, const ds::color<f32>& outer_color)
+                               const ds::color<f32>& inner_color,
+                               const ds::color<f32>& outer_color)
     {
         PaintStyle p{};
         constexpr static f32 large{ 1e5 };
@@ -2137,13 +2055,11 @@ namespace rl::nvg {
         f32 dy = ey - sy;
 
         const f32 d = sqrtf(dx * dx + dy * dy);
-        if (d > 0.0001f)
-        {
+        if (d > 0.0001f) {
             dx /= d;
             dy /= d;
         }
-        else
-        {
+        else {
             dx = 0;
             dy = 1;
         }
@@ -2169,7 +2085,8 @@ namespace rl::nvg {
     }
 
     PaintStyle radial_gradient(Context*, const f32 cx, const f32 cy, const f32 inr, const f32 outr,
-                               const ds::color<f32>& inner_color, const ds::color<f32>& outer_color)
+                               const ds::color<f32>& inner_color,
+                               const ds::color<f32>& outer_color)
     {
         const f32 r = (inr + outr) * 0.5f;
         const f32 f = outr - inr;
@@ -2278,8 +2195,7 @@ namespace rl::nvg {
         f32 rect[4];
 
         // If no previous scissor has been set, set the scissor as current scissor.
-        if (state->scissor.extent[0] < 0)
-        {
+        if (state->scissor.extent[0] < 0) {
             scissor(ctx, x, y, w, h);
             return;
         }
@@ -2387,11 +2303,10 @@ namespace rl::nvg {
             return;
 
         // Handle degenerate cases.
-        if (detail::pt_equals(x0, y0, x1, y1, ctx->dist_tol) ||
-            detail::pt_equals(x1, y1, x2, y2, ctx->dist_tol) ||
-            detail::dist_pt_seg(x1, y1, x0, y0, x2, y2) < ctx->dist_tol * ctx->dist_tol ||
-            radius < ctx->dist_tol)
-        {
+        if (detail::pt_equals(x0, y0, x1, y1, ctx->dist_tol)
+            || detail::pt_equals(x1, y1, x2, y2, ctx->dist_tol)
+            || detail::dist_pt_seg(x1, y1, x0, y0, x2, y2) < ctx->dist_tol * ctx->dist_tol
+            || radius < ctx->dist_tol) {
             line_to(ctx, x1, y1);
             return;
         }
@@ -2408,8 +2323,7 @@ namespace rl::nvg {
 
         //  printf("a=%f° d=%f\n", a/std::numbers::pi_v<f32>*180.0f, d);
 
-        if (d > 10000.0f)
-        {
+        if (d > 10000.0f) {
             line_to(ctx, x1, y1);
             return;
         }
@@ -2419,8 +2333,7 @@ namespace rl::nvg {
         f32 a0{ 0.0f };
         f32 a1{ 0.0f };
         ShapeWinding dir{ ShapeWinding::None };
-        if (detail::cross(dx0, dy0, dx1, dy1) > 0.0f)
-        {
+        if (detail::cross(dx0, dy0, dx1, dy1) > 0.0f) {
             cx = x1 + dx0 * d + dy0 * radius;
             cy = y1 + dy0 * d + -dx0 * radius;
             a0 = detail::atan2f(dx0, -dy0);
@@ -2430,8 +2343,7 @@ namespace rl::nvg {
             // a0/std::numbers::pi_v<f32>*180.0f,
             // a1/std::numbers::pi_v<f32>*180.0f);
         }
-        else
-        {
+        else {
             cx = x1 + dx0 * d + -dy0 * radius;
             cy = y1 + dy0 * d + dx0 * radius;
             a0 = detail::atan2f(-dx0, dy0);
@@ -2470,16 +2382,14 @@ namespace rl::nvg {
 
         // Clamp angles
         f32 da = a1 - a0;
-        if (dir == ShapeWinding::Clockwise)
-        {
+        if (dir == ShapeWinding::Clockwise) {
             if (detail::absf(da) >= std::numbers::pi_v<f32> * 2)
                 da = std::numbers::pi_v<f32> * 2;
             else
                 while (da < 0.0f)
                     da += std::numbers::pi_v<f32> * 2;
         }
-        else
-        {
+        else {
             if (detail::absf(da) >= std::numbers::pi_v<f32> * 2)
                 da = -std::numbers::pi_v<f32> * 2;
             else
@@ -2500,8 +2410,7 @@ namespace rl::nvg {
             kappa = -kappa;
 
         i32 nvals = 0;
-        for (i32 i = 0; i <= ndivs; i++)
-        {
+        for (i32 i = 0; i <= ndivs; i++) {
             const f32 a = a0 + da * (static_cast<f32>(i) / static_cast<f32>(ndivs));
             const f32 dx = detail::cosf(a);
             const f32 dy = detail::sinf(a);
@@ -2510,14 +2419,12 @@ namespace rl::nvg {
             const f32 tanx = -dy * r * kappa;
             const f32 tany = dx * r * kappa;
 
-            if (i == 0)
-            {
+            if (i == 0) {
                 vals[nvals++] = static_cast<f32>(move);
                 vals[nvals++] = x;
                 vals[nvals++] = y;
             }
-            else
-            {
+            else {
                 vals[nvals++] = static_cast<f32>(Commands::Bezierto);
                 vals[nvals++] = px + ptanx;
                 vals[nvals++] = py + ptany;
@@ -2566,17 +2473,26 @@ namespace rl::nvg {
     void rect(Context* ctx, const f32 x, const f32 y, const f32 w, const f32 h)
     {
         auto vals = std::array{
-            static_cast<f32>(Commands::MoveTo), x,     y,
-            static_cast<f32>(Commands::LineTo), x,     y + h,
-            static_cast<f32>(Commands::LineTo), x + w, y + h,
-            static_cast<f32>(Commands::LineTo), x + w, y,
+            static_cast<f32>(Commands::MoveTo),
+            x,
+            y,
+            static_cast<f32>(Commands::LineTo),
+            x,
+            y + h,
+            static_cast<f32>(Commands::LineTo),
+            x + w,
+            y + h,
+            static_cast<f32>(Commands::LineTo),
+            x + w,
+            y,
             static_cast<f32>(Commands::Close),
         };
 
         detail::append_commands(ctx, vals.data(), static_cast<i32>(std::size(vals)));
     }
 
-    void rounded_rect(Context* ctx, const f32 x, const f32 y, const f32 w, const f32 h, const f32 r)
+    void rounded_rect(Context* ctx, const f32 x, const f32 y, const f32 w, const f32 h,
+                      const f32 r)
     {
         rounded_rect_varying(ctx, x, y, w, h, r, r, r, r);
     }
@@ -2591,9 +2507,8 @@ namespace rl::nvg {
                               const f32 rad_top_left, const f32 rad_top_right,
                               const f32 rad_bottom_right, const f32 rad_bottom_left)
     {
-        if (rad_top_left < 0.1f && rad_top_right < 0.1f && rad_bottom_right < 0.1f &&
-            rad_bottom_left < 0.1f)
-        {
+        if (rad_top_left < 0.1f && rad_top_right < 0.1f && rad_bottom_right < 0.1f
+            && rad_bottom_left < 0.1f) {
             rect(ctx, x, y, w, h);
             return;
         }
@@ -2709,18 +2624,15 @@ namespace rl::nvg {
         i32 j;
 
         std::println("Dumping {} cached paths", ctx->cache->npaths);
-        for (i32 i = 0; i < ctx->cache->npaths; i++)
-        {
+        for (i32 i = 0; i < ctx->cache->npaths; i++) {
             const NVGpath* path = &ctx->cache->paths[i];
             std::println(" - Path {}", i);
-            if (path->nfill)
-            {
+            if (path->nfill) {
                 std::println("   - fill: {}", path->nfill);
                 for (j = 0; j < path->nfill; j++)
                     std::println("{:f}\t{:f}", path->fill[j].x, path->fill[j].y);
             }
-            if (path->nstroke)
-            {
+            if (path->nstroke) {
                 std::println("   - stroke: {}", path->nstroke);
                 for (j = 0; j < path->nstroke; j++)
                     std::println("{:f}\t{:f}", path->stroke[j].x, path->stroke[j].y);
@@ -2748,8 +2660,7 @@ namespace rl::nvg {
                                 ctx->cache->paths, ctx->cache->npaths);
 
         // Count triangles
-        for (i32 i = 0; i < ctx->cache->npaths; i++)
-        {
+        for (i32 i = 0; i < ctx->cache->npaths; i++) {
             const NVGpath* path = &ctx->cache->paths[i];
             ctx->fill_tri_count += path->nfill - 2;
             ctx->fill_tri_count += path->nstroke - 2;
@@ -2764,8 +2675,7 @@ namespace rl::nvg {
         f32 stroke_width = detail::clampf(state->stroke_width * scale, 0.0f, 200.0f);
         PaintStyle stroke_paint = state->stroke;
 
-        if (stroke_width < ctx->fringe_width)
-        {
+        if (stroke_width < ctx->fringe_width) {
             // If the stroke width is less than pixel size, use alpha to emulate coverage.
             // Since coverage is area, scale by alpha*alpha.
             const f32 alpha = detail::clampf(stroke_width / ctx->fringe_width, 0.0f, 1.0f);
@@ -2792,8 +2702,7 @@ namespace rl::nvg {
                                   ctx->cache->paths, ctx->cache->npaths);
 
         // Count triangles
-        for (i32 i = 0; i < ctx->cache->npaths; i++)
-        {
+        for (i32 i = 0; i < ctx->cache->npaths; i++) {
             const NVGpath* path = &ctx->cache->paths[i];
             ctx->stroke_tri_count += path->nstroke - 2;
             ctx->draw_call_count++;
@@ -2924,8 +2833,7 @@ namespace rl::nvg {
     f32 draw_text(Context* ctx, const ds::point<f32> pos, const std::string& text)
     {
         State* state{ detail::get_state(ctx) };
-        if (state->font_id == font::INVALID)
-        {
+        if (state->font_id == font::INVALID) {
             assert_msg("nvg::draw_text: invalid font");
             return pos.x;
         }
@@ -2953,20 +2861,16 @@ namespace rl::nvg {
         i32 nverts{ 0 };
         font::FontQuad q{};
         font::TextIter prev_iter = iter;
-        while (font::text_iter_next(ctx->fs, &iter, &q))
-        {
+        while (font::text_iter_next(ctx->fs, &iter, &q)) {
             f32 c[4 * 2]{};
-            if (iter.prev_glyph_index == -1)
-            {
+            if (iter.prev_glyph_index == -1) {
                 // can not retrieve glyph?
-                if (nverts != 0)
-                {
+                if (nverts != 0) {
                     detail::render_text(ctx, verts, nverts);
                     nverts = 0;
                 }
 
-                if (detail::alloc_text_atlas(ctx) == 0)
-                {
+                if (detail::alloc_text_atlas(ctx) == 0) {
                     // no memory :(
                     assert_msg("allocation for text atlas failed");
                     break;
@@ -2976,8 +2880,7 @@ namespace rl::nvg {
 
                 // try again
                 font::text_iter_next(ctx->fs, &iter, &q);
-                if (iter.prev_glyph_index == -1)
-                {
+                if (iter.prev_glyph_index == -1) {
                     // still can not find glyph? font size may be too small or negative
                     assert_msg("nvg::draw_text : failed to find glyph to render");
                     break;
@@ -2985,8 +2888,7 @@ namespace rl::nvg {
             }
 
             prev_iter = iter;
-            if (is_flipped)
-            {
+            if (is_flipped) {
                 std::swap(q.y0, q.y1);
                 std::swap(q.t0, q.t1);
             }
@@ -2998,8 +2900,7 @@ namespace rl::nvg {
             transform_point(&c[6], &c[7], state->xform, q.x0 * invscale, q.y1 * invscale);
 
             // Create triangles
-            if (nverts + 6 <= cverts)
-            {
+            if (nverts + 6 <= cverts) {
                 detail::vset(&verts[nverts], c[0], c[1], q.s0, q.t0);
                 nverts++;
                 detail::vset(&verts[nverts], c[4], c[5], q.s1, q.t1);
@@ -3026,16 +2927,15 @@ namespace rl::nvg {
                   const std::string& text)
     {
         State* state{ detail::get_state(ctx) };
-        if (state->font_id == font::INVALID)
-        {
+        if (state->font_id == font::INVALID) {
             assert_msg("font not loaded");
             return;
         }
 
         Align old_align{ state->text_align };
         Align haling{ state->text_align & (Align::HLeft | Align::HCenter | Align::HRight) };
-        Align valign{ state->text_align &
-                      (Align::VTop | Align::VMiddle | Align::VBottom | Align::VBaseline) };
+        Align valign{ state->text_align
+                      & (Align::VTop | Align::VMiddle | Align::VBottom | Align::VBaseline) };
 
         f32 lineh{ 0.0f };
         text_metrics_(ctx, nullptr, nullptr, &lineh);
@@ -3045,10 +2945,8 @@ namespace rl::nvg {
         const char* str{ text.c_str() };
         u32 nrows = text_break_lines(ctx, str, nullptr, break_row_width, rows.data(),
                                      static_cast<u32>(rows.size()));
-        while (nrows > 0)
-        {
-            for (u32 i = 0; i < nrows; i++)
-            {
+        while (nrows > 0) {
+            for (u32 i = 0; i < nrows; i++) {
                 const TextRow* row = &rows[i];
                 std::string row_text{ row->start, row->end };
 
@@ -3099,10 +2997,8 @@ namespace rl::nvg {
         font::text_iter_init(ctx->fs, &iter, { x * scale, y * scale }, string, end,
                              font::FonsGlyphBitmapOptional);
         prev_iter = iter;
-        while (font::text_iter_next(ctx->fs, &iter, &q))
-        {
-            if (iter.prev_glyph_index < 0 && detail::alloc_text_atlas(ctx))
-            {
+        while (font::text_iter_next(ctx->fs, &iter, &q)) {
+            if (iter.prev_glyph_index < 0 && detail::alloc_text_atlas(ctx)) {
                 // can not retrieve glyph?
                 iter = prev_iter;
                 font::text_iter_next(ctx->fs, &iter, &q);  // try again
@@ -3167,18 +3063,15 @@ namespace rl::nvg {
         font::text_iter_init(ctx->fs, &iter, ds::point<f32>::zero(), str, end,
                              font::FonsGlyphBitmapOptional);
         prev_iter = iter;
-        while (font::text_iter_next(ctx->fs, &iter, &q))
-        {
-            if (iter.prev_glyph_index < 0 && detail::alloc_text_atlas(ctx))
-            {
+        while (font::text_iter_next(ctx->fs, &iter, &q)) {
+            if (iter.prev_glyph_index < 0 && detail::alloc_text_atlas(ctx)) {
                 // can not retrieve glyph?
                 iter = prev_iter;
                 font::text_iter_next(ctx->fs, &iter, &q);  // try again
             }
 
             prev_iter = iter;
-            switch (iter.codepoint)
-            {
+            switch (iter.codepoint) {
                 case 9:       // \t
                 case 11:      // \v
                 case 12:      // \f
@@ -3196,20 +3089,19 @@ namespace rl::nvg {
                     type = CodepointType::Newline;
                     break;
                 default:
-                    if ((iter.codepoint >= 0x4E00 && iter.codepoint <= 0x9FFF) ||
-                        (iter.codepoint >= 0x3000 && iter.codepoint <= 0x30FF) ||
-                        (iter.codepoint >= 0xFF00 && iter.codepoint <= 0xFFEF) ||
-                        (iter.codepoint >= 0x1100 && iter.codepoint <= 0x11FF) ||
-                        (iter.codepoint >= 0x3130 && iter.codepoint <= 0x318F) ||
-                        (iter.codepoint >= 0xAC00 && iter.codepoint <= 0xD7AF))
+                    if ((iter.codepoint >= 0x4E00 && iter.codepoint <= 0x9FFF)
+                        || (iter.codepoint >= 0x3000 && iter.codepoint <= 0x30FF)
+                        || (iter.codepoint >= 0xFF00 && iter.codepoint <= 0xFFEF)
+                        || (iter.codepoint >= 0x1100 && iter.codepoint <= 0x11FF)
+                        || (iter.codepoint >= 0x3130 && iter.codepoint <= 0x318F)
+                        || (iter.codepoint >= 0xAC00 && iter.codepoint <= 0xD7AF))
                         type = CodepointType::CJKChar;
                     else
                         type = CodepointType::Char;
                     break;
             }
 
-            if (type == CodepointType::Newline)
-            {
+            if (type == CodepointType::Newline) {
                 // Always handle new lines.
                 rows[nrows].start = row_start != nullptr ? row_start : iter.str;
                 rows[nrows].end = row_end != nullptr ? row_end : iter.str;
@@ -3232,11 +3124,9 @@ namespace rl::nvg {
                 row_width = 0;
                 row_min_x = row_max_x = 0;
             }
-            else if (row_start == nullptr)
-            {
+            else if (row_start == nullptr) {
                 // Skip white space until the beginning of the line
-                if (type == CodepointType::Char || type == CodepointType::CJKChar)
-                {
+                if (type == CodepointType::Char || type == CodepointType::CJKChar) {
                     // The current char is the row so far
                     row_start_x = iter.x;
                     row_start = iter.str;
@@ -3253,43 +3143,37 @@ namespace rl::nvg {
                     break_max_x = 0.0;
                 }
             }
-            else
-            {
+            else {
                 f32 next_width = iter.nextx - row_start_x;
 
                 // track last non-white space character
-                if (type == CodepointType::Char || type == CodepointType::CJKChar)
-                {
+                if (type == CodepointType::Char || type == CodepointType::CJKChar) {
                     row_end = iter.next;
                     row_width = iter.nextx - row_start_x;
                     row_max_x = q.x1 - row_start_x;
                 }
                 // track last end of a word
-                if (((ptype == CodepointType::Char || ptype == CodepointType::CJKChar) &&
-                     type == CodepointType::Space) ||
-                    type == CodepointType::CJKChar)
-                {
+                if (((ptype == CodepointType::Char || ptype == CodepointType::CJKChar)
+                     && type == CodepointType::Space)
+                    || type == CodepointType::CJKChar) {
                     break_end = iter.str;
                     break_width = row_width;
                     break_max_x = row_max_x;
                 }
                 // track last beginning of a word
-                if ((ptype == CodepointType::Space &&
-                     (type == CodepointType::Char || type == CodepointType::CJKChar)) ||
-                    type == CodepointType::CJKChar)
-                {
+                if ((ptype == CodepointType::Space
+                     && (type == CodepointType::Char || type == CodepointType::CJKChar))
+                    || type == CodepointType::CJKChar) {
                     word_start = iter.str;
                     word_start_x = iter.x;
                     word_min_x = q.x0;
                 }
 
                 // Break to new line when a character is beyond break width.
-                if ((type == CodepointType::Char || type == CodepointType::CJKChar) &&
-                    next_width > break_row_width)
-                {
+                if ((type == CodepointType::Char || type == CodepointType::CJKChar)
+                    && next_width > break_row_width) {
                     // The run length is too long, need to break to new line.
-                    if (break_end == row_start)
-                    {
+                    if (break_end == row_start) {
                         // The current word is longer than the row length, just break it from here.
                         rows[nrows].start = row_start;
                         rows[nrows].end = iter.str;
@@ -3310,8 +3194,7 @@ namespace rl::nvg {
                         word_start_x = iter.x;
                         word_min_x = q.x0 - row_start_x;
                     }
-                    else
-                    {
+                    else {
                         // Break the line from the end of the last word, and start new line from the
                         // beginning of the new.
                         rows[nrows].start = row_start;
@@ -3345,8 +3228,7 @@ namespace rl::nvg {
 
         // Break the line from the end of the last word, and start new line from the beginning of
         // the new.
-        if (row_start != nullptr)
-        {
+        if (row_start != nullptr) {
             rows[nrows].start = row_start;
             rows[nrows].end = row_end;
             rows[nrows].width = row_width * invscale;
@@ -3376,8 +3258,7 @@ namespace rl::nvg {
         font::set_font(ctx->fs, state->font_id);
 
         const f32 width = font::text_bounds(ctx->fs, pos * scale, text.c_str(), nullptr, bounds);
-        if (!bounds.is_null())
-        {
+        if (!bounds.is_null()) {
             f32 min_y{ 0.0f };
             f32 max_y{ 0.0f };
 
@@ -3409,8 +3290,8 @@ namespace rl::nvg {
         const f32 invscale{ 1.0f / scale };
         const Align old_align{ state->text_align };
         const Align h_align{ state->text_align & (Align::HLeft | Align::HCenter | Align::HRight) };
-        const Align v_align{ state->text_align &
-                             (Align::VTop | Align::VMiddle | Align::VBottom | Align::VBaseline) };
+        const Align v_align{ state->text_align
+                             & (Align::VTop | Align::VMiddle | Align::VBottom | Align::VBaseline) };
 
         if (state->font_id == font::INVALID)
             return {};
@@ -3441,10 +3322,8 @@ namespace rl::nvg {
         const char* str{ text.c_str() };
         u32 nrows = text_break_lines(ctx, str, nullptr, break_row_width, rows.data(),
                                      static_cast<u32>(rows.size()));
-        while (nrows > 0)
-        {
-            for (u32 i = 0; i < nrows; i++)
-            {
+        while (nrows > 0) {
+            for (u32 i = 0; i < nrows; i++) {
                 const TextRow* row{ &rows[i] };
 
                 f32 dx = 0;

@@ -64,8 +64,7 @@ namespace rl::ds {
             vector2 ret{ *this };
 
             const f32 len{ this->length() };
-            if (len > 0.0f && maxlen < len)
-            {
+            if (len > 0.0f && maxlen < len) {
                 ret /= len;
                 ret *= maxlen;
             }
@@ -119,8 +118,7 @@ namespace rl::ds {
         constexpr const vector2<T>& normalize()
         {
             const f32 len_sq{ this->length_squared() };
-            if (len_sq != 0.0f)
-            {
+            if (len_sq != 0.0f) {
                 f32 len = std::sqrt(len_sq);
                 x /= len;
                 y /= len;
@@ -195,9 +193,8 @@ namespace rl::ds {
             const f32 start_len_sq{ this->length_squared() };
             const f32 end_len_sq{ to.length_squared() };
 
-            if (math::equal(start_len_sq, static_cast<T>(0)) ||
-                math::equal(end_len_sq, static_cast<T>(0))) [[unlikely]]
-            {
+            if (math::equal(start_len_sq, static_cast<T>(0))
+                || math::equal(end_len_sq, static_cast<T>(0))) [[unlikely]] {
                 // zero length vectors have no angle, so the best
                 // we can do is either lerp or throw an error.
                 return this->lerp(to, weight);

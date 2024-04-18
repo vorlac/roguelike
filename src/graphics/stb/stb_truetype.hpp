@@ -134,12 +134,12 @@ namespace rl::stb {
                                                                               // data
                                                                               // as
                                                                               // above
-                            int char_index,            // character to display
-                            float* xpos, float* ypos,  // pointers to current position
-                                                       // in screen pixel space
-                            stbtt_aligned_quad* q,     // output: quad to draw
-                            int opengl_fillrule);      // true if opengl fill rule; false
-                                                       // if DX9 or earlier
+                            int char_index,                                   // character to display
+                            float* xpos, float* ypos,                         // pointers to current position
+                                                                              // in screen pixel space
+                            stbtt_aligned_quad* q,                            // output: quad to draw
+                            int opengl_fillrule);                             // true if opengl fill rule; false
+                                                                              // if DX9 or earlier
     // Call GetBakedQuad with char_index = 'character - first_char', and it
     // creates the quad you need to draw and advances the current position.
     //
@@ -330,8 +330,8 @@ namespace rl::stb {
 
         int loca, head, glyf, hhea, hmtx, kern, gpos, svg;  // table locations as offset from
                                                             // start of .ttf
-        int index_map;         // a cmap mapping for our chosen character encoding
-        int indexToLocFormat;  // format needed to map from glyph index to glyph
+        int index_map;                                      // a cmap mapping for our chosen character encoding
+        int indexToLocFormat;                               // format needed to map from glyph index to glyph
 
         stbtt_buf cff;          // cff font data
         stbtt_buf charstrings;  // the charstring index

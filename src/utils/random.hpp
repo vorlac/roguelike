@@ -7,8 +7,8 @@
 namespace rl {
 
     template <auto RangeStart = 0, auto RangeEnd = std::numeric_limits<decltype(RangeStart)>::max()>
-        requires(std::same_as<decltype(RangeStart), decltype(RangeEnd)> &&
-                 std::integral<decltype(RangeStart)>)
+        requires(std::same_as<decltype(RangeStart), decltype(RangeEnd)>
+                 && std::integral<decltype(RangeStart)>)
     struct random
     {
         using numeric_type = decltype(RangeStart);

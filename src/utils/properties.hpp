@@ -33,8 +33,10 @@ namespace rl {
     };
 
     enum class SizePolicy : i16_fast {
+        Inherit,
         FixedSize,
         Minimum,
+        Maximum,
         Prefered,
     };
 
@@ -119,8 +121,7 @@ namespace rl {
 
     constexpr auto format_as(const Side side)
     {
-        switch (side)
-        {
+        switch (side) {
             case Side::None:
                 return "None";
             case Side::Left:
@@ -146,8 +147,7 @@ namespace rl {
 
     constexpr auto format_as(const Placement_OldAlignment alignment)
     {
-        switch (alignment)
-        {
+        switch (alignment) {
             case Placement_OldAlignment::None:
                 return "None";
             case Placement_OldAlignment::Minimum:
@@ -165,8 +165,7 @@ namespace rl {
 
     constexpr auto format_as(const Alignment orientation)
     {
-        switch (orientation)
-        {
+        switch (orientation) {
             case Alignment::None:
                 return "None";
             case Alignment::Horizontal:
@@ -180,8 +179,7 @@ namespace rl {
 
     constexpr auto format_as(const Axis axis)
     {
-        switch (axis)
-        {
+        switch (axis) {
             case Axis::Horizontal:
                 return "Horizontal";
             case Axis::Vertical:

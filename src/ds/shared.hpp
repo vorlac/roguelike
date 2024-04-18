@@ -47,8 +47,7 @@ namespace rl::ds {
         {
             // release reference on existing data
             // if one was already being held to it
-            if (m_data != nullptr)
-            {
+            if (m_data != nullptr) {
                 m_data->release_ref();
                 m_data = nullptr;
             }
@@ -59,8 +58,7 @@ namespace rl::ds {
 
         constexpr shared& operator=(const shared& other)
         {
-            if (this != &other)
-            {
+            if (this != &other) {
                 if (other.m_data != nullptr)
                     other.m_data->acquire_ref();
                 if (m_data != nullptr)
@@ -74,8 +72,7 @@ namespace rl::ds {
 
         constexpr shared& operator=(T* data)
         {
-            if (data != m_data)
-            {
+            if (data != m_data) {
                 if (data != nullptr)
                     data->acquire_ref();
                 if (m_data != nullptr)

@@ -38,8 +38,7 @@ namespace rl {
             runtime_assert((gl_major_ver >= 3 && gl_minor_ver >= 3 || gl_major_ver > 3),
                            "Deprecated OpenGL Version Loaded: {}.{}", gl_major_ver, gl_minor_ver);
 
-            if (gl_major_ver > 3 || (gl_major_ver == 3 && gl_minor_ver >= 3))
-            {
+            if (gl_major_ver > 3 || (gl_major_ver == 3 && gl_minor_ver >= 3)) {
                 const GLubyte* const gl_ver_str = glGetString(GL_VERSION);
                 const GLubyte* const renderer_str = glGetString(GL_RENDERER);
                 diag_log("GL_RENDERER = {}", reinterpret_cast<const char*>(renderer_str));
@@ -55,8 +54,7 @@ namespace rl {
         : m_properties{ flags }
         , m_sdl_glcontext{ detail::create_opengl_context(window.sdl_handle()) }
     {
-        if (m_sdl_glcontext != nullptr)
-        {
+        if (m_sdl_glcontext != nullptr) {
             sdl_assert(m_sdl_glcontext != nullptr, "failed to create renderer");
             const ds::dims<i32> viewport{ window.get_render_size() };
             glViewport(0, 0, viewport.width, viewport.height);

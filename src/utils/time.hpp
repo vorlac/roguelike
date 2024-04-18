@@ -133,15 +133,13 @@ namespace rl::inline utils {
             if (m_delta_time > m_max_delta_time)
                 m_delta_time = m_max_delta_time;
 
-            if (m_fixed_timestep > 0)
-            {
+            if (m_fixed_timestep > 0) {
                 // Fixed timestep update logic
                 if (std::abs(m_delta_time - m_fixed_timestep) < 1.0f / 4000)
                     m_delta_time = m_fixed_timestep;
 
                 m_leftover_ticks += m_delta_time;
-                while (m_leftover_ticks >= m_fixed_timestep)
-                {
+                while (m_leftover_ticks >= m_fixed_timestep) {
                     m_elapsed_time = m_fixed_timestep;
                     m_tick_timer += m_fixed_timestep;
                     m_leftover_ticks -= m_fixed_timestep;
@@ -150,8 +148,7 @@ namespace rl::inline utils {
                     std::invoke(std::forward<TCallable>(callable));
                 }
             }
-            else
-            {
+            else {
                 // Variable timestep update logic.
                 m_elapsed_time = m_delta_time;
                 m_tick_timer += m_delta_time;
@@ -165,8 +162,7 @@ namespace rl::inline utils {
             if (m_frame_count != last_frame_count)
                 ++m_fps_cur_count;
 
-            if (m_fps_cur_timer >= 1.0f)
-            {
+            if (m_fps_cur_timer >= 1.0f) {
                 m_fps_avg_count = m_fps_cur_count;
                 m_fps_cur_count = 0;
                 m_fps_cur_timer -= 1.0f;

@@ -49,8 +49,7 @@
       rl::ScopedLogger _lg(std::move(_f))
 
   #define diag_log(...)                                  \
-      do                                                 \
-      {                                                  \
+      do {                                               \
           std::string _diag{ fmt::format(__VA_ARGS__) }; \
           _lg.inner_scope_diag(std::move(_diag));        \
       }                                                  \
@@ -143,8 +142,7 @@ namespace rl {
                 },
             };
 
-            if constexpr (ScopedLogger::PRINT_TO_VS_DEBUG_OUTPUT)
-            {
+            if constexpr (ScopedLogger::PRINT_TO_VS_DEBUG_OUTPUT) {
                 const auto vs_output_sink{ std::make_shared<spdlog::sinks::msvc_sink_mt>() };
 
                 vs_output_sink->set_pattern("[%^%L%$] %v");

@@ -28,16 +28,16 @@ namespace rl::math {
     }
 
     template <rl::numeric T1, rl::numeric T2>
-        requires rl::signed_integer<T1, T2> || rl::unsigned_integer<T1, T2> ||
-                 rl::floating_point<T1, T2>
+        requires rl::signed_integer<T1, T2> || rl::unsigned_integer<T1, T2>
+              || rl::floating_point<T1, T2>
     constexpr auto max(const T1& a, const T2& b)
     {
         return a > b ? a : b;
     }
 
     template <rl::numeric T1, rl::numeric T2>
-        requires rl::signed_integer<T1, T2> || rl::unsigned_integer<T1, T2> ||
-                 rl::floating_point<T1, T2>
+        requires rl::signed_integer<T1, T2> || rl::unsigned_integer<T1, T2>
+              || rl::floating_point<T1, T2>
     constexpr auto min(const T1& a, const T2& b)
     {
         return a < b ? a : b;

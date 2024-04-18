@@ -51,7 +51,8 @@ namespace rl::nvg::font {
             return stb_error;
         }
 
-        void tt_get_font_v_metrics(const STTFontImpl* font, i32* ascent, i32* descent, i32* line_gap)
+        void tt_get_font_v_metrics(const STTFontImpl* font, i32* ascent, i32* descent,
+                                   i32* line_gap)
         {
             stbtt_GetFontVMetrics(&font->font, ascent, descent, line_gap);
         }
@@ -136,8 +137,7 @@ namespace rl::nvg::font {
         {
             // Allocate memory for the font font_ctx.
             const auto atlas = static_cast<Atlas*>(std::malloc(sizeof(Atlas)));
-            if (atlas != nullptr)
-            {
+            if (atlas != nullptr) {
                 memset(atlas, 0, sizeof(Atlas));
 
                 atlas->width = w;
@@ -145,8 +145,7 @@ namespace rl::nvg::font {
 
                 // Allocate space for skyline nodes
                 atlas->nodes = static_cast<AtlasNode*>(std::malloc(sizeof(AtlasNode) * nnodes));
-                if (atlas->nodes != nullptr)
-                {
+                if (atlas->nodes != nullptr) {
                     memset(atlas->nodes, 0, sizeof(AtlasNode) * nnodes);
                     atlas->nnodes = 0;
                     atlas->cnodes = nnodes;
@@ -171,8 +170,7 @@ namespace rl::nvg::font {
         i32 atlas_insert_node(Atlas* atlas, const i32 idx, const i32 x, const i32 y, const i32 w)
         {
             // Insert node
-            if (atlas->nnodes + 1 > atlas->cnodes)
-            {
+            if (atlas->nnodes + 1 > atlas->cnodes) {
                 atlas->cnodes = atlas->cnodes == 0 ? 8 : atlas->cnodes * 2;
                 atlas->nodes = static_cast<AtlasNode*>(
                     std::realloc(  // NOLINT(bugprone-suspicious-realloc-usage)
@@ -235,13 +233,12 @@ namespace rl::nvg::font {
                 return 0;
 
             // Delete skyline segments that fall under the shadow of the new segment.
-            for (i32 i = idx + 1; i < atlas->nnodes; ++i)
-            {
+            for (i32 i = idx + 1; i < atlas->nnodes; ++i) {
                 if (atlas->nodes[i].x >= atlas->nodes[i - 1].x + atlas->nodes[i - 1].width)
                     break;
 
-                const i32 shrink{ atlas->nodes[i - 1].x + atlas->nodes[i - 1].width -
-                                  atlas->nodes[i].x };
+                const i32 shrink{ atlas->nodes[i - 1].x + atlas->nodes[i - 1].width
+                                  - atlas->nodes[i].x };
 
                 atlas->nodes[i].x += shrink;
                 atlas->nodes[i].width -= shrink;
@@ -253,10 +250,8 @@ namespace rl::nvg::font {
             }
 
             // Merge same height skyline segments that are next to each other.
-            for (i32 i = 0; i < atlas->nnodes - 1; ++i)
-            {
-                if (atlas->nodes[i].y == atlas->nodes[i + 1].y)
-                {
+            for (i32 i = 0; i < atlas->nnodes - 1; ++i) {
+                if (atlas->nodes[i].y == atlas->nodes[i + 1].y) {
                     atlas->nodes[i].width += atlas->nodes[i + 1].width;
                     atlas_remove_node(atlas, i + 1);
                     --i;
@@ -277,8 +272,7 @@ namespace rl::nvg::font {
                 return -1;
 
             i32 space_left = w;
-            while (space_left > 0)
-            {
+            while (space_left > 0) {
                 if (i == atlas->nnodes)
                     return -1;
 
@@ -299,13 +293,10 @@ namespace rl::nvg::font {
             i32 bestx = -1, besty = -1;
 
             // Bottom left fit heuristic.
-            for (i32 i = 0; i < atlas->nnodes; i++)
-            {
+            for (i32 i = 0; i < atlas->nnodes; i++) {
                 const i32 y = atlas_rect_fits(atlas, i, rw, rh);
-                if (y != -1)
-                {
-                    if (y + rh < besth || (y + rh == besth && atlas->nodes[i].width < bestw))
-                    {
+                if (y != -1) {
+                    if (y + rh < besth || (y + rh == besth && atlas->nodes[i].width < bestw)) {
                         besti = i;
                         bestw = atlas->nodes[i].width;
                         besth = y + rh;
@@ -336,8 +327,7 @@ namespace rl::nvg::font {
 
             // Rasterize
             u8* dst = &font_ctx->tex_data[gx + gy * font_ctx->params.width];
-            for (i32 y = 0; y < h; y++)
-            {
+            for (i32 y = 0; y < h; y++) {
                 for (i32 x = 0; x < w; x++)
                     dst[x] = 0xff;
                 dst += font_ctx->params.width;
@@ -360,18 +350,15 @@ namespace rl::nvg::font {
         void blur_cols(u8* dst, const i32 w, const i32 h, const i32 dstStride, const i32 alpha)
         {
             i32 x;
-            for (i32 y = 0; y < h; y++)
-            {
+            for (i32 y = 0; y < h; y++) {
                 i32 z = 0;  // force zero border
-                for (x = 1; x < w; x++)
-                {
+                for (x = 1; x < w; x++) {
                     z += (alpha * ((static_cast<i32>(dst[x]) << ZPREC) - z)) >> APREC;
                     dst[x] = static_cast<u8>(z >> ZPREC);
                 }
                 dst[w - 1] = 0;  // force zero border
                 z = 0;
-                for (x = w - 2; x >= 0; x--)
-                {
+                for (x = w - 2; x >= 0; x--) {
                     z += (alpha * ((static_cast<i32>(dst[x]) << ZPREC) - z)) >> APREC;
                     dst[x] = static_cast<u8>(z >> ZPREC);
                 }
@@ -383,18 +370,15 @@ namespace rl::nvg::font {
         void blur_rows(u8* dst, const i32 w, const i32 h, const i32 dstStride, const i32 alpha)
         {
             i32 y;
-            for (i32 x = 0; x < w; x++)
-            {
+            for (i32 x = 0; x < w; x++) {
                 i32 z = 0;  // force zero border
-                for (y = dstStride; y < h * dstStride; y += dstStride)
-                {
+                for (y = dstStride; y < h * dstStride; y += dstStride) {
                     z += (alpha * ((static_cast<i32>(dst[y]) << ZPREC) - z)) >> APREC;
                     dst[y] = static_cast<u8>(z >> ZPREC);
                 }
                 dst[(h - 1) * dstStride] = 0;  // force zero border
                 z = 0;
-                for (y = (h - 2) * dstStride; y >= 0; y -= dstStride)
-                {
+                for (y = (h - 2) * dstStride; y >= 0; y -= dstStride) {
                     z += (alpha * ((static_cast<i32>(dst[y]) << ZPREC) - z)) >> APREC;
                     dst[y] = static_cast<u8>(z >> ZPREC);
                 }
@@ -424,8 +408,7 @@ namespace rl::nvg::font {
 
         Glyph* alloc_glyph(Font* font)
         {
-            if (font->nglyphs + 1 > font->cglyphs)
-            {
+            if (font->nglyphs + 1 > font->cglyphs) {
                 font->cglyphs = font->cglyphs == 0 ? 8 : font->cglyphs * 2;
                 font->glyphs = static_cast<Glyph*>(
                     std::realloc(font->glyphs, sizeof(Glyph) * font->cglyphs));
@@ -466,14 +449,12 @@ namespace rl::nvg::font {
             // Find code point and size.
             const u32 h = hashint(codepoint) & (HASH_LUT_SIZE - 1);
             i32 i = font->lut[h];
-            while (i != -1)
-            {
-                if (font->glyphs[i].codepoint == codepoint && font->glyphs[i].size == isize &&
-                    font->glyphs[i].blur == iblur)
-                {
+            while (i != -1) {
+                if (font->glyphs[i].codepoint == codepoint && font->glyphs[i].size == isize
+                    && font->glyphs[i].blur == iblur) {
                     glyph = &font->glyphs[i];
-                    if (bitmap_option == FonsGlyphBitmapOptional ||
-                        (glyph->x0 >= 0 && glyph->y0 >= 0))
+                    if (bitmap_option == FonsGlyphBitmapOptional
+                        || (glyph->x0 >= 0 && glyph->y0 >= 0))
                         return glyph;
                     // At this point, glyph exists but the bitmap data is not yet created.
                     break;
@@ -484,15 +465,12 @@ namespace rl::nvg::font {
             // Create a new glyph or rasterize bitmap data for a cached glyph.
             i32 g = tt_get_glyph_index(&font->font, static_cast<i32>(codepoint));
             // Try to find the glyph in fallback fonts.
-            if (g == 0)
-            {
-                for (i = 0; i < font->nfallbacks; ++i)
-                {
+            if (g == 0) {
+                for (i = 0; i < font->nfallbacks; ++i) {
                     const Font* fallbackFont = font_ctx->fonts[font->fallbacks[i]];
                     const i32 fallback_index = tt_get_glyph_index(&fallbackFont->font,
                                                                   static_cast<i32>(codepoint));
-                    if (fallback_index != 0)
-                    {
+                    if (fallback_index != 0) {
                         g = fallback_index;
                         render_font = fallbackFont;
                         break;
@@ -509,12 +487,10 @@ namespace rl::nvg::font {
             const i32 gh = y1 - y0 + pad * 2;
 
             // Determines the spot to draw glyph in the atlas.
-            if (bitmap_option == FonsGlyphBitmapRequired)
-            {
+            if (bitmap_option == FonsGlyphBitmapRequired) {
                 // Find free spot for the rect in the atlas
                 i32 added = atlas_add_rect(font_ctx->atlas, gw, gh, &gx, &gy);
-                if (added == 0 && font_ctx->handle_error != nullptr)
-                {
+                if (added == 0 && font_ctx->handle_error != nullptr) {
                     // Atlas is full, let the user to resize the atlas (or not), and try again.
                     font_ctx->handle_error(font_ctx->error_uptr, ErrorCode::FonsAtlasFull, 0);
                     added = atlas_add_rect(font_ctx->atlas, gw, gh, &gx, &gy);
@@ -522,16 +498,14 @@ namespace rl::nvg::font {
                 if (added == 0)
                     return nullptr;
             }
-            else
-            {
+            else {
                 // Negative coordinate indicates there is no bitmap data created.
                 gx = -1;
                 gy = -1;
             }
 
             // Init glyph.
-            if (glyph == nullptr)
-            {
+            if (glyph == nullptr) {
                 glyph = alloc_glyph(font);
                 glyph->codepoint = codepoint;
                 glyph->size = isize;
@@ -555,20 +529,18 @@ namespace rl::nvg::font {
                 return glyph;
 
             // Rasterize
-            u8* dst = &font_ctx->tex_data[(glyph->x0 + pad) +
-                                          (glyph->y0 + pad) * font_ctx->params.width];
+            u8* dst = &font_ctx->tex_data[(glyph->x0 + pad)
+                                          + (glyph->y0 + pad) * font_ctx->params.width];
             tt_render_glyph_bitmap(&render_font->font, dst, gw - pad * 2, gh - pad * 2,
                                    font_ctx->params.width, scale, scale, g);
 
             // Make sure there is one pixel empty border.
             dst = &font_ctx->tex_data[glyph->x0 + glyph->y0 * font_ctx->params.width];
-            for (i32 y = 0; y < gh; y++)
-            {
+            for (i32 y = 0; y < gh; y++) {
                 dst[y * font_ctx->params.width] = 0;
                 dst[gw - 1 + y * font_ctx->params.width] = 0;
             }
-            for (i32 x = 0; x < gw; x++)
-            {
+            for (i32 x = 0; x < gw; x++) {
                 dst[x] = 0;
                 dst[x + (gh - 1) * font_ctx->params.width] = 0;
             }
@@ -584,8 +556,7 @@ namespace rl::nvg::font {
                 }*/
 
             // Blur
-            if (iblur > 0)
-            {
+            if (iblur > 0) {
                 font_ctx->nscratch = 0;
                 u8* bdst = &font_ctx->tex_data[glyph->x0 + glyph->y0 * font_ctx->params.width];
                 blur(font_ctx, bdst, gw, gh, font_ctx->params.width, iblur);
@@ -603,10 +574,10 @@ namespace rl::nvg::font {
                       const Glyph* glyph, const f32 scale, const f32 spacing, f32* x, const f32* y,
                       FontQuad* q)
         {
-            if (prev_glyph_index != -1)
-            {
-                const f32 adv{ scale * static_cast<f32>(tt_get_glyph_kern_advance(
-                                           &font->font, prev_glyph_index, glyph->index)) };
+            if (prev_glyph_index != -1) {
+                const f32 adv{ scale
+                               * static_cast<f32>(tt_get_glyph_kern_advance(
+                                   &font->font, prev_glyph_index, glyph->index)) };
                 *x += std::round(adv + spacing);
             }
 
@@ -620,8 +591,7 @@ namespace rl::nvg::font {
             const f32 x1 = static_cast<f32>(glyph->x1 - 1);
             const f32 y1 = static_cast<f32>(glyph->y1 - 1);
 
-            if (font_ctx->params.flags & FonsZeroTopleft)
-            {
+            if (font_ctx->params.flags & FonsZeroTopleft) {
                 f32 rx = std::floor(*x + xoff);
                 f32 ry = std::floor(*y + yoff);
 
@@ -635,8 +605,7 @@ namespace rl::nvg::font {
                 q->s1 = x1 * font_ctx->itw;
                 q->t1 = y1 * font_ctx->ith;
             }
-            else
-            {
+            else {
                 f32 rx = std::floor(*x + xoff);
                 f32 ry = std::floor(*y - yoff);
 
@@ -657,9 +626,8 @@ namespace rl::nvg::font {
         void flush(Context* font_ctx)
         {
             // Flush texture
-            if (font_ctx->dirty_rect[0] < font_ctx->dirty_rect[2] &&
-                font_ctx->dirty_rect[1] < font_ctx->dirty_rect[3])
-            {
+            if (font_ctx->dirty_rect[0] < font_ctx->dirty_rect[2]
+                && font_ctx->dirty_rect[1] < font_ctx->dirty_rect[3]) {
                 if (font_ctx->params.render_update != nullptr)
                     font_ctx->params.render_update(font_ctx->params.user_ptr, font_ctx->dirty_rect,
                                                    font_ctx->tex_data);
@@ -671,8 +639,7 @@ namespace rl::nvg::font {
             }
 
             // Flush triangles
-            if (font_ctx->nverts > 0)
-            {
+            if (font_ctx->nverts > 0) {
                 if (font_ctx->params.render_draw != nullptr)
                     font_ctx->params.render_draw(font_ctx->params.user_ptr, font_ctx->verts,
                                                  font_ctx->tcoords, font_ctx->colors,
@@ -695,8 +662,7 @@ namespace rl::nvg::font {
         f32 get_vert_align(const Context* font_ctx, const Font* font, const Align align,
                            const i16 isize)
         {
-            if (font_ctx->params.flags & FonsZeroTopleft)
-            {
+            if (font_ctx->params.flags & FonsZeroTopleft) {
                 if ((align & Align::VTop) != 0)
                     return font->ascender * static_cast<f32>(isize) / 10.0f;
                 if ((align & Align::VMiddle) != 0)
@@ -706,8 +672,7 @@ namespace rl::nvg::font {
                 if ((align & Align::VBottom) != 0)
                     return font->descender * static_cast<f32>(isize) / 10.0f;
             }
-            else
-            {
+            else {
                 if ((align & Align::VTop) != 0)
                     return -font->ascender * static_cast<f32>(isize) / 10.0f;
                 if ((align & Align::VMiddle) != 0)
@@ -735,8 +700,7 @@ namespace rl::nvg::font {
 
         i32 alloc_font(Context* font_ctx)
         {
-            if (font_ctx->nfonts + 1 > font_ctx->cfonts)
-            {
+            if (font_ctx->nfonts + 1 > font_ctx->cfonts) {
                 font_ctx->cfonts = font_ctx->cfonts == 0 ? 8 : font_ctx->cfonts * 2;
                 font_ctx->fonts = static_cast<Font**>(
                     std::realloc(font_ctx->fonts, sizeof(Font*) * font_ctx->cfonts));
@@ -746,14 +710,12 @@ namespace rl::nvg::font {
             }
 
             const auto font = static_cast<Font*>(std::malloc(sizeof(Font)));
-            if (font != nullptr)
-            {
+            if (font != nullptr) {
                 std::memset(font, 0, sizeof(Font));
 
                 font->glyphs = static_cast<Glyph*>(std::malloc(sizeof(Glyph) * INIT_GLYPHS));
 
-                if (font->glyphs != nullptr)
-                {
+                if (font->glyphs != nullptr) {
                     font->cglyphs = INIT_GLYPHS;
                     font->nglyphs = 0;
 
@@ -771,31 +733,28 @@ namespace rl::nvg::font {
     {
         // Allocate memory for the font font_ctx.
         const auto font_ctx = static_cast<Context*>(std::malloc(sizeof(Context)));
-        if (font_ctx != nullptr)
-        {
+        if (font_ctx != nullptr) {
             std::memset(font_ctx, 0, sizeof(Context));
 
             font_ctx->params = *params;
 
             // Allocate scratch buffer.
             font_ctx->scratch = static_cast<u8*>(std::malloc(SCRATCH_BUF_SIZE));
-            if (font_ctx->scratch != nullptr)
-            {
+            if (font_ctx->scratch != nullptr) {
                 // Initialize implementation library
-                if (tt_init(font_ctx) || font_ctx->params.render_create != nullptr ||
-                    font_ctx->params.render_create(font_ctx->params.user_ptr, font_ctx->params.width,
-                                                   font_ctx->params.height) != 0)
-                {
+                if (tt_init(font_ctx) || font_ctx->params.render_create != nullptr
+                    || font_ctx->params.render_create(font_ctx->params.user_ptr,
+                                                      font_ctx->params.width,
+                                                      font_ctx->params.height)
+                           != 0) {
                     font_ctx->atlas = alloc_atlas(font_ctx->params.width, font_ctx->params.height,
                                                   INIT_ATLAS_NODES);
-                    if (font_ctx->atlas != nullptr)
-                    {
+                    if (font_ctx->atlas != nullptr) {
                         // Allocate space for fonts.
                         font_ctx->fonts = static_cast<Font**>(
                             std::malloc(sizeof(Font*) * INIT_FONTS));
 
-                        if (font_ctx->fonts != nullptr)
-                        {
+                        if (font_ctx->fonts != nullptr) {
                             memset(font_ctx->fonts, 0, sizeof(Font*) * INIT_FONTS);
                             font_ctx->cfonts = INIT_FONTS;
                             font_ctx->nfonts = 0;
@@ -806,8 +765,7 @@ namespace rl::nvg::font {
                             font_ctx->tex_data = static_cast<u8*>(
                                 std::malloc(font_ctx->params.width * font_ctx->params.height));
 
-                            if (font_ctx->tex_data != nullptr)
-                            {
+                            if (font_ctx->tex_data != nullptr) {
                                 std::memset(font_ctx->tex_data, 0,
                                             font_ctx->params.width * font_ctx->params.height);
 
@@ -835,8 +793,7 @@ namespace rl::nvg::font {
     i32 add_fallback_font(const Context* font_ctx, const i32 base, const i32 fallback)
     {
         Font* base_font = font_ctx->fonts[base];
-        if (base_font->nfallbacks < MAX_FALLBACKS)
-        {
+        if (base_font->nfallbacks < MAX_FALLBACKS) {
             base_font->fallbacks[base_font->nfallbacks++] = fallback;
             return 1;
         }
@@ -884,16 +841,14 @@ namespace rl::nvg::font {
 
     void push_state(Context* font_ctx)
     {
-        if (font_ctx->nstates >= MAX_STATES)
-        {
+        if (font_ctx->nstates >= MAX_STATES) {
             if (font_ctx->handle_error)
                 font_ctx->handle_error(font_ctx->error_uptr, ErrorCode::FonsStatesOverflow, 0);
 
             return;
         }
 
-        if (font_ctx->nstates > 0)
-        {
+        if (font_ctx->nstates > 0) {
             std::memcpy(&font_ctx->states[font_ctx->nstates],
                         &font_ctx->states[font_ctx->nstates - 1], sizeof(font::State));
         }
@@ -903,8 +858,7 @@ namespace rl::nvg::font {
 
     void pop_state(Context* font_ctx)
     {
-        if (font_ctx->nstates <= 1)
-        {
+        if (font_ctx->nstates <= 1) {
             if (font_ctx->handle_error)
                 font_ctx->handle_error(font_ctx->error_uptr, ErrorCode::FonsStatesUnderflow, 0);
             return;
@@ -931,16 +885,14 @@ namespace rl::nvg::font {
 
         // Read in the font data.
         FILE* fp = std::fopen(path, "rb");
-        if (fp != nullptr)
-        {
+        if (fp != nullptr) {
             status = std::fseek(fp, 0, SEEK_END);
             runtime_assert(status == 0, "fseek failed");
             i32 data_size = static_cast<i32>(std::ftell(fp));
             status = std::fseek(fp, 0, SEEK_SET);
             runtime_assert(status == 0, "fseek failed");
             data = static_cast<u8*>(std::malloc(data_size));
-            if (data != nullptr)
-            {
+            if (data != nullptr) {
                 const size_t readed = std::fread(data, 1, data_size, fp);
                 status = std::fclose(fp);
                 runtime_assert(status == 0, "fseek failed");
@@ -953,8 +905,7 @@ namespace rl::nvg::font {
 
         if (data != nullptr)
             std::free(data);
-        if (fp != nullptr)
-        {
+        if (fp != nullptr) {
             status = std::fclose(fp);
             runtime_assert(status == 0, "fseek failed");
         }
@@ -987,8 +938,7 @@ namespace rl::nvg::font {
 
         // Init font
         font_ctx->nscratch = 0;
-        if (tt_load_font(font_ctx, &font->font, data, data_size, font_index))
-        {
+        if (tt_load_font(font_ctx, &font->font, data, data_size, font_index)) {
             // Store normalized line height. The real line height is got
             // by multiplying the lineh by font size.
             tt_get_font_v_metrics(&font->font, &ascent, &descent, &line_gap);
@@ -1042,17 +992,14 @@ namespace rl::nvg::font {
             end = str + std::strlen(str);
 
         // Align horizontally
-        if ((state->align & Align::HLeft) != 0)
-        {
+        if ((state->align & Align::HLeft) != 0) {
             // empty
         }
-        else if ((state->align & Align::HRight) != 0)
-        {
+        else if ((state->align & Align::HRight) != 0) {
             width = text_bounds(font_ctx, { x, y }, str);
             x -= width;
         }
-        else if ((state->align & Align::HCenter) != 0)
-        {
+        else if ((state->align & Align::HCenter) != 0) {
             width = text_bounds(font_ctx, { x, y }, str);
             x -= width * 0.5f;
         }
@@ -1060,15 +1007,13 @@ namespace rl::nvg::font {
         // Align vertically.
         y += get_vert_align(font_ctx, font, state->align, isize);
 
-        for (; str != end; ++str)
-        {
+        for (; str != end; ++str) {
             if (decutf8(&utf8_state, &codepoint, *reinterpret_cast<const u8*>(str)))
                 continue;
 
             const Glyph* glyph = get_glyph(font_ctx, font, codepoint, isize, iblur,
                                            FonsGlyphBitmapRequired);
-            if (glyph != nullptr)
-            {
+            if (glyph != nullptr) {
                 get_quad(font_ctx, font, prev_glyph_index, glyph, scale, state->spacing, &x, &y, &q);
                 if (font_ctx->nverts + 6 > VERTEX_COUNT)
                     flush(font_ctx);
@@ -1113,13 +1058,11 @@ namespace rl::nvg::font {
 
         if ((state->align & Align::HLeft) != 0)
             ;  // intentionally empty
-        else if ((state->align & Align::HRight) != 0)
-        {
+        else if ((state->align & Align::HRight) != 0) {
             width = text_bounds(font_ctx, pos, str);
             pos.x -= width;
         }
-        else if ((state->align & Align::HCenter) != 0)
-        {
+        else if ((state->align & Align::HCenter) != 0) {
             width = text_bounds(font_ctx, pos, str);
             pos.x -= width * 0.5f;
         }
@@ -1151,8 +1094,7 @@ namespace rl::nvg::font {
         if (str == iter->end)
             return 0;
 
-        for (; str != iter->end; str++)
-        {
+        for (; str != iter->end; str++) {
             if (decutf8(&iter->utf8_state, &iter->codepoint, *reinterpret_cast<const u8*>(str)))
                 continue;
 
@@ -1204,8 +1146,7 @@ namespace rl::nvg::font {
         vertex(font_ctx, x + w, y + h, 1, 1, 0xffffffff);
 
         // Drawbug draw atlas
-        for (i32 i = 0; i < font_ctx->atlas->nnodes; i++)
-        {
+        for (i32 i = 0; i < font_ctx->atlas->nnodes; i++) {
             const AtlasNode* n = &font_ctx->atlas->nodes[i];
 
             if (font_ctx->nverts + 6 > VERTEX_COUNT)
@@ -1269,15 +1210,13 @@ namespace rl::nvg::font {
         if (end == nullptr)
             end = str + std::strlen(str);
 
-        for (; str < end; ++str)
-        {
+        for (; str < end; ++str) {
             if (decutf8(&utf8_state, &codepoint, *reinterpret_cast<const u8*>(str)))
                 continue;
 
             const Glyph* glyph = get_glyph(font_ctx, font, codepoint, isize, iblur,
                                            FonsGlyphBitmapOptional);
-            if (glyph != nullptr)
-            {
+            if (glyph != nullptr) {
                 get_quad(font_ctx, font, prev_glyph_index, glyph, scale, state->spacing, &pos.x,
                          &pos.y, &q);
 
@@ -1286,15 +1225,13 @@ namespace rl::nvg::font {
                 if (q.x1 > maxx)
                     maxx = q.x1;
 
-                if (font_ctx->params.flags & FonsZeroTopleft)
-                {
+                if (font_ctx->params.flags & FonsZeroTopleft) {
                     if (q.y0 < miny)
                         miny = q.y0;
                     if (q.y1 > maxy)
                         maxy = q.y1;
                 }
-                else
-                {
+                else {
                     if (q.y1 < miny)
                         miny = q.y1;
                     if (q.y0 > maxy)
@@ -1308,23 +1245,19 @@ namespace rl::nvg::font {
         text_width = pos.x - startx;
 
         // Align horizontally
-        if ((state->align & Align::HLeft) != 0)
-        {
+        if ((state->align & Align::HLeft) != 0) {
             // empty
         }
-        else if ((state->align & Align::HRight) != 0)
-        {
+        else if ((state->align & Align::HRight) != 0) {
             minx -= text_width;
             maxx -= text_width;
         }
-        else if ((state->align & Align::HCenter) != 0)
-        {
+        else if ((state->align & Align::HCenter) != 0) {
             minx -= text_width * 0.5f;
             maxx -= text_width * 0.5f;
         }
 
-        if (!bounds.is_null())
-        {
+        if (!bounds.is_null()) {
             bounds = ds::rect<f32>{
                 ds::point<f32>{
                     minx,
@@ -1378,13 +1311,11 @@ namespace rl::nvg::font {
         const i16 isize = static_cast<i16>(state->size * 10.0f);
         y += get_vert_align(font_ctx, font, state->align, isize);
 
-        if (font_ctx->params.flags & FonsZeroTopleft)
-        {
+        if (font_ctx->params.flags & FonsZeroTopleft) {
             *miny = y - font->ascender * static_cast<f32>(isize) / 10.0f;
             *maxy = *miny + font->lineh * static_cast<f32>(isize) / 10.0f;
         }
-        else
-        {
+        else {
             *maxy = y + font->descender * static_cast<f32>(isize) / 10.0f;
             *miny = *maxy - font->lineh * static_cast<f32>(isize) / 10.0f;
         }
@@ -1402,9 +1333,8 @@ namespace rl::nvg::font {
 
     i32 validate_texture(Context* font_ctx, i32* dirty)
     {
-        if (font_ctx->dirty_rect[0] < font_ctx->dirty_rect[2] &&
-            font_ctx->dirty_rect[1] < font_ctx->dirty_rect[3])
-        {
+        if (font_ctx->dirty_rect[0] < font_ctx->dirty_rect[2]
+            && font_ctx->dirty_rect[1] < font_ctx->dirty_rect[3]) {
             dirty[0] = font_ctx->dirty_rect[0];
             dirty[1] = font_ctx->dirty_rect[1];
             dirty[2] = font_ctx->dirty_rect[2];
@@ -1479,8 +1409,7 @@ namespace rl::nvg::font {
         flush(font_ctx);
 
         // Create new texture
-        if (font_ctx->params.render_resize != nullptr)
-        {
+        if (font_ctx->params.render_resize != nullptr) {
             if (font_ctx->params.render_resize(font_ctx->params.user_ptr, width, height) == 0)
                 return 0;
         }
@@ -1490,8 +1419,7 @@ namespace rl::nvg::font {
         if (data == nullptr)
             return 0;
 
-        for (i32 i = 0; i < font_ctx->params.height; i++)
-        {
+        for (i32 i = 0; i < font_ctx->params.height; i++) {
             u8* dst = &data[i * width];
             const u8* src = &font_ctx->tex_data[i * font_ctx->params.width];
             std::memcpy(dst, src, font_ctx->params.width);
@@ -1534,8 +1462,7 @@ namespace rl::nvg::font {
         flush(font_ctx);
 
         // Create new texture
-        if (font_ctx->params.render_resize != nullptr)
-        {
+        if (font_ctx->params.render_resize != nullptr) {
             if (font_ctx->params.render_resize(font_ctx->params.user_ptr, width, height) == 0)
                 return 0;
         }
@@ -1557,8 +1484,7 @@ namespace rl::nvg::font {
         font_ctx->dirty_rect[3] = 0;
 
         // Reset cached glyphs
-        for (i32 i = 0; i < font_ctx->nfonts; i++)
-        {
+        for (i32 i = 0; i < font_ctx->nfonts; i++) {
             Font* font = font_ctx->fonts[i];
             font->nglyphs = 0;
             for (i32& j : font->lut)

@@ -37,17 +37,16 @@ namespace rl::memory {
     constexpr bool static_memcmp(const T& a, const T& b)
     {
         constexpr u32 size{ sizeof(T) };
-        return 0 == detail::static_memcmp<size>(       //
-                        static_cast<const void*>(&a),  //
-                        static_cast<const void*>(&b)   //
-                    );
+        return 0 == detail::static_memcmp<size>(static_cast<const void*>(&a), static_cast<const void*>(&b));
     }
 
     template <rl::integer TInt>
     TInt align_to(TInt value, TInt alignment)
     {
         const TInt mod{ value % alignment };
-        return (mod != 0) ? value + (alignment - mod) : value;
+        return (mod != 0)
+                 ? value + (alignment - mod)
+                 : value;
     }
 }
 

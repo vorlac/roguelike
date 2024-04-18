@@ -86,8 +86,7 @@ namespace rl::ds {
             std::unique_lock<std::mutex> lock(m_buffer_lock);
             if (m_buffer_not_empty_cv.wait_for(lock, 2.5s, [&]() {
                     return m_occupancies > 0;
-                }))
-            {
+                })) {
                 // remove the item from the buffer, then update
                 // the the read index to the next available slot
                 auto item = std::move(m_buffer[m_read_idx]);
@@ -105,8 +104,7 @@ namespace rl::ds {
                 // transfer ownership of item to caller
                 return { BufferItemStatus::Valid, std::forward<TElem>(item) };
             }
-            else
-            {
+            else {
                 // if we land in here then this thread timed out waiting for
                 // the condition to be met above. this might mean nothing has
                 // been added to the buffer yet/recently and it's empty, but

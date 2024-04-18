@@ -155,8 +155,7 @@ namespace rl {
 
     constexpr auto format_as(const Mouse::Button::ID btn)
     {
-        switch (btn)
-        {
+        switch (btn) {
             case Mouse::Button::ID::Left:
                 return "left";
             case Mouse::Button::ID::Middle:

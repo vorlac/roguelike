@@ -8,14 +8,13 @@
 #include "core/assert.hpp"
 #include "core/main_window.hpp"
 #include "core/renderer.hpp"
-#include "core/ui/canvas.hpp"
 #include "ds/color.hpp"
 #include "ds/dims.hpp"
-#include "ds/point.hpp"
 #include "ds/rect.hpp"
 #include "ds/vector2d.hpp"
 #include "graphics/nvg_renderer.hpp"
 #include "sdl/defs.hpp"
+#include "ui/canvas.hpp"
 #include "utils/io.hpp"
 #include "utils/logging.hpp"
 #include "utils/numeric.hpp"
@@ -60,6 +59,7 @@ namespace rl {
         m_vg_renderer = std::make_unique<NVGRenderer>();
 
         m_gui_canvas = new ui::Canvas{
+            this,
             static_cast<ds::rect<f32>>(m_window_rect),
             m_mouse,
             m_keyboard,
@@ -69,8 +69,7 @@ namespace rl {
 
     MainWindow::~MainWindow()
     {
-        if (m_sdl_window != nullptr)
-        {
+        if (m_sdl_window != nullptr) {
             SDL3::SDL_DestroyWindow(m_sdl_window);
             m_sdl_window = nullptr;
         }
@@ -78,8 +77,7 @@ namespace rl {
 
     MainWindow& MainWindow::operator=(MainWindow&& other) noexcept
     {
-        if (m_sdl_window != nullptr)
-        {
+        if (m_sdl_window != nullptr) {
             SDL3::SDL_DestroyWindow(m_sdl_window);
             m_sdl_window = nullptr;
         }
@@ -219,16 +217,15 @@ namespace rl {
         return result == 0;
     }
 
-    bool MainWindow::set_size(const ds::dims<i32>& size)
+    bool MainWindow::set_size(ds::dims<i32> size)
     {
         const i32 result{ SDL3::SDL_SetWindowSize(m_sdl_window, size.width, size.height) };
         runtime_assert(result == 0, "failed to set size");
 
         m_window_rect.size = size;
-        m_gui_canvas->set_size({
-            static_cast<f32>(size.width),
-            static_cast<f32>(size.height),
-        });
+        const ds::rect<f32> canvas_rect{ m_gui_canvas->rect() };
+        if (size != canvas_rect.size)
+            m_gui_canvas->set_size(size);
 
         return result == 0;
     }
@@ -429,15 +426,11 @@ namespace rl {
 
     void MainWindow::mouse_moved_event_callback(const SDL3::SDL_Event& e)
     {
-        scoped_trace(log_level::trace);
-
         m_mouse.process_motion(e.motion);
+        // update button states from pressed to held if the
+        // button that was pressed last frame is still down
         if (m_mouse.is_button_pressed(Mouse::Button::Left))
-        {
-            // update button states from pressed to held if the
-            // button that was pressed last frame is still down
             m_mouse.process_button_down(Mouse::Button::Left);
-        }
 
         m_gui_canvas->on_mouse_move_event(m_mouse, m_keyboard);
     }
@@ -450,36 +443,35 @@ namespace rl {
 
     void MainWindow::mouse_button_pressed_event_callback(const SDL3::SDL_Event& e)
     {
-        Mouse::Button::ID button_pressed{ e.button.button };
+        const Mouse::Button::ID button_pressed{ e.button.button };
         m_mouse.process_button_down(button_pressed);
         m_gui_canvas->on_mouse_button_pressed_event(m_mouse, m_keyboard);
     }
 
     void MainWindow::mouse_button_released_event_callback(const SDL3::SDL_Event& e)
     {
-        Mouse::Button::ID button_released{ e.button.button };
+        const Mouse::Button::ID button_released{ e.button.button };
         m_mouse.process_button_up(button_released);
         m_gui_canvas->on_mouse_button_released_event(m_mouse, m_keyboard);
     }
 
     void MainWindow::keyboard_key_pressed_event_callback(const SDL3::SDL_Event& e)
     {
-        auto pressed_button{ static_cast<Keyboard::Scancode::ID>(e.key.keysym.scancode) };
+        const auto pressed_button{ static_cast<Keyboard::Scancode::ID>(e.key.keysym.scancode) };
         m_keyboard.process_button_down(pressed_button);
         m_gui_canvas->on_key_pressed(m_keyboard);
     }
 
     void MainWindow::keyboard_key_released_event_callback(const SDL3::SDL_Event& e)
     {
-        auto released_button{ static_cast<Keyboard::Scancode::ID>(e.key.keysym.scancode) };
+        const auto released_button{ static_cast<Keyboard::Scancode::ID>(e.key.keysym.scancode) };
         m_keyboard.process_button_up(released_button);
         m_gui_canvas->on_key_released(m_keyboard);
     }
 
     void MainWindow::keyboard_char_event_callback(const SDL3::SDL_Event& e)
     {
-        switch (e.type)
-        {
+        switch (e.type) {
             case Keyboard::Event::TextInput:
                 m_keyboard.process_text_input(e.text.text);
                 break;
@@ -496,7 +488,7 @@ namespace rl {
         const ds::dims<i32>& window_size{ this->get_size() };
         const ds::dims<i32>& framebuf_size{ this->get_render_size() };
 
-        ds::dims render_size{ static_cast<ds::dims<f32>>(window_size) / m_pixel_ratio };
+        const ds::dims render_size{ static_cast<ds::dims<f32>>(window_size) / m_pixel_ratio };
         runtime_assert(framebuf_size.area() > 0 && window_size.area() > 0,
                        "invalid window size/location");
 
@@ -513,8 +505,7 @@ namespace rl {
 
     void MainWindow::window_moved_event_callback(const SDL3::SDL_Event&)
     {
-        ds::point<i32> window_pos{ this->get_position() };
-
+        const ds::point<i32> window_pos{ this->get_position() };
         const ds::dims<i32> window_size{ this->get_size() };
         const ds::dims<i32> framebuf_size{ this->get_render_size() };
         runtime_assert(framebuf_size.area() > 0 && window_size.area() > 0,

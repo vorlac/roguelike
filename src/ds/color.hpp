@@ -392,7 +392,12 @@ namespace rl {
         constexpr static inline ds::color<f32> Background{ 39, 43, 51, 255 };
 
         constexpr static inline std::array List{
-            Red, Yellow, Green, Cyan, Blue, Purple,
+            Red,
+            Yellow,
+            Green,
+            Cyan,
+            Blue,
+            Purple,
         };
     };
 }

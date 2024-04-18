@@ -6,12 +6,12 @@
 
 #include "core/keyboard.hpp"
 #include "core/mouse.hpp"
-#include "core/ui/widget.hpp"
 #include "ds/dims.hpp"
 #include "ds/point.hpp"
 #include "ds/rect.hpp"
 #include "ds/vector2d.hpp"
 #include "sdl/defs.hpp"
+#include "ui/widget.hpp"
 
 namespace rl {
     class EventHandler;
@@ -232,7 +232,7 @@ namespace rl {
         bool set_fullscreen(bool fullscreen) const;
         bool set_opacity(f32 opacity) const;
         bool set_position(const ds::point<i32>& pos);
-        bool set_size(const ds::dims<i32>& size);
+        bool set_size(ds::dims<i32> size);
         bool set_min_size(const ds::dims<i32>& size) const;
         bool set_max_size(const ds::dims<i32>& size) const;
         bool set_opengl_attribute(OpenGL::Attribute attr, auto val);
@@ -276,12 +276,6 @@ namespace rl {
         explicit MainWindow(const MainWindow& window) = delete;
         explicit MainWindow(MainWindow&& window) noexcept = delete;
         explicit MainWindow(SDL3::SDL_Window* other) = delete;
-
-        // TODO: remove
-        static std::string name()
-        {
-            return "MainWindow;";
-        }
 
     private:
         SDL3::SDL_Window* m_sdl_window{ nullptr };

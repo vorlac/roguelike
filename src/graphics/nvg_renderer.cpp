@@ -4,7 +4,7 @@
 #include <memory>
 #include <type_traits>
 
-// #include "core/ui/theme.hpp"
+// #include "ui/theme.hpp"
 #include "ds/dims.hpp"
 #include "ds/line.hpp"
 #include "graphics/nvg_renderer.hpp"
@@ -33,8 +33,8 @@ namespace rl {
             depth_buf = depth_bits > 0;
             float_buf = float_mode != 0;
 
-            constexpr nvg::gl::CreateFlags nvg_flags{ nvg::gl::CreateFlags::AntiAlias |
-                                                      nvg::gl::CreateFlags::StencilStrokes };
+            constexpr nvg::gl::CreateFlags nvg_flags{ nvg::gl::CreateFlags::AntiAlias
+                                                      | nvg::gl::CreateFlags::StencilStrokes };
             // if (stencil_buf)
             //     nvg_flags |= nvg::gl::CreateFlags::StencilStrokes;
             // nvg_flags |= nvg::gl::CreateFlags::Debug;
@@ -120,9 +120,9 @@ namespace rl {
         nvg::reset_scissor(m_nvg_context.get());
     }
 
-    nvg::PaintStyle NVGRenderer::create_rect_gradient_paint_style(
-        ds::rect<f32>&& rect, const f32 corner_radius, const f32 outer_blur,
-        const ds::color<f32>& inner_color, const ds::color<f32>& outer_gradient_color) const
+    nvg::PaintStyle NVGRenderer::create_rect_gradient_paint_style(ds::rect<f32>&& rect, const f32 corner_radius,
+                                                                  const f32 outer_blur, const ds::color<f32>& inner_color,
+                                                                  const ds::color<f32>& outer_gradient_color) const
     {
         // Creates and returns a box gradient.
         // Box gradient is a feathered rounded rectangle, it is useful for rendering drop shadows or
@@ -135,9 +135,9 @@ namespace rl {
                                  corner_radius, outer_blur, inner_color, outer_gradient_color);
     }
 
-    nvg::PaintStyle NVGRenderer::create_linear_gradient_paint_style(
-        ds::line<f32>&& line, const ds::color<f32>& inner_color,
-        const ds::color<f32>& outer_gradient_color) const
+    nvg::PaintStyle NVGRenderer::create_linear_gradient_paint_style(ds::line<f32>&& line,
+                                                                    const ds::color<f32>& inner_color,
+                                                                    const ds::color<f32>& outer_gradient_color) const
     {
         // Creates and returns a box gradient.
         // Box gradient is a feathered rounded rectangle, it is useful for rendering drop shadows or
@@ -160,7 +160,8 @@ namespace rl {
         return fh;
     }
 
-    void NVGRenderer::flush(const ds::dims<f32>& viewport, const f32 pixel_ratio) const
+    void NVGRenderer::flush(const ds::dims<f32>& viewport,
+                            const f32 pixel_ratio) const
     {
         // Flush all queued up NanoVG rendering commands
         nvg::Params* params{ nvg::internal_params(m_nvg_context.get()) };
@@ -170,8 +171,7 @@ namespace rl {
 
     void NVGRenderer::load_fonts(const std::vector<text::font::Data>& fonts)
     {
-        for (auto&& [font_name, font_ttf] : fonts)
-        {
+        for (auto&& [font_name, font_ttf] : fonts) {
             text::font::handle fh{ this->load_font(font_name, font_ttf) };
             m_font_map[font_name] = fh;
         }
@@ -241,8 +241,7 @@ namespace rl {
         nvg::stroke_width(m_nvg_context.get(), stroke_width);
         nvg::begin_path(m_nvg_context.get());
 
-        switch (type)
-        {
+        switch (type) {
             case Outline::Inner:
                 nvg::rect(
                     m_nvg_context.get(),

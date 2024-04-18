@@ -50,8 +50,7 @@ namespace rl::gl {
             m_rect_positions_data.reserve(m_rect_count);
             m_rect_velocities_data.reserve(m_rect_count);
 
-            for (size_t i = 0; i < m_rect_count; ++i)
-            {
+            for (size_t i = 0; i < m_rect_count; ++i) {
                 const f32 xv{ static_cast<f32>(rl::random<0U, 2000U>::value()) };
                 const f32 yv{ static_cast<f32>(rl::random<0U, 2000U>::value()) };
 
@@ -75,25 +74,24 @@ namespace rl::gl {
             }
         }
 
-        bool update_buffers(const ds::rect<f32>& viewport)
+        bool update_buffers(const ds::rect<f32> viewport)
         {
-            constexpr static auto top_bottom_collision = [](const ds::point<f32>& pos,
-                                                            const ds::rect<f32>& window_rect) {
+            constexpr static auto top_bottom_collision = [](const ds::point<f32> pos,
+                                                            const ds::rect<f32> window_rect) {
                 const bool top_collision{ pos.y <= 0.0f };
                 const bool bottom_collision{ pos.y + m_rect_size.height >= window_rect.size.height };
                 return top_collision || bottom_collision;
             };
 
-            constexpr static auto left_right_collision = [](const ds::point<f32>& pos,
-                                                            const ds::rect<f32>& window_rect) {
-                bool left_collision{ pos.x <= 0.0f };
-                bool right_collision{ pos.x + m_rect_size.width >= window_rect.size.width };
+            constexpr static auto left_right_collision = [](const ds::point<f32> pos,
+                                                            const ds::rect<f32> window_rect) {
+                const bool left_collision{ pos.x <= 0.0f };
+                const bool right_collision{ pos.x + m_rect_size.width >= window_rect.size.width };
                 return left_collision || right_collision;
             };
 
-            f32 delta_time{ m_timer.delta() };
-            for (u32 i = 0; i < m_rect_count; ++i)
-            {
+            const f32 delta_time{ m_timer.delta() };
+            for (u32 i = 0; i < m_rect_count; ++i) {
                 auto& pos{ m_rect_positions_data[i] };
                 auto& vel{ m_rect_velocities_data[i] };
 
@@ -122,8 +120,7 @@ namespace rl::gl {
             if (mode == m_draw_mode)
                 return;
 
-            switch (mode)
-            {
+            switch (mode) {
                 case DrawMode::Wireframe:
                     glPolygonMode(GL_FRONT, GL_LINE);
                     break;
@@ -145,13 +142,13 @@ namespace rl::gl {
                 glBufferData(GL_ARRAY_BUFFER, sizeof(f32) * 3 * m_rect_vertex_buffer_data.size(),
                              m_rect_vertex_buffer_data.data(), GL_STATIC_DRAW);
 
-                glVertexAttribPointer(     //
-                    0,                     //
-                    3,                     // index and count of vertices to configure
-                    GL_FLOAT,              // data type of vertex data
-                    GL_FALSE,              // should vertices be normalized (to 0 or -1 for signed)
-                    3 * sizeof(f32),       // stride between each vertex record in the buffer
-                    static_cast<void*>(0)  // void* offset of where the position data starts
+                glVertexAttribPointer(
+                    0,
+                    3,                           // index and count of vertices to configure
+                    GL_FLOAT,                    // data type of vertex data
+                    GL_FALSE,                    // should vertices be normalized (to 0 or -1 for signed)
+                    3 * sizeof(f32),             // stride between each vertex record in the buffer
+                    static_cast<void*>(nullptr)  // void* offset of where the position data starts
                 );
                 glEnableVertexAttribArray(0);
             }
@@ -162,14 +159,14 @@ namespace rl::gl {
                 glBufferData(GL_ARRAY_BUFFER, sizeof(f32) * 4 * m_rect_colors_data.size(),
                              m_rect_colors_data.data(), GL_STATIC_DRAW);
 
-                glVertexAttribPointer(     //
-                    1,                     //
-                    4,                     //
-                    GL_FLOAT,              //
-                    GL_FALSE,              //
-                    0,                     //
-                    static_cast<void*>(0)  //
-                );
+                glVertexAttribPointer(
+                    1,
+                    4,
+                    GL_FLOAT,
+                    GL_FALSE,
+                    0,
+                    static_cast<void*>(nullptr));
+
                 glEnableVertexAttribArray(1);
             }
 
@@ -179,21 +176,21 @@ namespace rl::gl {
                 glBufferData(GL_ARRAY_BUFFER, sizeof(f32) * 3 * m_rect_positions_data.size(),
                              m_rect_positions_data.data(), GL_DYNAMIC_DRAW);
 
-                glVertexAttribPointer(     //
-                    2,                     //
-                    3,                     //
-                    GL_FLOAT,              //
-                    GL_FALSE,              //
-                    0,                     //
-                    static_cast<void*>(0)  //
-                );
+                glVertexAttribPointer(
+                    2,
+                    3,
+                    GL_FLOAT,
+                    GL_FALSE,
+                    0,
+                    static_cast<void*>(nullptr));
+
                 glEnableVertexAttribArray(2);
             }
 
             this->set_draw_mode(DrawMode::Fill);
         }
 
-        void draw_triangles()
+        void draw_triangles() const
         {
             glBindBuffer(GL_ARRAY_BUFFER, m_vbo_positions_id);
             glBufferData(GL_ARRAY_BUFFER, m_rect_positions_data.size() * 3 * sizeof(f32),
@@ -226,8 +223,7 @@ namespace rl::gl {
         constexpr static inline std::array<ds::point<f32>, 6> m_rect_vertex_buffer_data{
             ds::rect<f32>{
                 ds::point<f32>{ 0.0f, 0.0f },
-                ds::dims{ m_rect_size },
-            }
+                ds::dims{ m_rect_size } }
                 .triangles()
         };
 

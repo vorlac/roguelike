@@ -48,8 +48,7 @@ namespace rl::gl {
                 const bool glsl_exists = fs::exists(m_path);
                 runtime_assert(glsl_exists, "GLSL file not found: {}", m_path);
 
-                if (fs::exists(m_path))
-                {
+                if (fs::exists(m_path)) {
                     std::ifstream glsl(m_path);
                     m_glsl = std::string{ std::istreambuf_iterator<char>(glsl),
                                           std::istreambuf_iterator<char>() };
@@ -67,8 +66,7 @@ namespace rl::gl {
                 glGetShaderiv(shader_id, GL_COMPILE_STATUS, &success);
                 if (success != 0)
                     m_id = shader_id;
-                else
-                {
+                else {
                     char error_msg[512]{};
                     glGetShaderInfoLog(shader_id, 512, nullptr, error_msg);
                     runtime_assert(success != 0, "Shader ({}) compilation failed:\n{}",
@@ -124,8 +122,7 @@ namespace rl::gl {
             glGetProgramiv(m_shader_id, GL_LINK_STATUS, &success);
 
             constexpr static i32 COMPILATION_FAILURE{ 0 };
-            if (success == COMPILATION_FAILURE)
-            {
+            if (success == COMPILATION_FAILURE) {
                 char error_msg[256]{};
                 glGetProgramInfoLog(m_shader_id, 255, nullptr, error_msg);
                 runtime_assert(false, "Failed to build shader program (ID {}):\n{}", m_shader_id,

@@ -1,9 +1,5 @@
 #pragma once
 
-#include <cmath>
-#include <memory>
-#include <utility>
-
 #include <fmt/format.h>
 
 #include "utils/concepts.hpp"
@@ -11,6 +7,8 @@
 
 namespace rl::ds {
 #pragma pack(4)
+    template <rl::numeric T>
+    struct vector2;
 
     template <rl::numeric T>
     struct margin
@@ -61,32 +59,32 @@ namespace rl::ds {
         }
 
         [[nodiscard]]
-        constexpr point<T> offset() const
+        constexpr vector2<T> offset() const
         {
-            return point<T>{ left, top };
+            return vector2{ left, top };
         }
 
         [[nodiscard]]
         constexpr T vertical() const
         {
-            return static_cast<T>(top + bottom);
+            return top + bottom;
         }
 
         [[nodiscard]]
         constexpr T horizontal() const
         {
-            return static_cast<T>(left + right);
+            return left + right;
         }
 
-        constexpr bool operator==(const margin<T>& other) const
+        constexpr bool operator==(const margin<T> other) const
         {
-            return math::equal(this->top, other.top) &&        //
-                   math::equal(this->bottom, other.bottom) &&  //
-                   math::equal(this->left, other.left) &&      //
-                   math::equal(this->right, other.right);
+            return math::equal(this->top, other.top)
+                && math::equal(this->bottom, other.bottom)
+                && math::equal(this->left, other.left)
+                && math::equal(this->right, other.right);
         }
 
-        constexpr bool operator!=(const margin<T>& other) const
+        constexpr bool operator!=(const margin<T> other) const
         {
             return !this->operator==(other);
         }
@@ -238,11 +236,14 @@ namespace rl::ds {
         T right{ 0 };
     };
 
-    template <rl::numeric T>
-    constexpr auto format_as(const margin<T>& mar)
-    {
-        return fmt::format("margin=[t:{} b:{} l:{} r:{}]", mar.top, mar.bottom, mar.left, mar.right);
-    }
-
 #pragma pack()
+}
+
+namespace rl::ds {
+    template <rl::numeric T>
+    constexpr auto format_as(const margin<T> mar)
+    {
+        return fmt::format("margin=[t:{} b:{} l:{} r:{}]",
+                           mar.top, mar.bottom, mar.left, mar.right);
+    }
 }

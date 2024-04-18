@@ -12,9 +12,9 @@
 #include "core/event_handler.hpp"
 #include "core/main_window.hpp"
 #include "core/state/fsm.hpp"
-#include "core/ui/gui.hpp"
 #include "graphics/gl/instanced_buffer.hpp"
 #include "sdl/defs.hpp"
+#include "ui/gui.hpp"
 #include "utils/logging.hpp"
 #include "utils/numeric.hpp"
 #include "utils/time.hpp"
@@ -105,16 +105,19 @@ namespace rl {
             layout_v1->add_widget(new ui::Label{ "4", font_size, alignment });
             layout_v1->add_widget(new ui::Label{ "5", font_size, alignment });
 
-            const auto layout_v2{ new ui::BoxLayout<Alignment::Vertical>("Nums V2") };
-            layout_v2->add_widget(new ui::Label{ "1", font_size, alignment });
-            layout_v2->add_widget(new ui::Label{ "2", font_size, alignment });
-            layout_v2->add_widget(new ui::Label{ "3", font_size, alignment });
-            layout_v2->add_widget(new ui::Label{ "4", font_size, alignment });
-            layout_v2->add_widget(new ui::Label{ "5", font_size, alignment });
+            const auto layout_v2{ new ui::BoxLayout<Alignment::Vertical>("Nums V1") };
+
+            const auto layout_v3{ new ui::BoxLayout<Alignment::Vertical>("Nums V2") };
+            layout_v3->add_widget(new ui::Label{ "1", font_size, alignment });
+            layout_v3->add_widget(new ui::Label{ "2", font_size, alignment });
+            layout_v3->add_widget(new ui::Label{ "3", font_size, alignment });
+            layout_v3->add_widget(new ui::Label{ "4", font_size, alignment });
+            layout_v3->add_widget(new ui::Label{ "5", font_size, alignment });
 
             const auto horiz_nums_layout{ new ui::BoxLayout<Alignment::Horizontal>("ABC123 Horiz") };
             horiz_nums_layout->add_nested_layout(layout_v1);
             horiz_nums_layout->add_nested_layout(layout_v2);
+            horiz_nums_layout->add_nested_layout(layout_v3);
 
             const auto horiz_alph_layout{ new ui::BoxLayout<Alignment::Vertical>("ABC Horiz") };
             horiz_alph_layout->add_nested_layout(layout_h1);
@@ -127,8 +130,7 @@ namespace rl {
             m_main_window->gui()->assign_layout(layout_v_letters);
 
             m_timer.reset();
-            while (!this->should_exit())
-            {
+            while (!this->should_exit()) {
                 this->handle_events();
                 this->update();
                 this->render();

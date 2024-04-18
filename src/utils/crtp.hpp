@@ -44,12 +44,15 @@ namespace rl::crtp::example {
     {
         using variant_t = std::variant<A, B, C, D>;
         std::vector<variant_t> variants = {
-            A{ .a = 123 }, B{ .b = 234 }, D{ .d = 987 },
-            C{ .c = 457 }, A{ .a = 647 }, D{ .d = 666 },
+            A{ .a = 123 },
+            B{ .b = 234 },
+            D{ .d = 987 },
+            C{ .c = 457 },
+            A{ .a = 647 },
+            D{ .d = 666 },
         };
 
-        for (auto&& var : variants)
-        {
+        for (auto&& var : variants) {
             std::visit(variant_visitor{
                            [](A& a_variant) {
                                std::cout << "A: " << a_variant.a << std::endl;
