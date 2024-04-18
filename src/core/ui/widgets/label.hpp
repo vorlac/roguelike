@@ -37,7 +37,7 @@ namespace rl::ui {
     protected:
         std::string m_text{};
         std::string m_text_font{};
-        bool m_font_autosizing{ true };
+        bool m_font_autosizing{ false };
         Align m_text_alignment{ Align::HLeft | Align::VMiddle };
         ds::color<f32> m_text_color{ Colors::White };
         std::function<void()> m_callback;

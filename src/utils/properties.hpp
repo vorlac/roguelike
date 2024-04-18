@@ -50,7 +50,6 @@ namespace rl {
         None       = 0x0000,  // Invalid / uninitialized orientation
         Horizontal = 1 << 0,  // Layout expands on horizontal axis.
         Vertical   = 1 << 1,  // Layout expands on vertical axis.
-        Grid       = 1 << 2,  // Layout expands in 2D grid.
     };
 
     enum class Align : i16_fast {
@@ -174,8 +173,6 @@ namespace rl {
                 return "Horizontal";
             case Alignment::Vertical:
                 return "Vertical";
-            case Alignment::Grid:
-                return "Grid";
         }
 
         return "Unknown";

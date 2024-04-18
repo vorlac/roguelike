@@ -142,6 +142,7 @@ namespace rl::ui {
         ds::margin<f32> m_outer_margin{ ds::margin<f32>::init(5.0f) };
         ds::margin<f32> m_inner_margin{ ds::margin<f32>::init(5.0f) };
         ds::margin<f32> m_inner_padding{ ds::margin<f32>::init(5.0f) };
+        f32 m_spacing{ 10.0f };
     };
 
     class OldLayout : public ds::refcounted

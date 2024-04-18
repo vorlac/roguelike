@@ -75,16 +75,11 @@ namespace rl::ui {
             const Widget* widget{ this->find_widget(m_mouse.pos()) };
             if (widget != nullptr && !widget->tooltip().empty())
             {
-                // TODO: add to theme style sheet
-                constexpr static f32 TOOLTIP_WIDTH{ 150.0f };
+                const f32 tooltip_width{ m_theme->tooltip_width };
                 ds::rect bounds{ ds::rect<f32>::zero() };
-                ds::point<f32> pos{
-                    widget->position() +
-                        ds::point<f32>{
-                            (widget->width() / 2.0f),
-                            widget->height() + 10.0f,
-                        },
-                };
+                ds::point<f32> pos{ widget->abs_position() +
+                                    ds::point<f32>{ widget->width() / 2.0f,
+                                                    widget->height() + 10.0f } };
 
                 nvg::set_font_face(context, text::font::style::Sans);
                 nvg::set_font_size(context, 20.0f);
@@ -93,10 +88,10 @@ namespace rl::ui {
                 nvg::text_bounds(context, pos, widget->tooltip(), bounds);
 
                 f32 horiz{ bounds.size.width / 2.0f };
-                if (bounds.size.width / 2.0f > (TOOLTIP_WIDTH / 2.0f))
+                if (bounds.size.width / 2.0f > (tooltip_width / 2.0f))
                 {
                     nvg::set_text_align(context, Align::HCenter | Align::VTop);
-                    bounds = nvg::text_box_bounds(context, pos, TOOLTIP_WIDTH, widget->tooltip());
+                    bounds = nvg::text_box_bounds(context, pos, tooltip_width, widget->tooltip());
                     horiz = bounds.size.width / 2.0f;
                 }
 
@@ -126,7 +121,7 @@ namespace rl::ui {
 
                 nvg::fill_color(context, rl::Colors::White);
                 nvg::font_blur_(context, 0.0f);
-                nvg::text_box(context, { pos.x - horiz, pos.y }, TOOLTIP_WIDTH, widget->tooltip());
+                nvg::text_box(context, { pos.x - horiz, pos.y }, tooltip_width, widget->tooltip());
             }
         }
 

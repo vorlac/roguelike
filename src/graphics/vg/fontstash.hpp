@@ -227,8 +227,8 @@ namespace rl::nvg::font {
     void vert_metrics(Context* font_ctx, f32* ascender, f32* descender, f32* lineh);
 
     // Text iterator
-    i32 text_iter_init(Context* font_ctx, TextIter* iter, ds::point<f32> pos,
-                       const char* str, const char* end, i32 bitmap_option);
+    i32 text_iter_init(Context* font_ctx, TextIter* iter, ds::point<f32> pos, const char* str,
+                       const char* end, i32 bitmap_option);
     i32 text_iter_next(Context* font_ctx, TextIter* iter, FontQuad* quad);
 
     // Pull texture changes

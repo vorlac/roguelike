@@ -54,7 +54,7 @@ namespace rl::ui {
 
         Canvas* canvas();
         Widget* parent();
-        Layout* layout();
+        Layout* layout() const;
         ScrollableDialog* dialog();
 
         Widget* child_at(u64 index);
@@ -113,6 +113,8 @@ namespace rl::ui {
         }
 
     public:
+        void perform_layout_orig();
+
         virtual bool on_key_pressed(const Keyboard& kb);
         virtual bool on_key_released(const Keyboard& kb);
         virtual bool on_character_input(const Keyboard& kb);

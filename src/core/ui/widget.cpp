@@ -58,7 +58,7 @@ namespace rl::ui {
         m_parent = parent;
     }
 
-    Layout* Widget::layout()
+    Layout* Widget::layout() const
     {
         return m_layout;
     }
@@ -268,12 +268,18 @@ namespace rl::ui {
 
     ds::dims<f32> Widget::preferred_size() const
     {
-        return m_layout != nullptr            //
-                 ? m_layout->computed_size()  //
-                 : m_rect.size;
+        return m_layout != nullptr  //
+                 ? m_layout->computed_size()
+                 : this->preferred_size();
     }
 
     void Widget::perform_layout()
+    {
+        if (m_layout != nullptr)
+            m_layout->apply_layout();
+    }
+
+    void Widget::perform_layout_orig()
     {
         if (m_layout != nullptr)
         {
@@ -330,6 +336,7 @@ namespace rl::ui {
 
                 m_layout->set_rect(layout_rect);
             }
+
             this->set_max_size(max_size);
         }
 

@@ -116,7 +116,7 @@ namespace rl::ui {
                 ds::rect<f32> prect{ this->parent()->rect() };
                 bounds = nvg::text_box_bounds(context, prect.pt, prect.size.width + 2.0f, m_text);
                 // assert_cond(bounds.contained_by(prect));
-                size = ds::dims{ prect.size.width, bounds.size.height };
+                size = ds::dims{ bounds.size.width, bounds.size.height };
             }
 
             return size;
