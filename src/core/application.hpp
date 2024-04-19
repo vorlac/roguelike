@@ -45,7 +45,8 @@ namespace rl {
     public:
         Application()
         {
-            this->init_subsystem(Subsystem::All);
+            bool status{ this->init_subsystem(Subsystem::All) };
+            runtime_assert(status, "failed to init SDL subsystems");
             m_main_window = std::make_unique<MainWindow>("Roguelite [OpenGL Window]");
             m_event_handler = EventHandler{ m_main_window };
         }
@@ -105,8 +106,6 @@ namespace rl {
             layout_v1->add_widget(new ui::Label{ "4", font_size, alignment });
             layout_v1->add_widget(new ui::Label{ "5", font_size, alignment });
 
-            // const auto layout_v2{ new ui::BoxLayout<Alignment::Vertical>("Nums V1") };
-
             const auto layout_v3{ new ui::BoxLayout<Alignment::Vertical>("Nums V2") };
             layout_v3->add_widget(new ui::Label{ "1", font_size, alignment });
             layout_v3->add_widget(new ui::Label{ "2", font_size, alignment });
@@ -115,9 +114,7 @@ namespace rl {
             layout_v3->add_widget(new ui::Label{ "5", font_size, alignment });
 
             const auto horiz_nums_layout{ new ui::BoxLayout<Alignment::Horizontal>("123 Horiz") };
-            horiz_nums_layout->set_size_policy(SizePolicy::Maximum);
             horiz_nums_layout->add_nested_layout(layout_v1);
-            // horiz_nums_layout->add_nested_layout(layout_v2);
             horiz_nums_layout->add_nested_layout(layout_v3);
 
             const auto horiz_alph_layout{ new ui::BoxLayout<Alignment::Vertical>("ABC Horiz") };
@@ -125,7 +122,7 @@ namespace rl {
             horiz_alph_layout->add_nested_layout(layout_h2);
 
             auto layout_v_letters{ new ui::BoxLayout<Alignment::Vertical>("Letters H2") };
-            layout_v_letters->set_size_policy(SizePolicy::Prefered);
+            layout_v_letters->set_size_policy(SizePolicy::Maximum);
             layout_v_letters->add_nested_layout(horiz_nums_layout);
             layout_v_letters->add_nested_layout(horiz_alph_layout);
             m_main_window->gui()->assign_layout(layout_v_letters);
@@ -135,9 +132,7 @@ namespace rl {
                 this->handle_events();
                 this->update();
                 this->render();
-
-                using namespace std::chrono_literals;
-                std::this_thread::sleep_for(30ms);
+                this->print_loop_stats(m_timer.delta());
             }
 
             ret &= this->teardown();
@@ -149,11 +144,13 @@ namespace rl {
             m_main_window->render();
         }
 
+        [[nodiscard]]
         bool setup() const
         {
             return true;
         }
 
+        [[nodiscard]]
         bool teardown() const
         {
             return true;
@@ -181,6 +178,7 @@ namespace rl {
             return this->teardown();
         }
 
+        [[nodiscard]]
         bool init_subsystem(const Subsystem::ID flags) const
         {
             const i32 result{ SDL3::SDL_Init(flags) };
@@ -196,6 +194,23 @@ namespace rl {
         Application& sdl()
         {
             return *this;
+        }
+
+    private:
+        void print_loop_stats(const f32 delta_time)
+        {
+            f32 elapsed_time{ m_timer.elapsed() };
+            u64 iterations{ m_timer.tick_count() };
+            if (iterations % 2400 != 0)
+                return;
+
+            log::debug(
+                " {:>14.6f} s || {:>10L} u ][ {:>10.4f} ms | {:>10.4f} fps ][ {:>10.4f} avg fps ]",
+                elapsed_time,                                  // elapsed time (seconds)
+                iterations,                                    // loop iterations
+                delta_time * 1000.0f,                          // delta time (ms)
+                1.0f / delta_time,                             // current fps
+                static_cast<f32>(iterations) / elapsed_time);  // avg fps
         }
 
     private:

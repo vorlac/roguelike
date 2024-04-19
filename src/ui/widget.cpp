@@ -352,7 +352,7 @@ namespace rl::ui {
     {
         LocalTransform transform{ this };
         const ds::point<f32> local_mouse_pos{ pt - m_rect.pt };
-        for (Widget* child : std::ranges::reverse_view{ m_children }) {
+        for (Widget* child : m_children | std::views::reverse) {
             if (!child->visible())
                 continue;
 
@@ -404,7 +404,7 @@ namespace rl::ui {
     {
         LocalTransform transform{ this };
         const ds::point<f32> local_mouse_pos{ mouse.pos() - LocalTransform::absolute_pos };
-        for (const auto child : std::ranges::reverse_view{ m_children }) {
+        for (Widget* child : m_children | std::views::reverse) {
             if (!child->visible())
                 continue;
             if (!child->contains(local_mouse_pos))
@@ -425,7 +425,7 @@ namespace rl::ui {
     {
         LocalTransform transform{ this };
         const ds::point<f32> local_mouse_pos{ mouse.pos() - LocalTransform::absolute_pos };
-        for (Widget* child : std::ranges::reverse_view{ m_children }) {
+        for (Widget* child : m_children | std::views::reverse) {
             if (!child->visible())
                 continue;
             if (!child->contains(local_mouse_pos))
@@ -443,7 +443,7 @@ namespace rl::ui {
     {
         LocalTransform transform{ this };
         const ds::point<f32> local_mouse_pos{ mouse.pos() - LocalTransform::absolute_pos };
-        for (Widget* child : std::ranges::reverse_view{ m_children }) {
+        for (Widget* child : m_children | std::views::reverse) {
             if (!child->visible())
                 continue;
             if (!child->contains(local_mouse_pos))
@@ -463,7 +463,7 @@ namespace rl::ui {
 
         LocalTransform transform{ this };
         const ds::point<f32> local_mouse_pos{ mouse.pos() - LocalTransform::absolute_pos };
-        for (Widget* child : std::ranges::reverse_view{ m_children }) {
+        for (Widget* child : m_children | std::views::reverse) {
             if (!child->visible())
                 continue;
 
@@ -711,7 +711,7 @@ namespace rl::ui {
 
         LocalTransform transform{ this };
         const ds::point<f32> local_mouse_pos{ pt - m_rect.pt };
-        for (Widget* child : std::ranges::reverse_view{ m_children }) {
+        for (Widget* child : m_children | std::views::reverse) {
             if (!child->visible())
                 continue;
             if (!child->contains(local_mouse_pos))

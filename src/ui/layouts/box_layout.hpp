@@ -61,6 +61,7 @@ namespace rl::ui {
                                   - parent_layout->inner_margin()
                             : parent_widget->size()
                                   - m_outer_margin
+                                  - m_inner_margin
                     };
 
                     ds::dims<f32> total_size{ ds::dims<f32>::zero() };
@@ -93,7 +94,7 @@ namespace rl::ui {
 
                         const f32 delta_height{ fill_size.height - magnitude };
                         const f32 height_increase{ delta_height / sibling_count };
-                        for (auto [idx, sibling] : siblings | std::views::enumerate) {
+                        for (auto [sibling_idx, sibling] : siblings | std::views::enumerate) {
                             const Layout* sibling_layout{ sibling->layout() };
                             ds::margin<f32> sib_outer{
                                 sibling_layout != nullptr
@@ -102,7 +103,8 @@ namespace rl::ui {
                             };
 
                             auto rect{ sibling->rect() };
-                            rect.pt.y += (height_increase + sib_outer.bottom) * idx;
+                            rect.pt.y += (height_increase + sib_outer.bottom)
+                                       * static_cast<f32>(sibling_idx);
                             rect.size.height += height_increase + sib_outer.bottom;
                             sibling->set_rect(rect);
                         }
@@ -116,7 +118,7 @@ namespace rl::ui {
 
                         const f32 delta_width{ fill_size.width - magnitude };
                         const f32 width_increase{ delta_width / sibling_count };
-                        for (auto [idx, sibling] : siblings | std::views::enumerate) {
+                        for (auto [sibling_idx, sibling] : siblings | std::views::enumerate) {
                             const Layout* sibling_layout{ sibling->layout() };
                             ds::margin<f32> sib_outer{
                                 sibling_layout != nullptr
@@ -125,7 +127,8 @@ namespace rl::ui {
                             };
 
                             auto rect{ sibling->rect() };
-                            rect.pt.x += (width_increase + sib_outer.right) * idx;
+                            rect.pt.x += (width_increase + sib_outer.right)
+                                       * static_cast<f32>(sibling_idx);
                             rect.size.width += width_increase + sib_outer.right;
                             sibling->set_rect(rect);
                         }

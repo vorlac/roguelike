@@ -97,6 +97,7 @@ namespace rl::inline utils {
             const u64 curr_timestamp{ Timer::now() };
             const u64 prev_timestamp{ m_delta_timestamp };
 
+            ++m_tick_count;
             m_delta_timestamp = curr_timestamp;
             return this->convert(curr_timestamp - prev_timestamp);
         }

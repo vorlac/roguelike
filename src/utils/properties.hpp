@@ -1,7 +1,5 @@
 #pragma once
 
-#include <utility>
-
 #include "utils/conversions.hpp"
 #include "utils/numeric.hpp"
 
@@ -33,19 +31,19 @@ namespace rl {
     };
 
     enum class SizePolicy : i16_fast {
-        Inherit,
-        FixedSize,
-        Minimum,
-        Maximum,
-        Prefered,
+        Inherit    = 0x0000,
+        FixedSize  = 1 << 0,
+        Minimum    = 1 << 1,
+        Maximum    = 1 << 2,
+        Prefered   = 1 << 3,
     };
 
     enum class Placement_OldAlignment : i16_fast {
-        None    = 0x0000,  // Invalid / uninitialized alignment
-        Minimum = 1 << 0,  // Take only as much space as is required.
-        Center  = 1 << 1,  // Center align.
-        Maximum = 1 << 2,  // Take as much space as is allowed.
-        Fill    = 1 << 3,  // Fill according to preferred sizes.
+        None       = 0x0000,  // Invalid / uninitialized alignment
+        Minimum    = 1 << 0,  // Take only as much space as is required.
+        Center     = 1 << 1,  // Center align.
+        Maximum    = 1 << 2,  // Take as much space as is allowed.
+        Fill       = 1 << 3,  // Fill according to preferred sizes.
     };
 
     enum class Alignment : i16_fast {
@@ -55,14 +53,14 @@ namespace rl {
     };
 
     enum class Align : i16_fast {
-        None = 0,
-        HLeft = 1 << 0,      // Default, align text horizontally to left.
-        HCenter = 1 << 1,    // Align text horizontally to center.
-        HRight = 1 << 2,     // Align text horizontally to right.
-        VTop = 1 << 3,       // Align text vertically to top.
-        VMiddle = 1 << 4,    // Align text vertically to middle.
-        VBottom = 1 << 5,    // Align text vertically to bottom.
-        VBaseline = 1 << 6,  // Default, align text vertically to baseline.
+        None       = 0x0000,
+        HLeft      = 1 << 0,  // Default, align text horizontally to left.
+        HCenter    = 1 << 1,  // Align text horizontally to center.
+        HRight     = 1 << 2,  // Align text horizontally to right.
+        VTop       = 1 << 3,  // Align text vertically to top.
+        VMiddle    = 1 << 4,  // Align text vertically to middle.
+        VBottom    = 1 << 5,  // Align text vertically to bottom.
+        VBaseline  = 1 << 6,  // Default, align text vertically to baseline.
     };
 
     enum class Axis : i16_fast {
@@ -96,10 +94,10 @@ namespace rl {
     };
 
     enum class Quad : i16_fast {
-        TopLeft     = std::to_underlying(Side::Top    | Side::Left),
-        TopRight    = std::to_underlying(Side::Top    | Side::Right),
-        BottomLeft  = std::to_underlying(Side::Bottom | Side::Left),
-        BottomRight = std::to_underlying(Side::Bottom | Side::Right),
+        TopLeft     = Side::Top    | Side::Left,
+        TopRight    = Side::Top    | Side::Right,
+        BottomLeft  = Side::Bottom | Side::Left,
+        BottomRight = Side::Bottom | Side::Right,
     };
 
     enum class CompassDirection : i16_fast {

@@ -111,18 +111,9 @@
         </Expand>
     </Type>
   
-    <!-- - - - - - - - - -->
-    <!-- rl::ds::CellProperties -->
-    <!-- - - - - - - - - -->
-    <Type Name="rl::ui::CellProperties">
-        <DisplayString>
-            {this->first}, {this->second}
-        </DisplayString>
-    </Type>
-  
-    <!-- - - - - - - - - -->
+    <!-- - - - - - - - - - -->
     <!-- rl::ds::shared<T> -->
-    <!-- - - - - - - - - -->
+    <!-- - - - - - - - - - -->
     <Type Name="rl::ds::shared&lt;*&gt;">
         <DisplayString>
             {*m_data}
