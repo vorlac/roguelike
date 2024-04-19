@@ -529,8 +529,7 @@ namespace rl::stb {
     }
 
 #if !defined(STBI_NO_LINEAR) || !defined(STBI_NO_HDR) || !defined(STBI_NO_PNM)
-    static void* stbi_malloc_mad4(const int a, const int b, const int c, const int d,
-                                  const int add)
+    static void* stbi_malloc_mad4(const int a, const int b, const int c, const int d, const int add)
     {
         if (!stbi_mad4sizes_valid(a, b, c, d, add))
             return nullptr;
@@ -713,8 +712,7 @@ namespace rl::stb {
         return enlarged;
     }
 
-    static void stbi_vertical_flip(void* image, const int w, const int h,
-                                   const int bytes_per_pixel)
+    static void stbi_vertical_flip(void* image, int w, int h, int bytes_per_pixel)
     {
         const size_t bytes_per_row = static_cast<size_t>(w) * bytes_per_pixel;
         stbi_uc temp[2048];
@@ -1779,8 +1777,9 @@ namespace rl::stb {
 
     // (1 << n) - 1
     static const StbiUint32 stbi_bmask[17] = {
-        0, 1, 3, 7, 15, 31, 63, 127, 255, 511, 1023,
-        2047, 4095, 8191, 16383, 32767, 65535
+        0, 1, 3, 7, 15, 31, 63, 127,
+        255, 511, 1023, 2047, 4095,
+        8191, 16383, 32767, 65535
     };
 
     // decode a jpeg huffman value from the bitstream
@@ -1847,11 +1846,16 @@ namespace rl::stb {
     {
         if (j->code_bits < n)
             stbi_grow_buffer_unsafe(j);
-        if (j->code_bits < n)
-            return 0;  // ran out of bits from stream, return 0s intead of continuing
 
-        const int sgn = j->code_buffer >> 31;  // sign bit always in MSB; 0 if MSB clear (positive), 1 if
-                                               // MSB set (negative)
+        // ran out of bits from stream,
+        // return 0s intead of continuing
+        if (j->code_bits < n)
+            return 0;
+
+        // sign bit always in MSB;
+        // 0 if MSB clear (positive),
+        // 1 if MSB set (negative)
+        const int sgn = j->code_buffer >> 31;
         unsigned int k = stbi_lrot(j->code_buffer, n);
         j->code_buffer = k & ~stbi_bmask[n];
         k &= stbi_bmask[n];
@@ -2078,9 +2082,9 @@ namespace rl::stb {
             else {
                 k = j->spec_start;
                 do {
-                    const int rs = stbi_jpeg_huff_decode(j, hac);  // @OPTIMIZE see if we can use the
-                                                                   // fast path here, advance-by-r is so
-                                                                   // slow, eh
+                    const int rs = stbi_jpeg_huff_decode(j, hac);  // @OPTIMIZE see if we can use
+                                                                   // the fast path here,
+                                                                   // advance-by-r is so slow, eh
                     if (rs < 0)
                         return stbi__err("bad huffman code", "Corrupt JPEG");
                     int s = rs & 15;
@@ -2726,10 +2730,15 @@ namespace rl::stb {
         j->code_bits = 0;
         j->code_buffer = 0;
         j->nomore = 0;
-        j->img_comp[0].dc_pred = j->img_comp[1].dc_pred =
-            j->img_comp[2].dc_pred = j->img_comp[3].dc_pred = 0;
+        j->img_comp[0].dc_pred
+            = j->img_comp[1].dc_pred
+            = j->img_comp[2].dc_pred
+            = j->img_comp[3].dc_pred
+            = 0;
         j->marker = STBI_MARKER_none;
-        j->todo = j->restart_interval ? j->restart_interval : 0x7fffffff;
+        j->todo = j->restart_interval
+                    ? j->restart_interval
+                    : 0x7fffffff;
         j->eob_run = 0;
         // no more than 1<<31 MCUs if no restart_interal? that's plenty safe,
         // since we don't even allow 1<<30 pixels
@@ -4807,10 +4816,8 @@ namespace rl::stb {
 
             // expand decoded bits in cur to dest, also adding an extra alpha channel if desired
             if (depth < 8) {
-                const stbi_uc scale = (color == 0) ? stbi_depth_scale_table[depth] : 1;  // scale
-                                                                                         // grayscale
-                                                                                         // values to
-                                                                                         // 0..255 range
+                const stbi_uc scale = (color == 0) ? stbi_depth_scale_table[depth]
+                                                   : 1;  // scale grayscale values to 0..255 range
                 const stbi_uc* in = cur;
                 stbi_uc* out = dest;
                 stbi_uc inb = 0;
@@ -5541,15 +5548,15 @@ namespace rl::stb {
     static int stbi_shiftsigned(unsigned int v, const int shift, const int bits)
     {
         constexpr static i32 mul_table[] = {
-            0,
-            0xff /*0b11111111*/,
-            0x55 /*0b01010101*/,
-            0x49 /*0b01001001*/,
-            0x11 /*0b00010001*/,
-            0x21 /*0b00100001*/,
-            0x41 /*0b01000001*/,
-            0x81 /*0b10000001*/,
-            0x01 /*0b00000001*/,
+            0x00 /* 0000 0000 */,
+            0xff /* 1111 1111 */,
+            0x55 /* 0101 0101 */,
+            0x49 /* 0100 1001 */,
+            0x11 /* 0001 0001 */,
+            0x21 /* 0010 0001 */,
+            0x41 /* 0100 0001 */,
+            0x81 /* 1000 0001 */,
+            0x01 /* 0000 0001 */,
         };
 
         constexpr static std::array shift_table{

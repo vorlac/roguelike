@@ -61,9 +61,9 @@ namespace rl::ui {
         }
 
         template <typename T>
-        detail::FormWidget<T>* add_variable(
-            const std::string& label_text, const std::function<void(const T&)>& setter,
-            const std::function<T()>& getter, bool editable = true)
+        detail::FormWidget<T>* add_variable(const std::string& label_text,
+                                            const std::function<void(const T&)>& setter,
+                                            const std::function<T()>& getter, bool editable = true)
         {
             const Theme* theme{ m_dialog->theme() };
             const Label* label = new Label{ m_dialog, label_text };
@@ -107,8 +107,7 @@ namespace rl::ui {
         }
 
         template <typename T>
-        detail::FormWidget<T>* add_variable(const std::string& label, T& value,
-                                            bool editable = true)
+        detail::FormWidget<T>* add_variable(const std::string& label, T& value, bool editable = true)
         {
             return this->add_variable<T>(
                 label,

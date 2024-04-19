@@ -10,9 +10,11 @@
 #include "utils/conversions.hpp"
 
 namespace rl::nvg::font {
-    using namespace rl::stb;
+    using namespace stb;
 
-    constexpr i32 UTF8_ACCEPT{ 0 };
+    constexpr static i32 UTF8_ACCEPT{ 0 };
+    constexpr static i32 APREC{ 16 };
+    constexpr static i32 ZPREC{ 7 };
 
     namespace {
         u32 hashint(u32 a)
@@ -36,8 +38,7 @@ namespace rl::nvg::font {
             return 1;
         }
 
-        i32 tt_load_font(Context* context, STTFontImpl* font, const u8* data, i32 /*data_size*/,
-                         const i32 font_index)
+        i32 tt_load_font(Context* context, STTFontImpl* font, const u8* data, i32 /*data_size*/, const i32 font_index)
         {
             i32 stb_error;
             font->font.userdata = context;
@@ -51,15 +52,14 @@ namespace rl::nvg::font {
             return stb_error;
         }
 
-        void tt_get_font_v_metrics(const STTFontImpl* font, i32* ascent, i32* descent,
-                                   i32* line_gap)
+        void tt_get_font_v_metrics(const STTFontImpl* font, i32* ascent, i32* descent, i32* line_gap)
         {
-            stbtt_GetFontVMetrics(&font->font, ascent, descent, line_gap);
+            stbtt_get_font_v_metrics(&font->font, ascent, descent, line_gap);
         }
 
         f32 tt_get_pixel_height_scale(const STTFontImpl* font, const f32 size)
         {
-            return stbtt_ScaleForMappingEmToPixels(&font->font, size);
+            return stbtt_scale_for_mapping_em_to_pixels(&font->font, size);
         }
 
         i32 tt_get_glyph_index(const STTFontImpl* font, const i32 codepoint)
@@ -71,8 +71,8 @@ namespace rl::nvg::font {
                                   const f32 scale, i32* advance, i32* lsb, i32* x0, i32* y0,
                                   i32* x1, i32* y1)
         {
-            stbtt_GetGlyphHMetrics(&font->font, glyph, advance, lsb);
-            stbtt_GetGlyphBitmapBox(&font->font, glyph, scale, scale, x0, y0, x1, y1);
+            stbtt_get_glyph_h_metrics(&font->font, glyph, advance, lsb);
+            stbtt_get_glyph_bitmap_box(&font->font, glyph, scale, scale, x0, y0, x1, y1);
             return 1;
         }
 
@@ -80,13 +80,13 @@ namespace rl::nvg::font {
                                     const i32 out_height, const i32 out_stride, const f32 scale_x,
                                     const f32 scale_y, const i32 glyph)
         {
-            stbtt_MakeGlyphBitmap(&font->font, output, out_width, out_height, out_stride, scale_x,
-                                  scale_y, glyph);
+            stbtt_make_glyph_bitmap(&font->font, output, out_width, out_height, out_stride, scale_x,
+                                    scale_y, glyph);
         }
 
         i32 tt_get_glyph_kern_advance(const STTFontImpl* font, const i32 glyph1, const i32 glyph2)
         {
-            return stbtt_GetGlyphKernAdvance(&font->font, glyph1, glyph2);
+            return stbtt_get_glyph_kern_advance(&font->font, glyph1, glyph2);
         }
 
         u32 decutf8(u32* state, u32* codep, const u32 byte)
@@ -344,10 +344,7 @@ namespace rl::nvg::font {
             return &font_ctx->states[font_ctx->nstates - 1];
         }
 
-#define APREC 16
-#define ZPREC 7
-
-        void blur_cols(u8* dst, const i32 w, const i32 h, const i32 dstStride, const i32 alpha)
+        void blur_cols(u8* dst, const i32 w, const i32 h, const i32 dst_stride, const i32 alpha)
         {
             i32 x;
             for (i32 y = 0; y < h; y++) {
@@ -363,22 +360,22 @@ namespace rl::nvg::font {
                     dst[x] = static_cast<u8>(z >> ZPREC);
                 }
                 dst[0] = 0;  // force zero border
-                dst += dstStride;
+                dst += dst_stride;
             }
         }
 
-        void blur_rows(u8* dst, const i32 w, const i32 h, const i32 dstStride, const i32 alpha)
+        void blur_rows(u8* dst, const i32 w, const i32 h, const i32 dst_stride, const i32 alpha)
         {
             i32 y;
             for (i32 x = 0; x < w; x++) {
                 i32 z = 0;  // force zero border
-                for (y = dstStride; y < h * dstStride; y += dstStride) {
+                for (y = dst_stride; y < h * dst_stride; y += dst_stride) {
                     z += (alpha * ((static_cast<i32>(dst[y]) << ZPREC) - z)) >> APREC;
                     dst[y] = static_cast<u8>(z >> ZPREC);
                 }
-                dst[(h - 1) * dstStride] = 0;  // force zero border
+                dst[(h - 1) * dst_stride] = 0;  // force zero border
                 z = 0;
-                for (y = (h - 2) * dstStride; y >= 0; y -= dstStride) {
+                for (y = (h - 2) * dst_stride; y >= 0; y -= dst_stride) {
                     z += (alpha * ((static_cast<i32>(dst[y]) << ZPREC) - z)) >> APREC;
                     dst[y] = static_cast<u8>(z >> ZPREC);
                 }
@@ -387,23 +384,21 @@ namespace rl::nvg::font {
             }
         }
 
-        void blur(const Context* font_ctx, u8* dst, const i32 w, const i32 h, const i32 dst_stride,
-                  const i32 blur)
+        void blur(const Context* font_ctx, u8* dst, const i32 w, const i32 h, const i32 dst_stride, const i32 blur)
         {
             (void)font_ctx;
 
             if (blur < 1)
                 return;
-            // Calculate the alpha such that 90% of the kernel is within the radius. (Kernel extends
-            // to infinity)
+            // Calculate the alpha such that 90% of the kernel is within the radius. (Kernel extends to infinity)
             const f32 sigma = static_cast<f32>(blur) * 0.57735f;  // 1 / sqrt(3)
             const i32 alpha = static_cast<i32>((1 << APREC) * (1.0f - expf(-2.3f / (sigma + 1.0f))));
             blur_rows(dst, w, h, dst_stride, alpha);
             blur_cols(dst, w, h, dst_stride, alpha);
             blur_rows(dst, w, h, dst_stride, alpha);
             blur_cols(dst, w, h, dst_stride, alpha);
-            //	_blurrows(dst, w, h, dstStride, alpha);
-            //	_blurcols(dst, w, h, dstStride, alpha);
+            //  _blurrows(dst, w, h, dstStride, alpha);
+            //  _blurcols(dst, w, h, dstStride, alpha);
         }
 
         Glyph* alloc_glyph(Font* font)
@@ -411,7 +406,7 @@ namespace rl::nvg::font {
             if (font->nglyphs + 1 > font->cglyphs) {
                 font->cglyphs = font->cglyphs == 0 ? 8 : font->cglyphs * 2;
                 font->glyphs = static_cast<Glyph*>(
-                    std::realloc(font->glyphs, sizeof(Glyph) * font->cglyphs));
+                    std::realloc(font->glyphs, sizeof(Glyph) * font->cglyphs));  // NOLINT(bugprone-suspicious-realloc-usage)
 
                 if (font->glyphs == nullptr)
                     return nullptr;
@@ -546,14 +541,16 @@ namespace rl::nvg::font {
             }
 
             // Debug code to color the glyph background
-            /*	u8* fdst = &font_ctx->texData[glyph->x0 + glyph->y0 * font_ctx->params.width];
-                for (y = 0; y < gh; y++) {
-                    for (x = 0; x < gw; x++) {
-                        i32 a = (i32)fdst[x+y*font_ctx->params.width] + 20;
-                        if (a > 255) a = 255;
-                        fdst[x+y*font_ctx->params.width] = a;
-                    }
-                }*/
+            /*
+            u8* fdst = &font_ctx->texData[glyph->x0 + glyph->y0 * font_ctx->params.width];
+            for (y = 0; y < gh; y++) {
+                for (x = 0; x < gw; x++) {
+                    i32 a = (i32)fdst[x+y*font_ctx->params.width] + 20;
+                    if (a > 255) a = 255;
+                    fdst[x+y*font_ctx->params.width] = a;
+                }
+            }
+            */
 
             // Blur
             if (iblur > 0) {
@@ -575,9 +572,7 @@ namespace rl::nvg::font {
                       FontQuad* q)
         {
             if (prev_glyph_index != -1) {
-                const f32 adv{ scale
-                               * static_cast<f32>(tt_get_glyph_kern_advance(
-                                   &font->font, prev_glyph_index, glyph->index)) };
+                const f32 adv{ scale * static_cast<f32>(tt_get_glyph_kern_advance(&font->font, prev_glyph_index, glyph->index)) };
                 *x += std::round(adv + spacing);
             }
 
@@ -659,8 +654,7 @@ namespace rl::nvg::font {
             font_ctx->nverts++;
         }
 
-        f32 get_vert_align(const Context* font_ctx, const Font* font, const Align align,
-                           const i16 isize)
+        f32 get_vert_align(const Context* font_ctx, const Font* font, const Align align, const i16 isize)
         {
             if (font_ctx->params.flags & FonsZeroTopleft) {
                 if ((align & Align::VTop) != 0)

@@ -1,6 +1,6 @@
 #pragma once
 
-namespace rl::nsvg {
+namespace rl::nvg::svg {
 
     enum NSVGpaintType {
         NSVGPaintUndef = -1,

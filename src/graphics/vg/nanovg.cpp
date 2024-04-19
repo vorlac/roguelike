@@ -102,8 +102,9 @@ namespace rl::nvg {
 
             constexpr f32 clampf(const f32 a, const f32 mn, const f32 mx)
             {
-                return a < mn ? mn : a > mx ? mx
-                                            : a;
+                return a < mn ? mn
+                     : a > mx ? mx
+                              : a;
             }
 
             constexpr f32 cross(const f32 dx0, const f32 dy0, const f32 dx1, const f32 dy1)
@@ -177,8 +178,7 @@ namespace rl::nvg {
                 ctx->device_px_ratio = ratio;
             }
 
-            constexpr CompositeOperationState composite_operation_state(
-                const CompositeOperation op)
+            constexpr CompositeOperationState composite_operation_state(const CompositeOperation op)
             {
                 BlendFactor sfactor{};
                 BlendFactor dfactor{};
@@ -807,8 +807,7 @@ namespace rl::nvg {
             }
 
             Vertex* butt_cap_end(Vertex* dst, const Point* p, const f32 dx, const f32 dy,
-                                 const f32 w, const f32 d, const f32 aa, const f32 u0,
-                                 const f32 u1)
+                                 const f32 w, const f32 d, const f32 aa, const f32 u0, const f32 u1)
             {
                 const f32 px = p->x + dx * d;
                 const f32 py = p->y + dy * d;
@@ -2044,8 +2043,7 @@ namespace rl::nvg {
     }
 
     PaintStyle linear_gradient(Context*, const f32 sx, const f32 sy, const f32 ex, const f32 ey,
-                               const ds::color<f32>& inner_color,
-                               const ds::color<f32>& outer_color)
+                               const ds::color<f32>& inner_color, const ds::color<f32>& outer_color)
     {
         PaintStyle p{};
         constexpr static f32 large{ 1e5 };
@@ -2085,8 +2083,7 @@ namespace rl::nvg {
     }
 
     PaintStyle radial_gradient(Context*, const f32 cx, const f32 cy, const f32 inr, const f32 outr,
-                               const ds::color<f32>& inner_color,
-                               const ds::color<f32>& outer_color)
+                               const ds::color<f32>& inner_color, const ds::color<f32>& outer_color)
     {
         const f32 r = (inr + outr) * 0.5f;
         const f32 f = outr - inr;
@@ -2491,8 +2488,7 @@ namespace rl::nvg {
         detail::append_commands(ctx, vals.data(), static_cast<i32>(std::size(vals)));
     }
 
-    void rounded_rect(Context* ctx, const f32 x, const f32 y, const f32 w, const f32 h,
-                      const f32 r)
+    void rounded_rect(Context* ctx, const f32 x, const f32 y, const f32 w, const f32 h, const f32 r)
     {
         rounded_rect_varying(ctx, x, y, w, h, r, r, r, r);
     }

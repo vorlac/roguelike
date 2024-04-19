@@ -59,11 +59,8 @@ namespace rl {
         m_vg_renderer = std::make_unique<NVGRenderer>();
 
         m_gui_canvas = new ui::Canvas{
-            this,
-            static_cast<ds::rect<f32>>(m_window_rect),
-            m_mouse,
-            m_keyboard,
-            m_vg_renderer,
+            this, static_cast<ds::rect<f32>>(m_window_rect),
+            m_mouse, m_keyboard, m_vg_renderer
         };
     }
 

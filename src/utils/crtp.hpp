@@ -26,16 +26,16 @@ namespace rl::crtp::example {
     // clang-format off
 
     struct A {
-        int a{};
+        int a{ 0 };
     };
     struct B {
-        int b{};
+        int b{ 0 };
     };
     struct C {
-        int c{};
+        int c{ 0 };
     };
     struct D {
-        int d{};
+        int d{ 0 };
     };
 
     // clang-format on

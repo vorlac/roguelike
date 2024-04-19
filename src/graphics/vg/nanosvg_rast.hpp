@@ -1,6 +1,6 @@
 #pragma once
 
-namespace rl::nvg {
+namespace rl::nvg::svg {
     typedef struct NSVGrasterizer NSVGrasterizer;
 
     // Allocated rasterizer context.
@@ -15,12 +15,12 @@ namespace rl::nvg {
     //   w - width of the image to render
     //   h - height of the image to render
     //   stride - number of bytes per scaleline in the destination buffer
-    void nsvg_rasterize(NSVGrasterizer* r, const nsvg::NSVGimage* image, float tx, float ty,
+    void nsvg_rasterize(NSVGrasterizer* r, const nvg::svg::NSVGimage* image, float tx, float ty,
                         float scale, unsigned char* dst, int w, int h, int stride);
 
     // As above, but allow X and Y axes to scale independently for non-square aspects
     // Added by FLTK
-    void nsvg_rasterize_xy(NSVGrasterizer* r, const nsvg::NSVGimage* image, float tx, float ty,
+    void nsvg_rasterize_xy(NSVGrasterizer* r, const nvg::svg::NSVGimage* image, float tx, float ty,
                            float sx, float sy, unsigned char* dst, int w, int h, int stride);
 
     // Deletes rasterizer context.

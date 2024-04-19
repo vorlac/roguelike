@@ -4,8 +4,6 @@
 
 namespace rl::stb {
 
-#define STBI_VERSION 1
-
     enum {
         STBI_default = 0,  // only used for desired_channels
 
@@ -16,8 +14,8 @@ namespace rl::stb {
     };
 
 #include <stdlib.h>
-    typedef unsigned char stbi_uc;
-    typedef unsigned short stbi_us;
+    using stbi_uc = unsigned char;
+    using stbi_us = unsigned short;
 
     //////////////////////////////////////////////////////////////////////////////
     //
@@ -30,11 +28,12 @@ namespace rl::stb {
 
     struct stbi_io_callbacks
     {
-        int (*read)(void* user, char* data, int size);  // fill 'data' with 'size' bytes. return
-                                                        // number of bytes actually read
-        void (*skip)(void* user, int n);                // skip the next 'n' bytes, or 'unget' the last -n
-                                                        // bytes if negative
-        int (*eof)(void* user);                         // returns nonzero if we are at end of file/data
+        // fill 'data' with 'size' bytes. return number of bytes actually read
+        int (*read)(void* user, char* data, int size);
+        // skip the next 'n' bytes, or 'unget' the last -n bytes if negative
+        void (*skip)(void* user, int n);
+        // returns nonzero if we are at end of file/data
+        int (*eof)(void* user);
     };
 
     ////////////////////////////////////

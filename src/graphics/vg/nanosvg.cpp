@@ -23,7 +23,7 @@
 // #pragma warning(disable : 2220)
 #endif
 
-namespace rl::nsvg {
+namespace rl::nvg::svg {
     // Length proportional to radius of a cubic bezier handle for 90deg arcs.
     constexpr float NSVG_KAPPA90 = 0.5522847493f;
     constexpr int NSVG_MAX_DASHES = 8;
@@ -2212,8 +2212,8 @@ namespace rl::nsvg {
             a1 = nsvg_vecang(1.0f, 0.0f, ux, uy);  // Initial angle
             da = nsvg_vecang(ux, uy, vx, vy);      // Delta angle
 
-            //	if (vecrat(ux,uy,vx,vy) <= -1.0f) da = std::numbers::pi_v<float>;
-            //	if (vecrat(ux,uy,vx,vy) >= 1.0f) da = 0;
+            //  if (vecrat(ux,uy,vx,vy) <= -1.0f) da = std::numbers::pi_v<float>;
+            //  if (vecrat(ux,uy,vx,vy) >= 1.0f) da = 0;
 
             if (fs == 0 && da > 0)
                 da -= 2 * std::numbers::pi_v<float>;

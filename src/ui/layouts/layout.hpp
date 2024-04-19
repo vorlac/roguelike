@@ -67,23 +67,17 @@ namespace rl::ui {
             m_layout = this;
         }
 
-        void add_widget(Widget* widget, const CellProperties& properties = {
-                                            .outer_margin = { 2.0f, 2.0f, 2.0f, 2.0f },
-                                            .inner_margin = { 2.0f, 2.0f, 2.0f, 2.0f },
-                                        })
+        void add_widget(Widget* widget)
         {
             this->add_child(widget);
-            m_cell_data.emplace_back(widget, properties);
+            m_cell_data.emplace_back(widget, CellProperties{});
         }
 
-        void add_nested_layout(Layout* layout,
-                               const CellProperties& properties = {
-                                   .outer_margin = { 2.0f, 2.0f, 2.0f, 2.0f },
-                                   .inner_margin = { 2.0f, 2.0f, 2.0f, 2.0f } })
+        void add_nested_layout(Layout* layout)
         {
-            this->add_widget(layout, properties);
-            if (m_size_policy != SizePolicy::Inherit && layout->m_size_policy == SizePolicy::Inherit) {
-            }
+            this->add_widget(layout);
+            if (m_size_policy != SizePolicy::Inherit && layout->size_policy() == SizePolicy::Inherit)
+                layout->set_size_policy(m_size_policy);
         }
 
         auto widgets() const
@@ -93,6 +87,14 @@ namespace rl::ui {
 
         void set_size_policy(const SizePolicy policy)
         {
+            if (m_size_policy == SizePolicy::Inherit && policy != SizePolicy::Inherit) {
+                for (Widget* widget : m_cell_data | std::views::keys) {
+                    Layout* widget_layout{ widget->layout() };
+                    if (widget_layout != nullptr)
+                        widget_layout->set_size_policy(policy);
+                }
+            }
+
             m_size_policy = policy;
         }
 
@@ -136,7 +138,7 @@ namespace rl::ui {
         // Performs applies all Layout computations for the given widget.
         virtual void apply_layout() = 0;
         // update contents of layout based on it's size policy
-        virtual void adjust_for_size_policy() = 0;
+        virtual void adjust_for_size_policy(i64 sibling_idx = 0) = 0;
         // Compute the preferred size for a given Layout and widget
         virtual ds::dims<f32> computed_size() const = 0;
 

@@ -98,7 +98,8 @@ namespace rl::ui {
 
         m_renderer->set_text_properties_(m_text_font, m_font_size, m_text_alignment);
 
-        const bool is_fixed_size{ math::not_equal(m_fixed_size.width, 0.0f) && m_fixed_size.width > 0.0f };
+        const bool is_fixed_size{ math::not_equal(m_fixed_size.width, 0.0f)
+                                  && m_fixed_size.width > 0.0f };
         if (is_fixed_size || (m_font_autosizing && !m_rect.contained_by(this->parent()->rect()))) {
             ds::dims<f32> size{ ds::dims<f32>::zero() };
             ds::rect<f32> bounds{ ds::rect<f32>::zero() };

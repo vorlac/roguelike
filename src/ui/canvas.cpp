@@ -234,7 +234,6 @@ namespace rl::ui {
         Widget::set_size(size);
         runtime_assert(m_main_window != nullptr, "canvas doesn't have reference to main window");
         m_main_window->set_size(size);
-        m_main_window->set_resizable(false);
     }
 
     bool Canvas::tooltip_fade_in_progress()
@@ -246,8 +245,7 @@ namespace rl::ui {
 
         // Temporarily increase the frame rate to fade in the tooltip
         const Widget* widget{ this->find_widget(m_mouse.pos()) };
-        return widget != nullptr
-            && !widget->tooltip().empty();
+        return widget != nullptr && !widget->tooltip().empty();
     }
 
     void Canvas::dispose_dialog(const ScrollableDialog* dialog)

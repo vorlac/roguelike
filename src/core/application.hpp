@@ -105,7 +105,7 @@ namespace rl {
             layout_v1->add_widget(new ui::Label{ "4", font_size, alignment });
             layout_v1->add_widget(new ui::Label{ "5", font_size, alignment });
 
-            const auto layout_v2{ new ui::BoxLayout<Alignment::Vertical>("Nums V1") };
+            // const auto layout_v2{ new ui::BoxLayout<Alignment::Vertical>("Nums V1") };
 
             const auto layout_v3{ new ui::BoxLayout<Alignment::Vertical>("Nums V2") };
             layout_v3->add_widget(new ui::Label{ "1", font_size, alignment });
@@ -114,9 +114,10 @@ namespace rl {
             layout_v3->add_widget(new ui::Label{ "4", font_size, alignment });
             layout_v3->add_widget(new ui::Label{ "5", font_size, alignment });
 
-            const auto horiz_nums_layout{ new ui::BoxLayout<Alignment::Horizontal>("ABC123 Horiz") };
+            const auto horiz_nums_layout{ new ui::BoxLayout<Alignment::Horizontal>("123 Horiz") };
+            horiz_nums_layout->set_size_policy(SizePolicy::Maximum);
             horiz_nums_layout->add_nested_layout(layout_v1);
-            horiz_nums_layout->add_nested_layout(layout_v2);
+            // horiz_nums_layout->add_nested_layout(layout_v2);
             horiz_nums_layout->add_nested_layout(layout_v3);
 
             const auto horiz_alph_layout{ new ui::BoxLayout<Alignment::Vertical>("ABC Horiz") };
@@ -124,9 +125,9 @@ namespace rl {
             horiz_alph_layout->add_nested_layout(layout_h2);
 
             auto layout_v_letters{ new ui::BoxLayout<Alignment::Vertical>("Letters H2") };
+            layout_v_letters->set_size_policy(SizePolicy::Prefered);
             layout_v_letters->add_nested_layout(horiz_nums_layout);
             layout_v_letters->add_nested_layout(horiz_alph_layout);
-
             m_main_window->gui()->assign_layout(layout_v_letters);
 
             m_timer.reset();

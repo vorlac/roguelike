@@ -30,8 +30,9 @@
 	<s:Boolean x:Key="/Default/CodeEditing/TypingAssist/StringLiteralJoinEnabled/@EntryValue">False</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeEditing/TypingAssist/Xml/ChangedTagNameTracking/@EntryValue">False</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeInspection/CodeAnnotations/PropagateAnnotations/@EntryValue">False</s:Boolean>
-	<s:String x:Key="/Default/CodeInspection/CppGutterIcons/ShowGutterIcons/@EntryValue">None</s:String>
+	<s:String x:Key="/Default/CodeInspection/CppGutterIcons/ShowGutterIcons/@EntryValue">ExceptDeclarationDefinition</s:String>
 	<s:Boolean x:Key="/Default/CodeInspection/CppInspection/IdentifierHighlightingEnabled/@EntryValue">False</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/CppInspection/QuickInfoEnabled/@EntryValue">False</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeInspection/ExcludedFiles/FileMasksToSkip/=fonts_002Ecpp/@EntryIndexedValue">True</s:Boolean>
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=DB94C55F_002D6B9A_002D4AAE_002D80D7_002D29FD8153E6B5_002Fd_003A_002Ecache/@EntryIndexedValue">ExplicitlyExcluded</s:String>
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=DB94C55F_002D6B9A_002D4AAE_002D80D7_002D29FD8153E6B5_002Fd_003A_002Evscode/@EntryIndexedValue">ExplicitlyExcluded</s:String>

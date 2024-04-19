@@ -137,6 +137,8 @@ target_compile_options(${PROJECT_NAME}
         /utf-8
         /EHsc
         /nologo
+        /arch:AVX2
+        /fp:fast
 
         $<$<CONFIG:Debug>:
 			# /fsanitize=fuzzer

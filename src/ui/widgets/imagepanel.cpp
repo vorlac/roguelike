@@ -69,9 +69,9 @@ namespace rl::ui {
                        "image overlap inconsistency\nover_image={}\nover_image2={}", over_image,
                        over_image2);
 
-        return over_image ? static_cast<i32>(
-                                mouse_pos.x + mouse_pos.y * static_cast<f32>(this->grid_size().width))
-                          : -1;
+        return over_image
+                 ? static_cast<i32>(mouse_pos.x + mouse_pos.y * this->grid_size().width)
+                 : -1;
     }
 
     bool ImagePanel::on_mouse_move(const Mouse& mouse, const Keyboard&)

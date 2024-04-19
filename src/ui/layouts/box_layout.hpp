@@ -30,57 +30,74 @@ namespace rl::ui {
             return m_cell_data.size();
         }
 
-        virtual void adjust_for_size_policy() override
+        virtual void adjust_for_size_policy(const i64 sibling_idx /*= 0*/) override
         {
-            switch (m_layout->size_policy()) {
+            switch (this->size_policy()) {
                 case SizePolicy::Minimum:
                 {
-                    Widget* parent{ m_layout->parent() };
+                    Widget* parent{ this->parent() };
                     runtime_assert(parent != nullptr, "layout must have a parent widget");
-                    parent->set_size(m_layout->size() + m_layout->outer_margin());
+                    parent->set_size(m_rect.size + m_outer_margin);
                     break;
                 }
+
                 case SizePolicy::Maximum:
                 {
-                    const Widget* parent{ m_layout->parent() };
+                    const Widget* parent{ this->parent() };
                     runtime_assert(parent != nullptr, "layout must have a parent widget");
-
+                    const f32 sibling_count{ static_cast<f32>(parent->child_count()) };
                     const Layout* parent_layout{ parent->layout() };
-                    const ds::dims<f32> fill_size{
+
+                    const Alignment parent_alignment{
                         parent_layout != nullptr
-                            ? parent_layout->size()
-                                  - parent_layout->inner_margin()
-                                  - m_layout->outer_margin()
-                            : parent->size()
-                                  - m_layout->outer_margin()
+                            ? parent_layout->alignment()
+                            : Alignment::None
                     };
 
-                    const f32 sibling_count{ static_cast<f32>(parent->child_count()) };
+                    const ds::dims<f32> fill_size{
+                        parent_layout != nullptr
+                            ? parent_layout->size() - m_outer_margin
+                                  - parent_layout->inner_margin()
+                            : parent->size() - m_outer_margin
+                    };
+
                     if constexpr (VOrientation == Alignment::Horizontal) {
-                        const f32 delta_width{ fill_size.width - m_layout->width() };
-                        const f32 width_increase{ delta_width / sibling_count };
-                        m_rect.size.width += width_increase;
+                        if (parent_alignment == Alignment::Vertical)
+                            m_rect.size.width = fill_size.width;
+                        else {
+                            const f32 delta_width{ fill_size.width - m_rect.size.width };
+                            const f32 width_increase{ delta_width / sibling_count };
+                            m_rect.pt.x += width_increase * static_cast<f32>(sibling_idx);
+                            m_rect.size.width += width_increase;
+                        }
                     }
                     else if constexpr (VOrientation == Alignment::Vertical) {
-                        const f32 delta_width{ fill_size.width - m_layout->width() };
-                        const f32 width_increase{ delta_width / sibling_count };
-                        m_rect.size.width += width_increase;
-                    }
-
-                    for (const Widget* child : m_children) {
-                        Layout* child_layout{ child->layout() };
-                        if (child_layout != nullptr)
-                            child_layout->adjust_for_size_policy();
+                        if (parent_alignment == Alignment::Horizontal)
+                            m_rect.size.height = fill_size.height;
+                        else {
+                            const f32 delta_height{ fill_size.height - m_rect.size.height };
+                            const f32 height_increase{ delta_height / sibling_count };
+                            m_rect.pt.y += height_increase * static_cast<f32>(sibling_idx);
+                            m_rect.size.height += height_increase;
+                        }
                     }
 
                     break;
                 }
+
+                case SizePolicy::FixedSize:
+                    [[fallthrough]];
                 case SizePolicy::Prefered:
-                {
                     break;
-                }
-                default:
+                case SizePolicy::Inherit:
+                    assert_msg("layout must define a size policy");
                     break;
+            }
+
+            for (auto [idx, child] : m_children | std::views::enumerate) {
+                Layout* child_layout{ child->layout() };
+                if (child_layout != nullptr)
+                    child_layout->adjust_for_size_policy(idx);
             }
         }
 
@@ -127,9 +144,8 @@ namespace rl::ui {
             for (auto& widget : m_cell_data | std::views::keys) {
                 const Layout* widget_layout{ widget->layout() };
                 const ds::dims<f32> widget_computed_size{
-                    widget_layout != nullptr
-                        ? widget_layout->computed_size()
-                        : widget->preferred_size(),
+                    widget_layout != nullptr ? widget_layout->computed_size()
+                                             : widget->preferred_size(),
                 };
 
                 switch (VOrientation) {
