@@ -3,6 +3,8 @@
 #include <memory>
 #include <tuple>
 
+#include <fmt/format.h>
+
 #include "core/assert.hpp"
 #include "core/main_window.hpp"
 #include "core/renderer.hpp"
@@ -17,15 +19,8 @@ SDL_C_LIB_END
 
 namespace rl {
     namespace detail {
-        static std::string name()
-        {
-            return "OpenGL Context Creation";
-        }
-
         static SDL3::SDL_GLContext create_opengl_context(SDL3::SDL_Window* sdl_window)
         {
-            scoped_log();
-
             sdl_assert(sdl_window != nullptr,
                        "Attempting to create context from uninitialized window");
             const SDL3::SDL_GLContext gl_context{ SDL3::SDL_GL_CreateContext(sdl_window) };
@@ -41,9 +36,9 @@ namespace rl {
             if (gl_major_ver > 3 || (gl_major_ver == 3 && gl_minor_ver >= 3)) {
                 const GLubyte* const gl_ver_str = glGetString(GL_VERSION);
                 const GLubyte* const renderer_str = glGetString(GL_RENDERER);
-                diag_log("GL_RENDERER = {}", reinterpret_cast<const char*>(renderer_str));
-                diag_log("GL_VERSION = {}", reinterpret_cast<const char*>(gl_ver_str));
-                diag_log("OpenGL [{}.{}] Context Created Successfully", gl_major_ver, gl_minor_ver);
+                fmt::print("GL_RENDERER = {}", reinterpret_cast<const char*>(renderer_str));
+                fmt::print("GL_VERSION = {}", reinterpret_cast<const char*>(gl_ver_str));
+                fmt::print("OpenGL [{}.{}] Context Created Successfully", gl_major_ver, gl_minor_ver);
             }
 
             return gl_context;
