@@ -8,7 +8,7 @@
 namespace rl {
     // Defines the different types of mouse
     // interaction states for the main Canvas
-    enum class Interaction : i16_fast {
+    enum class Interaction : u8_fast {
         None      = 0x0000,  // constant positionioning
         Propagate = 1 << 0,  // pass unhandled events to children
         Move      = 1 << 1,  // being moved or can be moved
@@ -17,12 +17,12 @@ namespace rl {
         Dock      = 1 << 4,  // dock to a side of the screen
         Merge     = 1 << 5,  // merge dialog into another as tabs
         Modal     = 1 << 6,  // blocks all events outside of scope
-        All       = 0xFFFF,  // All Interactions Modes
+        All       = 0x00FF,  // All Interactions Modes
     };
 
     // Defines each potential UI widget component
     // Typically used for event/mouse handling
-    enum class Component : i16_fast {
+    enum class Component : u8_fast {
         None      = 0x0000,
         Header    = 1 << 0,
         Body      = 1 << 1,
@@ -30,15 +30,15 @@ namespace rl {
         Edge      = 1 << 3,
     };
 
-    enum class SizePolicy : i16_fast {
+    enum class SizePolicy : u8_fast {
         Inherit    = 0x0000,
         FixedSize  = 1 << 0,
         Minimum    = 1 << 1,
         Maximum    = 1 << 2,
         Prefered   = 1 << 3,
     };
-
-    enum class Placement_OldAlignment : i16_fast {
+    // TODO: remove
+    enum class Placement_OldAlignment : u8_fast {
         None       = 0x0000,  // Invalid / uninitialized alignment
         Minimum    = 1 << 0,  // Take only as much space as is required.
         Center     = 1 << 1,  // Center align.
@@ -46,13 +46,13 @@ namespace rl {
         Fill       = 1 << 3,  // Fill according to preferred sizes.
     };
 
-    enum class Alignment : i16_fast {
+    enum class Alignment : u8_fast {
         None       = 0x0000,  // Invalid / uninitialized orientation
         Horizontal = 1 << 0,  // Layout expands on horizontal axis.
         Vertical   = 1 << 1,  // Layout expands on vertical axis.
     };
 
-    enum class Align : i16_fast {
+    enum class Align : u8_fast {
         None       = 0x0000,
         HLeft      = 1 << 0,  // Default, align text horizontally to left.
         HCenter    = 1 << 1,  // Align text horizontally to center.
@@ -63,17 +63,17 @@ namespace rl {
         VBaseline  = 1 << 6,  // Default, align text vertically to baseline.
     };
 
-    enum class Axis : i16_fast {
+    enum class Axis : u8_fast {
         Horizontal = 1 << 0,  // x axis
         Vertical   = 1 << 1,  // y axis
     };
 
-    enum class Outline : i16_fast {
+    enum class Outline : u8_fast {
         Inner  = 1 << 0,
         Outer  = 1 << 1,
     };
 
-    enum class Side : i16_fast {
+    enum class Side : u8_fast {
         None        = 0x0000,
         Left        = 1 << 0,
         Right       = 1 << 1,
@@ -85,7 +85,7 @@ namespace rl {
         BottomRight = Bottom | Right,
     };
 
-    enum class Direction : i16_fast {
+    enum class Direction : u8_fast {
         None  = 0x0000,
         Up    = 1 << 0,
         Down  = 1 << 1,
@@ -93,14 +93,14 @@ namespace rl {
         Right = 1 << 3,
     };
 
-    enum class Quad : i16_fast {
+    enum class Quad : u8_fast {
         TopLeft     = Side::Top    | Side::Left,
         TopRight    = Side::Top    | Side::Right,
         BottomLeft  = Side::Bottom | Side::Left,
         BottomRight = Side::Bottom | Side::Right,
     };
 
-    enum class CompassDirection : i16_fast {
+    enum class CompassDirection : u8_fast {
         None      = 0x0000,
         North     = 1 << 0,
         South     = 1 << 1,
@@ -116,7 +116,6 @@ namespace rl {
 // clang-format on
 
 namespace rl {
-
     constexpr auto format_as(const Side side)
     {
         switch (side) {

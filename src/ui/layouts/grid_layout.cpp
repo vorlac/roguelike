@@ -21,10 +21,10 @@ namespace rl::ui {
         this->compute_layout(nvg_context, widget, grid);
 
         ds::dims pref_size{
-            (2.0f * m_margin) + std::accumulate(grid[0].begin(), grid[0].end(), 0.0f)
-                + (std::max(static_cast<f32>(grid[0].size()) - 1.0f, 0.0f) * m_spacing.x),
-            (2.0f * m_margin) + std::accumulate(grid[1].begin(), grid[1].end(), 0.0f)
-                + std::max(static_cast<f32>(grid[1].size()) - 1.0f, 0.0f) * m_spacing.y,
+            (2.0f * m_margin) + std::accumulate(grid[0].begin(), grid[0].end(), 0.0f) +
+                (std::max(static_cast<f32>(grid[0].size()) - 1.0f, 0.0f) * m_spacing.x),
+            (2.0f * m_margin) + std::accumulate(grid[1].begin(), grid[1].end(), 0.0f) +
+                std::max(static_cast<f32>(grid[1].size()) - 1.0f, 0.0f) * m_spacing.y,
         };
 
         const ScrollableDialog* dialog{ dynamic_cast<const ScrollableDialog*>(widget) };
@@ -118,8 +118,8 @@ namespace rl::ui {
 
         // Strech to size provided by widget
         for (const auto cur_axis : { Axis::Horizontal, Axis::Vertical }) {
-            f32 grid_size{ (2.0f * m_margin)
-                           + (cur_axis == Axis::Horizontal ? extra.width : extra.height) };
+            f32 grid_size{ (2.0f * m_margin) +
+                           (cur_axis == Axis::Horizontal ? extra.width : extra.height) };
 
             const i32 axis_idx{ std::to_underlying(cur_axis) };
             for (const auto& s : grid[axis_idx]) {

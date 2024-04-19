@@ -76,9 +76,9 @@ namespace rl::ui {
             if (widget != nullptr && !widget->tooltip().empty()) {
                 const f32 tooltip_width{ m_theme->tooltip_width };
                 ds::rect bounds{ ds::rect<f32>::zero() };
-                ds::point<f32> pos{ widget->abs_position()
-                                    + ds::point<f32>{ widget->width() / 2.0f,
-                                                      widget->height() + 10.0f } };
+                ds::point<f32> pos{ widget->abs_position() +
+                                    ds::point<f32>{ widget->width() / 2.0f,
+                                                    widget->height() + 10.0f } };
 
                 nvg::set_font_face(context, text::font::style::Sans);
                 nvg::set_font_size(context, 20.0f);
@@ -255,8 +255,7 @@ namespace rl::ui {
                 m_focus_path,
                 [&](const Widget* w) {
                     return w == dialog;
-                })
-            != m_focus_path.end()
+                }) != m_focus_path.end()
         };
 
         if (match_found)

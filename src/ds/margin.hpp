@@ -17,45 +17,25 @@ namespace rl::ds {
         [[nodiscard]]
         consteval static margin<T> zero()
         {
-            return margin{
-                static_cast<T>(0),
-                static_cast<T>(0),
-                static_cast<T>(0),
-                static_cast<T>(0),
-            };
+            return margin{ 0, 0, 0, 0 };
         }
 
         [[nodiscard]]
         consteval static margin<T> null()
         {
-            return margin{
-                static_cast<T>(-1),
-                static_cast<T>(-1),
-                static_cast<T>(-1),
-                static_cast<T>(-1),
-            };
+            return margin{ -1, -1, -1, -1 };
         }
 
         [[nodiscard]]
         consteval static margin<T> init(T val)
         {
-            return margin{
-                static_cast<T>(val),
-                static_cast<T>(val),
-                static_cast<T>(val),
-                static_cast<T>(val),
-            };
+            return margin{ val, val, val, val };
         }
 
         [[nodiscard]]
         consteval static margin<T> init(T top, T bot, T lft, T rgt)
         {
-            return margin{
-                static_cast<T>(top),
-                static_cast<T>(bot),
-                static_cast<T>(lft),
-                static_cast<T>(rgt),
-            };
+            return margin{ top, bot, lft, rgt };
         }
 
         [[nodiscard]]
@@ -78,10 +58,10 @@ namespace rl::ds {
 
         constexpr bool operator==(const margin<T> other) const
         {
-            return math::equal(this->top, other.top)
-                && math::equal(this->bottom, other.bottom)
-                && math::equal(this->left, other.left)
-                && math::equal(this->right, other.right);
+            return math::equal(this->top, other.top) &&
+                   math::equal(this->bottom, other.bottom) &&
+                   math::equal(this->left, other.left) &&
+                   math::equal(this->right, other.right);
         }
 
         constexpr bool operator!=(const margin<T> other) const

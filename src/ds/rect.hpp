@@ -246,8 +246,8 @@ namespace rl::ds {
 
                 // pnt is below bottom line of smaller and
                 // pnt is above bottom line of bigger
-                if (pnt.y > (smaller.pt.y + smaller.size.height)
-                    && pnt.y < (bigger.pt.y + bigger.size.height))
+                if (pnt.y > (smaller.pt.y + smaller.size.height) &&
+                    pnt.y < (bigger.pt.y + bigger.size.height))
                     overlap |= Side::Bottom;
 
                 // pnt is to the right of bigger's left line and
@@ -257,8 +257,8 @@ namespace rl::ds {
 
                 // pnt is to the right of smaller's right line and
                 // pnt in to the left of bigger's right line
-                if (pnt.x > (smaller.pt.x + smaller.size.width)
-                    && pnt.x < (bigger.pt.x + bigger.size.width))
+                if (pnt.x > (smaller.pt.x + smaller.size.width) &&
+                    pnt.x < (bigger.pt.x + bigger.size.width))
                     overlap |= Side::Right;
             }
 
@@ -412,8 +412,8 @@ namespace rl::ds {
         constexpr bool overlaps(const point<T>& pnt) const
 
         {
-            return (pnt.x >= this->pt.x && pnt.x <= this->pt.x + this->size.width)
-                && (pnt.y >= this->pt.y && pnt.y <= this->pt.y + this->size.height);
+            return (pnt.x >= this->pt.x && pnt.x <= this->pt.x + this->size.width) &&
+                   (pnt.y >= this->pt.y && pnt.y <= this->pt.y + this->size.height);
         }
 
         // Checks if the rects share any space with each other
@@ -421,40 +421,40 @@ namespace rl::ds {
         constexpr bool overlaps(const rect<T>& other) const
         {
             // TODO: optimize
-            return this->overlaps(other.top_left()) || this->overlaps(other.top_right())
-                || this->overlaps(other.bot_left()) || this->overlaps(other.bot_right());
+            return this->overlaps(other.top_left()) || this->overlaps(other.top_right()) ||
+                   this->overlaps(other.bot_left()) || this->overlaps(other.bot_right());
         }
 
         // Checks if the rect fully contains the point
         [[nodiscard]]
         constexpr bool contains(point<T> point) const
         {
-            return (point.x > this->pt.x && point.x < this->pt.x + this->size.width)
-                && (point.y > this->pt.y && point.y < this->pt.y + this->size.height);
+            return (point.x > this->pt.x && point.x < this->pt.x + this->size.width) &&
+                   (point.y > this->pt.y && point.y < this->pt.y + this->size.height);
         }
 
         // Checks if the rect fully contains the other
         [[nodiscard]]
         constexpr bool contains(const rect<T>& other) const
         {
-            return this->contains(other.top_left())
-                && this->contains(other.top_right());
+            return this->contains(other.top_left()) && this->contains(other.top_right());
         }
 
         // Checks if the rect fully contains the other
         [[nodiscard]]
         constexpr bool contained_by(const rect<T>& other) const
         {
-            return other.contains(this->top_left())
-                && other.contains(this->top_right());
+            return other.contains(this->top_left()) && other.contains(this->top_right());
         }
 
         // Checks if the point perfeclty falls somewhere on the rect's bounds.
         [[nodiscard]]
         constexpr bool touches(const point<T>& pnt) const
         {
-            return (pnt.x == this->pt.x && this->pt.y <= pnt.y && pnt.y <= this->pt.y + this->size.width)
-                || (pnt.y == this->pt.y && this->pt.x <= pnt.x && pnt.x <= this->pt.x + this->size.height);
+            return (pnt.x == this->pt.x && this->pt.y <= pnt.y &&
+                    pnt.y <= this->pt.y + this->size.width) ||
+                   (pnt.y == this->pt.y && this->pt.x <= pnt.x &&
+                    pnt.x <= this->pt.x + this->size.height);
         }
 
         // Checks if the this rect externally touches the other rect

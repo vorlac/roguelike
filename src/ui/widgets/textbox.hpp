@@ -222,8 +222,8 @@ namespace rl::ui {
             if (TextBox::on_mouse_drag(mouse, kb))
                 return true;
 
-            if (m_spinnable && !this->focused() && mouse.is_button_held(Mouse::Button::Right)
-                && m_mouse_down_pos.x != -1) {
+            if (m_spinnable && !this->focused() && mouse.is_button_held(Mouse::Button::Right) &&
+                m_mouse_down_pos.x != -1) {
                 i32 value_delta{ static_cast<int>((mouse.pos().x - m_mouse_down_pos.x) / 10.0f) };
                 this->set_value(m_mouse_down_value + value_delta * m_value_increment);
 
@@ -369,8 +369,8 @@ namespace rl::ui {
             if (TextBox::on_mouse_drag(mouse, kb))
                 return true;
 
-            if (m_spinnable && !this->focused() && mouse.is_button_held(Mouse::Button::Right)
-                && m_mouse_down_pos.x != -1) {
+            if (m_spinnable && !this->focused() && mouse.is_button_held(Mouse::Button::Right) &&
+                m_mouse_down_pos.x != -1) {
                 const f32 value_delta{ (mouse.pos().x - m_mouse_down_pos.x) / 10.0f };
                 this->set_value(m_mouse_down_value + value_delta * m_value_increment);
 

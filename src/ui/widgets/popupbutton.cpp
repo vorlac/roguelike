@@ -109,8 +109,8 @@ namespace rl::ui {
         ScrollableDialog* parent_dialog{ this->dialog() };
         if (parent_dialog != nullptr) {
             const f32 anchor_size{ m_popup->anchor_size() };
-            const f32 pos_y{ this->abs_position().y - parent_dialog->position().y
-                             + (m_rect.size.height / 2.0f) };
+            const f32 pos_y{ this->abs_position().y - parent_dialog->position().y +
+                             (m_rect.size.height / 2.0f) };
 
             if (m_popup->side() == Side::Right) {
                 const ds::point<f32> anchor_pos{

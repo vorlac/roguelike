@@ -16,13 +16,13 @@ namespace rl::math {
     {
         if constexpr (rl::lower_precision<A, B>) {
             using lp_float_t = rl::traits::float_traits<A>;
-            return math::abs(lhs - rhs) <= lp_float_t::eps * math::abs(lhs + rhs)
-                || math::abs(lhs - rhs) < lp_float_t::min;
+            return math::abs(lhs - rhs) <= lp_float_t::eps * math::abs(lhs + rhs) ||
+                   math::abs(lhs - rhs) < lp_float_t::min;
         }
         else {
             using lp_float_t = rl::traits::float_traits<B>;
-            return math::abs(lhs - rhs) <= lp_float_t::eps * math::abs(lhs + rhs)
-                || math::abs(lhs - rhs) < lp_float_t::min;
+            return math::abs(lhs - rhs) <= lp_float_t::eps * math::abs(lhs + rhs) ||
+                   math::abs(lhs - rhs) < lp_float_t::min;
         }
     }
 
@@ -55,8 +55,8 @@ namespace rl {
     }
 
     template <typename TEnum, typename TUnderlying>
-        requires std::is_scoped_enum_v<TEnum>
-              && std::same_as<std::underlying_type_t<TEnum>, TUnderlying>
+        requires std::is_scoped_enum_v<TEnum> &&
+                 std::same_as<std::underlying_type_t<TEnum>, TUnderlying>
     constexpr bool operator|(const TUnderlying lhs, const TEnum rhs)
     {
         return lhs | std::to_underlying(rhs);
@@ -128,15 +128,15 @@ namespace rl::inline cast {
         constexpr static bool value(From val)
             requires rl::signed_integer<To> && rl::unsigned_integer<From>
         {
-            return static_cast<i64>(val) <= std::numeric_limits<To>::max()
-                && static_cast<i64>(val) >= std::numeric_limits<To>::min();
+            return static_cast<i64>(val) <= std::numeric_limits<To>::max() &&
+                   static_cast<i64>(val) >= std::numeric_limits<To>::min();
         }
 
         constexpr static bool value(From val)
             requires rl::unsigned_integer<To> && rl::signed_integer<From>
         {
-            return static_cast<u64>(val) <= std::numeric_limits<To>::max()
-                && static_cast<u64>(val) >= std::numeric_limits<To>::min();
+            return static_cast<u64>(val) <= std::numeric_limits<To>::max() &&
+                   static_cast<u64>(val) >= std::numeric_limits<To>::min();
         }
 
         constexpr static bool value(From val)

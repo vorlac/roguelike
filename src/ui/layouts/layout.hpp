@@ -13,46 +13,12 @@ namespace rl::ui {
 
     struct CellProperties
     {
+        f32 stretch_factor{ 0.0f };
         Placement_OldAlignment alignment{ Placement_OldAlignment::Fill };
 
-        // the gap of space measured from the inner text/icon/etc
-        // drawn in a widget to the outer border of the widget
-        //
-        // padding of 1 space on left and right of a button:
-        // [ text ]
-        // padding of 4 space on left and right of a button:
-        // [    text    ]
         ds::margin<f32> inner_padding{ 5.0f, 5.0f, 10.0f, 10.0f };
-
-        // the gap of space measured from the outer border of each
-        // widget to the border of the layout cell containing them
-        //
-        // margin of 1 on all sides of two buttons in vertical layout:
-        // +----------+
-        // | [ text ] |
-        // +----------+
-        // | [ text ] |
-        // +----------+
-        //
-        // margin of 2 on all sides of two buttons in vertical layout:
-        //
-        // +------------+
-        // |            |
-        // |  [ text ]  |
-        // |            |
-        // +------------+
-        // |            |
-        // |  [ text ]  |
-        // |            |
-        // +------------+
         ds::margin<f32> outer_margin{ 20.0f, 20.0f, 20.0f, 20.0f };
         ds::margin<f32> inner_margin{ 20.0f, 20.0f, 20.0f, 20.0f };
-
-        // how much a widget should stretch
-        f32 stretch_factor{ 0.0f };
-
-        // the layout cell's rectangle (debug only)
-        ds::rect<f32> rect{ ds::rect<f32>::zero() };
     };
 
     class Layout : public Widget
@@ -76,7 +42,8 @@ namespace rl::ui {
         void add_nested_layout(Layout* layout)
         {
             this->add_widget(layout);
-            if (m_size_policy != SizePolicy::Inherit && layout->size_policy() == SizePolicy::Inherit)
+            if (m_size_policy != SizePolicy::Inherit &&
+                layout->size_policy() == SizePolicy::Inherit)
                 layout->set_size_policy(m_size_policy);
         }
 

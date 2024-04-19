@@ -52,9 +52,9 @@ namespace rl::ds {
         [[nodiscard]]
         constexpr bool is_invalid() const
         {
-            return this->width < 0
-                || this->height < 0
-                || this->is_null();
+            return this->width < 0 ||
+                   this->height < 0 ||
+                   this->is_null();
         }
 
         [[nodiscard]]
@@ -104,38 +104,38 @@ namespace rl::ds {
             requires rl::integer<T>
         constexpr bool operator==(const dims<F> other) const
         {
-            return math::equal(this->height, std::round(other.height))
-                && math::equal(this->width, std::round(other.width));
+            return math::equal(this->height, std::round(other.height)) &&
+                   math::equal(this->width, std::round(other.width));
         }
 
         template <rl::integer I>
             requires rl::floating_point<T>
         constexpr bool operator==(const dims<I> other) const
         {
-            return math::equal(std::lroundf(this->height), other.height)
-                && math::equal(std::lroundf(this->width), other.width);
+            return math::equal(std::lroundf(this->height), other.height) &&
+                   math::equal(std::lroundf(this->width), other.width);
         }
 
         constexpr bool operator==(const dims<T> other) const
         {
-            return math::equal(this->height, other.height)
-                && math::equal(this->width, other.width);
+            return math::equal(this->height, other.height) &&
+                   math::equal(this->width, other.width);
         }
 
         template <rl::floating_point F>
             requires rl::integer<T>
         constexpr bool operator!=(const dims<F> other) const
         {
-            return math::not_equal(this->height, static_cast<T>(std::lroundf(other.height)))
-                && math::not_equal(this->width, static_cast<T>(std::lroundf(other.width)));
+            return math::not_equal(this->height, static_cast<T>(std::lroundf(other.height))) &&
+                   math::not_equal(this->width, static_cast<T>(std::lroundf(other.width)));
         }
 
         template <rl::integer I>
             requires rl::floating_point<T>
         constexpr bool operator!=(const dims<I> other) const
         {
-            return math::not_equal(std::lroundf(this->height), other.height)
-                && math::not_equal(std::lroundf(this->width), other.width);
+            return math::not_equal(std::lroundf(this->height), other.height) &&
+                   math::not_equal(std::lroundf(this->width), other.width);
         }
 
         constexpr bool operator!=(const dims<T> other) const

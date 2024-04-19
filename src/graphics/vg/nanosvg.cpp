@@ -422,16 +422,16 @@ namespace rl::nvg::svg {
 
         int nsvg_pt_in_bounds(const float* pt, const float* bounds)
         {
-            return pt[0] >= bounds[0] && pt[0] <= bounds[2] && pt[1] >= bounds[1]
-                && pt[1] <= bounds[3];
+            return pt[0] >= bounds[0] && pt[0] <= bounds[2] && pt[1] >= bounds[1] &&
+                   pt[1] <= bounds[3];
         }
 
         double nsvg_eval_bezier(const double t, const double p0, const double p1, const double p2,
                                 const double p3)
         {
             const double it = 1.0 - t;
-            return it * it * it * p0 + 3.0 * it * it * t * p1 + 3.0 * it * t * t * p2
-                 + t * t * t * p3;
+            return it * it * it * p0 + 3.0 * it * it * t * p1 + 3.0 * it * t * t * p2 +
+                   t * t * t * p3;
         }
 
         void nsvg_curve_bounds(float* bounds, const float* curve)
@@ -1028,8 +1028,8 @@ namespace rl::nvg::svg {
                     // Parse digit sequence
                     frac_part = strtoll(cur, &end, 10);
                     if (cur != end) {
-                        res += static_cast<double>(frac_part)
-                             / pow(10.0, static_cast<double>(end - cur));
+                        res += static_cast<double>(frac_part) /
+                               pow(10.0, static_cast<double>(end - cur));
                         has_frac_part = 1;
                         cur = end;
                     }
@@ -2188,8 +2188,8 @@ namespace rl::nvg::svg {
             }
             // 2) Compute cx', cy'
             s = 0.0f;
-            sa = nsvg_sqr(rx) * nsvg_sqr(ry) - nsvg_sqr(rx) * nsvg_sqr(y1_p)
-               - nsvg_sqr(ry) * nsvg_sqr(x1_p);
+            sa = nsvg_sqr(rx) * nsvg_sqr(ry) - nsvg_sqr(rx) * nsvg_sqr(y1_p) -
+                 nsvg_sqr(ry) * nsvg_sqr(x1_p);
             sb = nsvg_sqr(rx) * nsvg_sqr(y1_p) + nsvg_sqr(ry) * nsvg_sqr(x1_p);
             if (sa < 0.0f)
                 sa = 0.0f;
@@ -2983,9 +2983,8 @@ namespace rl::nvg::svg {
             float sx = p->view_width > 0 ? p->image->width / p->view_width : 0;
             float sy = p->view_height > 0 ? p->image->height / p->view_height : 0;
             // Unit scaling
-            const float us = 1.0f
-                           / nsvg_convert_to_pixels(p, nsvg_coord(1.0f, nsvg_parse_units(units)),
-                                                    0.0f, 1.0f);
+            const float us = 1.0f / nsvg_convert_to_pixels(
+                                        p, nsvg_coord(1.0f, nsvg_parse_units(units)), 0.0f, 1.0f);
 
             // Fix aspect ratio
             if (p->align_type == Meet) {
@@ -3022,14 +3021,14 @@ namespace rl::nvg::svg {
                     }
                 }
 
-                if (shape->fill.type == NSVGPaintLinearGradient
-                    || shape->fill.type == NSVGPaintRadialGradient) {
+                if (shape->fill.type == NSVGPaintLinearGradient ||
+                    shape->fill.type == NSVGPaintRadialGradient) {
                     nsvg_scale_gradient(shape->fill.gradient, tx, ty, sx, sy);
                     memcpy(t, shape->fill.gradient->xform, sizeof(float) * 6);
                     nsvg_xform_inverse(shape->fill.gradient->xform, t);
                 }
-                if (shape->stroke.type == NSVGPaintLinearGradient
-                    || shape->stroke.type == NSVGPaintRadialGradient) {
+                if (shape->stroke.type == NSVGPaintLinearGradient ||
+                    shape->stroke.type == NSVGPaintRadialGradient) {
                     nsvg_scale_gradient(shape->stroke.gradient, tx, ty, sx, sy);
                     memcpy(t, shape->stroke.gradient->xform, sizeof(float) * 6);
                     nsvg_xform_inverse(shape->stroke.gradient->xform, t);

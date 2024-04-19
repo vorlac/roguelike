@@ -24,10 +24,10 @@
 
 namespace rl::stb {
 
-#if defined(STBI_ONLY_JPEG) || defined(STBI_ONLY_PNG) || defined(STBI_ONLY_BMP)   \
-    || defined(STBI_ONLY_TGA) || defined(STBI_ONLY_GIF) || defined(STBI_ONLY_PSD) \
-    || defined(STBI_ONLY_HDR) || defined(STBI_ONLY_PIC) || defined(STBI_ONLY_PNM) \
-    || defined(STBI_ONLY_ZLIB)
+#if defined(STBI_ONLY_JPEG) || defined(STBI_ONLY_PNG) || defined(STBI_ONLY_BMP) || \
+    defined(STBI_ONLY_TGA) || defined(STBI_ONLY_GIF) || defined(STBI_ONLY_PSD) ||  \
+    defined(STBI_ONLY_HDR) || defined(STBI_ONLY_PIC) || defined(STBI_ONLY_PNM) ||  \
+    defined(STBI_ONLY_ZLIB)
   #ifndef STBI_ONLY_JPEG
     #define STBI_NO_JPEG
   #endif
@@ -126,11 +126,11 @@ namespace rl::stb {
   #define stbi_lrot(x, y) (((x) << (y)) | ((x) >> (-(y) & 31)))
 #endif
 
-#if defined(STBI_MALLOC) && defined(STBI_FREE) \
-    && (defined(STBI_REALLOC) || defined(STBI_REALLOC_SIZED))
+#if defined(STBI_MALLOC) && defined(STBI_FREE) && \
+    (defined(STBI_REALLOC) || defined(STBI_REALLOC_SIZED))
 // ok
-#elif !defined(STBI_MALLOC) && !defined(STBI_FREE) && !defined(STBI_REALLOC) \
-    && !defined(STBI_REALLOC_SIZED)
+#elif !defined(STBI_MALLOC) && !defined(STBI_FREE) && !defined(STBI_REALLOC) && \
+    !defined(STBI_REALLOC_SIZED)
 // ok
 #else
   #error \
@@ -165,8 +165,8 @@ namespace rl::stb {
   #define STBI_NO_SIMD
 #endif
 
-#if defined(__MINGW32__) && defined(STBI__X86_TARGET) && !defined(STBI_MINGW_ENABLE_SSE2) \
-    && !defined(STBI_NO_SIMD)
+#if defined(__MINGW32__) && defined(STBI__X86_TARGET) && \
+    !defined(STBI_MINGW_ENABLE_SSE2) && !defined(STBI_NO_SIMD)
   // Note that __MINGW32__ doesn't actually mean 32-bit, so we have to avoid STBI__X64_TARGET
   //
   // 32-bit MinGW wants ESP to be 16-byte aligned, but this is not in the
@@ -315,7 +315,8 @@ namespace rl::stb {
     static void stbi_stdio_skip(void* user, const int n)
     {
         std::fseek(static_cast<FILE*>(user), n, SEEK_CUR);
-        const int ch = fgetc(static_cast<FILE*>(user)); /* have to read a byte to reset feof()'s flag */
+        const int ch = fgetc(static_cast<FILE*>(user)); /* have to read a byte to reset feof()'s
+                                                           flag */
         if (ch != EOF)
             ungetc(ch, static_cast<FILE*>(user)); /* push byte back onto stream if valid. */
     }
@@ -484,8 +485,8 @@ namespace rl::stb {
         return a <= INT_MAX / b;
     }
 
-#if !defined(STBI_NO_JPEG) || !defined(STBI_NO_PNG) || !defined(STBI_NO_TGA) \
-    || !defined(STBI_NO_HDR)
+#if !defined(STBI_NO_JPEG) || !defined(STBI_NO_PNG) || \
+    !defined(STBI_NO_TGA) || !defined(STBI_NO_HDR)
     // returns 1 if "a*b + add" has no negative terms/factors and doesn't overflow
     static int stbi_mad2sizes_valid(const int a, const int b, const int add)
     {
@@ -496,8 +497,9 @@ namespace rl::stb {
     // returns 1 if "a*b*c + add" has no negative terms/factors and doesn't overflow
     static int stbi_mad3sizes_valid(const int a, const int b, const int c, const int add)
     {
-        return stbi_mul2sizes_valid(a, b) && stbi_mul2sizes_valid(a * b, c)
-            && stbi_addsizes_valid(a * b * c, add);
+        return stbi_mul2sizes_valid(a, b) &&
+               stbi_mul2sizes_valid(a * b, c) &&
+               stbi_addsizes_valid(a * b * c, add);
     }
 
 // returns 1 if "a*b*c*d + add" has no negative terms/factors and doesn't overflow
@@ -505,13 +507,15 @@ namespace rl::stb {
     static int stbi_mad4sizes_valid(const int a, const int b, const int c, const int d,
                                     const int add)
     {
-        return stbi_mul2sizes_valid(a, b) && stbi_mul2sizes_valid(a * b, c)
-            && stbi_mul2sizes_valid(a * b * c, d) && stbi_addsizes_valid(a * b * c * d, add);
+        return stbi_mul2sizes_valid(a, b) &&
+               stbi_mul2sizes_valid(a * b, c) &&
+               stbi_mul2sizes_valid(a * b * c, d) &&
+               stbi_addsizes_valid(a * b * c * d, add);
     }
 #endif
 
-#if !defined(STBI_NO_JPEG) || !defined(STBI_NO_PNG) || !defined(STBI_NO_TGA) \
-    || !defined(STBI_NO_HDR)
+#if !defined(STBI_NO_JPEG) || !defined(STBI_NO_PNG) || \
+    !defined(STBI_NO_TGA) || !defined(STBI_NO_HDR)
     // mallocs with size overflow checking
     static void* stbi_malloc_mad2(const int a, const int b, const int add)
     {
@@ -843,14 +847,12 @@ namespace rl::stb {
   #if defined(_WIN32) && defined(STBI_WINDOWS_UTF8)
         wchar_t wMode[64];
         wchar_t wFilename[1024];
-        if (0
-            == MultiByteToWideChar(65001 /* UTF8 */, 0, filename, -1, wFilename,
-                                   sizeof(wFilename) / sizeof(*wFilename)))
+        if (0 == MultiByteToWideChar(65001 /* UTF8 */, 0, filename, -1, wFilename,
+                                     sizeof(wFilename) / sizeof(*wFilename)))
             return 0;
 
-        if (0
-            == MultiByteToWideChar(65001 /* UTF8 */, 0, mode, -1, wMode,
-                                   sizeof(wMode) / sizeof(*wMode)))
+        if (0 == MultiByteToWideChar(65001 /* UTF8 */, 0, mode, -1, wMode,
+                                     sizeof(wMode) / sizeof(*wMode)))
             return 0;
 
     #if defined(_MSC_VER) && _MSC_VER >= 1400
@@ -1162,8 +1164,8 @@ namespace rl::stb {
     }
 #endif
 
-#if defined(STBI_NO_JPEG) && defined(STBI_NO_PNG) && defined(STBI_NO_BMP) && defined(STBI_NO_PSD) \
-    && defined(STBI_NO_TGA) && defined(STBI_NO_GIF) && defined(STBI_NO_PIC)
+#if defined(STBI_NO_JPEG) && defined(STBI_NO_PNG) && defined(STBI_NO_BMP) && \
+    defined(STBI_NO_PSD) && defined(STBI_NO_TGA) && defined(STBI_NO_GIF) && defined(STBI_NO_PIC)
 // nothing
 #else
     static void stbi_skip(StbiContext* s, const int n)
@@ -1254,9 +1256,9 @@ namespace rl::stb {
 
 #define STBI_BYTECAST(x) ((stbi_uc)((x) & 255))  // truncate int to byte without warnings
 
-#if defined(STBI_NO_JPEG) && defined(STBI_NO_PNG) && defined(STBI_NO_BMP) && defined(STBI_NO_PSD) \
-    && defined(STBI_NO_TGA) && defined(STBI_NO_GIF) && defined(STBI_NO_PIC)                       \
-    && defined(STBI_NO_PNM)
+#if defined(STBI_NO_JPEG) && defined(STBI_NO_PNG) && defined(STBI_NO_BMP) && \
+    defined(STBI_NO_PSD) && defined(STBI_NO_TGA) && defined(STBI_NO_GIF) &&  \
+    defined(STBI_NO_PIC) && defined(STBI_NO_PNM)
 // nothing
 #else
     //////////////////////////////////////////////////////////////////////////////
@@ -1276,8 +1278,8 @@ namespace rl::stb {
     }
 #endif
 
-#if defined(STBI_NO_PNG) && defined(STBI_NO_BMP) && defined(STBI_NO_PSD) && defined(STBI_NO_TGA) \
-    && defined(STBI_NO_GIF) && defined(STBI_NO_PIC) && defined(STBI_NO_PNM)
+#if defined(STBI_NO_PNG) && defined(STBI_NO_BMP) && defined(STBI_NO_PSD) && \
+    defined(STBI_NO_TGA) && defined(STBI_NO_GIF) && defined(STBI_NO_PIC) && defined(STBI_NO_PNM)
 // nothing
 #else
     static unsigned char* stbi_convert_format(unsigned char* data, const int img_n,
@@ -1564,10 +1566,9 @@ namespace rl::stb {
             n = comp - 1;
         for (int i = 0; i < x * y; ++i) {
             for (k = 0; k < n; ++k) {
-                float z = static_cast<float>(
-                              pow(data[i * comp + k] * stbi_h2l_scale_i, stbi_h2l_gamma_i))
-                            * 255
-                        + 0.5f;
+                float z{ (pow(data[i * comp + k] * stbi_h2l_scale_i, stbi_h2l_gamma_i)) *
+                             255.0f +
+                         0.5f };
                 if (z < 0)
                     z = 0;
                 if (z > 255)
@@ -1776,11 +1777,9 @@ namespace rl::stb {
     }
 
     // (1 << n) - 1
-    static const StbiUint32 stbi_bmask[17] = {
-        0, 1, 3, 7, 15, 31, 63, 127,
-        255, 511, 1023, 2047, 4095,
-        8191, 16383, 32767, 65535
-    };
+    static const StbiUint32 stbi_bmask[17] = { 0, 1, 3, 7, 15, 31, 63, 127, 255,
+                                               511, 1023, 2047, 4095, 8191, 16383,
+                                               32767, 65535 };
 
     // decode a jpeg huffman value from the bitstream
     static stbi_inline int stbi_jpeg_huff_decode(stbi_jpeg* j, const StbiHuffman* h)
@@ -1834,11 +1833,8 @@ namespace rl::stb {
     }
 
     // bias[n] = (-1<<n) + 1
-    constexpr static int stbi_jbias[16] = {
-        0, -1, -3, -7, -15, -31, -63,
-        -127, -255, -511, -1023, -2047,
-        -4095, -8191, -16383, -32767
-    };
+    constexpr static int stbi_jbias[16] = { 0, -1, -3, -7, -15, -31, -63, -127,
+                                            -255, -511, -1023, -2047, -4095, -8191, -16383, -32767 };
 
     // combined JPEG 'receive' and JPEG 'extend', since baseline
     // always extends everything it receives.
@@ -2202,8 +2198,8 @@ namespace rl::stb {
         // columns
         for (i = 0; i < 8; ++i, ++d, ++v) {
             // if all zeroes, shortcut -- this avoids dequantizing 0s and IDCTing
-            if (d[8] == 0 && d[16] == 0 && d[24] == 0 && d[32] == 0 && d[40] == 0 && d[48] == 0
-                && d[56] == 0) {
+            if (d[8] == 0 && d[16] == 0 && d[24] == 0 && d[32] == 0 &&
+                d[40] == 0 && d[48] == 0 && d[56] == 0) {
                 //    no shortcut                 0     seconds
                 //    (1|2|3|4|5|6|7)==0          0     seconds
                 //    all separate               -0.047 seconds
@@ -2730,15 +2726,12 @@ namespace rl::stb {
         j->code_bits = 0;
         j->code_buffer = 0;
         j->nomore = 0;
-        j->img_comp[0].dc_pred
-            = j->img_comp[1].dc_pred
-            = j->img_comp[2].dc_pred
-            = j->img_comp[3].dc_pred
-            = 0;
+        j->img_comp[0].dc_pred =
+            j->img_comp[1].dc_pred =
+                j->img_comp[2].dc_pred =
+                    j->img_comp[3].dc_pred = 0;
         j->marker = STBI_MARKER_none;
-        j->todo = j->restart_interval
-                    ? j->restart_interval
-                    : 0x7fffffff;
+        j->todo = j->restart_interval ? j->restart_interval : 0x7fffffff;
         j->eob_run = 0;
         // no more than 1<<31 MCUs if no restart_interal? that's plenty safe,
         // since we don't even allow 1<<30 pixels
@@ -2865,8 +2858,8 @@ namespace rl::stb {
                             for (int x = 0; x < z->img_comp[n].h; ++x) {
                                 const int x2 = (i * z->img_comp[n].h + x);
                                 const int y2 = (j * z->img_comp[n].v + y);
-                                short* data = z->img_comp[n].coeff
-                                            + 64 * (x2 + y2 * z->img_comp[n].coeff_w);
+                                short* data = z->img_comp[n].coeff +
+                                              64 * (x2 + y2 * z->img_comp[n].coeff_w);
                                 if (!stbi_jpeg_decode_block_prog_dc(
                                         z, data, &z->huff_dc[z->img_comp[n].hd], n))
                                     return 0;
@@ -3059,8 +3052,8 @@ namespace rl::stb {
             z->succ_high = (aa >> 4);
             z->succ_low = (aa & 15);
             if (z->progressive) {
-                if (z->spec_start > 63 || z->spec_end > 63 || z->spec_start > z->spec_end
-                    || z->succ_high > 13 || z->succ_low > 13)
+                if (z->spec_start > 63 || z->spec_end > 63 || z->spec_start > z->spec_end ||
+                    z->succ_high > 13 || z->succ_low > 13)
                     return stbi__err("bad SOS", "Corrupt JPEG");
             }
             else {
@@ -3544,8 +3537,8 @@ namespace rl::stb {
             const int cr = pcr[i] - 128;
             const int cb = pcb[i] - 128;
             int r = y_fixed + cr * stbi_float2fixed(1.40200f);
-            int g = y_fixed + (cr * -stbi_float2fixed(0.71414f))
-                  + ((cb * -stbi_float2fixed(0.34414f)) & 0xffff0000);
+            int g = y_fixed + (cr * -stbi_float2fixed(0.71414f)) +
+                    ((cb * -stbi_float2fixed(0.34414f)) & 0xffff0000);
             int b = y_fixed + cb * stbi_float2fixed(1.77200f);
             r >>= 20;
             g >>= 20;
@@ -3695,8 +3688,8 @@ namespace rl::stb {
             int cr = pcr[i] - 128;
             int cb = pcb[i] - 128;
             r = y_fixed + cr * stbi_float2fixed(1.40200f);
-            g = y_fixed + cr * -stbi_float2fixed(0.71414f)
-              + ((cb * -stbi_float2fixed(0.34414f)) & 0xffff0000);
+            g = y_fixed + cr * -stbi_float2fixed(0.71414f) +
+                ((cb * -stbi_float2fixed(0.34414f)) & 0xffff0000);
             b = y_fixed + cb * stbi_float2fixed(1.77200f);
             r >>= 20;
             g >>= 20;
@@ -3793,8 +3786,8 @@ namespace rl::stb {
         const int n = req_comp ? req_comp : z->s->img_n >= 3 ? 3
                                                              : 1;
 
-        const int is_rgb = z->s->img_n == 3
-                        && (z->rgb == 3 || (z->app14_color_transform == 0 && !z->jfif));
+        const int is_rgb = z->s->img_n == 3 &&
+                           (z->rgb == 3 || (z->app14_color_transform == 0 && !z->jfif));
 
         if (z->s->img_n == 3 && n < 3 && !is_rgb)
             decode_n = 1;
@@ -4801,9 +4794,8 @@ namespace rl::stb {
                         cur[k] = STBI_BYTECAST(raw[k] + prior[k]);  // prior[k] ==
                                                                     // stbi__paeth(0,prior[k],0)
                     for (k = filter_bytes; k < nk; ++k)
-                        cur[k] = STBI_BYTECAST(
-                            raw[k]
-                            + stbi_paeth(cur[k - filter_bytes], prior[k], prior[k - filter_bytes]));
+                        cur[k] = STBI_BYTECAST(raw[k] + stbi_paeth(cur[k - filter_bytes], prior[k],
+                                                                   prior[k - filter_bytes]));
                     break;
                 case STBI_F_avg_first:
                     memcpy(cur, raw, filter_bytes);
@@ -5165,8 +5157,8 @@ namespace rl::stb {
                     if (s->img_x > STBI_MAX_DIMENSIONS)
                         return stbi__err("too large", "Very large image (corrupt?)");
                     z->depth = stbi_get8(s);
-                    if (z->depth != 1 && z->depth != 2 && z->depth != 4 && z->depth != 8
-                        && z->depth != 16)
+                    if (z->depth != 1 && z->depth != 2 && z->depth != 4 && z->depth != 8 &&
+                        z->depth != 16)
                         return stbi__err("1/2/4/8/16-bit only",
                                          "PNG not supported: 1/2/4/8/16-bit only");
                     color = stbi_get8(s);
@@ -5261,8 +5253,8 @@ namespace rl::stb {
                                                                                      // as-is
                         else
                             for (k = 0; k < s->img_n; ++k)
-                                tc[k] = static_cast<stbi_uc>(stbi_get16be(s) & 255)
-                                      * stbi_depth_scale_table[z->depth];  // non 8-bit images will
+                                tc[k] = static_cast<stbi_uc>(stbi_get16be(s) & 255) *
+                                        stbi_depth_scale_table[z->depth];  // non 8-bit images will
                                                                            // be larger
                     }
                     break;
@@ -5559,9 +5551,7 @@ namespace rl::stb {
             0x01 /* 0000 0001 */,
         };
 
-        constexpr static std::array shift_table{
-            0U, 0U, 0U, 1U, 0U, 2U, 4U, 6U, 0U
-        };
+        constexpr static std::array shift_table{ 0U, 0U, 0U, 1U, 0U, 2U, 4U, 6U, 0U };
 
         if (shift < 0)
             v <<= -shift;
@@ -5747,8 +5737,8 @@ namespace rl::stb {
             // accept some number of extra bytes after the header, but if the offset points either
             // to before the header ends or implies a large amount of extra data, reject the file as
             // malformed
-            int bytes_read_so_far = s->callback_already_read
-                                  + static_cast<int>(s->img_buffer - s->img_buffer_original);
+            int bytes_read_so_far = s->callback_already_read +
+                                    static_cast<int>(s->img_buffer - s->img_buffer_original);
             int header_limit = 1024;         // max we actually read is below 256 bytes currently.
             int extra_data_limit = 256 * 4;  // what ordinarily goes here is a palette; 256
                                              // entries*4 bytes is its max size.
@@ -5758,8 +5748,8 @@ namespace rl::stb {
             // the first half of this test rejects offsets that are either too small positives, or
             // negative, and guarantees that info.offset >= bytes_read_so_far > 0. this in turn
             // ensures the number computed in the second half of the test can't overflow.
-            if (info.offset < bytes_read_so_far
-                || info.offset - bytes_read_so_far > extra_data_limit)
+            if (info.offset < bytes_read_so_far ||
+                info.offset - bytes_read_so_far > extra_data_limit)
                 return stbi_errpuc("bad offset", "Corrupt BMP");
             else
                 stbi_skip(s, info.offset - bytes_read_so_far);
@@ -6014,8 +6004,8 @@ namespace rl::stb {
             tga_colormap_bpp = sz;
         }
         else {  // "normal" image w/o colormap - only RGB or grey allowed, +/- RLE
-            if ((tga_image_type != 2) && (tga_image_type != 3) && (tga_image_type != 10)
-                && (tga_image_type != 11)) {
+            if ((tga_image_type != 2) && (tga_image_type != 3) && (tga_image_type != 10) &&
+                (tga_image_type != 11)) {
                 stbi_rewind(s);
                 return 0;  // only RGB or grey allowed, +/- RLE
             }

@@ -28,19 +28,17 @@ namespace rl::ui {
     Widget::Widget(Widget* parent, const std::unique_ptr<NVGRenderer>& vg_renderer)
         : Widget{ parent }
     {
-        runtime_assert(m_renderer == nullptr, "widget vectorized renderer already set");
+        runtime_assert(m_renderer == nullptr,
+                       "widget renderer already set");
         if (m_renderer == nullptr)
             m_renderer = vg_renderer.get();
     }
 
     Widget::~Widget()
     {
-        for (const auto child : m_children)
+        for (Widget* child : m_children)
             if (child != nullptr)
                 child->release_ref();
-
-        // if (m_layout != nullptr)
-        //     m_layout->release_ref();
     }
 
     Widget* Widget::parent()
@@ -67,7 +65,6 @@ namespace rl::ui {
     {
         runtime_assert(m_layout == nullptr, "overwriting existing layout");
         this->add_child(layout);
-        m_layout = layout;
     }
 
     const Theme* Widget::theme() const
@@ -257,14 +254,14 @@ namespace rl::ui {
 
     f32 Widget::font_size() const
     {
-        return m_theme != nullptr && math::equal(m_font_size, -1.0f)  //
-                 ? m_theme->standard_font_size                        //
+        return m_theme != nullptr && math::equal(m_font_size, -1.0f)
+                 ? m_theme->standard_font_size
                  : m_font_size;
     }
 
     ds::dims<f32> Widget::preferred_size() const
     {
-        return m_layout != nullptr  //
+        return m_layout != nullptr
                  ? m_layout->computed_size()
                  : this->preferred_size();
     }
@@ -274,6 +271,11 @@ namespace rl::ui {
         if (m_layout != nullptr) {
             m_layout->apply_layout();
             m_layout->adjust_for_size_policy();
+        }
+        else if (m_parent == nullptr && m_children.size() == 1) {
+            Layout* child_layout{ m_children.front()->layout() };
+            if (child_layout != nullptr)
+                child_layout->perform_layout();
         }
     }
 

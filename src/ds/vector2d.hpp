@@ -193,8 +193,9 @@ namespace rl::ds {
             const f32 start_len_sq{ this->length_squared() };
             const f32 end_len_sq{ to.length_squared() };
 
-            if (math::equal(start_len_sq, static_cast<T>(0))
-                || math::equal(end_len_sq, static_cast<T>(0))) [[unlikely]] {
+            [[unlikely]]
+            if (math::equal(start_len_sq, static_cast<T>(0)) ||
+                math::equal(end_len_sq, static_cast<T>(0))) {
                 // zero length vectors have no angle, so the best
                 // we can do is either lerp or throw an error.
                 return this->lerp(to, weight);

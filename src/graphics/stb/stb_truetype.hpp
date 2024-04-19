@@ -420,9 +420,8 @@ namespace rl::stb {
     void stbtt_FreeBitmap(u8* bitmap, const void* userdata);
     // frees the bitmap allocated below
 
-    u8* stbtt_get_codepoint_bitmap(const stbtt_fontinfo* info, f32 scale_x,
-                                   f32 scale_y, i32 codepoint, i32* width, i32* height,
-                                   i32* xoff, i32* yoff);
+    u8* stbtt_get_codepoint_bitmap(const stbtt_fontinfo* info, f32 scale_x, f32 scale_y,
+                                   i32 codepoint, i32* width, i32* height, i32* xoff, i32* yoff);
     // allocates a large-enough single-channel 8bpp bitmap and renders the
     // specified character/glyph at the specified scale i32o it, with
     // antialiasing. 0 is no coverage (transparent), 255 is fully covered (opaque).
@@ -432,30 +431,29 @@ namespace rl::stb {
     // xoff/yoff are the offset it pixel space from the glyph origin to the top-left of the
     // bitmap
 
-    u8* stbtt_get_codepoint_bitmap_subpixel(
-        const stbtt_fontinfo* info, f32 scale_x, f32 scale_y, f32 shift_x, f32 shift_y,
-        i32 codepoint, i32* width, i32* height, i32* xoff, i32* yoff);
+    u8* stbtt_get_codepoint_bitmap_subpixel(const stbtt_fontinfo* info, f32 scale_x, f32 scale_y,
+                                            f32 shift_x, f32 shift_y, i32 codepoint, i32* width,
+                                            i32* height, i32* xoff, i32* yoff);
     // the same as stbtt_GetCodepoitnBitmap, but you can specify a subpixel
     // shift for the character
 
-    void stbtt_make_codepoint_bitmap(const stbtt_fontinfo* info, u8* output, i32 out_w,
-                                     i32 out_h, i32 out_stride, f32 scale_x, f32 scale_y,
-                                     i32 codepoint);
+    void stbtt_make_codepoint_bitmap(const stbtt_fontinfo* info, u8* output, i32 out_w, i32 out_h,
+                                     i32 out_stride, f32 scale_x, f32 scale_y, i32 codepoint);
     // the same as stbtt_GetCodepoi32Bitmap, but you pass in storage for the bitmap
     // in the form of 'output', with row spacing of 'out_stride' bytes. the bitmap
     // is clipped to out_w/out_h bytes. Call stbtt_GetCodepoi32BitmapBox to get the
     // width and height and positioning info for it first.
 
-    void stbtt_MakeCodepoi32BitmapSubpixel(
-        const stbtt_fontinfo* info, u8* output, i32 out_w, i32 out_h, i32 out_stride,
-        f32 scale_x, f32 scale_y, f32 shift_x, f32 shift_y, i32 codepoint);
+    void stbtt_MakeCodepoi32BitmapSubpixel(const stbtt_fontinfo* info, u8* output, i32 out_w,
+                                           i32 out_h, i32 out_stride, f32 scale_x, f32 scale_y,
+                                           f32 shift_x, f32 shift_y, i32 codepoint);
     // same as stbtt_MakeCodepoi32Bitmap, but you can specify a subpixel
     // shift for the character
 
     void stbtt_make_codepoint_bitmap_subpixel_prefilter(
-        const stbtt_fontinfo* info, u8* output, i32 out_w, i32 out_h, i32 out_stride,
-        f32 scale_x, f32 scale_y, f32 shift_x, f32 shift_y, i32 oversample_x,
-        i32 oversample_y, f32* sub_x, f32* sub_y, i32 codepoint);
+        const stbtt_fontinfo* info, u8* output, i32 out_w, i32 out_h, i32 out_stride, f32 scale_x,
+        f32 scale_y, f32 shift_x, f32 shift_y, i32 oversample_x, i32 oversample_y, f32* sub_x,
+        f32* sub_y, i32 codepoint);
     // same as stbtt_MakeCodepoi32BitmapSubpixel, but prefiltering
     // is performed (see stbtt_PackSetOversampling)
 
@@ -468,29 +466,29 @@ namespace rl::stb {
     // y-increases-up, so Codepoi32BitmapBox and Codepoi32Box are inverted.)
 
     void stbtt_get_codepoint_bitmap_box_subpixel(const stbtt_fontinfo* font, i32 codepoint,
-                                                 f32 scale_x, f32 scale_y, f32 shift_x,
-                                                 f32 shift_y, i32* ix0, i32* iy0, i32* ix1, i32* iy1);
+                                                 f32 scale_x, f32 scale_y, f32 shift_x, f32 shift_y,
+                                                 i32* ix0, i32* iy0, i32* ix1, i32* iy1);
     // same as stbtt_GetCodepoi32BitmapBox, but you can specify a subpixel
     // shift for the character
 
     // the following functions are equivalent to the above functions, but operate
     // on glyph indices instead of Unicode codepoints (for efficiency)
-    u8* stbtt_get_glyph_bitmap(const stbtt_fontinfo* info, f32 scale_x, f32 scale_y,
-                               i32 glyph, i32* width, i32* height, i32* xoff, i32* yoff);
-    u8* stbtt_get_glyph_bitmap_subpixel(
-        const stbtt_fontinfo* info, f32 scale_x, f32 scale_y, f32 shift_x, f32 shift_y,
-        i32 glyph, i32* width, i32* height, i32* xoff, i32* yoff);
-    void stbtt_make_glyph_bitmap(const stbtt_fontinfo* info, u8* output, i32 out_w,
-                                 i32 out_h, i32 out_stride, f32 scale_x, f32 scale_y, i32 glyph);
+    u8* stbtt_get_glyph_bitmap(const stbtt_fontinfo* info, f32 scale_x, f32 scale_y, i32 glyph,
+                               i32* width, i32* height, i32* xoff, i32* yoff);
+    u8* stbtt_get_glyph_bitmap_subpixel(const stbtt_fontinfo* info, f32 scale_x, f32 scale_y,
+                                        f32 shift_x, f32 shift_y, i32 glyph, i32* width,
+                                        i32* height, i32* xoff, i32* yoff);
+    void stbtt_make_glyph_bitmap(const stbtt_fontinfo* info, u8* output, i32 out_w, i32 out_h,
+                                 i32 out_stride, f32 scale_x, f32 scale_y, i32 glyph);
     void stbtt_make_glyph_bitmap_subpixel(const stbtt_fontinfo* info, u8* output, i32 out_w,
                                           i32 out_h, i32 out_stride, f32 scale_x, f32 scale_y,
                                           f32 shift_x, f32 shift_y, i32 glyph);
     void stbtt_MakeGlyphBitmapSubpixelPrefilter(
-        const stbtt_fontinfo* info, u8* output, i32 out_w, i32 out_h, i32 out_stride,
-        f32 scale_x, f32 scale_y, f32 shift_x, f32 shift_y, i32 oversample_x,
-        i32 oversample_y, f32* sub_x, f32* sub_y, i32 glyph);
-    void stbtt_get_glyph_bitmap_box(const stbtt_fontinfo* font, i32 glyph, f32 scale_x,
-                                    f32 scale_y, i32* ix0, i32* iy0, i32* ix1, i32* iy1);
+        const stbtt_fontinfo* info, u8* output, i32 out_w, i32 out_h, i32 out_stride, f32 scale_x,
+        f32 scale_y, f32 shift_x, f32 shift_y, i32 oversample_x, i32 oversample_y, f32* sub_x,
+        f32* sub_y, i32 glyph);
+    void stbtt_get_glyph_bitmap_box(const stbtt_fontinfo* font, i32 glyph, f32 scale_x, f32 scale_y,
+                                    i32* ix0, i32* iy0, i32* ix1, i32* iy1);
     void stbtt_get_glyph_bitmap_box_subpixel(const stbtt_fontinfo* font, i32 glyph, f32 scale_x,
                                              f32 scale_y, f32 shift_x, f32 shift_y, i32* ix0,
                                              i32* iy0, i32* ix1, i32* iy1);
@@ -524,12 +522,11 @@ namespace rl::stb {
     void stbtt_free_sdf(u8* bitmap, const void* userdata);
     // frees the SDF bitmap allocated below
 
-    u8* stbtt_GetGlyphSDF(
-        const stbtt_fontinfo* info, f32 scale, i32 glyph, i32 padding, u8 onedge_value,
-        f32 pixel_dist_scale, i32* width, i32* height, i32* xoff, i32* yoff);
-    u8* stbtt_get_codepoint_sdf(const stbtt_fontinfo* info, f32 scale, i32 codepoint,
-                                i32 padding, u8 onedge_value,
-                                f32 pixel_dist_scale, i32* width, i32* height,
+    u8* stbtt_GetGlyphSDF(const stbtt_fontinfo* info, f32 scale, i32 glyph, i32 padding,
+                          u8 onedge_value, f32 pixel_dist_scale, i32* width, i32* height, i32* xoff,
+                          i32* yoff);
+    u8* stbtt_get_codepoint_sdf(const stbtt_fontinfo* info, f32 scale, i32 codepoint, i32 padding,
+                                u8 onedge_value, f32 pixel_dist_scale, i32* width, i32* height,
                                 i32* xoff, i32* yoff);
     // These functions compute a discretized SDF field for a single character, suitable for
     // storing in a single-channel texture, sampling with bilinear filtering, and testing

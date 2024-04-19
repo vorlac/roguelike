@@ -196,8 +196,8 @@ namespace rl::ui {
                     f32 current_size{ 0.0f };
                     f32 total_stretch{ 0.0f };
                     for (u32 i = axis_anchor_pos; i < axis_anchor_pos + axis_anchor_size; ++i) {
-                        if (std::fabs(sizes[i]) < std::numeric_limits<f32>::epsilon()
-                            && axis_anchor_size == 1)
+                        if (std::fabs(sizes[i]) < std::numeric_limits<f32>::epsilon() &&
+                            axis_anchor_size == 1)
                             grid[i] = std::max(grid[i], target_size);
 
                         current_size += grid[i];

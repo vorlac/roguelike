@@ -221,10 +221,7 @@ namespace rl::gl {
         constexpr static inline u32 m_rect_count{ 1000000 };
         constexpr static inline ds::dims<f32> m_rect_size{ 5.0f, 5.0f };
         constexpr static inline std::array<ds::point<f32>, 6> m_rect_vertex_buffer_data{
-            ds::rect<f32>{
-                ds::point<f32>{ 0.0f, 0.0f },
-                ds::dims{ m_rect_size } }
-                .triangles()
+            ds::rect<f32>{ { 0.0f, 0.0f }, { m_rect_size } }.triangles()
         };
 
         std::vector<ds::color<f32>> m_rect_colors_data{};

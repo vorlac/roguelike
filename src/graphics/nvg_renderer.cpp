@@ -33,8 +33,8 @@ namespace rl {
             depth_buf = depth_bits > 0;
             float_buf = float_mode != 0;
 
-            constexpr nvg::gl::CreateFlags nvg_flags{ nvg::gl::CreateFlags::AntiAlias
-                                                      | nvg::gl::CreateFlags::StencilStrokes };
+            constexpr nvg::gl::CreateFlags nvg_flags{ nvg::gl::CreateFlags::AntiAlias |
+                                                      nvg::gl::CreateFlags::StencilStrokes };
             // if (stencil_buf)
             //     nvg_flags |= nvg::gl::CreateFlags::StencilStrokes;
             // nvg_flags |= nvg::gl::CreateFlags::Debug;
@@ -160,8 +160,7 @@ namespace rl {
         return fh;
     }
 
-    void NVGRenderer::flush(const ds::dims<f32>& viewport,
-                            const f32 pixel_ratio) const
+    void NVGRenderer::flush(const ds::dims<f32>& viewport, const f32 pixel_ratio) const
     {
         // Flush all queued up NanoVG rendering commands
         nvg::Params* params{ nvg::internal_params(m_nvg_context.get()) };

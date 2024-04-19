@@ -97,8 +97,8 @@ namespace rl::ui {
 
         m_parent_dialog->refresh_relative_placement();
         m_visible &= m_parent_dialog->visible_recursive();
-        m_rect.pt = m_parent_dialog->position() + m_anchor_pos
-                  - ds::point<f32>{ 0.0f, m_anchor_offset };
+        m_rect.pt = m_parent_dialog->position() + m_anchor_pos -
+                    ds::point<f32>{ 0.0f, m_anchor_offset };
     }
 
     void Popup::draw()

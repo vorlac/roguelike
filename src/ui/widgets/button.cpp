@@ -153,8 +153,8 @@ namespace rl::ui {
                 icon_size.height *= this->icon_scale();
                 nvg::set_font_size(context, icon_size.height);
                 nvg::set_font_face(context, text::font::style::Icons);
-                icon_size.width = m_rect.size.height * 0.15f
-                                + nvg::text_bounds(context, ds::point<f32>::zero(), utf8(m_icon));
+                icon_size.width = m_rect.size.height * 0.15f +
+                                  nvg::text_bounds(context, ds::point<f32>::zero(), utf8(m_icon));
             }
             else {
                 icon_size.height *= 0.9f;
@@ -189,8 +189,8 @@ namespace rl::ui {
         ds::shared self{ this };
 
         bool process_button_event{
-            (button == Mouse::Button::Left && !this->has_property(Property::StandardMenu))
-            || (button == Mouse::Button::Right && this->has_property(Property::StandardMenu))
+            (button == Mouse::Button::Left && !this->has_property(Property::StandardMenu)) ||
+            (button == Mouse::Button::Right && this->has_property(Property::StandardMenu))
         };
 
         if (m_enabled && process_button_event) {
@@ -200,8 +200,8 @@ namespace rl::ui {
                     if (m_button_group.empty()) {
                         for (const auto widget : parent()->children()) {
                             const auto btn{ dynamic_cast<Button*>(widget) };
-                            if (btn != this && btn != nullptr && btn->has_property(Property::Radio)
-                                && btn->pressed()) {
+                            if (btn != this && btn != nullptr &&
+                                btn->has_property(Property::Radio) && btn->pressed()) {
                                 btn->m_pressed = false;
                                 if (btn->m_change_callback != nullptr)
                                     btn->m_change_callback(false);
@@ -210,8 +210,8 @@ namespace rl::ui {
                     }
                     else {
                         for (const auto btn : m_button_group) {
-                            if (btn != this && btn->has_property(Property::Radio)
-                                && btn->m_pressed) {
+                            if (btn != this && btn->has_property(Property::Radio) &&
+                                btn->m_pressed) {
                                 btn->m_pressed = false;
                                 if (btn->m_change_callback != nullptr)
                                     btn->m_change_callback(false);
@@ -223,8 +223,8 @@ namespace rl::ui {
                 if (this->has_property(Property::PopupMenu)) {
                     for (const auto widget : this->parent()->children()) {
                         const auto btn{ dynamic_cast<Button*>(widget) };
-                        if (btn != this && btn != nullptr && btn->has_property(Property::PopupMenu)
-                            && btn->pressed()) {
+                        if (btn != this && btn != nullptr &&
+                            btn->has_property(Property::PopupMenu) && btn->pressed()) {
                             btn->set_pressed(false);
                             if (btn->m_change_callback != nullptr)
                                 btn->m_change_callback(false);

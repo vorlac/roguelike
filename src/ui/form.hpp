@@ -74,8 +74,8 @@ namespace rl::ui {
                 T current{ widget->value() };
 
                 if constexpr (std::floating_point<T>) {
-                    if (std::fabs(value - current)
-                        <= std::numeric_limits<decltype(value - current)>::epsilon())
+                    if (std::fabs(value - current) <=
+                        std::numeric_limits<decltype(value - current)>::epsilon())
                         widget->set_value(value);
                 }
                 else {

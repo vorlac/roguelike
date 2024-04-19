@@ -1,15 +1,8 @@
 #pragma once
 
-#include <cmath>
-
-#include "ds/point.hpp"
 #include "ds/rect.hpp"
 #include "graphics/stb/stb_truetype.hpp"
 #include "utils/numeric.hpp"
-
-namespace rl {
-    enum class Align;
-}
 
 namespace rl::nvg::font {
     constexpr i32 INVALID{ -1 };

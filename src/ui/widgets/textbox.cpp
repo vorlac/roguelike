@@ -265,8 +265,8 @@ namespace rl::ui {
 
             nvg::set_font_face(context, "icons");
             nvg::set_font_size(context,
-                               (m_font_size < 0.0f ? m_theme->button_font_size : m_font_size)
-                                   * this->icon_scale());
+                               (m_font_size < 0.0f ? m_theme->button_font_size : m_font_size) *
+                                   this->icon_scale());
 
             bool spinning{ math::not_equal(m_mouse_down_pos.x, -1.0f) };
 
@@ -333,8 +333,8 @@ namespace rl::ui {
         // clip visible text area
         f32 clip_x{ m_rect.pt.x + x_spacing + spin_arrows_width - 1.0f };
         f32 clip_y{ m_rect.pt.y + 1.0f };
-        f32 clip_width{ m_rect.size.width - unit_width - spin_arrows_width - 2.0f * x_spacing
-                        + 2.0f };
+        f32 clip_width{ m_rect.size.width - unit_width - spin_arrows_width - 2.0f * x_spacing +
+                        2.0f };
         f32 clip_height{ m_rect.size.height - 3.0f };
 
         nvg::save(context);
@@ -638,22 +638,22 @@ namespace rl::ui {
                 if (!m_committed)
                     this->on_focus_lost();
             }
-            else if (kb.is_button_pressed(Keyboard::Scancode::A)
-                     && kb.is_button_down(Keyboard::Scancode::LCtrl)) {
+            else if (kb.is_button_pressed(Keyboard::Scancode::A) &&
+                     kb.is_button_down(Keyboard::Scancode::LCtrl)) {
                 m_cursor_pos = static_cast<i32>(m_value_temp.length());
                 m_selection_pos = 0;
             }
-            else if (kb.is_button_pressed(Keyboard::Scancode::X)
-                     && kb.is_button_down(Keyboard::Scancode::LCtrl)) {
+            else if (kb.is_button_pressed(Keyboard::Scancode::X) &&
+                     kb.is_button_down(Keyboard::Scancode::LCtrl)) {
                 copy_selection();
                 delete_selection();
             }
-            else if (kb.is_button_pressed(Keyboard::Scancode::C)
-                     && kb.is_button_down(Keyboard::Scancode::LCtrl)) {
+            else if (kb.is_button_pressed(Keyboard::Scancode::C) &&
+                     kb.is_button_down(Keyboard::Scancode::LCtrl)) {
                 copy_selection();
             }
-            else if (kb.is_button_pressed(Keyboard::Scancode::V)
-                     && kb.is_button_down(Keyboard::Scancode::LCtrl)) {
+            else if (kb.is_button_pressed(Keyboard::Scancode::V) &&
+                     kb.is_button_down(Keyboard::Scancode::LCtrl)) {
                 this->delete_selection();
                 this->paste_from_clipboard();
             }
@@ -824,8 +824,8 @@ namespace rl::ui {
     {
         if ((0 <= pos.x - m_rect.pt.x) && (pos.x - m_rect.pt.x < 14.f)) {
             // on scrolling arrows
-            if (m_rect.size.height >= pos.y - m_rect.pt.y
-                && pos.y - m_rect.pt.y <= m_rect.size.height / 2.0f) {
+            if (m_rect.size.height >= pos.y - m_rect.pt.y &&
+                pos.y - m_rect.pt.y <= m_rect.size.height / 2.0f) {
                 // top part
                 return SpinArea::Top;
             }

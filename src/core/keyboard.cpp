@@ -79,9 +79,7 @@ namespace rl {
     void Keyboard::process_button_down(const Scancode::ID key)
     {
         m_released[key] = false;
-        auto& keystates = this->is_button_pressed(key)
-                            ? m_held
-                            : m_pressed;
+        auto& keystates = this->is_button_pressed(key) ? m_held : m_pressed;
         keystates[key] = true;
     }
 
@@ -108,8 +106,7 @@ namespace rl {
 namespace rl {
     auto format_as(const Keyboard& kb)
     {
-        return fmt::format("KB[W={} A={}, S={}, D={}]",
-                           kb.get_key_state(Keyboard::Scancode::W),
+        return fmt::format("KB[W={} A={}, S={}, D={}]", kb.get_key_state(Keyboard::Scancode::W),
                            kb.get_key_state(Keyboard::Scancode::A),
                            kb.get_key_state(Keyboard::Scancode::S),
                            kb.get_key_state(Keyboard::Scancode::D));

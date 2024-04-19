@@ -157,8 +157,7 @@ namespace rl::stb {
             return stbtt_buf_range(b, 0, 0);
         }
 
-        void stbtt_dict_get_ints(stbtt_buf* b, const i32 key, const i32 outcount,
-                                 u32* out)
+        void stbtt_dict_get_ints(stbtt_buf* b, const i32 key, const i32 outcount, u32* out)
         {
             stbtt_buf operands = stbtt_dict_get(b, key);
             for (i32 i = 0; i < outcount && operands.cursor < operands.size; i++)
@@ -229,8 +228,7 @@ namespace rl::stb {
         }
 
         // @OPTIMIZE: binary search
-        u32 stbtt_find_table(const u8* data, const u32 fontstart,
-                             const char* tag)
+        u32 stbtt_find_table(const u8* data, const u32 fontstart, const char* tag)
         {
             i32 num_tables = tt_aligned_u16(data + fontstart + 4);
             u32 tabledir = fontstart + 12;
@@ -242,8 +240,7 @@ namespace rl::stb {
             return 0;
         }
 
-        i32 stbtt_GetFontOffsetForIndex_internal(const u8* font_collection,
-                                                 const i32 index)
+        i32 stbtt_GetFontOffsetForIndex_internal(const u8* font_collection, const i32 index)
         {
             // if it's just a font, there's only one valid index
             if (stbtt_isfont(font_collection))
@@ -252,8 +249,8 @@ namespace rl::stb {
             // check if it's a TTC
             if (stbtt_tag(font_collection, "ttcf")) {
                 // version 1?
-                if (tt_aligned_u32(font_collection + 4) == 0x00010000
-                    || tt_aligned_u32(font_collection + 4) == 0x00020000) {
+                if (tt_aligned_u32(font_collection + 4) == 0x00010000 ||
+                    tt_aligned_u32(font_collection + 4) == 0x00020000) {
                     i32 n = tt_aligned_i32(font_collection + 8);
                     if (index >= n)
                         return -1;
@@ -274,8 +271,8 @@ namespace rl::stb {
             // check if it's a TTC
             if (stbtt_tag(font_collection, "ttcf")) {
                 // version 1?
-                if (tt_aligned_u32(font_collection + 4) == 0x00010000
-                    || tt_aligned_u32(font_collection + 4) == 0x00020000) {
+                if (tt_aligned_u32(font_collection + 4) == 0x00010000 ||
+                    tt_aligned_u32(font_collection + 4) == 0x00020000) {
                     return tt_aligned_i32(font_collection + 8);
                 }
             }
@@ -447,8 +444,8 @@ namespace rl::stb {
         if (format == 6) {
             u32 first = tt_aligned_u16(data + index_map + 6);
             u32 count = tt_aligned_u16(data + index_map + 8);
-            if (static_cast<u32>(unicode_codepoint) >= first
-                && static_cast<u32>(unicode_codepoint) < first + count)
+            if (static_cast<u32>(unicode_codepoint) >= first &&
+                static_cast<u32>(unicode_codepoint) < first + count)
                 return tt_aligned_u16(data + index_map + 10 + (unicode_codepoint - first) * 2);
             return 0;
         }
@@ -497,11 +494,11 @@ namespace rl::stb {
                 u16 offset = tt_aligned_u16(data + index_map + 14 + segcount * 6 + 2 + 2 * item);
                 if (offset == 0)
                     return static_cast<u16>(
-                        unicode_codepoint
-                        + tt_aligned_i16(data + index_map + 14 + segcount * 4 + 2 + 2 * item));
+                        unicode_codepoint +
+                        tt_aligned_i16(data + index_map + 14 + segcount * 4 + 2 + 2 * item));
 
-                return tt_aligned_u16(data + offset + (unicode_codepoint - start) * 2 + index_map + 14
-                                      + segcount * 6 + 2 + 2 * item);
+                return tt_aligned_u16(data + offset + (unicode_codepoint - start) * 2 + index_map +
+                                      14 + segcount * 6 + 2 + 2 * item);
             }
         }
         else if (format == 12 || format == 13) {
@@ -535,11 +532,12 @@ namespace rl::stb {
     i32 stbtt_get_codepoint_shape(const stbtt_fontinfo* info, const i32 unicode_codepoint,
                                   stbtt_vertex** vertices)
     {
-        return stbtt_get_glyph_shape(info, stbtt_find_glyph_index(info, unicode_codepoint), vertices);
+        return stbtt_get_glyph_shape(info, stbtt_find_glyph_index(info, unicode_codepoint),
+                                     vertices);
     }
 
-    static void stbtt_setvertex(stbtt_vertex* v, const u8 type, const i32 x,
-                                const i32 y, const i32 cx, const i32 cy)
+    static void stbtt_setvertex(stbtt_vertex* v, const u8 type, const i32 x, const i32 y,
+                                const i32 cx, const i32 cy)
     {
         v->type = type;
         v->x = static_cast<i16>(x);
@@ -571,11 +569,11 @@ namespace rl::stb {
         return g1 == g2 ? -1 : g1;  // if length is 0, return -1
     }
 
-    static i32 stbtt_get_glyph_info_t2(const stbtt_fontinfo* info, i32 glyph_index,
-                                       i32* x0, i32* y0, i32* x1, i32* y1);
+    static i32 stbtt_get_glyph_info_t2(const stbtt_fontinfo* info, i32 glyph_index, i32* x0,
+                                       i32* y0, i32* x1, i32* y1);
 
-    i32 stbtt_get_glyph_box(const stbtt_fontinfo* info, const i32 glyph_index, i32* x0,
-                            i32* y0, i32* x1, i32* y1)
+    i32 stbtt_get_glyph_box(const stbtt_fontinfo* info, const i32 glyph_index, i32* x0, i32* y0,
+                            i32* x1, i32* y1)
     {
         if (info->cff.size) {
             stbtt_get_glyph_info_t2(info, glyph_index, x0, y0, x1, y1);
@@ -597,8 +595,8 @@ namespace rl::stb {
         return 1;
     }
 
-    i32 stbtt_get_codepoint_box(const stbtt_fontinfo* info, const i32 codepoint,
-                                i32* x0, i32* y0, i32* x1, i32* y1)
+    i32 stbtt_get_codepoint_box(const stbtt_fontinfo* info, const i32 codepoint, i32* x0, i32* y0,
+                                i32* x1, i32* y1)
     {
         return stbtt_get_glyph_box(info, stbtt_find_glyph_index(info, codepoint), x0, y0, x1, y1);
     }
@@ -606,8 +604,8 @@ namespace rl::stb {
     i32 stbtt_is_glyph_empty(const stbtt_fontinfo* info, const i32 glyph_index)
     {
         if (info->cff.size)
-            return stbtt_get_glyph_info_t2(info, glyph_index, nullptr, nullptr, nullptr, nullptr)
-                == 0;
+            return 0 ==
+                   stbtt_get_glyph_info_t2(info, glyph_index, nullptr, nullptr, nullptr, nullptr);
         i32 g = stbtt_get_glyf_offset(info, glyph_index);
         if (g < 0)
             return 1;
@@ -615,10 +613,9 @@ namespace rl::stb {
         return numberOfContours == 0;
     }
 
-    static i32 stbtt_close_shape(
-        stbtt_vertex* vertices, i32 num_vertices, const i32 was_off,
-        const i32 start_off, const i32 sx, const i32 sy, const i32 scx,
-        const i32 scy, const i32 cx, const i32 cy)
+    static i32 stbtt_close_shape(stbtt_vertex* vertices, i32 num_vertices, const i32 was_off,
+                                 const i32 start_off, const i32 sx, const i32 sy, const i32 scx,
+                                 const i32 scy, const i32 cx, const i32 cy)
     {
         if (start_off) {
             if (was_off)
@@ -862,8 +859,8 @@ namespace rl::stb {
                         v->cy = static_cast<short>(n * (mtx[1] * x + mtx[3] * y + mtx[5]));
                     }
                     // Append vertices.
-                    tmp = static_cast<stbtt_vertex*>(std::malloc(
-                        (num_vertices + comp_num_verts) * sizeof(stbtt_vertex)));
+                    tmp = static_cast<stbtt_vertex*>(
+                        std::malloc((num_vertices + comp_num_verts) * sizeof(stbtt_vertex)));
                     if (!tmp) {
                         if (vertices)
                             std::free(vertices);
@@ -918,9 +915,8 @@ namespace rl::stb {
         c->started = 1;
     }
 
-    static void stbtt_csctx_v(stbtt_csctx* c, const u8 type, const i32 x,
-                              const i32 y, const i32 cx, const i32 cy,
-                              const i32 cx1, const i32 cy1)
+    static void stbtt_csctx_v(stbtt_csctx* c, const u8 type, const i32 x, const i32 y, const i32 cx,
+                              const i32 cy, const i32 cx1, const i32 cy1)
     {
         if (c->bounds) {
             stbtt_track_vertex(c, x, y);
@@ -949,21 +945,20 @@ namespace rl::stb {
         stbtt_csctx_close_shape(ctx);
         ctx->first_x = ctx->x = ctx->x + dx;
         ctx->first_y = ctx->y = ctx->y + dy;
-        stbtt_csctx_v(ctx, STBTT_vmove, static_cast<i32>(ctx->x), static_cast<i32>(ctx->y),
-                      0, 0, 0, 0);
+        stbtt_csctx_v(ctx, STBTT_vmove, static_cast<i32>(ctx->x), static_cast<i32>(ctx->y), 0, 0, 0,
+                      0);
     }
 
     static void stbtt_csctx_rline_to(stbtt_csctx* ctx, const f32 dx, const f32 dy)
     {
         ctx->x += dx;
         ctx->y += dy;
-        stbtt_csctx_v(ctx, STBTT_vline, static_cast<i32>(ctx->x), static_cast<i32>(ctx->y),
-                      0, 0, 0, 0);
+        stbtt_csctx_v(ctx, STBTT_vline, static_cast<i32>(ctx->x), static_cast<i32>(ctx->y), 0, 0, 0,
+                      0);
     }
 
     static void stbtt_csctx_rccurve_to(stbtt_csctx* ctx, const f32 dx1, const f32 dy1,
-                                       const f32 dx2, const f32 dy2, const f32 dx3,
-                                       const f32 dy3)
+                                       const f32 dx2, const f32 dy2, const f32 dx3, const f32 dy3)
     {
         f32 cx1 = ctx->x + dx1;
         f32 cy1 = ctx->y + dy1;
@@ -972,8 +967,8 @@ namespace rl::stb {
         ctx->x = cx2 + dx3;
         ctx->y = cy2 + dy3;
         stbtt_csctx_v(ctx, STBTT_vcubic, static_cast<i32>(ctx->x), static_cast<i32>(ctx->y),
-                      static_cast<i32>(cx1), static_cast<i32>(cy1),
-                      static_cast<i32>(cx2), static_cast<i32>(cy2));
+                      static_cast<i32>(cx1), static_cast<i32>(cy1), static_cast<i32>(cx2),
+                      static_cast<i32>(cy2));
     }
 
     static stbtt_buf stbtt_get_subr(stbtt_buf idx, i32 n)
@@ -990,8 +985,7 @@ namespace rl::stb {
         return stbtt_cff_index_get(idx, n);
     }
 
-    static stbtt_buf stbtt_cid_get_glyph_subrs(const stbtt_fontinfo* info,
-                                               const i32 glyph_index)
+    static stbtt_buf stbtt_cid_get_glyph_subrs(const stbtt_fontinfo* info, const i32 glyph_index)
     {
         stbtt_buf fdselect = info->fdselect;
         i32 fdselector = -1;
@@ -1021,8 +1015,7 @@ namespace rl::stb {
         return stbtt_get_subrs(info->cff, stbtt_cff_index_get(info->fontdicts, fdselector));
     }
 
-    static i32 stbtt_run_charstring(const stbtt_fontinfo* info, i32 glyph_index,
-                                    stbtt_csctx* c)
+    static i32 stbtt_run_charstring(const stbtt_fontinfo* info, i32 glyph_index, stbtt_csctx* c)
     {
         i32 in_header = 1, maskbits = 0, subr_stack_height = 0, sp = 0, v, i, b0;
         i32 has_subrs = 0, clear_stack;
@@ -1299,8 +1292,7 @@ namespace rl::stb {
 
                     // push immediate
                     if (b0 == 255) {
-                        f = static_cast<f32>(static_cast<i32>(stbtt_buf_get32(&b)))
-                          / 0x10000;
+                        f = static_cast<f32>(static_cast<i32>(stbtt_buf_get32(&b))) / 0x10000;
                     }
                     else {
                         stbtt_buf_skip(&b, -1);
@@ -1339,8 +1331,8 @@ namespace rl::stb {
         return 0;
     }
 
-    static i32 stbtt_get_glyph_info_t2(const stbtt_fontinfo* info, const i32 glyph_index,
-                                       i32* x0, i32* y0, i32* x1, i32* y1)
+    static i32 stbtt_get_glyph_info_t2(const stbtt_fontinfo* info, const i32 glyph_index, i32* x0,
+                                       i32* y0, i32* x1, i32* y1)
     {
         stbtt_csctx c = STBTT_CSCTX_INIT(1);
         i32 r = stbtt_run_charstring(info, glyph_index, &c);
@@ -1375,10 +1367,12 @@ namespace rl::stb {
         }
         else {
             if (advance_width)
-                *advance_width = tt_aligned_i16(info->data + info->hmtx + 4 * (numOfLongHorMetrics - 1));
+                *advance_width = tt_aligned_i16(
+                    info->data + info->hmtx + 4 * (numOfLongHorMetrics - 1));
             if (left_side_bearing)
-                *left_side_bearing = tt_aligned_i16(info->data + info->hmtx + 4 * numOfLongHorMetrics
-                                                    + 2 * (glyph_index - numOfLongHorMetrics));
+                *left_side_bearing = tt_aligned_i16(info->data + info->hmtx +
+                                                    4 * numOfLongHorMetrics +
+                                                    2 * (glyph_index - numOfLongHorMetrics));
         }
     }
 
@@ -1556,8 +1550,8 @@ namespace rl::stb {
         return 0;
     }
 
-    static i32 stbtt_get_glyph_gpos_info_advance(const stbtt_fontinfo* info,
-                                                 const i32 glyph1, const i32 glyph2)
+    static i32 stbtt_get_glyph_gpos_info_advance(const stbtt_fontinfo* info, const i32 glyph1,
+                                                 const i32 glyph2)
     {
         if (!info->gpos)
             return 0;
@@ -1615,8 +1609,8 @@ namespace rl::stb {
                             // Binary search.
                             while (l <= r) {
                                 i32 m = (l + r) >> 1;
-                                u8* pairValue = pair_value_array
-                                              + (2 + value_record_pair_size_in_bytes) * m;
+                                u8* pairValue = pair_value_array +
+                                                (2 + value_record_pair_size_in_bytes) * m;
                                 u16 secondGlyph = tt_aligned_u16(pairValue);
                                 i32 straw = secondGlyph;
                                 if (needle < straw)
@@ -1641,10 +1635,8 @@ namespace rl::stb {
                         if (valueFormat1 == 4 && valueFormat2 == 0) {  // Support more formats?
                             u16 classDef1Offset = tt_aligned_u16(table + 8);
                             u16 classDef2Offset = tt_aligned_u16(table + 10);
-                            i32 glyph1class = stbtt_GetGlyphClass(table + classDef1Offset,
-                                                                  glyph1);
-                            i32 glyph2class = stbtt_GetGlyphClass(table + classDef2Offset,
-                                                                  glyph2);
+                            i32 glyph1class = stbtt_GetGlyphClass(table + classDef1Offset, glyph1);
+                            i32 glyph2class = stbtt_GetGlyphClass(table + classDef2Offset, glyph2);
 
                             u16 class1Count = tt_aligned_u16(table + 12);
                             u16 class2Count = tt_aligned_u16(table + 14);
@@ -1655,8 +1647,7 @@ namespace rl::stb {
                                 return 0;  // malformed
 
                             u8* class1Records = table + 16;
-                            u8* class2Records = class1Records
-                                              + 2 * (glyph1class * class2Count);
+                            u8* class2Records = class1Records + 2 * (glyph1class * class2Count);
                             i16 xAdvance = tt_aligned_i16(class2Records + 2 * glyph2class);
                             return xAdvance;
                         }
@@ -1673,8 +1664,7 @@ namespace rl::stb {
         return 0;
     }
 
-    i32 stbtt_get_glyph_kern_advance(const stbtt_fontinfo* info, const i32 g1,
-                                     const i32 g2)
+    i32 stbtt_get_glyph_kern_advance(const stbtt_fontinfo* info, const i32 g1, const i32 g2)
     {
         i32 xAdvance = 0;
 
@@ -1686,8 +1676,7 @@ namespace rl::stb {
         return xAdvance;
     }
 
-    i32 stbtt_get_codepoint_kern_advance(const stbtt_fontinfo* info, const i32 ch1,
-                                         const i32 ch2)
+    i32 stbtt_get_codepoint_kern_advance(const stbtt_fontinfo* info, const i32 ch1, const i32 ch2)
     {
         if (!info->kern && !info->gpos)  // if no kerning table, don't waste time looking up both
                                          // codepoint->glyphs
@@ -1714,8 +1703,8 @@ namespace rl::stb {
             *lineGap = tt_aligned_i16(info->data + info->hhea + 8);
     }
 
-    i32 stbtt_get_font_v_metrics_os2(const stbtt_fontinfo* info, i32* typoAscent,
-                                     i32* typoDescent, i32* typoLineGap)
+    i32 stbtt_get_font_v_metrics_os2(const stbtt_fontinfo* info, i32* typoAscent, i32* typoDescent,
+                                     i32* typoLineGap)
     {
         u32 tab = stbtt_find_table(info->data, info->fontstart, "OS/2");
         if (tab == 0)
@@ -1731,8 +1720,7 @@ namespace rl::stb {
         return 1;
     }
 
-    void stbtt_get_font_bounding_box(const stbtt_fontinfo* info, i32* x0, i32* y0, i32* x1,
-                                     i32* y1)
+    void stbtt_get_font_bounding_box(const stbtt_fontinfo* info, i32* x0, i32* y0, i32* x1, i32* y1)
     {
         *x0 = tt_aligned_i16(info->data + info->head + 36);
         *y0 = tt_aligned_i16(info->data + info->head + 38);
@@ -1742,8 +1730,8 @@ namespace rl::stb {
 
     f32 stbtt_scale_for_pixel_height(const stbtt_fontinfo* info, const f32 pixel_height)
     {
-        i32 fheight = tt_aligned_i16(info->data + info->hhea + 4)
-                    - tt_aligned_i16(info->data + info->hhea + 6);
+        i32 fheight = tt_aligned_i16(info->data + info->hhea + 4) -
+                      tt_aligned_i16(info->data + info->hhea + 6);
         return static_cast<f32>(pixel_height) / fheight;
     }
 
@@ -1802,10 +1790,9 @@ namespace rl::stb {
     // antialiasing software rasterizer
     //
 
-    void stbtt_get_glyph_bitmap_box_subpixel(const stbtt_fontinfo* font, const i32 glyph,
-                                             const f32 scale_x, const f32 scale_y,
-                                             const f32 shift_x, const f32 shift_y, i32* ix0,
-                                             i32* iy0, i32* ix1, i32* iy1)
+    void stbtt_get_glyph_bitmap_box_subpixel(
+        const stbtt_fontinfo* font, const i32 glyph, const f32 scale_x, const f32 scale_y,
+        const f32 shift_x, const f32 shift_y, i32* ix0, i32* iy0, i32* ix1, i32* iy1)
     {
         i32 x0{ 0 };
         i32 y0{ 0 };
@@ -1835,29 +1822,27 @@ namespace rl::stb {
         }
     }
 
-    void stbtt_get_glyph_bitmap_box(const stbtt_fontinfo* font, const i32 glyph,
-                                    const f32 scale_x, const f32 scale_y, i32* ix0,
-                                    i32* iy0, i32* ix1, i32* iy1)
+    void stbtt_get_glyph_bitmap_box(const stbtt_fontinfo* font, const i32 glyph, const f32 scale_x,
+                                    const f32 scale_y, i32* ix0, i32* iy0, i32* ix1, i32* iy1)
     {
-        stbtt_get_glyph_bitmap_box_subpixel(font, glyph, scale_x, scale_y, 0.0f, 0.0f, ix0, iy0, ix1,
-                                            iy1);
+        stbtt_get_glyph_bitmap_box_subpixel(font, glyph, scale_x, scale_y, 0.0f, 0.0f, ix0, iy0,
+                                            ix1, iy1);
     }
 
-    void stbtt_get_codepoint_bitmap_box_subpixel(const stbtt_fontinfo* font, const i32 codepoint,
-                                                 const f32 scale_x, const f32 scale_y,
-                                                 const f32 shift_x, const f32 shift_y, i32* ix0,
-                                                 i32* iy0, i32* ix1, i32* iy1)
+    void stbtt_get_codepoint_bitmap_box_subpixel(
+        const stbtt_fontinfo* font, const i32 codepoint, const f32 scale_x, const f32 scale_y,
+        const f32 shift_x, const f32 shift_y, i32* ix0, i32* iy0, i32* ix1, i32* iy1)
     {
         stbtt_get_glyph_bitmap_box_subpixel(font, stbtt_find_glyph_index(font, codepoint), scale_x,
                                             scale_y, shift_x, shift_y, ix0, iy0, ix1, iy1);
     }
 
     void stbtt_get_codepoint_bitmap_box(const stbtt_fontinfo* font, const i32 codepoint,
-                                        const f32 scale_x, const f32 scale_y, i32* ix0,
-                                        i32* iy0, i32* ix1, i32* iy1)
+                                        const f32 scale_x, const f32 scale_y, i32* ix0, i32* iy0,
+                                        i32* ix1, i32* iy1)
     {
-        stbtt_get_codepoint_bitmap_box_subpixel(font, codepoint, scale_x, scale_y, 0.0f, 0.0f, ix0, iy0,
-                                                ix1, iy1);
+        stbtt_get_codepoint_bitmap_box_subpixel(font, codepoint, scale_x, scale_y, 0.0f, 0.0f, ix0,
+                                                iy0, ix1, iy1);
     }
 
     //////////////////////////////////////////////////////////////////////////////
@@ -1885,11 +1870,8 @@ namespace rl::stb {
         }
         else {
             if (hh->num_remaining_in_head_chunk == 0) {
-                i32 count{
-                    size < 32    ? 2000
-                    : size < 128 ? 800
-                                 : 100
-                };
+                i32 count{ size < 32 ? 2000 : size < 128 ? 800
+                                                         : 100 };
                 stbtt_hheap_chunk* c = static_cast<stbtt_hheap_chunk*>(
                     std::malloc(sizeof(stbtt_hheap_chunk) + size * count));
                 if (c == nullptr)
@@ -1899,8 +1881,8 @@ namespace rl::stb {
                 hh->num_remaining_in_head_chunk = count;
             }
             --hh->num_remaining_in_head_chunk;
-            return (char*)(hh->head) + sizeof(stbtt_hheap_chunk)
-                 + size * hh->num_remaining_in_head_chunk;
+            return (char*)(hh->head) + sizeof(stbtt_hheap_chunk) +
+                   size * hh->num_remaining_in_head_chunk;
         }
     }
 
@@ -1963,10 +1945,11 @@ namespace rl::stb {
         else
             z->dx = std::lrintf(std::floorf(STBTT_FIX * dxdy));
 
-        z->x = std::lrintf(std::floorf(STBTT_FIX * e->x0 + z->dx * (start_point - e->y0)));  // use z->dx so
-                                                                                             // when we offset
-                                                                                             // later it's by
-                                                                                             // the same amount
+        z->x = std::lrintf(
+            std::floorf(STBTT_FIX * e->x0 + z->dx * (start_point - e->y0)));  // use z->dx so
+                                                                              // when we offset
+                                                                              // later it's by
+                                                                              // the same amount
         z->x -= off_x * STBTT_FIX;
 
         z->ey = e->y1;
@@ -1975,8 +1958,9 @@ namespace rl::stb {
         return z;
     }
 #elif STBTT_RASTERIZER_VERSION == 2
-    static stbtt_active_edge* stbtt_new_active(stbtt_hheap* hh, const stbtt_edge* e, const i32 off_x,
-                                               const f32 start_point, void* userdata)
+    static stbtt_active_edge* stbtt_new_active(stbtt_hheap* hh, const stbtt_edge* e,
+                                               const i32 off_x, const f32 start_point,
+                                               void* userdata)
     {
         stbtt_active_edge* z = static_cast<stbtt_active_edge*>(
             stbtt_hheap_alloc(hh, sizeof(*z), userdata));
@@ -2005,8 +1989,7 @@ namespace rl::stb {
     // note: this routine clips fills that extend off the edges... ideally this
     // wouldn't happen, but it could happen if the truetype glyph bounding boxes
     // are wrong, or if the user supplies a too-small bitmap
-    static void stbtt_fill_active_edges(u8* scanline, i32 len, stbtt_active_edge* e,
-                                        i32 max_weight)
+    static void stbtt_fill_active_edges(u8* scanline, i32 len, stbtt_active_edge* e, i32 max_weight)
     {
         // non-zero winding fill
         i32 x0 = 0, w = 0;
@@ -2028,22 +2011,22 @@ namespace rl::stb {
                     if (i < len && j >= 0) {
                         if (i == j) {
                             // x0,x1 are the same pixel, so compute combined coverage
-                            scanline[i] = scanline[i]
-                                        + (u8)((x1 - x0) * max_weight >> STBTT_FIXSHIFT);
+                            scanline[i] = scanline[i] +
+                                          (u8)((x1 - x0) * max_weight >> STBTT_FIXSHIFT);
                         }
                         else {
                             if (i >= 0)  // add antialiasing for x0
-                                scanline[i] = scanline[i]
-                                            + (u8)(((STBTT_FIX - (x0 & STBTT_FIXMASK))
-                                                    * max_weight)
-                                                   >> STBTT_FIXSHIFT);
+                                scanline[i] = scanline[i] +
+                                              (u8)(((STBTT_FIX - (x0 & STBTT_FIXMASK)) *
+                                                    max_weight) >>
+                                                   STBTT_FIXSHIFT);
                             else
                                 i = -1;  // clip
 
                             if (j < len)  // add antialiasing for x1
-                                scanline[j] = scanline[j]
-                                            + (u8)(((x1 & STBTT_FIXMASK) * max_weight)
-                                                   >> STBTT_FIXSHIFT);
+                                scanline[j] = scanline[j] +
+                                              (u8)(((x1 & STBTT_FIXMASK) * max_weight) >>
+                                                   STBTT_FIXSHIFT);
                             else
                                 j = len;  // clip
 
@@ -2059,8 +2042,7 @@ namespace rl::stb {
     }
 
     static void stbtt_rasterize_sorted_edges(stbtt_bitmap* result, stbtt_edge* e, i32 n,
-                                             i32 vsubsample, i32 off_x, i32 off_y,
-                                             void* userdata)
+                                             i32 vsubsample, i32 off_x, i32 off_y, void* userdata)
     {
         stbtt_hheap hh = { 0, 0, 0 };
         stbtt_active_edge* active = NULL;
@@ -2231,9 +2213,8 @@ namespace rl::stb {
         return height * width / 2;
     }
 
-    static void stbtt_fill_active_edges_new(f32* scanline, f32* scanline_fill,
-                                            const i32 len, stbtt_active_edge* e,
-                                            const f32 y_top)
+    static void stbtt_fill_active_edges_new(f32* scanline, f32* scanline_fill, const i32 len,
+                                            stbtt_active_edge* e, const f32 y_top)
     {
         f32 y_bottom = y_top + 1;
 
@@ -2247,10 +2228,10 @@ namespace rl::stb {
                 f32 x0 = e->fx;
                 if (x0 < len) {
                     if (x0 >= 0) {
-                        stbtt_handle_clipped_edge(scanline, static_cast<i32>(x0), e, x0, y_top,
-                                                  x0, y_bottom);
-                        stbtt_handle_clipped_edge(scanline_fill - 1, static_cast<i32>(x0) + 1,
-                                                  e, x0, y_top, x0, y_bottom);
+                        stbtt_handle_clipped_edge(scanline, static_cast<i32>(x0), e, x0, y_top, x0,
+                                                  y_bottom);
+                        stbtt_handle_clipped_edge(scanline_fill - 1, static_cast<i32>(x0) + 1, e,
+                                                  x0, y_top, x0, y_bottom);
                     }
                     else {
                         stbtt_handle_clipped_edge(scanline_fill - 1, 0, e, x0, y_top, x0, y_bottom);
@@ -2392,11 +2373,9 @@ namespace rl::stb {
                         // area covered in the last pixel is the rectangle from all the pixels to
                         // the left, plus the trapezoid filled by the line segment in this pixel all
                         // the way to the right edge
-                        scanline[x2] += area
-                                      + sign
-                                            * stbtt_position_trapezoid_area(
-                                                sy1 - y_final, static_cast<f32>(x2), x2 + 1.0f,
-                                                x_bottom, x2 + 1.0f);
+                        scanline[x2] += area + sign * stbtt_position_trapezoid_area(
+                                                          sy1 - y_final, static_cast<f32>(x2),
+                                                          x2 + 1.0f, x_bottom, x2 + 1.0f);
 
                         // the rest of the line is filled based on the total height of the line
                         // segment in this pixel
@@ -2478,8 +2457,8 @@ namespace rl::stb {
 
     // directly AA rasterize edges w/o supersampling
     static void stbtt_rasterize_sorted_edges(const stbtt_bitmap* result, stbtt_edge* e, const i32 n,
-                                             const i32 vsubsample, const i32 off_x,
-                                             const i32 off_y, void* userdata)
+                                             const i32 vsubsample, const i32 off_x, const i32 off_y,
+                                             void* userdata)
     {
         stbtt_hheap hh = { nullptr, nullptr, 0 };
         stbtt_active_edge* active = nullptr;
@@ -2489,8 +2468,7 @@ namespace rl::stb {
         STBTT_NOT_USED(vsubsample);
 
         if (result->w > 64)
-            scanline = static_cast<f32*>(
-                std::malloc((result->w * 2 + 1) * sizeof(f32)));
+            scanline = static_cast<f32*>(std::malloc((result->w * 2 + 1) * sizeof(f32)));
         else
             scanline = scanline_data;
 
@@ -2752,9 +2730,8 @@ namespace rl::stb {
 
     // tessellate until threshold p is happy... @TODO warped to compensate for non-linear stretching
     static i32 stbtt_tesselate_curve(stbtt_point* points, i32* num_points, const f32 x0,
-                                     const f32 y0, const f32 x1, const f32 y1,
-                                     const f32 x2, const f32 y2,
-                                     const f32 objspace_flatness_squared, const i32 n)
+                                     const f32 y0, const f32 x1, const f32 y1, const f32 x2,
+                                     const f32 y2, const f32 objspace_flatness_squared, const i32 n)
     {
         // midpoint
         f32 mx = (x0 + 2 * x1 + x2) / 4;
@@ -2778,10 +2755,10 @@ namespace rl::stb {
         return 1;
     }
 
-    static void stbtt_tesselate_cubic(
-        stbtt_point* points, i32* num_points, const f32 x0, const f32 y0, const f32 x1,
-        const f32 y1, const f32 x2, const f32 y2, const f32 x3, const f32 y3,
-        const f32 objspace_flatness_squared, const i32 n)
+    static void stbtt_tesselate_cubic(stbtt_point* points, i32* num_points, const f32 x0,
+                                      const f32 y0, const f32 x1, const f32 y1, const f32 x2,
+                                      const f32 y2, const f32 x3, const f32 y3,
+                                      const f32 objspace_flatness_squared, const i32 n)
     {
         // @TODO this "flatness" calculation is just made-up nonsense that seems to work well enough
         f32 dx0 = x1 - x0;
@@ -2792,8 +2769,8 @@ namespace rl::stb {
         f32 dy2 = y3 - y2;
         f32 dx = x3 - x0;
         f32 dy = y3 - y0;
-        f32 longlen = std::sqrt(dx0 * dx0 + dy0 * dy0) + std::sqrt(dx1 * dx1 + dy1 * dy1)
-                    + std::sqrt(dx2 * dx2 + dy2 * dy2);
+        f32 longlen = std::sqrt(dx0 * dx0 + dy0 * dy0) + std::sqrt(dx1 * dx1 + dy1 * dy1) +
+                      std::sqrt(dx2 * dx2 + dy2 * dy2);
         f32 shortlen = std::sqrt(dx * dx + dy * dy);
         f32 flatness_squared = longlen * longlen - shortlen * shortlen;
 
@@ -2828,9 +2805,9 @@ namespace rl::stb {
     }
 
     // returns number of contours
-    static stbtt_point* stbtt_flatten_curves(
-        const stbtt_vertex* vertices, const i32 num_verts, const f32 objspace_flatness,
-        i32** contour_lengths, i32* num_contours, const void*)
+    static stbtt_point* stbtt_flatten_curves(const stbtt_vertex* vertices, const i32 num_verts,
+                                             const f32 objspace_flatness, i32** contour_lengths,
+                                             i32* num_contours, const void*)
     {
         stbtt_point* points = nullptr;
         i32 num_points = 0;
@@ -2847,8 +2824,7 @@ namespace rl::stb {
         if (n == 0)
             return nullptr;
 
-        *contour_lengths = static_cast<i32*>(
-            std::malloc(sizeof(**contour_lengths) * n));
+        *contour_lengths = static_cast<i32*>(std::malloc(sizeof(**contour_lengths) * n));
 
         if (*contour_lengths == nullptr) {
             *num_contours = 0;
@@ -2859,8 +2835,7 @@ namespace rl::stb {
         for (i32 pass = 0; pass < 2; ++pass) {
             f32 x = 0, y = 0;
             if (pass == 1) {
-                points = static_cast<stbtt_point*>(
-                    std::malloc(num_points * sizeof(points[0])));
+                points = static_cast<stbtt_point*>(std::malloc(num_points * sizeof(points[0])));
                 if (points == nullptr)
                     goto error;
             }
@@ -2909,17 +2884,17 @@ namespace rl::stb {
         return nullptr;
     }
 
-    void stbtt_rasterize(stbtt_bitmap* result, const f32 flatness_in_pixels,
-                         stbtt_vertex* vertices, const i32 num_verts, const f32 scale_x,
-                         const f32 scale_y, const f32 shift_x, const f32 shift_y,
-                         const i32 x_off, const i32 y_off, const i32 invert,
-                         void* userdata)
+    void stbtt_rasterize(stbtt_bitmap* result, const f32 flatness_in_pixels, stbtt_vertex* vertices,
+                         const i32 num_verts, const f32 scale_x, const f32 scale_y,
+                         const f32 shift_x, const f32 shift_y, const i32 x_off, const i32 y_off,
+                         const i32 invert, void* userdata)
     {
         f32 scale = scale_x > scale_y ? scale_y : scale_x;
         i32 winding_count = 0;
         i32* winding_lengths = nullptr;
-        stbtt_point* windings = stbtt_flatten_curves(vertices, num_verts, flatness_in_pixels / scale,
-                                                     &winding_lengths, &winding_count, userdata);
+        stbtt_point* windings = stbtt_flatten_curves(vertices, num_verts,
+                                                     flatness_in_pixels / scale, &winding_lengths,
+                                                     &winding_count, userdata);
         if (windings) {
             stbtt_rasterize(result, windings, winding_lengths, winding_count, scale_x, scale_y,
                             shift_x, shift_y, x_off, y_off, invert, userdata);
@@ -2934,9 +2909,8 @@ namespace rl::stb {
     }
 
     u8* stbtt_get_glyph_bitmap_subpixel(const stbtt_fontinfo* info, f32 scale_x, f32 scale_y,
-                                        const f32 shift_x, const f32 shift_y,
-                                        const i32 glyph, i32* width, i32* height,
-                                        i32* xoff, i32* yoff)
+                                        const f32 shift_x, const f32 shift_y, const i32 glyph,
+                                        i32* width, i32* height, i32* xoff, i32* yoff)
     {
         i32 ix0, iy0, ix1, iy1;
         stbtt_bitmap gbm;
@@ -2953,8 +2927,8 @@ namespace rl::stb {
             scale_y = scale_x;
         }
 
-        stbtt_get_glyph_bitmap_box_subpixel(info, glyph, scale_x, scale_y, shift_x, shift_y, &ix0, &iy0,
-                                            &ix1, &iy1);
+        stbtt_get_glyph_bitmap_box_subpixel(info, glyph, scale_x, scale_y, shift_x, shift_y, &ix0,
+                                            &iy0, &ix1, &iy1);
 
         // now we get the size
         gbm.w = (ix1 - ix0);
@@ -2983,26 +2957,25 @@ namespace rl::stb {
         return gbm.pixels;
     }
 
-    u8* stbtt_get_glyph_bitmap(const stbtt_fontinfo* info, const f32 scale_x,
-                               const f32 scale_y, const i32 glyph, i32* width,
-                               i32* height, i32* xoff, i32* yoff)
+    u8* stbtt_get_glyph_bitmap(const stbtt_fontinfo* info, const f32 scale_x, const f32 scale_y,
+                               const i32 glyph, i32* width, i32* height, i32* xoff, i32* yoff)
     {
         return stbtt_get_glyph_bitmap_subpixel(info, scale_x, scale_y, 0.0f, 0.0f, glyph, width,
                                                height, xoff, yoff);
     }
 
-    void stbtt_make_glyph_bitmap_subpixel(
-        const stbtt_fontinfo* info, u8* output, const i32 out_w, const i32 out_h,
-        const i32 out_stride, const f32 scale_x, const f32 scale_y, const f32 shift_x,
-        const f32 shift_y, const i32 glyph)
+    void stbtt_make_glyph_bitmap_subpixel(const stbtt_fontinfo* info, u8* output, const i32 out_w,
+                                          const i32 out_h, const i32 out_stride, const f32 scale_x,
+                                          const f32 scale_y, const f32 shift_x, const f32 shift_y,
+                                          const i32 glyph)
     {
         i32 ix0, iy0;
         stbtt_vertex* vertices;
         i32 num_verts = stbtt_get_glyph_shape(info, glyph, &vertices);
         stbtt_bitmap gbm;
 
-        stbtt_get_glyph_bitmap_box_subpixel(info, glyph, scale_x, scale_y, shift_x, shift_y, &ix0, &iy0,
-                                            nullptr, nullptr);
+        stbtt_get_glyph_bitmap_box_subpixel(info, glyph, scale_x, scale_y, shift_x, shift_y, &ix0,
+                                            &iy0, nullptr, nullptr);
         gbm.pixels = output;
         gbm.w = out_w;
         gbm.h = out_h;
@@ -3025,46 +2998,44 @@ namespace rl::stb {
 
     u8* stbtt_get_codepoint_bitmap_subpixel(
         const stbtt_fontinfo* info, const f32 scale_x, const f32 scale_y, const f32 shift_x,
-        const f32 shift_y, const i32 codepoint, i32* width, i32* height,
-        i32* xoff, i32* yoff)
+        const f32 shift_y, const i32 codepoint, i32* width, i32* height, i32* xoff, i32* yoff)
     {
         return stbtt_get_glyph_bitmap_subpixel(info, scale_x, scale_y, shift_x, shift_y,
-                                               stbtt_find_glyph_index(info, codepoint), width, height,
-                                               xoff, yoff);
+                                               stbtt_find_glyph_index(info, codepoint), width,
+                                               height, xoff, yoff);
     }
 
     void stbtt_make_codepoint_bitmap_subpixel_prefilter(
         const stbtt_fontinfo* info, u8* output, const i32 out_w, const i32 out_h,
         const i32 out_stride, const f32 scale_x, const f32 scale_y, const f32 shift_x,
-        const f32 shift_y, const i32 oversample_x, const i32 oversample_y, f32* sub_x,
-        f32* sub_y, const i32 codepoint)
+        const f32 shift_y, const i32 oversample_x, const i32 oversample_y, f32* sub_x, f32* sub_y,
+        const i32 codepoint)
     {
         stbtt_MakeGlyphBitmapSubpixelPrefilter(
             info, output, out_w, out_h, out_stride, scale_x, scale_y, shift_x, shift_y,
             oversample_x, oversample_y, sub_x, sub_y, stbtt_find_glyph_index(info, codepoint));
     }
 
-    void stbtt_MakeCodepointBitmapSubpixel(
-        const stbtt_fontinfo* info, u8* output, const i32 out_w, const i32 out_h,
-        const i32 out_stride, const f32 scale_x, const f32 scale_y, const f32 shift_x,
-        const f32 shift_y, const i32 codepoint)
+    void stbtt_MakeCodepointBitmapSubpixel(const stbtt_fontinfo* info, u8* output, const i32 out_w,
+                                           const i32 out_h, const i32 out_stride, const f32 scale_x,
+                                           const f32 scale_y, const f32 shift_x, const f32 shift_y,
+                                           const i32 codepoint)
     {
         stbtt_make_glyph_bitmap_subpixel(info, output, out_w, out_h, out_stride, scale_x, scale_y,
                                          shift_x, shift_y, stbtt_find_glyph_index(info, codepoint));
     }
 
-    u8* stbtt_get_codepoint_bitmap(const stbtt_fontinfo* info, const f32 scale_x,
-                                   const f32 scale_y, const i32 codepoint, i32* width,
-                                   i32* height, i32* xoff, i32* yoff)
+    u8* stbtt_get_codepoint_bitmap(const stbtt_fontinfo* info, const f32 scale_x, const f32 scale_y,
+                                   const i32 codepoint, i32* width, i32* height, i32* xoff,
+                                   i32* yoff)
     {
         return stbtt_get_codepoint_bitmap_subpixel(info, scale_x, scale_y, 0.0f, 0.0f, codepoint,
                                                    width, height, xoff, yoff);
     }
 
     void stbtt_make_codepoint_bitmap(const stbtt_fontinfo* info, u8* output, const i32 out_w,
-                                     const i32 out_h, const i32 out_stride,
-                                     const f32 scale_x, const f32 scale_y,
-                                     const i32 codepoint)
+                                     const i32 out_h, const i32 out_stride, const f32 scale_x,
+                                     const f32 scale_y, const i32 codepoint)
     {
         stbtt_MakeCodepointBitmapSubpixel(info, output, out_w, out_h, out_stride, scale_x, scale_y,
                                           0.0f, 0.0f, codepoint);
@@ -3077,10 +3048,10 @@ namespace rl::stb {
     // This is SUPER-CRAPPY packing to keep source code small
 
     static i32 stbtt_bake_font_bitmap_internal(const u8* data,
-                                               const i32 offset,        // font location (use offset=0 for plain .ttf)
+                                               const i32 offset,        // font location (use offset=0 for
+                                                                        // plain .ttf)
                                                const f32 pixel_height,  // height of font in  pixels
-                                               u8* pixels,
-                                               const i32 pw,
+                                               u8* pixels, const i32 pw,
                                                const i32 ph,  // bitmap to be filled in
                                                const i32 first_char,
                                                const i32 num_chars,  // characters to bake
@@ -3227,14 +3198,12 @@ namespace rl::stb {
     // This is SUPER-AWESOME (tm Ryan Gordon) packing using stb_rect_pack.h. If
     // stb_rect_pack.h isn't available, it uses the BakeFontBitmap strategy.
 
-    i32 stbtt_pack_begin(stbtt_pack_context* spc, u8* pixels, const i32 width,
-                         const i32 height, const i32 stride_in_bytes,
-                         const i32 padding, void* alloc_context)
+    i32 stbtt_pack_begin(stbtt_pack_context* spc, u8* pixels, const i32 width, const i32 height,
+                         const i32 stride_in_bytes, const i32 padding, void* alloc_context)
     {
         stbrp_context* context = static_cast<stbrp_context*>(std::malloc(sizeof(*context)));
         i32 num_nodes = width - padding;
-        stbrp_node* nodes = static_cast<stbrp_node*>(
-            std::malloc(sizeof(*nodes) * num_nodes));
+        stbrp_node* nodes = static_cast<stbrp_node*>(std::malloc(sizeof(*nodes) * num_nodes));
 
         if (context == nullptr || nodes == nullptr) {
             if (context != nullptr)
@@ -3286,8 +3255,8 @@ namespace rl::stb {
         spc->skip_missing = skip;
     }
 
-    static void stbtt_h_prefilter(u8* pixels, const i32 w, const i32 h,
-                                  const i32 stride_in_bytes, const u32 kernel_width)
+    static void stbtt_h_prefilter(u8* pixels, const i32 w, const i32 h, const i32 stride_in_bytes,
+                                  const u32 kernel_width)
     {
         u8 buffer[MaxOversample];
         i32 safe_w = w - kernel_width;
@@ -3348,8 +3317,8 @@ namespace rl::stb {
         }
     }
 
-    static void stbtt_v_prefilter(u8* pixels, const i32 w, const i32 h,
-                                  const i32 stride_in_bytes, const u32 kernel_width)
+    static void stbtt_v_prefilter(u8* pixels, const i32 w, const i32 h, const i32 stride_in_bytes,
+                                  const u32 kernel_width)
     {
         u8 buffer[MaxOversample];
         i32 safe_h = h - kernel_width;
@@ -3423,9 +3392,9 @@ namespace rl::stb {
     }
 
     // rects array must be big enough to accommodate all characters in the given ranges
-    i32 stbtt_pack_font_ranges_gather_rects(const stbtt_pack_context* spc, const stbtt_fontinfo* info,
-                                            stbtt_pack_range* ranges, const i32 num_ranges,
-                                            stbrp_rect* rects)
+    i32 stbtt_pack_font_ranges_gather_rects(const stbtt_pack_context* spc,
+                                            const stbtt_fontinfo* info, stbtt_pack_range* ranges,
+                                            const i32 num_ranges, stbrp_rect* rects)
     {
         i32 missing_glyph_added = 0;
 
@@ -3447,8 +3416,8 @@ namespace rl::stb {
                 }
                 else {
                     stbtt_get_glyph_bitmap_box_subpixel(info, glyph, scale * spc->h_oversample,
-                                                        scale * spc->v_oversample, 0, 0, &x0, &y0, &x1,
-                                                        &y1);
+                                                        scale * spc->v_oversample, 0, 0, &x0, &y0,
+                                                        &x1, &y1);
                     rects[k].w = static_cast<stbrp_coord>(
                         x1 - x0 + spc->padding + spc->h_oversample - 1);
                     rects[k].h = static_cast<stbrp_coord>(
@@ -3466,8 +3435,8 @@ namespace rl::stb {
     void stbtt_MakeGlyphBitmapSubpixelPrefilter(
         const stbtt_fontinfo* info, u8* output, const i32 out_w, const i32 out_h,
         const i32 out_stride, const f32 scale_x, const f32 scale_y, const f32 shift_x,
-        const f32 shift_y, const i32 prefilter_x, const i32 prefilter_y, f32* sub_x,
-        f32* sub_y, const i32 glyph)
+        const f32 shift_y, const i32 prefilter_x, const i32 prefilter_y, f32* sub_x, f32* sub_y,
+        const i32 glyph)
     {
         stbtt_make_glyph_bitmap_subpixel(info, output, out_w - (prefilter_x - 1),
                                          out_h - (prefilter_y - 1), out_stride, scale_x, scale_y,
@@ -3578,9 +3547,8 @@ namespace rl::stb {
         stbrp_pack_rects(static_cast<stbrp_context*>(spc->pack_info), rects, num_rects);
     }
 
-    i32 stbtt_pack_font_ranges(stbtt_pack_context* spc, const u8* fontdata,
-                               const i32 font_index, stbtt_pack_range* ranges,
-                               const i32 num_ranges)
+    i32 stbtt_pack_font_ranges(stbtt_pack_context* spc, const u8* fontdata, const i32 font_index,
+                               stbtt_pack_range* ranges, const i32 num_ranges)
     {
         stbtt_fontinfo info;
         i32 i, return_value = 1;
@@ -3600,8 +3568,7 @@ namespace rl::stb {
         for (i = 0; i < num_ranges; ++i)
             n += ranges[i].num_chars;
 
-        stbrp_rect* rects = static_cast<stbrp_rect*>(
-            std::malloc(sizeof(*rects) * n));
+        stbrp_rect* rects = static_cast<stbrp_rect*>(std::malloc(sizeof(*rects) * n));
         if (rects == nullptr)
             return 0;
 
@@ -3619,10 +3586,9 @@ namespace rl::stb {
         return return_value;
     }
 
-    i32 stbtt_pack_font_range(
-        stbtt_pack_context* spc, const u8* fontdata, const i32 font_index,
-        const f32 font_size, const i32 first_unicode_codepoint_in_range,
-        const i32 num_chars_in_range, stbtt_packedchar* chardata_for_range)
+    i32 stbtt_pack_font_range(stbtt_pack_context* spc, const u8* fontdata, const i32 font_index,
+                              const f32 font_size, const i32 first_unicode_codepoint_in_range,
+                              const i32 num_chars_in_range, stbtt_packedchar* chardata_for_range)
     {
         stbtt_pack_range range;
         range.first_unicode_codepoint_in_range = first_unicode_codepoint_in_range;
@@ -3633,9 +3599,8 @@ namespace rl::stb {
         return stbtt_pack_font_ranges(spc, fontdata, font_index, &range, 1);
     }
 
-    void stbtt_get_scaled_font_v_metrics(const u8* fontdata, const i32 index,
-                                         const f32 size, f32* ascent, f32* descent,
-                                         f32* lineGap)
+    void stbtt_get_scaled_font_v_metrics(const u8* fontdata, const i32 index, const f32 size,
+                                         f32* ascent, f32* descent, f32* lineGap)
     {
         i32 i_ascent, i_descent, i_lineGap;
         stbtt_fontinfo info;
@@ -3686,8 +3651,8 @@ namespace rl::stb {
 #define STBTT_min(a, b) ((a) < (b) ? (a) : (b))
 #define STBTT_max(a, b) ((a) < (b) ? (b) : (a))
 
-    static i32 stbtt_ray_intersect_bezier(f32 orig[2], f32 ray[2], f32 q0[2], f32 q1[2],
-                                          f32 q2[2], f32 hits[2][2])
+    static i32 stbtt_ray_intersect_bezier(f32 orig[2], f32 ray[2], f32 q0[2], f32 q1[2], f32 q2[2],
+                                          f32 hits[2][2])
     {
         f32 q0perp = q0[1] * ray[0] - q0[0] * ray[1];
         f32 q1perp = q1[1] * ray[0] - q1[0] * ray[1];
@@ -3790,8 +3755,7 @@ namespace rl::stb {
                 i32 x0 = verts[i - 1].x, y0 = verts[i - 1].y;
                 i32 x1 = verts[i].cx, y1 = verts[i].cy;
                 i32 x2 = verts[i].x, y2 = verts[i].y;
-                i32 ax = STBTT_min(x0, STBTT_min(x1, x2)),
-                    ay = STBTT_min(y0, STBTT_min(y1, y2));
+                i32 ax = STBTT_min(x0, STBTT_min(x1, x2)), ay = STBTT_min(y0, STBTT_min(y1, y2));
                 i32 by = STBTT_max(y0, STBTT_max(y1, y2));
                 if (y > ay && y < by && x > ax) {
                     f32 q0[2], q1[2], q2[2];
@@ -3807,8 +3771,8 @@ namespace rl::stb {
                         y0 = static_cast<i32>(verts[i - 1].y);
                         x1 = static_cast<i32>(verts[i].x);
                         y1 = static_cast<i32>(verts[i].y);
-                        if (y > STBTT_min(y0, y1) && y < STBTT_max(y0, y1)
-                            && x > STBTT_min(x0, x1)) {
+                        if (y > STBTT_min(y0, y1) && y < STBTT_max(y0, y1) &&
+                            x > STBTT_min(x0, x1)) {
                             f32 x_inter = (y - y0) / (y1 - y0) * (x1 - x0) + x0;
                             if (x_inter < x)
                                 winding += (y0 < y1) ? 1 : -1;
@@ -3872,9 +3836,9 @@ namespace rl::stb {
         }
     }
 
-    u8* stbtt_GetGlyphSDF(const stbtt_fontinfo* info, f32 scale, i32 glyph,
-                          i32 padding, u8 onedge_value, f32 pixel_dist_scale,
-                          i32* width, i32* height, i32* xoff, i32* yoff)
+    u8* stbtt_GetGlyphSDF(const stbtt_fontinfo* info, f32 scale, i32 glyph, i32 padding,
+                          u8 onedge_value, f32 pixel_dist_scale, i32* width, i32* height, i32* xoff,
+                          i32* yoff)
     {
         f32 scale_x = scale, scale_y = scale;
         i32 ix0, iy0, ix1, iy1;
@@ -3917,8 +3881,7 @@ namespace rl::stb {
             stbtt_vertex* verts;
             i32 num_verts = stbtt_get_glyph_shape(info, glyph, &verts);
             data = static_cast<u8*>(std::malloc(w * h));
-            precompute = static_cast<f32*>(
-                std::malloc(num_verts * sizeof(f32)));
+            precompute = static_cast<f32*>(std::malloc(num_verts * sizeof(f32)));
 
             for (i = 0, j = num_verts - 1; i < num_verts; j = i++) {
                 if (verts[i].type == STBTT_vline) {
@@ -3969,8 +3932,8 @@ namespace rl::stb {
                             // if (sx > STBTT_min(x0,x1)-min_dist && sx < STBTT_max(x0,x1)+min_dist
                             // &&
                             //    sy > STBTT_min(y0,y1)-min_dist && sy < STBTT_max(y0,y1)+min_dist)
-                            dist = std::fabs((x1 - x0) * (y0 - sy) - (y1 - y0) * (x0 - sx))
-                                 * precompute[i];
+                            dist = std::fabs((x1 - x0) * (y0 - sy) - (y1 - y0) * (x0 - sx)) *
+                                   precompute[i];
                             assert_cond(i != 0);
                             if (dist < min_dist) {
                                 // check position along line
@@ -3994,8 +3957,8 @@ namespace rl::stb {
                             f32 box_x1 = STBTT_max(STBTT_max(x0, x1), x2);
                             f32 box_y1 = STBTT_max(STBTT_max(y0, y1), y2);
                             // coarse culling against bbox to avoid computing cubic unnecessarily
-                            if (sx > box_x0 - min_dist && sx < box_x1 + min_dist
-                                && sy > box_y0 - min_dist && sy < box_y1 + min_dist) {
+                            if (sx > box_x0 - min_dist && sx < box_x1 + min_dist &&
+                                sy > box_y0 - min_dist && sy < box_y1 + min_dist) {
                                 i32 num = 0;
                                 f32 ax = x1 - x0, ay = y1 - y0;
                                 f32 bx = x0 - 2 * x1 + x2, by = y0 - 2 * y1 + y2;
@@ -4030,8 +3993,7 @@ namespace rl::stb {
                                                                               // this as it
                                                                               // doesn't depend on
                                                                               // sample point
-                                    f32 c = (2 * (ax * ax + ay * ay) + (mx * bx + my * by))
-                                          * a_inv;
+                                    f32 c = (2 * (ax * ax + ay * ay) + (mx * bx + my * by)) * a_inv;
                                     f32 d = (mx * ax + my * ay) * a_inv;
                                     num = stbtt_solve_cubic(b, c, d, res);
                                 }
@@ -4082,10 +4044,10 @@ namespace rl::stb {
         return data;
     }
 
-    u8* stbtt_get_codepoint_sdf(const stbtt_fontinfo* info, const f32 scale,
-                                const i32 codepoint, const i32 padding,
-                                const u8 onedge_value, const f32 pixel_dist_scale,
-                                i32* width, i32* height, i32* xoff, i32* yoff)
+    u8* stbtt_get_codepoint_sdf(const stbtt_fontinfo* info, const f32 scale, const i32 codepoint,
+                                const i32 padding, const u8 onedge_value,
+                                const f32 pixel_dist_scale, i32* width, i32* height, i32* xoff,
+                                i32* yoff)
     {
         return stbtt_GetGlyphSDF(info, scale, stbtt_find_glyph_index(info, codepoint), padding,
                                  onedge_value, pixel_dist_scale, width, height, xoff, yoff);
@@ -4160,12 +4122,10 @@ namespace rl::stb {
         return i;
     }
 
-    static i32 stbtt_compare_utf8_to_utf16_bigendian_internal(char* s1, const i32 len1,
-                                                              char* s2, const i32 len2)
+    static i32 stbtt_compare_utf8_to_utf16_bigendian_internal(char* s1, const i32 len1, char* s2,
+                                                              const i32 len2)
     {
-        return len1
-            == stbtt_compare_utf8_to_utf16_bigendian_prefix((u8*)s1, len1,
-                                                            (u8*)s2, len2);
+        return len1 == stbtt_compare_utf8_to_utf16_bigendian_prefix((u8*)s1, len1, (u8*)s2, len2);
     }
 
     // returns results in whatever encoding you request... but note that 2-byte encodings
@@ -4184,17 +4144,19 @@ namespace rl::stb {
         i32 string_offset = nm + tt_aligned_u16(fc + nm + 4);
         for (i32 i = 0; i < count; ++i) {
             u32 loc = nm + 6 + 12 * i;
-            if (platform_id == tt_aligned_u16(fc + loc + 0) && encoding_id == tt_aligned_u16(fc + loc + 2)
-                && language_id == tt_aligned_u16(fc + loc + 4) && name_id == tt_aligned_u16(fc + loc + 6)) {
+            if (platform_id == tt_aligned_u16(fc + loc + 0) &&
+                encoding_id == tt_aligned_u16(fc + loc + 2) &&
+                language_id == tt_aligned_u16(fc + loc + 4) &&
+                name_id == tt_aligned_u16(fc + loc + 6)) {
                 *length = tt_aligned_u16(fc + loc + 8);
-                return reinterpret_cast<const char*>(fc + string_offset + tt_aligned_u16(fc + loc + 10));
+                return reinterpret_cast<const char*>(
+                    fc + string_offset + tt_aligned_u16(fc + loc + 10));
             }
         }
         return nullptr;
     }
 
-    static i32 stbtt_matchpair(u8* fc, const u32 nm, u8* name,
-                               const i32 nlen, const i32 target_id,
+    static i32 stbtt_matchpair(u8* fc, const u32 nm, u8* name, const i32 nlen, const i32 target_id,
                                const i32 next_id)
     {
         i32 count = tt_aligned_u16(fc + nm + 2);
@@ -4209,17 +4171,21 @@ namespace rl::stb {
                 i32 language = tt_aligned_u16(fc + loc + 4);
 
                 // is this a Unicode encoding?
-                if (platform == 0 || (platform == 3 && encoding == 1) || (platform == 3 && encoding == 10)) {
+                if (platform == 0 || (platform == 3 && encoding == 1) ||
+                    (platform == 3 && encoding == 10)) {
                     i32 slen = tt_aligned_u16(fc + loc + 8);
                     i32 off = tt_aligned_u16(fc + loc + 10);
 
                     // check if there's a prefix match
-                    i32 matchlen = stbtt_compare_utf8_to_utf16_bigendian_prefix(name, nlen, fc + string_offset + off, slen);
+                    i32 matchlen = stbtt_compare_utf8_to_utf16_bigendian_prefix(
+                        name, nlen, fc + string_offset + off, slen);
                     if (matchlen >= 0) {
                         // check for target_id+1 immediately following, with same encoding &
                         // language
-                        if (i + 1 < count && tt_aligned_u16(fc + loc + 12 + 6) == next_id && tt_aligned_u16(fc + loc + 12) == platform
-                            && tt_aligned_u16(fc + loc + 12 + 2) == encoding && tt_aligned_u16(fc + loc + 12 + 4) == language) {
+                        if (i + 1 < count && tt_aligned_u16(fc + loc + 12 + 6) == next_id &&
+                            tt_aligned_u16(fc + loc + 12) == platform &&
+                            tt_aligned_u16(fc + loc + 12 + 2) == encoding &&
+                            tt_aligned_u16(fc + loc + 12 + 4) == language) {
                             slen = tt_aligned_u16(fc + loc + 12 + 8);
                             off = tt_aligned_u16(fc + loc + 12 + 10);
                             if (slen == 0) {
@@ -4248,8 +4214,7 @@ namespace rl::stb {
         return 0;
     }
 
-    static i32 stbtt_matches(u8* fc, const u32 offset, u8* name,
-                             const i32 flags)
+    static i32 stbtt_matches(u8* fc, const u32 offset, u8* name, const i32 flags)
     {
         i32 nlen = static_cast<i32>(std::strlen(reinterpret_cast<char*>(name)));
         if (!stbtt_isfont(fc + offset))
@@ -4287,25 +4252,24 @@ namespace rl::stb {
         return 0;
     }
 
-    static i32 stbtt_find_matching_font_internal(u8* font_collection, char* name_utf8, const i32 flags)
+    static i32 stbtt_find_matching_font_internal(u8* font_collection, char* name_utf8,
+                                                 const i32 flags)
     {
         for (i32 i = 0; /*empty*/; ++i) {
             i32 off = stbtt_get_font_offset_for_index(font_collection, i);
             if (off < 0)
                 return off;
-            if (stbtt_matches(font_collection, off,
-                              reinterpret_cast<u8*>(name_utf8), flags))
+            if (stbtt_matches(font_collection, off, reinterpret_cast<u8*>(name_utf8), flags))
                 return off;
         }
     }
 
-    i32 stbtt_bake_font_bitmap(const u8* data, const i32 offset,
-                               const f32 pixel_height, u8* pixels, const i32 pw,
-                               const i32 ph, const i32 first_char,
+    i32 stbtt_bake_font_bitmap(const u8* data, const i32 offset, const f32 pixel_height, u8* pixels,
+                               const i32 pw, const i32 ph, const i32 first_char,
                                const i32 num_chars, stbtt_bakedchar* chardata)
     {
-        return stbtt_bake_font_bitmap_internal(data, offset, pixel_height,
-                                               pixels, pw, ph, first_char, num_chars, chardata);
+        return stbtt_bake_font_bitmap_internal(data, offset, pixel_height, pixels, pw, ph,
+                                               first_char, num_chars, chardata);
     }
 
     i32 stbtt_get_font_offset_for_index(const u8* data, const i32 index)
@@ -4325,12 +4289,12 @@ namespace rl::stb {
 
     i32 stbtt_find_matching_font(const u8* fontdata, const char* name, const i32 flags)
     {
-        return stbtt_find_matching_font_internal(const_cast<u8*>(fontdata),
-                                                 const_cast<char*>(name), flags);
+        return stbtt_find_matching_font_internal(const_cast<u8*>(fontdata), const_cast<char*>(name),
+                                                 flags);
     }
 
-    i32 stbtt_compare_utf8_to_utf16_bigendian(const char* s1, const i32 len1,
-                                              const char* s2, const i32 len2)
+    i32 stbtt_compare_utf8_to_utf16_bigendian(const char* s1, const i32 len1, const char* s2,
+                                              const i32 len2)
     {
         return stbtt_compare_utf8_to_utf16_bigendian_internal(const_cast<char*>(s1), len1,
                                                               const_cast<char*>(s2), len2);

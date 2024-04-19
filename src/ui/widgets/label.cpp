@@ -7,15 +7,13 @@
 
 namespace rl::ui {
 
-    Label::Label(std::string text,
-                 const f32 font_size /*= -1.0f*/,
+    Label::Label(std::string text, const f32 font_size /*= -1.0f*/,
                  const Align alignment /*= Align::HLeft | Align::VMiddle*/)
         : Label{ nullptr, std::move(text), font_size, alignment }
     {
     }
 
-    Label::Label(Widget* parent, std::string text,
-                 const f32 font_size /*= font::InvalidSize*/,
+    Label::Label(Widget* parent, std::string text, const f32 font_size /*= font::InvalidSize*/,
                  const Align alignment /*= Align::HLeft | Align::VMiddle*/)
         : Widget{ parent }
         , m_text{ std::move(text) }
@@ -98,8 +96,8 @@ namespace rl::ui {
 
         m_renderer->set_text_properties_(m_text_font, m_font_size, m_text_alignment);
 
-        const bool is_fixed_size{ math::not_equal(m_fixed_size.width, 0.0f)
-                                  && m_fixed_size.width > 0.0f };
+        const bool is_fixed_size{ math::not_equal(m_fixed_size.width, 0.0f) &&
+                                  m_fixed_size.width > 0.0f };
         if (is_fixed_size || (m_font_autosizing && !m_rect.contained_by(this->parent()->rect()))) {
             ds::dims<f32> size{ ds::dims<f32>::zero() };
             ds::rect<f32> bounds{ ds::rect<f32>::zero() };

@@ -835,8 +835,8 @@ namespace rl::nvg {
                 const f32 dly{ -dx };
 
                 for (i32 i = 0; i < ncap; ++i) {
-                    const f32 a = static_cast<f32>(i) / (static_cast<f32>(ncap) - 1.0f)
-                                * std::numbers::pi_v<f32>;
+                    const f32 a = static_cast<f32>(i) / (static_cast<f32>(ncap) - 1.0f) *
+                                  std::numbers::pi_v<f32>;
                     const f32 ax = detail::cosf(a) * w;
                     const f32 ay = detail::sinf(a) * w;
 
@@ -866,8 +866,8 @@ namespace rl::nvg {
                 dst++;
 
                 for (i32 i = 0; i < ncap; i++) {
-                    const f32 a = static_cast<f32>(i) / static_cast<f32>(ncap - 1)
-                                * std::numbers::pi_v<f32>;
+                    const f32 a = static_cast<f32>(i) / static_cast<f32>(ncap - 1) *
+                                  std::numbers::pi_v<f32>;
                     const f32 ax = detail::cosf(a) * w;
                     const f32 ay = detail::sinf(a) * w;
 
@@ -935,8 +935,8 @@ namespace rl::nvg {
 
                         // Check to see if the corner needs to be beveled.
                         if (p1->flags & NvgPtCorner)
-                            if (dmr2 * miter_limit * miter_limit < 1.0f
-                                || line_join == LineCap::Bevel || line_join == LineCap::Round)
+                            if (dmr2 * miter_limit * miter_limit < 1.0f ||
+                                line_join == LineCap::Bevel || line_join == LineCap::Round)
                                 p1->flags |= NvgPtBevel;
 
                         if ((p1->flags & (NvgPtBevel | NvgPrInnerbevel)) != 0)
@@ -1294,8 +1294,8 @@ namespace rl::nvg {
                     else
                         iw *= 2;
 
-                    if (iw > static_cast<f32>(NvgMaxFontimageSize)
-                        || ih > static_cast<f32>(NvgMaxFontimageSize))
+                    if (iw > static_cast<f32>(NvgMaxFontimageSize) ||
+                        ih > static_cast<f32>(NvgMaxFontimageSize))
                         iw = ih = NvgMaxFontimageSize;
 
                     ctx->font_images[ctx->font_image_idx + 1] = ctx->params.render_create_texture(
@@ -1725,8 +1725,8 @@ namespace rl::nvg {
 
     i32 transform_inverse(f32* dst, const f32* src)
     {
-        const double det = static_cast<double>(src[0]) * src[3]
-                         - static_cast<double>(src[2]) * src[1];
+        const double det = static_cast<double>(src[0]) * src[3] -
+                           static_cast<double>(src[2]) * src[1];
 
         if (det > -1e-6 && det < 1e-6) {
             transform_identity(dst);
@@ -2300,10 +2300,10 @@ namespace rl::nvg {
             return;
 
         // Handle degenerate cases.
-        if (detail::pt_equals(x0, y0, x1, y1, ctx->dist_tol)
-            || detail::pt_equals(x1, y1, x2, y2, ctx->dist_tol)
-            || detail::dist_pt_seg(x1, y1, x0, y0, x2, y2) < ctx->dist_tol * ctx->dist_tol
-            || radius < ctx->dist_tol) {
+        if (detail::pt_equals(x0, y0, x1, y1, ctx->dist_tol) ||
+            detail::pt_equals(x1, y1, x2, y2, ctx->dist_tol) ||
+            detail::dist_pt_seg(x1, y1, x0, y0, x2, y2) < ctx->dist_tol * ctx->dist_tol ||
+            radius < ctx->dist_tol) {
             line_to(ctx, x1, y1);
             return;
         }
@@ -2503,8 +2503,8 @@ namespace rl::nvg {
                               const f32 rad_top_left, const f32 rad_top_right,
                               const f32 rad_bottom_right, const f32 rad_bottom_left)
     {
-        if (rad_top_left < 0.1f && rad_top_right < 0.1f && rad_bottom_right < 0.1f
-            && rad_bottom_left < 0.1f) {
+        if (rad_top_left < 0.1f && rad_top_right < 0.1f && rad_bottom_right < 0.1f &&
+            rad_bottom_left < 0.1f) {
             rect(ctx, x, y, w, h);
             return;
         }
@@ -2930,8 +2930,8 @@ namespace rl::nvg {
 
         Align old_align{ state->text_align };
         Align haling{ state->text_align & (Align::HLeft | Align::HCenter | Align::HRight) };
-        Align valign{ state->text_align
-                      & (Align::VTop | Align::VMiddle | Align::VBottom | Align::VBaseline) };
+        Align valign{ state->text_align &
+                      (Align::VTop | Align::VMiddle | Align::VBottom | Align::VBaseline) };
 
         f32 lineh{ 0.0f };
         text_metrics_(ctx, nullptr, nullptr, &lineh);
@@ -3085,12 +3085,12 @@ namespace rl::nvg {
                     type = CodepointType::Newline;
                     break;
                 default:
-                    if ((iter.codepoint >= 0x4E00 && iter.codepoint <= 0x9FFF)
-                        || (iter.codepoint >= 0x3000 && iter.codepoint <= 0x30FF)
-                        || (iter.codepoint >= 0xFF00 && iter.codepoint <= 0xFFEF)
-                        || (iter.codepoint >= 0x1100 && iter.codepoint <= 0x11FF)
-                        || (iter.codepoint >= 0x3130 && iter.codepoint <= 0x318F)
-                        || (iter.codepoint >= 0xAC00 && iter.codepoint <= 0xD7AF))
+                    if ((iter.codepoint >= 0x4E00 && iter.codepoint <= 0x9FFF) ||
+                        (iter.codepoint >= 0x3000 && iter.codepoint <= 0x30FF) ||
+                        (iter.codepoint >= 0xFF00 && iter.codepoint <= 0xFFEF) ||
+                        (iter.codepoint >= 0x1100 && iter.codepoint <= 0x11FF) ||
+                        (iter.codepoint >= 0x3130 && iter.codepoint <= 0x318F) ||
+                        (iter.codepoint >= 0xAC00 && iter.codepoint <= 0xD7AF))
                         type = CodepointType::CJKChar;
                     else
                         type = CodepointType::Char;
@@ -3149,25 +3149,25 @@ namespace rl::nvg {
                     row_max_x = q.x1 - row_start_x;
                 }
                 // track last end of a word
-                if (((ptype == CodepointType::Char || ptype == CodepointType::CJKChar)
-                     && type == CodepointType::Space)
-                    || type == CodepointType::CJKChar) {
+                if (((ptype == CodepointType::Char || ptype == CodepointType::CJKChar) &&
+                     type == CodepointType::Space) ||
+                    type == CodepointType::CJKChar) {
                     break_end = iter.str;
                     break_width = row_width;
                     break_max_x = row_max_x;
                 }
                 // track last beginning of a word
-                if ((ptype == CodepointType::Space
-                     && (type == CodepointType::Char || type == CodepointType::CJKChar))
-                    || type == CodepointType::CJKChar) {
+                if ((ptype == CodepointType::Space &&
+                     (type == CodepointType::Char || type == CodepointType::CJKChar)) ||
+                    type == CodepointType::CJKChar) {
                     word_start = iter.str;
                     word_start_x = iter.x;
                     word_min_x = q.x0;
                 }
 
                 // Break to new line when a character is beyond break width.
-                if ((type == CodepointType::Char || type == CodepointType::CJKChar)
-                    && next_width > break_row_width) {
+                if ((type == CodepointType::Char || type == CodepointType::CJKChar) &&
+                    next_width > break_row_width) {
                     // The run length is too long, need to break to new line.
                     if (break_end == row_start) {
                         // The current word is longer than the row length, just break it from here.
@@ -3286,8 +3286,8 @@ namespace rl::nvg {
         const f32 invscale{ 1.0f / scale };
         const Align old_align{ state->text_align };
         const Align h_align{ state->text_align & (Align::HLeft | Align::HCenter | Align::HRight) };
-        const Align v_align{ state->text_align
-                             & (Align::VTop | Align::VMiddle | Align::VBottom | Align::VBaseline) };
+        const Align v_align{ state->text_align &
+                             (Align::VTop | Align::VMiddle | Align::VBottom | Align::VBaseline) };
 
         if (state->font_id == font::INVALID)
             return {};

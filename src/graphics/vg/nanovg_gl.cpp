@@ -161,8 +161,8 @@ namespace rl::nvg::gl {
 
             void stencil_func(GLContext* gl, const GLenum func, const GLint ref, const GLuint mask)
             {
-                if ((gl->stencil_func != func) || (gl->stencil_func_ref != ref)
-                    || (gl->stencil_func_mask != mask)) {
+                if ((gl->stencil_func != func) || (gl->stencil_func_ref != ref) ||
+                    (gl->stencil_func_mask != mask)) {
                     gl->stencil_func = func;
                     gl->stencil_func_ref = ref;
                     gl->stencil_func_mask = mask;
@@ -172,10 +172,10 @@ namespace rl::nvg::gl {
 
             void blend_func_separate(GLContext* gl, const GLBlend* blend)
             {
-                if ((gl->blend_func.src_rgb != blend->src_rgb)
-                    || (gl->blend_func.dst_rgb != blend->dst_rgb)
-                    || (gl->blend_func.src_alpha != blend->src_alpha)
-                    || (gl->blend_func.dst_alpha != blend->dst_alpha)) {
+                if ((gl->blend_func.src_rgb != blend->src_rgb) ||
+                    (gl->blend_func.dst_rgb != blend->dst_rgb) ||
+                    (gl->blend_func.src_alpha != blend->src_alpha) ||
+                    (gl->blend_func.dst_alpha != blend->dst_alpha)) {
                     gl->blend_func = *blend;
                     glBlendFuncSeparate(blend->src_rgb, blend->dst_rgb, blend->src_alpha,
                                         blend->dst_alpha);
@@ -227,8 +227,8 @@ namespace rl::nvg::gl {
             {
                 for (i32 i = 0; i < gl->ntextures; i++) {
                     if (gl->textures[i].id == id) {
-                        if (gl->textures[i].tex != 0
-                            && (gl->textures[i].flags & ImageFlags::NoDelete) == 0)
+                        if (gl->textures[i].tex != 0 &&
+                            (gl->textures[i].flags & ImageFlags::NoDelete) == 0)
                             glDeleteTextures(1, &gl->textures[i].tex);
 
                         std::memset(&gl->textures[i], 0, sizeof(gl->textures[i]));
@@ -450,14 +450,12 @@ namespace rl::nvg::gl {
 
                 if ((gl->flags & CreateFlags::AntiAlias) != 0) {
                     if (create_shader(&gl->shader, "shader", shader_header, "#define EDGE_AA 1\n",
-                                      fill_vert_shader, fill_frag_shader)
-                        == 0)
+                                      fill_vert_shader, fill_frag_shader) == 0)
                         return 0;
                 }
                 else {
                     if (create_shader(&gl->shader, "shader", shader_header, nullptr,
-                                      fill_vert_shader, fill_frag_shader)
-                        == 0)
+                                      fill_vert_shader, fill_frag_shader) == 0)
                         return 0;
                 }
 
@@ -654,12 +652,12 @@ namespace rl::nvg::gl {
                     xform_to_mat3_x4(frag->scissor_mat, invxform);
                     frag->scissor_ext[0] = scissor->extent[0];
                     frag->scissor_ext[1] = scissor->extent[1];
-                    frag->scissor_scale[0] = std::sqrt(scissor->xform[0] * scissor->xform[0]
-                                                       + scissor->xform[2] * scissor->xform[2])
-                                           / fringe;
-                    frag->scissor_scale[1] = std::sqrt(scissor->xform[1] * scissor->xform[1]
-                                                       + scissor->xform[3] * scissor->xform[3])
-                                           / fringe;
+                    frag->scissor_scale[0] = std::sqrt(scissor->xform[0] * scissor->xform[0] +
+                                                       scissor->xform[2] * scissor->xform[2]) /
+                                             fringe;
+                    frag->scissor_scale[1] = std::sqrt(scissor->xform[1] * scissor->xform[1] +
+                                                       scissor->xform[3] * scissor->xform[3]) /
+                                             fringe;
                 }
 
                 std::memcpy(frag->extent, paint->extent, sizeof(frag->extent));
@@ -898,8 +896,8 @@ namespace rl::nvg::gl {
                 blend.src_alpha = convert_blend_func_factor(op.src_alpha);
                 blend.dst_alpha = convert_blend_func_factor(op.dst_alpha);
 
-                if (blend.src_rgb == GL_INVALID_ENUM || blend.dst_rgb == GL_INVALID_ENUM
-                    || blend.src_alpha == GL_INVALID_ENUM || blend.dst_alpha == GL_INVALID_ENUM) {
+                if (blend.src_rgb == GL_INVALID_ENUM || blend.dst_rgb == GL_INVALID_ENUM ||
+                    blend.src_alpha == GL_INVALID_ENUM || blend.dst_alpha == GL_INVALID_ENUM) {
                     blend.src_rgb = GL_ONE;
                     blend.dst_rgb = GL_ONE_MINUS_SRC_ALPHA;
                     blend.src_alpha = GL_ONE;
@@ -1303,8 +1301,8 @@ namespace rl::nvg::gl {
                     glDeleteBuffers(1, &gl->vert_buf);
 
                 for (i32 i = 0; i < gl->ntextures; i++)
-                    if (gl->textures[i].tex != 0
-                        && (gl->textures[i].flags & ImageFlags::NoDelete) == 0)
+                    if (gl->textures[i].tex != 0 &&
+                        (gl->textures[i].flags & ImageFlags::NoDelete) == 0)
                         glDeleteTextures(1, &gl->textures[i].tex);
 
                 std::free(gl->textures);

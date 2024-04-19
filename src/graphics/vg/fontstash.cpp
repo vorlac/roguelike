@@ -38,7 +38,8 @@ namespace rl::nvg::font {
             return 1;
         }
 
-        i32 tt_load_font(Context* context, STTFontImpl* font, const u8* data, i32 /*data_size*/, const i32 font_index)
+        i32 tt_load_font(Context* context, STTFontImpl* font, const u8* data, i32 /*data_size*/,
+                         const i32 font_index)
         {
             i32 stb_error;
             font->font.userdata = context;
@@ -237,8 +238,8 @@ namespace rl::nvg::font {
                 if (atlas->nodes[i].x >= atlas->nodes[i - 1].x + atlas->nodes[i - 1].width)
                     break;
 
-                const i32 shrink{ atlas->nodes[i - 1].x + atlas->nodes[i - 1].width
-                                  - atlas->nodes[i].x };
+                const i32 shrink{ atlas->nodes[i - 1].x + atlas->nodes[i - 1].width -
+                                  atlas->nodes[i].x };
 
                 atlas->nodes[i].x += shrink;
                 atlas->nodes[i].width -= shrink;
@@ -384,13 +385,15 @@ namespace rl::nvg::font {
             }
         }
 
-        void blur(const Context* font_ctx, u8* dst, const i32 w, const i32 h, const i32 dst_stride, const i32 blur)
+        void blur(const Context* font_ctx, u8* dst, const i32 w, const i32 h, const i32 dst_stride,
+                  const i32 blur)
         {
             (void)font_ctx;
 
             if (blur < 1)
                 return;
-            // Calculate the alpha such that 90% of the kernel is within the radius. (Kernel extends to infinity)
+            // Calculate the alpha such that 90% of the kernel is within the radius. (Kernel extends
+            // to infinity)
             const f32 sigma = static_cast<f32>(blur) * 0.57735f;  // 1 / sqrt(3)
             const i32 alpha = static_cast<i32>((1 << APREC) * (1.0f - expf(-2.3f / (sigma + 1.0f))));
             blur_rows(dst, w, h, dst_stride, alpha);
@@ -405,8 +408,9 @@ namespace rl::nvg::font {
         {
             if (font->nglyphs + 1 > font->cglyphs) {
                 font->cglyphs = font->cglyphs == 0 ? 8 : font->cglyphs * 2;
-                font->glyphs = static_cast<Glyph*>(
-                    std::realloc(font->glyphs, sizeof(Glyph) * font->cglyphs));  // NOLINT(bugprone-suspicious-realloc-usage)
+                font->glyphs = static_cast<Glyph*>(std::realloc(
+                    font->glyphs,
+                    sizeof(Glyph) * font->cglyphs));  // NOLINT(bugprone-suspicious-realloc-usage)
 
                 if (font->glyphs == nullptr)
                     return nullptr;
@@ -445,11 +449,11 @@ namespace rl::nvg::font {
             const u32 h = hashint(codepoint) & (HASH_LUT_SIZE - 1);
             i32 i = font->lut[h];
             while (i != -1) {
-                if (font->glyphs[i].codepoint == codepoint && font->glyphs[i].size == isize
-                    && font->glyphs[i].blur == iblur) {
+                if (font->glyphs[i].codepoint == codepoint && font->glyphs[i].size == isize &&
+                    font->glyphs[i].blur == iblur) {
                     glyph = &font->glyphs[i];
-                    if (bitmap_option == FonsGlyphBitmapOptional
-                        || (glyph->x0 >= 0 && glyph->y0 >= 0))
+                    if (bitmap_option == FonsGlyphBitmapOptional ||
+                        (glyph->x0 >= 0 && glyph->y0 >= 0))
                         return glyph;
                     // At this point, glyph exists but the bitmap data is not yet created.
                     break;
@@ -524,8 +528,8 @@ namespace rl::nvg::font {
                 return glyph;
 
             // Rasterize
-            u8* dst = &font_ctx->tex_data[(glyph->x0 + pad)
-                                          + (glyph->y0 + pad) * font_ctx->params.width];
+            u8* dst = &font_ctx->tex_data[(glyph->x0 + pad) +
+                                          (glyph->y0 + pad) * font_ctx->params.width];
             tt_render_glyph_bitmap(&render_font->font, dst, gw - pad * 2, gh - pad * 2,
                                    font_ctx->params.width, scale, scale, g);
 
@@ -572,7 +576,8 @@ namespace rl::nvg::font {
                       FontQuad* q)
         {
             if (prev_glyph_index != -1) {
-                const f32 adv{ scale * static_cast<f32>(tt_get_glyph_kern_advance(&font->font, prev_glyph_index, glyph->index)) };
+                const f32 adv{ scale * static_cast<f32>(tt_get_glyph_kern_advance(
+                                           &font->font, prev_glyph_index, glyph->index)) };
                 *x += std::round(adv + spacing);
             }
 
@@ -621,8 +626,8 @@ namespace rl::nvg::font {
         void flush(Context* font_ctx)
         {
             // Flush texture
-            if (font_ctx->dirty_rect[0] < font_ctx->dirty_rect[2]
-                && font_ctx->dirty_rect[1] < font_ctx->dirty_rect[3]) {
+            if (font_ctx->dirty_rect[0] < font_ctx->dirty_rect[2] &&
+                font_ctx->dirty_rect[1] < font_ctx->dirty_rect[3]) {
                 if (font_ctx->params.render_update != nullptr)
                     font_ctx->params.render_update(font_ctx->params.user_ptr, font_ctx->dirty_rect,
                                                    font_ctx->tex_data);
@@ -654,7 +659,8 @@ namespace rl::nvg::font {
             font_ctx->nverts++;
         }
 
-        f32 get_vert_align(const Context* font_ctx, const Font* font, const Align align, const i16 isize)
+        f32 get_vert_align(const Context* font_ctx, const Font* font, const Align align,
+                           const i16 isize)
         {
             if (font_ctx->params.flags & FonsZeroTopleft) {
                 if ((align & Align::VTop) != 0)
@@ -736,11 +742,9 @@ namespace rl::nvg::font {
             font_ctx->scratch = static_cast<u8*>(std::malloc(SCRATCH_BUF_SIZE));
             if (font_ctx->scratch != nullptr) {
                 // Initialize implementation library
-                if (tt_init(font_ctx) || font_ctx->params.render_create != nullptr
-                    || font_ctx->params.render_create(font_ctx->params.user_ptr,
-                                                      font_ctx->params.width,
-                                                      font_ctx->params.height)
-                           != 0) {
+                if (tt_init(font_ctx) || font_ctx->params.render_create != nullptr ||
+                    font_ctx->params.render_create(font_ctx->params.user_ptr, font_ctx->params.width,
+                                                   font_ctx->params.height) != 0) {
                     font_ctx->atlas = alloc_atlas(font_ctx->params.width, font_ctx->params.height,
                                                   INIT_ATLAS_NODES);
                     if (font_ctx->atlas != nullptr) {
@@ -1327,8 +1331,8 @@ namespace rl::nvg::font {
 
     i32 validate_texture(Context* font_ctx, i32* dirty)
     {
-        if (font_ctx->dirty_rect[0] < font_ctx->dirty_rect[2]
-            && font_ctx->dirty_rect[1] < font_ctx->dirty_rect[3]) {
+        if (font_ctx->dirty_rect[0] < font_ctx->dirty_rect[2] &&
+            font_ctx->dirty_rect[1] < font_ctx->dirty_rect[3]) {
             dirty[0] = font_ctx->dirty_rect[0];
             dirty[1] = font_ctx->dirty_rect[1];
             dirty[2] = font_ctx->dirty_rect[2];

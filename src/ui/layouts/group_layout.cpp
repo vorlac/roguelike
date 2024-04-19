@@ -42,8 +42,8 @@ namespace rl::ui {
 
             const bool indent_cur{ indent && label == nullptr };
             height += target_size.height;
-            width = std::max(width, target_size.width + (2.0f * m_margin)
-                                        + (indent_cur ? m_group_indent : 0.0f));
+            width = std::max(width, target_size.width + (2.0f * m_margin) +
+                                        (indent_cur ? m_group_indent : 0.0f));
             if (label != nullptr)
                 indent = !label->text().empty();
         }
