@@ -138,7 +138,7 @@ namespace rl::ui {
         // Performs applies all Layout computations for the given widget.
         virtual void apply_layout() = 0;
         // update contents of layout based on it's size policy
-        virtual void adjust_for_size_policy(i64 sibling_idx = 0) = 0;
+        virtual void adjust_for_size_policy() = 0;
         // Compute the preferred size for a given Layout and widget
         virtual ds::dims<f32> computed_size() const = 0;
 
