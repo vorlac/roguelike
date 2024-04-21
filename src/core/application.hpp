@@ -211,6 +211,9 @@ namespace rl {
                 delta_time * 1000.0f,                          // delta time (ms)
                 1.0f / delta_time,                             // current fps
                 static_cast<f32>(iterations) / elapsed_time);  // avg fps
+
+            using namespace std::chrono_literals;
+            std::this_thread::sleep_for(30ms);
         }
 
     private:

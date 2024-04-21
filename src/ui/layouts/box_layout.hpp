@@ -68,9 +68,10 @@ namespace rl::ui {
                         m_rect.pt = m_outer_margin.offset();
                     }
                     else {
-                        // not the topmost layout, size will be decided
+                        // not the topmost layout, so size will be decided
                         // by the amount of available space in parent layout
                         const Alignment parent_alignment{ parent_layout->alignment() };
+                        const f32 sibling_count{ static_cast<f32>(siblings.size()) };
                         auto& magnitude{ parent_alignment == Alignment::Vertical
                                              ? total_size.height
                                              : total_size.width };
@@ -90,13 +91,7 @@ namespace rl::ui {
                                            : sibling->width() + sib_outer_margin.horizontal();
                         }
 
-                        const f32 sibling_count{ static_cast<f32>(siblings.size()) };
-                        // no siblings to worry about when stretching
-                        // horizontally, since parent aligns vertically
                         if constexpr (VAlignment == Alignment::Horizontal) {
-                            if (parent_alignment == Alignment::Vertical)
-                                m_rect.size.width = fill_size.width;
-
                             const f32 delta_height{ fill_size.height - magnitude };
                             const f32 height_increase{ delta_height / sibling_count };
                             for (auto [sibling_idx, sibling] : siblings | std::views::enumerate) {
@@ -107,19 +102,23 @@ namespace rl::ui {
                                         : ds::margin<f32>::zero()
                                 };
 
-                                auto rect{ sibling->rect() };
+                                ds::rect<f32> rect{ sibling->rect() };
                                 rect.pt.y += (height_increase + sib_outer.bottom) * static_cast<f32>(sibling_idx);
                                 rect.size.height += height_increase + sib_outer.bottom;
+                                if (parent_alignment == Alignment::Vertical) {
+                                    // no siblings to worry about when stretching
+                                    // horizontally since parent aligns vertically
+                                    rect.size.width = fill_size.width;
+                                }
+                                else {
+                                    // TODO: handle width expansion for nested horizontal layouts
+                                }
+
                                 sibling->set_rect(rect);
                             }
                         }
 
-                        // no siblings to worry about when stretching
-                        // vertically, since parent aligns horizontally
                         if constexpr (VAlignment == Alignment::Vertical) {
-                            if (parent_alignment == Alignment::Horizontal)
-                                m_rect.size.height = fill_size.height;
-
                             const f32 delta_width{ fill_size.width - magnitude };
                             const f32 width_increase{ delta_width / sibling_count };
                             for (auto [sibling_idx, sibling] : siblings | std::views::enumerate) {
@@ -130,12 +129,32 @@ namespace rl::ui {
                                         : ds::margin<f32>::zero()
                                 };
 
-                                auto rect{ sibling->rect() };
+                                ds::rect<f32> rect{ sibling->rect() };
                                 rect.pt.x += (width_increase + sib_outer.right) * static_cast<f32>(sibling_idx);
                                 rect.size.width += width_increase + sib_outer.right;
+                                if (parent_alignment == Alignment::Horizontal) {
+                                    // no siblings to worry about when stretching
+                                    // vertically since parent aligns horizontally
+                                    rect.size.height = fill_size.height;
+                                }
+                                else {
+                                    // TODO: handle width expansion for nested horizontal layouts
+                                }
+
                                 sibling->set_rect(rect);
                             }
                         }
+                    }
+
+                    if (m_children.size() > 0) {
+                        // the recursive call only needs to happen
+                        // for the first child because its size is
+                        // recalculated along with all of the direct
+                        // siblings contained in the parent layout
+                        Widget* child{ m_children.front() };
+                        Layout* child_layout{ child->layout() };
+                        if (child_layout != nullptr)
+                            child_layout->adjust_for_size_policy();
                     }
 
                     break;
@@ -148,12 +167,6 @@ namespace rl::ui {
                 case SizePolicy::Inherit:
                     assert_msg("layout must define a size policy");
                     break;
-            }
-
-            for (Widget* child : m_children) {
-                Layout* child_layout{ child->layout() };
-                if (child_layout != nullptr)
-                    child_layout->adjust_for_size_policy();
             }
         }
 
