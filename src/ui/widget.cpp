@@ -15,7 +15,6 @@
 #include "ui/widgets/scroll_dialog.hpp"
 
 namespace rl::ui {
-
     Widget::Widget(Widget* parent)
         : m_parent{ parent }
     {
@@ -272,7 +271,7 @@ namespace rl::ui {
             m_layout->apply_layout();
             m_layout->adjust_for_size_policy();
         }
-        else if (m_parent == nullptr && m_children.size() == 1) {
+        else if (m_parent == nullptr || m_children.size() == 1) {
             Layout* child_layout{ m_children.front()->layout() };
             if (child_layout != nullptr)
                 child_layout->perform_layout();

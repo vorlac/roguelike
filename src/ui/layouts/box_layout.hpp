@@ -91,6 +91,10 @@ namespace rl::ui {
                                            : sibling->width() + sib_outer_margin.horizontal();
                         }
 
+                        // TODO:
+                        // TODO: Need to handle the sibling alignment..
+                        // TODO: NOT the current widget's alignment here
+                        // TODO:
                         if constexpr (VAlignment == Alignment::Horizontal) {
                             const f32 delta_height{ fill_size.height - magnitude };
                             const f32 height_increase{ delta_height / sibling_count };
@@ -111,6 +115,8 @@ namespace rl::ui {
                                     rect.size.width = fill_size.width;
                                 }
                                 else {
+                                    int a = 123;
+                                    (void)a;
                                     // TODO: handle width expansion for nested horizontal layouts
                                 }
 
@@ -118,6 +124,10 @@ namespace rl::ui {
                             }
                         }
 
+                        // TODO:
+                        // TODO: Need to handle the sibling alignment..
+                        // TODO: NOT the current widget's alignment here
+                        // TODO:
                         if constexpr (VAlignment == Alignment::Vertical) {
                             const f32 delta_width{ fill_size.width - magnitude };
                             const f32 width_increase{ delta_width / sibling_count };
@@ -138,6 +148,8 @@ namespace rl::ui {
                                     rect.size.height = fill_size.height;
                                 }
                                 else {
+                                    int a = 123;
+                                    (void)a;
                                     // TODO: handle width expansion for nested horizontal layouts
                                 }
 
