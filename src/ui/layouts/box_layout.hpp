@@ -91,6 +91,41 @@ namespace rl::ui {
                                            : sibling->width() + sib_outer_margin.horizontal();
                         }
 
+                        // for (auto [sibling_idx, sibling] : siblings | std::views::enumerate) {
+                        //     const Layout* sibling_layout{ sibling->layout() };
+                        //     const ds::margin<f32> sib_outer{
+                        //         sibling_layout != nullptr
+                        //             ? sibling_layout->outer_margin()
+                        //             : ds::margin<f32>::zero()
+                        //     };
+
+                        //    ds::rect<f32> rect{ sibling->rect() };
+                        //    if (sibling_layout->alignment() == Alignment::Vertical) {
+                        //        const f32 delta_height{ fill_size.height - magnitude };
+                        //        const f32 height_increase{ delta_height / sibling_count };
+                        //        rect.pt.y += (height_increase + sib_outer.bottom) * static_cast<f32>(sibling_idx);
+                        //        rect.size.height += height_increase + sib_outer.bottom;
+                        //        if (parent_alignment == Alignment::Horizontal) {
+                        //            // no siblings to worry about when stretching
+                        //            // horizontally since parent aligns vertically
+                        //            rect.size.width = fill_size.width;
+                        //        }
+                        //    }
+                        //    else if (sibling_layout->alignment() == Alignment::Horizontal) {
+                        //        const f32 delta_width{ fill_size.width - magnitude };
+                        //        const f32 width_increase{ delta_width / sibling_count };
+                        //        rect.pt.x += (width_increase + sib_outer.right) * static_cast<f32>(sibling_idx);
+                        //        rect.size.width += width_increase + sib_outer.right;
+                        //        if (parent_alignment == Alignment::Vertical) {
+                        //            // no siblings to worry about when stretching
+                        //            // horizontally since parent aligns vertically
+                        //            rect.size.width = fill_size.width;
+                        //        }
+                        //    }
+
+                        //    sibling->set_rect(rect);
+                        //}
+
                         // TODO:
                         // TODO: Need to handle the sibling alignment..
                         // TODO: NOT the current widget's alignment here

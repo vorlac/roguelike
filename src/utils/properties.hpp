@@ -94,10 +94,10 @@ namespace rl {
     };
 
     enum class Quad : u8_fast {
-        TopLeft     = Side::Top    | Side::Left,
-        TopRight    = Side::Top    | Side::Right,
-        BottomLeft  = Side::Bottom | Side::Left,
-        BottomRight = Side::Bottom | Side::Right,
+        TopLeft     = std::to_underlying(Side::Top    | Side::Left),
+        TopRight    = std::to_underlying(Side::Top    | Side::Right),
+        BottomLeft  = std::to_underlying(Side::Bottom | Side::Left),
+        BottomRight = std::to_underlying(Side::Bottom | Side::Right),
     };
 
     enum class CompassDirection : u8_fast {

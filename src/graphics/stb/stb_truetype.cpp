@@ -5,6 +5,7 @@
 
 #include "core/assert.hpp"
 #include "graphics/stb/stb_truetype.hpp"
+#include "utils/conversions.hpp"
 #include "utils/numeric.hpp"
 
 #define STBTT_RASTERIZER_VERSION 2
@@ -935,7 +936,7 @@ namespace rl::stb {
 
     static void stbtt_csctx_close_shape(stbtt_csctx* ctx)
     {
-        if (ctx->first_x != ctx->x || ctx->first_y != ctx->y)
+        if (math::not_equal(ctx->first_x, ctx->x) || math::not_equal(ctx->first_y, ctx->y))
             stbtt_csctx_v(ctx, STBTT_vline, static_cast<i32>(ctx->first_x),
                           static_cast<i32>(ctx->first_y), 0, 0, 0, 0);
     }
@@ -1173,7 +1174,7 @@ namespace rl::stb {
                             subrs = stbtt_cid_get_glyph_subrs(info, glyph_index);
                         has_subrs = 1;
                     }
-                    // FALLTHROUGH
+                    [[fallthrough]];
                 case 0x1D:  // callgsubr
                     if (sp < 1)
                         return STBTT_CSERR("call(g|)subr stack");
@@ -2850,11 +2851,13 @@ namespace rl::stb {
                         ++n;
                         start = num_points;
 
-                        x = vertices[i].x, y = vertices[i].y;
+                        x = vertices[i].x;
+                        y = vertices[i].y;
                         stbtt_add_point(points, num_points++, x, y);
                         break;
                     case STBTT_vline:
-                        x = vertices[i].x, y = vertices[i].y;
+                        x = vertices[i].x;
+                        y = vertices[i].y;
                         stbtt_add_point(points, num_points++, x, y);
                         break;
                     case STBTT_vcurve:

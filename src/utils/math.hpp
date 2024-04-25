@@ -68,8 +68,8 @@ namespace rl::math {
         if (equal<F, F>(val, 0))
             return 0;
         if (val > 0)
-            return static_cast<auto>(static_cast<i32>(val + 1));
-        return static_cast<auto>(static_cast<i32>(val));
+            return static_cast<i32>(val + 1);
+        return static_cast<i32>(val);
     }
 
     template <rl::integer I>

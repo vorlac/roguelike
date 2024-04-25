@@ -34,6 +34,7 @@ target_compile_options(${PROJECT_NAME}
             #-Wwrite-strings
 
             # Disable warnings which bleed through from godot-cpp's macros.
+            -Wno-switch-default
             -Wno-unused-parameter
             -Wno-c++98-compat
             -Wno-c++98-compat-pedantic
