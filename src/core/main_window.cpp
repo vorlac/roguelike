@@ -212,7 +212,7 @@ namespace rl {
         return result == 0;
     }
 
-    bool MainWindow::set_size(ds::dims<i32> size)
+    bool MainWindow::set_size(const ds::dims<i32> size)
     {
         const i32 result{ SDL3::SDL_SetWindowSize(m_sdl_window, size.width, size.height) };
         debug_assert(result == 0, "failed to set size");
@@ -478,11 +478,12 @@ namespace rl {
         m_gui_canvas->on_character_input(m_keyboard);
     }
 
-    void MainWindow::window_resized_event_callback(const SDL3::SDL_Event&)
+    void MainWindow::window_resized_event_callback(const SDL3::SDL_Event& e)
     {
+        m_mouse.process_motion(e.motion);
+
         const ds::dims<i32>& window_size{ this->get_size() };
         const ds::dims<i32>& framebuf_size{ this->get_render_size() };
-
         const ds::dims render_size{ static_cast<ds::dims<f32>>(window_size) / m_pixel_ratio };
         debug_assert(framebuf_size.area() > 0 && window_size.area() > 0,
                      "invalid window size/location");

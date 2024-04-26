@@ -21,7 +21,7 @@ namespace rl {
     class OpenGLRenderer
     {
     public:
-        struct Properties : public std::bitset<32>
+        struct Properties : std::bitset<32>
         {
             using type = SDL3::SDL_RendererFlags;
 
@@ -32,7 +32,7 @@ namespace rl {
                 VSync = SDL3::SDL_RENDERER_PRESENTVSYNC,
             };
 
-            constexpr inline operator type()
+            constexpr operator type() const
             {
                 return static_cast<type>(this->to_ulong());
             }
@@ -66,13 +66,11 @@ namespace rl {
         ~OpenGLRenderer() = default;
 
         SDL3::SDL_GLContext gl_context() const;
-
-        bool clear() const;
-        bool swap_buffers(const MainWindow& window) const;
-
         [[nodiscard]] ds::dims<i32> get_output_size() const;
         [[nodiscard]] ds::rect<f32> get_viewport() const;
 
+        bool clear() const;
+        bool swap_buffers(const MainWindow& window) const;
         bool set_viewport(const ds::rect<i32>& rect) const;
         bool set_draw_color(ds::color<f32> c) const;
         bool set_target() const;

@@ -109,22 +109,18 @@ namespace rl {
     void Mouse::process_motion(const Event::Data::Motion& motion)
     {
         m_prev_cursor_pos = m_cursor_position;
-        m_cursor_position = {
-            motion.x,
-            motion.y,
-        };
+        m_cursor_position = ds::point<f32>{ motion.x, motion.y };
     }
 
     void Mouse::process_wheel(const Mouse::Event::Data::Wheel& wheel)
     {
         auto new_wheel_pos{ wheel };
-
-        m_prev_wheel_pos = m_wheel_position;
         if (new_wheel_pos.direction == Mouse::Wheel::Direction::Flipped) {
             new_wheel_pos.x *= -1.0f;
             new_wheel_pos.y *= -1.0f;
         }
 
+        m_prev_wheel_pos = m_wheel_position;
         if (new_wheel_pos.x != 0.0f)
             m_wheel_position.x += new_wheel_pos.x;
         if (new_wheel_pos.y != 0.0f)

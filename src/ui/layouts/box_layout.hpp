@@ -97,12 +97,12 @@ namespace rl::ui {
 
                             switch (parent_alignment) {
                                 case Alignment::Horizontal:
-                                    rect.pt.x += (size_increase.width + sib_outer.right) * static_cast<f32>(sibling_idx);
+                                    rect.pt.x += (size_increase.width + sib_outer.right) * sibling_idx;
                                     rect.size.width += size_increase.width + sib_outer.right;
                                     rect.size.height = fill_size.height;
                                     break;
                                 case Alignment::Vertical:
-                                    rect.pt.y += (size_increase.height + sib_outer.bottom) * static_cast<f32>(sibling_idx);
+                                    rect.pt.y += (size_increase.height + sib_outer.bottom) * sibling_idx;
                                     rect.size.height += size_increase.height + sib_outer.bottom;
                                     rect.size.width = fill_size.width;
                                     break;
@@ -115,7 +115,7 @@ namespace rl::ui {
                         }
                     }
 
-                    for (Widget* child : m_children) {
+                    for (const Widget* child : m_children) {
                         Layout* child_layout{ child->layout() };
                         if (child_layout != nullptr)
                             child_layout->adjust_for_size_policy();
@@ -174,7 +174,7 @@ namespace rl::ui {
         virtual ds::dims<f32> computed_size() const override
         {
             ds::dims<f32> computed_size{ ds::dims<f32>::zero() };
-            for (Widget* widget : m_cell_data | std::views::keys) {
+            for (const Widget* widget : m_cell_data | std::views::keys) {
                 const Layout* widget_layout{ widget->layout() };
                 const ds::dims<f32> widget_computed_size{
                     widget_layout != nullptr

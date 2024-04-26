@@ -36,9 +36,9 @@ namespace rl {
             if (gl_major_ver > 3 || (gl_major_ver == 3 && gl_minor_ver >= 3)) {
                 const GLubyte* const gl_ver_str = glGetString(GL_VERSION);
                 const GLubyte* const renderer_str = glGetString(GL_RENDERER);
-                fmt::print("GL_RENDERER = {}", reinterpret_cast<const char*>(renderer_str));
-                fmt::print("GL_VERSION = {}", reinterpret_cast<const char*>(gl_ver_str));
-                fmt::print("OpenGL [{}.{}] Context Created Successfully", gl_major_ver, gl_minor_ver);
+                log::warning("GL_RENDERER = {}", reinterpret_cast<const char*>(renderer_str));
+                log::warning("GL_VERSION = {}", reinterpret_cast<const char*>(gl_ver_str));
+                log::warning("OpenGL [{}.{}] Context Created Successfully", gl_major_ver, gl_minor_ver);
             }
 
             return gl_context;
@@ -77,28 +77,28 @@ namespace rl {
 
     ds::dims<i32> OpenGLRenderer::get_output_size() const
     {
-        debug_assert(false, "not implemented");
+        debug_assert("not implemented");
         return ds::dims<i32>{ 0, 0 };
     }
 
     bool OpenGLRenderer::set_draw_color(ds::color<f32>) const
     {
         constexpr i32 result{ 0 };
-        debug_assert(false, "not implemented");
+        debug_assert("not implemented");
         return result == 0;
     }
 
     bool OpenGLRenderer::set_target() const
     {
         constexpr i32 result{ 0 };
-        debug_assert(false, "not implemented");
+        debug_assert("not implemented");
         return result == 0;
     }
 
     bool OpenGLRenderer::set_draw_blend_mode(const SDL3::SDL_BlendMode) const
     {
         constexpr i32 result{ 0 };
-        debug_assert(false, "not implemented");
+        debug_assert("not implemented");
         return result == 0;
     }
 
