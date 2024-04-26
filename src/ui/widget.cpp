@@ -543,7 +543,6 @@ namespace rl::ui {
     {
         [[maybe_unused]] const std::size_t child_count{ m_children.size() };
         std::erase(m_children, widget);
-
         debug_assert(m_children.size() != child_count, "didn't find widget to delete");
         widget->release_ref();
     }
@@ -551,7 +550,6 @@ namespace rl::ui {
     void Widget::remove_child_at(const u64 index)
     {
         debug_assert(index < m_children.size(), "widget child remove idx out of bounds");
-
         const Widget* widget{ m_children[index] };
         m_children.erase(m_children.begin() + static_cast<ptrdiff_t>(index));
         widget->release_ref();
