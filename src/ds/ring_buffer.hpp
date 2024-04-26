@@ -50,11 +50,12 @@ namespace rl::ds {
                 return m_vacancies > 0;
             });
 
-            runtime_assert(m_occupancies <= this->m_buffer.size(),
-                           "ringbuffer reporting more occupied slots than the max buffer size:\n"
-                               << "  occupancies = " << m_occupancies << std::endl
-                               << "  vacancies   = " << m_vacancies << std::endl
-                               << "  buffer_size = " << m_buffer.size() << std::endl);
+            debug_assert(m_occupancies <= this->m_buffer.size(),
+                         "ringbuffer reporting more occupied slots than the max buffer size:\n"
+                         "  occupancies = {}\n"
+                         "  vacancies   = {}\n"
+                         "  buffer_size = {}\n",
+                         m_occupancies, m_vacancies, m_buffer.size());
 
             // transfer the item to the buffer at the current
             // tail of the then increment the write index

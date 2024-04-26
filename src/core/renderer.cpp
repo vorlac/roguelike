@@ -24,14 +24,14 @@ namespace rl {
             sdl_assert(sdl_window != nullptr,
                        "Attempting to create context from uninitialized window");
             const SDL3::SDL_GLContext gl_context{ SDL3::SDL_GL_CreateContext(sdl_window) };
-            runtime_assert(gl_context != nullptr, "Failed to create OpenGL context");
+            debug_assert(gl_context != nullptr, "Failed to create OpenGL context");
 
             const i32 gl_version = gladLoadGL(SDL3::SDL_GL_GetProcAddress);
             i32 gl_major_ver{ GLAD_VERSION_MAJOR(gl_version) };
             i32 gl_minor_ver{ GLAD_VERSION_MINOR(gl_version) };
 
-            runtime_assert((gl_major_ver >= 3 && gl_minor_ver >= 3 || gl_major_ver > 3),
-                           "Deprecated OpenGL Version Loaded: {}.{}", gl_major_ver, gl_minor_ver);
+            debug_assert((gl_major_ver >= 3 && gl_minor_ver >= 3 || gl_major_ver > 3),
+                         "Deprecated OpenGL Version Loaded: {}.{}", gl_major_ver, gl_minor_ver);
 
             if (gl_major_ver > 3 || (gl_major_ver == 3 && gl_minor_ver >= 3)) {
                 const GLubyte* const gl_ver_str = glGetString(GL_VERSION);
@@ -77,28 +77,28 @@ namespace rl {
 
     ds::dims<i32> OpenGLRenderer::get_output_size() const
     {
-        runtime_assert(false, "not implemented");
+        debug_assert(false, "not implemented");
         return ds::dims<i32>{ 0, 0 };
     }
 
     bool OpenGLRenderer::set_draw_color(ds::color<f32>) const
     {
         constexpr i32 result{ 0 };
-        runtime_assert(false, "not implemented");
+        debug_assert(false, "not implemented");
         return result == 0;
     }
 
     bool OpenGLRenderer::set_target() const
     {
         constexpr i32 result{ 0 };
-        runtime_assert(false, "not implemented");
+        debug_assert(false, "not implemented");
         return result == 0;
     }
 
     bool OpenGLRenderer::set_draw_blend_mode(const SDL3::SDL_BlendMode) const
     {
         constexpr i32 result{ 0 };
-        runtime_assert(false, "not implemented");
+        debug_assert(false, "not implemented");
         return result == 0;
     }
 
@@ -106,7 +106,7 @@ namespace rl {
     {
         std::array buff{ 0, 0, 0, 0 };
         glGetIntegerv(GL_VIEWPORT, buff.data());
-        runtime_assert(buff[2] > 0 && buff[3] > 0, "failed to get viewport");
+        debug_assert(buff[2] > 0 && buff[3] > 0, "failed to get viewport");
 
         return ds::rect<f32>{
             ds::point<f32>{
@@ -122,7 +122,7 @@ namespace rl {
 
     bool OpenGLRenderer::set_viewport(const ds::rect<i32>& rect) const
     {
-        runtime_assert(!rect.is_empty(), "invalid viewport rect being set");
+        debug_assert(!rect.is_empty(), "invalid viewport rect being set");
         glViewport(rect.pt.x, rect.pt.y, rect.size.width, rect.size.height);
         return !rect.is_empty();
     }

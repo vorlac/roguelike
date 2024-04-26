@@ -102,7 +102,7 @@ namespace rl::ui {
         }
 
     public:
-        // Performs applies all Layout computations for the given widget.
+        // Performs all Layout computations for the given widget.
         virtual void apply_layout() = 0;
         // update contents of layout based on it's size policy
         virtual void adjust_for_size_policy() = 0;

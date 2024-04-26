@@ -132,7 +132,7 @@ namespace rl::ui {
     //            this->computed_size(),
     //        };
 
-    //        // runtime_assert(owner_rect.contains(m_layout_rect) || owner_rect == m_layout_rect,
+    //        // debug_assert(owner_rect.contains(m_layout_rect) || owner_rect == m_layout_rect,
     //        //                "rect mismatch");
 
     //        m_owner->set_rect(std::move(owner_rect));

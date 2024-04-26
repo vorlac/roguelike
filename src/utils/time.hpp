@@ -17,7 +17,7 @@ SDL_C_LIB_END
 namespace rl::inline utils {
     // time duration units used to interpret
     // as well as convert between timer values
-    enum class TimeDuration : rl::u64 {
+    enum class TimeDuration : u64 {
         // clang-format off
         Unknown      = 0,
         Second       = 1,
@@ -55,7 +55,7 @@ namespace rl::inline utils {
                 return TimeDuration::Millisecond;
 
             // TODO: is the freq always an exact ratio?
-            runtime_assert(false, "unknow perf timer tick frequency");
+            debug_assert(false, "unknow perf timer tick frequency");
             return TimeDuration::Unknown;
         }
 

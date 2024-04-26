@@ -43,8 +43,8 @@ namespace rl::gl {
             glGenBuffers(1, &m_vbo_positions_id);
 
             // compile shaders
-            const bool shaders_valid = m_shader.compile();
-            runtime_assert(shaders_valid, "Failed to compile shaders");
+            [[maybe_unused]] const bool shaders_valid = m_shader.compile();
+            debug_assert(shaders_valid, "Failed to compile shaders");
 
             m_rect_colors_data.reserve(m_rect_count);
             m_rect_positions_data.reserve(m_rect_count);

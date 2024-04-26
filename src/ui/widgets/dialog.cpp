@@ -238,7 +238,7 @@ namespace rl::ui {
                             return true;
 
                         default:
-                            assert_msg("Invalid/unhandled resize grab location");
+                            debug_assert("Invalid/unhandled resize grab location");
                             [[fallthrough]];
                         case Side::None:
                             break;
@@ -248,7 +248,7 @@ namespace rl::ui {
             }
 
             default:
-                assert_msg("Invalid/unsupported Dialog::Mode");
+                debug_assert("Invalid/unsupported Dialog::Mode");
                 [[fallthrough]];
             case Dialog::Mode::None:
                 [[fallthrough]];
@@ -275,8 +275,8 @@ namespace rl::ui {
             case Dialog::Mode::Resizing:
             {
                 // m_resize_grab_location = m_rect.edge_overlap(RESIZE_GRAB_BUFFER, mouse.pos());
-                runtime_assert(m_resize_grab_location != Side::None,
-                               "dialog resizing without grab location");
+                debug_assert(m_resize_grab_location != Side::None,
+                             "dialog resizing without grab location");
                 return m_resize_grab_location != Side::None;
             }
             case Dialog::Mode::None:
@@ -319,7 +319,7 @@ namespace rl::ui {
         if (m_button_panel != nullptr)
             m_button_panel->show();
 
-        auto context{ m_renderer->context() };
+        const auto context{ m_renderer->context() };
         nvg::set_font_size(context, m_theme->dialog_title_font_size);
         nvg::set_font_face(context, m_theme->dialog_title_font_name.data());
 
@@ -327,7 +327,7 @@ namespace rl::ui {
         nvg::text_bounds(context, ds::point<f32>::zero(), m_title, bounds);
 
         constexpr static f32 TEXT_SIZE_WIDTH_PADDING{ 20.0f };
-        ds::rect<f32> bounding_rect{
+        const ds::rect<f32> bounding_rect{
             ds::point<f32>::zero(),
             ds::dims<f32>{
                 std::max(result.width, bounds.size.width + TEXT_SIZE_WIDTH_PADDING),

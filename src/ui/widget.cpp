@@ -27,8 +27,7 @@ namespace rl::ui {
     Widget::Widget(Widget* parent, const std::unique_ptr<NVGRenderer>& vg_renderer)
         : Widget{ parent }
     {
-        runtime_assert(m_renderer == nullptr,
-                       "widget renderer already set");
+        debug_assert(m_renderer == nullptr, "widget renderer already set");
         if (m_renderer == nullptr)
             m_renderer = vg_renderer.get();
     }
@@ -62,7 +61,8 @@ namespace rl::ui {
 
     void Widget::assign_layout(Layout* layout)
     {
-        runtime_assert(m_layout == nullptr, "overwriting existing layout");
+        debug_assert(m_layout == nullptr, "overwriting existing layout");
+        debug_assert(m_children.empty(), "layout must be an only child");
         this->add_child(layout);
     }
 
@@ -265,18 +265,30 @@ namespace rl::ui {
                  : this->preferred_size();
     }
 
+    // TODO: move to Canvas to guarantee top level calls only
     void Widget::perform_layout()
     {
-        this->set_recalc_needed(true);
-        if (m_layout != nullptr) {
-            m_layout->apply_layout();
+        if (m_layout != nullptr)
             m_layout->adjust_for_size_policy();
-        }
-        else if (m_parent == nullptr || m_children.size() == 1) {
+        else if (m_parent == nullptr && m_children.size() == 1) {
             Layout* child_layout{ m_children.front()->layout() };
-            if (child_layout != nullptr)
-                child_layout->perform_layout();
+            if (child_layout != nullptr) {
+                child_layout->apply_layout();
+                if (m_min_size != m_rect.size) [[unlikely]]
+                    this->set_min_size(child_layout->size() + child_layout->outer_margin());
+                child_layout->adjust_for_size_policy();
+            }
         }
+        else {
+            Layout* parent_layout{ m_parent->layout() };
+            if (parent_layout != nullptr) {
+                //
+            }
+        }
+
+        // for (Widget* child : m_children) {
+        //     child->perform_layout();
+        // }
     }
 
     void Widget::perform_layout_orig()
@@ -313,7 +325,7 @@ namespace rl::ui {
             // TODO: see if min sizes can be precomputed as well to prevent this from being possible
             // if we're here, but max_size isn't valid (negative dimensions or an area of 0)
             // then we probably want to skip the size policy widget arrangements below...
-            runtime_assert(max_size.is_valid(), "couldn't determine upper bound for size");
+            debug_assert(max_size.is_valid(), "couldn't determine upper bound for size");
 
             if (m_layout->size_policy() == SizePolicy::Prefered) {
                 const Alignment alignment{ m_layout->alignment() };
@@ -514,7 +526,7 @@ namespace rl::ui {
 
     void Widget::add_child(const u64 index, Widget* widget)
     {
-        runtime_assert(index <= this->child_count(), "child widget index out of bounds");
+        debug_assert(index <= this->child_count(), "child widget index out of bounds");
         m_children.insert(m_children.begin() + static_cast<i32>(index), widget);
 
         widget->acquire_ref();
@@ -529,16 +541,16 @@ namespace rl::ui {
 
     void Widget::remove_child(const Widget* widget)
     {
-        const std::size_t child_count{ m_children.size() };
+        [[maybe_unused]] const std::size_t child_count{ m_children.size() };
         std::erase(m_children, widget);
 
-        runtime_assert(m_children.size() != child_count, "didn't find widget to delete");
+        debug_assert(m_children.size() != child_count, "didn't find widget to delete");
         widget->release_ref();
     }
 
     void Widget::remove_child_at(const u64 index)
     {
-        runtime_assert(index < m_children.size(), "widget child remove idx out of bounds");
+        debug_assert(index < m_children.size(), "widget child remove idx out of bounds");
 
         const Widget* widget{ m_children[index] };
         m_children.erase(m_children.begin() + static_cast<ptrdiff_t>(index));
@@ -639,17 +651,17 @@ namespace rl::ui {
         m_cursor = cursor;
     }
 
-    void Widget::set_min_size(const ds::dims<f32> min_size)
+    void Widget::set_min_size(const ds::dims<f32> size)
     {
-        m_min_size = min_size;
+        m_min_size = size;
     }
 
-    void Widget::set_max_size(const ds::dims<f32> max_size)
+    void Widget::set_max_size(const ds::dims<f32> size)
     {
-        m_max_size = max_size;
+        m_max_size = size;
         if (m_max_size.is_invalid()) {
-            m_max_size.width = math::max(1.0f, max_size.width);
-            m_max_size.height = math::max(1.0f, max_size.height);
+            m_max_size.width = math::max(1.0f, size.width);
+            m_max_size.height = math::max(1.0f, size.height);
         }
     }
 
@@ -714,7 +726,7 @@ namespace rl::ui {
             widget = widget->parent();
 
         Canvas* canvas{ dynamic_cast<Canvas*>(widget) };
-        runtime_assert(canvas != nullptr, "failed to get top level UI canvas");
+        debug_assert(canvas != nullptr, "failed to get top level UI canvas");
         canvas->update_focus(this);
     }
 
@@ -766,7 +778,7 @@ namespace rl::ui {
 
     f32 Widget::icon_scale() const
     {
-        runtime_assert(m_theme != nullptr, "theme not set");
+        debug_assert(m_theme != nullptr, "theme not set");
         return m_theme->icon_scale * m_icon_extra_scale;
     }
 }

@@ -91,8 +91,8 @@ namespace rl::ui {
             return ds::dims<f32>::zero();
 
         const auto context{ m_renderer->context() };
-        runtime_assert(Align::None != m_text_alignment,
-                       "invalid text alignment value assigned in label");
+        debug_assert(Align::None != m_text_alignment,
+                     "invalid text alignment value assigned in label");
 
         m_renderer->set_text_properties_(m_text_font, m_font_size, m_text_alignment);
 

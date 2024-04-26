@@ -1975,7 +1975,7 @@ namespace rl::nvg {
         stb::stbi_convert_iphone_png_to_rgb(1);
         u8* img = stb::stbi_load(filename, &w, &h, &n, 4);
         if (img == nullptr) {
-            assert_msg("Failed to load {} - {}\n", filename, stb::stbi_failure_reason());
+            debug_assert("Failed to load {} - {}\n", filename, stb::stbi_failure_reason());
             return 0;
         }
 
@@ -1992,7 +1992,7 @@ namespace rl::nvg {
         i32 n{ 0 };
         u8* img = stb::stbi_load_from_memory(data, ndata, &w, &h, &n, 4);
         if (img == nullptr) {
-            assert_msg("Failed to image - {}\n", stb::stbi_failure_reason());
+            debug_assert("Failed to image - {}\n", stb::stbi_failure_reason());
             return 0;
         }
 
@@ -2810,14 +2810,14 @@ namespace rl::nvg {
     {
         State* state = detail::get_state(ctx);
         state->font_id = font::get_font_by_name(ctx->fs, font);
-        runtime_assert(state->font_id != text::font::InvalidHandle, "failed to set font: {}", font);
+        debug_assert(state->font_id != text::font::InvalidHandle, "failed to set font: {}", font);
     }
 
     void set_font_face(Context* ctx, const std::string_view& font)
     {
         State* state{ detail::get_state(ctx) };
         state->font_id = font::get_font_by_name(ctx->fs, font.data());
-        runtime_assert(state->font_id != text::font::InvalidHandle, "failed to set font: {}", font);
+        debug_assert(state->font_id != text::font::InvalidHandle, "failed to set font: {}", font);
     }
 
     void set_font_face(Context* ctx, const std::string& font)
@@ -2830,7 +2830,7 @@ namespace rl::nvg {
     {
         State* state{ detail::get_state(ctx) };
         if (state->font_id == font::INVALID) {
-            assert_msg("nvg::draw_text: invalid font");
+            debug_assert("nvg::draw_text: invalid font");
             return pos.x;
         }
 
@@ -2868,7 +2868,7 @@ namespace rl::nvg {
 
                 if (detail::alloc_text_atlas(ctx) == 0) {
                     // no memory :(
-                    assert_msg("allocation for text atlas failed");
+                    debug_assert("allocation for text atlas failed");
                     break;
                 }
 
@@ -2878,7 +2878,7 @@ namespace rl::nvg {
                 font::text_iter_next(ctx->fs, &iter, &q);
                 if (iter.prev_glyph_index == -1) {
                     // still can not find glyph? font size may be too small or negative
-                    assert_msg("nvg::draw_text : failed to find glyph to render");
+                    debug_assert("nvg::draw_text : failed to find glyph to render");
                     break;
                 }
             }
@@ -2924,7 +2924,7 @@ namespace rl::nvg {
     {
         State* state{ detail::get_state(ctx) };
         if (state->font_id == font::INVALID) {
-            assert_msg("font not loaded");
+            debug_assert("font not loaded");
             return;
         }
 

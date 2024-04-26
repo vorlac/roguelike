@@ -40,7 +40,7 @@ namespace rl {
             // nvg_flags |= nvg::gl::CreateFlags::Debug;
 
             nvg::Context* nvg_context{ nvg::gl::create_gl_context(nvg_flags) };
-            runtime_assert(nvg_context != nullptr, "Failed to create NVG context");
+            debug_assert(nvg_context != nullptr, "Failed to create NVG context");
             return nvg_context;
         };
     }
@@ -156,7 +156,7 @@ namespace rl {
         // Creates font by loading it from the specified memory chunk.
         // Returns handle to the font.
         text::font::handle fh{ nvg::create_font_mem(m_nvg_context.get(), font_name, font_ttf) };
-        runtime_assert(fh != text::font::InvalidHandle, "failed to load font: {}", font_name);
+        debug_assert(fh != text::font::InvalidHandle, "failed to load font: {}", font_name);
         return fh;
     }
 
@@ -197,7 +197,7 @@ namespace rl {
 
     ds::dims<f32> NVGRenderer::get_text_size(const std::string&) const
     {
-        assert_cond(false);
+        debug_assert(false);
         return ds::dims<f32>::zero();
     }
 

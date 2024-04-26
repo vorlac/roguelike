@@ -168,9 +168,9 @@ namespace rl::inline cast {
     constexpr To to(const From in)
     {
         const bool value_in_bounds{ within_bounds<To, From>::value(in) };
-        runtime_assert(value_in_bounds,
-                       "narrowing integer numeric cast results in overflow {}  ({}) -> {}",
-                       typeid(From).name(), in, typeid(To).name());
+        debug_assert(value_in_bounds,
+                     "narrowing integer numeric cast results in overflow {}  ({}) -> {}",
+                     typeid(From).name(), in, typeid(To).name());
 
         return static_cast<To>(in);
     }
@@ -181,9 +181,9 @@ namespace rl::inline cast {
     constexpr To to(const From in)
     {
         const bool value_in_bounds{ within_bounds<To, From>::value(in) };
-        runtime_assert(value_in_bounds,
-                       "narrowing integer numeric cast results in overflow {}  ({}) -> {}",
-                       typeid(From).name(), in, typeid(To).name());
+        debug_assert(value_in_bounds,
+                     "narrowing integer numeric cast results in overflow {}  ({}) -> {}",
+                     typeid(From).name(), in, typeid(To).name());
 
         return static_cast<To>(in);
     }

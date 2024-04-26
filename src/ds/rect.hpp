@@ -410,7 +410,6 @@ namespace rl::ds {
         // Checks if the rect shares any space with pt
         [[nodiscard]]
         constexpr bool overlaps(const point<T>& pnt) const
-
         {
             return (pnt.x >= this->pt.x && pnt.x <= this->pt.x + this->size.width) &&
                    (pnt.y >= this->pt.y && pnt.y <= this->pt.y + this->size.height);
@@ -571,7 +570,7 @@ namespace rl::ds {
                     };
                 }
                 default:
-                    assert_msg("invalid axis value");
+                    debug_assert("invalid axis value");
                     return {};
             }
         }

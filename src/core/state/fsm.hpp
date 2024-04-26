@@ -31,14 +31,14 @@ namespace rl {
 
         void pop(auto&& s)
         {
-            // runtime_assert(m_states.size() > 0, "FSM has no active state");
+            // debug_assert(m_states.size() > 0, "FSM has no active state");
             // m_states.top().on_exit();
             // m_states.pop();
         }
 
         auto current()
         {
-            // runtime_assert(m_states.size() > 0, "FSM has no active state");
+            // debug_assert(m_states.size() > 0, "FSM has no active state");
             // auto& ret = m_states.top();
             // return ret;
             // static_cast<typeid(std::decay_t<decltype(ret)>(ret).type().hash_code)>(ret);

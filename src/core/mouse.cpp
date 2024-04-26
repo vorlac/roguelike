@@ -24,9 +24,9 @@ namespace rl {
         if (m_active_cursor == cursor_id)
             return false;
 
-        runtime_assert(static_cast<u64>(cursor_id) < m_system_cursors.size(), "invalid cursor idx");
+        debug_assert(static_cast<u64>(cursor_id) < m_system_cursors.size(), "invalid cursor idx");
         SDL3::SDL_Cursor* cursor{ m_system_cursors[cursor_id] };
-        runtime_assert(cursor != nullptr, "invalid cursor");
+        debug_assert(cursor != nullptr, "invalid cursor");
 
         const i32 result{ SDL3::SDL_SetCursor(cursor) };
         sdl_assert(result == 0, "failed to set cursor: {}", std::to_underlying(cursor_id));
@@ -78,7 +78,7 @@ namespace rl {
 
     void Mouse::process_button_down(const Mouse::Button::ID mouse_button)
     {
-        runtime_assert(mouse_button - 1 < Mouse::Button::Count, "invalid mouse button");
+        debug_assert(mouse_button - 1 < Mouse::Button::Count, "invalid mouse button");
 
         // store it as held
         m_buttons_held |= m_buttons_pressed;
@@ -90,7 +90,7 @@ namespace rl {
 
     void Mouse::process_button_up(const Mouse::Button::ID mouse_button)
     {
-        runtime_assert(mouse_button - 1 < Mouse::Button::Count, "invalid mouse button");
+        debug_assert(mouse_button - 1 < Mouse::Button::Count, "invalid mouse button");
 
         // set in released buttons
         m_buttons_released |= SDL_BUTTON(mouse_button);

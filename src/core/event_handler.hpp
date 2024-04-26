@@ -17,8 +17,8 @@ namespace rl {
                 return ret;
 
             const auto window{ static_cast<MainWindow*>(data) };
-            runtime_assert(e->window.windowID == window->window_id(),
-                           "main window resize event callback window id mismatch");
+            debug_assert(e->window.windowID == window->window_id(),
+                         "main window resize event callback window id mismatch");
 
             window->window_resized_event_callback(*e);
             return ret;
@@ -144,7 +144,7 @@ namespace rl {
                         break;
 
                     default:
-                        // runtime_assert(false, "unhandled event type");
+                        // debug_assert(false, "unhandled event type");
                         break;
                 }
             }

@@ -45,8 +45,8 @@ namespace rl {
     public:
         Application()
         {
-            bool status{ this->init_subsystem(Subsystem::All) };
-            runtime_assert(status, "failed to init SDL subsystems");
+            [[maybe_unused]] bool status{ this->init_subsystem(Subsystem::All) };
+            debug_assert(status, "failed to init SDL subsystems");
             m_main_window = std::make_unique<MainWindow>("Roguelite [OpenGL Window]");
             m_event_handler = EventHandler{ m_main_window };
         }
@@ -133,8 +133,8 @@ namespace rl {
                 this->update();
                 this->render();
                 this->print_loop_stats(m_timer.delta());
-                using namespace std::chrono_literals;
-                std::this_thread::sleep_for(30ms);
+                // using namespace std::chrono_literals;
+                // std::this_thread::sleep_for(30ms);
             }
 
             ret &= this->teardown();
@@ -184,7 +184,7 @@ namespace rl {
         bool init_subsystem(const Subsystem::ID flags) const
         {
             const i32 result{ SDL3::SDL_Init(flags) };
-            runtime_assert(result == 0, "failed to init subsystem");
+            debug_assert(result == 0, "failed to init subsystem");
             return result == 0;
         }
 
@@ -216,7 +216,7 @@ namespace rl {
         }
 
     private:
-        Timer<f32> m_timer{};
+        Timer<> m_timer{};
         std::unique_ptr<MainWindow> m_main_window{};
         EventHandler m_event_handler{};
     };

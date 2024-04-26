@@ -36,7 +36,7 @@ namespace rl::stb {
 
         void stbtt_buf_seek(stbtt_buf* b, const i32 o)
         {
-            assert_cond(!(o > b->size || o < 0));
+            debug_assert(!(o > b->size || o < 0));
             b->cursor = (o > b->size || o < 0) ? b->size : o;
         }
 
@@ -56,7 +56,7 @@ namespace rl::stb {
         {
             u32 v{ 0 };
             if (!std::is_constant_evaluated()) {
-                assert_cond(n >= 1 && n <= 4);
+                debug_assert(n >= 1 && n <= 4);
             }
             for (i32 i = 0; i < n; i++)
                 v = (v << 8) | stbtt_buf_get8(b);
@@ -76,7 +76,7 @@ namespace rl::stb {
         stbtt_buf stbtt_new_buf(void* p, const size_t size)
         {
             stbtt_buf r;
-            assert_cond(size < 0x40000000);
+            debug_assert(size < 0x40000000);
             r.data = static_cast<u8*>(p);
             r.size = static_cast<i32>(size);
             r.cursor = 0;
@@ -99,7 +99,7 @@ namespace rl::stb {
             i32 count = stbtt_buf_get16(b);
             if (count) {
                 i32 offsize = stbtt_buf_get8(b);
-                assert_cond(offsize >= 1 && offsize <= 4);
+                debug_assert(offsize >= 1 && offsize <= 4);
                 stbtt_buf_skip(b, offsize * count);
                 stbtt_buf_skip(b, stbtt_buf_get(b, offsize) - 1);
             }
@@ -120,14 +120,14 @@ namespace rl::stb {
             if (b0 == 29)
                 return stbtt_buf_get32(b);
 
-            assert_cond(false);
+            debug_assert(false);
             return 0;
         }
 
         void stbtt_cff_skip_operand(stbtt_buf* b)
         {
             i32 b0 = stbtt_buf_peek8(b);
-            assert_cond(b0 >= 28);
+            debug_assert(b0 >= 28);
             if (b0 == 30) {
                 stbtt_buf_skip(b, 1);
                 while (b->cursor < b->size) {
@@ -176,8 +176,8 @@ namespace rl::stb {
             stbtt_buf_seek(&b, 0);
             i32 count = stbtt_buf_get16(&b);
             i32 offsize = stbtt_buf_get8(&b);
-            assert_cond(i >= 0 && i < count);
-            assert_cond(offsize >= 1 && offsize <= 4);
+            debug_assert(i >= 0 && i < count);
+            debug_assert(offsize >= 1 && offsize <= 4);
             stbtt_buf_skip(&b, i * offsize);
             i32 start = stbtt_buf_get(&b, offsize);
             i32 end = stbtt_buf_get(&b, offsize);
@@ -451,7 +451,7 @@ namespace rl::stb {
             return 0;
         }
         if (format == 2) {
-            assert_cond(0);  // @TODO: high-byte mapping for japanese/chinese/korean
+            debug_assert(0);  // @TODO: high-byte mapping for japanese/chinese/korean
             return 0;
         }
         if (format == 4) {  // standard mapping for windows fonts: binary search collection of
@@ -526,7 +526,7 @@ namespace rl::stb {
             return 0;  // not found
         }
         // @TODO
-        assert_cond(0);
+        debug_assert(0);
         return 0;
     }
 
@@ -551,7 +551,7 @@ namespace rl::stb {
     {
         i32 g1, g2;
 
-        assert_cond(!info->cff.size);
+        debug_assert(!info->cff.size);
 
         if (glyph_index >= info->num_glyphs)
             return -1;  // glyph index out of range
@@ -814,7 +814,7 @@ namespace rl::stb {
                 }
                 else {
                     // @TODO handle matching point
-                    assert_cond(0);
+                    debug_assert(0);
                 }
                 if (flags & (1 << 3)) {  // WE_HAVE_A_SCALE
                     mtx[0] = mtx[3] = tt_aligned_i16(comp) / 16384.0f;
@@ -1324,7 +1324,7 @@ namespace rl::stb {
                 std::malloc(count_ctx.num_vertices * sizeof(stbtt_vertex)));
             output_ctx.pvertices = *pvertices;
             if (stbtt_run_charstring(info, glyph_index, &output_ctx)) {
-                assert_cond(output_ctx.num_vertices == count_ctx.num_vertices);
+                debug_assert(output_ctx.num_vertices == count_ctx.num_vertices);
                 return output_ctx.num_vertices;
             }
         }
@@ -1936,7 +1936,7 @@ namespace rl::stb {
     {
         stbtt_active_edge* z = (stbtt_active_edge*)stbtt_hheap_alloc(hh, sizeof(*z), userdata);
         f32 dxdy = (e->x1 - e->x0) / (e->y1 - e->y0);
-        assert_cond(z != NULL);
+        debug_assert(z != NULL);
         if (!z)
             return z;
 
@@ -1966,8 +1966,8 @@ namespace rl::stb {
         stbtt_active_edge* z = static_cast<stbtt_active_edge*>(
             stbtt_hheap_alloc(hh, sizeof(*z), userdata));
         f32 dxdy = (e->x1 - e->x0) / (e->y1 - e->y0);
-        assert_cond(z != NULL);
-        // assert_cond(e->y0 <= start_point);
+        debug_assert(z != NULL);
+        // debug_assert(e->y0 <= start_point);
 
         if (!z)
             return z;
@@ -2073,7 +2073,7 @@ namespace rl::stb {
                     stbtt_active_edge* z = *step;
                     if (z->ey <= scan_y) {
                         *step = z->next;  // delete from list
-                        assert_cond(z->direction);
+                        debug_assert(z->direction);
                         z->direction = 0;
                         stbtt_hheap_free(&hh, z);
                     }
@@ -2156,8 +2156,8 @@ namespace rl::stb {
     {
         if (y0 == y1)
             return;
-        assert_cond(y0 < y1);
-        assert_cond(e->sy <= e->ey);
+        debug_assert(y0 < y1);
+        debug_assert(e->sy <= e->ey);
         if (y0 > e->ey)
             return;
         if (y1 < e->sy)
@@ -2172,22 +2172,22 @@ namespace rl::stb {
         }
 
         if (x0 == x)
-            assert_cond(x1 <= x + 1);
+            debug_assert(x1 <= x + 1);
         else if (x0 == x + 1)
-            assert_cond(x1 >= x);
+            debug_assert(x1 >= x);
         else if (x0 <= x)
-            assert_cond(x1 <= x);
+            debug_assert(x1 <= x);
         else if (x0 >= x + 1)
-            assert_cond(x1 >= x + 1);
+            debug_assert(x1 >= x + 1);
         else
-            assert_cond(x1 >= x && x1 <= x + 1);
+            debug_assert(x1 >= x && x1 <= x + 1);
 
         if (x0 <= x && x1 <= x)
             scanline[x] += e->direction * (y1 - y0);
         else if (x0 >= x + 1 && x1 >= x + 1)
             ;
         else {
-            assert_cond(x0 >= x && x0 <= x + 1 && x1 >= x && x1 <= x + 1);
+            debug_assert(x0 >= x && x0 <= x + 1 && x1 >= x && x1 <= x + 1);
             scanline[x] += e->direction * (y1 - y0) * (1 - ((x0 - x) + (x1 - x)) / 2);  // coverage
                                                                                         // = 1 -
                                                                                         // average x
@@ -2198,8 +2198,8 @@ namespace rl::stb {
     static f32 stbtt_sized_trapezoid_area(const f32 height, const f32 top_width,
                                           const f32 bottom_width)
     {
-        assert_cond(top_width >= 0);
-        assert_cond(bottom_width >= 0);
+        debug_assert(top_width >= 0);
+        debug_assert(bottom_width >= 0);
         return (top_width + bottom_width) / 2.0f * height;
     }
 
@@ -2223,7 +2223,7 @@ namespace rl::stb {
             // brute force every pixel
 
             // compute intersection points with top & bottom
-            assert_cond(e->ey >= y_top);
+            debug_assert(e->ey >= y_top);
 
             if (e->fdx == 0) {
                 f32 x0 = e->fx;
@@ -2246,7 +2246,7 @@ namespace rl::stb {
                 f32 x_top, x_bottom;
                 f32 sy0, sy1;
                 f32 dy = e->fdy;
-                assert_cond(e->sy <= y_bottom && e->ey >= y_top);
+                debug_assert(e->sy <= y_bottom && e->ey >= y_top);
 
                 // compute endpoints of line segment clipped to this scanline (if the
                 // line segment starts on this scanline. x0 is the intersection of the
@@ -2275,7 +2275,7 @@ namespace rl::stb {
                         // simple case, only spans one pixel
                         i32 x = static_cast<i32>(x_top);
                         f32 height = (sy1 - sy0) * e->direction;
-                        assert_cond(x >= 0 && x < len);
+                        debug_assert(x >= 0 && x < len);
                         scanline[x] += stbtt_position_trapezoid_area(height, x_top, x + 1.0f,
                                                                      x_bottom, x + 1.0f);
                         scanline_fill[x] += height;  // everything right of this pixel is filled
@@ -2293,8 +2293,8 @@ namespace rl::stb {
                             dy = -dy;
                             t = x0, x0 = xb, xb = t;
                         }
-                        assert_cond(dy >= 0);
-                        assert_cond(dx >= 0);
+                        debug_assert(dy >= 0);
+                        debug_assert(dx >= 0);
 
                         i32 x1 = static_cast<i32>(x_top);
                         i32 x2 = static_cast<i32>(x_bottom);
@@ -2367,9 +2367,9 @@ namespace rl::stb {
                             scanline[x] += area + step / 2;  // area of trapezoid is 1*step/2
                             area += step;
                         }
-                        assert_cond(std::fabs(area) <= 1.01f);  // accumulated error from area +=
-                                                                // step unless we round step down
-                        assert_cond(sy1 > y_final - 0.01f);
+                        debug_assert(std::fabs(area) <= 1.01f);  // accumulated error from area +=
+                                                                 // step unless we round step down
+                        debug_assert(sy1 > y_final - 0.01f);
 
                         // area covered in the last pixel is the rectangle from all the pixels to
                         // the left, plus the trapezoid filled by the line segment in this pixel all
@@ -2493,7 +2493,7 @@ namespace rl::stb {
                 stbtt_active_edge* z = *step;
                 if (z->ey <= scan_y_top) {
                     *step = z->next;  // delete from list
-                    assert_cond(z->direction);
+                    debug_assert(z->direction);
                     z->direction = 0;
                     stbtt_hheap_free(&hh, z);
                 }
@@ -2514,8 +2514,8 @@ namespace rl::stb {
                                 z->ey = scan_y_top;
                             }
                         }
-                        assert_cond(z->ey >= scan_y_top);  // if we get really unlucky a tiny bit
-                                                           // of an edge can be out of bounds
+                        debug_assert(z->ey >= scan_y_top);  // if we get really unlucky a tiny bit
+                                                            // of an edge can be out of bounds
                         // insert at front
                         z->next = active;
                         active = z;
@@ -3083,8 +3083,8 @@ namespace rl::stb {
             if (y + gh + 1 >= ph)     // check if it fits vertically AFTER potentially moving to next
                                       // row
                 return -i;
-            assert_cond(x + gw < pw);
-            assert_cond(y + gh < ph);
+            debug_assert(x + gw < pw);
+            debug_assert(y + gh < ph);
             stbtt_make_glyph_bitmap(&f, pixels + x + y * pw, gw, gh, pw, scale, scale, g);
             chardata[i].x0 = static_cast<i16>(x);
             chardata[i].y0 = static_cast<i16>(y);
@@ -3245,8 +3245,8 @@ namespace rl::stb {
     void stbtt_pack_set_oversampling(stbtt_pack_context* spc, const u32 h_oversample,
                                      const u32 v_oversample)
     {
-        assert_cond(h_oversample <= MaxOversample);
-        assert_cond(v_oversample <= MaxOversample);
+        debug_assert(h_oversample <= MaxOversample);
+        debug_assert(v_oversample <= MaxOversample);
         if (h_oversample <= MaxOversample)
             spc->h_oversample = h_oversample;
         if (v_oversample <= MaxOversample)
@@ -3311,7 +3311,7 @@ namespace rl::stb {
             }
 
             for (; i < w; ++i) {
-                assert_cond(pixels[i] == 0);
+                debug_assert(pixels[i] == 0);
                 total -= buffer[i & OversampleMask];
                 pixels[i] = static_cast<u8>(total / kernel_width);
             }
@@ -3373,7 +3373,7 @@ namespace rl::stb {
             }
 
             for (; i < h; ++i) {
-                assert_cond(pixels[i * stride_in_bytes] == 0);
+                debug_assert(pixels[i * stride_in_bytes] == 0);
                 total -= buffer[i & OversampleMask];
                 pixels[i * stride_in_bytes] = static_cast<u8>(total / kernel_width);
             }
@@ -3831,10 +3831,10 @@ namespace rl::stb {
             r[1] = s - u * (m + n);
             r[2] = s - u * (m - n);
 
-            // assert_cond( std::fabs(((r[0]+a)*r[0]+b)*r[0]+c) < 0.05f);  // these asserts may
+            // debug_assert( std::fabs(((r[0]+a)*r[0]+b)*r[0]+c) < 0.05f);  // these asserts may
             // not be safe at all scales, though they're in bezier t parameter units so maybe?
-            // assert_cond( std::fabs(((r[1]+a)*r[1]+b)*r[1]+c) < 0.05f);
-            // assert_cond( std::fabs(((r[2]+a)*r[2]+b)*r[2]+c) < 0.05f);
+            // debug_assert( std::fabs(((r[1]+a)*r[1]+b)*r[1]+c) < 0.05f);
+            // debug_assert( std::fabs(((r[2]+a)*r[2]+b)*r[2]+c) < 0.05f);
             return 3;
         }
     }
@@ -3937,7 +3937,7 @@ namespace rl::stb {
                             //    sy > STBTT_min(y0,y1)-min_dist && sy < STBTT_max(y0,y1)+min_dist)
                             dist = std::fabs((x1 - x0) * (y0 - sy) - (y1 - y0) * (x0 - sx)) *
                                    precompute[i];
-                            assert_cond(i != 0);
+                            debug_assert(i != 0);
                             if (dist < min_dist) {
                                 // check position along line
                                 // x' = x0 + t*(x1-x0), y' = y0 + t*(y1-y0)

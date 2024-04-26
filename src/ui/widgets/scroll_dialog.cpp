@@ -101,7 +101,7 @@ namespace rl::ui {
 
     void ScrollableDialog::set_scroll_pos(const f32 pos)
     {
-        runtime_assert(pos >= 0.0f && pos <= 1.0f, "invalid scrollbar pos");
+        debug_assert(pos >= 0.0f && pos <= 1.0f, "invalid scrollbar pos");
         m_scrollbar_position = pos;
     }
 

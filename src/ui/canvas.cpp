@@ -192,14 +192,14 @@ namespace rl::ui {
     ComponentFormat Canvas::component_format() const
     {
         // Return the component format underlying the screen
-        runtime_assert(false, "not implemented");
+        debug_assert(false, "not implemented");
         return 0;
     }
 
     PixelFormat Canvas::pixel_format() const
     {
         // Return the pixel format underlying the screen
-        runtime_assert(false, "not implemented");
+        debug_assert(false, "not implemented");
         return 0;
     }
 
@@ -232,8 +232,15 @@ namespace rl::ui {
     void Canvas::set_size(const ds::dims<f32> size)
     {
         Widget::set_size(size);
-        runtime_assert(m_main_window != nullptr, "canvas doesn't have reference to main window");
+        debug_assert(m_main_window != nullptr, "canvas doesn't have reference to main window");
         m_main_window->set_size(size);
+    }
+
+    void Canvas::set_min_size(const ds::dims<f32> size)
+    {
+        Widget::set_min_size(size);
+        debug_assert(m_main_window != nullptr, "canvas doesn't have reference to main window");
+        m_main_window->set_min_size(size);
     }
 
     bool Canvas::tooltip_fade_in_progress()
@@ -411,7 +418,7 @@ namespace rl::ui {
                 case MouseMode::Ignore:
                     [[fallthrough]];
                 default:
-                    assert_msg("Unhandled/invalid Canvas mouse mode");
+                    debug_assert("Unhandled/invalid Canvas mouse mode");
                     break;
             }
         }
@@ -477,7 +484,7 @@ namespace rl::ui {
             case MouseMode::Resize:
                 [[fallthrough]];
             default:
-                assert_msg("Invalid/unhandled canvas mouse mode");
+                debug_assert("Invalid/unhandled canvas mouse mode");
                 [[fallthrough]];
             case MouseMode::Ignore:
                 break;
@@ -511,8 +518,8 @@ namespace rl::ui {
         switch (m_mouse_mode) {
             case MouseMode::Drag:
             {
-                runtime_assert(m_active_dialog != nullptr,
-                               "canvas in drag mode but no widgets active");
+                debug_assert(m_active_dialog != nullptr,
+                             "canvas in drag mode but no widgets active");
 
                 m_mouse_mode = MouseMode::Propagate;
                 if (drop_widget != m_active_dialog) {
@@ -528,8 +535,8 @@ namespace rl::ui {
             }
             case MouseMode::Resize:
             {
-                runtime_assert(m_active_dialog != nullptr,
-                               "canvas in resize mode but no widgets active");
+                debug_assert(m_active_dialog != nullptr,
+                             "canvas in resize mode but no widgets active");
 
                 LocalTransform transform{ m_active_dialog->parent() };
                 m_redraw |= m_active_dialog->on_mouse_button_released(mouse, kb);
@@ -543,7 +550,7 @@ namespace rl::ui {
             }
 
             default:
-                assert_msg("Invalid/unhandled UI Canvas mouse mode");
+                debug_assert("Invalid/unhandled UI Canvas mouse mode");
                 [[fallthrough]];
             case MouseMode::Ignore:
             case MouseMode::Propagate:

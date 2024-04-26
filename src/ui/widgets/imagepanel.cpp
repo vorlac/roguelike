@@ -52,9 +52,9 @@ namespace rl::ui {
         bool over_image2{ pp.x - std::floor(pp.x) < icon_size.width &&
                           pp.y - std::floor(pp.y) < icon_size.height };
 
-        runtime_assert(over_image == over_image2,
-                       "image overlap inconsistency\nover_image={}\nover_image2={}", over_image,
-                       over_image2);
+        debug_assert(over_image == over_image2,
+                     "image overlap inconsistency\nover_image={}\nover_image2={}", over_image,
+                     over_image2);
 
         const ds::rect<f32> grid_rect{
             mouse_pos,
@@ -66,9 +66,9 @@ namespace rl::ui {
                        mouse_pos.x < static_cast<f32>(this->grid_size().width) &&
                        mouse_pos.y < static_cast<f32>(this->grid_size().height);
 
-        runtime_assert(over_image == over_image2,
-                       "image overlap inconsistency\nover_image={}\nover_image2={}", over_image,
-                       over_image2);
+        debug_assert(over_image == over_image2,
+                     "image overlap inconsistency\nover_image={}\nover_image2={}", over_image,
+                     over_image2);
 
         return over_image ? static_cast<i32>(mouse_pos.x + mouse_pos.y * this->grid_size().width)
                           : -1;

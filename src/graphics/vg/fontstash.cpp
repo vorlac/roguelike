@@ -885,15 +885,15 @@ namespace rl::nvg::font {
         FILE* fp = std::fopen(path, "rb");
         if (fp != nullptr) {
             status = std::fseek(fp, 0, SEEK_END);
-            runtime_assert(status == 0, "fseek failed");
+            debug_assert(status == 0, "fseek failed");
             i32 data_size = static_cast<i32>(std::ftell(fp));
             status = std::fseek(fp, 0, SEEK_SET);
-            runtime_assert(status == 0, "fseek failed");
+            debug_assert(status == 0, "fseek failed");
             data = static_cast<u8*>(std::malloc(data_size));
             if (data != nullptr) {
                 const size_t readed = std::fread(data, 1, data_size, fp);
                 status = std::fclose(fp);
-                runtime_assert(status == 0, "fseek failed");
+                debug_assert(status == 0, "fseek failed");
 
                 fp = nullptr;
                 if (readed == static_cast<size_t>(data_size))
@@ -905,7 +905,7 @@ namespace rl::nvg::font {
             std::free(data);
         if (fp != nullptr) {
             status = std::fclose(fp);
-            runtime_assert(status == 0, "fseek failed");
+            debug_assert(status == 0, "fseek failed");
         }
 
         return font::INVALID;

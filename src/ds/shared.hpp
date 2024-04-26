@@ -120,13 +120,13 @@ namespace rl::ds {
 
         constexpr T& operator*()
         {
-            runtime_assert(m_data != nullptr, "dereferencing null shared<{}>", typeid(T).name());
+            debug_assert(m_data != nullptr, "dereferencing null shared<{}>", typeid(T).name());
             return *m_data;
         }
 
         constexpr const T& operator*() const
         {
-            runtime_assert(m_data != nullptr, "dereferencing null shared<{}>", typeid(T).name());
+            debug_assert(m_data != nullptr, "dereferencing null shared<{}>", typeid(T).name());
             return *m_data;
         }
 

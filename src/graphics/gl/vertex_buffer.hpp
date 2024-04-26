@@ -35,7 +35,7 @@ namespace rl::gl {
 
             // compile shaders
             bool shaders_valid = m_shader.compile();
-            runtime_assert(shaders_valid, "Failed to compile shaders");
+            debug_assert(shaders_valid, "Failed to compile shaders");
         }
 
         ~VertexBuffer()

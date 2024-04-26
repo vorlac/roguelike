@@ -38,18 +38,17 @@ namespace rl::ui {
                 case SizePolicy::Minimum:
                 {
                     Widget* parent{ this->parent() };
-                    runtime_assert(parent != nullptr,
-                                   "layout must have a parent widget");
+                    debug_assert(parent != nullptr,
+                                 "layout must have a parent widget");
 
                     parent->set_size(m_rect.size + m_outer_margin);
                     break;
                 }
-
                 case SizePolicy::Maximum:
                 {
                     const Widget* parent_widget{ this->parent() };
-                    runtime_assert(parent_widget != nullptr,
-                                   "layout missing a parent");
+                    debug_assert(parent_widget != nullptr,
+                                 "layout missing a parent");
 
                     ds::dims<f32> total_size{ ds::dims<f32>::zero() };
                     const auto& siblings{ parent_widget->children() };
@@ -62,8 +61,8 @@ namespace rl::ui {
                     };
 
                     if (parent_layout == nullptr) {
-                        runtime_assert(siblings.size() == 1,
-                                       "topmost layout must be an only child");
+                        debug_assert(siblings.size() == 1,
+                                     "topmost layout must be an only child");
                         m_rect.size = fill_size;
                         m_rect.pt = m_outer_margin.offset();
                     }
@@ -76,7 +75,7 @@ namespace rl::ui {
                         // calculate the total length & width of all siblings (including this one)
                         for (const Widget* sibling : siblings) {
                             const Layout* sibling_layout{ sibling->layout() };
-                            ds::margin<f32> sib_outer_margin{
+                            const ds::margin<f32> sib_outer_margin{
                                 sibling_layout != nullptr
                                     ? sibling_layout->outer_margin()
                                     : ds::margin<f32>::zero()
@@ -88,14 +87,13 @@ namespace rl::ui {
                         const ds::dims<f32> delta_size{ fill_size - total_size };
                         const ds::dims<f32> size_increase{ delta_size / sibling_count };
                         for (auto [sibling_idx, sibling] : siblings | std::views::enumerate) {
+                            ds::rect<f32> rect{ sibling->rect() };
                             const Layout* sibling_layout{ sibling->layout() };
                             const ds::margin<f32> sib_outer{
                                 sibling_layout != nullptr
                                     ? sibling_layout->outer_margin()
                                     : ds::margin<f32>::zero()
                             };
-
-                            ds::rect<f32> rect{ sibling->rect() };
 
                             switch (parent_alignment) {
                                 case Alignment::Horizontal:
@@ -109,7 +107,7 @@ namespace rl::ui {
                                     rect.size.width = fill_size.width;
                                     break;
                                 case Alignment::None:
-                                    assert_msg("invalid layout alignment");
+                                    debug_assert("invalid layout alignment");
                                     break;
                             }
 
@@ -117,12 +115,7 @@ namespace rl::ui {
                         }
                     }
 
-                    this->set_recalc_needed(false, false);
-
                     for (Widget* child : m_children) {
-                        if (!child->recalc_needed())
-                            continue;
-
                         Layout* child_layout{ child->layout() };
                         if (child_layout != nullptr)
                             child_layout->adjust_for_size_policy();
@@ -136,7 +129,7 @@ namespace rl::ui {
                 case SizePolicy::Prefered:
                     break;
                 case SizePolicy::Inherit:
-                    assert_msg("layout must define a size policy");
+                    debug_assert("layout must define a size policy");
                     break;
             }
         }
@@ -200,9 +193,8 @@ namespace rl::ui {
                         if (math::equal(computed_size.width, 0.0f))
                             computed_size.width = widget_computed_size.width;
                         break;
-                    default:
                     case Alignment::None:
-                        assert_msg("Invalid layout alignment: {}", VAlignment);
+                        debug_assert("Invalid layout alignment: {}", VAlignment);
                         break;
                 }
 

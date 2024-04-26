@@ -125,7 +125,7 @@ namespace rl::ui {
                                            : (container_size.height - m_margin * 2.0f);
                     break;
                 case Placement_OldAlignment::None:
-                    assert_cond(false);
+                    debug_assert(false);
                     break;
             }
 

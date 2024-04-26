@@ -15,14 +15,14 @@ namespace rl {
 
     // void StateMachine::pop(state_t&& s)
     //{
-    //     runtime_assert(m_states.size() > 0, "FSM has no active state");
+    //     debug_assert(m_states.size() > 0, "FSM has no active state");
     //     m_states.top()->on_exit();
     //     m_states.pop();
     // }
 
     // state_t& StateMachine::current()
     //{
-    //     runtime_assert(m_states.size() > 0, "FSM has no active state");
+    //     debug_assert(m_states.size() > 0, "FSM has no active state");
     //     return m_states.top();
     // }
 }

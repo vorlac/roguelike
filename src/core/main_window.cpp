@@ -128,7 +128,7 @@ namespace rl {
 
     WindowID MainWindow::window_id() const
     {
-        runtime_assert(m_window_id != 0, "invalid window ID");
+        debug_assert(m_window_id != 0, "invalid window ID");
         return m_window_id;
     }
 
@@ -173,20 +173,20 @@ namespace rl {
     bool MainWindow::set_fullscreen(const bool fullscreen) const
     {
         const i32 result{ SDL3::SDL_SetWindowFullscreen(m_sdl_window, fullscreen) };
-        runtime_assert(result == 0, "Failed to set window to fullscreen");
+        debug_assert(result == 0, "Failed to set window to fullscreen");
         return result == 0;
     }
 
     bool MainWindow::set_opacity(const float opacity) const
     {
         const i32 result{ SDL3::SDL_SetWindowOpacity(m_sdl_window, opacity) };
-        runtime_assert(result != 0, "failed to set window opacity");
+        debug_assert(result != 0, "failed to set window opacity");
         return result == 0;
     }
 
-    bool MainWindow::set_background(const ds::color<u8>& background) const
+    bool MainWindow::set_background([[maybe_unused]] const ds::color<u8>& background) const
     {
-        runtime_assert(false, "not implemented: MainWindow::background({})", background);
+        debug_assert(false, "not implemented: MainWindow::background({})", background);
         return false;
     }
 
@@ -198,9 +198,9 @@ namespace rl {
         return result == 0;
     }
 
-    bool MainWindow::set_modal(bool modal) const
+    bool MainWindow::set_modal([[maybe_unused]] bool modal) const
     {
-        runtime_assert(false, "not implemented: MainWindow::set_modal({})", modal);
+        debug_assert("not implemented: MainWindow::set_modal({})", modal);
         return false;
     }
 
@@ -215,7 +215,7 @@ namespace rl {
     bool MainWindow::set_size(ds::dims<i32> size)
     {
         const i32 result{ SDL3::SDL_SetWindowSize(m_sdl_window, size.width, size.height) };
-        runtime_assert(result == 0, "failed to set size");
+        debug_assert(result == 0, "failed to set size");
 
         m_window_rect.size = size;
         const ds::rect<f32> canvas_rect{ m_gui_canvas->rect() };
@@ -288,7 +288,7 @@ namespace rl {
     ds::point<i32> MainWindow::get_position() const
     {
         ds::point<i32> pos{ 0, 0 };
-        const i32 result{ SDL3::SDL_GetWindowPosition(m_sdl_window, &pos.x, &pos.y) };
+        [[maybe_unused]] const i32 result{ SDL3::SDL_GetWindowPosition(m_sdl_window, &pos.x, &pos.y) };
         sdl_assert(result == 0, "failed to get pos");
         return pos;
     }
@@ -296,7 +296,7 @@ namespace rl {
     ds::dims<i32> MainWindow::get_min_size() const
     {
         ds::dims<i32> size{ 0, 0 };
-        const i32 result{ SDL3::SDL_GetWindowMinimumSize(m_sdl_window, &size.width, &size.height) };
+        [[maybe_unused]] const i32 result{ SDL3::SDL_GetWindowMinimumSize(m_sdl_window, &size.width, &size.height) };
         sdl_assert(result == 0, "failed to get min size");
         return size;
     }
@@ -304,7 +304,7 @@ namespace rl {
     ds::dims<i32> MainWindow::get_max_size() const
     {
         ds::dims<i32> size{ 0, 0 };
-        const i32 result{ SDL3::SDL_GetWindowMaximumSize(m_sdl_window, &size.width, &size.height) };
+        [[maybe_unused]] const i32 result{ SDL3::SDL_GetWindowMaximumSize(m_sdl_window, &size.width, &size.height) };
         sdl_assert(result == 0, "failed to get max size");
         return size;
     }
@@ -317,7 +317,7 @@ namespace rl {
     DisplayID MainWindow::get_display_id()
     {
         m_display_id = SDL3::SDL_GetDisplayForWindow(m_sdl_window);
-        runtime_assert(m_display_id != 0, "failed to set window display idx");
+        debug_assert(m_display_id != 0, "failed to set window display idx");
         return m_display_id;
     }
 
@@ -325,7 +325,7 @@ namespace rl {
     {
         SDL3::SDL_DisplayMode ret{};
         const SDL3::SDL_DisplayMode* mode{ SDL3::SDL_GetWindowFullscreenMode(m_sdl_window) };
-        runtime_assert(mode == nullptr, "failed to get window display mode");
+        debug_assert(mode == nullptr, "failed to get window display mode");
 
         if (mode != nullptr)
             std::memcpy(&ret, mode, sizeof(ret));
@@ -336,15 +336,15 @@ namespace rl {
     f32 MainWindow::get_opacity() const
     {
         f32 opacity{ 0.0f };
-        const i32 result{ SDL3::SDL_GetWindowOpacity(m_sdl_window, &opacity) };
-        runtime_assert(result == -1, "failed to get window opacity");
+        [[maybe_unused]] const i32 result{ SDL3::SDL_GetWindowOpacity(m_sdl_window, &opacity) };
+        debug_assert(result == -1, "failed to get window opacity");
         return opacity;
     }
 
     const ds::dims<i32>& MainWindow::get_size()
     {
         auto& size = m_window_rect.size;
-        const i32 result{ SDL3::SDL_GetWindowSize(m_sdl_window, &size.width, &size.height) };
+        [[maybe_unused]] const i32 result{ SDL3::SDL_GetWindowSize(m_sdl_window, &size.width, &size.height) };
         sdl_assert(result == 0, "failed to set size");
         return m_window_rect.size;
     }
@@ -352,7 +352,7 @@ namespace rl {
     const ds::dims<i32>& MainWindow::get_render_size()
     {
         ds::dims<i32>& size{ m_framebuf_size };
-        const i32 result{ SDL3::SDL_GetWindowSizeInPixels(m_sdl_window, &size.width, &size.height) };
+        [[maybe_unused]] const i32 result{ SDL3::SDL_GetWindowSizeInPixels(m_sdl_window, &size.width, &size.height) };
         sdl_assert(result == 0, "failed to set render size");
         m_pixel_ratio = SDL3::SDL_GetWindowDisplayScale(m_sdl_window);
         sdl_assert(m_pixel_ratio != 0.0f, "failed to get pixel ratio [window:{}]", m_window_id);
@@ -484,8 +484,8 @@ namespace rl {
         const ds::dims<i32>& framebuf_size{ this->get_render_size() };
 
         const ds::dims render_size{ static_cast<ds::dims<f32>>(window_size) / m_pixel_ratio };
-        runtime_assert(framebuf_size.area() > 0 && window_size.area() > 0,
-                       "invalid window size/location");
+        debug_assert(framebuf_size.area() > 0 && window_size.area() > 0,
+                     "invalid window size/location");
 
         m_framebuf_size = framebuf_size;
         m_window_rect.size = render_size;
@@ -503,8 +503,8 @@ namespace rl {
         const ds::point<i32> window_pos{ this->get_position() };
         const ds::dims<i32> window_size{ this->get_size() };
         const ds::dims<i32> framebuf_size{ this->get_render_size() };
-        runtime_assert(framebuf_size.area() > 0 && window_size.area() > 0,
-                       "invalid window size/location");
+        debug_assert(framebuf_size.area() > 0 && window_size.area() > 0,
+                     "invalid window size/location");
 
         m_framebuf_size = framebuf_size;
         m_window_rect.pt = window_pos;

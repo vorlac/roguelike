@@ -207,7 +207,7 @@ namespace rl::ui {
                                                                       : grid[axis_idx][item_idx];
                             break;
                         case Placement_OldAlignment::None:
-                            assert_cond(false);
+                            debug_assert(false);
                             break;
                     }
                 }
@@ -252,7 +252,7 @@ namespace rl::ui {
             case Axis::Vertical:
                 return m_spacing.y;
             default:
-                runtime_assert(false, "invalid axis value");
+                debug_assert(false, "invalid axis value");
                 return -1;
         }
     }
@@ -267,7 +267,7 @@ namespace rl::ui {
                 m_spacing.y = spacing;
                 break;
             default:
-                runtime_assert(false, "invalid axis value");
+                debug_assert(false, "invalid axis value");
                 break;
         }
     }

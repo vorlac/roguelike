@@ -118,7 +118,7 @@ namespace rl::ui {
                                         : cell_size;
                         break;
                     case Placement_OldAlignment::None:
-                        assert_cond(false);
+                        debug_assert(false);
                         break;
                 }
 
@@ -190,8 +190,8 @@ namespace rl::ui {
                                                ? fs
                                                : ps };
 
-                    runtime_assert(axis_anchor_pos + axis_anchor_size <= grid.size(),
-                                   "Advanced grid layout: widget is out of bounds");
+                    debug_assert(axis_anchor_pos + axis_anchor_size <= grid.size(),
+                                 "Advanced grid layout: widget is out of bounds");
 
                     f32 current_size{ 0.0f };
                     f32 total_stretch{ 0.0f };
@@ -207,8 +207,8 @@ namespace rl::ui {
                     if (target_size <= current_size)
                         continue;
 
-                    runtime_assert(math::not_equal(total_stretch, 0.0f),
-                                   "Advanced grid layout: no space to place widget");
+                    debug_assert(math::not_equal(total_stretch, 0.0f),
+                                 "Advanced grid layout: no space to place widget");
 
                     const f32 amt{ (target_size - current_size) / total_stretch };
                     for (u32 i = axis_anchor_pos; i < axis_anchor_pos + axis_anchor_size; ++i)
@@ -280,7 +280,7 @@ namespace rl::ui {
     Anchor AdvancedGridLayout::anchor(const Widget* widget) const
     {
         const auto it{ m_anchor.find(widget) };
-        runtime_assert(it != m_anchor.end(), "Widget was not registered with the grid layout!");
+        debug_assert(it != m_anchor.end(), "Widget was not registered with the grid layout!");
         return it->second;
     }
 }

@@ -33,7 +33,7 @@ namespace rl::ui {
 
         ScrollableDialog* add_dialog(ds::point<f32>&& pos, const std::string& title = "Untitled")
         {
-            runtime_assert(m_ui_canvas != nullptr, "invalid dialog");
+            debug_assert(m_ui_canvas != nullptr, "invalid dialog");
 
             m_dialog = new ScrollableDialog{ m_ui_canvas, title };
             // m_dialog->set_layout(new BoxLayout{ Orientation::Horizontal });
@@ -163,7 +163,7 @@ namespace rl::ui {
         {
             m_dialog = dialog;
             m_layout = dynamic_cast<AdvancedGridLayout*>(dialog->layout());
-            runtime_assert(m_layout == nullptr, "invalid layout");
+            debug_assert(m_layout == nullptr, "invalid layout");
         }
 
         void set_fixed_size(const ds::dims<f32>& fw)

@@ -94,8 +94,7 @@ namespace rl::ui {
         void set_font_size(f32 font_size);
         void set_icon_extra_scale(f32 scale);
         void set_cursor(Mouse::Cursor::ID cursor);
-        void set_min_size(ds::dims<f32> min_size);
-        void set_max_size(ds::dims<f32> max_size);
+        void set_max_size(ds::dims<f32> size);
         void set_recalc_needed(bool size_recalc_needed, bool recursive = true);
         void request_focus();
         void remove_child_at(u64 index);
@@ -131,6 +130,7 @@ namespace rl::ui {
         virtual bool on_focus_lost();
 
         virtual void set_size(ds::dims<f32> size);
+        virtual void set_min_size(ds::dims<f32> size);
         virtual void set_visible(bool visible);
         virtual void set_theme(Theme* theme);
         virtual void add_child(Widget* widget);

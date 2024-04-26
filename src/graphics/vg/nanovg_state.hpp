@@ -17,7 +17,7 @@ namespace rl {
     public:
         explicit LocalTransform(const ui::Widget* widget) noexcept
         {
-            runtime_assert(widget != nullptr, "invalid reference to UI element");
+            debug_assert(widget != nullptr, "invalid reference to UI element");
             if (scope_stack.empty() || scope_stack.back() != widget) {
                 absolute_pos += widget->position();
                 nvg::translate(ui::Widget::context(), widget->position());
