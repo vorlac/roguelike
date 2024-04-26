@@ -177,11 +177,11 @@ namespace rl::ui {
         }
 
     protected:
-        ds::shared<Canvas> m_ui_canvas{ nullptr };
-        ds::shared<ScrollableDialog> m_dialog{ nullptr };
-        // ds::shared<VerticalScrollPanel> m_dialog{ nullptr };
-        ds::shared<Widget> m_container{ nullptr };
-        ds::shared<AdvancedGridLayout> m_layout{ nullptr };
+        Canvas* m_ui_canvas{ nullptr };
+        ScrollableDialog* m_dialog{ nullptr };
+        // VerticalScrollPanel> m_dialog{ nullptr };
+        Widget* m_container{ nullptr };
+        AdvancedGridLayout* m_layout{ nullptr };
         std::vector<std::function<void()>> m_refresh_callbacks;
         ds::dims<f32> m_fixed_size{ 0.0f, 0.0f };
     };

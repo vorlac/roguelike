@@ -8,6 +8,7 @@
 #include "core/mouse.hpp"
 #include "ds/rect.hpp"
 #include "ds/refcounted.hpp"
+#include "ds/shared.hpp"
 #include "ds/vector2d.hpp"
 #include "graphics/nvg_renderer.hpp"
 #include "utils/time.hpp"
@@ -17,7 +18,7 @@ namespace rl::ui {
     class Canvas;
     class Layout;
 
-    class Widget : public ds::refcounted
+    class Widget
     {
     private:
         friend class Canvas;
@@ -32,7 +33,7 @@ namespace rl::ui {
 
     public:
         explicit Widget(Widget* parent);
-        virtual ~Widget() override;
+        virtual ~Widget();
 
         void show();
         void hide();
@@ -112,12 +113,9 @@ namespace rl::ui {
         }
 
     public:
-        void perform_layout_orig();
-
         virtual bool on_key_pressed(const Keyboard& kb);
         virtual bool on_key_released(const Keyboard& kb);
         virtual bool on_character_input(const Keyboard& kb);
-
         virtual bool on_mouse_entered(const Mouse& mouse);
         virtual bool on_mouse_exited(const Mouse& mouse);
         virtual bool on_mouse_scroll(const Mouse& mouse, const Keyboard& kb);
@@ -125,7 +123,6 @@ namespace rl::ui {
         virtual bool on_mouse_button_released(const Mouse& mouse, const Keyboard& kb);
         virtual bool on_mouse_move(const Mouse& mouse, const Keyboard& kb);
         virtual bool on_mouse_drag(const Mouse& mouse, const Keyboard& kb);
-
         virtual bool on_focus_gained();
         virtual bool on_focus_lost();
 
@@ -138,20 +135,22 @@ namespace rl::ui {
         virtual void perform_layout();
         virtual void draw();
 
-        virtual ds::dims<f32> preferred_size() const;
-        virtual Widget* find_widget(ds::point<f32> pt);
         virtual bool contains(ds::point<f32> pt);
         virtual bool draw_mouse_intersection(ds::point<f32> pt);
 
-    protected:
-        f32 icon_scale() const;
+        virtual Widget* find_widget(ds::point<f32> pt);
+        virtual ds::dims<f32> preferred_size() const;
 
     protected:
-        Widget* m_parent{};
-        Theme* m_theme{ nullptr };
-        Layout* m_layout{ nullptr };
+        [[nodiscard]] f32 icon_scale() const;
 
+    protected:
         static inline rl::NVGRenderer* m_renderer{ nullptr };
+        Mouse::Cursor::ID m_cursor{ Mouse::Cursor::Arrow };
+
+        Widget* m_parent{ nullptr };
+        Layout* m_layout{ nullptr };
+        Theme* m_theme{ nullptr };
 
         bool m_enabled{ true };
         bool m_visible{ true };
@@ -160,28 +159,22 @@ namespace rl::ui {
         bool m_mouse_focus{ false };
         bool m_size_recalc_needed{ false };
 
-        ds::rect<f32> m_rect{
-            ds::point<f32>::zero(),
-            ds::dims<f32>::zero(),
-        };
+        // TODO: move to theme
+        f32 m_icon_extra_scale{ 1.0f };
+        f32 m_font_size{ -1.0f };
 
+        std::vector<Widget*> m_children{};
+        ds::rect<f32> m_rect{ ds::rect<f32>::zero() };
         ds::dims<f32> m_fixed_size{ ds::dims<f32>::zero() };
         ds::dims<f32> m_min_size{ ds::dims<f32>::null() };
         ds::dims<f32> m_max_size{ ds::dims<f32>::null() };
-
-        f32 m_font_size{ -1.0f };
-        f32 m_icon_extra_scale{ 1.0f };
-
-        Mouse::Cursor::ID m_cursor{ Mouse::Cursor::Arrow };
-        std::vector<Widget*> m_children{};
         std::string m_tooltip{};
-        Timer<f32> m_timer{};
-
         std::string m_name{};
+        Timer<f32> m_timer{};
 
     protected:
         constexpr static inline f32 RESIZE_GRAB_BUFFER{ 5.0f };
         constexpr static bool DiagnosticsEnabled{ true };
-        constexpr static inline Theme DEFAULT_THEME{ Theme{} };
+        constinit static inline Theme DEFAULT_THEME{ Theme{} };
     };
 }

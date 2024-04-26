@@ -18,6 +18,7 @@ namespace rl::ui {
     Widget::Widget(Widget* parent)
         : m_parent{ parent }
     {
+        // this->acquire_ref();
         if (m_theme == nullptr)
             m_theme = new Theme{};
         if (parent != nullptr)
@@ -34,9 +35,12 @@ namespace rl::ui {
 
     Widget::~Widget()
     {
-        for (Widget* child : m_children)
-            if (child != nullptr)
-                child->release_ref();
+        for (const Widget* child : m_children) {
+            if (child != nullptr) {
+                delete child;
+                child = nullptr;
+            }
+        }
     }
 
     Widget* Widget::parent()
@@ -94,15 +98,11 @@ namespace rl::ui {
     void Widget::set_rect(const ds::rect<f32>& rect)
     {
         m_rect = rect;
-        if (m_rect.size.is_invalid()) {
-            m_rect.size.width = math::max(1.0f, rect.size.width);
-            m_rect.size.height = math::max(1.0f, rect.size.height);
-        }
     }
 
     ds::point<f32> Widget::abs_position() const
     {
-        return m_parent != nullptr  //
+        return m_parent != nullptr
                  ? m_parent->abs_position() + m_rect.pt
                  : m_rect.pt;
     }
@@ -125,8 +125,6 @@ namespace rl::ui {
     void Widget::set_width(const f32 width)
     {
         m_rect.size.width = width;
-        if (m_rect.size.is_invalid())
-            m_rect.size.width = math::max(1.0f, width);
     }
 
     f32 Widget::height() const
@@ -137,17 +135,11 @@ namespace rl::ui {
     void Widget::set_height(const f32 height)
     {
         m_rect.size.height = height;
-        if (m_rect.size.is_invalid())
-            m_rect.size.height = math::max(1.0f, height);
     }
 
     void Widget::set_fixed_size(const ds::dims<f32> fixed_size)
     {
         m_fixed_size = fixed_size;
-        if (m_fixed_size.is_invalid()) {
-            m_fixed_size.width = math::max(1.0f, fixed_size.width);
-            m_fixed_size.height = math::max(1.0f, fixed_size.height);
-        }
     }
 
     ds::dims<f32> Widget::fixed_size() const
@@ -178,24 +170,16 @@ namespace rl::ui {
     void Widget::set_fixed_width(const f32 width)
     {
         m_fixed_size.width = width;
-        if (m_fixed_size.is_invalid())
-            m_fixed_size.width = math::max(1.0f, width);
     }
 
     void Widget::set_fixed_height(const f32 height)
     {
         m_fixed_size.height = height;
-        if (m_fixed_size.is_invalid())
-            m_fixed_size.height = math::max(1.0f, height);
     }
 
     void Widget::set_size(const ds::dims<f32> size)
     {
         m_rect.size = size;
-        if (m_rect.size.is_invalid()) {
-            m_rect.size.width = math::max(1.0f, size.width);
-            m_rect.size.height = math::max(1.0f, size.height);
-        }
     }
 
     bool Widget::visible() const
@@ -274,92 +258,21 @@ namespace rl::ui {
             Layout* child_layout{ m_children.front()->layout() };
             if (child_layout != nullptr) {
                 child_layout->apply_layout();
-                if (m_min_size != m_rect.size) [[unlikely]]
+                if (m_min_size != m_rect.size)
                     this->set_min_size(child_layout->size() + child_layout->outer_margin());
                 child_layout->adjust_for_size_policy();
             }
         }
-        else {
-            Layout* parent_layout{ m_parent->layout() };
-            if (parent_layout != nullptr) {
-                //
-            }
-        }
-
-        // for (Widget* child : m_children) {
-        //     child->perform_layout();
+        // else {
+        //     const Layout* parent_layout{ m_parent->layout() };
+        //     if (parent_layout != nullptr) {
+        //         //
+        //     }
         // }
-    }
 
-    void Widget::perform_layout_orig()
-    {
-        if (m_layout != nullptr) {
-            // if this widget has a layout attached, attempt to precompute the layout's
-            // preferred/maxium size. This is necessary when the layout is set to specific size
-            // policies (i.e. "preferred") since the layout cells containing each child widget
-            // it's going to arrange (as well as potentially also containing nested layouts)
-            // layouts, will dynamically size themselves using this value as an upper bound.
-            ds::dims<f32> max_size{ ds::dims<f32>::null() };
-            const ds::margin outer{ m_layout->outer_margin() };
-
-            if (m_parent != nullptr) {
-                const Layout* parent_layout{ m_parent->layout() };
-                if (parent_layout != nullptr) {
-                    const ds::dims<f32>& parent_layout_size{ parent_layout->size() };
-                    if (parent_layout_size.is_valid())
-                        max_size = parent_layout_size;
-                }
-
-                const ds::rect<f32>& parent_rect{ m_parent->rect() };
-                if (max_size.is_null() && parent_rect.is_valid())
-                    max_size = parent_rect.size;
-
-                const ds::dims<f32> parent_max_size{ m_parent->max_size() };
-                if (max_size.is_null() && parent_max_size.is_valid())
-                    max_size = parent_max_size;
-            }
-
-            if (max_size.is_null() && m_rect.is_valid())
-                max_size = m_rect.size;
-
-            // TODO: see if min sizes can be precomputed as well to prevent this from being possible
-            // if we're here, but max_size isn't valid (negative dimensions or an area of 0)
-            // then we probably want to skip the size policy widget arrangements below...
-            debug_assert(max_size.is_valid(), "couldn't determine upper bound for size");
-
-            if (m_layout->size_policy() == SizePolicy::Prefered) {
-                const Alignment alignment{ m_layout->alignment() };
-                const f32 child_count{ static_cast<f32>(m_children.size()) };
-
-                if (alignment == Alignment::Horizontal)
-                    max_size.width /= child_count;
-                else if (alignment == Alignment::Vertical)
-                    max_size.height /= child_count;
-
-                max_size -= outer;
-                const ds::rect layout_rect{
-                    ds::point<f32>::zero(),
-                    max_size - outer,
-                };
-
-                m_layout->set_rect(layout_rect);
-            }
-
-            this->set_max_size(max_size);
-        }
-
-        // recursively call after size info is computed
-        // in case we have to work top down instead of bottom
-        // up to compute the sizes of all children widgets
-        for (Widget* child : m_children)
+        for (Widget* child : m_children) {
             child->perform_layout();
-
-        // now that all child widgets/layouts have been
-        // processed, all of their positions and bounds
-        // be known at this point, which means we have
-        // everything we'd need to apply this layout
-        if (m_layout != nullptr)
-            m_layout->apply_layout();
+        }
     }
 
     Widget* Widget::find_widget(const ds::point<f32> pt)
@@ -529,7 +442,6 @@ namespace rl::ui {
         debug_assert(index <= this->child_count(), "child widget index out of bounds");
         m_children.insert(m_children.begin() + static_cast<i32>(index), widget);
 
-        widget->acquire_ref();
         widget->set_parent(this);
         widget->set_theme(m_theme);
     }
@@ -541,18 +453,17 @@ namespace rl::ui {
 
     void Widget::remove_child(const Widget* widget)
     {
+        // TODO: make sure the  widget is deallocated
         [[maybe_unused]] const std::size_t child_count{ m_children.size() };
         std::erase(m_children, widget);
         debug_assert(m_children.size() != child_count, "didn't find widget to delete");
-        widget->release_ref();
     }
 
     void Widget::remove_child_at(const u64 index)
     {
+        // TODO: make sure the  widget is deallocated
         debug_assert(index < m_children.size(), "widget child remove idx out of bounds");
-        const Widget* widget{ m_children[index] };
         m_children.erase(m_children.begin() + static_cast<ptrdiff_t>(index));
-        widget->release_ref();
     }
 
     u64 Widget::child_index(const Widget* widget) const

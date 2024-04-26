@@ -186,9 +186,9 @@ namespace rl::ui {
     {
         // Temporarily increase the reference count of the button in
         // case the button causes the parent window to be destructed
-        ds::shared self{ this };
+        // const auto lifetime_extend{ std::make_shared<Button>(this) };
 
-        bool process_button_event{
+        const bool process_button_event{
             (button == Mouse::Button::Left && !this->has_property(Property::StandardMenu)) ||
             (button == Mouse::Button::Right && this->has_property(Property::StandardMenu))
         };

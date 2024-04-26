@@ -57,9 +57,9 @@ namespace rl {
         SDL3::SDL_GL_SetSwapInterval(0);
 
         m_vg_renderer = std::make_unique<NVGRenderer>();
-
-        m_gui_canvas = new ui::Canvas{ this, static_cast<ds::rect<f32>>(m_window_rect),
-                                       m_mouse, m_keyboard, m_vg_renderer };
+        m_gui_canvas = std::make_unique<ui::Canvas>(
+            this, static_cast<ds::rect<f32>>(m_window_rect),
+            m_mouse, m_keyboard, m_vg_renderer);
     }
 
     MainWindow::~MainWindow()
@@ -274,7 +274,7 @@ namespace rl {
         return m_mouse;
     }
 
-    ui::Canvas* MainWindow::gui() const
+    std::unique_ptr<ui::Canvas>& MainWindow::gui()
     {
         return m_gui_canvas;
     }
@@ -391,7 +391,7 @@ namespace rl {
         return m_gl_renderer->swap_buffers(*this);
     }
 
-    bool MainWindow::render() const
+    bool MainWindow::render()
     {
         const i32 result{ SDL3::SDL_GL_MakeCurrent(m_sdl_window, m_gl_renderer->gl_context()) };
         sdl_assert(result == 0, "failed to make context current");

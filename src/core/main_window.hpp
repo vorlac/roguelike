@@ -195,7 +195,7 @@ namespace rl {
 
         bool clear() const;
         bool render_start() const;
-        bool render() const;
+        bool render();
         bool render_end() const;
         bool swap_buffers() const;
 
@@ -217,7 +217,7 @@ namespace rl {
         MainWindow::Properties::Flags get_flags() const;
         SDL3::SDL_DisplayMode get_display_mode() const;
 
-        ui::Canvas* gui() const;
+        std::unique_ptr<ui::Canvas>& gui();
 
         const std::unique_ptr<OpenGLRenderer>& glrenderer() const;
         const std::unique_ptr<NVGRenderer>& vgrenderer() const;
@@ -289,7 +289,7 @@ namespace rl {
         DisplayID m_display_id{ 0 };
         Properties m_properties{ Properties::None };
         ds::rect<i32> m_window_rect{ ds::rect<i32>::zero() };
-        ui::Canvas* m_gui_canvas{ nullptr };
+        std::unique_ptr<ui::Canvas> m_gui_canvas;
         ds::dims<i32> m_framebuf_size{ ds::dims<i32>::zero() };
 
         f32 m_pixel_ratio{ 1.0f };

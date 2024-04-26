@@ -15,7 +15,6 @@ namespace rl::ui {
     {
         f32 stretch_factor{ 0.0f };
         Placement_OldAlignment alignment{ Placement_OldAlignment::Fill };
-
         ds::margin<f32> inner_padding{ 5.0f, 5.0f, 10.0f, 10.0f };
         ds::margin<f32> outer_margin{ 20.0f, 20.0f, 20.0f, 20.0f };
         ds::margin<f32> inner_margin{ 20.0f, 20.0f, 20.0f, 20.0f };
@@ -47,11 +46,6 @@ namespace rl::ui {
                 layout->set_size_policy(m_size_policy);
         }
 
-        auto widgets() const
-        {
-            return m_cell_data | std::ranges::views::keys;
-        }
-
         void set_size_policy(const SizePolicy policy)
         {
             if (m_size_policy == SizePolicy::Inherit && policy != SizePolicy::Inherit) {
@@ -65,40 +59,50 @@ namespace rl::ui {
             m_size_policy = policy;
         }
 
-        SizePolicy size_policy() const
-        {
-            return m_size_policy;
-        }
-
-        Alignment alignment() const
-        {
-            return m_alignment;
-        }
-
-        const ds::margin<f32>& outer_margin() const
-        {
-            return m_outer_margin;
-        }
-
-        ds::margin<f32> inner_margin() const
-        {
-            return m_inner_margin;
-        }
-
-        void inner_margin(const ds::margin<f32> margin)
+        void set_inner_margin(const ds::margin<f32> margin)
         {
             m_inner_margin = margin;
         }
 
-        void outer_margin(const ds::margin<f32> margin)
+        void set_outer_margin(const ds::margin<f32> margin)
         {
             m_outer_margin = margin;
         }
 
         void set_margins(const ds::margin<f32> inner, const ds::margin<f32> outer)
         {
-            this->inner_margin(inner);
-            this->inner_margin(outer);
+            this->set_inner_margin(inner);
+            this->set_inner_margin(outer);
+        }
+
+        [[nodiscard]]
+        auto widgets() const
+        {
+            return m_cell_data | std::ranges::views::keys;
+        }
+
+        [[nodiscard]]
+        SizePolicy size_policy() const
+        {
+            return m_size_policy;
+        }
+
+        [[nodiscard]]
+        Alignment alignment() const
+        {
+            return m_alignment;
+        }
+
+        [[nodiscard]]
+        ds::margin<f32> outer_margin() const
+        {
+            return m_outer_margin;
+        }
+
+        [[nodiscard]]
+        ds::margin<f32> inner_margin() const
+        {
+            return m_inner_margin;
         }
 
     public:

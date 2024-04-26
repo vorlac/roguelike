@@ -50,7 +50,6 @@ namespace rl::ui {
                     debug_assert(parent_widget != nullptr,
                                  "layout missing a parent");
 
-                    ds::dims<f32> total_size{ ds::dims<f32>::zero() };
                     const auto& siblings{ parent_widget->children() };
                     const Layout* parent_layout{ parent_widget->layout() };
 
@@ -72,7 +71,8 @@ namespace rl::ui {
                         const Alignment parent_alignment{ parent_layout->alignment() };
                         const f32 sibling_count{ static_cast<f32>(siblings.size()) };
 
-                        // calculate the total length & width of all siblings (including this one)
+                        // calculate the combined size of self + siblings
+                        ds::dims<f32> total_size{ ds::dims<f32>::zero() };
                         for (const Widget* sibling : siblings) {
                             const Layout* sibling_layout{ sibling->layout() };
                             const ds::margin<f32> sib_outer_margin{
@@ -88,6 +88,7 @@ namespace rl::ui {
                         const ds::dims<f32> size_increase{ delta_size / sibling_count };
                         for (auto [sibling_idx, sibling] : siblings | std::views::enumerate) {
                             ds::rect<f32> rect{ sibling->rect() };
+                            const f32 sibling_order{ static_cast<f32>(sibling_idx) };
                             const Layout* sibling_layout{ sibling->layout() };
                             const ds::margin<f32> sib_outer{
                                 sibling_layout != nullptr
@@ -97,12 +98,12 @@ namespace rl::ui {
 
                             switch (parent_alignment) {
                                 case Alignment::Horizontal:
-                                    rect.pt.x += (size_increase.width + sib_outer.right) * sibling_idx;
+                                    rect.pt.x += (size_increase.width + sib_outer.right) * sibling_order;
                                     rect.size.width += size_increase.width + sib_outer.right;
                                     rect.size.height = fill_size.height;
                                     break;
                                 case Alignment::Vertical:
-                                    rect.pt.y += (size_increase.height + sib_outer.bottom) * sibling_idx;
+                                    rect.pt.y += (size_increase.height + sib_outer.bottom) * sibling_order;
                                     rect.size.height += size_increase.height + sib_outer.bottom;
                                     rect.size.width = fill_size.width;
                                     break;
@@ -115,10 +116,43 @@ namespace rl::ui {
                         }
                     }
 
-                    for (const Widget* child : m_children) {
-                        Layout* child_layout{ child->layout() };
+                    if (m_children.size() > 0) {
+                        Layout* child_layout{ m_children.front()->layout() };
                         if (child_layout != nullptr)
                             child_layout->adjust_for_size_policy();
+                        else {
+                            // calculate combined size of all children
+                            ds::dims<f32> total_size{ ds::dims<f32>::zero() };
+                            for (const Widget* child : m_children)
+                                total_size += child->size();
+
+                            const f32 child_count{ static_cast<f32>(m_children.size()) };
+                            ds::dims<f32> layout_fill_size{ m_rect.size - m_inner_margin - m_outer_margin };
+                            if constexpr (VAlignment == Alignment::Horizontal)
+                                layout_fill_size.width -= m_spacing * (child_count - 1.0f);
+                            if constexpr (VAlignment == Alignment::Vertical)
+                                layout_fill_size.height -= m_spacing * (child_count - 1.0f);
+
+                            const ds::dims<f32> delta_size{ layout_fill_size - total_size };
+                            const ds::dims<f32> size_increase{ delta_size / child_count };
+                            for (auto [child_idx, child] : m_children | std::views::enumerate) {
+                                const f32 child_order{ static_cast<f32>(child_idx) };
+
+                                ds::rect<f32> rect{ child->rect() };
+                                if constexpr (VAlignment == Alignment::Horizontal) {
+                                    rect.pt.x += size_increase.width * child_order;
+                                    rect.size.width += size_increase.width;
+                                    rect.size.height = layout_fill_size.height;
+                                }
+                                if constexpr (VAlignment == Alignment::Vertical) {
+                                    rect.pt.y += size_increase.height * child_order;
+                                    rect.size.height += size_increase.height;
+                                    rect.size.width = layout_fill_size.width;
+                                }
+
+                                child->set_rect(rect);
+                            }
+                        }
                     }
 
                     break;

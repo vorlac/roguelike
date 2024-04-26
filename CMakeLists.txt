@@ -146,6 +146,16 @@ target_compile_options(${PROJECT_NAME}
             # /Z7 # embed debug info into .o files instead of pdb (for ccache)
             # /Zi # enable edit and continue
         >
+        
+        $<$<CONFIG:RelWithDebInfo>:
+            /O2 # maximize speed
+            /Oi # generate intrinsics
+            /Oy # frame pointer omission
+            /Gw # optimize global data
+            /GS- # disable buffer security checks
+            /GA # optimize for windows application
+            /GL # whole program optimization
+        >
 
         $<$<CONFIG:Release>:
             /O2 # maximize speed

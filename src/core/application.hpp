@@ -133,8 +133,8 @@ namespace rl {
                 this->update();
                 this->render();
                 this->print_loop_stats(m_timer.delta());
-                using namespace std::chrono_literals;
-                std::this_thread::sleep_for(30ms);
+                // using namespace std::chrono_literals;
+                // std::this_thread::sleep_for(30ms);
             }
 
             ret &= this->teardown();
