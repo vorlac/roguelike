@@ -267,6 +267,7 @@ namespace rl::ui {
 
     void Widget::perform_layout()
     {
+        this->set_recalc_needed(true);
         if (m_layout != nullptr) {
             m_layout->apply_layout();
             m_layout->adjust_for_size_policy();
@@ -573,6 +574,11 @@ namespace rl::ui {
         return m_resizable;
     }
 
+    bool Widget::recalc_needed() const
+    {
+        return m_size_recalc_needed;
+    }
+
     void Widget::set_focused(const bool focused)
     {
         m_focused = focused;
@@ -644,6 +650,15 @@ namespace rl::ui {
         if (m_max_size.is_invalid()) {
             m_max_size.width = math::max(1.0f, max_size.width);
             m_max_size.height = math::max(1.0f, max_size.height);
+        }
+    }
+
+    void Widget::set_recalc_needed(const bool size_recalc_needed, const bool recursive /*= true*/)
+    {
+        m_size_recalc_needed = size_recalc_needed;
+        if (recursive) {
+            for (Widget* child : m_children)
+                child->set_recalc_needed(size_recalc_needed, recursive);
         }
     }
 

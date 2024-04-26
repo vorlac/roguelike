@@ -72,12 +72,8 @@ namespace rl::ui {
                         // by the amount of available space in parent layout
                         const Alignment parent_alignment{ parent_layout->alignment() };
                         const f32 sibling_count{ static_cast<f32>(siblings.size()) };
-                        auto& magnitude{ parent_alignment == Alignment::Vertical
-                                             ? total_size.height
-                                             : total_size.width };
 
-                        // calculate the total length of all siblings (including this one)
-                        // in the dimension that the parent layout aligns it's contents
+                        // calculate the total length & width of all siblings (including this one)
                         for (const Widget* sibling : siblings) {
                             const Layout* sibling_layout{ sibling->layout() };
                             ds::margin<f32> sib_outer_margin{
@@ -86,119 +82,47 @@ namespace rl::ui {
                                     : ds::margin<f32>::zero()
                             };
 
-                            magnitude += parent_alignment == Alignment::Vertical
-                                           ? sibling->height() + sib_outer_margin.vertical()
-                                           : sibling->width() + sib_outer_margin.horizontal();
+                            total_size += sibling->size() + sib_outer_margin;
                         }
 
-                        // for (auto [sibling_idx, sibling] : siblings | std::views::enumerate) {
-                        //     const Layout* sibling_layout{ sibling->layout() };
-                        //     const ds::margin<f32> sib_outer{
-                        //         sibling_layout != nullptr
-                        //             ? sibling_layout->outer_margin()
-                        //             : ds::margin<f32>::zero()
-                        //     };
+                        const ds::dims<f32> delta_size{ fill_size - total_size };
+                        const ds::dims<f32> size_increase{ delta_size / sibling_count };
+                        for (auto [sibling_idx, sibling] : siblings | std::views::enumerate) {
+                            const Layout* sibling_layout{ sibling->layout() };
+                            const ds::margin<f32> sib_outer{
+                                sibling_layout != nullptr
+                                    ? sibling_layout->outer_margin()
+                                    : ds::margin<f32>::zero()
+                            };
 
-                        //    ds::rect<f32> rect{ sibling->rect() };
-                        //    if (sibling_layout->alignment() == Alignment::Vertical) {
-                        //        const f32 delta_height{ fill_size.height - magnitude };
-                        //        const f32 height_increase{ delta_height / sibling_count };
-                        //        rect.pt.y += (height_increase + sib_outer.bottom) * static_cast<f32>(sibling_idx);
-                        //        rect.size.height += height_increase + sib_outer.bottom;
-                        //        if (parent_alignment == Alignment::Horizontal) {
-                        //            // no siblings to worry about when stretching
-                        //            // horizontally since parent aligns vertically
-                        //            rect.size.width = fill_size.width;
-                        //        }
-                        //    }
-                        //    else if (sibling_layout->alignment() == Alignment::Horizontal) {
-                        //        const f32 delta_width{ fill_size.width - magnitude };
-                        //        const f32 width_increase{ delta_width / sibling_count };
-                        //        rect.pt.x += (width_increase + sib_outer.right) * static_cast<f32>(sibling_idx);
-                        //        rect.size.width += width_increase + sib_outer.right;
-                        //        if (parent_alignment == Alignment::Vertical) {
-                        //            // no siblings to worry about when stretching
-                        //            // horizontally since parent aligns vertically
-                        //            rect.size.width = fill_size.width;
-                        //        }
-                        //    }
+                            ds::rect<f32> rect{ sibling->rect() };
 
-                        //    sibling->set_rect(rect);
-                        //}
-
-                        // TODO:
-                        // TODO: Need to handle the sibling alignment..
-                        // TODO: NOT the current widget's alignment here
-                        // TODO:
-                        if constexpr (VAlignment == Alignment::Horizontal) {
-                            const f32 delta_height{ fill_size.height - magnitude };
-                            const f32 height_increase{ delta_height / sibling_count };
-                            for (auto [sibling_idx, sibling] : siblings | std::views::enumerate) {
-                                const Layout* sibling_layout{ sibling->layout() };
-                                const ds::margin<f32> sib_outer{
-                                    sibling_layout != nullptr
-                                        ? sibling_layout->outer_margin()
-                                        : ds::margin<f32>::zero()
-                                };
-
-                                ds::rect<f32> rect{ sibling->rect() };
-                                rect.pt.y += (height_increase + sib_outer.bottom) * static_cast<f32>(sibling_idx);
-                                rect.size.height += height_increase + sib_outer.bottom;
-                                if (parent_alignment == Alignment::Vertical) {
-                                    // no siblings to worry about when stretching
-                                    // horizontally since parent aligns vertically
-                                    rect.size.width = fill_size.width;
-                                }
-                                else {
-                                    int a = 123;
-                                    (void)a;
-                                    // TODO: handle width expansion for nested horizontal layouts
-                                }
-
-                                sibling->set_rect(rect);
-                            }
-                        }
-
-                        // TODO:
-                        // TODO: Need to handle the sibling alignment..
-                        // TODO: NOT the current widget's alignment here
-                        // TODO:
-                        if constexpr (VAlignment == Alignment::Vertical) {
-                            const f32 delta_width{ fill_size.width - magnitude };
-                            const f32 width_increase{ delta_width / sibling_count };
-                            for (auto [sibling_idx, sibling] : siblings | std::views::enumerate) {
-                                const Layout* sibling_layout{ sibling->layout() };
-                                const ds::margin<f32> sib_outer{
-                                    sibling_layout != nullptr
-                                        ? sibling_layout->outer_margin()
-                                        : ds::margin<f32>::zero()
-                                };
-
-                                ds::rect<f32> rect{ sibling->rect() };
-                                rect.pt.x += (width_increase + sib_outer.right) * static_cast<f32>(sibling_idx);
-                                rect.size.width += width_increase + sib_outer.right;
-                                if (parent_alignment == Alignment::Horizontal) {
-                                    // no siblings to worry about when stretching
-                                    // vertically since parent aligns horizontally
+                            switch (parent_alignment) {
+                                case Alignment::Horizontal:
+                                    rect.pt.x += (size_increase.width + sib_outer.right) * static_cast<f32>(sibling_idx);
+                                    rect.size.width += size_increase.width + sib_outer.right;
                                     rect.size.height = fill_size.height;
-                                }
-                                else {
-                                    int a = 123;
-                                    (void)a;
-                                    // TODO: handle width expansion for nested horizontal layouts
-                                }
-
-                                sibling->set_rect(rect);
+                                    break;
+                                case Alignment::Vertical:
+                                    rect.pt.y += (size_increase.height + sib_outer.bottom) * static_cast<f32>(sibling_idx);
+                                    rect.size.height += size_increase.height + sib_outer.bottom;
+                                    rect.size.width = fill_size.width;
+                                    break;
+                                case Alignment::None:
+                                    assert_msg("invalid layout alignment");
+                                    break;
                             }
+
+                            sibling->set_rect(rect);
                         }
                     }
 
-                    if (m_children.size() > 0) {
-                        // the recursive call only needs to happen
-                        // for the first child because its size is
-                        // recalculated along with all of the direct
-                        // siblings contained in the parent layout
-                        Widget* child{ m_children.front() };
+                    this->set_recalc_needed(false, false);
+
+                    for (Widget* child : m_children) {
+                        if (!child->recalc_needed())
+                            continue;
+
                         Layout* child_layout{ child->layout() };
                         if (child_layout != nullptr)
                             child_layout->adjust_for_size_policy();

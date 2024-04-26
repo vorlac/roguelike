@@ -10,9 +10,6 @@ target_compile_options(${PROJECT_NAME}
             #/Wall
             /W4
 
-            # Treat all warning as errors
-            /WX
-
             # # Disable warnings which bleed through from godot-cpp's macros.
             # /wd4189 # local variable is initialized but not referenced
 			# /wd4100 # formal parameter unused

@@ -42,6 +42,7 @@ namespace rl::ui {
         bool enabled() const;
         bool focused() const;
         bool resizable() const;
+        bool recalc_needed() const;
 
         f32 width() const;
         f32 height() const;
@@ -95,7 +96,7 @@ namespace rl::ui {
         void set_cursor(Mouse::Cursor::ID cursor);
         void set_min_size(ds::dims<f32> min_size);
         void set_max_size(ds::dims<f32> max_size);
-
+        void set_recalc_needed(bool size_recalc_needed, bool recursive = true);
         void request_focus();
         void remove_child_at(u64 index);
         void remove_child(const Widget* widget);
@@ -157,6 +158,7 @@ namespace rl::ui {
         bool m_focused{ false };
         bool m_resizable{ false };
         bool m_mouse_focus{ false };
+        bool m_size_recalc_needed{ false };
 
         ds::rect<f32> m_rect{
             ds::point<f32>::zero(),
