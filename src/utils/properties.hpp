@@ -31,11 +31,10 @@ namespace rl {
     };
 
     enum class SizePolicy : u8_fast {
-        Inherit    = 0x0000,
-        FixedSize  = 1 << 0,
-        Minimum    = 1 << 1,
-        Maximum    = 1 << 2,
-        Prefered   = 1 << 3,
+        Inherit    = 0x0000, // Inherits from any higher level layouts that get a valid policy assigned 
+        Freeform   = 1 << 0, // Allows nested floating dialogs to be used (eventually snapping/docking)
+        Minimum    = 1 << 1, // Computes preferred sizes, then clamps main window size to the gui size
+        Maximum    = 1 << 2, // Expands evenly taking up any free space available within parent widget
     };
     // TODO: remove
     enum class Placement_OldAlignment : u8_fast {

@@ -79,9 +79,10 @@ namespace rl::ui {
         std::string title() const;
 
     public:
+        virtual void set_visible(bool visible) override;
         virtual void set_size(ds::dims<f32> size) override;
         virtual void set_min_size(ds::dims<f32> size) override;
-        virtual void set_visible(bool visible) override;
+        virtual void set_max_size(ds::dims<f32> size) override;
         virtual bool on_key_pressed(const Keyboard& kb) override;
         virtual bool on_key_released(const Keyboard& kb) override;
         virtual bool on_character_input(const Keyboard& kb) override;

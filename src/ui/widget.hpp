@@ -92,8 +92,6 @@ namespace rl::ui {
         void set_font_size(f32 font_size);
         void set_icon_extra_scale(f32 scale);
         void set_cursor(Mouse::Cursor::ID cursor);
-        void set_max_size(ds::dims<f32> size);
-        void set_recalc_needed(bool size_recalc_needed, bool recursive = true);
         void request_focus();
         void remove_child_at(u64 index);
         void remove_child(const Widget* widget);
@@ -125,6 +123,7 @@ namespace rl::ui {
 
         virtual void set_size(ds::dims<f32> size);
         virtual void set_min_size(ds::dims<f32> size);
+        virtual void set_max_size(ds::dims<f32> size);
         virtual void set_visible(bool visible);
         virtual void set_theme(Theme* theme);
         virtual void add_child(Widget* widget);
@@ -171,7 +170,7 @@ namespace rl::ui {
 
     protected:
         constexpr static inline f32 RESIZE_GRAB_BUFFER{ 5.0f };
-        constexpr static bool DiagnosticsEnabled{ false };
-        constinit static inline Theme DEFAULT_THEME{ Theme{} };
+        constexpr static inline bool DiagnosticsEnabled{ true };
+        constinit static inline Theme m_default_theme{ Theme{} };
     };
 }

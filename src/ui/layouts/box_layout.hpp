@@ -47,15 +47,16 @@ namespace rl::ui {
         virtual void adjust_for_size_policy() override
         {
             switch (this->size_policy()) {
+                // interestingly enough, both Minimim and Maximum both
+                // use the same code to adjust internal layours/widgets.
+                // The main difference between the two is in an outer
+                // scope, where Minimim clamps the window's min & max
+                // size to perfectly fit the gui contents before anything
+                // is expanded, which is the only thing preventing the
+                // minimum policy to behave exactly like the maximum policy
                 case SizePolicy::Minimum:
-                {
-                    Widget* parent{ this->parent() };
-                    debug_assert(parent != nullptr,
-                                 "layout must have a parent widget");
+                    [[fallthrough]];
 
-                    parent->set_size(m_rect.size + m_outer_margin);
-                    break;
-                }
                 case SizePolicy::Maximum:
                 {
                     const Widget* parent_widget{ this->parent() };
@@ -170,10 +171,8 @@ namespace rl::ui {
                     break;
                 }
 
-                case SizePolicy::FixedSize:
+                case SizePolicy::Freeform:
                     [[fallthrough]];
-                case SizePolicy::Prefered:
-                    break;
                 case SizePolicy::Inherit:
                     debug_assert("layout must define a size policy");
                     break;

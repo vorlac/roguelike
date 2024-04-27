@@ -91,5 +91,9 @@ namespace rl::ui {
         Icon::ID popup_chevron_left_icon{ Icon::ChevronLeft };
         Icon::ID text_box_up_icon{ Icon::ChevronUp };
         Icon::ID text_box_down_icon{ Icon::ChevronDown };
+
+        // TODO: implement some better debug visualization
+        ds::color<f32> debug_layout_background{ 40, 44, 52 };
+        ds::color<f32> debug_layout_outline{ 69, 76, 90 };
     };
 }

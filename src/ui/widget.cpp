@@ -13,6 +13,7 @@
 #include "ui/theme.hpp"
 #include "ui/widget.hpp"
 #include "ui/widgets/scroll_dialog.hpp"
+#include "utils/debug.hpp"
 
 namespace rl::ui {
     Widget::Widget(Widget* parent)
@@ -257,8 +258,13 @@ namespace rl::ui {
             Layout* child_layout{ m_children.front()->layout() };
             if (child_layout != nullptr) {
                 child_layout->apply_layout();
-                if (m_min_size != m_rect.size)
-                    this->set_min_size(child_layout->size() + child_layout->outer_margin());
+                if (m_min_size != m_rect.size) {
+                    const ds::dims<f32> size{ child_layout->size() +
+                                              child_layout->outer_margin() };
+                    this->set_min_size(size);
+                    if (child_layout->size_policy() == SizePolicy::Minimum)
+                        this->set_max_size(size);
+                }
                 child_layout->adjust_for_size_policy();
             }
         }
@@ -458,15 +464,6 @@ namespace rl::ui {
         m_children.erase(m_children.begin() + static_cast<ptrdiff_t>(index));
     }
 
-    // u64 Widget::child_index(const Widget* widget) const
-    //{
-    //     const auto w{ std::ranges::find(m_children, widget) };
-    //     if (w == m_children.end())
-    //         return std::numeric_limits<u64>::max();
-
-    //    return static_cast<u64>(w - m_children.begin());
-    //}
-
     bool Widget::enabled() const
     {
         return m_enabled;
@@ -562,15 +559,6 @@ namespace rl::ui {
         m_max_size = size;
     }
 
-    void Widget::set_recalc_needed(const bool size_recalc_needed, const bool recursive /*= true*/)
-    {
-        m_size_recalc_needed = size_recalc_needed;
-        if (recursive) {
-            for (Widget* child : m_children)
-                child->set_recalc_needed(size_recalc_needed, recursive);
-        }
-    }
-
     bool Widget::contains(const ds::point<f32> pt)
     {
         // Check if the widget contains a certain position
@@ -629,32 +617,31 @@ namespace rl::ui {
 
     bool Widget::draw_mouse_intersection(const ds::point<f32> pt)
     {
-        if (this->contains(pt)) {
-            const ds::rect widget_rect{ m_rect.pt, m_rect.size };
-            m_renderer->draw_rect_outline(widget_rect, 1.0f, rl::Colors::Yellow, Outline::Inner);
+        if constexpr (debug::ui::mouse_interaction) {
+            if (this->contains(pt))
+                m_renderer->draw_rect_outline(m_rect, 1.0f, rl::Colors::Yellow, Outline::Inner);
+
+            LocalTransform transform{ this };
+            const ds::point<f32> local_mouse_pos{ pt - m_rect.pt };
+            for (Widget* child : m_children | std::views::reverse) {
+                if (!child->visible())
+                    continue;
+                if (!child->contains(local_mouse_pos))
+                    continue;
+                if (!child->draw_mouse_intersection(local_mouse_pos))
+                    continue;
+
+                m_renderer->draw_rect_outline(m_rect, 1.0f, rl::Colors::Yellow, Outline::Inner);
+                return true;
+            }
         }
-
-        LocalTransform transform{ this };
-        const ds::point<f32> local_mouse_pos{ pt - m_rect.pt };
-        for (Widget* child : m_children | std::views::reverse) {
-            if (!child->visible())
-                continue;
-            if (!child->contains(local_mouse_pos))
-                continue;
-            if (!child->draw_mouse_intersection(local_mouse_pos))
-                continue;
-
-            m_renderer->draw_rect_outline(m_rect, 1.0f, rl::Colors::Yellow, Outline::Inner);
-            return true;
-        }
-
         return false;
     }
 
     void Widget::draw()
     {
-        if constexpr (Widget::DiagnosticsEnabled)
-            m_renderer->draw_rect_outline(m_rect, 1.0f, rl::Colors::Grey, Outline::Outer);
+        if constexpr (debug::ui::widget_outlines)
+            m_renderer->draw_rect_outline(m_rect, 1.0f, m_theme->debug_layout_outline, Outline::Inner);
 
         if (m_children.empty())
             return;

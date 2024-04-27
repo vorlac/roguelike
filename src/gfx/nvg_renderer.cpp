@@ -158,7 +158,7 @@ namespace rl {
     {
         // Creates font by loading it from the specified memory chunk.
         // Returns handle to the font.
-        text::font::handle fh{ nvg::create_font_mem(m_nvg_context.get(), font_name, font_ttf) };
+        const text::font::handle fh{ nvg::create_font_mem(m_nvg_context.get(), font_name, font_ttf) };
         debug_assert(fh != text::font::InvalidHandle, "failed to load font: {}", font_name);
         return fh;
     }
@@ -166,7 +166,7 @@ namespace rl {
     void NVGRenderer::flush(const ds::dims<f32>& viewport, const f32 pixel_ratio) const
     {
         // Flush all queued up NanoVG rendering commands
-        nvg::Params* params{ nvg::internal_params(m_nvg_context.get()) };
+        const nvg::Params* params{ nvg::internal_params(m_nvg_context.get()) };
         params->render_flush(params->user_ptr);
         params->render_viewport(params->user_ptr, viewport.width, viewport.height, pixel_ratio);
     }
@@ -212,7 +212,10 @@ namespace rl {
         // Measures the specified multi-text string. Parameter bounds should be a pointer to
         // float[4], if the bounding box of the text should be returned. The bounds value are
         // [xmin,ymin, xmax,ymax] Measured values are returned in local coordinate space.
-        ds::rect bounds{ nvg::text_box_bounds(m_nvg_context.get(), pos, fold_width, text) };
+        const ds::rect bounds{
+            nvg::text_box_bounds(m_nvg_context.get(),
+                                 pos, fold_width, text)
+        };
 
         return ds::rect<f32>{
             pos,

@@ -231,16 +231,24 @@ namespace rl::ui {
 
     void Canvas::set_size(const ds::dims<f32> size)
     {
+        debug_assert(
+            m_main_window != nullptr,
+            "canvas missing window reference");
+
         Widget::set_size(size);
-        debug_assert(m_main_window != nullptr, "canvas doesn't have reference to main window");
         m_main_window->set_size(size);
     }
 
     void Canvas::set_min_size(const ds::dims<f32> size)
     {
         Widget::set_min_size(size);
-        debug_assert(m_main_window != nullptr, "canvas doesn't have reference to main window");
         m_main_window->set_min_size(size);
+    }
+
+    void Canvas::set_max_size(const ds::dims<f32> size)
+    {
+        Widget::set_min_size(size);
+        m_main_window->set_max_size(size);
     }
 
     bool Canvas::tooltip_fade_in_progress()
@@ -267,7 +275,6 @@ namespace rl::ui {
 
         if (match_found)
             m_focus_path.clear();
-
         if (m_active_dialog == dialog) {
             m_active_dialog = nullptr;
             m_active_widget = nullptr;
@@ -299,7 +306,7 @@ namespace rl::ui {
         }
         m_focus_path.clear();
 
-        const ScrollableDialog* dialog{ nullptr };
+        const ScrollableDialog* dialog{};
         while (widget != nullptr) {
             m_focus_path.push_back(widget);
             const ScrollableDialog* dlg{ dynamic_cast<ScrollableDialog*>(widget) };
@@ -416,8 +423,6 @@ namespace rl::ui {
                 }
 
                 case MouseMode::Ignore:
-                    [[fallthrough]];
-                default:
                     debug_assert("Unhandled/invalid Canvas mouse mode");
                     break;
             }
@@ -460,9 +465,8 @@ namespace rl::ui {
                 m_active_dialog = dynamic_cast<ScrollableDialog*>(m_active_widget);
 
                 if (m_active_dialog != nullptr) {
-                    bool drag_btn_pressed{ mouse.is_button_pressed(Mouse::Button::Left) };
-                    bool resize_btn_pressed{ mouse.is_button_pressed(Mouse::Button::Left) };
-
+                    const bool drag_btn_pressed{ mouse.is_button_pressed(Mouse::Button::Left) };
+                    const bool resize_btn_pressed{ mouse.is_button_pressed(Mouse::Button::Left) };
                     if (resize_btn_pressed && m_active_dialog != nullptr) {
                         auto [mode, comp, grab_pos] = m_active_dialog->check_interaction(mouse_pos);
                         if (grab_pos != Side::None) {
@@ -482,8 +486,6 @@ namespace rl::ui {
             case MouseMode::Drag:
                 [[fallthrough]];
             case MouseMode::Resize:
-                [[fallthrough]];
-            default:
                 debug_assert("Invalid/unhandled canvas mouse mode");
                 [[fallthrough]];
             case MouseMode::Ignore:
@@ -504,14 +506,14 @@ namespace rl::ui {
         m_last_interaction = m_timer.elapsed();
 
         if (m_focus_path.size() > 1) {
-            auto dialog{ dynamic_cast<ScrollableDialog*>(m_focus_path[m_focus_path.size() - 2]) };
+            const auto dialog{ dynamic_cast<ScrollableDialog*>(m_focus_path[m_focus_path.size() - 2]) };
             if (dialog != nullptr && dialog->mode_active(Interaction::Modal)) {
                 if (!dialog->contains(mouse_pos))
                     return true;
             }
         }
 
-        Widget* drop_widget{ this->find_widget(mouse_pos) };
+        const Widget* drop_widget{ this->find_widget(mouse_pos) };
         if (drop_widget != nullptr && drop_widget->cursor() != m_mouse.active_cursor())
             m_mouse.set_cursor(drop_widget->cursor());
 
