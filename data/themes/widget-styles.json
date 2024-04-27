@@ -3,7 +3,7 @@
     "label": {
         "text": {
             "font.family": "mono",
-            "font.size": 38.0,
+            "font.size": 38.0
         },
         "colors": {
             "background": "#777777",
@@ -19,7 +19,7 @@
     "button": {
         "text": {
             "font.family": "sans",
-            "font.size": 38.0,
+            "font.size": 38.0
         },
         "colors": {
             "background": "#2f2626",

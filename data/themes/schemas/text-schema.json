@@ -10,7 +10,7 @@
                     "type": "string",
                     "enum": [
                         "sans",
-                        "sans-bold",
+                        "sans_bold",
                         "mono",
                         "icon"
                     ]
