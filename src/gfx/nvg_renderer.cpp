@@ -4,7 +4,6 @@
 #include <memory>
 #include <type_traits>
 
-// #include "ui/theme.hpp"
 #include "ds/dims.hpp"
 #include "ds/line.hpp"
 #include "gfx/nvg_renderer.hpp"
@@ -33,8 +32,11 @@ namespace rl {
             depth_buf = depth_bits > 0;
             float_buf = float_mode != 0;
 
-            constexpr nvg::gl::CreateFlags nvg_flags{ nvg::gl::CreateFlags::AntiAlias |
-                                                      nvg::gl::CreateFlags::StencilStrokes };
+            constexpr nvg::gl::CreateFlags nvg_flags{
+                nvg::gl::CreateFlags::AntiAlias |
+                nvg::gl::CreateFlags::StencilStrokes
+                //| nvg::gl::CreateFlags::Debug
+            };
             // if (stencil_buf)
             //     nvg_flags |= nvg::gl::CreateFlags::StencilStrokes;
             // nvg_flags |= nvg::gl::CreateFlags::Debug;
@@ -120,7 +122,7 @@ namespace rl {
         nvg::reset_scissor(m_nvg_context.get());
     }
 
-    nvg::PaintStyle NVGRenderer::create_rect_gradient_paint_style(ds::rect<f32>&& rect, const f32 corner_radius,
+    nvg::PaintStyle NVGRenderer::create_rect_gradient_paint_style(const ds::rect<f32>& rect, const f32 corner_radius,
                                                                   const f32 outer_blur, const ds::color<f32>& inner_color,
                                                                   const ds::color<f32>& outer_gradient_color) const
     {
@@ -131,11 +133,12 @@ namespace rl {
         // defines how blurry the border of the rectangle is. Parameter icol specifies the inner
         // color and ocol the outer color of the gradient. The gradient is transformed by the
         // current transform when it is passed to FillPaint() or StrokePaint().
-        return nvg::box_gradient(m_nvg_context.get(), std::forward<ds::rect<f32>>(rect),
-                                 corner_radius, outer_blur, inner_color, outer_gradient_color);
+        return nvg::box_gradient(
+            m_nvg_context.get(), rect, corner_radius,
+            outer_blur, inner_color, outer_gradient_color);
     }
 
-    nvg::PaintStyle NVGRenderer::create_linear_gradient_paint_style(ds::line<f32>&& line,
+    nvg::PaintStyle NVGRenderer::create_linear_gradient_paint_style(ds::line<f32> line,
                                                                     const ds::color<f32>& inner_color,
                                                                     const ds::color<f32>& outer_gradient_color) const
     {
@@ -171,19 +174,19 @@ namespace rl {
     void NVGRenderer::load_fonts(const std::vector<text::font::Data>& fonts)
     {
         for (auto&& [font_name, font_ttf] : fonts) {
-            text::font::handle fh{ this->load_font(font_name, font_ttf) };
+            const text::font::handle fh{ this->load_font(font_name, font_ttf) };
             m_font_map[font_name] = fh;
         }
     }
 
-    void NVGRenderer::set_fill_paint_style(nvg::PaintStyle&& paint_style) const
+    void NVGRenderer::set_fill_paint_style(const nvg::PaintStyle& paint_style) const
     {
-        nvg::fill_paint(m_nvg_context.get(), std::move(paint_style));
+        nvg::fill_paint(m_nvg_context.get(), paint_style);
     }
 
-    void NVGRenderer::fill_current_path(nvg::PaintStyle&& paint_style) const
+    void NVGRenderer::fill_current_path(const nvg::PaintStyle& paint_style) const
     {
-        nvg::fill_paint(m_nvg_context.get(), std::move(paint_style));
+        nvg::fill_paint(m_nvg_context.get(), paint_style);
         nvg::fill(m_nvg_context.get());
     }
 

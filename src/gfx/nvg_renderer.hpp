@@ -34,44 +34,41 @@ namespace rl {
         void restore_state() const;
         void reset_scissor() const;
 
-        void set_fill_paint_style(nvg::PaintStyle&& paint_style) const;
-        void fill_current_path(nvg::PaintStyle&& paint_style) const;
+        void set_fill_paint_style(const nvg::PaintStyle& paint_style) const;
+        void fill_current_path(const nvg::PaintStyle& paint_style) const;
 
-        nvg::PaintStyle create_rect_gradient_paint_style(
-            ds::rect<f32>&& rect, f32 corner_radius, f32 outer_blur,
+        [[nodiscard]] nvg::Context* context() const;
+
+        [[nodiscard]] nvg::PaintStyle create_rect_gradient_paint_style(
+            const ds::rect<f32>& rect, f32 corner_radius, f32 outer_blur,
             const ds::color<f32>& inner_color, const ds::color<f32>& outer_gradient_color) const;
 
-        nvg::PaintStyle create_linear_gradient_paint_style(
-            ds::line<f32>&& line, const ds::color<f32>& inner_color,
+        [[nodiscard]] nvg::PaintStyle create_linear_gradient_paint_style(
+            ds::line<f32> line, const ds::color<f32>& inner_color,
             const ds::color<f32>& outer_gradient_color) const;
+
+        [[nodiscard]] text::font::handle load_font(
+            const std::string_view& font_name,
+            const std::basic_string_view<u8>& font_ttf) const;
+
+        [[nodiscard]] ds::dims<f32> get_text_size(
+            const std::string& text) const;
+
+        [[nodiscard]] ds::dims<f32> get_text_size(
+            const std::string& text, const std::string_view& font_name,
+            f32 font_size, Align alignment = Align::HCenter | Align::VMiddle) const;
+
+        [[nodiscard]] ds::rect<f32> get_text_box_rect(
+            const std::string& text, const ds::point<f32>& pos, const std::string_view& font_name,
+            f32 font_size, f32 fold_width, Align alignment = Align::HLeft | Align::VTop) const;
 
         void load_fonts(const std::vector<text::font::Data>& fonts);
         void set_text_properties_(const std::string_view& font_name, f32 font_size,
                                   Align alignment) const;
 
-        [[nodiscard]]
-        text::font::handle load_font(const std::string_view& font_name,
-                                     const std::basic_string_view<u8>& font_ttf) const;
-
-        [[nodiscard]]
-        ds::dims<f32> get_text_size(const std::string& text) const;
-
-        [[nodiscard]]
-        ds::dims<f32> get_text_size(const std::string& text, const std::string_view& font_name,
-                                    f32 font_size,
-                                    Align alignment = Align::HCenter | Align::VMiddle) const;
-
-        [[nodiscard]]
-        ds::rect<f32> get_text_box_rect(
-            const std::string& text, const ds::point<f32>& pos, const std::string_view& font_name,
-            f32 font_size, f32 fold_width, Align alignment = Align::HLeft | Align::VTop) const;
-
+        void draw_rounded_rect(const ds::rect<f32>& rect, f32 corner_radius) const;
         void draw_rect_outline(const ds::rect<f32>& rect, f32 stroke_width,
                                const ds::color<f32>& color, Outline type) const;
-        void draw_rounded_rect(const ds::rect<f32>& rect, f32 corner_radius) const;
-
-        [[nodiscard]]
-        nvg::Context* context() const;
 
     public:
         template <std::invocable TCallable>

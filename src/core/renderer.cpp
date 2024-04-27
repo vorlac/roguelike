@@ -9,9 +9,9 @@
 #include "core/main_window.hpp"
 #include "core/renderer.hpp"
 #include "gfx/nvg_renderer.hpp"
-#include "sdl/defs.hpp"
 #include "utils/io.hpp"
 #include "utils/logging.hpp"
+#include "utils/sdl_defs.hpp"
 
 SDL_C_LIB_BEGIN
 struct SDL_VideoDevice;

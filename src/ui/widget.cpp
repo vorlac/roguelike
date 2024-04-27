@@ -262,16 +262,9 @@ namespace rl::ui {
                 child_layout->adjust_for_size_policy();
             }
         }
-        // else {
-        //     const Layout* parent_layout{ m_parent->layout() };
-        //     if (parent_layout != nullptr) {
-        //         //
-        //     }
-        // }
 
-        for (Widget* child : m_children) {
+        for (Widget* child : m_children)
             child->perform_layout();
-        }
     }
 
     Widget* Widget::find_widget(const ds::point<f32> pt)

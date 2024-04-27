@@ -3,12 +3,10 @@
 
 int main(const int argc, char** argv)
 {
-    int ret = 0;
-    if (!rl::parse_args(argc, argv))
-        ret = 1;
-    else {
+    int ret{ -1 };
+    if (rl::parse_args(argc, argv)) {
         rl::Application game{};
-        ret = game.run() ? 0 : -1;
+        ret = game.run();
     }
 
     return ret;

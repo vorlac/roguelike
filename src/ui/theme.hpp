@@ -11,10 +11,7 @@ namespace rl::ui {
     class Theme final : public ds::refcounted
     {
     public:
-        std::string_view label_font_name{ text::font::style::Sans };
-        std::string_view button_font_name{ text::font::style::Sans };
         std::string_view tooltip_font_name{ text::font::style::SansBold };
-        std::string_view dialog_title_font_name{ text::font::style::SansBold };
         std::string_view form_group_font_name{ text::font::style::Mono };
 
         f32 icon_scale{ 1.0f };
@@ -24,9 +21,7 @@ namespace rl::ui {
 
         f32 standard_font_size{ 16.0f };
         f32 tooltip_font_size{ 18.0f };
-        f32 button_font_size{ 20.0f };
         f32 text_box_font_size{ 20.0f };
-        f32 dialog_title_font_size{ 24.0f };
         f32 form_group_font_size{ 24.0f };
         f32 form_widget_font_size{ 18.0f };
         f32 form_pre_group_spacing{ 15.0f };
@@ -34,12 +29,6 @@ namespace rl::ui {
         f32 form_variable_spacing{ 10.0f };
 
         f32 label_font_size{ 38.0f };
-
-        f32 dialog_corner_radius{ 5.0f };
-        f32 dialog_header_height{ 40.0f };
-        f32 dialog_drop_shadow_size{ 15.0f };
-
-        f32 button_corner_radius{ 2.5f };
 
         f32 tab_inner_margin{ 5.0f };
         f32 tab_min_button_width{ 20.0f };
@@ -59,15 +48,28 @@ namespace rl::ui {
         ds::color<f32> disabled_text_color{ Colors::DarkGrey };
         ds::color<f32> text_shadow_color{ Colors::Black };
         ds::color<f32> icon_color{ Colors::LightGrey };
+
+        std::string_view label_font_name{ text::font::style::Sans };
         ds::color<f32> label_font_color{ Colors::White };
 
+        f32 button_font_size{ 32.0f };
+        f32 button_corner_radius{ 2.5f };
+        f32 button_outline_width_focused{ 2.5f };
+        f32 button_outline_width_unfocused{ 2.5f };
+        std::string_view button_font_name{ text::font::style::Sans };
         ds::color<f32> button_gradient_top_focused{ 64, 64, 64 };
         ds::color<f32> button_gradient_bot_focused{ 48, 48, 48, 255 };
-        ds::color<f32> button_gradient_top_unfocused{ 74, 74, 74, 255 };
-        ds::color<f32> button_gradient_bot_unfocused{ 58, 58, 58, 255 };
+        ds::color<f32> button_gradient_top_unfocused{ 100, 100, 100 };
+        ds::color<f32> button_gradient_bot_unfocused{ 65, 65, 65 };
         ds::color<f32> button_gradient_top_pushed{ 41, 41, 41, 255 };
         ds::color<f32> button_gradient_bot_pushed{ 29, 29, 29, 255 };
+        ds::color<f32> button_disabled_text_color{ Colors::DarkGrey };
 
+        f32 dialog_title_font_size{ 24.0f };
+        f32 dialog_header_height{ 40.0f };
+        f32 dialog_corner_radius{ 5.0f };
+        f32 dialog_drop_shadow_size{ 15.0f };
+        std::string_view dialog_title_font_name{ text::font::style::SansBold };
         ds::color<f32> dialog_fill_unfocused{ 43, 43, 43, 230 };
         ds::color<f32> dialog_fill_focused{ 45, 45, 45, 230 };
         ds::color<f32> dialog_title_unfocused{ 220, 220, 220, 160 };

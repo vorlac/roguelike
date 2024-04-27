@@ -6,11 +6,11 @@
 
 #include <fmt/color.h>
 
-#include "sdl/defs.hpp"
 #include "utils/concepts.hpp"
 #include "utils/memory.hpp"
 #include "utils/numeric.hpp"
 #include "utils/random.hpp"
+#include "utils/sdl_defs.hpp"
 
 SDL_C_LIB_BEGIN
 #include <SDL3/SDL_pixels.h>

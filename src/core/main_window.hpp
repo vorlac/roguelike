@@ -10,8 +10,8 @@
 #include "ds/point.hpp"
 #include "ds/rect.hpp"
 #include "ds/vector2d.hpp"
-#include "sdl/defs.hpp"
 #include "ui/widget.hpp"
+#include "utils/sdl_defs.hpp"
 
 namespace rl {
     class EventHandler;

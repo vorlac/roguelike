@@ -4,8 +4,8 @@
 #include "core/main_window.hpp"
 #include "core/mouse.hpp"
 #include "core/system.hpp"
-#include "sdl/defs.hpp"
 #include "utils/io.hpp"
+#include "utils/sdl_defs.hpp"
 
 namespace rl {
     class EventHandler

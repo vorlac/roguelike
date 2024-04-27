@@ -5,8 +5,8 @@ namespace rl::ui {
     {
         enum class Placement {
             Left,           // far left
-            LeftCentered,   // left, centered (depends on caption text length)
-            RightCentered,  // right, centered (depends on caption text length)
+            LeftCentered,   // left, centered (depends on text length)
+            RightCentered,  // right, centered (depends on text length)
             Right           // far right
         };
 

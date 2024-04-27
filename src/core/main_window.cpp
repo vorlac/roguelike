@@ -13,11 +13,11 @@
 #include "ds/rect.hpp"
 #include "ds/vector2d.hpp"
 #include "gfx/nvg_renderer.hpp"
-#include "sdl/defs.hpp"
 #include "ui/canvas.hpp"
 #include "utils/io.hpp"
 #include "utils/logging.hpp"
 #include "utils/numeric.hpp"
+#include "utils/sdl_defs.hpp"
 
 namespace rl {
 

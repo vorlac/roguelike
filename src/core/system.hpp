@@ -2,7 +2,7 @@
 
 #include <type_traits>
 
-#include "sdl/defs.hpp"
+#include "utils/sdl_defs.hpp"
 SDL_C_LIB_BEGIN
 #include <SDL3/SDL_events.h>
 SDL_C_LIB_END

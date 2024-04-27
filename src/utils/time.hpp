@@ -6,9 +6,9 @@
 #include <utility>
 
 #include "core/assert.hpp"
-#include "sdl/defs.hpp"
 #include "utils/concepts.hpp"
 #include "utils/numeric.hpp"
+#include "utils/sdl_defs.hpp"
 
 SDL_C_LIB_BEGIN
 #include <SDL3/SDL_timer.h>

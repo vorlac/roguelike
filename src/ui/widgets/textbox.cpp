@@ -5,11 +5,11 @@
 #include "core/main_window.hpp"
 #include "core/mouse.hpp"
 #include "gfx/vg/nanovg.hpp"
-#include "sdl/defs.hpp"
 #include "ui/theme.hpp"
 #include "ui/widgets/textbox.hpp"
 #include "utils/math.hpp"
 #include "utils/numeric.hpp"
+#include "utils/sdl_defs.hpp"
 #include "utils/unicode.hpp"
 
 SDL_C_LIB_BEGIN

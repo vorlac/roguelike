@@ -1,21 +1,10 @@
 #pragma once
-#include <concepts>
+
 #include <ranges>
 #include <string>
-#include <tuple>
-#include <typeinfo>
-#include <utility>
 
 #include <fmt/color.h>
-#include <fmt/compile.h>
 #include <fmt/format.h>
-#include <fmt/ranges.h>
-
-#include "sdl/defs.hpp"
-
-SDL_C_LIB_BEGIN
-#include <SDL3/SDL_error.h>
-SDL_C_LIB_END
 
 #ifdef NDEBUG
 

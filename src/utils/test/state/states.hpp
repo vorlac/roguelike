@@ -1,7 +1,7 @@
 #pragma once
 
-#include "sdl/defs.hpp"
 #include "utils/io.hpp"
+#include "utils/sdl_defs.hpp"
 
 SDL_C_LIB_BEGIN
 #include <SDL3/SDL_events.h>

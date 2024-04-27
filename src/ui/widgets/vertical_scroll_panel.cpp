@@ -281,11 +281,11 @@ namespace rl::ui {
                 };
 
                 nvg::PaintStyle bgbrush{ m_renderer->create_rect_gradient_paint_style(
-                    std::move(scrollbar_rect), ScrollBarBackgroundRadius, ShadowBlur,
+                    scrollbar_rect, ScrollBarBackgroundRadius, ShadowBlur,
                     ScrollbarColor, ScrollbarShadowColor) };
 
-                nvg::rounded_rect(context, std::move(scrollbar_border_rect), ScrollBarCornerRadius);
-                nvg::fill_paint(context, std::move(bgbrush));
+                nvg::rounded_rect(context, scrollbar_border_rect, ScrollBarCornerRadius);
+                nvg::fill_paint(context, bgbrush);
                 nvg::fill(context);
             });
         });

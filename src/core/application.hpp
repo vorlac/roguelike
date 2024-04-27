@@ -12,10 +12,10 @@
 #include "core/event_handler.hpp"
 #include "core/main_window.hpp"
 #include "gfx/gl/instanced_buffer.hpp"
-#include "sdl/defs.hpp"
 #include "ui/gui.hpp"
 #include "utils/logging.hpp"
 #include "utils/numeric.hpp"
+#include "utils/sdl_defs.hpp"
 #include "utils/time.hpp"
 
 SDL_C_LIB_BEGIN
@@ -61,7 +61,7 @@ namespace rl {
         }
 
     public:
-        bool run()
+        i32 run()
         {
             bool ret{ this->setup() };
 
@@ -137,7 +137,7 @@ namespace rl {
             }
 
             ret &= this->teardown();
-            return ret;
+            return ret ? 0 : 1;
         }
 
         void render() const

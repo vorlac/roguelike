@@ -2128,7 +2128,7 @@ namespace rl::nvg {
         return p;
     }
 
-    PaintStyle box_gradient(Context*, ds::rect<f32>&& rect, const f32 corner_radius,
+    PaintStyle box_gradient(Context*, const ds::rect<f32>& rect, const f32 corner_radius,
                             const f32 feather_blur, const ds::color<f32>& inner_color,
                             const ds::color<f32>& outer_gradient_color)
     {

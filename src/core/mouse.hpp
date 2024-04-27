@@ -2,7 +2,7 @@
 #include <array>
 
 #include "ds/point.hpp"
-#include "sdl/defs.hpp"
+#include "utils/sdl_defs.hpp"
 
 SDL_C_LIB_BEGIN
 #include <SDL3/SDL_events.h>

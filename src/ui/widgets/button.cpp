@@ -45,7 +45,7 @@ namespace rl::ui {
         return m_props;
     }
 
-    std::string_view Button::caption() const
+    std::string_view Button::text() const
     {
         return m_text;
     }
@@ -152,8 +152,7 @@ namespace rl::ui {
                 icon_size.height *= this->icon_scale();
                 nvg::set_font_size(context, icon_size.height);
                 nvg::set_font_face(context, text::font::style::Icons);
-                icon_size.width = m_rect.size.height * 0.15f +
-                                  nvg::text_bounds(context, ds::point<f32>::zero(), utf8(m_icon));
+                icon_size.width = nvg::text_bounds(context, ds::point<f32>::zero(), utf8(m_icon));
             }
             else {
                 icon_size.height *= 0.9f;
@@ -180,7 +179,7 @@ namespace rl::ui {
         return true;
     }
 
-    bool Button::handle_mouse_button_event(ds::point<f32> pt, const Mouse::Button::ID button,
+    bool Button::handle_mouse_button_event(const ds::point<f32> pt, const Mouse::Button::ID button,
                                            const bool button_pressed, Keyboard::Scancode::ID)
     {
         // Temporarily increase the reference count of the button in
@@ -270,8 +269,8 @@ namespace rl::ui {
     {
         Widget::draw();
 
-        ds::color grad_top{ m_theme->button_gradient_top_unfocused };
-        ds::color grad_bot{ m_theme->button_gradient_bot_unfocused };
+        ds::color<f32> grad_top{ m_theme->button_gradient_top_unfocused };
+        ds::color<f32> grad_bot{ m_theme->button_gradient_bot_unfocused };
 
         auto context{ m_renderer->context() };
         if (m_pressed || (m_mouse_focus && this->has_property(Property::StandardMenu))) {
@@ -338,11 +337,11 @@ namespace rl::ui {
             center.y - 1.0f,
         };
 
-        ds::color text_color{ math::equal(m_text_color.a, 0.0f) ? m_theme->text_color
-                                                                : m_text_color };
+        ds::color text_color{ math::equal(m_text_color.a, 0.0f)
+                                  ? m_theme->text_color
+                                  : m_text_color };
         if (!m_enabled)
             text_color = m_theme->disabled_text_color;
-
         if (m_icon != Icon::None) {
             const std::string icon{ utf8(m_icon) };
             ds::dims icon_size{ font_size, font_size };

@@ -45,8 +45,6 @@ namespace rl::math {
 }
 
 namespace rl {
-    // scoped enum conversions
-
     template <typename TEnum>
         requires std::is_scoped_enum_v<TEnum>
     constexpr TEnum operator|(const TEnum lhs, const TEnum rhs)

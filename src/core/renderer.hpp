@@ -3,14 +3,11 @@
 #include <bitset>
 
 #include "ds/dims.hpp"
-#include "ds/point.hpp"
 #include "ds/rect.hpp"
-#include "sdl/defs.hpp"
+#include "utils/sdl_defs.hpp"
 
 SDL_C_LIB_BEGIN
-#include <SDL3/SDL_blendmode.h>
 #include <SDL3/SDL_render.h>
-#include <SDL3/SDL_video.h>
 SDL_C_LIB_END
 
 struct NVGLUframebuffer;
@@ -57,6 +54,8 @@ namespace rl {
         explicit OpenGLRenderer() = delete;
         explicit OpenGLRenderer(const OpenGLRenderer& other) = delete;
         explicit OpenGLRenderer(OpenGLRenderer& other) = delete;
+        OpenGLRenderer& operator=(const OpenGLRenderer& other) = delete;
+        OpenGLRenderer& operator=(OpenGLRenderer& other) = delete;
 
     public:
         explicit OpenGLRenderer(
@@ -65,7 +64,7 @@ namespace rl {
 
         ~OpenGLRenderer() = default;
 
-        SDL3::SDL_GLContext gl_context() const;
+        [[nodiscard]] SDL3::SDL_GLContext gl_context() const;
         [[nodiscard]] ds::dims<i32> get_output_size() const;
         [[nodiscard]] ds::rect<f32> get_viewport() const;
 
