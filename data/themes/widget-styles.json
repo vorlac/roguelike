@@ -1,5 +1,5 @@
 {
-    "$schema": "./schemas/gui-theme-schema.json",
+    "$schema": "schemas/gui-theme-schema.json",
     "label": {
         "text": {
             "font.family": "mono",
