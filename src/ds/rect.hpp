@@ -55,21 +55,18 @@ namespace rl::ds {
             };
         }
 
-        // Returns the area of the rect<T>
         [[nodiscard]]
         constexpr T area() const
         {
             return size.area();
         }
 
-        // Checks if the rectangle has no area
         [[nodiscard]]
         constexpr bool is_empty() const
         {
             return math::equal(this->area(), static_cast<T>(0));
         }
 
-        // Checks if the rectangle has a negative width or height
         [[nodiscard]]
         constexpr bool is_invalid() const
         {
@@ -82,16 +79,16 @@ namespace rl::ds {
             return !this->is_invalid();
         }
 
-        // Checks if the rectangle has invalid coordinates and is empty
         [[nodiscard]]
         constexpr bool is_null() const
         {
             return *this == ds::rect<T>::null();
         }
 
-        // Generates an array of vertices representing the rect to be used in an OpenGL VBO
         constexpr auto triangles() -> std::array<point<T>, 6>
         {
+            // Generates an array of vertices representing
+            // the rect to be used in an OpenGL VBO
             point<T> tl{ pt.x, pt.y + size.height };
             point<T> bl{ pt.x, pt.y };
             point<T> tr{ tl.x + size.width, tl.y };
@@ -107,13 +104,11 @@ namespace rl::ds {
             };
         }
 
-        // Generates a packed array of vertex/color pairs to be used in an OpenGL VBO
-        //
-        // Parameters:
-        //     clr - The color to pack into the return array for this rect.
         constexpr auto triangles(const color<f32>& clr)
             -> std::array<std::pair<point<f32>, color<f32>>, 6>
         {
+            // Generates a packed array of vertex/color
+            // pairs to be used in an OpenGL VBO
             point<T> tl{ pt.x, pt.y + size.height };
             point<T> bl{ pt.x, pt.y };
             point<T> tr{ tl.x + size.width, tl.y };
@@ -129,11 +124,11 @@ namespace rl::ds {
             };
         }
 
-        // returns list of packed verices and indexes for each triangle
-        // for both triangles to be used as Element constexpr inline Buffer Objects
         [[nodiscard]]
         auto triangle_ebo() const
         {
+            // returns list of packed verices and indexes for each triangle
+            // for both triangles to be used as Element constexpr inline Buffer Objects
             point<T> tl{ pt.x, pt.y + size.height };
             point<T> bl{ pt.x, pt.y };
             point<T> tr{ tl.x + size.width, tl.y };
@@ -151,10 +146,10 @@ namespace rl::ds {
             };
         }
 
-        // expand current rect to include rect other
         [[nodiscard]]
         constexpr rect<T> expanded(const rect<T>& other) const
         {
+            // expand current rect to include rect other
             const T min_x{ math::min(this->pt.x, other.pt.x) };
             const T max_x{ math::max((this->pt.x + this->size.width),
                                      (other.pt.x + other.size.width)) };
@@ -175,17 +170,17 @@ namespace rl::ds {
             };
         }
 
-        // expand current rect to include rect other
         constexpr rect<T>& expand(const rect<T>& other)
         {
+            // expand current rect to include rect other
             *this = std::move(this->expanded(other));
             return *this;
         }
 
-        // Expands a rect by the amount on all sides
         [[nodiscard]]
         constexpr rect<T> expanded(T amount) const noexcept
         {
+            // Expands a rect by the amount on all sides
             return rect<T>{
                 point<T>{
                     this->pt.x - amount,
@@ -198,10 +193,10 @@ namespace rl::ds {
             };
         }
 
-        // Expands a rect by the specific amounts on each side
         [[nodiscard]]
         constexpr rect<T> expanded(T top, T bottom, T left, T right) const noexcept
         {
+            // Expands a rect by the specific amounts on each side
             return rect<T>{
                 point<T>{
                     this->pt.x - left,
@@ -214,10 +209,10 @@ namespace rl::ds {
             };
         }
 
-        // Expands a rect by the specific amounts on each side
         [[nodiscard]]
         constexpr rect<T> expanded(ds::margin<T> expansion) const noexcept
         {
+            // Expands a rect by the specific amounts on each side
             return rect<T>{
                 point<T>{
                     this->pt.x - expansion.left,
@@ -341,7 +336,6 @@ namespace rl::ds {
             };
         }
 
-        // Gets the top left point of the rectangle
         [[nodiscard]]
         constexpr T top() const noexcept
         {
@@ -366,45 +360,57 @@ namespace rl::ds {
             return pt.x + size.width;
         }
 
-        // Gets the top left point of the rectangle
         [[nodiscard]]
         constexpr point<T> top_left() const noexcept
         {
             return point<T>{ pt.x, pt.y };
         }
 
-        // Gets the top right point of the rectangle
         [[nodiscard]]
         constexpr point<T> top_right() const noexcept
         {
             return point<T>{ pt.x + size.width, pt.y };
         }
 
-        // Gets the bottom left point of the rectangle
         [[nodiscard]]
         constexpr point<T> bot_left() const noexcept
         {
             return point<T>{ pt.x, pt.y + size.height };
         }
 
-        // Gets the bottom right point of the rectangle
         [[nodiscard]]
         constexpr point<T> bot_right() const noexcept
         {
-            return point<T>{
-                pt.x + size.width,
-                pt.y + size.height,
+            return point<T>{ static_cast<T>(pt.x + size.width),
+                             static_cast<T>(pt.y + size.height) };
+        }
+
+        [[nodiscard]]
+        constexpr rect<T> centered(const ds::point<f32> pos) const
+        {
+            // Returns a new rect centered at pos
+            const ds::vector2<T> delta{ pos - this->centroid() };
+            return ds::rect<T>{
+                this->pt + delta,
+                this->size,
             };
         }
 
-        // Gets the center point of the rectangle
+        [[nodiscard]]
+        constexpr rect<T>& center(const ds::point<f32> pos)
+        {
+            // Centers the rect at the point
+            const ds::vector2<T> delta{ pos - this->centroid() };
+            this->pt += delta;
+            return *this;
+        }
+
         [[nodiscard]]
         constexpr point<T> centroid() const noexcept
         {
-            return point<T>{
-                pt.x + (size.width / 2.0f),
-                pt.y + (size.height / 2.0f),
-            };
+            // Gets the center point of the rectangle
+            return point<T>{ pt.x + (size.width / 2.0f),
+                             pt.y + (size.height / 2.0f) };
         }
 
         // Checks if the rect shares any space with pt
@@ -415,58 +421,59 @@ namespace rl::ds {
                    (pnt.y >= this->pt.y && pnt.y <= this->pt.y + this->size.height);
         }
 
-        // Checks if the rects share any space with each other
         [[nodiscard]]
         constexpr bool overlaps(const rect<T>& other) const
         {
-            // TODO: optimize
+            // Checks if the rects share any space with each other
             return this->overlaps(other.top_left()) || this->overlaps(other.top_right()) ||
                    this->overlaps(other.bot_left()) || this->overlaps(other.bot_right());
         }
 
-        // Checks if the rect fully contains the point
         [[nodiscard]]
         constexpr bool contains(point<T> point) const
         {
+            // Checks if the rect fully contains the point
             return (point.x > this->pt.x && point.x < this->pt.x + this->size.width) &&
                    (point.y > this->pt.y && point.y < this->pt.y + this->size.height);
         }
 
-        // Checks if the rect fully contains the other
         [[nodiscard]]
         constexpr bool contains(const rect<T>& other) const
         {
-            return this->contains(other.top_left()) && this->contains(other.top_right());
+            // Checks if the rect fully contains the other
+            return this->contains(other.top_left()) &&
+                   this->contains(other.top_right());
         }
 
-        // Checks if the rect fully contains the other
         [[nodiscard]]
         constexpr bool contained_by(const rect<T>& other) const
         {
-            return other.contains(this->top_left()) && other.contains(this->top_right());
+            // Checks if the rect fully contains the other
+            return other.contains(this->top_left()) &&
+                   other.contains(this->top_right());
         }
 
-        // Checks if the point perfeclty falls somewhere on the rect's bounds.
         [[nodiscard]]
         constexpr bool touches(const point<T>& pnt) const
         {
+            // Checks if the point perfeclty falls on the rect's bounds
             return (pnt.x == this->pt.x && this->pt.y <= pnt.y &&
                     pnt.y <= this->pt.y + this->size.width) ||
                    (pnt.y == this->pt.y && this->pt.x <= pnt.x &&
                     pnt.x <= this->pt.x + this->size.height);
         }
 
-        // Checks if the this rect externally touches the other rect
         [[nodiscard]]
         constexpr bool touches(const rect<T>& other) const
         {
+            // Checks if the this rect externally touches the other rect
             return this->overlaps(other) && not this->overlaps(other);
         }
 
-        // Returns a quadrant of the rectangle
         [[nodiscard]]
         constexpr rect<T> quad(Quad quad) const
         {
+            // Returns a quadrant of the rectangle
             point<T> center{ this->centroid() };
             dims<T> quad_size{
                 this->size.width / static_cast<T>(2),
@@ -495,12 +502,16 @@ namespace rl::ds {
                         { quad_size },
                     };
             }
+
+            debug_assert("Invalid Quadrant: {}", quad);
+            return {};
         }
 
-        // returns an array of the 4 quadrants of this constexpr inline rectangle
         [[nodiscard]]
         std::array<rect<T>, 4> quads() const
         {
+            // returns an array of the 4
+            // quadrants of the rectangle
             return std::array{
                 this->quad(Quad::TopLeft),
                 this->quad(Quad::BottomLeft),
@@ -509,13 +520,14 @@ namespace rl::ds {
             };
         }
 
-        // Returns a new rect scaled by the ratio, expanded / shrunk from the centroid
         [[nodiscard]]
-        constexpr rect<T> scaled(vector2<f32> ratio) const
+        constexpr rect<T> scaled(f32 ratio) const
         {
+            // Returns a new rect scaled by the ratio,
+            // expanded / shrunk from the centroid
             dims<T> scaled_size{
-                T(cast::to<f32>(this->size.width) * ratio.x),
-                T(cast::to<f32>(this->size.height) * ratio.y),
+                this->size.width * ratio,
+                this->size.height * ratio,
             };
             return rect<T>{
                 this->centroid() - (scaled_size / 2.0f),
@@ -523,11 +535,26 @@ namespace rl::ds {
             };
         }
 
-        // returns two halves of a rectange,
-        // split either horizontally or vertically
+        [[nodiscard]]
+        constexpr rect<T> scaled(vector2<f32> ratio) const
+        {
+            // Returns a new rect scaled by the ratio,
+            // expanded / shrunk from the centroid
+            dims<T> scaled_size{
+                this->size.width * ratio.x,
+                this->size.height * ratio.y,
+            };
+            return rect<T>{
+                this->centroid() - (scaled_size / 2.0f),
+                scaled_size,
+            };
+        }
+
         [[nodiscard]]
         constexpr std::array<rect<T>, 2> split(const Axis axis) const
         {
+            // returns two halves of a
+            // rectange, split along axis
             switch (axis) {
                 case Axis::Horizontal:
                 {
@@ -569,10 +596,10 @@ namespace rl::ds {
                         },
                     };
                 }
-                default:
-                    debug_assert("invalid axis value");
-                    return {};
             }
+
+            debug_assert("invalid axis value: {}", axis);
+            return {};
         }
 
     public:

@@ -22,7 +22,7 @@ namespace rl::ds {
         [[nodiscard]]
         consteval static vector2<T> zero()
         {
-            return vector2{
+            return vector2<T>{
                 static_cast<T>(0),
                 static_cast<T>(0),
             };
@@ -31,7 +31,7 @@ namespace rl::ds {
         [[nodiscard]]
         consteval static vector2<T> null()
         {
-            return vector2{
+            return vector2<T>{
                 std::numeric_limits<T>::max(),
                 std::numeric_limits<T>::max(),
             };
@@ -40,7 +40,7 @@ namespace rl::ds {
         [[nodiscard]]
         constexpr static vector2<T> from_angle(const f32 angle)
         {
-            return vector2{
+            return vector2<T>{
                 std::cosf(angle),
                 std::sinf(angle),
             };
@@ -163,7 +163,7 @@ namespace rl::ds {
             f32 s{ std::sin(radians) };
             f32 c{ std::cos(radians) };
 
-            return vector2{
+            return vector2<T>{
                 (this->x * c) - (this->y * s),
                 (this->x * s) + (this->y * c),
             };
@@ -172,7 +172,7 @@ namespace rl::ds {
         [[nodiscard]]
         constexpr vector2 clamp(vector2<T> min, vector2<T> max) const
         {
-            return vector2{
+            return vector2<T>{
                 std::clamp(this->x, min.x, max.x),
                 std::clamp(this->y, min.y, max.y),
             };
@@ -227,7 +227,7 @@ namespace rl::ds {
         [[nodiscard]]
         constexpr vector2<T> reflect(const vector2<T> normal) const
         {
-            return (cast::to<T>(2.0) * normal * this->dot_product(normal)) - *this;
+            return (static_cast<T>(2.0) * normal * this->dot_product(normal)) - *this;
         }
 
         [[nodiscard]]
@@ -237,14 +237,18 @@ namespace rl::ds {
         }
 
     public:
-        [[nodiscard]] constexpr bool operator==(vector2<T> other) const
+        [[nodiscard]]
+        constexpr bool operator==(vector2<T> other) const
         {
-            return math::equal(this->x, other.x) && math::equal(this->y, other.y);
+            return math::equal(this->x, other.x) &&
+                   math::equal(this->y, other.y);
         }
 
-        [[nodiscard]] constexpr bool operator!=(vector2<T> other) const
+        [[nodiscard]]
+        constexpr bool operator!=(vector2<T> other) const
         {
-            return math::not_equal(this->x, other.x) || math::not_equal(this->y, other.y);
+            return math::not_equal(this->x, other.x) ||
+                   math::not_equal(this->y, other.y);
         }
 
         template <rl::floating_point F>
@@ -257,105 +261,118 @@ namespace rl::ds {
             };
         }
 
-        [[nodiscard]] constexpr vector2<T> operator-() const noexcept
+        [[nodiscard]]
+        constexpr vector2<T> operator-() const noexcept
         {
-            return vector2{
+            return vector2<T>{
                 -this->x,
                 -this->y,
             };
         }
 
-        [[nodiscard]] constexpr vector2<T> operator+(T other) const noexcept
+        [[nodiscard]]
+        constexpr vector2<T> operator+(T other) const noexcept
         {
-            return vector2{
+            return vector2<T>{
                 this->x + other,
                 this->y + other,
             };
         }
 
-        [[nodiscard]] constexpr vector2<T> operator-(T other) const noexcept
+        [[nodiscard]]
+        constexpr vector2<T> operator-(T other) const noexcept
         {
-            return vector2{
+            return vector2<T>{
                 this->x - other,
                 this->y - other,
             };
         }
 
-        [[nodiscard]] constexpr vector2<T> operator*(T other) const noexcept
+        [[nodiscard]]
+        constexpr vector2<T> operator*(T other) const noexcept
         {
-            return vector2{
+            return vector2<T>{
                 this->x * other,
                 this->y * other,
             };
         }
 
-        [[nodiscard]] constexpr vector2<T> operator/(T other) const noexcept
+        [[nodiscard]]
+        constexpr vector2<T> operator/(T other) const noexcept
         {
-            return vector2{
+            return vector2<T>{
                 this->x / other,
                 this->y / other,
             };
         }
 
-        [[nodiscard]] constexpr vector2<T> operator+(vector2<T> other) const noexcept
+        [[nodiscard]]
+        constexpr vector2<T> operator+(vector2<T> other) const noexcept
         {
-            return vector2{
+            return vector2<T>{
                 this->x + other.x,
                 this->y + other.y,
             };
         }
 
-        [[nodiscard]] constexpr vector2<T> operator-(vector2<T> other) const noexcept
+        [[nodiscard]]
+        constexpr vector2<T> operator-(vector2<T> other) const noexcept
         {
-            return vector2{
+            return vector2<T>{
                 this->x - other.x,
                 this->y - other.y,
             };
         }
 
-        [[nodiscard]] constexpr vector2<T> operator*(vector2<T> other) const noexcept
+        [[nodiscard]]
+        constexpr vector2<T> operator*(vector2<T> other) const noexcept
         {
-            return vector2{
+            return vector2<T>{
                 this->x * other.x,
                 this->y * other.y,
             };
         }
 
-        [[nodiscard]] constexpr vector2<T> operator/(vector2<T> other) const noexcept
+        [[nodiscard]]
+        constexpr vector2<T> operator/(vector2<T> other) const noexcept
         {
-            return vector2{
+            return vector2<T>{
                 this->x / other.x,
                 this->y / other.y,
             };
         }
 
-        [[nodiscard]] constexpr vector2<T> operator+(dims<T> other) const noexcept
+        [[nodiscard]]
+        constexpr vector2<T> operator+(dims<T> other) const noexcept
         {
-            return vector2{
+            return vector2<T>{
                 static_cast<T>(this->x + other.width),
                 static_cast<T>(this->y + other.height),
             };
         }
 
-        [[nodiscard]] constexpr vector2<T> operator-(dims<T> other) const noexcept
+        [[nodiscard]]
+        constexpr vector2<T> operator-(dims<T> other) const noexcept
         {
-            return vector2{
+            return vector2<T>{
                 this->x - other.width,
                 this->y - other.height,
             };
         }
 
-        [[nodiscard]] constexpr vector2<T> operator*(dims<T> other) const noexcept
+        [[nodiscard]]
+        constexpr vector2<T> operator*(dims<T> other) const noexcept
         {
-            return vector2{
+            return vector2<T>{
                 this->x * other.width,
                 this->y * other.height,
             };
         }
 
-        [[nodiscard]] constexpr vector2<T> operator/(dims<T> other) const noexcept
+        [[nodiscard]]
+        constexpr vector2<T> operator/(dims<T> other) const noexcept
         {
-            return vector2{
+            return vector2<T>{
                 this->x / other.width,
                 this->y / other.height,
             };
