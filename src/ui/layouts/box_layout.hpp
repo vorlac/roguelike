@@ -20,14 +20,26 @@ namespace rl::ui {
         }
 
     public:
-        u64 columns() const
+        u64 rows() const
             requires rl::equal_v<VAlignment, Alignment::Horizontal>
         {
-            return m_cell_data.size();
+            return 1;
+        }
+
+        u64 columns() const
+            requires rl::equal_v<VAlignment, Alignment::Vertical>
+        {
+            return 1;
         }
 
         u64 rows() const
             requires rl::equal_v<VAlignment, Alignment::Vertical>
+        {
+            return m_cell_data.size();
+        }
+
+        u64 columns() const
+            requires rl::equal_v<VAlignment, Alignment::Horizontal>
         {
             return m_cell_data.size();
         }

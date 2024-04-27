@@ -2,8 +2,12 @@
 
 #include <chrono>
 #include <concepts>
+#include <filesystem>
+#include <fstream>
+#include <iosfwd>
 #include <locale>
 #include <memory>
+#include <ranges>
 #include <string>
 #include <type_traits>
 #include <utility>
@@ -46,77 +50,52 @@ namespace rl::io {
     };
 }
 
-namespace rl::log {
+namespace rl::io {
 
     using namespace std::chrono_literals;
 
-    // template <auto log_level, typename... TArgs>
-    // constexpr void print(fmt::format_string<TArgs...> format_str, TArgs&&... args)
-    //{
-    //     if constexpr (io::logging::level >= log_level)
-    //     {
-    //         fmt::text_style c{ fmt::fg(fmt::color(0xC1C4CA)) };
-    //         switch (log_level)
-    //         {
-    //             case io::LogLevel::Trace:
-    //                 c = fmt::fg(fmt::color(0xC1C4CA));
-    //                 break;
-    //             case io::LogLevel::Info:
-    //                 c = fmt::fg(fmt::color(0x83B2B6));
-    //                 break;
-    //             case io::LogLevel::Debug:
-    //                 c = fmt::fg(fmt::color(0x9AAF8B));
-    //                 break;
-    //             case io::LogLevel::Warning:
-    //                 c = fmt::fg(fmt::color(0xCAB880));
-    //                 break;
-    //             case io::LogLevel::Error:
-    //                 c = fmt::fg(fmt::color(0xD4A4A4));
-    //                 break;
-    //             case io::LogLevel::Fatal:
-    //                 c = fmt::fg(fmt::color(0xB6ADDB));
-    //                 break;
-    //         }
+    struct ScopedWriter
+    {
+        explicit ScopedWriter(std::filesystem::path file_path, int32_t flags = std::fstream::binary | std::fstream::app)
+            : m_write_stream{
+                std::move(file_path),
+                std::fstream::out | flags,
+            }
+        {
+            debug_assert(m_write_stream.is_open());
+        }
 
-    //        fmt::text_style style = c;
-    //        fmt::print(style, fmt::format(format_str, std::forward<TArgs>(args)...) + "\n");
-    //    }
-    //}
+        ~ScopedWriter()
+        {
+            if (m_write_stream.is_open())
+                m_write_stream.close();
+        }
 
-    // template <typename... TArgs>
-    // constexpr void trace(fmt::format_string<TArgs...> format_str, TArgs&&... args)
-    //{
-    //     log::print<io::LogLevel::Trace>(format_str, std::forward<TArgs>(args)...);
-    // }
+        template <typename T>
+            requires std::is_trivially_copyable_v<T>
+        std::size_t write(const auto&& data)
+        {
+            // binary write example...
+            debug_assert(m_write_stream.is_open());
+#pragma pack(4)  // force 4 byte alignment to avoid most unwanted padding
+            m_write_stream.write(static_cast<uint8_t*>(&data), sizeof(data));
+            m_write_stream.flush();
+#pragma pack()
+        }
 
-    // template <typename... TArgs>
-    // constexpr void info(fmt::format_string<TArgs...> format_str, TArgs&&... args)
-    //{
-    //     log::print<io::LogLevel::Info>(format_str, std::forward<TArgs>(args)...);
-    // }
+        std::size_t write(const std::string& data)
+        {
+            // make sure to use text mode instead of binary mode if you use something like this
+            debug_assert(m_write_stream.is_open());
+            m_write_stream << data;  // write data to file stream
+            m_write_stream.flush();  // flush data to disk
+            m_write_stream.sync();   // sync with phyiscal IO device
+            debug_assert(!m_write_stream.fail(), "failed to write: {}", data);
+            debug_assert(!m_write_stream.bad(), "encountered bad bit when writing: {}", data);
+            return data.size();
+        }
 
-    // template <typename... TArgs>
-    // constexpr void debug(fmt::format_string<TArgs...> format_str, TArgs&&... args)
-    //{
-    //     log::print<io::LogLevel::Debug>(format_str, std::forward<TArgs>(args)...);
-    // }
-
-    // template <typename... TArgs>
-    // constexpr void warning(fmt::format_string<TArgs...> format_str, TArgs&&... args)
-    //{
-    //     log::print<io::LogLevel::Warning>(format_str, std::forward<TArgs>(args)...);
-    // }
-
-    // template <typename... TArgs>
-    // constexpr void error(fmt::format_string<TArgs...> format_str, TArgs&&... args)
-    //{
-    //     log::print<io::LogLevel::Error>(format_str, std::forward<TArgs>(args)...);
-    // }
-
-    // template <typename... TArgs>
-    // constexpr void fatal(fmt::format_string<TArgs...> format_str, TArgs&&... args)
-    //{
-    //     log::print<io::LogLevel::Fatal>(format_str, std::forward<TArgs>(args)...);
-    //     exit(-1);
-    // }
+    private:
+        std::fstream m_write_stream{};
+    };
 }

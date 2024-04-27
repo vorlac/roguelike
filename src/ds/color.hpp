@@ -24,30 +24,17 @@ namespace rl::ds {
     struct color
     {
     public:
-        consteval color() = default;
-        constexpr ~color() = default;
-
-        constexpr color(T fr, T fg, T fb, T fa = 1.0f)
-            requires std::same_as<T, f32>
-            : r{ std::move(fr) }
-            , g{ std::move(fg) }
-            , b{ std::move(fb) }
-            , a{ std::move(fa) }
-        {
-        }
-
-        constexpr color(T ir, T ig, T ib, T ia = 255)
-            requires std::same_as<T, u8>
-            : r{ std::move(ir) }
-            , g{ std::move(ig) }
-            , b{ std::move(ib) }
-            , a{ std::move(ia) }
+        constexpr color(T red, T green, T blue, T alpha = 1.0f)
+            : r{ red }
+            , g{ green }
+            , b{ blue }
+            , a{ alpha }
         {
         }
 
         template <rl::integer I>
             requires std::same_as<T, f32>
-        constexpr color(I ri, I gi, I bi, I ai = 255)
+        explicit constexpr color(I ri, I gi, I bi, I ai = 255)
             : r{ static_cast<T>(static_cast<u8>(ri) / 255.0f) }
             , g{ static_cast<T>(static_cast<u8>(gi) / 255.0f) }
             , b{ static_cast<T>(static_cast<u8>(bi) / 255.0f) }
@@ -57,27 +44,11 @@ namespace rl::ds {
 
         template <rl::floating_point F>
             requires std::same_as<T, u8>
-        explicit constexpr color(F rf, F gf, F bf, F af = 1.0f)
+        constexpr color(const F rf, const F gf, const F bf, const F af = 1.0f)
             : r{ static_cast<u8>(std::clamp(static_cast<f32>(rf) * 255.0f, 0.0f, 255.0f)) }
             , g{ static_cast<u8>(std::clamp(static_cast<f32>(gf) * 255.0f, 0.0f, 255.0f)) }
             , b{ static_cast<u8>(std::clamp(static_cast<f32>(bf) * 255.0f, 0.0f, 255.0f)) }
             , a{ static_cast<u8>(std::clamp(static_cast<f32>(af) * 255.0f, 0.0f, 255.0f)) }
-        {
-        }
-
-        constexpr color(color<T>&& other) noexcept
-            : r{ std::forward<T>(other.r) }
-            , g{ std::forward<T>(other.g) }
-            , b{ std::forward<T>(other.b) }
-            , a{ std::forward<T>(other.a) }
-        {
-        }
-
-        constexpr color(const color<T>& other)
-            : r{ std::forward<const T>(other.r) }
-            , g{ std::forward<const T>(other.g) }
-            , b{ std::forward<const T>(other.b) }
-            , a{ std::forward<const T>(other.a) }
         {
         }
 
@@ -94,10 +65,10 @@ namespace rl::ds {
         // 0xRRGGBBAA
         explicit constexpr color(const u32 rgba)
             requires std::same_as<T, f32>
-            : r{ ((0xff & rgba >> 8 * 3) / 255.0f) }
-            , g{ ((0xff & rgba >> 8 * 2) / 255.0f) }
-            , b{ ((0xff & rgba >> 8 * 1) / 255.0f) }
-            , a{ ((0xff & rgba >> 8 * 0) / 255.0f) }
+            : r{ (static_cast<f32>(0xff & rgba >> 8 * 3) / 255.0f) }
+            , g{ (static_cast<f32>(0xff & rgba >> 8 * 2) / 255.0f) }
+            , b{ (static_cast<f32>(0xff & rgba >> 8 * 1) / 255.0f) }
+            , a{ (static_cast<f32>(0xff & rgba >> 8 * 0) / 255.0f) }
         {
         }
 
@@ -122,26 +93,7 @@ namespace rl::ds {
         }
 
     public:
-        constexpr color<T>& operator=(const color<T>& other)
-        {
-            this->r = other.r;
-            this->g = other.g;
-            this->b = other.b;
-            this->a = other.a;
-            return *this;
-        }
-
-        constexpr color<T>& operator=(color<T>&& other) noexcept
-        {
-            this->r = other.r;
-            this->g = other.g;
-            this->b = other.b;
-            this->a = other.a;
-            return *this;
-        }
-
-    public:
-        constexpr color<T> operator+(const color<T>& other) const
+        constexpr color<T> operator+(color<T> other) const
         {
             return color{
                 this->r + other.r,
@@ -151,7 +103,7 @@ namespace rl::ds {
             };
         }
 
-        constexpr color<T> operator-(const color<T>& other) const
+        constexpr color<T> operator-(color<T> other) const
         {
             return color{
                 this->r - other.r,
@@ -161,7 +113,7 @@ namespace rl::ds {
             };
         }
 
-        constexpr color<T> operator*(const color<T>& other) const
+        constexpr color<T> operator*(color<T> other) const
         {
             return color{
                 this->r * other.r,
@@ -171,7 +123,7 @@ namespace rl::ds {
             };
         }
 
-        constexpr color<T> operator/(const color<T>& other) const
+        constexpr color<T> operator/(color<T> other) const
         {
             return color{
                 this->r / other.r,
@@ -182,7 +134,7 @@ namespace rl::ds {
         }
 
         template <rl::numeric N>
-        constexpr color<T> operator+(const N val) const
+        constexpr color<T> operator+(N val) const
         {
             return color{
                 this->r + val,
@@ -193,7 +145,7 @@ namespace rl::ds {
         }
 
         template <rl::numeric N>
-        constexpr color<T> operator-(const N val) const
+        constexpr color<T> operator-(N val) const
         {
             return color{
                 this->r - val,
@@ -204,7 +156,7 @@ namespace rl::ds {
         }
 
         template <rl::numeric N>
-        constexpr color<T> operator*(const N val) const
+        constexpr color<T> operator*(N val) const
         {
             return color{
                 this->r * val,
@@ -215,7 +167,7 @@ namespace rl::ds {
         }
 
         template <rl::numeric N>
-        constexpr color<T> operator/(const N val) const
+        constexpr color<T> operator/(N val) const
         {
             return color{
                 this->r / val,
@@ -225,7 +177,7 @@ namespace rl::ds {
             };
         }
 
-        constexpr color<T>& operator+=(const color<T>& other)
+        constexpr color<T>& operator+=(color<T> other)
         {
             this->r += other.r;
             this->g += other.g;
@@ -234,7 +186,7 @@ namespace rl::ds {
             return *this;
         }
 
-        constexpr color<T>& operator-=(const color<T>& other)
+        constexpr color<T>& operator-=(color<T> other)
         {
             this->r -= other.r;
             this->g -= other.g;
@@ -243,7 +195,7 @@ namespace rl::ds {
             return *this;
         }
 
-        constexpr color<T>& operator*=(const color<T>& other)
+        constexpr color<T>& operator*=(color<T> other)
         {
             this->r *= other.r;
             this->g *= other.g;
@@ -252,7 +204,7 @@ namespace rl::ds {
             return *this;
         }
 
-        constexpr color<T>& operator/=(const color<T>& other)
+        constexpr color<T>& operator/=(color<T> other)
         {
             this->r /= other.r;
             this->g /= other.g;
@@ -262,7 +214,7 @@ namespace rl::ds {
         }
 
     public:
-        constexpr static color<T> lerp(const color<T>& s, const color<T>& e, T step)
+        constexpr static color<T> lerp(color<T> s, color<T> e, T step)
         {
             return { s + (e - s) * step };
         }
@@ -277,16 +229,19 @@ namespace rl::ds {
             return SDL3::SDL_MapRGBA(format, this->r, this->g, this->b, this->a);
         }
 
-        constexpr bool operator==(const color& other) const
+        [[nodiscard]]
+        constexpr bool operator==(color<T> other) const
         {
             return 0 == memory::static_memcmp<sizeof(*this)>(this, &other);
         }
 
+        [[nodiscard]]
         constexpr bool is_empty() const
         {
             return this->operator==({});
         }
 
+        [[nodiscard]]
         constexpr bool operator!=(const color& other) const
         {
             return !this->operator==(other);
@@ -406,8 +361,6 @@ namespace rl {
         constexpr static inline ds::color<f32> Purple{ 182, 173, 219, 255 };
         constexpr static inline ds::color<f32> Cyan{ 131, 178, 182, 255 };
         constexpr static inline ds::color<f32> Background{ 39, 43, 51, 255 };
-
-        constexpr static inline std::array List{ Red, Yellow, Green, Cyan, Blue, Purple };
     };
 }
 

@@ -20,7 +20,7 @@ namespace rl::ui {
         f32 icon_scale{ 1.0f };
         f32 tab_border_width{ 0.75f };
 
-        f32 tooltip_width{ 150.0f };
+        f32 tooltip_width{ 250.0f };
 
         f32 standard_font_size{ 16.0f };
         f32 tooltip_font_size{ 18.0f };

@@ -2149,7 +2149,7 @@ namespace rl::nvg {
     }
 
     PaintStyle image_pattern(Context*, const f32 cx, const f32 cy, const f32 w, const f32 h,
-                             const f32 angle, const i32 image, const f32 alpha)
+                             const f32 angle, const i32 image, f32 alpha)
     {
         PaintStyle p{};
 
@@ -2163,7 +2163,8 @@ namespace rl::nvg {
 
         p.image = image;
 
-        p.inner_color = p.outer_color = ds::color<f32>{ 1.0f, 1.0f, 1.0f, alpha };
+        p.inner_color = ds::color<f32>{ 1.0f, 1.0f, 1.0f, alpha };
+        p.outer_color = ds::color{ 1.0f, 1.0f, 1.0f, alpha };
 
         return p;
     }

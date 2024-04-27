@@ -7,7 +7,6 @@
 #include "core/mouse.hpp"
 #include "ds/color.hpp"
 #include "ds/margin.hpp"
-#include "ds/point.hpp"
 #include "ui/widget.hpp"
 #include "utils/numeric.hpp"
 
@@ -23,18 +22,17 @@ namespace rl::ui {
             Toggle = 1 << 2,
             PopupMenu = 1 << 3,
             StandardMenu = 1 << 4,
-
             Toolbar = Radio | Toggle,
             TogglePopupMenu = PopupMenu | Toggle,
         };
 
     public:
-        explicit Button(const std::string_view& text, Icon::ID icon = Icon::None);
+        explicit Button(std::string text, Icon::ID icon = Icon::None);
         explicit Button(Widget* parent, std::string text, Icon::ID icon = Icon::None);
 
         bool pressed() const;
         Icon::ID icon() const;
-        const std::string& caption() const;
+        std::string_view caption() const;
         Button::Property properties() const;
         Icon::Placement icon_placement() const;
         ds::color<f32> background_color() const;
@@ -45,9 +43,9 @@ namespace rl::ui {
 
         bool has_property(Button::Property prop) const;
         void set_property(Button::Property prop);
-        void set_text(const std::string& text);
-        void set_background_color(const ds::color<f32>& bg_color);
-        void set_text_color(const ds::color<f32>& text_color);
+        void set_text(std::string text);
+        void set_background_color(ds::color<f32> bg_color);
+        void set_text_color(ds::color<f32> text_color);
         void set_icon(Icon::ID icon);
         void set_icon_placement(Icon::Placement placement);
         void set_pressed(bool pressed);

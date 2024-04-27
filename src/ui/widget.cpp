@@ -182,9 +182,21 @@ namespace rl::ui {
         m_rect.size = size;
     }
 
-    bool Widget::visible() const
+    bool Widget::visible(const bool recursive /*= false*/) const
     {
-        return m_visible;
+        bool ret{ true };
+
+        if (!recursive)
+            ret = m_visible;
+        else {
+            const Widget* curr_widget{ this };
+            while (curr_widget != nullptr) {
+                ret &= curr_widget->visible();
+                curr_widget = curr_widget->parent();
+            }
+        }
+
+        return ret;
     }
 
     void Widget::set_visible(const bool visible)
@@ -200,19 +212,6 @@ namespace rl::ui {
     void Widget::hide()
     {
         this->set_visible(false);
-    }
-
-    bool Widget::visible_recursive() const
-    {
-        bool visible{ true };
-
-        const Widget* widget{ this };
-        while (widget != nullptr) {
-            visible &= widget->visible();
-            widget = widget->parent();
-        }
-
-        return visible;
     }
 
     u64 Widget::child_count() const
@@ -466,14 +465,14 @@ namespace rl::ui {
         m_children.erase(m_children.begin() + static_cast<ptrdiff_t>(index));
     }
 
-    u64 Widget::child_index(const Widget* widget) const
-    {
-        auto w{ std::ranges::find(m_children, widget) };
-        if (w == m_children.end())
-            return std::numeric_limits<u64>::max();
+    // u64 Widget::child_index(const Widget* widget) const
+    //{
+    //     const auto w{ std::ranges::find(m_children, widget) };
+    //     if (w == m_children.end())
+    //         return std::numeric_limits<u64>::max();
 
-        return static_cast<u64>(w - m_children.begin());
-    }
+    //    return static_cast<u64>(w - m_children.begin());
+    //}
 
     bool Widget::enabled() const
     {
@@ -568,10 +567,6 @@ namespace rl::ui {
     void Widget::set_max_size(const ds::dims<f32> size)
     {
         m_max_size = size;
-        if (m_max_size.is_invalid()) {
-            m_max_size.width = math::max(1.0f, size.width);
-            m_max_size.height = math::max(1.0f, size.height);
-        }
     }
 
     void Widget::set_recalc_needed(const bool size_recalc_needed, const bool recursive /*= true*/)
@@ -678,8 +673,9 @@ namespace rl::ui {
 
             m_renderer->scoped_draw([child] {
                 // TODO: put this back after fixing popup window
-                // nvg::intersect_scissor(context, child->m_rect.pt.x, child->m_rect.pt.y,
-                // child->m_rect.size.width, child->m_rect.size.height);
+                // nvg::intersect_scissor(m_renderer->context(),
+                //                       child->m_rect.pt.x - 1, child->m_rect.pt.y - 1,
+                //                       child->m_rect.size.width + 2, child->m_rect.size.height + 2);
                 child->draw();
             });
         }

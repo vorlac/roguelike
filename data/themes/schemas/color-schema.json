@@ -1,0 +1,76 @@
+{
+    "type": "object",
+    "description": "Label color definitions",
+    "properties": {
+        "text.foreground": {
+            "type": "string",
+            "description": "Text foreground color",
+            "format": "color-hex",
+            "defaultSnippets": [
+                {
+                    "body": "${1:#ff0000}"
+                }
+            ]
+        },
+        "text.foreground.pressed": {
+            "type": "string",
+            "description": "Text foreground color",
+            "format": "color-hex",
+            "defaultSnippets": [
+                {
+                    "body": "${1:#ff0000}"
+                }
+            ]
+        },
+        "text.outline": {
+            "type": "string",
+            "description": "Text outline color",
+            "format": "color-hex",
+            "defaultSnippets": [
+                {
+                    "body": "${1:#ff0000}"
+                }
+            ]
+        },
+        "background": {
+            "type": "string",
+            "description": "Background color when inactive",
+            "format": "color-hex",
+            "defaultSnippets": [
+                {
+                    "body": "${1:#ff0000}"
+                }
+            ]
+        },
+        "background.active": {
+            "type": "string",
+            "description": "Background color when active",
+            "format": "color-hex",
+            "defaultSnippets": [
+                {
+                    "body": "${1:#ff0000}"
+                }
+            ]
+        },
+        "border": {
+            "type": "string",
+            "description": "Label widget outer border color when inactive",
+            "format": "color-hex",
+            "defaultSnippets": [
+                {
+                    "body": "${1:#ff0000}"
+                }
+            ]
+        },
+        "border.active": {
+            "type": "string",
+            "description": "Label widget outer border color when active",
+            "format": "color",
+            "defaultSnippets": [
+                {
+                    "body": "${1:#ff0000}"
+                }
+            ]
+        }
+    }
+}

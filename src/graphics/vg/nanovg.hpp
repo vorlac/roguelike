@@ -143,8 +143,8 @@ namespace rl::nvg {
         f32 extent[2]{};
         f32 radius{ 0.0f };
         f32 feather{ 0.0f };
-        ds::color<f32> inner_color{ 0.0f, 0.0f, 0.0f, 0.0f };
-        ds::color<f32> outer_color{ 0.0f, 0.0f, 0.0f, 0.0f };
+        ds::color<f32> inner_color{ 0, 0, 0, 0 };
+        ds::color<f32> outer_color{ 0, 0, 0, 0 };
         i32 image{ 0 };
     };
 

@@ -1,0 +1,48 @@
+{
+    "type": "object",
+    "$schema": "base-schema.json",
+    "description": "GUI Widget Styles",
+    "allowComments": true,
+    "allowTrailingCommas": true,
+    "additionalProperties": false,
+    "properties": {
+        "label": {
+            "description": "Label Style Properties",
+            "type": "object",
+            "properties": {
+                "text": {
+                    "$ref": "text-schema.json"
+                },
+                "colors": {
+                    "$ref": "color-schema.json"
+                }
+            },
+        },
+        "button": {
+            "description": "Button Style Properties",
+            "type": "object",
+            "properties": {
+                "text": {
+                    "$ref": "text-schema.json"
+                },
+                "colors": {
+                    "$ref": "color-schema.json"
+                }
+            },
+        },
+        "geometry": {
+            "description": "",
+            "type": "object",
+            "properties": {
+                "corner-radius": {
+                    "type": "number",
+                    "defaultSnippets": [
+                        {
+                            "body": 10.0
+                        }
+                    ]
+                }
+            }
+        }
+    }
+}

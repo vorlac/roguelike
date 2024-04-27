@@ -1,0 +1,30 @@
+{
+    "description": "Widget text style properties",
+    "type": "object",
+    "properties": {
+        "font.family": {
+            "description": "Font family to be used for widget text",
+            "type": "string",
+            "oneOf": [
+                {
+                    "type": "string",
+                    "enum": [
+                        "sans",
+                        "sans-bold",
+                        "mono",
+                        "icon"
+                    ]
+                }
+            ]
+        },
+        "font.size": {
+            "description": "Widget text size",
+            "type": "number",
+            "defaultSnippets": [
+                {
+                    "body": 36.0
+                }
+            ]
+        }
+    }
+}

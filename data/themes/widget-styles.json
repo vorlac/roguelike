@@ -1,0 +1,38 @@
+{
+    "$schema": "./schemas/gui-theme-schema.json",
+    "label": {
+        "text": {
+            "font.family": "mono",
+            "font.size": 38.0,
+        },
+        "colors": {
+            "background": "#777777",
+            "background.pressed": "#ff0000",
+            "background.active": "#ff0000",
+            "border": "#ff0000",
+            "border.active": "#ff0000",
+            "text.foreground": "#ff0000",
+            "text.foreground.pressed": "#ff0000",
+            "text.outline": "#ff0000"
+        }
+    },
+    "button": {
+        "text": {
+            "font.family": "sans",
+            "font.size": 38.0,
+        },
+        "colors": {
+            "background": "#2f2626",
+            "background.pressed": "#ff0000",
+            "background.active": "#ff0000",
+            "border": "#ff0000",
+            "border.active": "#ff0000",
+            "text.foreground": "#ff0000",
+            "text.foreground.pressed": "#ff0000",
+            "text.outline": "#ff0000"
+        }
+    },
+    "geometry": {
+        "corner-radius": 10.0
+    }
+}

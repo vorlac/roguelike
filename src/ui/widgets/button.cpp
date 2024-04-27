@@ -9,13 +9,12 @@
 #include "ui/theme.hpp"
 #include "ui/widgets/button.hpp"
 #include "ui/widgets/popupbutton.hpp"
-#include "utils/logging.hpp"
 #include "utils/unicode.hpp"
 
 namespace rl::ui {
-    Button::Button(const std::string_view& text, const Icon::ID icon)
+    Button::Button(std::string text, const Icon::ID icon)
         : Widget{ nullptr }
-        , m_text{ text }
+        , m_text{ std::move(text) }
         , m_icon{ icon }
     {
     }
@@ -46,14 +45,14 @@ namespace rl::ui {
         return m_props;
     }
 
-    const std::string& Button::caption() const
+    std::string_view Button::caption() const
     {
         return m_text;
     }
 
-    void Button::set_text(const std::string& text)
+    void Button::set_text(std::string text)
     {
-        m_text = text;
+        m_text = std::move(text);
     }
 
     ds::color<f32> Button::background_color() const
@@ -61,7 +60,7 @@ namespace rl::ui {
         return m_background_color;
     }
 
-    void Button::set_background_color(const ds::color<f32>& bg_color)
+    void Button::set_background_color(const ds::color<f32> bg_color)
     {
         m_background_color = bg_color;
     }
@@ -71,7 +70,7 @@ namespace rl::ui {
         return m_text_color;
     }
 
-    void Button::set_text_color(const ds::color<f32>& text_color)
+    void Button::set_text_color(const ds::color<f32> text_color)
     {
         m_text_color = text_color;
     }
@@ -163,7 +162,7 @@ namespace rl::ui {
             }
         }
 
-        return ds::dims{
+        return ds::dims<f32>{
             text_width + icon_size.width + INNER_PADDING.horizontal(),
             font_size + INNER_PADDING.vertical(),
         };

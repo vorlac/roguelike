@@ -100,7 +100,7 @@ namespace rl {
             layout_abc_h2->add_widget(new ui::Label{ "Z", font_size, alignment });
 
             const auto layout_num_v1{ new ui::BoxLayout<Alignment::Vertical>("Nums1 Inner Vert") };
-            layout_num_v1->add_widget(new ui::Label{ "123", font_size, alignment });
+            layout_num_v1->add_widget(new ui::Button{ "Button", ui::Icon::ID::Bong });
             layout_num_v1->add_widget(new ui::Label{ "2", font_size, alignment });
             layout_num_v1->add_widget(new ui::Label{ "3", font_size, alignment });
             layout_num_v1->add_widget(new ui::Label{ "4", font_size, alignment });

@@ -37,8 +37,7 @@ namespace rl::ui {
 
         void show();
         void hide();
-        bool visible() const;
-        bool visible_recursive() const;
+        bool visible(bool recursive = false) const;
         bool has_font_size() const;
         bool enabled() const;
         bool focused() const;
@@ -51,7 +50,7 @@ namespace rl::ui {
         f32 fixed_height() const;
         f32 font_size() const;
         f32 icon_extra_scale() const;
-        u64 child_index(const Widget* widget) const;
+        // u64 child_index(const Widget* widget) const;
         u64 child_count() const;
 
         Canvas* canvas();
