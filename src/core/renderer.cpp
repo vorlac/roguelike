@@ -8,7 +8,7 @@
 #include "core/assert.hpp"
 #include "core/main_window.hpp"
 #include "core/renderer.hpp"
-#include "graphics/nvg_renderer.hpp"
+#include "gfx/nvg_renderer.hpp"
 #include "sdl/defs.hpp"
 #include "utils/io.hpp"
 #include "utils/logging.hpp"

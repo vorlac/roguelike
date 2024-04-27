@@ -1,5 +1,5 @@
 #include "ds/color.hpp"
-#include "graphics/vg/nanovg_state.hpp"
+#include "gfx/vg/nanovg_state.hpp"
 #include "ui/theme.hpp"
 #include "utils/logging.hpp"
 #include "utils/math.hpp"

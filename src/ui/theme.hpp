@@ -2,7 +2,7 @@
 
 #include "ds/color.hpp"
 #include "ds/refcounted.hpp"
-#include "graphics/text.hpp"
+#include "gfx/text.hpp"
 #include "ui/icons.hpp"
 #include "utils/numeric.hpp"
 

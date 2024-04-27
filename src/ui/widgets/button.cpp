@@ -5,7 +5,7 @@
 #include "core/keyboard.hpp"
 #include "core/mouse.hpp"
 #include "ds/shared.hpp"
-#include "graphics/vg/nanovg.hpp"
+#include "gfx/vg/nanovg.hpp"
 #include "ui/theme.hpp"
 #include "ui/widgets/button.hpp"
 #include "ui/widgets/popupbutton.hpp"

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "graphics/vg/nanovg.hpp"
+#include "gfx/vg/nanovg.hpp"
 
 namespace rl::nvg::gl {
     // Create flags

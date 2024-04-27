@@ -4,7 +4,7 @@
 #include <cstring>
 #include <numbers>
 
-#include "graphics/vg/nanosvg.hpp"
+#include "gfx/vg/nanosvg.hpp"
 #include "utils/conversions.hpp"
 #include "utils/numeric.hpp"
 

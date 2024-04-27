@@ -30,18 +30,18 @@ namespace rl::ui {
         explicit Button(std::string text, Icon::ID icon = Icon::None);
         explicit Button(Widget* parent, std::string text, Icon::ID icon = Icon::None);
 
-        bool pressed() const;
-        Icon::ID icon() const;
-        std::string_view caption() const;
-        Button::Property properties() const;
-        Icon::Placement icon_placement() const;
-        ds::color<f32> background_color() const;
-        ds::color<f32> text_color() const;
-        const std::function<void()>& callback() const;
-        const std::function<void(bool)>& change_callback() const;
-        const std::vector<Button*>& button_group() const;
+        [[nodiscard]] bool pressed() const;
+        [[nodiscard]] Icon::ID icon() const;
+        [[nodiscard]] std::string_view caption() const;
+        [[nodiscard]] Button::Property properties() const;
+        [[nodiscard]] Icon::Placement icon_placement() const;
+        [[nodiscard]] ds::color<f32> background_color() const;
+        [[nodiscard]] ds::color<f32> text_color() const;
+        [[nodiscard]] const std::function<void()>& callback() const;
+        [[nodiscard]] const std::function<void(bool)>& change_callback() const;
+        [[nodiscard]] const std::vector<Button*>& button_group() const;
+        [[nodiscard]] bool has_property(Button::Property prop) const;
 
-        bool has_property(Button::Property prop) const;
         void set_property(Button::Property prop);
         void set_text(std::string text);
         void set_background_color(ds::color<f32> bg_color);

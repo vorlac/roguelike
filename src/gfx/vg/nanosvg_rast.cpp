@@ -5,8 +5,8 @@
 #include <limits>
 #include <numbers>
 
-#include "graphics/vg/nanosvg.hpp"
-#include "graphics/vg/nanosvg_rast.hpp"
+#include "gfx/vg/nanosvg.hpp"
+#include "gfx/vg/nanosvg_rast.hpp"
 #include "utils/numeric.hpp"
 
 namespace rl::nvg::svg {

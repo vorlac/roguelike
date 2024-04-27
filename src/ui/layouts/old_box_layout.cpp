@@ -2,7 +2,7 @@
 #include <utility>
 
 #include "ds/dims.hpp"
-#include "graphics/vg/nanovg.hpp"
+#include "gfx/vg/nanovg.hpp"
 #include "ui/layouts/old_box_layout.hpp"
 #include "ui/theme.hpp"
 #include "ui/widget.hpp"

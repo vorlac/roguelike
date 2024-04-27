@@ -5,7 +5,7 @@
 #include "ds/color.hpp"
 #include "ds/point.hpp"
 #include "ds/rect.hpp"
-#include "graphics/vg/fontstash.hpp"
+#include "gfx/vg/fontstash.hpp"
 #include "utils/properties.hpp"
 
 #ifdef _MSC_VER

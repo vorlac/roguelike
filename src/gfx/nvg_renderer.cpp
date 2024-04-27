@@ -7,10 +7,10 @@
 // #include "ui/theme.hpp"
 #include "ds/dims.hpp"
 #include "ds/line.hpp"
-#include "graphics/nvg_renderer.hpp"
-#include "graphics/text.hpp"
-#include "graphics/vg/nanovg.hpp"
-#include "graphics/vg/nanovg_gl.hpp"
+#include "gfx/nvg_renderer.hpp"
+#include "gfx/text.hpp"
+#include "gfx/vg/nanovg.hpp"
+#include "gfx/vg/nanovg_gl.hpp"
 
 namespace rl {
     namespace {

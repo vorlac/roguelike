@@ -2,8 +2,6 @@
 #include <stack>
 #include <type_traits>
 
-#include "core/state/fsm.hpp"
-
 namespace rl {
 
     // template <typename T>

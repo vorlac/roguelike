@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ds/rect.hpp"
-#include "graphics/stb/stb_truetype.hpp"
+#include "gfx/stb/stb_truetype.hpp"
 #include "utils/numeric.hpp"
 
 namespace rl::nvg::font {

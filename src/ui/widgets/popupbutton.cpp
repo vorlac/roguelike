@@ -1,4 +1,4 @@
-#include "graphics/vg/nanovg_state.hpp"
+#include "gfx/vg/nanovg_state.hpp"
 #include "ui/canvas.hpp"
 #include "ui/theme.hpp"
 #include "ui/widgets/popupbutton.hpp"

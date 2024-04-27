@@ -9,7 +9,7 @@
 #include "ds/color.hpp"
 #include "ds/rect.hpp"
 #include "ds/vector2d.hpp"
-#include "graphics/gl/shader.hpp"
+#include "gfx/gl/shader.hpp"
 #include "utils/numeric.hpp"
 #include "utils/time.hpp"
 

@@ -12,7 +12,7 @@
 #include "ds/dims.hpp"
 #include "ds/rect.hpp"
 #include "ds/vector2d.hpp"
-#include "graphics/nvg_renderer.hpp"
+#include "gfx/nvg_renderer.hpp"
 #include "sdl/defs.hpp"
 #include "ui/canvas.hpp"
 #include "utils/io.hpp"

@@ -3,7 +3,7 @@
 #include <memory>
 #include <string>
 
-#include "graphics/vg/nanovg.hpp"
+#include "gfx/vg/nanovg.hpp"
 #include "ui/crtp/crtp_widget.hpp"
 #include "utils/numeric.hpp"
 

@@ -6,9 +6,9 @@
 
 #include "ds/color.hpp"
 #include "ds/rect.hpp"
-#include "graphics/stb/stb_image.hpp"
-#include "graphics/text.hpp"
-#include "graphics/vg/nanovg.hpp"
+#include "gfx/stb/stb_image.hpp"
+#include "gfx/text.hpp"
+#include "gfx/vg/nanovg.hpp"
 
 namespace rl::nvg {
     enum InitSize {

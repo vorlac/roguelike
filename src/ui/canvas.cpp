@@ -8,7 +8,7 @@
 #include "core/main_window.hpp"
 #include "core/mouse.hpp"
 #include "ds/rect.hpp"
-#include "graphics/vg/nanovg_state.hpp"
+#include "gfx/vg/nanovg_state.hpp"
 #include "ui/canvas.hpp"
 #include "ui/widget.hpp"
 #include "ui/widgets/popup.hpp"

@@ -8,9 +8,8 @@
 #include "core/mouse.hpp"
 #include "ds/rect.hpp"
 #include "ds/refcounted.hpp"
-#include "ds/shared.hpp"
 #include "ds/vector2d.hpp"
-#include "graphics/nvg_renderer.hpp"
+#include "gfx/nvg_renderer.hpp"
 #include "utils/time.hpp"
 
 namespace rl::ui {
@@ -50,7 +49,6 @@ namespace rl::ui {
         f32 fixed_height() const;
         f32 font_size() const;
         f32 icon_extra_scale() const;
-        // u64 child_index(const Widget* widget) const;
         u64 child_count() const;
 
         Canvas* canvas();
@@ -173,7 +171,7 @@ namespace rl::ui {
 
     protected:
         constexpr static inline f32 RESIZE_GRAB_BUFFER{ 5.0f };
-        constexpr static bool DiagnosticsEnabled{ true };
+        constexpr static bool DiagnosticsEnabled{ false };
         constinit static inline Theme DEFAULT_THEME{ Theme{} };
     };
 }

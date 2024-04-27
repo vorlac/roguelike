@@ -3,7 +3,7 @@
 #include <cstring>
 #include <print>
 
-#include "graphics/vg/nanovg_gl.hpp"
+#include "gfx/vg/nanovg_gl.hpp"
 
 namespace rl::nvg::gl {
 

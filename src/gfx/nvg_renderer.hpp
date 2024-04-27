@@ -8,7 +8,7 @@
 #include <vector>
 
 #include "ds/rect.hpp"
-#include "graphics/vg/nanovg.hpp"
+#include "gfx/vg/nanovg.hpp"
 #include "ui/theme.hpp"
 #include "utils/numeric.hpp"
 

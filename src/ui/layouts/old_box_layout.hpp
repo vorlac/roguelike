@@ -2,7 +2,7 @@
 
 #include "ds/dims.hpp"
 #include "ds/rect.hpp"
-#include "graphics/vg/nanovg_state.hpp"
+#include "gfx/vg/nanovg_state.hpp"
 #include "ui/widget.hpp"
 #include "utils/properties.hpp"
 

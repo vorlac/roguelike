@@ -19,7 +19,7 @@
   #define STBI_ASSERT(x) assert(x)
 #endif
 
-#include "graphics/stb/stb_image.hpp"
+#include "gfx/stb/stb_image.hpp"
 #include "utils/numeric.hpp"
 
 namespace rl::stb {

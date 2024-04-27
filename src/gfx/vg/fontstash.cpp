@@ -4,8 +4,8 @@
 #include <utility>
 #include <vector>
 
-#include "graphics/stb/stb_truetype.hpp"
-#include "graphics/vg/fontstash.hpp"
+#include "gfx/stb/stb_truetype.hpp"
+#include "gfx/vg/fontstash.hpp"
 #include "nanovg.hpp"
 #include "utils/conversions.hpp"
 

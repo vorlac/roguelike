@@ -4,7 +4,7 @@
 #include <utility>
 
 #include "core/assert.hpp"
-#include "graphics/stb/stb_truetype.hpp"
+#include "gfx/stb/stb_truetype.hpp"
 #include "utils/conversions.hpp"
 #include "utils/numeric.hpp"
 

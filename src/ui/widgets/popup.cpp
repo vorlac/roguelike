@@ -1,4 +1,4 @@
-#include "graphics/vg/nanovg.hpp"
+#include "gfx/vg/nanovg.hpp"
 #include "scroll_dialog.hpp"
 #include "ui/theme.hpp"
 #include "ui/widgets/popup.hpp"

@@ -3,7 +3,7 @@
 #include "ds/margin.hpp"
 #include "ds/rect.hpp"
 #include "ds/refcounted.hpp"
-#include "graphics/vg/nanovg.hpp"
+#include "gfx/vg/nanovg.hpp"
 #include "ui/widget.hpp"
 #include "utils/numeric.hpp"
 #include "utils/properties.hpp"

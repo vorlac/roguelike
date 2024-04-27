@@ -2,7 +2,7 @@
 
 #include <parallel_hashmap/phmap.h>
 
-#include "graphics/vg/nanovg.hpp"
+#include "gfx/vg/nanovg.hpp"
 #include "resources/fonts.hpp"
 #include "utils/numeric.hpp"
 

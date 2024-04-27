@@ -3,7 +3,7 @@
 
 #include "ds/dims.hpp"
 #include "ds/vector2d.hpp"
-#include "graphics/vg/nanovg.hpp"
+#include "gfx/vg/nanovg.hpp"
 #include "ui/canvas.hpp"
 #include "ui/layouts/box_layout.hpp"
 #include "ui/widgets/dialog.hpp"

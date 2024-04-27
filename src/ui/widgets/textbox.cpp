@@ -4,7 +4,7 @@
 #include "core/keyboard.hpp"
 #include "core/main_window.hpp"
 #include "core/mouse.hpp"
-#include "graphics/vg/nanovg.hpp"
+#include "gfx/vg/nanovg.hpp"
 #include "sdl/defs.hpp"
 #include "ui/theme.hpp"
 #include "ui/widgets/textbox.hpp"

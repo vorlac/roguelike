@@ -1,7 +1,7 @@
 #pragma once
 #include <ranges>
 
-#include "graphics/vg/nanovg.hpp"
+#include "gfx/vg/nanovg.hpp"
 #include "ui/widget.hpp"
 
 namespace rl {
