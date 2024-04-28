@@ -94,7 +94,7 @@ namespace rl::ui {
         debug_assert(Align::None != m_text_alignment,
                      "invalid text alignment value assigned in label");
 
-        m_renderer->set_text_properties_(m_text_font, m_font_size, m_text_alignment);
+        m_renderer->set_text_properties(m_text_font, m_font_size, m_text_alignment);
 
         const bool is_fixed_size{ math::not_equal(m_fixed_size.width, 0.0f) &&
                                   m_fixed_size.width > 0.0f };
@@ -128,7 +128,7 @@ namespace rl::ui {
     {
         ui::Widget::draw();
 
-        m_renderer->set_text_properties_(m_text_font, m_font_size, m_text_alignment);
+        m_renderer->set_text_properties(m_text_font, m_font_size, m_text_alignment);
 
         auto context{ m_renderer->context() };
         if (math::not_equal(m_fixed_size.width, 0.0f) && m_fixed_size.width > 0.0f) {

@@ -484,11 +484,6 @@ namespace rl::ui {
         return m_resizable;
     }
 
-    bool Widget::recalc_needed() const
-    {
-        return m_size_recalc_needed;
-    }
-
     void Widget::set_focused(const bool focused)
     {
         m_focused = focused;

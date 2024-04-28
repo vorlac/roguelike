@@ -65,10 +65,12 @@ namespace rl {
         {
             bool ret{ this->setup() };
 
-            constexpr auto font_size{ 20.0f };
-            constexpr auto alignment{ Align::VMiddle | Align::HCenter };
+            const auto font_size{ 20.0f };
+            const auto alignment{ Align::VMiddle | Align::HCenter };
 
-            const auto layout_abc_h1{ new ui::BoxLayout<Alignment::Horizontal>("A=>M Inner Horiz") };
+            const auto layout_abc_h1{
+                new ui::BoxLayout<Alignment::Horizontal>("A=>M Inner Horiz")
+            };
             layout_abc_h1->add_widget(new ui::Label{ "A", font_size, alignment });
             layout_abc_h1->add_widget(new ui::Label{ "B", font_size, alignment });
             layout_abc_h1->add_widget(new ui::Label{ "C", font_size, alignment });
@@ -82,8 +84,9 @@ namespace rl {
             layout_abc_h1->add_widget(new ui::Label{ "K", font_size, alignment });
             layout_abc_h1->add_widget(new ui::Label{ "L", font_size, alignment });
             layout_abc_h1->add_widget(new ui::Label{ "M", font_size, alignment });
-
-            const auto layout_abc_h2{ new ui::BoxLayout<Alignment::Horizontal>("N=>Z Inner Horiz") };
+            const auto layout_abc_h2{
+                new ui::BoxLayout<Alignment::Horizontal>("N=>Z Inner Horiz")
+            };
             layout_abc_h2->add_widget(new ui::Label{ "N", font_size, alignment });
             layout_abc_h2->add_widget(new ui::Label{ "O", font_size, alignment });
             layout_abc_h2->add_widget(new ui::Label{ "P", font_size, alignment });
@@ -97,30 +100,35 @@ namespace rl {
             layout_abc_h2->add_widget(new ui::Label{ "X", font_size, alignment });
             layout_abc_h2->add_widget(new ui::Label{ "Y", font_size, alignment });
             layout_abc_h2->add_widget(new ui::Label{ "Z", font_size, alignment });
-
-            const auto layout_num_v1{ new ui::BoxLayout<Alignment::Vertical>("Nums1 Inner Vert") };
+            const auto layout_num_v1{
+                new ui::BoxLayout<Alignment::Vertical>("Nums1 Inner Vert")
+            };
             layout_num_v1->add_widget(new ui::Button{ "Button", ui::Icon::ID::Bong });
             layout_num_v1->add_widget(new ui::Label{ "2", font_size, alignment });
             layout_num_v1->add_widget(new ui::Label{ "3", font_size, alignment });
             layout_num_v1->add_widget(new ui::Label{ "4", font_size, alignment });
             layout_num_v1->add_widget(new ui::Label{ "5", font_size, alignment });
-
-            const auto layout_num_v2{ new ui::BoxLayout<Alignment::Vertical>("Nums2 Inner Vert") };
-            layout_num_v2->add_widget(new ui::Label{ "1", font_size, alignment });
+            const auto layout_num_v2{
+                new ui::BoxLayout<Alignment::Vertical>("Nums2 Inner Vert")
+            };
+            layout_num_v2->add_widget(new ui::CheckBox{ "Checkbox" });
             layout_num_v2->add_widget(new ui::Label{ "2", font_size, alignment });
             layout_num_v2->add_widget(new ui::Label{ "3", font_size, alignment });
             layout_num_v2->add_widget(new ui::Label{ "4", font_size, alignment });
             layout_num_v2->add_widget(new ui::Label{ "5", font_size, alignment });
-
-            const auto layout_nums_horiz_outer{ new ui::BoxLayout<Alignment::Horizontal>("Nums Outer Horiz") };
+            const auto layout_nums_horiz_outer{
+                new ui::BoxLayout<Alignment::Horizontal>("Nums Outer Horiz")
+            };
             layout_nums_horiz_outer->add_nested_layout(layout_num_v1);
             layout_nums_horiz_outer->add_nested_layout(layout_num_v2);
-
-            const auto layout_abc_vert_nested{ new ui::BoxLayout<Alignment::Vertical>("ABC Nested Vert") };
+            const auto layout_abc_vert_nested{
+                new ui::BoxLayout<Alignment::Vertical>("ABC Nested Vert")
+            };
             layout_abc_vert_nested->add_nested_layout(layout_abc_h1);
             layout_abc_vert_nested->add_nested_layout(layout_abc_h2);
-
-            const auto layout_canvas_vert{ new ui::BoxLayout<Alignment::Vertical>("Top Level Vert") };
+            const auto layout_canvas_vert{
+                new ui::BoxLayout<Alignment::Vertical>("Top Level Vert")
+            };
             layout_canvas_vert->set_size_policy(SizePolicy::Maximum);
             layout_canvas_vert->add_nested_layout(layout_nums_horiz_outer);
             layout_canvas_vert->add_nested_layout(layout_abc_vert_nested);

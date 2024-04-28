@@ -748,7 +748,7 @@ namespace rl::nvg {
 
     // Draws text string at specified location. If end is specified only the sub-string up to
     // the end is drawn.
-    f32 draw_text(Context* ctx, ds::point<f32> pos, const std::string& text);
+    f32 draw_text(Context* ctx, ds::point<f32> pos, std::string text);
 
     // Draws multi-line text string at specified location wrapped at the specified width. If end
     // is specified only the sub-string up to the end is drawn. White space is stripped at the

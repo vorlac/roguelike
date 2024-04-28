@@ -139,12 +139,18 @@ namespace rl::ui {
     {
         // TODO: check font size here
         const auto context{ m_renderer->context() };
-        const f32 font_size{ m_font_size < 0.0f ? m_theme->button_font_size : m_font_size };
 
-        m_renderer->set_text_properties_(m_theme->button_font_name, font_size,
-                                         Align::HCenter | Align::VMiddle);
+        TextProperties props{
+            .font = m_theme->button_font_name,
+            .align = Align::HCenter | Align::VMiddle,
+            .color = m_enabled ? m_theme->button_text_color
+                               : m_theme->button_disabled_text_color,
+            .size = m_font_size < 0.0f ? m_theme->button_font_size
+                                       : m_font_size
+        };
 
-        ds::dims icon_size{ 0.0f, font_size };
+        m_renderer->set_text_properties(props);
+        ds::dims<f32> icon_size{ 0.0f, props.size };
         const f32 text_width{ nvg::text_bounds(context, ds::point<f32>::zero(), m_text) };
 
         if (m_icon != Icon::ID::None) {
@@ -163,7 +169,7 @@ namespace rl::ui {
 
         return ds::dims<f32>{
             text_width + icon_size.width + INNER_PADDING.horizontal(),
-            font_size + INNER_PADDING.vertical(),
+            props.size + INNER_PADDING.vertical(),
         };
     }
 
@@ -255,14 +261,15 @@ namespace rl::ui {
     bool Button::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb)
     {
         Widget::on_mouse_button_pressed(mouse, kb);
-        return handle_mouse_button_event(mouse.pos(), mouse.button_pressed(), true, kb.keys_down());
+        return handle_mouse_button_event(mouse.pos(), mouse.button_pressed(),
+                                         true, kb.keys_down());
     }
 
     bool Button::on_mouse_button_released(const Mouse& mouse, const Keyboard& kb)
     {
         Widget::on_mouse_button_released(mouse, kb);
-        return handle_mouse_button_event(mouse.pos(), mouse.button_released(), false,
-                                         kb.keys_down());
+        return handle_mouse_button_event(mouse.pos(), mouse.button_released(),
+                                         false, kb.keys_down());
     }
 
     void Button::draw()
@@ -282,56 +289,64 @@ namespace rl::ui {
             grad_bot = m_theme->button_gradient_bot_focused;
         }
 
-        nvg::begin_path(context);
-        nvg::rounded_rect(context, m_rect.pt.x + 1.0f, m_rect.pt.y + 1.0f, m_rect.size.width - 2.0f,
-                          m_rect.size.height - 2.0f, m_theme->button_corner_radius - 1.0f);
+        m_renderer->draw_path(false, [&] {
+            m_renderer->draw_rounded_rect(m_rect, m_theme->button_corner_radius);
+            if (math::equal(m_background_color.a, 0.0f)) {
+                nvg::fill_color(context, m_background_color);
+                nvg::fill(context);
 
-        if (math::equal(m_background_color.a, 0.0f)) {
-            nvg::fill_color(context, m_background_color);
-            nvg::fill(context);
-
-            if (m_pressed)
-                grad_top.a = grad_bot.a = 0.8f;
-            else {
-                const f32 v{ 1.0f - m_background_color.a };
-                grad_top.a = m_enabled ? v : v * 0.5f + 0.5f;
-                grad_bot.a = m_enabled ? v : v * 0.5f + 0.5f;
+                if (m_pressed)
+                    grad_top.a = grad_bot.a = 0.8f;
+                else {
+                    const f32 v{ 1.0f - m_background_color.a };
+                    grad_top.a = m_enabled ? v : v * 0.5f + 0.5f;
+                    grad_bot.a = m_enabled ? v : v * 0.5f + 0.5f;
+                }
             }
-        }
 
-        const nvg::PaintStyle bg{ nvg::linear_gradient(
-            context, m_rect.pt.x, m_rect.pt.y, m_rect.pt.x, m_rect.pt.y + m_rect.size.height,
-            grad_top, grad_bot) };
+            const ds::line<f32> line{
+                m_rect.pt,
+                ds::point{ m_rect.pt.x, m_rect.pt.y + m_rect.size.height }
+            };
+            const nvg::PaintStyle bg{ m_renderer->create_linear_gradient_paint_style(line, grad_top, grad_bot) };
+            nvg::fill_paint(context, bg);
+            nvg::fill(context);
+        });
 
-        nvg::fill_paint(context, bg);
-        nvg::fill(context);
+        // TODO: Add border weight to style
 
-        nvg::begin_path(context);
-        nvg::stroke_width(context, 1.0f);
-        nvg::rounded_rect(context, m_rect.pt.x + 0.5f, m_rect.pt.y + (m_pressed ? 0.5f : 1.5f),
-                          m_rect.size.width - 1.0f,
-                          m_rect.size.height - 1.0f - (m_pressed ? 0.0f : 1.0f),
-                          m_theme->button_corner_radius);
+        // Light Border
+        m_renderer->draw_path(false, [&] {
+            ds::rect<f32> test_rect{ m_rect };
+            test_rect.size += m_pressed ? ds::margin<f32>::init(1.5f)
+                                        : ds::margin<f32>::init(0.5f);
+            nvg::stroke_width(context, 1.0f);
+            m_renderer->draw_rounded_rect(test_rect, m_theme->button_corner_radius);
+            nvg::stroke_color(context, m_theme->border_light);
+            nvg::stroke(context);
+        });
 
-        nvg::stroke_color(context, m_theme->border_light);
-        nvg::stroke(context);
+        // Dark border
+        m_renderer->draw_path(false, [&] {
+            ds::rect<f32> test_rect{ m_rect };
+            test_rect.size += ds::margin<f32>::init(0.5f);
+            m_renderer->draw_rounded_rect(test_rect, m_theme->button_corner_radius);
+            nvg::stroke_color(context, m_theme->border_dark);
+            nvg::stroke(context);
+        });
 
-        nvg::begin_path(context);
-        nvg::rounded_rect(context, m_rect.pt.x + 0.5f, m_rect.pt.y + 0.5f, m_rect.size.width - 1.0f,
-                          m_rect.size.height - 2.0f, m_theme->button_corner_radius);
-        nvg::stroke_color(context, m_theme->border_dark);
-        nvg::stroke(context);
+        const f32 font_size{ math::equal(m_font_size, -1.0f)
+                                 ? m_theme->button_font_size
+                                 : m_font_size };
 
-        f32 font_size{ math::equal(m_font_size, -1.0f) ? m_theme->button_font_size : m_font_size };
         nvg::set_font_size(context, font_size);
         nvg::set_font_face(context, text::font::style::SansBold);
-        f32 text_width{ nvg::text_bounds(context, ds::point<f32>::zero(), m_text) };
 
-        ds::point<f32> center{
-            m_rect.pt.x + m_rect.size.width * 0.5f,
-            m_rect.pt.y + m_rect.size.height * 0.5f,
+        const f32 text_width{
+            nvg::text_bounds(context, ds::point<f32>::zero(), m_text)
         };
 
+        const ds::point<f32> center{ m_rect.centroid() };
         ds::point<f32> text_pos{
             center.x - text_width * 0.5f,
             center.y - 1.0f,

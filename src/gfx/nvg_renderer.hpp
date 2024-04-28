@@ -17,25 +17,18 @@ namespace rl {
         struct PaintStyle;
     }
 
+    struct TextProperties
+    {
+        std::string_view font{};
+        Align align{ Align::None };
+        ds::color<f32> color{ Colors::Transparent };
+        f32 size{ -1.0f };
+    };
+
     class NVGRenderer
     {
     public:
         NVGRenderer();
-
-        void flush(const ds::dims<f32>& viewport, f32 pixel_ratio = 1.0f) const;
-
-        void begin_frame(const ds::dims<f32>& render_size, f32 pixel_ratio = 1.0f) const;
-        void end_frame() const;
-
-        void begin_path() const;
-        void end_path() const;
-
-        void save_state() const;
-        void restore_state() const;
-        void reset_scissor() const;
-
-        void set_fill_paint_style(const nvg::PaintStyle& paint_style) const;
-        void fill_current_path(const nvg::PaintStyle& paint_style) const;
 
         [[nodiscard]] nvg::Context* context() const;
 
@@ -59,16 +52,35 @@ namespace rl {
             f32 font_size, Align alignment = Align::HCenter | Align::VMiddle) const;
 
         [[nodiscard]] ds::rect<f32> get_text_box_rect(
-            const std::string& text, const ds::point<f32>& pos, const std::string_view& font_name,
+            const std::string& text, ds::point<f32> pos, std::string_view font_name,
             f32 font_size, f32 fold_width, Align alignment = Align::HLeft | Align::VTop) const;
 
-        void load_fonts(const std::vector<text::font::Data>& fonts);
-        void set_text_properties_(const std::string_view& font_name, f32 font_size,
-                                  Align alignment) const;
+        void set_fill_paint_style(const nvg::PaintStyle& paint_style) const;
+        void fill_current_path(const nvg::PaintStyle& paint_style) const;
 
+        void set_text_properties(const TextProperties& props) const;
+        void set_text_properties(std::string_view font_name,
+                                 f32 font_size = -1.0f,
+                                 Align alignment = Align::None,
+                                 const ds::color<f32>& text_color = Colors::Transparent) const;
+
+        void draw_text(std::string text, ds::point<f32> pos,
+                       const TextProperties& props = {}) const;
         void draw_rounded_rect(const ds::rect<f32>& rect, f32 corner_radius) const;
         void draw_rect_outline(const ds::rect<f32>& rect, f32 stroke_width,
                                const ds::color<f32>& color, Outline type) const;
+
+        void load_fonts(const std::vector<text::font::Data>& fonts);
+        void begin_frame(const ds::dims<f32>& render_size, f32 pixel_ratio = 1.0f) const;
+        void end_frame() const;
+
+        void save_state() const;
+        void restore_state() const;
+        void reset_scissor() const;
+        void flush(const ds::dims<f32>& viewport, f32 pixel_ratio = 1.0f) const;
+
+        void begin_path() const;
+        void end_path() const;
 
     public:
         template <std::invocable TCallable>

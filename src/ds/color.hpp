@@ -1,13 +1,12 @@
 #pragma once
 
 #include <algorithm>
-#include <array>
 #include <concepts>
 
 #include <fmt/color.h>
 
 #include "utils/concepts.hpp"
-#include "utils/memory.hpp"
+#include "utils/conversions.hpp"
 #include "utils/numeric.hpp"
 #include "utils/random.hpp"
 #include "utils/sdl_defs.hpp"
@@ -230,21 +229,18 @@ namespace rl::ds {
         }
 
         [[nodiscard]]
-        constexpr bool operator==(color<T> other) const
-        {
-            return 0 == memory::static_memcmp<sizeof(*this)>(this, &other);
-        }
-
-        [[nodiscard]]
         constexpr bool is_empty() const
         {
-            return this->operator==({});
+            return *this == color<T>{};
         }
 
         [[nodiscard]]
-        constexpr bool operator!=(const color& other) const
+        constexpr bool is_null() const
         {
-            return !this->operator==(other);
+            return math::equal(this->r, static_cast<T>(0)) &&
+                   math::equal(this->g, static_cast<T>(0)) &&
+                   math::equal(this->b, static_cast<T>(0)) &&
+                   math::equal(this->a, static_cast<T>(0));
         }
 
     public:

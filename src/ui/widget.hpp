@@ -41,7 +41,6 @@ namespace rl::ui {
         bool enabled() const;
         bool focused() const;
         bool resizable() const;
-        bool recalc_needed() const;
 
         f32 width() const;
         f32 height() const;
@@ -153,7 +152,6 @@ namespace rl::ui {
         bool m_focused{ false };
         bool m_resizable{ false };
         bool m_mouse_focus{ false };
-        bool m_size_recalc_needed{ false };
 
         // TODO: move to theme
         f32 m_icon_extra_scale{ 1.0f };

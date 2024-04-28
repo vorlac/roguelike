@@ -4,6 +4,7 @@
 #include <memory>
 #include <type_traits>
 
+#include "ds/color.hpp"
 #include "ds/dims.hpp"
 #include "ds/line.hpp"
 #include "gfx/nvg_renderer.hpp"
@@ -48,7 +49,9 @@ namespace rl {
     }
 
     NVGRenderer::NVGRenderer()
-        : m_nvg_context{ create_nvg_context(m_stencil_buffer, m_depth_buffer, m_float_buffer) }
+        : m_nvg_context{
+            create_nvg_context(m_stencil_buffer, m_depth_buffer, m_float_buffer)
+        }
     {
         this->load_fonts({
             text::font::Data{
@@ -133,9 +136,8 @@ namespace rl {
         // defines how blurry the border of the rectangle is. Parameter icol specifies the inner
         // color and ocol the outer color of the gradient. The gradient is transformed by the
         // current transform when it is passed to FillPaint() or StrokePaint().
-        return nvg::box_gradient(
-            m_nvg_context.get(), rect, corner_radius,
-            outer_blur, inner_color, outer_gradient_color);
+        return nvg::box_gradient(m_nvg_context.get(), rect, corner_radius,
+                                 outer_blur, inner_color, outer_gradient_color);
     }
 
     nvg::PaintStyle NVGRenderer::create_linear_gradient_paint_style(ds::line<f32> line,
@@ -190,12 +192,29 @@ namespace rl {
         nvg::fill(m_nvg_context.get());
     }
 
-    void NVGRenderer::set_text_properties_(const std::string_view& font_name, const f32 font_size,
-                                           const Align alignment) const
+    void NVGRenderer::set_text_properties(std::string_view font_name, const f32 font_size,
+                                          const Align alignment, const ds::color<f32>& text_color) const
     {
-        nvg::set_font_face(m_nvg_context.get(), font_name);
-        nvg::set_font_size(m_nvg_context.get(), font_size);
-        nvg::set_text_align(m_nvg_context.get(), alignment);
+        if (!font_name.empty())
+            nvg::set_font_face(m_nvg_context.get(), font_name);
+        if (font_size > 0.0f)
+            nvg::set_font_size(m_nvg_context.get(), font_size);
+        if (alignment != Align::None)
+            nvg::set_text_align(m_nvg_context.get(), alignment);
+        if (!text_color.is_null())
+            nvg::fill_color(m_nvg_context.get(), text_color);
+    }
+
+    void NVGRenderer::set_text_properties(const TextProperties& props) const
+    {
+        this->set_text_properties(props.font, props.size, props.align, props.color);
+    }
+
+    void NVGRenderer::draw_text(std::string text, const ds::point<f32> pos,
+                                const TextProperties& props) const
+    {
+        this->set_text_properties(props.font, props.size, props.align, props.color);
+        nvg::draw_text(m_nvg_context.get(), pos, std::move(text));
     }
 
     ds::dims<f32> NVGRenderer::get_text_size(const std::string&) const
@@ -205,17 +224,15 @@ namespace rl {
     }
 
     ds::rect<f32> NVGRenderer::get_text_box_rect(
-        const std::string& text, const ds::point<f32>& pos, const std::string_view& font_name,
+        const std::string& text, ds::point<f32> pos, std::string_view font_name,
         const f32 font_size, const f32 fold_width, const Align alignment) const
     {
-        this->set_text_properties_(font_name, font_size, alignment);
+        this->set_text_properties(font_name, font_size, alignment);
         // Measures the specified multi-text string. Parameter bounds should be a pointer to
         // float[4], if the bounding box of the text should be returned. The bounds value are
         // [xmin,ymin, xmax,ymax] Measured values are returned in local coordinate space.
-        const ds::rect bounds{
-            nvg::text_box_bounds(m_nvg_context.get(),
-                                 pos, fold_width, text)
-        };
+        const ds::rect bounds{ nvg::text_box_bounds(
+            m_nvg_context.get(), pos, fold_width, text) };
 
         return ds::rect<f32>{
             pos,
@@ -230,7 +247,7 @@ namespace rl {
                                              const std::string_view& font_name, const f32 font_size,
                                              const Align alignment) const
     {
-        this->set_text_properties_(font_name, font_size, alignment);
+        this->set_text_properties(font_name, font_size, alignment);
         const f32 width{ nvg::text_bounds(m_nvg_context.get(), ds::point<f32>::zero(), text) };
 
         constexpr static f32 width_buffer{ 2.0f };
@@ -272,7 +289,7 @@ namespace rl {
 
     void NVGRenderer::draw_rounded_rect(const ds::rect<f32>& rect, const f32 corner_radius) const
     {
-        nvg::rounded_rect(m_nvg_context.get(), rect.pt.x, rect.pt.y, rect.size.width,
-                          rect.size.height, corner_radius);
+        nvg::rounded_rect(m_nvg_context.get(), rect.pt.x, rect.pt.y,
+                          rect.size.width, rect.size.height, corner_radius);
     }
 }

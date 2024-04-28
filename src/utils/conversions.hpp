@@ -40,7 +40,7 @@ namespace rl::math {
     template <rl::numeric T>
     constexpr bool not_equal(const T lhs, const T rhs)
     {
-        return !math::equal(lhs, rhs);
+        return !equal(lhs, rhs);
     }
 }
 

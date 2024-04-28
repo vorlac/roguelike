@@ -1,13 +1,14 @@
 #include <string>
 
 #include "utils/numeric.hpp"
+#include "utils/unicode.hpp"
 
 namespace rl {
     std::string utf8(u32 c)
     {
-        char seq[8] = { 0 };
-        i32 n{ 0 };
+        char seq[8]{};
 
+        i32 n{ 0 };
         if (c < 0x80)
             n = 1;
         else if (c < 0x800)
@@ -52,6 +53,6 @@ namespace rl {
             case 1:
                 seq[0] = static_cast<char>(c);
         }
-        return std::string(seq, seq + n);
+        return { seq, seq + n };
     }
 }

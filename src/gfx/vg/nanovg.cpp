@@ -2827,7 +2827,7 @@ namespace rl::nvg {
         state->font_id = font::get_font_by_name(ctx->fs, font.c_str());
     }
 
-    f32 draw_text(Context* ctx, const ds::point<f32> pos, const std::string& text)
+    f32 draw_text(Context* ctx, const ds::point<f32> pos, std::string text)
     {
         State* state{ detail::get_state(ctx) };
         if (state->font_id == font::INVALID) {

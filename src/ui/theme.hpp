@@ -56,13 +56,14 @@ namespace rl::ui {
         f32 button_corner_radius{ 2.5f };
         f32 button_outline_width_focused{ 2.5f };
         f32 button_outline_width_unfocused{ 2.5f };
-        std::string_view button_font_name{ text::font::style::Sans };
+        std::string_view button_font_name{ text::font::style::Mono };
         ds::color<f32> button_gradient_top_focused{ 64, 64, 64 };
         ds::color<f32> button_gradient_bot_focused{ 48, 48, 48, 255 };
         ds::color<f32> button_gradient_top_unfocused{ 100, 100, 100 };
         ds::color<f32> button_gradient_bot_unfocused{ 65, 65, 65 };
         ds::color<f32> button_gradient_top_pushed{ 41, 41, 41, 255 };
         ds::color<f32> button_gradient_bot_pushed{ 29, 29, 29, 255 };
+        ds::color<float> button_text_color{ Colors::DarkGrey };
         ds::color<f32> button_disabled_text_color{ Colors::DarkGrey };
 
         f32 dialog_title_font_size{ 24.0f };
@@ -81,7 +82,11 @@ namespace rl::ui {
         ds::color<f32> dialog_popup_fill{ 50, 50, 50, 255 };
         ds::color<f32> dialog_popup_transparent{ 50, 50, 50, 0 };
 
+        f32 check_box_font_size{ 32.0f };
         Icon::ID check_box_icon{ Icon::Check };
+        std::string_view checkbox_text_font{ text::font::style::Sans };
+        std::string_view checkbox_icon_font{ text::font::style::Icons };
+
         Icon::ID message_information_icon{ Icon::InfoCircle };
         Icon::ID message_question_icon{ Icon::QuestionCircle };
         Icon::ID message_warning_icon{ Icon::ExclamationTriangle };

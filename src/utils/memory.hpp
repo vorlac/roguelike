@@ -5,16 +5,8 @@
 #include "utils/concepts.hpp"
 #include "utils/numeric.hpp"
 
-struct small_trivially_copyable
-{
-    int32_t a{};
-    uint64_t b{};
-    float c{};
-};
-
 namespace rl::memory {
     namespace detail {
-
         template <u64 Size>
             requires(Size < 32)
         constexpr i32 static_memcmp(const void* a, const void* b)
