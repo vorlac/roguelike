@@ -158,7 +158,7 @@ namespace rl::ui {
                 icon_size.height *= this->icon_scale();
                 nvg::set_font_size(context, icon_size.height);
                 nvg::set_font_face(context, text::font::style::Icons);
-                icon_size.width = nvg::text_bounds(context, ds::point<f32>::zero(), utf8(m_icon));
+                icon_size.width = nvg::text_bounds(context, ds::point<f32>::zero(), utf8::codepoint_to_str(m_icon));
             }
             else {
                 icon_size.height *= 0.9f;
@@ -358,7 +358,7 @@ namespace rl::ui {
         if (!m_enabled)
             text_color = m_theme->disabled_text_color;
         if (m_icon != Icon::None) {
-            const std::string icon{ utf8(m_icon) };
+            const std::string icon{ utf8::codepoint_to_str(m_icon) };
             ds::dims icon_size{ font_size, font_size };
 
             if (Icon::is_font(m_icon)) {

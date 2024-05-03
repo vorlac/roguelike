@@ -7,7 +7,6 @@
 #include "core/keyboard.hpp"
 #include "core/mouse.hpp"
 #include "ds/dims.hpp"
-#include "ds/point.hpp"
 #include "ds/rect.hpp"
 #include "ds/vector2d.hpp"
 #include "ui/widget.hpp"

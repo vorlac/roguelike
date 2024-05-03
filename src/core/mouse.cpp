@@ -33,6 +33,7 @@ namespace rl {
 
         if (result == 0)
             m_active_cursor = cursor_id;
+
         return result == 0;
     }
 
@@ -177,7 +178,7 @@ namespace rl {
         return 0 != (m_buttons_held & SDL_BUTTON(button));
     }
 
-    bool Mouse::all_buttons_down(std::vector<Mouse::Button::ID>&& buttons) const
+    bool Mouse::all_buttons_down(const std::vector<Mouse::Button::ID>& buttons) const
     {
         bool ret{ true };
 
@@ -187,9 +188,9 @@ namespace rl {
         return ret;
     }
 
-    bool Mouse::any_buttons_down(std::vector<Mouse::Button::ID>&& buttons) const
+    bool Mouse::any_buttons_down(const std::vector<Mouse::Button::ID>& buttons) const
     {
-        for (auto&& button : buttons) {
+        for (const Mouse::Button::ID button : buttons) {
             if (this->is_button_down(button))
                 return true;
         }

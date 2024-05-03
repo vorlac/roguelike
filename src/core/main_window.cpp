@@ -1,5 +1,3 @@
-#include <glad/gl.h>
-
 #include <array>
 #include <memory>
 #include <utility>
@@ -20,7 +18,6 @@
 #include "utils/sdl_defs.hpp"
 
 namespace rl {
-
     MainWindow::MainWindow(const std::string& title, const ds::dims<i32>& dims,
                            const MainWindow::Properties flags)
     {

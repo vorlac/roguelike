@@ -188,7 +188,7 @@ namespace rl::ui {
                     m_rect.pt.x + checkbox_height * 0.5f,
                     m_rect.pt.y + m_rect.size.height * 0.5f,
                 },
-                utf8(m_theme->check_box_icon));
+                utf8::codepoint_to_str(m_theme->check_box_icon));
         }
     }
 }

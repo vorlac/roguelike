@@ -1,4 +1,4 @@
-#include "core/application.hpp"
+﻿#include "core/application.hpp"
 #include "utils/options.hpp"
 
 int main(const int argc, char** argv)

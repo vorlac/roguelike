@@ -16,7 +16,7 @@ namespace rl {
 
     bool Keyboard::is_button_released(const Keyboard::Scancode::ID key) const
     {
-        const bool ret = m_released[static_cast<std::size_t>(key)];
+        const bool ret = m_released[key];
         m_released[key] = false;
         return ret;
     }

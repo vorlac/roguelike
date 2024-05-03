@@ -79,7 +79,7 @@ namespace rl::ui {
         if (m_chevron_icon != Icon::None) {
             auto&& context{ m_renderer->context() };
             const f32 text_size{ m_font_size < 0.0f ? m_theme->button_font_size : m_font_size };
-            const std::string icon{ utf8(m_chevron_icon) };
+            const std::string icon{ utf8::codepoint_to_str(m_chevron_icon) };
             const ds::color<f32>& text_color{ math::equal(m_text_color.a, 0.0f)
                                                   ? m_theme->text_color
                                                   : m_text_color };

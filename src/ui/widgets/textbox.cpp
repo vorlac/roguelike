@@ -277,7 +277,7 @@ namespace rl::ui {
                                              ? m_theme->text_color
                                              : m_theme->disabled_text_color);
 
-                const std::string icon{ utf8(std::to_underlying(m_theme->text_box_up_icon)) };
+                const std::string icon{ utf8::codepoint_to_str(std::to_underlying(m_theme->text_box_up_icon)) };
                 nvg::set_text_align(context, Align::HLeft | Align::VMiddle);
 
                 ds::point<f32> icon_pos{
@@ -295,7 +295,7 @@ namespace rl::ui {
                                              ? m_theme->text_color
                                              : m_theme->disabled_text_color);
 
-                const std::string icon{ utf8(m_theme->text_box_down_icon) };
+                const std::string icon{ utf8::codepoint_to_str(m_theme->text_box_down_icon) };
                 nvg::set_text_align(context, Align::HLeft | Align::VMiddle);
 
                 ds::point<f32> icon_pos{

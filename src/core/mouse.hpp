@@ -118,8 +118,8 @@ namespace rl {
         bool is_button_released(Mouse::Button::ID button) const;
         bool is_button_held(Mouse::Button::ID button) const;
         bool is_button_down(Mouse::Button::ID button) const;
-        bool all_buttons_down(std::vector<Mouse::Button::ID>&& buttons) const;
-        bool any_buttons_down(std::vector<Mouse::Button::ID>&& buttons) const;
+        bool all_buttons_down(const std::vector<Mouse::Button::ID>& buttons) const;
+        bool any_buttons_down(const std::vector<Mouse::Button::ID>& buttons) const;
 
     protected:
         void process_button_down(Mouse::Button::ID mouse_button);

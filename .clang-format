@@ -166,7 +166,7 @@ SpaceBeforeSquareBrackets: false
 BitFieldColonSpacing: Both
 Standard: Latest
 TabWidth: 4
-UseCRLF: false
+LineEnding: LF
 UseTab: Never
 WhitespaceSensitiveMacros:
   - R
