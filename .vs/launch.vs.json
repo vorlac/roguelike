@@ -1,12 +1,12 @@
 {
-  "version": "0.2.1",
-  "configurations": [
-    {
-      "isDefaultConfiguration": true,
-      "name": "roguelike",
-      "project": "CMakeLists.txt",
-      "externalConsole": false,
-      "args": []
-    }
-  ]
+    "version": "0.2.1",
+    "configurations": [
+        {
+            "isDefaultConfiguration": true,
+            "name": "roguelike",
+            "project": "CMakeLists.txt",
+            "externalConsole": false,
+            "args": []
+        }
+    ]
 }

@@ -40,6 +40,14 @@ namespace rl {
             bool m_pressed{ false };
             bool m_checked{ false };
             std::function<void(bool)> m_toggled_callback;
+
+        private:
+            constexpr static inline f32 CORNER_RADIUS{ 3.0f };
+            constexpr static inline f32 OUTER_BLUR{ 3.0f };
+            // the spacing offset between the cbeckbox rect
+            // and the text label for the checkbox. represents
+            // a perfentage of the checkbox square's height.
+            constexpr static inline f32 TEXT_OFFSET{ 0.33f };
         };
     }
 }

@@ -111,7 +111,7 @@ namespace rl {
             const auto layout_num_v2{
                 new ui::BoxLayout<Alignment::Vertical>("Nums2 Inner Vert")
             };
-            layout_num_v2->add_widget(new ui::CheckBox{ "Checkbox" });
+            layout_num_v2->add_widget(new ui::CheckBox{ "Checkbox ASDFGHJKL" });
             layout_num_v2->add_widget(new ui::Label{ "2", font_size, alignment });
             layout_num_v2->add_widget(new ui::Label{ "3", font_size, alignment });
             layout_num_v2->add_widget(new ui::Label{ "4", font_size, alignment });

@@ -2,7 +2,6 @@
 #include "core/mouse.hpp"
 #include "ds/color.hpp"
 #include "ds/dims.hpp"
-#include "ds/margin.hpp"
 #include "gfx/vg/nanovg.hpp"
 #include "gfx/vg/nanovg_state.hpp"
 #include "ui/widget.hpp"
@@ -100,7 +99,7 @@ namespace rl::ui {
 
     ds::dims<f32> CheckBox::preferred_size() const
     {
-        if (m_fixed_size != ds::dims<f32>::zero())
+        if (!m_fixed_size.is_empty())
             return m_fixed_size;
 
         const auto context{ m_renderer->context() };
@@ -110,8 +109,8 @@ namespace rl::ui {
 
         const f32 text_width{ nvg::text_bounds(context, ds::point<f32>::zero(), m_text) };
         const ds::dims pref_size{
-            text_width + (2.0f * font_size),
-            font_size * 1.25f,
+            text_width + (font_size * (1.0f + TEXT_OFFSET)),
+            font_size,
         };
 
         return pref_size;
@@ -122,46 +121,56 @@ namespace rl::ui {
         Widget::draw();
 
         const auto context{ m_renderer->context() };
+        const f32 checkbox_height{
+            math::equal(m_fixed_size.height, 0.0f)
+                ? m_theme->check_box_font_size
+                : m_fixed_size.height
+        };
 
         const TextProperties props{
             .font = m_theme->checkbox_text_font,
             .align = Align::VMiddle | Align::HLeft,
             .color = m_enabled ? m_theme->text_color
                                : m_theme->disabled_text_color,
-            .size = m_theme->check_box_font_size,
+            .size = checkbox_height,
+        };
+        const ds::rect<f32> checkbox_rect{
+            ds::point{
+                m_rect.pt.x,
+                m_rect.pt.y +
+                    m_rect.size.height / 2.0f -
+                    checkbox_height / 2.0f,
+            },
+            ds::dims{
+                checkbox_height,
+                checkbox_height,
+            },
         };
 
+        // start text horixontally adjacent to cb square
+        // and center text vertically within the widget
         const ds::point<f32> text_pos{
-            // start text adjacent to checkbox square
-            m_rect.pt.x + (m_rect.size.height),
-            // center text vertically...
+            m_rect.pt.x + (checkbox_height * (1.0f + TEXT_OFFSET)),
             m_rect.pt.y + (m_rect.size.height / 2.0f)
         };
 
         m_renderer->draw_text(m_text, text_pos, props);
 
-        constexpr static f32 CORNER_RADIUS{ 3.0f };
-        constexpr static f32 OUTER_BLUR{ 3.0f };
-        ds::rect<f32> temp_rect{
-            m_rect.pt + ((m_rect.size.height * 0.25f) / 2.0f),
-            ds::dims{
-                m_rect.size.height * 0.75f,  //- 2.0f,
-                m_rect.size.height * 0.75f,  //- 2.0f,
-            },
-        };
-
         const nvg::PaintStyle bg{
             m_renderer->create_rect_gradient_paint_style(
-                temp_rect, CORNER_RADIUS, OUTER_BLUR,
+                checkbox_rect, CORNER_RADIUS, OUTER_BLUR,
                 m_pressed ? ds::color<f32>{ 0, 0, 0, 100 }
                           : ds::color<f32>{ 0, 0, 0, 32 },
                 ds::color<f32>{ 0, 0, 0, 180 })
         };
 
         // draw the sunken checkbox square
+        // -2 pixels in size so it's fully
+        // contained by the widget's rect
         m_renderer->draw_path(false, [&] {
-            temp_rect = temp_rect.expanded(-2.0f);
-            m_renderer->draw_rounded_rect(temp_rect, CORNER_RADIUS);
+            m_renderer->draw_rounded_rect(
+                checkbox_rect.expanded(-2.0f),
+                CORNER_RADIUS);
             nvg::fill_paint(context, bg);
             nvg::fill(context);
         });
@@ -170,15 +179,16 @@ namespace rl::ui {
             // draw the check mark
             const f32 icon_scale{ m_icon_extra_scale * m_theme->icon_scale };
             nvg::set_font_face(context, text::font::style::Icons);
-            nvg::set_font_size(context, m_rect.size.height * icon_scale);
+            nvg::set_font_size(context, checkbox_height * icon_scale);
             nvg::fill_color(context, m_enabled ? m_theme->icon_color : m_theme->disabled_text_color);
             nvg::set_text_align(context, Align::HCenter | Align::VMiddle);
-            nvg::draw_text(context,
-                           ds::point<f32>{
-                               m_rect.pt.x + m_rect.size.height * 0.5f + 1,
-                               m_rect.pt.y + m_rect.size.height * 0.5f,
-                           },
-                           utf8(m_theme->check_box_icon));
+            nvg::draw_text(
+                context,
+                ds::point<f32>{
+                    m_rect.pt.x + checkbox_height * 0.5f,
+                    m_rect.pt.y + m_rect.size.height * 0.5f,
+                },
+                utf8(m_theme->check_box_icon));
         }
     }
 }
