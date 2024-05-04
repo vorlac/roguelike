@@ -444,9 +444,9 @@ namespace rl::ui {
 
             m_mouse_down_modifier = 0;
             if (kb.is_button_down(Keyboard::Scancode::LCtrl))
-                m_mouse_down_modifier |= Keyboard::Scancode::LCtrl;
+                m_mouse_down_modifier |= std::to_underlying(Keyboard::Scancode::LCtrl);
             if (kb.is_button_down(Keyboard::Scancode::LShift))
-                m_mouse_down_modifier |= Keyboard::Scancode::LShift;
+                m_mouse_down_modifier |= std::to_underlying(Keyboard::Scancode::LShift);
 
             const f32 time{ m_timer.elapsed() };
             if (time - m_last_click < 0.25f) {
@@ -465,9 +465,9 @@ namespace rl::ui {
                 m_mouse_down_pos = mouse_pos;
                 m_mouse_down_modifier = 0;
                 if (kb.is_button_down(Keyboard::Scancode::LCtrl))
-                    m_mouse_down_modifier |= Keyboard::Scancode::LCtrl;
+                    m_mouse_down_modifier |= std::to_underlying(Keyboard::Scancode::LCtrl);
                 if (kb.is_button_down(Keyboard::Scancode::LShift))
-                    m_mouse_down_modifier |= Keyboard::Scancode::LShift;
+                    m_mouse_down_modifier |= std::to_underlying(Keyboard::Scancode::LShift);
 
                 const f32 time{ m_timer.elapsed() };
                 if (time - m_last_click < 0.25f) {

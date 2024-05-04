@@ -5,6 +5,8 @@
 
 #include <fmt/color.h>
 #include <fmt/format.h>
+#include <fmt/printf.h>
+#include <fmt/std.h>
 
 #ifdef NDEBUG
 

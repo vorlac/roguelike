@@ -146,9 +146,9 @@ target_compile_options(${PROJECT_NAME}
             # /Z7 # embed debug info into .o files instead of pdb (for ccache)
             # /Zi # enable edit and continue
         >
-        
+
         $<$<CONFIG:RelWithDebInfo>:
-            /O2 # maximize speed
+            /Ox # maximize speed
             /Oi # generate intrinsics
             /Oy # frame pointer omission
             /Gw # optimize global data
@@ -159,21 +159,21 @@ target_compile_options(${PROJECT_NAME}
 
         $<$<CONFIG:Release>:
             /O2 # maximize speed
-            /Oi # generate intrinsics
+            #/Oi # generate intrinsics
             /Oy # frame pointer omission
             /Gw # optimize global data
-            # /GS- # disable buffer security checks
+            /GS- # disable buffer security checks
             # /GA # optimize for windows application
             /GL # whole program optimization
-            # /fp:fast # prefer fast over accurate floating point math
+            /fp:fast # prefer fast over accurate floating point math
             # /favor:INTEL64
 
-            #/Ox # enable most speed optimizations
-            #/Ot # favor fast code
+            /Ox # enable most speed optimizations
+            /Ot # favor fast code
             #/Ob2 # inline function expansion
             #/GR- # disable RTTI
             #/EHa- # disable exception handling
-            #/Gr # __vectorcall calling convention, Gr for __fastcall
+            /Gr # __vectorcall calling convention, Gr for __fastcall
             #/order # order functions for optimal paging
         >
     >

@@ -206,7 +206,8 @@ namespace rl {
         const ds::dims<i32>& get_render_size();
 
         bool is_valid() const;
-        bool input_grabbed() const;
+        bool kb_grabbed() const;
+        bool mouse_grabbed() const;
         ds::dims<i32> get_min_size() const;
         ds::dims<i32> get_max_size() const;
         ds::point<i32> get_position() const;
@@ -225,7 +226,8 @@ namespace rl {
         const Mouse& mouse() const;
 
         bool set_vsync(bool enabled);
-        bool set_grab(bool grabbed) const;
+        bool set_kb_grab(bool grabbed) const;
+        bool set_mouse_grab(bool grabbed) const;
         bool set_bordered(bool bordered) const;
         bool set_resizable(bool resizable) const;
         bool set_fullscreen(bool fullscreen) const;

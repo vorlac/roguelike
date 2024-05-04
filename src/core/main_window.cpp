@@ -146,10 +146,17 @@ namespace rl {
         return result == 0;
     }
 
-    bool MainWindow::set_grab(const bool grabbed) const
+    bool MainWindow::set_kb_grab(const bool grabbed) const
     {
-        const i32 result{ SDL3::SDL_SetWindowGrab(m_sdl_window, grabbed) };
-        sdl_assert(result == 0, "failed to set grab");
+        const i32 result{ SDL3::SDL_SetWindowKeyboardGrab(m_sdl_window, grabbed) };
+        sdl_assert(result == 0, "failed to set kb grab");
+        return result == 0;
+    }
+
+    bool MainWindow::set_mouse_grab(const bool grabbed) const
+    {
+        const i32 result{ SDL3::SDL_SetWindowMouseGrab(m_sdl_window, grabbed) };
+        sdl_assert(result == 0, "failed to set mouse grab");
         return result == 0;
     }
 
@@ -306,9 +313,14 @@ namespace rl {
         return size;
     }
 
-    bool MainWindow::input_grabbed() const
+    bool MainWindow::kb_grabbed() const
     {
-        return SDL3::SDL_GetWindowGrab(m_sdl_window);
+        return SDL3::SDL_GetWindowKeyboardGrab(m_sdl_window);
+    }
+
+    bool MainWindow::mouse_grabbed() const
+    {
+        return SDL3::SDL_GetWindowMouseGrab(m_sdl_window);
     }
 
     DisplayID MainWindow::get_display_id()
@@ -449,14 +461,14 @@ namespace rl {
 
     void MainWindow::keyboard_key_pressed_event_callback(const SDL3::SDL_Event& e)
     {
-        const auto pressed_button{ static_cast<Keyboard::Scancode::ID>(e.key.keysym.scancode) };
+        const auto pressed_button{ static_cast<Keyboard::Scancode>(e.key.keysym.scancode) };
         m_keyboard.process_button_down(pressed_button);
         m_gui_canvas->on_key_pressed(m_keyboard);
     }
 
     void MainWindow::keyboard_key_released_event_callback(const SDL3::SDL_Event& e)
     {
-        const auto released_button{ static_cast<Keyboard::Scancode::ID>(e.key.keysym.scancode) };
+        const auto released_button{ static_cast<Keyboard::Scancode>(e.key.keysym.scancode) };
         m_keyboard.process_button_up(released_button);
         m_gui_canvas->on_key_released(m_keyboard);
     }

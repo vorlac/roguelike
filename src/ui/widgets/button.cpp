@@ -186,7 +186,7 @@ namespace rl::ui {
     }
 
     bool Button::handle_mouse_button_event(const ds::point<f32> pt, const Mouse::Button::ID button,
-                                           const bool button_pressed, Keyboard::Scancode::ID)
+                                           const bool button_pressed, Keyboard::Scancode)
     {
         // Temporarily increase the reference count of the button in
         // case the button causes the parent window to be destructed

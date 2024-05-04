@@ -38,7 +38,6 @@ namespace rl {
 
             while (SDL3::SDL_PollEvent(&e) != 0) {
                 switch (e.type) {
-                    // Mouse input events
                     case Mouse::Event::MouseWheel:
                         window->mouse_wheel_event_callback(e);
                         break;
@@ -52,11 +51,10 @@ namespace rl {
                         window->mouse_button_released_event_callback(e);
                         break;
 
-                    // Keyboard input events
                     case Keyboard::Event::KeyDown:
                     {
                         window->keyboard_key_pressed_event_callback(e);
-                        auto key{ static_cast<Keyboard::Scancode::ID>(e.key.keysym.scancode) };
+                        const auto key{ static_cast<Keyboard::Scancode>(e.key.keysym.scancode) };
                         if (key == Keyboard::Scancode::Escape) [[unlikely]]
                             m_quit = true;
                         break;
@@ -65,7 +63,6 @@ namespace rl {
                         window->keyboard_key_released_event_callback(e);
                         break;
 
-                    // MainWindow events
                     case MainWindow::Event::Shown:
                         window->window_shown_event_callback(e);
                         break;
@@ -130,21 +127,17 @@ namespace rl {
                         window->window_destroyed_event_callback(e);
                         break;
 
-                    // Display events
                     case MainWindow::DisplayEvent::ContentScaleChanged:
                         break;
 
-                    // System events
                     case System::Event::ClipboardUpdate:
                         break;
 
-                    // Quit request event
                     case Event::Quit:
                         m_quit = true;
                         break;
 
                     default:
-                        // debug_assert(false, "unhandled event type");
                         break;
                 }
             }
@@ -167,7 +160,7 @@ namespace rl {
         };
 
         struct EventAction {
-            using type = SDL3::SDL_eventaction;
+            using type = SDL3::SDL_EventAction;
             static inline constexpr type Add = SDL3::SDL_ADDEVENT;
             static inline constexpr type Peek = SDL3::SDL_PEEKEVENT;
             static inline constexpr type Get = SDL3::SDL_GETEVENT;

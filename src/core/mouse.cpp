@@ -116,7 +116,7 @@ namespace rl {
     void Mouse::process_wheel(const Mouse::Event::Data::Wheel& wheel)
     {
         auto new_wheel_pos{ wheel };
-        if (new_wheel_pos.direction == Mouse::Wheel::Direction::Flipped) {
+        if (new_wheel_pos.direction == std::to_underlying(Mouse::Wheel::Direction::Flipped)) {
             new_wheel_pos.x *= -1.0f;
             new_wheel_pos.y *= -1.0f;
         }

@@ -24,15 +24,8 @@ namespace rl {
 
             enum Flag : std::underlying_type_t<type> {
                 None = 0,
-                Software = SDL3::SDL_RENDERER_SOFTWARE,
-                HWAccelerated = SDL3::SDL_RENDERER_ACCELERATED,
                 VSync = SDL3::SDL_RENDERER_PRESENTVSYNC,
             };
-
-            constexpr operator type() const
-            {
-                return static_cast<type>(this->to_ulong());
-            }
         };
 
         struct BlendMode
@@ -46,9 +39,7 @@ namespace rl {
             constexpr static inline auto Invalid = SDL3::SDL_BLENDMODE_INVALID;
         };
 
-        constexpr static inline OpenGLRenderer::Properties DefaultProperties = {
-            OpenGLRenderer::Properties::HWAccelerated
-        };
+        constexpr static inline OpenGLRenderer::Properties DefaultProperties{ Properties::None };
 
     public:
         explicit OpenGLRenderer() = delete;
@@ -73,7 +64,7 @@ namespace rl {
         bool set_viewport(const ds::rect<i32>& rect) const;
         bool set_draw_color(ds::color<f32> c) const;
         bool set_target() const;
-        bool set_draw_blend_mode(SDL3::SDL_BlendMode blend_mode) const;
+        bool set_draw_blend_mode(const SDL3::SDL_BlendMode blend_mode) const;
 
     private:
         constexpr static inline ds::color m_bg_color{ rl::Colors::Background };
