@@ -2,11 +2,14 @@
 
 #include <memory>
 #include <string>
+#include <string_view>
 #include <tuple>
 #include <utility>
 
 #include "ds/color.hpp"
-#include "ui/widget.hpp"
+#include "ui/layouts/box_layout.hpp"
+#include "ui/widgets/Label.hpp"
+#include "ui/widgets/button.hpp"
 
 namespace rl {
     class Keyboard;
@@ -17,10 +20,58 @@ namespace rl {
         class ScrollableDialog : public Widget
         {
         public:
+            explicit ScrollableDialog(std::string title = "")
+                : ScrollableDialog{ nullptr, std::move(title) }
+            {
+            }
+
             explicit ScrollableDialog(Widget* parent, std::string title = "")
                 : Widget{ parent }
                 , m_title{ std::move(title) }
             {
+                const auto min_btn{ new ui::Button{ Icon::WindowMinimize } };
+                const auto max_btn{ new ui::Button{ Icon::WindowMaximize } };
+                const auto cls_btn{ new ui::Button{ Icon::WindowClose } };
+
+                min_btn->set_font_size(18.0f);
+                min_btn->set_fixed_height(24.0f);
+                max_btn->set_font_size(18.0f);
+                max_btn->set_fixed_height(24.0f);
+                cls_btn->set_font_size(18.0f);
+                cls_btn->set_fixed_height(24.0f);
+
+                // horizontally aligns title (centered), minimize, maximize, and close buttons
+                const auto titlebar_layout{ new BoxLayout<Alignment::Horizontal>{ "Titlebar Horiz" } };
+                // titlebar_layout->set_margins(
+                //     { 1.0f, 1.0f, 1.0f, 1.0f },
+                //     { 1.0f, 1.0f, 1.0f, 1.0f });
+
+                titlebar_layout->set_size_policy(SizePolicy::Minimum);
+                titlebar_layout->add_widget(min_btn);
+                titlebar_layout->add_widget(max_btn);
+                titlebar_layout->add_widget(cls_btn);
+
+                // horizontally aligns the contents panel containing all children, and scrollbar
+                const auto body_label{ new ui::Label{ "Body", -1.0f, Align::HCenter | Align::VMiddle } };
+                const auto body_layout{ new BoxLayout<Alignment::Horizontal>{ "Body Horiz" } };
+                body_layout->add_widget(body_label);
+                // body_layout->set_size_policy(SizePolicy::Maximum);
+                //    body_layout->set_margins(
+                //       { 1.0f, 1.0f, 1.0f, 1.0f },
+                //       { 1.0f, 1.0f, 1.0f, 1.0f });
+
+                // vertically aligns titlebar and dialog body
+                const auto root_layout{ new BoxLayout<Alignment::Vertical>{ "Dialog Root Vert" } };
+                // root_layout->set_margins(
+                //     { 1.0f, 1.0f, 1.0f, 1.0f },
+                //     { 1.0f, 1.0f, 1.0f, 1.0f });
+
+                root_layout->set_size_policy(SizePolicy::Maximum);
+                root_layout->add_nested_layout(titlebar_layout);
+                root_layout->add_nested_layout(body_layout);
+
+                this->assign_layout(root_layout);
+                Widget::perform_layout();
             }
 
             std::tuple<Interaction, Component, Side> check_interaction(
@@ -47,7 +98,6 @@ namespace rl {
             virtual bool on_mouse_drag(const Mouse& mouse, const Keyboard& kb) override;
 
             virtual void draw() override;
-            virtual void perform_layout() override;
             virtual void refresh_relative_placement();
             virtual ds::dims<f32> preferred_size() const override;
 
@@ -61,18 +111,18 @@ namespace rl {
             std::string m_title{};
 
         private:
-            constexpr static inline ds::color<f32> SDScrollbarColor{ 220, 220, 220, 100 };
-            constexpr static inline ds::color<f32> SDScrollbarShadowColor{ 128, 128, 128, 100 };
-            constexpr static inline ds::color<f32> SDScrollGuideColor{ 0, 0, 0, 32 };
-            constexpr static inline ds::color<f32> SDScrollGuideShadowColor{ 0, 0, 0, 92 };
+            constexpr static ds::color<f32> SDScrollbarColor{ 220, 220, 220, 100 };
+            constexpr static ds::color<f32> SDScrollbarShadowColor{ 128, 128, 128, 100 };
+            constexpr static ds::color<f32> SDScrollGuideColor{ 0, 0, 0, 32 };
+            constexpr static ds::color<f32> SDScrollGuideShadowColor{ 0, 0, 0, 92 };
 
-            constexpr static inline f32 SDScrollBarBackgroundRadius{ 3.0f };
-            constexpr static inline f32 SDScrollBarCornerRadius{ 2.0f };
-            constexpr static inline f32 SDShadowBlur{ 4.0f };
-            constexpr static inline f32 SDScrollbarWidth{ 12.0f };
-            constexpr static inline f32 SDScrollbarBorder{ 1.0f };
-            constexpr static inline f32 SDOutlineSize{ 1.0f };
-            constexpr static inline f32 SDMargin{ 4.0f };
+            constexpr static f32 SDScrollBarBackgroundRadius{ 3.0f };
+            constexpr static f32 SDScrollBarCornerRadius{ 2.0f };
+            constexpr static f32 SDShadowBlur{ 4.0f };
+            constexpr static f32 SDScrollbarWidth{ 12.0f };
+            constexpr static f32 SDScrollbarBorder{ 1.0f };
+            constexpr static f32 SDOutlineSize{ 1.0f };
+            constexpr static f32 SDMargin{ 4.0f };
         };
     }
 }

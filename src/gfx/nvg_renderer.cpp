@@ -11,6 +11,7 @@
 #include "gfx/text.hpp"
 #include "gfx/vg/nanovg.hpp"
 #include "gfx/vg/nanovg_gl.hpp"
+#include "resources/fonts.hpp"
 
 namespace rl {
     namespace {
@@ -25,10 +26,9 @@ namespace rl {
 
             glGetFramebufferAttachmentParameteriv(
                 GL_DRAW_FRAMEBUFFER, GL_DEPTH, GL_FRAMEBUFFER_ATTACHMENT_DEPTH_SIZE, &depth_bits);
+            glGetFramebufferAttachmentParameteriv(
+                GL_DRAW_FRAMEBUFFER, GL_STENCIL, GL_FRAMEBUFFER_ATTACHMENT_STENCIL_SIZE, &stencil_bits);
 
-            glGetFramebufferAttachmentParameteriv(GL_DRAW_FRAMEBUFFER, GL_STENCIL,
-                                                  GL_FRAMEBUFFER_ATTACHMENT_STENCIL_SIZE,
-                                                  &stencil_bits);
             stencil_buf = stencil_bits > 0;
             depth_buf = depth_bits > 0;
             float_buf = float_mode != 0;
@@ -38,9 +38,6 @@ namespace rl {
                 nvg::gl::CreateFlags::StencilStrokes
                 //| nvg::gl::CreateFlags::Debug
             };
-            // if (stencil_buf)
-            //     nvg_flags |= nvg::gl::CreateFlags::StencilStrokes;
-            // nvg_flags |= nvg::gl::CreateFlags::Debug;
 
             nvg::Context* nvg_context{ nvg::gl::create_gl_context(nvg_flags) };
             debug_assert(nvg_context != nullptr, "Failed to create NVG context");
@@ -49,9 +46,7 @@ namespace rl {
     }
 
     NVGRenderer::NVGRenderer()
-        : m_nvg_context{
-            create_nvg_context(m_stencil_buffer, m_depth_buffer, m_float_buffer)
-        }
+        : m_nvg_context{ create_nvg_context(m_stencil_buffer, m_depth_buffer, m_float_buffer) }
     {
         this->load_fonts({
             text::font::Data{
@@ -90,9 +85,11 @@ namespace rl {
         return m_nvg_context.get();
     }
 
-    void NVGRenderer::begin_frame(const ds::dims<f32>& render_size, const f32 pixel_ratio) const
+    void NVGRenderer::begin_frame(const ds::dims<f32>& render_size, f32 pixel_ratio) const
     {
-        nvg::begin_frame(m_nvg_context.get(), render_size.width, render_size.height, pixel_ratio);
+        nvg::begin_frame(
+            m_nvg_context.get(), render_size.width,
+            render_size.height, pixel_ratio);
     }
 
     void NVGRenderer::end_frame() const
@@ -192,7 +189,7 @@ namespace rl {
         nvg::fill(m_nvg_context.get());
     }
 
-    void NVGRenderer::set_text_properties(std::string_view font_name, const f32 font_size,
+    void NVGRenderer::set_text_properties(const std::string_view font_name, const f32 font_size,
                                           const Align alignment, const ds::color<f32>& text_color) const
     {
         if (!font_name.empty())
@@ -207,13 +204,13 @@ namespace rl {
 
     void NVGRenderer::set_text_properties(const TextProperties& props) const
     {
-        this->set_text_properties(props.font, props.size, props.align, props.color);
+        this->set_text_properties(props.font, props.font_size, props.align, props.color);
     }
 
     void NVGRenderer::draw_text(std::string text, const ds::point<f32> pos,
                                 const TextProperties& props) const
     {
-        this->set_text_properties(props.font, props.size, props.align, props.color);
+        this->set_text_properties(props.font, props.font_size, props.align, props.color);
         nvg::draw_text(m_nvg_context.get(), pos, std::move(text));
     }
 
@@ -243,9 +240,9 @@ namespace rl {
         };
     }
 
-    ds::dims<f32> NVGRenderer::get_text_size(const std::string& text,
-                                             const std::string_view& font_name, const f32 font_size,
-                                             const Align alignment) const
+    ds::dims<f32> NVGRenderer::get_text_size(
+        const std::string& text, const std::string_view& font_name, const f32 font_size,
+        const Align alignment) const
     {
         this->set_text_properties(font_name, font_size, alignment);
         const f32 width{ nvg::text_bounds(m_nvg_context.get(), ds::point<f32>::zero(), text) };
@@ -257,8 +254,9 @@ namespace rl {
         };
     }
 
-    void NVGRenderer::draw_rect_outline(const ds::rect<f32>& rect, const f32 stroke_width,
-                                        const ds::color<f32>& color, const Outline type) const
+    void NVGRenderer::draw_rect_outline(
+        const ds::rect<f32>& rect, const f32 stroke_width, const ds::color<f32>& color,
+        const Outline type) const
     {
         nvg::stroke_width(m_nvg_context.get(), stroke_width);
         nvg::begin_path(m_nvg_context.get());

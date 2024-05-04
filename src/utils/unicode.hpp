@@ -3,7 +3,6 @@
 #include <array>
 #include <string>
 
-#include "core/assert.hpp"
 #include "utils/numeric.hpp"
 
 namespace rl::utf8 {

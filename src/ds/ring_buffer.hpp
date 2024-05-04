@@ -31,7 +31,7 @@ namespace rl::ds {
         Unknown
     };
 
-    template <std::movable TElem, auto BufferSize = 512U>
+    template <std::movable TElem, u64 BufferSize = 512U>
     class ring_buffer
     {
     public:
@@ -129,7 +129,4 @@ namespace rl::ds {
         std::condition_variable m_buffer_not_full_cv{};
         std::condition_variable m_buffer_not_empty_cv{};
     };
-
-    template <typename T>
-    using buffer_ptr_t = std::shared_ptr<ring_buffer<T>>;
 }

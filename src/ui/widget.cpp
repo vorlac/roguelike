@@ -29,7 +29,10 @@ namespace rl::ui {
     Widget::Widget(Widget* parent, const std::unique_ptr<NVGRenderer>& vg_renderer)
         : Widget{ parent }
     {
-        debug_assert(m_renderer == nullptr, "widget renderer already set");
+        debug_assert(
+            m_renderer == nullptr,
+            "widget renderer already set");
+
         if (m_renderer == nullptr)
             m_renderer = vg_renderer.get();
     }
@@ -66,8 +69,13 @@ namespace rl::ui {
 
     void Widget::assign_layout(Layout* layout)
     {
-        debug_assert(m_layout == nullptr, "overwriting existing layout");
-        debug_assert(m_children.empty(), "layout must be an only child");
+        debug_assert(
+            m_layout == nullptr,
+            "overwriting existing layout");
+        debug_assert(
+            m_children.empty(),
+            "layout must be an only child");
+
         this->add_child(layout);
     }
 
@@ -183,7 +191,7 @@ namespace rl::ui {
         m_rect.size = size;
     }
 
-    bool Widget::visible(const bool recursive /*= false*/) const
+    bool Widget::visible(const bool recursive) const
     {
         bool ret{ true };
 
@@ -259,8 +267,10 @@ namespace rl::ui {
             if (child_layout != nullptr) {
                 child_layout->apply_layout();
                 if (m_min_size != m_rect.size) {
-                    const ds::dims<f32> size{ child_layout->size() +
-                                              child_layout->outer_margin() };
+                    const ds::dims<f32> size{
+                        child_layout->size() +
+                        child_layout->outer_margin()
+                    };
                     this->set_min_size(size);
                     if (child_layout->size_policy() == SizePolicy::Minimum)
                         this->set_max_size(size);
@@ -298,7 +308,9 @@ namespace rl::ui {
                 return child->find_widget(local_mouse_pos);
         }
 
-        return this->contains(pt) ? this : nullptr;
+        return this->contains(pt)
+                 ? this
+                 : nullptr;
     }
 
     bool Widget::on_mouse_entered(const Mouse&)
@@ -489,24 +501,24 @@ namespace rl::ui {
         m_focused = focused;
     }
 
-    const std::string& Widget::tooltip() const
+    std::string_view Widget::tooltip() const
     {
         return m_tooltip;
     }
 
-    void Widget::set_tooltip(const std::string& tooltip)
+    void Widget::set_tooltip(std::string tooltip)
     {
-        m_tooltip = tooltip;
+        m_tooltip = std::move(tooltip);
     }
 
-    const std::string& Widget::name() const
+    std::string_view Widget::name() const
     {
         return m_name;
     }
 
-    void Widget::set_name(const std::string& name)
+    void Widget::set_name(std::string name)
     {
-        m_name = name;
+        m_name = std::move(name);
     }
 
     void Widget::set_font_size(const f32 font_size)
@@ -516,7 +528,8 @@ namespace rl::ui {
 
     bool Widget::has_font_size() const
     {
-        return m_font_size > 0 && math::not_equal(m_font_size, 0.0f);
+        return m_font_size > 0.0f &&
+               math::not_equal(m_font_size, 0.0f);
     }
 
     f32 Widget::icon_extra_scale() const
@@ -613,8 +626,11 @@ namespace rl::ui {
     bool Widget::draw_mouse_intersection(const ds::point<f32> pt)
     {
         if constexpr (debug::ui::mouse_interaction) {
-            if (this->contains(pt))
-                m_renderer->draw_rect_outline(m_rect, 1.0f, rl::Colors::Yellow, Outline::Inner);
+            if (this->contains(pt)) {
+                m_renderer->draw_rect_outline(
+                    m_rect, 1.0f, debug::ui::active_outline_color,
+                    Outline::Inner);
+            }
 
             LocalTransform transform{ this };
             const ds::point<f32> local_mouse_pos{ pt - m_rect.pt };
@@ -626,17 +642,24 @@ namespace rl::ui {
                 if (!child->draw_mouse_intersection(local_mouse_pos))
                     continue;
 
-                m_renderer->draw_rect_outline(m_rect, 1.0f, rl::Colors::Yellow, Outline::Inner);
+                m_renderer->draw_rect_outline(
+                    m_rect, 1.0f, debug::ui::active_outline_color,
+                    Outline::Inner);
+
                 return true;
             }
         }
+
         return false;
     }
 
     void Widget::draw()
     {
-        if constexpr (debug::ui::widget_outlines)
-            m_renderer->draw_rect_outline(m_rect, 1.0f, m_theme->debug_layout_outline, Outline::Inner);
+        if constexpr (debug::ui::widget_outlines) {
+            m_renderer->draw_rect_outline(
+                m_rect, 1.0f, debug::ui::widget_outline_color,
+                Outline::Inner);
+        }
 
         if (m_children.empty())
             return;
@@ -649,8 +672,9 @@ namespace rl::ui {
             m_renderer->scoped_draw([child] {
                 // TODO: put this back after fixing popup window
                 // nvg::intersect_scissor(m_renderer->context(),
-                //                       child->m_rect.pt.x - 1, child->m_rect.pt.y - 1,
-                //                       child->m_rect.size.width + 2, child->m_rect.size.height + 2);
+                //     child->m_rect.pt.x - 1, child->m_rect.pt.y - 1,
+                //     child->m_rect.size.width + 2, child->m_rect.size.height + 2
+                //  );
                 child->draw();
             });
         }

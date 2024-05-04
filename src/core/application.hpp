@@ -1,18 +1,11 @@
 #pragma once
 
-#include <array>
-#include <memory>
-#include <string>
-#include <string_view>
-#include <tuple>
-#include <utility>
-#include <vector>
-
 #include "core/assert.hpp"
 #include "core/event_handler.hpp"
 #include "core/main_window.hpp"
 #include "gfx/gl/instanced_buffer.hpp"
 #include "ui/gui.hpp"
+#include "utils/debug.hpp"
 #include "utils/logging.hpp"
 #include "utils/numeric.hpp"
 #include "utils/sdl_defs.hpp"
@@ -65,76 +58,88 @@ namespace rl {
         {
             bool ret{ this->setup() };
 
-            const auto font_size{ 20.0f };
-            const auto alignment{ Align::VMiddle | Align::HCenter };
+            // constexpr auto font_size{ 20.0f };
+            // constexpr auto alignment{ Align::VMiddle | Align::HCenter };
 
-            const auto layout_abc_h1{ new ui::BoxLayout<Alignment::Horizontal>("A=>M Inner Horiz") };
-            layout_abc_h1->add_widget(new ui::Label{ "A", font_size, alignment });
-            layout_abc_h1->add_widget(new ui::Label{ "B", font_size, alignment });
-            layout_abc_h1->add_widget(new ui::Label{ "C", font_size, alignment });
-            layout_abc_h1->add_widget(new ui::Label{ "D", font_size, alignment });
-            layout_abc_h1->add_widget(new ui::Label{ "E", font_size, alignment });
-            layout_abc_h1->add_widget(new ui::Label{ "F", font_size, alignment });
-            layout_abc_h1->add_widget(new ui::Label{ "G", font_size, alignment });
-            layout_abc_h1->add_widget(new ui::Label{ "H", font_size, alignment });
-            layout_abc_h1->add_widget(new ui::Label{ "I", font_size, alignment });
-            layout_abc_h1->add_widget(new ui::Label{ "J", font_size, alignment });
-            layout_abc_h1->add_widget(new ui::Label{ "K", font_size, alignment });
-            layout_abc_h1->add_widget(new ui::Label{ "L", font_size, alignment });
-            layout_abc_h1->add_widget(new ui::Label{ "M", font_size, alignment });
+            // const auto layout_abc_h1{ new ui::BoxLayout<Alignment::Horizontal>("A=>M Inner Horiz") };
+            // layout_abc_h1->add_widget(new ui::Label{ "A", font_size, alignment });
+            // layout_abc_h1->add_widget(new ui::Label{ "B", font_size, alignment });
+            // layout_abc_h1->add_widget(new ui::Label{ "C", font_size, alignment });
+            // layout_abc_h1->add_widget(new ui::Label{ "D", font_size, alignment });
+            // layout_abc_h1->add_widget(new ui::Label{ "E", font_size, alignment });
+            // layout_abc_h1->add_widget(new ui::Label{ "F", font_size, alignment });
+            // layout_abc_h1->add_widget(new ui::Label{ "G", font_size, alignment });
+            // layout_abc_h1->add_widget(new ui::Label{ "H", font_size, alignment });
+            // layout_abc_h1->add_widget(new ui::Label{ "I", font_size, alignment });
+            // layout_abc_h1->add_widget(new ui::Label{ "J", font_size, alignment });
+            // layout_abc_h1->add_widget(new ui::Label{ "K", font_size, alignment });
+            // layout_abc_h1->add_widget(new ui::Label{ "L", font_size, alignment });
+            // layout_abc_h1->add_widget(new ui::Label{ "M", font_size, alignment });
 
-            const auto layout_abc_h2{ new ui::BoxLayout<Alignment::Horizontal>("N=>Z Inner Horiz") };
-            layout_abc_h2->add_widget(new ui::Label{ "N", font_size, alignment });
-            layout_abc_h2->add_widget(new ui::Label{ "O", font_size, alignment });
-            layout_abc_h2->add_widget(new ui::Label{ "P", font_size, alignment });
-            layout_abc_h2->add_widget(new ui::Label{ "Q", font_size, alignment });
-            layout_abc_h2->add_widget(new ui::Label{ "R", font_size, alignment });
-            layout_abc_h2->add_widget(new ui::Label{ "S", font_size, alignment });
-            layout_abc_h2->add_widget(new ui::Label{ "T", font_size, alignment });
-            layout_abc_h2->add_widget(new ui::Label{ "U", font_size, alignment });
-            layout_abc_h2->add_widget(new ui::Label{ "V", font_size, alignment });
-            layout_abc_h2->add_widget(new ui::Label{ "W", font_size, alignment });
-            layout_abc_h2->add_widget(new ui::Label{ "X", font_size, alignment });
-            layout_abc_h2->add_widget(new ui::Label{ "Y", font_size, alignment });
-            layout_abc_h2->add_widget(new ui::Label{ "Z", font_size, alignment });
+            // const auto layout_abc_h2{ new ui::BoxLayout<Alignment::Horizontal>("N=>Z Inner Horiz") };
+            // layout_abc_h2->add_widget(new ui::Label{ "N", font_size, alignment });
+            // layout_abc_h2->add_widget(new ui::Label{ "O", font_size, alignment });
+            // layout_abc_h2->add_widget(new ui::Label{ "P", font_size, alignment });
+            // layout_abc_h2->add_widget(new ui::Label{ "Q", font_size, alignment });
+            // layout_abc_h2->add_widget(new ui::Label{ "R", font_size, alignment });
+            // layout_abc_h2->add_widget(new ui::Label{ "S", font_size, alignment });
+            // layout_abc_h2->add_widget(new ui::Label{ "T", font_size, alignment });
+            // layout_abc_h2->add_widget(new ui::Label{ "U", font_size, alignment });
+            // layout_abc_h2->add_widget(new ui::Label{ "V", font_size, alignment });
+            // layout_abc_h2->add_widget(new ui::Label{ "W", font_size, alignment });
+            // layout_abc_h2->add_widget(new ui::Label{ "X", font_size, alignment });
+            // layout_abc_h2->add_widget(new ui::Label{ "Y", font_size, alignment });
+            // layout_abc_h2->add_widget(new ui::Label{ "Z", font_size, alignment });
 
-            const auto layout_num_v1{ new ui::BoxLayout<Alignment::Vertical>("Nums1 Inner Vert") };
-            layout_num_v1->add_widget(new ui::Button{ "Button", ui::Icon::ID::Bong });
-            layout_num_v1->add_widget(new ui::Label{ "2", font_size, alignment });
-            layout_num_v1->add_widget(new ui::Label{ "3", font_size, alignment });
-            layout_num_v1->add_widget(new ui::Label{ "4", font_size, alignment });
-            layout_num_v1->add_widget(new ui::Label{ "5", font_size, alignment });
+            // const auto layout_num_v1{ new ui::BoxLayout<Alignment::Vertical>("Nums1 Inner Vert") };
+            // layout_num_v1->add_widget(new ui::Button{ "Button", ui::Icon::ID::Bong });
+            // layout_num_v1->add_widget(new ui::Label{ "2", font_size, alignment });
+            // layout_num_v1->add_widget(new ui::Label{ "3", font_size, alignment });
+            // layout_num_v1->add_widget(new ui::Label{ "4", font_size, alignment });
+            // layout_num_v1->add_widget(new ui::Label{ "5", font_size, alignment });
 
-            const auto layout_num_v2{ new ui::BoxLayout<Alignment::Vertical>("Nums2 Inner Vert") };
-            layout_num_v2->add_widget(new ui::CheckBox{ "Checkbox ASDFGHJKL" });
-            layout_num_v2->add_widget(new ui::Label{ "2", font_size, alignment });
-            layout_num_v2->add_widget(new ui::Label{ "3", font_size, alignment });
-            layout_num_v2->add_widget(new ui::Label{ "4", font_size, alignment });
-            layout_num_v2->add_widget(new ui::Label{ "5", font_size, alignment });
+            // const auto layout_num_v2{ new ui::BoxLayout<Alignment::Vertical>("Nums2 Inner Vert") };
+            // layout_num_v2->add_widget(new ui::CheckBox{ "Checkbox ASDFGHJKL" });
+            // layout_num_v2->add_widget(new ui::Label{ "2", font_size, alignment });
+            // layout_num_v2->add_widget(new ui::Label{ "3", font_size, alignment });
+            // layout_num_v2->add_widget(new ui::Label{ "4", font_size, alignment });
+            // layout_num_v2->add_widget(new ui::Label{ "5", font_size, alignment });
 
-            const auto layout_nums_horiz_outer{ new ui::BoxLayout<Alignment::Horizontal>("Nums Outer Horiz") };
-            layout_nums_horiz_outer->add_nested_layout(layout_num_v1);
-            layout_nums_horiz_outer->add_nested_layout(layout_num_v2);
+            // const auto layout_nums_horiz_outer{ new ui::BoxLayout<Alignment::Horizontal>("Nums Outer Horiz") };
+            // layout_nums_horiz_outer->add_nested_layout(layout_num_v1);
+            // layout_nums_horiz_outer->add_nested_layout(layout_num_v2);
 
-            const auto layout_abc_vert_nested{ new ui::BoxLayout<Alignment::Vertical>("ABC Nested Vert") };
-            layout_abc_vert_nested->add_nested_layout(layout_abc_h1);
-            layout_abc_vert_nested->add_nested_layout(layout_abc_h2);
+            // const auto layout_abc_vert_nested{ new ui::BoxLayout<Alignment::Vertical>("ABC Nested Vert") };
+            // layout_abc_vert_nested->add_nested_layout(layout_abc_h1);
+            // layout_abc_vert_nested->add_nested_layout(layout_abc_h2);
 
-            const auto layout_canvas_vert{ new ui::BoxLayout<Alignment::Vertical>("Top Level Vert") };
-            layout_canvas_vert->set_size_policy(SizePolicy::Maximum);
-            layout_canvas_vert->add_nested_layout(layout_nums_horiz_outer);
-            layout_canvas_vert->add_nested_layout(layout_abc_vert_nested);
+            // dialog_layout->add_nested_layout(layout_nums_horiz_outer);
+            // dialog_layout->add_nested_layout(layout_abc_vert_nested);
 
-            m_main_window->gui()->assign_layout(layout_canvas_vert);
+            // const auto canvas_layout{ new ui::BoxLayout<Alignment::Vertical>("Top Level Vert") };
+            // canvas_layout->set_size_policy(SizePolicy::Freeform);
+            const auto gui_canvas{ m_main_window->gui().get() };
+
+            const auto dialog{ new ui::ScrollableDialog{ gui_canvas, "Dialog Title" } };
+            // canvas_layout->add_widget(dialog);
+
+            // m_main_window->gui()->assign_layout(canvas_layout);
+            // m_main_window->gui()->add_child(dialog);
+            dialog->set_size({ 600, 800 });
+            dialog->center();
 
             m_timer.reset();
             while (!this->should_exit()) {
                 this->handle_events();
                 this->update();
                 this->render();
-                this->print_loop_stats(m_timer.delta());
-                // using namespace std::chrono_literals;
-                // std::this_thread::sleep_for(30ms);
+
+                if constexpr (debug::core::loop_timing_stats)
+                    this->print_loop_stats(m_timer.delta());
+                if constexpr (debug::core::loop_throttling) {
+                    using namespace std::chrono_literals;
+                    std::this_thread::sleep_for(30ms);
+                }
             }
 
             ret &= this->teardown();

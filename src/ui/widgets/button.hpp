@@ -27,6 +27,7 @@ namespace rl::ui {
         };
 
     public:
+        explicit Button(Icon::ID icon);
         explicit Button(std::string text, Icon::ID icon = Icon::None);
         explicit Button(Widget* parent, std::string text, Icon::ID icon = Icon::None);
 

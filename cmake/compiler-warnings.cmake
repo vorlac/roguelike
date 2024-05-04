@@ -6,13 +6,7 @@ target_compile_options(${PROJECT_NAME}
     PRIVATE
         # MSVC only
         $<${compiler_is_msvc}:
-            # Enable all warnings
-            #/Wall
             /W4
-
-            # # Disable warnings which bleed through from godot-cpp's macros.
-            # /wd4189 # local variable is initialized but not referenced
-			# /wd4100 # formal parameter unused
 		>
 
         # Clang and GNU

@@ -2,8 +2,6 @@
 
 #include <parallel_hashmap/phmap.h>
 
-#include "gfx/vg/nanovg.hpp"
-#include "resources/fonts.hpp"
 #include "utils/numeric.hpp"
 
 namespace rl::text {

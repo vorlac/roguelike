@@ -756,20 +756,22 @@ namespace rl::nvg {
     // are encountered. Words longer than the max width are slit at nearest character (i.e. no
     // hyphenation).
     void text_box(Context* ctx, ds::point<f32> pos, f32 break_row_width, const std::string& text);
+    void text_box(Context* ctx, ds::point<f32> pos, f32 break_row_width, std::string_view text);
 
     // Measures the specified text string. Parameter bounds should be a pointer to f32[4],
     // if the bounding box of the text should be returned. The bounds value are [xmin,ymin,
     // xmax,ymax] Returns the horizontal advance of the measured text (i.e. where the next
     // character should drawn). Measured values are returned in local coordinate space.
     f32 text_bounds(Context* ctx, ds::point<f32> pos, const std::string& text);
-    f32 text_bounds(Context* ctx, ds::point<f32> pos, const std::string& text,
-                    ds::rect<f32>& bounds);
+    f32 text_bounds(Context* ctx, ds::point<f32> pos, const std::string& text, ds::rect<f32>& bounds);
+    f32 text_bounds(Context* ctx, ds::point<f32> pos, std::string_view text, ds::rect<f32>& bounds);
+    f32 text_bounds(Context* ctx, ds::point<f32> pos, std::string_view text);
 
     // Measures the specified multi-text string. Parameter bounds should be a pointer to
     // f32[4], if the bounding box of the text should be returned. The bounds value are
     // [xmin,ymin, xmax,ymax] Measured values are returned in local coordinate space.
-    ds::rect<f32> text_box_bounds(Context* ctx, ds::point<f32> pos, f32 break_row_width,
-                                  const std::string& text);
+    ds::rect<f32> text_box_bounds(Context* ctx, ds::point<f32> pos, f32 break_row_width, const std::string& text);
+    ds::rect<f32> text_box_bounds(Context* ctx, ds::point<f32> pos, f32 break_row_width, std::string_view text);
 
     // Calculates the glyph x positions of the specified text. If end is specified only the
     // sub-string will be used. Measured values are returned in local coordinate space.

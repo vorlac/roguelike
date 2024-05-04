@@ -1,10 +1,16 @@
 #pragma once
 
+#include <functional>
+#include <mutex>
+#include <thread>
+#include <utility>
+#include <vector>
+
 #include "core/keyboard.hpp"
 #include "core/main_window.hpp"
 #include "core/mouse.hpp"
 #include "core/system.hpp"
-#include "utils/io.hpp"
+#include "ds/ring_buffer.hpp"
 #include "utils/sdl_defs.hpp"
 
 namespace rl {
@@ -12,16 +18,12 @@ namespace rl {
     {
         constexpr static i32 resizing_event_watcher(void* data, SDL3::SDL_Event* e)
         {
-            constexpr i32 ret{ 0 };
             if (e->type != MainWindow::Event::Resized)
-                return ret;
+                return 0;
 
             const auto window{ static_cast<MainWindow*>(data) };
-            debug_assert(e->window.windowID == window->window_id(),
-                         "main window resize event callback window id mismatch");
-
             window->window_resized_event_callback(*e);
-            return ret;
+            return 1;
         }
 
     public:
@@ -35,7 +37,6 @@ namespace rl {
         bool handle_events(const std::unique_ptr<MainWindow>& window)
         {
             SDL3::SDL_Event e{};
-
             while (SDL3::SDL_PollEvent(&e) != 0) {
                 switch (e.type) {
                     case Mouse::Event::MouseWheel:

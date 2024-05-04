@@ -1755,7 +1755,7 @@ namespace rl::nvg {
     ds::point<f32> transform_point(Context* ctx, ds::point<f32> src_pt)
     {
         f32 xform[6] = {};
-        nvg::current_transform(ctx, xform);
+        current_transform(ctx, xform);
         return ds::point<f32>{
             src_pt.x * xform[0] + src_pt.y * xform[2] + xform[4],
             src_pt.x * xform[1] + src_pt.y * xform[3] + xform[5],
@@ -2831,7 +2831,7 @@ namespace rl::nvg {
     {
         State* state{ detail::get_state(ctx) };
         if (state->font_id == font::INVALID) {
-            debug_assert("nvg::draw_text: invalid font");
+            debug_assert("draw_text: invalid font");
             return pos.x;
         }
 
@@ -2879,7 +2879,7 @@ namespace rl::nvg {
                 font::text_iter_next(ctx->fs, &iter, &q);
                 if (iter.prev_glyph_index == -1) {
                     // still can not find glyph? font size may be too small or negative
-                    debug_assert("nvg::draw_text : failed to find glyph to render");
+                    debug_assert("draw_text : failed to find glyph to render");
                     break;
                 }
             }
@@ -2920,8 +2920,12 @@ namespace rl::nvg {
         return iter.nextx / scale;
     }
 
-    void text_box(Context* ctx, ds::point<f32> pos, const f32 break_row_width,
-                  const std::string& text)
+    void text_box(Context* ctx, ds::point<f32> pos, f32 break_row_width, const std::string& text)
+    {
+        return text_box(ctx, pos, break_row_width, std::string_view{ text });
+    }
+
+    void text_box(Context* ctx, ds::point<f32> pos, const f32 break_row_width, std::string_view text)
     {
         State* state{ detail::get_state(ctx) };
         if (state->font_id == font::INVALID) {
@@ -2939,7 +2943,7 @@ namespace rl::nvg {
         state->text_align = Align::HLeft | valign;
 
         std::array<TextRow, 2> rows{ TextRow{}, TextRow{} };
-        const char* str{ text.c_str() };
+        const char* str{ text.data() };
         u32 nrows = text_break_lines(ctx, str, nullptr, break_row_width, rows.data(),
                                      static_cast<u32>(rows.size()));
         while (nrows > 0) {
@@ -3238,8 +3242,12 @@ namespace rl::nvg {
         return nrows;
     }
 
-    f32 text_bounds(Context* ctx, const ds::point<f32> pos, const std::string& text,
-                    ds::rect<f32>& bounds)
+    f32 text_bounds(Context* ctx, const ds::point<f32> pos, const std::string& text, ds::rect<f32>& bounds)
+    {
+        return text_bounds(ctx, pos, std::string_view{ text }, bounds);
+    }
+
+    f32 text_bounds(Context* ctx, const ds::point<f32> pos, std::string_view text, ds::rect<f32>& bounds)
     {
         const State* state = detail::get_state(ctx);
         const f32 scale = detail::get_font_scale(state) * ctx->device_px_ratio;
@@ -3254,7 +3262,7 @@ namespace rl::nvg {
         font::set_align(ctx->fs, state->text_align);
         font::set_font(ctx->fs, state->font_id);
 
-        const f32 width = font::text_bounds(ctx->fs, pos * scale, text.c_str(), nullptr, bounds);
+        const f32 width = font::text_bounds(ctx->fs, pos * scale, text.data(), nullptr, bounds);
         if (!bounds.is_null()) {
             f32 min_y{ 0.0f };
             f32 max_y{ 0.0f };
@@ -3272,15 +3280,25 @@ namespace rl::nvg {
     f32 text_bounds(Context* ctx, const ds::point<f32> pos, const std::string& text)
     {
         ds::rect<f32> _ = ds::rect<f32>::null();
-        return nvg::text_bounds(ctx, pos, text, _);
+        return text_bounds(ctx, pos, text, _);
+    }
+
+    f32 text_bounds(Context* ctx, ds::point<f32> pos, std::string_view text)
+    {
+        ds::rect<f32> _ = ds::rect<f32>::null();
+        return text_bounds(ctx, pos, text, _);
+    }
+
+    ds::rect<f32> text_box_bounds(Context* ctx, ds::point<f32> pos, f32 break_row_width, const std::string& text)
+    {
+        return text_box_bounds(ctx, pos, break_row_width, std::string_view{ text });
     }
 
     // Measures the specified multi-text string. Parameter bounds should be a pointer to
     // f32[4], if the bounding box of the text should be returned. The bounds value are
     // [xmin,ymin, xmax,ymax] Measured values are returned in local coordinate space.
     [[nodiscard]]
-    ds::rect<f32> text_box_bounds(Context* ctx, ds::point<f32> pos, const f32 break_row_width,
-                                  const std::string& text)
+    ds::rect<f32> text_box_bounds(Context* ctx, ds::point<f32> pos, const f32 break_row_width, std::string_view text)
     {
         State* state = detail::get_state(ctx);
         const f32 scale{ detail::get_font_scale(state) * ctx->device_px_ratio };
@@ -3316,7 +3334,7 @@ namespace rl::nvg {
         f32 max_y{ pos.y };
 
         std::array<TextRow, 2> rows{};
-        const char* str{ text.c_str() };
+        const char* str{ text.data() };
         u32 nrows = text_break_lines(ctx, str, nullptr, break_row_width, rows.data(),
                                      static_cast<u32>(rows.size()));
         while (nrows > 0) {

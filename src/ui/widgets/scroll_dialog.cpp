@@ -8,7 +8,6 @@
 #include "ui/widgets/scroll_dialog.hpp"
 
 namespace rl::ui {
-
     std::string ScrollableDialog::title() const
     {
         return m_title;
@@ -39,7 +38,7 @@ namespace rl::ui {
         const bool moveable{ (m_enabled_interactions & Interaction::Move) != Interaction::None };
         if (moveable && m_header_visible) {
             const f32 header_height{ this->header_height() };
-            ds::rect header_rect{
+            const ds::rect header_rect{
                 m_rect.pt,
                 ds::dims{
                     m_rect.size.width,
@@ -180,7 +179,7 @@ namespace rl::ui {
 
     void ScrollableDialog::draw()
     {
-        auto context{ m_renderer->context() };
+        const auto context{ m_renderer->context() };
         const f32 drop_shadow_size{ m_theme->dialog_drop_shadow_size };
         const f32 corner_radius{ m_theme->dialog_corner_radius };
         const f32 header_height{ this->header_height() };
@@ -198,10 +197,12 @@ namespace rl::ui {
             m_renderer->scoped_draw([&] {
                 m_renderer->reset_scissor();
                 m_renderer->draw_path(false, [&] {
-                    const nvg::PaintStyle shadow_paint{ nvg::box_gradient(
-                        context, m_rect.pt.x, m_rect.pt.y, m_rect.size.width, m_rect.size.height,
-                        corner_radius * 2.0f, drop_shadow_size * 2.0f, m_theme->dialog_shadow,
-                        m_theme->transparent) };
+                    const nvg::PaintStyle shadow_paint{
+                        nvg::box_gradient(
+                            context, m_rect.pt.x, m_rect.pt.y, m_rect.size.width, m_rect.size.height,
+                            corner_radius * 2.0f, drop_shadow_size * 2.0f, m_theme->dialog_shadow,
+                            m_theme->transparent)
+                    };
 
                     nvg::rect(context, m_rect.pt.x - drop_shadow_size,
                               m_rect.pt.y - drop_shadow_size,
@@ -217,18 +218,19 @@ namespace rl::ui {
 
             if (!m_title.empty()) {
                 m_renderer->draw_path(false, [&] {
-                    nvg::PaintStyle header_style{ nvg::linear_gradient(
-                        context, m_rect.pt.x, m_rect.pt.y, m_rect.pt.x, m_rect.pt.y + header_height,
-                        m_theme->dialog_header_gradient_top, m_theme->dialog_header_gradient_bot) };
+                    const nvg::PaintStyle header_style{
+                        nvg::linear_gradient(
+                            context, m_rect.pt.x, m_rect.pt.y, m_rect.pt.x, m_rect.pt.y + header_height,
+                            m_theme->dialog_header_gradient_top, m_theme->dialog_header_gradient_bot)
+                    };
 
                     m_renderer->draw_rounded_rect(
                         ds::rect<f32>{
                             ds::point<f32>{ m_rect.pt },
-                            ds::dims<f32>{ m_rect.size.width, header_height },
-                        },
+                            ds::dims<f32>{ m_rect.size.width, header_height } },
                         corner_radius);
 
-                    m_renderer->fill_current_path(std::move(header_style));
+                    m_renderer->fill_current_path(header_style);
                 });
 
                 m_renderer->draw_path(false, [&] {
@@ -239,8 +241,7 @@ namespace rl::ui {
                     nvg::stroke_color(context, m_theme->dialog_header_sep_top);
 
                     m_renderer->scoped_draw([&] {
-                        nvg::intersect_scissor(context, m_rect.pt.x, m_rect.pt.y, m_rect.size.width,
-                                               0.5f);
+                        nvg::intersect_scissor(context, m_rect.pt.x, m_rect.pt.y, m_rect.size.width, 0.5f);
                         nvg::stroke(context);
                     });
                 });
@@ -260,28 +261,34 @@ namespace rl::ui {
                 // header text shadow
                 nvg::font_blur_(context, 2.0f);
                 nvg::fill_color(context, m_theme->text_shadow);
-                nvg::draw_text(context,
-                               { m_rect.pt.x + (m_rect.size.width / 2.0f),
-                                 m_rect.pt.y + (header_height / 2.0f) },
-                               m_title);
+                nvg::draw_text(
+                    context,
+                    ds::point<f32>{
+                        m_rect.pt.x + (m_rect.size.width / 2.0f),
+                        m_rect.pt.y + (header_height / 2.0f),
+                    },
+                    m_title);
 
                 // Header text
                 nvg::font_blur_(context, 0.0f);
                 nvg::fill_color(context, m_focused ? m_theme->dialog_title_focused
                                                    : m_theme->dialog_title_unfocused);
-                nvg::draw_text(context,
-                               { m_rect.pt.x + (m_rect.size.width / 2.0f),
-                                 m_rect.pt.y + (header_height / 2.0f) - 1.0f },
-                               m_title);
+                nvg::draw_text(
+                    context,
+                    ds::point<f32>{
+                        m_rect.pt.x + (m_rect.size.width / 2.0f),
+                        m_rect.pt.y + (header_height / 2.0f) - 1.0f,
+                    },
+                    m_title);
             }
         });
 
         Widget::draw();
     }
 
-    void ScrollableDialog::perform_layout()
-    {
-    }
+    // void ScrollableDialog::perform_layout()
+    //{
+    // }
 
     ds::dims<f32> ScrollableDialog::preferred_size() const
     {

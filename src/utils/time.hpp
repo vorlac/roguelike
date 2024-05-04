@@ -73,7 +73,7 @@ namespace rl::inline utils {
         constexpr T convert(const u64 timestamp_duration)
         {
             constexpr u64 to_ratio{ std::to_underlying(time_unit) };
-            const f64 seconds{ static_cast<f64>(timestamp_duration) / m_perf_counter_freq };
+            const f32 seconds{ static_cast<f32>(timestamp_duration) / m_perf_counter_freq };
             return static_cast<T>(seconds * to_ratio);
         }
 

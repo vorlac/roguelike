@@ -124,7 +124,6 @@ target_compile_definitions(${PROJECT_NAME}
     $<${compiler_is_gnu}:
 		$<$<CONFIG:Debug>:
 			_GLIBCXX_DEBUG
-			_GLIBCXX_DEBUG_BACKTRACE
 		>
 	>
 )
@@ -132,7 +131,6 @@ target_compile_definitions(${PROJECT_NAME}
 target_compile_options(${PROJECT_NAME}
   PRIVATE
     $<${compiler_is_msvc}:
-        # /std:c++latest
         /Zc:preprocessor
         /utf-8
         /EHsc

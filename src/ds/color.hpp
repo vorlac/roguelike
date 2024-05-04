@@ -342,21 +342,21 @@ namespace rl::ds {
 namespace rl {
     struct Colors
     {
-        constexpr static inline ds::color<f32> Transparent{ 0, 0, 0, 0 };
-        constexpr static inline ds::color<f32> White{ 255, 255, 255, 255 };
-        constexpr static inline ds::color<f32> LightGrey{ 192, 195, 201, 255 };
-        constexpr static inline ds::color<f32> Grey{ 165, 165, 165, 255 };
-        constexpr static inline ds::color<f32> DarkGrey{ 38, 43, 51, 255 };
-        constexpr static inline ds::color<f32> DarkerGrey{ 51, 51, 51, 255 };
-        constexpr static inline ds::color<f32> DarkererGrey{ 17, 17, 17, 255 };
-        constexpr static inline ds::color<f32> Black{ 0, 0, 0, 255 };
-        constexpr static inline ds::color<f32> Red{ 212, 164, 164, 255 };
-        constexpr static inline ds::color<f32> Green{ 154, 175, 139, 255 };
-        constexpr static inline ds::color<f32> Yellow{ 202, 183, 127, 255 };
-        constexpr static inline ds::color<f32> Blue{ 119, 157, 201, 255 };
-        constexpr static inline ds::color<f32> Purple{ 182, 173, 219, 255 };
-        constexpr static inline ds::color<f32> Cyan{ 131, 178, 182, 255 };
-        constexpr static inline ds::color<f32> Background{ 39, 43, 51, 255 };
+        constexpr static ds::color<f32> Transparent{ 0, 0, 0, 0 };
+        constexpr static ds::color<f32> White{ 255, 255, 255, 255 };
+        constexpr static ds::color<f32> LightGrey{ 192, 195, 201, 255 };
+        constexpr static ds::color<f32> Grey{ 165, 165, 165, 255 };
+        constexpr static ds::color<f32> DarkGrey{ 38, 43, 51, 255 };
+        constexpr static ds::color<f32> DarkerGrey{ 51, 51, 51, 255 };
+        constexpr static ds::color<f32> DarkererGrey{ 17, 17, 17, 255 };
+        constexpr static ds::color<f32> Black{ 0, 0, 0, 255 };
+        constexpr static ds::color<f32> Red{ 212, 164, 164, 255 };
+        constexpr static ds::color<f32> Green{ 154, 175, 139, 255 };
+        constexpr static ds::color<f32> Yellow{ 202, 183, 127, 255 };
+        constexpr static ds::color<f32> Blue{ 119, 157, 201, 255 };
+        constexpr static ds::color<f32> Purple{ 182, 173, 219, 255 };
+        constexpr static ds::color<f32> Cyan{ 131, 178, 182, 255 };
+        constexpr static ds::color<f32> Background{ 39, 43, 51, 255 };
     };
 }
 

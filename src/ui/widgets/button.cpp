@@ -4,7 +4,6 @@
 
 #include "core/keyboard.hpp"
 #include "core/mouse.hpp"
-#include "ds/shared.hpp"
 #include "gfx/vg/nanovg.hpp"
 #include "ui/theme.hpp"
 #include "ui/widgets/button.hpp"
@@ -12,10 +11,13 @@
 #include "utils/unicode.hpp"
 
 namespace rl::ui {
+    Button::Button(const Icon::ID icon)
+        : Button{ nullptr, "", icon }
+    {
+    }
+
     Button::Button(std::string text, const Icon::ID icon)
-        : Widget{ nullptr }
-        , m_text{ std::move(text) }
-        , m_icon{ icon }
+        : Button{ nullptr, std::move(text), icon }
     {
     }
 
@@ -140,17 +142,17 @@ namespace rl::ui {
         // TODO: check font size here
         const auto context{ m_renderer->context() };
 
-        TextProperties props{
+        const TextProperties props{
             .font = m_theme->button_font_name,
             .align = Align::HCenter | Align::VMiddle,
             .color = m_enabled ? m_theme->button_text_color
                                : m_theme->button_disabled_text_color,
-            .size = m_font_size < 0.0f ? m_theme->button_font_size
-                                       : m_font_size
+            .font_size = m_font_size < 0.0f ? m_theme->button_font_size
+                                            : m_font_size
         };
 
         m_renderer->set_text_properties(props);
-        ds::dims<f32> icon_size{ 0.0f, props.size };
+        ds::dims<f32> icon_size{ 0.0f, props.font_size };
         const f32 text_width{ nvg::text_bounds(context, ds::point<f32>::zero(), m_text) };
 
         if (m_icon != Icon::ID::None) {
@@ -169,7 +171,7 @@ namespace rl::ui {
 
         return ds::dims<f32>{
             text_width + icon_size.width + INNER_PADDING.horizontal(),
-            props.size + INNER_PADDING.vertical(),
+            props.font_size + INNER_PADDING.vertical(),
         };
     }
 

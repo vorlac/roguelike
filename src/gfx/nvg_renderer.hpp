@@ -1,12 +1,5 @@
 #pragma once
 
-#include <concepts>
-#include <memory>
-#include <string>
-#include <type_traits>
-#include <utility>
-#include <vector>
-
 #include "ds/rect.hpp"
 #include "gfx/vg/nanovg.hpp"
 #include "ui/theme.hpp"
@@ -22,7 +15,7 @@ namespace rl {
         std::string_view font{};
         Align align{ Align::None };
         ds::color<f32> color{ Colors::Transparent };
-        f32 size{ -1.0f };
+        f32 font_size{ -1.0f };
     };
 
     class NVGRenderer
@@ -92,8 +85,7 @@ namespace rl {
         }
 
         template <std::invocable TCallable>
-        void draw_frame(TCallable&& callable, const ds::dims<f32>& render_size,
-                        const f32 pixel_ratio)
+        void draw_frame(TCallable&& callable, const ds::dims<f32>& render_size, f32 pixel_ratio)
         {
             this->begin_frame(render_size, pixel_ratio);
             std::invoke(std::forward<TCallable>(callable));

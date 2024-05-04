@@ -63,7 +63,7 @@ namespace rl::ui {
         ds::color<f32> button_gradient_bot_unfocused{ 65, 65, 65 };
         ds::color<f32> button_gradient_top_pushed{ 41, 41, 41, 255 };
         ds::color<f32> button_gradient_bot_pushed{ 29, 29, 29, 255 };
-        ds::color<float> button_text_color{ Colors::DarkGrey };
+        ds::color<f32> button_text_color{ Colors::DarkGrey };
         ds::color<f32> button_disabled_text_color{ Colors::DarkGrey };
 
         f32 dialog_title_font_size{ 24.0f };
@@ -96,9 +96,5 @@ namespace rl::ui {
         Icon::ID popup_chevron_left_icon{ Icon::ChevronLeft };
         Icon::ID text_box_up_icon{ Icon::ChevronUp };
         Icon::ID text_box_down_icon{ Icon::ChevronDown };
-
-        // TODO: implement some better debug visualization
-        ds::color<f32> debug_layout_background{ 40, 44, 52 };
-        ds::color<f32> debug_layout_outline{ 69, 76, 90 };
     };
 }

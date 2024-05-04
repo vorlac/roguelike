@@ -132,7 +132,7 @@ namespace rl::ui {
             .align = Align::VMiddle | Align::HLeft,
             .color = m_enabled ? m_theme->text_color
                                : m_theme->disabled_text_color,
-            .size = checkbox_height,
+            .font_size = checkbox_height,
         };
         const ds::rect<f32> checkbox_rect{
             ds::point{

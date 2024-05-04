@@ -31,15 +31,15 @@ namespace rl {
         struct BlendMode
         {
             using type = SDL3::SDL_BlendMode;
-            constexpr static inline auto None = SDL3::SDL_BLENDMODE_NONE;
-            constexpr static inline auto Blend = SDL3::SDL_BLENDMODE_BLEND;
-            constexpr static inline auto Add = SDL3::SDL_BLENDMODE_ADD;
-            constexpr static inline auto Mod = SDL3::SDL_BLENDMODE_MOD;
-            constexpr static inline auto Mul = SDL3::SDL_BLENDMODE_MUL;
-            constexpr static inline auto Invalid = SDL3::SDL_BLENDMODE_INVALID;
+            constexpr static auto None = SDL3::SDL_BLENDMODE_NONE;
+            constexpr static auto Blend = SDL3::SDL_BLENDMODE_BLEND;
+            constexpr static auto Add = SDL3::SDL_BLENDMODE_ADD;
+            constexpr static auto Mod = SDL3::SDL_BLENDMODE_MOD;
+            constexpr static auto Mul = SDL3::SDL_BLENDMODE_MUL;
+            constexpr static auto Invalid = SDL3::SDL_BLENDMODE_INVALID;
         };
 
-        constexpr static inline OpenGLRenderer::Properties DefaultProperties{ Properties::None };
+        constexpr static OpenGLRenderer::Properties DefaultProperties{ Properties::None };
 
     public:
         explicit OpenGLRenderer() = delete;
@@ -53,8 +53,6 @@ namespace rl {
             MainWindow& window,
             OpenGLRenderer::Properties flags = OpenGLRenderer::DefaultProperties);
 
-        ~OpenGLRenderer() = default;
-
         [[nodiscard]] SDL3::SDL_GLContext gl_context() const;
         [[nodiscard]] ds::dims<i32> get_output_size() const;
         [[nodiscard]] ds::rect<f32> get_viewport() const;
@@ -64,10 +62,11 @@ namespace rl {
         bool set_viewport(const ds::rect<i32>& rect) const;
         bool set_draw_color(ds::color<f32> c) const;
         bool set_target() const;
-        bool set_draw_blend_mode(const SDL3::SDL_BlendMode blend_mode) const;
+        bool set_draw_blend_mode(SDL3::SDL_BlendMode blend_mode) const;
 
     private:
-        constexpr static inline ds::color m_bg_color{ rl::Colors::Background };
+        // TODO: move to style configs
+        constexpr static ds::color m_bg_color{ rl::Colors::Background };
         Properties m_properties{ OpenGLRenderer::DefaultProperties };
         SDL3::SDL_GLContext m_sdl_glcontext{ nullptr };
     };

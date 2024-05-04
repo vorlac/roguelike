@@ -5,3495 +5,3494 @@
 #include "utils/numeric.hpp"
 
 namespace rl::ui::icon {
-
     struct MaterialSymbols
     {
-        constexpr static inline std::string_view FILE_NAME_MSO{ "MaterialSymbolsOutlined[FILL,GRAD,opsz,wght].ttf" };
-        constexpr static inline std::string_view FILE_NAME_MSR{ "MaterialSymbolsRounded[FILL,GRAD,opsz,wght].ttf" };
-        constexpr static inline std::string_view FILE_NAME_MSS{ "MaterialSymbolsSharp[FILL,GRAD,opsz,wght].ttf" };
+        constexpr static std::string_view FILE_NAME_MSO{ "MaterialSymbolsOutlined.ttf" };
+        constexpr static std::string_view FILE_NAME_MSR{ "MaterialSymbolsRounded.ttf" };
+        constexpr static std::string_view FILE_NAME_MSS{ "MaterialSymbolsSharp.ttf" };
 
-        constexpr static inline u16 IconMin{ 0xe003 };
-        constexpr static inline u16 IconMax16{ 0xf8ff };
-        constexpr static inline u16 IconMax{ 0xf8ff };
+        constexpr static u16 IconMin{ 0xe003 };
+        constexpr static u16 IconMax16{ 0xf8ff };
+        constexpr static u16 IconMax{ 0xf8ff };
 
-        constexpr static inline std::string_view MS10k{ "\xee\xa5\x91" };                                   // U+e951
-        constexpr static inline std::string_view MS10mp{ "\xee\xa5\x92" };                                  // U+e952
-        constexpr static inline std::string_view MS11mp{ "\xee\xa5\x93" };                                  // U+e953
-        constexpr static inline std::string_view MS123{ "\xee\xae\x8d" };                                   // U+eb8d
-        constexpr static inline std::string_view MS12mp{ "\xee\xa5\x94" };                                  // U+e954
-        constexpr static inline std::string_view MS13mp{ "\xee\xa5\x95" };                                  // U+e955
-        constexpr static inline std::string_view MS14mp{ "\xee\xa5\x96" };                                  // U+e956
-        constexpr static inline std::string_view MS15mp{ "\xee\xa5\x97" };                                  // U+e957
-        constexpr static inline std::string_view MS16mp{ "\xee\xa5\x98" };                                  // U+e958
-        constexpr static inline std::string_view MS17mp{ "\xee\xa5\x99" };                                  // U+e959
-        constexpr static inline std::string_view MS18UpRating{ "\xef\xa3\xbd" };                            // U+f8fd
-        constexpr static inline std::string_view MS18mp{ "\xee\xa5\x9a" };                                  // U+e95a
-        constexpr static inline std::string_view MS19mp{ "\xee\xa5\x9b" };                                  // U+e95b
-        constexpr static inline std::string_view MS1k{ "\xee\xa5\x9c" };                                    // U+e95c
-        constexpr static inline std::string_view MS1kPlus{ "\xee\xa5\x9d" };                                // U+e95d
-        constexpr static inline std::string_view MS1xMobiledata{ "\xee\xbf\x8d" };                          // U+efcd
-        constexpr static inline std::string_view MS1xMobiledataBadge{ "\xef\x9f\xb1" };                     // U+f7f1
-        constexpr static inline std::string_view MS20mp{ "\xee\xa5\x9e" };                                  // U+e95e
-        constexpr static inline std::string_view MS21mp{ "\xee\xa5\x9f" };                                  // U+e95f
-        constexpr static inline std::string_view MS22mp{ "\xee\xa5\xa0" };                                  // U+e960
-        constexpr static inline std::string_view MS23mp{ "\xee\xa5\xa1" };                                  // U+e961
-        constexpr static inline std::string_view MS24mp{ "\xee\xa5\xa2" };                                  // U+e962
-        constexpr static inline std::string_view MS2d{ "\xee\xbc\xb7" };                                    // U+ef37
-        constexpr static inline std::string_view MS2k{ "\xee\xa5\xa3" };                                    // U+e963
-        constexpr static inline std::string_view MS2kPlus{ "\xee\xa5\xa4" };                                // U+e964
-        constexpr static inline std::string_view MS2mp{ "\xee\xa5\xa5" };                                   // U+e965
-        constexpr static inline std::string_view MS30fps{ "\xee\xbf\x8e" };                                 // U+efce
-        constexpr static inline std::string_view MS30fpsSelect{ "\xee\xbf\x8f" };                           // U+efcf
-        constexpr static inline std::string_view MS360{ "\xee\x95\xb7" };                                   // U+e577
-        constexpr static inline std::string_view MS3dRotation{ "\xee\xa1\x8d" };                            // U+e84d
-        constexpr static inline std::string_view MS3gMobiledata{ "\xee\xbf\x90" };                          // U+efd0
-        constexpr static inline std::string_view MS3gMobiledataBadge{ "\xef\x9f\xb0" };                     // U+f7f0
-        constexpr static inline std::string_view MS3k{ "\xee\xa5\xa6" };                                    // U+e966
-        constexpr static inline std::string_view MS3kPlus{ "\xee\xa5\xa7" };                                // U+e967
-        constexpr static inline std::string_view MS3mp{ "\xee\xa5\xa8" };                                   // U+e968
-        constexpr static inline std::string_view MS3p{ "\xee\xbf\x91" };                                    // U+efd1
-        constexpr static inline std::string_view MS4gMobiledata{ "\xee\xbf\x92" };                          // U+efd2
-        constexpr static inline std::string_view MS4gMobiledataBadge{ "\xef\x9f\xaf" };                     // U+f7ef
-        constexpr static inline std::string_view MS4gPlusMobiledata{ "\xee\xbf\x93" };                      // U+efd3
-        constexpr static inline std::string_view MS4k{ "\xee\x81\xb2" };                                    // U+e072
-        constexpr static inline std::string_view MS4kPlus{ "\xee\xa5\xa9" };                                // U+e969
-        constexpr static inline std::string_view MS4mp{ "\xee\xa5\xaa" };                                   // U+e96a
-        constexpr static inline std::string_view MS50mp{ "\xef\x9b\xb3" };                                  // U+f6f3
-        constexpr static inline std::string_view MS5g{ "\xee\xbc\xb8" };                                    // U+ef38
-        constexpr static inline std::string_view MS5gMobiledataBadge{ "\xef\x9f\xae" };                     // U+f7ee
-        constexpr static inline std::string_view MS5k{ "\xee\xa5\xab" };                                    // U+e96b
-        constexpr static inline std::string_view MS5kPlus{ "\xee\xa5\xac" };                                // U+e96c
-        constexpr static inline std::string_view MS5mp{ "\xee\xa5\xad" };                                   // U+e96d
-        constexpr static inline std::string_view MS60fps{ "\xee\xbf\x94" };                                 // U+efd4
-        constexpr static inline std::string_view MS60fpsSelect{ "\xee\xbf\x95" };                           // U+efd5
-        constexpr static inline std::string_view MS6FtApart{ "\xef\x88\x9e" };                              // U+f21e
-        constexpr static inline std::string_view MS6k{ "\xee\xa5\xae" };                                    // U+e96e
-        constexpr static inline std::string_view MS6kPlus{ "\xee\xa5\xaf" };                                // U+e96f
-        constexpr static inline std::string_view MS6mp{ "\xee\xa5\xb0" };                                   // U+e970
-        constexpr static inline std::string_view MS7k{ "\xee\xa5\xb1" };                                    // U+e971
-        constexpr static inline std::string_view MS7kPlus{ "\xee\xa5\xb2" };                                // U+e972
-        constexpr static inline std::string_view MS7mp{ "\xee\xa5\xb3" };                                   // U+e973
-        constexpr static inline std::string_view MS8k{ "\xee\xa5\xb4" };                                    // U+e974
-        constexpr static inline std::string_view MS8kPlus{ "\xee\xa5\xb5" };                                // U+e975
-        constexpr static inline std::string_view MS8mp{ "\xee\xa5\xb6" };                                   // U+e976
-        constexpr static inline std::string_view MS9k{ "\xee\xa5\xb7" };                                    // U+e977
-        constexpr static inline std::string_view MS9kPlus{ "\xee\xa5\xb8" };                                // U+e978
-        constexpr static inline std::string_view MS9mp{ "\xee\xa5\xb9" };                                   // U+e979
-        constexpr static inline std::string_view Abc{ "\xee\xae\x94" };                                     // U+eb94
-        constexpr static inline std::string_view AcUnit{ "\xee\xac\xbb" };                                  // U+eb3b
-        constexpr static inline std::string_view AccessAlarm{ "\xee\xa1\x95" };                             // U+e855
-        constexpr static inline std::string_view AccessAlarms{ "\xee\xa1\x95" };                            // U+e855
-        constexpr static inline std::string_view AccessTime{ "\xee\xbf\x96" };                              // U+efd6
-        constexpr static inline std::string_view AccessTimeFilled{ "\xee\xbf\x96" };                        // U+efd6
-        constexpr static inline std::string_view Accessibility{ "\xee\xa1\x8e" };                           // U+e84e
-        constexpr static inline std::string_view AccessibilityNew{ "\xee\xa4\xac" };                        // U+e92c
-        constexpr static inline std::string_view Accessible{ "\xee\xa4\x94" };                              // U+e914
-        constexpr static inline std::string_view AccessibleForward{ "\xee\xa4\xb4" };                       // U+e934
-        constexpr static inline std::string_view AccountBalance{ "\xee\xa1\x8f" };                          // U+e84f
-        constexpr static inline std::string_view AccountBalanceWallet{ "\xee\xa1\x90" };                    // U+e850
-        constexpr static inline std::string_view AccountBox{ "\xee\xa1\x91" };                              // U+e851
-        constexpr static inline std::string_view AccountChild{ "\xee\xa1\x92" };                            // U+e852
-        constexpr static inline std::string_view AccountChildInvert{ "\xee\x99\x99" };                      // U+e659
-        constexpr static inline std::string_view AccountCircle{ "\xef\x88\x8b" };                           // U+f20b
-        constexpr static inline std::string_view AccountCircleFilled{ "\xef\x88\x8b" };                     // U+f20b
-        constexpr static inline std::string_view AccountCircleOff{ "\xef\x9e\xb3" };                        // U+f7b3
-        constexpr static inline std::string_view AccountTree{ "\xee\xa5\xba" };                             // U+e97a
-        constexpr static inline std::string_view ActionKey{ "\xef\x94\x82" };                               // U+f502
-        constexpr static inline std::string_view ActivityZone{ "\xee\x87\xa6" };                            // U+e1e6
-        constexpr static inline std::string_view Acute{ "\xee\x93\x8b" };                                   // U+e4cb
-        constexpr static inline std::string_view Ad{ "\xee\x99\x9a" };                                      // U+e65a
-        constexpr static inline std::string_view AdGroup{ "\xee\x99\x9b" };                                 // U+e65b
-        constexpr static inline std::string_view AdGroupOff{ "\xee\xab\xa5" };                              // U+eae5
-        constexpr static inline std::string_view AdOff{ "\xef\x9e\xb2" };                                   // U+f7b2
-        constexpr static inline std::string_view AdUnits{ "\xee\xbc\xb9" };                                 // U+ef39
-        constexpr static inline std::string_view Adb{ "\xee\x98\x8e" };                                     // U+e60e
-        constexpr static inline std::string_view Add{ "\xee\x85\x85" };                                     // U+e145
-        constexpr static inline std::string_view AddAPhoto{ "\xee\x90\xb9" };                               // U+e439
-        constexpr static inline std::string_view AddAd{ "\xee\x9c\xaa" };                                   // U+e72a
-        constexpr static inline std::string_view AddAlarm{ "\xee\xa1\x96" };                                // U+e856
-        constexpr static inline std::string_view AddAlert{ "\xee\x80\x83" };                                // U+e003
-        constexpr static inline std::string_view AddBox{ "\xee\x85\x86" };                                  // U+e146
-        constexpr static inline std::string_view AddBusiness{ "\xee\x9c\xa9" };                             // U+e729
-        constexpr static inline std::string_view AddCall{ "\xef\x82\xb7" };                                 // U+f0b7
-        constexpr static inline std::string_view AddCard{ "\xee\xae\x86" };                                 // U+eb86
-        constexpr static inline std::string_view AddChart{ "\xee\xbc\xbc" };                                // U+ef3c
-        constexpr static inline std::string_view AddCircle{ "\xee\x8e\xba" };                               // U+e3ba
-        constexpr static inline std::string_view AddCircleOutline{ "\xee\x8e\xba" };                        // U+e3ba
-        constexpr static inline std::string_view AddComment{ "\xee\x89\xa6" };                              // U+e266
-        constexpr static inline std::string_view AddHome{ "\xef\xa3\xab" };                                 // U+f8eb
-        constexpr static inline std::string_view AddHomeWork{ "\xef\xa3\xad" };                             // U+f8ed
-        constexpr static inline std::string_view AddIcCall{ "\xef\x82\xb7" };                               // U+f0b7
-        constexpr static inline std::string_view AddLink{ "\xee\x85\xb8" };                                 // U+e178
-        constexpr static inline std::string_view AddLocation{ "\xee\x95\xa7" };                             // U+e567
-        constexpr static inline std::string_view AddLocationAlt{ "\xee\xbc\xba" };                          // U+ef3a
-        constexpr static inline std::string_view AddModerator{ "\xee\xa5\xbd" };                            // U+e97d
-        constexpr static inline std::string_view AddNotes{ "\xee\x82\x91" };                                // U+e091
-        constexpr static inline std::string_view AddPhotoAlternate{ "\xee\x90\xbe" };                       // U+e43e
-        constexpr static inline std::string_view AddReaction{ "\xee\x87\x93" };                             // U+e1d3
-        constexpr static inline std::string_view AddRoad{ "\xee\xbc\xbb" };                                 // U+ef3b
-        constexpr static inline std::string_view AddShoppingCart{ "\xee\xa1\x94" };                         // U+e854
-        constexpr static inline std::string_view AddTask{ "\xef\x88\xba" };                                 // U+f23a
-        constexpr static inline std::string_view AddToDrive{ "\xee\x99\x9c" };                              // U+e65c
-        constexpr static inline std::string_view AddToHomeScreen{ "\xee\x87\xbe" };                         // U+e1fe
-        constexpr static inline std::string_view AddToPhotos{ "\xee\x8e\x9d" };                             // U+e39d
-        constexpr static inline std::string_view AddToQueue{ "\xee\x81\x9c" };                              // U+e05c
-        constexpr static inline std::string_view Addchart{ "\xee\xbc\xbc" };                                // U+ef3c
-        constexpr static inline std::string_view AdfScanner{ "\xee\xab\x9a" };                              // U+eada
-        constexpr static inline std::string_view Adjust{ "\xee\x8e\x9e" };                                  // U+e39e
-        constexpr static inline std::string_view AdminMeds{ "\xee\x92\x8d" };                               // U+e48d
-        constexpr static inline std::string_view AdminPanelSettings{ "\xee\xbc\xbd" };                      // U+ef3d
-        constexpr static inline std::string_view AdsClick{ "\xee\x9d\xa2" };                                // U+e762
-        constexpr static inline std::string_view Agender{ "\xef\xa2\x88" };                                 // U+f888
-        constexpr static inline std::string_view Agriculture{ "\xee\xa9\xb9" };                             // U+ea79
-        constexpr static inline std::string_view Air{ "\xee\xbf\x98" };                                     // U+efd8
-        constexpr static inline std::string_view AirFreshener{ "\xee\x8b\x8a" };                            // U+e2ca
-        constexpr static inline std::string_view AirPurifier{ "\xee\xa5\xbe" };                             // U+e97e
-        constexpr static inline std::string_view AirPurifierGen{ "\xee\xa0\xa9" };                          // U+e829
-        constexpr static inline std::string_view AirlineSeatFlat{ "\xee\x98\xb0" };                         // U+e630
-        constexpr static inline std::string_view AirlineSeatFlatAngled{ "\xee\x98\xb1" };                   // U+e631
-        constexpr static inline std::string_view AirlineSeatIndividualSuite{ "\xee\x98\xb2" };              // U+e632
-        constexpr static inline std::string_view AirlineSeatLegroomExtra{ "\xee\x98\xb3" };                 // U+e633
-        constexpr static inline std::string_view AirlineSeatLegroomNormal{ "\xee\x98\xb4" };                // U+e634
-        constexpr static inline std::string_view AirlineSeatLegroomReduced{ "\xee\x98\xb5" };               // U+e635
-        constexpr static inline std::string_view AirlineSeatReclineExtra{ "\xee\x98\xb6" };                 // U+e636
-        constexpr static inline std::string_view AirlineSeatReclineNormal{ "\xee\x98\xb7" };                // U+e637
-        constexpr static inline std::string_view AirlineStops{ "\xee\x9f\x90" };                            // U+e7d0
-        constexpr static inline std::string_view Airlines{ "\xee\x9f\x8a" };                                // U+e7ca
-        constexpr static inline std::string_view AirplaneTicket{ "\xee\xbf\x99" };                          // U+efd9
-        constexpr static inline std::string_view AirplanemodeActive{ "\xee\x94\xbd" };                      // U+e53d
-        constexpr static inline std::string_view AirplanemodeInactive{ "\xee\x86\x94" };                    // U+e194
-        constexpr static inline std::string_view Airplay{ "\xee\x81\x95" };                                 // U+e055
-        constexpr static inline std::string_view AirportShuttle{ "\xee\xac\xbc" };                          // U+eb3c
-        constexpr static inline std::string_view Airware{ "\xef\x85\x94" };                                 // U+f154
-        constexpr static inline std::string_view Airwave{ "\xef\x85\x94" };                                 // U+f154
-        constexpr static inline std::string_view Alarm{ "\xee\xa1\x95" };                                   // U+e855
-        constexpr static inline std::string_view AlarmAdd{ "\xee\xa1\x96" };                                // U+e856
-        constexpr static inline std::string_view AlarmOff{ "\xee\xa1\x97" };                                // U+e857
-        constexpr static inline std::string_view AlarmOn{ "\xee\xa1\x98" };                                 // U+e858
-        constexpr static inline std::string_view AlarmSmartWake{ "\xef\x9a\xb0" };                          // U+f6b0
-        constexpr static inline std::string_view Album{ "\xee\x80\x99" };                                   // U+e019
-        constexpr static inline std::string_view AlignCenter{ "\xee\x8d\x96" };                             // U+e356
-        constexpr static inline std::string_view AlignEnd{ "\xef\x9e\x97" };                                // U+f797
-        constexpr static inline std::string_view AlignFlexCenter{ "\xef\x9e\x96" };                         // U+f796
-        constexpr static inline std::string_view AlignFlexEnd{ "\xef\x9e\x95" };                            // U+f795
-        constexpr static inline std::string_view AlignFlexStart{ "\xef\x9e\x94" };                          // U+f794
-        constexpr static inline std::string_view AlignHorizontalCenter{ "\xee\x80\x8f" };                   // U+e00f
-        constexpr static inline std::string_view AlignHorizontalLeft{ "\xee\x80\x8d" };                     // U+e00d
-        constexpr static inline std::string_view AlignHorizontalRight{ "\xee\x80\x90" };                    // U+e010
-        constexpr static inline std::string_view AlignItemsStretch{ "\xef\x9e\x93" };                       // U+f793
-        constexpr static inline std::string_view AlignJustifyCenter{ "\xef\x9e\x92" };                      // U+f792
-        constexpr static inline std::string_view AlignJustifyFlexEnd{ "\xef\x9e\x91" };                     // U+f791
-        constexpr static inline std::string_view AlignJustifyFlexStart{ "\xef\x9e\x90" };                   // U+f790
-        constexpr static inline std::string_view AlignJustifySpaceAround{ "\xef\x9e\x8f" };                 // U+f78f
-        constexpr static inline std::string_view AlignJustifySpaceBetween{ "\xef\x9e\x8e" };                // U+f78e
-        constexpr static inline std::string_view AlignJustifySpaceEven{ "\xef\x9e\x8d" };                   // U+f78d
-        constexpr static inline std::string_view AlignJustifyStretch{ "\xef\x9e\x8c" };                     // U+f78c
-        constexpr static inline std::string_view AlignSelfStretch{ "\xef\x9e\x8b" };                        // U+f78b
-        constexpr static inline std::string_view AlignSpaceAround{ "\xef\x9e\x8a" };                        // U+f78a
-        constexpr static inline std::string_view AlignSpaceBetween{ "\xef\x9e\x89" };                       // U+f789
-        constexpr static inline std::string_view AlignSpaceEven{ "\xef\x9e\x88" };                          // U+f788
-        constexpr static inline std::string_view AlignStart{ "\xef\x9e\x87" };                              // U+f787
-        constexpr static inline std::string_view AlignStretch{ "\xef\x9e\x86" };                            // U+f786
-        constexpr static inline std::string_view AlignVerticalBottom{ "\xee\x80\x95" };                     // U+e015
-        constexpr static inline std::string_view AlignVerticalCenter{ "\xee\x80\x91" };                     // U+e011
-        constexpr static inline std::string_view AlignVerticalTop{ "\xee\x80\x8c" };                        // U+e00c
-        constexpr static inline std::string_view AllInbox{ "\xee\xa5\xbf" };                                // U+e97f
-        constexpr static inline std::string_view AllInclusive{ "\xee\xac\xbd" };                            // U+eb3d
-        constexpr static inline std::string_view AllMatch{ "\xee\x82\x93" };                                // U+e093
-        constexpr static inline std::string_view AllOut{ "\xee\xa4\x8b" };                                  // U+e90b
-        constexpr static inline std::string_view Allergies{ "\xee\x82\x94" };                               // U+e094
-        constexpr static inline std::string_view Allergy{ "\xee\x99\x8e" };                                 // U+e64e
-        constexpr static inline std::string_view AltRoute{ "\xef\x86\x84" };                                // U+f184
-        constexpr static inline std::string_view AlternateEmail{ "\xee\x83\xa6" };                          // U+e0e6
-        constexpr static inline std::string_view Altitude{ "\xef\xa1\xb3" };                                // U+f873
-        constexpr static inline std::string_view AmbientScreen{ "\xef\x9b\x84" };                           // U+f6c4
-        constexpr static inline std::string_view Ambulance{ "\xef\xa0\x83" };                               // U+f803
-        constexpr static inline std::string_view Amend{ "\xef\xa0\x82" };                                   // U+f802
-        constexpr static inline std::string_view AmpStories{ "\xee\xa8\x93" };                              // U+ea13
-        constexpr static inline std::string_view Analytics{ "\xee\xbc\xbe" };                               // U+ef3e
-        constexpr static inline std::string_view Anchor{ "\xef\x87\x8d" };                                  // U+f1cd
-        constexpr static inline std::string_view Android{ "\xee\xa1\x99" };                                 // U+e859
-        constexpr static inline std::string_view Animation{ "\xee\x9c\x9c" };                               // U+e71c
-        constexpr static inline std::string_view Announcement{ "\xee\xa1\xbf" };                            // U+e87f
-        constexpr static inline std::string_view Aod{ "\xee\xbf\x9a" };                                     // U+efda
-        constexpr static inline std::string_view AodTablet{ "\xef\xa2\x9f" };                               // U+f89f
-        constexpr static inline std::string_view AodWatch{ "\xef\x9a\xac" };                                // U+f6ac
-        constexpr static inline std::string_view Apartment{ "\xee\xa9\x80" };                               // U+ea40
-        constexpr static inline std::string_view Api{ "\xef\x86\xb7" };                                     // U+f1b7
-        constexpr static inline std::string_view ApkDocument{ "\xef\xa2\x8e" };                             // U+f88e
-        constexpr static inline std::string_view ApkInstall{ "\xef\xa2\x8f" };                              // U+f88f
-        constexpr static inline std::string_view AppBadging{ "\xef\x9c\xaf" };                              // U+f72f
-        constexpr static inline std::string_view AppBlocking{ "\xee\xbc\xbf" };                             // U+ef3f
-        constexpr static inline std::string_view AppPromo{ "\xee\xa6\x81" };                                // U+e981
-        constexpr static inline std::string_view AppRegistration{ "\xee\xbd\x80" };                         // U+ef40
-        constexpr static inline std::string_view AppSettingsAlt{ "\xee\xbd\x81" };                          // U+ef41
-        constexpr static inline std::string_view AppShortcut{ "\xee\xab\xa4" };                             // U+eae4
-        constexpr static inline std::string_view Apparel{ "\xee\xbd\xbb" };                                 // U+ef7b
-        constexpr static inline std::string_view Approval{ "\xee\xa6\x82" };                                // U+e982
-        constexpr static inline std::string_view ApprovalDelegation{ "\xef\xa1\x8a" };                      // U+f84a
-        constexpr static inline std::string_view Apps{ "\xee\x97\x83" };                                    // U+e5c3
-        constexpr static inline std::string_view AppsOutage{ "\xee\x9f\x8c" };                              // U+e7cc
-        constexpr static inline std::string_view Aq{ "\xef\x95\x9a" };                                      // U+f55a
-        constexpr static inline std::string_view AqIndoor{ "\xef\x95\x9b" };                                // U+f55b
-        constexpr static inline std::string_view ArOnYou{ "\xee\xbd\xbc" };                                 // U+ef7c
-        constexpr static inline std::string_view ArStickers{ "\xee\xa6\x83" };                              // U+e983
-        constexpr static inline std::string_view Architecture{ "\xee\xa8\xbb" };                            // U+ea3b
-        constexpr static inline std::string_view Archive{ "\xee\x85\x89" };                                 // U+e149
-        constexpr static inline std::string_view AreaChart{ "\xee\x9d\xb0" };                               // U+e770
-        constexpr static inline std::string_view ArmingCountdown{ "\xee\x9e\x8a" };                         // U+e78a
-        constexpr static inline std::string_view ArrowAndEdge{ "\xef\x97\x97" };                            // U+f5d7
-        constexpr static inline std::string_view ArrowBack{ "\xee\x97\x84" };                               // U+e5c4
-        constexpr static inline std::string_view ArrowBackIos{ "\xee\x97\xa0" };                            // U+e5e0
-        constexpr static inline std::string_view ArrowBackIosNew{ "\xee\x8b\xaa" };                         // U+e2ea
-        constexpr static inline std::string_view ArrowCircleDown{ "\xef\x86\x81" };                         // U+f181
-        constexpr static inline std::string_view ArrowCircleLeft{ "\xee\xaa\xa7" };                         // U+eaa7
-        constexpr static inline std::string_view ArrowCircleRight{ "\xee\xaa\xaa" };                        // U+eaaa
-        constexpr static inline std::string_view ArrowCircleUp{ "\xef\x86\x82" };                           // U+f182
-        constexpr static inline std::string_view ArrowDownward{ "\xee\x97\x9b" };                           // U+e5db
-        constexpr static inline std::string_view ArrowDownwardAlt{ "\xee\xa6\x84" };                        // U+e984
-        constexpr static inline std::string_view ArrowDropDown{ "\xee\x97\x85" };                           // U+e5c5
-        constexpr static inline std::string_view ArrowDropDownCircle{ "\xee\x97\x86" };                     // U+e5c6
-        constexpr static inline std::string_view ArrowDropUp{ "\xee\x97\x87" };                             // U+e5c7
-        constexpr static inline std::string_view ArrowForward{ "\xee\x97\x88" };                            // U+e5c8
-        constexpr static inline std::string_view ArrowForwardIos{ "\xee\x97\xa1" };                         // U+e5e1
-        constexpr static inline std::string_view ArrowInsert{ "\xef\xa0\xb7" };                             // U+f837
-        constexpr static inline std::string_view ArrowLeft{ "\xee\x97\x9e" };                               // U+e5de
-        constexpr static inline std::string_view ArrowLeftAlt{ "\xee\xbd\xbd" };                            // U+ef7d
-        constexpr static inline std::string_view ArrowOrEdge{ "\xef\x97\x96" };                             // U+f5d6
-        constexpr static inline std::string_view ArrowOutward{ "\xef\xa3\x8e" };                            // U+f8ce
-        constexpr static inline std::string_view ArrowRange{ "\xef\x9a\x9b" };                              // U+f69b
-        constexpr static inline std::string_view ArrowRight{ "\xee\x97\x9f" };                              // U+e5df
-        constexpr static inline std::string_view ArrowRightAlt{ "\xee\xa5\x81" };                           // U+e941
-        constexpr static inline std::string_view ArrowSelectorTool{ "\xef\xa0\xaf" };                       // U+f82f
-        constexpr static inline std::string_view ArrowSplit{ "\xee\xa8\x84" };                              // U+ea04
-        constexpr static inline std::string_view ArrowTopLeft{ "\xef\x9c\xae" };                            // U+f72e
-        constexpr static inline std::string_view ArrowTopRight{ "\xef\x9c\xad" };                           // U+f72d
-        constexpr static inline std::string_view ArrowUpward{ "\xee\x97\x98" };                             // U+e5d8
-        constexpr static inline std::string_view ArrowUpwardAlt{ "\xee\xa6\x86" };                          // U+e986
-        constexpr static inline std::string_view ArrowsMoreDown{ "\xef\xa2\xab" };                          // U+f8ab
-        constexpr static inline std::string_view ArrowsMoreUp{ "\xef\xa2\xac" };                            // U+f8ac
-        constexpr static inline std::string_view ArrowsOutward{ "\xef\x9c\xac" };                           // U+f72c
-        constexpr static inline std::string_view ArtTrack{ "\xee\x81\xa0" };                                // U+e060
-        constexpr static inline std::string_view Article{ "\xee\xbd\x82" };                                 // U+ef42
-        constexpr static inline std::string_view ArticleShortcut{ "\xef\x96\x87" };                         // U+f587
-        constexpr static inline std::string_view Artist{ "\xee\x80\x9a" };                                  // U+e01a
-        constexpr static inline std::string_view AspectRatio{ "\xee\xa1\x9b" };                             // U+e85b
-        constexpr static inline std::string_view Assessment{ "\xef\x83\x8c" };                              // U+f0cc
-        constexpr static inline std::string_view Assignment{ "\xee\xa1\x9d" };                              // U+e85d
-        constexpr static inline std::string_view AssignmentAdd{ "\xef\xa1\x88" };                           // U+f848
-        constexpr static inline std::string_view AssignmentInd{ "\xee\xa1\x9e" };                           // U+e85e
-        constexpr static inline std::string_view AssignmentLate{ "\xee\xa1\x9f" };                          // U+e85f
-        constexpr static inline std::string_view AssignmentReturn{ "\xee\xa1\xa0" };                        // U+e860
-        constexpr static inline std::string_view AssignmentReturned{ "\xee\xa1\xa1" };                      // U+e861
-        constexpr static inline std::string_view AssignmentTurnedIn{ "\xee\xa1\xa2" };                      // U+e862
-        constexpr static inline std::string_view AssistWalker{ "\xef\xa3\x95" };                            // U+f8d5
-        constexpr static inline std::string_view Assistant{ "\xee\x8e\x9f" };                               // U+e39f
-        constexpr static inline std::string_view AssistantDevice{ "\xee\xa6\x87" };                         // U+e987
-        constexpr static inline std::string_view AssistantDirection{ "\xee\xa6\x88" };                      // U+e988
-        constexpr static inline std::string_view AssistantNavigation{ "\xee\xa6\x89" };                     // U+e989
-        constexpr static inline std::string_view AssistantOnHub{ "\xef\x9b\x81" };                          // U+f6c1
-        constexpr static inline std::string_view AssistantPhoto{ "\xef\x83\x86" };                          // U+f0c6
-        constexpr static inline std::string_view AssuredWorkload{ "\xee\xad\xaf" };                         // U+eb6f
-        constexpr static inline std::string_view Asterisk{ "\xef\x94\xa5" };                                // U+f525
-        constexpr static inline std::string_view AstrophotographyAuto{ "\xef\x87\x99" };                    // U+f1d9
-        constexpr static inline std::string_view AstrophotographyOff{ "\xef\x87\x9a" };                     // U+f1da
-        constexpr static inline std::string_view Atm{ "\xee\x95\xb3" };                                     // U+e573
-        constexpr static inline std::string_view Atr{ "\xee\xaf\x87" };                                     // U+ebc7
-        constexpr static inline std::string_view AttachEmail{ "\xee\xa9\x9e" };                             // U+ea5e
-        constexpr static inline std::string_view AttachFile{ "\xee\x88\xa6" };                              // U+e226
-        constexpr static inline std::string_view AttachFileAdd{ "\xef\xa1\x81" };                           // U+f841
-        constexpr static inline std::string_view AttachFileOff{ "\xef\x93\x99" };                           // U+f4d9
-        constexpr static inline std::string_view AttachMoney{ "\xee\x88\xa7" };                             // U+e227
-        constexpr static inline std::string_view Attachment{ "\xee\x8a\xbc" };                              // U+e2bc
-        constexpr static inline std::string_view Attractions{ "\xee\xa9\x92" };                             // U+ea52
-        constexpr static inline std::string_view Attribution{ "\xee\xbf\x9b" };                             // U+efdb
-        constexpr static inline std::string_view AudioDescription{ "\xef\x96\x8c" };                        // U+f58c
-        constexpr static inline std::string_view AudioFile{ "\xee\xae\x82" };                               // U+eb82
-        constexpr static inline std::string_view AudioVideoReceiver{ "\xef\x97\x93" };                      // U+f5d3
-        constexpr static inline std::string_view Audiotrack{ "\xee\x90\x85" };                              // U+e405
-        constexpr static inline std::string_view AutoActivityZone{ "\xef\xa2\xad" };                        // U+f8ad
-        constexpr static inline std::string_view AutoAwesome{ "\xee\x99\x9f" };                             // U+e65f
-        constexpr static inline std::string_view AutoAwesomeMosaic{ "\xee\x99\xa0" };                       // U+e660
-        constexpr static inline std::string_view AutoAwesomeMotion{ "\xee\x99\xa1" };                       // U+e661
-        constexpr static inline std::string_view AutoDelete{ "\xee\xa9\x8c" };                              // U+ea4c
-        constexpr static inline std::string_view AutoDetectVoice{ "\xef\xa0\xbe" };                         // U+f83e
-        constexpr static inline std::string_view AutoDrawSolid{ "\xee\xa6\x8a" };                           // U+e98a
-        constexpr static inline std::string_view AutoFix{ "\xee\x99\xa3" };                                 // U+e663
-        constexpr static inline std::string_view AutoFixHigh{ "\xee\x99\xa3" };                             // U+e663
-        constexpr static inline std::string_view AutoFixNormal{ "\xee\x99\xa4" };                           // U+e664
-        constexpr static inline std::string_view AutoFixOff{ "\xee\x99\xa5" };                              // U+e665
-        constexpr static inline std::string_view AutoGraph{ "\xee\x93\xbb" };                               // U+e4fb
-        constexpr static inline std::string_view AutoLabel{ "\xef\x9a\xbe" };                               // U+f6be
-        constexpr static inline std::string_view AutoMeetingRoom{ "\xef\x9a\xbf" };                         // U+f6bf
-        constexpr static inline std::string_view AutoMode{ "\xee\xb0\xa0" };                                // U+ec20
-        constexpr static inline std::string_view AutoReadPause{ "\xef\x88\x99" };                           // U+f219
-        constexpr static inline std::string_view AutoReadPlay{ "\xef\x88\x96" };                            // U+f216
-        constexpr static inline std::string_view AutoSchedule{ "\xee\x88\x94" };                            // U+e214
-        constexpr static inline std::string_view AutoStories{ "\xee\x99\xa6" };                             // U+e666
-        constexpr static inline std::string_view AutoTimer{ "\xee\xbd\xbf" };                               // U+ef7f
-        constexpr static inline std::string_view AutoTowing{ "\xee\x9c\x9e" };                              // U+e71e
-        constexpr static inline std::string_view AutoTransmission{ "\xef\x94\xbf" };                        // U+f53f
-        constexpr static inline std::string_view AutoVideocam{ "\xef\x9b\x80" };                            // U+f6c0
-        constexpr static inline std::string_view AutofpsSelect{ "\xee\xbf\x9c" };                           // U+efdc
-        constexpr static inline std::string_view Autopause{ "\xef\x9a\xb6" };                               // U+f6b6
-        constexpr static inline std::string_view Autopay{ "\xef\xa1\x8b" };                                 // U+f84b
-        constexpr static inline std::string_view Autoplay{ "\xef\x9a\xb5" };                                // U+f6b5
-        constexpr static inline std::string_view Autorenew{ "\xee\xa1\xa3" };                               // U+e863
-        constexpr static inline std::string_view Autostop{ "\xef\x9a\x82" };                                // U+f682
-        constexpr static inline std::string_view AvTimer{ "\xee\x80\x9b" };                                 // U+e01b
-        constexpr static inline std::string_view AvgPace{ "\xef\x9a\xbb" };                                 // U+f6bb
-        constexpr static inline std::string_view AvgTime{ "\xef\xa0\x93" };                                 // U+f813
-        constexpr static inline std::string_view AwardStar{ "\xef\x98\x92" };                               // U+f612
-        constexpr static inline std::string_view Azm{ "\xef\x9b\xac" };                                     // U+f6ec
-        constexpr static inline std::string_view BabyChangingStation{ "\xef\x86\x9b" };                     // U+f19b
-        constexpr static inline std::string_view BackHand{ "\xee\x9d\xa4" };                                // U+e764
-        constexpr static inline std::string_view BackToTab{ "\xef\x9c\xab" };                               // U+f72b
-        constexpr static inline std::string_view BackgroundDotLarge{ "\xef\x9e\x9e" };                      // U+f79e
-        constexpr static inline std::string_view BackgroundDotSmall{ "\xef\x94\x94" };                      // U+f514
-        constexpr static inline std::string_view BackgroundGridSmall{ "\xef\x9e\x9d" };                     // U+f79d
-        constexpr static inline std::string_view BackgroundReplace{ "\xef\x88\x8a" };                       // U+f20a
-        constexpr static inline std::string_view BacklightHigh{ "\xef\x9f\xad" };                           // U+f7ed
-        constexpr static inline std::string_view BacklightHighOff{ "\xef\x93\xaf" };                        // U+f4ef
-        constexpr static inline std::string_view BacklightLow{ "\xef\x9f\xac" };                            // U+f7ec
-        constexpr static inline std::string_view Backpack{ "\xef\x86\x9c" };                                // U+f19c
-        constexpr static inline std::string_view Backspace{ "\xee\x85\x8a" };                               // U+e14a
-        constexpr static inline std::string_view Backup{ "\xee\xa1\xa4" };                                  // U+e864
-        constexpr static inline std::string_view BackupTable{ "\xee\xbd\x83" };                             // U+ef43
-        constexpr static inline std::string_view Badge{ "\xee\xa9\xa7" };                                   // U+ea67
-        constexpr static inline std::string_view BadgeCriticalBattery{ "\xef\x85\x96" };                    // U+f156
-        constexpr static inline std::string_view BakeryDining{ "\xee\xa9\x93" };                            // U+ea53
-        constexpr static inline std::string_view Balance{ "\xee\xab\xb6" };                                 // U+eaf6
-        constexpr static inline std::string_view Balcony{ "\xee\x96\x8f" };                                 // U+e58f
-        constexpr static inline std::string_view Ballot{ "\xee\x85\xb2" };                                  // U+e172
-        constexpr static inline std::string_view BarChart{ "\xee\x89\xab" };                                // U+e26b
-        constexpr static inline std::string_view BarChart_4Bars{ "\xef\x9a\x81" };                          // U+f681
-        constexpr static inline std::string_view Barcode{ "\xee\x9c\x8b" };                                 // U+e70b
-        constexpr static inline std::string_view BarcodeReader{ "\xef\xa1\x9c" };                           // U+f85c
-        constexpr static inline std::string_view BarcodeScanner{ "\xee\x9c\x8c" };                          // U+e70c
-        constexpr static inline std::string_view Barefoot{ "\xef\xa1\xb1" };                                // U+f871
-        constexpr static inline std::string_view BatchPrediction{ "\xef\x83\xb5" };                         // U+f0f5
-        constexpr static inline std::string_view BathOutdoor{ "\xef\x9b\xbb" };                             // U+f6fb
-        constexpr static inline std::string_view BathPrivate{ "\xef\x9b\xba" };                             // U+f6fa
-        constexpr static inline std::string_view BathPublicLarge{ "\xef\x9b\xb9" };                         // U+f6f9
-        constexpr static inline std::string_view Bathroom{ "\xee\xbf\x9d" };                                // U+efdd
-        constexpr static inline std::string_view Bathtub{ "\xee\xa9\x81" };                                 // U+ea41
-        constexpr static inline std::string_view Battery_0Bar{ "\xee\xaf\x9c" };                            // U+ebdc
-        constexpr static inline std::string_view Battery_1Bar{ "\xef\x82\x9c" };                            // U+f09c
-        constexpr static inline std::string_view Battery_20{ "\xef\x82\x9c" };                              // U+f09c
-        constexpr static inline std::string_view Battery_2Bar{ "\xef\x82\x9d" };                            // U+f09d
-        constexpr static inline std::string_view Battery_30{ "\xef\x82\x9d" };                              // U+f09d
-        constexpr static inline std::string_view Battery_3Bar{ "\xef\x82\x9e" };                            // U+f09e
-        constexpr static inline std::string_view Battery_4Bar{ "\xef\x82\x9f" };                            // U+f09f
-        constexpr static inline std::string_view Battery_50{ "\xef\x82\x9e" };                              // U+f09e
-        constexpr static inline std::string_view Battery_5Bar{ "\xef\x82\xa0" };                            // U+f0a0
-        constexpr static inline std::string_view Battery_60{ "\xef\x82\x9f" };                              // U+f09f
-        constexpr static inline std::string_view Battery_6Bar{ "\xef\x82\xa1" };                            // U+f0a1
-        constexpr static inline std::string_view Battery_80{ "\xef\x82\xa0" };                              // U+f0a0
-        constexpr static inline std::string_view Battery_90{ "\xef\x82\xa1" };                              // U+f0a1
-        constexpr static inline std::string_view BatteryAlert{ "\xee\x86\x9c" };                            // U+e19c
-        constexpr static inline std::string_view BatteryChange{ "\xef\x9f\xab" };                           // U+f7eb
-        constexpr static inline std::string_view BatteryCharging_20{ "\xef\x82\xa2" };                      // U+f0a2
-        constexpr static inline std::string_view BatteryCharging_30{ "\xef\x82\xa3" };                      // U+f0a3
-        constexpr static inline std::string_view BatteryCharging_50{ "\xef\x82\xa4" };                      // U+f0a4
-        constexpr static inline std::string_view BatteryCharging_60{ "\xef\x82\xa5" };                      // U+f0a5
-        constexpr static inline std::string_view BatteryCharging_80{ "\xef\x82\xa6" };                      // U+f0a6
-        constexpr static inline std::string_view BatteryCharging_90{ "\xef\x82\xa7" };                      // U+f0a7
-        constexpr static inline std::string_view BatteryChargingFull{ "\xee\x86\xa3" };                     // U+e1a3
-        constexpr static inline std::string_view BatteryError{ "\xef\x9f\xaa" };                            // U+f7ea
-        constexpr static inline std::string_view BatteryFull{ "\xee\x86\xa5" };                             // U+e1a5
-        constexpr static inline std::string_view BatteryFullAlt{ "\xef\x84\xbb" };                          // U+f13b
-        constexpr static inline std::string_view BatteryHoriz_000{ "\xef\xa2\xae" };                        // U+f8ae
-        constexpr static inline std::string_view BatteryHoriz_050{ "\xef\xa2\xaf" };                        // U+f8af
-        constexpr static inline std::string_view BatteryHoriz_075{ "\xef\xa2\xb0" };                        // U+f8b0
-        constexpr static inline std::string_view BatteryLow{ "\xef\x85\x95" };                              // U+f155
-        constexpr static inline std::string_view BatteryPlus{ "\xef\x9f\xa9" };                             // U+f7e9
-        constexpr static inline std::string_view BatteryProfile{ "\xee\x88\x86" };                          // U+e206
-        constexpr static inline std::string_view BatterySaver{ "\xee\xbf\x9e" };                            // U+efde
-        constexpr static inline std::string_view BatteryShare{ "\xef\x99\xbe" };                            // U+f67e
-        constexpr static inline std::string_view BatteryStatusGood{ "\xef\x99\xbd" };                       // U+f67d
-        constexpr static inline std::string_view BatteryStd{ "\xee\x86\xa5" };                              // U+e1a5
-        constexpr static inline std::string_view BatteryUnknown{ "\xee\x86\xa6" };                          // U+e1a6
-        constexpr static inline std::string_view BatteryVert_005{ "\xef\xa2\xb1" };                         // U+f8b1
-        constexpr static inline std::string_view BatteryVert_020{ "\xef\xa2\xb2" };                         // U+f8b2
-        constexpr static inline std::string_view BatteryVert_050{ "\xef\xa2\xb3" };                         // U+f8b3
-        constexpr static inline std::string_view BatteryVeryLow{ "\xef\x85\x96" };                          // U+f156
-        constexpr static inline std::string_view BeachAccess{ "\xee\xac\xbe" };                             // U+eb3e
-        constexpr static inline std::string_view Bed{ "\xee\xbf\x9f" };                                     // U+efdf
-        constexpr static inline std::string_view BedroomBaby{ "\xee\xbf\xa0" };                             // U+efe0
-        constexpr static inline std::string_view BedroomChild{ "\xee\xbf\xa1" };                            // U+efe1
-        constexpr static inline std::string_view BedroomParent{ "\xee\xbf\xa2" };                           // U+efe2
-        constexpr static inline std::string_view Bedtime{ "\xee\xbd\x84" };                                 // U+ef44
-        constexpr static inline std::string_view BedtimeOff{ "\xee\xad\xb6" };                              // U+eb76
-        constexpr static inline std::string_view Beenhere{ "\xee\x94\xad" };                                // U+e52d
-        constexpr static inline std::string_view Bento{ "\xef\x87\xb4" };                                   // U+f1f4
-        constexpr static inline std::string_view Bia{ "\xef\x9b\xab" };                                     // U+f6eb
-        constexpr static inline std::string_view BidLandscape{ "\xee\x99\xb8" };                            // U+e678
-        constexpr static inline std::string_view BidLandscapeDisabled{ "\xee\xbe\x81" };                    // U+ef81
-        constexpr static inline std::string_view BigtopUpdates{ "\xee\x99\xa9" };                           // U+e669
-        constexpr static inline std::string_view BikeScooter{ "\xee\xbd\x85" };                             // U+ef45
-        constexpr static inline std::string_view Biotech{ "\xee\xa8\xba" };                                 // U+ea3a
-        constexpr static inline std::string_view Blanket{ "\xee\xa0\xa8" };                                 // U+e828
-        constexpr static inline std::string_view Blender{ "\xee\xbf\xa3" };                                 // U+efe3
-        constexpr static inline std::string_view Blind{ "\xef\xa3\x96" };                                   // U+f8d6
-        constexpr static inline std::string_view Blinds{ "\xee\x8a\x86" };                                  // U+e286
-        constexpr static inline std::string_view BlindsClosed{ "\xee\xb0\x9f" };                            // U+ec1f
-        constexpr static inline std::string_view Block{ "\xef\x82\x8c" };                                   // U+f08c
-        constexpr static inline std::string_view BloodPressure{ "\xee\x82\x97" };                           // U+e097
-        constexpr static inline std::string_view Bloodtype{ "\xee\xbf\xa4" };                               // U+efe4
-        constexpr static inline std::string_view Bluetooth{ "\xee\x86\xa7" };                               // U+e1a7
-        constexpr static inline std::string_view BluetoothAudio{ "\xee\x98\x8f" };                          // U+e60f
-        constexpr static inline std::string_view BluetoothConnected{ "\xee\x86\xa8" };                      // U+e1a8
-        constexpr static inline std::string_view BluetoothDisabled{ "\xee\x86\xa9" };                       // U+e1a9
-        constexpr static inline std::string_view BluetoothDrive{ "\xee\xbf\xa5" };                          // U+efe5
-        constexpr static inline std::string_view BluetoothSearching{ "\xee\x98\x8f" };                      // U+e60f
-        constexpr static inline std::string_view BlurCircular{ "\xee\x8e\xa2" };                            // U+e3a2
-        constexpr static inline std::string_view BlurLinear{ "\xee\x8e\xa3" };                              // U+e3a3
-        constexpr static inline std::string_view BlurMedium{ "\xee\xa1\x8c" };                              // U+e84c
-        constexpr static inline std::string_view BlurOff{ "\xee\x8e\xa4" };                                 // U+e3a4
-        constexpr static inline std::string_view BlurOn{ "\xee\x8e\xa5" };                                  // U+e3a5
-        constexpr static inline std::string_view BlurShort{ "\xee\xa3\x8f" };                               // U+e8cf
-        constexpr static inline std::string_view BodyFat{ "\xee\x82\x98" };                                 // U+e098
-        constexpr static inline std::string_view BodySystem{ "\xee\x82\x99" };                              // U+e099
-        constexpr static inline std::string_view Bolt{ "\xee\xa8\x8b" };                                    // U+ea0b
-        constexpr static inline std::string_view Bomb{ "\xef\x95\xa8" };                                    // U+f568
-        constexpr static inline std::string_view Book{ "\xee\xa1\xae" };                                    // U+e86e
-        constexpr static inline std::string_view Book_2{ "\xef\x94\xbe" };                                  // U+f53e
-        constexpr static inline std::string_view Book_3{ "\xef\x94\xbd" };                                  // U+f53d
-        constexpr static inline std::string_view Book_4{ "\xef\x94\xbc" };                                  // U+f53c
-        constexpr static inline std::string_view Book_5{ "\xef\x94\xbb" };                                  // U+f53b
-        constexpr static inline std::string_view BookOnline{ "\xef\x88\x97" };                              // U+f217
-        constexpr static inline std::string_view Bookmark{ "\xee\xa3\xa7" };                                // U+e8e7
-        constexpr static inline std::string_view BookmarkAdd{ "\xee\x96\x98" };                             // U+e598
-        constexpr static inline std::string_view BookmarkAdded{ "\xee\x96\x99" };                           // U+e599
-        constexpr static inline std::string_view BookmarkBorder{ "\xee\xa3\xa7" };                          // U+e8e7
-        constexpr static inline std::string_view BookmarkManager{ "\xef\x9e\xb1" };                         // U+f7b1
-        constexpr static inline std::string_view BookmarkRemove{ "\xee\x96\x9a" };                          // U+e59a
-        constexpr static inline std::string_view Bookmarks{ "\xee\xa6\x8b" };                               // U+e98b
-        constexpr static inline std::string_view BorderAll{ "\xee\x88\xa8" };                               // U+e228
-        constexpr static inline std::string_view BorderBottom{ "\xee\x88\xa9" };                            // U+e229
-        constexpr static inline std::string_view BorderClear{ "\xee\x88\xaa" };                             // U+e22a
-        constexpr static inline std::string_view BorderColor{ "\xee\x88\xab" };                             // U+e22b
-        constexpr static inline std::string_view BorderHorizontal{ "\xee\x88\xac" };                        // U+e22c
-        constexpr static inline std::string_view BorderInner{ "\xee\x88\xad" };                             // U+e22d
-        constexpr static inline std::string_view BorderLeft{ "\xee\x88\xae" };                              // U+e22e
-        constexpr static inline std::string_view BorderOuter{ "\xee\x88\xaf" };                             // U+e22f
-        constexpr static inline std::string_view BorderRight{ "\xee\x88\xb0" };                             // U+e230
-        constexpr static inline std::string_view BorderStyle{ "\xee\x88\xb1" };                             // U+e231
-        constexpr static inline std::string_view BorderTop{ "\xee\x88\xb2" };                               // U+e232
-        constexpr static inline std::string_view BorderVertical{ "\xee\x88\xb3" };                          // U+e233
-        constexpr static inline std::string_view BottomAppBar{ "\xee\x9c\xb0" };                            // U+e730
-        constexpr static inline std::string_view BottomDrawer{ "\xee\x9c\xad" };                            // U+e72d
-        constexpr static inline std::string_view BottomNavigation{ "\xee\xa6\x8c" };                        // U+e98c
-        constexpr static inline std::string_view BottomPanelClose{ "\xef\x9c\xaa" };                        // U+f72a
-        constexpr static inline std::string_view BottomPanelOpen{ "\xef\x9c\xa9" };                         // U+f729
-        constexpr static inline std::string_view BottomRightClick{ "\xef\x9a\x84" };                        // U+f684
-        constexpr static inline std::string_view BottomSheets{ "\xee\xa6\x8d" };                            // U+e98d
-        constexpr static inline std::string_view Box{ "\xef\x96\xa4" };                                     // U+f5a4
-        constexpr static inline std::string_view BoxAdd{ "\xef\x96\xa5" };                                  // U+f5a5
-        constexpr static inline std::string_view BoxEdit{ "\xef\x96\xa6" };                                 // U+f5a6
-        constexpr static inline std::string_view Boy{ "\xee\xad\xa7" };                                     // U+eb67
-        constexpr static inline std::string_view BrandAwareness{ "\xee\xa6\x8e" };                          // U+e98e
-        constexpr static inline std::string_view BrandFamily{ "\xef\x93\xb1" };                             // U+f4f1
-        constexpr static inline std::string_view BrandingWatermark{ "\xee\x81\xab" };                       // U+e06b
-        constexpr static inline std::string_view BreakfastDining{ "\xee\xa9\x94" };                         // U+ea54
-        constexpr static inline std::string_view BreakingNews{ "\xee\xa8\x88" };                            // U+ea08
-        constexpr static inline std::string_view BreakingNewsAlt_1{ "\xef\x82\xba" };                       // U+f0ba
-        constexpr static inline std::string_view Breastfeeding{ "\xef\xa1\x96" };                           // U+f856
-        constexpr static inline std::string_view Brightness_1{ "\xee\x8f\xba" };                            // U+e3fa
-        constexpr static inline std::string_view Brightness_2{ "\xef\x80\xb6" };                            // U+f036
-        constexpr static inline std::string_view Brightness_3{ "\xee\x8e\xa8" };                            // U+e3a8
-        constexpr static inline std::string_view Brightness_4{ "\xee\x8e\xa9" };                            // U+e3a9
-        constexpr static inline std::string_view Brightness_5{ "\xee\x8e\xaa" };                            // U+e3aa
-        constexpr static inline std::string_view Brightness_6{ "\xee\x8e\xab" };                            // U+e3ab
-        constexpr static inline std::string_view Brightness_7{ "\xee\x8e\xac" };                            // U+e3ac
-        constexpr static inline std::string_view BrightnessAlert{ "\xef\x97\x8f" };                         // U+f5cf
-        constexpr static inline std::string_view BrightnessAuto{ "\xee\x86\xab" };                          // U+e1ab
-        constexpr static inline std::string_view BrightnessEmpty{ "\xef\x9f\xa8" };                         // U+f7e8
-        constexpr static inline std::string_view BrightnessHigh{ "\xee\x86\xac" };                          // U+e1ac
-        constexpr static inline std::string_view BrightnessLow{ "\xee\x86\xad" };                           // U+e1ad
-        constexpr static inline std::string_view BrightnessMedium{ "\xee\x86\xae" };                        // U+e1ae
-        constexpr static inline std::string_view BringYourOwnIp{ "\xee\x80\x96" };                          // U+e016
-        constexpr static inline std::string_view BroadcastOnHome{ "\xef\xa3\xb8" };                         // U+f8f8
-        constexpr static inline std::string_view BroadcastOnPersonal{ "\xef\xa3\xb9" };                     // U+f8f9
-        constexpr static inline std::string_view BrokenImage{ "\xee\x8e\xad" };                             // U+e3ad
-        constexpr static inline std::string_view Browse{ "\xee\xac\x93" };                                  // U+eb13
-        constexpr static inline std::string_view BrowseActivity{ "\xef\xa2\xa5" };                          // U+f8a5
-        constexpr static inline std::string_view BrowseGallery{ "\xee\xaf\x91" };                           // U+ebd1
-        constexpr static inline std::string_view BrowserNotSupported{ "\xee\xbd\x87" };                     // U+ef47
-        constexpr static inline std::string_view BrowserUpdated{ "\xee\x9f\x8f" };                          // U+e7cf
-        constexpr static inline std::string_view BrunchDining{ "\xee\xa9\xb3" };                            // U+ea73
-        constexpr static inline std::string_view Brush{ "\xee\x8e\xae" };                                   // U+e3ae
-        constexpr static inline std::string_view Bubble{ "\xee\xbe\x83" };                                  // U+ef83
-        constexpr static inline std::string_view BubbleChart{ "\xee\x9b\x9d" };                             // U+e6dd
-        constexpr static inline std::string_view Bubbles{ "\xef\x99\x8e" };                                 // U+f64e
-        constexpr static inline std::string_view BugReport{ "\xee\xa1\xa8" };                               // U+e868
-        constexpr static inline std::string_view Build{ "\xef\xa3\x8d" };                                   // U+f8cd
-        constexpr static inline std::string_view BuildCircle{ "\xee\xbd\x88" };                             // U+ef48
-        constexpr static inline std::string_view Bungalow{ "\xee\x96\x91" };                                // U+e591
-        constexpr static inline std::string_view BurstMode{ "\xee\x90\xbc" };                               // U+e43c
-        constexpr static inline std::string_view BusAlert{ "\xee\xa6\x8f" };                                // U+e98f
-        constexpr static inline std::string_view Business{ "\xee\x9f\xae" };                                // U+e7ee
-        constexpr static inline std::string_view BusinessCenter{ "\xee\xac\xbf" };                          // U+eb3f
-        constexpr static inline std::string_view BusinessChip{ "\xef\xa1\x8c" };                            // U+f84c
-        constexpr static inline std::string_view BusinessMessages{ "\xee\xbe\x84" };                        // U+ef84
-        constexpr static inline std::string_view ButtonsAlt{ "\xee\x9c\xaf" };                              // U+e72f
-        constexpr static inline std::string_view Cabin{ "\xee\x96\x89" };                                   // U+e589
-        constexpr static inline std::string_view Cable{ "\xee\xbf\xa6" };                                   // U+efe6
-        constexpr static inline std::string_view Cached{ "\xee\xa1\xaa" };                                  // U+e86a
-        constexpr static inline std::string_view Cake{ "\xee\x9f\xa9" };                                    // U+e7e9
-        constexpr static inline std::string_view CakeAdd{ "\xef\xa1\x9b" };                                 // U+f85b
-        constexpr static inline std::string_view Calculate{ "\xee\xa9\x9f" };                               // U+ea5f
-        constexpr static inline std::string_view CalendarAddOn{ "\xee\xbe\x85" };                           // U+ef85
-        constexpr static inline std::string_view CalendarAppsScript{ "\xef\x82\xbb" };                      // U+f0bb
-        constexpr static inline std::string_view CalendarClock{ "\xef\x95\x80" };                           // U+f540
-        constexpr static inline std::string_view CalendarMonth{ "\xee\xaf\x8c" };                           // U+ebcc
-        constexpr static inline std::string_view CalendarToday{ "\xee\xa4\xb5" };                           // U+e935
-        constexpr static inline std::string_view CalendarViewDay{ "\xee\xa4\xb6" };                         // U+e936
-        constexpr static inline std::string_view CalendarViewMonth{ "\xee\xbf\xa7" };                       // U+efe7
-        constexpr static inline std::string_view CalendarViewWeek{ "\xee\xbf\xa8" };                        // U+efe8
-        constexpr static inline std::string_view Call{ "\xef\x83\x94" };                                    // U+f0d4
-        constexpr static inline std::string_view CallEnd{ "\xef\x82\xbc" };                                 // U+f0bc
-        constexpr static inline std::string_view CallEndAlt{ "\xef\x82\xbc" };                              // U+f0bc
-        constexpr static inline std::string_view CallLog{ "\xee\x82\x8e" };                                 // U+e08e
-        constexpr static inline std::string_view CallMade{ "\xee\x82\xb2" };                                // U+e0b2
-        constexpr static inline std::string_view CallMerge{ "\xee\x82\xb3" };                               // U+e0b3
-        constexpr static inline std::string_view CallMissed{ "\xee\x82\xb4" };                              // U+e0b4
-        constexpr static inline std::string_view CallMissedOutgoing{ "\xee\x83\xa4" };                      // U+e0e4
-        constexpr static inline std::string_view CallQuality{ "\xef\x99\x92" };                             // U+f652
-        constexpr static inline std::string_view CallReceived{ "\xee\x82\xb5" };                            // U+e0b5
-        constexpr static inline std::string_view CallSplit{ "\xee\x82\xb6" };                               // U+e0b6
-        constexpr static inline std::string_view CallToAction{ "\xee\x81\xac" };                            // U+e06c
-        constexpr static inline std::string_view Camera{ "\xee\x8e\xaf" };                                  // U+e3af
-        constexpr static inline std::string_view CameraAlt{ "\xee\x90\x92" };                               // U+e412
-        constexpr static inline std::string_view CameraEnhance{ "\xee\xa3\xbc" };                           // U+e8fc
-        constexpr static inline std::string_view CameraFront{ "\xee\x8e\xb1" };                             // U+e3b1
-        constexpr static inline std::string_view CameraIndoor{ "\xee\xbf\xa9" };                            // U+efe9
-        constexpr static inline std::string_view CameraOutdoor{ "\xee\xbf\xaa" };                           // U+efea
-        constexpr static inline std::string_view CameraRear{ "\xee\x8e\xb2" };                              // U+e3b2
-        constexpr static inline std::string_view CameraRoll{ "\xee\x8e\xb3" };                              // U+e3b3
-        constexpr static inline std::string_view CameraVideo{ "\xef\x9e\xa6" };                             // U+f7a6
-        constexpr static inline std::string_view Cameraswitch{ "\xee\xbf\xab" };                            // U+efeb
-        constexpr static inline std::string_view Campaign{ "\xee\xbd\x89" };                                // U+ef49
-        constexpr static inline std::string_view Camping{ "\xef\xa2\xa2" };                                 // U+f8a2
-        constexpr static inline std::string_view Cancel{ "\xee\xa2\x88" };                                  // U+e888
-        constexpr static inline std::string_view CancelPresentation{ "\xee\x83\xa9" };                      // U+e0e9
-        constexpr static inline std::string_view CancelScheduleSend{ "\xee\xa8\xb9" };                      // U+ea39
-        constexpr static inline std::string_view Candle{ "\xef\x96\x88" };                                  // U+f588
-        constexpr static inline std::string_view CandlestickChart{ "\xee\xab\x94" };                        // U+ead4
-        constexpr static inline std::string_view CaptivePortal{ "\xef\x9c\xa8" };                           // U+f728
-        constexpr static inline std::string_view Capture{ "\xef\x9c\xa7" };                                 // U+f727
-        constexpr static inline std::string_view CarCrash{ "\xee\xaf\xb2" };                                // U+ebf2
-        constexpr static inline std::string_view CarRental{ "\xee\xa9\x95" };                               // U+ea55
-        constexpr static inline std::string_view CarRepair{ "\xee\xa9\x96" };                               // U+ea56
-        constexpr static inline std::string_view CarTag{ "\xef\x93\xa3" };                                  // U+f4e3
-        constexpr static inline std::string_view CardGiftcard{ "\xee\xa3\xb6" };                            // U+e8f6
-        constexpr static inline std::string_view CardMembership{ "\xee\xa3\xb7" };                          // U+e8f7
-        constexpr static inline std::string_view CardTravel{ "\xee\xa3\xb8" };                              // U+e8f8
-        constexpr static inline std::string_view Cardiology{ "\xee\x82\x9c" };                              // U+e09c
-        constexpr static inline std::string_view Cards{ "\xee\xa6\x91" };                                   // U+e991
-        constexpr static inline std::string_view Carpenter{ "\xef\x87\xb8" };                               // U+f1f8
-        constexpr static inline std::string_view CarryOnBag{ "\xee\xac\x88" };                              // U+eb08
-        constexpr static inline std::string_view CarryOnBagChecked{ "\xee\xac\x8b" };                       // U+eb0b
-        constexpr static inline std::string_view CarryOnBagInactive{ "\xee\xac\x8a" };                      // U+eb0a
-        constexpr static inline std::string_view CarryOnBagQuestion{ "\xee\xac\x89" };                      // U+eb09
-        constexpr static inline std::string_view Cases{ "\xee\xa6\x92" };                                   // U+e992
-        constexpr static inline std::string_view Casino{ "\xee\xad\x80" };                                  // U+eb40
-        constexpr static inline std::string_view Cast{ "\xee\x8c\x87" };                                    // U+e307
-        constexpr static inline std::string_view CastConnected{ "\xee\x8c\x88" };                           // U+e308
-        constexpr static inline std::string_view CastForEducation{ "\xee\xbf\xac" };                        // U+efec
-        constexpr static inline std::string_view CastPause{ "\xef\x97\xb0" };                               // U+f5f0
-        constexpr static inline std::string_view CastWarning{ "\xef\x97\xaf" };                             // U+f5ef
-        constexpr static inline std::string_view Castle{ "\xee\xaa\xb1" };                                  // U+eab1
-        constexpr static inline std::string_view Category{ "\xee\x95\xb4" };                                // U+e574
-        constexpr static inline std::string_view Celebration{ "\xee\xa9\xa5" };                             // U+ea65
-        constexpr static inline std::string_view CellMerge{ "\xef\xa0\xae" };                               // U+f82e
-        constexpr static inline std::string_view CellTower{ "\xee\xae\xba" };                               // U+ebba
-        constexpr static inline std::string_view CellWifi{ "\xee\x83\xac" };                                // U+e0ec
-        constexpr static inline std::string_view CenterFocusStrong{ "\xee\x8e\xb4" };                       // U+e3b4
-        constexpr static inline std::string_view CenterFocusWeak{ "\xee\x8e\xb5" };                         // U+e3b5
-        constexpr static inline std::string_view Chair{ "\xee\xbf\xad" };                                   // U+efed
-        constexpr static inline std::string_view ChairAlt{ "\xee\xbf\xae" };                                // U+efee
-        constexpr static inline std::string_view Chalet{ "\xee\x96\x85" };                                  // U+e585
-        constexpr static inline std::string_view ChangeCircle{ "\xee\x8b\xa7" };                            // U+e2e7
-        constexpr static inline std::string_view ChangeHistory{ "\xee\xa1\xab" };                           // U+e86b
-        constexpr static inline std::string_view Charger{ "\xee\x8a\xae" };                                 // U+e2ae
-        constexpr static inline std::string_view ChargingStation{ "\xef\x86\x9d" };                         // U+f19d
-        constexpr static inline std::string_view ChartData{ "\xee\x91\xb3" };                               // U+e473
-        constexpr static inline std::string_view Chat{ "\xee\x83\x89" };                                    // U+e0c9
-        constexpr static inline std::string_view ChatAddOn{ "\xef\x83\xb3" };                               // U+f0f3
-        constexpr static inline std::string_view ChatAppsScript{ "\xef\x82\xbd" };                          // U+f0bd
-        constexpr static inline std::string_view ChatBubble{ "\xee\x83\x8b" };                              // U+e0cb
-        constexpr static inline std::string_view ChatBubbleOutline{ "\xee\x83\x8b" };                       // U+e0cb
-        constexpr static inline std::string_view ChatError{ "\xef\x9e\xac" };                               // U+f7ac
-        constexpr static inline std::string_view ChatInfo{ "\xef\x94\xab" };                                // U+f52b
-        constexpr static inline std::string_view ChatPasteGo{ "\xef\x9a\xbd" };                             // U+f6bd
-        constexpr static inline std::string_view Check{ "\xee\x97\x8a" };                                   // U+e5ca
-        constexpr static inline std::string_view CheckBox{ "\xee\xa0\xb4" };                                // U+e834
-        constexpr static inline std::string_view CheckBoxOutlineBlank{ "\xee\xa0\xb5" };                    // U+e835
-        constexpr static inline std::string_view CheckCircle{ "\xef\x82\xbe" };                             // U+f0be
-        constexpr static inline std::string_view CheckCircleFilled{ "\xef\x82\xbe" };                       // U+f0be
-        constexpr static inline std::string_view CheckCircleOutline{ "\xef\x82\xbe" };                      // U+f0be
-        constexpr static inline std::string_view CheckInOut{ "\xef\x9b\xb6" };                              // U+f6f6
-        constexpr static inline std::string_view CheckIndeterminateSmall{ "\xef\xa2\x8a" };                 // U+f88a
-        constexpr static inline std::string_view CheckSmall{ "\xef\xa2\x8b" };                              // U+f88b
-        constexpr static inline std::string_view Checkbook{ "\xee\x9c\x8d" };                               // U+e70d
-        constexpr static inline std::string_view CheckedBag{ "\xee\xac\x8c" };                              // U+eb0c
-        constexpr static inline std::string_view CheckedBagQuestion{ "\xee\xac\x8d" };                      // U+eb0d
-        constexpr static inline std::string_view Checklist{ "\xee\x9a\xb1" };                               // U+e6b1
-        constexpr static inline std::string_view ChecklistRtl{ "\xee\x9a\xb3" };                            // U+e6b3
-        constexpr static inline std::string_view Checkroom{ "\xef\x86\x9e" };                               // U+f19e
-        constexpr static inline std::string_view Cheer{ "\xef\x9a\xa8" };                                   // U+f6a8
-        constexpr static inline std::string_view Chess{ "\xef\x97\xa7" };                                   // U+f5e7
-        constexpr static inline std::string_view ChevronLeft{ "\xee\x97\x8b" };                             // U+e5cb
-        constexpr static inline std::string_view ChevronRight{ "\xee\x97\x8c" };                            // U+e5cc
-        constexpr static inline std::string_view ChildCare{ "\xee\xad\x81" };                               // U+eb41
-        constexpr static inline std::string_view ChildFriendly{ "\xee\xad\x82" };                           // U+eb42
-        constexpr static inline std::string_view ChipExtraction{ "\xef\xa0\xa1" };                          // U+f821
-        constexpr static inline std::string_view Chips{ "\xee\xa6\x93" };                                   // U+e993
-        constexpr static inline std::string_view ChromeReaderMode{ "\xee\xa1\xad" };                        // U+e86d
-        constexpr static inline std::string_view Chromecast_2{ "\xef\x85\xbb" };                            // U+f17b
-        constexpr static inline std::string_view ChromecastDevice{ "\xee\xa0\xbc" };                        // U+e83c
-        constexpr static inline std::string_view Chronic{ "\xee\xae\xb2" };                                 // U+ebb2
-        constexpr static inline std::string_view Church{ "\xee\xaa\xae" };                                  // U+eaae
-        constexpr static inline std::string_view CinematicBlur{ "\xef\xa1\x93" };                           // U+f853
-        constexpr static inline std::string_view Circle{ "\xee\xbd\x8a" };                                  // U+ef4a
-        constexpr static inline std::string_view CircleNotifications{ "\xee\xa6\x94" };                     // U+e994
-        constexpr static inline std::string_view Circles{ "\xee\x9f\xaa" };                                 // U+e7ea
-        constexpr static inline std::string_view CirclesExt{ "\xee\x9f\xac" };                              // U+e7ec
-        constexpr static inline std::string_view Clarify{ "\xef\x82\xbf" };                                 // U+f0bf
-        constexpr static inline std::string_view Class{ "\xee\xa1\xae" };                                   // U+e86e
-        constexpr static inline std::string_view CleanHands{ "\xef\x88\x9f" };                              // U+f21f
-        constexpr static inline std::string_view Cleaning{ "\xee\xa6\x95" };                                // U+e995
-        constexpr static inline std::string_view CleaningBucket{ "\xef\xa2\xb4" };                          // U+f8b4
-        constexpr static inline std::string_view CleaningServices{ "\xef\x83\xbf" };                        // U+f0ff
-        constexpr static inline std::string_view Clear{ "\xee\x97\x8d" };                                   // U+e5cd
-        constexpr static inline std::string_view ClearAll{ "\xee\x82\xb8" };                                // U+e0b8
-        constexpr static inline std::string_view ClearDay{ "\xef\x85\x97" };                                // U+f157
-        constexpr static inline std::string_view ClearNight{ "\xef\x85\x99" };                              // U+f159
-        constexpr static inline std::string_view ClimateMiniSplit{ "\xef\xa2\xb5" };                        // U+f8b5
-        constexpr static inline std::string_view ClinicalNotes{ "\xee\x82\x9e" };                           // U+e09e
-        constexpr static inline std::string_view ClockLoader_10{ "\xef\x9c\xa6" };                          // U+f726
-        constexpr static inline std::string_view ClockLoader_20{ "\xef\x9c\xa5" };                          // U+f725
-        constexpr static inline std::string_view ClockLoader_40{ "\xef\x9c\xa4" };                          // U+f724
-        constexpr static inline std::string_view ClockLoader_60{ "\xef\x9c\xa3" };                          // U+f723
-        constexpr static inline std::string_view ClockLoader_80{ "\xef\x9c\xa2" };                          // U+f722
-        constexpr static inline std::string_view ClockLoader_90{ "\xef\x9c\xa1" };                          // U+f721
-        constexpr static inline std::string_view Close{ "\xee\x97\x8d" };                                   // U+e5cd
-        constexpr static inline std::string_view CloseFullscreen{ "\xef\x87\x8f" };                         // U+f1cf
-        constexpr static inline std::string_view CloseSmall{ "\xef\x94\x88" };                              // U+f508
-        constexpr static inline std::string_view ClosedCaption{ "\xee\xa6\x96" };                           // U+e996
-        constexpr static inline std::string_view ClosedCaptionDisabled{ "\xef\x87\x9c" };                   // U+f1dc
-        constexpr static inline std::string_view ClosedCaptionOff{ "\xee\xa6\x96" };                        // U+e996
-        constexpr static inline std::string_view Cloud{ "\xef\x85\x9c" };                                   // U+f15c
-        constexpr static inline std::string_view CloudCircle{ "\xee\x8a\xbe" };                             // U+e2be
-        constexpr static inline std::string_view CloudDone{ "\xee\x8a\xbf" };                               // U+e2bf
-        constexpr static inline std::string_view CloudDownload{ "\xee\x8b\x80" };                           // U+e2c0
-        constexpr static inline std::string_view CloudOff{ "\xee\x8b\x81" };                                // U+e2c1
-        constexpr static inline std::string_view CloudQueue{ "\xef\x85\x9c" };                              // U+f15c
-        constexpr static inline std::string_view CloudSync{ "\xee\xad\x9a" };                               // U+eb5a
-        constexpr static inline std::string_view CloudUpload{ "\xee\x8b\x83" };                             // U+e2c3
-        constexpr static inline std::string_view Cloudy{ "\xef\x85\x9c" };                                  // U+f15c
-        constexpr static inline std::string_view CloudyFilled{ "\xef\x85\x9c" };                            // U+f15c
-        constexpr static inline std::string_view CloudySnowing{ "\xee\xa0\x90" };                           // U+e810
-        constexpr static inline std::string_view Co2{ "\xee\x9e\xb0" };                                     // U+e7b0
-        constexpr static inline std::string_view CoPresent{ "\xee\xab\xb0" };                               // U+eaf0
-        constexpr static inline std::string_view Code{ "\xee\xa1\xaf" };                                    // U+e86f
-        constexpr static inline std::string_view CodeBlocks{ "\xef\xa1\x8d" };                              // U+f84d
-        constexpr static inline std::string_view CodeOff{ "\xee\x93\xb3" };                                 // U+e4f3
-        constexpr static inline std::string_view Coffee{ "\xee\xbf\xaf" };                                  // U+efef
-        constexpr static inline std::string_view CoffeeMaker{ "\xee\xbf\xb0" };                             // U+eff0
-        constexpr static inline std::string_view Cognition{ "\xee\x82\x9f" };                               // U+e09f
-        constexpr static inline std::string_view CollapseAll{ "\xee\xa5\x84" };                             // U+e944
-        constexpr static inline std::string_view CollapseContent{ "\xef\x94\x87" };                         // U+f507
-        constexpr static inline std::string_view Collections{ "\xee\x8f\x93" };                             // U+e3d3
-        constexpr static inline std::string_view CollectionsBookmark{ "\xee\x90\xb1" };                     // U+e431
-        constexpr static inline std::string_view ColorLens{ "\xee\x90\x8a" };                               // U+e40a
-        constexpr static inline std::string_view Colorize{ "\xee\x8e\xb8" };                                // U+e3b8
-        constexpr static inline std::string_view Colors{ "\xee\xa6\x97" };                                  // U+e997
-        constexpr static inline std::string_view ComedyMask{ "\xef\x93\x96" };                              // U+f4d6
-        constexpr static inline std::string_view ComicBubble{ "\xef\x97\x9d" };                             // U+f5dd
-        constexpr static inline std::string_view Comment{ "\xee\x89\x8c" };                                 // U+e24c
-        constexpr static inline std::string_view CommentBank{ "\xee\xa9\x8e" };                             // U+ea4e
-        constexpr static inline std::string_view CommentsDisabled{ "\xee\x9e\xa2" };                        // U+e7a2
-        constexpr static inline std::string_view Commit{ "\xee\xab\xb5" };                                  // U+eaf5
-        constexpr static inline std::string_view Communication{ "\xee\x89\xbc" };                           // U+e27c
-        constexpr static inline std::string_view Communities{ "\xee\xac\x96" };                             // U+eb16
-        constexpr static inline std::string_view CommunitiesFilled{ "\xee\xac\x96" };                       // U+eb16
-        constexpr static inline std::string_view Commute{ "\xee\xa5\x80" };                                 // U+e940
-        constexpr static inline std::string_view Compare{ "\xee\x8e\xb9" };                                 // U+e3b9
-        constexpr static inline std::string_view CompareArrows{ "\xee\xa4\x95" };                           // U+e915
-        constexpr static inline std::string_view CompassCalibration{ "\xee\x95\xbc" };                      // U+e57c
-        constexpr static inline std::string_view ComponentExchange{ "\xef\x87\xa7" };                       // U+f1e7
-        constexpr static inline std::string_view Compost{ "\xee\x9d\xa1" };                                 // U+e761
-        constexpr static inline std::string_view Compress{ "\xee\xa5\x8d" };                                // U+e94d
-        constexpr static inline std::string_view Computer{ "\xee\x8c\x9e" };                                // U+e31e
-        constexpr static inline std::string_view Concierge{ "\xef\x95\xa1" };                               // U+f561
-        constexpr static inline std::string_view Conditions{ "\xee\x82\xa0" };                              // U+e0a0
-        constexpr static inline std::string_view ConfirmationNumber{ "\xee\x98\xb8" };                      // U+e638
-        constexpr static inline std::string_view Congenital{ "\xee\x82\xa1" };                              // U+e0a1
-        constexpr static inline std::string_view ConnectWithoutContact{ "\xef\x88\xa3" };                   // U+f223
-        constexpr static inline std::string_view ConnectedTv{ "\xee\xa6\x98" };                             // U+e998
-        constexpr static inline std::string_view ConnectingAirports{ "\xee\x9f\x89" };                      // U+e7c9
-        constexpr static inline std::string_view Construction{ "\xee\xa8\xbc" };                            // U+ea3c
-        constexpr static inline std::string_view ContactEmergency{ "\xef\xa3\x91" };                        // U+f8d1
-        constexpr static inline std::string_view ContactMail{ "\xee\x83\x90" };                             // U+e0d0
-        constexpr static inline std::string_view ContactPage{ "\xef\x88\xae" };                             // U+f22e
-        constexpr static inline std::string_view ContactPhone{ "\xef\x83\x80" };                            // U+f0c0
-        constexpr static inline std::string_view ContactPhoneFilled{ "\xef\x83\x80" };                      // U+f0c0
-        constexpr static inline std::string_view ContactSupport{ "\xee\xa5\x8c" };                          // U+e94c
-        constexpr static inline std::string_view Contactless{ "\xee\xa9\xb1" };                             // U+ea71
-        constexpr static inline std::string_view ContactlessOff{ "\xef\xa1\x98" };                          // U+f858
-        constexpr static inline std::string_view Contacts{ "\xee\x82\xba" };                                // U+e0ba
-        constexpr static inline std::string_view ContactsProduct{ "\xee\xa6\x99" };                         // U+e999
-        constexpr static inline std::string_view ContentCopy{ "\xee\x85\x8d" };                             // U+e14d
-        constexpr static inline std::string_view ContentCut{ "\xee\x85\x8e" };                              // U+e14e
-        constexpr static inline std::string_view ContentPaste{ "\xee\x85\x8f" };                            // U+e14f
-        constexpr static inline std::string_view ContentPasteGo{ "\xee\xaa\x8e" };                          // U+ea8e
-        constexpr static inline std::string_view ContentPasteOff{ "\xee\x93\xb8" };                         // U+e4f8
-        constexpr static inline std::string_view ContentPasteSearch{ "\xee\xaa\x9b" };                      // U+ea9b
-        constexpr static inline std::string_view Contract{ "\xef\x96\xa0" };                                // U+f5a0
-        constexpr static inline std::string_view ContractDelete{ "\xef\x96\xa2" };                          // U+f5a2
-        constexpr static inline std::string_view ContractEdit{ "\xef\x96\xa1" };                            // U+f5a1
-        constexpr static inline std::string_view Contrast{ "\xee\xac\xb7" };                                // U+eb37
-        constexpr static inline std::string_view ContrastRtlOff{ "\xee\xb1\xb2" };                          // U+ec72
-        constexpr static inline std::string_view ControlCamera{ "\xee\x81\xb4" };                           // U+e074
-        constexpr static inline std::string_view ControlPoint{ "\xee\x8e\xba" };                            // U+e3ba
-        constexpr static inline std::string_view ControlPointDuplicate{ "\xee\x8e\xbb" };                   // U+e3bb
-        constexpr static inline std::string_view ControllerGen{ "\xee\xa0\xbd" };                           // U+e83d
-        constexpr static inline std::string_view ConversionPath{ "\xef\x83\x81" };                          // U+f0c1
-        constexpr static inline std::string_view ConversionPathOff{ "\xef\x9e\xb4" };                       // U+f7b4
-        constexpr static inline std::string_view ConveyorBelt{ "\xef\xa1\xa7" };                            // U+f867
-        constexpr static inline std::string_view Cookie{ "\xee\xaa\xac" };                                  // U+eaac
-        constexpr static inline std::string_view CookieOff{ "\xef\x9e\x9a" };                               // U+f79a
-        constexpr static inline std::string_view Cooking{ "\xee\x8a\xb6" };                                 // U+e2b6
-        constexpr static inline std::string_view CoolToDry{ "\xee\x89\xb6" };                               // U+e276
-        constexpr static inline std::string_view CopyAll{ "\xee\x8b\xac" };                                 // U+e2ec
-        constexpr static inline std::string_view Copyright{ "\xee\xa4\x8c" };                               // U+e90c
-        constexpr static inline std::string_view Coronavirus{ "\xef\x88\xa1" };                             // U+f221
-        constexpr static inline std::string_view CorporateFare{ "\xef\x87\x90" };                           // U+f1d0
-        constexpr static inline std::string_view Cottage{ "\xee\x96\x87" };                                 // U+e587
-        constexpr static inline std::string_view Counter_0{ "\xef\x9e\x85" };                               // U+f785
-        constexpr static inline std::string_view Counter_1{ "\xef\x9e\x84" };                               // U+f784
-        constexpr static inline std::string_view Counter_2{ "\xef\x9e\x83" };                               // U+f783
-        constexpr static inline std::string_view Counter_3{ "\xef\x9e\x82" };                               // U+f782
-        constexpr static inline std::string_view Counter_4{ "\xef\x9e\x81" };                               // U+f781
-        constexpr static inline std::string_view Counter_5{ "\xef\x9e\x80" };                               // U+f780
-        constexpr static inline std::string_view Counter_6{ "\xef\x9d\xbf" };                               // U+f77f
-        constexpr static inline std::string_view Counter_7{ "\xef\x9d\xbe" };                               // U+f77e
-        constexpr static inline std::string_view Counter_8{ "\xef\x9d\xbd" };                               // U+f77d
-        constexpr static inline std::string_view Counter_9{ "\xef\x9d\xbc" };                               // U+f77c
-        constexpr static inline std::string_view Countertops{ "\xef\x87\xb7" };                             // U+f1f7
-        constexpr static inline std::string_view Create{ "\xef\x82\x97" };                                  // U+f097
-        constexpr static inline std::string_view CreateNewFolder{ "\xee\x8b\x8c" };                         // U+e2cc
-        constexpr static inline std::string_view CreditCard{ "\xee\xa2\xa1" };                              // U+e8a1
-        constexpr static inline std::string_view CreditCardGear{ "\xef\x94\xad" };                          // U+f52d
-        constexpr static inline std::string_view CreditCardHeart{ "\xef\x94\xac" };                         // U+f52c
-        constexpr static inline std::string_view CreditCardOff{ "\xee\x93\xb4" };                           // U+e4f4
-        constexpr static inline std::string_view CreditScore{ "\xee\xbf\xb1" };                             // U+eff1
-        constexpr static inline std::string_view Crib{ "\xee\x96\x88" };                                    // U+e588
-        constexpr static inline std::string_view CrisisAlert{ "\xee\xaf\xa9" };                             // U+ebe9
-        constexpr static inline std::string_view Crop{ "\xee\x8e\xbe" };                                    // U+e3be
-        constexpr static inline std::string_view Crop_16_9{ "\xee\x8e\xbc" };                               // U+e3bc
-        constexpr static inline std::string_view Crop_3_2{ "\xee\x8e\xbd" };                                // U+e3bd
-        constexpr static inline std::string_view Crop_5_4{ "\xee\x8e\xbf" };                                // U+e3bf
-        constexpr static inline std::string_view Crop_7_5{ "\xee\x8f\x80" };                                // U+e3c0
-        constexpr static inline std::string_view Crop_9_16{ "\xef\x95\x89" };                               // U+f549
-        constexpr static inline std::string_view CropDin{ "\xee\x8f\x86" };                                 // U+e3c6
-        constexpr static inline std::string_view CropFree{ "\xee\x8f\x82" };                                // U+e3c2
-        constexpr static inline std::string_view CropLandscape{ "\xee\x8f\x83" };                           // U+e3c3
-        constexpr static inline std::string_view CropOriginal{ "\xee\x8f\xb4" };                            // U+e3f4
-        constexpr static inline std::string_view CropPortrait{ "\xee\x8f\x85" };                            // U+e3c5
-        constexpr static inline std::string_view CropRotate{ "\xee\x90\xb7" };                              // U+e437
-        constexpr static inline std::string_view CropSquare{ "\xee\x8f\x86" };                              // U+e3c6
-        constexpr static inline std::string_view Crossword{ "\xef\x97\xa5" };                               // U+f5e5
-        constexpr static inline std::string_view Crowdsource{ "\xee\xac\x98" };                             // U+eb18
-        constexpr static inline std::string_view CrueltyFree{ "\xee\x9e\x99" };                             // U+e799
-        constexpr static inline std::string_view Css{ "\xee\xae\x93" };                                     // U+eb93
-        constexpr static inline std::string_view Csv{ "\xee\x9b\x8f" };                                     // U+e6cf
-        constexpr static inline std::string_view CurrencyBitcoin{ "\xee\xaf\x85" };                         // U+ebc5
-        constexpr static inline std::string_view CurrencyExchange{ "\xee\xad\xb0" };                        // U+eb70
-        constexpr static inline std::string_view CurrencyFranc{ "\xee\xab\xba" };                           // U+eafa
-        constexpr static inline std::string_view CurrencyLira{ "\xee\xab\xaf" };                            // U+eaef
-        constexpr static inline std::string_view CurrencyPound{ "\xee\xab\xb1" };                           // U+eaf1
-        constexpr static inline std::string_view CurrencyRuble{ "\xee\xab\xac" };                           // U+eaec
-        constexpr static inline std::string_view CurrencyRupee{ "\xee\xab\xb7" };                           // U+eaf7
-        constexpr static inline std::string_view CurrencyYen{ "\xee\xab\xbb" };                             // U+eafb
-        constexpr static inline std::string_view CurrencyYuan{ "\xee\xab\xb9" };                            // U+eaf9
-        constexpr static inline std::string_view Curtains{ "\xee\xb0\x9e" };                                // U+ec1e
-        constexpr static inline std::string_view CurtainsClosed{ "\xee\xb0\x9d" };                          // U+ec1d
-        constexpr static inline std::string_view CustomTypography{ "\xee\x9c\xb2" };                        // U+e732
-        constexpr static inline std::string_view Cut{ "\xef\x82\x8b" };                                     // U+f08b
-        constexpr static inline std::string_view Cycle{ "\xef\xa1\x94" };                                   // U+f854
-        constexpr static inline std::string_view Cyclone{ "\xee\xaf\x95" };                                 // U+ebd5
-        constexpr static inline std::string_view Dangerous{ "\xee\xa6\x9a" };                               // U+e99a
-        constexpr static inline std::string_view DarkMode{ "\xee\x94\x9c" };                                // U+e51c
-        constexpr static inline std::string_view Dashboard{ "\xee\xa1\xb1" };                               // U+e871
-        constexpr static inline std::string_view DashboardCustomize{ "\xee\xa6\x9b" };                      // U+e99b
-        constexpr static inline std::string_view DataAlert{ "\xef\x9f\xb6" };                               // U+f7f6
-        constexpr static inline std::string_view DataArray{ "\xee\xab\x91" };                               // U+ead1
-        constexpr static inline std::string_view DataCheck{ "\xef\x9f\xb2" };                               // U+f7f2
-        constexpr static inline std::string_view DataExploration{ "\xee\x9d\xaf" };                         // U+e76f
-        constexpr static inline std::string_view DataInfoAlert{ "\xef\x9f\xb5" };                           // U+f7f5
-        constexpr static inline std::string_view DataLossPrevention{ "\xee\x8b\x9c" };                      // U+e2dc
-        constexpr static inline std::string_view DataObject{ "\xee\xab\x93" };                              // U+ead3
-        constexpr static inline std::string_view DataSaverOff{ "\xee\xbf\xb2" };                            // U+eff2
-        constexpr static inline std::string_view DataSaverOn{ "\xee\xbf\xb3" };                             // U+eff3
-        constexpr static inline std::string_view DataTable{ "\xee\xa6\x9c" };                               // U+e99c
-        constexpr static inline std::string_view DataThresholding{ "\xee\xae\x9f" };                        // U+eb9f
-        constexpr static inline std::string_view DataUsage{ "\xee\xbf\xb2" };                               // U+eff2
-        constexpr static inline std::string_view Database{ "\xef\x88\x8e" };                                // U+f20e
-        constexpr static inline std::string_view Dataset{ "\xef\xa3\xae" };                                 // U+f8ee
-        constexpr static inline std::string_view DatasetLinked{ "\xef\xa3\xaf" };                           // U+f8ef
-        constexpr static inline std::string_view DateRange{ "\xee\xa4\x96" };                               // U+e916
-        constexpr static inline std::string_view Deblur{ "\xee\xad\xb7" };                                  // U+eb77
-        constexpr static inline std::string_view Deceased{ "\xee\x82\xa5" };                                // U+e0a5
-        constexpr static inline std::string_view DecimalDecrease{ "\xef\xa0\xad" };                         // U+f82d
-        constexpr static inline std::string_view DecimalIncrease{ "\xef\xa0\xac" };                         // U+f82c
-        constexpr static inline std::string_view Deck{ "\xee\xa9\x82" };                                    // U+ea42
-        constexpr static inline std::string_view Dehaze{ "\xee\x8f\x87" };                                  // U+e3c7
-        constexpr static inline std::string_view Delete{ "\xee\xa4\xae" };                                  // U+e92e
-        constexpr static inline std::string_view DeleteForever{ "\xee\xa4\xab" };                           // U+e92b
-        constexpr static inline std::string_view DeleteHistory{ "\xef\x94\x98" };                           // U+f518
-        constexpr static inline std::string_view DeleteOutline{ "\xee\xa4\xae" };                           // U+e92e
-        constexpr static inline std::string_view DeleteSweep{ "\xee\x85\xac" };                             // U+e16c
-        constexpr static inline std::string_view Demography{ "\xee\x92\x89" };                              // U+e489
-        constexpr static inline std::string_view DensityLarge{ "\xee\xae\xa9" };                            // U+eba9
-        constexpr static inline std::string_view DensityMedium{ "\xee\xae\x9e" };                           // U+eb9e
-        constexpr static inline std::string_view DensitySmall{ "\xee\xae\xa8" };                            // U+eba8
-        constexpr static inline std::string_view Dentistry{ "\xee\x82\xa6" };                               // U+e0a6
-        constexpr static inline std::string_view DepartureBoard{ "\xee\x95\xb6" };                          // U+e576
-        constexpr static inline std::string_view DeployedCode{ "\xef\x9c\xa0" };                            // U+f720
-        constexpr static inline std::string_view DeployedCodeAccount{ "\xef\x94\x9b" };                     // U+f51b
-        constexpr static inline std::string_view DeployedCodeAlert{ "\xef\x97\xb2" };                       // U+f5f2
-        constexpr static inline std::string_view DeployedCodeHistory{ "\xef\x97\xb3" };                     // U+f5f3
-        constexpr static inline std::string_view DeployedCodeUpdate{ "\xef\x97\xb4" };                      // U+f5f4
-        constexpr static inline std::string_view Dermatology{ "\xee\x82\xa7" };                             // U+e0a7
-        constexpr static inline std::string_view Description{ "\xee\xa1\xb3" };                             // U+e873
-        constexpr static inline std::string_view Deselect{ "\xee\xae\xb6" };                                // U+ebb6
-        constexpr static inline std::string_view DesignServices{ "\xef\x84\x8a" };                          // U+f10a
-        constexpr static inline std::string_view Desk{ "\xef\xa3\xb4" };                                    // U+f8f4
-        constexpr static inline std::string_view Deskphone{ "\xef\x9f\xba" };                               // U+f7fa
-        constexpr static inline std::string_view DesktopAccessDisabled{ "\xee\xa6\x9d" };                   // U+e99d
-        constexpr static inline std::string_view DesktopMac{ "\xee\x8c\x8b" };                              // U+e30b
-        constexpr static inline std::string_view DesktopWindows{ "\xee\x8c\x8c" };                          // U+e30c
-        constexpr static inline std::string_view Destruction{ "\xef\x96\x85" };                             // U+f585
-        constexpr static inline std::string_view Details{ "\xee\x8f\x88" };                                 // U+e3c8
-        constexpr static inline std::string_view DetectionAndZone{ "\xee\x8a\x9f" };                        // U+e29f
-        constexpr static inline std::string_view Detector{ "\xee\x8a\x82" };                                // U+e282
-        constexpr static inline std::string_view DetectorAlarm{ "\xee\x87\xb7" };                           // U+e1f7
-        constexpr static inline std::string_view DetectorBattery{ "\xee\x88\x84" };                         // U+e204
-        constexpr static inline std::string_view DetectorCo{ "\xee\x8a\xaf" };                              // U+e2af
-        constexpr static inline std::string_view DetectorOffline{ "\xee\x88\xa3" };                         // U+e223
-        constexpr static inline std::string_view DetectorSmoke{ "\xee\x8a\x85" };                           // U+e285
-        constexpr static inline std::string_view DetectorStatus{ "\xee\x87\xa8" };                          // U+e1e8
-        constexpr static inline std::string_view DeveloperBoard{ "\xee\x8c\x8d" };                          // U+e30d
-        constexpr static inline std::string_view DeveloperBoardOff{ "\xee\x93\xbf" };                       // U+e4ff
-        constexpr static inline std::string_view DeveloperGuide{ "\xee\xa6\x9e" };                          // U+e99e
-        constexpr static inline std::string_view DeveloperMode{ "\xee\x86\xb0" };                           // U+e1b0
-        constexpr static inline std::string_view DeveloperModeTv{ "\xee\xa1\xb4" };                         // U+e874
-        constexpr static inline std::string_view DeviceHub{ "\xee\x8c\xb5" };                               // U+e335
-        constexpr static inline std::string_view DeviceReset{ "\xee\xa2\xb3" };                             // U+e8b3
-        constexpr static inline std::string_view DeviceThermostat{ "\xee\x87\xbf" };                        // U+e1ff
-        constexpr static inline std::string_view DeviceUnknown{ "\xee\x8c\xb9" };                           // U+e339
-        constexpr static inline std::string_view Devices{ "\xee\x8c\xa6" };                                 // U+e326
-        constexpr static inline std::string_view DevicesFold{ "\xee\xaf\x9e" };                             // U+ebde
-        constexpr static inline std::string_view DevicesOff{ "\xef\x9e\xa5" };                              // U+f7a5
-        constexpr static inline std::string_view DevicesOther{ "\xee\x8c\xb7" };                            // U+e337
-        constexpr static inline std::string_view DevicesWearables{ "\xef\x9a\xab" };                        // U+f6ab
-        constexpr static inline std::string_view DewPoint{ "\xef\xa1\xb9" };                                // U+f879
-        constexpr static inline std::string_view Diagnosis{ "\xee\x82\xa8" };                               // U+e0a8
-        constexpr static inline std::string_view DialerSip{ "\xee\x82\xbb" };                               // U+e0bb
-        constexpr static inline std::string_view Dialogs{ "\xee\xa6\x9f" };                                 // U+e99f
-        constexpr static inline std::string_view Dialpad{ "\xee\x82\xbc" };                                 // U+e0bc
-        constexpr static inline std::string_view Diamond{ "\xee\xab\x95" };                                 // U+ead5
-        constexpr static inline std::string_view Dictionary{ "\xef\x94\xb9" };                              // U+f539
-        constexpr static inline std::string_view Difference{ "\xee\xad\xbd" };                              // U+eb7d
-        constexpr static inline std::string_view DigitalOutOfHome{ "\xef\x87\x9e" };                        // U+f1de
-        constexpr static inline std::string_view DigitalWellbeing{ "\xee\xbe\x86" };                        // U+ef86
-        constexpr static inline std::string_view Dining{ "\xee\xbf\xb4" };                                  // U+eff4
-        constexpr static inline std::string_view DinnerDining{ "\xee\xa9\x97" };                            // U+ea57
-        constexpr static inline std::string_view Directions{ "\xee\x94\xae" };                              // U+e52e
-        constexpr static inline std::string_view DirectionsAlt{ "\xef\xa2\x80" };                           // U+f880
-        constexpr static inline std::string_view DirectionsAltOff{ "\xef\xa2\x81" };                        // U+f881
-        constexpr static inline std::string_view DirectionsBike{ "\xee\x94\xaf" };                          // U+e52f
-        constexpr static inline std::string_view DirectionsBoat{ "\xee\xbf\xb5" };                          // U+eff5
-        constexpr static inline std::string_view DirectionsBoatFilled{ "\xee\xbf\xb5" };                    // U+eff5
-        constexpr static inline std::string_view DirectionsBus{ "\xee\xbf\xb6" };                           // U+eff6
-        constexpr static inline std::string_view DirectionsBusFilled{ "\xee\xbf\xb6" };                     // U+eff6
-        constexpr static inline std::string_view DirectionsCar{ "\xee\xbf\xb7" };                           // U+eff7
-        constexpr static inline std::string_view DirectionsCarFilled{ "\xee\xbf\xb7" };                     // U+eff7
-        constexpr static inline std::string_view DirectionsOff{ "\xef\x84\x8f" };                           // U+f10f
-        constexpr static inline std::string_view DirectionsRailway{ "\xee\xbf\xb8" };                       // U+eff8
-        constexpr static inline std::string_view DirectionsRailwayFilled{ "\xee\xbf\xb8" };                 // U+eff8
-        constexpr static inline std::string_view DirectionsRun{ "\xee\x95\xa6" };                           // U+e566
-        constexpr static inline std::string_view DirectionsSubway{ "\xee\xbf\xba" };                        // U+effa
-        constexpr static inline std::string_view DirectionsSubwayFilled{ "\xee\xbf\xba" };                  // U+effa
-        constexpr static inline std::string_view DirectionsTransit{ "\xee\xbf\xba" };                       // U+effa
-        constexpr static inline std::string_view DirectionsTransitFilled{ "\xee\xbf\xba" };                 // U+effa
-        constexpr static inline std::string_view DirectionsWalk{ "\xee\x94\xb6" };                          // U+e536
-        constexpr static inline std::string_view DirectorySync{ "\xee\x8e\x94" };                           // U+e394
-        constexpr static inline std::string_view DirtyLens{ "\xee\xbd\x8b" };                               // U+ef4b
-        constexpr static inline std::string_view DisabledByDefault{ "\xef\x88\xb0" };                       // U+f230
-        constexpr static inline std::string_view DisabledVisible{ "\xee\x9d\xae" };                         // U+e76e
-        constexpr static inline std::string_view DiscFull{ "\xee\x98\x90" };                                // U+e610
-        constexpr static inline std::string_view DiscoverTune{ "\xee\x80\x98" };                            // U+e018
-        constexpr static inline std::string_view Dishwasher{ "\xee\xa6\xa0" };                              // U+e9a0
-        constexpr static inline std::string_view DishwasherGen{ "\xee\xa0\xb2" };                           // U+e832
-        constexpr static inline std::string_view DisplayExternalInput{ "\xef\x9f\xa7" };                    // U+f7e7
-        constexpr static inline std::string_view DisplaySettings{ "\xee\xae\x97" };                         // U+eb97
-        constexpr static inline std::string_view Distance{ "\xef\x9b\xaa" };                                // U+f6ea
-        constexpr static inline std::string_view Diversity_1{ "\xef\xa3\x97" };                             // U+f8d7
-        constexpr static inline std::string_view Diversity_2{ "\xef\xa3\x98" };                             // U+f8d8
-        constexpr static inline std::string_view Diversity_3{ "\xef\xa3\x99" };                             // U+f8d9
-        constexpr static inline std::string_view Diversity_4{ "\xef\xa1\x97" };                             // U+f857
-        constexpr static inline std::string_view Dns{ "\xee\xa1\xb5" };                                     // U+e875
-        constexpr static inline std::string_view DoDisturb{ "\xef\x82\x8c" };                               // U+f08c
-        constexpr static inline std::string_view DoDisturbAlt{ "\xef\x82\x8d" };                            // U+f08d
-        constexpr static inline std::string_view DoDisturbOff{ "\xef\x82\x8e" };                            // U+f08e
-        constexpr static inline std::string_view DoDisturbOn{ "\xef\x82\x8f" };                             // U+f08f
-        constexpr static inline std::string_view DoNotDisturb{ "\xef\x82\x8d" };                            // U+f08d
-        constexpr static inline std::string_view DoNotDisturbAlt{ "\xef\x82\x8c" };                         // U+f08c
-        constexpr static inline std::string_view DoNotDisturbOff{ "\xef\x82\x8e" };                         // U+f08e
-        constexpr static inline std::string_view DoNotDisturbOn{ "\xef\x82\x8f" };                          // U+f08f
-        constexpr static inline std::string_view DoNotDisturbOnTotalSilence{ "\xee\xbf\xbb" };              // U+effb
-        constexpr static inline std::string_view DoNotStep{ "\xef\x86\x9f" };                               // U+f19f
-        constexpr static inline std::string_view DoNotTouch{ "\xef\x86\xb0" };                              // U+f1b0
-        constexpr static inline std::string_view Dock{ "\xee\x8c\x8e" };                                    // U+e30e
-        constexpr static inline std::string_view DockToBottom{ "\xef\x9f\xa6" };                            // U+f7e6
-        constexpr static inline std::string_view DockToLeft{ "\xef\x9f\xa5" };                              // U+f7e5
-        constexpr static inline std::string_view DockToRight{ "\xef\x9f\xa4" };                             // U+f7e4
-        constexpr static inline std::string_view DocsAddOn{ "\xef\x83\x82" };                               // U+f0c2
-        constexpr static inline std::string_view DocsAppsScript{ "\xef\x83\x83" };                          // U+f0c3
-        constexpr static inline std::string_view DocumentScanner{ "\xee\x97\xba" };                         // U+e5fa
-        constexpr static inline std::string_view Domain{ "\xee\x9f\xae" };                                  // U+e7ee
-        constexpr static inline std::string_view DomainAdd{ "\xee\xad\xa2" };                               // U+eb62
-        constexpr static inline std::string_view DomainDisabled{ "\xee\x83\xaf" };                          // U+e0ef
-        constexpr static inline std::string_view DomainVerification{ "\xee\xbd\x8c" };                      // U+ef4c
-        constexpr static inline std::string_view DomainVerificationOff{ "\xef\x9e\xb0" };                   // U+f7b0
-        constexpr static inline std::string_view DominoMask{ "\xef\x97\xa4" };                              // U+f5e4
-        constexpr static inline std::string_view Done{ "\xee\xa1\xb6" };                                    // U+e876
-        constexpr static inline std::string_view DoneAll{ "\xee\xa1\xb7" };                                 // U+e877
-        constexpr static inline std::string_view DoneOutline{ "\xee\xa4\xaf" };                             // U+e92f
-        constexpr static inline std::string_view DonutLarge{ "\xee\xa4\x97" };                              // U+e917
-        constexpr static inline std::string_view DonutSmall{ "\xee\xa4\x98" };                              // U+e918
-        constexpr static inline std::string_view DoorBack{ "\xee\xbf\xbc" };                                // U+effc
-        constexpr static inline std::string_view DoorFront{ "\xee\xbf\xbd" };                               // U+effd
-        constexpr static inline std::string_view DoorOpen{ "\xee\x9d\xbc" };                                // U+e77c
-        constexpr static inline std::string_view DoorSensor{ "\xee\x8a\x8a" };                              // U+e28a
-        constexpr static inline std::string_view DoorSliding{ "\xee\xbf\xbe" };                             // U+effe
-        constexpr static inline std::string_view Doorbell{ "\xee\xbf\xbf" };                                // U+efff
-        constexpr static inline std::string_view Doorbell_3p{ "\xee\x87\xa7" };                             // U+e1e7
-        constexpr static inline std::string_view DoorbellChime{ "\xee\x87\xb3" };                           // U+e1f3
-        constexpr static inline std::string_view DoubleArrow{ "\xee\xa9\x90" };                             // U+ea50
-        constexpr static inline std::string_view DownhillSkiing{ "\xee\x94\x89" };                          // U+e509
-        constexpr static inline std::string_view Download{ "\xef\x82\x90" };                                // U+f090
-        constexpr static inline std::string_view Download_2{ "\xef\x94\xa3" };                              // U+f523
-        constexpr static inline std::string_view DownloadDone{ "\xef\x82\x91" };                            // U+f091
-        constexpr static inline std::string_view DownloadForOffline{ "\xef\x80\x80" };                      // U+f000
-        constexpr static inline std::string_view Downloading{ "\xef\x80\x81" };                             // U+f001
-        constexpr static inline std::string_view Draft{ "\xee\x99\xad" };                                   // U+e66d
-        constexpr static inline std::string_view DraftOrders{ "\xee\x9e\xb3" };                             // U+e7b3
-        constexpr static inline std::string_view Drafts{ "\xee\x85\x91" };                                  // U+e151
-        constexpr static inline std::string_view DragClick{ "\xef\x9c\x9f" };                               // U+f71f
-        constexpr static inline std::string_view DragHandle{ "\xee\x89\x9d" };                              // U+e25d
-        constexpr static inline std::string_view DragIndicator{ "\xee\xa5\x85" };                           // U+e945
-        constexpr static inline std::string_view DragPan{ "\xef\x9c\x9e" };                                 // U+f71e
-        constexpr static inline std::string_view Draw{ "\xee\x9d\x86" };                                    // U+e746
-        constexpr static inline std::string_view DrawAbstract{ "\xef\x9f\xb8" };                            // U+f7f8
-        constexpr static inline std::string_view DrawCollage{ "\xef\x9f\xb7" };                             // U+f7f7
-        constexpr static inline std::string_view DrawingRecognition{ "\xee\xac\x80" };                      // U+eb00
-        constexpr static inline std::string_view Dresser{ "\xee\x88\x90" };                                 // U+e210
-        constexpr static inline std::string_view DriveEta{ "\xee\xbf\xb7" };                                // U+eff7
-        constexpr static inline std::string_view DriveFileMove{ "\xee\xa6\xa1" };                           // U+e9a1
-        constexpr static inline std::string_view DriveFileMoveOutline{ "\xee\xa6\xa1" };                    // U+e9a1
-        constexpr static inline std::string_view DriveFileMoveRtl{ "\xee\xa6\xa1" };                        // U+e9a1
-        constexpr static inline std::string_view DriveFileRenameOutline{ "\xee\xa6\xa2" };                  // U+e9a2
-        constexpr static inline std::string_view DriveFolderUpload{ "\xee\xa6\xa3" };                       // U+e9a3
-        constexpr static inline std::string_view DriveFusiontable{ "\xee\x99\xb8" };                        // U+e678
-        constexpr static inline std::string_view Dropdown{ "\xee\xa6\xa4" };                                // U+e9a4
-        constexpr static inline std::string_view Dry{ "\xef\x86\xb3" };                                     // U+f1b3
-        constexpr static inline std::string_view DryCleaning{ "\xee\xa9\x98" };                             // U+ea58
-        constexpr static inline std::string_view DualScreen{ "\xef\x9b\x8f" };                              // U+f6cf
-        constexpr static inline std::string_view Duo{ "\xee\xa6\xa5" };                                     // U+e9a5
-        constexpr static inline std::string_view Dvr{ "\xee\x86\xb2" };                                     // U+e1b2
-        constexpr static inline std::string_view DynamicFeed{ "\xee\xa8\x94" };                             // U+ea14
-        constexpr static inline std::string_view DynamicForm{ "\xef\x86\xbf" };                             // U+f1bf
-        constexpr static inline std::string_view E911Avatar{ "\xef\x84\x9a" };                              // U+f11a
-        constexpr static inline std::string_view E911Emergency{ "\xef\x84\x99" };                           // U+f119
-        constexpr static inline std::string_view EMobiledata{ "\xef\x80\x82" };                             // U+f002
-        constexpr static inline std::string_view EMobiledataBadge{ "\xef\x9f\xa3" };                        // U+f7e3
-        constexpr static inline std::string_view Earbuds{ "\xef\x80\x83" };                                 // U+f003
-        constexpr static inline std::string_view EarbudsBattery{ "\xef\x80\x84" };                          // U+f004
-        constexpr static inline std::string_view EarlyOn{ "\xee\x8a\xba" };                                 // U+e2ba
-        constexpr static inline std::string_view Earthquake{ "\xef\x99\x8f" };                              // U+f64f
-        constexpr static inline std::string_view East{ "\xef\x87\x9f" };                                    // U+f1df
-        constexpr static inline std::string_view Ecg{ "\xef\xa0\x8f" };                                     // U+f80f
-        constexpr static inline std::string_view EcgHeart{ "\xef\x9b\xa9" };                                // U+f6e9
-        constexpr static inline std::string_view Eco{ "\xee\xa8\xb5" };                                     // U+ea35
-        constexpr static inline std::string_view Eda{ "\xef\x9b\xa8" };                                     // U+f6e8
-        constexpr static inline std::string_view EdgesensorHigh{ "\xef\x80\x85" };                          // U+f005
-        constexpr static inline std::string_view EdgesensorLow{ "\xef\x80\x86" };                           // U+f006
-        constexpr static inline std::string_view Edit{ "\xef\x82\x97" };                                    // U+f097
-        constexpr static inline std::string_view EditAttributes{ "\xee\x95\xb8" };                          // U+e578
-        constexpr static inline std::string_view EditCalendar{ "\xee\x9d\x82" };                            // U+e742
-        constexpr static inline std::string_view EditDocument{ "\xef\xa2\x8c" };                            // U+f88c
-        constexpr static inline std::string_view EditLocation{ "\xee\x95\xa8" };                            // U+e568
-        constexpr static inline std::string_view EditLocationAlt{ "\xee\x87\x85" };                         // U+e1c5
-        constexpr static inline std::string_view EditNote{ "\xee\x9d\x85" };                                // U+e745
-        constexpr static inline std::string_view EditNotifications{ "\xee\x94\xa5" };                       // U+e525
-        constexpr static inline std::string_view EditOff{ "\xee\xa5\x90" };                                 // U+e950
-        constexpr static inline std::string_view EditRoad{ "\xee\xbd\x8d" };                                // U+ef4d
-        constexpr static inline std::string_view EditSquare{ "\xef\xa2\x8d" };                              // U+f88d
-        constexpr static inline std::string_view EditorChoice{ "\xef\x94\xa8" };                            // U+f528
-        constexpr static inline std::string_view Egg{ "\xee\xab\x8c" };                                     // U+eacc
-        constexpr static inline std::string_view EggAlt{ "\xee\xab\x88" };                                  // U+eac8
-        constexpr static inline std::string_view Eject{ "\xee\xa3\xbb" };                                   // U+e8fb
-        constexpr static inline std::string_view Elderly{ "\xef\x88\x9a" };                                 // U+f21a
-        constexpr static inline std::string_view ElderlyWoman{ "\xee\xad\xa9" };                            // U+eb69
-        constexpr static inline std::string_view ElectricBike{ "\xee\xac\x9b" };                            // U+eb1b
-        constexpr static inline std::string_view ElectricBolt{ "\xee\xb0\x9c" };                            // U+ec1c
-        constexpr static inline std::string_view ElectricCar{ "\xee\xac\x9c" };                             // U+eb1c
-        constexpr static inline std::string_view ElectricMeter{ "\xee\xb0\x9b" };                           // U+ec1b
-        constexpr static inline std::string_view ElectricMoped{ "\xee\xac\x9d" };                           // U+eb1d
-        constexpr static inline std::string_view ElectricRickshaw{ "\xee\xac\x9e" };                        // U+eb1e
-        constexpr static inline std::string_view ElectricScooter{ "\xee\xac\x9f" };                         // U+eb1f
-        constexpr static inline std::string_view ElectricalServices{ "\xef\x84\x82" };                      // U+f102
-        constexpr static inline std::string_view Elevation{ "\xef\x9b\xa7" };                               // U+f6e7
-        constexpr static inline std::string_view Elevator{ "\xef\x86\xa0" };                                // U+f1a0
-        constexpr static inline std::string_view Email{ "\xee\x85\x99" };                                   // U+e159
-        constexpr static inline std::string_view Emergency{ "\xee\x87\xab" };                               // U+e1eb
-        constexpr static inline std::string_view EmergencyHeat{ "\xef\x85\x9d" };                           // U+f15d
-        constexpr static inline std::string_view EmergencyHeat_2{ "\xef\x93\xa5" };                         // U+f4e5
-        constexpr static inline std::string_view EmergencyHome{ "\xee\xa0\xaa" };                           // U+e82a
-        constexpr static inline std::string_view EmergencyRecording{ "\xee\xaf\xb4" };                      // U+ebf4
-        constexpr static inline std::string_view EmergencyShare{ "\xee\xaf\xb6" };                          // U+ebf6
-        constexpr static inline std::string_view EmergencyShareOff{ "\xef\x96\x9e" };                       // U+f59e
-        constexpr static inline std::string_view EmojiEmotions{ "\xee\xa8\xa2" };                           // U+ea22
-        constexpr static inline std::string_view EmojiEvents{ "\xee\xa8\xa3" };                             // U+ea23
-        constexpr static inline std::string_view EmojiFlags{ "\xef\x83\x86" };                              // U+f0c6
-        constexpr static inline std::string_view EmojiFoodBeverage{ "\xee\xa8\x9b" };                       // U+ea1b
-        constexpr static inline std::string_view EmojiNature{ "\xee\xa8\x9c" };                             // U+ea1c
-        constexpr static inline std::string_view EmojiObjects{ "\xee\xa8\xa4" };                            // U+ea24
-        constexpr static inline std::string_view EmojiPeople{ "\xee\xa8\x9d" };                             // U+ea1d
-        constexpr static inline std::string_view EmojiSymbols{ "\xee\xa8\x9e" };                            // U+ea1e
-        constexpr static inline std::string_view EmojiTransportation{ "\xee\xa8\x9f" };                     // U+ea1f
-        constexpr static inline std::string_view Emoticon{ "\xee\x97\xb3" };                                // U+e5f3
-        constexpr static inline std::string_view EmptyDashboard{ "\xef\xa1\x84" };                          // U+f844
-        constexpr static inline std::string_view Enable{ "\xef\x86\x88" };                                  // U+f188
-        constexpr static inline std::string_view Encrypted{ "\xee\x96\x93" };                               // U+e593
-        constexpr static inline std::string_view Endocrinology{ "\xee\x82\xa9" };                           // U+e0a9
-        constexpr static inline std::string_view Energy{ "\xee\xa6\xa6" };                                  // U+e9a6
-        constexpr static inline std::string_view EnergyProgramSaving{ "\xef\x85\x9f" };                     // U+f15f
-        constexpr static inline std::string_view EnergyProgramTimeUsed{ "\xef\x85\xa1" };                   // U+f161
-        constexpr static inline std::string_view EnergySavingsLeaf{ "\xee\xb0\x9a" };                       // U+ec1a
-        constexpr static inline std::string_view Engineering{ "\xee\xa8\xbd" };                             // U+ea3d
-        constexpr static inline std::string_view EnhancedEncryption{ "\xee\x98\xbf" };                      // U+e63f
-        constexpr static inline std::string_view Ent{ "\xee\x82\xaa" };                                     // U+e0aa
-        constexpr static inline std::string_view Enterprise{ "\xee\x9c\x8e" };                              // U+e70e
-        constexpr static inline std::string_view EnterpriseOff{ "\xee\xad\x8d" };                           // U+eb4d
-        constexpr static inline std::string_view Equal{ "\xef\x9d\xbb" };                                   // U+f77b
-        constexpr static inline std::string_view Equalizer{ "\xee\x80\x9d" };                               // U+e01d
-        constexpr static inline std::string_view Error{ "\xef\xa2\xb6" };                                   // U+f8b6
-        constexpr static inline std::string_view ErrorCircleRounded{ "\xef\xa2\xb6" };                      // U+f8b6
-        constexpr static inline std::string_view ErrorMed{ "\xee\x92\x9b" };                                // U+e49b
-        constexpr static inline std::string_view ErrorOutline{ "\xef\xa2\xb6" };                            // U+f8b6
-        constexpr static inline std::string_view Escalator{ "\xef\x86\xa1" };                               // U+f1a1
-        constexpr static inline std::string_view EscalatorWarning{ "\xef\x86\xac" };                        // U+f1ac
-        constexpr static inline std::string_view Euro{ "\xee\xa8\x95" };                                    // U+ea15
-        constexpr static inline std::string_view EuroSymbol{ "\xee\xa4\xa6" };                              // U+e926
-        constexpr static inline std::string_view EvCharger{ "\xee\x95\xad" };                               // U+e56d
-        constexpr static inline std::string_view EvMobiledataBadge{ "\xef\x9f\xa2" };                       // U+f7e2
-        constexpr static inline std::string_view EvShadow{ "\xee\xbe\x8f" };                                // U+ef8f
-        constexpr static inline std::string_view EvShadowAdd{ "\xef\x96\x80" };                             // U+f580
-        constexpr static inline std::string_view EvShadowMinus{ "\xef\x95\xbf" };                           // U+f57f
-        constexpr static inline std::string_view EvStation{ "\xee\x95\xad" };                               // U+e56d
-        constexpr static inline std::string_view Event{ "\xee\xa1\xb8" };                                   // U+e878
-        constexpr static inline std::string_view EventAvailable{ "\xee\x98\x94" };                          // U+e614
-        constexpr static inline std::string_view EventBusy{ "\xee\x98\x95" };                               // U+e615
-        constexpr static inline std::string_view EventList{ "\xef\x9a\x83" };                               // U+f683
-        constexpr static inline std::string_view EventNote{ "\xee\x98\x96" };                               // U+e616
-        constexpr static inline std::string_view EventRepeat{ "\xee\xad\xbb" };                             // U+eb7b
-        constexpr static inline std::string_view EventSeat{ "\xee\xa4\x83" };                               // U+e903
-        constexpr static inline std::string_view EventUpcoming{ "\xef\x88\xb8" };                           // U+f238
-        constexpr static inline std::string_view Exclamation{ "\xef\x88\xaf" };                             // U+f22f
-        constexpr static inline std::string_view Exercise{ "\xef\x9b\xa6" };                                // U+f6e6
-        constexpr static inline std::string_view ExitToApp{ "\xee\xa1\xb9" };                               // U+e879
-        constexpr static inline std::string_view Expand{ "\xee\xa5\x8f" };                                  // U+e94f
-        constexpr static inline std::string_view ExpandAll{ "\xee\xa5\x86" };                               // U+e946
-        constexpr static inline std::string_view ExpandCircleDown{ "\xee\x9f\x8d" };                        // U+e7cd
-        constexpr static inline std::string_view ExpandCircleRight{ "\xef\x96\x91" };                       // U+f591
-        constexpr static inline std::string_view ExpandCircleUp{ "\xef\x97\x92" };                          // U+f5d2
-        constexpr static inline std::string_view ExpandContent{ "\xef\xa0\xb0" };                           // U+f830
-        constexpr static inline std::string_view ExpandLess{ "\xee\x97\x8e" };                              // U+e5ce
-        constexpr static inline std::string_view ExpandMore{ "\xee\x97\x8f" };                              // U+e5cf
-        constexpr static inline std::string_view Experiment{ "\xee\x9a\x86" };                              // U+e686
-        constexpr static inline std::string_view Explicit{ "\xee\x80\x9e" };                                // U+e01e
-        constexpr static inline std::string_view Explore{ "\xee\xa1\xba" };                                 // U+e87a
-        constexpr static inline std::string_view ExploreNearby{ "\xee\x94\xb8" };                           // U+e538
-        constexpr static inline std::string_view ExploreOff{ "\xee\xa6\xa8" };                              // U+e9a8
-        constexpr static inline std::string_view Explosion{ "\xef\x9a\x85" };                               // U+f685
-        constexpr static inline std::string_view ExportNotes{ "\xee\x82\xac" };                             // U+e0ac
-        constexpr static inline std::string_view Exposure{ "\xee\x8f\xb6" };                                // U+e3f6
-        constexpr static inline std::string_view ExposureNeg_1{ "\xee\x8f\x8b" };                           // U+e3cb
-        constexpr static inline std::string_view ExposureNeg_2{ "\xee\x8f\x8c" };                           // U+e3cc
-        constexpr static inline std::string_view ExposurePlus_1{ "\xee\xa0\x80" };                          // U+e800
-        constexpr static inline std::string_view ExposurePlus_2{ "\xee\x8f\x8e" };                          // U+e3ce
-        constexpr static inline std::string_view ExposureZero{ "\xee\x8f\x8f" };                            // U+e3cf
-        constexpr static inline std::string_view Extension{ "\xee\xa1\xbb" };                               // U+e87b
-        constexpr static inline std::string_view ExtensionOff{ "\xee\x93\xb5" };                            // U+e4f5
-        constexpr static inline std::string_view Eyeglasses{ "\xef\x9b\xae" };                              // U+f6ee
-        constexpr static inline std::string_view Face{ "\xef\x80\x88" };                                    // U+f008
-        constexpr static inline std::string_view Face_2{ "\xef\xa3\x9a" };                                  // U+f8da
-        constexpr static inline std::string_view Face_3{ "\xef\xa3\x9b" };                                  // U+f8db
-        constexpr static inline std::string_view Face_4{ "\xef\xa3\x9c" };                                  // U+f8dc
-        constexpr static inline std::string_view Face_5{ "\xef\xa3\x9d" };                                  // U+f8dd
-        constexpr static inline std::string_view Face_6{ "\xef\xa3\x9e" };                                  // U+f8de
-        constexpr static inline std::string_view FaceRetouchingNatural{ "\xee\xbd\x8e" };                   // U+ef4e
-        constexpr static inline std::string_view FaceRetouchingOff{ "\xef\x80\x87" };                       // U+f007
-        constexpr static inline std::string_view FaceUnlock{ "\xef\x80\x88" };                              // U+f008
-        constexpr static inline std::string_view FactCheck{ "\xef\x83\x85" };                               // U+f0c5
-        constexpr static inline std::string_view Factory{ "\xee\xae\xbc" };                                 // U+ebbc
-        constexpr static inline std::string_view Falling{ "\xef\x98\x8d" };                                 // U+f60d
-        constexpr static inline std::string_view FamiliarFaceAndZone{ "\xee\x88\x9c" };                     // U+e21c
-        constexpr static inline std::string_view FamilyHistory{ "\xee\x82\xad" };                           // U+e0ad
-        constexpr static inline std::string_view FamilyHome{ "\xee\xac\xa6" };                              // U+eb26
-        constexpr static inline std::string_view FamilyLink{ "\xee\xac\x99" };                              // U+eb19
-        constexpr static inline std::string_view FamilyRestroom{ "\xef\x86\xa2" };                          // U+f1a2
-        constexpr static inline std::string_view FamilyStar{ "\xef\x94\xa7" };                              // U+f527
-        constexpr static inline std::string_view FarsightDigital{ "\xef\x95\x99" };                         // U+f559
-        constexpr static inline std::string_view FastForward{ "\xee\x80\x9f" };                             // U+e01f
-        constexpr static inline std::string_view FastRewind{ "\xee\x80\xa0" };                              // U+e020
-        constexpr static inline std::string_view Fastfood{ "\xee\x95\xba" };                                // U+e57a
-        constexpr static inline std::string_view Faucet{ "\xee\x89\xb8" };                                  // U+e278
-        constexpr static inline std::string_view Favorite{ "\xee\xa1\xbe" };                                // U+e87e
-        constexpr static inline std::string_view FavoriteBorder{ "\xee\xa1\xbe" };                          // U+e87e
-        constexpr static inline std::string_view Fax{ "\xee\xab\x98" };                                     // U+ead8
-        constexpr static inline std::string_view FeatureSearch{ "\xee\xa6\xa9" };                           // U+e9a9
-        constexpr static inline std::string_view FeaturedPlayList{ "\xee\x81\xad" };                        // U+e06d
-        constexpr static inline std::string_view FeaturedSeasonalAndGifts{ "\xee\xbe\x91" };                // U+ef91
-        constexpr static inline std::string_view FeaturedVideo{ "\xee\x81\xae" };                           // U+e06e
-        constexpr static inline std::string_view Feed{ "\xef\x80\x89" };                                    // U+f009
-        constexpr static inline std::string_view Feedback{ "\xee\xa1\xbf" };                                // U+e87f
-        constexpr static inline std::string_view Female{ "\xee\x96\x90" };                                  // U+e590
-        constexpr static inline std::string_view Femur{ "\xef\xa2\x91" };                                   // U+f891
-        constexpr static inline std::string_view FemurAlt{ "\xef\xa2\x92" };                                // U+f892
-        constexpr static inline std::string_view Fence{ "\xef\x87\xb6" };                                   // U+f1f6
-        constexpr static inline std::string_view Fertile{ "\xef\x9b\xa5" };                                 // U+f6e5
-        constexpr static inline std::string_view Festival{ "\xee\xa9\xa8" };                                // U+ea68
-        constexpr static inline std::string_view FiberDvr{ "\xee\x81\x9d" };                                // U+e05d
-        constexpr static inline std::string_view FiberManualRecord{ "\xee\x81\xa1" };                       // U+e061
-        constexpr static inline std::string_view FiberNew{ "\xee\x81\x9e" };                                // U+e05e
-        constexpr static inline std::string_view FiberPin{ "\xee\x81\xaa" };                                // U+e06a
-        constexpr static inline std::string_view FiberSmartRecord{ "\xee\x81\xa2" };                        // U+e062
-        constexpr static inline std::string_view FileCopy{ "\xee\x85\xb3" };                                // U+e173
-        constexpr static inline std::string_view FileCopyOff{ "\xef\x93\x98" };                             // U+f4d8
-        constexpr static inline std::string_view FileDownload{ "\xef\x82\x90" };                            // U+f090
-        constexpr static inline std::string_view FileDownloadDone{ "\xef\x82\x91" };                        // U+f091
-        constexpr static inline std::string_view FileDownloadOff{ "\xee\x93\xbe" };                         // U+e4fe
-        constexpr static inline std::string_view FileMap{ "\xee\x8b\x85" };                                 // U+e2c5
-        constexpr static inline std::string_view FileOpen{ "\xee\xab\xb3" };                                // U+eaf3
-        constexpr static inline std::string_view FilePresent{ "\xee\xa8\x8e" };                             // U+ea0e
-        constexpr static inline std::string_view FileSave{ "\xef\x85\xbf" };                                // U+f17f
-        constexpr static inline std::string_view FileSaveOff{ "\xee\x94\x85" };                             // U+e505
-        constexpr static inline std::string_view FileUpload{ "\xef\x82\x9b" };                              // U+f09b
-        constexpr static inline std::string_view FileUploadOff{ "\xef\xa2\x86" };                           // U+f886
-        constexpr static inline std::string_view Filter{ "\xee\x8f\x93" };                                  // U+e3d3
-        constexpr static inline std::string_view Filter_1{ "\xee\x8f\x90" };                                // U+e3d0
-        constexpr static inline std::string_view Filter_2{ "\xee\x8f\x91" };                                // U+e3d1
-        constexpr static inline std::string_view Filter_3{ "\xee\x8f\x92" };                                // U+e3d2
-        constexpr static inline std::string_view Filter_4{ "\xee\x8f\x94" };                                // U+e3d4
-        constexpr static inline std::string_view Filter_5{ "\xee\x8f\x95" };                                // U+e3d5
-        constexpr static inline std::string_view Filter_6{ "\xee\x8f\x96" };                                // U+e3d6
-        constexpr static inline std::string_view Filter_7{ "\xee\x8f\x97" };                                // U+e3d7
-        constexpr static inline std::string_view Filter_8{ "\xee\x8f\x98" };                                // U+e3d8
-        constexpr static inline std::string_view Filter_9{ "\xee\x8f\x99" };                                // U+e3d9
-        constexpr static inline std::string_view Filter_9Plus{ "\xee\x8f\x9a" };                            // U+e3da
-        constexpr static inline std::string_view FilterAlt{ "\xee\xbd\x8f" };                               // U+ef4f
-        constexpr static inline std::string_view FilterAltOff{ "\xee\xac\xb2" };                            // U+eb32
-        constexpr static inline std::string_view FilterBAndW{ "\xee\x8f\x9b" };                             // U+e3db
-        constexpr static inline std::string_view FilterCenterFocus{ "\xee\x8f\x9c" };                       // U+e3dc
-        constexpr static inline std::string_view FilterDrama{ "\xee\x8f\x9d" };                             // U+e3dd
-        constexpr static inline std::string_view FilterFrames{ "\xee\x8f\x9e" };                            // U+e3de
-        constexpr static inline std::string_view FilterHdr{ "\xee\x8f\x9f" };                               // U+e3df
-        constexpr static inline std::string_view FilterList{ "\xee\x85\x92" };                              // U+e152
-        constexpr static inline std::string_view FilterListAlt{ "\xee\xa5\x8e" };                           // U+e94e
-        constexpr static inline std::string_view FilterListOff{ "\xee\xad\x97" };                           // U+eb57
-        constexpr static inline std::string_view FilterNone{ "\xee\x8f\xa0" };                              // U+e3e0
-        constexpr static inline std::string_view FilterRetrolux{ "\xee\x8f\xa1" };                          // U+e3e1
-        constexpr static inline std::string_view FilterTiltShift{ "\xee\x8f\xa2" };                         // U+e3e2
-        constexpr static inline std::string_view FilterVintage{ "\xee\x8f\xa3" };                           // U+e3e3
-        constexpr static inline std::string_view Finance{ "\xee\x9a\xbf" };                                 // U+e6bf
-        constexpr static inline std::string_view FinanceChip{ "\xef\xa1\x8e" };                             // U+f84e
-        constexpr static inline std::string_view FinanceMode{ "\xee\xbe\x92" };                             // U+ef92
-        constexpr static inline std::string_view FindInPage{ "\xee\xa2\x80" };                              // U+e880
-        constexpr static inline std::string_view FindReplace{ "\xee\xa2\x81" };                             // U+e881
-        constexpr static inline std::string_view Fingerprint{ "\xee\xa4\x8d" };                             // U+e90d
-        constexpr static inline std::string_view FireExtinguisher{ "\xef\x87\x98" };                        // U+f1d8
-        constexpr static inline std::string_view FireHydrant{ "\xef\x86\xa3" };                             // U+f1a3
-        constexpr static inline std::string_view FireTruck{ "\xef\xa3\xb2" };                               // U+f8f2
-        constexpr static inline std::string_view Fireplace{ "\xee\xa9\x83" };                               // U+ea43
-        constexpr static inline std::string_view FirstPage{ "\xee\x97\x9c" };                               // U+e5dc
-        constexpr static inline std::string_view FitPage{ "\xef\x9d\xba" };                                 // U+f77a
-        constexpr static inline std::string_view FitScreen{ "\xee\xa8\x90" };                               // U+ea10
-        constexpr static inline std::string_view FitWidth{ "\xef\x9d\xb9" };                                // U+f779
-        constexpr static inline std::string_view FitnessCenter{ "\xee\xad\x83" };                           // U+eb43
-        constexpr static inline std::string_view Flag{ "\xef\x83\x86" };                                    // U+f0c6
-        constexpr static inline std::string_view FlagCircle{ "\xee\xab\xb8" };                              // U+eaf8
-        constexpr static inline std::string_view FlagFilled{ "\xef\x83\x86" };                              // U+f0c6
-        constexpr static inline std::string_view Flaky{ "\xee\xbd\x90" };                                   // U+ef50
-        constexpr static inline std::string_view Flare{ "\xee\x8f\xa4" };                                   // U+e3e4
-        constexpr static inline std::string_view FlashAuto{ "\xee\x8f\xa5" };                               // U+e3e5
-        constexpr static inline std::string_view FlashOff{ "\xee\x8f\xa6" };                                // U+e3e6
-        constexpr static inline std::string_view FlashOn{ "\xee\x8f\xa7" };                                 // U+e3e7
-        constexpr static inline std::string_view FlashlightOff{ "\xef\x80\x8a" };                           // U+f00a
-        constexpr static inline std::string_view FlashlightOn{ "\xef\x80\x8b" };                            // U+f00b
-        constexpr static inline std::string_view Flatware{ "\xef\x80\x8c" };                                // U+f00c
-        constexpr static inline std::string_view FlexDirection{ "\xef\x9d\xb8" };                           // U+f778
-        constexpr static inline std::string_view FlexNoWrap{ "\xef\x9d\xb7" };                              // U+f777
-        constexpr static inline std::string_view FlexWrap{ "\xef\x9d\xb6" };                                // U+f776
-        constexpr static inline std::string_view Flight{ "\xee\x94\xb9" };                                  // U+e539
-        constexpr static inline std::string_view FlightClass{ "\xee\x9f\x8b" };                             // U+e7cb
-        constexpr static inline std::string_view FlightLand{ "\xee\xa4\x84" };                              // U+e904
-        constexpr static inline std::string_view FlightTakeoff{ "\xee\xa4\x85" };                           // U+e905
-        constexpr static inline std::string_view FlightsAndHotels{ "\xee\xa6\xab" };                        // U+e9ab
-        constexpr static inline std::string_view Flightsmode{ "\xee\xbe\x93" };                             // U+ef93
-        constexpr static inline std::string_view Flip{ "\xee\x8f\xa8" };                                    // U+e3e8
-        constexpr static inline std::string_view FlipCameraAndroid{ "\xee\xa8\xb7" };                       // U+ea37
-        constexpr static inline std::string_view FlipCameraIos{ "\xee\xa8\xb8" };                           // U+ea38
-        constexpr static inline std::string_view FlipToBack{ "\xee\xa2\x82" };                              // U+e882
-        constexpr static inline std::string_view FlipToFront{ "\xee\xa2\x83" };                             // U+e883
-        constexpr static inline std::string_view Flood{ "\xee\xaf\xa6" };                                   // U+ebe6
-        constexpr static inline std::string_view Floor{ "\xef\x9b\xa4" };                                   // U+f6e4
-        constexpr static inline std::string_view FloorLamp{ "\xee\x88\x9e" };                               // U+e21e
-        constexpr static inline std::string_view Flourescent{ "\xef\x81\xbd" };                             // U+f07d
-        constexpr static inline std::string_view Flowsheet{ "\xee\x82\xae" };                               // U+e0ae
-        constexpr static inline std::string_view Fluid{ "\xee\x92\x83" };                                   // U+e483
-        constexpr static inline std::string_view FluidBalance{ "\xef\xa0\x8d" };                            // U+f80d
-        constexpr static inline std::string_view FluidMed{ "\xef\xa0\x8c" };                                // U+f80c
-        constexpr static inline std::string_view Fluorescent{ "\xef\x81\xbd" };                             // U+f07d
-        constexpr static inline std::string_view Flutter{ "\xef\x87\x9d" };                                 // U+f1dd
-        constexpr static inline std::string_view FlutterDash{ "\xee\x80\x8b" };                             // U+e00b
-        constexpr static inline std::string_view FmdBad{ "\xef\x80\x8e" };                                  // U+f00e
-        constexpr static inline std::string_view FmdGood{ "\xef\x87\x9b" };                                 // U+f1db
-        constexpr static inline std::string_view Foggy{ "\xee\xa0\x98" };                                   // U+e818
-        constexpr static inline std::string_view FoldedHands{ "\xef\x97\xad" };                             // U+f5ed
-        constexpr static inline std::string_view Folder{ "\xee\x8b\x87" };                                  // U+e2c7
-        constexpr static inline std::string_view FolderCopy{ "\xee\xae\xbd" };                              // U+ebbd
-        constexpr static inline std::string_view FolderData{ "\xef\x96\x86" };                              // U+f586
-        constexpr static inline std::string_view FolderDelete{ "\xee\xac\xb4" };                            // U+eb34
-        constexpr static inline std::string_view FolderLimited{ "\xef\x93\xa4" };                           // U+f4e4
-        constexpr static inline std::string_view FolderManaged{ "\xef\x9d\xb5" };                           // U+f775
-        constexpr static inline std::string_view FolderOff{ "\xee\xae\x83" };                               // U+eb83
-        constexpr static inline std::string_view FolderOpen{ "\xee\x8b\x88" };                              // U+e2c8
-        constexpr static inline std::string_view FolderShared{ "\xee\x8b\x89" };                            // U+e2c9
-        constexpr static inline std::string_view FolderSpecial{ "\xee\x98\x97" };                           // U+e617
-        constexpr static inline std::string_view FolderSupervised{ "\xef\x9d\xb4" };                        // U+f774
-        constexpr static inline std::string_view FolderZip{ "\xee\xac\xac" };                               // U+eb2c
-        constexpr static inline std::string_view FollowTheSigns{ "\xef\x88\xa2" };                          // U+f222
-        constexpr static inline std::string_view FontDownload{ "\xee\x85\xa7" };                            // U+e167
-        constexpr static inline std::string_view FontDownloadOff{ "\xee\x93\xb9" };                         // U+e4f9
-        constexpr static inline std::string_view FoodBank{ "\xef\x87\xb2" };                                // U+f1f2
-        constexpr static inline std::string_view FootBones{ "\xef\xa2\x93" };                               // U+f893
-        constexpr static inline std::string_view Footprint{ "\xef\xa1\xbd" };                               // U+f87d
-        constexpr static inline std::string_view ForYou{ "\xee\xa6\xac" };                                  // U+e9ac
-        constexpr static inline std::string_view Forest{ "\xee\xaa\x99" };                                  // U+ea99
-        constexpr static inline std::string_view ForkLeft{ "\xee\xae\xa0" };                                // U+eba0
-        constexpr static inline std::string_view ForkRight{ "\xee\xae\xac" };                               // U+ebac
-        constexpr static inline std::string_view Forklift{ "\xef\xa1\xa8" };                                // U+f868
-        constexpr static inline std::string_view FormatAlignCenter{ "\xee\x88\xb4" };                       // U+e234
-        constexpr static inline std::string_view FormatAlignJustify{ "\xee\x88\xb5" };                      // U+e235
-        constexpr static inline std::string_view FormatAlignLeft{ "\xee\x88\xb6" };                         // U+e236
-        constexpr static inline std::string_view FormatAlignRight{ "\xee\x88\xb7" };                        // U+e237
-        constexpr static inline std::string_view FormatBold{ "\xee\x88\xb8" };                              // U+e238
-        constexpr static inline std::string_view FormatClear{ "\xee\x88\xb9" };                             // U+e239
-        constexpr static inline std::string_view FormatColorFill{ "\xee\x88\xba" };                         // U+e23a
-        constexpr static inline std::string_view FormatColorReset{ "\xee\x88\xbb" };                        // U+e23b
-        constexpr static inline std::string_view FormatColorText{ "\xee\x88\xbc" };                         // U+e23c
-        constexpr static inline std::string_view FormatH1{ "\xef\xa1\x9d" };                                // U+f85d
-        constexpr static inline std::string_view FormatH2{ "\xef\xa1\x9e" };                                // U+f85e
-        constexpr static inline std::string_view FormatH3{ "\xef\xa1\x9f" };                                // U+f85f
-        constexpr static inline std::string_view FormatH4{ "\xef\xa1\xa0" };                                // U+f860
-        constexpr static inline std::string_view FormatH5{ "\xef\xa1\xa1" };                                // U+f861
-        constexpr static inline std::string_view FormatH6{ "\xef\xa1\xa2" };                                // U+f862
-        constexpr static inline std::string_view FormatImageLeft{ "\xef\xa1\xa3" };                         // U+f863
-        constexpr static inline std::string_view FormatImageRight{ "\xef\xa1\xa4" };                        // U+f864
-        constexpr static inline std::string_view FormatIndentDecrease{ "\xee\x88\xbd" };                    // U+e23d
-        constexpr static inline std::string_view FormatIndentIncrease{ "\xee\x88\xbe" };                    // U+e23e
-        constexpr static inline std::string_view FormatInkHighlighter{ "\xef\xa0\xab" };                    // U+f82b
-        constexpr static inline std::string_view FormatItalic{ "\xee\x88\xbf" };                            // U+e23f
-        constexpr static inline std::string_view FormatLetterSpacing{ "\xef\x9d\xb3" };                     // U+f773
-        constexpr static inline std::string_view FormatLetterSpacing_2{ "\xef\x98\x98" };                   // U+f618
-        constexpr static inline std::string_view FormatLetterSpacingStandard{ "\xef\x98\x97" };             // U+f617
-        constexpr static inline std::string_view FormatLetterSpacingWide{ "\xef\x98\x96" };                 // U+f616
-        constexpr static inline std::string_view FormatLetterSpacingWider{ "\xef\x98\x95" };                // U+f615
-        constexpr static inline std::string_view FormatLineSpacing{ "\xee\x89\x80" };                       // U+e240
-        constexpr static inline std::string_view FormatListBulleted{ "\xee\x89\x81" };                      // U+e241
-        constexpr static inline std::string_view FormatListBulletedAdd{ "\xef\xa1\x89" };                   // U+f849
-        constexpr static inline std::string_view FormatListNumbered{ "\xee\x89\x82" };                      // U+e242
-        constexpr static inline std::string_view FormatListNumberedRtl{ "\xee\x89\xa7" };                   // U+e267
-        constexpr static inline std::string_view FormatOverline{ "\xee\xad\xa5" };                          // U+eb65
-        constexpr static inline std::string_view FormatPaint{ "\xee\x89\x83" };                             // U+e243
-        constexpr static inline std::string_view FormatParagraph{ "\xef\xa1\xa5" };                         // U+f865
-        constexpr static inline std::string_view FormatQuote{ "\xee\x89\x84" };                             // U+e244
-        constexpr static inline std::string_view FormatShapes{ "\xee\x89\x9e" };                            // U+e25e
-        constexpr static inline std::string_view FormatSize{ "\xee\x89\x85" };                              // U+e245
-        constexpr static inline std::string_view FormatStrikethrough{ "\xee\x89\x86" };                     // U+e246
-        constexpr static inline std::string_view FormatTextClip{ "\xef\xa0\xaa" };                          // U+f82a
-        constexpr static inline std::string_view FormatTextOverflow{ "\xef\xa0\xa9" };                      // U+f829
-        constexpr static inline std::string_view FormatTextWrap{ "\xef\xa0\xa8" };                          // U+f828
-        constexpr static inline std::string_view FormatTextdirectionLToR{ "\xee\x89\x87" };                 // U+e247
-        constexpr static inline std::string_view FormatTextdirectionRToL{ "\xee\x89\x88" };                 // U+e248
-        constexpr static inline std::string_view FormatUnderlined{ "\xee\x89\x89" };                        // U+e249
-        constexpr static inline std::string_view FormatUnderlinedSquiggle{ "\xef\xa2\x85" };                // U+f885
-        constexpr static inline std::string_view FormsAddOn{ "\xef\x83\x87" };                              // U+f0c7
-        constexpr static inline std::string_view FormsAppsScript{ "\xef\x83\x88" };                         // U+f0c8
-        constexpr static inline std::string_view Fort{ "\xee\xaa\xad" };                                    // U+eaad
-        constexpr static inline std::string_view Forum{ "\xee\xa2\xaf" };                                   // U+e8af
-        constexpr static inline std::string_view Forward{ "\xef\x95\xba" };                                 // U+f57a
-        constexpr static inline std::string_view Forward_10{ "\xee\x81\x96" };                              // U+e056
-        constexpr static inline std::string_view Forward_30{ "\xee\x81\x97" };                              // U+e057
-        constexpr static inline std::string_view Forward_5{ "\xee\x81\x98" };                               // U+e058
-        constexpr static inline std::string_view ForwardCircle{ "\xef\x9b\xb5" };                           // U+f6f5
-        constexpr static inline std::string_view ForwardMedia{ "\xef\x9b\xb4" };                            // U+f6f4
-        constexpr static inline std::string_view ForwardToInbox{ "\xef\x86\x87" };                          // U+f187
-        constexpr static inline std::string_view Foundation{ "\xef\x88\x80" };                              // U+f200
-        constexpr static inline std::string_view FrameInspect{ "\xef\x9d\xb2" };                            // U+f772
-        constexpr static inline std::string_view FramePerson{ "\xef\xa2\xa6" };                             // U+f8a6
-        constexpr static inline std::string_view FramePersonOff{ "\xef\x9f\x91" };                          // U+f7d1
-        constexpr static inline std::string_view FrameReload{ "\xef\x9d\xb1" };                             // U+f771
-        constexpr static inline std::string_view FrameSource{ "\xef\x9d\xb0" };                             // U+f770
-        constexpr static inline std::string_view FreeBreakfast{ "\xee\xad\x84" };                           // U+eb44
-        constexpr static inline std::string_view FreeCancellation{ "\xee\x9d\x88" };                        // U+e748
-        constexpr static inline std::string_view FrontHand{ "\xee\x9d\xa9" };                               // U+e769
-        constexpr static inline std::string_view FrontLoader{ "\xef\xa1\xa9" };                             // U+f869
-        constexpr static inline std::string_view FullCoverage{ "\xee\xac\x92" };                            // U+eb12
-        constexpr static inline std::string_view FullHd{ "\xef\x96\x8b" };                                  // U+f58b
-        constexpr static inline std::string_view FullStackedBarChart{ "\xef\x88\x92" };                     // U+f212
-        constexpr static inline std::string_view Fullscreen{ "\xee\x97\x90" };                              // U+e5d0
-        constexpr static inline std::string_view FullscreenExit{ "\xee\x97\x91" };                          // U+e5d1
-        constexpr static inline std::string_view Function{ "\xef\xa1\xa6" };                                // U+f866
-        constexpr static inline std::string_view Functions{ "\xee\x89\x8a" };                               // U+e24a
-        constexpr static inline std::string_view GMobiledata{ "\xef\x80\x90" };                             // U+f010
-        constexpr static inline std::string_view GMobiledataBadge{ "\xef\x9f\xa1" };                        // U+f7e1
-        constexpr static inline std::string_view GTranslate{ "\xee\xa4\xa7" };                              // U+e927
-        constexpr static inline std::string_view GalleryThumbnail{ "\xef\xa1\xaf" };                        // U+f86f
-        constexpr static inline std::string_view Gamepad{ "\xee\x8c\x8f" };                                 // U+e30f
-        constexpr static inline std::string_view Games{ "\xee\x8c\x8f" };                                   // U+e30f
-        constexpr static inline std::string_view Garage{ "\xef\x80\x91" };                                  // U+f011
-        constexpr static inline std::string_view GarageDoor{ "\xee\x9c\x94" };                              // U+e714
-        constexpr static inline std::string_view GarageHome{ "\xee\xa0\xad" };                              // U+e82d
-        constexpr static inline std::string_view GardenCart{ "\xef\xa2\xa9" };                              // U+f8a9
-        constexpr static inline std::string_view GasMeter{ "\xee\xb0\x99" };                                // U+ec19
-        constexpr static inline std::string_view Gastroenterology{ "\xee\x83\xb1" };                        // U+e0f1
-        constexpr static inline std::string_view Gate{ "\xee\x89\xb7" };                                    // U+e277
-        constexpr static inline std::string_view Gavel{ "\xee\xa4\x8e" };                                   // U+e90e
-        constexpr static inline std::string_view GeneralDevice{ "\xee\x9b\x9e" };                           // U+e6de
-        constexpr static inline std::string_view GeneratingTokens{ "\xee\x9d\x89" };                        // U+e749
-        constexpr static inline std::string_view Genetics{ "\xee\x83\xb3" };                                // U+e0f3
-        constexpr static inline std::string_view Genres{ "\xee\x9b\xae" };                                  // U+e6ee
-        constexpr static inline std::string_view Gesture{ "\xee\x85\x95" };                                 // U+e155
-        constexpr static inline std::string_view GestureSelect{ "\xef\x99\x97" };                           // U+f657
-        constexpr static inline std::string_view GetApp{ "\xef\x82\x90" };                                  // U+f090
-        constexpr static inline std::string_view Gif{ "\xee\xa4\x88" };                                     // U+e908
-        constexpr static inline std::string_view GifBox{ "\xee\x9e\xa3" };                                  // U+e7a3
-        constexpr static inline std::string_view Girl{ "\xee\xad\xa8" };                                    // U+eb68
-        constexpr static inline std::string_view Gite{ "\xee\x96\x8b" };                                    // U+e58b
-        constexpr static inline std::string_view GlassCup{ "\xef\x9b\xa3" };                                // U+f6e3
-        constexpr static inline std::string_view Globe{ "\xee\x99\x8c" };                                   // U+e64c
-        constexpr static inline std::string_view GlobeAsia{ "\xef\x9e\x99" };                               // U+f799
-        constexpr static inline std::string_view GlobeUk{ "\xef\x9e\x98" };                                 // U+f798
-        constexpr static inline std::string_view Glucose{ "\xee\x92\xa0" };                                 // U+e4a0
-        constexpr static inline std::string_view Glyphs{ "\xef\xa2\xa3" };                                  // U+f8a3
-        constexpr static inline std::string_view GoToLine{ "\xef\x9c\x9d" };                                // U+f71d
-        constexpr static inline std::string_view GolfCourse{ "\xee\xad\x85" };                              // U+eb45
-        constexpr static inline std::string_view GoogleHomeDevices{ "\xee\x9c\x95" };                       // U+e715
-        constexpr static inline std::string_view GooglePlusReshare{ "\xef\x95\xba" };                       // U+f57a
-        constexpr static inline std::string_view GoogleTvRemote{ "\xef\x97\x9b" };                          // U+f5db
-        constexpr static inline std::string_view GoogleWifi{ "\xef\x95\xb9" };                              // U+f579
-        constexpr static inline std::string_view GppBad{ "\xef\x80\x92" };                                  // U+f012
-        constexpr static inline std::string_view GppGood{ "\xef\x80\x93" };                                 // U+f013
-        constexpr static inline std::string_view GppMaybe{ "\xef\x80\x94" };                                // U+f014
-        constexpr static inline std::string_view GpsFixed{ "\xee\x95\x9c" };                                // U+e55c
-        constexpr static inline std::string_view GpsNotFixed{ "\xee\x86\xb7" };                             // U+e1b7
-        constexpr static inline std::string_view GpsOff{ "\xee\x86\xb6" };                                  // U+e1b6
-        constexpr static inline std::string_view Grade{ "\xee\xa2\x85" };                                   // U+e885
-        constexpr static inline std::string_view Gradient{ "\xee\x8f\xa9" };                                // U+e3e9
-        constexpr static inline std::string_view Grading{ "\xee\xa9\x8f" };                                 // U+ea4f
-        constexpr static inline std::string_view Grain{ "\xee\x8f\xaa" };                                   // U+e3ea
-        constexpr static inline std::string_view GraphicEq{ "\xee\x86\xb8" };                               // U+e1b8
-        constexpr static inline std::string_view Grass{ "\xef\x88\x85" };                                   // U+f205
-        constexpr static inline std::string_view Grid_3x3{ "\xef\x80\x95" };                                // U+f015
-        constexpr static inline std::string_view Grid_3x3Off{ "\xef\x99\xbc" };                             // U+f67c
-        constexpr static inline std::string_view Grid_4x4{ "\xef\x80\x96" };                                // U+f016
-        constexpr static inline std::string_view GridGoldenratio{ "\xef\x80\x97" };                         // U+f017
-        constexpr static inline std::string_view GridGuides{ "\xef\x9d\xaf" };                              // U+f76f
-        constexpr static inline std::string_view GridOff{ "\xee\x8f\xab" };                                 // U+e3eb
-        constexpr static inline std::string_view GridOn{ "\xee\x8f\xac" };                                  // U+e3ec
-        constexpr static inline std::string_view GridView{ "\xee\xa6\xb0" };                                // U+e9b0
-        constexpr static inline std::string_view Grocery{ "\xee\xbe\x97" };                                 // U+ef97
-        constexpr static inline std::string_view Group{ "\xee\xa8\xa1" };                                   // U+ea21
-        constexpr static inline std::string_view GroupAdd{ "\xee\x9f\xb0" };                                // U+e7f0
-        constexpr static inline std::string_view GroupOff{ "\xee\x9d\x87" };                                // U+e747
-        constexpr static inline std::string_view GroupRemove{ "\xee\x9e\xad" };                             // U+e7ad
-        constexpr static inline std::string_view GroupWork{ "\xee\xa2\x86" };                               // U+e886
-        constexpr static inline std::string_view GroupedBarChart{ "\xef\x88\x91" };                         // U+f211
-        constexpr static inline std::string_view Groups{ "\xef\x88\xb3" };                                  // U+f233
-        constexpr static inline std::string_view Groups_2{ "\xef\xa3\x9f" };                                // U+f8df
-        constexpr static inline std::string_view Groups_3{ "\xef\xa3\xa0" };                                // U+f8e0
-        constexpr static inline std::string_view Gynecology{ "\xee\x83\xb4" };                              // U+e0f4
-        constexpr static inline std::string_view HMobiledata{ "\xef\x80\x98" };                             // U+f018
-        constexpr static inline std::string_view HMobiledataBadge{ "\xef\x9f\xa0" };                        // U+f7e0
-        constexpr static inline std::string_view HPlusMobiledata{ "\xef\x80\x99" };                         // U+f019
-        constexpr static inline std::string_view HPlusMobiledataBadge{ "\xef\x9f\x9f" };                    // U+f7df
-        constexpr static inline std::string_view Hail{ "\xee\xa6\xb1" };                                    // U+e9b1
-        constexpr static inline std::string_view Hallway{ "\xee\x9b\xb8" };                                 // U+e6f8
-        constexpr static inline std::string_view HandBones{ "\xef\xa2\x94" };                               // U+f894
-        constexpr static inline std::string_view HandGesture{ "\xee\xbe\x9c" };                             // U+ef9c
-        constexpr static inline std::string_view Handshake{ "\xee\xaf\x8b" };                               // U+ebcb
-        constexpr static inline std::string_view HandwritingRecognition{ "\xee\xac\x82" };                  // U+eb02
-        constexpr static inline std::string_view Handyman{ "\xef\x84\x8b" };                                // U+f10b
-        constexpr static inline std::string_view HangoutVideo{ "\xee\x83\x81" };                            // U+e0c1
-        constexpr static inline std::string_view HangoutVideoOff{ "\xee\x83\x82" };                         // U+e0c2
-        constexpr static inline std::string_view HardDrive{ "\xef\xa0\x8e" };                               // U+f80e
-        constexpr static inline std::string_view HardDrive_2{ "\xef\x9e\xa4" };                             // U+f7a4
-        constexpr static inline std::string_view Hardware{ "\xee\xa9\x99" };                                // U+ea59
-        constexpr static inline std::string_view Hd{ "\xee\x81\x92" };                                      // U+e052
-        constexpr static inline std::string_view HdrAuto{ "\xef\x80\x9a" };                                 // U+f01a
-        constexpr static inline std::string_view HdrAutoSelect{ "\xef\x80\x9b" };                           // U+f01b
-        constexpr static inline std::string_view HdrEnhancedSelect{ "\xee\xbd\x91" };                       // U+ef51
-        constexpr static inline std::string_view HdrOff{ "\xee\x8f\xad" };                                  // U+e3ed
-        constexpr static inline std::string_view HdrOffSelect{ "\xef\x80\x9c" };                            // U+f01c
-        constexpr static inline std::string_view HdrOn{ "\xee\x8f\xae" };                                   // U+e3ee
-        constexpr static inline std::string_view HdrOnSelect{ "\xef\x80\x9d" };                             // U+f01d
-        constexpr static inline std::string_view HdrPlus{ "\xef\x80\x9e" };                                 // U+f01e
-        constexpr static inline std::string_view HdrPlusOff{ "\xee\x8f\xaf" };                              // U+e3ef
-        constexpr static inline std::string_view HdrStrong{ "\xee\x8f\xb1" };                               // U+e3f1
-        constexpr static inline std::string_view HdrWeak{ "\xee\x8f\xb2" };                                 // U+e3f2
-        constexpr static inline std::string_view Headphones{ "\xef\x80\x9f" };                              // U+f01f
-        constexpr static inline std::string_view HeadphonesBattery{ "\xef\x80\xa0" };                       // U+f020
-        constexpr static inline std::string_view Headset{ "\xef\x80\x9f" };                                 // U+f01f
-        constexpr static inline std::string_view HeadsetMic{ "\xee\x8c\x91" };                              // U+e311
-        constexpr static inline std::string_view HeadsetOff{ "\xee\x8c\xba" };                              // U+e33a
-        constexpr static inline std::string_view Healing{ "\xee\x8f\xb3" };                                 // U+e3f3
-        constexpr static inline std::string_view HealthAndBeauty{ "\xee\xbe\x9d" };                         // U+ef9d
-        constexpr static inline std::string_view HealthAndSafety{ "\xee\x87\x95" };                         // U+e1d5
-        constexpr static inline std::string_view HealthMetrics{ "\xef\x9b\xa2" };                           // U+f6e2
-        constexpr static inline std::string_view HeapSnapshotLarge{ "\xef\x9d\xae" };                       // U+f76e
-        constexpr static inline std::string_view HeapSnapshotMultiple{ "\xef\x9d\xad" };                    // U+f76d
-        constexpr static inline std::string_view HeapSnapshotThumbnail{ "\xef\x9d\xac" };                   // U+f76c
-        constexpr static inline std::string_view Hearing{ "\xee\x80\xa3" };                                 // U+e023
-        constexpr static inline std::string_view HearingDisabled{ "\xef\x84\x84" };                         // U+f104
-        constexpr static inline std::string_view HeartBroken{ "\xee\xab\x82" };                             // U+eac2
-        constexpr static inline std::string_view HeartCheck{ "\xef\x98\x8a" };                              // U+f60a
-        constexpr static inline std::string_view HeartMinus{ "\xef\xa2\x83" };                              // U+f883
-        constexpr static inline std::string_view HeartPlus{ "\xef\xa2\x84" };                               // U+f884
-        constexpr static inline std::string_view Heat{ "\xef\x94\xb7" };                                    // U+f537
-        constexpr static inline std::string_view HeatPump{ "\xee\xb0\x98" };                                // U+ec18
-        constexpr static inline std::string_view HeatPumpBalance{ "\xee\x89\xbe" };                         // U+e27e
-        constexpr static inline std::string_view Height{ "\xee\xa8\x96" };                                  // U+ea16
-        constexpr static inline std::string_view Helicopter{ "\xef\x98\x8c" };                              // U+f60c
-        constexpr static inline std::string_view Help{ "\xee\xa3\xbd" };                                    // U+e8fd
-        constexpr static inline std::string_view HelpCenter{ "\xef\x87\x80" };                              // U+f1c0
-        constexpr static inline std::string_view HelpClinic{ "\xef\xa0\x90" };                              // U+f810
-        constexpr static inline std::string_view HelpOutline{ "\xee\xa3\xbd" };                             // U+e8fd
-        constexpr static inline std::string_view Hematology{ "\xee\x83\xb6" };                              // U+e0f6
-        constexpr static inline std::string_view Hevc{ "\xef\x80\xa1" };                                    // U+f021
-        constexpr static inline std::string_view Hexagon{ "\xee\xac\xb9" };                                 // U+eb39
-        constexpr static inline std::string_view Hide{ "\xee\xbe\x9e" };                                    // U+ef9e
-        constexpr static inline std::string_view HideImage{ "\xef\x80\xa2" };                               // U+f022
-        constexpr static inline std::string_view HideSource{ "\xef\x80\xa3" };                              // U+f023
-        constexpr static inline std::string_view HighDensity{ "\xef\x9e\x9c" };                             // U+f79c
-        constexpr static inline std::string_view HighQuality{ "\xee\x80\xa4" };                             // U+e024
-        constexpr static inline std::string_view HighRes{ "\xef\x95\x8b" };                                 // U+f54b
-        constexpr static inline std::string_view Highlight{ "\xee\x89\x9f" };                               // U+e25f
-        constexpr static inline std::string_view HighlightKeyboardFocus{ "\xef\x94\x90" };                  // U+f510
-        constexpr static inline std::string_view HighlightMouseCursor{ "\xef\x94\x91" };                    // U+f511
-        constexpr static inline std::string_view HighlightOff{ "\xee\xa2\x88" };                            // U+e888
-        constexpr static inline std::string_view HighlightTextCursor{ "\xef\x94\x92" };                     // U+f512
-        constexpr static inline std::string_view HighlighterSize_1{ "\xef\x9d\xab" };                       // U+f76b
-        constexpr static inline std::string_view HighlighterSize_2{ "\xef\x9d\xaa" };                       // U+f76a
-        constexpr static inline std::string_view HighlighterSize_3{ "\xef\x9d\xa9" };                       // U+f769
-        constexpr static inline std::string_view HighlighterSize_4{ "\xef\x9d\xa8" };                       // U+f768
-        constexpr static inline std::string_view HighlighterSize_5{ "\xef\x9d\xa7" };                       // U+f767
-        constexpr static inline std::string_view Hiking{ "\xee\x94\x8a" };                                  // U+e50a
-        constexpr static inline std::string_view History{ "\xee\xa2\xb3" };                                 // U+e8b3
-        constexpr static inline std::string_view HistoryEdu{ "\xee\xa8\xbe" };                              // U+ea3e
-        constexpr static inline std::string_view HistoryOff{ "\xef\x93\x9a" };                              // U+f4da
-        constexpr static inline std::string_view HistoryToggleOff{ "\xef\x85\xbd" };                        // U+f17d
-        constexpr static inline std::string_view Hive{ "\xee\xaa\xa6" };                                    // U+eaa6
-        constexpr static inline std::string_view Hls{ "\xee\xae\x8a" };                                     // U+eb8a
-        constexpr static inline std::string_view HlsOff{ "\xee\xae\x8c" };                                  // U+eb8c
-        constexpr static inline std::string_view HolidayVillage{ "\xee\x96\x8a" };                          // U+e58a
-        constexpr static inline std::string_view Home{ "\xee\xa6\xb2" };                                    // U+e9b2
-        constexpr static inline std::string_view HomeAndGarden{ "\xee\xbe\x9f" };                           // U+ef9f
-        constexpr static inline std::string_view HomeAppLogo{ "\xee\x8a\x95" };                             // U+e295
-        constexpr static inline std::string_view HomeFilled{ "\xee\xa6\xb2" };                              // U+e9b2
-        constexpr static inline std::string_view HomeHealth{ "\xee\x92\xb9" };                              // U+e4b9
-        constexpr static inline std::string_view HomeImprovementAndTools{ "\xee\xbe\xa0" };                 // U+efa0
-        constexpr static inline std::string_view HomeIotDevice{ "\xee\x8a\x83" };                           // U+e283
-        constexpr static inline std::string_view HomeMax{ "\xef\x80\xa4" };                                 // U+f024
-        constexpr static inline std::string_view HomeMaxDots{ "\xee\xa1\x89" };                             // U+e849
-        constexpr static inline std::string_view HomeMini{ "\xef\x80\xa5" };                                // U+f025
-        constexpr static inline std::string_view HomePin{ "\xef\x85\x8d" };                                 // U+f14d
-        constexpr static inline std::string_view HomeRepairService{ "\xef\x84\x80" };                       // U+f100
-        constexpr static inline std::string_view HomeSpeaker{ "\xef\x84\x9c" };                             // U+f11c
-        constexpr static inline std::string_view HomeStorage{ "\xef\xa1\xac" };                             // U+f86c
-        constexpr static inline std::string_view HomeWork{ "\xef\x80\xb0" };                                // U+f030
-        constexpr static inline std::string_view HorizontalDistribute{ "\xee\x80\x94" };                    // U+e014
-        constexpr static inline std::string_view HorizontalRule{ "\xef\x84\x88" };                          // U+f108
-        constexpr static inline std::string_view HorizontalSplit{ "\xee\xa5\x87" };                         // U+e947
-        constexpr static inline std::string_view HotTub{ "\xee\xad\x86" };                                  // U+eb46
-        constexpr static inline std::string_view Hotel{ "\xee\x95\x89" };                                   // U+e549
-        constexpr static inline std::string_view HotelClass{ "\xee\x9d\x83" };                              // U+e743
-        constexpr static inline std::string_view Hourglass{ "\xee\xaf\xbf" };                               // U+ebff
-        constexpr static inline std::string_view HourglassBottom{ "\xee\xa9\x9c" };                         // U+ea5c
-        constexpr static inline std::string_view HourglassDisabled{ "\xee\xbd\x93" };                       // U+ef53
-        constexpr static inline std::string_view HourglassEmpty{ "\xee\xa2\x8b" };                          // U+e88b
-        constexpr static inline std::string_view HourglassFull{ "\xee\xa2\x8c" };                           // U+e88c
-        constexpr static inline std::string_view HourglassTop{ "\xee\xa9\x9b" };                            // U+ea5b
-        constexpr static inline std::string_view House{ "\xee\xa9\x84" };                                   // U+ea44
-        constexpr static inline std::string_view HouseSiding{ "\xef\x88\x82" };                             // U+f202
-        constexpr static inline std::string_view HouseWithShield{ "\xee\x9e\x86" };                         // U+e786
-        constexpr static inline std::string_view Houseboat{ "\xee\x96\x84" };                               // U+e584
-        constexpr static inline std::string_view HouseholdSupplies{ "\xee\xbe\xa1" };                       // U+efa1
-        constexpr static inline std::string_view HowToReg{ "\xee\x85\xb4" };                                // U+e174
-        constexpr static inline std::string_view HowToVote{ "\xee\x85\xb5" };                               // U+e175
-        constexpr static inline std::string_view HrResting{ "\xef\x9a\xba" };                               // U+f6ba
-        constexpr static inline std::string_view Html{ "\xee\xad\xbe" };                                    // U+eb7e
-        constexpr static inline std::string_view Http{ "\xee\xa4\x82" };                                    // U+e902
-        constexpr static inline std::string_view Https{ "\xee\xa2\x99" };                                   // U+e899
-        constexpr static inline std::string_view Hub{ "\xee\xa7\xb4" };                                     // U+e9f4
-        constexpr static inline std::string_view Humerus{ "\xef\xa2\x95" };                                 // U+f895
-        constexpr static inline std::string_view HumerusAlt{ "\xef\xa2\x96" };                              // U+f896
-        constexpr static inline std::string_view HumidityHigh{ "\xef\x85\xa3" };                            // U+f163
-        constexpr static inline std::string_view HumidityIndoor{ "\xef\x95\x98" };                          // U+f558
-        constexpr static inline std::string_view HumidityLow{ "\xef\x85\xa4" };                             // U+f164
-        constexpr static inline std::string_view HumidityMid{ "\xef\x85\xa5" };                             // U+f165
-        constexpr static inline std::string_view HumidityPercentage{ "\xef\xa1\xbe" };                      // U+f87e
-        constexpr static inline std::string_view Hvac{ "\xef\x84\x8e" };                                    // U+f10e
-        constexpr static inline std::string_view IceSkating{ "\xee\x94\x8b" };                              // U+e50b
-        constexpr static inline std::string_view Icecream{ "\xee\xa9\xa9" };                                // U+ea69
-        constexpr static inline std::string_view Ifl{ "\xee\x80\xa5" };                                     // U+e025
-        constexpr static inline std::string_view Iframe{ "\xef\x9c\x9b" };                                  // U+f71b
-        constexpr static inline std::string_view IframeOff{ "\xef\x9c\x9c" };                               // U+f71c
-        constexpr static inline std::string_view Image{ "\xee\x8f\xb4" };                                   // U+e3f4
-        constexpr static inline std::string_view ImageAspectRatio{ "\xee\x8f\xb5" };                        // U+e3f5
-        constexpr static inline std::string_view ImageNotSupported{ "\xef\x84\x96" };                       // U+f116
-        constexpr static inline std::string_view ImageSearch{ "\xee\x90\xbf" };                             // U+e43f
-        constexpr static inline std::string_view ImagesearchRoller{ "\xee\xa6\xb4" };                       // U+e9b4
-        constexpr static inline std::string_view Imagesmode{ "\xee\xbe\xa2" };                              // U+efa2
-        constexpr static inline std::string_view Immunology{ "\xee\x83\xbb" };                              // U+e0fb
-        constexpr static inline std::string_view ImportContacts{ "\xee\x83\xa0" };                          // U+e0e0
-        constexpr static inline std::string_view ImportExport{ "\xee\xa3\x95" };                            // U+e8d5
-        constexpr static inline std::string_view ImportantDevices{ "\xee\xa4\x92" };                        // U+e912
-        constexpr static inline std::string_view InHomeMode{ "\xee\xa0\xb3" };                              // U+e833
-        constexpr static inline std::string_view InactiveOrder{ "\xee\x83\xbc" };                           // U+e0fc
-        constexpr static inline std::string_view Inbox{ "\xee\x85\x96" };                                   // U+e156
-        constexpr static inline std::string_view InboxCustomize{ "\xef\xa1\x99" };                          // U+f859
-        constexpr static inline std::string_view IncompleteCircle{ "\xee\x9e\x9b" };                        // U+e79b
-        constexpr static inline std::string_view IndeterminateCheckBox{ "\xee\xa4\x89" };                   // U+e909
-        constexpr static inline std::string_view IndeterminateQuestionBox{ "\xef\x95\xad" };                // U+f56d
-        constexpr static inline std::string_view Info{ "\xee\xa2\x8e" };                                    // U+e88e
-        constexpr static inline std::string_view InfoI{ "\xef\x96\x9b" };                                   // U+f59b
-        constexpr static inline std::string_view Infrared{ "\xef\xa1\xbc" };                                // U+f87c
-        constexpr static inline std::string_view InkEraser{ "\xee\x9b\x90" };                               // U+e6d0
-        constexpr static inline std::string_view InkEraserOff{ "\xee\x9f\xa3" };                            // U+e7e3
-        constexpr static inline std::string_view InkHighlighter{ "\xee\x9b\x91" };                          // U+e6d1
-        constexpr static inline std::string_view InkHighlighterMove{ "\xef\x94\xa4" };                      // U+f524
-        constexpr static inline std::string_view InkMarker{ "\xee\x9b\x92" };                               // U+e6d2
-        constexpr static inline std::string_view InkPen{ "\xee\x9b\x93" };                                  // U+e6d3
-        constexpr static inline std::string_view Inpatient{ "\xee\x83\xbe" };                               // U+e0fe
-        constexpr static inline std::string_view Input{ "\xee\xa2\x90" };                                   // U+e890
-        constexpr static inline std::string_view InputCircle{ "\xef\x9c\x9a" };                             // U+f71a
-        constexpr static inline std::string_view InsertChart{ "\xef\x83\x8c" };                             // U+f0cc
-        constexpr static inline std::string_view InsertChartFilled{ "\xef\x83\x8c" };                       // U+f0cc
-        constexpr static inline std::string_view InsertChartOutlined{ "\xef\x83\x8c" };                     // U+f0cc
-        constexpr static inline std::string_view InsertComment{ "\xee\x89\x8c" };                           // U+e24c
-        constexpr static inline std::string_view InsertDriveFile{ "\xee\x99\xad" };                         // U+e66d
-        constexpr static inline std::string_view InsertEmoticon{ "\xee\xa8\xa2" };                          // U+ea22
-        constexpr static inline std::string_view InsertInvitation{ "\xee\xa1\xb8" };                        // U+e878
-        constexpr static inline std::string_view InsertLink{ "\xee\x89\x90" };                              // U+e250
-        constexpr static inline std::string_view InsertPageBreak{ "\xee\xab\x8a" };                         // U+eaca
-        constexpr static inline std::string_view InsertPhoto{ "\xee\x8f\xb4" };                             // U+e3f4
-        constexpr static inline std::string_view InsertText{ "\xef\xa0\xa7" };                              // U+f827
-        constexpr static inline std::string_view Insights{ "\xef\x82\x92" };                                // U+f092
-        constexpr static inline std::string_view InstallDesktop{ "\xee\xad\xb1" };                          // U+eb71
-        constexpr static inline std::string_view InstallMobile{ "\xee\xad\xb2" };                           // U+eb72
-        constexpr static inline std::string_view InstantMix{ "\xee\x80\xa6" };                              // U+e026
-        constexpr static inline std::string_view IntegrationInstructions{ "\xee\xbd\x94" };                 // U+ef54
-        constexpr static inline std::string_view InteractiveSpace{ "\xef\x9f\xbf" };                        // U+f7ff
-        constexpr static inline std::string_view Interests{ "\xee\x9f\x88" };                               // U+e7c8
-        constexpr static inline std::string_view InterpreterMode{ "\xee\xa0\xbb" };                         // U+e83b
-        constexpr static inline std::string_view Inventory{ "\xee\x85\xb9" };                               // U+e179
-        constexpr static inline std::string_view Inventory_2{ "\xee\x86\xa1" };                             // U+e1a1
-        constexpr static inline std::string_view InvertColors{ "\xee\xa2\x91" };                            // U+e891
-        constexpr static inline std::string_view InvertColorsOff{ "\xee\x83\x84" };                         // U+e0c4
-        constexpr static inline std::string_view Ios{ "\xee\x80\xa7" };                                     // U+e027
-        constexpr static inline std::string_view IosShare{ "\xee\x9a\xb8" };                                // U+e6b8
-        constexpr static inline std::string_view Iron{ "\xee\x96\x83" };                                    // U+e583
-        constexpr static inline std::string_view Iso{ "\xee\x8f\xb6" };                                     // U+e3f6
-        constexpr static inline std::string_view JamboardKiosk{ "\xee\xa6\xb5" };                           // U+e9b5
-        constexpr static inline std::string_view Javascript{ "\xee\xad\xbc" };                              // U+eb7c
-        constexpr static inline std::string_view Join{ "\xef\xa1\x8f" };                                    // U+f84f
-        constexpr static inline std::string_view JoinFull{ "\xef\xa1\x8f" };                                // U+f84f
-        constexpr static inline std::string_view JoinInner{ "\xee\xab\xb4" };                               // U+eaf4
-        constexpr static inline std::string_view JoinLeft{ "\xee\xab\xb2" };                                // U+eaf2
-        constexpr static inline std::string_view JoinRight{ "\xee\xab\xaa" };                               // U+eaea
-        constexpr static inline std::string_view Joystick{ "\xef\x97\xae" };                                // U+f5ee
-        constexpr static inline std::string_view JumpToElement{ "\xef\x9c\x99" };                           // U+f719
-        constexpr static inline std::string_view Kayaking{ "\xee\x94\x8c" };                                // U+e50c
-        constexpr static inline std::string_view KebabDining{ "\xee\xa1\x82" };                             // U+e842
-        constexpr static inline std::string_view Kettle{ "\xee\x8a\xb9" };                                  // U+e2b9
-        constexpr static inline std::string_view Key{ "\xee\x9c\xbc" };                                     // U+e73c
-        constexpr static inline std::string_view KeyOff{ "\xee\xae\x84" };                                  // U+eb84
-        constexpr static inline std::string_view KeyVertical{ "\xef\x94\x9a" };                             // U+f51a
-        constexpr static inline std::string_view KeyVisualizer{ "\xef\x86\x99" };                           // U+f199
-        constexpr static inline std::string_view Keyboard{ "\xee\x8c\x92" };                                // U+e312
-        constexpr static inline std::string_view KeyboardAlt{ "\xef\x80\xa8" };                             // U+f028
-        constexpr static inline std::string_view KeyboardArrowDown{ "\xee\x8c\x93" };                       // U+e313
-        constexpr static inline std::string_view KeyboardArrowLeft{ "\xee\x8c\x94" };                       // U+e314
-        constexpr static inline std::string_view KeyboardArrowRight{ "\xee\x8c\x95" };                      // U+e315
-        constexpr static inline std::string_view KeyboardArrowUp{ "\xee\x8c\x96" };                         // U+e316
-        constexpr static inline std::string_view KeyboardBackspace{ "\xee\x8c\x97" };                       // U+e317
-        constexpr static inline std::string_view KeyboardCapslock{ "\xee\x8c\x98" };                        // U+e318
-        constexpr static inline std::string_view KeyboardCapslockBadge{ "\xef\x9f\x9e" };                   // U+f7de
-        constexpr static inline std::string_view KeyboardCommandKey{ "\xee\xab\xa7" };                      // U+eae7
-        constexpr static inline std::string_view KeyboardControlKey{ "\xee\xab\xa6" };                      // U+eae6
-        constexpr static inline std::string_view KeyboardDoubleArrowDown{ "\xee\xab\x90" };                 // U+ead0
-        constexpr static inline std::string_view KeyboardDoubleArrowLeft{ "\xee\xab\x83" };                 // U+eac3
-        constexpr static inline std::string_view KeyboardDoubleArrowRight{ "\xee\xab\x89" };                // U+eac9
-        constexpr static inline std::string_view KeyboardDoubleArrowUp{ "\xee\xab\x8f" };                   // U+eacf
-        constexpr static inline std::string_view KeyboardExternalInput{ "\xef\x9f\x9d" };                   // U+f7dd
-        constexpr static inline std::string_view KeyboardFull{ "\xef\x9f\x9c" };                            // U+f7dc
-        constexpr static inline std::string_view KeyboardHide{ "\xee\x8c\x9a" };                            // U+e31a
-        constexpr static inline std::string_view KeyboardKeys{ "\xef\x99\xbb" };                            // U+f67b
-        constexpr static inline std::string_view KeyboardOff{ "\xef\x99\xba" };                             // U+f67a
-        constexpr static inline std::string_view KeyboardOnscreen{ "\xef\x9f\x9b" };                        // U+f7db
-        constexpr static inline std::string_view KeyboardOptionKey{ "\xee\xab\xa8" };                       // U+eae8
-        constexpr static inline std::string_view KeyboardPreviousLanguage{ "\xef\x9f\x9a" };                // U+f7da
-        constexpr static inline std::string_view KeyboardReturn{ "\xee\x8c\x9b" };                          // U+e31b
-        constexpr static inline std::string_view KeyboardTab{ "\xee\x8c\x9c" };                             // U+e31c
-        constexpr static inline std::string_view KeyboardTabRtl{ "\xee\xb1\xb3" };                          // U+ec73
-        constexpr static inline std::string_view KeyboardVoice{ "\xee\x8c\x9d" };                           // U+e31d
-        constexpr static inline std::string_view KidStar{ "\xef\x94\xa6" };                                 // U+f526
-        constexpr static inline std::string_view KingBed{ "\xee\xa9\x85" };                                 // U+ea45
-        constexpr static inline std::string_view Kitchen{ "\xee\xad\x87" };                                 // U+eb47
-        constexpr static inline std::string_view Kitesurfing{ "\xee\x94\x8d" };                             // U+e50d
-        constexpr static inline std::string_view LabPanel{ "\xee\x84\x83" };                                // U+e103
-        constexpr static inline std::string_view LabProfile{ "\xee\x84\x84" };                              // U+e104
-        constexpr static inline std::string_view LabResearch{ "\xef\xa0\x8b" };                             // U+f80b
-        constexpr static inline std::string_view Label{ "\xee\xa2\x93" };                                   // U+e893
-        constexpr static inline std::string_view LabelImportant{ "\xee\xa5\x88" };                          // U+e948
-        constexpr static inline std::string_view LabelImportantOutline{ "\xee\xa5\x88" };                   // U+e948
-        constexpr static inline std::string_view LabelOff{ "\xee\xa6\xb6" };                                // U+e9b6
-        constexpr static inline std::string_view LabelOutline{ "\xee\xa2\x93" };                            // U+e893
-        constexpr static inline std::string_view Labs{ "\xee\x84\x85" };                                    // U+e105
-        constexpr static inline std::string_view Lan{ "\xee\xac\xaf" };                                     // U+eb2f
-        constexpr static inline std::string_view Landscape{ "\xee\x95\xa4" };                               // U+e564
-        constexpr static inline std::string_view Landslide{ "\xee\xaf\x97" };                               // U+ebd7
-        constexpr static inline std::string_view Language{ "\xee\xa2\x94" };                                // U+e894
-        constexpr static inline std::string_view LanguageChineseArray{ "\xef\x9d\xa6" };                    // U+f766
-        constexpr static inline std::string_view LanguageChineseCangjie{ "\xef\x9d\xa5" };                  // U+f765
-        constexpr static inline std::string_view LanguageChineseDayi{ "\xef\x9d\xa4" };                     // U+f764
-        constexpr static inline std::string_view LanguageChinesePinyin{ "\xef\x9d\xa3" };                   // U+f763
-        constexpr static inline std::string_view LanguageChineseQuick{ "\xef\x9d\xa2" };                    // U+f762
-        constexpr static inline std::string_view LanguageChineseWubi{ "\xef\x9d\xa1" };                     // U+f761
-        constexpr static inline std::string_view LanguageFrench{ "\xef\x9d\xa0" };                          // U+f760
-        constexpr static inline std::string_view LanguageGbEnglish{ "\xef\x9d\x9f" };                       // U+f75f
-        constexpr static inline std::string_view LanguageInternational{ "\xef\x9d\x9e" };                   // U+f75e
-        constexpr static inline std::string_view LanguageJapaneseKana{ "\xef\x94\x93" };                    // U+f513
-        constexpr static inline std::string_view LanguageKoreanLatin{ "\xef\x9d\x9d" };                     // U+f75d
-        constexpr static inline std::string_view LanguagePinyin{ "\xef\x9d\x9c" };                          // U+f75c
-        constexpr static inline std::string_view LanguageSpanish{ "\xef\x97\xa9" };                         // U+f5e9
-        constexpr static inline std::string_view LanguageUs{ "\xef\x9d\x99" };                              // U+f759
-        constexpr static inline std::string_view LanguageUsColemak{ "\xef\x9d\x9b" };                       // U+f75b
-        constexpr static inline std::string_view LanguageUsDvorak{ "\xef\x9d\x9a" };                        // U+f75a
-        constexpr static inline std::string_view Laps{ "\xef\x9a\xb9" };                                    // U+f6b9
-        constexpr static inline std::string_view Laptop{ "\xee\x8c\x9e" };                                  // U+e31e
-        constexpr static inline std::string_view LaptopChromebook{ "\xee\x8c\x9f" };                        // U+e31f
-        constexpr static inline std::string_view LaptopMac{ "\xee\x8c\xa0" };                               // U+e320
-        constexpr static inline std::string_view LaptopWindows{ "\xee\x8c\xa1" };                           // U+e321
-        constexpr static inline std::string_view LassoSelect{ "\xee\xac\x83" };                             // U+eb03
-        constexpr static inline std::string_view LastPage{ "\xee\x97\x9d" };                                // U+e5dd
-        constexpr static inline std::string_view Launch{ "\xee\xa2\x9e" };                                  // U+e89e
-        constexpr static inline std::string_view Laundry{ "\xee\x8a\xa8" };                                 // U+e2a8
-        constexpr static inline std::string_view Layers{ "\xee\x94\xbb" };                                  // U+e53b
-        constexpr static inline std::string_view LayersClear{ "\xee\x94\xbc" };                             // U+e53c
-        constexpr static inline std::string_view Lda{ "\xee\x84\x86" };                                     // U+e106
-        constexpr static inline std::string_view Leaderboard{ "\xef\x88\x8c" };                             // U+f20c
-        constexpr static inline std::string_view LeakAdd{ "\xee\x8f\xb8" };                                 // U+e3f8
-        constexpr static inline std::string_view LeakRemove{ "\xee\x8f\xb9" };                              // U+e3f9
-        constexpr static inline std::string_view LeftClick{ "\xef\x9c\x98" };                               // U+f718
-        constexpr static inline std::string_view LeftPanelClose{ "\xef\x9c\x97" };                          // U+f717
-        constexpr static inline std::string_view LeftPanelOpen{ "\xef\x9c\x96" };                           // U+f716
-        constexpr static inline std::string_view LegendToggle{ "\xef\x84\x9b" };                            // U+f11b
-        constexpr static inline std::string_view Lens{ "\xee\x8f\xba" };                                    // U+e3fa
-        constexpr static inline std::string_view LensBlur{ "\xef\x80\xa9" };                                // U+f029
-        constexpr static inline std::string_view LetterSwitch{ "\xef\x9d\x98" };                            // U+f758
-        constexpr static inline std::string_view LibraryAdd{ "\xee\x80\xbc" };                              // U+e03c
-        constexpr static inline std::string_view LibraryAddCheck{ "\xee\xa6\xb7" };                         // U+e9b7
-        constexpr static inline std::string_view LibraryBooks{ "\xee\x80\xaf" };                            // U+e02f
-        constexpr static inline std::string_view LibraryMusic{ "\xee\x80\xb0" };                            // U+e030
-        constexpr static inline std::string_view License{ "\xee\xac\x84" };                                 // U+eb04
-        constexpr static inline std::string_view LiftToTalk{ "\xee\xbe\xa3" };                              // U+efa3
-        constexpr static inline std::string_view Light{ "\xef\x80\xaa" };                                   // U+f02a
-        constexpr static inline std::string_view LightGroup{ "\xee\x8a\x8b" };                              // U+e28b
-        constexpr static inline std::string_view LightMode{ "\xee\x94\x98" };                               // U+e518
-        constexpr static inline std::string_view LightOff{ "\xee\xa6\xb8" };                                // U+e9b8
-        constexpr static inline std::string_view Lightbulb{ "\xee\xa4\x8f" };                               // U+e90f
-        constexpr static inline std::string_view LightbulbCircle{ "\xee\xaf\xbe" };                         // U+ebfe
-        constexpr static inline std::string_view LightbulbOutline{ "\xee\xa4\x8f" };                        // U+e90f
-        constexpr static inline std::string_view LightningStand{ "\xee\xbe\xa4" };                          // U+efa4
-        constexpr static inline std::string_view LineAxis{ "\xee\xaa\x9a" };                                // U+ea9a
-        constexpr static inline std::string_view LineCurve{ "\xef\x9d\x97" };                               // U+f757
-        constexpr static inline std::string_view LineEnd{ "\xef\xa0\xa6" };                                 // U+f826
-        constexpr static inline std::string_view LineEndArrow{ "\xef\xa0\x9d" };                            // U+f81d
-        constexpr static inline std::string_view LineEndArrowNotch{ "\xef\xa0\x9c" };                       // U+f81c
-        constexpr static inline std::string_view LineEndCircle{ "\xef\xa0\x9b" };                           // U+f81b
-        constexpr static inline std::string_view LineEndDiamond{ "\xef\xa0\x9a" };                          // U+f81a
-        constexpr static inline std::string_view LineEndSquare{ "\xef\xa0\x99" };                           // U+f819
-        constexpr static inline std::string_view LineStart{ "\xef\xa0\xa5" };                               // U+f825
-        constexpr static inline std::string_view LineStartArrow{ "\xef\xa0\x98" };                          // U+f818
-        constexpr static inline std::string_view LineStartArrowNotch{ "\xef\xa0\x97" };                     // U+f817
-        constexpr static inline std::string_view LineStartCircle{ "\xef\xa0\x96" };                         // U+f816
-        constexpr static inline std::string_view LineStartDiamond{ "\xef\xa0\x95" };                        // U+f815
-        constexpr static inline std::string_view LineStartSquare{ "\xef\xa0\x94" };                         // U+f814
-        constexpr static inline std::string_view LineStyle{ "\xee\xa4\x99" };                               // U+e919
-        constexpr static inline std::string_view LineWeight{ "\xee\xa4\x9a" };                              // U+e91a
-        constexpr static inline std::string_view LinearScale{ "\xee\x89\xa0" };                             // U+e260
-        constexpr static inline std::string_view Link{ "\xee\x89\x90" };                                    // U+e250
-        constexpr static inline std::string_view LinkOff{ "\xee\x85\xaf" };                                 // U+e16f
-        constexpr static inline std::string_view LinkedCamera{ "\xee\x90\xb8" };                            // U+e438
-        constexpr static inline std::string_view LinkedServices{ "\xef\x94\xb5" };                          // U+f535
-        constexpr static inline std::string_view Liquor{ "\xee\xa9\xa0" };                                  // U+ea60
-        constexpr static inline std::string_view List{ "\xee\xa2\x96" };                                    // U+e896
-        constexpr static inline std::string_view ListAlt{ "\xee\x83\xae" };                                 // U+e0ee
-        constexpr static inline std::string_view ListAltAdd{ "\xef\x9d\x96" };                              // U+f756
-        constexpr static inline std::string_view Lists{ "\xee\xa6\xb9" };                                   // U+e9b9
-        constexpr static inline std::string_view LiveHelp{ "\xee\x83\x86" };                                // U+e0c6
-        constexpr static inline std::string_view LiveTv{ "\xee\x98\xba" };                                  // U+e63a
-        constexpr static inline std::string_view Living{ "\xef\x80\xab" };                                  // U+f02b
-        constexpr static inline std::string_view LocalActivity{ "\xee\x95\x93" };                           // U+e553
-        constexpr static inline std::string_view LocalAirport{ "\xee\x94\xbd" };                            // U+e53d
-        constexpr static inline std::string_view LocalAtm{ "\xee\x94\xbe" };                                // U+e53e
-        constexpr static inline std::string_view LocalBar{ "\xee\x95\x80" };                                // U+e540
-        constexpr static inline std::string_view LocalCafe{ "\xee\xad\x84" };                               // U+eb44
-        constexpr static inline std::string_view LocalCarWash{ "\xee\x95\x82" };                            // U+e542
-        constexpr static inline std::string_view LocalConvenienceStore{ "\xee\x95\x83" };                   // U+e543
-        constexpr static inline std::string_view LocalDining{ "\xee\x95\xa1" };                             // U+e561
-        constexpr static inline std::string_view LocalDrink{ "\xee\x95\x84" };                              // U+e544
-        constexpr static inline std::string_view LocalFireDepartment{ "\xee\xbd\x95" };                     // U+ef55
-        constexpr static inline std::string_view LocalFlorist{ "\xee\x95\x85" };                            // U+e545
-        constexpr static inline std::string_view LocalGasStation{ "\xee\x95\x86" };                         // U+e546
-        constexpr static inline std::string_view LocalGroceryStore{ "\xee\xa3\x8c" };                       // U+e8cc
-        constexpr static inline std::string_view LocalHospital{ "\xee\x95\x88" };                           // U+e548
-        constexpr static inline std::string_view LocalHotel{ "\xee\x95\x89" };                              // U+e549
-        constexpr static inline std::string_view LocalLaundryService{ "\xee\x95\x8a" };                     // U+e54a
-        constexpr static inline std::string_view LocalLibrary{ "\xee\x95\x8b" };                            // U+e54b
-        constexpr static inline std::string_view LocalMall{ "\xee\x95\x8c" };                               // U+e54c
-        constexpr static inline std::string_view LocalMovies{ "\xee\xa3\x9a" };                             // U+e8da
-        constexpr static inline std::string_view LocalOffer{ "\xef\x81\x9b" };                              // U+f05b
-        constexpr static inline std::string_view LocalParking{ "\xee\x95\x8f" };                            // U+e54f
-        constexpr static inline std::string_view LocalPharmacy{ "\xee\x95\x90" };                           // U+e550
-        constexpr static inline std::string_view LocalPhone{ "\xef\x83\x94" };                              // U+f0d4
-        constexpr static inline std::string_view LocalPizza{ "\xee\x95\x92" };                              // U+e552
-        constexpr static inline std::string_view LocalPlay{ "\xee\x95\x93" };                               // U+e553
-        constexpr static inline std::string_view LocalPolice{ "\xee\xbd\x96" };                             // U+ef56
-        constexpr static inline std::string_view LocalPostOffice{ "\xee\x95\x94" };                         // U+e554
-        constexpr static inline std::string_view LocalPrintshop{ "\xee\xa2\xad" };                          // U+e8ad
-        constexpr static inline std::string_view LocalSee{ "\xee\x95\x97" };                                // U+e557
-        constexpr static inline std::string_view LocalShipping{ "\xee\x95\x98" };                           // U+e558
-        constexpr static inline std::string_view LocalTaxi{ "\xee\x95\x99" };                               // U+e559
-        constexpr static inline std::string_view LocationAutomation{ "\xef\x85\x8f" };                      // U+f14f
-        constexpr static inline std::string_view LocationAway{ "\xef\x85\x90" };                            // U+f150
-        constexpr static inline std::string_view LocationChip{ "\xef\xa1\x90" };                            // U+f850
-        constexpr static inline std::string_view LocationCity{ "\xee\x9f\xb1" };                            // U+e7f1
-        constexpr static inline std::string_view LocationDisabled{ "\xee\x86\xb6" };                        // U+e1b6
-        constexpr static inline std::string_view LocationHome{ "\xef\x85\x92" };                            // U+f152
-        constexpr static inline std::string_view LocationOff{ "\xee\x83\x87" };                             // U+e0c7
-        constexpr static inline std::string_view LocationOn{ "\xef\x87\x9b" };                              // U+f1db
-        constexpr static inline std::string_view LocationPin{ "\xef\x87\x9b" };                             // U+f1db
-        constexpr static inline std::string_view LocationSearching{ "\xee\x86\xb7" };                       // U+e1b7
-        constexpr static inline std::string_view LocatorTag{ "\xef\xa3\x81" };                              // U+f8c1
-        constexpr static inline std::string_view Lock{ "\xee\xa2\x99" };                                    // U+e899
-        constexpr static inline std::string_view LockClock{ "\xee\xbd\x97" };                               // U+ef57
-        constexpr static inline std::string_view LockOpen{ "\xee\xa2\x98" };                                // U+e898
-        constexpr static inline std::string_view LockOpenRight{ "\xef\x99\x96" };                           // U+f656
-        constexpr static inline std::string_view LockOutline{ "\xee\xa2\x99" };                             // U+e899
-        constexpr static inline std::string_view LockPerson{ "\xef\xa3\xb3" };                              // U+f8f3
-        constexpr static inline std::string_view LockReset{ "\xee\xab\x9e" };                               // U+eade
-        constexpr static inline std::string_view Login{ "\xee\xa9\xb7" };                                   // U+ea77
-        constexpr static inline std::string_view LogoDev{ "\xee\xab\x96" };                                 // U+ead6
-        constexpr static inline std::string_view Logout{ "\xee\xa6\xba" };                                  // U+e9ba
-        constexpr static inline std::string_view Looks{ "\xee\x8f\xbc" };                                   // U+e3fc
-        constexpr static inline std::string_view Looks_3{ "\xee\x8f\xbb" };                                 // U+e3fb
-        constexpr static inline std::string_view Looks_4{ "\xee\x8f\xbd" };                                 // U+e3fd
-        constexpr static inline std::string_view Looks_5{ "\xee\x8f\xbe" };                                 // U+e3fe
-        constexpr static inline std::string_view Looks_6{ "\xee\x8f\xbf" };                                 // U+e3ff
-        constexpr static inline std::string_view LooksOne{ "\xee\x90\x80" };                                // U+e400
-        constexpr static inline std::string_view LooksTwo{ "\xee\x90\x81" };                                // U+e401
-        constexpr static inline std::string_view Loop{ "\xee\xa1\xa3" };                                    // U+e863
-        constexpr static inline std::string_view Loupe{ "\xee\x90\x82" };                                   // U+e402
-        constexpr static inline std::string_view LowDensity{ "\xef\x9e\x9b" };                              // U+f79b
-        constexpr static inline std::string_view LowPriority{ "\xee\x85\xad" };                             // U+e16d
-        constexpr static inline std::string_view Loyalty{ "\xee\xa2\x9a" };                                 // U+e89a
-        constexpr static inline std::string_view LteMobiledata{ "\xef\x80\xac" };                           // U+f02c
-        constexpr static inline std::string_view LteMobiledataBadge{ "\xef\x9f\x99" };                      // U+f7d9
-        constexpr static inline std::string_view LtePlusMobiledata{ "\xef\x80\xad" };                       // U+f02d
-        constexpr static inline std::string_view LtePlusMobiledataBadge{ "\xef\x9f\x98" };                  // U+f7d8
-        constexpr static inline std::string_view Luggage{ "\xef\x88\xb5" };                                 // U+f235
-        constexpr static inline std::string_view LunchDining{ "\xee\xa9\xa1" };                             // U+ea61
-        constexpr static inline std::string_view Lyrics{ "\xee\xb0\x8b" };                                  // U+ec0b
-        constexpr static inline std::string_view MacroAuto{ "\xef\x9b\xb2" };                               // U+f6f2
-        constexpr static inline std::string_view MacroOff{ "\xef\xa3\x92" };                                // U+f8d2
-        constexpr static inline std::string_view MagicButton{ "\xef\x84\xb6" };                             // U+f136
-        constexpr static inline std::string_view MagicExchange{ "\xef\x9f\xb4" };                           // U+f7f4
-        constexpr static inline std::string_view MagicTether{ "\xef\x9f\x97" };                             // U+f7d7
-        constexpr static inline std::string_view MagnificationLarge{ "\xef\xa0\xbd" };                      // U+f83d
-        constexpr static inline std::string_view MagnificationSmall{ "\xef\xa0\xbc" };                      // U+f83c
-        constexpr static inline std::string_view MagnifyDocked{ "\xef\x9f\x96" };                           // U+f7d6
-        constexpr static inline std::string_view MagnifyFullscreen{ "\xef\x9f\x95" };                       // U+f7d5
-        constexpr static inline std::string_view Mail{ "\xee\x85\x99" };                                    // U+e159
-        constexpr static inline std::string_view MailLock{ "\xee\xb0\x8a" };                                // U+ec0a
-        constexpr static inline std::string_view MailOutline{ "\xee\x85\x99" };                             // U+e159
-        constexpr static inline std::string_view Male{ "\xee\x96\x8e" };                                    // U+e58e
-        constexpr static inline std::string_view Man{ "\xee\x93\xab" };                                     // U+e4eb
-        constexpr static inline std::string_view Man_2{ "\xef\xa3\xa1" };                                   // U+f8e1
-        constexpr static inline std::string_view Man_3{ "\xef\xa3\xa2" };                                   // U+f8e2
-        constexpr static inline std::string_view Man_4{ "\xef\xa3\xa3" };                                   // U+f8e3
-        constexpr static inline std::string_view ManageAccounts{ "\xef\x80\xae" };                          // U+f02e
-        constexpr static inline std::string_view ManageHistory{ "\xee\xaf\xa7" };                           // U+ebe7
-        constexpr static inline std::string_view ManageSearch{ "\xef\x80\xaf" };                            // U+f02f
-        constexpr static inline std::string_view Manga{ "\xef\x97\xa3" };                                   // U+f5e3
-        constexpr static inline std::string_view Manufacturing{ "\xee\x9c\xa6" };                           // U+e726
-        constexpr static inline std::string_view Map{ "\xee\x95\x9b" };                                     // U+e55b
-        constexpr static inline std::string_view MapsHomeWork{ "\xef\x80\xb0" };                            // U+f030
-        constexpr static inline std::string_view MapsUgc{ "\xee\xbd\x98" };                                 // U+ef58
-        constexpr static inline std::string_view Margin{ "\xee\xa6\xbb" };                                  // U+e9bb
-        constexpr static inline std::string_view MarkAsUnread{ "\xee\xa6\xbc" };                            // U+e9bc
-        constexpr static inline std::string_view MarkChatRead{ "\xef\x86\x8b" };                            // U+f18b
-        constexpr static inline std::string_view MarkChatUnread{ "\xef\x86\x89" };                          // U+f189
-        constexpr static inline std::string_view MarkEmailRead{ "\xef\x86\x8c" };                           // U+f18c
-        constexpr static inline std::string_view MarkEmailUnread{ "\xef\x86\x8a" };                         // U+f18a
-        constexpr static inline std::string_view MarkUnreadChatAlt{ "\xee\xae\x9d" };                       // U+eb9d
-        constexpr static inline std::string_view Markdown{ "\xef\x95\x92" };                                // U+f552
-        constexpr static inline std::string_view MarkdownCopy{ "\xef\x95\x93" };                            // U+f553
-        constexpr static inline std::string_view MarkdownPaste{ "\xef\x95\x94" };                           // U+f554
-        constexpr static inline std::string_view Markunread{ "\xee\x85\x99" };                              // U+e159
-        constexpr static inline std::string_view MarkunreadMailbox{ "\xee\xa2\x9b" };                       // U+e89b
-        constexpr static inline std::string_view MaskedTransitions{ "\xee\x9c\xae" };                       // U+e72e
-        constexpr static inline std::string_view Masks{ "\xef\x88\x98" };                                   // U+f218
-        constexpr static inline std::string_view MatchCase{ "\xef\x9b\xb1" };                               // U+f6f1
-        constexpr static inline std::string_view MatchWord{ "\xef\x9b\xb0" };                               // U+f6f0
-        constexpr static inline std::string_view Matter{ "\xee\xa4\x87" };                                  // U+e907
-        constexpr static inline std::string_view Maximize{ "\xee\xa4\xb0" };                                // U+e930
-        constexpr static inline std::string_view MeasuringTape{ "\xef\x9a\xaf" };                           // U+f6af
-        constexpr static inline std::string_view MediaBluetoothOff{ "\xef\x80\xb1" };                       // U+f031
-        constexpr static inline std::string_view MediaBluetoothOn{ "\xef\x80\xb2" };                        // U+f032
-        constexpr static inline std::string_view MediaLink{ "\xef\xa0\xbf" };                               // U+f83f
-        constexpr static inline std::string_view MediaOutput{ "\xef\x93\xb2" };                             // U+f4f2
-        constexpr static inline std::string_view MediaOutputOff{ "\xef\x93\xb3" };                          // U+f4f3
-        constexpr static inline std::string_view Mediation{ "\xee\xbe\xa7" };                               // U+efa7
-        constexpr static inline std::string_view MedicalInformation{ "\xee\xaf\xad" };                      // U+ebed
-        constexpr static inline std::string_view MedicalMask{ "\xef\xa0\x8a" };                             // U+f80a
-        constexpr static inline std::string_view MedicalServices{ "\xef\x84\x89" };                         // U+f109
-        constexpr static inline std::string_view Medication{ "\xef\x80\xb3" };                              // U+f033
-        constexpr static inline std::string_view MedicationLiquid{ "\xee\xaa\x87" };                        // U+ea87
-        constexpr static inline std::string_view MeetingRoom{ "\xee\xad\x8f" };                             // U+eb4f
-        constexpr static inline std::string_view Memory{ "\xee\x8c\xa2" };                                  // U+e322
-        constexpr static inline std::string_view MemoryAlt{ "\xef\x9e\xa3" };                               // U+f7a3
-        constexpr static inline std::string_view MenstrualHealth{ "\xef\x9b\xa1" };                         // U+f6e1
-        constexpr static inline std::string_view Menu{ "\xee\x97\x92" };                                    // U+e5d2
-        constexpr static inline std::string_view MenuBook{ "\xee\xa8\x99" };                                // U+ea19
-        constexpr static inline std::string_view MenuOpen{ "\xee\xa6\xbd" };                                // U+e9bd
-        constexpr static inline std::string_view Merge{ "\xee\xae\x98" };                                   // U+eb98
-        constexpr static inline std::string_view MergeType{ "\xee\x89\x92" };                               // U+e252
-        constexpr static inline std::string_view Message{ "\xee\x83\x89" };                                 // U+e0c9
-        constexpr static inline std::string_view Metabolism{ "\xee\x84\x8b" };                              // U+e10b
-        constexpr static inline std::string_view MfgNestYaleLock{ "\xef\x84\x9d" };                         // U+f11d
-        constexpr static inline std::string_view Mic{ "\xee\x8c\x9d" };                                     // U+e31d
-        constexpr static inline std::string_view MicDouble{ "\xef\x97\x91" };                               // U+f5d1
-        constexpr static inline std::string_view MicExternalOff{ "\xee\xbd\x99" };                          // U+ef59
-        constexpr static inline std::string_view MicExternalOn{ "\xee\xbd\x9a" };                           // U+ef5a
-        constexpr static inline std::string_view MicNone{ "\xee\x8c\x9d" };                                 // U+e31d
-        constexpr static inline std::string_view MicOff{ "\xee\x80\xab" };                                  // U+e02b
-        constexpr static inline std::string_view Microbiology{ "\xee\x84\x8c" };                            // U+e10c
-        constexpr static inline std::string_view Microwave{ "\xef\x88\x84" };                               // U+f204
-        constexpr static inline std::string_view MicrowaveGen{ "\xee\xa1\x87" };                            // U+e847
-        constexpr static inline std::string_view MilitaryTech{ "\xee\xa8\xbf" };                            // U+ea3f
-        constexpr static inline std::string_view Mimo{ "\xee\xa6\xbe" };                                    // U+e9be
-        constexpr static inline std::string_view MimoDisconnect{ "\xee\xa6\xbf" };                          // U+e9bf
-        constexpr static inline std::string_view Mindfulness{ "\xef\x9b\xa0" };                             // U+f6e0
-        constexpr static inline std::string_view Minimize{ "\xee\xa4\xb1" };                                // U+e931
-        constexpr static inline std::string_view MinorCrash{ "\xee\xaf\xb1" };                              // U+ebf1
-        constexpr static inline std::string_view Mintmark{ "\xee\xbe\xa9" };                                // U+efa9
-        constexpr static inline std::string_view MissedVideoCall{ "\xef\x83\x8e" };                         // U+f0ce
-        constexpr static inline std::string_view MissedVideoCallFilled{ "\xef\x83\x8e" };                   // U+f0ce
-        constexpr static inline std::string_view MissingController{ "\xee\x9c\x81" };                       // U+e701
-        constexpr static inline std::string_view Mist{ "\xee\x86\x88" };                                    // U+e188
-        constexpr static inline std::string_view Mitre{ "\xef\x95\x87" };                                   // U+f547
-        constexpr static inline std::string_view MixtureMed{ "\xee\x93\x88" };                              // U+e4c8
-        constexpr static inline std::string_view Mms{ "\xee\x98\x98" };                                     // U+e618
-        constexpr static inline std::string_view MobileFriendly{ "\xee\x88\x80" };                          // U+e200
-        constexpr static inline std::string_view MobileOff{ "\xee\x88\x81" };                               // U+e201
-        constexpr static inline std::string_view MobileScreenShare{ "\xee\x83\xa7" };                       // U+e0e7
-        constexpr static inline std::string_view MobiledataOff{ "\xef\x80\xb4" };                           // U+f034
-        constexpr static inline std::string_view Mode{ "\xef\x82\x97" };                                    // U+f097
-        constexpr static inline std::string_view ModeComment{ "\xee\x89\x93" };                             // U+e253
-        constexpr static inline std::string_view ModeCool{ "\xef\x85\xa6" };                                // U+f166
-        constexpr static inline std::string_view ModeCoolOff{ "\xef\x85\xa7" };                             // U+f167
-        constexpr static inline std::string_view ModeDual{ "\xef\x95\x97" };                                // U+f557
-        constexpr static inline std::string_view ModeEdit{ "\xef\x82\x97" };                                // U+f097
-        constexpr static inline std::string_view ModeEditOutline{ "\xef\x82\x97" };                         // U+f097
-        constexpr static inline std::string_view ModeFan{ "\xef\x85\xa8" };                                 // U+f168
-        constexpr static inline std::string_view ModeFanOff{ "\xee\xb0\x97" };                              // U+ec17
-        constexpr static inline std::string_view ModeHeat{ "\xef\x85\xaa" };                                // U+f16a
-        constexpr static inline std::string_view ModeHeatCool{ "\xef\x85\xab" };                            // U+f16b
-        constexpr static inline std::string_view ModeHeatOff{ "\xef\x85\xad" };                             // U+f16d
-        constexpr static inline std::string_view ModeNight{ "\xef\x80\xb6" };                               // U+f036
-        constexpr static inline std::string_view ModeOfTravel{ "\xee\x9f\x8e" };                            // U+e7ce
-        constexpr static inline std::string_view ModeOffOn{ "\xef\x85\xaf" };                               // U+f16f
-        constexpr static inline std::string_view ModeStandby{ "\xef\x80\xb7" };                             // U+f037
-        constexpr static inline std::string_view ModelTraining{ "\xef\x83\x8f" };                           // U+f0cf
-        constexpr static inline std::string_view MonetizationOn{ "\xee\x89\xa3" };                          // U+e263
-        constexpr static inline std::string_view Money{ "\xee\x95\xbd" };                                   // U+e57d
-        constexpr static inline std::string_view MoneyOff{ "\xef\x80\xb8" };                                // U+f038
-        constexpr static inline std::string_view MoneyOffCsred{ "\xef\x80\xb8" };                           // U+f038
-        constexpr static inline std::string_view Monitor{ "\xee\xbd\x9b" };                                 // U+ef5b
-        constexpr static inline std::string_view MonitorHeart{ "\xee\xaa\xa2" };                            // U+eaa2
-        constexpr static inline std::string_view MonitorWeight{ "\xef\x80\xb9" };                           // U+f039
-        constexpr static inline std::string_view MonitorWeightGain{ "\xef\x9b\x9f" };                       // U+f6df
-        constexpr static inline std::string_view MonitorWeightLoss{ "\xef\x9b\x9e" };                       // U+f6de
-        constexpr static inline std::string_view Monitoring{ "\xef\x86\x90" };                              // U+f190
-        constexpr static inline std::string_view MonochromePhotos{ "\xee\x90\x83" };                        // U+e403
-        constexpr static inline std::string_view Mood{ "\xee\xa8\xa2" };                                    // U+ea22
-        constexpr static inline std::string_view MoodBad{ "\xee\x9f\xb3" };                                 // U+e7f3
-        constexpr static inline std::string_view Mop{ "\xee\x8a\x8d" };                                     // U+e28d
-        constexpr static inline std::string_view More{ "\xee\x98\x99" };                                    // U+e619
-        constexpr static inline std::string_view MoreDown{ "\xef\x86\x96" };                                // U+f196
-        constexpr static inline std::string_view MoreHoriz{ "\xee\x97\x93" };                               // U+e5d3
-        constexpr static inline std::string_view MoreTime{ "\xee\xa9\x9d" };                                // U+ea5d
-        constexpr static inline std::string_view MoreUp{ "\xef\x86\x97" };                                  // U+f197
-        constexpr static inline std::string_view MoreVert{ "\xee\x97\x94" };                                // U+e5d4
-        constexpr static inline std::string_view Mosque{ "\xee\xaa\xb2" };                                  // U+eab2
-        constexpr static inline std::string_view MotionBlur{ "\xef\x83\x90" };                              // U+f0d0
-        constexpr static inline std::string_view MotionMode{ "\xef\xa1\x82" };                              // U+f842
-        constexpr static inline std::string_view MotionPhotosAuto{ "\xef\x80\xba" };                        // U+f03a
-        constexpr static inline std::string_view MotionPhotosOff{ "\xee\xa7\x80" };                         // U+e9c0
-        constexpr static inline std::string_view MotionPhotosOn{ "\xee\xa7\x81" };                          // U+e9c1
-        constexpr static inline std::string_view MotionPhotosPause{ "\xef\x88\xa7" };                       // U+f227
-        constexpr static inline std::string_view MotionPhotosPaused{ "\xef\x88\xa7" };                      // U+f227
-        constexpr static inline std::string_view MotionSensorActive{ "\xee\x9e\x92" };                      // U+e792
-        constexpr static inline std::string_view MotionSensorAlert{ "\xee\x9e\x84" };                       // U+e784
-        constexpr static inline std::string_view MotionSensorIdle{ "\xee\x9e\x83" };                        // U+e783
-        constexpr static inline std::string_view MotionSensorUrgent{ "\xee\x9e\x8e" };                      // U+e78e
-        constexpr static inline std::string_view Motorcycle{ "\xee\xa4\x9b" };                              // U+e91b
-        constexpr static inline std::string_view MountainFlag{ "\xef\x97\xa2" };                            // U+f5e2
-        constexpr static inline std::string_view Mouse{ "\xee\x8c\xa3" };                                   // U+e323
-        constexpr static inline std::string_view Move{ "\xee\x9d\x80" };                                    // U+e740
-        constexpr static inline std::string_view MoveDown{ "\xee\xad\xa1" };                                // U+eb61
-        constexpr static inline std::string_view MoveGroup{ "\xef\x9c\x95" };                               // U+f715
-        constexpr static inline std::string_view MoveItem{ "\xef\x87\xbf" };                                // U+f1ff
-        constexpr static inline std::string_view MoveLocation{ "\xee\x9d\x81" };                            // U+e741
-        constexpr static inline std::string_view MoveSelectionDown{ "\xef\x9c\x94" };                       // U+f714
-        constexpr static inline std::string_view MoveSelectionLeft{ "\xef\x9c\x93" };                       // U+f713
-        constexpr static inline std::string_view MoveSelectionRight{ "\xef\x9c\x92" };                      // U+f712
-        constexpr static inline std::string_view MoveSelectionUp{ "\xef\x9c\x91" };                         // U+f711
-        constexpr static inline std::string_view MoveToInbox{ "\xee\x85\xa8" };                             // U+e168
-        constexpr static inline std::string_view MoveUp{ "\xee\xad\xa4" };                                  // U+eb64
-        constexpr static inline std::string_view MovedLocation{ "\xee\x96\x94" };                           // U+e594
-        constexpr static inline std::string_view Movie{ "\xee\x90\x84" };                                   // U+e404
-        constexpr static inline std::string_view MovieCreation{ "\xee\x90\x84" };                           // U+e404
-        constexpr static inline std::string_view MovieEdit{ "\xef\xa1\x80" };                               // U+f840
-        constexpr static inline std::string_view MovieFilter{ "\xee\x90\xba" };                             // U+e43a
-        constexpr static inline std::string_view MovieInfo{ "\xee\x80\xad" };                               // U+e02d
-        constexpr static inline std::string_view Moving{ "\xee\x94\x81" };                                  // U+e501
-        constexpr static inline std::string_view MovingBeds{ "\xee\x9c\xbd" };                              // U+e73d
-        constexpr static inline std::string_view MovingMinistry{ "\xee\x9c\xbe" };                          // U+e73e
-        constexpr static inline std::string_view Mp{ "\xee\xa7\x83" };                                      // U+e9c3
-        constexpr static inline std::string_view Multicooker{ "\xee\x8a\x93" };                             // U+e293
-        constexpr static inline std::string_view MultilineChart{ "\xee\x9b\x9f" };                          // U+e6df
-        constexpr static inline std::string_view MultipleStop{ "\xef\x86\xb9" };                            // U+f1b9
-        constexpr static inline std::string_view Museum{ "\xee\xa8\xb6" };                                  // U+ea36
-        constexpr static inline std::string_view MusicCast{ "\xee\xac\x9a" };                               // U+eb1a
-        constexpr static inline std::string_view MusicNote{ "\xee\x90\x85" };                               // U+e405
-        constexpr static inline std::string_view MusicOff{ "\xee\x91\x80" };                                // U+e440
-        constexpr static inline std::string_view MusicVideo{ "\xee\x81\xa3" };                              // U+e063
-        constexpr static inline std::string_view MyLocation{ "\xee\x95\x9c" };                              // U+e55c
-        constexpr static inline std::string_view Mystery{ "\xef\x97\xa1" };                                 // U+f5e1
-        constexpr static inline std::string_view Nat{ "\xee\xbd\x9c" };                                     // U+ef5c
-        constexpr static inline std::string_view Nature{ "\xee\x90\x86" };                                  // U+e406
-        constexpr static inline std::string_view NaturePeople{ "\xee\x90\x87" };                            // U+e407
-        constexpr static inline std::string_view NavigateBefore{ "\xee\x90\x88" };                          // U+e408
-        constexpr static inline std::string_view NavigateNext{ "\xee\x90\x89" };                            // U+e409
-        constexpr static inline std::string_view Navigation{ "\xee\x95\x9d" };                              // U+e55d
-        constexpr static inline std::string_view NearMe{ "\xee\x95\xa9" };                                  // U+e569
-        constexpr static inline std::string_view NearMeDisabled{ "\xef\x87\xaf" };                          // U+f1ef
-        constexpr static inline std::string_view Nearby{ "\xee\x9a\xb7" };                                  // U+e6b7
-        constexpr static inline std::string_view NearbyError{ "\xef\x80\xbb" };                             // U+f03b
-        constexpr static inline std::string_view NearbyOff{ "\xef\x80\xbc" };                               // U+f03c
-        constexpr static inline std::string_view Nephrology{ "\xee\x84\x8d" };                              // U+e10d
-        constexpr static inline std::string_view NestAudio{ "\xee\xae\xbf" };                               // U+ebbf
-        constexpr static inline std::string_view NestCamFloodlight{ "\xef\xa2\xb7" };                       // U+f8b7
-        constexpr static inline std::string_view NestCamIndoor{ "\xef\x84\x9e" };                           // U+f11e
-        constexpr static inline std::string_view NestCamIq{ "\xef\x84\x9f" };                               // U+f11f
-        constexpr static inline std::string_view NestCamIqOutdoor{ "\xef\x84\xa0" };                        // U+f120
-        constexpr static inline std::string_view NestCamMagnetMount{ "\xef\xa2\xb8" };                      // U+f8b8
-        constexpr static inline std::string_view NestCamOutdoor{ "\xef\x84\xa1" };                          // U+f121
-        constexpr static inline std::string_view NestCamStand{ "\xef\xa2\xb9" };                            // U+f8b9
-        constexpr static inline std::string_view NestCamWallMount{ "\xef\xa2\xba" };                        // U+f8ba
-        constexpr static inline std::string_view NestCamWiredStand{ "\xee\xb0\x96" };                       // U+ec16
-        constexpr static inline std::string_view NestClockFarsightAnalog{ "\xef\xa2\xbb" };                 // U+f8bb
-        constexpr static inline std::string_view NestClockFarsightDigital{ "\xef\xa2\xbc" };                // U+f8bc
-        constexpr static inline std::string_view NestConnect{ "\xef\x84\xa2" };                             // U+f122
-        constexpr static inline std::string_view NestDetect{ "\xef\x84\xa3" };                              // U+f123
-        constexpr static inline std::string_view NestDisplay{ "\xef\x84\xa4" };                             // U+f124
-        constexpr static inline std::string_view NestDisplayMax{ "\xef\x84\xa5" };                          // U+f125
-        constexpr static inline std::string_view NestDoorbellVisitor{ "\xef\xa2\xbd" };                     // U+f8bd
-        constexpr static inline std::string_view NestEcoLeaf{ "\xef\xa2\xbe" };                             // U+f8be
-        constexpr static inline std::string_view NestFarsightWeather{ "\xef\xa2\xbf" };                     // U+f8bf
-        constexpr static inline std::string_view NestFoundSavings{ "\xef\xa3\x80" };                        // U+f8c0
-        constexpr static inline std::string_view NestGaleWifi{ "\xef\x95\xb9" };                            // U+f579
-        constexpr static inline std::string_view NestHeatLinkE{ "\xef\x84\xa6" };                           // U+f126
-        constexpr static inline std::string_view NestHeatLinkGen_3{ "\xef\x84\xa7" };                       // U+f127
-        constexpr static inline std::string_view NestHelloDoorbell{ "\xee\xa0\xac" };                       // U+e82c
-        constexpr static inline std::string_view NestLocatorTag{ "\xef\xa3\x81" };                          // U+f8c1
-        constexpr static inline std::string_view NestMini{ "\xee\x9e\x89" };                                // U+e789
-        constexpr static inline std::string_view NestMultiRoom{ "\xef\xa3\x82" };                           // U+f8c2
-        constexpr static inline std::string_view NestProtect{ "\xee\x9a\x8e" };                             // U+e68e
-        constexpr static inline std::string_view NestRemote{ "\xef\x97\x9b" };                              // U+f5db
-        constexpr static inline std::string_view NestRemoteComfortSensor{ "\xef\x84\xaa" };                 // U+f12a
-        constexpr static inline std::string_view NestSecureAlarm{ "\xef\x84\xab" };                         // U+f12b
-        constexpr static inline std::string_view NestSunblock{ "\xef\xa3\x83" };                            // U+f8c3
-        constexpr static inline std::string_view NestTag{ "\xef\xa3\x81" };                                 // U+f8c1
-        constexpr static inline std::string_view NestThermostat{ "\xee\x9a\x8f" };                          // U+e68f
-        constexpr static inline std::string_view NestThermostatEEu{ "\xef\x84\xad" };                       // U+f12d
-        constexpr static inline std::string_view NestThermostatGen_3{ "\xef\x84\xae" };                     // U+f12e
-        constexpr static inline std::string_view NestThermostatSensor{ "\xef\x84\xaf" };                    // U+f12f
-        constexpr static inline std::string_view NestThermostatSensorEu{ "\xef\x84\xb0" };                  // U+f130
-        constexpr static inline std::string_view NestThermostatZirconiumEu{ "\xef\x84\xb1" };               // U+f131
-        constexpr static inline std::string_view NestTrueRadiant{ "\xef\xa3\x84" };                         // U+f8c4
-        constexpr static inline std::string_view NestWakeOnApproach{ "\xef\xa3\x85" };                      // U+f8c5
-        constexpr static inline std::string_view NestWakeOnPress{ "\xef\xa3\x86" };                         // U+f8c6
-        constexpr static inline std::string_view NestWifiGale{ "\xef\x84\xb2" };                            // U+f132
-        constexpr static inline std::string_view NestWifiMistral{ "\xef\x84\xb3" };                         // U+f133
-        constexpr static inline std::string_view NestWifiPoint{ "\xef\x84\xb4" };                           // U+f134
-        constexpr static inline std::string_view NestWifiPointVento{ "\xef\x84\xb4" };                      // U+f134
-        constexpr static inline std::string_view NestWifiPro{ "\xef\x95\xab" };                             // U+f56b
-        constexpr static inline std::string_view NestWifiPro_2{ "\xef\x95\xaa" };                           // U+f56a
-        constexpr static inline std::string_view NestWifiRouter{ "\xef\x84\xb3" };                          // U+f133
-        constexpr static inline std::string_view NetworkCell{ "\xee\x86\xb9" };                             // U+e1b9
-        constexpr static inline std::string_view NetworkCheck{ "\xee\x99\x80" };                            // U+e640
-        constexpr static inline std::string_view NetworkIntelligenceHistory{ "\xef\x97\xb6" };              // U+f5f6
-        constexpr static inline std::string_view NetworkIntelligenceUpdate{ "\xef\x97\xb5" };               // U+f5f5
-        constexpr static inline std::string_view NetworkLocked{ "\xee\x98\x9a" };                           // U+e61a
-        constexpr static inline std::string_view NetworkManage{ "\xef\x9e\xab" };                           // U+f7ab
-        constexpr static inline std::string_view NetworkNode{ "\xef\x95\xae" };                             // U+f56e
-        constexpr static inline std::string_view NetworkPing{ "\xee\xaf\x8a" };                             // U+ebca
-        constexpr static inline std::string_view NetworkWifi{ "\xee\x86\xba" };                             // U+e1ba
-        constexpr static inline std::string_view NetworkWifi_1Bar{ "\xee\xaf\xa4" };                        // U+ebe4
-        constexpr static inline std::string_view NetworkWifi_1BarLocked{ "\xef\x96\x8f" };                  // U+f58f
-        constexpr static inline std::string_view NetworkWifi_2Bar{ "\xee\xaf\x96" };                        // U+ebd6
-        constexpr static inline std::string_view NetworkWifi_2BarLocked{ "\xef\x96\x8e" };                  // U+f58e
-        constexpr static inline std::string_view NetworkWifi_3Bar{ "\xee\xaf\xa1" };                        // U+ebe1
-        constexpr static inline std::string_view NetworkWifi_3BarLocked{ "\xef\x96\x8d" };                  // U+f58d
-        constexpr static inline std::string_view NetworkWifiLocked{ "\xef\x94\xb2" };                       // U+f532
-        constexpr static inline std::string_view Neurology{ "\xee\x84\x8e" };                               // U+e10e
-        constexpr static inline std::string_view NewLabel{ "\xee\x98\x89" };                                // U+e609
-        constexpr static inline std::string_view NewReleases{ "\xee\xbd\xb6" };                             // U+ef76
-        constexpr static inline std::string_view NewWindow{ "\xef\x9c\x90" };                               // U+f710
-        constexpr static inline std::string_view News{ "\xee\x80\xb2" };                                    // U+e032
-        constexpr static inline std::string_view Newsmode{ "\xee\xbe\xad" };                                // U+efad
-        constexpr static inline std::string_view Newspaper{ "\xee\xae\x81" };                               // U+eb81
-        constexpr static inline std::string_view Newsstand{ "\xee\xa7\x84" };                               // U+e9c4
-        constexpr static inline std::string_view NextPlan{ "\xee\xbd\x9d" };                                // U+ef5d
-        constexpr static inline std::string_view NextWeek{ "\xee\x85\xaa" };                                // U+e16a
-        constexpr static inline std::string_view Nfc{ "\xee\x86\xbb" };                                     // U+e1bb
-        constexpr static inline std::string_view NightShelter{ "\xef\x87\xb1" };                            // U+f1f1
-        constexpr static inline std::string_view NightSightAuto{ "\xef\x87\x97" };                          // U+f1d7
-        constexpr static inline std::string_view NightSightAutoOff{ "\xef\x87\xb9" };                       // U+f1f9
-        constexpr static inline std::string_view NightSightMax{ "\xef\x9b\x83" };                           // U+f6c3
-        constexpr static inline std::string_view Nightlife{ "\xee\xa9\xa2" };                               // U+ea62
-        constexpr static inline std::string_view Nightlight{ "\xef\x80\xbd" };                              // U+f03d
-        constexpr static inline std::string_view NightlightRound{ "\xef\x80\xbd" };                         // U+f03d
-        constexpr static inline std::string_view NightsStay{ "\xee\xa9\x86" };                              // U+ea46
-        constexpr static inline std::string_view NoAccounts{ "\xef\x80\xbe" };                              // U+f03e
-        constexpr static inline std::string_view NoAdultContent{ "\xef\xa3\xbe" };                          // U+f8fe
-        constexpr static inline std::string_view NoBackpack{ "\xef\x88\xb7" };                              // U+f237
-        constexpr static inline std::string_view NoCrash{ "\xee\xaf\xb0" };                                 // U+ebf0
-        constexpr static inline std::string_view NoDrinks{ "\xef\x86\xa5" };                                // U+f1a5
-        constexpr static inline std::string_view NoEncryption{ "\xef\x80\xbf" };                            // U+f03f
-        constexpr static inline std::string_view NoEncryptionGmailerrorred{ "\xef\x80\xbf" };               // U+f03f
-        constexpr static inline std::string_view NoFlash{ "\xef\x86\xa6" };                                 // U+f1a6
-        constexpr static inline std::string_view NoFood{ "\xef\x86\xa7" };                                  // U+f1a7
-        constexpr static inline std::string_view NoLuggage{ "\xef\x88\xbb" };                               // U+f23b
-        constexpr static inline std::string_view NoMeals{ "\xef\x87\x96" };                                 // U+f1d6
-        constexpr static inline std::string_view NoMeetingRoom{ "\xee\xad\x8e" };                           // U+eb4e
-        constexpr static inline std::string_view NoPhotography{ "\xef\x86\xa8" };                           // U+f1a8
-        constexpr static inline std::string_view NoSim{ "\xee\x87\x8e" };                                   // U+e1ce
-        constexpr static inline std::string_view NoSound{ "\xee\x9c\x90" };                                 // U+e710
-        constexpr static inline std::string_view NoStroller{ "\xef\x86\xaf" };                              // U+f1af
-        constexpr static inline std::string_view NoTransfer{ "\xef\x87\x95" };                              // U+f1d5
-        constexpr static inline std::string_view NoiseAware{ "\xee\xaf\xac" };                              // U+ebec
-        constexpr static inline std::string_view NoiseControlOff{ "\xee\xaf\xb3" };                         // U+ebf3
-        constexpr static inline std::string_view NoiseControlOn{ "\xef\xa2\xa8" };                          // U+f8a8
-        constexpr static inline std::string_view NordicWalking{ "\xee\x94\x8e" };                           // U+e50e
-        constexpr static inline std::string_view North{ "\xef\x87\xa0" };                                   // U+f1e0
-        constexpr static inline std::string_view NorthEast{ "\xef\x87\xa1" };                               // U+f1e1
-        constexpr static inline std::string_view NorthWest{ "\xef\x87\xa2" };                               // U+f1e2
-        constexpr static inline std::string_view NotAccessible{ "\xef\x83\xbe" };                           // U+f0fe
-        constexpr static inline std::string_view NotAccessibleForward{ "\xef\x95\x8a" };                    // U+f54a
-        constexpr static inline std::string_view NotInterested{ "\xef\x82\x8c" };                           // U+f08c
-        constexpr static inline std::string_view NotListedLocation{ "\xee\x95\xb5" };                       // U+e575
-        constexpr static inline std::string_view NotStarted{ "\xef\x83\x91" };                              // U+f0d1
-        constexpr static inline std::string_view Note{ "\xee\x99\xad" };                                    // U+e66d
-        constexpr static inline std::string_view NoteAdd{ "\xee\xa2\x9c" };                                 // U+e89c
-        constexpr static inline std::string_view NoteAlt{ "\xef\x81\x80" };                                 // U+f040
-        constexpr static inline std::string_view NoteStack{ "\xef\x95\xa2" };                               // U+f562
-        constexpr static inline std::string_view NoteStackAdd{ "\xef\x95\xa3" };                            // U+f563
-        constexpr static inline std::string_view Notes{ "\xee\x89\xac" };                                   // U+e26c
-        constexpr static inline std::string_view NotificationAdd{ "\xee\x8e\x99" };                         // U+e399
-        constexpr static inline std::string_view NotificationImportant{ "\xee\x80\x84" };                   // U+e004
-        constexpr static inline std::string_view NotificationMultiple{ "\xee\x9b\x82" };                    // U+e6c2
-        constexpr static inline std::string_view Notifications{ "\xee\x9f\xb5" };                           // U+e7f5
-        constexpr static inline std::string_view NotificationsActive{ "\xee\x9f\xb7" };                     // U+e7f7
-        constexpr static inline std::string_view NotificationsNone{ "\xee\x9f\xb5" };                       // U+e7f5
-        constexpr static inline std::string_view NotificationsOff{ "\xee\x9f\xb6" };                        // U+e7f6
-        constexpr static inline std::string_view NotificationsPaused{ "\xee\x9f\xb8" };                     // U+e7f8
-        constexpr static inline std::string_view NotificationsUnread{ "\xef\x93\xbe" };                     // U+f4fe
-        constexpr static inline std::string_view Numbers{ "\xee\xab\x87" };                                 // U+eac7
-        constexpr static inline std::string_view Nutrition{ "\xee\x84\x90" };                               // U+e110
-        constexpr static inline std::string_view Ods{ "\xee\x9b\xa8" };                                     // U+e6e8
-        constexpr static inline std::string_view Odt{ "\xee\x9b\xa9" };                                     // U+e6e9
-        constexpr static inline std::string_view OfflineBolt{ "\xee\xa4\xb2" };                             // U+e932
-        constexpr static inline std::string_view OfflinePin{ "\xee\xa4\x8a" };                              // U+e90a
-        constexpr static inline std::string_view OfflineShare{ "\xee\xa7\x85" };                            // U+e9c5
-        constexpr static inline std::string_view OilBarrel{ "\xee\xb0\x95" };                               // U+ec15
-        constexpr static inline std::string_view OnDeviceTraining{ "\xee\xaf\xbd" };                        // U+ebfd
-        constexpr static inline std::string_view OnHubDevice{ "\xee\x9b\x83" };                             // U+e6c3
-        constexpr static inline std::string_view Oncology{ "\xee\x84\x94" };                                // U+e114
-        constexpr static inline std::string_view OndemandVideo{ "\xee\x98\xba" };                           // U+e63a
-        constexpr static inline std::string_view OnlinePrediction{ "\xef\x83\xab" };                        // U+f0eb
-        constexpr static inline std::string_view Onsen{ "\xef\x9b\xb8" };                                   // U+f6f8
-        constexpr static inline std::string_view Opacity{ "\xee\xa4\x9c" };                                 // U+e91c
-        constexpr static inline std::string_view OpenInBrowser{ "\xee\xa2\x9d" };                           // U+e89d
-        constexpr static inline std::string_view OpenInFull{ "\xef\x87\x8e" };                              // U+f1ce
-        constexpr static inline std::string_view OpenInNew{ "\xee\xa2\x9e" };                               // U+e89e
-        constexpr static inline std::string_view OpenInNewDown{ "\xef\x9c\x8f" };                           // U+f70f
-        constexpr static inline std::string_view OpenInNewOff{ "\xee\x93\xb6" };                            // U+e4f6
-        constexpr static inline std::string_view OpenInPhone{ "\xee\x9c\x82" };                             // U+e702
-        constexpr static inline std::string_view OpenJam{ "\xee\xbe\xae" };                                 // U+efae
-        constexpr static inline std::string_view OpenWith{ "\xee\xa2\x9f" };                                // U+e89f
-        constexpr static inline std::string_view Ophthalmology{ "\xee\x84\x95" };                           // U+e115
-        constexpr static inline std::string_view OralDisease{ "\xee\x84\x96" };                             // U+e116
-        constexpr static inline std::string_view OrderApprove{ "\xef\xa0\x92" };                            // U+f812
-        constexpr static inline std::string_view OrderPlay{ "\xef\xa0\x91" };                               // U+f811
-        constexpr static inline std::string_view Orders{ "\xee\xac\x94" };                                  // U+eb14
-        constexpr static inline std::string_view Orthopedics{ "\xef\xa2\x97" };                             // U+f897
-        constexpr static inline std::string_view OtherAdmission{ "\xee\x91\xbb" };                          // U+e47b
-        constexpr static inline std::string_view OtherHouses{ "\xee\x96\x8c" };                             // U+e58c
-        constexpr static inline std::string_view Outbound{ "\xee\x87\x8a" };                                // U+e1ca
-        constexpr static inline std::string_view Outbox{ "\xee\xbd\x9f" };                                  // U+ef5f
-        constexpr static inline std::string_view OutboxAlt{ "\xee\xac\x97" };                               // U+eb17
-        constexpr static inline std::string_view OutdoorGarden{ "\xee\x88\x85" };                           // U+e205
-        constexpr static inline std::string_view OutdoorGrill{ "\xee\xa9\x87" };                            // U+ea47
-        constexpr static inline std::string_view OutgoingMail{ "\xef\x83\x92" };                            // U+f0d2
-        constexpr static inline std::string_view Outlet{ "\xef\x87\x94" };                                  // U+f1d4
-        constexpr static inline std::string_view OutlinedFlag{ "\xef\x83\x86" };                            // U+f0c6
-        constexpr static inline std::string_view Outpatient{ "\xee\x84\x98" };                              // U+e118
-        constexpr static inline std::string_view OutpatientMed{ "\xee\x84\x99" };                           // U+e119
-        constexpr static inline std::string_view Output{ "\xee\xae\xbe" };                                  // U+ebbe
-        constexpr static inline std::string_view OutputCircle{ "\xef\x9c\x8e" };                            // U+f70e
-        constexpr static inline std::string_view Oven{ "\xee\xa7\x87" };                                    // U+e9c7
-        constexpr static inline std::string_view OvenGen{ "\xee\xa1\x83" };                                 // U+e843
-        constexpr static inline std::string_view Overview{ "\xee\x92\xa7" };                                // U+e4a7
-        constexpr static inline std::string_view OverviewKey{ "\xef\x9f\x94" };                             // U+f7d4
-        constexpr static inline std::string_view OxygenSaturation{ "\xee\x93\x9e" };                        // U+e4de
-        constexpr static inline std::string_view P2p{ "\xef\x94\xaa" };                                     // U+f52a
-        constexpr static inline std::string_view Pace{ "\xef\x9a\xb8" };                                    // U+f6b8
-        constexpr static inline std::string_view Pacemaker{ "\xee\x99\x96" };                               // U+e656
-        constexpr static inline std::string_view Package{ "\xee\x92\x8f" };                                 // U+e48f
-        constexpr static inline std::string_view Package_2{ "\xef\x95\xa9" };                               // U+f569
-        constexpr static inline std::string_view Padding{ "\xee\xa7\x88" };                                 // U+e9c8
-        constexpr static inline std::string_view PageControl{ "\xee\x9c\xb1" };                             // U+e731
-        constexpr static inline std::string_view PageInfo{ "\xef\x98\x94" };                                // U+f614
-        constexpr static inline std::string_view Pageless{ "\xef\x94\x89" };                                // U+f509
-        constexpr static inline std::string_view Pages{ "\xee\x9f\xb9" };                                   // U+e7f9
-        constexpr static inline std::string_view Pageview{ "\xee\xa2\xa0" };                                // U+e8a0
-        constexpr static inline std::string_view Paid{ "\xef\x81\x81" };                                    // U+f041
-        constexpr static inline std::string_view Palette{ "\xee\x90\x8a" };                                 // U+e40a
-        constexpr static inline std::string_view Pallet{ "\xef\xa1\xaa" };                                  // U+f86a
-        constexpr static inline std::string_view PanTool{ "\xee\xa4\xa5" };                                 // U+e925
-        constexpr static inline std::string_view PanToolAlt{ "\xee\xae\xb9" };                              // U+ebb9
-        constexpr static inline std::string_view PanZoom{ "\xef\x99\x95" };                                 // U+f655
-        constexpr static inline std::string_view Panorama{ "\xee\x90\x8b" };                                // U+e40b
-        constexpr static inline std::string_view PanoramaFishEye{ "\xee\x90\x8c" };                         // U+e40c
-        constexpr static inline std::string_view PanoramaHorizontal{ "\xee\x90\x8d" };                      // U+e40d
-        constexpr static inline std::string_view PanoramaPhotosphere{ "\xee\xa7\x89" };                     // U+e9c9
-        constexpr static inline std::string_view PanoramaVertical{ "\xee\x90\x8e" };                        // U+e40e
-        constexpr static inline std::string_view PanoramaWideAngle{ "\xee\x90\x8f" };                       // U+e40f
-        constexpr static inline std::string_view Paragliding{ "\xee\x94\x8f" };                             // U+e50f
-        constexpr static inline std::string_view Park{ "\xee\xa9\xa3" };                                    // U+ea63
-        constexpr static inline std::string_view PartlyCloudyDay{ "\xef\x85\xb2" };                         // U+f172
-        constexpr static inline std::string_view PartlyCloudyNight{ "\xef\x85\xb4" };                       // U+f174
-        constexpr static inline std::string_view PartnerExchange{ "\xef\x9f\xb9" };                         // U+f7f9
-        constexpr static inline std::string_view PartnerReports{ "\xee\xbe\xaf" };                          // U+efaf
-        constexpr static inline std::string_view PartyMode{ "\xee\x9f\xba" };                               // U+e7fa
-        constexpr static inline std::string_view Passkey{ "\xef\xa1\xbf" };                                 // U+f87f
-        constexpr static inline std::string_view Password{ "\xef\x81\x82" };                                // U+f042
-        constexpr static inline std::string_view PatientList{ "\xee\x99\x93" };                             // U+e653
-        constexpr static inline std::string_view Pattern{ "\xef\x81\x83" };                                 // U+f043
-        constexpr static inline std::string_view Pause{ "\xee\x80\xb4" };                                   // U+e034
-        constexpr static inline std::string_view PauseCircle{ "\xee\x86\xa2" };                             // U+e1a2
-        constexpr static inline std::string_view PauseCircleFilled{ "\xee\x86\xa2" };                       // U+e1a2
-        constexpr static inline std::string_view PauseCircleOutline{ "\xee\x86\xa2" };                      // U+e1a2
-        constexpr static inline std::string_view PausePresentation{ "\xee\x83\xaa" };                       // U+e0ea
-        constexpr static inline std::string_view Payment{ "\xee\xa2\xa1" };                                 // U+e8a1
-        constexpr static inline std::string_view Payments{ "\xee\xbd\xa3" };                                // U+ef63
-        constexpr static inline std::string_view PedalBike{ "\xee\xac\xa9" };                               // U+eb29
-        constexpr static inline std::string_view Pediatrics{ "\xee\x84\x9d" };                              // U+e11d
-        constexpr static inline std::string_view PenSize_1{ "\xef\x9d\x95" };                               // U+f755
-        constexpr static inline std::string_view PenSize_2{ "\xef\x9d\x94" };                               // U+f754
-        constexpr static inline std::string_view PenSize_3{ "\xef\x9d\x93" };                               // U+f753
-        constexpr static inline std::string_view PenSize_4{ "\xef\x9d\x92" };                               // U+f752
-        constexpr static inline std::string_view PenSize_5{ "\xef\x9d\x91" };                               // U+f751
-        constexpr static inline std::string_view Pending{ "\xee\xbd\xa4" };                                 // U+ef64
-        constexpr static inline std::string_view PendingActions{ "\xef\x86\xbb" };                          // U+f1bb
-        constexpr static inline std::string_view Pentagon{ "\xee\xad\x90" };                                // U+eb50
-        constexpr static inline std::string_view People{ "\xee\xa8\xa1" };                                  // U+ea21
-        constexpr static inline std::string_view PeopleAlt{ "\xee\xa8\xa1" };                               // U+ea21
-        constexpr static inline std::string_view PeopleOutline{ "\xee\xa8\xa1" };                           // U+ea21
-        constexpr static inline std::string_view Percent{ "\xee\xad\x98" };                                 // U+eb58
-        constexpr static inline std::string_view PerformanceMax{ "\xee\x94\x9a" };                          // U+e51a
-        constexpr static inline std::string_view Pergola{ "\xee\x88\x83" };                                 // U+e203
-        constexpr static inline std::string_view PermCameraMic{ "\xee\xa2\xa2" };                           // U+e8a2
-        constexpr static inline std::string_view PermContactCalendar{ "\xee\xa2\xa3" };                     // U+e8a3
-        constexpr static inline std::string_view PermDataSetting{ "\xee\xa2\xa4" };                         // U+e8a4
-        constexpr static inline std::string_view PermDeviceInformation{ "\xee\xa2\xa5" };                   // U+e8a5
-        constexpr static inline std::string_view PermIdentity{ "\xef\x83\x93" };                            // U+f0d3
-        constexpr static inline std::string_view PermMedia{ "\xee\xa2\xa7" };                               // U+e8a7
-        constexpr static inline std::string_view PermPhoneMsg{ "\xee\xa2\xa8" };                            // U+e8a8
-        constexpr static inline std::string_view PermScanWifi{ "\xee\xa2\xa9" };                            // U+e8a9
-        constexpr static inline std::string_view Person{ "\xef\x83\x93" };                                  // U+f0d3
-        constexpr static inline std::string_view Person_2{ "\xef\xa3\xa4" };                                // U+f8e4
-        constexpr static inline std::string_view Person_3{ "\xef\xa3\xa5" };                                // U+f8e5
-        constexpr static inline std::string_view Person_4{ "\xef\xa3\xa6" };                                // U+f8e6
-        constexpr static inline std::string_view PersonAdd{ "\xee\xa9\x8d" };                               // U+ea4d
-        constexpr static inline std::string_view PersonAddAlt{ "\xee\xa9\x8d" };                            // U+ea4d
-        constexpr static inline std::string_view PersonAddDisabled{ "\xee\xa7\x8b" };                       // U+e9cb
-        constexpr static inline std::string_view PersonAlert{ "\xef\x95\xa7" };                             // U+f567
-        constexpr static inline std::string_view PersonApron{ "\xef\x96\xa3" };                             // U+f5a3
-        constexpr static inline std::string_view PersonBook{ "\xef\x97\xa8" };                              // U+f5e8
-        constexpr static inline std::string_view PersonCancel{ "\xef\x95\xa6" };                            // U+f566
-        constexpr static inline std::string_view PersonCelebrate{ "\xef\x9f\xbe" };                         // U+f7fe
-        constexpr static inline std::string_view PersonCheck{ "\xef\x95\xa5" };                             // U+f565
-        constexpr static inline std::string_view PersonEdit{ "\xef\x93\xba" };                              // U+f4fa
-        constexpr static inline std::string_view PersonFilled{ "\xef\x83\x93" };                            // U+f0d3
-        constexpr static inline std::string_view PersonOff{ "\xee\x94\x90" };                               // U+e510
-        constexpr static inline std::string_view PersonOutline{ "\xef\x83\x93" };                           // U+f0d3
-        constexpr static inline std::string_view PersonPin{ "\xee\x95\x9a" };                               // U+e55a
-        constexpr static inline std::string_view PersonPinCircle{ "\xee\x95\xaa" };                         // U+e56a
-        constexpr static inline std::string_view PersonPlay{ "\xef\x9f\xbd" };                              // U+f7fd
-        constexpr static inline std::string_view PersonRaisedHand{ "\xef\x96\x9a" };                        // U+f59a
-        constexpr static inline std::string_view PersonRemove{ "\xee\xbd\xa6" };                            // U+ef66
-        constexpr static inline std::string_view PersonSearch{ "\xef\x84\x86" };                            // U+f106
-        constexpr static inline std::string_view PersonalBag{ "\xee\xac\x8e" };                             // U+eb0e
-        constexpr static inline std::string_view PersonalBagOff{ "\xee\xac\x8f" };                          // U+eb0f
-        constexpr static inline std::string_view PersonalBagQuestion{ "\xee\xac\x90" };                     // U+eb10
-        constexpr static inline std::string_view PersonalInjury{ "\xee\x9b\x9a" };                          // U+e6da
-        constexpr static inline std::string_view PersonalPlaces{ "\xee\x9c\x83" };                          // U+e703
-        constexpr static inline std::string_view PersonalVideo{ "\xee\x98\xbb" };                           // U+e63b
-        constexpr static inline std::string_view PestControl{ "\xef\x83\xba" };                             // U+f0fa
-        constexpr static inline std::string_view PestControlRodent{ "\xef\x83\xbd" };                       // U+f0fd
-        constexpr static inline std::string_view PetSupplies{ "\xee\xbe\xb1" };                             // U+efb1
-        constexpr static inline std::string_view Pets{ "\xee\xa4\x9d" };                                    // U+e91d
-        constexpr static inline std::string_view Phishing{ "\xee\xab\x97" };                                // U+ead7
-        constexpr static inline std::string_view Phone{ "\xef\x83\x94" };                                   // U+f0d4
-        constexpr static inline std::string_view PhoneAlt{ "\xef\x83\x94" };                                // U+f0d4
-        constexpr static inline std::string_view PhoneAndroid{ "\xee\x8c\xa4" };                            // U+e324
-        constexpr static inline std::string_view PhoneBluetoothSpeaker{ "\xee\x98\x9b" };                   // U+e61b
-        constexpr static inline std::string_view PhoneCallback{ "\xee\x99\x89" };                           // U+e649
-        constexpr static inline std::string_view PhoneDisabled{ "\xee\xa7\x8c" };                           // U+e9cc
-        constexpr static inline std::string_view PhoneEnabled{ "\xee\xa7\x8d" };                            // U+e9cd
-        constexpr static inline std::string_view PhoneForwarded{ "\xee\x98\x9c" };                          // U+e61c
-        constexpr static inline std::string_view PhoneInTalk{ "\xee\x98\x9d" };                             // U+e61d
-        constexpr static inline std::string_view PhoneIphone{ "\xee\x8c\xa5" };                             // U+e325
-        constexpr static inline std::string_view PhoneLocked{ "\xee\x98\x9e" };                             // U+e61e
-        constexpr static inline std::string_view PhoneMissed{ "\xee\x98\x9f" };                             // U+e61f
-        constexpr static inline std::string_view PhonePaused{ "\xee\x98\xa0" };                             // U+e620
-        constexpr static inline std::string_view Phonelink{ "\xee\x8c\xa6" };                               // U+e326
-        constexpr static inline std::string_view PhonelinkErase{ "\xee\x83\x9b" };                          // U+e0db
-        constexpr static inline std::string_view PhonelinkLock{ "\xee\x83\x9c" };                           // U+e0dc
-        constexpr static inline std::string_view PhonelinkOff{ "\xee\x8c\xa7" };                            // U+e327
-        constexpr static inline std::string_view PhonelinkRing{ "\xee\x83\x9d" };                           // U+e0dd
-        constexpr static inline std::string_view PhonelinkRingOff{ "\xef\x9e\xaa" };                        // U+f7aa
-        constexpr static inline std::string_view PhonelinkSetup{ "\xee\xbd\x81" };                          // U+ef41
-        constexpr static inline std::string_view Photo{ "\xee\x90\xb2" };                                   // U+e432
-        constexpr static inline std::string_view PhotoAlbum{ "\xee\x90\x91" };                              // U+e411
-        constexpr static inline std::string_view PhotoAutoMerge{ "\xef\x94\xb0" };                          // U+f530
-        constexpr static inline std::string_view PhotoCamera{ "\xee\x90\x92" };                             // U+e412
-        constexpr static inline std::string_view PhotoCameraBack{ "\xee\xbd\xa8" };                         // U+ef68
-        constexpr static inline std::string_view PhotoCameraFront{ "\xee\xbd\xa9" };                        // U+ef69
-        constexpr static inline std::string_view PhotoFilter{ "\xee\x90\xbb" };                             // U+e43b
-        constexpr static inline std::string_view PhotoFrame{ "\xef\x83\x99" };                              // U+f0d9
-        constexpr static inline std::string_view PhotoLibrary{ "\xee\x90\x93" };                            // U+e413
-        constexpr static inline std::string_view PhotoPrints{ "\xee\xbe\xb2" };                             // U+efb2
-        constexpr static inline std::string_view PhotoSizeSelectActual{ "\xee\x90\xb2" };                   // U+e432
-        constexpr static inline std::string_view PhotoSizeSelectLarge{ "\xee\x90\xb3" };                    // U+e433
-        constexpr static inline std::string_view PhotoSizeSelectSmall{ "\xee\x90\xb4" };                    // U+e434
-        constexpr static inline std::string_view Php{ "\xee\xae\x8f" };                                     // U+eb8f
-        constexpr static inline std::string_view PhysicalTherapy{ "\xee\x84\x9e" };                         // U+e11e
-        constexpr static inline std::string_view Piano{ "\xee\x94\xa1" };                                   // U+e521
-        constexpr static inline std::string_view PianoOff{ "\xee\x94\xa0" };                                // U+e520
-        constexpr static inline std::string_view PictureAsPdf{ "\xee\x90\x95" };                            // U+e415
-        constexpr static inline std::string_view PictureInPicture{ "\xee\xa2\xaa" };                        // U+e8aa
-        constexpr static inline std::string_view PictureInPictureAlt{ "\xee\xa4\x91" };                     // U+e911
-        constexpr static inline std::string_view PictureInPictureCenter{ "\xef\x95\x90" };                  // U+f550
-        constexpr static inline std::string_view PictureInPictureLarge{ "\xef\x95\x8f" };                   // U+f54f
-        constexpr static inline std::string_view PictureInPictureMedium{ "\xef\x95\x8e" };                  // U+f54e
-        constexpr static inline std::string_view PictureInPictureMobile{ "\xef\x94\x97" };                  // U+f517
-        constexpr static inline std::string_view PictureInPictureOff{ "\xef\x94\xaf" };                     // U+f52f
-        constexpr static inline std::string_view PictureInPictureSmall{ "\xef\x95\x8d" };                   // U+f54d
-        constexpr static inline std::string_view PieChart{ "\xef\x83\x9a" };                                // U+f0da
-        constexpr static inline std::string_view PieChartFilled{ "\xef\x83\x9a" };                          // U+f0da
-        constexpr static inline std::string_view PieChartOutline{ "\xef\x83\x9a" };                         // U+f0da
-        constexpr static inline std::string_view PieChartOutlined{ "\xef\x83\x9a" };                        // U+f0da
-        constexpr static inline std::string_view Pill{ "\xee\x84\x9f" };                                    // U+e11f
-        constexpr static inline std::string_view PillOff{ "\xef\xa0\x89" };                                 // U+f809
-        constexpr static inline std::string_view Pin{ "\xef\x81\x85" };                                     // U+f045
-        constexpr static inline std::string_view PinDrop{ "\xee\x95\x9e" };                                 // U+e55e
-        constexpr static inline std::string_view PinEnd{ "\xee\x9d\xa7" };                                  // U+e767
-        constexpr static inline std::string_view PinInvoke{ "\xee\x9d\xa3" };                               // U+e763
-        constexpr static inline std::string_view Pinch{ "\xee\xac\xb8" };                                   // U+eb38
-        constexpr static inline std::string_view PinchZoomIn{ "\xef\x87\xba" };                             // U+f1fa
-        constexpr static inline std::string_view PinchZoomOut{ "\xef\x87\xbb" };                            // U+f1fb
-        constexpr static inline std::string_view Pip{ "\xef\x99\x8d" };                                     // U+f64d
-        constexpr static inline std::string_view PipExit{ "\xef\x9c\x8d" };                                 // U+f70d
-        constexpr static inline std::string_view PivotTableChart{ "\xee\xa7\x8e" };                         // U+e9ce
-        constexpr static inline std::string_view Place{ "\xef\x87\x9b" };                                   // U+f1db
-        constexpr static inline std::string_view PlaceItem{ "\xef\x87\xb0" };                               // U+f1f0
-        constexpr static inline std::string_view Plagiarism{ "\xee\xa9\x9a" };                              // U+ea5a
-        constexpr static inline std::string_view PlannerBannerAdPt{ "\xee\x9a\x92" };                       // U+e692
-        constexpr static inline std::string_view PlannerReview{ "\xee\x9a\x94" };                           // U+e694
-        constexpr static inline std::string_view PlayArrow{ "\xee\x80\xb7" };                               // U+e037
-        constexpr static inline std::string_view PlayCircle{ "\xee\x87\x84" };                              // U+e1c4
-        constexpr static inline std::string_view PlayDisabled{ "\xee\xbd\xaa" };                            // U+ef6a
-        constexpr static inline std::string_view PlayForWork{ "\xee\xa4\x86" };                             // U+e906
-        constexpr static inline std::string_view PlayLesson{ "\xef\x81\x87" };                              // U+f047
-        constexpr static inline std::string_view PlayMusic{ "\xee\x9b\xae" };                               // U+e6ee
-        constexpr static inline std::string_view PlayPause{ "\xef\x84\xb7" };                               // U+f137
-        constexpr static inline std::string_view PlayShapes{ "\xef\x9f\xbc" };                              // U+f7fc
-        constexpr static inline std::string_view PlayingCards{ "\xef\x97\x9c" };                            // U+f5dc
-        constexpr static inline std::string_view PlaylistAdd{ "\xee\x80\xbb" };                             // U+e03b
-        constexpr static inline std::string_view PlaylistAddCheck{ "\xee\x81\xa5" };                        // U+e065
-        constexpr static inline std::string_view PlaylistAddCheckCircle{ "\xee\x9f\xa6" };                  // U+e7e6
-        constexpr static inline std::string_view PlaylistAddCircle{ "\xee\x9f\xa5" };                       // U+e7e5
-        constexpr static inline std::string_view PlaylistPlay{ "\xee\x81\x9f" };                            // U+e05f
-        constexpr static inline std::string_view PlaylistRemove{ "\xee\xae\x80" };                          // U+eb80
-        constexpr static inline std::string_view Plumbing{ "\xef\x84\x87" };                                // U+f107
-        constexpr static inline std::string_view PlusOne{ "\xee\xa0\x80" };                                 // U+e800
-        constexpr static inline std::string_view Podcasts{ "\xef\x81\x88" };                                // U+f048
-        constexpr static inline std::string_view Podiatry{ "\xee\x84\xa0" };                                // U+e120
-        constexpr static inline std::string_view Podium{ "\xef\x9f\xbb" };                                  // U+f7fb
-        constexpr static inline std::string_view PointOfSale{ "\xef\x85\xbe" };                             // U+f17e
-        constexpr static inline std::string_view PointScan{ "\xef\x9c\x8c" };                               // U+f70c
-        constexpr static inline std::string_view Policy{ "\xee\xa8\x97" };                                  // U+ea17
-        constexpr static inline std::string_view Poll{ "\xef\x83\x8c" };                                    // U+f0cc
-        constexpr static inline std::string_view Polyline{ "\xee\xae\xbb" };                                // U+ebbb
-        constexpr static inline std::string_view Polymer{ "\xee\xa2\xab" };                                 // U+e8ab
-        constexpr static inline std::string_view Pool{ "\xee\xad\x88" };                                    // U+eb48
-        constexpr static inline std::string_view PortableWifiOff{ "\xef\x82\x87" };                         // U+f087
-        constexpr static inline std::string_view Portrait{ "\xee\xa1\x91" };                                // U+e851
-        constexpr static inline std::string_view PositionBottomLeft{ "\xef\x9c\x8b" };                      // U+f70b
-        constexpr static inline std::string_view PositionBottomRight{ "\xef\x9c\x8a" };                     // U+f70a
-        constexpr static inline std::string_view PositionTopRight{ "\xef\x9c\x89" };                        // U+f709
-        constexpr static inline std::string_view Post{ "\xee\x9c\x85" };                                    // U+e705
-        constexpr static inline std::string_view PostAdd{ "\xee\xa8\xa0" };                                 // U+ea20
-        constexpr static inline std::string_view PottedPlant{ "\xef\xa2\xaa" };                             // U+f8aa
-        constexpr static inline std::string_view Power{ "\xee\x98\xbc" };                                   // U+e63c
-        constexpr static inline std::string_view PowerInput{ "\xee\x8c\xb6" };                              // U+e336
-        constexpr static inline std::string_view PowerOff{ "\xee\x99\x86" };                                // U+e646
-        constexpr static inline std::string_view PowerRounded{ "\xef\xa3\x87" };                            // U+f8c7
-        constexpr static inline std::string_view PowerSettingsNew{ "\xef\xa3\x87" };                        // U+f8c7
-        constexpr static inline std::string_view PrayerTimes{ "\xef\xa0\xb8" };                             // U+f838
-        constexpr static inline std::string_view PrecisionManufacturing{ "\xef\x81\x89" };                  // U+f049
-        constexpr static inline std::string_view Pregnancy{ "\xef\x97\xb1" };                               // U+f5f1
-        constexpr static inline std::string_view PregnantWoman{ "\xef\x97\xb1" };                           // U+f5f1
-        constexpr static inline std::string_view Preliminary{ "\xee\x9f\x98" };                             // U+e7d8
-        constexpr static inline std::string_view Prescriptions{ "\xee\x84\xa1" };                           // U+e121
-        constexpr static inline std::string_view PresentToAll{ "\xee\x83\x9f" };                            // U+e0df
-        constexpr static inline std::string_view Preview{ "\xef\x87\x85" };                                 // U+f1c5
-        constexpr static inline std::string_view PreviewOff{ "\xef\x9e\xaf" };                              // U+f7af
-        constexpr static inline std::string_view PriceChange{ "\xef\x81\x8a" };                             // U+f04a
-        constexpr static inline std::string_view PriceCheck{ "\xef\x81\x8b" };                              // U+f04b
-        constexpr static inline std::string_view Print{ "\xee\xa2\xad" };                                   // U+e8ad
-        constexpr static inline std::string_view PrintAdd{ "\xef\x9e\xa2" };                                // U+f7a2
-        constexpr static inline std::string_view PrintConnect{ "\xef\x9e\xa1" };                            // U+f7a1
-        constexpr static inline std::string_view PrintDisabled{ "\xee\xa7\x8f" };                           // U+e9cf
-        constexpr static inline std::string_view PrintError{ "\xef\x9e\xa0" };                              // U+f7a0
-        constexpr static inline std::string_view PrintLock{ "\xef\x99\x91" };                               // U+f651
-        constexpr static inline std::string_view Priority{ "\xee\x86\x9f" };                                // U+e19f
-        constexpr static inline std::string_view PriorityHigh{ "\xee\x99\x85" };                            // U+e645
-        constexpr static inline std::string_view Privacy{ "\xef\x85\x88" };                                 // U+f148
-        constexpr static inline std::string_view PrivacyTip{ "\xef\x83\x9c" };                              // U+f0dc
-        constexpr static inline std::string_view PrivateConnectivity{ "\xee\x9d\x84" };                     // U+e744
-        constexpr static inline std::string_view Problem{ "\xee\x84\xa2" };                                 // U+e122
-        constexpr static inline std::string_view Procedure{ "\xee\x99\x91" };                               // U+e651
-        constexpr static inline std::string_view ProcessChart{ "\xef\xa1\x95" };                            // U+f855
-        constexpr static inline std::string_view ProductionQuantityLimits{ "\xee\x87\x91" };                // U+e1d1
-        constexpr static inline std::string_view Productivity{ "\xee\x8a\x96" };                            // U+e296
-        constexpr static inline std::string_view ProgressActivity{ "\xee\xa7\x90" };                        // U+e9d0
-        constexpr static inline std::string_view PromptSuggestion{ "\xef\x93\xb6" };                        // U+f4f6
-        constexpr static inline std::string_view Propane{ "\xee\xb0\x94" };                                 // U+ec14
-        constexpr static inline std::string_view PropaneTank{ "\xee\xb0\x93" };                             // U+ec13
-        constexpr static inline std::string_view Psychiatry{ "\xee\x84\xa3" };                              // U+e123
-        constexpr static inline std::string_view Psychology{ "\xee\xa9\x8a" };                              // U+ea4a
-        constexpr static inline std::string_view PsychologyAlt{ "\xef\xa3\xaa" };                           // U+f8ea
-        constexpr static inline std::string_view Public{ "\xee\xa0\x8b" };                                  // U+e80b
-        constexpr static inline std::string_view PublicOff{ "\xef\x87\x8a" };                               // U+f1ca
-        constexpr static inline std::string_view Publish{ "\xee\x89\x95" };                                 // U+e255
-        constexpr static inline std::string_view PublishedWithChanges{ "\xef\x88\xb2" };                    // U+f232
-        constexpr static inline std::string_view Pulmonology{ "\xee\x84\xa4" };                             // U+e124
-        constexpr static inline std::string_view PulseAlert{ "\xef\x94\x81" };                              // U+f501
-        constexpr static inline std::string_view PunchClock{ "\xee\xaa\xa8" };                              // U+eaa8
-        constexpr static inline std::string_view PushPin{ "\xef\x84\x8d" };                                 // U+f10d
-        constexpr static inline std::string_view QrCode{ "\xee\xbd\xab" };                                  // U+ef6b
-        constexpr static inline std::string_view QrCode_2{ "\xee\x80\x8a" };                                // U+e00a
-        constexpr static inline std::string_view QrCode_2Add{ "\xef\x99\x98" };                             // U+f658
-        constexpr static inline std::string_view QrCodeScanner{ "\xef\x88\x86" };                           // U+f206
-        constexpr static inline std::string_view QueryBuilder{ "\xee\xbf\x96" };                            // U+efd6
-        constexpr static inline std::string_view QueryStats{ "\xee\x93\xbc" };                              // U+e4fc
-        constexpr static inline std::string_view QuestionAnswer{ "\xee\xa2\xaf" };                          // U+e8af
-        constexpr static inline std::string_view QuestionExchange{ "\xef\x9f\xb3" };                        // U+f7f3
-        constexpr static inline std::string_view QuestionMark{ "\xee\xae\x8b" };                            // U+eb8b
-        constexpr static inline std::string_view Queue{ "\xee\x80\xbc" };                                   // U+e03c
-        constexpr static inline std::string_view QueueMusic{ "\xee\x80\xbd" };                              // U+e03d
-        constexpr static inline std::string_view QueuePlayNext{ "\xee\x81\xa6" };                           // U+e066
-        constexpr static inline std::string_view QuickPhrases{ "\xee\x9f\x91" };                            // U+e7d1
-        constexpr static inline std::string_view QuickReference{ "\xee\x91\xae" };                          // U+e46e
-        constexpr static inline std::string_view QuickReferenceAll{ "\xef\xa0\x81" };                       // U+f801
-        constexpr static inline std::string_view QuickReorder{ "\xee\xac\x95" };                            // U+eb15
-        constexpr static inline std::string_view Quickreply{ "\xee\xbd\xac" };                              // U+ef6c
-        constexpr static inline std::string_view QuietTime{ "\xee\x87\xb9" };                               // U+e1f9
-        constexpr static inline std::string_view QuietTimeActive{ "\xee\x8a\x91" };                         // U+e291
-        constexpr static inline std::string_view Quiz{ "\xef\x81\x8c" };                                    // U+f04c
-        constexpr static inline std::string_view RMobiledata{ "\xef\x81\x8d" };                             // U+f04d
-        constexpr static inline std::string_view Radar{ "\xef\x81\x8e" };                                   // U+f04e
-        constexpr static inline std::string_view Radio{ "\xee\x80\xbe" };                                   // U+e03e
-        constexpr static inline std::string_view RadioButtonChecked{ "\xee\xa0\xb7" };                      // U+e837
-        constexpr static inline std::string_view RadioButtonPartial{ "\xef\x95\xa0" };                      // U+f560
-        constexpr static inline std::string_view RadioButtonUnchecked{ "\xee\xa0\xb6" };                    // U+e836
-        constexpr static inline std::string_view Radiology{ "\xee\x84\xa5" };                               // U+e125
-        constexpr static inline std::string_view RailwayAlert{ "\xee\xa7\x91" };                            // U+e9d1
-        constexpr static inline std::string_view Rainy{ "\xef\x85\xb6" };                                   // U+f176
-        constexpr static inline std::string_view RainyHeavy{ "\xef\x98\x9f" };                              // U+f61f
-        constexpr static inline std::string_view RainyLight{ "\xef\x98\x9e" };                              // U+f61e
-        constexpr static inline std::string_view RainySnow{ "\xef\x98\x9d" };                               // U+f61d
-        constexpr static inline std::string_view RamenDining{ "\xee\xa9\xa4" };                             // U+ea64
-        constexpr static inline std::string_view RampLeft{ "\xee\xae\x9c" };                                // U+eb9c
-        constexpr static inline std::string_view RampRight{ "\xee\xae\x96" };                               // U+eb96
-        constexpr static inline std::string_view RangeHood{ "\xee\x87\xaa" };                               // U+e1ea
-        constexpr static inline std::string_view RateReview{ "\xee\x95\xa0" };                              // U+e560
-        constexpr static inline std::string_view Raven{ "\xef\x95\x95" };                                   // U+f555
-        constexpr static inline std::string_view RawOff{ "\xef\x81\x8f" };                                  // U+f04f
-        constexpr static inline std::string_view RawOn{ "\xef\x81\x90" };                                   // U+f050
-        constexpr static inline std::string_view ReadMore{ "\xee\xbd\xad" };                                // U+ef6d
-        constexpr static inline std::string_view ReadinessScore{ "\xef\x9b\x9d" };                          // U+f6dd
-        constexpr static inline std::string_view RealEstateAgent{ "\xee\x9c\xba" };                         // U+e73a
-        constexpr static inline std::string_view RearCamera{ "\xef\x9b\x82" };                              // U+f6c2
-        constexpr static inline std::string_view Rebase{ "\xef\xa1\x85" };                                  // U+f845
-        constexpr static inline std::string_view RebaseEdit{ "\xef\xa1\x86" };                              // U+f846
-        constexpr static inline std::string_view Receipt{ "\xee\xa2\xb0" };                                 // U+e8b0
-        constexpr static inline std::string_view ReceiptLong{ "\xee\xbd\xae" };                             // U+ef6e
-        constexpr static inline std::string_view RecentActors{ "\xee\x80\xbf" };                            // U+e03f
-        constexpr static inline std::string_view RecentPatient{ "\xef\xa0\x88" };                           // U+f808
-        constexpr static inline std::string_view Recommend{ "\xee\xa7\x92" };                               // U+e9d2
-        constexpr static inline std::string_view RecordVoiceOver{ "\xee\xa4\x9f" };                         // U+e91f
-        constexpr static inline std::string_view Rectangle{ "\xee\xad\x94" };                               // U+eb54
-        constexpr static inline std::string_view Recycling{ "\xee\x9d\xa0" };                               // U+e760
-        constexpr static inline std::string_view Redeem{ "\xee\xa3\xb6" };                                  // U+e8f6
-        constexpr static inline std::string_view Redo{ "\xee\x85\x9a" };                                    // U+e15a
-        constexpr static inline std::string_view ReduceCapacity{ "\xef\x88\x9c" };                          // U+f21c
-        constexpr static inline std::string_view Refresh{ "\xee\x97\x95" };                                 // U+e5d5
-        constexpr static inline std::string_view RegularExpression{ "\xef\x9d\x90" };                       // U+f750
-        constexpr static inline std::string_view Relax{ "\xef\x9b\x9c" };                                   // U+f6dc
-        constexpr static inline std::string_view ReleaseAlert{ "\xef\x99\x94" };                            // U+f654
-        constexpr static inline std::string_view RememberMe{ "\xef\x81\x91" };                              // U+f051
-        constexpr static inline std::string_view Reminder{ "\xee\x9b\x86" };                                // U+e6c6
-        constexpr static inline std::string_view RemindersAlt{ "\xee\x9b\x86" };                            // U+e6c6
-        constexpr static inline std::string_view RemoteGen{ "\xee\xa0\xbe" };                               // U+e83e
-        constexpr static inline std::string_view Remove{ "\xee\x85\x9b" };                                  // U+e15b
-        constexpr static inline std::string_view RemoveCircle{ "\xef\x82\x8f" };                            // U+f08f
-        constexpr static inline std::string_view RemoveCircleOutline{ "\xef\x82\x8f" };                     // U+f08f
-        constexpr static inline std::string_view RemoveDone{ "\xee\xa7\x93" };                              // U+e9d3
-        constexpr static inline std::string_view RemoveFromQueue{ "\xee\x81\xa7" };                         // U+e067
-        constexpr static inline std::string_view RemoveModerator{ "\xee\xa7\x94" };                         // U+e9d4
-        constexpr static inline std::string_view RemoveRedEye{ "\xee\xa3\xb4" };                            // U+e8f4
-        constexpr static inline std::string_view RemoveRoad{ "\xee\xaf\xbc" };                              // U+ebfc
-        constexpr static inline std::string_view RemoveSelection{ "\xee\xa7\x95" };                         // U+e9d5
-        constexpr static inline std::string_view RemoveShoppingCart{ "\xee\xa4\xa8" };                      // U+e928
-        constexpr static inline std::string_view ReopenWindow{ "\xef\x9c\x88" };                            // U+f708
-        constexpr static inline std::string_view Reorder{ "\xee\xa3\xbe" };                                 // U+e8fe
-        constexpr static inline std::string_view Repartition{ "\xef\xa3\xa8" };                             // U+f8e8
-        constexpr static inline std::string_view Repeat{ "\xee\x81\x80" };                                  // U+e040
-        constexpr static inline std::string_view RepeatOn{ "\xee\xa7\x96" };                                // U+e9d6
-        constexpr static inline std::string_view RepeatOne{ "\xee\x81\x81" };                               // U+e041
-        constexpr static inline std::string_view RepeatOneOn{ "\xee\xa7\x97" };                             // U+e9d7
-        constexpr static inline std::string_view Replay{ "\xee\x81\x82" };                                  // U+e042
-        constexpr static inline std::string_view Replay_10{ "\xee\x81\x99" };                               // U+e059
-        constexpr static inline std::string_view Replay_30{ "\xee\x81\x9a" };                               // U+e05a
-        constexpr static inline std::string_view Replay_5{ "\xee\x81\x9b" };                                // U+e05b
-        constexpr static inline std::string_view ReplayCircleFilled{ "\xee\xa7\x98" };                      // U+e9d8
-        constexpr static inline std::string_view Reply{ "\xee\x85\x9e" };                                   // U+e15e
-        constexpr static inline std::string_view ReplyAll{ "\xee\x85\x9f" };                                // U+e15f
-        constexpr static inline std::string_view Report{ "\xef\x81\x92" };                                  // U+f052
-        constexpr static inline std::string_view ReportGmailerrorred{ "\xef\x81\x92" };                     // U+f052
-        constexpr static inline std::string_view ReportOff{ "\xee\x85\xb0" };                               // U+e170
-        constexpr static inline std::string_view ReportProblem{ "\xef\x82\x83" };                           // U+f083
-        constexpr static inline std::string_view RequestPage{ "\xef\x88\xac" };                             // U+f22c
-        constexpr static inline std::string_view RequestQuote{ "\xef\x86\xb6" };                            // U+f1b6
-        constexpr static inline std::string_view ResetImage{ "\xef\xa0\xa4" };                              // U+f824
-        constexpr static inline std::string_view ResetTv{ "\xee\xa7\x99" };                                 // U+e9d9
-        constexpr static inline std::string_view ResetWrench{ "\xef\x95\xac" };                             // U+f56c
-        constexpr static inline std::string_view Resize{ "\xef\x9c\x87" };                                  // U+f707
-        constexpr static inline std::string_view RespiratoryRate{ "\xee\x84\xa7" };                         // U+e127
-        constexpr static inline std::string_view ResponsiveLayout{ "\xee\xa7\x9a" };                        // U+e9da
-        constexpr static inline std::string_view RestartAlt{ "\xef\x81\x93" };                              // U+f053
-        constexpr static inline std::string_view Restaurant{ "\xee\x95\xac" };                              // U+e56c
-        constexpr static inline std::string_view RestaurantMenu{ "\xee\x95\xa1" };                          // U+e561
-        constexpr static inline std::string_view Restore{ "\xee\xa2\xb3" };                                 // U+e8b3
-        constexpr static inline std::string_view RestoreFromTrash{ "\xee\xa4\xb8" };                        // U+e938
-        constexpr static inline std::string_view RestorePage{ "\xee\xa4\xa9" };                             // U+e929
-        constexpr static inline std::string_view Resume{ "\xef\x9f\x90" };                                  // U+f7d0
-        constexpr static inline std::string_view Reviews{ "\xef\x81\xbc" };                                 // U+f07c
-        constexpr static inline std::string_view RewardedAds{ "\xee\xbe\xb6" };                             // U+efb6
-        constexpr static inline std::string_view Rheumatology{ "\xee\x84\xa8" };                            // U+e128
-        constexpr static inline std::string_view RibCage{ "\xef\xa2\x98" };                                 // U+f898
-        constexpr static inline std::string_view RiceBowl{ "\xef\x87\xb5" };                                // U+f1f5
-        constexpr static inline std::string_view RightClick{ "\xef\x9c\x86" };                              // U+f706
-        constexpr static inline std::string_view RightPanelClose{ "\xef\x9c\x85" };                         // U+f705
-        constexpr static inline std::string_view RightPanelOpen{ "\xef\x9c\x84" };                          // U+f704
-        constexpr static inline std::string_view RingVolume{ "\xef\x83\x9d" };                              // U+f0dd
-        constexpr static inline std::string_view RingVolumeFilled{ "\xef\x83\x9d" };                        // U+f0dd
-        constexpr static inline std::string_view Ripples{ "\xee\xa7\x9b" };                                 // U+e9db
-        constexpr static inline std::string_view Robot{ "\xef\xa2\x82" };                                   // U+f882
-        constexpr static inline std::string_view Robot_2{ "\xef\x97\x90" };                                 // U+f5d0
-        constexpr static inline std::string_view Rocket{ "\xee\xae\xa5" };                                  // U+eba5
-        constexpr static inline std::string_view RocketLaunch{ "\xee\xae\x9b" };                            // U+eb9b
-        constexpr static inline std::string_view RollerShades{ "\xee\xb0\x92" };                            // U+ec12
-        constexpr static inline std::string_view RollerShadesClosed{ "\xee\xb0\x91" };                      // U+ec11
-        constexpr static inline std::string_view RollerSkating{ "\xee\xaf\x8d" };                           // U+ebcd
-        constexpr static inline std::string_view Roofing{ "\xef\x88\x81" };                                 // U+f201
-        constexpr static inline std::string_view Room{ "\xef\x87\x9b" };                                    // U+f1db
-        constexpr static inline std::string_view RoomPreferences{ "\xef\x86\xb8" };                         // U+f1b8
-        constexpr static inline std::string_view RoomService{ "\xee\xad\x89" };                             // U+eb49
-        constexpr static inline std::string_view Rotate_90DegreesCcw{ "\xee\x90\x98" };                     // U+e418
-        constexpr static inline std::string_view Rotate_90DegreesCw{ "\xee\xaa\xab" };                      // U+eaab
-        constexpr static inline std::string_view RotateLeft{ "\xee\x90\x99" };                              // U+e419
-        constexpr static inline std::string_view RotateRight{ "\xee\x90\x9a" };                             // U+e41a
-        constexpr static inline std::string_view RoundaboutLeft{ "\xee\xae\x99" };                          // U+eb99
-        constexpr static inline std::string_view RoundaboutRight{ "\xee\xae\xa3" };                         // U+eba3
-        constexpr static inline std::string_view RoundedCorner{ "\xee\xa4\xa0" };                           // U+e920
-        constexpr static inline std::string_view Route{ "\xee\xab\x8d" };                                   // U+eacd
-        constexpr static inline std::string_view Router{ "\xee\x8c\xa8" };                                  // U+e328
-        constexpr static inline std::string_view Routine{ "\xee\x88\x8c" };                                 // U+e20c
-        constexpr static inline std::string_view Rowing{ "\xee\xa4\xa1" };                                  // U+e921
-        constexpr static inline std::string_view RssFeed{ "\xee\x83\xa5" };                                 // U+e0e5
-        constexpr static inline std::string_view Rsvp{ "\xef\x81\x95" };                                    // U+f055
-        constexpr static inline std::string_view Rtt{ "\xee\xa6\xad" };                                     // U+e9ad
-        constexpr static inline std::string_view Rubric{ "\xee\xac\xa7" };                                  // U+eb27
-        constexpr static inline std::string_view Rule{ "\xef\x87\x82" };                                    // U+f1c2
-        constexpr static inline std::string_view RuleFolder{ "\xef\x87\x89" };                              // U+f1c9
-        constexpr static inline std::string_view RuleSettings{ "\xef\x99\x8c" };                            // U+f64c
-        constexpr static inline std::string_view RunCircle{ "\xee\xbd\xaf" };                               // U+ef6f
-        constexpr static inline std::string_view RunningWithErrors{ "\xee\x94\x9d" };                       // U+e51d
-        constexpr static inline std::string_view RvHookup{ "\xee\x99\x82" };                                // U+e642
-        constexpr static inline std::string_view SafetyCheck{ "\xee\xaf\xaf" };                             // U+ebef
-        constexpr static inline std::string_view SafetyCheckOff{ "\xef\x96\x9d" };                          // U+f59d
-        constexpr static inline std::string_view SafetyDivider{ "\xee\x87\x8c" };                           // U+e1cc
-        constexpr static inline std::string_view Sailing{ "\xee\x94\x82" };                                 // U+e502
-        constexpr static inline std::string_view Salinity{ "\xef\xa1\xb6" };                                // U+f876
-        constexpr static inline std::string_view Sanitizer{ "\xef\x88\x9d" };                               // U+f21d
-        constexpr static inline std::string_view Satellite{ "\xee\x95\xa2" };                               // U+e562
-        constexpr static inline std::string_view SatelliteAlt{ "\xee\xac\xba" };                            // U+eb3a
-        constexpr static inline std::string_view Sauna{ "\xef\x9b\xb7" };                                   // U+f6f7
-        constexpr static inline std::string_view Save{ "\xee\x85\xa1" };                                    // U+e161
-        constexpr static inline std::string_view SaveAlt{ "\xef\x82\x90" };                                 // U+f090
-        constexpr static inline std::string_view SaveAs{ "\xee\xad\xa0" };                                  // U+eb60
-        constexpr static inline std::string_view SavedSearch{ "\xee\xa8\x91" };                             // U+ea11
-        constexpr static inline std::string_view Savings{ "\xee\x8b\xab" };                                 // U+e2eb
-        constexpr static inline std::string_view Scale{ "\xee\xad\x9f" };                                   // U+eb5f
-        constexpr static inline std::string_view Scan{ "\xef\x9d\x8e" };                                    // U+f74e
-        constexpr static inline std::string_view ScanDelete{ "\xef\x9d\x8f" };                              // U+f74f
-        constexpr static inline std::string_view Scanner{ "\xee\x8c\xa9" };                                 // U+e329
-        constexpr static inline std::string_view ScatterPlot{ "\xee\x89\xa8" };                             // U+e268
-        constexpr static inline std::string_view Scene{ "\xee\x8a\xa7" };                                   // U+e2a7
-        constexpr static inline std::string_view Schedule{ "\xee\xbf\x96" };                                // U+efd6
-        constexpr static inline std::string_view ScheduleSend{ "\xee\xa8\x8a" };                            // U+ea0a
-        constexpr static inline std::string_view Schema{ "\xee\x93\xbd" };                                  // U+e4fd
-        constexpr static inline std::string_view School{ "\xee\xa0\x8c" };                                  // U+e80c
-        constexpr static inline std::string_view Science{ "\xee\xa9\x8b" };                                 // U+ea4b
-        constexpr static inline std::string_view ScienceOff{ "\xef\x95\x82" };                              // U+f542
-        constexpr static inline std::string_view Score{ "\xee\x89\xa9" };                                   // U+e269
-        constexpr static inline std::string_view Scoreboard{ "\xee\xaf\x90" };                              // U+ebd0
-        constexpr static inline std::string_view ScreenLockLandscape{ "\xee\x86\xbe" };                     // U+e1be
-        constexpr static inline std::string_view ScreenLockPortrait{ "\xee\x86\xbf" };                      // U+e1bf
-        constexpr static inline std::string_view ScreenLockRotation{ "\xee\x87\x80" };                      // U+e1c0
-        constexpr static inline std::string_view ScreenRecord{ "\xef\x99\xb9" };                            // U+f679
-        constexpr static inline std::string_view ScreenRotation{ "\xee\x87\x81" };                          // U+e1c1
-        constexpr static inline std::string_view ScreenRotationAlt{ "\xee\xaf\xae" };                       // U+ebee
-        constexpr static inline std::string_view ScreenRotationUp{ "\xef\x99\xb8" };                        // U+f678
-        constexpr static inline std::string_view ScreenSearchDesktop{ "\xee\xbd\xb0" };                     // U+ef70
-        constexpr static inline std::string_view ScreenShare{ "\xee\x83\xa2" };                             // U+e0e2
-        constexpr static inline std::string_view Screenshot{ "\xef\x81\x96" };                              // U+f056
-        constexpr static inline std::string_view ScreenshotFrame{ "\xef\x99\xb7" };                         // U+f677
-        constexpr static inline std::string_view ScreenshotKeyboard{ "\xef\x9f\x93" };                      // U+f7d3
-        constexpr static inline std::string_view ScreenshotMonitor{ "\xee\xb0\x88" };                       // U+ec08
-        constexpr static inline std::string_view ScreenshotRegion{ "\xef\x9f\x92" };                        // U+f7d2
-        constexpr static inline std::string_view ScreenshotTablet{ "\xef\x9a\x97" };                        // U+f697
-        constexpr static inline std::string_view ScrollableHeader{ "\xee\xa7\x9c" };                        // U+e9dc
-        constexpr static inline std::string_view ScubaDiving{ "\xee\xaf\x8e" };                             // U+ebce
-        constexpr static inline std::string_view Sd{ "\xee\xa7\x9d" };                                      // U+e9dd
-        constexpr static inline std::string_view SdCard{ "\xee\x98\xa3" };                                  // U+e623
-        constexpr static inline std::string_view SdCardAlert{ "\xef\x81\x97" };                             // U+f057
-        constexpr static inline std::string_view SdStorage{ "\xee\x98\xa3" };                               // U+e623
-        constexpr static inline std::string_view Sdk{ "\xee\x9c\xa0" };                                     // U+e720
-        constexpr static inline std::string_view Search{ "\xee\xa2\xb6" };                                  // U+e8b6
-        constexpr static inline std::string_view SearchCheck{ "\xef\xa0\x80" };                             // U+f800
-        constexpr static inline std::string_view SearchHandsFree{ "\xee\x9a\x96" };                         // U+e696
-        constexpr static inline std::string_view SearchOff{ "\xee\xa9\xb6" };                               // U+ea76
-        constexpr static inline std::string_view Security{ "\xee\x8c\xaa" };                                // U+e32a
-        constexpr static inline std::string_view SecurityKey{ "\xef\x94\x83" };                             // U+f503
-        constexpr static inline std::string_view SecurityUpdate{ "\xef\x81\xb2" };                          // U+f072
-        constexpr static inline std::string_view SecurityUpdateGood{ "\xef\x81\xb3" };                      // U+f073
-        constexpr static inline std::string_view SecurityUpdateWarning{ "\xef\x81\xb4" };                   // U+f074
-        constexpr static inline std::string_view Segment{ "\xee\xa5\x8b" };                                 // U+e94b
-        constexpr static inline std::string_view Select{ "\xef\x9d\x8d" };                                  // U+f74d
-        constexpr static inline std::string_view SelectAll{ "\xee\x85\xa2" };                               // U+e162
-        constexpr static inline std::string_view SelectCheckBox{ "\xef\x87\xbe" };                          // U+f1fe
-        constexpr static inline std::string_view SelectToSpeak{ "\xef\x9f\x8f" };                           // U+f7cf
-        constexpr static inline std::string_view SelectWindow{ "\xee\x9b\xba" };                            // U+e6fa
-        constexpr static inline std::string_view SelectWindowOff{ "\xee\x94\x86" };                         // U+e506
-        constexpr static inline std::string_view SelfCare{ "\xef\xa1\xad" };                                // U+f86d
-        constexpr static inline std::string_view SelfImprovement{ "\xee\xa9\xb8" };                         // U+ea78
-        constexpr static inline std::string_view Sell{ "\xef\x81\x9b" };                                    // U+f05b
-        constexpr static inline std::string_view Send{ "\xee\x85\xa3" };                                    // U+e163
-        constexpr static inline std::string_view SendAndArchive{ "\xee\xa8\x8c" };                          // U+ea0c
-        constexpr static inline std::string_view SendMoney{ "\xee\xa2\xb7" };                               // U+e8b7
-        constexpr static inline std::string_view SendTimeExtension{ "\xee\xab\x9b" };                       // U+eadb
-        constexpr static inline std::string_view SendToMobile{ "\xef\x81\x9c" };                            // U+f05c
-        constexpr static inline std::string_view SensorDoor{ "\xef\x86\xb5" };                              // U+f1b5
-        constexpr static inline std::string_view SensorOccupied{ "\xee\xb0\x90" };                          // U+ec10
-        constexpr static inline std::string_view SensorWindow{ "\xef\x86\xb4" };                            // U+f1b4
-        constexpr static inline std::string_view Sensors{ "\xee\x94\x9e" };                                 // U+e51e
-        constexpr static inline std::string_view SensorsKrx{ "\xef\x95\x96" };                              // U+f556
-        constexpr static inline std::string_view SensorsKrxOff{ "\xef\x94\x95" };                           // U+f515
-        constexpr static inline std::string_view SensorsOff{ "\xee\x94\x9f" };                              // U+e51f
-        constexpr static inline std::string_view SentimentCalm{ "\xef\x9a\xa7" };                           // U+f6a7
-        constexpr static inline std::string_view SentimentContent{ "\xef\x9a\xa6" };                        // U+f6a6
-        constexpr static inline std::string_view SentimentDissatisfied{ "\xee\xa0\x91" };                   // U+e811
-        constexpr static inline std::string_view SentimentExcited{ "\xef\x9a\xa5" };                        // U+f6a5
-        constexpr static inline std::string_view SentimentExtremelyDissatisfied{ "\xef\x86\x94" };          // U+f194
-        constexpr static inline std::string_view SentimentFrustrated{ "\xef\x9a\xa4" };                     // U+f6a4
-        constexpr static inline std::string_view SentimentNeutral{ "\xee\xa0\x92" };                        // U+e812
-        constexpr static inline std::string_view SentimentSad{ "\xef\x9a\xa3" };                            // U+f6a3
-        constexpr static inline std::string_view SentimentSatisfied{ "\xee\xa0\x93" };                      // U+e813
-        constexpr static inline std::string_view SentimentSatisfiedAlt{ "\xee\xa0\x93" };                   // U+e813
-        constexpr static inline std::string_view SentimentStressed{ "\xef\x9a\xa2" };                       // U+f6a2
-        constexpr static inline std::string_view SentimentVeryDissatisfied{ "\xee\xa0\x94" };               // U+e814
-        constexpr static inline std::string_view SentimentVerySatisfied{ "\xee\xa0\x95" };                  // U+e815
-        constexpr static inline std::string_view SentimentWorried{ "\xef\x9a\xa1" };                        // U+f6a1
-        constexpr static inline std::string_view ServiceToolbox{ "\xee\x9c\x97" };                          // U+e717
-        constexpr static inline std::string_view SetMeal{ "\xef\x87\xaa" };                                 // U+f1ea
-        constexpr static inline std::string_view Settings{ "\xee\xa2\xb8" };                                // U+e8b8
-        constexpr static inline std::string_view SettingsAccessibility{ "\xef\x81\x9d" };                   // U+f05d
-        constexpr static inline std::string_view SettingsAccountBox{ "\xef\xa0\xb5" };                      // U+f835
-        constexpr static inline std::string_view SettingsAlert{ "\xef\x85\x83" };                           // U+f143
-        constexpr static inline std::string_view SettingsApplications{ "\xee\xa2\xb9" };                    // U+e8b9
-        constexpr static inline std::string_view SettingsBRoll{ "\xef\x98\xa5" };                           // U+f625
-        constexpr static inline std::string_view SettingsBackupRestore{ "\xee\xa2\xba" };                   // U+e8ba
-        constexpr static inline std::string_view SettingsBluetooth{ "\xee\xa2\xbb" };                       // U+e8bb
-        constexpr static inline std::string_view SettingsBrightness{ "\xee\xa2\xbd" };                      // U+e8bd
-        constexpr static inline std::string_view SettingsCell{ "\xee\xa2\xbc" };                            // U+e8bc
-        constexpr static inline std::string_view SettingsCinematicBlur{ "\xef\x98\xa4" };                   // U+f624
-        constexpr static inline std::string_view SettingsEthernet{ "\xee\xa2\xbe" };                        // U+e8be
-        constexpr static inline std::string_view SettingsHeart{ "\xef\x94\xa2" };                           // U+f522
-        constexpr static inline std::string_view SettingsInputAntenna{ "\xee\xa2\xbf" };                    // U+e8bf
-        constexpr static inline std::string_view SettingsInputComponent{ "\xee\xa3\x81" };                  // U+e8c1
-        constexpr static inline std::string_view SettingsInputComposite{ "\xee\xa3\x81" };                  // U+e8c1
-        constexpr static inline std::string_view SettingsInputHdmi{ "\xee\xa3\x82" };                       // U+e8c2
-        constexpr static inline std::string_view SettingsInputSvideo{ "\xee\xa3\x83" };                     // U+e8c3
-        constexpr static inline std::string_view SettingsMotionMode{ "\xef\xa0\xb3" };                      // U+f833
-        constexpr static inline std::string_view SettingsNightSight{ "\xef\xa0\xb2" };                      // U+f832
-        constexpr static inline std::string_view SettingsOverscan{ "\xee\xa3\x84" };                        // U+e8c4
-        constexpr static inline std::string_view SettingsPanorama{ "\xef\xa0\xb1" };                        // U+f831
-        constexpr static inline std::string_view SettingsPhone{ "\xee\xa3\x85" };                           // U+e8c5
-        constexpr static inline std::string_view SettingsPhotoCamera{ "\xef\xa0\xb4" };                     // U+f834
-        constexpr static inline std::string_view SettingsPower{ "\xee\xa3\x86" };                           // U+e8c6
-        constexpr static inline std::string_view SettingsRemote{ "\xee\xa3\x87" };                          // U+e8c7
-        constexpr static inline std::string_view SettingsSlowMotion{ "\xef\x98\xa3" };                      // U+f623
-        constexpr static inline std::string_view SettingsSuggest{ "\xef\x81\x9e" };                         // U+f05e
-        constexpr static inline std::string_view SettingsSystemDaydream{ "\xee\x87\x83" };                  // U+e1c3
-        constexpr static inline std::string_view SettingsTimelapse{ "\xef\x98\xa2" };                       // U+f622
-        constexpr static inline std::string_view SettingsVideoCamera{ "\xef\x98\xa1" };                     // U+f621
-        constexpr static inline std::string_view SettingsVoice{ "\xee\xa3\x88" };                           // U+e8c8
-        constexpr static inline std::string_view SettopComponent{ "\xee\x8a\xac" };                         // U+e2ac
-        constexpr static inline std::string_view SevereCold{ "\xee\xaf\x93" };                              // U+ebd3
-        constexpr static inline std::string_view Shadow{ "\xee\xa7\x9f" };                                  // U+e9df
-        constexpr static inline std::string_view ShadowAdd{ "\xef\x96\x84" };                               // U+f584
-        constexpr static inline std::string_view ShadowMinus{ "\xef\x96\x83" };                             // U+f583
-        constexpr static inline std::string_view ShapeLine{ "\xef\xa3\x93" };                               // U+f8d3
-        constexpr static inline std::string_view ShapeRecognition{ "\xee\xac\x81" };                        // U+eb01
-        constexpr static inline std::string_view Shapes{ "\xee\x98\x82" };                                  // U+e602
-        constexpr static inline std::string_view Share{ "\xee\xa0\x8d" };                                   // U+e80d
-        constexpr static inline std::string_view ShareLocation{ "\xef\x81\x9f" };                           // U+f05f
-        constexpr static inline std::string_view ShareOff{ "\xef\x9b\x8b" };                                // U+f6cb
-        constexpr static inline std::string_view ShareReviews{ "\xef\xa2\xa4" };                            // U+f8a4
-        constexpr static inline std::string_view ShareWindows{ "\xef\x98\x93" };                            // U+f613
-        constexpr static inline std::string_view SheetsRtl{ "\xef\xa0\xa3" };                               // U+f823
-        constexpr static inline std::string_view ShelfAutoHide{ "\xef\x9c\x83" };                           // U+f703
-        constexpr static inline std::string_view ShelfPosition{ "\xef\x9c\x82" };                           // U+f702
-        constexpr static inline std::string_view Shelves{ "\xef\xa1\xae" };                                 // U+f86e
-        constexpr static inline std::string_view Shield{ "\xee\xa7\xa0" };                                  // U+e9e0
-        constexpr static inline std::string_view ShieldLock{ "\xef\x9a\x86" };                              // U+f686
-        constexpr static inline std::string_view ShieldLocked{ "\xef\x96\x92" };                            // U+f592
-        constexpr static inline std::string_view ShieldMoon{ "\xee\xaa\xa9" };                              // U+eaa9
-        constexpr static inline std::string_view ShieldPerson{ "\xef\x99\x90" };                            // U+f650
-        constexpr static inline std::string_view ShieldQuestion{ "\xef\x94\xa9" };                          // U+f529
-        constexpr static inline std::string_view ShieldWithHeart{ "\xee\x9e\x8f" };                         // U+e78f
-        constexpr static inline std::string_view ShieldWithHouse{ "\xee\x9e\x8d" };                         // U+e78d
-        constexpr static inline std::string_view Shift{ "\xee\x97\xb2" };                                   // U+e5f2
-        constexpr static inline std::string_view ShiftLock{ "\xef\x9e\xae" };                               // U+f7ae
-        constexpr static inline std::string_view Shop{ "\xee\xa3\x89" };                                    // U+e8c9
-        constexpr static inline std::string_view Shop_2{ "\xee\xa3\x8a" };                                  // U+e8ca
-        constexpr static inline std::string_view ShopTwo{ "\xee\xa3\x8a" };                                 // U+e8ca
-        constexpr static inline std::string_view ShoppingBag{ "\xef\x87\x8c" };                             // U+f1cc
-        constexpr static inline std::string_view ShoppingBasket{ "\xee\xa3\x8b" };                          // U+e8cb
-        constexpr static inline std::string_view ShoppingCart{ "\xee\xa3\x8c" };                            // U+e8cc
-        constexpr static inline std::string_view ShoppingCartCheckout{ "\xee\xae\x88" };                    // U+eb88
-        constexpr static inline std::string_view ShoppingCartOff{ "\xef\x93\xb7" };                         // U+f4f7
-        constexpr static inline std::string_view Shoppingmode{ "\xee\xbe\xb7" };                            // U+efb7
-        constexpr static inline std::string_view ShortStay{ "\xee\x93\x90" };                               // U+e4d0
-        constexpr static inline std::string_view ShortText{ "\xee\x89\xa1" };                               // U+e261
-        constexpr static inline std::string_view Shortcut{ "\xef\x95\xba" };                                // U+f57a
-        constexpr static inline std::string_view ShowChart{ "\xee\x9b\xa1" };                               // U+e6e1
-        constexpr static inline std::string_view Shower{ "\xef\x81\xa1" };                                  // U+f061
-        constexpr static inline std::string_view Shuffle{ "\xee\x81\x83" };                                 // U+e043
-        constexpr static inline std::string_view ShuffleOn{ "\xee\xa7\xa1" };                               // U+e9e1
-        constexpr static inline std::string_view ShutterSpeed{ "\xee\x90\xbd" };                            // U+e43d
-        constexpr static inline std::string_view ShutterSpeedAdd{ "\xef\x95\xbe" };                         // U+f57e
-        constexpr static inline std::string_view ShutterSpeedMinus{ "\xef\x95\xbd" };                       // U+f57d
-        constexpr static inline std::string_view Sick{ "\xef\x88\xa0" };                                    // U+f220
-        constexpr static inline std::string_view SideNavigation{ "\xee\xa7\xa2" };                          // U+e9e2
-        constexpr static inline std::string_view SignLanguage{ "\xee\xaf\xa5" };                            // U+ebe5
-        constexpr static inline std::string_view SignalCellular_0Bar{ "\xef\x82\xa8" };                     // U+f0a8
-        constexpr static inline std::string_view SignalCellular_1Bar{ "\xef\x82\xa9" };                     // U+f0a9
-        constexpr static inline std::string_view SignalCellular_2Bar{ "\xef\x82\xaa" };                     // U+f0aa
-        constexpr static inline std::string_view SignalCellular_3Bar{ "\xef\x82\xab" };                     // U+f0ab
-        constexpr static inline std::string_view SignalCellular_4Bar{ "\xee\x87\x88" };                     // U+e1c8
-        constexpr static inline std::string_view SignalCellularAdd{ "\xef\x9e\xa9" };                       // U+f7a9
-        constexpr static inline std::string_view SignalCellularAlt{ "\xee\x88\x82" };                       // U+e202
-        constexpr static inline std::string_view SignalCellularAlt_1Bar{ "\xee\xaf\x9f" };                  // U+ebdf
-        constexpr static inline std::string_view SignalCellularAlt_2Bar{ "\xee\xaf\xa3" };                  // U+ebe3
-        constexpr static inline std::string_view SignalCellularConnectedNoInternet_0Bar{ "\xef\x82\xac" };  // U+f0ac
-        constexpr static inline std::string_view SignalCellularConnectedNoInternet_4Bar{ "\xee\x87\x8d" };  // U+e1cd
-        constexpr static inline std::string_view SignalCellularNoSim{ "\xee\x87\x8e" };                     // U+e1ce
-        constexpr static inline std::string_view SignalCellularNodata{ "\xef\x81\xa2" };                    // U+f062
-        constexpr static inline std::string_view SignalCellularNull{ "\xee\x87\x8f" };                      // U+e1cf
-        constexpr static inline std::string_view SignalCellularOff{ "\xee\x87\x90" };                       // U+e1d0
-        constexpr static inline std::string_view SignalCellularPause{ "\xef\x96\xa7" };                     // U+f5a7
-        constexpr static inline std::string_view SignalDisconnected{ "\xef\x88\xb9" };                      // U+f239
-        constexpr static inline std::string_view SignalWifi_0Bar{ "\xef\x82\xb0" };                         // U+f0b0
-        constexpr static inline std::string_view SignalWifi_4Bar{ "\xef\x81\xa5" };                         // U+f065
-        constexpr static inline std::string_view SignalWifi_4BarLock{ "\xee\x87\xa1" };                     // U+e1e1
-        constexpr static inline std::string_view SignalWifiBad{ "\xef\x81\xa4" };                           // U+f064
-        constexpr static inline std::string_view SignalWifiConnectedNoInternet_4{ "\xef\x81\xa4" };         // U+f064
-        constexpr static inline std::string_view SignalWifiOff{ "\xee\x87\x9a" };                           // U+e1da
-        constexpr static inline std::string_view SignalWifiStatusbar_4Bar{ "\xef\x81\xa5" };                // U+f065
-        constexpr static inline std::string_view SignalWifiStatusbarNotConnected{ "\xef\x83\xaf" };         // U+f0ef
-        constexpr static inline std::string_view SignalWifiStatusbarNull{ "\xef\x81\xa7" };                 // U+f067
-        constexpr static inline std::string_view Signature{ "\xef\x9d\x8c" };                               // U+f74c
-        constexpr static inline std::string_view Signpost{ "\xee\xae\x91" };                                // U+eb91
-        constexpr static inline std::string_view SimCard{ "\xee\x8c\xab" };                                 // U+e32b
-        constexpr static inline std::string_view SimCardAlert{ "\xef\x81\x97" };                            // U+f057
-        constexpr static inline std::string_view SimCardDownload{ "\xef\x81\xa8" };                         // U+f068
-        constexpr static inline std::string_view SingleBed{ "\xee\xa9\x88" };                               // U+ea48
-        constexpr static inline std::string_view Sip{ "\xef\x81\xa9" };                                     // U+f069
-        constexpr static inline std::string_view Skateboarding{ "\xee\x94\x91" };                           // U+e511
-        constexpr static inline std::string_view Skeleton{ "\xef\xa2\x99" };                                // U+f899
-        constexpr static inline std::string_view Skillet{ "\xef\x95\x83" };                                 // U+f543
-        constexpr static inline std::string_view SkilletCooktop{ "\xef\x95\x84" };                          // U+f544
-        constexpr static inline std::string_view SkipNext{ "\xee\x81\x84" };                                // U+e044
-        constexpr static inline std::string_view SkipPrevious{ "\xee\x81\x85" };                            // U+e045
-        constexpr static inline std::string_view Skull{ "\xef\xa2\x9a" };                                   // U+f89a
-        constexpr static inline std::string_view Sledding{ "\xee\x94\x92" };                                // U+e512
-        constexpr static inline std::string_view Sleep{ "\xee\x88\x93" };                                   // U+e213
-        constexpr static inline std::string_view SleepScore{ "\xef\x9a\xb7" };                              // U+f6b7
-        constexpr static inline std::string_view SlideLibrary{ "\xef\xa0\xa2" };                            // U+f822
-        constexpr static inline std::string_view Sliders{ "\xee\xa7\xa3" };                                 // U+e9e3
-        constexpr static inline std::string_view Slideshow{ "\xee\x90\x9b" };                               // U+e41b
-        constexpr static inline std::string_view SlowMotionVideo{ "\xee\x81\xa8" };                         // U+e068
-        constexpr static inline std::string_view SmartButton{ "\xef\x87\x81" };                             // U+f1c1
-        constexpr static inline std::string_view SmartDisplay{ "\xef\x81\xaa" };                            // U+f06a
-        constexpr static inline std::string_view SmartOutlet{ "\xee\xa1\x84" };                             // U+e844
-        constexpr static inline std::string_view SmartScreen{ "\xef\x81\xab" };                             // U+f06b
-        constexpr static inline std::string_view SmartToy{ "\xef\x81\xac" };                                // U+f06c
-        constexpr static inline std::string_view Smartphone{ "\xee\x8c\xac" };                              // U+e32c
-        constexpr static inline std::string_view SmbShare{ "\xef\x9d\x8b" };                                // U+f74b
-        constexpr static inline std::string_view SmokeFree{ "\xee\xad\x8a" };                               // U+eb4a
-        constexpr static inline std::string_view SmokingRooms{ "\xee\xad\x8b" };                            // U+eb4b
-        constexpr static inline std::string_view Sms{ "\xee\x98\xa5" };                                     // U+e625
-        constexpr static inline std::string_view SmsFailed{ "\xee\xa1\xbf" };                               // U+e87f
-        constexpr static inline std::string_view SnippetFolder{ "\xef\x87\x87" };                           // U+f1c7
-        constexpr static inline std::string_view Snooze{ "\xee\x81\x86" };                                  // U+e046
-        constexpr static inline std::string_view Snowboarding{ "\xee\x94\x93" };                            // U+e513
-        constexpr static inline std::string_view Snowing{ "\xee\xa0\x8f" };                                 // U+e80f
-        constexpr static inline std::string_view SnowingHeavy{ "\xef\x98\x9c" };                            // U+f61c
-        constexpr static inline std::string_view Snowmobile{ "\xee\x94\x83" };                              // U+e503
-        constexpr static inline std::string_view Snowshoeing{ "\xee\x94\x94" };                             // U+e514
-        constexpr static inline std::string_view Soap{ "\xef\x86\xb2" };                                    // U+f1b2
-        constexpr static inline std::string_view SocialDistance{ "\xee\x87\x8b" };                          // U+e1cb
-        constexpr static inline std::string_view SocialLeaderboard{ "\xef\x9a\xa0" };                       // U+f6a0
-        constexpr static inline std::string_view SolarPower{ "\xee\xb0\x8f" };                              // U+ec0f
-        constexpr static inline std::string_view Sort{ "\xee\x85\xa4" };                                    // U+e164
-        constexpr static inline std::string_view SortByAlpha{ "\xee\x81\x93" };                             // U+e053
-        constexpr static inline std::string_view Sos{ "\xee\xaf\xb7" };                                     // U+ebf7
-        constexpr static inline std::string_view SoundDetectionDogBarking{ "\xef\x85\x89" };                // U+f149
-        constexpr static inline std::string_view SoundDetectionGlassBreak{ "\xef\x85\x8a" };                // U+f14a
-        constexpr static inline std::string_view SoundDetectionLoudSound{ "\xef\x85\x8b" };                 // U+f14b
-        constexpr static inline std::string_view SoundSampler{ "\xef\x9a\xb4" };                            // U+f6b4
-        constexpr static inline std::string_view SoupKitchen{ "\xee\x9f\x93" };                             // U+e7d3
-        constexpr static inline std::string_view Source{ "\xef\x87\x88" };                                  // U+f1c8
-        constexpr static inline std::string_view SourceEnvironment{ "\xee\x94\xa7" };                       // U+e527
-        constexpr static inline std::string_view SourceNotes{ "\xee\x84\xad" };                             // U+e12d
-        constexpr static inline std::string_view South{ "\xef\x87\xa3" };                                   // U+f1e3
-        constexpr static inline std::string_view SouthAmerica{ "\xee\x9f\xa4" };                            // U+e7e4
-        constexpr static inline std::string_view SouthEast{ "\xef\x87\xa4" };                               // U+f1e4
-        constexpr static inline std::string_view SouthWest{ "\xef\x87\xa5" };                               // U+f1e5
-        constexpr static inline std::string_view Spa{ "\xee\xad\x8c" };                                     // U+eb4c
-        constexpr static inline std::string_view SpaceBar{ "\xee\x89\x96" };                                // U+e256
-        constexpr static inline std::string_view SpaceDashboard{ "\xee\x99\xab" };                          // U+e66b
-        constexpr static inline std::string_view SpatialAudio{ "\xee\xaf\xab" };                            // U+ebeb
-        constexpr static inline std::string_view SpatialAudioOff{ "\xee\xaf\xa8" };                         // U+ebe8
-        constexpr static inline std::string_view SpatialTracking{ "\xee\xaf\xaa" };                         // U+ebea
-        constexpr static inline std::string_view Speaker{ "\xee\x8c\xad" };                                 // U+e32d
-        constexpr static inline std::string_view SpeakerGroup{ "\xee\x8c\xae" };                            // U+e32e
-        constexpr static inline std::string_view SpeakerNotes{ "\xee\xa3\x8d" };                            // U+e8cd
-        constexpr static inline std::string_view SpeakerNotesOff{ "\xee\xa4\xaa" };                         // U+e92a
-        constexpr static inline std::string_view SpeakerPhone{ "\xee\x83\x92" };                            // U+e0d2
-        constexpr static inline std::string_view SpecialCharacter{ "\xef\x9d\x8a" };                        // U+f74a
-        constexpr static inline std::string_view SpecificGravity{ "\xef\xa1\xb2" };                         // U+f872
-        constexpr static inline std::string_view SpeechToText{ "\xef\xa2\xa7" };                            // U+f8a7
-        constexpr static inline std::string_view Speed{ "\xee\xa7\xa4" };                                   // U+e9e4
-        constexpr static inline std::string_view Speed_0_5{ "\xef\x93\xa2" };                               // U+f4e2
-        constexpr static inline std::string_view Speed_1_2{ "\xef\x93\xa1" };                               // U+f4e1
-        constexpr static inline std::string_view Speed_1_5{ "\xef\x93\xa0" };                               // U+f4e0
-        constexpr static inline std::string_view Speed_2x{ "\xef\x93\xab" };                                // U+f4eb
-        constexpr static inline std::string_view Spellcheck{ "\xee\xa3\x8e" };                              // U+e8ce
-        constexpr static inline std::string_view Splitscreen{ "\xef\x81\xad" };                             // U+f06d
-        constexpr static inline std::string_view SplitscreenAdd{ "\xef\x93\xbd" };                          // U+f4fd
-        constexpr static inline std::string_view SplitscreenBottom{ "\xef\x99\xb6" };                       // U+f676
-        constexpr static inline std::string_view SplitscreenLeft{ "\xef\x99\xb5" };                         // U+f675
-        constexpr static inline std::string_view SplitscreenRight{ "\xef\x99\xb4" };                        // U+f674
-        constexpr static inline std::string_view SplitscreenTop{ "\xef\x99\xb3" };                          // U+f673
-        constexpr static inline std::string_view SplitscreenVerticalAdd{ "\xef\x93\xbc" };                  // U+f4fc
-        constexpr static inline std::string_view Spo2{ "\xef\x9b\x9b" };                                    // U+f6db
-        constexpr static inline std::string_view Spoke{ "\xee\xa6\xa7" };                                   // U+e9a7
-        constexpr static inline std::string_view Sports{ "\xee\xa8\xb0" };                                  // U+ea30
-        constexpr static inline std::string_view SportsAndOutdoors{ "\xee\xbe\xb8" };                       // U+efb8
-        constexpr static inline std::string_view SportsBar{ "\xef\x87\xb3" };                               // U+f1f3
-        constexpr static inline std::string_view SportsBaseball{ "\xee\xa9\x91" };                          // U+ea51
-        constexpr static inline std::string_view SportsBasketball{ "\xee\xa8\xa6" };                        // U+ea26
-        constexpr static inline std::string_view SportsCricket{ "\xee\xa8\xa7" };                           // U+ea27
-        constexpr static inline std::string_view SportsEsports{ "\xee\xa8\xa8" };                           // U+ea28
-        constexpr static inline std::string_view SportsFootball{ "\xee\xa8\xa9" };                          // U+ea29
-        constexpr static inline std::string_view SportsGolf{ "\xee\xa8\xaa" };                              // U+ea2a
-        constexpr static inline std::string_view SportsGymnastics{ "\xee\xaf\x84" };                        // U+ebc4
-        constexpr static inline std::string_view SportsHandball{ "\xee\xa8\xb3" };                          // U+ea33
-        constexpr static inline std::string_view SportsHockey{ "\xee\xa8\xab" };                            // U+ea2b
-        constexpr static inline std::string_view SportsKabaddi{ "\xee\xa8\xb4" };                           // U+ea34
-        constexpr static inline std::string_view SportsMartialArts{ "\xee\xab\xa9" };                       // U+eae9
-        constexpr static inline std::string_view SportsMma{ "\xee\xa8\xac" };                               // U+ea2c
-        constexpr static inline std::string_view SportsMotorsports{ "\xee\xa8\xad" };                       // U+ea2d
-        constexpr static inline std::string_view SportsRugby{ "\xee\xa8\xae" };                             // U+ea2e
-        constexpr static inline std::string_view SportsScore{ "\xef\x81\xae" };                             // U+f06e
-        constexpr static inline std::string_view SportsSoccer{ "\xee\xa8\xaf" };                            // U+ea2f
-        constexpr static inline std::string_view SportsTennis{ "\xee\xa8\xb2" };                            // U+ea32
-        constexpr static inline std::string_view SportsVolleyball{ "\xee\xa8\xb1" };                        // U+ea31
-        constexpr static inline std::string_view Sprinkler{ "\xee\x8a\x9a" };                               // U+e29a
-        constexpr static inline std::string_view Sprint{ "\xef\xa0\x9f" };                                  // U+f81f
-        constexpr static inline std::string_view Square{ "\xee\xac\xb6" };                                  // U+eb36
-        constexpr static inline std::string_view SquareFoot{ "\xee\xa9\x89" };                              // U+ea49
-        constexpr static inline std::string_view SsidChart{ "\xee\xad\xa6" };                               // U+eb66
-        constexpr static inline std::string_view Stack{ "\xef\x98\x89" };                                   // U+f609
-        constexpr static inline std::string_view StackOff{ "\xef\x98\x88" };                                // U+f608
-        constexpr static inline std::string_view StackStar{ "\xef\x98\x87" };                               // U+f607
-        constexpr static inline std::string_view StackedBarChart{ "\xee\xa7\xa6" };                         // U+e9e6
-        constexpr static inline std::string_view StackedEmail{ "\xee\x9b\x87" };                            // U+e6c7
-        constexpr static inline std::string_view StackedInbox{ "\xee\x9b\x89" };                            // U+e6c9
-        constexpr static inline std::string_view StackedLineChart{ "\xef\x88\xab" };                        // U+f22b
-        constexpr static inline std::string_view Stacks{ "\xef\x94\x80" };                                  // U+f500
-        constexpr static inline std::string_view StadiaController{ "\xef\x84\xb5" };                        // U+f135
-        constexpr static inline std::string_view Stadium{ "\xee\xae\x90" };                                 // U+eb90
-        constexpr static inline std::string_view Stairs{ "\xef\x86\xa9" };                                  // U+f1a9
-        constexpr static inline std::string_view Star{ "\xef\x82\x9a" };                                    // U+f09a
-        constexpr static inline std::string_view StarBorder{ "\xef\x82\x9a" };                              // U+f09a
-        constexpr static inline std::string_view StarBorderPurple500{ "\xef\x82\x9a" };                     // U+f09a
-        constexpr static inline std::string_view StarHalf{ "\xee\xa0\xb9" };                                // U+e839
-        constexpr static inline std::string_view StarOutline{ "\xef\x82\x9a" };                             // U+f09a
-        constexpr static inline std::string_view StarPurple500{ "\xef\x82\x9a" };                           // U+f09a
-        constexpr static inline std::string_view StarRate{ "\xef\x83\xac" };                                // U+f0ec
-        constexpr static inline std::string_view StarRateHalf{ "\xee\xb1\x85" };                            // U+ec45
-        constexpr static inline std::string_view Stars{ "\xee\xa3\x90" };                                   // U+e8d0
-        constexpr static inline std::string_view Start{ "\xee\x82\x89" };                                   // U+e089
-        constexpr static inline std::string_view Stat_0{ "\xee\x9a\x97" };                                  // U+e697
-        constexpr static inline std::string_view Stat_1{ "\xee\x9a\x98" };                                  // U+e698
-        constexpr static inline std::string_view Stat_2{ "\xee\x9a\x99" };                                  // U+e699
-        constexpr static inline std::string_view Stat_3{ "\xee\x9a\x9a" };                                  // U+e69a
-        constexpr static inline std::string_view StatMinus_1{ "\xee\x9a\x9b" };                             // U+e69b
-        constexpr static inline std::string_view StatMinus_2{ "\xee\x9a\x9c" };                             // U+e69c
-        constexpr static inline std::string_view StatMinus_3{ "\xee\x9a\x9d" };                             // U+e69d
-        constexpr static inline std::string_view StayCurrentLandscape{ "\xee\x83\x93" };                    // U+e0d3
-        constexpr static inline std::string_view StayCurrentPortrait{ "\xee\x83\x94" };                     // U+e0d4
-        constexpr static inline std::string_view StayPrimaryLandscape{ "\xee\x83\x95" };                    // U+e0d5
-        constexpr static inline std::string_view StayPrimaryPortrait{ "\xee\x83\x96" };                     // U+e0d6
-        constexpr static inline std::string_view Step{ "\xef\x9b\xbe" };                                    // U+f6fe
-        constexpr static inline std::string_view StepInto{ "\xef\x9c\x81" };                                // U+f701
-        constexpr static inline std::string_view StepOut{ "\xef\x9c\x80" };                                 // U+f700
-        constexpr static inline std::string_view StepOver{ "\xef\x9b\xbf" };                                // U+f6ff
-        constexpr static inline std::string_view Steppers{ "\xee\xa7\xa7" };                                // U+e9e7
-        constexpr static inline std::string_view Steps{ "\xef\x9b\x9a" };                                   // U+f6da
-        constexpr static inline std::string_view Stethoscope{ "\xef\xa0\x85" };                             // U+f805
-        constexpr static inline std::string_view StethoscopeArrow{ "\xef\xa0\x87" };                        // U+f807
-        constexpr static inline std::string_view StethoscopeCheck{ "\xef\xa0\x86" };                        // U+f806
-        constexpr static inline std::string_view StickyNote{ "\xee\xa7\xa8" };                              // U+e9e8
-        constexpr static inline std::string_view StickyNote_2{ "\xef\x87\xbc" };                            // U+f1fc
-        constexpr static inline std::string_view StockMedia{ "\xef\x95\xb0" };                              // U+f570
-        constexpr static inline std::string_view Stockpot{ "\xef\x95\x85" };                                // U+f545
-        constexpr static inline std::string_view Stop{ "\xee\x81\x87" };                                    // U+e047
-        constexpr static inline std::string_view StopCircle{ "\xee\xbd\xb1" };                              // U+ef71
-        constexpr static inline std::string_view StopScreenShare{ "\xee\x83\xa3" };                         // U+e0e3
-        constexpr static inline std::string_view Storage{ "\xee\x87\x9b" };                                 // U+e1db
-        constexpr static inline std::string_view Store{ "\xee\xa3\x91" };                                   // U+e8d1
-        constexpr static inline std::string_view StoreMallDirectory{ "\xee\xa3\x91" };                      // U+e8d1
-        constexpr static inline std::string_view Storefront{ "\xee\xa8\x92" };                              // U+ea12
-        constexpr static inline std::string_view Storm{ "\xef\x81\xb0" };                                   // U+f070
-        constexpr static inline std::string_view Straight{ "\xee\xae\x95" };                                // U+eb95
-        constexpr static inline std::string_view Straighten{ "\xee\x90\x9c" };                              // U+e41c
-        constexpr static inline std::string_view Strategy{ "\xef\x97\x9f" };                                // U+f5df
-        constexpr static inline std::string_view Stream{ "\xee\xa7\xa9" };                                  // U+e9e9
-        constexpr static inline std::string_view StreamApps{ "\xef\x9e\x9f" };                              // U+f79f
-        constexpr static inline std::string_view Streetview{ "\xee\x95\xae" };                              // U+e56e
-        constexpr static inline std::string_view StressManagement{ "\xef\x9b\x99" };                        // U+f6d9
-        constexpr static inline std::string_view StrikethroughS{ "\xee\x89\x97" };                          // U+e257
-        constexpr static inline std::string_view StrokeFull{ "\xef\x9d\x89" };                              // U+f749
-        constexpr static inline std::string_view StrokePartial{ "\xef\x9d\x88" };                           // U+f748
-        constexpr static inline std::string_view Stroller{ "\xef\x86\xae" };                                // U+f1ae
-        constexpr static inline std::string_view Style{ "\xee\x90\x9d" };                                   // U+e41d
-        constexpr static inline std::string_view Styler{ "\xee\x89\xb3" };                                  // U+e273
-        constexpr static inline std::string_view Stylus{ "\xef\x98\x84" };                                  // U+f604
-        constexpr static inline std::string_view StylusLaserPointer{ "\xef\x9d\x87" };                      // U+f747
-        constexpr static inline std::string_view StylusNote{ "\xef\x98\x83" };                              // U+f603
-        constexpr static inline std::string_view SubdirectoryArrowLeft{ "\xee\x97\x99" };                   // U+e5d9
-        constexpr static inline std::string_view SubdirectoryArrowRight{ "\xee\x97\x9a" };                  // U+e5da
-        constexpr static inline std::string_view Subheader{ "\xee\xa7\xaa" };                               // U+e9ea
-        constexpr static inline std::string_view Subject{ "\xee\xa3\x92" };                                 // U+e8d2
-        constexpr static inline std::string_view Subscript{ "\xef\x84\x91" };                               // U+f111
-        constexpr static inline std::string_view Subscriptions{ "\xee\x81\xa4" };                           // U+e064
-        constexpr static inline std::string_view Subtitles{ "\xee\x81\x88" };                               // U+e048
-        constexpr static inline std::string_view SubtitlesOff{ "\xee\xbd\xb2" };                            // U+ef72
-        constexpr static inline std::string_view Subway{ "\xee\x95\xaf" };                                  // U+e56f
-        constexpr static inline std::string_view Summarize{ "\xef\x81\xb1" };                               // U+f071
-        constexpr static inline std::string_view Sunny{ "\xee\xa0\x9a" };                                   // U+e81a
-        constexpr static inline std::string_view SunnySnowing{ "\xee\xa0\x99" };                            // U+e819
-        constexpr static inline std::string_view Superscript{ "\xef\x84\x92" };                             // U+f112
-        constexpr static inline std::string_view SupervisedUserCircle{ "\xee\xa4\xb9" };                    // U+e939
-        constexpr static inline std::string_view SupervisedUserCircleOff{ "\xef\x98\x8e" };                 // U+f60e
-        constexpr static inline std::string_view SupervisorAccount{ "\xee\xa3\x93" };                       // U+e8d3
-        constexpr static inline std::string_view Support{ "\xee\xbd\xb3" };                                 // U+ef73
-        constexpr static inline std::string_view SupportAgent{ "\xef\x83\xa2" };                            // U+f0e2
-        constexpr static inline std::string_view Surfing{ "\xee\x94\x95" };                                 // U+e515
-        constexpr static inline std::string_view Surgical{ "\xee\x84\xb1" };                                // U+e131
-        constexpr static inline std::string_view SurroundSound{ "\xee\x81\x89" };                           // U+e049
-        constexpr static inline std::string_view SwapCalls{ "\xee\x83\x97" };                               // U+e0d7
-        constexpr static inline std::string_view SwapDrivingApps{ "\xee\x9a\x9e" };                         // U+e69e
-        constexpr static inline std::string_view SwapDrivingAppsWheel{ "\xee\x9a\x9f" };                    // U+e69f
-        constexpr static inline std::string_view SwapHoriz{ "\xee\xa3\x94" };                               // U+e8d4
-        constexpr static inline std::string_view SwapHorizontalCircle{ "\xee\xa4\xb3" };                    // U+e933
-        constexpr static inline std::string_view SwapVert{ "\xee\xa3\x95" };                                // U+e8d5
-        constexpr static inline std::string_view SwapVerticalCircle{ "\xee\xa3\x96" };                      // U+e8d6
-        constexpr static inline std::string_view Sweep{ "\xee\x9a\xac" };                                   // U+e6ac
-        constexpr static inline std::string_view Swipe{ "\xee\xa7\xac" };                                   // U+e9ec
-        constexpr static inline std::string_view SwipeDown{ "\xee\xad\x93" };                               // U+eb53
-        constexpr static inline std::string_view SwipeDownAlt{ "\xee\xac\xb0" };                            // U+eb30
-        constexpr static inline std::string_view SwipeLeft{ "\xee\xad\x99" };                               // U+eb59
-        constexpr static inline std::string_view SwipeLeftAlt{ "\xee\xac\xb3" };                            // U+eb33
-        constexpr static inline std::string_view SwipeRight{ "\xee\xad\x92" };                              // U+eb52
-        constexpr static inline std::string_view SwipeRightAlt{ "\xee\xad\x96" };                           // U+eb56
-        constexpr static inline std::string_view SwipeUp{ "\xee\xac\xae" };                                 // U+eb2e
-        constexpr static inline std::string_view SwipeUpAlt{ "\xee\xac\xb5" };                              // U+eb35
-        constexpr static inline std::string_view SwipeVertical{ "\xee\xad\x91" };                           // U+eb51
-        constexpr static inline std::string_view Switch{ "\xee\x87\xb4" };                                  // U+e1f4
-        constexpr static inline std::string_view SwitchAccess{ "\xef\x9b\xbd" };                            // U+f6fd
-        constexpr static inline std::string_view SwitchAccess_2{ "\xef\x94\x86" };                          // U+f506
-        constexpr static inline std::string_view SwitchAccessShortcut{ "\xee\x9f\xa1" };                    // U+e7e1
-        constexpr static inline std::string_view SwitchAccessShortcutAdd{ "\xee\x9f\xa2" };                 // U+e7e2
-        constexpr static inline std::string_view SwitchAccount{ "\xee\xa7\xad" };                           // U+e9ed
-        constexpr static inline std::string_view SwitchCamera{ "\xee\x90\x9e" };                            // U+e41e
-        constexpr static inline std::string_view SwitchLeft{ "\xef\x87\x91" };                              // U+f1d1
-        constexpr static inline std::string_view SwitchRight{ "\xef\x87\x92" };                             // U+f1d2
-        constexpr static inline std::string_view SwitchVideo{ "\xee\x90\x9f" };                             // U+e41f
-        constexpr static inline std::string_view Switches{ "\xee\x9c\xb3" };                                // U+e733
-        constexpr static inline std::string_view SwordRose{ "\xef\x97\x9e" };                               // U+f5de
-        constexpr static inline std::string_view Swords{ "\xef\xa2\x89" };                                  // U+f889
-        constexpr static inline std::string_view Symptoms{ "\xee\x84\xb2" };                                // U+e132
-        constexpr static inline std::string_view Synagogue{ "\xee\xaa\xb0" };                               // U+eab0
-        constexpr static inline std::string_view Sync{ "\xee\x98\xa7" };                                    // U+e627
-        constexpr static inline std::string_view SyncAlt{ "\xee\xa8\x98" };                                 // U+ea18
-        constexpr static inline std::string_view SyncDisabled{ "\xee\x98\xa8" };                            // U+e628
-        constexpr static inline std::string_view SyncLock{ "\xee\xab\xae" };                                // U+eaee
-        constexpr static inline std::string_view SyncProblem{ "\xee\x98\xa9" };                             // U+e629
-        constexpr static inline std::string_view SyncSavedLocally{ "\xef\xa0\xa0" };                        // U+f820
-        constexpr static inline std::string_view Syringe{ "\xee\x84\xb3" };                                 // U+e133
-        constexpr static inline std::string_view SystemSecurityUpdate{ "\xef\x81\xb2" };                    // U+f072
-        constexpr static inline std::string_view SystemSecurityUpdateGood{ "\xef\x81\xb3" };                // U+f073
-        constexpr static inline std::string_view SystemSecurityUpdateWarning{ "\xef\x81\xb4" };             // U+f074
-        constexpr static inline std::string_view SystemUpdate{ "\xef\x81\xb2" };                            // U+f072
-        constexpr static inline std::string_view SystemUpdateAlt{ "\xee\xa3\x97" };                         // U+e8d7
-        constexpr static inline std::string_view Tab{ "\xee\xa3\x98" };                                     // U+e8d8
-        constexpr static inline std::string_view TabClose{ "\xef\x9d\x85" };                                // U+f745
-        constexpr static inline std::string_view TabCloseRight{ "\xef\x9d\x86" };                           // U+f746
-        constexpr static inline std::string_view TabDuplicate{ "\xef\x9d\x84" };                            // U+f744
-        constexpr static inline std::string_view TabGroup{ "\xef\x9d\x83" };                                // U+f743
-        constexpr static inline std::string_view TabMove{ "\xef\x9d\x82" };                                 // U+f742
-        constexpr static inline std::string_view TabNewRight{ "\xef\x9d\x81" };                             // U+f741
-        constexpr static inline std::string_view TabRecent{ "\xef\x9d\x80" };                               // U+f740
-        constexpr static inline std::string_view TabUnselected{ "\xee\xa3\x99" };                           // U+e8d9
-        constexpr static inline std::string_view Table{ "\xef\x86\x91" };                                   // U+f191
-        constexpr static inline std::string_view TableBar{ "\xee\xab\x92" };                                // U+ead2
-        constexpr static inline std::string_view TableChart{ "\xee\x89\xa5" };                              // U+e265
-        constexpr static inline std::string_view TableChartView{ "\xef\x9b\xaf" };                          // U+f6ef
-        constexpr static inline std::string_view TableLamp{ "\xee\x87\xb2" };                               // U+e1f2
-        constexpr static inline std::string_view TableRestaurant{ "\xee\xab\x86" };                         // U+eac6
-        constexpr static inline std::string_view TableRows{ "\xef\x84\x81" };                               // U+f101
-        constexpr static inline std::string_view TableRowsNarrow{ "\xef\x9c\xbf" };                         // U+f73f
-        constexpr static inline std::string_view TableView{ "\xef\x86\xbe" };                               // U+f1be
-        constexpr static inline std::string_view Tablet{ "\xee\x8c\xaf" };                                  // U+e32f
-        constexpr static inline std::string_view TabletAndroid{ "\xee\x8c\xb0" };                           // U+e330
-        constexpr static inline std::string_view TabletMac{ "\xee\x8c\xb1" };                               // U+e331
-        constexpr static inline std::string_view Tabs{ "\xee\xa7\xae" };                                    // U+e9ee
-        constexpr static inline std::string_view Tactic{ "\xef\x95\xa4" };                                  // U+f564
-        constexpr static inline std::string_view Tag{ "\xee\xa7\xaf" };                                     // U+e9ef
-        constexpr static inline std::string_view TagFaces{ "\xee\xa8\xa2" };                                // U+ea22
-        constexpr static inline std::string_view TakeoutDining{ "\xee\xa9\xb4" };                           // U+ea74
-        constexpr static inline std::string_view TamperDetectionOff{ "\xee\xa0\xae" };                      // U+e82e
-        constexpr static inline std::string_view TamperDetectionOn{ "\xef\xa3\x88" };                       // U+f8c8
-        constexpr static inline std::string_view TapAndPlay{ "\xee\x98\xab" };                              // U+e62b
-        constexpr static inline std::string_view Tapas{ "\xef\x87\xa9" };                                   // U+f1e9
-        constexpr static inline std::string_view Target{ "\xee\x9c\x99" };                                  // U+e719
-        constexpr static inline std::string_view Task{ "\xef\x81\xb5" };                                    // U+f075
-        constexpr static inline std::string_view TaskAlt{ "\xee\x8b\xa6" };                                 // U+e2e6
-        constexpr static inline std::string_view Taunt{ "\xef\x9a\x9f" };                                   // U+f69f
-        constexpr static inline std::string_view TaxiAlert{ "\xee\xbd\xb4" };                               // U+ef74
-        constexpr static inline std::string_view TeamDashboard{ "\xee\x80\x93" };                           // U+e013
-        constexpr static inline std::string_view TempPreferencesCustom{ "\xef\xa3\x89" };                   // U+f8c9
-        constexpr static inline std::string_view TempPreferencesEco{ "\xef\xa3\x8a" };                      // U+f8ca
-        constexpr static inline std::string_view TempleBuddhist{ "\xee\xaa\xb3" };                          // U+eab3
-        constexpr static inline std::string_view TempleHindu{ "\xee\xaa\xaf" };                             // U+eaaf
-        constexpr static inline std::string_view Tenancy{ "\xef\x83\xa3" };                                 // U+f0e3
-        constexpr static inline std::string_view Terminal{ "\xee\xae\x8e" };                                // U+eb8e
-        constexpr static inline std::string_view Terrain{ "\xee\x95\xa4" };                                 // U+e564
-        constexpr static inline std::string_view TextAd{ "\xee\x9c\xa8" };                                  // U+e728
-        constexpr static inline std::string_view TextDecrease{ "\xee\xab\x9d" };                            // U+eadd
-        constexpr static inline std::string_view TextFields{ "\xee\x89\xa2" };                              // U+e262
-        constexpr static inline std::string_view TextFieldsAlt{ "\xee\xa7\xb1" };                           // U+e9f1
-        constexpr static inline std::string_view TextFormat{ "\xee\x85\xa5" };                              // U+e165
-        constexpr static inline std::string_view TextIncrease{ "\xee\xab\xa2" };                            // U+eae2
-        constexpr static inline std::string_view TextRotateUp{ "\xee\xa4\xba" };                            // U+e93a
-        constexpr static inline std::string_view TextRotateVertical{ "\xee\xa4\xbb" };                      // U+e93b
-        constexpr static inline std::string_view TextRotationAngledown{ "\xee\xa4\xbc" };                   // U+e93c
-        constexpr static inline std::string_view TextRotationAngleup{ "\xee\xa4\xbd" };                     // U+e93d
-        constexpr static inline std::string_view TextRotationDown{ "\xee\xa4\xbe" };                        // U+e93e
-        constexpr static inline std::string_view TextRotationNone{ "\xee\xa4\xbf" };                        // U+e93f
-        constexpr static inline std::string_view TextSelectEnd{ "\xef\x9c\xbe" };                           // U+f73e
-        constexpr static inline std::string_view TextSelectJumpToBeginning{ "\xef\x9c\xbd" };               // U+f73d
-        constexpr static inline std::string_view TextSelectJumpToEnd{ "\xef\x9c\xbc" };                     // U+f73c
-        constexpr static inline std::string_view TextSelectMoveBackCharacter{ "\xef\x9c\xbb" };             // U+f73b
-        constexpr static inline std::string_view TextSelectMoveBackWord{ "\xef\x9c\xba" };                  // U+f73a
-        constexpr static inline std::string_view TextSelectMoveDown{ "\xef\x9c\xb9" };                      // U+f739
-        constexpr static inline std::string_view TextSelectMoveForwardCharacter{ "\xef\x9c\xb8" };          // U+f738
-        constexpr static inline std::string_view TextSelectMoveForwardWord{ "\xef\x9c\xb7" };               // U+f737
-        constexpr static inline std::string_view TextSelectMoveUp{ "\xef\x9c\xb6" };                        // U+f736
-        constexpr static inline std::string_view TextSelectStart{ "\xef\x9c\xb5" };                         // U+f735
-        constexpr static inline std::string_view TextSnippet{ "\xef\x87\x86" };                             // U+f1c6
-        constexpr static inline std::string_view TextToSpeech{ "\xef\x86\xbc" };                            // U+f1bc
-        constexpr static inline std::string_view Textsms{ "\xee\x98\xa5" };                                 // U+e625
-        constexpr static inline std::string_view Texture{ "\xee\x90\xa1" };                                 // U+e421
-        constexpr static inline std::string_view TextureAdd{ "\xef\x95\xbc" };                              // U+f57c
-        constexpr static inline std::string_view TextureMinus{ "\xef\x95\xbb" };                            // U+f57b
-        constexpr static inline std::string_view TheaterComedy{ "\xee\xa9\xa6" };                           // U+ea66
-        constexpr static inline std::string_view Theaters{ "\xee\xa3\x9a" };                                // U+e8da
-        constexpr static inline std::string_view Thermometer{ "\xee\xa1\x86" };                             // U+e846
-        constexpr static inline std::string_view ThermometerAdd{ "\xef\x96\x82" };                          // U+f582
-        constexpr static inline std::string_view ThermometerGain{ "\xef\x9b\x98" };                         // U+f6d8
-        constexpr static inline std::string_view ThermometerLoss{ "\xef\x9b\x97" };                         // U+f6d7
-        constexpr static inline std::string_view ThermometerMinus{ "\xef\x96\x81" };                        // U+f581
-        constexpr static inline std::string_view Thermostat{ "\xef\x81\xb6" };                              // U+f076
-        constexpr static inline std::string_view ThermostatAuto{ "\xef\x81\xb7" };                          // U+f077
-        constexpr static inline std::string_view ThermostatCarbon{ "\xef\x85\xb8" };                        // U+f178
-        constexpr static inline std::string_view ThingsToDo{ "\xee\xac\xaa" };                              // U+eb2a
-        constexpr static inline std::string_view ThreadUnread{ "\xef\x93\xb9" };                            // U+f4f9
-        constexpr static inline std::string_view ThumbDown{ "\xef\x95\xb8" };                               // U+f578
-        constexpr static inline std::string_view ThumbDownAlt{ "\xef\x95\xb8" };                            // U+f578
-        constexpr static inline std::string_view ThumbDownFilled{ "\xef\x95\xb8" };                         // U+f578
-        constexpr static inline std::string_view ThumbDownOff{ "\xef\x95\xb8" };                            // U+f578
-        constexpr static inline std::string_view ThumbDownOffAlt{ "\xef\x95\xb8" };                         // U+f578
-        constexpr static inline std::string_view ThumbUp{ "\xef\x95\xb7" };                                 // U+f577
-        constexpr static inline std::string_view ThumbUpAlt{ "\xef\x95\xb7" };                              // U+f577
-        constexpr static inline std::string_view ThumbUpFilled{ "\xef\x95\xb7" };                           // U+f577
-        constexpr static inline std::string_view ThumbUpOff{ "\xef\x95\xb7" };                              // U+f577
-        constexpr static inline std::string_view ThumbUpOffAlt{ "\xef\x95\xb7" };                           // U+f577
-        constexpr static inline std::string_view ThumbnailBar{ "\xef\x9c\xb4" };                            // U+f734
-        constexpr static inline std::string_view ThumbsUpDown{ "\xee\xa3\x9d" };                            // U+e8dd
-        constexpr static inline std::string_view Thunderstorm{ "\xee\xaf\x9b" };                            // U+ebdb
-        constexpr static inline std::string_view Tibia{ "\xef\xa2\x9b" };                                   // U+f89b
-        constexpr static inline std::string_view TibiaAlt{ "\xef\xa2\x9c" };                                // U+f89c
-        constexpr static inline std::string_view TimeAuto{ "\xef\x83\xa4" };                                // U+f0e4
-        constexpr static inline std::string_view TimeToLeave{ "\xee\xbf\xb7" };                             // U+eff7
-        constexpr static inline std::string_view Timelapse{ "\xee\x90\xa2" };                               // U+e422
-        constexpr static inline std::string_view Timeline{ "\xee\xa4\xa2" };                                // U+e922
-        constexpr static inline std::string_view Timer{ "\xee\x90\xa5" };                                   // U+e425
-        constexpr static inline std::string_view Timer_10{ "\xee\x90\xa3" };                                // U+e423
-        constexpr static inline std::string_view Timer_10Alt_1{ "\xee\xbe\xbf" };                           // U+efbf
-        constexpr static inline std::string_view Timer_10Select{ "\xef\x81\xba" };                          // U+f07a
-        constexpr static inline std::string_view Timer_3{ "\xee\x90\xa4" };                                 // U+e424
-        constexpr static inline std::string_view Timer_3Alt_1{ "\xee\xbf\x80" };                            // U+efc0
-        constexpr static inline std::string_view Timer_3Select{ "\xef\x81\xbb" };                           // U+f07b
-        constexpr static inline std::string_view TimerOff{ "\xee\x90\xa6" };                                // U+e426
-        constexpr static inline std::string_view TipsAndUpdates{ "\xee\x9e\x9a" };                          // U+e79a
-        constexpr static inline std::string_view TireRepair{ "\xee\xaf\x88" };                              // U+ebc8
-        constexpr static inline std::string_view Title{ "\xee\x89\xa4" };                                   // U+e264
-        constexpr static inline std::string_view Toast{ "\xee\xbf\x81" };                                   // U+efc1
-        constexpr static inline std::string_view Toc{ "\xee\xa3\x9e" };                                     // U+e8de
-        constexpr static inline std::string_view Today{ "\xee\xa3\x9f" };                                   // U+e8df
-        constexpr static inline std::string_view ToggleOff{ "\xee\xa7\xb5" };                               // U+e9f5
-        constexpr static inline std::string_view ToggleOn{ "\xee\xa7\xb6" };                                // U+e9f6
-        constexpr static inline std::string_view Token{ "\xee\xa8\xa5" };                                   // U+ea25
-        constexpr static inline std::string_view Toll{ "\xee\xa3\xa0" };                                    // U+e8e0
-        constexpr static inline std::string_view Tonality{ "\xee\x90\xa7" };                                // U+e427
-        constexpr static inline std::string_view Toolbar{ "\xee\xa7\xb7" };                                 // U+e9f7
-        constexpr static inline std::string_view ToolsFlatHead{ "\xef\xa3\x8b" };                           // U+f8cb
-        constexpr static inline std::string_view ToolsInstallationKit{ "\xee\x8a\xab" };                    // U+e2ab
-        constexpr static inline std::string_view ToolsLadder{ "\xee\x8b\x8b" };                             // U+e2cb
-        constexpr static inline std::string_view ToolsLevel{ "\xee\x9d\xbb" };                              // U+e77b
-        constexpr static inline std::string_view ToolsPhillips{ "\xef\xa3\x8c" };                           // U+f8cc
-        constexpr static inline std::string_view ToolsPliersWireStripper{ "\xee\x8a\xaa" };                 // U+e2aa
-        constexpr static inline std::string_view ToolsPowerDrill{ "\xee\x87\xa9" };                         // U+e1e9
-        constexpr static inline std::string_view ToolsWrench{ "\xef\xa3\x8d" };                             // U+f8cd
-        constexpr static inline std::string_view Tooltip{ "\xee\xa7\xb8" };                                 // U+e9f8
-        constexpr static inline std::string_view TopPanelClose{ "\xef\x9c\xb3" };                           // U+f733
-        constexpr static inline std::string_view TopPanelOpen{ "\xef\x9c\xb2" };                            // U+f732
-        constexpr static inline std::string_view Topic{ "\xef\x87\x88" };                                   // U+f1c8
-        constexpr static inline std::string_view Tornado{ "\xee\x86\x99" };                                 // U+e199
-        constexpr static inline std::string_view TotalDissolvedSolids{ "\xef\xa1\xb7" };                    // U+f877
-        constexpr static inline std::string_view TouchApp{ "\xee\xa4\x93" };                                // U+e913
-        constexpr static inline std::string_view TouchpadMouse{ "\xef\x9a\x87" };                           // U+f687
-        constexpr static inline std::string_view TouchpadMouseOff{ "\xef\x93\xa6" };                        // U+f4e6
-        constexpr static inline std::string_view Tour{ "\xee\xbd\xb5" };                                    // U+ef75
-        constexpr static inline std::string_view Toys{ "\xee\x8c\xb2" };                                    // U+e332
-        constexpr static inline std::string_view ToysAndGames{ "\xee\xbf\x82" };                            // U+efc2
-        constexpr static inline std::string_view ToysFan{ "\xef\xa2\x87" };                                 // U+f887
-        constexpr static inline std::string_view TrackChanges{ "\xee\xa3\xa1" };                            // U+e8e1
-        constexpr static inline std::string_view Traffic{ "\xee\x95\xa5" };                                 // U+e565
-        constexpr static inline std::string_view TrailLength{ "\xee\xad\x9e" };                             // U+eb5e
-        constexpr static inline std::string_view TrailLengthMedium{ "\xee\xad\xa3" };                       // U+eb63
-        constexpr static inline std::string_view TrailLengthShort{ "\xee\xad\xad" };                        // U+eb6d
-        constexpr static inline std::string_view Train{ "\xee\x95\xb0" };                                   // U+e570
-        constexpr static inline std::string_view Tram{ "\xee\x95\xb1" };                                    // U+e571
-        constexpr static inline std::string_view Transcribe{ "\xef\xa3\xac" };                              // U+f8ec
-        constexpr static inline std::string_view TransferWithinAStation{ "\xee\x95\xb2" };                  // U+e572
-        constexpr static inline std::string_view Transform{ "\xee\x90\xa8" };                               // U+e428
-        constexpr static inline std::string_view Transgender{ "\xee\x96\x8d" };                             // U+e58d
-        constexpr static inline std::string_view TransitEnterexit{ "\xee\x95\xb9" };                        // U+e579
-        constexpr static inline std::string_view TransitionChop{ "\xef\x94\x8e" };                          // U+f50e
-        constexpr static inline std::string_view TransitionDissolve{ "\xef\x94\x8d" };                      // U+f50d
-        constexpr static inline std::string_view TransitionFade{ "\xef\x94\x8c" };                          // U+f50c
-        constexpr static inline std::string_view TransitionPush{ "\xef\x94\x8b" };                          // U+f50b
-        constexpr static inline std::string_view TransitionSlide{ "\xef\x94\x8a" };                         // U+f50a
-        constexpr static inline std::string_view Translate{ "\xee\xa3\xa2" };                               // U+e8e2
-        constexpr static inline std::string_view Transportation{ "\xee\x88\x9d" };                          // U+e21d
-        constexpr static inline std::string_view Travel{ "\xee\xbe\x93" };                                  // U+ef93
-        constexpr static inline std::string_view TravelExplore{ "\xee\x8b\x9b" };                           // U+e2db
-        constexpr static inline std::string_view TravelLuggageAndBags{ "\xee\xbf\x83" };                    // U+efc3
-        constexpr static inline std::string_view TrendingDown{ "\xee\xa3\xa3" };                            // U+e8e3
-        constexpr static inline std::string_view TrendingFlat{ "\xee\xa3\xa4" };                            // U+e8e4
-        constexpr static inline std::string_view TrendingUp{ "\xee\xa3\xa5" };                              // U+e8e5
-        constexpr static inline std::string_view Trip{ "\xee\x9b\xbb" };                                    // U+e6fb
-        constexpr static inline std::string_view TripOrigin{ "\xee\x95\xbb" };                              // U+e57b
-        constexpr static inline std::string_view Trolley{ "\xef\xa1\xab" };                                 // U+f86b
-        constexpr static inline std::string_view Trophy{ "\xee\xa8\xa3" };                                  // U+ea23
-        constexpr static inline std::string_view Troubleshoot{ "\xee\x87\x92" };                            // U+e1d2
-        constexpr static inline std::string_view Try{ "\xef\x81\xbc" };                                     // U+f07c
-        constexpr static inline std::string_view Tsunami{ "\xee\xaf\x98" };                                 // U+ebd8
-        constexpr static inline std::string_view Tsv{ "\xee\x9b\x96" };                                     // U+e6d6
-        constexpr static inline std::string_view Tty{ "\xef\x86\xaa" };                                     // U+f1aa
-        constexpr static inline std::string_view Tune{ "\xee\x90\xa9" };                                    // U+e429
-        constexpr static inline std::string_view Tungsten{ "\xef\x81\xbd" };                                // U+f07d
-        constexpr static inline std::string_view TurnLeft{ "\xee\xae\xa6" };                                // U+eba6
-        constexpr static inline std::string_view TurnRight{ "\xee\xae\xab" };                               // U+ebab
-        constexpr static inline std::string_view TurnSharpLeft{ "\xee\xae\xa7" };                           // U+eba7
-        constexpr static inline std::string_view TurnSharpRight{ "\xee\xae\xaa" };                          // U+ebaa
-        constexpr static inline std::string_view TurnSlightLeft{ "\xee\xae\xa4" };                          // U+eba4
-        constexpr static inline std::string_view TurnSlightRight{ "\xee\xae\x9a" };                         // U+eb9a
-        constexpr static inline std::string_view TurnedIn{ "\xee\xa3\xa7" };                                // U+e8e7
-        constexpr static inline std::string_view TurnedInNot{ "\xee\xa3\xa7" };                             // U+e8e7
-        constexpr static inline std::string_view Tv{ "\xee\x98\xbb" };                                      // U+e63b
-        constexpr static inline std::string_view TvGen{ "\xee\xa0\xb0" };                                   // U+e830
-        constexpr static inline std::string_view TvGuide{ "\xee\x87\x9c" };                                 // U+e1dc
-        constexpr static inline std::string_view TvOff{ "\xee\x99\x87" };                                   // U+e647
-        constexpr static inline std::string_view TvOptionsEditChannels{ "\xee\x87\x9d" };                   // U+e1dd
-        constexpr static inline std::string_view TvOptionsInputSettings{ "\xee\x87\x9e" };                  // U+e1de
-        constexpr static inline std::string_view TvRemote{ "\xef\x97\x99" };                                // U+f5d9
-        constexpr static inline std::string_view TvSignin{ "\xee\x9c\x9b" };                                // U+e71b
-        constexpr static inline std::string_view TvWithAssistant{ "\xee\x9e\x85" };                         // U+e785
-        constexpr static inline std::string_view TwoPager{ "\xef\x94\x9f" };                                // U+f51f
-        constexpr static inline std::string_view TwoWheeler{ "\xee\xa7\xb9" };                              // U+e9f9
-        constexpr static inline std::string_view TypeSpecimen{ "\xef\xa3\xb0" };                            // U+f8f0
-        constexpr static inline std::string_view UTurnLeft{ "\xee\xae\xa1" };                               // U+eba1
-        constexpr static inline std::string_view UTurnRight{ "\xee\xae\xa2" };                              // U+eba2
-        constexpr static inline std::string_view UlnaRadius{ "\xef\xa2\x9d" };                              // U+f89d
-        constexpr static inline std::string_view UlnaRadiusAlt{ "\xef\xa2\x9e" };                           // U+f89e
-        constexpr static inline std::string_view Umbrella{ "\xef\x86\xad" };                                // U+f1ad
-        constexpr static inline std::string_view Unarchive{ "\xee\x85\xa9" };                               // U+e169
-        constexpr static inline std::string_view Undo{ "\xee\x85\xa6" };                                    // U+e166
-        constexpr static inline std::string_view UnfoldLess{ "\xee\x97\x96" };                              // U+e5d6
-        constexpr static inline std::string_view UnfoldLessDouble{ "\xef\xa3\x8f" };                        // U+f8cf
-        constexpr static inline std::string_view UnfoldMore{ "\xee\x97\x97" };                              // U+e5d7
-        constexpr static inline std::string_view UnfoldMoreDouble{ "\xef\xa3\x90" };                        // U+f8d0
-        constexpr static inline std::string_view Ungroup{ "\xef\x9c\xb1" };                                 // U+f731
-        constexpr static inline std::string_view UniversalCurrency{ "\xee\xa7\xba" };                       // U+e9fa
-        constexpr static inline std::string_view UniversalCurrencyAlt{ "\xee\x9c\xb4" };                    // U+e734
-        constexpr static inline std::string_view UniversalLocal{ "\xee\xa7\xbb" };                          // U+e9fb
-        constexpr static inline std::string_view Unknown_2{ "\xee\x9a\xa2" };                               // U+e6a2
-        constexpr static inline std::string_view Unknown_5{ "\xee\x9a\xa5" };                               // U+e6a5
-        constexpr static inline std::string_view UnknownDocument{ "\xef\xa0\x84" };                         // U+f804
-        constexpr static inline std::string_view UnknownMed{ "\xee\xaa\xbd" };                              // U+eabd
-        constexpr static inline std::string_view Unlicense{ "\xee\xac\x85" };                               // U+eb05
-        constexpr static inline std::string_view Unpublished{ "\xef\x88\xb6" };                             // U+f236
-        constexpr static inline std::string_view Unsubscribe{ "\xee\x83\xab" };                             // U+e0eb
-        constexpr static inline std::string_view Upcoming{ "\xef\x81\xbe" };                                // U+f07e
-        constexpr static inline std::string_view Update{ "\xee\xa4\xa3" };                                  // U+e923
-        constexpr static inline std::string_view UpdateDisabled{ "\xee\x81\xb5" };                          // U+e075
-        constexpr static inline std::string_view Upgrade{ "\xef\x83\xbb" };                                 // U+f0fb
-        constexpr static inline std::string_view Upload{ "\xef\x82\x9b" };                                  // U+f09b
-        constexpr static inline std::string_view Upload_2{ "\xef\x94\xa1" };                                // U+f521
-        constexpr static inline std::string_view UploadFile{ "\xee\xa7\xbc" };                              // U+e9fc
-        constexpr static inline std::string_view Urology{ "\xee\x84\xb7" };                                 // U+e137
-        constexpr static inline std::string_view Usb{ "\xee\x87\xa0" };                                     // U+e1e0
-        constexpr static inline std::string_view UsbOff{ "\xee\x93\xba" };                                  // U+e4fa
-        constexpr static inline std::string_view UserAttributes{ "\xee\x9c\x88" };                          // U+e708
-        constexpr static inline std::string_view Vaccines{ "\xee\x84\xb8" };                                // U+e138
-        constexpr static inline std::string_view Vacuum{ "\xee\xbf\x85" };                                  // U+efc5
-        constexpr static inline std::string_view Valve{ "\xee\x88\xa4" };                                   // U+e224
-        constexpr static inline std::string_view VapeFree{ "\xee\xaf\x86" };                                // U+ebc6
-        constexpr static inline std::string_view VapingRooms{ "\xee\xaf\x8f" };                             // U+ebcf
-        constexpr static inline std::string_view VariableAdd{ "\xef\x94\x9e" };                             // U+f51e
-        constexpr static inline std::string_view VariableInsert{ "\xef\x94\x9d" };                          // U+f51d
-        constexpr static inline std::string_view VariableRemove{ "\xef\x94\x9c" };                          // U+f51c
-        constexpr static inline std::string_view Variables{ "\xef\xa1\x91" };                               // U+f851
-        constexpr static inline std::string_view Ventilator{ "\xee\x84\xb9" };                              // U+e139
-        constexpr static inline std::string_view Verified{ "\xee\xbd\xb6" };                                // U+ef76
-        constexpr static inline std::string_view VerifiedUser{ "\xef\x80\x93" };                            // U+f013
-        constexpr static inline std::string_view VerticalAlignBottom{ "\xee\x89\x98" };                     // U+e258
-        constexpr static inline std::string_view VerticalAlignCenter{ "\xee\x89\x99" };                     // U+e259
-        constexpr static inline std::string_view VerticalAlignTop{ "\xee\x89\x9a" };                        // U+e25a
-        constexpr static inline std::string_view VerticalDistribute{ "\xee\x81\xb6" };                      // U+e076
-        constexpr static inline std::string_view VerticalShades{ "\xee\xb0\x8e" };                          // U+ec0e
-        constexpr static inline std::string_view VerticalShadesClosed{ "\xee\xb0\x8d" };                    // U+ec0d
-        constexpr static inline std::string_view VerticalSplit{ "\xee\xa5\x89" };                           // U+e949
-        constexpr static inline std::string_view Vibration{ "\xee\x98\xad" };                               // U+e62d
-        constexpr static inline std::string_view VideoCall{ "\xee\x81\xb0" };                               // U+e070
-        constexpr static inline std::string_view VideoCameraBack{ "\xef\x81\xbf" };                         // U+f07f
-        constexpr static inline std::string_view VideoCameraFront{ "\xef\x82\x80" };                        // U+f080
-        constexpr static inline std::string_view VideoCameraFrontOff{ "\xef\xa0\xbb" };                     // U+f83b
-        constexpr static inline std::string_view VideoChat{ "\xef\xa2\xa0" };                               // U+f8a0
-        constexpr static inline std::string_view VideoFile{ "\xee\xae\x87" };                               // U+eb87
-        constexpr static inline std::string_view VideoLabel{ "\xee\x81\xb1" };                              // U+e071
-        constexpr static inline std::string_view VideoLibrary{ "\xee\x81\x8a" };                            // U+e04a
-        constexpr static inline std::string_view VideoSearch{ "\xee\xbf\x86" };                             // U+efc6
-        constexpr static inline std::string_view VideoSettings{ "\xee\xa9\xb5" };                           // U+ea75
-        constexpr static inline std::string_view VideoStable{ "\xef\x82\x81" };                             // U+f081
-        constexpr static inline std::string_view Videocam{ "\xee\x81\x8b" };                                // U+e04b
-        constexpr static inline std::string_view VideocamOff{ "\xee\x81\x8c" };                             // U+e04c
-        constexpr static inline std::string_view VideogameAsset{ "\xee\x8c\xb8" };                          // U+e338
-        constexpr static inline std::string_view VideogameAssetOff{ "\xee\x94\x80" };                       // U+e500
-        constexpr static inline std::string_view ViewAgenda{ "\xee\xa3\xa9" };                              // U+e8e9
-        constexpr static inline std::string_view ViewArray{ "\xee\xa3\xaa" };                               // U+e8ea
-        constexpr static inline std::string_view ViewCarousel{ "\xee\xa3\xab" };                            // U+e8eb
-        constexpr static inline std::string_view ViewColumn{ "\xee\xa3\xac" };                              // U+e8ec
-        constexpr static inline std::string_view ViewColumn_2{ "\xef\xa1\x87" };                            // U+f847
-        constexpr static inline std::string_view ViewComfy{ "\xee\x90\xaa" };                               // U+e42a
-        constexpr static inline std::string_view ViewComfyAlt{ "\xee\xad\xb3" };                            // U+eb73
-        constexpr static inline std::string_view ViewCompact{ "\xee\x90\xab" };                             // U+e42b
-        constexpr static inline std::string_view ViewCompactAlt{ "\xee\xad\xb4" };                          // U+eb74
-        constexpr static inline std::string_view ViewCozy{ "\xee\xad\xb5" };                                // U+eb75
-        constexpr static inline std::string_view ViewDay{ "\xee\xa3\xad" };                                 // U+e8ed
-        constexpr static inline std::string_view ViewHeadline{ "\xee\xa3\xae" };                            // U+e8ee
-        constexpr static inline std::string_view ViewInAr{ "\xee\xbf\x89" };                                // U+efc9
-        constexpr static inline std::string_view ViewInArNew{ "\xee\xbf\x89" };                             // U+efc9
-        constexpr static inline std::string_view ViewInArOff{ "\xef\x98\x9b" };                             // U+f61b
-        constexpr static inline std::string_view ViewKanban{ "\xee\xad\xbf" };                              // U+eb7f
-        constexpr static inline std::string_view ViewList{ "\xee\xa3\xaf" };                                // U+e8ef
-        constexpr static inline std::string_view ViewModule{ "\xee\xa3\xb0" };                              // U+e8f0
-        constexpr static inline std::string_view ViewQuilt{ "\xee\xa3\xb1" };                               // U+e8f1
-        constexpr static inline std::string_view ViewSidebar{ "\xef\x84\x94" };                             // U+f114
-        constexpr static inline std::string_view ViewStream{ "\xee\xa3\xb2" };                              // U+e8f2
-        constexpr static inline std::string_view ViewTimeline{ "\xee\xae\x85" };                            // U+eb85
-        constexpr static inline std::string_view ViewWeek{ "\xee\xa3\xb3" };                                // U+e8f3
-        constexpr static inline std::string_view Vignette{ "\xee\x90\xb5" };                                // U+e435
-        constexpr static inline std::string_view Villa{ "\xee\x96\x86" };                                   // U+e586
-        constexpr static inline std::string_view Visibility{ "\xee\xa3\xb4" };                              // U+e8f4
-        constexpr static inline std::string_view VisibilityLock{ "\xef\x99\x93" };                          // U+f653
-        constexpr static inline std::string_view VisibilityOff{ "\xee\xa3\xb5" };                           // U+e8f5
-        constexpr static inline std::string_view VitalSigns{ "\xee\x99\x90" };                              // U+e650
-        constexpr static inline std::string_view Vitals{ "\xee\x84\xbb" };                                  // U+e13b
-        constexpr static inline std::string_view VoiceChat{ "\xee\x98\xae" };                               // U+e62e
-        constexpr static inline std::string_view VoiceOverOff{ "\xee\xa5\x8a" };                            // U+e94a
-        constexpr static inline std::string_view VoiceSelection{ "\xef\x96\x8a" };                          // U+f58a
-        constexpr static inline std::string_view Voicemail{ "\xee\x83\x99" };                               // U+e0d9
-        constexpr static inline std::string_view Volcano{ "\xee\xaf\x9a" };                                 // U+ebda
-        constexpr static inline std::string_view VolumeDown{ "\xee\x81\x8d" };                              // U+e04d
-        constexpr static inline std::string_view VolumeDownAlt{ "\xee\x9e\x9c" };                           // U+e79c
-        constexpr static inline std::string_view VolumeMute{ "\xee\x81\x8e" };                              // U+e04e
-        constexpr static inline std::string_view VolumeOff{ "\xee\x81\x8f" };                               // U+e04f
-        constexpr static inline std::string_view VolumeUp{ "\xee\x81\x90" };                                // U+e050
-        constexpr static inline std::string_view VolunteerActivism{ "\xee\xa9\xb0" };                       // U+ea70
-        constexpr static inline std::string_view VotingChip{ "\xef\xa1\x92" };                              // U+f852
-        constexpr static inline std::string_view VpnKey{ "\xee\x83\x9a" };                                  // U+e0da
-        constexpr static inline std::string_view VpnKeyAlert{ "\xef\x9b\x8c" };                             // U+f6cc
-        constexpr static inline std::string_view VpnKeyOff{ "\xee\xad\xba" };                               // U+eb7a
-        constexpr static inline std::string_view VpnLock{ "\xee\x98\xaf" };                                 // U+e62f
-        constexpr static inline std::string_view Vr180Create2d{ "\xee\xbf\x8a" };                           // U+efca
-        constexpr static inline std::string_view Vr180Create2dOff{ "\xef\x95\xb1" };                        // U+f571
-        constexpr static inline std::string_view Vrpano{ "\xef\x82\x82" };                                  // U+f082
-        constexpr static inline std::string_view WallArt{ "\xee\xbf\x8b" };                                 // U+efcb
-        constexpr static inline std::string_view WallLamp{ "\xee\x8a\xb4" };                                // U+e2b4
-        constexpr static inline std::string_view Wallet{ "\xef\xa3\xbf" };                                  // U+f8ff
-        constexpr static inline std::string_view Wallpaper{ "\xee\x86\xbc" };                               // U+e1bc
-        constexpr static inline std::string_view WallpaperSlideshow{ "\xef\x99\xb2" };                      // U+f672
-        constexpr static inline std::string_view Ward{ "\xee\x84\xbc" };                                    // U+e13c
-        constexpr static inline std::string_view Warehouse{ "\xee\xae\xb8" };                               // U+ebb8
-        constexpr static inline std::string_view Warning{ "\xef\x82\x83" };                                 // U+f083
-        constexpr static inline std::string_view WarningAmber{ "\xef\x82\x83" };                            // U+f083
-        constexpr static inline std::string_view WarningOff{ "\xef\x9e\xad" };                              // U+f7ad
-        constexpr static inline std::string_view Wash{ "\xef\x86\xb1" };                                    // U+f1b1
-        constexpr static inline std::string_view Watch{ "\xee\x8c\xb4" };                                   // U+e334
-        constexpr static inline std::string_view WatchButtonPress{ "\xef\x9a\xaa" };                        // U+f6aa
-        constexpr static inline std::string_view WatchLater{ "\xee\xbf\x96" };                              // U+efd6
-        constexpr static inline std::string_view WatchOff{ "\xee\xab\xa3" };                                // U+eae3
-        constexpr static inline std::string_view WatchScreentime{ "\xef\x9a\xae" };                         // U+f6ae
-        constexpr static inline std::string_view WatchWake{ "\xef\x9a\xa9" };                               // U+f6a9
-        constexpr static inline std::string_view Water{ "\xef\x82\x84" };                                   // U+f084
-        constexpr static inline std::string_view WaterBottle{ "\xef\x9a\x9d" };                             // U+f69d
-        constexpr static inline std::string_view WaterBottleLarge{ "\xef\x9a\x9e" };                        // U+f69e
-        constexpr static inline std::string_view WaterDamage{ "\xef\x88\x83" };                             // U+f203
-        constexpr static inline std::string_view WaterDo{ "\xef\xa1\xb0" };                                 // U+f870
-        constexpr static inline std::string_view WaterDrop{ "\xee\x9e\x98" };                               // U+e798
-        constexpr static inline std::string_view WaterEc{ "\xef\xa1\xb5" };                                 // U+f875
-        constexpr static inline std::string_view WaterFull{ "\xef\x9b\x96" };                               // U+f6d6
-        constexpr static inline std::string_view WaterHeater{ "\xee\x8a\x84" };                             // U+e284
-        constexpr static inline std::string_view WaterLock{ "\xef\x9a\xad" };                               // U+f6ad
-        constexpr static inline std::string_view WaterLoss{ "\xef\x9b\x95" };                               // U+f6d5
-        constexpr static inline std::string_view WaterLux{ "\xef\xa1\xb4" };                                // U+f874
-        constexpr static inline std::string_view WaterMedium{ "\xef\x9b\x94" };                             // U+f6d4
-        constexpr static inline std::string_view WaterOrp{ "\xef\xa1\xb8" };                                // U+f878
-        constexpr static inline std::string_view WaterPh{ "\xef\xa1\xba" };                                 // U+f87a
-        constexpr static inline std::string_view WaterPump{ "\xef\x97\x98" };                               // U+f5d8
-        constexpr static inline std::string_view WaterVoc{ "\xef\xa1\xbb" };                                // U+f87b
-        constexpr static inline std::string_view WaterfallChart{ "\xee\xa8\x80" };                          // U+ea00
-        constexpr static inline std::string_view Waves{ "\xee\x85\xb6" };                                   // U+e176
-        constexpr static inline std::string_view WavingHand{ "\xee\x9d\xa6" };                              // U+e766
-        constexpr static inline std::string_view WbAuto{ "\xee\x90\xac" };                                  // U+e42c
-        constexpr static inline std::string_view WbCloudy{ "\xef\x85\x9c" };                                // U+f15c
-        constexpr static inline std::string_view WbIncandescent{ "\xee\x90\xae" };                          // U+e42e
-        constexpr static inline std::string_view WbIridescent{ "\xef\x81\xbd" };                            // U+f07d
-        constexpr static inline std::string_view WbShade{ "\xee\xa8\x81" };                                 // U+ea01
-        constexpr static inline std::string_view WbSunny{ "\xee\x90\xb0" };                                 // U+e430
-        constexpr static inline std::string_view WbTwilight{ "\xee\x87\x86" };                              // U+e1c6
-        constexpr static inline std::string_view Wc{ "\xee\x98\xbd" };                                      // U+e63d
-        constexpr static inline std::string_view WeatherHail{ "\xef\x99\xbf" };                             // U+f67f
-        constexpr static inline std::string_view WeatherMix{ "\xef\x98\x8b" };                              // U+f60b
-        constexpr static inline std::string_view WeatherSnowy{ "\xee\x8b\x8d" };                            // U+e2cd
-        constexpr static inline std::string_view Web{ "\xee\x81\x91" };                                     // U+e051
-        constexpr static inline std::string_view WebAsset{ "\xee\x81\xa9" };                                // U+e069
-        constexpr static inline std::string_view WebAssetOff{ "\xee\xbd\x87" };                             // U+ef47
-        constexpr static inline std::string_view WebStories{ "\xee\x96\x95" };                              // U+e595
-        constexpr static inline std::string_view WebTraffic{ "\xee\xa8\x83" };                              // U+ea03
-        constexpr static inline std::string_view Webhook{ "\xee\xae\x92" };                                 // U+eb92
-        constexpr static inline std::string_view Weekend{ "\xee\x85\xab" };                                 // U+e16b
-        constexpr static inline std::string_view Weight{ "\xee\x84\xbd" };                                  // U+e13d
-        constexpr static inline std::string_view West{ "\xef\x87\xa6" };                                    // U+f1e6
-        constexpr static inline std::string_view Whatshot{ "\xee\xa0\x8e" };                                // U+e80e
-        constexpr static inline std::string_view WheelchairPickup{ "\xef\x86\xab" };                        // U+f1ab
-        constexpr static inline std::string_view WhereToVote{ "\xee\x85\xb7" };                             // U+e177
-        constexpr static inline std::string_view Widgets{ "\xee\x86\xbd" };                                 // U+e1bd
-        constexpr static inline std::string_view Width{ "\xef\x9c\xb0" };                                   // U+f730
-        constexpr static inline std::string_view WidthFull{ "\xef\xa3\xb5" };                               // U+f8f5
-        constexpr static inline std::string_view WidthNormal{ "\xef\xa3\xb6" };                             // U+f8f6
-        constexpr static inline std::string_view WidthWide{ "\xef\xa3\xb7" };                               // U+f8f7
-        constexpr static inline std::string_view Wifi{ "\xee\x98\xbe" };                                    // U+e63e
-        constexpr static inline std::string_view Wifi_1Bar{ "\xee\x93\x8a" };                               // U+e4ca
-        constexpr static inline std::string_view Wifi_2Bar{ "\xee\x93\x99" };                               // U+e4d9
-        constexpr static inline std::string_view WifiAdd{ "\xef\x9e\xa8" };                                 // U+f7a8
-        constexpr static inline std::string_view WifiCalling{ "\xee\xbd\xb7" };                             // U+ef77
-        constexpr static inline std::string_view WifiCalling_1{ "\xef\x83\xb6" };                           // U+f0f6
-        constexpr static inline std::string_view WifiCalling_2{ "\xef\x83\xb6" };                           // U+f0f6
-        constexpr static inline std::string_view WifiCalling_3{ "\xef\x83\xb6" };                           // U+f0f6
-        constexpr static inline std::string_view WifiChannel{ "\xee\xad\xaa" };                             // U+eb6a
-        constexpr static inline std::string_view WifiFind{ "\xee\xac\xb1" };                                // U+eb31
-        constexpr static inline std::string_view WifiHome{ "\xef\x99\xb1" };                                // U+f671
-        constexpr static inline std::string_view WifiLock{ "\xee\x87\xa1" };                                // U+e1e1
-        constexpr static inline std::string_view WifiNotification{ "\xef\x99\xb0" };                        // U+f670
-        constexpr static inline std::string_view WifiOff{ "\xee\x99\x88" };                                 // U+e648
-        constexpr static inline std::string_view WifiPassword{ "\xee\xad\xab" };                            // U+eb6b
-        constexpr static inline std::string_view WifiProtectedSetup{ "\xef\x83\xbc" };                      // U+f0fc
-        constexpr static inline std::string_view WifiProxy{ "\xef\x9e\xa7" };                               // U+f7a7
-        constexpr static inline std::string_view WifiTethering{ "\xee\x87\xa2" };                           // U+e1e2
-        constexpr static inline std::string_view WifiTetheringError{ "\xee\xab\x99" };                      // U+ead9
-        constexpr static inline std::string_view WifiTetheringOff{ "\xef\x82\x87" };                        // U+f087
-        constexpr static inline std::string_view WindPower{ "\xee\xb0\x8c" };                               // U+ec0c
-        constexpr static inline std::string_view Window{ "\xef\x82\x88" };                                  // U+f088
-        constexpr static inline std::string_view WindowClosed{ "\xee\x9d\xbe" };                            // U+e77e
-        constexpr static inline std::string_view WindowOpen{ "\xee\x9e\x8c" };                              // U+e78c
-        constexpr static inline std::string_view WindowSensor{ "\xee\x8a\xbb" };                            // U+e2bb
-        constexpr static inline std::string_view WineBar{ "\xef\x87\xa8" };                                 // U+f1e8
-        constexpr static inline std::string_view Woman{ "\xee\x84\xbe" };                                   // U+e13e
-        constexpr static inline std::string_view Woman_2{ "\xef\xa3\xa7" };                                 // U+f8e7
-        constexpr static inline std::string_view Work{ "\xee\xa5\x83" };                                    // U+e943
-        constexpr static inline std::string_view WorkAlert{ "\xef\x97\xb7" };                               // U+f5f7
-        constexpr static inline std::string_view WorkHistory{ "\xee\xb0\x89" };                             // U+ec09
-        constexpr static inline std::string_view WorkOff{ "\xee\xa5\x82" };                                 // U+e942
-        constexpr static inline std::string_view WorkOutline{ "\xee\xa5\x83" };                             // U+e943
-        constexpr static inline std::string_view WorkUpdate{ "\xef\x97\xb8" };                              // U+f5f8
-        constexpr static inline std::string_view Workflow{ "\xee\xa8\x84" };                                // U+ea04
-        constexpr static inline std::string_view WorkspacePremium{ "\xee\x9e\xaf" };                        // U+e7af
-        constexpr static inline std::string_view Workspaces{ "\xee\xa8\x8f" };                              // U+ea0f
-        constexpr static inline std::string_view WorkspacesOutline{ "\xee\xa8\x8f" };                       // U+ea0f
-        constexpr static inline std::string_view WoundsInjuries{ "\xee\x84\xbf" };                          // U+e13f
-        constexpr static inline std::string_view WrapText{ "\xee\x89\x9b" };                                // U+e25b
-        constexpr static inline std::string_view Wrist{ "\xef\x9a\x9c" };                                   // U+f69c
-        constexpr static inline std::string_view WrongLocation{ "\xee\xbd\xb8" };                           // U+ef78
-        constexpr static inline std::string_view Wysiwyg{ "\xef\x87\x83" };                                 // U+f1c3
-        constexpr static inline std::string_view Yard{ "\xef\x82\x89" };                                    // U+f089
-        constexpr static inline std::string_view YourTrips{ "\xee\xac\xab" };                               // U+eb2b
-        constexpr static inline std::string_view YoutubeActivity{ "\xef\xa1\x9a" };                         // U+f85a
-        constexpr static inline std::string_view YoutubeSearchedFor{ "\xee\xa3\xba" };                      // U+e8fa
-        constexpr static inline std::string_view ZonePersonAlert{ "\xee\x9e\x81" };                         // U+e781
-        constexpr static inline std::string_view ZonePersonIdle{ "\xee\x9d\xba" };                          // U+e77a
-        constexpr static inline std::string_view ZonePersonUrgent{ "\xee\x9e\x88" };                        // U+e788
-        constexpr static inline std::string_view ZoomIn{ "\xee\xa3\xbf" };                                  // U+e8ff
-        constexpr static inline std::string_view ZoomInMap{ "\xee\xac\xad" };                               // U+eb2d
-        constexpr static inline std::string_view ZoomOut{ "\xee\xa4\x80" };                                 // U+e900
-        constexpr static inline std::string_view ZoomOutMap{ "\xee\x95\xab" };                              // U+e56b
+        constexpr static std::string_view MS10k{ "\xee\xa5\x91" };                                   // U+e951
+        constexpr static std::string_view MS10mp{ "\xee\xa5\x92" };                                  // U+e952
+        constexpr static std::string_view MS11mp{ "\xee\xa5\x93" };                                  // U+e953
+        constexpr static std::string_view MS123{ "\xee\xae\x8d" };                                   // U+eb8d
+        constexpr static std::string_view MS12mp{ "\xee\xa5\x94" };                                  // U+e954
+        constexpr static std::string_view MS13mp{ "\xee\xa5\x95" };                                  // U+e955
+        constexpr static std::string_view MS14mp{ "\xee\xa5\x96" };                                  // U+e956
+        constexpr static std::string_view MS15mp{ "\xee\xa5\x97" };                                  // U+e957
+        constexpr static std::string_view MS16mp{ "\xee\xa5\x98" };                                  // U+e958
+        constexpr static std::string_view MS17mp{ "\xee\xa5\x99" };                                  // U+e959
+        constexpr static std::string_view MS18UpRating{ "\xef\xa3\xbd" };                            // U+f8fd
+        constexpr static std::string_view MS18mp{ "\xee\xa5\x9a" };                                  // U+e95a
+        constexpr static std::string_view MS19mp{ "\xee\xa5\x9b" };                                  // U+e95b
+        constexpr static std::string_view MS1k{ "\xee\xa5\x9c" };                                    // U+e95c
+        constexpr static std::string_view MS1kPlus{ "\xee\xa5\x9d" };                                // U+e95d
+        constexpr static std::string_view MS1xMobiledata{ "\xee\xbf\x8d" };                          // U+efcd
+        constexpr static std::string_view MS1xMobiledataBadge{ "\xef\x9f\xb1" };                     // U+f7f1
+        constexpr static std::string_view MS20mp{ "\xee\xa5\x9e" };                                  // U+e95e
+        constexpr static std::string_view MS21mp{ "\xee\xa5\x9f" };                                  // U+e95f
+        constexpr static std::string_view MS22mp{ "\xee\xa5\xa0" };                                  // U+e960
+        constexpr static std::string_view MS23mp{ "\xee\xa5\xa1" };                                  // U+e961
+        constexpr static std::string_view MS24mp{ "\xee\xa5\xa2" };                                  // U+e962
+        constexpr static std::string_view MS2d{ "\xee\xbc\xb7" };                                    // U+ef37
+        constexpr static std::string_view MS2k{ "\xee\xa5\xa3" };                                    // U+e963
+        constexpr static std::string_view MS2kPlus{ "\xee\xa5\xa4" };                                // U+e964
+        constexpr static std::string_view MS2mp{ "\xee\xa5\xa5" };                                   // U+e965
+        constexpr static std::string_view MS30fps{ "\xee\xbf\x8e" };                                 // U+efce
+        constexpr static std::string_view MS30fpsSelect{ "\xee\xbf\x8f" };                           // U+efcf
+        constexpr static std::string_view MS360{ "\xee\x95\xb7" };                                   // U+e577
+        constexpr static std::string_view MS3dRotation{ "\xee\xa1\x8d" };                            // U+e84d
+        constexpr static std::string_view MS3gMobiledata{ "\xee\xbf\x90" };                          // U+efd0
+        constexpr static std::string_view MS3gMobiledataBadge{ "\xef\x9f\xb0" };                     // U+f7f0
+        constexpr static std::string_view MS3k{ "\xee\xa5\xa6" };                                    // U+e966
+        constexpr static std::string_view MS3kPlus{ "\xee\xa5\xa7" };                                // U+e967
+        constexpr static std::string_view MS3mp{ "\xee\xa5\xa8" };                                   // U+e968
+        constexpr static std::string_view MS3p{ "\xee\xbf\x91" };                                    // U+efd1
+        constexpr static std::string_view MS4gMobiledata{ "\xee\xbf\x92" };                          // U+efd2
+        constexpr static std::string_view MS4gMobiledataBadge{ "\xef\x9f\xaf" };                     // U+f7ef
+        constexpr static std::string_view MS4gPlusMobiledata{ "\xee\xbf\x93" };                      // U+efd3
+        constexpr static std::string_view MS4k{ "\xee\x81\xb2" };                                    // U+e072
+        constexpr static std::string_view MS4kPlus{ "\xee\xa5\xa9" };                                // U+e969
+        constexpr static std::string_view MS4mp{ "\xee\xa5\xaa" };                                   // U+e96a
+        constexpr static std::string_view MS50mp{ "\xef\x9b\xb3" };                                  // U+f6f3
+        constexpr static std::string_view MS5g{ "\xee\xbc\xb8" };                                    // U+ef38
+        constexpr static std::string_view MS5gMobiledataBadge{ "\xef\x9f\xae" };                     // U+f7ee
+        constexpr static std::string_view MS5k{ "\xee\xa5\xab" };                                    // U+e96b
+        constexpr static std::string_view MS5kPlus{ "\xee\xa5\xac" };                                // U+e96c
+        constexpr static std::string_view MS5mp{ "\xee\xa5\xad" };                                   // U+e96d
+        constexpr static std::string_view MS60fps{ "\xee\xbf\x94" };                                 // U+efd4
+        constexpr static std::string_view MS60fpsSelect{ "\xee\xbf\x95" };                           // U+efd5
+        constexpr static std::string_view MS6FtApart{ "\xef\x88\x9e" };                              // U+f21e
+        constexpr static std::string_view MS6k{ "\xee\xa5\xae" };                                    // U+e96e
+        constexpr static std::string_view MS6kPlus{ "\xee\xa5\xaf" };                                // U+e96f
+        constexpr static std::string_view MS6mp{ "\xee\xa5\xb0" };                                   // U+e970
+        constexpr static std::string_view MS7k{ "\xee\xa5\xb1" };                                    // U+e971
+        constexpr static std::string_view MS7kPlus{ "\xee\xa5\xb2" };                                // U+e972
+        constexpr static std::string_view MS7mp{ "\xee\xa5\xb3" };                                   // U+e973
+        constexpr static std::string_view MS8k{ "\xee\xa5\xb4" };                                    // U+e974
+        constexpr static std::string_view MS8kPlus{ "\xee\xa5\xb5" };                                // U+e975
+        constexpr static std::string_view MS8mp{ "\xee\xa5\xb6" };                                   // U+e976
+        constexpr static std::string_view MS9k{ "\xee\xa5\xb7" };                                    // U+e977
+        constexpr static std::string_view MS9kPlus{ "\xee\xa5\xb8" };                                // U+e978
+        constexpr static std::string_view MS9mp{ "\xee\xa5\xb9" };                                   // U+e979
+        constexpr static std::string_view Abc{ "\xee\xae\x94" };                                     // U+eb94
+        constexpr static std::string_view AcUnit{ "\xee\xac\xbb" };                                  // U+eb3b
+        constexpr static std::string_view AccessAlarm{ "\xee\xa1\x95" };                             // U+e855
+        constexpr static std::string_view AccessAlarms{ "\xee\xa1\x95" };                            // U+e855
+        constexpr static std::string_view AccessTime{ "\xee\xbf\x96" };                              // U+efd6
+        constexpr static std::string_view AccessTimeFilled{ "\xee\xbf\x96" };                        // U+efd6
+        constexpr static std::string_view Accessibility{ "\xee\xa1\x8e" };                           // U+e84e
+        constexpr static std::string_view AccessibilityNew{ "\xee\xa4\xac" };                        // U+e92c
+        constexpr static std::string_view Accessible{ "\xee\xa4\x94" };                              // U+e914
+        constexpr static std::string_view AccessibleForward{ "\xee\xa4\xb4" };                       // U+e934
+        constexpr static std::string_view AccountBalance{ "\xee\xa1\x8f" };                          // U+e84f
+        constexpr static std::string_view AccountBalanceWallet{ "\xee\xa1\x90" };                    // U+e850
+        constexpr static std::string_view AccountBox{ "\xee\xa1\x91" };                              // U+e851
+        constexpr static std::string_view AccountChild{ "\xee\xa1\x92" };                            // U+e852
+        constexpr static std::string_view AccountChildInvert{ "\xee\x99\x99" };                      // U+e659
+        constexpr static std::string_view AccountCircle{ "\xef\x88\x8b" };                           // U+f20b
+        constexpr static std::string_view AccountCircleFilled{ "\xef\x88\x8b" };                     // U+f20b
+        constexpr static std::string_view AccountCircleOff{ "\xef\x9e\xb3" };                        // U+f7b3
+        constexpr static std::string_view AccountTree{ "\xee\xa5\xba" };                             // U+e97a
+        constexpr static std::string_view ActionKey{ "\xef\x94\x82" };                               // U+f502
+        constexpr static std::string_view ActivityZone{ "\xee\x87\xa6" };                            // U+e1e6
+        constexpr static std::string_view Acute{ "\xee\x93\x8b" };                                   // U+e4cb
+        constexpr static std::string_view Ad{ "\xee\x99\x9a" };                                      // U+e65a
+        constexpr static std::string_view AdGroup{ "\xee\x99\x9b" };                                 // U+e65b
+        constexpr static std::string_view AdGroupOff{ "\xee\xab\xa5" };                              // U+eae5
+        constexpr static std::string_view AdOff{ "\xef\x9e\xb2" };                                   // U+f7b2
+        constexpr static std::string_view AdUnits{ "\xee\xbc\xb9" };                                 // U+ef39
+        constexpr static std::string_view Adb{ "\xee\x98\x8e" };                                     // U+e60e
+        constexpr static std::string_view Add{ "\xee\x85\x85" };                                     // U+e145
+        constexpr static std::string_view AddAPhoto{ "\xee\x90\xb9" };                               // U+e439
+        constexpr static std::string_view AddAd{ "\xee\x9c\xaa" };                                   // U+e72a
+        constexpr static std::string_view AddAlarm{ "\xee\xa1\x96" };                                // U+e856
+        constexpr static std::string_view AddAlert{ "\xee\x80\x83" };                                // U+e003
+        constexpr static std::string_view AddBox{ "\xee\x85\x86" };                                  // U+e146
+        constexpr static std::string_view AddBusiness{ "\xee\x9c\xa9" };                             // U+e729
+        constexpr static std::string_view AddCall{ "\xef\x82\xb7" };                                 // U+f0b7
+        constexpr static std::string_view AddCard{ "\xee\xae\x86" };                                 // U+eb86
+        constexpr static std::string_view AddChart{ "\xee\xbc\xbc" };                                // U+ef3c
+        constexpr static std::string_view AddCircle{ "\xee\x8e\xba" };                               // U+e3ba
+        constexpr static std::string_view AddCircleOutline{ "\xee\x8e\xba" };                        // U+e3ba
+        constexpr static std::string_view AddComment{ "\xee\x89\xa6" };                              // U+e266
+        constexpr static std::string_view AddHome{ "\xef\xa3\xab" };                                 // U+f8eb
+        constexpr static std::string_view AddHomeWork{ "\xef\xa3\xad" };                             // U+f8ed
+        constexpr static std::string_view AddIcCall{ "\xef\x82\xb7" };                               // U+f0b7
+        constexpr static std::string_view AddLink{ "\xee\x85\xb8" };                                 // U+e178
+        constexpr static std::string_view AddLocation{ "\xee\x95\xa7" };                             // U+e567
+        constexpr static std::string_view AddLocationAlt{ "\xee\xbc\xba" };                          // U+ef3a
+        constexpr static std::string_view AddModerator{ "\xee\xa5\xbd" };                            // U+e97d
+        constexpr static std::string_view AddNotes{ "\xee\x82\x91" };                                // U+e091
+        constexpr static std::string_view AddPhotoAlternate{ "\xee\x90\xbe" };                       // U+e43e
+        constexpr static std::string_view AddReaction{ "\xee\x87\x93" };                             // U+e1d3
+        constexpr static std::string_view AddRoad{ "\xee\xbc\xbb" };                                 // U+ef3b
+        constexpr static std::string_view AddShoppingCart{ "\xee\xa1\x94" };                         // U+e854
+        constexpr static std::string_view AddTask{ "\xef\x88\xba" };                                 // U+f23a
+        constexpr static std::string_view AddToDrive{ "\xee\x99\x9c" };                              // U+e65c
+        constexpr static std::string_view AddToHomeScreen{ "\xee\x87\xbe" };                         // U+e1fe
+        constexpr static std::string_view AddToPhotos{ "\xee\x8e\x9d" };                             // U+e39d
+        constexpr static std::string_view AddToQueue{ "\xee\x81\x9c" };                              // U+e05c
+        constexpr static std::string_view Addchart{ "\xee\xbc\xbc" };                                // U+ef3c
+        constexpr static std::string_view AdfScanner{ "\xee\xab\x9a" };                              // U+eada
+        constexpr static std::string_view Adjust{ "\xee\x8e\x9e" };                                  // U+e39e
+        constexpr static std::string_view AdminMeds{ "\xee\x92\x8d" };                               // U+e48d
+        constexpr static std::string_view AdminPanelSettings{ "\xee\xbc\xbd" };                      // U+ef3d
+        constexpr static std::string_view AdsClick{ "\xee\x9d\xa2" };                                // U+e762
+        constexpr static std::string_view Agender{ "\xef\xa2\x88" };                                 // U+f888
+        constexpr static std::string_view Agriculture{ "\xee\xa9\xb9" };                             // U+ea79
+        constexpr static std::string_view Air{ "\xee\xbf\x98" };                                     // U+efd8
+        constexpr static std::string_view AirFreshener{ "\xee\x8b\x8a" };                            // U+e2ca
+        constexpr static std::string_view AirPurifier{ "\xee\xa5\xbe" };                             // U+e97e
+        constexpr static std::string_view AirPurifierGen{ "\xee\xa0\xa9" };                          // U+e829
+        constexpr static std::string_view AirlineSeatFlat{ "\xee\x98\xb0" };                         // U+e630
+        constexpr static std::string_view AirlineSeatFlatAngled{ "\xee\x98\xb1" };                   // U+e631
+        constexpr static std::string_view AirlineSeatIndividualSuite{ "\xee\x98\xb2" };              // U+e632
+        constexpr static std::string_view AirlineSeatLegroomExtra{ "\xee\x98\xb3" };                 // U+e633
+        constexpr static std::string_view AirlineSeatLegroomNormal{ "\xee\x98\xb4" };                // U+e634
+        constexpr static std::string_view AirlineSeatLegroomReduced{ "\xee\x98\xb5" };               // U+e635
+        constexpr static std::string_view AirlineSeatReclineExtra{ "\xee\x98\xb6" };                 // U+e636
+        constexpr static std::string_view AirlineSeatReclineNormal{ "\xee\x98\xb7" };                // U+e637
+        constexpr static std::string_view AirlineStops{ "\xee\x9f\x90" };                            // U+e7d0
+        constexpr static std::string_view Airlines{ "\xee\x9f\x8a" };                                // U+e7ca
+        constexpr static std::string_view AirplaneTicket{ "\xee\xbf\x99" };                          // U+efd9
+        constexpr static std::string_view AirplanemodeActive{ "\xee\x94\xbd" };                      // U+e53d
+        constexpr static std::string_view AirplanemodeInactive{ "\xee\x86\x94" };                    // U+e194
+        constexpr static std::string_view Airplay{ "\xee\x81\x95" };                                 // U+e055
+        constexpr static std::string_view AirportShuttle{ "\xee\xac\xbc" };                          // U+eb3c
+        constexpr static std::string_view Airware{ "\xef\x85\x94" };                                 // U+f154
+        constexpr static std::string_view Airwave{ "\xef\x85\x94" };                                 // U+f154
+        constexpr static std::string_view Alarm{ "\xee\xa1\x95" };                                   // U+e855
+        constexpr static std::string_view AlarmAdd{ "\xee\xa1\x96" };                                // U+e856
+        constexpr static std::string_view AlarmOff{ "\xee\xa1\x97" };                                // U+e857
+        constexpr static std::string_view AlarmOn{ "\xee\xa1\x98" };                                 // U+e858
+        constexpr static std::string_view AlarmSmartWake{ "\xef\x9a\xb0" };                          // U+f6b0
+        constexpr static std::string_view Album{ "\xee\x80\x99" };                                   // U+e019
+        constexpr static std::string_view AlignCenter{ "\xee\x8d\x96" };                             // U+e356
+        constexpr static std::string_view AlignEnd{ "\xef\x9e\x97" };                                // U+f797
+        constexpr static std::string_view AlignFlexCenter{ "\xef\x9e\x96" };                         // U+f796
+        constexpr static std::string_view AlignFlexEnd{ "\xef\x9e\x95" };                            // U+f795
+        constexpr static std::string_view AlignFlexStart{ "\xef\x9e\x94" };                          // U+f794
+        constexpr static std::string_view AlignHorizontalCenter{ "\xee\x80\x8f" };                   // U+e00f
+        constexpr static std::string_view AlignHorizontalLeft{ "\xee\x80\x8d" };                     // U+e00d
+        constexpr static std::string_view AlignHorizontalRight{ "\xee\x80\x90" };                    // U+e010
+        constexpr static std::string_view AlignItemsStretch{ "\xef\x9e\x93" };                       // U+f793
+        constexpr static std::string_view AlignJustifyCenter{ "\xef\x9e\x92" };                      // U+f792
+        constexpr static std::string_view AlignJustifyFlexEnd{ "\xef\x9e\x91" };                     // U+f791
+        constexpr static std::string_view AlignJustifyFlexStart{ "\xef\x9e\x90" };                   // U+f790
+        constexpr static std::string_view AlignJustifySpaceAround{ "\xef\x9e\x8f" };                 // U+f78f
+        constexpr static std::string_view AlignJustifySpaceBetween{ "\xef\x9e\x8e" };                // U+f78e
+        constexpr static std::string_view AlignJustifySpaceEven{ "\xef\x9e\x8d" };                   // U+f78d
+        constexpr static std::string_view AlignJustifyStretch{ "\xef\x9e\x8c" };                     // U+f78c
+        constexpr static std::string_view AlignSelfStretch{ "\xef\x9e\x8b" };                        // U+f78b
+        constexpr static std::string_view AlignSpaceAround{ "\xef\x9e\x8a" };                        // U+f78a
+        constexpr static std::string_view AlignSpaceBetween{ "\xef\x9e\x89" };                       // U+f789
+        constexpr static std::string_view AlignSpaceEven{ "\xef\x9e\x88" };                          // U+f788
+        constexpr static std::string_view AlignStart{ "\xef\x9e\x87" };                              // U+f787
+        constexpr static std::string_view AlignStretch{ "\xef\x9e\x86" };                            // U+f786
+        constexpr static std::string_view AlignVerticalBottom{ "\xee\x80\x95" };                     // U+e015
+        constexpr static std::string_view AlignVerticalCenter{ "\xee\x80\x91" };                     // U+e011
+        constexpr static std::string_view AlignVerticalTop{ "\xee\x80\x8c" };                        // U+e00c
+        constexpr static std::string_view AllInbox{ "\xee\xa5\xbf" };                                // U+e97f
+        constexpr static std::string_view AllInclusive{ "\xee\xac\xbd" };                            // U+eb3d
+        constexpr static std::string_view AllMatch{ "\xee\x82\x93" };                                // U+e093
+        constexpr static std::string_view AllOut{ "\xee\xa4\x8b" };                                  // U+e90b
+        constexpr static std::string_view Allergies{ "\xee\x82\x94" };                               // U+e094
+        constexpr static std::string_view Allergy{ "\xee\x99\x8e" };                                 // U+e64e
+        constexpr static std::string_view AltRoute{ "\xef\x86\x84" };                                // U+f184
+        constexpr static std::string_view AlternateEmail{ "\xee\x83\xa6" };                          // U+e0e6
+        constexpr static std::string_view Altitude{ "\xef\xa1\xb3" };                                // U+f873
+        constexpr static std::string_view AmbientScreen{ "\xef\x9b\x84" };                           // U+f6c4
+        constexpr static std::string_view Ambulance{ "\xef\xa0\x83" };                               // U+f803
+        constexpr static std::string_view Amend{ "\xef\xa0\x82" };                                   // U+f802
+        constexpr static std::string_view AmpStories{ "\xee\xa8\x93" };                              // U+ea13
+        constexpr static std::string_view Analytics{ "\xee\xbc\xbe" };                               // U+ef3e
+        constexpr static std::string_view Anchor{ "\xef\x87\x8d" };                                  // U+f1cd
+        constexpr static std::string_view Android{ "\xee\xa1\x99" };                                 // U+e859
+        constexpr static std::string_view Animation{ "\xee\x9c\x9c" };                               // U+e71c
+        constexpr static std::string_view Announcement{ "\xee\xa1\xbf" };                            // U+e87f
+        constexpr static std::string_view Aod{ "\xee\xbf\x9a" };                                     // U+efda
+        constexpr static std::string_view AodTablet{ "\xef\xa2\x9f" };                               // U+f89f
+        constexpr static std::string_view AodWatch{ "\xef\x9a\xac" };                                // U+f6ac
+        constexpr static std::string_view Apartment{ "\xee\xa9\x80" };                               // U+ea40
+        constexpr static std::string_view Api{ "\xef\x86\xb7" };                                     // U+f1b7
+        constexpr static std::string_view ApkDocument{ "\xef\xa2\x8e" };                             // U+f88e
+        constexpr static std::string_view ApkInstall{ "\xef\xa2\x8f" };                              // U+f88f
+        constexpr static std::string_view AppBadging{ "\xef\x9c\xaf" };                              // U+f72f
+        constexpr static std::string_view AppBlocking{ "\xee\xbc\xbf" };                             // U+ef3f
+        constexpr static std::string_view AppPromo{ "\xee\xa6\x81" };                                // U+e981
+        constexpr static std::string_view AppRegistration{ "\xee\xbd\x80" };                         // U+ef40
+        constexpr static std::string_view AppSettingsAlt{ "\xee\xbd\x81" };                          // U+ef41
+        constexpr static std::string_view AppShortcut{ "\xee\xab\xa4" };                             // U+eae4
+        constexpr static std::string_view Apparel{ "\xee\xbd\xbb" };                                 // U+ef7b
+        constexpr static std::string_view Approval{ "\xee\xa6\x82" };                                // U+e982
+        constexpr static std::string_view ApprovalDelegation{ "\xef\xa1\x8a" };                      // U+f84a
+        constexpr static std::string_view Apps{ "\xee\x97\x83" };                                    // U+e5c3
+        constexpr static std::string_view AppsOutage{ "\xee\x9f\x8c" };                              // U+e7cc
+        constexpr static std::string_view Aq{ "\xef\x95\x9a" };                                      // U+f55a
+        constexpr static std::string_view AqIndoor{ "\xef\x95\x9b" };                                // U+f55b
+        constexpr static std::string_view ArOnYou{ "\xee\xbd\xbc" };                                 // U+ef7c
+        constexpr static std::string_view ArStickers{ "\xee\xa6\x83" };                              // U+e983
+        constexpr static std::string_view Architecture{ "\xee\xa8\xbb" };                            // U+ea3b
+        constexpr static std::string_view Archive{ "\xee\x85\x89" };                                 // U+e149
+        constexpr static std::string_view AreaChart{ "\xee\x9d\xb0" };                               // U+e770
+        constexpr static std::string_view ArmingCountdown{ "\xee\x9e\x8a" };                         // U+e78a
+        constexpr static std::string_view ArrowAndEdge{ "\xef\x97\x97" };                            // U+f5d7
+        constexpr static std::string_view ArrowBack{ "\xee\x97\x84" };                               // U+e5c4
+        constexpr static std::string_view ArrowBackIos{ "\xee\x97\xa0" };                            // U+e5e0
+        constexpr static std::string_view ArrowBackIosNew{ "\xee\x8b\xaa" };                         // U+e2ea
+        constexpr static std::string_view ArrowCircleDown{ "\xef\x86\x81" };                         // U+f181
+        constexpr static std::string_view ArrowCircleLeft{ "\xee\xaa\xa7" };                         // U+eaa7
+        constexpr static std::string_view ArrowCircleRight{ "\xee\xaa\xaa" };                        // U+eaaa
+        constexpr static std::string_view ArrowCircleUp{ "\xef\x86\x82" };                           // U+f182
+        constexpr static std::string_view ArrowDownward{ "\xee\x97\x9b" };                           // U+e5db
+        constexpr static std::string_view ArrowDownwardAlt{ "\xee\xa6\x84" };                        // U+e984
+        constexpr static std::string_view ArrowDropDown{ "\xee\x97\x85" };                           // U+e5c5
+        constexpr static std::string_view ArrowDropDownCircle{ "\xee\x97\x86" };                     // U+e5c6
+        constexpr static std::string_view ArrowDropUp{ "\xee\x97\x87" };                             // U+e5c7
+        constexpr static std::string_view ArrowForward{ "\xee\x97\x88" };                            // U+e5c8
+        constexpr static std::string_view ArrowForwardIos{ "\xee\x97\xa1" };                         // U+e5e1
+        constexpr static std::string_view ArrowInsert{ "\xef\xa0\xb7" };                             // U+f837
+        constexpr static std::string_view ArrowLeft{ "\xee\x97\x9e" };                               // U+e5de
+        constexpr static std::string_view ArrowLeftAlt{ "\xee\xbd\xbd" };                            // U+ef7d
+        constexpr static std::string_view ArrowOrEdge{ "\xef\x97\x96" };                             // U+f5d6
+        constexpr static std::string_view ArrowOutward{ "\xef\xa3\x8e" };                            // U+f8ce
+        constexpr static std::string_view ArrowRange{ "\xef\x9a\x9b" };                              // U+f69b
+        constexpr static std::string_view ArrowRight{ "\xee\x97\x9f" };                              // U+e5df
+        constexpr static std::string_view ArrowRightAlt{ "\xee\xa5\x81" };                           // U+e941
+        constexpr static std::string_view ArrowSelectorTool{ "\xef\xa0\xaf" };                       // U+f82f
+        constexpr static std::string_view ArrowSplit{ "\xee\xa8\x84" };                              // U+ea04
+        constexpr static std::string_view ArrowTopLeft{ "\xef\x9c\xae" };                            // U+f72e
+        constexpr static std::string_view ArrowTopRight{ "\xef\x9c\xad" };                           // U+f72d
+        constexpr static std::string_view ArrowUpward{ "\xee\x97\x98" };                             // U+e5d8
+        constexpr static std::string_view ArrowUpwardAlt{ "\xee\xa6\x86" };                          // U+e986
+        constexpr static std::string_view ArrowsMoreDown{ "\xef\xa2\xab" };                          // U+f8ab
+        constexpr static std::string_view ArrowsMoreUp{ "\xef\xa2\xac" };                            // U+f8ac
+        constexpr static std::string_view ArrowsOutward{ "\xef\x9c\xac" };                           // U+f72c
+        constexpr static std::string_view ArtTrack{ "\xee\x81\xa0" };                                // U+e060
+        constexpr static std::string_view Article{ "\xee\xbd\x82" };                                 // U+ef42
+        constexpr static std::string_view ArticleShortcut{ "\xef\x96\x87" };                         // U+f587
+        constexpr static std::string_view Artist{ "\xee\x80\x9a" };                                  // U+e01a
+        constexpr static std::string_view AspectRatio{ "\xee\xa1\x9b" };                             // U+e85b
+        constexpr static std::string_view Assessment{ "\xef\x83\x8c" };                              // U+f0cc
+        constexpr static std::string_view Assignment{ "\xee\xa1\x9d" };                              // U+e85d
+        constexpr static std::string_view AssignmentAdd{ "\xef\xa1\x88" };                           // U+f848
+        constexpr static std::string_view AssignmentInd{ "\xee\xa1\x9e" };                           // U+e85e
+        constexpr static std::string_view AssignmentLate{ "\xee\xa1\x9f" };                          // U+e85f
+        constexpr static std::string_view AssignmentReturn{ "\xee\xa1\xa0" };                        // U+e860
+        constexpr static std::string_view AssignmentReturned{ "\xee\xa1\xa1" };                      // U+e861
+        constexpr static std::string_view AssignmentTurnedIn{ "\xee\xa1\xa2" };                      // U+e862
+        constexpr static std::string_view AssistWalker{ "\xef\xa3\x95" };                            // U+f8d5
+        constexpr static std::string_view Assistant{ "\xee\x8e\x9f" };                               // U+e39f
+        constexpr static std::string_view AssistantDevice{ "\xee\xa6\x87" };                         // U+e987
+        constexpr static std::string_view AssistantDirection{ "\xee\xa6\x88" };                      // U+e988
+        constexpr static std::string_view AssistantNavigation{ "\xee\xa6\x89" };                     // U+e989
+        constexpr static std::string_view AssistantOnHub{ "\xef\x9b\x81" };                          // U+f6c1
+        constexpr static std::string_view AssistantPhoto{ "\xef\x83\x86" };                          // U+f0c6
+        constexpr static std::string_view AssuredWorkload{ "\xee\xad\xaf" };                         // U+eb6f
+        constexpr static std::string_view Asterisk{ "\xef\x94\xa5" };                                // U+f525
+        constexpr static std::string_view AstrophotographyAuto{ "\xef\x87\x99" };                    // U+f1d9
+        constexpr static std::string_view AstrophotographyOff{ "\xef\x87\x9a" };                     // U+f1da
+        constexpr static std::string_view Atm{ "\xee\x95\xb3" };                                     // U+e573
+        constexpr static std::string_view Atr{ "\xee\xaf\x87" };                                     // U+ebc7
+        constexpr static std::string_view AttachEmail{ "\xee\xa9\x9e" };                             // U+ea5e
+        constexpr static std::string_view AttachFile{ "\xee\x88\xa6" };                              // U+e226
+        constexpr static std::string_view AttachFileAdd{ "\xef\xa1\x81" };                           // U+f841
+        constexpr static std::string_view AttachFileOff{ "\xef\x93\x99" };                           // U+f4d9
+        constexpr static std::string_view AttachMoney{ "\xee\x88\xa7" };                             // U+e227
+        constexpr static std::string_view Attachment{ "\xee\x8a\xbc" };                              // U+e2bc
+        constexpr static std::string_view Attractions{ "\xee\xa9\x92" };                             // U+ea52
+        constexpr static std::string_view Attribution{ "\xee\xbf\x9b" };                             // U+efdb
+        constexpr static std::string_view AudioDescription{ "\xef\x96\x8c" };                        // U+f58c
+        constexpr static std::string_view AudioFile{ "\xee\xae\x82" };                               // U+eb82
+        constexpr static std::string_view AudioVideoReceiver{ "\xef\x97\x93" };                      // U+f5d3
+        constexpr static std::string_view Audiotrack{ "\xee\x90\x85" };                              // U+e405
+        constexpr static std::string_view AutoActivityZone{ "\xef\xa2\xad" };                        // U+f8ad
+        constexpr static std::string_view AutoAwesome{ "\xee\x99\x9f" };                             // U+e65f
+        constexpr static std::string_view AutoAwesomeMosaic{ "\xee\x99\xa0" };                       // U+e660
+        constexpr static std::string_view AutoAwesomeMotion{ "\xee\x99\xa1" };                       // U+e661
+        constexpr static std::string_view AutoDelete{ "\xee\xa9\x8c" };                              // U+ea4c
+        constexpr static std::string_view AutoDetectVoice{ "\xef\xa0\xbe" };                         // U+f83e
+        constexpr static std::string_view AutoDrawSolid{ "\xee\xa6\x8a" };                           // U+e98a
+        constexpr static std::string_view AutoFix{ "\xee\x99\xa3" };                                 // U+e663
+        constexpr static std::string_view AutoFixHigh{ "\xee\x99\xa3" };                             // U+e663
+        constexpr static std::string_view AutoFixNormal{ "\xee\x99\xa4" };                           // U+e664
+        constexpr static std::string_view AutoFixOff{ "\xee\x99\xa5" };                              // U+e665
+        constexpr static std::string_view AutoGraph{ "\xee\x93\xbb" };                               // U+e4fb
+        constexpr static std::string_view AutoLabel{ "\xef\x9a\xbe" };                               // U+f6be
+        constexpr static std::string_view AutoMeetingRoom{ "\xef\x9a\xbf" };                         // U+f6bf
+        constexpr static std::string_view AutoMode{ "\xee\xb0\xa0" };                                // U+ec20
+        constexpr static std::string_view AutoReadPause{ "\xef\x88\x99" };                           // U+f219
+        constexpr static std::string_view AutoReadPlay{ "\xef\x88\x96" };                            // U+f216
+        constexpr static std::string_view AutoSchedule{ "\xee\x88\x94" };                            // U+e214
+        constexpr static std::string_view AutoStories{ "\xee\x99\xa6" };                             // U+e666
+        constexpr static std::string_view AutoTimer{ "\xee\xbd\xbf" };                               // U+ef7f
+        constexpr static std::string_view AutoTowing{ "\xee\x9c\x9e" };                              // U+e71e
+        constexpr static std::string_view AutoTransmission{ "\xef\x94\xbf" };                        // U+f53f
+        constexpr static std::string_view AutoVideocam{ "\xef\x9b\x80" };                            // U+f6c0
+        constexpr static std::string_view AutofpsSelect{ "\xee\xbf\x9c" };                           // U+efdc
+        constexpr static std::string_view Autopause{ "\xef\x9a\xb6" };                               // U+f6b6
+        constexpr static std::string_view Autopay{ "\xef\xa1\x8b" };                                 // U+f84b
+        constexpr static std::string_view Autoplay{ "\xef\x9a\xb5" };                                // U+f6b5
+        constexpr static std::string_view Autorenew{ "\xee\xa1\xa3" };                               // U+e863
+        constexpr static std::string_view Autostop{ "\xef\x9a\x82" };                                // U+f682
+        constexpr static std::string_view AvTimer{ "\xee\x80\x9b" };                                 // U+e01b
+        constexpr static std::string_view AvgPace{ "\xef\x9a\xbb" };                                 // U+f6bb
+        constexpr static std::string_view AvgTime{ "\xef\xa0\x93" };                                 // U+f813
+        constexpr static std::string_view AwardStar{ "\xef\x98\x92" };                               // U+f612
+        constexpr static std::string_view Azm{ "\xef\x9b\xac" };                                     // U+f6ec
+        constexpr static std::string_view BabyChangingStation{ "\xef\x86\x9b" };                     // U+f19b
+        constexpr static std::string_view BackHand{ "\xee\x9d\xa4" };                                // U+e764
+        constexpr static std::string_view BackToTab{ "\xef\x9c\xab" };                               // U+f72b
+        constexpr static std::string_view BackgroundDotLarge{ "\xef\x9e\x9e" };                      // U+f79e
+        constexpr static std::string_view BackgroundDotSmall{ "\xef\x94\x94" };                      // U+f514
+        constexpr static std::string_view BackgroundGridSmall{ "\xef\x9e\x9d" };                     // U+f79d
+        constexpr static std::string_view BackgroundReplace{ "\xef\x88\x8a" };                       // U+f20a
+        constexpr static std::string_view BacklightHigh{ "\xef\x9f\xad" };                           // U+f7ed
+        constexpr static std::string_view BacklightHighOff{ "\xef\x93\xaf" };                        // U+f4ef
+        constexpr static std::string_view BacklightLow{ "\xef\x9f\xac" };                            // U+f7ec
+        constexpr static std::string_view Backpack{ "\xef\x86\x9c" };                                // U+f19c
+        constexpr static std::string_view Backspace{ "\xee\x85\x8a" };                               // U+e14a
+        constexpr static std::string_view Backup{ "\xee\xa1\xa4" };                                  // U+e864
+        constexpr static std::string_view BackupTable{ "\xee\xbd\x83" };                             // U+ef43
+        constexpr static std::string_view Badge{ "\xee\xa9\xa7" };                                   // U+ea67
+        constexpr static std::string_view BadgeCriticalBattery{ "\xef\x85\x96" };                    // U+f156
+        constexpr static std::string_view BakeryDining{ "\xee\xa9\x93" };                            // U+ea53
+        constexpr static std::string_view Balance{ "\xee\xab\xb6" };                                 // U+eaf6
+        constexpr static std::string_view Balcony{ "\xee\x96\x8f" };                                 // U+e58f
+        constexpr static std::string_view Ballot{ "\xee\x85\xb2" };                                  // U+e172
+        constexpr static std::string_view BarChart{ "\xee\x89\xab" };                                // U+e26b
+        constexpr static std::string_view BarChart_4Bars{ "\xef\x9a\x81" };                          // U+f681
+        constexpr static std::string_view Barcode{ "\xee\x9c\x8b" };                                 // U+e70b
+        constexpr static std::string_view BarcodeReader{ "\xef\xa1\x9c" };                           // U+f85c
+        constexpr static std::string_view BarcodeScanner{ "\xee\x9c\x8c" };                          // U+e70c
+        constexpr static std::string_view Barefoot{ "\xef\xa1\xb1" };                                // U+f871
+        constexpr static std::string_view BatchPrediction{ "\xef\x83\xb5" };                         // U+f0f5
+        constexpr static std::string_view BathOutdoor{ "\xef\x9b\xbb" };                             // U+f6fb
+        constexpr static std::string_view BathPrivate{ "\xef\x9b\xba" };                             // U+f6fa
+        constexpr static std::string_view BathPublicLarge{ "\xef\x9b\xb9" };                         // U+f6f9
+        constexpr static std::string_view Bathroom{ "\xee\xbf\x9d" };                                // U+efdd
+        constexpr static std::string_view Bathtub{ "\xee\xa9\x81" };                                 // U+ea41
+        constexpr static std::string_view Battery_0Bar{ "\xee\xaf\x9c" };                            // U+ebdc
+        constexpr static std::string_view Battery_1Bar{ "\xef\x82\x9c" };                            // U+f09c
+        constexpr static std::string_view Battery_20{ "\xef\x82\x9c" };                              // U+f09c
+        constexpr static std::string_view Battery_2Bar{ "\xef\x82\x9d" };                            // U+f09d
+        constexpr static std::string_view Battery_30{ "\xef\x82\x9d" };                              // U+f09d
+        constexpr static std::string_view Battery_3Bar{ "\xef\x82\x9e" };                            // U+f09e
+        constexpr static std::string_view Battery_4Bar{ "\xef\x82\x9f" };                            // U+f09f
+        constexpr static std::string_view Battery_50{ "\xef\x82\x9e" };                              // U+f09e
+        constexpr static std::string_view Battery_5Bar{ "\xef\x82\xa0" };                            // U+f0a0
+        constexpr static std::string_view Battery_60{ "\xef\x82\x9f" };                              // U+f09f
+        constexpr static std::string_view Battery_6Bar{ "\xef\x82\xa1" };                            // U+f0a1
+        constexpr static std::string_view Battery_80{ "\xef\x82\xa0" };                              // U+f0a0
+        constexpr static std::string_view Battery_90{ "\xef\x82\xa1" };                              // U+f0a1
+        constexpr static std::string_view BatteryAlert{ "\xee\x86\x9c" };                            // U+e19c
+        constexpr static std::string_view BatteryChange{ "\xef\x9f\xab" };                           // U+f7eb
+        constexpr static std::string_view BatteryCharging_20{ "\xef\x82\xa2" };                      // U+f0a2
+        constexpr static std::string_view BatteryCharging_30{ "\xef\x82\xa3" };                      // U+f0a3
+        constexpr static std::string_view BatteryCharging_50{ "\xef\x82\xa4" };                      // U+f0a4
+        constexpr static std::string_view BatteryCharging_60{ "\xef\x82\xa5" };                      // U+f0a5
+        constexpr static std::string_view BatteryCharging_80{ "\xef\x82\xa6" };                      // U+f0a6
+        constexpr static std::string_view BatteryCharging_90{ "\xef\x82\xa7" };                      // U+f0a7
+        constexpr static std::string_view BatteryChargingFull{ "\xee\x86\xa3" };                     // U+e1a3
+        constexpr static std::string_view BatteryError{ "\xef\x9f\xaa" };                            // U+f7ea
+        constexpr static std::string_view BatteryFull{ "\xee\x86\xa5" };                             // U+e1a5
+        constexpr static std::string_view BatteryFullAlt{ "\xef\x84\xbb" };                          // U+f13b
+        constexpr static std::string_view BatteryHoriz_000{ "\xef\xa2\xae" };                        // U+f8ae
+        constexpr static std::string_view BatteryHoriz_050{ "\xef\xa2\xaf" };                        // U+f8af
+        constexpr static std::string_view BatteryHoriz_075{ "\xef\xa2\xb0" };                        // U+f8b0
+        constexpr static std::string_view BatteryLow{ "\xef\x85\x95" };                              // U+f155
+        constexpr static std::string_view BatteryPlus{ "\xef\x9f\xa9" };                             // U+f7e9
+        constexpr static std::string_view BatteryProfile{ "\xee\x88\x86" };                          // U+e206
+        constexpr static std::string_view BatterySaver{ "\xee\xbf\x9e" };                            // U+efde
+        constexpr static std::string_view BatteryShare{ "\xef\x99\xbe" };                            // U+f67e
+        constexpr static std::string_view BatteryStatusGood{ "\xef\x99\xbd" };                       // U+f67d
+        constexpr static std::string_view BatteryStd{ "\xee\x86\xa5" };                              // U+e1a5
+        constexpr static std::string_view BatteryUnknown{ "\xee\x86\xa6" };                          // U+e1a6
+        constexpr static std::string_view BatteryVert_005{ "\xef\xa2\xb1" };                         // U+f8b1
+        constexpr static std::string_view BatteryVert_020{ "\xef\xa2\xb2" };                         // U+f8b2
+        constexpr static std::string_view BatteryVert_050{ "\xef\xa2\xb3" };                         // U+f8b3
+        constexpr static std::string_view BatteryVeryLow{ "\xef\x85\x96" };                          // U+f156
+        constexpr static std::string_view BeachAccess{ "\xee\xac\xbe" };                             // U+eb3e
+        constexpr static std::string_view Bed{ "\xee\xbf\x9f" };                                     // U+efdf
+        constexpr static std::string_view BedroomBaby{ "\xee\xbf\xa0" };                             // U+efe0
+        constexpr static std::string_view BedroomChild{ "\xee\xbf\xa1" };                            // U+efe1
+        constexpr static std::string_view BedroomParent{ "\xee\xbf\xa2" };                           // U+efe2
+        constexpr static std::string_view Bedtime{ "\xee\xbd\x84" };                                 // U+ef44
+        constexpr static std::string_view BedtimeOff{ "\xee\xad\xb6" };                              // U+eb76
+        constexpr static std::string_view Beenhere{ "\xee\x94\xad" };                                // U+e52d
+        constexpr static std::string_view Bento{ "\xef\x87\xb4" };                                   // U+f1f4
+        constexpr static std::string_view Bia{ "\xef\x9b\xab" };                                     // U+f6eb
+        constexpr static std::string_view BidLandscape{ "\xee\x99\xb8" };                            // U+e678
+        constexpr static std::string_view BidLandscapeDisabled{ "\xee\xbe\x81" };                    // U+ef81
+        constexpr static std::string_view BigtopUpdates{ "\xee\x99\xa9" };                           // U+e669
+        constexpr static std::string_view BikeScooter{ "\xee\xbd\x85" };                             // U+ef45
+        constexpr static std::string_view Biotech{ "\xee\xa8\xba" };                                 // U+ea3a
+        constexpr static std::string_view Blanket{ "\xee\xa0\xa8" };                                 // U+e828
+        constexpr static std::string_view Blender{ "\xee\xbf\xa3" };                                 // U+efe3
+        constexpr static std::string_view Blind{ "\xef\xa3\x96" };                                   // U+f8d6
+        constexpr static std::string_view Blinds{ "\xee\x8a\x86" };                                  // U+e286
+        constexpr static std::string_view BlindsClosed{ "\xee\xb0\x9f" };                            // U+ec1f
+        constexpr static std::string_view Block{ "\xef\x82\x8c" };                                   // U+f08c
+        constexpr static std::string_view BloodPressure{ "\xee\x82\x97" };                           // U+e097
+        constexpr static std::string_view Bloodtype{ "\xee\xbf\xa4" };                               // U+efe4
+        constexpr static std::string_view Bluetooth{ "\xee\x86\xa7" };                               // U+e1a7
+        constexpr static std::string_view BluetoothAudio{ "\xee\x98\x8f" };                          // U+e60f
+        constexpr static std::string_view BluetoothConnected{ "\xee\x86\xa8" };                      // U+e1a8
+        constexpr static std::string_view BluetoothDisabled{ "\xee\x86\xa9" };                       // U+e1a9
+        constexpr static std::string_view BluetoothDrive{ "\xee\xbf\xa5" };                          // U+efe5
+        constexpr static std::string_view BluetoothSearching{ "\xee\x98\x8f" };                      // U+e60f
+        constexpr static std::string_view BlurCircular{ "\xee\x8e\xa2" };                            // U+e3a2
+        constexpr static std::string_view BlurLinear{ "\xee\x8e\xa3" };                              // U+e3a3
+        constexpr static std::string_view BlurMedium{ "\xee\xa1\x8c" };                              // U+e84c
+        constexpr static std::string_view BlurOff{ "\xee\x8e\xa4" };                                 // U+e3a4
+        constexpr static std::string_view BlurOn{ "\xee\x8e\xa5" };                                  // U+e3a5
+        constexpr static std::string_view BlurShort{ "\xee\xa3\x8f" };                               // U+e8cf
+        constexpr static std::string_view BodyFat{ "\xee\x82\x98" };                                 // U+e098
+        constexpr static std::string_view BodySystem{ "\xee\x82\x99" };                              // U+e099
+        constexpr static std::string_view Bolt{ "\xee\xa8\x8b" };                                    // U+ea0b
+        constexpr static std::string_view Bomb{ "\xef\x95\xa8" };                                    // U+f568
+        constexpr static std::string_view Book{ "\xee\xa1\xae" };                                    // U+e86e
+        constexpr static std::string_view Book_2{ "\xef\x94\xbe" };                                  // U+f53e
+        constexpr static std::string_view Book_3{ "\xef\x94\xbd" };                                  // U+f53d
+        constexpr static std::string_view Book_4{ "\xef\x94\xbc" };                                  // U+f53c
+        constexpr static std::string_view Book_5{ "\xef\x94\xbb" };                                  // U+f53b
+        constexpr static std::string_view BookOnline{ "\xef\x88\x97" };                              // U+f217
+        constexpr static std::string_view Bookmark{ "\xee\xa3\xa7" };                                // U+e8e7
+        constexpr static std::string_view BookmarkAdd{ "\xee\x96\x98" };                             // U+e598
+        constexpr static std::string_view BookmarkAdded{ "\xee\x96\x99" };                           // U+e599
+        constexpr static std::string_view BookmarkBorder{ "\xee\xa3\xa7" };                          // U+e8e7
+        constexpr static std::string_view BookmarkManager{ "\xef\x9e\xb1" };                         // U+f7b1
+        constexpr static std::string_view BookmarkRemove{ "\xee\x96\x9a" };                          // U+e59a
+        constexpr static std::string_view Bookmarks{ "\xee\xa6\x8b" };                               // U+e98b
+        constexpr static std::string_view BorderAll{ "\xee\x88\xa8" };                               // U+e228
+        constexpr static std::string_view BorderBottom{ "\xee\x88\xa9" };                            // U+e229
+        constexpr static std::string_view BorderClear{ "\xee\x88\xaa" };                             // U+e22a
+        constexpr static std::string_view BorderColor{ "\xee\x88\xab" };                             // U+e22b
+        constexpr static std::string_view BorderHorizontal{ "\xee\x88\xac" };                        // U+e22c
+        constexpr static std::string_view BorderInner{ "\xee\x88\xad" };                             // U+e22d
+        constexpr static std::string_view BorderLeft{ "\xee\x88\xae" };                              // U+e22e
+        constexpr static std::string_view BorderOuter{ "\xee\x88\xaf" };                             // U+e22f
+        constexpr static std::string_view BorderRight{ "\xee\x88\xb0" };                             // U+e230
+        constexpr static std::string_view BorderStyle{ "\xee\x88\xb1" };                             // U+e231
+        constexpr static std::string_view BorderTop{ "\xee\x88\xb2" };                               // U+e232
+        constexpr static std::string_view BorderVertical{ "\xee\x88\xb3" };                          // U+e233
+        constexpr static std::string_view BottomAppBar{ "\xee\x9c\xb0" };                            // U+e730
+        constexpr static std::string_view BottomDrawer{ "\xee\x9c\xad" };                            // U+e72d
+        constexpr static std::string_view BottomNavigation{ "\xee\xa6\x8c" };                        // U+e98c
+        constexpr static std::string_view BottomPanelClose{ "\xef\x9c\xaa" };                        // U+f72a
+        constexpr static std::string_view BottomPanelOpen{ "\xef\x9c\xa9" };                         // U+f729
+        constexpr static std::string_view BottomRightClick{ "\xef\x9a\x84" };                        // U+f684
+        constexpr static std::string_view BottomSheets{ "\xee\xa6\x8d" };                            // U+e98d
+        constexpr static std::string_view Box{ "\xef\x96\xa4" };                                     // U+f5a4
+        constexpr static std::string_view BoxAdd{ "\xef\x96\xa5" };                                  // U+f5a5
+        constexpr static std::string_view BoxEdit{ "\xef\x96\xa6" };                                 // U+f5a6
+        constexpr static std::string_view Boy{ "\xee\xad\xa7" };                                     // U+eb67
+        constexpr static std::string_view BrandAwareness{ "\xee\xa6\x8e" };                          // U+e98e
+        constexpr static std::string_view BrandFamily{ "\xef\x93\xb1" };                             // U+f4f1
+        constexpr static std::string_view BrandingWatermark{ "\xee\x81\xab" };                       // U+e06b
+        constexpr static std::string_view BreakfastDining{ "\xee\xa9\x94" };                         // U+ea54
+        constexpr static std::string_view BreakingNews{ "\xee\xa8\x88" };                            // U+ea08
+        constexpr static std::string_view BreakingNewsAlt_1{ "\xef\x82\xba" };                       // U+f0ba
+        constexpr static std::string_view Breastfeeding{ "\xef\xa1\x96" };                           // U+f856
+        constexpr static std::string_view Brightness_1{ "\xee\x8f\xba" };                            // U+e3fa
+        constexpr static std::string_view Brightness_2{ "\xef\x80\xb6" };                            // U+f036
+        constexpr static std::string_view Brightness_3{ "\xee\x8e\xa8" };                            // U+e3a8
+        constexpr static std::string_view Brightness_4{ "\xee\x8e\xa9" };                            // U+e3a9
+        constexpr static std::string_view Brightness_5{ "\xee\x8e\xaa" };                            // U+e3aa
+        constexpr static std::string_view Brightness_6{ "\xee\x8e\xab" };                            // U+e3ab
+        constexpr static std::string_view Brightness_7{ "\xee\x8e\xac" };                            // U+e3ac
+        constexpr static std::string_view BrightnessAlert{ "\xef\x97\x8f" };                         // U+f5cf
+        constexpr static std::string_view BrightnessAuto{ "\xee\x86\xab" };                          // U+e1ab
+        constexpr static std::string_view BrightnessEmpty{ "\xef\x9f\xa8" };                         // U+f7e8
+        constexpr static std::string_view BrightnessHigh{ "\xee\x86\xac" };                          // U+e1ac
+        constexpr static std::string_view BrightnessLow{ "\xee\x86\xad" };                           // U+e1ad
+        constexpr static std::string_view BrightnessMedium{ "\xee\x86\xae" };                        // U+e1ae
+        constexpr static std::string_view BringYourOwnIp{ "\xee\x80\x96" };                          // U+e016
+        constexpr static std::string_view BroadcastOnHome{ "\xef\xa3\xb8" };                         // U+f8f8
+        constexpr static std::string_view BroadcastOnPersonal{ "\xef\xa3\xb9" };                     // U+f8f9
+        constexpr static std::string_view BrokenImage{ "\xee\x8e\xad" };                             // U+e3ad
+        constexpr static std::string_view Browse{ "\xee\xac\x93" };                                  // U+eb13
+        constexpr static std::string_view BrowseActivity{ "\xef\xa2\xa5" };                          // U+f8a5
+        constexpr static std::string_view BrowseGallery{ "\xee\xaf\x91" };                           // U+ebd1
+        constexpr static std::string_view BrowserNotSupported{ "\xee\xbd\x87" };                     // U+ef47
+        constexpr static std::string_view BrowserUpdated{ "\xee\x9f\x8f" };                          // U+e7cf
+        constexpr static std::string_view BrunchDining{ "\xee\xa9\xb3" };                            // U+ea73
+        constexpr static std::string_view Brush{ "\xee\x8e\xae" };                                   // U+e3ae
+        constexpr static std::string_view Bubble{ "\xee\xbe\x83" };                                  // U+ef83
+        constexpr static std::string_view BubbleChart{ "\xee\x9b\x9d" };                             // U+e6dd
+        constexpr static std::string_view Bubbles{ "\xef\x99\x8e" };                                 // U+f64e
+        constexpr static std::string_view BugReport{ "\xee\xa1\xa8" };                               // U+e868
+        constexpr static std::string_view Build{ "\xef\xa3\x8d" };                                   // U+f8cd
+        constexpr static std::string_view BuildCircle{ "\xee\xbd\x88" };                             // U+ef48
+        constexpr static std::string_view Bungalow{ "\xee\x96\x91" };                                // U+e591
+        constexpr static std::string_view BurstMode{ "\xee\x90\xbc" };                               // U+e43c
+        constexpr static std::string_view BusAlert{ "\xee\xa6\x8f" };                                // U+e98f
+        constexpr static std::string_view Business{ "\xee\x9f\xae" };                                // U+e7ee
+        constexpr static std::string_view BusinessCenter{ "\xee\xac\xbf" };                          // U+eb3f
+        constexpr static std::string_view BusinessChip{ "\xef\xa1\x8c" };                            // U+f84c
+        constexpr static std::string_view BusinessMessages{ "\xee\xbe\x84" };                        // U+ef84
+        constexpr static std::string_view ButtonsAlt{ "\xee\x9c\xaf" };                              // U+e72f
+        constexpr static std::string_view Cabin{ "\xee\x96\x89" };                                   // U+e589
+        constexpr static std::string_view Cable{ "\xee\xbf\xa6" };                                   // U+efe6
+        constexpr static std::string_view Cached{ "\xee\xa1\xaa" };                                  // U+e86a
+        constexpr static std::string_view Cake{ "\xee\x9f\xa9" };                                    // U+e7e9
+        constexpr static std::string_view CakeAdd{ "\xef\xa1\x9b" };                                 // U+f85b
+        constexpr static std::string_view Calculate{ "\xee\xa9\x9f" };                               // U+ea5f
+        constexpr static std::string_view CalendarAddOn{ "\xee\xbe\x85" };                           // U+ef85
+        constexpr static std::string_view CalendarAppsScript{ "\xef\x82\xbb" };                      // U+f0bb
+        constexpr static std::string_view CalendarClock{ "\xef\x95\x80" };                           // U+f540
+        constexpr static std::string_view CalendarMonth{ "\xee\xaf\x8c" };                           // U+ebcc
+        constexpr static std::string_view CalendarToday{ "\xee\xa4\xb5" };                           // U+e935
+        constexpr static std::string_view CalendarViewDay{ "\xee\xa4\xb6" };                         // U+e936
+        constexpr static std::string_view CalendarViewMonth{ "\xee\xbf\xa7" };                       // U+efe7
+        constexpr static std::string_view CalendarViewWeek{ "\xee\xbf\xa8" };                        // U+efe8
+        constexpr static std::string_view Call{ "\xef\x83\x94" };                                    // U+f0d4
+        constexpr static std::string_view CallEnd{ "\xef\x82\xbc" };                                 // U+f0bc
+        constexpr static std::string_view CallEndAlt{ "\xef\x82\xbc" };                              // U+f0bc
+        constexpr static std::string_view CallLog{ "\xee\x82\x8e" };                                 // U+e08e
+        constexpr static std::string_view CallMade{ "\xee\x82\xb2" };                                // U+e0b2
+        constexpr static std::string_view CallMerge{ "\xee\x82\xb3" };                               // U+e0b3
+        constexpr static std::string_view CallMissed{ "\xee\x82\xb4" };                              // U+e0b4
+        constexpr static std::string_view CallMissedOutgoing{ "\xee\x83\xa4" };                      // U+e0e4
+        constexpr static std::string_view CallQuality{ "\xef\x99\x92" };                             // U+f652
+        constexpr static std::string_view CallReceived{ "\xee\x82\xb5" };                            // U+e0b5
+        constexpr static std::string_view CallSplit{ "\xee\x82\xb6" };                               // U+e0b6
+        constexpr static std::string_view CallToAction{ "\xee\x81\xac" };                            // U+e06c
+        constexpr static std::string_view Camera{ "\xee\x8e\xaf" };                                  // U+e3af
+        constexpr static std::string_view CameraAlt{ "\xee\x90\x92" };                               // U+e412
+        constexpr static std::string_view CameraEnhance{ "\xee\xa3\xbc" };                           // U+e8fc
+        constexpr static std::string_view CameraFront{ "\xee\x8e\xb1" };                             // U+e3b1
+        constexpr static std::string_view CameraIndoor{ "\xee\xbf\xa9" };                            // U+efe9
+        constexpr static std::string_view CameraOutdoor{ "\xee\xbf\xaa" };                           // U+efea
+        constexpr static std::string_view CameraRear{ "\xee\x8e\xb2" };                              // U+e3b2
+        constexpr static std::string_view CameraRoll{ "\xee\x8e\xb3" };                              // U+e3b3
+        constexpr static std::string_view CameraVideo{ "\xef\x9e\xa6" };                             // U+f7a6
+        constexpr static std::string_view Cameraswitch{ "\xee\xbf\xab" };                            // U+efeb
+        constexpr static std::string_view Campaign{ "\xee\xbd\x89" };                                // U+ef49
+        constexpr static std::string_view Camping{ "\xef\xa2\xa2" };                                 // U+f8a2
+        constexpr static std::string_view Cancel{ "\xee\xa2\x88" };                                  // U+e888
+        constexpr static std::string_view CancelPresentation{ "\xee\x83\xa9" };                      // U+e0e9
+        constexpr static std::string_view CancelScheduleSend{ "\xee\xa8\xb9" };                      // U+ea39
+        constexpr static std::string_view Candle{ "\xef\x96\x88" };                                  // U+f588
+        constexpr static std::string_view CandlestickChart{ "\xee\xab\x94" };                        // U+ead4
+        constexpr static std::string_view CaptivePortal{ "\xef\x9c\xa8" };                           // U+f728
+        constexpr static std::string_view Capture{ "\xef\x9c\xa7" };                                 // U+f727
+        constexpr static std::string_view CarCrash{ "\xee\xaf\xb2" };                                // U+ebf2
+        constexpr static std::string_view CarRental{ "\xee\xa9\x95" };                               // U+ea55
+        constexpr static std::string_view CarRepair{ "\xee\xa9\x96" };                               // U+ea56
+        constexpr static std::string_view CarTag{ "\xef\x93\xa3" };                                  // U+f4e3
+        constexpr static std::string_view CardGiftcard{ "\xee\xa3\xb6" };                            // U+e8f6
+        constexpr static std::string_view CardMembership{ "\xee\xa3\xb7" };                          // U+e8f7
+        constexpr static std::string_view CardTravel{ "\xee\xa3\xb8" };                              // U+e8f8
+        constexpr static std::string_view Cardiology{ "\xee\x82\x9c" };                              // U+e09c
+        constexpr static std::string_view Cards{ "\xee\xa6\x91" };                                   // U+e991
+        constexpr static std::string_view Carpenter{ "\xef\x87\xb8" };                               // U+f1f8
+        constexpr static std::string_view CarryOnBag{ "\xee\xac\x88" };                              // U+eb08
+        constexpr static std::string_view CarryOnBagChecked{ "\xee\xac\x8b" };                       // U+eb0b
+        constexpr static std::string_view CarryOnBagInactive{ "\xee\xac\x8a" };                      // U+eb0a
+        constexpr static std::string_view CarryOnBagQuestion{ "\xee\xac\x89" };                      // U+eb09
+        constexpr static std::string_view Cases{ "\xee\xa6\x92" };                                   // U+e992
+        constexpr static std::string_view Casino{ "\xee\xad\x80" };                                  // U+eb40
+        constexpr static std::string_view Cast{ "\xee\x8c\x87" };                                    // U+e307
+        constexpr static std::string_view CastConnected{ "\xee\x8c\x88" };                           // U+e308
+        constexpr static std::string_view CastForEducation{ "\xee\xbf\xac" };                        // U+efec
+        constexpr static std::string_view CastPause{ "\xef\x97\xb0" };                               // U+f5f0
+        constexpr static std::string_view CastWarning{ "\xef\x97\xaf" };                             // U+f5ef
+        constexpr static std::string_view Castle{ "\xee\xaa\xb1" };                                  // U+eab1
+        constexpr static std::string_view Category{ "\xee\x95\xb4" };                                // U+e574
+        constexpr static std::string_view Celebration{ "\xee\xa9\xa5" };                             // U+ea65
+        constexpr static std::string_view CellMerge{ "\xef\xa0\xae" };                               // U+f82e
+        constexpr static std::string_view CellTower{ "\xee\xae\xba" };                               // U+ebba
+        constexpr static std::string_view CellWifi{ "\xee\x83\xac" };                                // U+e0ec
+        constexpr static std::string_view CenterFocusStrong{ "\xee\x8e\xb4" };                       // U+e3b4
+        constexpr static std::string_view CenterFocusWeak{ "\xee\x8e\xb5" };                         // U+e3b5
+        constexpr static std::string_view Chair{ "\xee\xbf\xad" };                                   // U+efed
+        constexpr static std::string_view ChairAlt{ "\xee\xbf\xae" };                                // U+efee
+        constexpr static std::string_view Chalet{ "\xee\x96\x85" };                                  // U+e585
+        constexpr static std::string_view ChangeCircle{ "\xee\x8b\xa7" };                            // U+e2e7
+        constexpr static std::string_view ChangeHistory{ "\xee\xa1\xab" };                           // U+e86b
+        constexpr static std::string_view Charger{ "\xee\x8a\xae" };                                 // U+e2ae
+        constexpr static std::string_view ChargingStation{ "\xef\x86\x9d" };                         // U+f19d
+        constexpr static std::string_view ChartData{ "\xee\x91\xb3" };                               // U+e473
+        constexpr static std::string_view Chat{ "\xee\x83\x89" };                                    // U+e0c9
+        constexpr static std::string_view ChatAddOn{ "\xef\x83\xb3" };                               // U+f0f3
+        constexpr static std::string_view ChatAppsScript{ "\xef\x82\xbd" };                          // U+f0bd
+        constexpr static std::string_view ChatBubble{ "\xee\x83\x8b" };                              // U+e0cb
+        constexpr static std::string_view ChatBubbleOutline{ "\xee\x83\x8b" };                       // U+e0cb
+        constexpr static std::string_view ChatError{ "\xef\x9e\xac" };                               // U+f7ac
+        constexpr static std::string_view ChatInfo{ "\xef\x94\xab" };                                // U+f52b
+        constexpr static std::string_view ChatPasteGo{ "\xef\x9a\xbd" };                             // U+f6bd
+        constexpr static std::string_view Check{ "\xee\x97\x8a" };                                   // U+e5ca
+        constexpr static std::string_view CheckBox{ "\xee\xa0\xb4" };                                // U+e834
+        constexpr static std::string_view CheckBoxOutlineBlank{ "\xee\xa0\xb5" };                    // U+e835
+        constexpr static std::string_view CheckCircle{ "\xef\x82\xbe" };                             // U+f0be
+        constexpr static std::string_view CheckCircleFilled{ "\xef\x82\xbe" };                       // U+f0be
+        constexpr static std::string_view CheckCircleOutline{ "\xef\x82\xbe" };                      // U+f0be
+        constexpr static std::string_view CheckInOut{ "\xef\x9b\xb6" };                              // U+f6f6
+        constexpr static std::string_view CheckIndeterminateSmall{ "\xef\xa2\x8a" };                 // U+f88a
+        constexpr static std::string_view CheckSmall{ "\xef\xa2\x8b" };                              // U+f88b
+        constexpr static std::string_view Checkbook{ "\xee\x9c\x8d" };                               // U+e70d
+        constexpr static std::string_view CheckedBag{ "\xee\xac\x8c" };                              // U+eb0c
+        constexpr static std::string_view CheckedBagQuestion{ "\xee\xac\x8d" };                      // U+eb0d
+        constexpr static std::string_view Checklist{ "\xee\x9a\xb1" };                               // U+e6b1
+        constexpr static std::string_view ChecklistRtl{ "\xee\x9a\xb3" };                            // U+e6b3
+        constexpr static std::string_view Checkroom{ "\xef\x86\x9e" };                               // U+f19e
+        constexpr static std::string_view Cheer{ "\xef\x9a\xa8" };                                   // U+f6a8
+        constexpr static std::string_view Chess{ "\xef\x97\xa7" };                                   // U+f5e7
+        constexpr static std::string_view ChevronLeft{ "\xee\x97\x8b" };                             // U+e5cb
+        constexpr static std::string_view ChevronRight{ "\xee\x97\x8c" };                            // U+e5cc
+        constexpr static std::string_view ChildCare{ "\xee\xad\x81" };                               // U+eb41
+        constexpr static std::string_view ChildFriendly{ "\xee\xad\x82" };                           // U+eb42
+        constexpr static std::string_view ChipExtraction{ "\xef\xa0\xa1" };                          // U+f821
+        constexpr static std::string_view Chips{ "\xee\xa6\x93" };                                   // U+e993
+        constexpr static std::string_view ChromeReaderMode{ "\xee\xa1\xad" };                        // U+e86d
+        constexpr static std::string_view Chromecast_2{ "\xef\x85\xbb" };                            // U+f17b
+        constexpr static std::string_view ChromecastDevice{ "\xee\xa0\xbc" };                        // U+e83c
+        constexpr static std::string_view Chronic{ "\xee\xae\xb2" };                                 // U+ebb2
+        constexpr static std::string_view Church{ "\xee\xaa\xae" };                                  // U+eaae
+        constexpr static std::string_view CinematicBlur{ "\xef\xa1\x93" };                           // U+f853
+        constexpr static std::string_view Circle{ "\xee\xbd\x8a" };                                  // U+ef4a
+        constexpr static std::string_view CircleNotifications{ "\xee\xa6\x94" };                     // U+e994
+        constexpr static std::string_view Circles{ "\xee\x9f\xaa" };                                 // U+e7ea
+        constexpr static std::string_view CirclesExt{ "\xee\x9f\xac" };                              // U+e7ec
+        constexpr static std::string_view Clarify{ "\xef\x82\xbf" };                                 // U+f0bf
+        constexpr static std::string_view Class{ "\xee\xa1\xae" };                                   // U+e86e
+        constexpr static std::string_view CleanHands{ "\xef\x88\x9f" };                              // U+f21f
+        constexpr static std::string_view Cleaning{ "\xee\xa6\x95" };                                // U+e995
+        constexpr static std::string_view CleaningBucket{ "\xef\xa2\xb4" };                          // U+f8b4
+        constexpr static std::string_view CleaningServices{ "\xef\x83\xbf" };                        // U+f0ff
+        constexpr static std::string_view Clear{ "\xee\x97\x8d" };                                   // U+e5cd
+        constexpr static std::string_view ClearAll{ "\xee\x82\xb8" };                                // U+e0b8
+        constexpr static std::string_view ClearDay{ "\xef\x85\x97" };                                // U+f157
+        constexpr static std::string_view ClearNight{ "\xef\x85\x99" };                              // U+f159
+        constexpr static std::string_view ClimateMiniSplit{ "\xef\xa2\xb5" };                        // U+f8b5
+        constexpr static std::string_view ClinicalNotes{ "\xee\x82\x9e" };                           // U+e09e
+        constexpr static std::string_view ClockLoader_10{ "\xef\x9c\xa6" };                          // U+f726
+        constexpr static std::string_view ClockLoader_20{ "\xef\x9c\xa5" };                          // U+f725
+        constexpr static std::string_view ClockLoader_40{ "\xef\x9c\xa4" };                          // U+f724
+        constexpr static std::string_view ClockLoader_60{ "\xef\x9c\xa3" };                          // U+f723
+        constexpr static std::string_view ClockLoader_80{ "\xef\x9c\xa2" };                          // U+f722
+        constexpr static std::string_view ClockLoader_90{ "\xef\x9c\xa1" };                          // U+f721
+        constexpr static std::string_view Close{ "\xee\x97\x8d" };                                   // U+e5cd
+        constexpr static std::string_view CloseFullscreen{ "\xef\x87\x8f" };                         // U+f1cf
+        constexpr static std::string_view CloseSmall{ "\xef\x94\x88" };                              // U+f508
+        constexpr static std::string_view ClosedCaption{ "\xee\xa6\x96" };                           // U+e996
+        constexpr static std::string_view ClosedCaptionDisabled{ "\xef\x87\x9c" };                   // U+f1dc
+        constexpr static std::string_view ClosedCaptionOff{ "\xee\xa6\x96" };                        // U+e996
+        constexpr static std::string_view Cloud{ "\xef\x85\x9c" };                                   // U+f15c
+        constexpr static std::string_view CloudCircle{ "\xee\x8a\xbe" };                             // U+e2be
+        constexpr static std::string_view CloudDone{ "\xee\x8a\xbf" };                               // U+e2bf
+        constexpr static std::string_view CloudDownload{ "\xee\x8b\x80" };                           // U+e2c0
+        constexpr static std::string_view CloudOff{ "\xee\x8b\x81" };                                // U+e2c1
+        constexpr static std::string_view CloudQueue{ "\xef\x85\x9c" };                              // U+f15c
+        constexpr static std::string_view CloudSync{ "\xee\xad\x9a" };                               // U+eb5a
+        constexpr static std::string_view CloudUpload{ "\xee\x8b\x83" };                             // U+e2c3
+        constexpr static std::string_view Cloudy{ "\xef\x85\x9c" };                                  // U+f15c
+        constexpr static std::string_view CloudyFilled{ "\xef\x85\x9c" };                            // U+f15c
+        constexpr static std::string_view CloudySnowing{ "\xee\xa0\x90" };                           // U+e810
+        constexpr static std::string_view Co2{ "\xee\x9e\xb0" };                                     // U+e7b0
+        constexpr static std::string_view CoPresent{ "\xee\xab\xb0" };                               // U+eaf0
+        constexpr static std::string_view Code{ "\xee\xa1\xaf" };                                    // U+e86f
+        constexpr static std::string_view CodeBlocks{ "\xef\xa1\x8d" };                              // U+f84d
+        constexpr static std::string_view CodeOff{ "\xee\x93\xb3" };                                 // U+e4f3
+        constexpr static std::string_view Coffee{ "\xee\xbf\xaf" };                                  // U+efef
+        constexpr static std::string_view CoffeeMaker{ "\xee\xbf\xb0" };                             // U+eff0
+        constexpr static std::string_view Cognition{ "\xee\x82\x9f" };                               // U+e09f
+        constexpr static std::string_view CollapseAll{ "\xee\xa5\x84" };                             // U+e944
+        constexpr static std::string_view CollapseContent{ "\xef\x94\x87" };                         // U+f507
+        constexpr static std::string_view Collections{ "\xee\x8f\x93" };                             // U+e3d3
+        constexpr static std::string_view CollectionsBookmark{ "\xee\x90\xb1" };                     // U+e431
+        constexpr static std::string_view ColorLens{ "\xee\x90\x8a" };                               // U+e40a
+        constexpr static std::string_view Colorize{ "\xee\x8e\xb8" };                                // U+e3b8
+        constexpr static std::string_view Colors{ "\xee\xa6\x97" };                                  // U+e997
+        constexpr static std::string_view ComedyMask{ "\xef\x93\x96" };                              // U+f4d6
+        constexpr static std::string_view ComicBubble{ "\xef\x97\x9d" };                             // U+f5dd
+        constexpr static std::string_view Comment{ "\xee\x89\x8c" };                                 // U+e24c
+        constexpr static std::string_view CommentBank{ "\xee\xa9\x8e" };                             // U+ea4e
+        constexpr static std::string_view CommentsDisabled{ "\xee\x9e\xa2" };                        // U+e7a2
+        constexpr static std::string_view Commit{ "\xee\xab\xb5" };                                  // U+eaf5
+        constexpr static std::string_view Communication{ "\xee\x89\xbc" };                           // U+e27c
+        constexpr static std::string_view Communities{ "\xee\xac\x96" };                             // U+eb16
+        constexpr static std::string_view CommunitiesFilled{ "\xee\xac\x96" };                       // U+eb16
+        constexpr static std::string_view Commute{ "\xee\xa5\x80" };                                 // U+e940
+        constexpr static std::string_view Compare{ "\xee\x8e\xb9" };                                 // U+e3b9
+        constexpr static std::string_view CompareArrows{ "\xee\xa4\x95" };                           // U+e915
+        constexpr static std::string_view CompassCalibration{ "\xee\x95\xbc" };                      // U+e57c
+        constexpr static std::string_view ComponentExchange{ "\xef\x87\xa7" };                       // U+f1e7
+        constexpr static std::string_view Compost{ "\xee\x9d\xa1" };                                 // U+e761
+        constexpr static std::string_view Compress{ "\xee\xa5\x8d" };                                // U+e94d
+        constexpr static std::string_view Computer{ "\xee\x8c\x9e" };                                // U+e31e
+        constexpr static std::string_view Concierge{ "\xef\x95\xa1" };                               // U+f561
+        constexpr static std::string_view Conditions{ "\xee\x82\xa0" };                              // U+e0a0
+        constexpr static std::string_view ConfirmationNumber{ "\xee\x98\xb8" };                      // U+e638
+        constexpr static std::string_view Congenital{ "\xee\x82\xa1" };                              // U+e0a1
+        constexpr static std::string_view ConnectWithoutContact{ "\xef\x88\xa3" };                   // U+f223
+        constexpr static std::string_view ConnectedTv{ "\xee\xa6\x98" };                             // U+e998
+        constexpr static std::string_view ConnectingAirports{ "\xee\x9f\x89" };                      // U+e7c9
+        constexpr static std::string_view Construction{ "\xee\xa8\xbc" };                            // U+ea3c
+        constexpr static std::string_view ContactEmergency{ "\xef\xa3\x91" };                        // U+f8d1
+        constexpr static std::string_view ContactMail{ "\xee\x83\x90" };                             // U+e0d0
+        constexpr static std::string_view ContactPage{ "\xef\x88\xae" };                             // U+f22e
+        constexpr static std::string_view ContactPhone{ "\xef\x83\x80" };                            // U+f0c0
+        constexpr static std::string_view ContactPhoneFilled{ "\xef\x83\x80" };                      // U+f0c0
+        constexpr static std::string_view ContactSupport{ "\xee\xa5\x8c" };                          // U+e94c
+        constexpr static std::string_view Contactless{ "\xee\xa9\xb1" };                             // U+ea71
+        constexpr static std::string_view ContactlessOff{ "\xef\xa1\x98" };                          // U+f858
+        constexpr static std::string_view Contacts{ "\xee\x82\xba" };                                // U+e0ba
+        constexpr static std::string_view ContactsProduct{ "\xee\xa6\x99" };                         // U+e999
+        constexpr static std::string_view ContentCopy{ "\xee\x85\x8d" };                             // U+e14d
+        constexpr static std::string_view ContentCut{ "\xee\x85\x8e" };                              // U+e14e
+        constexpr static std::string_view ContentPaste{ "\xee\x85\x8f" };                            // U+e14f
+        constexpr static std::string_view ContentPasteGo{ "\xee\xaa\x8e" };                          // U+ea8e
+        constexpr static std::string_view ContentPasteOff{ "\xee\x93\xb8" };                         // U+e4f8
+        constexpr static std::string_view ContentPasteSearch{ "\xee\xaa\x9b" };                      // U+ea9b
+        constexpr static std::string_view Contract{ "\xef\x96\xa0" };                                // U+f5a0
+        constexpr static std::string_view ContractDelete{ "\xef\x96\xa2" };                          // U+f5a2
+        constexpr static std::string_view ContractEdit{ "\xef\x96\xa1" };                            // U+f5a1
+        constexpr static std::string_view Contrast{ "\xee\xac\xb7" };                                // U+eb37
+        constexpr static std::string_view ContrastRtlOff{ "\xee\xb1\xb2" };                          // U+ec72
+        constexpr static std::string_view ControlCamera{ "\xee\x81\xb4" };                           // U+e074
+        constexpr static std::string_view ControlPoint{ "\xee\x8e\xba" };                            // U+e3ba
+        constexpr static std::string_view ControlPointDuplicate{ "\xee\x8e\xbb" };                   // U+e3bb
+        constexpr static std::string_view ControllerGen{ "\xee\xa0\xbd" };                           // U+e83d
+        constexpr static std::string_view ConversionPath{ "\xef\x83\x81" };                          // U+f0c1
+        constexpr static std::string_view ConversionPathOff{ "\xef\x9e\xb4" };                       // U+f7b4
+        constexpr static std::string_view ConveyorBelt{ "\xef\xa1\xa7" };                            // U+f867
+        constexpr static std::string_view Cookie{ "\xee\xaa\xac" };                                  // U+eaac
+        constexpr static std::string_view CookieOff{ "\xef\x9e\x9a" };                               // U+f79a
+        constexpr static std::string_view Cooking{ "\xee\x8a\xb6" };                                 // U+e2b6
+        constexpr static std::string_view CoolToDry{ "\xee\x89\xb6" };                               // U+e276
+        constexpr static std::string_view CopyAll{ "\xee\x8b\xac" };                                 // U+e2ec
+        constexpr static std::string_view Copyright{ "\xee\xa4\x8c" };                               // U+e90c
+        constexpr static std::string_view Coronavirus{ "\xef\x88\xa1" };                             // U+f221
+        constexpr static std::string_view CorporateFare{ "\xef\x87\x90" };                           // U+f1d0
+        constexpr static std::string_view Cottage{ "\xee\x96\x87" };                                 // U+e587
+        constexpr static std::string_view Counter_0{ "\xef\x9e\x85" };                               // U+f785
+        constexpr static std::string_view Counter_1{ "\xef\x9e\x84" };                               // U+f784
+        constexpr static std::string_view Counter_2{ "\xef\x9e\x83" };                               // U+f783
+        constexpr static std::string_view Counter_3{ "\xef\x9e\x82" };                               // U+f782
+        constexpr static std::string_view Counter_4{ "\xef\x9e\x81" };                               // U+f781
+        constexpr static std::string_view Counter_5{ "\xef\x9e\x80" };                               // U+f780
+        constexpr static std::string_view Counter_6{ "\xef\x9d\xbf" };                               // U+f77f
+        constexpr static std::string_view Counter_7{ "\xef\x9d\xbe" };                               // U+f77e
+        constexpr static std::string_view Counter_8{ "\xef\x9d\xbd" };                               // U+f77d
+        constexpr static std::string_view Counter_9{ "\xef\x9d\xbc" };                               // U+f77c
+        constexpr static std::string_view Countertops{ "\xef\x87\xb7" };                             // U+f1f7
+        constexpr static std::string_view Create{ "\xef\x82\x97" };                                  // U+f097
+        constexpr static std::string_view CreateNewFolder{ "\xee\x8b\x8c" };                         // U+e2cc
+        constexpr static std::string_view CreditCard{ "\xee\xa2\xa1" };                              // U+e8a1
+        constexpr static std::string_view CreditCardGear{ "\xef\x94\xad" };                          // U+f52d
+        constexpr static std::string_view CreditCardHeart{ "\xef\x94\xac" };                         // U+f52c
+        constexpr static std::string_view CreditCardOff{ "\xee\x93\xb4" };                           // U+e4f4
+        constexpr static std::string_view CreditScore{ "\xee\xbf\xb1" };                             // U+eff1
+        constexpr static std::string_view Crib{ "\xee\x96\x88" };                                    // U+e588
+        constexpr static std::string_view CrisisAlert{ "\xee\xaf\xa9" };                             // U+ebe9
+        constexpr static std::string_view Crop{ "\xee\x8e\xbe" };                                    // U+e3be
+        constexpr static std::string_view Crop_16_9{ "\xee\x8e\xbc" };                               // U+e3bc
+        constexpr static std::string_view Crop_3_2{ "\xee\x8e\xbd" };                                // U+e3bd
+        constexpr static std::string_view Crop_5_4{ "\xee\x8e\xbf" };                                // U+e3bf
+        constexpr static std::string_view Crop_7_5{ "\xee\x8f\x80" };                                // U+e3c0
+        constexpr static std::string_view Crop_9_16{ "\xef\x95\x89" };                               // U+f549
+        constexpr static std::string_view CropDin{ "\xee\x8f\x86" };                                 // U+e3c6
+        constexpr static std::string_view CropFree{ "\xee\x8f\x82" };                                // U+e3c2
+        constexpr static std::string_view CropLandscape{ "\xee\x8f\x83" };                           // U+e3c3
+        constexpr static std::string_view CropOriginal{ "\xee\x8f\xb4" };                            // U+e3f4
+        constexpr static std::string_view CropPortrait{ "\xee\x8f\x85" };                            // U+e3c5
+        constexpr static std::string_view CropRotate{ "\xee\x90\xb7" };                              // U+e437
+        constexpr static std::string_view CropSquare{ "\xee\x8f\x86" };                              // U+e3c6
+        constexpr static std::string_view Crossword{ "\xef\x97\xa5" };                               // U+f5e5
+        constexpr static std::string_view Crowdsource{ "\xee\xac\x98" };                             // U+eb18
+        constexpr static std::string_view CrueltyFree{ "\xee\x9e\x99" };                             // U+e799
+        constexpr static std::string_view Css{ "\xee\xae\x93" };                                     // U+eb93
+        constexpr static std::string_view Csv{ "\xee\x9b\x8f" };                                     // U+e6cf
+        constexpr static std::string_view CurrencyBitcoin{ "\xee\xaf\x85" };                         // U+ebc5
+        constexpr static std::string_view CurrencyExchange{ "\xee\xad\xb0" };                        // U+eb70
+        constexpr static std::string_view CurrencyFranc{ "\xee\xab\xba" };                           // U+eafa
+        constexpr static std::string_view CurrencyLira{ "\xee\xab\xaf" };                            // U+eaef
+        constexpr static std::string_view CurrencyPound{ "\xee\xab\xb1" };                           // U+eaf1
+        constexpr static std::string_view CurrencyRuble{ "\xee\xab\xac" };                           // U+eaec
+        constexpr static std::string_view CurrencyRupee{ "\xee\xab\xb7" };                           // U+eaf7
+        constexpr static std::string_view CurrencyYen{ "\xee\xab\xbb" };                             // U+eafb
+        constexpr static std::string_view CurrencyYuan{ "\xee\xab\xb9" };                            // U+eaf9
+        constexpr static std::string_view Curtains{ "\xee\xb0\x9e" };                                // U+ec1e
+        constexpr static std::string_view CurtainsClosed{ "\xee\xb0\x9d" };                          // U+ec1d
+        constexpr static std::string_view CustomTypography{ "\xee\x9c\xb2" };                        // U+e732
+        constexpr static std::string_view Cut{ "\xef\x82\x8b" };                                     // U+f08b
+        constexpr static std::string_view Cycle{ "\xef\xa1\x94" };                                   // U+f854
+        constexpr static std::string_view Cyclone{ "\xee\xaf\x95" };                                 // U+ebd5
+        constexpr static std::string_view Dangerous{ "\xee\xa6\x9a" };                               // U+e99a
+        constexpr static std::string_view DarkMode{ "\xee\x94\x9c" };                                // U+e51c
+        constexpr static std::string_view Dashboard{ "\xee\xa1\xb1" };                               // U+e871
+        constexpr static std::string_view DashboardCustomize{ "\xee\xa6\x9b" };                      // U+e99b
+        constexpr static std::string_view DataAlert{ "\xef\x9f\xb6" };                               // U+f7f6
+        constexpr static std::string_view DataArray{ "\xee\xab\x91" };                               // U+ead1
+        constexpr static std::string_view DataCheck{ "\xef\x9f\xb2" };                               // U+f7f2
+        constexpr static std::string_view DataExploration{ "\xee\x9d\xaf" };                         // U+e76f
+        constexpr static std::string_view DataInfoAlert{ "\xef\x9f\xb5" };                           // U+f7f5
+        constexpr static std::string_view DataLossPrevention{ "\xee\x8b\x9c" };                      // U+e2dc
+        constexpr static std::string_view DataObject{ "\xee\xab\x93" };                              // U+ead3
+        constexpr static std::string_view DataSaverOff{ "\xee\xbf\xb2" };                            // U+eff2
+        constexpr static std::string_view DataSaverOn{ "\xee\xbf\xb3" };                             // U+eff3
+        constexpr static std::string_view DataTable{ "\xee\xa6\x9c" };                               // U+e99c
+        constexpr static std::string_view DataThresholding{ "\xee\xae\x9f" };                        // U+eb9f
+        constexpr static std::string_view DataUsage{ "\xee\xbf\xb2" };                               // U+eff2
+        constexpr static std::string_view Database{ "\xef\x88\x8e" };                                // U+f20e
+        constexpr static std::string_view Dataset{ "\xef\xa3\xae" };                                 // U+f8ee
+        constexpr static std::string_view DatasetLinked{ "\xef\xa3\xaf" };                           // U+f8ef
+        constexpr static std::string_view DateRange{ "\xee\xa4\x96" };                               // U+e916
+        constexpr static std::string_view Deblur{ "\xee\xad\xb7" };                                  // U+eb77
+        constexpr static std::string_view Deceased{ "\xee\x82\xa5" };                                // U+e0a5
+        constexpr static std::string_view DecimalDecrease{ "\xef\xa0\xad" };                         // U+f82d
+        constexpr static std::string_view DecimalIncrease{ "\xef\xa0\xac" };                         // U+f82c
+        constexpr static std::string_view Deck{ "\xee\xa9\x82" };                                    // U+ea42
+        constexpr static std::string_view Dehaze{ "\xee\x8f\x87" };                                  // U+e3c7
+        constexpr static std::string_view Delete{ "\xee\xa4\xae" };                                  // U+e92e
+        constexpr static std::string_view DeleteForever{ "\xee\xa4\xab" };                           // U+e92b
+        constexpr static std::string_view DeleteHistory{ "\xef\x94\x98" };                           // U+f518
+        constexpr static std::string_view DeleteOutline{ "\xee\xa4\xae" };                           // U+e92e
+        constexpr static std::string_view DeleteSweep{ "\xee\x85\xac" };                             // U+e16c
+        constexpr static std::string_view Demography{ "\xee\x92\x89" };                              // U+e489
+        constexpr static std::string_view DensityLarge{ "\xee\xae\xa9" };                            // U+eba9
+        constexpr static std::string_view DensityMedium{ "\xee\xae\x9e" };                           // U+eb9e
+        constexpr static std::string_view DensitySmall{ "\xee\xae\xa8" };                            // U+eba8
+        constexpr static std::string_view Dentistry{ "\xee\x82\xa6" };                               // U+e0a6
+        constexpr static std::string_view DepartureBoard{ "\xee\x95\xb6" };                          // U+e576
+        constexpr static std::string_view DeployedCode{ "\xef\x9c\xa0" };                            // U+f720
+        constexpr static std::string_view DeployedCodeAccount{ "\xef\x94\x9b" };                     // U+f51b
+        constexpr static std::string_view DeployedCodeAlert{ "\xef\x97\xb2" };                       // U+f5f2
+        constexpr static std::string_view DeployedCodeHistory{ "\xef\x97\xb3" };                     // U+f5f3
+        constexpr static std::string_view DeployedCodeUpdate{ "\xef\x97\xb4" };                      // U+f5f4
+        constexpr static std::string_view Dermatology{ "\xee\x82\xa7" };                             // U+e0a7
+        constexpr static std::string_view Description{ "\xee\xa1\xb3" };                             // U+e873
+        constexpr static std::string_view Deselect{ "\xee\xae\xb6" };                                // U+ebb6
+        constexpr static std::string_view DesignServices{ "\xef\x84\x8a" };                          // U+f10a
+        constexpr static std::string_view Desk{ "\xef\xa3\xb4" };                                    // U+f8f4
+        constexpr static std::string_view Deskphone{ "\xef\x9f\xba" };                               // U+f7fa
+        constexpr static std::string_view DesktopAccessDisabled{ "\xee\xa6\x9d" };                   // U+e99d
+        constexpr static std::string_view DesktopMac{ "\xee\x8c\x8b" };                              // U+e30b
+        constexpr static std::string_view DesktopWindows{ "\xee\x8c\x8c" };                          // U+e30c
+        constexpr static std::string_view Destruction{ "\xef\x96\x85" };                             // U+f585
+        constexpr static std::string_view Details{ "\xee\x8f\x88" };                                 // U+e3c8
+        constexpr static std::string_view DetectionAndZone{ "\xee\x8a\x9f" };                        // U+e29f
+        constexpr static std::string_view Detector{ "\xee\x8a\x82" };                                // U+e282
+        constexpr static std::string_view DetectorAlarm{ "\xee\x87\xb7" };                           // U+e1f7
+        constexpr static std::string_view DetectorBattery{ "\xee\x88\x84" };                         // U+e204
+        constexpr static std::string_view DetectorCo{ "\xee\x8a\xaf" };                              // U+e2af
+        constexpr static std::string_view DetectorOffline{ "\xee\x88\xa3" };                         // U+e223
+        constexpr static std::string_view DetectorSmoke{ "\xee\x8a\x85" };                           // U+e285
+        constexpr static std::string_view DetectorStatus{ "\xee\x87\xa8" };                          // U+e1e8
+        constexpr static std::string_view DeveloperBoard{ "\xee\x8c\x8d" };                          // U+e30d
+        constexpr static std::string_view DeveloperBoardOff{ "\xee\x93\xbf" };                       // U+e4ff
+        constexpr static std::string_view DeveloperGuide{ "\xee\xa6\x9e" };                          // U+e99e
+        constexpr static std::string_view DeveloperMode{ "\xee\x86\xb0" };                           // U+e1b0
+        constexpr static std::string_view DeveloperModeTv{ "\xee\xa1\xb4" };                         // U+e874
+        constexpr static std::string_view DeviceHub{ "\xee\x8c\xb5" };                               // U+e335
+        constexpr static std::string_view DeviceReset{ "\xee\xa2\xb3" };                             // U+e8b3
+        constexpr static std::string_view DeviceThermostat{ "\xee\x87\xbf" };                        // U+e1ff
+        constexpr static std::string_view DeviceUnknown{ "\xee\x8c\xb9" };                           // U+e339
+        constexpr static std::string_view Devices{ "\xee\x8c\xa6" };                                 // U+e326
+        constexpr static std::string_view DevicesFold{ "\xee\xaf\x9e" };                             // U+ebde
+        constexpr static std::string_view DevicesOff{ "\xef\x9e\xa5" };                              // U+f7a5
+        constexpr static std::string_view DevicesOther{ "\xee\x8c\xb7" };                            // U+e337
+        constexpr static std::string_view DevicesWearables{ "\xef\x9a\xab" };                        // U+f6ab
+        constexpr static std::string_view DewPoint{ "\xef\xa1\xb9" };                                // U+f879
+        constexpr static std::string_view Diagnosis{ "\xee\x82\xa8" };                               // U+e0a8
+        constexpr static std::string_view DialerSip{ "\xee\x82\xbb" };                               // U+e0bb
+        constexpr static std::string_view Dialogs{ "\xee\xa6\x9f" };                                 // U+e99f
+        constexpr static std::string_view Dialpad{ "\xee\x82\xbc" };                                 // U+e0bc
+        constexpr static std::string_view Diamond{ "\xee\xab\x95" };                                 // U+ead5
+        constexpr static std::string_view Dictionary{ "\xef\x94\xb9" };                              // U+f539
+        constexpr static std::string_view Difference{ "\xee\xad\xbd" };                              // U+eb7d
+        constexpr static std::string_view DigitalOutOfHome{ "\xef\x87\x9e" };                        // U+f1de
+        constexpr static std::string_view DigitalWellbeing{ "\xee\xbe\x86" };                        // U+ef86
+        constexpr static std::string_view Dining{ "\xee\xbf\xb4" };                                  // U+eff4
+        constexpr static std::string_view DinnerDining{ "\xee\xa9\x97" };                            // U+ea57
+        constexpr static std::string_view Directions{ "\xee\x94\xae" };                              // U+e52e
+        constexpr static std::string_view DirectionsAlt{ "\xef\xa2\x80" };                           // U+f880
+        constexpr static std::string_view DirectionsAltOff{ "\xef\xa2\x81" };                        // U+f881
+        constexpr static std::string_view DirectionsBike{ "\xee\x94\xaf" };                          // U+e52f
+        constexpr static std::string_view DirectionsBoat{ "\xee\xbf\xb5" };                          // U+eff5
+        constexpr static std::string_view DirectionsBoatFilled{ "\xee\xbf\xb5" };                    // U+eff5
+        constexpr static std::string_view DirectionsBus{ "\xee\xbf\xb6" };                           // U+eff6
+        constexpr static std::string_view DirectionsBusFilled{ "\xee\xbf\xb6" };                     // U+eff6
+        constexpr static std::string_view DirectionsCar{ "\xee\xbf\xb7" };                           // U+eff7
+        constexpr static std::string_view DirectionsCarFilled{ "\xee\xbf\xb7" };                     // U+eff7
+        constexpr static std::string_view DirectionsOff{ "\xef\x84\x8f" };                           // U+f10f
+        constexpr static std::string_view DirectionsRailway{ "\xee\xbf\xb8" };                       // U+eff8
+        constexpr static std::string_view DirectionsRailwayFilled{ "\xee\xbf\xb8" };                 // U+eff8
+        constexpr static std::string_view DirectionsRun{ "\xee\x95\xa6" };                           // U+e566
+        constexpr static std::string_view DirectionsSubway{ "\xee\xbf\xba" };                        // U+effa
+        constexpr static std::string_view DirectionsSubwayFilled{ "\xee\xbf\xba" };                  // U+effa
+        constexpr static std::string_view DirectionsTransit{ "\xee\xbf\xba" };                       // U+effa
+        constexpr static std::string_view DirectionsTransitFilled{ "\xee\xbf\xba" };                 // U+effa
+        constexpr static std::string_view DirectionsWalk{ "\xee\x94\xb6" };                          // U+e536
+        constexpr static std::string_view DirectorySync{ "\xee\x8e\x94" };                           // U+e394
+        constexpr static std::string_view DirtyLens{ "\xee\xbd\x8b" };                               // U+ef4b
+        constexpr static std::string_view DisabledByDefault{ "\xef\x88\xb0" };                       // U+f230
+        constexpr static std::string_view DisabledVisible{ "\xee\x9d\xae" };                         // U+e76e
+        constexpr static std::string_view DiscFull{ "\xee\x98\x90" };                                // U+e610
+        constexpr static std::string_view DiscoverTune{ "\xee\x80\x98" };                            // U+e018
+        constexpr static std::string_view Dishwasher{ "\xee\xa6\xa0" };                              // U+e9a0
+        constexpr static std::string_view DishwasherGen{ "\xee\xa0\xb2" };                           // U+e832
+        constexpr static std::string_view DisplayExternalInput{ "\xef\x9f\xa7" };                    // U+f7e7
+        constexpr static std::string_view DisplaySettings{ "\xee\xae\x97" };                         // U+eb97
+        constexpr static std::string_view Distance{ "\xef\x9b\xaa" };                                // U+f6ea
+        constexpr static std::string_view Diversity_1{ "\xef\xa3\x97" };                             // U+f8d7
+        constexpr static std::string_view Diversity_2{ "\xef\xa3\x98" };                             // U+f8d8
+        constexpr static std::string_view Diversity_3{ "\xef\xa3\x99" };                             // U+f8d9
+        constexpr static std::string_view Diversity_4{ "\xef\xa1\x97" };                             // U+f857
+        constexpr static std::string_view Dns{ "\xee\xa1\xb5" };                                     // U+e875
+        constexpr static std::string_view DoDisturb{ "\xef\x82\x8c" };                               // U+f08c
+        constexpr static std::string_view DoDisturbAlt{ "\xef\x82\x8d" };                            // U+f08d
+        constexpr static std::string_view DoDisturbOff{ "\xef\x82\x8e" };                            // U+f08e
+        constexpr static std::string_view DoDisturbOn{ "\xef\x82\x8f" };                             // U+f08f
+        constexpr static std::string_view DoNotDisturb{ "\xef\x82\x8d" };                            // U+f08d
+        constexpr static std::string_view DoNotDisturbAlt{ "\xef\x82\x8c" };                         // U+f08c
+        constexpr static std::string_view DoNotDisturbOff{ "\xef\x82\x8e" };                         // U+f08e
+        constexpr static std::string_view DoNotDisturbOn{ "\xef\x82\x8f" };                          // U+f08f
+        constexpr static std::string_view DoNotDisturbOnTotalSilence{ "\xee\xbf\xbb" };              // U+effb
+        constexpr static std::string_view DoNotStep{ "\xef\x86\x9f" };                               // U+f19f
+        constexpr static std::string_view DoNotTouch{ "\xef\x86\xb0" };                              // U+f1b0
+        constexpr static std::string_view Dock{ "\xee\x8c\x8e" };                                    // U+e30e
+        constexpr static std::string_view DockToBottom{ "\xef\x9f\xa6" };                            // U+f7e6
+        constexpr static std::string_view DockToLeft{ "\xef\x9f\xa5" };                              // U+f7e5
+        constexpr static std::string_view DockToRight{ "\xef\x9f\xa4" };                             // U+f7e4
+        constexpr static std::string_view DocsAddOn{ "\xef\x83\x82" };                               // U+f0c2
+        constexpr static std::string_view DocsAppsScript{ "\xef\x83\x83" };                          // U+f0c3
+        constexpr static std::string_view DocumentScanner{ "\xee\x97\xba" };                         // U+e5fa
+        constexpr static std::string_view Domain{ "\xee\x9f\xae" };                                  // U+e7ee
+        constexpr static std::string_view DomainAdd{ "\xee\xad\xa2" };                               // U+eb62
+        constexpr static std::string_view DomainDisabled{ "\xee\x83\xaf" };                          // U+e0ef
+        constexpr static std::string_view DomainVerification{ "\xee\xbd\x8c" };                      // U+ef4c
+        constexpr static std::string_view DomainVerificationOff{ "\xef\x9e\xb0" };                   // U+f7b0
+        constexpr static std::string_view DominoMask{ "\xef\x97\xa4" };                              // U+f5e4
+        constexpr static std::string_view Done{ "\xee\xa1\xb6" };                                    // U+e876
+        constexpr static std::string_view DoneAll{ "\xee\xa1\xb7" };                                 // U+e877
+        constexpr static std::string_view DoneOutline{ "\xee\xa4\xaf" };                             // U+e92f
+        constexpr static std::string_view DonutLarge{ "\xee\xa4\x97" };                              // U+e917
+        constexpr static std::string_view DonutSmall{ "\xee\xa4\x98" };                              // U+e918
+        constexpr static std::string_view DoorBack{ "\xee\xbf\xbc" };                                // U+effc
+        constexpr static std::string_view DoorFront{ "\xee\xbf\xbd" };                               // U+effd
+        constexpr static std::string_view DoorOpen{ "\xee\x9d\xbc" };                                // U+e77c
+        constexpr static std::string_view DoorSensor{ "\xee\x8a\x8a" };                              // U+e28a
+        constexpr static std::string_view DoorSliding{ "\xee\xbf\xbe" };                             // U+effe
+        constexpr static std::string_view Doorbell{ "\xee\xbf\xbf" };                                // U+efff
+        constexpr static std::string_view Doorbell_3p{ "\xee\x87\xa7" };                             // U+e1e7
+        constexpr static std::string_view DoorbellChime{ "\xee\x87\xb3" };                           // U+e1f3
+        constexpr static std::string_view DoubleArrow{ "\xee\xa9\x90" };                             // U+ea50
+        constexpr static std::string_view DownhillSkiing{ "\xee\x94\x89" };                          // U+e509
+        constexpr static std::string_view Download{ "\xef\x82\x90" };                                // U+f090
+        constexpr static std::string_view Download_2{ "\xef\x94\xa3" };                              // U+f523
+        constexpr static std::string_view DownloadDone{ "\xef\x82\x91" };                            // U+f091
+        constexpr static std::string_view DownloadForOffline{ "\xef\x80\x80" };                      // U+f000
+        constexpr static std::string_view Downloading{ "\xef\x80\x81" };                             // U+f001
+        constexpr static std::string_view Draft{ "\xee\x99\xad" };                                   // U+e66d
+        constexpr static std::string_view DraftOrders{ "\xee\x9e\xb3" };                             // U+e7b3
+        constexpr static std::string_view Drafts{ "\xee\x85\x91" };                                  // U+e151
+        constexpr static std::string_view DragClick{ "\xef\x9c\x9f" };                               // U+f71f
+        constexpr static std::string_view DragHandle{ "\xee\x89\x9d" };                              // U+e25d
+        constexpr static std::string_view DragIndicator{ "\xee\xa5\x85" };                           // U+e945
+        constexpr static std::string_view DragPan{ "\xef\x9c\x9e" };                                 // U+f71e
+        constexpr static std::string_view Draw{ "\xee\x9d\x86" };                                    // U+e746
+        constexpr static std::string_view DrawAbstract{ "\xef\x9f\xb8" };                            // U+f7f8
+        constexpr static std::string_view DrawCollage{ "\xef\x9f\xb7" };                             // U+f7f7
+        constexpr static std::string_view DrawingRecognition{ "\xee\xac\x80" };                      // U+eb00
+        constexpr static std::string_view Dresser{ "\xee\x88\x90" };                                 // U+e210
+        constexpr static std::string_view DriveEta{ "\xee\xbf\xb7" };                                // U+eff7
+        constexpr static std::string_view DriveFileMove{ "\xee\xa6\xa1" };                           // U+e9a1
+        constexpr static std::string_view DriveFileMoveOutline{ "\xee\xa6\xa1" };                    // U+e9a1
+        constexpr static std::string_view DriveFileMoveRtl{ "\xee\xa6\xa1" };                        // U+e9a1
+        constexpr static std::string_view DriveFileRenameOutline{ "\xee\xa6\xa2" };                  // U+e9a2
+        constexpr static std::string_view DriveFolderUpload{ "\xee\xa6\xa3" };                       // U+e9a3
+        constexpr static std::string_view DriveFusiontable{ "\xee\x99\xb8" };                        // U+e678
+        constexpr static std::string_view Dropdown{ "\xee\xa6\xa4" };                                // U+e9a4
+        constexpr static std::string_view Dry{ "\xef\x86\xb3" };                                     // U+f1b3
+        constexpr static std::string_view DryCleaning{ "\xee\xa9\x98" };                             // U+ea58
+        constexpr static std::string_view DualScreen{ "\xef\x9b\x8f" };                              // U+f6cf
+        constexpr static std::string_view Duo{ "\xee\xa6\xa5" };                                     // U+e9a5
+        constexpr static std::string_view Dvr{ "\xee\x86\xb2" };                                     // U+e1b2
+        constexpr static std::string_view DynamicFeed{ "\xee\xa8\x94" };                             // U+ea14
+        constexpr static std::string_view DynamicForm{ "\xef\x86\xbf" };                             // U+f1bf
+        constexpr static std::string_view E911Avatar{ "\xef\x84\x9a" };                              // U+f11a
+        constexpr static std::string_view E911Emergency{ "\xef\x84\x99" };                           // U+f119
+        constexpr static std::string_view EMobiledata{ "\xef\x80\x82" };                             // U+f002
+        constexpr static std::string_view EMobiledataBadge{ "\xef\x9f\xa3" };                        // U+f7e3
+        constexpr static std::string_view Earbuds{ "\xef\x80\x83" };                                 // U+f003
+        constexpr static std::string_view EarbudsBattery{ "\xef\x80\x84" };                          // U+f004
+        constexpr static std::string_view EarlyOn{ "\xee\x8a\xba" };                                 // U+e2ba
+        constexpr static std::string_view Earthquake{ "\xef\x99\x8f" };                              // U+f64f
+        constexpr static std::string_view East{ "\xef\x87\x9f" };                                    // U+f1df
+        constexpr static std::string_view Ecg{ "\xef\xa0\x8f" };                                     // U+f80f
+        constexpr static std::string_view EcgHeart{ "\xef\x9b\xa9" };                                // U+f6e9
+        constexpr static std::string_view Eco{ "\xee\xa8\xb5" };                                     // U+ea35
+        constexpr static std::string_view Eda{ "\xef\x9b\xa8" };                                     // U+f6e8
+        constexpr static std::string_view EdgesensorHigh{ "\xef\x80\x85" };                          // U+f005
+        constexpr static std::string_view EdgesensorLow{ "\xef\x80\x86" };                           // U+f006
+        constexpr static std::string_view Edit{ "\xef\x82\x97" };                                    // U+f097
+        constexpr static std::string_view EditAttributes{ "\xee\x95\xb8" };                          // U+e578
+        constexpr static std::string_view EditCalendar{ "\xee\x9d\x82" };                            // U+e742
+        constexpr static std::string_view EditDocument{ "\xef\xa2\x8c" };                            // U+f88c
+        constexpr static std::string_view EditLocation{ "\xee\x95\xa8" };                            // U+e568
+        constexpr static std::string_view EditLocationAlt{ "\xee\x87\x85" };                         // U+e1c5
+        constexpr static std::string_view EditNote{ "\xee\x9d\x85" };                                // U+e745
+        constexpr static std::string_view EditNotifications{ "\xee\x94\xa5" };                       // U+e525
+        constexpr static std::string_view EditOff{ "\xee\xa5\x90" };                                 // U+e950
+        constexpr static std::string_view EditRoad{ "\xee\xbd\x8d" };                                // U+ef4d
+        constexpr static std::string_view EditSquare{ "\xef\xa2\x8d" };                              // U+f88d
+        constexpr static std::string_view EditorChoice{ "\xef\x94\xa8" };                            // U+f528
+        constexpr static std::string_view Egg{ "\xee\xab\x8c" };                                     // U+eacc
+        constexpr static std::string_view EggAlt{ "\xee\xab\x88" };                                  // U+eac8
+        constexpr static std::string_view Eject{ "\xee\xa3\xbb" };                                   // U+e8fb
+        constexpr static std::string_view Elderly{ "\xef\x88\x9a" };                                 // U+f21a
+        constexpr static std::string_view ElderlyWoman{ "\xee\xad\xa9" };                            // U+eb69
+        constexpr static std::string_view ElectricBike{ "\xee\xac\x9b" };                            // U+eb1b
+        constexpr static std::string_view ElectricBolt{ "\xee\xb0\x9c" };                            // U+ec1c
+        constexpr static std::string_view ElectricCar{ "\xee\xac\x9c" };                             // U+eb1c
+        constexpr static std::string_view ElectricMeter{ "\xee\xb0\x9b" };                           // U+ec1b
+        constexpr static std::string_view ElectricMoped{ "\xee\xac\x9d" };                           // U+eb1d
+        constexpr static std::string_view ElectricRickshaw{ "\xee\xac\x9e" };                        // U+eb1e
+        constexpr static std::string_view ElectricScooter{ "\xee\xac\x9f" };                         // U+eb1f
+        constexpr static std::string_view ElectricalServices{ "\xef\x84\x82" };                      // U+f102
+        constexpr static std::string_view Elevation{ "\xef\x9b\xa7" };                               // U+f6e7
+        constexpr static std::string_view Elevator{ "\xef\x86\xa0" };                                // U+f1a0
+        constexpr static std::string_view Email{ "\xee\x85\x99" };                                   // U+e159
+        constexpr static std::string_view Emergency{ "\xee\x87\xab" };                               // U+e1eb
+        constexpr static std::string_view EmergencyHeat{ "\xef\x85\x9d" };                           // U+f15d
+        constexpr static std::string_view EmergencyHeat_2{ "\xef\x93\xa5" };                         // U+f4e5
+        constexpr static std::string_view EmergencyHome{ "\xee\xa0\xaa" };                           // U+e82a
+        constexpr static std::string_view EmergencyRecording{ "\xee\xaf\xb4" };                      // U+ebf4
+        constexpr static std::string_view EmergencyShare{ "\xee\xaf\xb6" };                          // U+ebf6
+        constexpr static std::string_view EmergencyShareOff{ "\xef\x96\x9e" };                       // U+f59e
+        constexpr static std::string_view EmojiEmotions{ "\xee\xa8\xa2" };                           // U+ea22
+        constexpr static std::string_view EmojiEvents{ "\xee\xa8\xa3" };                             // U+ea23
+        constexpr static std::string_view EmojiFlags{ "\xef\x83\x86" };                              // U+f0c6
+        constexpr static std::string_view EmojiFoodBeverage{ "\xee\xa8\x9b" };                       // U+ea1b
+        constexpr static std::string_view EmojiNature{ "\xee\xa8\x9c" };                             // U+ea1c
+        constexpr static std::string_view EmojiObjects{ "\xee\xa8\xa4" };                            // U+ea24
+        constexpr static std::string_view EmojiPeople{ "\xee\xa8\x9d" };                             // U+ea1d
+        constexpr static std::string_view EmojiSymbols{ "\xee\xa8\x9e" };                            // U+ea1e
+        constexpr static std::string_view EmojiTransportation{ "\xee\xa8\x9f" };                     // U+ea1f
+        constexpr static std::string_view Emoticon{ "\xee\x97\xb3" };                                // U+e5f3
+        constexpr static std::string_view EmptyDashboard{ "\xef\xa1\x84" };                          // U+f844
+        constexpr static std::string_view Enable{ "\xef\x86\x88" };                                  // U+f188
+        constexpr static std::string_view Encrypted{ "\xee\x96\x93" };                               // U+e593
+        constexpr static std::string_view Endocrinology{ "\xee\x82\xa9" };                           // U+e0a9
+        constexpr static std::string_view Energy{ "\xee\xa6\xa6" };                                  // U+e9a6
+        constexpr static std::string_view EnergyProgramSaving{ "\xef\x85\x9f" };                     // U+f15f
+        constexpr static std::string_view EnergyProgramTimeUsed{ "\xef\x85\xa1" };                   // U+f161
+        constexpr static std::string_view EnergySavingsLeaf{ "\xee\xb0\x9a" };                       // U+ec1a
+        constexpr static std::string_view Engineering{ "\xee\xa8\xbd" };                             // U+ea3d
+        constexpr static std::string_view EnhancedEncryption{ "\xee\x98\xbf" };                      // U+e63f
+        constexpr static std::string_view Ent{ "\xee\x82\xaa" };                                     // U+e0aa
+        constexpr static std::string_view Enterprise{ "\xee\x9c\x8e" };                              // U+e70e
+        constexpr static std::string_view EnterpriseOff{ "\xee\xad\x8d" };                           // U+eb4d
+        constexpr static std::string_view Equal{ "\xef\x9d\xbb" };                                   // U+f77b
+        constexpr static std::string_view Equalizer{ "\xee\x80\x9d" };                               // U+e01d
+        constexpr static std::string_view Error{ "\xef\xa2\xb6" };                                   // U+f8b6
+        constexpr static std::string_view ErrorCircleRounded{ "\xef\xa2\xb6" };                      // U+f8b6
+        constexpr static std::string_view ErrorMed{ "\xee\x92\x9b" };                                // U+e49b
+        constexpr static std::string_view ErrorOutline{ "\xef\xa2\xb6" };                            // U+f8b6
+        constexpr static std::string_view Escalator{ "\xef\x86\xa1" };                               // U+f1a1
+        constexpr static std::string_view EscalatorWarning{ "\xef\x86\xac" };                        // U+f1ac
+        constexpr static std::string_view Euro{ "\xee\xa8\x95" };                                    // U+ea15
+        constexpr static std::string_view EuroSymbol{ "\xee\xa4\xa6" };                              // U+e926
+        constexpr static std::string_view EvCharger{ "\xee\x95\xad" };                               // U+e56d
+        constexpr static std::string_view EvMobiledataBadge{ "\xef\x9f\xa2" };                       // U+f7e2
+        constexpr static std::string_view EvShadow{ "\xee\xbe\x8f" };                                // U+ef8f
+        constexpr static std::string_view EvShadowAdd{ "\xef\x96\x80" };                             // U+f580
+        constexpr static std::string_view EvShadowMinus{ "\xef\x95\xbf" };                           // U+f57f
+        constexpr static std::string_view EvStation{ "\xee\x95\xad" };                               // U+e56d
+        constexpr static std::string_view Event{ "\xee\xa1\xb8" };                                   // U+e878
+        constexpr static std::string_view EventAvailable{ "\xee\x98\x94" };                          // U+e614
+        constexpr static std::string_view EventBusy{ "\xee\x98\x95" };                               // U+e615
+        constexpr static std::string_view EventList{ "\xef\x9a\x83" };                               // U+f683
+        constexpr static std::string_view EventNote{ "\xee\x98\x96" };                               // U+e616
+        constexpr static std::string_view EventRepeat{ "\xee\xad\xbb" };                             // U+eb7b
+        constexpr static std::string_view EventSeat{ "\xee\xa4\x83" };                               // U+e903
+        constexpr static std::string_view EventUpcoming{ "\xef\x88\xb8" };                           // U+f238
+        constexpr static std::string_view Exclamation{ "\xef\x88\xaf" };                             // U+f22f
+        constexpr static std::string_view Exercise{ "\xef\x9b\xa6" };                                // U+f6e6
+        constexpr static std::string_view ExitToApp{ "\xee\xa1\xb9" };                               // U+e879
+        constexpr static std::string_view Expand{ "\xee\xa5\x8f" };                                  // U+e94f
+        constexpr static std::string_view ExpandAll{ "\xee\xa5\x86" };                               // U+e946
+        constexpr static std::string_view ExpandCircleDown{ "\xee\x9f\x8d" };                        // U+e7cd
+        constexpr static std::string_view ExpandCircleRight{ "\xef\x96\x91" };                       // U+f591
+        constexpr static std::string_view ExpandCircleUp{ "\xef\x97\x92" };                          // U+f5d2
+        constexpr static std::string_view ExpandContent{ "\xef\xa0\xb0" };                           // U+f830
+        constexpr static std::string_view ExpandLess{ "\xee\x97\x8e" };                              // U+e5ce
+        constexpr static std::string_view ExpandMore{ "\xee\x97\x8f" };                              // U+e5cf
+        constexpr static std::string_view Experiment{ "\xee\x9a\x86" };                              // U+e686
+        constexpr static std::string_view Explicit{ "\xee\x80\x9e" };                                // U+e01e
+        constexpr static std::string_view Explore{ "\xee\xa1\xba" };                                 // U+e87a
+        constexpr static std::string_view ExploreNearby{ "\xee\x94\xb8" };                           // U+e538
+        constexpr static std::string_view ExploreOff{ "\xee\xa6\xa8" };                              // U+e9a8
+        constexpr static std::string_view Explosion{ "\xef\x9a\x85" };                               // U+f685
+        constexpr static std::string_view ExportNotes{ "\xee\x82\xac" };                             // U+e0ac
+        constexpr static std::string_view Exposure{ "\xee\x8f\xb6" };                                // U+e3f6
+        constexpr static std::string_view ExposureNeg_1{ "\xee\x8f\x8b" };                           // U+e3cb
+        constexpr static std::string_view ExposureNeg_2{ "\xee\x8f\x8c" };                           // U+e3cc
+        constexpr static std::string_view ExposurePlus_1{ "\xee\xa0\x80" };                          // U+e800
+        constexpr static std::string_view ExposurePlus_2{ "\xee\x8f\x8e" };                          // U+e3ce
+        constexpr static std::string_view ExposureZero{ "\xee\x8f\x8f" };                            // U+e3cf
+        constexpr static std::string_view Extension{ "\xee\xa1\xbb" };                               // U+e87b
+        constexpr static std::string_view ExtensionOff{ "\xee\x93\xb5" };                            // U+e4f5
+        constexpr static std::string_view Eyeglasses{ "\xef\x9b\xae" };                              // U+f6ee
+        constexpr static std::string_view Face{ "\xef\x80\x88" };                                    // U+f008
+        constexpr static std::string_view Face_2{ "\xef\xa3\x9a" };                                  // U+f8da
+        constexpr static std::string_view Face_3{ "\xef\xa3\x9b" };                                  // U+f8db
+        constexpr static std::string_view Face_4{ "\xef\xa3\x9c" };                                  // U+f8dc
+        constexpr static std::string_view Face_5{ "\xef\xa3\x9d" };                                  // U+f8dd
+        constexpr static std::string_view Face_6{ "\xef\xa3\x9e" };                                  // U+f8de
+        constexpr static std::string_view FaceRetouchingNatural{ "\xee\xbd\x8e" };                   // U+ef4e
+        constexpr static std::string_view FaceRetouchingOff{ "\xef\x80\x87" };                       // U+f007
+        constexpr static std::string_view FaceUnlock{ "\xef\x80\x88" };                              // U+f008
+        constexpr static std::string_view FactCheck{ "\xef\x83\x85" };                               // U+f0c5
+        constexpr static std::string_view Factory{ "\xee\xae\xbc" };                                 // U+ebbc
+        constexpr static std::string_view Falling{ "\xef\x98\x8d" };                                 // U+f60d
+        constexpr static std::string_view FamiliarFaceAndZone{ "\xee\x88\x9c" };                     // U+e21c
+        constexpr static std::string_view FamilyHistory{ "\xee\x82\xad" };                           // U+e0ad
+        constexpr static std::string_view FamilyHome{ "\xee\xac\xa6" };                              // U+eb26
+        constexpr static std::string_view FamilyLink{ "\xee\xac\x99" };                              // U+eb19
+        constexpr static std::string_view FamilyRestroom{ "\xef\x86\xa2" };                          // U+f1a2
+        constexpr static std::string_view FamilyStar{ "\xef\x94\xa7" };                              // U+f527
+        constexpr static std::string_view FarsightDigital{ "\xef\x95\x99" };                         // U+f559
+        constexpr static std::string_view FastForward{ "\xee\x80\x9f" };                             // U+e01f
+        constexpr static std::string_view FastRewind{ "\xee\x80\xa0" };                              // U+e020
+        constexpr static std::string_view Fastfood{ "\xee\x95\xba" };                                // U+e57a
+        constexpr static std::string_view Faucet{ "\xee\x89\xb8" };                                  // U+e278
+        constexpr static std::string_view Favorite{ "\xee\xa1\xbe" };                                // U+e87e
+        constexpr static std::string_view FavoriteBorder{ "\xee\xa1\xbe" };                          // U+e87e
+        constexpr static std::string_view Fax{ "\xee\xab\x98" };                                     // U+ead8
+        constexpr static std::string_view FeatureSearch{ "\xee\xa6\xa9" };                           // U+e9a9
+        constexpr static std::string_view FeaturedPlayList{ "\xee\x81\xad" };                        // U+e06d
+        constexpr static std::string_view FeaturedSeasonalAndGifts{ "\xee\xbe\x91" };                // U+ef91
+        constexpr static std::string_view FeaturedVideo{ "\xee\x81\xae" };                           // U+e06e
+        constexpr static std::string_view Feed{ "\xef\x80\x89" };                                    // U+f009
+        constexpr static std::string_view Feedback{ "\xee\xa1\xbf" };                                // U+e87f
+        constexpr static std::string_view Female{ "\xee\x96\x90" };                                  // U+e590
+        constexpr static std::string_view Femur{ "\xef\xa2\x91" };                                   // U+f891
+        constexpr static std::string_view FemurAlt{ "\xef\xa2\x92" };                                // U+f892
+        constexpr static std::string_view Fence{ "\xef\x87\xb6" };                                   // U+f1f6
+        constexpr static std::string_view Fertile{ "\xef\x9b\xa5" };                                 // U+f6e5
+        constexpr static std::string_view Festival{ "\xee\xa9\xa8" };                                // U+ea68
+        constexpr static std::string_view FiberDvr{ "\xee\x81\x9d" };                                // U+e05d
+        constexpr static std::string_view FiberManualRecord{ "\xee\x81\xa1" };                       // U+e061
+        constexpr static std::string_view FiberNew{ "\xee\x81\x9e" };                                // U+e05e
+        constexpr static std::string_view FiberPin{ "\xee\x81\xaa" };                                // U+e06a
+        constexpr static std::string_view FiberSmartRecord{ "\xee\x81\xa2" };                        // U+e062
+        constexpr static std::string_view FileCopy{ "\xee\x85\xb3" };                                // U+e173
+        constexpr static std::string_view FileCopyOff{ "\xef\x93\x98" };                             // U+f4d8
+        constexpr static std::string_view FileDownload{ "\xef\x82\x90" };                            // U+f090
+        constexpr static std::string_view FileDownloadDone{ "\xef\x82\x91" };                        // U+f091
+        constexpr static std::string_view FileDownloadOff{ "\xee\x93\xbe" };                         // U+e4fe
+        constexpr static std::string_view FileMap{ "\xee\x8b\x85" };                                 // U+e2c5
+        constexpr static std::string_view FileOpen{ "\xee\xab\xb3" };                                // U+eaf3
+        constexpr static std::string_view FilePresent{ "\xee\xa8\x8e" };                             // U+ea0e
+        constexpr static std::string_view FileSave{ "\xef\x85\xbf" };                                // U+f17f
+        constexpr static std::string_view FileSaveOff{ "\xee\x94\x85" };                             // U+e505
+        constexpr static std::string_view FileUpload{ "\xef\x82\x9b" };                              // U+f09b
+        constexpr static std::string_view FileUploadOff{ "\xef\xa2\x86" };                           // U+f886
+        constexpr static std::string_view Filter{ "\xee\x8f\x93" };                                  // U+e3d3
+        constexpr static std::string_view Filter_1{ "\xee\x8f\x90" };                                // U+e3d0
+        constexpr static std::string_view Filter_2{ "\xee\x8f\x91" };                                // U+e3d1
+        constexpr static std::string_view Filter_3{ "\xee\x8f\x92" };                                // U+e3d2
+        constexpr static std::string_view Filter_4{ "\xee\x8f\x94" };                                // U+e3d4
+        constexpr static std::string_view Filter_5{ "\xee\x8f\x95" };                                // U+e3d5
+        constexpr static std::string_view Filter_6{ "\xee\x8f\x96" };                                // U+e3d6
+        constexpr static std::string_view Filter_7{ "\xee\x8f\x97" };                                // U+e3d7
+        constexpr static std::string_view Filter_8{ "\xee\x8f\x98" };                                // U+e3d8
+        constexpr static std::string_view Filter_9{ "\xee\x8f\x99" };                                // U+e3d9
+        constexpr static std::string_view Filter_9Plus{ "\xee\x8f\x9a" };                            // U+e3da
+        constexpr static std::string_view FilterAlt{ "\xee\xbd\x8f" };                               // U+ef4f
+        constexpr static std::string_view FilterAltOff{ "\xee\xac\xb2" };                            // U+eb32
+        constexpr static std::string_view FilterBAndW{ "\xee\x8f\x9b" };                             // U+e3db
+        constexpr static std::string_view FilterCenterFocus{ "\xee\x8f\x9c" };                       // U+e3dc
+        constexpr static std::string_view FilterDrama{ "\xee\x8f\x9d" };                             // U+e3dd
+        constexpr static std::string_view FilterFrames{ "\xee\x8f\x9e" };                            // U+e3de
+        constexpr static std::string_view FilterHdr{ "\xee\x8f\x9f" };                               // U+e3df
+        constexpr static std::string_view FilterList{ "\xee\x85\x92" };                              // U+e152
+        constexpr static std::string_view FilterListAlt{ "\xee\xa5\x8e" };                           // U+e94e
+        constexpr static std::string_view FilterListOff{ "\xee\xad\x97" };                           // U+eb57
+        constexpr static std::string_view FilterNone{ "\xee\x8f\xa0" };                              // U+e3e0
+        constexpr static std::string_view FilterRetrolux{ "\xee\x8f\xa1" };                          // U+e3e1
+        constexpr static std::string_view FilterTiltShift{ "\xee\x8f\xa2" };                         // U+e3e2
+        constexpr static std::string_view FilterVintage{ "\xee\x8f\xa3" };                           // U+e3e3
+        constexpr static std::string_view Finance{ "\xee\x9a\xbf" };                                 // U+e6bf
+        constexpr static std::string_view FinanceChip{ "\xef\xa1\x8e" };                             // U+f84e
+        constexpr static std::string_view FinanceMode{ "\xee\xbe\x92" };                             // U+ef92
+        constexpr static std::string_view FindInPage{ "\xee\xa2\x80" };                              // U+e880
+        constexpr static std::string_view FindReplace{ "\xee\xa2\x81" };                             // U+e881
+        constexpr static std::string_view Fingerprint{ "\xee\xa4\x8d" };                             // U+e90d
+        constexpr static std::string_view FireExtinguisher{ "\xef\x87\x98" };                        // U+f1d8
+        constexpr static std::string_view FireHydrant{ "\xef\x86\xa3" };                             // U+f1a3
+        constexpr static std::string_view FireTruck{ "\xef\xa3\xb2" };                               // U+f8f2
+        constexpr static std::string_view Fireplace{ "\xee\xa9\x83" };                               // U+ea43
+        constexpr static std::string_view FirstPage{ "\xee\x97\x9c" };                               // U+e5dc
+        constexpr static std::string_view FitPage{ "\xef\x9d\xba" };                                 // U+f77a
+        constexpr static std::string_view FitScreen{ "\xee\xa8\x90" };                               // U+ea10
+        constexpr static std::string_view FitWidth{ "\xef\x9d\xb9" };                                // U+f779
+        constexpr static std::string_view FitnessCenter{ "\xee\xad\x83" };                           // U+eb43
+        constexpr static std::string_view Flag{ "\xef\x83\x86" };                                    // U+f0c6
+        constexpr static std::string_view FlagCircle{ "\xee\xab\xb8" };                              // U+eaf8
+        constexpr static std::string_view FlagFilled{ "\xef\x83\x86" };                              // U+f0c6
+        constexpr static std::string_view Flaky{ "\xee\xbd\x90" };                                   // U+ef50
+        constexpr static std::string_view Flare{ "\xee\x8f\xa4" };                                   // U+e3e4
+        constexpr static std::string_view FlashAuto{ "\xee\x8f\xa5" };                               // U+e3e5
+        constexpr static std::string_view FlashOff{ "\xee\x8f\xa6" };                                // U+e3e6
+        constexpr static std::string_view FlashOn{ "\xee\x8f\xa7" };                                 // U+e3e7
+        constexpr static std::string_view FlashlightOff{ "\xef\x80\x8a" };                           // U+f00a
+        constexpr static std::string_view FlashlightOn{ "\xef\x80\x8b" };                            // U+f00b
+        constexpr static std::string_view Flatware{ "\xef\x80\x8c" };                                // U+f00c
+        constexpr static std::string_view FlexDirection{ "\xef\x9d\xb8" };                           // U+f778
+        constexpr static std::string_view FlexNoWrap{ "\xef\x9d\xb7" };                              // U+f777
+        constexpr static std::string_view FlexWrap{ "\xef\x9d\xb6" };                                // U+f776
+        constexpr static std::string_view Flight{ "\xee\x94\xb9" };                                  // U+e539
+        constexpr static std::string_view FlightClass{ "\xee\x9f\x8b" };                             // U+e7cb
+        constexpr static std::string_view FlightLand{ "\xee\xa4\x84" };                              // U+e904
+        constexpr static std::string_view FlightTakeoff{ "\xee\xa4\x85" };                           // U+e905
+        constexpr static std::string_view FlightsAndHotels{ "\xee\xa6\xab" };                        // U+e9ab
+        constexpr static std::string_view Flightsmode{ "\xee\xbe\x93" };                             // U+ef93
+        constexpr static std::string_view Flip{ "\xee\x8f\xa8" };                                    // U+e3e8
+        constexpr static std::string_view FlipCameraAndroid{ "\xee\xa8\xb7" };                       // U+ea37
+        constexpr static std::string_view FlipCameraIos{ "\xee\xa8\xb8" };                           // U+ea38
+        constexpr static std::string_view FlipToBack{ "\xee\xa2\x82" };                              // U+e882
+        constexpr static std::string_view FlipToFront{ "\xee\xa2\x83" };                             // U+e883
+        constexpr static std::string_view Flood{ "\xee\xaf\xa6" };                                   // U+ebe6
+        constexpr static std::string_view Floor{ "\xef\x9b\xa4" };                                   // U+f6e4
+        constexpr static std::string_view FloorLamp{ "\xee\x88\x9e" };                               // U+e21e
+        constexpr static std::string_view Flourescent{ "\xef\x81\xbd" };                             // U+f07d
+        constexpr static std::string_view Flowsheet{ "\xee\x82\xae" };                               // U+e0ae
+        constexpr static std::string_view Fluid{ "\xee\x92\x83" };                                   // U+e483
+        constexpr static std::string_view FluidBalance{ "\xef\xa0\x8d" };                            // U+f80d
+        constexpr static std::string_view FluidMed{ "\xef\xa0\x8c" };                                // U+f80c
+        constexpr static std::string_view Fluorescent{ "\xef\x81\xbd" };                             // U+f07d
+        constexpr static std::string_view Flutter{ "\xef\x87\x9d" };                                 // U+f1dd
+        constexpr static std::string_view FlutterDash{ "\xee\x80\x8b" };                             // U+e00b
+        constexpr static std::string_view FmdBad{ "\xef\x80\x8e" };                                  // U+f00e
+        constexpr static std::string_view FmdGood{ "\xef\x87\x9b" };                                 // U+f1db
+        constexpr static std::string_view Foggy{ "\xee\xa0\x98" };                                   // U+e818
+        constexpr static std::string_view FoldedHands{ "\xef\x97\xad" };                             // U+f5ed
+        constexpr static std::string_view Folder{ "\xee\x8b\x87" };                                  // U+e2c7
+        constexpr static std::string_view FolderCopy{ "\xee\xae\xbd" };                              // U+ebbd
+        constexpr static std::string_view FolderData{ "\xef\x96\x86" };                              // U+f586
+        constexpr static std::string_view FolderDelete{ "\xee\xac\xb4" };                            // U+eb34
+        constexpr static std::string_view FolderLimited{ "\xef\x93\xa4" };                           // U+f4e4
+        constexpr static std::string_view FolderManaged{ "\xef\x9d\xb5" };                           // U+f775
+        constexpr static std::string_view FolderOff{ "\xee\xae\x83" };                               // U+eb83
+        constexpr static std::string_view FolderOpen{ "\xee\x8b\x88" };                              // U+e2c8
+        constexpr static std::string_view FolderShared{ "\xee\x8b\x89" };                            // U+e2c9
+        constexpr static std::string_view FolderSpecial{ "\xee\x98\x97" };                           // U+e617
+        constexpr static std::string_view FolderSupervised{ "\xef\x9d\xb4" };                        // U+f774
+        constexpr static std::string_view FolderZip{ "\xee\xac\xac" };                               // U+eb2c
+        constexpr static std::string_view FollowTheSigns{ "\xef\x88\xa2" };                          // U+f222
+        constexpr static std::string_view FontDownload{ "\xee\x85\xa7" };                            // U+e167
+        constexpr static std::string_view FontDownloadOff{ "\xee\x93\xb9" };                         // U+e4f9
+        constexpr static std::string_view FoodBank{ "\xef\x87\xb2" };                                // U+f1f2
+        constexpr static std::string_view FootBones{ "\xef\xa2\x93" };                               // U+f893
+        constexpr static std::string_view Footprint{ "\xef\xa1\xbd" };                               // U+f87d
+        constexpr static std::string_view ForYou{ "\xee\xa6\xac" };                                  // U+e9ac
+        constexpr static std::string_view Forest{ "\xee\xaa\x99" };                                  // U+ea99
+        constexpr static std::string_view ForkLeft{ "\xee\xae\xa0" };                                // U+eba0
+        constexpr static std::string_view ForkRight{ "\xee\xae\xac" };                               // U+ebac
+        constexpr static std::string_view Forklift{ "\xef\xa1\xa8" };                                // U+f868
+        constexpr static std::string_view FormatAlignCenter{ "\xee\x88\xb4" };                       // U+e234
+        constexpr static std::string_view FormatAlignJustify{ "\xee\x88\xb5" };                      // U+e235
+        constexpr static std::string_view FormatAlignLeft{ "\xee\x88\xb6" };                         // U+e236
+        constexpr static std::string_view FormatAlignRight{ "\xee\x88\xb7" };                        // U+e237
+        constexpr static std::string_view FormatBold{ "\xee\x88\xb8" };                              // U+e238
+        constexpr static std::string_view FormatClear{ "\xee\x88\xb9" };                             // U+e239
+        constexpr static std::string_view FormatColorFill{ "\xee\x88\xba" };                         // U+e23a
+        constexpr static std::string_view FormatColorReset{ "\xee\x88\xbb" };                        // U+e23b
+        constexpr static std::string_view FormatColorText{ "\xee\x88\xbc" };                         // U+e23c
+        constexpr static std::string_view FormatH1{ "\xef\xa1\x9d" };                                // U+f85d
+        constexpr static std::string_view FormatH2{ "\xef\xa1\x9e" };                                // U+f85e
+        constexpr static std::string_view FormatH3{ "\xef\xa1\x9f" };                                // U+f85f
+        constexpr static std::string_view FormatH4{ "\xef\xa1\xa0" };                                // U+f860
+        constexpr static std::string_view FormatH5{ "\xef\xa1\xa1" };                                // U+f861
+        constexpr static std::string_view FormatH6{ "\xef\xa1\xa2" };                                // U+f862
+        constexpr static std::string_view FormatImageLeft{ "\xef\xa1\xa3" };                         // U+f863
+        constexpr static std::string_view FormatImageRight{ "\xef\xa1\xa4" };                        // U+f864
+        constexpr static std::string_view FormatIndentDecrease{ "\xee\x88\xbd" };                    // U+e23d
+        constexpr static std::string_view FormatIndentIncrease{ "\xee\x88\xbe" };                    // U+e23e
+        constexpr static std::string_view FormatInkHighlighter{ "\xef\xa0\xab" };                    // U+f82b
+        constexpr static std::string_view FormatItalic{ "\xee\x88\xbf" };                            // U+e23f
+        constexpr static std::string_view FormatLetterSpacing{ "\xef\x9d\xb3" };                     // U+f773
+        constexpr static std::string_view FormatLetterSpacing_2{ "\xef\x98\x98" };                   // U+f618
+        constexpr static std::string_view FormatLetterSpacingStandard{ "\xef\x98\x97" };             // U+f617
+        constexpr static std::string_view FormatLetterSpacingWide{ "\xef\x98\x96" };                 // U+f616
+        constexpr static std::string_view FormatLetterSpacingWider{ "\xef\x98\x95" };                // U+f615
+        constexpr static std::string_view FormatLineSpacing{ "\xee\x89\x80" };                       // U+e240
+        constexpr static std::string_view FormatListBulleted{ "\xee\x89\x81" };                      // U+e241
+        constexpr static std::string_view FormatListBulletedAdd{ "\xef\xa1\x89" };                   // U+f849
+        constexpr static std::string_view FormatListNumbered{ "\xee\x89\x82" };                      // U+e242
+        constexpr static std::string_view FormatListNumberedRtl{ "\xee\x89\xa7" };                   // U+e267
+        constexpr static std::string_view FormatOverline{ "\xee\xad\xa5" };                          // U+eb65
+        constexpr static std::string_view FormatPaint{ "\xee\x89\x83" };                             // U+e243
+        constexpr static std::string_view FormatParagraph{ "\xef\xa1\xa5" };                         // U+f865
+        constexpr static std::string_view FormatQuote{ "\xee\x89\x84" };                             // U+e244
+        constexpr static std::string_view FormatShapes{ "\xee\x89\x9e" };                            // U+e25e
+        constexpr static std::string_view FormatSize{ "\xee\x89\x85" };                              // U+e245
+        constexpr static std::string_view FormatStrikethrough{ "\xee\x89\x86" };                     // U+e246
+        constexpr static std::string_view FormatTextClip{ "\xef\xa0\xaa" };                          // U+f82a
+        constexpr static std::string_view FormatTextOverflow{ "\xef\xa0\xa9" };                      // U+f829
+        constexpr static std::string_view FormatTextWrap{ "\xef\xa0\xa8" };                          // U+f828
+        constexpr static std::string_view FormatTextdirectionLToR{ "\xee\x89\x87" };                 // U+e247
+        constexpr static std::string_view FormatTextdirectionRToL{ "\xee\x89\x88" };                 // U+e248
+        constexpr static std::string_view FormatUnderlined{ "\xee\x89\x89" };                        // U+e249
+        constexpr static std::string_view FormatUnderlinedSquiggle{ "\xef\xa2\x85" };                // U+f885
+        constexpr static std::string_view FormsAddOn{ "\xef\x83\x87" };                              // U+f0c7
+        constexpr static std::string_view FormsAppsScript{ "\xef\x83\x88" };                         // U+f0c8
+        constexpr static std::string_view Fort{ "\xee\xaa\xad" };                                    // U+eaad
+        constexpr static std::string_view Forum{ "\xee\xa2\xaf" };                                   // U+e8af
+        constexpr static std::string_view Forward{ "\xef\x95\xba" };                                 // U+f57a
+        constexpr static std::string_view Forward_10{ "\xee\x81\x96" };                              // U+e056
+        constexpr static std::string_view Forward_30{ "\xee\x81\x97" };                              // U+e057
+        constexpr static std::string_view Forward_5{ "\xee\x81\x98" };                               // U+e058
+        constexpr static std::string_view ForwardCircle{ "\xef\x9b\xb5" };                           // U+f6f5
+        constexpr static std::string_view ForwardMedia{ "\xef\x9b\xb4" };                            // U+f6f4
+        constexpr static std::string_view ForwardToInbox{ "\xef\x86\x87" };                          // U+f187
+        constexpr static std::string_view Foundation{ "\xef\x88\x80" };                              // U+f200
+        constexpr static std::string_view FrameInspect{ "\xef\x9d\xb2" };                            // U+f772
+        constexpr static std::string_view FramePerson{ "\xef\xa2\xa6" };                             // U+f8a6
+        constexpr static std::string_view FramePersonOff{ "\xef\x9f\x91" };                          // U+f7d1
+        constexpr static std::string_view FrameReload{ "\xef\x9d\xb1" };                             // U+f771
+        constexpr static std::string_view FrameSource{ "\xef\x9d\xb0" };                             // U+f770
+        constexpr static std::string_view FreeBreakfast{ "\xee\xad\x84" };                           // U+eb44
+        constexpr static std::string_view FreeCancellation{ "\xee\x9d\x88" };                        // U+e748
+        constexpr static std::string_view FrontHand{ "\xee\x9d\xa9" };                               // U+e769
+        constexpr static std::string_view FrontLoader{ "\xef\xa1\xa9" };                             // U+f869
+        constexpr static std::string_view FullCoverage{ "\xee\xac\x92" };                            // U+eb12
+        constexpr static std::string_view FullHd{ "\xef\x96\x8b" };                                  // U+f58b
+        constexpr static std::string_view FullStackedBarChart{ "\xef\x88\x92" };                     // U+f212
+        constexpr static std::string_view Fullscreen{ "\xee\x97\x90" };                              // U+e5d0
+        constexpr static std::string_view FullscreenExit{ "\xee\x97\x91" };                          // U+e5d1
+        constexpr static std::string_view Function{ "\xef\xa1\xa6" };                                // U+f866
+        constexpr static std::string_view Functions{ "\xee\x89\x8a" };                               // U+e24a
+        constexpr static std::string_view GMobiledata{ "\xef\x80\x90" };                             // U+f010
+        constexpr static std::string_view GMobiledataBadge{ "\xef\x9f\xa1" };                        // U+f7e1
+        constexpr static std::string_view GTranslate{ "\xee\xa4\xa7" };                              // U+e927
+        constexpr static std::string_view GalleryThumbnail{ "\xef\xa1\xaf" };                        // U+f86f
+        constexpr static std::string_view Gamepad{ "\xee\x8c\x8f" };                                 // U+e30f
+        constexpr static std::string_view Games{ "\xee\x8c\x8f" };                                   // U+e30f
+        constexpr static std::string_view Garage{ "\xef\x80\x91" };                                  // U+f011
+        constexpr static std::string_view GarageDoor{ "\xee\x9c\x94" };                              // U+e714
+        constexpr static std::string_view GarageHome{ "\xee\xa0\xad" };                              // U+e82d
+        constexpr static std::string_view GardenCart{ "\xef\xa2\xa9" };                              // U+f8a9
+        constexpr static std::string_view GasMeter{ "\xee\xb0\x99" };                                // U+ec19
+        constexpr static std::string_view Gastroenterology{ "\xee\x83\xb1" };                        // U+e0f1
+        constexpr static std::string_view Gate{ "\xee\x89\xb7" };                                    // U+e277
+        constexpr static std::string_view Gavel{ "\xee\xa4\x8e" };                                   // U+e90e
+        constexpr static std::string_view GeneralDevice{ "\xee\x9b\x9e" };                           // U+e6de
+        constexpr static std::string_view GeneratingTokens{ "\xee\x9d\x89" };                        // U+e749
+        constexpr static std::string_view Genetics{ "\xee\x83\xb3" };                                // U+e0f3
+        constexpr static std::string_view Genres{ "\xee\x9b\xae" };                                  // U+e6ee
+        constexpr static std::string_view Gesture{ "\xee\x85\x95" };                                 // U+e155
+        constexpr static std::string_view GestureSelect{ "\xef\x99\x97" };                           // U+f657
+        constexpr static std::string_view GetApp{ "\xef\x82\x90" };                                  // U+f090
+        constexpr static std::string_view Gif{ "\xee\xa4\x88" };                                     // U+e908
+        constexpr static std::string_view GifBox{ "\xee\x9e\xa3" };                                  // U+e7a3
+        constexpr static std::string_view Girl{ "\xee\xad\xa8" };                                    // U+eb68
+        constexpr static std::string_view Gite{ "\xee\x96\x8b" };                                    // U+e58b
+        constexpr static std::string_view GlassCup{ "\xef\x9b\xa3" };                                // U+f6e3
+        constexpr static std::string_view Globe{ "\xee\x99\x8c" };                                   // U+e64c
+        constexpr static std::string_view GlobeAsia{ "\xef\x9e\x99" };                               // U+f799
+        constexpr static std::string_view GlobeUk{ "\xef\x9e\x98" };                                 // U+f798
+        constexpr static std::string_view Glucose{ "\xee\x92\xa0" };                                 // U+e4a0
+        constexpr static std::string_view Glyphs{ "\xef\xa2\xa3" };                                  // U+f8a3
+        constexpr static std::string_view GoToLine{ "\xef\x9c\x9d" };                                // U+f71d
+        constexpr static std::string_view GolfCourse{ "\xee\xad\x85" };                              // U+eb45
+        constexpr static std::string_view GoogleHomeDevices{ "\xee\x9c\x95" };                       // U+e715
+        constexpr static std::string_view GooglePlusReshare{ "\xef\x95\xba" };                       // U+f57a
+        constexpr static std::string_view GoogleTvRemote{ "\xef\x97\x9b" };                          // U+f5db
+        constexpr static std::string_view GoogleWifi{ "\xef\x95\xb9" };                              // U+f579
+        constexpr static std::string_view GppBad{ "\xef\x80\x92" };                                  // U+f012
+        constexpr static std::string_view GppGood{ "\xef\x80\x93" };                                 // U+f013
+        constexpr static std::string_view GppMaybe{ "\xef\x80\x94" };                                // U+f014
+        constexpr static std::string_view GpsFixed{ "\xee\x95\x9c" };                                // U+e55c
+        constexpr static std::string_view GpsNotFixed{ "\xee\x86\xb7" };                             // U+e1b7
+        constexpr static std::string_view GpsOff{ "\xee\x86\xb6" };                                  // U+e1b6
+        constexpr static std::string_view Grade{ "\xee\xa2\x85" };                                   // U+e885
+        constexpr static std::string_view Gradient{ "\xee\x8f\xa9" };                                // U+e3e9
+        constexpr static std::string_view Grading{ "\xee\xa9\x8f" };                                 // U+ea4f
+        constexpr static std::string_view Grain{ "\xee\x8f\xaa" };                                   // U+e3ea
+        constexpr static std::string_view GraphicEq{ "\xee\x86\xb8" };                               // U+e1b8
+        constexpr static std::string_view Grass{ "\xef\x88\x85" };                                   // U+f205
+        constexpr static std::string_view Grid_3x3{ "\xef\x80\x95" };                                // U+f015
+        constexpr static std::string_view Grid_3x3Off{ "\xef\x99\xbc" };                             // U+f67c
+        constexpr static std::string_view Grid_4x4{ "\xef\x80\x96" };                                // U+f016
+        constexpr static std::string_view GridGoldenratio{ "\xef\x80\x97" };                         // U+f017
+        constexpr static std::string_view GridGuides{ "\xef\x9d\xaf" };                              // U+f76f
+        constexpr static std::string_view GridOff{ "\xee\x8f\xab" };                                 // U+e3eb
+        constexpr static std::string_view GridOn{ "\xee\x8f\xac" };                                  // U+e3ec
+        constexpr static std::string_view GridView{ "\xee\xa6\xb0" };                                // U+e9b0
+        constexpr static std::string_view Grocery{ "\xee\xbe\x97" };                                 // U+ef97
+        constexpr static std::string_view Group{ "\xee\xa8\xa1" };                                   // U+ea21
+        constexpr static std::string_view GroupAdd{ "\xee\x9f\xb0" };                                // U+e7f0
+        constexpr static std::string_view GroupOff{ "\xee\x9d\x87" };                                // U+e747
+        constexpr static std::string_view GroupRemove{ "\xee\x9e\xad" };                             // U+e7ad
+        constexpr static std::string_view GroupWork{ "\xee\xa2\x86" };                               // U+e886
+        constexpr static std::string_view GroupedBarChart{ "\xef\x88\x91" };                         // U+f211
+        constexpr static std::string_view Groups{ "\xef\x88\xb3" };                                  // U+f233
+        constexpr static std::string_view Groups_2{ "\xef\xa3\x9f" };                                // U+f8df
+        constexpr static std::string_view Groups_3{ "\xef\xa3\xa0" };                                // U+f8e0
+        constexpr static std::string_view Gynecology{ "\xee\x83\xb4" };                              // U+e0f4
+        constexpr static std::string_view HMobiledata{ "\xef\x80\x98" };                             // U+f018
+        constexpr static std::string_view HMobiledataBadge{ "\xef\x9f\xa0" };                        // U+f7e0
+        constexpr static std::string_view HPlusMobiledata{ "\xef\x80\x99" };                         // U+f019
+        constexpr static std::string_view HPlusMobiledataBadge{ "\xef\x9f\x9f" };                    // U+f7df
+        constexpr static std::string_view Hail{ "\xee\xa6\xb1" };                                    // U+e9b1
+        constexpr static std::string_view Hallway{ "\xee\x9b\xb8" };                                 // U+e6f8
+        constexpr static std::string_view HandBones{ "\xef\xa2\x94" };                               // U+f894
+        constexpr static std::string_view HandGesture{ "\xee\xbe\x9c" };                             // U+ef9c
+        constexpr static std::string_view Handshake{ "\xee\xaf\x8b" };                               // U+ebcb
+        constexpr static std::string_view HandwritingRecognition{ "\xee\xac\x82" };                  // U+eb02
+        constexpr static std::string_view Handyman{ "\xef\x84\x8b" };                                // U+f10b
+        constexpr static std::string_view HangoutVideo{ "\xee\x83\x81" };                            // U+e0c1
+        constexpr static std::string_view HangoutVideoOff{ "\xee\x83\x82" };                         // U+e0c2
+        constexpr static std::string_view HardDrive{ "\xef\xa0\x8e" };                               // U+f80e
+        constexpr static std::string_view HardDrive_2{ "\xef\x9e\xa4" };                             // U+f7a4
+        constexpr static std::string_view Hardware{ "\xee\xa9\x99" };                                // U+ea59
+        constexpr static std::string_view Hd{ "\xee\x81\x92" };                                      // U+e052
+        constexpr static std::string_view HdrAuto{ "\xef\x80\x9a" };                                 // U+f01a
+        constexpr static std::string_view HdrAutoSelect{ "\xef\x80\x9b" };                           // U+f01b
+        constexpr static std::string_view HdrEnhancedSelect{ "\xee\xbd\x91" };                       // U+ef51
+        constexpr static std::string_view HdrOff{ "\xee\x8f\xad" };                                  // U+e3ed
+        constexpr static std::string_view HdrOffSelect{ "\xef\x80\x9c" };                            // U+f01c
+        constexpr static std::string_view HdrOn{ "\xee\x8f\xae" };                                   // U+e3ee
+        constexpr static std::string_view HdrOnSelect{ "\xef\x80\x9d" };                             // U+f01d
+        constexpr static std::string_view HdrPlus{ "\xef\x80\x9e" };                                 // U+f01e
+        constexpr static std::string_view HdrPlusOff{ "\xee\x8f\xaf" };                              // U+e3ef
+        constexpr static std::string_view HdrStrong{ "\xee\x8f\xb1" };                               // U+e3f1
+        constexpr static std::string_view HdrWeak{ "\xee\x8f\xb2" };                                 // U+e3f2
+        constexpr static std::string_view Headphones{ "\xef\x80\x9f" };                              // U+f01f
+        constexpr static std::string_view HeadphonesBattery{ "\xef\x80\xa0" };                       // U+f020
+        constexpr static std::string_view Headset{ "\xef\x80\x9f" };                                 // U+f01f
+        constexpr static std::string_view HeadsetMic{ "\xee\x8c\x91" };                              // U+e311
+        constexpr static std::string_view HeadsetOff{ "\xee\x8c\xba" };                              // U+e33a
+        constexpr static std::string_view Healing{ "\xee\x8f\xb3" };                                 // U+e3f3
+        constexpr static std::string_view HealthAndBeauty{ "\xee\xbe\x9d" };                         // U+ef9d
+        constexpr static std::string_view HealthAndSafety{ "\xee\x87\x95" };                         // U+e1d5
+        constexpr static std::string_view HealthMetrics{ "\xef\x9b\xa2" };                           // U+f6e2
+        constexpr static std::string_view HeapSnapshotLarge{ "\xef\x9d\xae" };                       // U+f76e
+        constexpr static std::string_view HeapSnapshotMultiple{ "\xef\x9d\xad" };                    // U+f76d
+        constexpr static std::string_view HeapSnapshotThumbnail{ "\xef\x9d\xac" };                   // U+f76c
+        constexpr static std::string_view Hearing{ "\xee\x80\xa3" };                                 // U+e023
+        constexpr static std::string_view HearingDisabled{ "\xef\x84\x84" };                         // U+f104
+        constexpr static std::string_view HeartBroken{ "\xee\xab\x82" };                             // U+eac2
+        constexpr static std::string_view HeartCheck{ "\xef\x98\x8a" };                              // U+f60a
+        constexpr static std::string_view HeartMinus{ "\xef\xa2\x83" };                              // U+f883
+        constexpr static std::string_view HeartPlus{ "\xef\xa2\x84" };                               // U+f884
+        constexpr static std::string_view Heat{ "\xef\x94\xb7" };                                    // U+f537
+        constexpr static std::string_view HeatPump{ "\xee\xb0\x98" };                                // U+ec18
+        constexpr static std::string_view HeatPumpBalance{ "\xee\x89\xbe" };                         // U+e27e
+        constexpr static std::string_view Height{ "\xee\xa8\x96" };                                  // U+ea16
+        constexpr static std::string_view Helicopter{ "\xef\x98\x8c" };                              // U+f60c
+        constexpr static std::string_view Help{ "\xee\xa3\xbd" };                                    // U+e8fd
+        constexpr static std::string_view HelpCenter{ "\xef\x87\x80" };                              // U+f1c0
+        constexpr static std::string_view HelpClinic{ "\xef\xa0\x90" };                              // U+f810
+        constexpr static std::string_view HelpOutline{ "\xee\xa3\xbd" };                             // U+e8fd
+        constexpr static std::string_view Hematology{ "\xee\x83\xb6" };                              // U+e0f6
+        constexpr static std::string_view Hevc{ "\xef\x80\xa1" };                                    // U+f021
+        constexpr static std::string_view Hexagon{ "\xee\xac\xb9" };                                 // U+eb39
+        constexpr static std::string_view Hide{ "\xee\xbe\x9e" };                                    // U+ef9e
+        constexpr static std::string_view HideImage{ "\xef\x80\xa2" };                               // U+f022
+        constexpr static std::string_view HideSource{ "\xef\x80\xa3" };                              // U+f023
+        constexpr static std::string_view HighDensity{ "\xef\x9e\x9c" };                             // U+f79c
+        constexpr static std::string_view HighQuality{ "\xee\x80\xa4" };                             // U+e024
+        constexpr static std::string_view HighRes{ "\xef\x95\x8b" };                                 // U+f54b
+        constexpr static std::string_view Highlight{ "\xee\x89\x9f" };                               // U+e25f
+        constexpr static std::string_view HighlightKeyboardFocus{ "\xef\x94\x90" };                  // U+f510
+        constexpr static std::string_view HighlightMouseCursor{ "\xef\x94\x91" };                    // U+f511
+        constexpr static std::string_view HighlightOff{ "\xee\xa2\x88" };                            // U+e888
+        constexpr static std::string_view HighlightTextCursor{ "\xef\x94\x92" };                     // U+f512
+        constexpr static std::string_view HighlighterSize_1{ "\xef\x9d\xab" };                       // U+f76b
+        constexpr static std::string_view HighlighterSize_2{ "\xef\x9d\xaa" };                       // U+f76a
+        constexpr static std::string_view HighlighterSize_3{ "\xef\x9d\xa9" };                       // U+f769
+        constexpr static std::string_view HighlighterSize_4{ "\xef\x9d\xa8" };                       // U+f768
+        constexpr static std::string_view HighlighterSize_5{ "\xef\x9d\xa7" };                       // U+f767
+        constexpr static std::string_view Hiking{ "\xee\x94\x8a" };                                  // U+e50a
+        constexpr static std::string_view History{ "\xee\xa2\xb3" };                                 // U+e8b3
+        constexpr static std::string_view HistoryEdu{ "\xee\xa8\xbe" };                              // U+ea3e
+        constexpr static std::string_view HistoryOff{ "\xef\x93\x9a" };                              // U+f4da
+        constexpr static std::string_view HistoryToggleOff{ "\xef\x85\xbd" };                        // U+f17d
+        constexpr static std::string_view Hive{ "\xee\xaa\xa6" };                                    // U+eaa6
+        constexpr static std::string_view Hls{ "\xee\xae\x8a" };                                     // U+eb8a
+        constexpr static std::string_view HlsOff{ "\xee\xae\x8c" };                                  // U+eb8c
+        constexpr static std::string_view HolidayVillage{ "\xee\x96\x8a" };                          // U+e58a
+        constexpr static std::string_view Home{ "\xee\xa6\xb2" };                                    // U+e9b2
+        constexpr static std::string_view HomeAndGarden{ "\xee\xbe\x9f" };                           // U+ef9f
+        constexpr static std::string_view HomeAppLogo{ "\xee\x8a\x95" };                             // U+e295
+        constexpr static std::string_view HomeFilled{ "\xee\xa6\xb2" };                              // U+e9b2
+        constexpr static std::string_view HomeHealth{ "\xee\x92\xb9" };                              // U+e4b9
+        constexpr static std::string_view HomeImprovementAndTools{ "\xee\xbe\xa0" };                 // U+efa0
+        constexpr static std::string_view HomeIotDevice{ "\xee\x8a\x83" };                           // U+e283
+        constexpr static std::string_view HomeMax{ "\xef\x80\xa4" };                                 // U+f024
+        constexpr static std::string_view HomeMaxDots{ "\xee\xa1\x89" };                             // U+e849
+        constexpr static std::string_view HomeMini{ "\xef\x80\xa5" };                                // U+f025
+        constexpr static std::string_view HomePin{ "\xef\x85\x8d" };                                 // U+f14d
+        constexpr static std::string_view HomeRepairService{ "\xef\x84\x80" };                       // U+f100
+        constexpr static std::string_view HomeSpeaker{ "\xef\x84\x9c" };                             // U+f11c
+        constexpr static std::string_view HomeStorage{ "\xef\xa1\xac" };                             // U+f86c
+        constexpr static std::string_view HomeWork{ "\xef\x80\xb0" };                                // U+f030
+        constexpr static std::string_view HorizontalDistribute{ "\xee\x80\x94" };                    // U+e014
+        constexpr static std::string_view HorizontalRule{ "\xef\x84\x88" };                          // U+f108
+        constexpr static std::string_view HorizontalSplit{ "\xee\xa5\x87" };                         // U+e947
+        constexpr static std::string_view HotTub{ "\xee\xad\x86" };                                  // U+eb46
+        constexpr static std::string_view Hotel{ "\xee\x95\x89" };                                   // U+e549
+        constexpr static std::string_view HotelClass{ "\xee\x9d\x83" };                              // U+e743
+        constexpr static std::string_view Hourglass{ "\xee\xaf\xbf" };                               // U+ebff
+        constexpr static std::string_view HourglassBottom{ "\xee\xa9\x9c" };                         // U+ea5c
+        constexpr static std::string_view HourglassDisabled{ "\xee\xbd\x93" };                       // U+ef53
+        constexpr static std::string_view HourglassEmpty{ "\xee\xa2\x8b" };                          // U+e88b
+        constexpr static std::string_view HourglassFull{ "\xee\xa2\x8c" };                           // U+e88c
+        constexpr static std::string_view HourglassTop{ "\xee\xa9\x9b" };                            // U+ea5b
+        constexpr static std::string_view House{ "\xee\xa9\x84" };                                   // U+ea44
+        constexpr static std::string_view HouseSiding{ "\xef\x88\x82" };                             // U+f202
+        constexpr static std::string_view HouseWithShield{ "\xee\x9e\x86" };                         // U+e786
+        constexpr static std::string_view Houseboat{ "\xee\x96\x84" };                               // U+e584
+        constexpr static std::string_view HouseholdSupplies{ "\xee\xbe\xa1" };                       // U+efa1
+        constexpr static std::string_view HowToReg{ "\xee\x85\xb4" };                                // U+e174
+        constexpr static std::string_view HowToVote{ "\xee\x85\xb5" };                               // U+e175
+        constexpr static std::string_view HrResting{ "\xef\x9a\xba" };                               // U+f6ba
+        constexpr static std::string_view Html{ "\xee\xad\xbe" };                                    // U+eb7e
+        constexpr static std::string_view Http{ "\xee\xa4\x82" };                                    // U+e902
+        constexpr static std::string_view Https{ "\xee\xa2\x99" };                                   // U+e899
+        constexpr static std::string_view Hub{ "\xee\xa7\xb4" };                                     // U+e9f4
+        constexpr static std::string_view Humerus{ "\xef\xa2\x95" };                                 // U+f895
+        constexpr static std::string_view HumerusAlt{ "\xef\xa2\x96" };                              // U+f896
+        constexpr static std::string_view HumidityHigh{ "\xef\x85\xa3" };                            // U+f163
+        constexpr static std::string_view HumidityIndoor{ "\xef\x95\x98" };                          // U+f558
+        constexpr static std::string_view HumidityLow{ "\xef\x85\xa4" };                             // U+f164
+        constexpr static std::string_view HumidityMid{ "\xef\x85\xa5" };                             // U+f165
+        constexpr static std::string_view HumidityPercentage{ "\xef\xa1\xbe" };                      // U+f87e
+        constexpr static std::string_view Hvac{ "\xef\x84\x8e" };                                    // U+f10e
+        constexpr static std::string_view IceSkating{ "\xee\x94\x8b" };                              // U+e50b
+        constexpr static std::string_view Icecream{ "\xee\xa9\xa9" };                                // U+ea69
+        constexpr static std::string_view Ifl{ "\xee\x80\xa5" };                                     // U+e025
+        constexpr static std::string_view Iframe{ "\xef\x9c\x9b" };                                  // U+f71b
+        constexpr static std::string_view IframeOff{ "\xef\x9c\x9c" };                               // U+f71c
+        constexpr static std::string_view Image{ "\xee\x8f\xb4" };                                   // U+e3f4
+        constexpr static std::string_view ImageAspectRatio{ "\xee\x8f\xb5" };                        // U+e3f5
+        constexpr static std::string_view ImageNotSupported{ "\xef\x84\x96" };                       // U+f116
+        constexpr static std::string_view ImageSearch{ "\xee\x90\xbf" };                             // U+e43f
+        constexpr static std::string_view ImagesearchRoller{ "\xee\xa6\xb4" };                       // U+e9b4
+        constexpr static std::string_view Imagesmode{ "\xee\xbe\xa2" };                              // U+efa2
+        constexpr static std::string_view Immunology{ "\xee\x83\xbb" };                              // U+e0fb
+        constexpr static std::string_view ImportContacts{ "\xee\x83\xa0" };                          // U+e0e0
+        constexpr static std::string_view ImportExport{ "\xee\xa3\x95" };                            // U+e8d5
+        constexpr static std::string_view ImportantDevices{ "\xee\xa4\x92" };                        // U+e912
+        constexpr static std::string_view InHomeMode{ "\xee\xa0\xb3" };                              // U+e833
+        constexpr static std::string_view InactiveOrder{ "\xee\x83\xbc" };                           // U+e0fc
+        constexpr static std::string_view Inbox{ "\xee\x85\x96" };                                   // U+e156
+        constexpr static std::string_view InboxCustomize{ "\xef\xa1\x99" };                          // U+f859
+        constexpr static std::string_view IncompleteCircle{ "\xee\x9e\x9b" };                        // U+e79b
+        constexpr static std::string_view IndeterminateCheckBox{ "\xee\xa4\x89" };                   // U+e909
+        constexpr static std::string_view IndeterminateQuestionBox{ "\xef\x95\xad" };                // U+f56d
+        constexpr static std::string_view Info{ "\xee\xa2\x8e" };                                    // U+e88e
+        constexpr static std::string_view InfoI{ "\xef\x96\x9b" };                                   // U+f59b
+        constexpr static std::string_view Infrared{ "\xef\xa1\xbc" };                                // U+f87c
+        constexpr static std::string_view InkEraser{ "\xee\x9b\x90" };                               // U+e6d0
+        constexpr static std::string_view InkEraserOff{ "\xee\x9f\xa3" };                            // U+e7e3
+        constexpr static std::string_view InkHighlighter{ "\xee\x9b\x91" };                          // U+e6d1
+        constexpr static std::string_view InkHighlighterMove{ "\xef\x94\xa4" };                      // U+f524
+        constexpr static std::string_view InkMarker{ "\xee\x9b\x92" };                               // U+e6d2
+        constexpr static std::string_view InkPen{ "\xee\x9b\x93" };                                  // U+e6d3
+        constexpr static std::string_view Inpatient{ "\xee\x83\xbe" };                               // U+e0fe
+        constexpr static std::string_view Input{ "\xee\xa2\x90" };                                   // U+e890
+        constexpr static std::string_view InputCircle{ "\xef\x9c\x9a" };                             // U+f71a
+        constexpr static std::string_view InsertChart{ "\xef\x83\x8c" };                             // U+f0cc
+        constexpr static std::string_view InsertChartFilled{ "\xef\x83\x8c" };                       // U+f0cc
+        constexpr static std::string_view InsertChartOutlined{ "\xef\x83\x8c" };                     // U+f0cc
+        constexpr static std::string_view InsertComment{ "\xee\x89\x8c" };                           // U+e24c
+        constexpr static std::string_view InsertDriveFile{ "\xee\x99\xad" };                         // U+e66d
+        constexpr static std::string_view InsertEmoticon{ "\xee\xa8\xa2" };                          // U+ea22
+        constexpr static std::string_view InsertInvitation{ "\xee\xa1\xb8" };                        // U+e878
+        constexpr static std::string_view InsertLink{ "\xee\x89\x90" };                              // U+e250
+        constexpr static std::string_view InsertPageBreak{ "\xee\xab\x8a" };                         // U+eaca
+        constexpr static std::string_view InsertPhoto{ "\xee\x8f\xb4" };                             // U+e3f4
+        constexpr static std::string_view InsertText{ "\xef\xa0\xa7" };                              // U+f827
+        constexpr static std::string_view Insights{ "\xef\x82\x92" };                                // U+f092
+        constexpr static std::string_view InstallDesktop{ "\xee\xad\xb1" };                          // U+eb71
+        constexpr static std::string_view InstallMobile{ "\xee\xad\xb2" };                           // U+eb72
+        constexpr static std::string_view InstantMix{ "\xee\x80\xa6" };                              // U+e026
+        constexpr static std::string_view IntegrationInstructions{ "\xee\xbd\x94" };                 // U+ef54
+        constexpr static std::string_view InteractiveSpace{ "\xef\x9f\xbf" };                        // U+f7ff
+        constexpr static std::string_view Interests{ "\xee\x9f\x88" };                               // U+e7c8
+        constexpr static std::string_view InterpreterMode{ "\xee\xa0\xbb" };                         // U+e83b
+        constexpr static std::string_view Inventory{ "\xee\x85\xb9" };                               // U+e179
+        constexpr static std::string_view Inventory_2{ "\xee\x86\xa1" };                             // U+e1a1
+        constexpr static std::string_view InvertColors{ "\xee\xa2\x91" };                            // U+e891
+        constexpr static std::string_view InvertColorsOff{ "\xee\x83\x84" };                         // U+e0c4
+        constexpr static std::string_view Ios{ "\xee\x80\xa7" };                                     // U+e027
+        constexpr static std::string_view IosShare{ "\xee\x9a\xb8" };                                // U+e6b8
+        constexpr static std::string_view Iron{ "\xee\x96\x83" };                                    // U+e583
+        constexpr static std::string_view Iso{ "\xee\x8f\xb6" };                                     // U+e3f6
+        constexpr static std::string_view JamboardKiosk{ "\xee\xa6\xb5" };                           // U+e9b5
+        constexpr static std::string_view Javascript{ "\xee\xad\xbc" };                              // U+eb7c
+        constexpr static std::string_view Join{ "\xef\xa1\x8f" };                                    // U+f84f
+        constexpr static std::string_view JoinFull{ "\xef\xa1\x8f" };                                // U+f84f
+        constexpr static std::string_view JoinInner{ "\xee\xab\xb4" };                               // U+eaf4
+        constexpr static std::string_view JoinLeft{ "\xee\xab\xb2" };                                // U+eaf2
+        constexpr static std::string_view JoinRight{ "\xee\xab\xaa" };                               // U+eaea
+        constexpr static std::string_view Joystick{ "\xef\x97\xae" };                                // U+f5ee
+        constexpr static std::string_view JumpToElement{ "\xef\x9c\x99" };                           // U+f719
+        constexpr static std::string_view Kayaking{ "\xee\x94\x8c" };                                // U+e50c
+        constexpr static std::string_view KebabDining{ "\xee\xa1\x82" };                             // U+e842
+        constexpr static std::string_view Kettle{ "\xee\x8a\xb9" };                                  // U+e2b9
+        constexpr static std::string_view Key{ "\xee\x9c\xbc" };                                     // U+e73c
+        constexpr static std::string_view KeyOff{ "\xee\xae\x84" };                                  // U+eb84
+        constexpr static std::string_view KeyVertical{ "\xef\x94\x9a" };                             // U+f51a
+        constexpr static std::string_view KeyVisualizer{ "\xef\x86\x99" };                           // U+f199
+        constexpr static std::string_view Keyboard{ "\xee\x8c\x92" };                                // U+e312
+        constexpr static std::string_view KeyboardAlt{ "\xef\x80\xa8" };                             // U+f028
+        constexpr static std::string_view KeyboardArrowDown{ "\xee\x8c\x93" };                       // U+e313
+        constexpr static std::string_view KeyboardArrowLeft{ "\xee\x8c\x94" };                       // U+e314
+        constexpr static std::string_view KeyboardArrowRight{ "\xee\x8c\x95" };                      // U+e315
+        constexpr static std::string_view KeyboardArrowUp{ "\xee\x8c\x96" };                         // U+e316
+        constexpr static std::string_view KeyboardBackspace{ "\xee\x8c\x97" };                       // U+e317
+        constexpr static std::string_view KeyboardCapslock{ "\xee\x8c\x98" };                        // U+e318
+        constexpr static std::string_view KeyboardCapslockBadge{ "\xef\x9f\x9e" };                   // U+f7de
+        constexpr static std::string_view KeyboardCommandKey{ "\xee\xab\xa7" };                      // U+eae7
+        constexpr static std::string_view KeyboardControlKey{ "\xee\xab\xa6" };                      // U+eae6
+        constexpr static std::string_view KeyboardDoubleArrowDown{ "\xee\xab\x90" };                 // U+ead0
+        constexpr static std::string_view KeyboardDoubleArrowLeft{ "\xee\xab\x83" };                 // U+eac3
+        constexpr static std::string_view KeyboardDoubleArrowRight{ "\xee\xab\x89" };                // U+eac9
+        constexpr static std::string_view KeyboardDoubleArrowUp{ "\xee\xab\x8f" };                   // U+eacf
+        constexpr static std::string_view KeyboardExternalInput{ "\xef\x9f\x9d" };                   // U+f7dd
+        constexpr static std::string_view KeyboardFull{ "\xef\x9f\x9c" };                            // U+f7dc
+        constexpr static std::string_view KeyboardHide{ "\xee\x8c\x9a" };                            // U+e31a
+        constexpr static std::string_view KeyboardKeys{ "\xef\x99\xbb" };                            // U+f67b
+        constexpr static std::string_view KeyboardOff{ "\xef\x99\xba" };                             // U+f67a
+        constexpr static std::string_view KeyboardOnscreen{ "\xef\x9f\x9b" };                        // U+f7db
+        constexpr static std::string_view KeyboardOptionKey{ "\xee\xab\xa8" };                       // U+eae8
+        constexpr static std::string_view KeyboardPreviousLanguage{ "\xef\x9f\x9a" };                // U+f7da
+        constexpr static std::string_view KeyboardReturn{ "\xee\x8c\x9b" };                          // U+e31b
+        constexpr static std::string_view KeyboardTab{ "\xee\x8c\x9c" };                             // U+e31c
+        constexpr static std::string_view KeyboardTabRtl{ "\xee\xb1\xb3" };                          // U+ec73
+        constexpr static std::string_view KeyboardVoice{ "\xee\x8c\x9d" };                           // U+e31d
+        constexpr static std::string_view KidStar{ "\xef\x94\xa6" };                                 // U+f526
+        constexpr static std::string_view KingBed{ "\xee\xa9\x85" };                                 // U+ea45
+        constexpr static std::string_view Kitchen{ "\xee\xad\x87" };                                 // U+eb47
+        constexpr static std::string_view Kitesurfing{ "\xee\x94\x8d" };                             // U+e50d
+        constexpr static std::string_view LabPanel{ "\xee\x84\x83" };                                // U+e103
+        constexpr static std::string_view LabProfile{ "\xee\x84\x84" };                              // U+e104
+        constexpr static std::string_view LabResearch{ "\xef\xa0\x8b" };                             // U+f80b
+        constexpr static std::string_view Label{ "\xee\xa2\x93" };                                   // U+e893
+        constexpr static std::string_view LabelImportant{ "\xee\xa5\x88" };                          // U+e948
+        constexpr static std::string_view LabelImportantOutline{ "\xee\xa5\x88" };                   // U+e948
+        constexpr static std::string_view LabelOff{ "\xee\xa6\xb6" };                                // U+e9b6
+        constexpr static std::string_view LabelOutline{ "\xee\xa2\x93" };                            // U+e893
+        constexpr static std::string_view Labs{ "\xee\x84\x85" };                                    // U+e105
+        constexpr static std::string_view Lan{ "\xee\xac\xaf" };                                     // U+eb2f
+        constexpr static std::string_view Landscape{ "\xee\x95\xa4" };                               // U+e564
+        constexpr static std::string_view Landslide{ "\xee\xaf\x97" };                               // U+ebd7
+        constexpr static std::string_view Language{ "\xee\xa2\x94" };                                // U+e894
+        constexpr static std::string_view LanguageChineseArray{ "\xef\x9d\xa6" };                    // U+f766
+        constexpr static std::string_view LanguageChineseCangjie{ "\xef\x9d\xa5" };                  // U+f765
+        constexpr static std::string_view LanguageChineseDayi{ "\xef\x9d\xa4" };                     // U+f764
+        constexpr static std::string_view LanguageChinesePinyin{ "\xef\x9d\xa3" };                   // U+f763
+        constexpr static std::string_view LanguageChineseQuick{ "\xef\x9d\xa2" };                    // U+f762
+        constexpr static std::string_view LanguageChineseWubi{ "\xef\x9d\xa1" };                     // U+f761
+        constexpr static std::string_view LanguageFrench{ "\xef\x9d\xa0" };                          // U+f760
+        constexpr static std::string_view LanguageGbEnglish{ "\xef\x9d\x9f" };                       // U+f75f
+        constexpr static std::string_view LanguageInternational{ "\xef\x9d\x9e" };                   // U+f75e
+        constexpr static std::string_view LanguageJapaneseKana{ "\xef\x94\x93" };                    // U+f513
+        constexpr static std::string_view LanguageKoreanLatin{ "\xef\x9d\x9d" };                     // U+f75d
+        constexpr static std::string_view LanguagePinyin{ "\xef\x9d\x9c" };                          // U+f75c
+        constexpr static std::string_view LanguageSpanish{ "\xef\x97\xa9" };                         // U+f5e9
+        constexpr static std::string_view LanguageUs{ "\xef\x9d\x99" };                              // U+f759
+        constexpr static std::string_view LanguageUsColemak{ "\xef\x9d\x9b" };                       // U+f75b
+        constexpr static std::string_view LanguageUsDvorak{ "\xef\x9d\x9a" };                        // U+f75a
+        constexpr static std::string_view Laps{ "\xef\x9a\xb9" };                                    // U+f6b9
+        constexpr static std::string_view Laptop{ "\xee\x8c\x9e" };                                  // U+e31e
+        constexpr static std::string_view LaptopChromebook{ "\xee\x8c\x9f" };                        // U+e31f
+        constexpr static std::string_view LaptopMac{ "\xee\x8c\xa0" };                               // U+e320
+        constexpr static std::string_view LaptopWindows{ "\xee\x8c\xa1" };                           // U+e321
+        constexpr static std::string_view LassoSelect{ "\xee\xac\x83" };                             // U+eb03
+        constexpr static std::string_view LastPage{ "\xee\x97\x9d" };                                // U+e5dd
+        constexpr static std::string_view Launch{ "\xee\xa2\x9e" };                                  // U+e89e
+        constexpr static std::string_view Laundry{ "\xee\x8a\xa8" };                                 // U+e2a8
+        constexpr static std::string_view Layers{ "\xee\x94\xbb" };                                  // U+e53b
+        constexpr static std::string_view LayersClear{ "\xee\x94\xbc" };                             // U+e53c
+        constexpr static std::string_view Lda{ "\xee\x84\x86" };                                     // U+e106
+        constexpr static std::string_view Leaderboard{ "\xef\x88\x8c" };                             // U+f20c
+        constexpr static std::string_view LeakAdd{ "\xee\x8f\xb8" };                                 // U+e3f8
+        constexpr static std::string_view LeakRemove{ "\xee\x8f\xb9" };                              // U+e3f9
+        constexpr static std::string_view LeftClick{ "\xef\x9c\x98" };                               // U+f718
+        constexpr static std::string_view LeftPanelClose{ "\xef\x9c\x97" };                          // U+f717
+        constexpr static std::string_view LeftPanelOpen{ "\xef\x9c\x96" };                           // U+f716
+        constexpr static std::string_view LegendToggle{ "\xef\x84\x9b" };                            // U+f11b
+        constexpr static std::string_view Lens{ "\xee\x8f\xba" };                                    // U+e3fa
+        constexpr static std::string_view LensBlur{ "\xef\x80\xa9" };                                // U+f029
+        constexpr static std::string_view LetterSwitch{ "\xef\x9d\x98" };                            // U+f758
+        constexpr static std::string_view LibraryAdd{ "\xee\x80\xbc" };                              // U+e03c
+        constexpr static std::string_view LibraryAddCheck{ "\xee\xa6\xb7" };                         // U+e9b7
+        constexpr static std::string_view LibraryBooks{ "\xee\x80\xaf" };                            // U+e02f
+        constexpr static std::string_view LibraryMusic{ "\xee\x80\xb0" };                            // U+e030
+        constexpr static std::string_view License{ "\xee\xac\x84" };                                 // U+eb04
+        constexpr static std::string_view LiftToTalk{ "\xee\xbe\xa3" };                              // U+efa3
+        constexpr static std::string_view Light{ "\xef\x80\xaa" };                                   // U+f02a
+        constexpr static std::string_view LightGroup{ "\xee\x8a\x8b" };                              // U+e28b
+        constexpr static std::string_view LightMode{ "\xee\x94\x98" };                               // U+e518
+        constexpr static std::string_view LightOff{ "\xee\xa6\xb8" };                                // U+e9b8
+        constexpr static std::string_view Lightbulb{ "\xee\xa4\x8f" };                               // U+e90f
+        constexpr static std::string_view LightbulbCircle{ "\xee\xaf\xbe" };                         // U+ebfe
+        constexpr static std::string_view LightbulbOutline{ "\xee\xa4\x8f" };                        // U+e90f
+        constexpr static std::string_view LightningStand{ "\xee\xbe\xa4" };                          // U+efa4
+        constexpr static std::string_view LineAxis{ "\xee\xaa\x9a" };                                // U+ea9a
+        constexpr static std::string_view LineCurve{ "\xef\x9d\x97" };                               // U+f757
+        constexpr static std::string_view LineEnd{ "\xef\xa0\xa6" };                                 // U+f826
+        constexpr static std::string_view LineEndArrow{ "\xef\xa0\x9d" };                            // U+f81d
+        constexpr static std::string_view LineEndArrowNotch{ "\xef\xa0\x9c" };                       // U+f81c
+        constexpr static std::string_view LineEndCircle{ "\xef\xa0\x9b" };                           // U+f81b
+        constexpr static std::string_view LineEndDiamond{ "\xef\xa0\x9a" };                          // U+f81a
+        constexpr static std::string_view LineEndSquare{ "\xef\xa0\x99" };                           // U+f819
+        constexpr static std::string_view LineStart{ "\xef\xa0\xa5" };                               // U+f825
+        constexpr static std::string_view LineStartArrow{ "\xef\xa0\x98" };                          // U+f818
+        constexpr static std::string_view LineStartArrowNotch{ "\xef\xa0\x97" };                     // U+f817
+        constexpr static std::string_view LineStartCircle{ "\xef\xa0\x96" };                         // U+f816
+        constexpr static std::string_view LineStartDiamond{ "\xef\xa0\x95" };                        // U+f815
+        constexpr static std::string_view LineStartSquare{ "\xef\xa0\x94" };                         // U+f814
+        constexpr static std::string_view LineStyle{ "\xee\xa4\x99" };                               // U+e919
+        constexpr static std::string_view LineWeight{ "\xee\xa4\x9a" };                              // U+e91a
+        constexpr static std::string_view LinearScale{ "\xee\x89\xa0" };                             // U+e260
+        constexpr static std::string_view Link{ "\xee\x89\x90" };                                    // U+e250
+        constexpr static std::string_view LinkOff{ "\xee\x85\xaf" };                                 // U+e16f
+        constexpr static std::string_view LinkedCamera{ "\xee\x90\xb8" };                            // U+e438
+        constexpr static std::string_view LinkedServices{ "\xef\x94\xb5" };                          // U+f535
+        constexpr static std::string_view Liquor{ "\xee\xa9\xa0" };                                  // U+ea60
+        constexpr static std::string_view List{ "\xee\xa2\x96" };                                    // U+e896
+        constexpr static std::string_view ListAlt{ "\xee\x83\xae" };                                 // U+e0ee
+        constexpr static std::string_view ListAltAdd{ "\xef\x9d\x96" };                              // U+f756
+        constexpr static std::string_view Lists{ "\xee\xa6\xb9" };                                   // U+e9b9
+        constexpr static std::string_view LiveHelp{ "\xee\x83\x86" };                                // U+e0c6
+        constexpr static std::string_view LiveTv{ "\xee\x98\xba" };                                  // U+e63a
+        constexpr static std::string_view Living{ "\xef\x80\xab" };                                  // U+f02b
+        constexpr static std::string_view LocalActivity{ "\xee\x95\x93" };                           // U+e553
+        constexpr static std::string_view LocalAirport{ "\xee\x94\xbd" };                            // U+e53d
+        constexpr static std::string_view LocalAtm{ "\xee\x94\xbe" };                                // U+e53e
+        constexpr static std::string_view LocalBar{ "\xee\x95\x80" };                                // U+e540
+        constexpr static std::string_view LocalCafe{ "\xee\xad\x84" };                               // U+eb44
+        constexpr static std::string_view LocalCarWash{ "\xee\x95\x82" };                            // U+e542
+        constexpr static std::string_view LocalConvenienceStore{ "\xee\x95\x83" };                   // U+e543
+        constexpr static std::string_view LocalDining{ "\xee\x95\xa1" };                             // U+e561
+        constexpr static std::string_view LocalDrink{ "\xee\x95\x84" };                              // U+e544
+        constexpr static std::string_view LocalFireDepartment{ "\xee\xbd\x95" };                     // U+ef55
+        constexpr static std::string_view LocalFlorist{ "\xee\x95\x85" };                            // U+e545
+        constexpr static std::string_view LocalGasStation{ "\xee\x95\x86" };                         // U+e546
+        constexpr static std::string_view LocalGroceryStore{ "\xee\xa3\x8c" };                       // U+e8cc
+        constexpr static std::string_view LocalHospital{ "\xee\x95\x88" };                           // U+e548
+        constexpr static std::string_view LocalHotel{ "\xee\x95\x89" };                              // U+e549
+        constexpr static std::string_view LocalLaundryService{ "\xee\x95\x8a" };                     // U+e54a
+        constexpr static std::string_view LocalLibrary{ "\xee\x95\x8b" };                            // U+e54b
+        constexpr static std::string_view LocalMall{ "\xee\x95\x8c" };                               // U+e54c
+        constexpr static std::string_view LocalMovies{ "\xee\xa3\x9a" };                             // U+e8da
+        constexpr static std::string_view LocalOffer{ "\xef\x81\x9b" };                              // U+f05b
+        constexpr static std::string_view LocalParking{ "\xee\x95\x8f" };                            // U+e54f
+        constexpr static std::string_view LocalPharmacy{ "\xee\x95\x90" };                           // U+e550
+        constexpr static std::string_view LocalPhone{ "\xef\x83\x94" };                              // U+f0d4
+        constexpr static std::string_view LocalPizza{ "\xee\x95\x92" };                              // U+e552
+        constexpr static std::string_view LocalPlay{ "\xee\x95\x93" };                               // U+e553
+        constexpr static std::string_view LocalPolice{ "\xee\xbd\x96" };                             // U+ef56
+        constexpr static std::string_view LocalPostOffice{ "\xee\x95\x94" };                         // U+e554
+        constexpr static std::string_view LocalPrintshop{ "\xee\xa2\xad" };                          // U+e8ad
+        constexpr static std::string_view LocalSee{ "\xee\x95\x97" };                                // U+e557
+        constexpr static std::string_view LocalShipping{ "\xee\x95\x98" };                           // U+e558
+        constexpr static std::string_view LocalTaxi{ "\xee\x95\x99" };                               // U+e559
+        constexpr static std::string_view LocationAutomation{ "\xef\x85\x8f" };                      // U+f14f
+        constexpr static std::string_view LocationAway{ "\xef\x85\x90" };                            // U+f150
+        constexpr static std::string_view LocationChip{ "\xef\xa1\x90" };                            // U+f850
+        constexpr static std::string_view LocationCity{ "\xee\x9f\xb1" };                            // U+e7f1
+        constexpr static std::string_view LocationDisabled{ "\xee\x86\xb6" };                        // U+e1b6
+        constexpr static std::string_view LocationHome{ "\xef\x85\x92" };                            // U+f152
+        constexpr static std::string_view LocationOff{ "\xee\x83\x87" };                             // U+e0c7
+        constexpr static std::string_view LocationOn{ "\xef\x87\x9b" };                              // U+f1db
+        constexpr static std::string_view LocationPin{ "\xef\x87\x9b" };                             // U+f1db
+        constexpr static std::string_view LocationSearching{ "\xee\x86\xb7" };                       // U+e1b7
+        constexpr static std::string_view LocatorTag{ "\xef\xa3\x81" };                              // U+f8c1
+        constexpr static std::string_view Lock{ "\xee\xa2\x99" };                                    // U+e899
+        constexpr static std::string_view LockClock{ "\xee\xbd\x97" };                               // U+ef57
+        constexpr static std::string_view LockOpen{ "\xee\xa2\x98" };                                // U+e898
+        constexpr static std::string_view LockOpenRight{ "\xef\x99\x96" };                           // U+f656
+        constexpr static std::string_view LockOutline{ "\xee\xa2\x99" };                             // U+e899
+        constexpr static std::string_view LockPerson{ "\xef\xa3\xb3" };                              // U+f8f3
+        constexpr static std::string_view LockReset{ "\xee\xab\x9e" };                               // U+eade
+        constexpr static std::string_view Login{ "\xee\xa9\xb7" };                                   // U+ea77
+        constexpr static std::string_view LogoDev{ "\xee\xab\x96" };                                 // U+ead6
+        constexpr static std::string_view Logout{ "\xee\xa6\xba" };                                  // U+e9ba
+        constexpr static std::string_view Looks{ "\xee\x8f\xbc" };                                   // U+e3fc
+        constexpr static std::string_view Looks_3{ "\xee\x8f\xbb" };                                 // U+e3fb
+        constexpr static std::string_view Looks_4{ "\xee\x8f\xbd" };                                 // U+e3fd
+        constexpr static std::string_view Looks_5{ "\xee\x8f\xbe" };                                 // U+e3fe
+        constexpr static std::string_view Looks_6{ "\xee\x8f\xbf" };                                 // U+e3ff
+        constexpr static std::string_view LooksOne{ "\xee\x90\x80" };                                // U+e400
+        constexpr static std::string_view LooksTwo{ "\xee\x90\x81" };                                // U+e401
+        constexpr static std::string_view Loop{ "\xee\xa1\xa3" };                                    // U+e863
+        constexpr static std::string_view Loupe{ "\xee\x90\x82" };                                   // U+e402
+        constexpr static std::string_view LowDensity{ "\xef\x9e\x9b" };                              // U+f79b
+        constexpr static std::string_view LowPriority{ "\xee\x85\xad" };                             // U+e16d
+        constexpr static std::string_view Loyalty{ "\xee\xa2\x9a" };                                 // U+e89a
+        constexpr static std::string_view LteMobiledata{ "\xef\x80\xac" };                           // U+f02c
+        constexpr static std::string_view LteMobiledataBadge{ "\xef\x9f\x99" };                      // U+f7d9
+        constexpr static std::string_view LtePlusMobiledata{ "\xef\x80\xad" };                       // U+f02d
+        constexpr static std::string_view LtePlusMobiledataBadge{ "\xef\x9f\x98" };                  // U+f7d8
+        constexpr static std::string_view Luggage{ "\xef\x88\xb5" };                                 // U+f235
+        constexpr static std::string_view LunchDining{ "\xee\xa9\xa1" };                             // U+ea61
+        constexpr static std::string_view Lyrics{ "\xee\xb0\x8b" };                                  // U+ec0b
+        constexpr static std::string_view MacroAuto{ "\xef\x9b\xb2" };                               // U+f6f2
+        constexpr static std::string_view MacroOff{ "\xef\xa3\x92" };                                // U+f8d2
+        constexpr static std::string_view MagicButton{ "\xef\x84\xb6" };                             // U+f136
+        constexpr static std::string_view MagicExchange{ "\xef\x9f\xb4" };                           // U+f7f4
+        constexpr static std::string_view MagicTether{ "\xef\x9f\x97" };                             // U+f7d7
+        constexpr static std::string_view MagnificationLarge{ "\xef\xa0\xbd" };                      // U+f83d
+        constexpr static std::string_view MagnificationSmall{ "\xef\xa0\xbc" };                      // U+f83c
+        constexpr static std::string_view MagnifyDocked{ "\xef\x9f\x96" };                           // U+f7d6
+        constexpr static std::string_view MagnifyFullscreen{ "\xef\x9f\x95" };                       // U+f7d5
+        constexpr static std::string_view Mail{ "\xee\x85\x99" };                                    // U+e159
+        constexpr static std::string_view MailLock{ "\xee\xb0\x8a" };                                // U+ec0a
+        constexpr static std::string_view MailOutline{ "\xee\x85\x99" };                             // U+e159
+        constexpr static std::string_view Male{ "\xee\x96\x8e" };                                    // U+e58e
+        constexpr static std::string_view Man{ "\xee\x93\xab" };                                     // U+e4eb
+        constexpr static std::string_view Man_2{ "\xef\xa3\xa1" };                                   // U+f8e1
+        constexpr static std::string_view Man_3{ "\xef\xa3\xa2" };                                   // U+f8e2
+        constexpr static std::string_view Man_4{ "\xef\xa3\xa3" };                                   // U+f8e3
+        constexpr static std::string_view ManageAccounts{ "\xef\x80\xae" };                          // U+f02e
+        constexpr static std::string_view ManageHistory{ "\xee\xaf\xa7" };                           // U+ebe7
+        constexpr static std::string_view ManageSearch{ "\xef\x80\xaf" };                            // U+f02f
+        constexpr static std::string_view Manga{ "\xef\x97\xa3" };                                   // U+f5e3
+        constexpr static std::string_view Manufacturing{ "\xee\x9c\xa6" };                           // U+e726
+        constexpr static std::string_view Map{ "\xee\x95\x9b" };                                     // U+e55b
+        constexpr static std::string_view MapsHomeWork{ "\xef\x80\xb0" };                            // U+f030
+        constexpr static std::string_view MapsUgc{ "\xee\xbd\x98" };                                 // U+ef58
+        constexpr static std::string_view Margin{ "\xee\xa6\xbb" };                                  // U+e9bb
+        constexpr static std::string_view MarkAsUnread{ "\xee\xa6\xbc" };                            // U+e9bc
+        constexpr static std::string_view MarkChatRead{ "\xef\x86\x8b" };                            // U+f18b
+        constexpr static std::string_view MarkChatUnread{ "\xef\x86\x89" };                          // U+f189
+        constexpr static std::string_view MarkEmailRead{ "\xef\x86\x8c" };                           // U+f18c
+        constexpr static std::string_view MarkEmailUnread{ "\xef\x86\x8a" };                         // U+f18a
+        constexpr static std::string_view MarkUnreadChatAlt{ "\xee\xae\x9d" };                       // U+eb9d
+        constexpr static std::string_view Markdown{ "\xef\x95\x92" };                                // U+f552
+        constexpr static std::string_view MarkdownCopy{ "\xef\x95\x93" };                            // U+f553
+        constexpr static std::string_view MarkdownPaste{ "\xef\x95\x94" };                           // U+f554
+        constexpr static std::string_view Markunread{ "\xee\x85\x99" };                              // U+e159
+        constexpr static std::string_view MarkunreadMailbox{ "\xee\xa2\x9b" };                       // U+e89b
+        constexpr static std::string_view MaskedTransitions{ "\xee\x9c\xae" };                       // U+e72e
+        constexpr static std::string_view Masks{ "\xef\x88\x98" };                                   // U+f218
+        constexpr static std::string_view MatchCase{ "\xef\x9b\xb1" };                               // U+f6f1
+        constexpr static std::string_view MatchWord{ "\xef\x9b\xb0" };                               // U+f6f0
+        constexpr static std::string_view Matter{ "\xee\xa4\x87" };                                  // U+e907
+        constexpr static std::string_view Maximize{ "\xee\xa4\xb0" };                                // U+e930
+        constexpr static std::string_view MeasuringTape{ "\xef\x9a\xaf" };                           // U+f6af
+        constexpr static std::string_view MediaBluetoothOff{ "\xef\x80\xb1" };                       // U+f031
+        constexpr static std::string_view MediaBluetoothOn{ "\xef\x80\xb2" };                        // U+f032
+        constexpr static std::string_view MediaLink{ "\xef\xa0\xbf" };                               // U+f83f
+        constexpr static std::string_view MediaOutput{ "\xef\x93\xb2" };                             // U+f4f2
+        constexpr static std::string_view MediaOutputOff{ "\xef\x93\xb3" };                          // U+f4f3
+        constexpr static std::string_view Mediation{ "\xee\xbe\xa7" };                               // U+efa7
+        constexpr static std::string_view MedicalInformation{ "\xee\xaf\xad" };                      // U+ebed
+        constexpr static std::string_view MedicalMask{ "\xef\xa0\x8a" };                             // U+f80a
+        constexpr static std::string_view MedicalServices{ "\xef\x84\x89" };                         // U+f109
+        constexpr static std::string_view Medication{ "\xef\x80\xb3" };                              // U+f033
+        constexpr static std::string_view MedicationLiquid{ "\xee\xaa\x87" };                        // U+ea87
+        constexpr static std::string_view MeetingRoom{ "\xee\xad\x8f" };                             // U+eb4f
+        constexpr static std::string_view Memory{ "\xee\x8c\xa2" };                                  // U+e322
+        constexpr static std::string_view MemoryAlt{ "\xef\x9e\xa3" };                               // U+f7a3
+        constexpr static std::string_view MenstrualHealth{ "\xef\x9b\xa1" };                         // U+f6e1
+        constexpr static std::string_view Menu{ "\xee\x97\x92" };                                    // U+e5d2
+        constexpr static std::string_view MenuBook{ "\xee\xa8\x99" };                                // U+ea19
+        constexpr static std::string_view MenuOpen{ "\xee\xa6\xbd" };                                // U+e9bd
+        constexpr static std::string_view Merge{ "\xee\xae\x98" };                                   // U+eb98
+        constexpr static std::string_view MergeType{ "\xee\x89\x92" };                               // U+e252
+        constexpr static std::string_view Message{ "\xee\x83\x89" };                                 // U+e0c9
+        constexpr static std::string_view Metabolism{ "\xee\x84\x8b" };                              // U+e10b
+        constexpr static std::string_view MfgNestYaleLock{ "\xef\x84\x9d" };                         // U+f11d
+        constexpr static std::string_view Mic{ "\xee\x8c\x9d" };                                     // U+e31d
+        constexpr static std::string_view MicDouble{ "\xef\x97\x91" };                               // U+f5d1
+        constexpr static std::string_view MicExternalOff{ "\xee\xbd\x99" };                          // U+ef59
+        constexpr static std::string_view MicExternalOn{ "\xee\xbd\x9a" };                           // U+ef5a
+        constexpr static std::string_view MicNone{ "\xee\x8c\x9d" };                                 // U+e31d
+        constexpr static std::string_view MicOff{ "\xee\x80\xab" };                                  // U+e02b
+        constexpr static std::string_view Microbiology{ "\xee\x84\x8c" };                            // U+e10c
+        constexpr static std::string_view Microwave{ "\xef\x88\x84" };                               // U+f204
+        constexpr static std::string_view MicrowaveGen{ "\xee\xa1\x87" };                            // U+e847
+        constexpr static std::string_view MilitaryTech{ "\xee\xa8\xbf" };                            // U+ea3f
+        constexpr static std::string_view Mimo{ "\xee\xa6\xbe" };                                    // U+e9be
+        constexpr static std::string_view MimoDisconnect{ "\xee\xa6\xbf" };                          // U+e9bf
+        constexpr static std::string_view Mindfulness{ "\xef\x9b\xa0" };                             // U+f6e0
+        constexpr static std::string_view Minimize{ "\xee\xa4\xb1" };                                // U+e931
+        constexpr static std::string_view MinorCrash{ "\xee\xaf\xb1" };                              // U+ebf1
+        constexpr static std::string_view Mintmark{ "\xee\xbe\xa9" };                                // U+efa9
+        constexpr static std::string_view MissedVideoCall{ "\xef\x83\x8e" };                         // U+f0ce
+        constexpr static std::string_view MissedVideoCallFilled{ "\xef\x83\x8e" };                   // U+f0ce
+        constexpr static std::string_view MissingController{ "\xee\x9c\x81" };                       // U+e701
+        constexpr static std::string_view Mist{ "\xee\x86\x88" };                                    // U+e188
+        constexpr static std::string_view Mitre{ "\xef\x95\x87" };                                   // U+f547
+        constexpr static std::string_view MixtureMed{ "\xee\x93\x88" };                              // U+e4c8
+        constexpr static std::string_view Mms{ "\xee\x98\x98" };                                     // U+e618
+        constexpr static std::string_view MobileFriendly{ "\xee\x88\x80" };                          // U+e200
+        constexpr static std::string_view MobileOff{ "\xee\x88\x81" };                               // U+e201
+        constexpr static std::string_view MobileScreenShare{ "\xee\x83\xa7" };                       // U+e0e7
+        constexpr static std::string_view MobiledataOff{ "\xef\x80\xb4" };                           // U+f034
+        constexpr static std::string_view Mode{ "\xef\x82\x97" };                                    // U+f097
+        constexpr static std::string_view ModeComment{ "\xee\x89\x93" };                             // U+e253
+        constexpr static std::string_view ModeCool{ "\xef\x85\xa6" };                                // U+f166
+        constexpr static std::string_view ModeCoolOff{ "\xef\x85\xa7" };                             // U+f167
+        constexpr static std::string_view ModeDual{ "\xef\x95\x97" };                                // U+f557
+        constexpr static std::string_view ModeEdit{ "\xef\x82\x97" };                                // U+f097
+        constexpr static std::string_view ModeEditOutline{ "\xef\x82\x97" };                         // U+f097
+        constexpr static std::string_view ModeFan{ "\xef\x85\xa8" };                                 // U+f168
+        constexpr static std::string_view ModeFanOff{ "\xee\xb0\x97" };                              // U+ec17
+        constexpr static std::string_view ModeHeat{ "\xef\x85\xaa" };                                // U+f16a
+        constexpr static std::string_view ModeHeatCool{ "\xef\x85\xab" };                            // U+f16b
+        constexpr static std::string_view ModeHeatOff{ "\xef\x85\xad" };                             // U+f16d
+        constexpr static std::string_view ModeNight{ "\xef\x80\xb6" };                               // U+f036
+        constexpr static std::string_view ModeOfTravel{ "\xee\x9f\x8e" };                            // U+e7ce
+        constexpr static std::string_view ModeOffOn{ "\xef\x85\xaf" };                               // U+f16f
+        constexpr static std::string_view ModeStandby{ "\xef\x80\xb7" };                             // U+f037
+        constexpr static std::string_view ModelTraining{ "\xef\x83\x8f" };                           // U+f0cf
+        constexpr static std::string_view MonetizationOn{ "\xee\x89\xa3" };                          // U+e263
+        constexpr static std::string_view Money{ "\xee\x95\xbd" };                                   // U+e57d
+        constexpr static std::string_view MoneyOff{ "\xef\x80\xb8" };                                // U+f038
+        constexpr static std::string_view MoneyOffCsred{ "\xef\x80\xb8" };                           // U+f038
+        constexpr static std::string_view Monitor{ "\xee\xbd\x9b" };                                 // U+ef5b
+        constexpr static std::string_view MonitorHeart{ "\xee\xaa\xa2" };                            // U+eaa2
+        constexpr static std::string_view MonitorWeight{ "\xef\x80\xb9" };                           // U+f039
+        constexpr static std::string_view MonitorWeightGain{ "\xef\x9b\x9f" };                       // U+f6df
+        constexpr static std::string_view MonitorWeightLoss{ "\xef\x9b\x9e" };                       // U+f6de
+        constexpr static std::string_view Monitoring{ "\xef\x86\x90" };                              // U+f190
+        constexpr static std::string_view MonochromePhotos{ "\xee\x90\x83" };                        // U+e403
+        constexpr static std::string_view Mood{ "\xee\xa8\xa2" };                                    // U+ea22
+        constexpr static std::string_view MoodBad{ "\xee\x9f\xb3" };                                 // U+e7f3
+        constexpr static std::string_view Mop{ "\xee\x8a\x8d" };                                     // U+e28d
+        constexpr static std::string_view More{ "\xee\x98\x99" };                                    // U+e619
+        constexpr static std::string_view MoreDown{ "\xef\x86\x96" };                                // U+f196
+        constexpr static std::string_view MoreHoriz{ "\xee\x97\x93" };                               // U+e5d3
+        constexpr static std::string_view MoreTime{ "\xee\xa9\x9d" };                                // U+ea5d
+        constexpr static std::string_view MoreUp{ "\xef\x86\x97" };                                  // U+f197
+        constexpr static std::string_view MoreVert{ "\xee\x97\x94" };                                // U+e5d4
+        constexpr static std::string_view Mosque{ "\xee\xaa\xb2" };                                  // U+eab2
+        constexpr static std::string_view MotionBlur{ "\xef\x83\x90" };                              // U+f0d0
+        constexpr static std::string_view MotionMode{ "\xef\xa1\x82" };                              // U+f842
+        constexpr static std::string_view MotionPhotosAuto{ "\xef\x80\xba" };                        // U+f03a
+        constexpr static std::string_view MotionPhotosOff{ "\xee\xa7\x80" };                         // U+e9c0
+        constexpr static std::string_view MotionPhotosOn{ "\xee\xa7\x81" };                          // U+e9c1
+        constexpr static std::string_view MotionPhotosPause{ "\xef\x88\xa7" };                       // U+f227
+        constexpr static std::string_view MotionPhotosPaused{ "\xef\x88\xa7" };                      // U+f227
+        constexpr static std::string_view MotionSensorActive{ "\xee\x9e\x92" };                      // U+e792
+        constexpr static std::string_view MotionSensorAlert{ "\xee\x9e\x84" };                       // U+e784
+        constexpr static std::string_view MotionSensorIdle{ "\xee\x9e\x83" };                        // U+e783
+        constexpr static std::string_view MotionSensorUrgent{ "\xee\x9e\x8e" };                      // U+e78e
+        constexpr static std::string_view Motorcycle{ "\xee\xa4\x9b" };                              // U+e91b
+        constexpr static std::string_view MountainFlag{ "\xef\x97\xa2" };                            // U+f5e2
+        constexpr static std::string_view Mouse{ "\xee\x8c\xa3" };                                   // U+e323
+        constexpr static std::string_view Move{ "\xee\x9d\x80" };                                    // U+e740
+        constexpr static std::string_view MoveDown{ "\xee\xad\xa1" };                                // U+eb61
+        constexpr static std::string_view MoveGroup{ "\xef\x9c\x95" };                               // U+f715
+        constexpr static std::string_view MoveItem{ "\xef\x87\xbf" };                                // U+f1ff
+        constexpr static std::string_view MoveLocation{ "\xee\x9d\x81" };                            // U+e741
+        constexpr static std::string_view MoveSelectionDown{ "\xef\x9c\x94" };                       // U+f714
+        constexpr static std::string_view MoveSelectionLeft{ "\xef\x9c\x93" };                       // U+f713
+        constexpr static std::string_view MoveSelectionRight{ "\xef\x9c\x92" };                      // U+f712
+        constexpr static std::string_view MoveSelectionUp{ "\xef\x9c\x91" };                         // U+f711
+        constexpr static std::string_view MoveToInbox{ "\xee\x85\xa8" };                             // U+e168
+        constexpr static std::string_view MoveUp{ "\xee\xad\xa4" };                                  // U+eb64
+        constexpr static std::string_view MovedLocation{ "\xee\x96\x94" };                           // U+e594
+        constexpr static std::string_view Movie{ "\xee\x90\x84" };                                   // U+e404
+        constexpr static std::string_view MovieCreation{ "\xee\x90\x84" };                           // U+e404
+        constexpr static std::string_view MovieEdit{ "\xef\xa1\x80" };                               // U+f840
+        constexpr static std::string_view MovieFilter{ "\xee\x90\xba" };                             // U+e43a
+        constexpr static std::string_view MovieInfo{ "\xee\x80\xad" };                               // U+e02d
+        constexpr static std::string_view Moving{ "\xee\x94\x81" };                                  // U+e501
+        constexpr static std::string_view MovingBeds{ "\xee\x9c\xbd" };                              // U+e73d
+        constexpr static std::string_view MovingMinistry{ "\xee\x9c\xbe" };                          // U+e73e
+        constexpr static std::string_view Mp{ "\xee\xa7\x83" };                                      // U+e9c3
+        constexpr static std::string_view Multicooker{ "\xee\x8a\x93" };                             // U+e293
+        constexpr static std::string_view MultilineChart{ "\xee\x9b\x9f" };                          // U+e6df
+        constexpr static std::string_view MultipleStop{ "\xef\x86\xb9" };                            // U+f1b9
+        constexpr static std::string_view Museum{ "\xee\xa8\xb6" };                                  // U+ea36
+        constexpr static std::string_view MusicCast{ "\xee\xac\x9a" };                               // U+eb1a
+        constexpr static std::string_view MusicNote{ "\xee\x90\x85" };                               // U+e405
+        constexpr static std::string_view MusicOff{ "\xee\x91\x80" };                                // U+e440
+        constexpr static std::string_view MusicVideo{ "\xee\x81\xa3" };                              // U+e063
+        constexpr static std::string_view MyLocation{ "\xee\x95\x9c" };                              // U+e55c
+        constexpr static std::string_view Mystery{ "\xef\x97\xa1" };                                 // U+f5e1
+        constexpr static std::string_view Nat{ "\xee\xbd\x9c" };                                     // U+ef5c
+        constexpr static std::string_view Nature{ "\xee\x90\x86" };                                  // U+e406
+        constexpr static std::string_view NaturePeople{ "\xee\x90\x87" };                            // U+e407
+        constexpr static std::string_view NavigateBefore{ "\xee\x90\x88" };                          // U+e408
+        constexpr static std::string_view NavigateNext{ "\xee\x90\x89" };                            // U+e409
+        constexpr static std::string_view Navigation{ "\xee\x95\x9d" };                              // U+e55d
+        constexpr static std::string_view NearMe{ "\xee\x95\xa9" };                                  // U+e569
+        constexpr static std::string_view NearMeDisabled{ "\xef\x87\xaf" };                          // U+f1ef
+        constexpr static std::string_view Nearby{ "\xee\x9a\xb7" };                                  // U+e6b7
+        constexpr static std::string_view NearbyError{ "\xef\x80\xbb" };                             // U+f03b
+        constexpr static std::string_view NearbyOff{ "\xef\x80\xbc" };                               // U+f03c
+        constexpr static std::string_view Nephrology{ "\xee\x84\x8d" };                              // U+e10d
+        constexpr static std::string_view NestAudio{ "\xee\xae\xbf" };                               // U+ebbf
+        constexpr static std::string_view NestCamFloodlight{ "\xef\xa2\xb7" };                       // U+f8b7
+        constexpr static std::string_view NestCamIndoor{ "\xef\x84\x9e" };                           // U+f11e
+        constexpr static std::string_view NestCamIq{ "\xef\x84\x9f" };                               // U+f11f
+        constexpr static std::string_view NestCamIqOutdoor{ "\xef\x84\xa0" };                        // U+f120
+        constexpr static std::string_view NestCamMagnetMount{ "\xef\xa2\xb8" };                      // U+f8b8
+        constexpr static std::string_view NestCamOutdoor{ "\xef\x84\xa1" };                          // U+f121
+        constexpr static std::string_view NestCamStand{ "\xef\xa2\xb9" };                            // U+f8b9
+        constexpr static std::string_view NestCamWallMount{ "\xef\xa2\xba" };                        // U+f8ba
+        constexpr static std::string_view NestCamWiredStand{ "\xee\xb0\x96" };                       // U+ec16
+        constexpr static std::string_view NestClockFarsightAnalog{ "\xef\xa2\xbb" };                 // U+f8bb
+        constexpr static std::string_view NestClockFarsightDigital{ "\xef\xa2\xbc" };                // U+f8bc
+        constexpr static std::string_view NestConnect{ "\xef\x84\xa2" };                             // U+f122
+        constexpr static std::string_view NestDetect{ "\xef\x84\xa3" };                              // U+f123
+        constexpr static std::string_view NestDisplay{ "\xef\x84\xa4" };                             // U+f124
+        constexpr static std::string_view NestDisplayMax{ "\xef\x84\xa5" };                          // U+f125
+        constexpr static std::string_view NestDoorbellVisitor{ "\xef\xa2\xbd" };                     // U+f8bd
+        constexpr static std::string_view NestEcoLeaf{ "\xef\xa2\xbe" };                             // U+f8be
+        constexpr static std::string_view NestFarsightWeather{ "\xef\xa2\xbf" };                     // U+f8bf
+        constexpr static std::string_view NestFoundSavings{ "\xef\xa3\x80" };                        // U+f8c0
+        constexpr static std::string_view NestGaleWifi{ "\xef\x95\xb9" };                            // U+f579
+        constexpr static std::string_view NestHeatLinkE{ "\xef\x84\xa6" };                           // U+f126
+        constexpr static std::string_view NestHeatLinkGen_3{ "\xef\x84\xa7" };                       // U+f127
+        constexpr static std::string_view NestHelloDoorbell{ "\xee\xa0\xac" };                       // U+e82c
+        constexpr static std::string_view NestLocatorTag{ "\xef\xa3\x81" };                          // U+f8c1
+        constexpr static std::string_view NestMini{ "\xee\x9e\x89" };                                // U+e789
+        constexpr static std::string_view NestMultiRoom{ "\xef\xa3\x82" };                           // U+f8c2
+        constexpr static std::string_view NestProtect{ "\xee\x9a\x8e" };                             // U+e68e
+        constexpr static std::string_view NestRemote{ "\xef\x97\x9b" };                              // U+f5db
+        constexpr static std::string_view NestRemoteComfortSensor{ "\xef\x84\xaa" };                 // U+f12a
+        constexpr static std::string_view NestSecureAlarm{ "\xef\x84\xab" };                         // U+f12b
+        constexpr static std::string_view NestSunblock{ "\xef\xa3\x83" };                            // U+f8c3
+        constexpr static std::string_view NestTag{ "\xef\xa3\x81" };                                 // U+f8c1
+        constexpr static std::string_view NestThermostat{ "\xee\x9a\x8f" };                          // U+e68f
+        constexpr static std::string_view NestThermostatEEu{ "\xef\x84\xad" };                       // U+f12d
+        constexpr static std::string_view NestThermostatGen_3{ "\xef\x84\xae" };                     // U+f12e
+        constexpr static std::string_view NestThermostatSensor{ "\xef\x84\xaf" };                    // U+f12f
+        constexpr static std::string_view NestThermostatSensorEu{ "\xef\x84\xb0" };                  // U+f130
+        constexpr static std::string_view NestThermostatZirconiumEu{ "\xef\x84\xb1" };               // U+f131
+        constexpr static std::string_view NestTrueRadiant{ "\xef\xa3\x84" };                         // U+f8c4
+        constexpr static std::string_view NestWakeOnApproach{ "\xef\xa3\x85" };                      // U+f8c5
+        constexpr static std::string_view NestWakeOnPress{ "\xef\xa3\x86" };                         // U+f8c6
+        constexpr static std::string_view NestWifiGale{ "\xef\x84\xb2" };                            // U+f132
+        constexpr static std::string_view NestWifiMistral{ "\xef\x84\xb3" };                         // U+f133
+        constexpr static std::string_view NestWifiPoint{ "\xef\x84\xb4" };                           // U+f134
+        constexpr static std::string_view NestWifiPointVento{ "\xef\x84\xb4" };                      // U+f134
+        constexpr static std::string_view NestWifiPro{ "\xef\x95\xab" };                             // U+f56b
+        constexpr static std::string_view NestWifiPro_2{ "\xef\x95\xaa" };                           // U+f56a
+        constexpr static std::string_view NestWifiRouter{ "\xef\x84\xb3" };                          // U+f133
+        constexpr static std::string_view NetworkCell{ "\xee\x86\xb9" };                             // U+e1b9
+        constexpr static std::string_view NetworkCheck{ "\xee\x99\x80" };                            // U+e640
+        constexpr static std::string_view NetworkIntelligenceHistory{ "\xef\x97\xb6" };              // U+f5f6
+        constexpr static std::string_view NetworkIntelligenceUpdate{ "\xef\x97\xb5" };               // U+f5f5
+        constexpr static std::string_view NetworkLocked{ "\xee\x98\x9a" };                           // U+e61a
+        constexpr static std::string_view NetworkManage{ "\xef\x9e\xab" };                           // U+f7ab
+        constexpr static std::string_view NetworkNode{ "\xef\x95\xae" };                             // U+f56e
+        constexpr static std::string_view NetworkPing{ "\xee\xaf\x8a" };                             // U+ebca
+        constexpr static std::string_view NetworkWifi{ "\xee\x86\xba" };                             // U+e1ba
+        constexpr static std::string_view NetworkWifi_1Bar{ "\xee\xaf\xa4" };                        // U+ebe4
+        constexpr static std::string_view NetworkWifi_1BarLocked{ "\xef\x96\x8f" };                  // U+f58f
+        constexpr static std::string_view NetworkWifi_2Bar{ "\xee\xaf\x96" };                        // U+ebd6
+        constexpr static std::string_view NetworkWifi_2BarLocked{ "\xef\x96\x8e" };                  // U+f58e
+        constexpr static std::string_view NetworkWifi_3Bar{ "\xee\xaf\xa1" };                        // U+ebe1
+        constexpr static std::string_view NetworkWifi_3BarLocked{ "\xef\x96\x8d" };                  // U+f58d
+        constexpr static std::string_view NetworkWifiLocked{ "\xef\x94\xb2" };                       // U+f532
+        constexpr static std::string_view Neurology{ "\xee\x84\x8e" };                               // U+e10e
+        constexpr static std::string_view NewLabel{ "\xee\x98\x89" };                                // U+e609
+        constexpr static std::string_view NewReleases{ "\xee\xbd\xb6" };                             // U+ef76
+        constexpr static std::string_view NewWindow{ "\xef\x9c\x90" };                               // U+f710
+        constexpr static std::string_view News{ "\xee\x80\xb2" };                                    // U+e032
+        constexpr static std::string_view Newsmode{ "\xee\xbe\xad" };                                // U+efad
+        constexpr static std::string_view Newspaper{ "\xee\xae\x81" };                               // U+eb81
+        constexpr static std::string_view Newsstand{ "\xee\xa7\x84" };                               // U+e9c4
+        constexpr static std::string_view NextPlan{ "\xee\xbd\x9d" };                                // U+ef5d
+        constexpr static std::string_view NextWeek{ "\xee\x85\xaa" };                                // U+e16a
+        constexpr static std::string_view Nfc{ "\xee\x86\xbb" };                                     // U+e1bb
+        constexpr static std::string_view NightShelter{ "\xef\x87\xb1" };                            // U+f1f1
+        constexpr static std::string_view NightSightAuto{ "\xef\x87\x97" };                          // U+f1d7
+        constexpr static std::string_view NightSightAutoOff{ "\xef\x87\xb9" };                       // U+f1f9
+        constexpr static std::string_view NightSightMax{ "\xef\x9b\x83" };                           // U+f6c3
+        constexpr static std::string_view Nightlife{ "\xee\xa9\xa2" };                               // U+ea62
+        constexpr static std::string_view Nightlight{ "\xef\x80\xbd" };                              // U+f03d
+        constexpr static std::string_view NightlightRound{ "\xef\x80\xbd" };                         // U+f03d
+        constexpr static std::string_view NightsStay{ "\xee\xa9\x86" };                              // U+ea46
+        constexpr static std::string_view NoAccounts{ "\xef\x80\xbe" };                              // U+f03e
+        constexpr static std::string_view NoAdultContent{ "\xef\xa3\xbe" };                          // U+f8fe
+        constexpr static std::string_view NoBackpack{ "\xef\x88\xb7" };                              // U+f237
+        constexpr static std::string_view NoCrash{ "\xee\xaf\xb0" };                                 // U+ebf0
+        constexpr static std::string_view NoDrinks{ "\xef\x86\xa5" };                                // U+f1a5
+        constexpr static std::string_view NoEncryption{ "\xef\x80\xbf" };                            // U+f03f
+        constexpr static std::string_view NoEncryptionGmailerrorred{ "\xef\x80\xbf" };               // U+f03f
+        constexpr static std::string_view NoFlash{ "\xef\x86\xa6" };                                 // U+f1a6
+        constexpr static std::string_view NoFood{ "\xef\x86\xa7" };                                  // U+f1a7
+        constexpr static std::string_view NoLuggage{ "\xef\x88\xbb" };                               // U+f23b
+        constexpr static std::string_view NoMeals{ "\xef\x87\x96" };                                 // U+f1d6
+        constexpr static std::string_view NoMeetingRoom{ "\xee\xad\x8e" };                           // U+eb4e
+        constexpr static std::string_view NoPhotography{ "\xef\x86\xa8" };                           // U+f1a8
+        constexpr static std::string_view NoSim{ "\xee\x87\x8e" };                                   // U+e1ce
+        constexpr static std::string_view NoSound{ "\xee\x9c\x90" };                                 // U+e710
+        constexpr static std::string_view NoStroller{ "\xef\x86\xaf" };                              // U+f1af
+        constexpr static std::string_view NoTransfer{ "\xef\x87\x95" };                              // U+f1d5
+        constexpr static std::string_view NoiseAware{ "\xee\xaf\xac" };                              // U+ebec
+        constexpr static std::string_view NoiseControlOff{ "\xee\xaf\xb3" };                         // U+ebf3
+        constexpr static std::string_view NoiseControlOn{ "\xef\xa2\xa8" };                          // U+f8a8
+        constexpr static std::string_view NordicWalking{ "\xee\x94\x8e" };                           // U+e50e
+        constexpr static std::string_view North{ "\xef\x87\xa0" };                                   // U+f1e0
+        constexpr static std::string_view NorthEast{ "\xef\x87\xa1" };                               // U+f1e1
+        constexpr static std::string_view NorthWest{ "\xef\x87\xa2" };                               // U+f1e2
+        constexpr static std::string_view NotAccessible{ "\xef\x83\xbe" };                           // U+f0fe
+        constexpr static std::string_view NotAccessibleForward{ "\xef\x95\x8a" };                    // U+f54a
+        constexpr static std::string_view NotInterested{ "\xef\x82\x8c" };                           // U+f08c
+        constexpr static std::string_view NotListedLocation{ "\xee\x95\xb5" };                       // U+e575
+        constexpr static std::string_view NotStarted{ "\xef\x83\x91" };                              // U+f0d1
+        constexpr static std::string_view Note{ "\xee\x99\xad" };                                    // U+e66d
+        constexpr static std::string_view NoteAdd{ "\xee\xa2\x9c" };                                 // U+e89c
+        constexpr static std::string_view NoteAlt{ "\xef\x81\x80" };                                 // U+f040
+        constexpr static std::string_view NoteStack{ "\xef\x95\xa2" };                               // U+f562
+        constexpr static std::string_view NoteStackAdd{ "\xef\x95\xa3" };                            // U+f563
+        constexpr static std::string_view Notes{ "\xee\x89\xac" };                                   // U+e26c
+        constexpr static std::string_view NotificationAdd{ "\xee\x8e\x99" };                         // U+e399
+        constexpr static std::string_view NotificationImportant{ "\xee\x80\x84" };                   // U+e004
+        constexpr static std::string_view NotificationMultiple{ "\xee\x9b\x82" };                    // U+e6c2
+        constexpr static std::string_view Notifications{ "\xee\x9f\xb5" };                           // U+e7f5
+        constexpr static std::string_view NotificationsActive{ "\xee\x9f\xb7" };                     // U+e7f7
+        constexpr static std::string_view NotificationsNone{ "\xee\x9f\xb5" };                       // U+e7f5
+        constexpr static std::string_view NotificationsOff{ "\xee\x9f\xb6" };                        // U+e7f6
+        constexpr static std::string_view NotificationsPaused{ "\xee\x9f\xb8" };                     // U+e7f8
+        constexpr static std::string_view NotificationsUnread{ "\xef\x93\xbe" };                     // U+f4fe
+        constexpr static std::string_view Numbers{ "\xee\xab\x87" };                                 // U+eac7
+        constexpr static std::string_view Nutrition{ "\xee\x84\x90" };                               // U+e110
+        constexpr static std::string_view Ods{ "\xee\x9b\xa8" };                                     // U+e6e8
+        constexpr static std::string_view Odt{ "\xee\x9b\xa9" };                                     // U+e6e9
+        constexpr static std::string_view OfflineBolt{ "\xee\xa4\xb2" };                             // U+e932
+        constexpr static std::string_view OfflinePin{ "\xee\xa4\x8a" };                              // U+e90a
+        constexpr static std::string_view OfflineShare{ "\xee\xa7\x85" };                            // U+e9c5
+        constexpr static std::string_view OilBarrel{ "\xee\xb0\x95" };                               // U+ec15
+        constexpr static std::string_view OnDeviceTraining{ "\xee\xaf\xbd" };                        // U+ebfd
+        constexpr static std::string_view OnHubDevice{ "\xee\x9b\x83" };                             // U+e6c3
+        constexpr static std::string_view Oncology{ "\xee\x84\x94" };                                // U+e114
+        constexpr static std::string_view OndemandVideo{ "\xee\x98\xba" };                           // U+e63a
+        constexpr static std::string_view OnlinePrediction{ "\xef\x83\xab" };                        // U+f0eb
+        constexpr static std::string_view Onsen{ "\xef\x9b\xb8" };                                   // U+f6f8
+        constexpr static std::string_view Opacity{ "\xee\xa4\x9c" };                                 // U+e91c
+        constexpr static std::string_view OpenInBrowser{ "\xee\xa2\x9d" };                           // U+e89d
+        constexpr static std::string_view OpenInFull{ "\xef\x87\x8e" };                              // U+f1ce
+        constexpr static std::string_view OpenInNew{ "\xee\xa2\x9e" };                               // U+e89e
+        constexpr static std::string_view OpenInNewDown{ "\xef\x9c\x8f" };                           // U+f70f
+        constexpr static std::string_view OpenInNewOff{ "\xee\x93\xb6" };                            // U+e4f6
+        constexpr static std::string_view OpenInPhone{ "\xee\x9c\x82" };                             // U+e702
+        constexpr static std::string_view OpenJam{ "\xee\xbe\xae" };                                 // U+efae
+        constexpr static std::string_view OpenWith{ "\xee\xa2\x9f" };                                // U+e89f
+        constexpr static std::string_view Ophthalmology{ "\xee\x84\x95" };                           // U+e115
+        constexpr static std::string_view OralDisease{ "\xee\x84\x96" };                             // U+e116
+        constexpr static std::string_view OrderApprove{ "\xef\xa0\x92" };                            // U+f812
+        constexpr static std::string_view OrderPlay{ "\xef\xa0\x91" };                               // U+f811
+        constexpr static std::string_view Orders{ "\xee\xac\x94" };                                  // U+eb14
+        constexpr static std::string_view Orthopedics{ "\xef\xa2\x97" };                             // U+f897
+        constexpr static std::string_view OtherAdmission{ "\xee\x91\xbb" };                          // U+e47b
+        constexpr static std::string_view OtherHouses{ "\xee\x96\x8c" };                             // U+e58c
+        constexpr static std::string_view Outbound{ "\xee\x87\x8a" };                                // U+e1ca
+        constexpr static std::string_view Outbox{ "\xee\xbd\x9f" };                                  // U+ef5f
+        constexpr static std::string_view OutboxAlt{ "\xee\xac\x97" };                               // U+eb17
+        constexpr static std::string_view OutdoorGarden{ "\xee\x88\x85" };                           // U+e205
+        constexpr static std::string_view OutdoorGrill{ "\xee\xa9\x87" };                            // U+ea47
+        constexpr static std::string_view OutgoingMail{ "\xef\x83\x92" };                            // U+f0d2
+        constexpr static std::string_view Outlet{ "\xef\x87\x94" };                                  // U+f1d4
+        constexpr static std::string_view OutlinedFlag{ "\xef\x83\x86" };                            // U+f0c6
+        constexpr static std::string_view Outpatient{ "\xee\x84\x98" };                              // U+e118
+        constexpr static std::string_view OutpatientMed{ "\xee\x84\x99" };                           // U+e119
+        constexpr static std::string_view Output{ "\xee\xae\xbe" };                                  // U+ebbe
+        constexpr static std::string_view OutputCircle{ "\xef\x9c\x8e" };                            // U+f70e
+        constexpr static std::string_view Oven{ "\xee\xa7\x87" };                                    // U+e9c7
+        constexpr static std::string_view OvenGen{ "\xee\xa1\x83" };                                 // U+e843
+        constexpr static std::string_view Overview{ "\xee\x92\xa7" };                                // U+e4a7
+        constexpr static std::string_view OverviewKey{ "\xef\x9f\x94" };                             // U+f7d4
+        constexpr static std::string_view OxygenSaturation{ "\xee\x93\x9e" };                        // U+e4de
+        constexpr static std::string_view P2p{ "\xef\x94\xaa" };                                     // U+f52a
+        constexpr static std::string_view Pace{ "\xef\x9a\xb8" };                                    // U+f6b8
+        constexpr static std::string_view Pacemaker{ "\xee\x99\x96" };                               // U+e656
+        constexpr static std::string_view Package{ "\xee\x92\x8f" };                                 // U+e48f
+        constexpr static std::string_view Package_2{ "\xef\x95\xa9" };                               // U+f569
+        constexpr static std::string_view Padding{ "\xee\xa7\x88" };                                 // U+e9c8
+        constexpr static std::string_view PageControl{ "\xee\x9c\xb1" };                             // U+e731
+        constexpr static std::string_view PageInfo{ "\xef\x98\x94" };                                // U+f614
+        constexpr static std::string_view Pageless{ "\xef\x94\x89" };                                // U+f509
+        constexpr static std::string_view Pages{ "\xee\x9f\xb9" };                                   // U+e7f9
+        constexpr static std::string_view Pageview{ "\xee\xa2\xa0" };                                // U+e8a0
+        constexpr static std::string_view Paid{ "\xef\x81\x81" };                                    // U+f041
+        constexpr static std::string_view Palette{ "\xee\x90\x8a" };                                 // U+e40a
+        constexpr static std::string_view Pallet{ "\xef\xa1\xaa" };                                  // U+f86a
+        constexpr static std::string_view PanTool{ "\xee\xa4\xa5" };                                 // U+e925
+        constexpr static std::string_view PanToolAlt{ "\xee\xae\xb9" };                              // U+ebb9
+        constexpr static std::string_view PanZoom{ "\xef\x99\x95" };                                 // U+f655
+        constexpr static std::string_view Panorama{ "\xee\x90\x8b" };                                // U+e40b
+        constexpr static std::string_view PanoramaFishEye{ "\xee\x90\x8c" };                         // U+e40c
+        constexpr static std::string_view PanoramaHorizontal{ "\xee\x90\x8d" };                      // U+e40d
+        constexpr static std::string_view PanoramaPhotosphere{ "\xee\xa7\x89" };                     // U+e9c9
+        constexpr static std::string_view PanoramaVertical{ "\xee\x90\x8e" };                        // U+e40e
+        constexpr static std::string_view PanoramaWideAngle{ "\xee\x90\x8f" };                       // U+e40f
+        constexpr static std::string_view Paragliding{ "\xee\x94\x8f" };                             // U+e50f
+        constexpr static std::string_view Park{ "\xee\xa9\xa3" };                                    // U+ea63
+        constexpr static std::string_view PartlyCloudyDay{ "\xef\x85\xb2" };                         // U+f172
+        constexpr static std::string_view PartlyCloudyNight{ "\xef\x85\xb4" };                       // U+f174
+        constexpr static std::string_view PartnerExchange{ "\xef\x9f\xb9" };                         // U+f7f9
+        constexpr static std::string_view PartnerReports{ "\xee\xbe\xaf" };                          // U+efaf
+        constexpr static std::string_view PartyMode{ "\xee\x9f\xba" };                               // U+e7fa
+        constexpr static std::string_view Passkey{ "\xef\xa1\xbf" };                                 // U+f87f
+        constexpr static std::string_view Password{ "\xef\x81\x82" };                                // U+f042
+        constexpr static std::string_view PatientList{ "\xee\x99\x93" };                             // U+e653
+        constexpr static std::string_view Pattern{ "\xef\x81\x83" };                                 // U+f043
+        constexpr static std::string_view Pause{ "\xee\x80\xb4" };                                   // U+e034
+        constexpr static std::string_view PauseCircle{ "\xee\x86\xa2" };                             // U+e1a2
+        constexpr static std::string_view PauseCircleFilled{ "\xee\x86\xa2" };                       // U+e1a2
+        constexpr static std::string_view PauseCircleOutline{ "\xee\x86\xa2" };                      // U+e1a2
+        constexpr static std::string_view PausePresentation{ "\xee\x83\xaa" };                       // U+e0ea
+        constexpr static std::string_view Payment{ "\xee\xa2\xa1" };                                 // U+e8a1
+        constexpr static std::string_view Payments{ "\xee\xbd\xa3" };                                // U+ef63
+        constexpr static std::string_view PedalBike{ "\xee\xac\xa9" };                               // U+eb29
+        constexpr static std::string_view Pediatrics{ "\xee\x84\x9d" };                              // U+e11d
+        constexpr static std::string_view PenSize_1{ "\xef\x9d\x95" };                               // U+f755
+        constexpr static std::string_view PenSize_2{ "\xef\x9d\x94" };                               // U+f754
+        constexpr static std::string_view PenSize_3{ "\xef\x9d\x93" };                               // U+f753
+        constexpr static std::string_view PenSize_4{ "\xef\x9d\x92" };                               // U+f752
+        constexpr static std::string_view PenSize_5{ "\xef\x9d\x91" };                               // U+f751
+        constexpr static std::string_view Pending{ "\xee\xbd\xa4" };                                 // U+ef64
+        constexpr static std::string_view PendingActions{ "\xef\x86\xbb" };                          // U+f1bb
+        constexpr static std::string_view Pentagon{ "\xee\xad\x90" };                                // U+eb50
+        constexpr static std::string_view People{ "\xee\xa8\xa1" };                                  // U+ea21
+        constexpr static std::string_view PeopleAlt{ "\xee\xa8\xa1" };                               // U+ea21
+        constexpr static std::string_view PeopleOutline{ "\xee\xa8\xa1" };                           // U+ea21
+        constexpr static std::string_view Percent{ "\xee\xad\x98" };                                 // U+eb58
+        constexpr static std::string_view PerformanceMax{ "\xee\x94\x9a" };                          // U+e51a
+        constexpr static std::string_view Pergola{ "\xee\x88\x83" };                                 // U+e203
+        constexpr static std::string_view PermCameraMic{ "\xee\xa2\xa2" };                           // U+e8a2
+        constexpr static std::string_view PermContactCalendar{ "\xee\xa2\xa3" };                     // U+e8a3
+        constexpr static std::string_view PermDataSetting{ "\xee\xa2\xa4" };                         // U+e8a4
+        constexpr static std::string_view PermDeviceInformation{ "\xee\xa2\xa5" };                   // U+e8a5
+        constexpr static std::string_view PermIdentity{ "\xef\x83\x93" };                            // U+f0d3
+        constexpr static std::string_view PermMedia{ "\xee\xa2\xa7" };                               // U+e8a7
+        constexpr static std::string_view PermPhoneMsg{ "\xee\xa2\xa8" };                            // U+e8a8
+        constexpr static std::string_view PermScanWifi{ "\xee\xa2\xa9" };                            // U+e8a9
+        constexpr static std::string_view Person{ "\xef\x83\x93" };                                  // U+f0d3
+        constexpr static std::string_view Person_2{ "\xef\xa3\xa4" };                                // U+f8e4
+        constexpr static std::string_view Person_3{ "\xef\xa3\xa5" };                                // U+f8e5
+        constexpr static std::string_view Person_4{ "\xef\xa3\xa6" };                                // U+f8e6
+        constexpr static std::string_view PersonAdd{ "\xee\xa9\x8d" };                               // U+ea4d
+        constexpr static std::string_view PersonAddAlt{ "\xee\xa9\x8d" };                            // U+ea4d
+        constexpr static std::string_view PersonAddDisabled{ "\xee\xa7\x8b" };                       // U+e9cb
+        constexpr static std::string_view PersonAlert{ "\xef\x95\xa7" };                             // U+f567
+        constexpr static std::string_view PersonApron{ "\xef\x96\xa3" };                             // U+f5a3
+        constexpr static std::string_view PersonBook{ "\xef\x97\xa8" };                              // U+f5e8
+        constexpr static std::string_view PersonCancel{ "\xef\x95\xa6" };                            // U+f566
+        constexpr static std::string_view PersonCelebrate{ "\xef\x9f\xbe" };                         // U+f7fe
+        constexpr static std::string_view PersonCheck{ "\xef\x95\xa5" };                             // U+f565
+        constexpr static std::string_view PersonEdit{ "\xef\x93\xba" };                              // U+f4fa
+        constexpr static std::string_view PersonFilled{ "\xef\x83\x93" };                            // U+f0d3
+        constexpr static std::string_view PersonOff{ "\xee\x94\x90" };                               // U+e510
+        constexpr static std::string_view PersonOutline{ "\xef\x83\x93" };                           // U+f0d3
+        constexpr static std::string_view PersonPin{ "\xee\x95\x9a" };                               // U+e55a
+        constexpr static std::string_view PersonPinCircle{ "\xee\x95\xaa" };                         // U+e56a
+        constexpr static std::string_view PersonPlay{ "\xef\x9f\xbd" };                              // U+f7fd
+        constexpr static std::string_view PersonRaisedHand{ "\xef\x96\x9a" };                        // U+f59a
+        constexpr static std::string_view PersonRemove{ "\xee\xbd\xa6" };                            // U+ef66
+        constexpr static std::string_view PersonSearch{ "\xef\x84\x86" };                            // U+f106
+        constexpr static std::string_view PersonalBag{ "\xee\xac\x8e" };                             // U+eb0e
+        constexpr static std::string_view PersonalBagOff{ "\xee\xac\x8f" };                          // U+eb0f
+        constexpr static std::string_view PersonalBagQuestion{ "\xee\xac\x90" };                     // U+eb10
+        constexpr static std::string_view PersonalInjury{ "\xee\x9b\x9a" };                          // U+e6da
+        constexpr static std::string_view PersonalPlaces{ "\xee\x9c\x83" };                          // U+e703
+        constexpr static std::string_view PersonalVideo{ "\xee\x98\xbb" };                           // U+e63b
+        constexpr static std::string_view PestControl{ "\xef\x83\xba" };                             // U+f0fa
+        constexpr static std::string_view PestControlRodent{ "\xef\x83\xbd" };                       // U+f0fd
+        constexpr static std::string_view PetSupplies{ "\xee\xbe\xb1" };                             // U+efb1
+        constexpr static std::string_view Pets{ "\xee\xa4\x9d" };                                    // U+e91d
+        constexpr static std::string_view Phishing{ "\xee\xab\x97" };                                // U+ead7
+        constexpr static std::string_view Phone{ "\xef\x83\x94" };                                   // U+f0d4
+        constexpr static std::string_view PhoneAlt{ "\xef\x83\x94" };                                // U+f0d4
+        constexpr static std::string_view PhoneAndroid{ "\xee\x8c\xa4" };                            // U+e324
+        constexpr static std::string_view PhoneBluetoothSpeaker{ "\xee\x98\x9b" };                   // U+e61b
+        constexpr static std::string_view PhoneCallback{ "\xee\x99\x89" };                           // U+e649
+        constexpr static std::string_view PhoneDisabled{ "\xee\xa7\x8c" };                           // U+e9cc
+        constexpr static std::string_view PhoneEnabled{ "\xee\xa7\x8d" };                            // U+e9cd
+        constexpr static std::string_view PhoneForwarded{ "\xee\x98\x9c" };                          // U+e61c
+        constexpr static std::string_view PhoneInTalk{ "\xee\x98\x9d" };                             // U+e61d
+        constexpr static std::string_view PhoneIphone{ "\xee\x8c\xa5" };                             // U+e325
+        constexpr static std::string_view PhoneLocked{ "\xee\x98\x9e" };                             // U+e61e
+        constexpr static std::string_view PhoneMissed{ "\xee\x98\x9f" };                             // U+e61f
+        constexpr static std::string_view PhonePaused{ "\xee\x98\xa0" };                             // U+e620
+        constexpr static std::string_view Phonelink{ "\xee\x8c\xa6" };                               // U+e326
+        constexpr static std::string_view PhonelinkErase{ "\xee\x83\x9b" };                          // U+e0db
+        constexpr static std::string_view PhonelinkLock{ "\xee\x83\x9c" };                           // U+e0dc
+        constexpr static std::string_view PhonelinkOff{ "\xee\x8c\xa7" };                            // U+e327
+        constexpr static std::string_view PhonelinkRing{ "\xee\x83\x9d" };                           // U+e0dd
+        constexpr static std::string_view PhonelinkRingOff{ "\xef\x9e\xaa" };                        // U+f7aa
+        constexpr static std::string_view PhonelinkSetup{ "\xee\xbd\x81" };                          // U+ef41
+        constexpr static std::string_view Photo{ "\xee\x90\xb2" };                                   // U+e432
+        constexpr static std::string_view PhotoAlbum{ "\xee\x90\x91" };                              // U+e411
+        constexpr static std::string_view PhotoAutoMerge{ "\xef\x94\xb0" };                          // U+f530
+        constexpr static std::string_view PhotoCamera{ "\xee\x90\x92" };                             // U+e412
+        constexpr static std::string_view PhotoCameraBack{ "\xee\xbd\xa8" };                         // U+ef68
+        constexpr static std::string_view PhotoCameraFront{ "\xee\xbd\xa9" };                        // U+ef69
+        constexpr static std::string_view PhotoFilter{ "\xee\x90\xbb" };                             // U+e43b
+        constexpr static std::string_view PhotoFrame{ "\xef\x83\x99" };                              // U+f0d9
+        constexpr static std::string_view PhotoLibrary{ "\xee\x90\x93" };                            // U+e413
+        constexpr static std::string_view PhotoPrints{ "\xee\xbe\xb2" };                             // U+efb2
+        constexpr static std::string_view PhotoSizeSelectActual{ "\xee\x90\xb2" };                   // U+e432
+        constexpr static std::string_view PhotoSizeSelectLarge{ "\xee\x90\xb3" };                    // U+e433
+        constexpr static std::string_view PhotoSizeSelectSmall{ "\xee\x90\xb4" };                    // U+e434
+        constexpr static std::string_view Php{ "\xee\xae\x8f" };                                     // U+eb8f
+        constexpr static std::string_view PhysicalTherapy{ "\xee\x84\x9e" };                         // U+e11e
+        constexpr static std::string_view Piano{ "\xee\x94\xa1" };                                   // U+e521
+        constexpr static std::string_view PianoOff{ "\xee\x94\xa0" };                                // U+e520
+        constexpr static std::string_view PictureAsPdf{ "\xee\x90\x95" };                            // U+e415
+        constexpr static std::string_view PictureInPicture{ "\xee\xa2\xaa" };                        // U+e8aa
+        constexpr static std::string_view PictureInPictureAlt{ "\xee\xa4\x91" };                     // U+e911
+        constexpr static std::string_view PictureInPictureCenter{ "\xef\x95\x90" };                  // U+f550
+        constexpr static std::string_view PictureInPictureLarge{ "\xef\x95\x8f" };                   // U+f54f
+        constexpr static std::string_view PictureInPictureMedium{ "\xef\x95\x8e" };                  // U+f54e
+        constexpr static std::string_view PictureInPictureMobile{ "\xef\x94\x97" };                  // U+f517
+        constexpr static std::string_view PictureInPictureOff{ "\xef\x94\xaf" };                     // U+f52f
+        constexpr static std::string_view PictureInPictureSmall{ "\xef\x95\x8d" };                   // U+f54d
+        constexpr static std::string_view PieChart{ "\xef\x83\x9a" };                                // U+f0da
+        constexpr static std::string_view PieChartFilled{ "\xef\x83\x9a" };                          // U+f0da
+        constexpr static std::string_view PieChartOutline{ "\xef\x83\x9a" };                         // U+f0da
+        constexpr static std::string_view PieChartOutlined{ "\xef\x83\x9a" };                        // U+f0da
+        constexpr static std::string_view Pill{ "\xee\x84\x9f" };                                    // U+e11f
+        constexpr static std::string_view PillOff{ "\xef\xa0\x89" };                                 // U+f809
+        constexpr static std::string_view Pin{ "\xef\x81\x85" };                                     // U+f045
+        constexpr static std::string_view PinDrop{ "\xee\x95\x9e" };                                 // U+e55e
+        constexpr static std::string_view PinEnd{ "\xee\x9d\xa7" };                                  // U+e767
+        constexpr static std::string_view PinInvoke{ "\xee\x9d\xa3" };                               // U+e763
+        constexpr static std::string_view Pinch{ "\xee\xac\xb8" };                                   // U+eb38
+        constexpr static std::string_view PinchZoomIn{ "\xef\x87\xba" };                             // U+f1fa
+        constexpr static std::string_view PinchZoomOut{ "\xef\x87\xbb" };                            // U+f1fb
+        constexpr static std::string_view Pip{ "\xef\x99\x8d" };                                     // U+f64d
+        constexpr static std::string_view PipExit{ "\xef\x9c\x8d" };                                 // U+f70d
+        constexpr static std::string_view PivotTableChart{ "\xee\xa7\x8e" };                         // U+e9ce
+        constexpr static std::string_view Place{ "\xef\x87\x9b" };                                   // U+f1db
+        constexpr static std::string_view PlaceItem{ "\xef\x87\xb0" };                               // U+f1f0
+        constexpr static std::string_view Plagiarism{ "\xee\xa9\x9a" };                              // U+ea5a
+        constexpr static std::string_view PlannerBannerAdPt{ "\xee\x9a\x92" };                       // U+e692
+        constexpr static std::string_view PlannerReview{ "\xee\x9a\x94" };                           // U+e694
+        constexpr static std::string_view PlayArrow{ "\xee\x80\xb7" };                               // U+e037
+        constexpr static std::string_view PlayCircle{ "\xee\x87\x84" };                              // U+e1c4
+        constexpr static std::string_view PlayDisabled{ "\xee\xbd\xaa" };                            // U+ef6a
+        constexpr static std::string_view PlayForWork{ "\xee\xa4\x86" };                             // U+e906
+        constexpr static std::string_view PlayLesson{ "\xef\x81\x87" };                              // U+f047
+        constexpr static std::string_view PlayMusic{ "\xee\x9b\xae" };                               // U+e6ee
+        constexpr static std::string_view PlayPause{ "\xef\x84\xb7" };                               // U+f137
+        constexpr static std::string_view PlayShapes{ "\xef\x9f\xbc" };                              // U+f7fc
+        constexpr static std::string_view PlayingCards{ "\xef\x97\x9c" };                            // U+f5dc
+        constexpr static std::string_view PlaylistAdd{ "\xee\x80\xbb" };                             // U+e03b
+        constexpr static std::string_view PlaylistAddCheck{ "\xee\x81\xa5" };                        // U+e065
+        constexpr static std::string_view PlaylistAddCheckCircle{ "\xee\x9f\xa6" };                  // U+e7e6
+        constexpr static std::string_view PlaylistAddCircle{ "\xee\x9f\xa5" };                       // U+e7e5
+        constexpr static std::string_view PlaylistPlay{ "\xee\x81\x9f" };                            // U+e05f
+        constexpr static std::string_view PlaylistRemove{ "\xee\xae\x80" };                          // U+eb80
+        constexpr static std::string_view Plumbing{ "\xef\x84\x87" };                                // U+f107
+        constexpr static std::string_view PlusOne{ "\xee\xa0\x80" };                                 // U+e800
+        constexpr static std::string_view Podcasts{ "\xef\x81\x88" };                                // U+f048
+        constexpr static std::string_view Podiatry{ "\xee\x84\xa0" };                                // U+e120
+        constexpr static std::string_view Podium{ "\xef\x9f\xbb" };                                  // U+f7fb
+        constexpr static std::string_view PointOfSale{ "\xef\x85\xbe" };                             // U+f17e
+        constexpr static std::string_view PointScan{ "\xef\x9c\x8c" };                               // U+f70c
+        constexpr static std::string_view Policy{ "\xee\xa8\x97" };                                  // U+ea17
+        constexpr static std::string_view Poll{ "\xef\x83\x8c" };                                    // U+f0cc
+        constexpr static std::string_view Polyline{ "\xee\xae\xbb" };                                // U+ebbb
+        constexpr static std::string_view Polymer{ "\xee\xa2\xab" };                                 // U+e8ab
+        constexpr static std::string_view Pool{ "\xee\xad\x88" };                                    // U+eb48
+        constexpr static std::string_view PortableWifiOff{ "\xef\x82\x87" };                         // U+f087
+        constexpr static std::string_view Portrait{ "\xee\xa1\x91" };                                // U+e851
+        constexpr static std::string_view PositionBottomLeft{ "\xef\x9c\x8b" };                      // U+f70b
+        constexpr static std::string_view PositionBottomRight{ "\xef\x9c\x8a" };                     // U+f70a
+        constexpr static std::string_view PositionTopRight{ "\xef\x9c\x89" };                        // U+f709
+        constexpr static std::string_view Post{ "\xee\x9c\x85" };                                    // U+e705
+        constexpr static std::string_view PostAdd{ "\xee\xa8\xa0" };                                 // U+ea20
+        constexpr static std::string_view PottedPlant{ "\xef\xa2\xaa" };                             // U+f8aa
+        constexpr static std::string_view Power{ "\xee\x98\xbc" };                                   // U+e63c
+        constexpr static std::string_view PowerInput{ "\xee\x8c\xb6" };                              // U+e336
+        constexpr static std::string_view PowerOff{ "\xee\x99\x86" };                                // U+e646
+        constexpr static std::string_view PowerRounded{ "\xef\xa3\x87" };                            // U+f8c7
+        constexpr static std::string_view PowerSettingsNew{ "\xef\xa3\x87" };                        // U+f8c7
+        constexpr static std::string_view PrayerTimes{ "\xef\xa0\xb8" };                             // U+f838
+        constexpr static std::string_view PrecisionManufacturing{ "\xef\x81\x89" };                  // U+f049
+        constexpr static std::string_view Pregnancy{ "\xef\x97\xb1" };                               // U+f5f1
+        constexpr static std::string_view PregnantWoman{ "\xef\x97\xb1" };                           // U+f5f1
+        constexpr static std::string_view Preliminary{ "\xee\x9f\x98" };                             // U+e7d8
+        constexpr static std::string_view Prescriptions{ "\xee\x84\xa1" };                           // U+e121
+        constexpr static std::string_view PresentToAll{ "\xee\x83\x9f" };                            // U+e0df
+        constexpr static std::string_view Preview{ "\xef\x87\x85" };                                 // U+f1c5
+        constexpr static std::string_view PreviewOff{ "\xef\x9e\xaf" };                              // U+f7af
+        constexpr static std::string_view PriceChange{ "\xef\x81\x8a" };                             // U+f04a
+        constexpr static std::string_view PriceCheck{ "\xef\x81\x8b" };                              // U+f04b
+        constexpr static std::string_view Print{ "\xee\xa2\xad" };                                   // U+e8ad
+        constexpr static std::string_view PrintAdd{ "\xef\x9e\xa2" };                                // U+f7a2
+        constexpr static std::string_view PrintConnect{ "\xef\x9e\xa1" };                            // U+f7a1
+        constexpr static std::string_view PrintDisabled{ "\xee\xa7\x8f" };                           // U+e9cf
+        constexpr static std::string_view PrintError{ "\xef\x9e\xa0" };                              // U+f7a0
+        constexpr static std::string_view PrintLock{ "\xef\x99\x91" };                               // U+f651
+        constexpr static std::string_view Priority{ "\xee\x86\x9f" };                                // U+e19f
+        constexpr static std::string_view PriorityHigh{ "\xee\x99\x85" };                            // U+e645
+        constexpr static std::string_view Privacy{ "\xef\x85\x88" };                                 // U+f148
+        constexpr static std::string_view PrivacyTip{ "\xef\x83\x9c" };                              // U+f0dc
+        constexpr static std::string_view PrivateConnectivity{ "\xee\x9d\x84" };                     // U+e744
+        constexpr static std::string_view Problem{ "\xee\x84\xa2" };                                 // U+e122
+        constexpr static std::string_view Procedure{ "\xee\x99\x91" };                               // U+e651
+        constexpr static std::string_view ProcessChart{ "\xef\xa1\x95" };                            // U+f855
+        constexpr static std::string_view ProductionQuantityLimits{ "\xee\x87\x91" };                // U+e1d1
+        constexpr static std::string_view Productivity{ "\xee\x8a\x96" };                            // U+e296
+        constexpr static std::string_view ProgressActivity{ "\xee\xa7\x90" };                        // U+e9d0
+        constexpr static std::string_view PromptSuggestion{ "\xef\x93\xb6" };                        // U+f4f6
+        constexpr static std::string_view Propane{ "\xee\xb0\x94" };                                 // U+ec14
+        constexpr static std::string_view PropaneTank{ "\xee\xb0\x93" };                             // U+ec13
+        constexpr static std::string_view Psychiatry{ "\xee\x84\xa3" };                              // U+e123
+        constexpr static std::string_view Psychology{ "\xee\xa9\x8a" };                              // U+ea4a
+        constexpr static std::string_view PsychologyAlt{ "\xef\xa3\xaa" };                           // U+f8ea
+        constexpr static std::string_view Public{ "\xee\xa0\x8b" };                                  // U+e80b
+        constexpr static std::string_view PublicOff{ "\xef\x87\x8a" };                               // U+f1ca
+        constexpr static std::string_view Publish{ "\xee\x89\x95" };                                 // U+e255
+        constexpr static std::string_view PublishedWithChanges{ "\xef\x88\xb2" };                    // U+f232
+        constexpr static std::string_view Pulmonology{ "\xee\x84\xa4" };                             // U+e124
+        constexpr static std::string_view PulseAlert{ "\xef\x94\x81" };                              // U+f501
+        constexpr static std::string_view PunchClock{ "\xee\xaa\xa8" };                              // U+eaa8
+        constexpr static std::string_view PushPin{ "\xef\x84\x8d" };                                 // U+f10d
+        constexpr static std::string_view QrCode{ "\xee\xbd\xab" };                                  // U+ef6b
+        constexpr static std::string_view QrCode_2{ "\xee\x80\x8a" };                                // U+e00a
+        constexpr static std::string_view QrCode_2Add{ "\xef\x99\x98" };                             // U+f658
+        constexpr static std::string_view QrCodeScanner{ "\xef\x88\x86" };                           // U+f206
+        constexpr static std::string_view QueryBuilder{ "\xee\xbf\x96" };                            // U+efd6
+        constexpr static std::string_view QueryStats{ "\xee\x93\xbc" };                              // U+e4fc
+        constexpr static std::string_view QuestionAnswer{ "\xee\xa2\xaf" };                          // U+e8af
+        constexpr static std::string_view QuestionExchange{ "\xef\x9f\xb3" };                        // U+f7f3
+        constexpr static std::string_view QuestionMark{ "\xee\xae\x8b" };                            // U+eb8b
+        constexpr static std::string_view Queue{ "\xee\x80\xbc" };                                   // U+e03c
+        constexpr static std::string_view QueueMusic{ "\xee\x80\xbd" };                              // U+e03d
+        constexpr static std::string_view QueuePlayNext{ "\xee\x81\xa6" };                           // U+e066
+        constexpr static std::string_view QuickPhrases{ "\xee\x9f\x91" };                            // U+e7d1
+        constexpr static std::string_view QuickReference{ "\xee\x91\xae" };                          // U+e46e
+        constexpr static std::string_view QuickReferenceAll{ "\xef\xa0\x81" };                       // U+f801
+        constexpr static std::string_view QuickReorder{ "\xee\xac\x95" };                            // U+eb15
+        constexpr static std::string_view Quickreply{ "\xee\xbd\xac" };                              // U+ef6c
+        constexpr static std::string_view QuietTime{ "\xee\x87\xb9" };                               // U+e1f9
+        constexpr static std::string_view QuietTimeActive{ "\xee\x8a\x91" };                         // U+e291
+        constexpr static std::string_view Quiz{ "\xef\x81\x8c" };                                    // U+f04c
+        constexpr static std::string_view RMobiledata{ "\xef\x81\x8d" };                             // U+f04d
+        constexpr static std::string_view Radar{ "\xef\x81\x8e" };                                   // U+f04e
+        constexpr static std::string_view Radio{ "\xee\x80\xbe" };                                   // U+e03e
+        constexpr static std::string_view RadioButtonChecked{ "\xee\xa0\xb7" };                      // U+e837
+        constexpr static std::string_view RadioButtonPartial{ "\xef\x95\xa0" };                      // U+f560
+        constexpr static std::string_view RadioButtonUnchecked{ "\xee\xa0\xb6" };                    // U+e836
+        constexpr static std::string_view Radiology{ "\xee\x84\xa5" };                               // U+e125
+        constexpr static std::string_view RailwayAlert{ "\xee\xa7\x91" };                            // U+e9d1
+        constexpr static std::string_view Rainy{ "\xef\x85\xb6" };                                   // U+f176
+        constexpr static std::string_view RainyHeavy{ "\xef\x98\x9f" };                              // U+f61f
+        constexpr static std::string_view RainyLight{ "\xef\x98\x9e" };                              // U+f61e
+        constexpr static std::string_view RainySnow{ "\xef\x98\x9d" };                               // U+f61d
+        constexpr static std::string_view RamenDining{ "\xee\xa9\xa4" };                             // U+ea64
+        constexpr static std::string_view RampLeft{ "\xee\xae\x9c" };                                // U+eb9c
+        constexpr static std::string_view RampRight{ "\xee\xae\x96" };                               // U+eb96
+        constexpr static std::string_view RangeHood{ "\xee\x87\xaa" };                               // U+e1ea
+        constexpr static std::string_view RateReview{ "\xee\x95\xa0" };                              // U+e560
+        constexpr static std::string_view Raven{ "\xef\x95\x95" };                                   // U+f555
+        constexpr static std::string_view RawOff{ "\xef\x81\x8f" };                                  // U+f04f
+        constexpr static std::string_view RawOn{ "\xef\x81\x90" };                                   // U+f050
+        constexpr static std::string_view ReadMore{ "\xee\xbd\xad" };                                // U+ef6d
+        constexpr static std::string_view ReadinessScore{ "\xef\x9b\x9d" };                          // U+f6dd
+        constexpr static std::string_view RealEstateAgent{ "\xee\x9c\xba" };                         // U+e73a
+        constexpr static std::string_view RearCamera{ "\xef\x9b\x82" };                              // U+f6c2
+        constexpr static std::string_view Rebase{ "\xef\xa1\x85" };                                  // U+f845
+        constexpr static std::string_view RebaseEdit{ "\xef\xa1\x86" };                              // U+f846
+        constexpr static std::string_view Receipt{ "\xee\xa2\xb0" };                                 // U+e8b0
+        constexpr static std::string_view ReceiptLong{ "\xee\xbd\xae" };                             // U+ef6e
+        constexpr static std::string_view RecentActors{ "\xee\x80\xbf" };                            // U+e03f
+        constexpr static std::string_view RecentPatient{ "\xef\xa0\x88" };                           // U+f808
+        constexpr static std::string_view Recommend{ "\xee\xa7\x92" };                               // U+e9d2
+        constexpr static std::string_view RecordVoiceOver{ "\xee\xa4\x9f" };                         // U+e91f
+        constexpr static std::string_view Rectangle{ "\xee\xad\x94" };                               // U+eb54
+        constexpr static std::string_view Recycling{ "\xee\x9d\xa0" };                               // U+e760
+        constexpr static std::string_view Redeem{ "\xee\xa3\xb6" };                                  // U+e8f6
+        constexpr static std::string_view Redo{ "\xee\x85\x9a" };                                    // U+e15a
+        constexpr static std::string_view ReduceCapacity{ "\xef\x88\x9c" };                          // U+f21c
+        constexpr static std::string_view Refresh{ "\xee\x97\x95" };                                 // U+e5d5
+        constexpr static std::string_view RegularExpression{ "\xef\x9d\x90" };                       // U+f750
+        constexpr static std::string_view Relax{ "\xef\x9b\x9c" };                                   // U+f6dc
+        constexpr static std::string_view ReleaseAlert{ "\xef\x99\x94" };                            // U+f654
+        constexpr static std::string_view RememberMe{ "\xef\x81\x91" };                              // U+f051
+        constexpr static std::string_view Reminder{ "\xee\x9b\x86" };                                // U+e6c6
+        constexpr static std::string_view RemindersAlt{ "\xee\x9b\x86" };                            // U+e6c6
+        constexpr static std::string_view RemoteGen{ "\xee\xa0\xbe" };                               // U+e83e
+        constexpr static std::string_view Remove{ "\xee\x85\x9b" };                                  // U+e15b
+        constexpr static std::string_view RemoveCircle{ "\xef\x82\x8f" };                            // U+f08f
+        constexpr static std::string_view RemoveCircleOutline{ "\xef\x82\x8f" };                     // U+f08f
+        constexpr static std::string_view RemoveDone{ "\xee\xa7\x93" };                              // U+e9d3
+        constexpr static std::string_view RemoveFromQueue{ "\xee\x81\xa7" };                         // U+e067
+        constexpr static std::string_view RemoveModerator{ "\xee\xa7\x94" };                         // U+e9d4
+        constexpr static std::string_view RemoveRedEye{ "\xee\xa3\xb4" };                            // U+e8f4
+        constexpr static std::string_view RemoveRoad{ "\xee\xaf\xbc" };                              // U+ebfc
+        constexpr static std::string_view RemoveSelection{ "\xee\xa7\x95" };                         // U+e9d5
+        constexpr static std::string_view RemoveShoppingCart{ "\xee\xa4\xa8" };                      // U+e928
+        constexpr static std::string_view ReopenWindow{ "\xef\x9c\x88" };                            // U+f708
+        constexpr static std::string_view Reorder{ "\xee\xa3\xbe" };                                 // U+e8fe
+        constexpr static std::string_view Repartition{ "\xef\xa3\xa8" };                             // U+f8e8
+        constexpr static std::string_view Repeat{ "\xee\x81\x80" };                                  // U+e040
+        constexpr static std::string_view RepeatOn{ "\xee\xa7\x96" };                                // U+e9d6
+        constexpr static std::string_view RepeatOne{ "\xee\x81\x81" };                               // U+e041
+        constexpr static std::string_view RepeatOneOn{ "\xee\xa7\x97" };                             // U+e9d7
+        constexpr static std::string_view Replay{ "\xee\x81\x82" };                                  // U+e042
+        constexpr static std::string_view Replay_10{ "\xee\x81\x99" };                               // U+e059
+        constexpr static std::string_view Replay_30{ "\xee\x81\x9a" };                               // U+e05a
+        constexpr static std::string_view Replay_5{ "\xee\x81\x9b" };                                // U+e05b
+        constexpr static std::string_view ReplayCircleFilled{ "\xee\xa7\x98" };                      // U+e9d8
+        constexpr static std::string_view Reply{ "\xee\x85\x9e" };                                   // U+e15e
+        constexpr static std::string_view ReplyAll{ "\xee\x85\x9f" };                                // U+e15f
+        constexpr static std::string_view Report{ "\xef\x81\x92" };                                  // U+f052
+        constexpr static std::string_view ReportGmailerrorred{ "\xef\x81\x92" };                     // U+f052
+        constexpr static std::string_view ReportOff{ "\xee\x85\xb0" };                               // U+e170
+        constexpr static std::string_view ReportProblem{ "\xef\x82\x83" };                           // U+f083
+        constexpr static std::string_view RequestPage{ "\xef\x88\xac" };                             // U+f22c
+        constexpr static std::string_view RequestQuote{ "\xef\x86\xb6" };                            // U+f1b6
+        constexpr static std::string_view ResetImage{ "\xef\xa0\xa4" };                              // U+f824
+        constexpr static std::string_view ResetTv{ "\xee\xa7\x99" };                                 // U+e9d9
+        constexpr static std::string_view ResetWrench{ "\xef\x95\xac" };                             // U+f56c
+        constexpr static std::string_view Resize{ "\xef\x9c\x87" };                                  // U+f707
+        constexpr static std::string_view RespiratoryRate{ "\xee\x84\xa7" };                         // U+e127
+        constexpr static std::string_view ResponsiveLayout{ "\xee\xa7\x9a" };                        // U+e9da
+        constexpr static std::string_view RestartAlt{ "\xef\x81\x93" };                              // U+f053
+        constexpr static std::string_view Restaurant{ "\xee\x95\xac" };                              // U+e56c
+        constexpr static std::string_view RestaurantMenu{ "\xee\x95\xa1" };                          // U+e561
+        constexpr static std::string_view Restore{ "\xee\xa2\xb3" };                                 // U+e8b3
+        constexpr static std::string_view RestoreFromTrash{ "\xee\xa4\xb8" };                        // U+e938
+        constexpr static std::string_view RestorePage{ "\xee\xa4\xa9" };                             // U+e929
+        constexpr static std::string_view Resume{ "\xef\x9f\x90" };                                  // U+f7d0
+        constexpr static std::string_view Reviews{ "\xef\x81\xbc" };                                 // U+f07c
+        constexpr static std::string_view RewardedAds{ "\xee\xbe\xb6" };                             // U+efb6
+        constexpr static std::string_view Rheumatology{ "\xee\x84\xa8" };                            // U+e128
+        constexpr static std::string_view RibCage{ "\xef\xa2\x98" };                                 // U+f898
+        constexpr static std::string_view RiceBowl{ "\xef\x87\xb5" };                                // U+f1f5
+        constexpr static std::string_view RightClick{ "\xef\x9c\x86" };                              // U+f706
+        constexpr static std::string_view RightPanelClose{ "\xef\x9c\x85" };                         // U+f705
+        constexpr static std::string_view RightPanelOpen{ "\xef\x9c\x84" };                          // U+f704
+        constexpr static std::string_view RingVolume{ "\xef\x83\x9d" };                              // U+f0dd
+        constexpr static std::string_view RingVolumeFilled{ "\xef\x83\x9d" };                        // U+f0dd
+        constexpr static std::string_view Ripples{ "\xee\xa7\x9b" };                                 // U+e9db
+        constexpr static std::string_view Robot{ "\xef\xa2\x82" };                                   // U+f882
+        constexpr static std::string_view Robot_2{ "\xef\x97\x90" };                                 // U+f5d0
+        constexpr static std::string_view Rocket{ "\xee\xae\xa5" };                                  // U+eba5
+        constexpr static std::string_view RocketLaunch{ "\xee\xae\x9b" };                            // U+eb9b
+        constexpr static std::string_view RollerShades{ "\xee\xb0\x92" };                            // U+ec12
+        constexpr static std::string_view RollerShadesClosed{ "\xee\xb0\x91" };                      // U+ec11
+        constexpr static std::string_view RollerSkating{ "\xee\xaf\x8d" };                           // U+ebcd
+        constexpr static std::string_view Roofing{ "\xef\x88\x81" };                                 // U+f201
+        constexpr static std::string_view Room{ "\xef\x87\x9b" };                                    // U+f1db
+        constexpr static std::string_view RoomPreferences{ "\xef\x86\xb8" };                         // U+f1b8
+        constexpr static std::string_view RoomService{ "\xee\xad\x89" };                             // U+eb49
+        constexpr static std::string_view Rotate_90DegreesCcw{ "\xee\x90\x98" };                     // U+e418
+        constexpr static std::string_view Rotate_90DegreesCw{ "\xee\xaa\xab" };                      // U+eaab
+        constexpr static std::string_view RotateLeft{ "\xee\x90\x99" };                              // U+e419
+        constexpr static std::string_view RotateRight{ "\xee\x90\x9a" };                             // U+e41a
+        constexpr static std::string_view RoundaboutLeft{ "\xee\xae\x99" };                          // U+eb99
+        constexpr static std::string_view RoundaboutRight{ "\xee\xae\xa3" };                         // U+eba3
+        constexpr static std::string_view RoundedCorner{ "\xee\xa4\xa0" };                           // U+e920
+        constexpr static std::string_view Route{ "\xee\xab\x8d" };                                   // U+eacd
+        constexpr static std::string_view Router{ "\xee\x8c\xa8" };                                  // U+e328
+        constexpr static std::string_view Routine{ "\xee\x88\x8c" };                                 // U+e20c
+        constexpr static std::string_view Rowing{ "\xee\xa4\xa1" };                                  // U+e921
+        constexpr static std::string_view RssFeed{ "\xee\x83\xa5" };                                 // U+e0e5
+        constexpr static std::string_view Rsvp{ "\xef\x81\x95" };                                    // U+f055
+        constexpr static std::string_view Rtt{ "\xee\xa6\xad" };                                     // U+e9ad
+        constexpr static std::string_view Rubric{ "\xee\xac\xa7" };                                  // U+eb27
+        constexpr static std::string_view Rule{ "\xef\x87\x82" };                                    // U+f1c2
+        constexpr static std::string_view RuleFolder{ "\xef\x87\x89" };                              // U+f1c9
+        constexpr static std::string_view RuleSettings{ "\xef\x99\x8c" };                            // U+f64c
+        constexpr static std::string_view RunCircle{ "\xee\xbd\xaf" };                               // U+ef6f
+        constexpr static std::string_view RunningWithErrors{ "\xee\x94\x9d" };                       // U+e51d
+        constexpr static std::string_view RvHookup{ "\xee\x99\x82" };                                // U+e642
+        constexpr static std::string_view SafetyCheck{ "\xee\xaf\xaf" };                             // U+ebef
+        constexpr static std::string_view SafetyCheckOff{ "\xef\x96\x9d" };                          // U+f59d
+        constexpr static std::string_view SafetyDivider{ "\xee\x87\x8c" };                           // U+e1cc
+        constexpr static std::string_view Sailing{ "\xee\x94\x82" };                                 // U+e502
+        constexpr static std::string_view Salinity{ "\xef\xa1\xb6" };                                // U+f876
+        constexpr static std::string_view Sanitizer{ "\xef\x88\x9d" };                               // U+f21d
+        constexpr static std::string_view Satellite{ "\xee\x95\xa2" };                               // U+e562
+        constexpr static std::string_view SatelliteAlt{ "\xee\xac\xba" };                            // U+eb3a
+        constexpr static std::string_view Sauna{ "\xef\x9b\xb7" };                                   // U+f6f7
+        constexpr static std::string_view Save{ "\xee\x85\xa1" };                                    // U+e161
+        constexpr static std::string_view SaveAlt{ "\xef\x82\x90" };                                 // U+f090
+        constexpr static std::string_view SaveAs{ "\xee\xad\xa0" };                                  // U+eb60
+        constexpr static std::string_view SavedSearch{ "\xee\xa8\x91" };                             // U+ea11
+        constexpr static std::string_view Savings{ "\xee\x8b\xab" };                                 // U+e2eb
+        constexpr static std::string_view Scale{ "\xee\xad\x9f" };                                   // U+eb5f
+        constexpr static std::string_view Scan{ "\xef\x9d\x8e" };                                    // U+f74e
+        constexpr static std::string_view ScanDelete{ "\xef\x9d\x8f" };                              // U+f74f
+        constexpr static std::string_view Scanner{ "\xee\x8c\xa9" };                                 // U+e329
+        constexpr static std::string_view ScatterPlot{ "\xee\x89\xa8" };                             // U+e268
+        constexpr static std::string_view Scene{ "\xee\x8a\xa7" };                                   // U+e2a7
+        constexpr static std::string_view Schedule{ "\xee\xbf\x96" };                                // U+efd6
+        constexpr static std::string_view ScheduleSend{ "\xee\xa8\x8a" };                            // U+ea0a
+        constexpr static std::string_view Schema{ "\xee\x93\xbd" };                                  // U+e4fd
+        constexpr static std::string_view School{ "\xee\xa0\x8c" };                                  // U+e80c
+        constexpr static std::string_view Science{ "\xee\xa9\x8b" };                                 // U+ea4b
+        constexpr static std::string_view ScienceOff{ "\xef\x95\x82" };                              // U+f542
+        constexpr static std::string_view Score{ "\xee\x89\xa9" };                                   // U+e269
+        constexpr static std::string_view Scoreboard{ "\xee\xaf\x90" };                              // U+ebd0
+        constexpr static std::string_view ScreenLockLandscape{ "\xee\x86\xbe" };                     // U+e1be
+        constexpr static std::string_view ScreenLockPortrait{ "\xee\x86\xbf" };                      // U+e1bf
+        constexpr static std::string_view ScreenLockRotation{ "\xee\x87\x80" };                      // U+e1c0
+        constexpr static std::string_view ScreenRecord{ "\xef\x99\xb9" };                            // U+f679
+        constexpr static std::string_view ScreenRotation{ "\xee\x87\x81" };                          // U+e1c1
+        constexpr static std::string_view ScreenRotationAlt{ "\xee\xaf\xae" };                       // U+ebee
+        constexpr static std::string_view ScreenRotationUp{ "\xef\x99\xb8" };                        // U+f678
+        constexpr static std::string_view ScreenSearchDesktop{ "\xee\xbd\xb0" };                     // U+ef70
+        constexpr static std::string_view ScreenShare{ "\xee\x83\xa2" };                             // U+e0e2
+        constexpr static std::string_view Screenshot{ "\xef\x81\x96" };                              // U+f056
+        constexpr static std::string_view ScreenshotFrame{ "\xef\x99\xb7" };                         // U+f677
+        constexpr static std::string_view ScreenshotKeyboard{ "\xef\x9f\x93" };                      // U+f7d3
+        constexpr static std::string_view ScreenshotMonitor{ "\xee\xb0\x88" };                       // U+ec08
+        constexpr static std::string_view ScreenshotRegion{ "\xef\x9f\x92" };                        // U+f7d2
+        constexpr static std::string_view ScreenshotTablet{ "\xef\x9a\x97" };                        // U+f697
+        constexpr static std::string_view ScrollableHeader{ "\xee\xa7\x9c" };                        // U+e9dc
+        constexpr static std::string_view ScubaDiving{ "\xee\xaf\x8e" };                             // U+ebce
+        constexpr static std::string_view Sd{ "\xee\xa7\x9d" };                                      // U+e9dd
+        constexpr static std::string_view SdCard{ "\xee\x98\xa3" };                                  // U+e623
+        constexpr static std::string_view SdCardAlert{ "\xef\x81\x97" };                             // U+f057
+        constexpr static std::string_view SdStorage{ "\xee\x98\xa3" };                               // U+e623
+        constexpr static std::string_view Sdk{ "\xee\x9c\xa0" };                                     // U+e720
+        constexpr static std::string_view Search{ "\xee\xa2\xb6" };                                  // U+e8b6
+        constexpr static std::string_view SearchCheck{ "\xef\xa0\x80" };                             // U+f800
+        constexpr static std::string_view SearchHandsFree{ "\xee\x9a\x96" };                         // U+e696
+        constexpr static std::string_view SearchOff{ "\xee\xa9\xb6" };                               // U+ea76
+        constexpr static std::string_view Security{ "\xee\x8c\xaa" };                                // U+e32a
+        constexpr static std::string_view SecurityKey{ "\xef\x94\x83" };                             // U+f503
+        constexpr static std::string_view SecurityUpdate{ "\xef\x81\xb2" };                          // U+f072
+        constexpr static std::string_view SecurityUpdateGood{ "\xef\x81\xb3" };                      // U+f073
+        constexpr static std::string_view SecurityUpdateWarning{ "\xef\x81\xb4" };                   // U+f074
+        constexpr static std::string_view Segment{ "\xee\xa5\x8b" };                                 // U+e94b
+        constexpr static std::string_view Select{ "\xef\x9d\x8d" };                                  // U+f74d
+        constexpr static std::string_view SelectAll{ "\xee\x85\xa2" };                               // U+e162
+        constexpr static std::string_view SelectCheckBox{ "\xef\x87\xbe" };                          // U+f1fe
+        constexpr static std::string_view SelectToSpeak{ "\xef\x9f\x8f" };                           // U+f7cf
+        constexpr static std::string_view SelectWindow{ "\xee\x9b\xba" };                            // U+e6fa
+        constexpr static std::string_view SelectWindowOff{ "\xee\x94\x86" };                         // U+e506
+        constexpr static std::string_view SelfCare{ "\xef\xa1\xad" };                                // U+f86d
+        constexpr static std::string_view SelfImprovement{ "\xee\xa9\xb8" };                         // U+ea78
+        constexpr static std::string_view Sell{ "\xef\x81\x9b" };                                    // U+f05b
+        constexpr static std::string_view Send{ "\xee\x85\xa3" };                                    // U+e163
+        constexpr static std::string_view SendAndArchive{ "\xee\xa8\x8c" };                          // U+ea0c
+        constexpr static std::string_view SendMoney{ "\xee\xa2\xb7" };                               // U+e8b7
+        constexpr static std::string_view SendTimeExtension{ "\xee\xab\x9b" };                       // U+eadb
+        constexpr static std::string_view SendToMobile{ "\xef\x81\x9c" };                            // U+f05c
+        constexpr static std::string_view SensorDoor{ "\xef\x86\xb5" };                              // U+f1b5
+        constexpr static std::string_view SensorOccupied{ "\xee\xb0\x90" };                          // U+ec10
+        constexpr static std::string_view SensorWindow{ "\xef\x86\xb4" };                            // U+f1b4
+        constexpr static std::string_view Sensors{ "\xee\x94\x9e" };                                 // U+e51e
+        constexpr static std::string_view SensorsKrx{ "\xef\x95\x96" };                              // U+f556
+        constexpr static std::string_view SensorsKrxOff{ "\xef\x94\x95" };                           // U+f515
+        constexpr static std::string_view SensorsOff{ "\xee\x94\x9f" };                              // U+e51f
+        constexpr static std::string_view SentimentCalm{ "\xef\x9a\xa7" };                           // U+f6a7
+        constexpr static std::string_view SentimentContent{ "\xef\x9a\xa6" };                        // U+f6a6
+        constexpr static std::string_view SentimentDissatisfied{ "\xee\xa0\x91" };                   // U+e811
+        constexpr static std::string_view SentimentExcited{ "\xef\x9a\xa5" };                        // U+f6a5
+        constexpr static std::string_view SentimentExtremelyDissatisfied{ "\xef\x86\x94" };          // U+f194
+        constexpr static std::string_view SentimentFrustrated{ "\xef\x9a\xa4" };                     // U+f6a4
+        constexpr static std::string_view SentimentNeutral{ "\xee\xa0\x92" };                        // U+e812
+        constexpr static std::string_view SentimentSad{ "\xef\x9a\xa3" };                            // U+f6a3
+        constexpr static std::string_view SentimentSatisfied{ "\xee\xa0\x93" };                      // U+e813
+        constexpr static std::string_view SentimentSatisfiedAlt{ "\xee\xa0\x93" };                   // U+e813
+        constexpr static std::string_view SentimentStressed{ "\xef\x9a\xa2" };                       // U+f6a2
+        constexpr static std::string_view SentimentVeryDissatisfied{ "\xee\xa0\x94" };               // U+e814
+        constexpr static std::string_view SentimentVerySatisfied{ "\xee\xa0\x95" };                  // U+e815
+        constexpr static std::string_view SentimentWorried{ "\xef\x9a\xa1" };                        // U+f6a1
+        constexpr static std::string_view ServiceToolbox{ "\xee\x9c\x97" };                          // U+e717
+        constexpr static std::string_view SetMeal{ "\xef\x87\xaa" };                                 // U+f1ea
+        constexpr static std::string_view Settings{ "\xee\xa2\xb8" };                                // U+e8b8
+        constexpr static std::string_view SettingsAccessibility{ "\xef\x81\x9d" };                   // U+f05d
+        constexpr static std::string_view SettingsAccountBox{ "\xef\xa0\xb5" };                      // U+f835
+        constexpr static std::string_view SettingsAlert{ "\xef\x85\x83" };                           // U+f143
+        constexpr static std::string_view SettingsApplications{ "\xee\xa2\xb9" };                    // U+e8b9
+        constexpr static std::string_view SettingsBRoll{ "\xef\x98\xa5" };                           // U+f625
+        constexpr static std::string_view SettingsBackupRestore{ "\xee\xa2\xba" };                   // U+e8ba
+        constexpr static std::string_view SettingsBluetooth{ "\xee\xa2\xbb" };                       // U+e8bb
+        constexpr static std::string_view SettingsBrightness{ "\xee\xa2\xbd" };                      // U+e8bd
+        constexpr static std::string_view SettingsCell{ "\xee\xa2\xbc" };                            // U+e8bc
+        constexpr static std::string_view SettingsCinematicBlur{ "\xef\x98\xa4" };                   // U+f624
+        constexpr static std::string_view SettingsEthernet{ "\xee\xa2\xbe" };                        // U+e8be
+        constexpr static std::string_view SettingsHeart{ "\xef\x94\xa2" };                           // U+f522
+        constexpr static std::string_view SettingsInputAntenna{ "\xee\xa2\xbf" };                    // U+e8bf
+        constexpr static std::string_view SettingsInputComponent{ "\xee\xa3\x81" };                  // U+e8c1
+        constexpr static std::string_view SettingsInputComposite{ "\xee\xa3\x81" };                  // U+e8c1
+        constexpr static std::string_view SettingsInputHdmi{ "\xee\xa3\x82" };                       // U+e8c2
+        constexpr static std::string_view SettingsInputSvideo{ "\xee\xa3\x83" };                     // U+e8c3
+        constexpr static std::string_view SettingsMotionMode{ "\xef\xa0\xb3" };                      // U+f833
+        constexpr static std::string_view SettingsNightSight{ "\xef\xa0\xb2" };                      // U+f832
+        constexpr static std::string_view SettingsOverscan{ "\xee\xa3\x84" };                        // U+e8c4
+        constexpr static std::string_view SettingsPanorama{ "\xef\xa0\xb1" };                        // U+f831
+        constexpr static std::string_view SettingsPhone{ "\xee\xa3\x85" };                           // U+e8c5
+        constexpr static std::string_view SettingsPhotoCamera{ "\xef\xa0\xb4" };                     // U+f834
+        constexpr static std::string_view SettingsPower{ "\xee\xa3\x86" };                           // U+e8c6
+        constexpr static std::string_view SettingsRemote{ "\xee\xa3\x87" };                          // U+e8c7
+        constexpr static std::string_view SettingsSlowMotion{ "\xef\x98\xa3" };                      // U+f623
+        constexpr static std::string_view SettingsSuggest{ "\xef\x81\x9e" };                         // U+f05e
+        constexpr static std::string_view SettingsSystemDaydream{ "\xee\x87\x83" };                  // U+e1c3
+        constexpr static std::string_view SettingsTimelapse{ "\xef\x98\xa2" };                       // U+f622
+        constexpr static std::string_view SettingsVideoCamera{ "\xef\x98\xa1" };                     // U+f621
+        constexpr static std::string_view SettingsVoice{ "\xee\xa3\x88" };                           // U+e8c8
+        constexpr static std::string_view SettopComponent{ "\xee\x8a\xac" };                         // U+e2ac
+        constexpr static std::string_view SevereCold{ "\xee\xaf\x93" };                              // U+ebd3
+        constexpr static std::string_view Shadow{ "\xee\xa7\x9f" };                                  // U+e9df
+        constexpr static std::string_view ShadowAdd{ "\xef\x96\x84" };                               // U+f584
+        constexpr static std::string_view ShadowMinus{ "\xef\x96\x83" };                             // U+f583
+        constexpr static std::string_view ShapeLine{ "\xef\xa3\x93" };                               // U+f8d3
+        constexpr static std::string_view ShapeRecognition{ "\xee\xac\x81" };                        // U+eb01
+        constexpr static std::string_view Shapes{ "\xee\x98\x82" };                                  // U+e602
+        constexpr static std::string_view Share{ "\xee\xa0\x8d" };                                   // U+e80d
+        constexpr static std::string_view ShareLocation{ "\xef\x81\x9f" };                           // U+f05f
+        constexpr static std::string_view ShareOff{ "\xef\x9b\x8b" };                                // U+f6cb
+        constexpr static std::string_view ShareReviews{ "\xef\xa2\xa4" };                            // U+f8a4
+        constexpr static std::string_view ShareWindows{ "\xef\x98\x93" };                            // U+f613
+        constexpr static std::string_view SheetsRtl{ "\xef\xa0\xa3" };                               // U+f823
+        constexpr static std::string_view ShelfAutoHide{ "\xef\x9c\x83" };                           // U+f703
+        constexpr static std::string_view ShelfPosition{ "\xef\x9c\x82" };                           // U+f702
+        constexpr static std::string_view Shelves{ "\xef\xa1\xae" };                                 // U+f86e
+        constexpr static std::string_view Shield{ "\xee\xa7\xa0" };                                  // U+e9e0
+        constexpr static std::string_view ShieldLock{ "\xef\x9a\x86" };                              // U+f686
+        constexpr static std::string_view ShieldLocked{ "\xef\x96\x92" };                            // U+f592
+        constexpr static std::string_view ShieldMoon{ "\xee\xaa\xa9" };                              // U+eaa9
+        constexpr static std::string_view ShieldPerson{ "\xef\x99\x90" };                            // U+f650
+        constexpr static std::string_view ShieldQuestion{ "\xef\x94\xa9" };                          // U+f529
+        constexpr static std::string_view ShieldWithHeart{ "\xee\x9e\x8f" };                         // U+e78f
+        constexpr static std::string_view ShieldWithHouse{ "\xee\x9e\x8d" };                         // U+e78d
+        constexpr static std::string_view Shift{ "\xee\x97\xb2" };                                   // U+e5f2
+        constexpr static std::string_view ShiftLock{ "\xef\x9e\xae" };                               // U+f7ae
+        constexpr static std::string_view Shop{ "\xee\xa3\x89" };                                    // U+e8c9
+        constexpr static std::string_view Shop_2{ "\xee\xa3\x8a" };                                  // U+e8ca
+        constexpr static std::string_view ShopTwo{ "\xee\xa3\x8a" };                                 // U+e8ca
+        constexpr static std::string_view ShoppingBag{ "\xef\x87\x8c" };                             // U+f1cc
+        constexpr static std::string_view ShoppingBasket{ "\xee\xa3\x8b" };                          // U+e8cb
+        constexpr static std::string_view ShoppingCart{ "\xee\xa3\x8c" };                            // U+e8cc
+        constexpr static std::string_view ShoppingCartCheckout{ "\xee\xae\x88" };                    // U+eb88
+        constexpr static std::string_view ShoppingCartOff{ "\xef\x93\xb7" };                         // U+f4f7
+        constexpr static std::string_view Shoppingmode{ "\xee\xbe\xb7" };                            // U+efb7
+        constexpr static std::string_view ShortStay{ "\xee\x93\x90" };                               // U+e4d0
+        constexpr static std::string_view ShortText{ "\xee\x89\xa1" };                               // U+e261
+        constexpr static std::string_view Shortcut{ "\xef\x95\xba" };                                // U+f57a
+        constexpr static std::string_view ShowChart{ "\xee\x9b\xa1" };                               // U+e6e1
+        constexpr static std::string_view Shower{ "\xef\x81\xa1" };                                  // U+f061
+        constexpr static std::string_view Shuffle{ "\xee\x81\x83" };                                 // U+e043
+        constexpr static std::string_view ShuffleOn{ "\xee\xa7\xa1" };                               // U+e9e1
+        constexpr static std::string_view ShutterSpeed{ "\xee\x90\xbd" };                            // U+e43d
+        constexpr static std::string_view ShutterSpeedAdd{ "\xef\x95\xbe" };                         // U+f57e
+        constexpr static std::string_view ShutterSpeedMinus{ "\xef\x95\xbd" };                       // U+f57d
+        constexpr static std::string_view Sick{ "\xef\x88\xa0" };                                    // U+f220
+        constexpr static std::string_view SideNavigation{ "\xee\xa7\xa2" };                          // U+e9e2
+        constexpr static std::string_view SignLanguage{ "\xee\xaf\xa5" };                            // U+ebe5
+        constexpr static std::string_view SignalCellular_0Bar{ "\xef\x82\xa8" };                     // U+f0a8
+        constexpr static std::string_view SignalCellular_1Bar{ "\xef\x82\xa9" };                     // U+f0a9
+        constexpr static std::string_view SignalCellular_2Bar{ "\xef\x82\xaa" };                     // U+f0aa
+        constexpr static std::string_view SignalCellular_3Bar{ "\xef\x82\xab" };                     // U+f0ab
+        constexpr static std::string_view SignalCellular_4Bar{ "\xee\x87\x88" };                     // U+e1c8
+        constexpr static std::string_view SignalCellularAdd{ "\xef\x9e\xa9" };                       // U+f7a9
+        constexpr static std::string_view SignalCellularAlt{ "\xee\x88\x82" };                       // U+e202
+        constexpr static std::string_view SignalCellularAlt_1Bar{ "\xee\xaf\x9f" };                  // U+ebdf
+        constexpr static std::string_view SignalCellularAlt_2Bar{ "\xee\xaf\xa3" };                  // U+ebe3
+        constexpr static std::string_view SignalCellularConnectedNoInternet_0Bar{ "\xef\x82\xac" };  // U+f0ac
+        constexpr static std::string_view SignalCellularConnectedNoInternet_4Bar{ "\xee\x87\x8d" };  // U+e1cd
+        constexpr static std::string_view SignalCellularNoSim{ "\xee\x87\x8e" };                     // U+e1ce
+        constexpr static std::string_view SignalCellularNodata{ "\xef\x81\xa2" };                    // U+f062
+        constexpr static std::string_view SignalCellularNull{ "\xee\x87\x8f" };                      // U+e1cf
+        constexpr static std::string_view SignalCellularOff{ "\xee\x87\x90" };                       // U+e1d0
+        constexpr static std::string_view SignalCellularPause{ "\xef\x96\xa7" };                     // U+f5a7
+        constexpr static std::string_view SignalDisconnected{ "\xef\x88\xb9" };                      // U+f239
+        constexpr static std::string_view SignalWifi_0Bar{ "\xef\x82\xb0" };                         // U+f0b0
+        constexpr static std::string_view SignalWifi_4Bar{ "\xef\x81\xa5" };                         // U+f065
+        constexpr static std::string_view SignalWifi_4BarLock{ "\xee\x87\xa1" };                     // U+e1e1
+        constexpr static std::string_view SignalWifiBad{ "\xef\x81\xa4" };                           // U+f064
+        constexpr static std::string_view SignalWifiConnectedNoInternet_4{ "\xef\x81\xa4" };         // U+f064
+        constexpr static std::string_view SignalWifiOff{ "\xee\x87\x9a" };                           // U+e1da
+        constexpr static std::string_view SignalWifiStatusbar_4Bar{ "\xef\x81\xa5" };                // U+f065
+        constexpr static std::string_view SignalWifiStatusbarNotConnected{ "\xef\x83\xaf" };         // U+f0ef
+        constexpr static std::string_view SignalWifiStatusbarNull{ "\xef\x81\xa7" };                 // U+f067
+        constexpr static std::string_view Signature{ "\xef\x9d\x8c" };                               // U+f74c
+        constexpr static std::string_view Signpost{ "\xee\xae\x91" };                                // U+eb91
+        constexpr static std::string_view SimCard{ "\xee\x8c\xab" };                                 // U+e32b
+        constexpr static std::string_view SimCardAlert{ "\xef\x81\x97" };                            // U+f057
+        constexpr static std::string_view SimCardDownload{ "\xef\x81\xa8" };                         // U+f068
+        constexpr static std::string_view SingleBed{ "\xee\xa9\x88" };                               // U+ea48
+        constexpr static std::string_view Sip{ "\xef\x81\xa9" };                                     // U+f069
+        constexpr static std::string_view Skateboarding{ "\xee\x94\x91" };                           // U+e511
+        constexpr static std::string_view Skeleton{ "\xef\xa2\x99" };                                // U+f899
+        constexpr static std::string_view Skillet{ "\xef\x95\x83" };                                 // U+f543
+        constexpr static std::string_view SkilletCooktop{ "\xef\x95\x84" };                          // U+f544
+        constexpr static std::string_view SkipNext{ "\xee\x81\x84" };                                // U+e044
+        constexpr static std::string_view SkipPrevious{ "\xee\x81\x85" };                            // U+e045
+        constexpr static std::string_view Skull{ "\xef\xa2\x9a" };                                   // U+f89a
+        constexpr static std::string_view Sledding{ "\xee\x94\x92" };                                // U+e512
+        constexpr static std::string_view Sleep{ "\xee\x88\x93" };                                   // U+e213
+        constexpr static std::string_view SleepScore{ "\xef\x9a\xb7" };                              // U+f6b7
+        constexpr static std::string_view SlideLibrary{ "\xef\xa0\xa2" };                            // U+f822
+        constexpr static std::string_view Sliders{ "\xee\xa7\xa3" };                                 // U+e9e3
+        constexpr static std::string_view Slideshow{ "\xee\x90\x9b" };                               // U+e41b
+        constexpr static std::string_view SlowMotionVideo{ "\xee\x81\xa8" };                         // U+e068
+        constexpr static std::string_view SmartButton{ "\xef\x87\x81" };                             // U+f1c1
+        constexpr static std::string_view SmartDisplay{ "\xef\x81\xaa" };                            // U+f06a
+        constexpr static std::string_view SmartOutlet{ "\xee\xa1\x84" };                             // U+e844
+        constexpr static std::string_view SmartScreen{ "\xef\x81\xab" };                             // U+f06b
+        constexpr static std::string_view SmartToy{ "\xef\x81\xac" };                                // U+f06c
+        constexpr static std::string_view Smartphone{ "\xee\x8c\xac" };                              // U+e32c
+        constexpr static std::string_view SmbShare{ "\xef\x9d\x8b" };                                // U+f74b
+        constexpr static std::string_view SmokeFree{ "\xee\xad\x8a" };                               // U+eb4a
+        constexpr static std::string_view SmokingRooms{ "\xee\xad\x8b" };                            // U+eb4b
+        constexpr static std::string_view Sms{ "\xee\x98\xa5" };                                     // U+e625
+        constexpr static std::string_view SmsFailed{ "\xee\xa1\xbf" };                               // U+e87f
+        constexpr static std::string_view SnippetFolder{ "\xef\x87\x87" };                           // U+f1c7
+        constexpr static std::string_view Snooze{ "\xee\x81\x86" };                                  // U+e046
+        constexpr static std::string_view Snowboarding{ "\xee\x94\x93" };                            // U+e513
+        constexpr static std::string_view Snowing{ "\xee\xa0\x8f" };                                 // U+e80f
+        constexpr static std::string_view SnowingHeavy{ "\xef\x98\x9c" };                            // U+f61c
+        constexpr static std::string_view Snowmobile{ "\xee\x94\x83" };                              // U+e503
+        constexpr static std::string_view Snowshoeing{ "\xee\x94\x94" };                             // U+e514
+        constexpr static std::string_view Soap{ "\xef\x86\xb2" };                                    // U+f1b2
+        constexpr static std::string_view SocialDistance{ "\xee\x87\x8b" };                          // U+e1cb
+        constexpr static std::string_view SocialLeaderboard{ "\xef\x9a\xa0" };                       // U+f6a0
+        constexpr static std::string_view SolarPower{ "\xee\xb0\x8f" };                              // U+ec0f
+        constexpr static std::string_view Sort{ "\xee\x85\xa4" };                                    // U+e164
+        constexpr static std::string_view SortByAlpha{ "\xee\x81\x93" };                             // U+e053
+        constexpr static std::string_view Sos{ "\xee\xaf\xb7" };                                     // U+ebf7
+        constexpr static std::string_view SoundDetectionDogBarking{ "\xef\x85\x89" };                // U+f149
+        constexpr static std::string_view SoundDetectionGlassBreak{ "\xef\x85\x8a" };                // U+f14a
+        constexpr static std::string_view SoundDetectionLoudSound{ "\xef\x85\x8b" };                 // U+f14b
+        constexpr static std::string_view SoundSampler{ "\xef\x9a\xb4" };                            // U+f6b4
+        constexpr static std::string_view SoupKitchen{ "\xee\x9f\x93" };                             // U+e7d3
+        constexpr static std::string_view Source{ "\xef\x87\x88" };                                  // U+f1c8
+        constexpr static std::string_view SourceEnvironment{ "\xee\x94\xa7" };                       // U+e527
+        constexpr static std::string_view SourceNotes{ "\xee\x84\xad" };                             // U+e12d
+        constexpr static std::string_view South{ "\xef\x87\xa3" };                                   // U+f1e3
+        constexpr static std::string_view SouthAmerica{ "\xee\x9f\xa4" };                            // U+e7e4
+        constexpr static std::string_view SouthEast{ "\xef\x87\xa4" };                               // U+f1e4
+        constexpr static std::string_view SouthWest{ "\xef\x87\xa5" };                               // U+f1e5
+        constexpr static std::string_view Spa{ "\xee\xad\x8c" };                                     // U+eb4c
+        constexpr static std::string_view SpaceBar{ "\xee\x89\x96" };                                // U+e256
+        constexpr static std::string_view SpaceDashboard{ "\xee\x99\xab" };                          // U+e66b
+        constexpr static std::string_view SpatialAudio{ "\xee\xaf\xab" };                            // U+ebeb
+        constexpr static std::string_view SpatialAudioOff{ "\xee\xaf\xa8" };                         // U+ebe8
+        constexpr static std::string_view SpatialTracking{ "\xee\xaf\xaa" };                         // U+ebea
+        constexpr static std::string_view Speaker{ "\xee\x8c\xad" };                                 // U+e32d
+        constexpr static std::string_view SpeakerGroup{ "\xee\x8c\xae" };                            // U+e32e
+        constexpr static std::string_view SpeakerNotes{ "\xee\xa3\x8d" };                            // U+e8cd
+        constexpr static std::string_view SpeakerNotesOff{ "\xee\xa4\xaa" };                         // U+e92a
+        constexpr static std::string_view SpeakerPhone{ "\xee\x83\x92" };                            // U+e0d2
+        constexpr static std::string_view SpecialCharacter{ "\xef\x9d\x8a" };                        // U+f74a
+        constexpr static std::string_view SpecificGravity{ "\xef\xa1\xb2" };                         // U+f872
+        constexpr static std::string_view SpeechToText{ "\xef\xa2\xa7" };                            // U+f8a7
+        constexpr static std::string_view Speed{ "\xee\xa7\xa4" };                                   // U+e9e4
+        constexpr static std::string_view Speed_0_5{ "\xef\x93\xa2" };                               // U+f4e2
+        constexpr static std::string_view Speed_1_2{ "\xef\x93\xa1" };                               // U+f4e1
+        constexpr static std::string_view Speed_1_5{ "\xef\x93\xa0" };                               // U+f4e0
+        constexpr static std::string_view Speed_2x{ "\xef\x93\xab" };                                // U+f4eb
+        constexpr static std::string_view Spellcheck{ "\xee\xa3\x8e" };                              // U+e8ce
+        constexpr static std::string_view Splitscreen{ "\xef\x81\xad" };                             // U+f06d
+        constexpr static std::string_view SplitscreenAdd{ "\xef\x93\xbd" };                          // U+f4fd
+        constexpr static std::string_view SplitscreenBottom{ "\xef\x99\xb6" };                       // U+f676
+        constexpr static std::string_view SplitscreenLeft{ "\xef\x99\xb5" };                         // U+f675
+        constexpr static std::string_view SplitscreenRight{ "\xef\x99\xb4" };                        // U+f674
+        constexpr static std::string_view SplitscreenTop{ "\xef\x99\xb3" };                          // U+f673
+        constexpr static std::string_view SplitscreenVerticalAdd{ "\xef\x93\xbc" };                  // U+f4fc
+        constexpr static std::string_view Spo2{ "\xef\x9b\x9b" };                                    // U+f6db
+        constexpr static std::string_view Spoke{ "\xee\xa6\xa7" };                                   // U+e9a7
+        constexpr static std::string_view Sports{ "\xee\xa8\xb0" };                                  // U+ea30
+        constexpr static std::string_view SportsAndOutdoors{ "\xee\xbe\xb8" };                       // U+efb8
+        constexpr static std::string_view SportsBar{ "\xef\x87\xb3" };                               // U+f1f3
+        constexpr static std::string_view SportsBaseball{ "\xee\xa9\x91" };                          // U+ea51
+        constexpr static std::string_view SportsBasketball{ "\xee\xa8\xa6" };                        // U+ea26
+        constexpr static std::string_view SportsCricket{ "\xee\xa8\xa7" };                           // U+ea27
+        constexpr static std::string_view SportsEsports{ "\xee\xa8\xa8" };                           // U+ea28
+        constexpr static std::string_view SportsFootball{ "\xee\xa8\xa9" };                          // U+ea29
+        constexpr static std::string_view SportsGolf{ "\xee\xa8\xaa" };                              // U+ea2a
+        constexpr static std::string_view SportsGymnastics{ "\xee\xaf\x84" };                        // U+ebc4
+        constexpr static std::string_view SportsHandball{ "\xee\xa8\xb3" };                          // U+ea33
+        constexpr static std::string_view SportsHockey{ "\xee\xa8\xab" };                            // U+ea2b
+        constexpr static std::string_view SportsKabaddi{ "\xee\xa8\xb4" };                           // U+ea34
+        constexpr static std::string_view SportsMartialArts{ "\xee\xab\xa9" };                       // U+eae9
+        constexpr static std::string_view SportsMma{ "\xee\xa8\xac" };                               // U+ea2c
+        constexpr static std::string_view SportsMotorsports{ "\xee\xa8\xad" };                       // U+ea2d
+        constexpr static std::string_view SportsRugby{ "\xee\xa8\xae" };                             // U+ea2e
+        constexpr static std::string_view SportsScore{ "\xef\x81\xae" };                             // U+f06e
+        constexpr static std::string_view SportsSoccer{ "\xee\xa8\xaf" };                            // U+ea2f
+        constexpr static std::string_view SportsTennis{ "\xee\xa8\xb2" };                            // U+ea32
+        constexpr static std::string_view SportsVolleyball{ "\xee\xa8\xb1" };                        // U+ea31
+        constexpr static std::string_view Sprinkler{ "\xee\x8a\x9a" };                               // U+e29a
+        constexpr static std::string_view Sprint{ "\xef\xa0\x9f" };                                  // U+f81f
+        constexpr static std::string_view Square{ "\xee\xac\xb6" };                                  // U+eb36
+        constexpr static std::string_view SquareFoot{ "\xee\xa9\x89" };                              // U+ea49
+        constexpr static std::string_view SsidChart{ "\xee\xad\xa6" };                               // U+eb66
+        constexpr static std::string_view Stack{ "\xef\x98\x89" };                                   // U+f609
+        constexpr static std::string_view StackOff{ "\xef\x98\x88" };                                // U+f608
+        constexpr static std::string_view StackStar{ "\xef\x98\x87" };                               // U+f607
+        constexpr static std::string_view StackedBarChart{ "\xee\xa7\xa6" };                         // U+e9e6
+        constexpr static std::string_view StackedEmail{ "\xee\x9b\x87" };                            // U+e6c7
+        constexpr static std::string_view StackedInbox{ "\xee\x9b\x89" };                            // U+e6c9
+        constexpr static std::string_view StackedLineChart{ "\xef\x88\xab" };                        // U+f22b
+        constexpr static std::string_view Stacks{ "\xef\x94\x80" };                                  // U+f500
+        constexpr static std::string_view StadiaController{ "\xef\x84\xb5" };                        // U+f135
+        constexpr static std::string_view Stadium{ "\xee\xae\x90" };                                 // U+eb90
+        constexpr static std::string_view Stairs{ "\xef\x86\xa9" };                                  // U+f1a9
+        constexpr static std::string_view Star{ "\xef\x82\x9a" };                                    // U+f09a
+        constexpr static std::string_view StarBorder{ "\xef\x82\x9a" };                              // U+f09a
+        constexpr static std::string_view StarBorderPurple500{ "\xef\x82\x9a" };                     // U+f09a
+        constexpr static std::string_view StarHalf{ "\xee\xa0\xb9" };                                // U+e839
+        constexpr static std::string_view StarOutline{ "\xef\x82\x9a" };                             // U+f09a
+        constexpr static std::string_view StarPurple500{ "\xef\x82\x9a" };                           // U+f09a
+        constexpr static std::string_view StarRate{ "\xef\x83\xac" };                                // U+f0ec
+        constexpr static std::string_view StarRateHalf{ "\xee\xb1\x85" };                            // U+ec45
+        constexpr static std::string_view Stars{ "\xee\xa3\x90" };                                   // U+e8d0
+        constexpr static std::string_view Start{ "\xee\x82\x89" };                                   // U+e089
+        constexpr static std::string_view Stat_0{ "\xee\x9a\x97" };                                  // U+e697
+        constexpr static std::string_view Stat_1{ "\xee\x9a\x98" };                                  // U+e698
+        constexpr static std::string_view Stat_2{ "\xee\x9a\x99" };                                  // U+e699
+        constexpr static std::string_view Stat_3{ "\xee\x9a\x9a" };                                  // U+e69a
+        constexpr static std::string_view StatMinus_1{ "\xee\x9a\x9b" };                             // U+e69b
+        constexpr static std::string_view StatMinus_2{ "\xee\x9a\x9c" };                             // U+e69c
+        constexpr static std::string_view StatMinus_3{ "\xee\x9a\x9d" };                             // U+e69d
+        constexpr static std::string_view StayCurrentLandscape{ "\xee\x83\x93" };                    // U+e0d3
+        constexpr static std::string_view StayCurrentPortrait{ "\xee\x83\x94" };                     // U+e0d4
+        constexpr static std::string_view StayPrimaryLandscape{ "\xee\x83\x95" };                    // U+e0d5
+        constexpr static std::string_view StayPrimaryPortrait{ "\xee\x83\x96" };                     // U+e0d6
+        constexpr static std::string_view Step{ "\xef\x9b\xbe" };                                    // U+f6fe
+        constexpr static std::string_view StepInto{ "\xef\x9c\x81" };                                // U+f701
+        constexpr static std::string_view StepOut{ "\xef\x9c\x80" };                                 // U+f700
+        constexpr static std::string_view StepOver{ "\xef\x9b\xbf" };                                // U+f6ff
+        constexpr static std::string_view Steppers{ "\xee\xa7\xa7" };                                // U+e9e7
+        constexpr static std::string_view Steps{ "\xef\x9b\x9a" };                                   // U+f6da
+        constexpr static std::string_view Stethoscope{ "\xef\xa0\x85" };                             // U+f805
+        constexpr static std::string_view StethoscopeArrow{ "\xef\xa0\x87" };                        // U+f807
+        constexpr static std::string_view StethoscopeCheck{ "\xef\xa0\x86" };                        // U+f806
+        constexpr static std::string_view StickyNote{ "\xee\xa7\xa8" };                              // U+e9e8
+        constexpr static std::string_view StickyNote_2{ "\xef\x87\xbc" };                            // U+f1fc
+        constexpr static std::string_view StockMedia{ "\xef\x95\xb0" };                              // U+f570
+        constexpr static std::string_view Stockpot{ "\xef\x95\x85" };                                // U+f545
+        constexpr static std::string_view Stop{ "\xee\x81\x87" };                                    // U+e047
+        constexpr static std::string_view StopCircle{ "\xee\xbd\xb1" };                              // U+ef71
+        constexpr static std::string_view StopScreenShare{ "\xee\x83\xa3" };                         // U+e0e3
+        constexpr static std::string_view Storage{ "\xee\x87\x9b" };                                 // U+e1db
+        constexpr static std::string_view Store{ "\xee\xa3\x91" };                                   // U+e8d1
+        constexpr static std::string_view StoreMallDirectory{ "\xee\xa3\x91" };                      // U+e8d1
+        constexpr static std::string_view Storefront{ "\xee\xa8\x92" };                              // U+ea12
+        constexpr static std::string_view Storm{ "\xef\x81\xb0" };                                   // U+f070
+        constexpr static std::string_view Straight{ "\xee\xae\x95" };                                // U+eb95
+        constexpr static std::string_view Straighten{ "\xee\x90\x9c" };                              // U+e41c
+        constexpr static std::string_view Strategy{ "\xef\x97\x9f" };                                // U+f5df
+        constexpr static std::string_view Stream{ "\xee\xa7\xa9" };                                  // U+e9e9
+        constexpr static std::string_view StreamApps{ "\xef\x9e\x9f" };                              // U+f79f
+        constexpr static std::string_view Streetview{ "\xee\x95\xae" };                              // U+e56e
+        constexpr static std::string_view StressManagement{ "\xef\x9b\x99" };                        // U+f6d9
+        constexpr static std::string_view StrikethroughS{ "\xee\x89\x97" };                          // U+e257
+        constexpr static std::string_view StrokeFull{ "\xef\x9d\x89" };                              // U+f749
+        constexpr static std::string_view StrokePartial{ "\xef\x9d\x88" };                           // U+f748
+        constexpr static std::string_view Stroller{ "\xef\x86\xae" };                                // U+f1ae
+        constexpr static std::string_view Style{ "\xee\x90\x9d" };                                   // U+e41d
+        constexpr static std::string_view Styler{ "\xee\x89\xb3" };                                  // U+e273
+        constexpr static std::string_view Stylus{ "\xef\x98\x84" };                                  // U+f604
+        constexpr static std::string_view StylusLaserPointer{ "\xef\x9d\x87" };                      // U+f747
+        constexpr static std::string_view StylusNote{ "\xef\x98\x83" };                              // U+f603
+        constexpr static std::string_view SubdirectoryArrowLeft{ "\xee\x97\x99" };                   // U+e5d9
+        constexpr static std::string_view SubdirectoryArrowRight{ "\xee\x97\x9a" };                  // U+e5da
+        constexpr static std::string_view Subheader{ "\xee\xa7\xaa" };                               // U+e9ea
+        constexpr static std::string_view Subject{ "\xee\xa3\x92" };                                 // U+e8d2
+        constexpr static std::string_view Subscript{ "\xef\x84\x91" };                               // U+f111
+        constexpr static std::string_view Subscriptions{ "\xee\x81\xa4" };                           // U+e064
+        constexpr static std::string_view Subtitles{ "\xee\x81\x88" };                               // U+e048
+        constexpr static std::string_view SubtitlesOff{ "\xee\xbd\xb2" };                            // U+ef72
+        constexpr static std::string_view Subway{ "\xee\x95\xaf" };                                  // U+e56f
+        constexpr static std::string_view Summarize{ "\xef\x81\xb1" };                               // U+f071
+        constexpr static std::string_view Sunny{ "\xee\xa0\x9a" };                                   // U+e81a
+        constexpr static std::string_view SunnySnowing{ "\xee\xa0\x99" };                            // U+e819
+        constexpr static std::string_view Superscript{ "\xef\x84\x92" };                             // U+f112
+        constexpr static std::string_view SupervisedUserCircle{ "\xee\xa4\xb9" };                    // U+e939
+        constexpr static std::string_view SupervisedUserCircleOff{ "\xef\x98\x8e" };                 // U+f60e
+        constexpr static std::string_view SupervisorAccount{ "\xee\xa3\x93" };                       // U+e8d3
+        constexpr static std::string_view Support{ "\xee\xbd\xb3" };                                 // U+ef73
+        constexpr static std::string_view SupportAgent{ "\xef\x83\xa2" };                            // U+f0e2
+        constexpr static std::string_view Surfing{ "\xee\x94\x95" };                                 // U+e515
+        constexpr static std::string_view Surgical{ "\xee\x84\xb1" };                                // U+e131
+        constexpr static std::string_view SurroundSound{ "\xee\x81\x89" };                           // U+e049
+        constexpr static std::string_view SwapCalls{ "\xee\x83\x97" };                               // U+e0d7
+        constexpr static std::string_view SwapDrivingApps{ "\xee\x9a\x9e" };                         // U+e69e
+        constexpr static std::string_view SwapDrivingAppsWheel{ "\xee\x9a\x9f" };                    // U+e69f
+        constexpr static std::string_view SwapHoriz{ "\xee\xa3\x94" };                               // U+e8d4
+        constexpr static std::string_view SwapHorizontalCircle{ "\xee\xa4\xb3" };                    // U+e933
+        constexpr static std::string_view SwapVert{ "\xee\xa3\x95" };                                // U+e8d5
+        constexpr static std::string_view SwapVerticalCircle{ "\xee\xa3\x96" };                      // U+e8d6
+        constexpr static std::string_view Sweep{ "\xee\x9a\xac" };                                   // U+e6ac
+        constexpr static std::string_view Swipe{ "\xee\xa7\xac" };                                   // U+e9ec
+        constexpr static std::string_view SwipeDown{ "\xee\xad\x93" };                               // U+eb53
+        constexpr static std::string_view SwipeDownAlt{ "\xee\xac\xb0" };                            // U+eb30
+        constexpr static std::string_view SwipeLeft{ "\xee\xad\x99" };                               // U+eb59
+        constexpr static std::string_view SwipeLeftAlt{ "\xee\xac\xb3" };                            // U+eb33
+        constexpr static std::string_view SwipeRight{ "\xee\xad\x92" };                              // U+eb52
+        constexpr static std::string_view SwipeRightAlt{ "\xee\xad\x96" };                           // U+eb56
+        constexpr static std::string_view SwipeUp{ "\xee\xac\xae" };                                 // U+eb2e
+        constexpr static std::string_view SwipeUpAlt{ "\xee\xac\xb5" };                              // U+eb35
+        constexpr static std::string_view SwipeVertical{ "\xee\xad\x91" };                           // U+eb51
+        constexpr static std::string_view Switch{ "\xee\x87\xb4" };                                  // U+e1f4
+        constexpr static std::string_view SwitchAccess{ "\xef\x9b\xbd" };                            // U+f6fd
+        constexpr static std::string_view SwitchAccess_2{ "\xef\x94\x86" };                          // U+f506
+        constexpr static std::string_view SwitchAccessShortcut{ "\xee\x9f\xa1" };                    // U+e7e1
+        constexpr static std::string_view SwitchAccessShortcutAdd{ "\xee\x9f\xa2" };                 // U+e7e2
+        constexpr static std::string_view SwitchAccount{ "\xee\xa7\xad" };                           // U+e9ed
+        constexpr static std::string_view SwitchCamera{ "\xee\x90\x9e" };                            // U+e41e
+        constexpr static std::string_view SwitchLeft{ "\xef\x87\x91" };                              // U+f1d1
+        constexpr static std::string_view SwitchRight{ "\xef\x87\x92" };                             // U+f1d2
+        constexpr static std::string_view SwitchVideo{ "\xee\x90\x9f" };                             // U+e41f
+        constexpr static std::string_view Switches{ "\xee\x9c\xb3" };                                // U+e733
+        constexpr static std::string_view SwordRose{ "\xef\x97\x9e" };                               // U+f5de
+        constexpr static std::string_view Swords{ "\xef\xa2\x89" };                                  // U+f889
+        constexpr static std::string_view Symptoms{ "\xee\x84\xb2" };                                // U+e132
+        constexpr static std::string_view Synagogue{ "\xee\xaa\xb0" };                               // U+eab0
+        constexpr static std::string_view Sync{ "\xee\x98\xa7" };                                    // U+e627
+        constexpr static std::string_view SyncAlt{ "\xee\xa8\x98" };                                 // U+ea18
+        constexpr static std::string_view SyncDisabled{ "\xee\x98\xa8" };                            // U+e628
+        constexpr static std::string_view SyncLock{ "\xee\xab\xae" };                                // U+eaee
+        constexpr static std::string_view SyncProblem{ "\xee\x98\xa9" };                             // U+e629
+        constexpr static std::string_view SyncSavedLocally{ "\xef\xa0\xa0" };                        // U+f820
+        constexpr static std::string_view Syringe{ "\xee\x84\xb3" };                                 // U+e133
+        constexpr static std::string_view SystemSecurityUpdate{ "\xef\x81\xb2" };                    // U+f072
+        constexpr static std::string_view SystemSecurityUpdateGood{ "\xef\x81\xb3" };                // U+f073
+        constexpr static std::string_view SystemSecurityUpdateWarning{ "\xef\x81\xb4" };             // U+f074
+        constexpr static std::string_view SystemUpdate{ "\xef\x81\xb2" };                            // U+f072
+        constexpr static std::string_view SystemUpdateAlt{ "\xee\xa3\x97" };                         // U+e8d7
+        constexpr static std::string_view Tab{ "\xee\xa3\x98" };                                     // U+e8d8
+        constexpr static std::string_view TabClose{ "\xef\x9d\x85" };                                // U+f745
+        constexpr static std::string_view TabCloseRight{ "\xef\x9d\x86" };                           // U+f746
+        constexpr static std::string_view TabDuplicate{ "\xef\x9d\x84" };                            // U+f744
+        constexpr static std::string_view TabGroup{ "\xef\x9d\x83" };                                // U+f743
+        constexpr static std::string_view TabMove{ "\xef\x9d\x82" };                                 // U+f742
+        constexpr static std::string_view TabNewRight{ "\xef\x9d\x81" };                             // U+f741
+        constexpr static std::string_view TabRecent{ "\xef\x9d\x80" };                               // U+f740
+        constexpr static std::string_view TabUnselected{ "\xee\xa3\x99" };                           // U+e8d9
+        constexpr static std::string_view Table{ "\xef\x86\x91" };                                   // U+f191
+        constexpr static std::string_view TableBar{ "\xee\xab\x92" };                                // U+ead2
+        constexpr static std::string_view TableChart{ "\xee\x89\xa5" };                              // U+e265
+        constexpr static std::string_view TableChartView{ "\xef\x9b\xaf" };                          // U+f6ef
+        constexpr static std::string_view TableLamp{ "\xee\x87\xb2" };                               // U+e1f2
+        constexpr static std::string_view TableRestaurant{ "\xee\xab\x86" };                         // U+eac6
+        constexpr static std::string_view TableRows{ "\xef\x84\x81" };                               // U+f101
+        constexpr static std::string_view TableRowsNarrow{ "\xef\x9c\xbf" };                         // U+f73f
+        constexpr static std::string_view TableView{ "\xef\x86\xbe" };                               // U+f1be
+        constexpr static std::string_view Tablet{ "\xee\x8c\xaf" };                                  // U+e32f
+        constexpr static std::string_view TabletAndroid{ "\xee\x8c\xb0" };                           // U+e330
+        constexpr static std::string_view TabletMac{ "\xee\x8c\xb1" };                               // U+e331
+        constexpr static std::string_view Tabs{ "\xee\xa7\xae" };                                    // U+e9ee
+        constexpr static std::string_view Tactic{ "\xef\x95\xa4" };                                  // U+f564
+        constexpr static std::string_view Tag{ "\xee\xa7\xaf" };                                     // U+e9ef
+        constexpr static std::string_view TagFaces{ "\xee\xa8\xa2" };                                // U+ea22
+        constexpr static std::string_view TakeoutDining{ "\xee\xa9\xb4" };                           // U+ea74
+        constexpr static std::string_view TamperDetectionOff{ "\xee\xa0\xae" };                      // U+e82e
+        constexpr static std::string_view TamperDetectionOn{ "\xef\xa3\x88" };                       // U+f8c8
+        constexpr static std::string_view TapAndPlay{ "\xee\x98\xab" };                              // U+e62b
+        constexpr static std::string_view Tapas{ "\xef\x87\xa9" };                                   // U+f1e9
+        constexpr static std::string_view Target{ "\xee\x9c\x99" };                                  // U+e719
+        constexpr static std::string_view Task{ "\xef\x81\xb5" };                                    // U+f075
+        constexpr static std::string_view TaskAlt{ "\xee\x8b\xa6" };                                 // U+e2e6
+        constexpr static std::string_view Taunt{ "\xef\x9a\x9f" };                                   // U+f69f
+        constexpr static std::string_view TaxiAlert{ "\xee\xbd\xb4" };                               // U+ef74
+        constexpr static std::string_view TeamDashboard{ "\xee\x80\x93" };                           // U+e013
+        constexpr static std::string_view TempPreferencesCustom{ "\xef\xa3\x89" };                   // U+f8c9
+        constexpr static std::string_view TempPreferencesEco{ "\xef\xa3\x8a" };                      // U+f8ca
+        constexpr static std::string_view TempleBuddhist{ "\xee\xaa\xb3" };                          // U+eab3
+        constexpr static std::string_view TempleHindu{ "\xee\xaa\xaf" };                             // U+eaaf
+        constexpr static std::string_view Tenancy{ "\xef\x83\xa3" };                                 // U+f0e3
+        constexpr static std::string_view Terminal{ "\xee\xae\x8e" };                                // U+eb8e
+        constexpr static std::string_view Terrain{ "\xee\x95\xa4" };                                 // U+e564
+        constexpr static std::string_view TextAd{ "\xee\x9c\xa8" };                                  // U+e728
+        constexpr static std::string_view TextDecrease{ "\xee\xab\x9d" };                            // U+eadd
+        constexpr static std::string_view TextFields{ "\xee\x89\xa2" };                              // U+e262
+        constexpr static std::string_view TextFieldsAlt{ "\xee\xa7\xb1" };                           // U+e9f1
+        constexpr static std::string_view TextFormat{ "\xee\x85\xa5" };                              // U+e165
+        constexpr static std::string_view TextIncrease{ "\xee\xab\xa2" };                            // U+eae2
+        constexpr static std::string_view TextRotateUp{ "\xee\xa4\xba" };                            // U+e93a
+        constexpr static std::string_view TextRotateVertical{ "\xee\xa4\xbb" };                      // U+e93b
+        constexpr static std::string_view TextRotationAngledown{ "\xee\xa4\xbc" };                   // U+e93c
+        constexpr static std::string_view TextRotationAngleup{ "\xee\xa4\xbd" };                     // U+e93d
+        constexpr static std::string_view TextRotationDown{ "\xee\xa4\xbe" };                        // U+e93e
+        constexpr static std::string_view TextRotationNone{ "\xee\xa4\xbf" };                        // U+e93f
+        constexpr static std::string_view TextSelectEnd{ "\xef\x9c\xbe" };                           // U+f73e
+        constexpr static std::string_view TextSelectJumpToBeginning{ "\xef\x9c\xbd" };               // U+f73d
+        constexpr static std::string_view TextSelectJumpToEnd{ "\xef\x9c\xbc" };                     // U+f73c
+        constexpr static std::string_view TextSelectMoveBackCharacter{ "\xef\x9c\xbb" };             // U+f73b
+        constexpr static std::string_view TextSelectMoveBackWord{ "\xef\x9c\xba" };                  // U+f73a
+        constexpr static std::string_view TextSelectMoveDown{ "\xef\x9c\xb9" };                      // U+f739
+        constexpr static std::string_view TextSelectMoveForwardCharacter{ "\xef\x9c\xb8" };          // U+f738
+        constexpr static std::string_view TextSelectMoveForwardWord{ "\xef\x9c\xb7" };               // U+f737
+        constexpr static std::string_view TextSelectMoveUp{ "\xef\x9c\xb6" };                        // U+f736
+        constexpr static std::string_view TextSelectStart{ "\xef\x9c\xb5" };                         // U+f735
+        constexpr static std::string_view TextSnippet{ "\xef\x87\x86" };                             // U+f1c6
+        constexpr static std::string_view TextToSpeech{ "\xef\x86\xbc" };                            // U+f1bc
+        constexpr static std::string_view Textsms{ "\xee\x98\xa5" };                                 // U+e625
+        constexpr static std::string_view Texture{ "\xee\x90\xa1" };                                 // U+e421
+        constexpr static std::string_view TextureAdd{ "\xef\x95\xbc" };                              // U+f57c
+        constexpr static std::string_view TextureMinus{ "\xef\x95\xbb" };                            // U+f57b
+        constexpr static std::string_view TheaterComedy{ "\xee\xa9\xa6" };                           // U+ea66
+        constexpr static std::string_view Theaters{ "\xee\xa3\x9a" };                                // U+e8da
+        constexpr static std::string_view Thermometer{ "\xee\xa1\x86" };                             // U+e846
+        constexpr static std::string_view ThermometerAdd{ "\xef\x96\x82" };                          // U+f582
+        constexpr static std::string_view ThermometerGain{ "\xef\x9b\x98" };                         // U+f6d8
+        constexpr static std::string_view ThermometerLoss{ "\xef\x9b\x97" };                         // U+f6d7
+        constexpr static std::string_view ThermometerMinus{ "\xef\x96\x81" };                        // U+f581
+        constexpr static std::string_view Thermostat{ "\xef\x81\xb6" };                              // U+f076
+        constexpr static std::string_view ThermostatAuto{ "\xef\x81\xb7" };                          // U+f077
+        constexpr static std::string_view ThermostatCarbon{ "\xef\x85\xb8" };                        // U+f178
+        constexpr static std::string_view ThingsToDo{ "\xee\xac\xaa" };                              // U+eb2a
+        constexpr static std::string_view ThreadUnread{ "\xef\x93\xb9" };                            // U+f4f9
+        constexpr static std::string_view ThumbDown{ "\xef\x95\xb8" };                               // U+f578
+        constexpr static std::string_view ThumbDownAlt{ "\xef\x95\xb8" };                            // U+f578
+        constexpr static std::string_view ThumbDownFilled{ "\xef\x95\xb8" };                         // U+f578
+        constexpr static std::string_view ThumbDownOff{ "\xef\x95\xb8" };                            // U+f578
+        constexpr static std::string_view ThumbDownOffAlt{ "\xef\x95\xb8" };                         // U+f578
+        constexpr static std::string_view ThumbUp{ "\xef\x95\xb7" };                                 // U+f577
+        constexpr static std::string_view ThumbUpAlt{ "\xef\x95\xb7" };                              // U+f577
+        constexpr static std::string_view ThumbUpFilled{ "\xef\x95\xb7" };                           // U+f577
+        constexpr static std::string_view ThumbUpOff{ "\xef\x95\xb7" };                              // U+f577
+        constexpr static std::string_view ThumbUpOffAlt{ "\xef\x95\xb7" };                           // U+f577
+        constexpr static std::string_view ThumbnailBar{ "\xef\x9c\xb4" };                            // U+f734
+        constexpr static std::string_view ThumbsUpDown{ "\xee\xa3\x9d" };                            // U+e8dd
+        constexpr static std::string_view Thunderstorm{ "\xee\xaf\x9b" };                            // U+ebdb
+        constexpr static std::string_view Tibia{ "\xef\xa2\x9b" };                                   // U+f89b
+        constexpr static std::string_view TibiaAlt{ "\xef\xa2\x9c" };                                // U+f89c
+        constexpr static std::string_view TimeAuto{ "\xef\x83\xa4" };                                // U+f0e4
+        constexpr static std::string_view TimeToLeave{ "\xee\xbf\xb7" };                             // U+eff7
+        constexpr static std::string_view Timelapse{ "\xee\x90\xa2" };                               // U+e422
+        constexpr static std::string_view Timeline{ "\xee\xa4\xa2" };                                // U+e922
+        constexpr static std::string_view Timer{ "\xee\x90\xa5" };                                   // U+e425
+        constexpr static std::string_view Timer_10{ "\xee\x90\xa3" };                                // U+e423
+        constexpr static std::string_view Timer_10Alt_1{ "\xee\xbe\xbf" };                           // U+efbf
+        constexpr static std::string_view Timer_10Select{ "\xef\x81\xba" };                          // U+f07a
+        constexpr static std::string_view Timer_3{ "\xee\x90\xa4" };                                 // U+e424
+        constexpr static std::string_view Timer_3Alt_1{ "\xee\xbf\x80" };                            // U+efc0
+        constexpr static std::string_view Timer_3Select{ "\xef\x81\xbb" };                           // U+f07b
+        constexpr static std::string_view TimerOff{ "\xee\x90\xa6" };                                // U+e426
+        constexpr static std::string_view TipsAndUpdates{ "\xee\x9e\x9a" };                          // U+e79a
+        constexpr static std::string_view TireRepair{ "\xee\xaf\x88" };                              // U+ebc8
+        constexpr static std::string_view Title{ "\xee\x89\xa4" };                                   // U+e264
+        constexpr static std::string_view Toast{ "\xee\xbf\x81" };                                   // U+efc1
+        constexpr static std::string_view Toc{ "\xee\xa3\x9e" };                                     // U+e8de
+        constexpr static std::string_view Today{ "\xee\xa3\x9f" };                                   // U+e8df
+        constexpr static std::string_view ToggleOff{ "\xee\xa7\xb5" };                               // U+e9f5
+        constexpr static std::string_view ToggleOn{ "\xee\xa7\xb6" };                                // U+e9f6
+        constexpr static std::string_view Token{ "\xee\xa8\xa5" };                                   // U+ea25
+        constexpr static std::string_view Toll{ "\xee\xa3\xa0" };                                    // U+e8e0
+        constexpr static std::string_view Tonality{ "\xee\x90\xa7" };                                // U+e427
+        constexpr static std::string_view Toolbar{ "\xee\xa7\xb7" };                                 // U+e9f7
+        constexpr static std::string_view ToolsFlatHead{ "\xef\xa3\x8b" };                           // U+f8cb
+        constexpr static std::string_view ToolsInstallationKit{ "\xee\x8a\xab" };                    // U+e2ab
+        constexpr static std::string_view ToolsLadder{ "\xee\x8b\x8b" };                             // U+e2cb
+        constexpr static std::string_view ToolsLevel{ "\xee\x9d\xbb" };                              // U+e77b
+        constexpr static std::string_view ToolsPhillips{ "\xef\xa3\x8c" };                           // U+f8cc
+        constexpr static std::string_view ToolsPliersWireStripper{ "\xee\x8a\xaa" };                 // U+e2aa
+        constexpr static std::string_view ToolsPowerDrill{ "\xee\x87\xa9" };                         // U+e1e9
+        constexpr static std::string_view ToolsWrench{ "\xef\xa3\x8d" };                             // U+f8cd
+        constexpr static std::string_view Tooltip{ "\xee\xa7\xb8" };                                 // U+e9f8
+        constexpr static std::string_view TopPanelClose{ "\xef\x9c\xb3" };                           // U+f733
+        constexpr static std::string_view TopPanelOpen{ "\xef\x9c\xb2" };                            // U+f732
+        constexpr static std::string_view Topic{ "\xef\x87\x88" };                                   // U+f1c8
+        constexpr static std::string_view Tornado{ "\xee\x86\x99" };                                 // U+e199
+        constexpr static std::string_view TotalDissolvedSolids{ "\xef\xa1\xb7" };                    // U+f877
+        constexpr static std::string_view TouchApp{ "\xee\xa4\x93" };                                // U+e913
+        constexpr static std::string_view TouchpadMouse{ "\xef\x9a\x87" };                           // U+f687
+        constexpr static std::string_view TouchpadMouseOff{ "\xef\x93\xa6" };                        // U+f4e6
+        constexpr static std::string_view Tour{ "\xee\xbd\xb5" };                                    // U+ef75
+        constexpr static std::string_view Toys{ "\xee\x8c\xb2" };                                    // U+e332
+        constexpr static std::string_view ToysAndGames{ "\xee\xbf\x82" };                            // U+efc2
+        constexpr static std::string_view ToysFan{ "\xef\xa2\x87" };                                 // U+f887
+        constexpr static std::string_view TrackChanges{ "\xee\xa3\xa1" };                            // U+e8e1
+        constexpr static std::string_view Traffic{ "\xee\x95\xa5" };                                 // U+e565
+        constexpr static std::string_view TrailLength{ "\xee\xad\x9e" };                             // U+eb5e
+        constexpr static std::string_view TrailLengthMedium{ "\xee\xad\xa3" };                       // U+eb63
+        constexpr static std::string_view TrailLengthShort{ "\xee\xad\xad" };                        // U+eb6d
+        constexpr static std::string_view Train{ "\xee\x95\xb0" };                                   // U+e570
+        constexpr static std::string_view Tram{ "\xee\x95\xb1" };                                    // U+e571
+        constexpr static std::string_view Transcribe{ "\xef\xa3\xac" };                              // U+f8ec
+        constexpr static std::string_view TransferWithinAStation{ "\xee\x95\xb2" };                  // U+e572
+        constexpr static std::string_view Transform{ "\xee\x90\xa8" };                               // U+e428
+        constexpr static std::string_view Transgender{ "\xee\x96\x8d" };                             // U+e58d
+        constexpr static std::string_view TransitEnterexit{ "\xee\x95\xb9" };                        // U+e579
+        constexpr static std::string_view TransitionChop{ "\xef\x94\x8e" };                          // U+f50e
+        constexpr static std::string_view TransitionDissolve{ "\xef\x94\x8d" };                      // U+f50d
+        constexpr static std::string_view TransitionFade{ "\xef\x94\x8c" };                          // U+f50c
+        constexpr static std::string_view TransitionPush{ "\xef\x94\x8b" };                          // U+f50b
+        constexpr static std::string_view TransitionSlide{ "\xef\x94\x8a" };                         // U+f50a
+        constexpr static std::string_view Translate{ "\xee\xa3\xa2" };                               // U+e8e2
+        constexpr static std::string_view Transportation{ "\xee\x88\x9d" };                          // U+e21d
+        constexpr static std::string_view Travel{ "\xee\xbe\x93" };                                  // U+ef93
+        constexpr static std::string_view TravelExplore{ "\xee\x8b\x9b" };                           // U+e2db
+        constexpr static std::string_view TravelLuggageAndBags{ "\xee\xbf\x83" };                    // U+efc3
+        constexpr static std::string_view TrendingDown{ "\xee\xa3\xa3" };                            // U+e8e3
+        constexpr static std::string_view TrendingFlat{ "\xee\xa3\xa4" };                            // U+e8e4
+        constexpr static std::string_view TrendingUp{ "\xee\xa3\xa5" };                              // U+e8e5
+        constexpr static std::string_view Trip{ "\xee\x9b\xbb" };                                    // U+e6fb
+        constexpr static std::string_view TripOrigin{ "\xee\x95\xbb" };                              // U+e57b
+        constexpr static std::string_view Trolley{ "\xef\xa1\xab" };                                 // U+f86b
+        constexpr static std::string_view Trophy{ "\xee\xa8\xa3" };                                  // U+ea23
+        constexpr static std::string_view Troubleshoot{ "\xee\x87\x92" };                            // U+e1d2
+        constexpr static std::string_view Try{ "\xef\x81\xbc" };                                     // U+f07c
+        constexpr static std::string_view Tsunami{ "\xee\xaf\x98" };                                 // U+ebd8
+        constexpr static std::string_view Tsv{ "\xee\x9b\x96" };                                     // U+e6d6
+        constexpr static std::string_view Tty{ "\xef\x86\xaa" };                                     // U+f1aa
+        constexpr static std::string_view Tune{ "\xee\x90\xa9" };                                    // U+e429
+        constexpr static std::string_view Tungsten{ "\xef\x81\xbd" };                                // U+f07d
+        constexpr static std::string_view TurnLeft{ "\xee\xae\xa6" };                                // U+eba6
+        constexpr static std::string_view TurnRight{ "\xee\xae\xab" };                               // U+ebab
+        constexpr static std::string_view TurnSharpLeft{ "\xee\xae\xa7" };                           // U+eba7
+        constexpr static std::string_view TurnSharpRight{ "\xee\xae\xaa" };                          // U+ebaa
+        constexpr static std::string_view TurnSlightLeft{ "\xee\xae\xa4" };                          // U+eba4
+        constexpr static std::string_view TurnSlightRight{ "\xee\xae\x9a" };                         // U+eb9a
+        constexpr static std::string_view TurnedIn{ "\xee\xa3\xa7" };                                // U+e8e7
+        constexpr static std::string_view TurnedInNot{ "\xee\xa3\xa7" };                             // U+e8e7
+        constexpr static std::string_view Tv{ "\xee\x98\xbb" };                                      // U+e63b
+        constexpr static std::string_view TvGen{ "\xee\xa0\xb0" };                                   // U+e830
+        constexpr static std::string_view TvGuide{ "\xee\x87\x9c" };                                 // U+e1dc
+        constexpr static std::string_view TvOff{ "\xee\x99\x87" };                                   // U+e647
+        constexpr static std::string_view TvOptionsEditChannels{ "\xee\x87\x9d" };                   // U+e1dd
+        constexpr static std::string_view TvOptionsInputSettings{ "\xee\x87\x9e" };                  // U+e1de
+        constexpr static std::string_view TvRemote{ "\xef\x97\x99" };                                // U+f5d9
+        constexpr static std::string_view TvSignin{ "\xee\x9c\x9b" };                                // U+e71b
+        constexpr static std::string_view TvWithAssistant{ "\xee\x9e\x85" };                         // U+e785
+        constexpr static std::string_view TwoPager{ "\xef\x94\x9f" };                                // U+f51f
+        constexpr static std::string_view TwoWheeler{ "\xee\xa7\xb9" };                              // U+e9f9
+        constexpr static std::string_view TypeSpecimen{ "\xef\xa3\xb0" };                            // U+f8f0
+        constexpr static std::string_view UTurnLeft{ "\xee\xae\xa1" };                               // U+eba1
+        constexpr static std::string_view UTurnRight{ "\xee\xae\xa2" };                              // U+eba2
+        constexpr static std::string_view UlnaRadius{ "\xef\xa2\x9d" };                              // U+f89d
+        constexpr static std::string_view UlnaRadiusAlt{ "\xef\xa2\x9e" };                           // U+f89e
+        constexpr static std::string_view Umbrella{ "\xef\x86\xad" };                                // U+f1ad
+        constexpr static std::string_view Unarchive{ "\xee\x85\xa9" };                               // U+e169
+        constexpr static std::string_view Undo{ "\xee\x85\xa6" };                                    // U+e166
+        constexpr static std::string_view UnfoldLess{ "\xee\x97\x96" };                              // U+e5d6
+        constexpr static std::string_view UnfoldLessDouble{ "\xef\xa3\x8f" };                        // U+f8cf
+        constexpr static std::string_view UnfoldMore{ "\xee\x97\x97" };                              // U+e5d7
+        constexpr static std::string_view UnfoldMoreDouble{ "\xef\xa3\x90" };                        // U+f8d0
+        constexpr static std::string_view Ungroup{ "\xef\x9c\xb1" };                                 // U+f731
+        constexpr static std::string_view UniversalCurrency{ "\xee\xa7\xba" };                       // U+e9fa
+        constexpr static std::string_view UniversalCurrencyAlt{ "\xee\x9c\xb4" };                    // U+e734
+        constexpr static std::string_view UniversalLocal{ "\xee\xa7\xbb" };                          // U+e9fb
+        constexpr static std::string_view Unknown_2{ "\xee\x9a\xa2" };                               // U+e6a2
+        constexpr static std::string_view Unknown_5{ "\xee\x9a\xa5" };                               // U+e6a5
+        constexpr static std::string_view UnknownDocument{ "\xef\xa0\x84" };                         // U+f804
+        constexpr static std::string_view UnknownMed{ "\xee\xaa\xbd" };                              // U+eabd
+        constexpr static std::string_view Unlicense{ "\xee\xac\x85" };                               // U+eb05
+        constexpr static std::string_view Unpublished{ "\xef\x88\xb6" };                             // U+f236
+        constexpr static std::string_view Unsubscribe{ "\xee\x83\xab" };                             // U+e0eb
+        constexpr static std::string_view Upcoming{ "\xef\x81\xbe" };                                // U+f07e
+        constexpr static std::string_view Update{ "\xee\xa4\xa3" };                                  // U+e923
+        constexpr static std::string_view UpdateDisabled{ "\xee\x81\xb5" };                          // U+e075
+        constexpr static std::string_view Upgrade{ "\xef\x83\xbb" };                                 // U+f0fb
+        constexpr static std::string_view Upload{ "\xef\x82\x9b" };                                  // U+f09b
+        constexpr static std::string_view Upload_2{ "\xef\x94\xa1" };                                // U+f521
+        constexpr static std::string_view UploadFile{ "\xee\xa7\xbc" };                              // U+e9fc
+        constexpr static std::string_view Urology{ "\xee\x84\xb7" };                                 // U+e137
+        constexpr static std::string_view Usb{ "\xee\x87\xa0" };                                     // U+e1e0
+        constexpr static std::string_view UsbOff{ "\xee\x93\xba" };                                  // U+e4fa
+        constexpr static std::string_view UserAttributes{ "\xee\x9c\x88" };                          // U+e708
+        constexpr static std::string_view Vaccines{ "\xee\x84\xb8" };                                // U+e138
+        constexpr static std::string_view Vacuum{ "\xee\xbf\x85" };                                  // U+efc5
+        constexpr static std::string_view Valve{ "\xee\x88\xa4" };                                   // U+e224
+        constexpr static std::string_view VapeFree{ "\xee\xaf\x86" };                                // U+ebc6
+        constexpr static std::string_view VapingRooms{ "\xee\xaf\x8f" };                             // U+ebcf
+        constexpr static std::string_view VariableAdd{ "\xef\x94\x9e" };                             // U+f51e
+        constexpr static std::string_view VariableInsert{ "\xef\x94\x9d" };                          // U+f51d
+        constexpr static std::string_view VariableRemove{ "\xef\x94\x9c" };                          // U+f51c
+        constexpr static std::string_view Variables{ "\xef\xa1\x91" };                               // U+f851
+        constexpr static std::string_view Ventilator{ "\xee\x84\xb9" };                              // U+e139
+        constexpr static std::string_view Verified{ "\xee\xbd\xb6" };                                // U+ef76
+        constexpr static std::string_view VerifiedUser{ "\xef\x80\x93" };                            // U+f013
+        constexpr static std::string_view VerticalAlignBottom{ "\xee\x89\x98" };                     // U+e258
+        constexpr static std::string_view VerticalAlignCenter{ "\xee\x89\x99" };                     // U+e259
+        constexpr static std::string_view VerticalAlignTop{ "\xee\x89\x9a" };                        // U+e25a
+        constexpr static std::string_view VerticalDistribute{ "\xee\x81\xb6" };                      // U+e076
+        constexpr static std::string_view VerticalShades{ "\xee\xb0\x8e" };                          // U+ec0e
+        constexpr static std::string_view VerticalShadesClosed{ "\xee\xb0\x8d" };                    // U+ec0d
+        constexpr static std::string_view VerticalSplit{ "\xee\xa5\x89" };                           // U+e949
+        constexpr static std::string_view Vibration{ "\xee\x98\xad" };                               // U+e62d
+        constexpr static std::string_view VideoCall{ "\xee\x81\xb0" };                               // U+e070
+        constexpr static std::string_view VideoCameraBack{ "\xef\x81\xbf" };                         // U+f07f
+        constexpr static std::string_view VideoCameraFront{ "\xef\x82\x80" };                        // U+f080
+        constexpr static std::string_view VideoCameraFrontOff{ "\xef\xa0\xbb" };                     // U+f83b
+        constexpr static std::string_view VideoChat{ "\xef\xa2\xa0" };                               // U+f8a0
+        constexpr static std::string_view VideoFile{ "\xee\xae\x87" };                               // U+eb87
+        constexpr static std::string_view VideoLabel{ "\xee\x81\xb1" };                              // U+e071
+        constexpr static std::string_view VideoLibrary{ "\xee\x81\x8a" };                            // U+e04a
+        constexpr static std::string_view VideoSearch{ "\xee\xbf\x86" };                             // U+efc6
+        constexpr static std::string_view VideoSettings{ "\xee\xa9\xb5" };                           // U+ea75
+        constexpr static std::string_view VideoStable{ "\xef\x82\x81" };                             // U+f081
+        constexpr static std::string_view Videocam{ "\xee\x81\x8b" };                                // U+e04b
+        constexpr static std::string_view VideocamOff{ "\xee\x81\x8c" };                             // U+e04c
+        constexpr static std::string_view VideogameAsset{ "\xee\x8c\xb8" };                          // U+e338
+        constexpr static std::string_view VideogameAssetOff{ "\xee\x94\x80" };                       // U+e500
+        constexpr static std::string_view ViewAgenda{ "\xee\xa3\xa9" };                              // U+e8e9
+        constexpr static std::string_view ViewArray{ "\xee\xa3\xaa" };                               // U+e8ea
+        constexpr static std::string_view ViewCarousel{ "\xee\xa3\xab" };                            // U+e8eb
+        constexpr static std::string_view ViewColumn{ "\xee\xa3\xac" };                              // U+e8ec
+        constexpr static std::string_view ViewColumn_2{ "\xef\xa1\x87" };                            // U+f847
+        constexpr static std::string_view ViewComfy{ "\xee\x90\xaa" };                               // U+e42a
+        constexpr static std::string_view ViewComfyAlt{ "\xee\xad\xb3" };                            // U+eb73
+        constexpr static std::string_view ViewCompact{ "\xee\x90\xab" };                             // U+e42b
+        constexpr static std::string_view ViewCompactAlt{ "\xee\xad\xb4" };                          // U+eb74
+        constexpr static std::string_view ViewCozy{ "\xee\xad\xb5" };                                // U+eb75
+        constexpr static std::string_view ViewDay{ "\xee\xa3\xad" };                                 // U+e8ed
+        constexpr static std::string_view ViewHeadline{ "\xee\xa3\xae" };                            // U+e8ee
+        constexpr static std::string_view ViewInAr{ "\xee\xbf\x89" };                                // U+efc9
+        constexpr static std::string_view ViewInArNew{ "\xee\xbf\x89" };                             // U+efc9
+        constexpr static std::string_view ViewInArOff{ "\xef\x98\x9b" };                             // U+f61b
+        constexpr static std::string_view ViewKanban{ "\xee\xad\xbf" };                              // U+eb7f
+        constexpr static std::string_view ViewList{ "\xee\xa3\xaf" };                                // U+e8ef
+        constexpr static std::string_view ViewModule{ "\xee\xa3\xb0" };                              // U+e8f0
+        constexpr static std::string_view ViewQuilt{ "\xee\xa3\xb1" };                               // U+e8f1
+        constexpr static std::string_view ViewSidebar{ "\xef\x84\x94" };                             // U+f114
+        constexpr static std::string_view ViewStream{ "\xee\xa3\xb2" };                              // U+e8f2
+        constexpr static std::string_view ViewTimeline{ "\xee\xae\x85" };                            // U+eb85
+        constexpr static std::string_view ViewWeek{ "\xee\xa3\xb3" };                                // U+e8f3
+        constexpr static std::string_view Vignette{ "\xee\x90\xb5" };                                // U+e435
+        constexpr static std::string_view Villa{ "\xee\x96\x86" };                                   // U+e586
+        constexpr static std::string_view Visibility{ "\xee\xa3\xb4" };                              // U+e8f4
+        constexpr static std::string_view VisibilityLock{ "\xef\x99\x93" };                          // U+f653
+        constexpr static std::string_view VisibilityOff{ "\xee\xa3\xb5" };                           // U+e8f5
+        constexpr static std::string_view VitalSigns{ "\xee\x99\x90" };                              // U+e650
+        constexpr static std::string_view Vitals{ "\xee\x84\xbb" };                                  // U+e13b
+        constexpr static std::string_view VoiceChat{ "\xee\x98\xae" };                               // U+e62e
+        constexpr static std::string_view VoiceOverOff{ "\xee\xa5\x8a" };                            // U+e94a
+        constexpr static std::string_view VoiceSelection{ "\xef\x96\x8a" };                          // U+f58a
+        constexpr static std::string_view Voicemail{ "\xee\x83\x99" };                               // U+e0d9
+        constexpr static std::string_view Volcano{ "\xee\xaf\x9a" };                                 // U+ebda
+        constexpr static std::string_view VolumeDown{ "\xee\x81\x8d" };                              // U+e04d
+        constexpr static std::string_view VolumeDownAlt{ "\xee\x9e\x9c" };                           // U+e79c
+        constexpr static std::string_view VolumeMute{ "\xee\x81\x8e" };                              // U+e04e
+        constexpr static std::string_view VolumeOff{ "\xee\x81\x8f" };                               // U+e04f
+        constexpr static std::string_view VolumeUp{ "\xee\x81\x90" };                                // U+e050
+        constexpr static std::string_view VolunteerActivism{ "\xee\xa9\xb0" };                       // U+ea70
+        constexpr static std::string_view VotingChip{ "\xef\xa1\x92" };                              // U+f852
+        constexpr static std::string_view VpnKey{ "\xee\x83\x9a" };                                  // U+e0da
+        constexpr static std::string_view VpnKeyAlert{ "\xef\x9b\x8c" };                             // U+f6cc
+        constexpr static std::string_view VpnKeyOff{ "\xee\xad\xba" };                               // U+eb7a
+        constexpr static std::string_view VpnLock{ "\xee\x98\xaf" };                                 // U+e62f
+        constexpr static std::string_view Vr180Create2d{ "\xee\xbf\x8a" };                           // U+efca
+        constexpr static std::string_view Vr180Create2dOff{ "\xef\x95\xb1" };                        // U+f571
+        constexpr static std::string_view Vrpano{ "\xef\x82\x82" };                                  // U+f082
+        constexpr static std::string_view WallArt{ "\xee\xbf\x8b" };                                 // U+efcb
+        constexpr static std::string_view WallLamp{ "\xee\x8a\xb4" };                                // U+e2b4
+        constexpr static std::string_view Wallet{ "\xef\xa3\xbf" };                                  // U+f8ff
+        constexpr static std::string_view Wallpaper{ "\xee\x86\xbc" };                               // U+e1bc
+        constexpr static std::string_view WallpaperSlideshow{ "\xef\x99\xb2" };                      // U+f672
+        constexpr static std::string_view Ward{ "\xee\x84\xbc" };                                    // U+e13c
+        constexpr static std::string_view Warehouse{ "\xee\xae\xb8" };                               // U+ebb8
+        constexpr static std::string_view Warning{ "\xef\x82\x83" };                                 // U+f083
+        constexpr static std::string_view WarningAmber{ "\xef\x82\x83" };                            // U+f083
+        constexpr static std::string_view WarningOff{ "\xef\x9e\xad" };                              // U+f7ad
+        constexpr static std::string_view Wash{ "\xef\x86\xb1" };                                    // U+f1b1
+        constexpr static std::string_view Watch{ "\xee\x8c\xb4" };                                   // U+e334
+        constexpr static std::string_view WatchButtonPress{ "\xef\x9a\xaa" };                        // U+f6aa
+        constexpr static std::string_view WatchLater{ "\xee\xbf\x96" };                              // U+efd6
+        constexpr static std::string_view WatchOff{ "\xee\xab\xa3" };                                // U+eae3
+        constexpr static std::string_view WatchScreentime{ "\xef\x9a\xae" };                         // U+f6ae
+        constexpr static std::string_view WatchWake{ "\xef\x9a\xa9" };                               // U+f6a9
+        constexpr static std::string_view Water{ "\xef\x82\x84" };                                   // U+f084
+        constexpr static std::string_view WaterBottle{ "\xef\x9a\x9d" };                             // U+f69d
+        constexpr static std::string_view WaterBottleLarge{ "\xef\x9a\x9e" };                        // U+f69e
+        constexpr static std::string_view WaterDamage{ "\xef\x88\x83" };                             // U+f203
+        constexpr static std::string_view WaterDo{ "\xef\xa1\xb0" };                                 // U+f870
+        constexpr static std::string_view WaterDrop{ "\xee\x9e\x98" };                               // U+e798
+        constexpr static std::string_view WaterEc{ "\xef\xa1\xb5" };                                 // U+f875
+        constexpr static std::string_view WaterFull{ "\xef\x9b\x96" };                               // U+f6d6
+        constexpr static std::string_view WaterHeater{ "\xee\x8a\x84" };                             // U+e284
+        constexpr static std::string_view WaterLock{ "\xef\x9a\xad" };                               // U+f6ad
+        constexpr static std::string_view WaterLoss{ "\xef\x9b\x95" };                               // U+f6d5
+        constexpr static std::string_view WaterLux{ "\xef\xa1\xb4" };                                // U+f874
+        constexpr static std::string_view WaterMedium{ "\xef\x9b\x94" };                             // U+f6d4
+        constexpr static std::string_view WaterOrp{ "\xef\xa1\xb8" };                                // U+f878
+        constexpr static std::string_view WaterPh{ "\xef\xa1\xba" };                                 // U+f87a
+        constexpr static std::string_view WaterPump{ "\xef\x97\x98" };                               // U+f5d8
+        constexpr static std::string_view WaterVoc{ "\xef\xa1\xbb" };                                // U+f87b
+        constexpr static std::string_view WaterfallChart{ "\xee\xa8\x80" };                          // U+ea00
+        constexpr static std::string_view Waves{ "\xee\x85\xb6" };                                   // U+e176
+        constexpr static std::string_view WavingHand{ "\xee\x9d\xa6" };                              // U+e766
+        constexpr static std::string_view WbAuto{ "\xee\x90\xac" };                                  // U+e42c
+        constexpr static std::string_view WbCloudy{ "\xef\x85\x9c" };                                // U+f15c
+        constexpr static std::string_view WbIncandescent{ "\xee\x90\xae" };                          // U+e42e
+        constexpr static std::string_view WbIridescent{ "\xef\x81\xbd" };                            // U+f07d
+        constexpr static std::string_view WbShade{ "\xee\xa8\x81" };                                 // U+ea01
+        constexpr static std::string_view WbSunny{ "\xee\x90\xb0" };                                 // U+e430
+        constexpr static std::string_view WbTwilight{ "\xee\x87\x86" };                              // U+e1c6
+        constexpr static std::string_view Wc{ "\xee\x98\xbd" };                                      // U+e63d
+        constexpr static std::string_view WeatherHail{ "\xef\x99\xbf" };                             // U+f67f
+        constexpr static std::string_view WeatherMix{ "\xef\x98\x8b" };                              // U+f60b
+        constexpr static std::string_view WeatherSnowy{ "\xee\x8b\x8d" };                            // U+e2cd
+        constexpr static std::string_view Web{ "\xee\x81\x91" };                                     // U+e051
+        constexpr static std::string_view WebAsset{ "\xee\x81\xa9" };                                // U+e069
+        constexpr static std::string_view WebAssetOff{ "\xee\xbd\x87" };                             // U+ef47
+        constexpr static std::string_view WebStories{ "\xee\x96\x95" };                              // U+e595
+        constexpr static std::string_view WebTraffic{ "\xee\xa8\x83" };                              // U+ea03
+        constexpr static std::string_view Webhook{ "\xee\xae\x92" };                                 // U+eb92
+        constexpr static std::string_view Weekend{ "\xee\x85\xab" };                                 // U+e16b
+        constexpr static std::string_view Weight{ "\xee\x84\xbd" };                                  // U+e13d
+        constexpr static std::string_view West{ "\xef\x87\xa6" };                                    // U+f1e6
+        constexpr static std::string_view Whatshot{ "\xee\xa0\x8e" };                                // U+e80e
+        constexpr static std::string_view WheelchairPickup{ "\xef\x86\xab" };                        // U+f1ab
+        constexpr static std::string_view WhereToVote{ "\xee\x85\xb7" };                             // U+e177
+        constexpr static std::string_view Widgets{ "\xee\x86\xbd" };                                 // U+e1bd
+        constexpr static std::string_view Width{ "\xef\x9c\xb0" };                                   // U+f730
+        constexpr static std::string_view WidthFull{ "\xef\xa3\xb5" };                               // U+f8f5
+        constexpr static std::string_view WidthNormal{ "\xef\xa3\xb6" };                             // U+f8f6
+        constexpr static std::string_view WidthWide{ "\xef\xa3\xb7" };                               // U+f8f7
+        constexpr static std::string_view Wifi{ "\xee\x98\xbe" };                                    // U+e63e
+        constexpr static std::string_view Wifi_1Bar{ "\xee\x93\x8a" };                               // U+e4ca
+        constexpr static std::string_view Wifi_2Bar{ "\xee\x93\x99" };                               // U+e4d9
+        constexpr static std::string_view WifiAdd{ "\xef\x9e\xa8" };                                 // U+f7a8
+        constexpr static std::string_view WifiCalling{ "\xee\xbd\xb7" };                             // U+ef77
+        constexpr static std::string_view WifiCalling_1{ "\xef\x83\xb6" };                           // U+f0f6
+        constexpr static std::string_view WifiCalling_2{ "\xef\x83\xb6" };                           // U+f0f6
+        constexpr static std::string_view WifiCalling_3{ "\xef\x83\xb6" };                           // U+f0f6
+        constexpr static std::string_view WifiChannel{ "\xee\xad\xaa" };                             // U+eb6a
+        constexpr static std::string_view WifiFind{ "\xee\xac\xb1" };                                // U+eb31
+        constexpr static std::string_view WifiHome{ "\xef\x99\xb1" };                                // U+f671
+        constexpr static std::string_view WifiLock{ "\xee\x87\xa1" };                                // U+e1e1
+        constexpr static std::string_view WifiNotification{ "\xef\x99\xb0" };                        // U+f670
+        constexpr static std::string_view WifiOff{ "\xee\x99\x88" };                                 // U+e648
+        constexpr static std::string_view WifiPassword{ "\xee\xad\xab" };                            // U+eb6b
+        constexpr static std::string_view WifiProtectedSetup{ "\xef\x83\xbc" };                      // U+f0fc
+        constexpr static std::string_view WifiProxy{ "\xef\x9e\xa7" };                               // U+f7a7
+        constexpr static std::string_view WifiTethering{ "\xee\x87\xa2" };                           // U+e1e2
+        constexpr static std::string_view WifiTetheringError{ "\xee\xab\x99" };                      // U+ead9
+        constexpr static std::string_view WifiTetheringOff{ "\xef\x82\x87" };                        // U+f087
+        constexpr static std::string_view WindPower{ "\xee\xb0\x8c" };                               // U+ec0c
+        constexpr static std::string_view Window{ "\xef\x82\x88" };                                  // U+f088
+        constexpr static std::string_view WindowClosed{ "\xee\x9d\xbe" };                            // U+e77e
+        constexpr static std::string_view WindowOpen{ "\xee\x9e\x8c" };                              // U+e78c
+        constexpr static std::string_view WindowSensor{ "\xee\x8a\xbb" };                            // U+e2bb
+        constexpr static std::string_view WineBar{ "\xef\x87\xa8" };                                 // U+f1e8
+        constexpr static std::string_view Woman{ "\xee\x84\xbe" };                                   // U+e13e
+        constexpr static std::string_view Woman_2{ "\xef\xa3\xa7" };                                 // U+f8e7
+        constexpr static std::string_view Work{ "\xee\xa5\x83" };                                    // U+e943
+        constexpr static std::string_view WorkAlert{ "\xef\x97\xb7" };                               // U+f5f7
+        constexpr static std::string_view WorkHistory{ "\xee\xb0\x89" };                             // U+ec09
+        constexpr static std::string_view WorkOff{ "\xee\xa5\x82" };                                 // U+e942
+        constexpr static std::string_view WorkOutline{ "\xee\xa5\x83" };                             // U+e943
+        constexpr static std::string_view WorkUpdate{ "\xef\x97\xb8" };                              // U+f5f8
+        constexpr static std::string_view Workflow{ "\xee\xa8\x84" };                                // U+ea04
+        constexpr static std::string_view WorkspacePremium{ "\xee\x9e\xaf" };                        // U+e7af
+        constexpr static std::string_view Workspaces{ "\xee\xa8\x8f" };                              // U+ea0f
+        constexpr static std::string_view WorkspacesOutline{ "\xee\xa8\x8f" };                       // U+ea0f
+        constexpr static std::string_view WoundsInjuries{ "\xee\x84\xbf" };                          // U+e13f
+        constexpr static std::string_view WrapText{ "\xee\x89\x9b" };                                // U+e25b
+        constexpr static std::string_view Wrist{ "\xef\x9a\x9c" };                                   // U+f69c
+        constexpr static std::string_view WrongLocation{ "\xee\xbd\xb8" };                           // U+ef78
+        constexpr static std::string_view Wysiwyg{ "\xef\x87\x83" };                                 // U+f1c3
+        constexpr static std::string_view Yard{ "\xef\x82\x89" };                                    // U+f089
+        constexpr static std::string_view YourTrips{ "\xee\xac\xab" };                               // U+eb2b
+        constexpr static std::string_view YoutubeActivity{ "\xef\xa1\x9a" };                         // U+f85a
+        constexpr static std::string_view YoutubeSearchedFor{ "\xee\xa3\xba" };                      // U+e8fa
+        constexpr static std::string_view ZonePersonAlert{ "\xee\x9e\x81" };                         // U+e781
+        constexpr static std::string_view ZonePersonIdle{ "\xee\x9d\xba" };                          // U+e77a
+        constexpr static std::string_view ZonePersonUrgent{ "\xee\x9e\x88" };                        // U+e788
+        constexpr static std::string_view ZoomIn{ "\xee\xa3\xbf" };                                  // U+e8ff
+        constexpr static std::string_view ZoomInMap{ "\xee\xac\xad" };                               // U+eb2d
+        constexpr static std::string_view ZoomOut{ "\xee\xa4\x80" };                                 // U+e900
+        constexpr static std::string_view ZoomOutMap{ "\xee\x95\xab" };                              // U+e56b
     };
 }

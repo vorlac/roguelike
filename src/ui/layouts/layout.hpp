@@ -28,7 +28,8 @@ namespace rl::ui {
         {
             this->set_name(name);
             this->set_tooltip(name);
-
+            // this just bypasses the
+            // need for dynamic_cast
             m_layout = this;
         }
 
@@ -49,7 +50,7 @@ namespace rl::ui {
         void set_size_policy(const SizePolicy policy)
         {
             if (m_size_policy == SizePolicy::Inherit && policy != SizePolicy::Inherit) {
-                for (Widget* widget : m_cell_data | std::views::keys) {
+                for (const Widget* widget : m_cell_data | std::views::keys) {
                     Layout* widget_layout{ widget->layout() };
                     if (widget_layout != nullptr)
                         widget_layout->set_size_policy(policy);
@@ -117,9 +118,9 @@ namespace rl::ui {
         Alignment m_alignment{ Alignment::None };
         SizePolicy m_size_policy{ SizePolicy::Inherit };
         std::vector<std::pair<Widget*, CellProperties>> m_cell_data{};
-        ds::margin<f32> m_outer_margin{ ds::margin<f32>::init(5.0f) };
-        ds::margin<f32> m_inner_margin{ ds::margin<f32>::init(5.0f) };
-        ds::margin<f32> m_inner_padding{ ds::margin<f32>::init(5.0f) };
+        ds::margin<f32> m_outer_margin{ ds::margin<f32>::init(3.0f) };
+        ds::margin<f32> m_inner_margin{ ds::margin<f32>::init(3.0f) };
+        // spacing between widgets managed by layout
         f32 m_spacing{ 10.0f };
     };
 

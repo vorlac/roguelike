@@ -65,6 +65,8 @@ namespace rl::ui {
         ds::dims<f32> min_size() const;
         ds::dims<f32> max_size() const;
         ds::dims<f32> size() const;
+        std::string_view tooltip() const;
+        std::string_view name() const;
         const ds::rect<f32>& rect() const;
         const Theme* theme() const;
         const Canvas* canvas() const;
@@ -72,8 +74,6 @@ namespace rl::ui {
         const Widget* parent() const;
         const Widget* child_at(u64 index) const;
         const std::vector<Widget*>& children() const;
-        const std::string& tooltip() const;
-        const std::string& name() const;
 
         void assign_layout(Layout* layout);
         void set_parent(Widget* parent);
@@ -86,8 +86,8 @@ namespace rl::ui {
         void set_fixed_height(f32 height);
         void set_enabled(bool enabled);
         void set_focused(bool focused);
-        void set_tooltip(const std::string& tooltip);
-        void set_name(const std::string& name);
+        void set_tooltip(std::string tooltip);
+        void set_name(std::string name);
         void set_font_size(f32 font_size);
         void set_icon_extra_scale(f32 scale);
         void set_cursor(Mouse::Cursor::ID cursor);
@@ -167,8 +167,8 @@ namespace rl::ui {
         Timer<f32> m_timer{};
 
     protected:
-        constexpr static inline f32 RESIZE_GRAB_BUFFER{ 5.0f };
-        constexpr static inline bool DiagnosticsEnabled{ true };
-        constinit static inline Theme m_default_theme{ Theme{} };
+        constexpr static f32 RESIZE_GRAB_BUFFER{ 5.0f };
+        constexpr static bool DiagnosticsEnabled{ true };
+        constinit static inline Theme m_default_theme{};
     };
 }
