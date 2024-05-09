@@ -13,20 +13,24 @@ namespace rl::ui {
     class Label final : public Widget
     {
     public:
-        explicit Label(std::string text, f32 font_size = text::font::InvalidSize,
-                       Align alignment = Align::HLeft | Align::VMiddle);
-        explicit Label(Widget* parent, std::string text, f32 font_size = text::font::InvalidSize,
-                       Align alignment = Align::HLeft | Align::VMiddle);
+        explicit Label(
+            std::string text,
+            f32 font_size = text::font::InvalidSize,
+            Align alignment = Align::HLeft | Align::VMiddle);
+        explicit Label(
+            Widget* parent, std::string text,
+            f32 font_size = text::font::InvalidSize,
+            Align alignment = Align::HLeft | Align::VMiddle);
 
-        const std::string& font() const;
-        const std::string& text() const;
-        const ds::color<f32>& color() const;
-        Align text_alignment() const;
+        [[nodiscard]] std::string_view font() const;
+        [[nodiscard]] std::string_view text() const;
+        [[nodiscard]] ds::color<f32> color() const;
+        [[nodiscard]] Align text_alignment() const;
 
-        void set_text(const std::string& text);
-        void set_font(const std::string& font);
+        void set_text(std::string text);
+        void set_font(std::string_view font);
         void set_text_alignment(Align alignment);
-        void set_color(const ds::color<f32>& color);
+        void set_color(ds::color<f32> color);
         void set_callback(const std::function<void()>& callable);
 
     public:
@@ -36,10 +40,10 @@ namespace rl::ui {
 
     protected:
         std::string m_text{};
-        std::string m_text_font{};
+        std::string m_font{ m_theme->label_font_name };
         bool m_font_autosizing{ false };
         Align m_text_alignment{ Align::HLeft | Align::VMiddle };
-        ds::color<f32> m_text_color{ Colors::White };
-        std::function<void()> m_callback;
+        ds::color<f32> m_text_color{ m_theme->label_font_color };
+        std::function<void()> m_callback{ nullptr };
     };
 }

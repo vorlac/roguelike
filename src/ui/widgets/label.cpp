@@ -7,23 +7,17 @@
 
 namespace rl::ui {
 
-    Label::Label(std::string text, const f32 font_size /*= -1.0f*/,
-                 const Align alignment /*= Align::HLeft | Align::VMiddle*/)
+    Label::Label(std::string text, const f32 font_size, const Align alignment)
         : Label{ nullptr, std::move(text), font_size, alignment }
     {
     }
 
-    Label::Label(Widget* parent, std::string text, const f32 font_size /*= font::InvalidSize*/,
-                 const Align alignment /*= Align::HLeft | Align::VMiddle*/)
+    Label::Label(Widget* parent, std::string text, const f32 font_size, const Align alignment)
         : Widget{ parent }
         , m_text{ std::move(text) }
         , m_text_alignment{ alignment }
-
     {
-        m_text_color = m_theme->label_font_color;
-        m_text_font = m_theme->label_font_name;
         m_font_size = m_theme->label_font_size;
-
         if (math::not_equal(m_font_size, text::font::InvalidSize))
             m_font_size = font_size;
 
@@ -31,17 +25,17 @@ namespace rl::ui {
             m_text_alignment = alignment;
     }
 
-    const std::string& Label::text() const
+    std::string_view Label::text() const
     {
         return m_text;
     }
 
-    const std::string& Label::font() const
+    std::string_view Label::font() const
     {
-        return m_text_font;
+        return m_font;
     }
 
-    const ds::color<f32>& Label::color() const
+    ds::color<f32> Label::color() const
     {
         return m_text_color;
     }
@@ -51,14 +45,14 @@ namespace rl::ui {
         return m_text_alignment;
     }
 
-    void Label::set_text(const std::string& text)
+    void Label::set_text(std::string text)
     {
-        m_text = text;
+        m_text = std::move(text);
     }
 
-    void Label::set_font(const std::string& font)
+    void Label::set_font(const std::string_view font)
     {
-        m_text_font = font;
+        m_font = font;
     }
 
     void Label::set_text_alignment(const Align alignment)
@@ -66,7 +60,7 @@ namespace rl::ui {
         m_text_alignment = alignment;
     }
 
-    void Label::set_color(const ds::color<f32>& color)
+    void Label::set_color(const ds::color<f32> color)
     {
         m_text_color = color;
     }
@@ -94,7 +88,7 @@ namespace rl::ui {
         debug_assert(Align::None != m_text_alignment,
                      "invalid text alignment value assigned in label");
 
-        m_renderer->set_text_properties(m_text_font, m_font_size, m_text_alignment);
+        m_renderer->set_text_properties(m_font, m_font_size, m_text_alignment);
 
         const bool is_fixed_size{ math::not_equal(m_fixed_size.width, 0.0f) &&
                                   m_fixed_size.width > 0.0f };
@@ -128,7 +122,7 @@ namespace rl::ui {
     {
         ui::Widget::draw();
 
-        m_renderer->set_text_properties(m_text_font, m_font_size, m_text_alignment);
+        m_renderer->set_text_properties(m_font, m_font_size, m_text_alignment);
 
         auto context{ m_renderer->context() };
         if (math::not_equal(m_fixed_size.width, 0.0f) && m_fixed_size.width > 0.0f) {
