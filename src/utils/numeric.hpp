@@ -7,8 +7,8 @@
 
 namespace rl {
 
-    using f32 = float_t;
-    using f64 = double_t;
+    using f32 = float;
+    using f64 = double;
 
     using i8 = std::int8_t;
     using i16 = std::int16_t;

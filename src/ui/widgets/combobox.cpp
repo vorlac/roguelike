@@ -87,7 +87,8 @@ namespace rl::ui {
     void ComboBox::set_items(const std::vector<std::string>& items,
                              const std::vector<std::string>& items_short)
     {
-        debug_assert(items.size() == items_short.size(), "item counts mismatch: {} vs {}",
+        debug_assert(items.size() == items_short.size(),
+                     "item counts mismatch: {} vs {}",
                      items.size(), items_short.size());
 
         m_items = items;

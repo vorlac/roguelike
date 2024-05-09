@@ -34,49 +34,43 @@ namespace rl::ui {
         explicit Widget(Widget* parent);
         virtual ~Widget();
 
-        void show();
-        void hide();
-        bool visible(bool recursive = false) const;
-        bool has_font_size() const;
-        bool enabled() const;
-        bool focused() const;
-        bool resizable() const;
-
-        f32 width() const;
-        f32 height() const;
-        f32 fixed_width() const;
-        f32 fixed_height() const;
-        f32 font_size() const;
-        f32 icon_extra_scale() const;
-        u64 child_count() const;
-
         Canvas* canvas();
         Widget* parent();
-        Layout* layout() const;
         ScrollableDialog* dialog();
 
-        Widget* child_at(u64 index);
-        Mouse::Cursor::ID cursor() const;
-        ds::rect<f32> resize_rect() const;
-        ds::point<f32> abs_position() const;
-
-        ds::point<f32> position() const;
-        ds::dims<f32> fixed_size() const;
-        ds::dims<f32> min_size() const;
-        ds::dims<f32> max_size() const;
-        ds::dims<f32> size() const;
-        std::string_view tooltip() const;
-        std::string_view name() const;
-        const ds::rect<f32>& rect() const;
-        const Theme* theme() const;
-        const Canvas* canvas() const;
-        const ScrollableDialog* dialog() const;
-        const Widget* parent() const;
-        const Widget* child_at(u64 index) const;
-        const std::vector<Widget*>& children() const;
+        [[nodiscard]] f32 width() const;
+        [[nodiscard]] f32 height() const;
+        [[nodiscard]] f32 fixed_width() const;
+        [[nodiscard]] f32 fixed_height() const;
+        [[nodiscard]] f32 font_size() const;
+        [[nodiscard]] f32 icon_extra_scale() const;
+        [[nodiscard]] f32 stretch_factor() const;
+        [[nodiscard]] u64 child_count() const;
+        [[nodiscard]] Layout* layout() const;
+        [[nodiscard]] Mouse::Cursor::ID cursor() const;
+        [[nodiscard]] Widget* child_at(u64 index) const;
+        [[nodiscard]] ds::rect<f32> resize_rect() const;
+        [[nodiscard]] ds::point<f32> abs_position() const;
+        [[nodiscard]] ds::point<f32> position() const;
+        [[nodiscard]] ds::dims<f32> fixed_size() const;
+        [[nodiscard]] ds::dims<f32> min_size() const;
+        [[nodiscard]] ds::dims<f32> max_size() const;
+        [[nodiscard]] ds::dims<f32> size() const;
+        [[nodiscard]] std::string_view tooltip() const;
+        [[nodiscard]] std::string_view name() const;
+        [[nodiscard]] const ds::rect<f32>& rect() const;
+        [[nodiscard]] const Theme* theme() const;
+        [[nodiscard]] const Canvas* canvas() const;
+        [[nodiscard]] const ScrollableDialog* dialog() const;
+        [[nodiscard]] const Widget* parent() const;
+        [[nodiscard]] const std::vector<Widget*>& children() const;
+        [[nodiscard]] bool visible(bool recursive = false) const;
+        [[nodiscard]] bool has_font_size() const;
+        [[nodiscard]] bool enabled() const;
+        [[nodiscard]] bool focused() const;
+        [[nodiscard]] bool resizable() const;
 
         void assign_layout(Layout* layout);
-        void set_parent(Widget* parent);
         void set_position(ds::point<f32> pos);
         void set_rect(const ds::rect<f32>& rect);
         void set_width(f32 width);
@@ -88,23 +82,18 @@ namespace rl::ui {
         void set_focused(bool focused);
         void set_tooltip(std::string tooltip);
         void set_name(std::string name);
+        void set_stretch_factor(f32 stretch);
         void set_font_size(f32 font_size);
         void set_icon_extra_scale(f32 scale);
         void set_cursor(Mouse::Cursor::ID cursor);
-        void request_focus();
         void remove_child_at(u64 index);
+        void request_focus();
+        void show();
+        void hide();
+
+    private:
+        void set_parent(Widget* parent);
         void remove_child(const Widget* widget);
-
-        // TODO: get rid of this
-        static nvg::Context* context()
-        {
-            return m_renderer->context();
-        }
-
-        static NVGRenderer* renderer()
-        {
-            return m_renderer;
-        }
 
     public:
         virtual bool on_key_pressed(const Keyboard& kb);
@@ -156,12 +145,13 @@ namespace rl::ui {
         // TODO: move to theme
         f32 m_icon_extra_scale{ 1.0f };
         f32 m_font_size{ -1.0f };
+        f32 m_stretch_factor{ 1.0f };
 
         std::vector<Widget*> m_children{};
-        ds::rect<f32> m_rect{ ds::rect<f32>::zero() };
-        ds::dims<f32> m_fixed_size{ ds::dims<f32>::zero() };
-        ds::dims<f32> m_min_size{ ds::dims<f32>::null() };
-        ds::dims<f32> m_max_size{ ds::dims<f32>::null() };
+        ds::rect<f32> m_rect{};
+        ds::dims<f32> m_fixed_size{};
+        ds::dims<f32> m_min_size{};
+        ds::dims<f32> m_max_size{};
         std::string m_tooltip{};
         std::string m_name{};
         Timer<f32> m_timer{};
@@ -170,5 +160,17 @@ namespace rl::ui {
         constexpr static f32 RESIZE_GRAB_BUFFER{ 5.0f };
         constexpr static bool DiagnosticsEnabled{ true };
         constinit static inline Theme m_default_theme{};
+
+    public:
+        // TODO: get rid of this stuff
+        static nvg::Context* context()
+        {
+            return m_renderer->context();
+        }
+
+        static NVGRenderer* renderer()
+        {
+            return m_renderer;
+        }
     };
 }

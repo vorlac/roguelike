@@ -24,6 +24,7 @@ namespace rl {
                 : Widget{ nullptr }
                 , m_title{ std::move(title) }
             {
+                this->set_icon_extra_scale(0.8f);
                 if (fixed_size.valid())
                     Widget::set_size(fixed_size);
 
@@ -31,12 +32,9 @@ namespace rl {
                 const auto max_btn{ new ui::Button{ Icon::WindowMaximize } };
                 const auto cls_btn{ new ui::Button{ Icon::WindowClose } };
 
-                min_btn->set_font_size(18.0f);
-                min_btn->set_fixed_height(18.0f);
-                max_btn->set_font_size(18.0f);
-                max_btn->set_fixed_height(18.0f);
-                cls_btn->set_font_size(18.0f);
-                cls_btn->set_fixed_height(18.0f);
+                min_btn->set_font_size(40.0f);
+                max_btn->set_font_size(40.0f);
+                cls_btn->set_font_size(40.0f);
 
                 // horizontally aligns title (centered), minimize, maximize, and close buttons
                 const auto titlebar_layout{ new BoxLayout<Alignment::Horizontal>{ "Titlebar Horiz" } };

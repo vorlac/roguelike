@@ -27,6 +27,12 @@ namespace rl::ds {
         {
         }
 
+        explicit constexpr dims(margin<T> m)
+            : width{ m.horizontal() }
+            , height{ m.vertical() }
+        {
+        }
+
         [[nodiscard]]
         consteval static dims<T> null()
         {

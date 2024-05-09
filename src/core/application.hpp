@@ -103,13 +103,15 @@ namespace rl {
                         })
                 };
 
+                const auto label{ new ui::Label{ "3", font_size, alignment } };
+                label->set_stretch_factor(2.0f);
                 const auto layout_num_v1{
                     new ui::BoxLayout<Alignment::Vertical>(
                         "Nums1 Inner Vert",
                         {
                             new ui::Button{ "Button", ui::Icon::ID::Bong },
                             new ui::Label{ "2", font_size, alignment },
-                            new ui::Label{ "3", font_size, alignment },
+                            label,
                             new ui::Label{ "4", font_size, alignment },
                             new ui::Label{ "5", font_size, alignment },
                         })

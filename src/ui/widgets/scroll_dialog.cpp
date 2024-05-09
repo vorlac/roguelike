@@ -286,10 +286,6 @@ namespace rl::ui {
         Widget::draw();
     }
 
-    // void ScrollableDialog::perform_layout()
-    //{
-    // }
-
     ds::dims<f32> ScrollableDialog::preferred_size() const
     {
         return ds::dims<f32>::zero();

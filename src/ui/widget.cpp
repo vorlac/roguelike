@@ -121,6 +121,11 @@ namespace rl::ui {
         return m_rect.size;
     }
 
+    f32 Widget::stretch_factor() const
+    {
+        return m_stretch_factor;
+    }
+
     const ds::rect<f32>& Widget::rect() const
     {
         return m_rect;
@@ -228,12 +233,7 @@ namespace rl::ui {
         return m_children.size();
     }
 
-    Widget* Widget::child_at(const u64 index)
-    {
-        return m_children[index];
-    }
-
-    const Widget* Widget::child_at(const u64 index) const
+    Widget* Widget::child_at(const u64 index) const
     {
         return m_children[index];
     }
@@ -684,5 +684,10 @@ namespace rl::ui {
     {
         debug_assert(m_theme != nullptr, "theme not set");
         return m_theme->icon_scale * m_icon_extra_scale;
+    }
+
+    void Widget::set_stretch_factor(const f32 stretch)
+    {
+        m_stretch_factor = stretch;
     }
 }

@@ -12,7 +12,7 @@ namespace rl {
         class Widget;
         class VerticalScrollPanel;
 
-        class ComboBox : public PopupButton
+        class ComboBox final : public PopupButton
         {
         public:
             explicit ComboBox(Widget* parent);
