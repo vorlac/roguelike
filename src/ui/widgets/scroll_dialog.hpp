@@ -65,8 +65,8 @@ namespace rl {
                 Widget::perform_layout();
             }
 
-            std::tuple<Interaction, Component, Side> check_interaction(
-                const ds::point<f32>& pt) const;
+            [[nodiscard]]
+            std::tuple<Interaction, Component, Side> check_interaction(ds::point<f32> pt) const;
 
             void center();
             void dispose();

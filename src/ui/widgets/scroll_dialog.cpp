@@ -14,8 +14,7 @@ namespace rl::ui {
         return m_title;
     }
 
-    std::tuple<Interaction, Component, Side> ScrollableDialog::check_interaction(
-        const ds::point<f32>& pt) const
+    std::tuple<Interaction, Component, Side> ScrollableDialog::check_interaction(const ds::point<f32> pt) const
     {
         // default to no interaction / interaction
         // candidate components of the dialog

@@ -13,35 +13,24 @@ namespace rl::ui {
     class BoxLayout final : public Layout
     {
     public:
-        constexpr explicit BoxLayout(const std::string& name)
-            : Layout{ name }
+        constexpr explicit BoxLayout(std::string name)
+            : Layout{ std::move(name) }
         {
             m_alignment = VAlignment;
         }
 
-    public:
-        u64 rows() const
-            requires rl::equal_v<VAlignment, Alignment::Horizontal>
+        constexpr explicit BoxLayout(std::string name, const std::initializer_list<Widget*>& widgets)
+            : BoxLayout{ std::move(name) }
         {
-            return 1;
+            for (Widget* widget : widgets)
+                this->add_widget(widget);
         }
 
-        u64 columns() const
-            requires rl::equal_v<VAlignment, Alignment::Vertical>
+        constexpr explicit BoxLayout(std::string name, const std::initializer_list<Layout*>& nested_layouts)
+            : BoxLayout{ std::move(name) }
         {
-            return 1;
-        }
-
-        u64 rows() const
-            requires rl::equal_v<VAlignment, Alignment::Vertical>
-        {
-            return m_cell_data.size();
-        }
-
-        u64 columns() const
-            requires rl::equal_v<VAlignment, Alignment::Horizontal>
-        {
-            return m_cell_data.size();
+            for (Layout* layout : nested_layouts)
+                this->add_nested_layout(layout);
         }
 
         virtual void adjust_for_size_policy() override

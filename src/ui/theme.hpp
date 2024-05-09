@@ -52,7 +52,7 @@ namespace rl::ui {
         std::string_view label_font_name{ text::font::style::Sans };
         ds::color<f32> label_font_color{ Colors::White };
 
-        f32 button_font_size{ 32.0f };
+        f32 button_font_size{ 24.0f };
         f32 button_corner_radius{ 2.5f };
         f32 button_outline_width_focused{ 2.5f };
         f32 button_outline_width_unfocused{ 2.5f };
