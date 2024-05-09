@@ -20,31 +20,27 @@ namespace rl {
         class ScrollableDialog : public Widget
         {
         public:
-            explicit ScrollableDialog(std::string title = "")
-                : ScrollableDialog{ nullptr, std::move(title) }
-            {
-            }
-
-            explicit ScrollableDialog(Widget* parent, std::string title = "")
-                : Widget{ parent }
+            explicit ScrollableDialog(std::string title = "", const ds::dims<f32> fixed_size = ds::dims<f32>::zero())
+                : Widget{ nullptr }
                 , m_title{ std::move(title) }
             {
+                if (fixed_size.valid())
+                    Widget::set_size(fixed_size);
+
                 const auto min_btn{ new ui::Button{ Icon::WindowMinimize } };
                 const auto max_btn{ new ui::Button{ Icon::WindowMaximize } };
                 const auto cls_btn{ new ui::Button{ Icon::WindowClose } };
 
                 min_btn->set_font_size(18.0f);
-                min_btn->set_fixed_height(24.0f);
+                min_btn->set_fixed_height(18.0f);
                 max_btn->set_font_size(18.0f);
-                max_btn->set_fixed_height(24.0f);
+                max_btn->set_fixed_height(18.0f);
                 cls_btn->set_font_size(18.0f);
-                cls_btn->set_fixed_height(24.0f);
+                cls_btn->set_fixed_height(18.0f);
 
                 // horizontally aligns title (centered), minimize, maximize, and close buttons
                 const auto titlebar_layout{ new BoxLayout<Alignment::Horizontal>{ "Titlebar Horiz" } };
-                titlebar_layout->set_margins(
-                    { 1.0f, 1.0f, 1.0f, 1.0f },
-                    { 1.0f, 1.0f, 1.0f, 1.0f });
+                titlebar_layout->set_margins({ 2.0f }, { 2.0f });
 
                 titlebar_layout->set_size_policy(SizePolicy::Minimum);
                 titlebar_layout->add_widget(min_btn);
@@ -55,15 +51,11 @@ namespace rl {
                 const auto body_label{ new ui::Label{ "Body", -1.0f, Align::HCenter | Align::VMiddle } };
                 const auto body_layout{ new BoxLayout<Alignment::Horizontal>{ "Body Horiz" } };
                 body_layout->add_widget(body_label);
-                body_layout->set_margins(
-                    { 1.0f, 1.0f, 1.0f, 1.0f },
-                    { 1.0f, 1.0f, 1.0f, 1.0f });
+                body_layout->set_margins({ 2.0f }, { 2.0f });
 
                 // vertically aligns titlebar and dialog body
                 const auto root_layout{ new BoxLayout<Alignment::Vertical>{ "Dialog Root Vert" } };
-                root_layout->set_margins(
-                    { 1.0f, 1.0f, 1.0f, 1.0f },
-                    { 1.0f, 1.0f, 1.0f, 1.0f });
+                root_layout->set_margins({ 2.0f }, { 2.0f });
 
                 root_layout->set_size_policy(SizePolicy::Maximum);
                 root_layout->add_nested_layout(titlebar_layout);
@@ -80,7 +72,7 @@ namespace rl {
             void dispose();
             void set_title(std::string title);
             void enable_interaction(Interaction inter);
-            void disable_interaction(Interaction inter) ;
+            void disable_interaction(Interaction inter);
             bool interaction_enabled(Interaction inter) const;
             bool mode_active(Interaction inter) const;
 

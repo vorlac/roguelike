@@ -19,22 +19,24 @@ namespace rl::ds {
     struct dims
     {
     public:
+        consteval dims() = default;
+
+        constexpr dims(T w, T h)
+            : width{ w }
+            , height{ h }
+        {
+        }
+
         [[nodiscard]]
         consteval static dims<T> null()
         {
-            return dims<T>{
-                static_cast<T>(-1),
-                static_cast<T>(-1),
-            };
+            return dims<T>{ -1, -1 };
         }
 
         [[nodiscard]]
         consteval static dims<T> zero()
         {
-            return dims<T>{
-                static_cast<T>(0),
-                static_cast<T>(0),
-            };
+            return dims<T>{ 0, 0 };
         }
 
         [[nodiscard]]
@@ -44,23 +46,22 @@ namespace rl::ds {
         }
 
         [[nodiscard]]
-        constexpr bool is_empty() const
+        constexpr bool empty() const
         {
             return *this == dims<T>::zero();
         }
 
         [[nodiscard]]
-        constexpr bool is_invalid() const
+        constexpr bool valid() const
         {
-            return this->width < 0 ||
-                   this->height < 0 ||
-                   this->is_null();
+            return this->width > 0 &&
+                   this->height > 0;
         }
 
         [[nodiscard]]
-        constexpr bool is_valid() const
+        constexpr bool invalid() const
         {
-            return this->area() > static_cast<T>(0);
+            return !this->valid();
         }
 
         [[nodiscard]]

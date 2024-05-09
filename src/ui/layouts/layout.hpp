@@ -23,11 +23,12 @@ namespace rl::ui {
     class Layout : public Widget
     {
     public:
-        explicit Layout(const std::string& name)
+        explicit Layout(std::string name)
             : Widget(nullptr)
         {
-            this->set_name(name);
-            this->set_tooltip(name);
+            this->set_name(std::move(name));
+            // TODO: remove, debug
+            this->set_tooltip(std::string{ this->name() });
             // this just bypasses the
             // need for dynamic_cast
             m_layout = this;
@@ -73,7 +74,7 @@ namespace rl::ui {
         void set_margins(const ds::margin<f32> inner, const ds::margin<f32> outer)
         {
             this->set_inner_margin(inner);
-            this->set_inner_margin(outer);
+            this->set_outer_margin(outer);
         }
 
         [[nodiscard]]

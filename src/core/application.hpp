@@ -120,12 +120,11 @@ namespace rl {
             // canvas_layout->set_size_policy(SizePolicy::Freeform);
             // const auto gui_canvas{ m_main_window->gui().get() };
 
-            const auto dialog{ new ui::ScrollableDialog{ "Dialog Title" } };
+            const auto dialog{ new ui::ScrollableDialog{ "Dialog Title", ds::dims{ 600, 800 } } };
             // canvas_layout->add_widget(dialog);
 
             // m_main_window->gui()->assign_layout(canvas_layout);
             m_main_window->gui()->add_child(dialog);
-            dialog->set_size({ 600, 800 });
             dialog->center();
 
             m_timer.reset();

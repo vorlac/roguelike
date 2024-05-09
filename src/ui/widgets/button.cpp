@@ -153,7 +153,7 @@ namespace rl::ui {
 
         m_renderer->set_text_properties(props);
         ds::dims<f32> icon_size{ 0.0f, props.font_size };
-        const f32 text_width{ nvg::text_bounds(context, ds::point<f32>::zero(), m_text) };
+        const f32 text_width{ nvg::text_bounds(context, ds::point<f32>{}, m_text) };
 
         if (m_icon != Icon::ID::None) {
             if (Icon::is_font(m_icon)) {
@@ -320,8 +320,8 @@ namespace rl::ui {
         // Light Border
         m_renderer->draw_path(false, [&] {
             ds::rect<f32> test_rect{ m_rect };
-            test_rect.size += m_pressed ? ds::margin<f32>::init(1.5f)
-                                        : ds::margin<f32>::init(0.5f);
+            test_rect.size += m_pressed ? ds::margin<f32>{ -1.5f }
+                                        : ds::margin<f32>{ -0.5f };
             nvg::stroke_width(context, 1.0f);
             m_renderer->draw_rounded_rect(test_rect, m_theme->button_corner_radius);
             nvg::stroke_color(context, m_theme->border_light);
@@ -331,7 +331,7 @@ namespace rl::ui {
         // Dark border
         m_renderer->draw_path(false, [&] {
             ds::rect<f32> test_rect{ m_rect };
-            test_rect.size += ds::margin<f32>::init(0.5f);
+            test_rect.size += ds::margin<f32>{ -0.5f };
             m_renderer->draw_rounded_rect(test_rect, m_theme->button_corner_radius);
             nvg::stroke_color(context, m_theme->border_dark);
             nvg::stroke(context);

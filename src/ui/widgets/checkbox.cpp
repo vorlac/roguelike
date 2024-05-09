@@ -99,7 +99,7 @@ namespace rl::ui {
 
     ds::dims<f32> CheckBox::preferred_size() const
     {
-        if (!m_fixed_size.is_empty())
+        if (!m_fixed_size.empty())
             return m_fixed_size;
 
         const auto context{ m_renderer->context() };

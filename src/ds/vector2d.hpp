@@ -19,13 +19,18 @@ namespace rl::ds {
     template <rl::numeric T>
     struct vector2
     {
+        consteval vector2() = default;
+
+        constexpr vector2(const T xval, const T yval)
+            : x{ xval }
+            , y{ yval }
+        {
+        }
+
         [[nodiscard]]
         consteval static vector2<T> zero()
         {
-            return vector2<T>{
-                static_cast<T>(0),
-                static_cast<T>(0),
-            };
+            return vector2<T>{ 0, 0 };
         }
 
         [[nodiscard]]
@@ -463,9 +468,9 @@ namespace rl::ds {
         }
 
     public:
-        T x{ static_cast<T>(0) };
-        T y{ static_cast<T>(0) };
-        T z{ static_cast<T>(0) };
+        T x{ 0 };
+        T y{ 0 };
+        T z{ 0 };
     };
 
 #pragma pack()

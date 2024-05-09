@@ -66,15 +66,18 @@ namespace rl::ui {
                     const auto& siblings{ parent_widget->children() };
                     const Layout* parent_layout{ parent_widget->layout() };
 
+                    // first determine how much space is available for this layout and it's siblings
+                    // by subtracting it's outer margin from the parent widget/layout's size
                     const ds::dims<f32> fill_size{
                         parent_layout != nullptr
                             ? parent_layout->size() - m_outer_margin - parent_layout->inner_margin()
                             : parent_widget->size() - m_outer_margin
                     };
 
+                    debug_assert(fill_size.valid(), "fill size dimensions must be positive");
+
                     if (parent_layout == nullptr) {
-                        debug_assert(siblings.size() == 1,
-                                     "topmost layout must be an only child");
+                        debug_assert(siblings.size() == 1, "topmost layout must be an only child");
                         m_rect.size = fill_size;
                         m_rect.pt = m_outer_margin.offset();
                     }
@@ -82,27 +85,24 @@ namespace rl::ui {
                         // not the topmost layout, so size will be decided
                         // by the amount of available space in parent layout
                         // first, calculate the combined size of all siblings
-                        ds::dims<f32> combined_size{};
+                        ds::dims<f32> combined_size{ ds::dims<f32>{} + parent_layout->inner_margin() };
                         f32 expand_count{ 0.0f };
 
                         for (const Widget* sibling : siblings) {
-                            ds::margin<f32> sib_outer_margin{ ds::margin<f32>::zero() };
                             const Layout* sibling_layout{ sibling->layout() };
                             if (sibling_layout != nullptr) {
-                                sib_outer_margin = sibling_layout->outer_margin();
                                 if (sibling_layout->size_policy() == SizePolicy::Maximum)
                                     ++expand_count;
                             }
 
-                            combined_size += sibling->size() + sib_outer_margin;
+                            combined_size += sibling->size();
                         }
 
                         const ds::dims<f32> delta_size{ fill_size - combined_size };
                         const ds::dims<f32> size_increase{ delta_size / expand_count };
                         const Alignment parent_alignment{ parent_layout->alignment() };
-                        // f32 sibling_count{ static_cast<f32>(siblings.size()) };
+
                         f32 sibling_order{ 0.0f };
-                        // f32 sibling_order{ 0.0f };
                         for (auto [sibling_idx, sibling] : siblings | std::views::enumerate) {
                             const Layout* sibling_layout{ sibling->layout() };
                             const ds::margin sibling_outer{
@@ -111,26 +111,19 @@ namespace rl::ui {
                                     : ds::margin<f32>::zero()
                             };
 
-                            // const f32 sibling_order{
-                            //     static_cast<f32>(sibling_idx) +
-                            //     sibling_count - expand_count
-                            // };
-
                             ds::rect rect{ sibling->rect() };
                             switch (parent_alignment) {
                                 case Alignment::Horizontal:
-                                    if (sibling_layout && sibling_layout->size_policy() != SizePolicy::Minimum) {
-                                        rect.pt.x += (size_increase.width + sibling_outer.right) * sibling_order;
-                                        rect.size.width += size_increase.width + sibling_outer.right;
-                                        sibling_order += 1.0f;
+                                    if (sibling_layout->size_policy() != SizePolicy::Minimum) {
+                                        rect.pt.x += size_increase.width * sibling_order++;
+                                        rect.size.width += size_increase.width;
                                     }
                                     rect.size.height = fill_size.height;
                                     break;
                                 case Alignment::Vertical:
-                                    if (sibling_layout && sibling_layout->size_policy() != SizePolicy::Minimum) {
-                                        rect.pt.y += (size_increase.height + sibling_outer.bottom) * sibling_order;
-                                        rect.size.height += size_increase.height + sibling_outer.bottom;
-                                        sibling_order += 1.0f;
+                                    if (sibling_layout->size_policy() != SizePolicy::Minimum) {
+                                        rect.pt.y += size_increase.height * sibling_order++;
+                                        rect.size.height += size_increase.height;
                                     }
                                     rect.size.width = fill_size.width;
                                     break;
@@ -149,28 +142,16 @@ namespace rl::ui {
                             child_layout->adjust_for_size_policy();
                         else {
                             // calculate combined size of all children
-                            ds::dims<f32> total_size{ ds::dims<f32>::zero() };
-                            for (const Widget* child : m_children) {
+                            ds::dims<f32> total_size{};
+                            for (const Widget* child : m_children)
                                 total_size += child->size();
-
-                                // total_size += ds::dims{
-                                //     math::equal(child->fixed_width(), 0.0f)
-                                //         ? child->width()
-                                //         : child->fixed_width(),
-                                //     math::equal(child->fixed_height(), 0.0f)
-                                //         ? child->height()
-                                //         : child->fixed_height()
-                                // };
-                            }
 
                             const f32 child_count{ static_cast<f32>(m_children.size()) };
                             ds::dims<f32> layout_fill_size{ m_rect.size - m_inner_margin - m_outer_margin };
                             if constexpr (VAlignment == Alignment::Horizontal)
-                                if (this->size_policy() == SizePolicy::Maximum)
-                                    layout_fill_size.width -= m_spacing * (child_count - 1.0f);
+                                layout_fill_size.width -= m_spacing * (child_count - 1.0f);
                             if constexpr (VAlignment == Alignment::Vertical)
-                                if (this->size_policy() == SizePolicy::Maximum)
-                                    layout_fill_size.height -= m_spacing * (child_count - 1.0f);
+                                layout_fill_size.height -= m_spacing * (child_count - 1.0f);
 
                             const ds::dims<f32> delta_size{ layout_fill_size - total_size };
                             const ds::dims<f32> size_increase{ delta_size / child_count };
@@ -208,15 +189,15 @@ namespace rl::ui {
 
         virtual void apply_layout() override
         {
-            ds::rect<f32> computed_rect{ ds::rect<f32>::zero() };
-            ds::point<f32> curr_widget_pos{ m_inner_margin.offset() };
+            ds::rect<f32> computed_rect{};
+            ds::point<f32> curr_widget_pos{ m_outer_margin.offset() };
 
-            for (Widget* widget : m_cell_data | std::views::keys) {
-                ds::rect<f32> widget_rect{ ds::rect<f32>::zero() };
+            for (auto [idx, widget] : m_children | std::views::enumerate) {
+                ds::rect<f32> widget_rect{};
                 Layout* widget_layout{ widget->layout() };
                 if (widget_layout == nullptr) {
                     widget_rect.size = widget->preferred_size();
-                    widget_rect.pt += curr_widget_pos + m_outer_margin.offset();
+                    widget_rect.pt += m_inner_margin.offset() + curr_widget_pos;
                 }
                 else {
                     widget_layout->apply_layout();
@@ -226,23 +207,34 @@ namespace rl::ui {
                 }
 
                 widget->set_rect(widget_rect);
-                computed_rect.expand(widget_rect);
+                computed_rect.engulf(widget_rect);
 
-                if constexpr (VAlignment == Alignment::Horizontal)
-                    curr_widget_pos.x += widget_rect.size.width + m_spacing;
-                else if constexpr (VAlignment == Alignment::Vertical)
-                    curr_widget_pos.y += widget_rect.size.height + m_spacing;
+                if constexpr (VAlignment == Alignment::Horizontal) {
+                    curr_widget_pos.x += widget_rect.size.width;
+                    if (widget_layout == nullptr)
+                        curr_widget_pos.x += m_spacing;
+                    else {
+                        const ds::margin widget_outer{ widget_layout->outer_margin() };
+                        curr_widget_pos.x += widget_outer.horizontal();
+                    }
+                }
+                if constexpr (VAlignment == Alignment::Vertical) {
+                    curr_widget_pos.y += widget_rect.size.height;
+                    if (widget_layout == nullptr)
+                        curr_widget_pos.y += m_spacing;
+                    else {
+                        const ds::margin widget_outer{ widget_layout->outer_margin() };
+                        curr_widget_pos.y += widget_outer.vertical();
+                    }
+                }
             }
 
             computed_rect.pt += m_outer_margin.offset();
-            computed_rect.size += ds::vector2{
-                m_inner_margin.right + m_outer_margin.right,
-                m_inner_margin.bottom + m_outer_margin.bottom,
-            };
-
+            computed_rect.size += m_outer_margin;
             this->set_rect(computed_rect);
         }
 
+        [[nodiscard]]
         virtual ds::dims<f32> computed_size() const override
         {
             ds::dims<f32> computed_size{ ds::dims<f32>::zero() };

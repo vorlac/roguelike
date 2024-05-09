@@ -14,6 +14,24 @@ namespace rl::ds {
     struct margin
     {
     public:
+        consteval margin() = default;
+
+        consteval margin(T val)
+            : top{ val }
+            , bottom{ val }
+            , left{ val }
+            , right{ val }
+        {
+        }
+
+        consteval margin(T t, T b, T l, T r)
+            : top{ t }
+            , bottom{ b }
+            , left{ l }
+            , right{ r }
+        {
+        }
+
         [[nodiscard]]
         consteval static margin<T> zero()
         {

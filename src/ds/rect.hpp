@@ -27,6 +27,14 @@ namespace rl::ds {
     class rect
     {
     public:
+        consteval rect() = default;
+
+        constexpr rect(ds::point<T> tl_point, ds::dims<T> rect_size)
+            : pt{ tl_point }
+            , size{ rect_size }
+        {
+        }
+
         [[nodiscard]]
         consteval static rect<T> null()
         {
@@ -64,19 +72,19 @@ namespace rl::ds {
         [[nodiscard]]
         constexpr bool is_empty() const
         {
-            return math::equal(this->area(), static_cast<T>(0));
+            return math::equal(this->area(), 0);
         }
 
         [[nodiscard]]
-        constexpr bool is_invalid() const
+        constexpr bool invalid() const
         {
-            return this->size.is_invalid() || this->pt == point<T>::null();
+            return this->size.invalid() || this->pt == point<T>::null();
         }
 
         [[nodiscard]]
-        constexpr bool is_valid() const
+        constexpr bool valid() const
         {
-            return !this->is_invalid();
+            return !this->invalid();
         }
 
         [[nodiscard]]
@@ -134,16 +142,13 @@ namespace rl::ds {
             point<T> tr{ tl.x + size.width, tl.y };
             point<T> br{ tl.x + size.width, tl.y - size.height };
 
-            std::vector<point<f32>> pts = { tr, br, bl, tl };
-            std::vector<u32> idx = {
+            std::vector<point<f32>> pts{ tr, br, bl, tl };
+            std::vector<u32> idx{
                 0, 1, 3,  // triangle 1 point indices
                 1, 2, 3   // triangle 2 point indices
             };
 
-            return std::pair{
-                pts,
-                idx,
-            };
+            return std::make_pair(std::move(pts), std::move(idx));
         }
 
         [[nodiscard]]
@@ -170,7 +175,7 @@ namespace rl::ds {
             };
         }
 
-        constexpr rect<T>& expand(const rect<T>& other)
+        constexpr rect<T>& engulf(const rect<T> other) noexcept
         {
             // expand current rect to include rect other
             *this = std::move(this->expanded(other));
@@ -648,10 +653,10 @@ namespace rl::ds {
 
     public:
         // position of the rect's top left point
-        point<T> pt{};
+        point<T> pt{ 0, 0 };
         // 2D size of the rect, relative to pt
         // size assumed to always be positive
-        dims<T> size{};
+        dims<T> size{ 0, 0 };
     };
 
     template <rl::numeric T>

@@ -5,9 +5,8 @@
 #include "utils/logging.hpp"
 
 namespace rl::ui {
-
-    Popup::Popup(Widget* parent, ScrollableDialog* parent_dialog)
-        : ScrollableDialog{ parent, "" }
+    Popup::Popup(Widget*, ScrollableDialog* parent_dialog)
+        : ScrollableDialog{}
         , m_parent_dialog{ parent_dialog }
     {
     }
