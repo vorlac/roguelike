@@ -42,9 +42,9 @@ namespace rl {
 
                 // horizontally aligns title (centered), minimize, maximize, and close buttons
                 const auto titlebar_layout{ new BoxLayout<Alignment::Horizontal>{ "Titlebar Horiz" } };
-                // titlebar_layout->set_margins(
-                //     { 1.0f, 1.0f, 1.0f, 1.0f },
-                //     { 1.0f, 1.0f, 1.0f, 1.0f });
+                titlebar_layout->set_margins(
+                    { 1.0f, 1.0f, 1.0f, 1.0f },
+                    { 1.0f, 1.0f, 1.0f, 1.0f });
 
                 titlebar_layout->set_size_policy(SizePolicy::Minimum);
                 titlebar_layout->add_widget(min_btn);
@@ -55,16 +55,15 @@ namespace rl {
                 const auto body_label{ new ui::Label{ "Body", -1.0f, Align::HCenter | Align::VMiddle } };
                 const auto body_layout{ new BoxLayout<Alignment::Horizontal>{ "Body Horiz" } };
                 body_layout->add_widget(body_label);
-                // body_layout->set_size_policy(SizePolicy::Maximum);
-                //    body_layout->set_margins(
-                //       { 1.0f, 1.0f, 1.0f, 1.0f },
-                //       { 1.0f, 1.0f, 1.0f, 1.0f });
+                body_layout->set_margins(
+                    { 1.0f, 1.0f, 1.0f, 1.0f },
+                    { 1.0f, 1.0f, 1.0f, 1.0f });
 
                 // vertically aligns titlebar and dialog body
                 const auto root_layout{ new BoxLayout<Alignment::Vertical>{ "Dialog Root Vert" } };
-                // root_layout->set_margins(
-                //     { 1.0f, 1.0f, 1.0f, 1.0f },
-                //     { 1.0f, 1.0f, 1.0f, 1.0f });
+                root_layout->set_margins(
+                    { 1.0f, 1.0f, 1.0f, 1.0f },
+                    { 1.0f, 1.0f, 1.0f, 1.0f });
 
                 root_layout->set_size_policy(SizePolicy::Maximum);
                 root_layout->add_nested_layout(titlebar_layout);
@@ -81,7 +80,7 @@ namespace rl {
             void dispose();
             void set_title(std::string title);
             void enable_interaction(Interaction inter);
-            void disable_interaction(Interaction inter) const;
+            void disable_interaction(Interaction inter) ;
             bool interaction_enabled(Interaction inter) const;
             bool mode_active(Interaction inter) const;
 

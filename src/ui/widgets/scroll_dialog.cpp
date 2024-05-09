@@ -6,6 +6,7 @@
 
 #include "ui/canvas.hpp"
 #include "ui/widgets/scroll_dialog.hpp"
+#include "utils/conversions.hpp"
 
 namespace rl::ui {
     std::string ScrollableDialog::title() const
@@ -114,10 +115,10 @@ namespace rl::ui {
         m_enabled_interactions |= inter;
     }
 
-    void ScrollableDialog::disable_interaction(const Interaction inter) const
+    void ScrollableDialog::disable_interaction(const Interaction inter)
     {
         // todo: clean this up
-        m_enabled_interactions &= static_cast<Interaction>(~std::to_underlying(inter));
+        m_enabled_interactions &= ~inter;
     }
 
     bool ScrollableDialog::mode_active(const Interaction inter) const

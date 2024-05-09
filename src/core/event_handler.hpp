@@ -1,16 +1,9 @@
 #pragma once
 
-#include <functional>
-#include <mutex>
-#include <thread>
-#include <utility>
-#include <vector>
-
 #include "core/keyboard.hpp"
 #include "core/main_window.hpp"
 #include "core/mouse.hpp"
 #include "core/system.hpp"
-#include "ds/ring_buffer.hpp"
 #include "utils/sdl_defs.hpp"
 
 namespace rl {
@@ -154,85 +147,84 @@ namespace rl {
         bool m_quit{ false };
 
     public:
-        // clang-format off
         enum ButtonState {
             Pressed = 0,
             Released = 1,
         };
 
-        struct EventAction {
+        struct EventAction
+        {
             using type = SDL3::SDL_EventAction;
-            static inline constexpr type Add = SDL3::SDL_ADDEVENT;
-            static inline constexpr type Peek = SDL3::SDL_PEEKEVENT;
-            static inline constexpr type Get = SDL3::SDL_GETEVENT;
+            constexpr static type Add = SDL3::SDL_ADDEVENT;
+            constexpr static type Peek = SDL3::SDL_PEEKEVENT;
+            constexpr static type Get = SDL3::SDL_GETEVENT;
         };
 
-        struct Event {
+        struct Event
+        {
             using type = SDL3::SDL_EventType;
-            static inline constexpr type First = SDL3::SDL_EVENT_FIRST;
-            static inline constexpr type Quit = SDL3::SDL_EVENT_QUIT;
-            static inline constexpr type Terminating = SDL3::SDL_EVENT_TERMINATING;
-            static inline constexpr type LowMemory = SDL3::SDL_EVENT_LOW_MEMORY;
-            static inline constexpr type WillEnterBackground = SDL3::SDL_EVENT_WILL_ENTER_BACKGROUND;
-            static inline constexpr type DidEnterBackground = SDL3::SDL_EVENT_DID_ENTER_BACKGROUND;
-            static inline constexpr type WillEnterForeground = SDL3::SDL_EVENT_WILL_ENTER_FOREGROUND;
-            static inline constexpr type DidEnterForeground = SDL3::SDL_EVENT_DID_ENTER_FOREGROUND;
-            static inline constexpr type LocaleChanged = SDL3::SDL_EVENT_LOCALE_CHANGED;
-            static inline constexpr type SystemThemeChanged = SDL3::SDL_EVENT_SYSTEM_THEME_CHANGED;
+            constexpr static type First = SDL3::SDL_EVENT_FIRST;
+            constexpr static type Quit = SDL3::SDL_EVENT_QUIT;
+            constexpr static type Terminating = SDL3::SDL_EVENT_TERMINATING;
+            constexpr static type LowMemory = SDL3::SDL_EVENT_LOW_MEMORY;
+            constexpr static type WillEnterBackground = SDL3::SDL_EVENT_WILL_ENTER_BACKGROUND;
+            constexpr static type DidEnterBackground = SDL3::SDL_EVENT_DID_ENTER_BACKGROUND;
+            constexpr static type WillEnterForeground = SDL3::SDL_EVENT_WILL_ENTER_FOREGROUND;
+            constexpr static type DidEnterForeground = SDL3::SDL_EVENT_DID_ENTER_FOREGROUND;
+            constexpr static type LocaleChanged = SDL3::SDL_EVENT_LOCALE_CHANGED;
+            constexpr static type SystemThemeChanged = SDL3::SDL_EVENT_SYSTEM_THEME_CHANGED;
 
-            static inline constexpr type DisplayOrientation = SDL3::SDL_EVENT_DISPLAY_ORIENTATION;
-            static inline constexpr type DisplayAdded = SDL3::SDL_EVENT_DISPLAY_ADDED;
-            static inline constexpr type DisplayRemoved = SDL3::SDL_EVENT_DISPLAY_REMOVED;
-            static inline constexpr type DisplayMoved = SDL3::SDL_EVENT_DISPLAY_MOVED;
-            static inline constexpr type DispContentScaleChanged = SDL3::SDL_EVENT_DISPLAY_CONTENT_SCALE_CHANGED;
-            static inline constexpr type DisplayFirst = SDL3::SDL_EVENT_DISPLAY_FIRST;
-            static inline constexpr type DisplayLast = SDL3::SDL_EVENT_DISPLAY_LAST;
+            constexpr static type DisplayOrientation = SDL3::SDL_EVENT_DISPLAY_ORIENTATION;
+            constexpr static type DisplayAdded = SDL3::SDL_EVENT_DISPLAY_ADDED;
+            constexpr static type DisplayRemoved = SDL3::SDL_EVENT_DISPLAY_REMOVED;
+            constexpr static type DisplayMoved = SDL3::SDL_EVENT_DISPLAY_MOVED;
+            constexpr static type DispContentScaleChanged = SDL3::SDL_EVENT_DISPLAY_CONTENT_SCALE_CHANGED;
+            constexpr static type DisplayFirst = SDL3::SDL_EVENT_DISPLAY_FIRST;
+            constexpr static type DisplayLast = SDL3::SDL_EVENT_DISPLAY_LAST;
 
-            static inline constexpr type JoystickAxisMotion = SDL3::SDL_EVENT_JOYSTICK_AXIS_MOTION;
-            static inline constexpr type JoystickHatMotion = SDL3::SDL_EVENT_JOYSTICK_HAT_MOTION;
-            static inline constexpr type JoystickButtonDown = SDL3::SDL_EVENT_JOYSTICK_BUTTON_DOWN;
-            static inline constexpr type JoystickButtonUp = SDL3::SDL_EVENT_JOYSTICK_BUTTON_UP;
-            static inline constexpr type JoystickAdded = SDL3::SDL_EVENT_JOYSTICK_ADDED;
-            static inline constexpr type JoystickRemoved = SDL3::SDL_EVENT_JOYSTICK_REMOVED;
-            static inline constexpr type JoystickBatteryUpdated = SDL3::SDL_EVENT_JOYSTICK_BATTERY_UPDATED;
-            static inline constexpr type JoystickUpdateComplete = SDL3::SDL_EVENT_JOYSTICK_UPDATE_COMPLETE;
+            constexpr static type JoystickAxisMotion = SDL3::SDL_EVENT_JOYSTICK_AXIS_MOTION;
+            constexpr static type JoystickHatMotion = SDL3::SDL_EVENT_JOYSTICK_HAT_MOTION;
+            constexpr static type JoystickButtonDown = SDL3::SDL_EVENT_JOYSTICK_BUTTON_DOWN;
+            constexpr static type JoystickButtonUp = SDL3::SDL_EVENT_JOYSTICK_BUTTON_UP;
+            constexpr static type JoystickAdded = SDL3::SDL_EVENT_JOYSTICK_ADDED;
+            constexpr static type JoystickRemoved = SDL3::SDL_EVENT_JOYSTICK_REMOVED;
+            constexpr static type JoystickBatteryUpdated = SDL3::SDL_EVENT_JOYSTICK_BATTERY_UPDATED;
+            constexpr static type JoystickUpdateComplete = SDL3::SDL_EVENT_JOYSTICK_UPDATE_COMPLETE;
 
-            static inline constexpr type GamepadAxisMotion = SDL3::SDL_EVENT_GAMEPAD_AXIS_MOTION;
-            static inline constexpr type GamepadButtonDown = SDL3::SDL_EVENT_GAMEPAD_BUTTON_DOWN;
-            static inline constexpr type GamepadButtonUp = SDL3::SDL_EVENT_GAMEPAD_BUTTON_UP;
-            static inline constexpr type GamepadAdded = SDL3::SDL_EVENT_GAMEPAD_ADDED;
-            static inline constexpr type GamepadRemoved = SDL3::SDL_EVENT_GAMEPAD_REMOVED;
-            static inline constexpr type GamepadRemapped = SDL3::SDL_EVENT_GAMEPAD_REMAPPED;
-            static inline constexpr type GamepadTouchpadDown = SDL3::SDL_EVENT_GAMEPAD_TOUCHPAD_DOWN;
-            static inline constexpr type GamepadTouchpadMotion = SDL3::SDL_EVENT_GAMEPAD_TOUCHPAD_MOTION;
-            static inline constexpr type GamepadTouchpadUp = SDL3::SDL_EVENT_GAMEPAD_TOUCHPAD_UP;
-            static inline constexpr type GamepadSensorUpdate = SDL3::SDL_EVENT_GAMEPAD_SENSOR_UPDATE;
-            static inline constexpr type GamepadUpdateComplete = SDL3::SDL_EVENT_GAMEPAD_UPDATE_COMPLETE;
+            constexpr static type GamepadAxisMotion = SDL3::SDL_EVENT_GAMEPAD_AXIS_MOTION;
+            constexpr static type GamepadButtonDown = SDL3::SDL_EVENT_GAMEPAD_BUTTON_DOWN;
+            constexpr static type GamepadButtonUp = SDL3::SDL_EVENT_GAMEPAD_BUTTON_UP;
+            constexpr static type GamepadAdded = SDL3::SDL_EVENT_GAMEPAD_ADDED;
+            constexpr static type GamepadRemoved = SDL3::SDL_EVENT_GAMEPAD_REMOVED;
+            constexpr static type GamepadRemapped = SDL3::SDL_EVENT_GAMEPAD_REMAPPED;
+            constexpr static type GamepadTouchpadDown = SDL3::SDL_EVENT_GAMEPAD_TOUCHPAD_DOWN;
+            constexpr static type GamepadTouchpadMotion = SDL3::SDL_EVENT_GAMEPAD_TOUCHPAD_MOTION;
+            constexpr static type GamepadTouchpadUp = SDL3::SDL_EVENT_GAMEPAD_TOUCHPAD_UP;
+            constexpr static type GamepadSensorUpdate = SDL3::SDL_EVENT_GAMEPAD_SENSOR_UPDATE;
+            constexpr static type GamepadUpdateComplete = SDL3::SDL_EVENT_GAMEPAD_UPDATE_COMPLETE;
 
-            static inline constexpr type FingerDown = SDL3::SDL_EVENT_FINGER_DOWN;
-            static inline constexpr type FingerUp = SDL3::SDL_EVENT_FINGER_UP;
-            static inline constexpr type FingerMotion = SDL3::SDL_EVENT_FINGER_MOTION;
+            constexpr static type FingerDown = SDL3::SDL_EVENT_FINGER_DOWN;
+            constexpr static type FingerUp = SDL3::SDL_EVENT_FINGER_UP;
+            constexpr static type FingerMotion = SDL3::SDL_EVENT_FINGER_MOTION;
 
-            static inline constexpr type ClipboardUpdate = SDL3::SDL_EVENT_CLIPBOARD_UPDATE;
-            static inline constexpr type DropFile = SDL3::SDL_EVENT_DROP_FILE;
-            static inline constexpr type DropText = SDL3::SDL_EVENT_DROP_TEXT;
-            static inline constexpr type DropBegin = SDL3::SDL_EVENT_DROP_BEGIN;
-            static inline constexpr type DropComplete = SDL3::SDL_EVENT_DROP_COMPLETE;
-            static inline constexpr type DropPosition = SDL3::SDL_EVENT_DROP_POSITION;
+            constexpr static type ClipboardUpdate = SDL3::SDL_EVENT_CLIPBOARD_UPDATE;
+            constexpr static type DropFile = SDL3::SDL_EVENT_DROP_FILE;
+            constexpr static type DropText = SDL3::SDL_EVENT_DROP_TEXT;
+            constexpr static type DropBegin = SDL3::SDL_EVENT_DROP_BEGIN;
+            constexpr static type DropComplete = SDL3::SDL_EVENT_DROP_COMPLETE;
+            constexpr static type DropPosition = SDL3::SDL_EVENT_DROP_POSITION;
 
-            static inline constexpr type AudioDeviceAdded = SDL3::SDL_EVENT_AUDIO_DEVICE_ADDED;
-            static inline constexpr type AudioDeviceRemoved = SDL3::SDL_EVENT_AUDIO_DEVICE_REMOVED;
-            static inline constexpr type AudioDeviceFormatChanged = SDL3::SDL_EVENT_AUDIO_DEVICE_FORMAT_CHANGED;
+            constexpr static type AudioDeviceAdded = SDL3::SDL_EVENT_AUDIO_DEVICE_ADDED;
+            constexpr static type AudioDeviceRemoved = SDL3::SDL_EVENT_AUDIO_DEVICE_REMOVED;
+            constexpr static type AudioDeviceFormatChanged = SDL3::SDL_EVENT_AUDIO_DEVICE_FORMAT_CHANGED;
 
-            static inline constexpr type SensorUpdate = SDL3::SDL_EVENT_SENSOR_UPDATE;
-            static inline constexpr type RenderTargetsReset = SDL3::SDL_EVENT_RENDER_TARGETS_RESET;
-            static inline constexpr type RenderDeviceReset = SDL3::SDL_EVENT_RENDER_DEVICE_RESET;
-            static inline constexpr type PollSentinel = SDL3::SDL_EVENT_POLL_SENTINEL;
-            static inline constexpr type User = SDL3::SDL_EVENT_USER;
+            constexpr static type SensorUpdate = SDL3::SDL_EVENT_SENSOR_UPDATE;
+            constexpr static type RenderTargetsReset = SDL3::SDL_EVENT_RENDER_TARGETS_RESET;
+            constexpr static type RenderDeviceReset = SDL3::SDL_EVENT_RENDER_DEVICE_RESET;
+            constexpr static type PollSentinel = SDL3::SDL_EVENT_POLL_SENTINEL;
+            constexpr static type User = SDL3::SDL_EVENT_USER;
 
-            static inline constexpr type Last = SDL3::SDL_EVENT_LAST;
+            constexpr static type Last = SDL3::SDL_EVENT_LAST;
         };
-
-        // clang-format on
     };
 }

@@ -45,74 +45,69 @@ namespace rl::math {
 }
 
 namespace rl {
-    template <typename TEnum>
-        requires std::is_scoped_enum_v<TEnum>
+    template <rl::scoped_enum TEnum>
     constexpr TEnum operator|(const TEnum lhs, const TEnum rhs)
     {
         return static_cast<TEnum>(std::to_underlying(lhs) | std::to_underlying(rhs));
     }
 
-    template <typename TEnum, typename TUnderlying>
-        requires std::is_scoped_enum_v<TEnum> &&
-                 std::same_as<std::underlying_type_t<TEnum>, TUnderlying>
+    template <rl::scoped_enum TEnum, rl::integer TUnderlying>
     constexpr bool operator|(const TUnderlying lhs, const TEnum rhs)
     {
         return lhs | std::to_underlying(rhs);
     }
 
-    template <typename TEnum>
-        requires std::is_scoped_enum_v<TEnum>
+    template <rl::scoped_enum TEnum>
     constexpr TEnum& operator|=(TEnum& lhs, const TEnum rhs)
     {
         lhs = (lhs | rhs);
         return lhs;
     }
 
-    template <typename TEnum>
-        requires std::is_scoped_enum_v<TEnum>
+    template <rl::scoped_enum TEnum>
+    constexpr TEnum operator~(const TEnum val)
+    {
+        return static_cast<TEnum>(~std::to_underlying(val));
+    }
+
+    template <rl::scoped_enum TEnum>
     constexpr TEnum operator&(const TEnum lhs, const TEnum rhs)
     {
         return static_cast<TEnum>(std::to_underlying(lhs) & std::to_underlying(rhs));
     }
 
-    template <typename TEnum, rl::integer TUnderlying>
-        requires std::is_scoped_enum_v<TEnum>
+    template <rl::scoped_enum TEnum, rl::integer TUnderlying>
     constexpr bool operator&(const TUnderlying lhs, const TEnum rhs)
     {
         return lhs & std::to_underlying(rhs);
     }
 
-    template <typename TEnum>
-        requires std::is_scoped_enum_v<TEnum>
-    constexpr TEnum operator&=(const TEnum lhs, const TEnum rhs)
+    template <rl::scoped_enum TEnum>
+    constexpr TEnum operator&=(TEnum& lhs, const TEnum rhs)
     {
-        TEnum ret{ static_cast<TEnum>(std::to_underlying(lhs) & std::to_underlying(rhs)) };
-        return ret;
+        lhs = static_cast<TEnum>(std::to_underlying(lhs) & std::to_underlying(rhs));
+        return lhs;
     }
 
-    template <typename TEnum, rl::integer TUnderlying>
-        requires std::is_scoped_enum_v<TEnum>
+    template <rl::scoped_enum TEnum, rl::integer TUnderlying>
     constexpr bool operator==(const TUnderlying lhs, const TEnum rhs)
     {
         return static_cast<std::underlying_type_t<TEnum>>(lhs) == std::to_underlying(rhs);
     }
 
-    template <typename TEnum, rl::integer TUnderlying>
-        requires std::is_scoped_enum_v<TEnum>
+    template <rl::scoped_enum TEnum, rl::integer TUnderlying>
     constexpr bool operator==(const TEnum lhs, const TUnderlying rhs)
     {
         return std::to_underlying(lhs) == static_cast<std::underlying_type_t<TEnum>>(rhs);
     }
 
-    template <typename TEnum, rl::integer TUnderlying>
-        requires std::is_scoped_enum_v<TEnum>
+    template <rl::scoped_enum TEnum, rl::integer TUnderlying>
     constexpr bool operator!=(const TUnderlying lhs, const TEnum rhs)
     {
         return !(lhs == rhs);
     }
 
-    template <typename TEnum, rl::integer TUnderlying>
-        requires std::is_scoped_enum_v<TEnum>
+    template <rl::scoped_enum TEnum, rl::integer TUnderlying>
     constexpr bool operator!=(const TEnum lhs, const TUnderlying rhs)
     {
         return !(lhs == rhs);

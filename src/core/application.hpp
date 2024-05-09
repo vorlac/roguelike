@@ -118,13 +118,13 @@ namespace rl {
 
             // const auto canvas_layout{ new ui::BoxLayout<Alignment::Vertical>("Top Level Vert") };
             // canvas_layout->set_size_policy(SizePolicy::Freeform);
-            const auto gui_canvas{ m_main_window->gui().get() };
+            // const auto gui_canvas{ m_main_window->gui().get() };
 
-            const auto dialog{ new ui::ScrollableDialog{ gui_canvas, "Dialog Title" } };
+            const auto dialog{ new ui::ScrollableDialog{ "Dialog Title" } };
             // canvas_layout->add_widget(dialog);
 
             // m_main_window->gui()->assign_layout(canvas_layout);
-            // m_main_window->gui()->add_child(dialog);
+            m_main_window->gui()->add_child(dialog);
             dialog->set_size({ 600, 800 });
             dialog->center();
 
