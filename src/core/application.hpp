@@ -35,6 +35,12 @@ namespace rl {
         };
 
     public:
+        Application(Application&& other) = delete;
+        Application(const Application& other) = delete;
+        Application& operator=(const Application& other) = delete;
+        Application& operator=(Application&& other) = delete;
+
+    public:
         Application()
         {
             [[maybe_unused]] bool status{ this->init_subsystem(Subsystem::All) };
@@ -43,17 +49,11 @@ namespace rl {
             m_event_handler = EventHandler{ m_main_window };
         }
 
-        Application(Application&& other) = delete;
-        Application(const Application& other) = delete;
-        Application& operator=(const Application& other) = delete;
-        Application& operator=(Application&& other) = delete;
-
         ~Application()
         {
             SDL3::SDL_Quit();
         }
 
-    public:
         i32 run()
         {
             bool ret{ this->setup() };

@@ -31,6 +31,7 @@ set(REBUILD_RESOURCES_ON_CONFIGURE
 )
 
 include(vcpkg-init)
+include(submodule-init)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_EXTENSIONS ON)

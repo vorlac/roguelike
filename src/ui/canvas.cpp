@@ -529,7 +529,7 @@ namespace rl::ui {
                     m_redraw |= m_active_dialog->on_mouse_button_released(mouse, kb);
                 }
 
-                bool drag_btn_released{ mouse.is_button_released(Mouse::Button::Left) };
+                const bool drag_btn_released{ mouse.is_button_released(Mouse::Button::Left) };
                 if (drag_btn_released)
                     m_active_dialog = nullptr;
 
@@ -544,7 +544,7 @@ namespace rl::ui {
                 m_redraw |= m_active_dialog->on_mouse_button_released(mouse, kb);
                 m_mouse_mode = MouseMode::Propagate;
 
-                bool resize_btn_released{ mouse.is_button_released(Mouse::Button::Left) };
+                const bool resize_btn_released{ mouse.is_button_released(Mouse::Button::Left) };
                 if (resize_btn_released)
                     m_active_dialog = nullptr;
 

@@ -121,7 +121,7 @@ namespace rl::ui {
         return m_rect.size;
     }
 
-    f32 Widget::stretch_factor() const
+    f32 Widget::expansion_factor() const
     {
         return m_stretch_factor;
     }

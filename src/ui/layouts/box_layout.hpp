@@ -69,40 +69,32 @@ namespace rl::ui {
                         m_rect.pt = m_outer_margin.offset();
                     }
                     else {
-                        ///////////////////////////////////////////////
-                        //// f32 total_space = 30;
-                        // std::vector<std::pair<f32, f32>> sib_growth{ { 3.f, 10.f }, { 1.f, 10.f }, { 2.f, 10.f } };
-                        // f32 total_sibs{ static_cast<f32>(sib_growth.size()) };
-                        // std::vector<f32> res{};
-                        // for (auto [factor, increase] : sib_growth) {
-                        //     auto val = ((3.0f * 10.0f) / (total_sibs));  //+ 10.0f;
-                        //     (void)val;
-                        //     val = increase + ((factor * increase) / (total_sibs - 1));
-                        //     res.push_back(((factor * increase) / (total_sibs - 1)));
-                        // }
-                        ////////////////////////////////////////////////
-
                         // not the topmost layout, so size will be decided
                         // by the amount of available space in parent layout
                         // first, calculate the combined size of all siblings
                         ds::dims combined_size{ parent_layout->inner_margin() };
-
+                        f32 combined_stretch{ 0.0f };
                         f32 expand_count{ 0.0f };
+
                         for (const Widget* sibling : siblings) {
                             const Layout* sibling_layout{ sibling->layout() };
-                            if (sibling_layout != nullptr) {
-                                if (sibling_layout->size_policy() == SizePolicy::Maximum)
-                                    ++expand_count;
-                            }
 
                             combined_size += sibling->size();
+                            if (sibling_layout == nullptr)
+                                continue;
+
+                            if (sibling_layout->size_policy() == SizePolicy::Maximum) {
+                                combined_stretch += sibling->expansion_factor();
+                                expand_count += 1.0f;
+                            }
                         }
 
                         const ds::dims<f32> delta_size{ fill_size - combined_size };
-                        const ds::dims<f32> size_increase{ delta_size / expand_count };
+                        const ds::dims<f32> size_increase{ delta_size / combined_stretch };
                         const Alignment parent_alignment{ parent_layout->alignment() };
 
-                        f32 sibling_order{ 0.0f };
+                        f32 prev_offset{ 0.0f };
+                        f32 siblings_expanded{ 0.0f };
                         for (auto [sibling_idx, sibling] : siblings | std::views::enumerate) {
                             ds::rect rect{ sibling->rect() };
 
@@ -111,25 +103,23 @@ namespace rl::ui {
                                 case Alignment::Horizontal:
                                     rect.size.height = fill_size.height;
                                     if (sibling_layout->size_policy() != SizePolicy::Minimum) {
-                                        const f32 width_growth{
-                                            (sibling_layout->stretch_factor() * size_increase.width) /
-                                            std::max(1.0f, (expand_count - 1))
-                                        };
+                                        const f32 width_increase{ sibling_layout->expansion_factor() *
+                                                                  size_increase.width };
 
-                                        rect.size.width += width_growth;
-                                        rect.pt.x += width_growth * sibling_order++;
+                                        rect.size.width += width_increase;
+                                        rect.pt.x += width_increase * siblings_expanded++;
+                                        prev_offset = rect.bottom();
                                     }
                                     break;
                                 case Alignment::Vertical:
                                     rect.size.width = fill_size.width;
                                     if (sibling_layout->size_policy() != SizePolicy::Minimum) {
-                                        const f32 height_increase{
-                                            (sibling_layout->stretch_factor() * size_increase.height) /
-                                            std::max(1.0f, (expand_count - 1))
-                                        };
+                                        const f32 height_increase{ sibling_layout->expansion_factor() *
+                                                                   size_increase.height };
 
                                         rect.size.height += height_increase;
-                                        rect.pt.y += height_increase * sibling_order++;
+                                        rect.pt.y += height_increase * siblings_expanded++;
+                                        prev_offset = rect.bottom();
                                     }
                                     break;
 
@@ -147,9 +137,12 @@ namespace rl::ui {
                             child_layout->adjust_for_size_policy();
                         else {
                             // calculate combined size of all children
-                            ds::dims<f32> total_size{};
-                            for (const Widget* child : m_children)
-                                total_size += child->size();
+                            f32 combined_stretch{};
+                            ds::dims<f32> children_combined_size{};
+                            for (const Widget* child : m_children) {
+                                combined_stretch += child->expansion_factor();
+                                children_combined_size += child->size();
+                            }
 
                             const f32 child_count{ static_cast<f32>(m_children.size()) };
                             ds::dims<f32> layout_fill_size{ m_rect.size - m_inner_margin - m_outer_margin };
@@ -158,23 +151,20 @@ namespace rl::ui {
                             if constexpr (VAlignment == Alignment::Vertical)
                                 layout_fill_size.height -= m_spacing * (child_count - 1.0f);
 
-                            const ds::dims<f32> delta_size{ layout_fill_size - total_size };
-                            const ds::dims<f32> size_increase{ delta_size / child_count };
+                            f32 children_expanded{};
+                            const ds::dims<f32> delta_size{ layout_fill_size - children_combined_size };
+                            const ds::dims<f32> growth_expand{ delta_size / combined_stretch };
                             for (auto [child_idx, child] : m_children | std::views::enumerate) {
-                                const f32 child_order{ static_cast<f32>(child_idx) };
-                                const ds::dims<f32> actual_increase{
-                                    (size_increase * child->stretch_factor()) /
-                                    std::max(1.0f, (child_count - 1))
-                                };
+                                const ds::dims<f32> actual_increase{ growth_expand * child->expansion_factor() };
 
                                 ds::rect<f32> rect{ child->rect() };
                                 if constexpr (VAlignment == Alignment::Horizontal) {
-                                    rect.pt.x += actual_increase.width * child_order;
+                                    rect.pt.x += actual_increase.width * children_expanded++;
                                     rect.size.width += actual_increase.width;
                                     rect.size.height = layout_fill_size.height;
                                 }
                                 if constexpr (VAlignment == Alignment::Vertical) {
-                                    rect.pt.y += actual_increase.height * child_order;
+                                    rect.pt.y += actual_increase.height * children_expanded++;
                                     rect.size.height += actual_increase.height;
                                     rect.size.width = layout_fill_size.width;
                                 }

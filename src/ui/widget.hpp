@@ -44,7 +44,7 @@ namespace rl::ui {
         [[nodiscard]] f32 fixed_height() const;
         [[nodiscard]] f32 font_size() const;
         [[nodiscard]] f32 icon_extra_scale() const;
-        [[nodiscard]] f32 stretch_factor() const;
+        [[nodiscard]] f32 expansion_factor() const;
         [[nodiscard]] u64 child_count() const;
         [[nodiscard]] Layout* layout() const;
         [[nodiscard]] Mouse::Cursor::ID cursor() const;
