@@ -34,42 +34,6 @@ namespace rl::ui {
         explicit Widget(Widget* parent);
         virtual ~Widget();
 
-        Canvas* canvas();
-        Widget* parent();
-        ScrollableDialog* dialog();
-
-        [[nodiscard]] f32 width() const;
-        [[nodiscard]] f32 height() const;
-        [[nodiscard]] f32 fixed_width() const;
-        [[nodiscard]] f32 fixed_height() const;
-        [[nodiscard]] f32 font_size() const;
-        [[nodiscard]] f32 icon_extra_scale() const;
-        [[nodiscard]] f32 expansion_factor() const;
-        [[nodiscard]] u64 child_count() const;
-        [[nodiscard]] Layout* layout() const;
-        [[nodiscard]] Mouse::Cursor::ID cursor() const;
-        [[nodiscard]] Widget* child_at(u64 index) const;
-        [[nodiscard]] ds::rect<f32> resize_rect() const;
-        [[nodiscard]] ds::point<f32> abs_position() const;
-        [[nodiscard]] ds::point<f32> position() const;
-        [[nodiscard]] ds::dims<f32> fixed_size() const;
-        [[nodiscard]] ds::dims<f32> min_size() const;
-        [[nodiscard]] ds::dims<f32> max_size() const;
-        [[nodiscard]] ds::dims<f32> size() const;
-        [[nodiscard]] std::string_view tooltip() const;
-        [[nodiscard]] std::string_view name() const;
-        [[nodiscard]] const ds::rect<f32>& rect() const;
-        [[nodiscard]] const Theme* theme() const;
-        [[nodiscard]] const Canvas* canvas() const;
-        [[nodiscard]] const ScrollableDialog* dialog() const;
-        [[nodiscard]] const Widget* parent() const;
-        [[nodiscard]] const std::vector<Widget*>& children() const;
-        [[nodiscard]] bool visible(bool recursive = false) const;
-        [[nodiscard]] bool has_font_size() const;
-        [[nodiscard]] bool enabled() const;
-        [[nodiscard]] bool focused() const;
-        [[nodiscard]] bool resizable() const;
-
         void assign_layout(Layout* layout);
         void set_position(ds::point<f32> pos);
         void set_rect(const ds::rect<f32>& rect);
@@ -82,7 +46,7 @@ namespace rl::ui {
         void set_focused(bool focused);
         void set_tooltip(std::string tooltip);
         void set_name(std::string name);
-        void set_stretch_factor(f32 stretch);
+        void set_expansion(f32 stretch);
         void set_font_size(f32 font_size);
         void set_icon_extra_scale(f32 scale);
         void set_cursor(Mouse::Cursor::ID cursor);
@@ -90,6 +54,46 @@ namespace rl::ui {
         void request_focus();
         void show();
         void hide();
+
+        [[nodiscard]] bool enabled() const;
+        [[nodiscard]] bool focused() const;
+        [[nodiscard]] bool resizable() const;
+        [[nodiscard]] bool visible(bool recursive = false) const;
+        [[nodiscard]] bool has_font_size() const;
+
+        [[nodiscard]] Mouse::Cursor::ID cursor() const;
+        [[nodiscard]] std::string_view tooltip() const;
+        [[nodiscard]] std::string_view name() const;
+
+        [[nodiscard]] ds::point<f32> position() const;
+        [[nodiscard]] ds::point<f32> abs_position() const;
+        [[nodiscard]] ds::dims<f32> size() const;
+        [[nodiscard]] ds::dims<f32> min_size() const;
+        [[nodiscard]] ds::dims<f32> max_size() const;
+        [[nodiscard]] ds::dims<f32> fixed_size() const;
+        [[nodiscard]] ds::rect<f32> resize_rect() const;
+
+        [[nodiscard]] u64 child_count() const;
+        [[nodiscard]] f32 icon_extra_scale() const;
+        [[nodiscard]] f32 width() const;
+        [[nodiscard]] f32 height() const;
+        [[nodiscard]] f32 fixed_width() const;
+        [[nodiscard]] f32 fixed_height() const;
+        [[nodiscard]] f32 expansion() const;
+        [[nodiscard]] f32 font_size() const;
+
+        [[nodiscard]] Widget* parent();
+        [[nodiscard]] Canvas* canvas();
+        [[nodiscard]] Layout* layout() const;
+        [[nodiscard]] Widget* parent() const;
+        [[nodiscard]] Theme* theme() const;
+        [[nodiscard]] ScrollableDialog* dialog();
+        [[nodiscard]] Widget* child_at(u64 index) const;
+
+        [[nodiscard]] const Canvas* canvas() const;
+        [[nodiscard]] const ScrollableDialog* dialog() const;
+        [[nodiscard]] const std::vector<Widget*>& children() const;
+        [[nodiscard]] const ds::rect<f32>& rect() const;
 
     private:
         void set_parent(Widget* parent);
@@ -129,7 +133,7 @@ namespace rl::ui {
         [[nodiscard]] f32 icon_scale() const;
 
     protected:
-        static inline rl::NVGRenderer* m_renderer{ nullptr };
+        static inline NVGRenderer* m_renderer{ nullptr };
         Mouse::Cursor::ID m_cursor{ Mouse::Cursor::Arrow };
 
         Widget* m_parent{ nullptr };

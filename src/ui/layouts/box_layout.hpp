@@ -84,7 +84,7 @@ namespace rl::ui {
                                 continue;
 
                             if (sibling_layout->size_policy() == SizePolicy::Maximum) {
-                                combined_stretch += sibling->expansion_factor();
+                                combined_stretch += sibling->expansion();
                                 expand_count += 1.0f;
                             }
                         }
@@ -103,7 +103,7 @@ namespace rl::ui {
                                     rect.size.height = fill_size.height;
                                     if (sibling_layout->size_policy() != SizePolicy::Minimum) {
                                         const f32 width_expansion{
-                                            sibling_layout->expansion_factor() *
+                                            sibling_layout->expansion() *
                                             size_increase.width
                                         };
 
@@ -117,7 +117,7 @@ namespace rl::ui {
                                     rect.size.width = fill_size.width;
                                     if (sibling_layout->size_policy() != SizePolicy::Minimum) {
                                         const f32 height_expansion{
-                                            sibling_layout->expansion_factor() *
+                                            sibling_layout->expansion() *
                                             size_increase.height
                                         };
 
@@ -145,7 +145,7 @@ namespace rl::ui {
 
                             // calculate combined size of all children
                             for (const Widget* child : m_children) {
-                                combined_stretch += child->expansion_factor();
+                                combined_stretch += child->expansion();
                                 children_combined_size += child->size();
                             }
 
@@ -165,7 +165,7 @@ namespace rl::ui {
                             const ds::dims growth_expansion{ delta_size / combined_stretch };
                             for (auto [child_idx, child] : m_children | std::views::enumerate) {
                                 const ds::dims<f32> actual_increase{
-                                    growth_expansion * child->expansion_factor()
+                                    growth_expansion * child->expansion()
                                 };
 
                                 ds::rect<f32> rect{ child->rect() };

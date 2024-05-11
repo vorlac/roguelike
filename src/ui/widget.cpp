@@ -52,7 +52,7 @@ namespace rl::ui {
         return m_parent;
     }
 
-    const Widget* Widget::parent() const
+    Widget* Widget::parent() const
     {
         return m_parent;
     }
@@ -79,7 +79,7 @@ namespace rl::ui {
         this->add_child(layout);
     }
 
-    const Theme* Widget::theme() const
+    Theme* Widget::theme() const
     {
         return m_theme;
     }
@@ -121,7 +121,7 @@ namespace rl::ui {
         return m_rect.size;
     }
 
-    f32 Widget::expansion_factor() const
+    f32 Widget::expansion() const
     {
         return m_stretch_factor;
     }
@@ -686,7 +686,7 @@ namespace rl::ui {
         return m_theme->icon_scale * m_icon_extra_scale;
     }
 
-    void Widget::set_stretch_factor(const f32 stretch)
+    void Widget::set_expansion(const f32 stretch)
     {
         m_stretch_factor = stretch;
     }

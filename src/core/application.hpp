@@ -103,8 +103,8 @@ namespace rl {
                         })
                 };
 
-                const auto label{ new ui::Label{ "3", font_size, alignment } };
-                label->set_stretch_factor(2.0f);
+                const auto label{ new ui::Label{ "5x Expansion", font_size, alignment } };
+                label->set_expansion(5.0f);
                 const auto layout_num_v1{
                     new ui::BoxLayout<Alignment::Vertical>(
                         "Nums1 Inner Vert",
@@ -253,7 +253,7 @@ namespace rl {
         }
 
     private:
-        Timer<> m_timer{};
+        Timer<f32> m_timer{};
         std::unique_ptr<MainWindow> m_main_window{};
         EventHandler m_event_handler{};
     };
