@@ -24,7 +24,7 @@ namespace rl {
 
         explicit EventHandler(const std::unique_ptr<MainWindow>& window)
         {
-            SDL3::SDL_AddEventWatch(EventHandler::resizing_event_watcher, window.get());
+            SDL3::SDL_AddEventWatch(resizing_event_watcher, window.get());
         }
 
         bool handle_events(const std::unique_ptr<MainWindow>& window)

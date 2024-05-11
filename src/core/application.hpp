@@ -54,12 +54,18 @@ namespace rl {
             SDL3::SDL_Quit();
         }
 
+        enum class UITest {
+            CanvasLayout,
+            ScrollDialog,
+        };
+
         i32 run()
         {
             bool ret{ this->setup() };
 
             constexpr auto test_case{ 1 };
-            if constexpr (test_case == 1) {
+
+            if constexpr (test_case == UITest::CanvasLayout) {
                 constexpr auto font_size{ 20.0f };
                 constexpr auto alignment{ Align::VMiddle | Align::HCenter };
 
@@ -154,8 +160,11 @@ namespace rl {
                 layout_canvas_vert->add_nested_layout(layout_abc_vert_nested);
                 m_main_window->gui()->assign_layout(layout_canvas_vert);
             }
-            else if constexpr (test_case == 2) {
-                const auto dialog{ new ui::ScrollableDialog{ "Dialog Title", ds::dims{ 600, 800 } } };
+            else if constexpr (test_case == UITest::ScrollDialog) {
+                const auto dialog{
+                    new ui::ScrollableDialog{
+                        "Dialog Title", ds::dims{ 600, 800 } },
+                };
                 m_main_window->gui()->add_child(dialog);
                 dialog->center();
             }

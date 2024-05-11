@@ -16,69 +16,27 @@ namespace rl {
     class Mouse;
 
     namespace ui {
-
         class ScrollableDialog : public Widget
         {
         public:
-            explicit ScrollableDialog(std::string title = "", const ds::dims<f32> fixed_size = ds::dims<f32>::zero())
-                : Widget{ nullptr }
-                , m_title{ std::move(title) }
-            {
-                this->set_icon_extra_scale(0.8f);
-                if (fixed_size.valid())
-                    Widget::set_size(fixed_size);
-
-                const auto min_btn{ new ui::Button{ Icon::WindowMinimize } };
-                const auto max_btn{ new ui::Button{ Icon::WindowMaximize } };
-                const auto cls_btn{ new ui::Button{ Icon::WindowClose } };
-
-                min_btn->set_font_size(40.0f);
-                max_btn->set_font_size(40.0f);
-                cls_btn->set_font_size(40.0f);
-
-                // horizontally aligns title (centered), minimize, maximize, and close buttons
-                const auto titlebar_layout{ new BoxLayout<Alignment::Horizontal>{ "Titlebar Horiz" } };
-                titlebar_layout->set_margins({ 2.0f }, { 2.0f });
-
-                titlebar_layout->set_size_policy(SizePolicy::Minimum);
-                titlebar_layout->add_widget(min_btn);
-                titlebar_layout->add_widget(max_btn);
-                titlebar_layout->add_widget(cls_btn);
-
-                // horizontally aligns the contents panel containing all children, and scrollbar
-                const auto body_label{ new ui::Label{ "Body", -1.0f, Align::HCenter | Align::VMiddle } };
-                const auto body_layout{ new BoxLayout<Alignment::Horizontal>{ "Body Horiz" } };
-                body_layout->add_widget(body_label);
-                body_layout->set_margins({ 2.0f }, { 2.0f });
-
-                // vertically aligns titlebar and dialog body
-                const auto root_layout{ new BoxLayout<Alignment::Vertical>{ "Dialog Root Vert" } };
-                root_layout->set_margins({ 2.0f }, { 2.0f });
-
-                root_layout->set_size_policy(SizePolicy::Maximum);
-                root_layout->add_nested_layout(titlebar_layout);
-                root_layout->add_nested_layout(body_layout);
-
-                this->assign_layout(root_layout);
-                Widget::perform_layout();
-            }
-
-            [[nodiscard]]
-            std::tuple<Interaction, Component, Side> check_interaction(ds::point<f32> pt) const;
-
+            explicit ScrollableDialog(std::string title = {},
+                                      ds::dims<f32> fixed_size = {});
             void center();
             void dispose();
+            void set_scroll_pos(f32 pos);
             void set_title(std::string title);
             void enable_interaction(Interaction inter);
             void disable_interaction(Interaction inter);
-            bool interaction_enabled(Interaction inter) const;
-            bool mode_active(Interaction inter) const;
 
-            f32 scroll_pos() const;
-            f32 header_height() const;
-            std::string title() const;
-            Widget* button_panel() const;
-            void set_scroll_pos(f32 pos);
+            [[nodiscard]] f32 scroll_pos() const;
+            [[nodiscard]] f32 header_height() const;
+            [[nodiscard]] Widget* button_panel() const;
+            [[nodiscard]] std::string_view title() const;
+
+            using interactions_t = std::tuple<Interaction, Component, Side>;
+            [[nodiscard]] interactions_t check_interaction(ds::point<f32> pt) const;
+            [[nodiscard]] bool interaction_enabled(Interaction inter) const;
+            [[nodiscard]] bool mode_active(Interaction inter) const;
 
         public:
             virtual bool on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb) override;
@@ -87,8 +45,8 @@ namespace rl {
             virtual bool on_mouse_drag(const Mouse& mouse, const Keyboard& kb) override;
 
             virtual void draw() override;
-            virtual void refresh_relative_placement();
             virtual ds::dims<f32> preferred_size() const override;
+            virtual void refresh_relative_placement();
 
         protected:
             bool m_header_visible{ false };

@@ -9,7 +9,7 @@
 #include "utils/conversions.hpp"
 
 namespace rl::ui {
-    std::string ScrollableDialog::title() const
+    std::string_view ScrollableDialog::title() const
     {
         return m_title;
     }

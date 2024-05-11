@@ -6,7 +6,6 @@
 #include "ui/widgets/label.hpp"
 
 namespace rl::ui {
-
     Label::Label(std::string text, const f32 font_size, const Align alignment)
         : Label{ nullptr, std::move(text), font_size, alignment }
     {
@@ -25,52 +24,7 @@ namespace rl::ui {
             m_text_alignment = alignment;
     }
 
-    std::string_view Label::text() const
-    {
-        return m_text;
-    }
-
-    std::string_view Label::font() const
-    {
-        return m_font;
-    }
-
-    ds::color<f32> Label::color() const
-    {
-        return m_text_color;
-    }
-
-    Align Label::text_alignment() const
-    {
-        return m_text_alignment;
-    }
-
-    void Label::set_text(std::string text)
-    {
-        m_text = std::move(text);
-    }
-
-    void Label::set_font(const std::string_view font)
-    {
-        m_font = font;
-    }
-
-    void Label::set_text_alignment(const Align alignment)
-    {
-        m_text_alignment = alignment;
-    }
-
-    void Label::set_color(const ds::color<f32> color)
-    {
-        m_text_color = color;
-    }
-
-    void Label::set_callback(const std::function<void()>& callable)
-    {
-        m_callback = callable;
-    }
-
-    void Label::set_theme(ui::Theme* theme)
+    void Label::set_theme(Theme* theme)
     {
         Widget::set_theme(theme);
         if (m_theme != nullptr) {
@@ -120,7 +74,7 @@ namespace rl::ui {
 
     void Label::draw()
     {
-        ui::Widget::draw();
+        Widget::draw();
 
         m_renderer->set_text_properties(m_font, m_font_size, m_text_alignment);
 
@@ -145,5 +99,50 @@ namespace rl::ui {
             nvg::set_text_align(context, m_text_alignment);
             nvg::draw_text(context, pos, m_text);
         }
+    }
+
+    std::string_view Label::text() const
+    {
+        return m_text;
+    }
+
+    std::string_view Label::font() const
+    {
+        return m_font;
+    }
+
+    ds::color<f32> Label::color() const
+    {
+        return m_text_color;
+    }
+
+    Align Label::text_alignment() const
+    {
+        return m_text_alignment;
+    }
+
+    void Label::set_text(std::string text)
+    {
+        m_text = std::move(text);
+    }
+
+    void Label::set_font(const std::string_view font)
+    {
+        m_font = std::string{ font };
+    }
+
+    void Label::set_text_alignment(const Align alignment)
+    {
+        m_text_alignment = alignment;
+    }
+
+    void Label::set_color(const ds::color<f32> color)
+    {
+        m_text_color = color;
+    }
+
+    void Label::set_callback(const std::function<void()>& callable)
+    {
+        m_callback = callable;
     }
 }
