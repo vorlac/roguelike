@@ -14,8 +14,6 @@
 #include "utils/time.hpp"
 
 namespace rl::gl {
-    // OpenGL Vertex Buffer Object (VBO) representing a buffer of vertices that
-    // openGL can read from when executing shaders on the data being rendered
     class InstancedVertexBuffer
     {
     public:
@@ -30,10 +28,8 @@ namespace rl::gl {
             return "InstancedVertexBuffer";
         }
 
-        explicit InstancedVertexBuffer(ds::rect<f32>&& viewport_rect)
+        explicit InstancedVertexBuffer(const ds::rect<f32>& viewport_rect)
         {
-            ds::rect window_rect{ viewport_rect.expanded(-450.0f) };
-
             // create vertex array object
             glGenVertexArrays(1, &m_vao_id);
 
@@ -240,7 +236,7 @@ namespace rl::gl {
         u32 m_vbo_colors_id{ std::numeric_limits<u32>::max() };
 
         /**
-         * @brief VBO name of fuffer containing
+         * @brief VBO name of buffer containing
          * the rect vertices to use for instancing.
          * */
 

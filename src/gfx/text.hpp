@@ -15,6 +15,8 @@ namespace rl::text {
             Disk,
         };
 
+        constexpr static inline f32 MaxValidSize{ 96.0f };
+        constexpr static inline f32 MinValidSize{ 1.0f };
         constexpr static inline f32 InvalidSize{ -1.0f };
         constexpr static inline i32 InvalidHandle{ -1 };
 

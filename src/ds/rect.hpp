@@ -29,7 +29,7 @@ namespace rl::ds {
     public:
         consteval rect() = default;
 
-        constexpr rect(ds::point<T> tl_point, ds::dims<T> rect_size)
+        constexpr rect(point<T> tl_point, dims<T> rect_size)
             : pt{ tl_point }
             , size{ rect_size }
         {
@@ -90,7 +90,7 @@ namespace rl::ds {
         [[nodiscard]]
         constexpr bool is_null() const
         {
-            return *this == ds::rect<T>::null();
+            return *this == rect<T>::null();
         }
 
         constexpr auto triangles() -> std::array<point<T>, 6>
@@ -215,7 +215,7 @@ namespace rl::ds {
         }
 
         [[nodiscard]]
-        constexpr rect<T> expanded(ds::margin<T> expansion) const noexcept
+        constexpr rect<T> expanded(margin<T> expansion) const noexcept
         {
             // Expands a rect by the specific amounts on each side
             return rect<T>{
@@ -269,8 +269,8 @@ namespace rl::ds {
         constexpr rect<T> top(T expand) const noexcept
         {
             return rect<T>{
-                ds::point<T>{ this->pt.x + expand, this->pt.y - expand },
-                ds::dims<T>{ this->size.width - expand * 2, expand * 2 },
+                point<T>{ this->pt.x + expand, this->pt.y - expand },
+                dims<T>{ this->size.width - expand * 2, expand * 2 },
             };
         }
 
@@ -278,8 +278,8 @@ namespace rl::ds {
         constexpr rect<T> bottom(T expand) const noexcept
         {
             return rect<T>{
-                ds::point<T>{ pt.x + expand, (pt.y + this->size.height) - expand },
-                ds::dims<T>{ this->size.width - expand * 2, expand * 2 },
+                point<T>{ pt.x + expand, (pt.y + this->size.height) - expand },
+                dims<T>{ this->size.width - expand * 2, expand * 2 },
             };
         }
 
@@ -287,8 +287,8 @@ namespace rl::ds {
         constexpr rect<T> left(T expand) const noexcept
         {
             return rect<T>{
-                ds::point<T>{ this->pt.x - expand, pt.y + expand },
-                ds::dims<T>{ expand * 2, this->size.height - expand * 2 },
+                point<T>{ this->pt.x - expand, pt.y + expand },
+                dims<T>{ expand * 2, this->size.height - expand * 2 },
             };
         }
 
@@ -296,8 +296,8 @@ namespace rl::ds {
         constexpr rect<T> right(T expand) const noexcept
         {
             return rect<T>{
-                ds::point<T>{ (this->pt.x + this->size.width) - expand, pt.y + expand },
-                ds::dims<T>{ expand * 2, this->size.height - expand * 2 },
+                point<T>{ (this->pt.x + this->size.width) - expand, pt.y + expand },
+                dims<T>{ expand * 2, this->size.height - expand * 2 },
             };
         }
 
@@ -306,8 +306,8 @@ namespace rl::ds {
         {
             const point<T> ret{ this->top_left() };
             return rect<T>{
-                ds::point<T>{ ret - expand },
-                ds::dims<T>{ expand * 2, expand * 2 },
+                point<T>{ ret - expand },
+                dims<T>{ expand * 2, expand * 2 },
             };
         }
 
@@ -316,8 +316,8 @@ namespace rl::ds {
         {
             const point<T> ret{ this->top_right() };
             return rect<T>{
-                ds::point<T>{ ret - expand },
-                ds::dims<T>{ expand * 2, expand * 2 },
+                point<T>{ ret - expand },
+                dims<T>{ expand * 2, expand * 2 },
             };
         }
 
@@ -326,8 +326,8 @@ namespace rl::ds {
         {
             const point<T> ret{ this->bot_left() };
             return rect<T>{
-                ds::point<T>{ ret - expand },
-                ds::dims<T>{ expand * 2, expand * 2 },
+                point<T>{ ret - expand },
+                dims<T>{ expand * 2, expand * 2 },
             };
         }
 
@@ -336,13 +336,26 @@ namespace rl::ds {
         {
             const point<T> ret{ this->bot_right() };
             return rect<T>{
-                ds::point<T>{ ret - expand },
-                ds::dims<T>{ expand * 2, expand * 2 },
+                point<T>{ ret - expand },
+                dims<T>{ expand * 2, expand * 2 },
             };
         }
 
         [[nodiscard]]
-        constexpr T top() const noexcept
+        constexpr point<T> reference_point(const Align alignment) const noexcept
+        {
+            return alignment == (Align::HLeft | Align::VMiddle)     ? point<T>{ pt.x, pt.y + (size.height / 2.0f) }
+                 : alignment == (Align::HLeft | Align::VBaseline)   ? point<T>{ pt.x, pt.y + size.height }
+                 : alignment == (Align::HCenter | Align::VMiddle)   ? point<T>{ pt.x + (size.width / 2.0f), pt.y + (size.height / 2.0f) }
+                 : alignment == (Align::HCenter | Align::VBaseline) ? point<T>{ pt.x + (size.width / 2.0f), pt.y + size.height }
+                 : alignment == (Align::HRight | Align::VMiddle)    ? point<T>{ pt.x + size.width, pt.y + (size.height / 2.0f) }
+                 : alignment == (Align::HRight | Align::VBaseline)  ? point<T>{ pt.x + size.width, pt.y + size.height }
+                                                                    : pt;
+        }
+
+        [[nodiscard]] constexpr T
+        top() const noexcept
+
         {
             return pt.y;
         }
@@ -391,21 +404,21 @@ namespace rl::ds {
         }
 
         [[nodiscard]]
-        constexpr rect<T> centered(const ds::point<f32> pos) const
+        constexpr rect<T> centered(const point<f32> pos) const
         {
             // Returns a new rect centered at pos
-            const ds::vector2<T> delta{ pos - this->centroid() };
-            return ds::rect<T>{
+            const vector2<T> delta{ pos - this->centroid() };
+            return rect<T>{
                 this->pt + delta,
                 this->size,
             };
         }
 
         [[nodiscard]]
-        constexpr rect<T>& center(const ds::point<f32> pos)
+        constexpr rect<T>& center(const point<f32> pos)
         {
             // Centers the rect at the point
-            const ds::vector2<T> delta{ pos - this->centroid() };
+            const vector2<T> delta{ pos - this->centroid() };
             this->pt += delta;
             return *this;
         }

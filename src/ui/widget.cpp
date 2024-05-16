@@ -16,51 +16,6 @@
 #include "utils/debug.hpp"
 
 namespace rl::ui {
-    ScrollableDialog::ScrollableDialog(std::string title, const ds::dims<f32> fixed_size)
-        : Widget{ nullptr }
-        , m_title{ std::move(title) }
-    {
-        this->set_icon_extra_scale(0.8f);
-        if (fixed_size.valid())
-            Widget::set_size(fixed_size);
-
-        const auto dgtitle{ new Label{ "Dialog Title", 18.0f } };
-        const auto min_btn{ new Button{ Icon::WindowMinimize } };
-        const auto max_btn{ new Button{ Icon::WindowMaximize } };
-        const auto cls_btn{ new Button{ Icon::WindowClose } };
-
-        min_btn->set_font_size(40.0f);
-        max_btn->set_font_size(40.0f);
-        cls_btn->set_font_size(40.0f);
-
-        // horizontally aligns title (centered), minimize, maximize, and close buttons
-        const auto titlebar_layout{ new BoxLayout<Alignment::Horizontal>{ "Titlebar Horiz" } };
-        titlebar_layout->set_margins({ 2.0f }, { 2.0f });
-
-        titlebar_layout->set_size_policy(SizePolicy::Minimum);
-        titlebar_layout->add_widget(dgtitle);
-        titlebar_layout->add_widget(min_btn);
-        titlebar_layout->add_widget(max_btn);
-        titlebar_layout->add_widget(cls_btn);
-
-        // horizontally aligns the contents panel containing all children, and scrollbar
-        const auto body_label{ new Label{ "Body", -1.0f, Align::HCenter | Align::VMiddle } };
-        const auto body_layout{ new BoxLayout<Alignment::Horizontal>{ "Body Horiz" } };
-        body_layout->add_widget(body_label);
-        body_layout->set_margins({ 2.0f }, { 2.0f });
-
-        // vertically aligns titlebar and dialog body
-        const auto root_layout{ new BoxLayout<Alignment::Vertical>{ "Dialog Root Vert" } };
-        root_layout->set_margins({ 2.0f }, { 2.0f });
-
-        root_layout->set_size_policy(SizePolicy::Maximum);
-        root_layout->add_nested_layout(titlebar_layout);
-        root_layout->add_nested_layout(body_layout);
-
-        this->assign_layout(root_layout);
-        Widget::perform_layout();
-    }
-
     Widget::Widget(Widget* parent)
         : m_parent{ parent }
     {
@@ -571,10 +526,10 @@ namespace rl::ui {
         m_font_size = std::max(1.0f, font_size);
     }
 
-    bool Widget::has_font_size() const
+    bool Widget::has_font_size_override() const
     {
-        return m_font_size > 0.0f &&
-               math::not_equal(m_font_size, 0.0f);
+        return m_font_size > text::font::MinValidSize ||
+               math::not_equal(m_font_size, text::font::InvalidSize);
     }
 
     f32 Widget::icon_extra_scale() const

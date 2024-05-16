@@ -216,7 +216,7 @@ namespace rl {
 
     ds::dims<f32> NVGRenderer::get_text_size(const std::string&) const
     {
-        debug_assert(false);
+        debug_assert("not implemented");
         return ds::dims<f32>::zero();
     }
 

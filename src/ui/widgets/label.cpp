@@ -17,7 +17,7 @@ namespace rl::ui {
         , m_text_alignment{ alignment }
     {
         m_font_size = m_theme->label_font_size;
-        if (math::not_equal(m_font_size, text::font::InvalidSize))
+        if (font_size >= text::font::MinValidSize)
             m_font_size = font_size;
 
         if (alignment != Align::None)
@@ -28,7 +28,10 @@ namespace rl::ui {
     {
         Widget::set_theme(theme);
         if (m_theme != nullptr) {
-            m_font_size = m_theme->label_font_size;
+            if (!this->has_font_size_override())
+                m_font_size = m_theme->label_font_size;
+
+            // TODO: handle color overrides?
             m_text_color = m_theme->label_font_color;
         }
     }
@@ -38,37 +41,34 @@ namespace rl::ui {
         if (m_text.empty())
             return ds::dims<f32>::zero();
 
-        const auto context{ m_renderer->context() };
         debug_assert(Align::None != m_text_alignment,
                      "invalid text alignment value assigned in label");
 
-        m_renderer->set_text_properties(m_font, m_font_size, m_text_alignment);
-
+        const auto context{ m_renderer->context() };
         const bool is_fixed_size{ math::not_equal(m_fixed_size.width, 0.0f) &&
                                   m_fixed_size.width > 0.0f };
+
+        m_renderer->set_text_properties(m_font, m_font_size, m_text_alignment);
         if (is_fixed_size || (m_font_autosizing && !m_rect.contained_by(this->parent()->rect()))) {
-            ds::dims<f32> size{ ds::dims<f32>::zero() };
-            ds::rect<f32> bounds{ ds::rect<f32>::zero() };
+            // using TL aligntment since the font size will be computed from the predefined width
+            nvg::set_text_align(context, Align::HLeft | Align::VTop);
 
-            // use TL aligntment if nvg has to compute the actual font size from a predefined width
-            constexpr static Align TOP_LEFT_ALIGNMENT{ Align::HLeft | Align::VTop };
-            nvg::set_text_align(context, TOP_LEFT_ALIGNMENT);
             if (is_fixed_size) {
-                bounds = nvg::text_box_bounds(context, m_rect.pt, m_fixed_size.width, m_text);
-                size = ds::dims{ m_fixed_size.width, bounds.size.height };
-            }
-            else {
-                const ds::rect<f32> prect{ this->parent()->rect() };
-                bounds = nvg::text_box_bounds(context, prect.pt, prect.size.width + 2.0f, m_text);
-                // assert_cond(bounds.contained_by(prect));
-                size = ds::dims{ bounds.size.width, bounds.size.height };
+                const ds::rect<f32> bounds{ nvg::text_box_bounds(
+                    context, m_rect.pt, m_fixed_size.width, m_text) };
+
+                return ds::dims{ m_fixed_size.width, bounds.size.height };
             }
 
-            return size;
+            const ds::rect<f32> prect{ this->parent()->rect() };
+            const ds::rect<f32> bounds{ nvg::text_box_bounds(
+                context, prect.pt, prect.size.width + 2.0f, m_text) };
+
+            return ds::dims{ bounds.size.width, bounds.size.height };
         }
 
         nvg::set_text_align(context, m_text_alignment);
-        const f32 text_width{ nvg::text_bounds(context, ds::point<f32>::zero(), m_text) };
+        const f32 text_width{ nvg::text_bounds(context, ds::point<f32>{}, m_text) };
         return ds::dims{ text_width + 2.0f, m_font_size };
     }
 
@@ -89,14 +89,37 @@ namespace rl::ui {
             nvg::text_box(context, m_rect.pt, m_fixed_size.width + 2.0f, m_text);
         }
         else {
+            // nvg::set_font_size(context, m_theme->tooltip_font_size);
+            // nvg::set_font_face(context, m_theme->tooltip_font_name.data());
+            // nvg::set_text_align(context, Align::HCenter | Align::VMiddle);
+
+            //// header text shadow
+            // nvg::font_blur_(context, 2.0f);
+            // nvg::fill_color(context, m_theme->text_shadow);
+            // nvg::draw_text(
+            //     context,
+            //     ds::point<f32>{
+            //         m_rect.pt.x + (m_rect.size.width / 2.0f),
+            //         m_rect.pt.y + (header_height / 2.0f),
+            //     },
+            //     m_title);
+
+            //// Header text
+            // nvg::font_blur_(context, 0.0f);
+            // nvg::fill_color(context, m_focused ? m_theme->dialog_title_focused
+            //                                    : m_theme->dialog_title_unfocused);
+            // nvg::draw_text(
+            //     context,
+            //     ds::point<f32>{
+            //         m_rect.pt.x + (m_rect.size.width / 2.0f),
+            //         m_rect.pt.y + (header_height / 2.0f) - 1.0f,
+            //     },
+            //     m_title);
+
+            const ds::point<f32> pos{ m_rect.reference_point(m_text_alignment) };
+
             nvg::fill_color(context, m_text_color);
-            // TODO: set as constexpr defautl valye
-            const ds::point<f32>& pos{
-                m_text_alignment == (Align::HLeft | Align::VMiddle)  //
-                    ? m_rect.pt
-                    : m_rect.centroid(),
-            };
-            nvg::set_text_align(context, m_text_alignment);
+            // nvg::set_text_align(context, m_text_alignment);
             nvg::draw_text(context, pos, m_text);
         }
     }

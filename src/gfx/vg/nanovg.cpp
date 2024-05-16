@@ -2827,7 +2827,7 @@ namespace rl::nvg {
         state->font_id = font::get_font_by_name(ctx->fs, font.c_str());
     }
 
-    f32 draw_text(Context* ctx, const ds::point<f32> pos, std::string text)
+    f32 draw_text(Context* ctx, const ds::point<f32> pos, const std::string& text)
     {
         State* state{ detail::get_state(ctx) };
         if (state->font_id == font::INVALID) {
@@ -2837,6 +2837,7 @@ namespace rl::nvg {
 
         f32 scale{ detail::get_font_scale(state) * ctx->device_px_ratio };
         f32 invscale{ 1.0f / scale };
+
         font::set_size(ctx->fs, state->font_size * scale);
         font::set_spacing(ctx->fs, state->letter_spacing * scale);
         font::set_blur(ctx->fs, state->font_blur * scale);
@@ -2868,7 +2869,6 @@ namespace rl::nvg {
                 }
 
                 if (detail::alloc_text_atlas(ctx) == 0) {
-                    // no memory :(
                     debug_assert("allocation for text atlas failed");
                     break;
                 }
@@ -2879,7 +2879,7 @@ namespace rl::nvg {
                 font::text_iter_next(ctx->fs, &iter, &q);
                 if (iter.prev_glyph_index == -1) {
                     // still can not find glyph? font size may be too small or negative
-                    debug_assert("draw_text : failed to find glyph to render");
+                    debug_assert("failed to find glyph to render");
                     break;
                 }
             }
@@ -2920,12 +2920,12 @@ namespace rl::nvg {
         return iter.nextx / scale;
     }
 
-    void text_box(Context* ctx, ds::point<f32> pos, f32 break_row_width, const std::string& text)
+    void text_box(Context* ctx, const ds::point<f32> pos, const f32 break_row_width, const std::string& text)
     {
         return text_box(ctx, pos, break_row_width, std::string_view{ text });
     }
 
-    void text_box(Context* ctx, ds::point<f32> pos, const f32 break_row_width, std::string_view text)
+    void text_box(Context* ctx, ds::point<f32> pos, const f32 break_row_width, const std::string_view text)
     {
         State* state{ detail::get_state(ctx) };
         if (state->font_id == font::INVALID) {

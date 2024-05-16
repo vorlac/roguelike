@@ -19,7 +19,7 @@ if (CLANG_FORMAT_PROGRAM)
     )
 
     set(skip_stb_pattern "src/gfx/stb/stb.*")
-    set(skip_ico_pattern "src/ui/text/icons.*")
+    set(skip_ico_pattern "src/gfx/text/icons.*")
 
     foreach(_src_file ${format_src_list})
         unset(MATCHED_STB)

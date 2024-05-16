@@ -3,6 +3,7 @@
 #include "core/assert.hpp"
 #include "core/event_handler.hpp"
 #include "core/main_window.hpp"
+#include "core/renderer.hpp"
 #include "gfx/gl/instanced_buffer.hpp"
 #include "ui/gui.hpp"
 #include "utils/debug.hpp"
@@ -63,8 +64,7 @@ namespace rl {
         {
             bool ret{ this->setup() };
 
-            constexpr auto test_case{ 1 };
-
+            constexpr auto test_case{ UITest::ScrollDialog };
             if constexpr (test_case == UITest::CanvasLayout) {
                 constexpr auto font_size{ 20.0f };
                 constexpr auto alignment{ Align::VMiddle | Align::HCenter };
@@ -169,11 +169,21 @@ namespace rl {
                 dialog->center();
             }
 
+            // const std::unique_ptr<rl::OpenGLRenderer>& renderer{ m_main_window->glrenderer() };
+            // gl::InstancedVertexBuffer vbo{ renderer->get_viewport() };
+            // vbo.bind_buffers();
+
             m_timer.reset();
             while (!this->should_exit()) {
                 this->handle_events();
                 this->update();
                 this->render();
+
+                // this->handle_events();
+                // this->update();
+                // vbo.update_buffers(renderer->get_viewport());
+                // vbo.draw_triangles();
+                // m_main_window->swap_buffers();
 
                 if constexpr (debug::core::loop_timing_stats)
                     this->print_loop_stats(m_timer.delta());

@@ -35,7 +35,7 @@ namespace rl::ui {
 
     public:
         virtual ds::dims<f32> preferred_size() const override;
-        virtual void set_theme(ui::Theme* theme) override;
+        virtual void set_theme(Theme* theme) override;
         virtual void draw() override;
 
     protected:
@@ -44,6 +44,7 @@ namespace rl::ui {
         bool m_font_autosizing{ false };
         Align m_text_alignment{ Align::HLeft | Align::VMiddle };
         ds::color<f32> m_text_color{ m_theme->label_font_color };
+        ds::color<f32> m_text_outline_color{ m_theme->text_shadow };
         std::function<void()> m_callback{ nullptr };
     };
 }

@@ -59,7 +59,7 @@ namespace rl::ui {
         [[nodiscard]] bool focused() const;
         [[nodiscard]] bool resizable() const;
         [[nodiscard]] bool visible(bool recursive = false) const;
-        [[nodiscard]] bool has_font_size() const;
+        [[nodiscard]] bool has_font_size_override() const;
 
         [[nodiscard]] Mouse::Cursor::ID cursor() const;
         [[nodiscard]] std::string_view tooltip() const;
@@ -148,7 +148,7 @@ namespace rl::ui {
 
         // TODO: move to theme
         f32 m_icon_extra_scale{ 1.0f };
-        f32 m_font_size{ -1.0f };
+        f32 m_font_size{ text::font::InvalidSize };
         f32 m_stretch_factor{ 1.0f };
 
         std::vector<Widget*> m_children{};

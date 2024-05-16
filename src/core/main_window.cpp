@@ -395,6 +395,7 @@ namespace rl {
         return this->swap_buffers();
     }
 
+    [[maybe_unused]]
     bool MainWindow::swap_buffers() const
     {
         return m_gl_renderer->swap_buffers(*this);

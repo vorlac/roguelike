@@ -7,6 +7,7 @@
 #include "utils/io.hpp"
 
 namespace rl {
+    [[maybe_unused]]
     static bool parse_args(const i32 /*argc*/, char** /*argv[]*/)
     {
         // auto args = argparse::ArgumentParser{

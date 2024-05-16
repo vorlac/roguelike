@@ -262,7 +262,7 @@ endif()
 add_custom_command(TARGET ${PROJECT_NAME}
   PRE_BUILD COMMAND
     ${CMAKE_COMMAND} -E create_symlink
-      ${CMAKE_CURRENT_SOURCE_DIR}/src/graphics/gl/shaders
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/gfx/gl/shaders
       $<TARGET_FILE_DIR:${PROJECT_NAME}>/shaders
 )
 

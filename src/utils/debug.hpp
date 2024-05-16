@@ -6,7 +6,7 @@ namespace rl::debug {
     struct ui
     {
         constexpr static bool mouse_interaction{ true };
-        constexpr static bool widget_outlines{ true };
+        constexpr static bool widget_outlines{ false };
 
         constexpr static ds::color<f32> layout_background_color{ 40, 44, 52 };
         constexpr static ds::color<f32> widget_outline_color{ Colors::Blue };

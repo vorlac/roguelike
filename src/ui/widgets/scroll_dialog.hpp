@@ -1,6 +1,5 @@
 #pragma once
 
-#include <memory>
 #include <string>
 #include <string_view>
 #include <tuple>
@@ -30,7 +29,6 @@ namespace rl {
 
             [[nodiscard]] f32 scroll_pos() const;
             [[nodiscard]] f32 header_height() const;
-            [[nodiscard]] Widget* button_panel() const;
             [[nodiscard]] std::string_view title() const;
 
             using interactions_t = std::tuple<Interaction, Component, Side>;
@@ -52,12 +50,13 @@ namespace rl {
             bool m_header_visible{ false };
             bool m_scrollbar_visible{ false };
             f32 m_scrollbar_position{ 0.0f };
-            Widget* m_button_panel{ nullptr };
             Interaction m_enabled_interactions{ Interaction::All };
             Interaction m_active_interactions{ Interaction::None };
             std::string m_title{};
 
         private:
+            BoxLayout<Alignment::Horizontal>* m_titlebar_layout{ nullptr };
+            BoxLayout<Alignment::Horizontal>* m_body_layout{ nullptr };
             constexpr static ds::color<f32> SDScrollbarColor{ 220, 220, 220, 100 };
             constexpr static ds::color<f32> SDScrollbarShadowColor{ 128, 128, 128, 100 };
             constexpr static ds::color<f32> SDScrollGuideColor{ 0, 0, 0, 32 };

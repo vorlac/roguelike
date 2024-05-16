@@ -9,9 +9,59 @@
 #include "utils/conversions.hpp"
 
 namespace rl::ui {
-    std::string_view ScrollableDialog::title() const
+    ScrollableDialog::ScrollableDialog(std::string title, const ds::dims<f32> fixed_size)
+        : Widget{ nullptr }
+        , m_title{ std::move(title) }
     {
-        return m_title;
+        this->set_icon_extra_scale(0.8f);
+        if (fixed_size.valid())
+            Widget::set_size(fixed_size);
+
+        // horizontally aligns title (centered),
+        // minimize, maximize, and close buttons
+        const auto dgtitle{ new Label{ "Dialog Title", 24, Align::HLeft | Align::VMiddle } };
+        const auto min_btn{ new Button{ Icon::WindowMinimize } };
+        const auto max_btn{ new Button{ Icon::WindowMaximize } };
+        const auto cls_btn{ new Button{ Icon::WindowClose } };
+
+        dgtitle->set_expansion(20.0f);
+        min_btn->set_font_size(18.0f);
+        max_btn->set_font_size(18.0f);
+        cls_btn->set_font_size(18.0f);
+
+        m_titlebar_layout = new BoxLayout<Alignment::Horizontal>{
+            "Buttons Horiz",
+            {
+                dgtitle,
+                min_btn,
+                max_btn,
+                cls_btn,
+            },
+        };
+
+        m_titlebar_layout->set_size_policy(SizePolicy::Minimum);
+        m_titlebar_layout->set_margins({ 1 }, { 1 });
+
+        // horizontally aligns the contents panel containing all children, and scrollbar
+        m_body_layout = new BoxLayout<Alignment::Horizontal>{
+            "Body Horiz",
+            {
+                new Label{ "Body", -1.0f, Align::HCenter | Align::VMiddle },
+            },
+        };
+
+        m_body_layout->set_margins({ 2.0f }, { 2.0f });
+
+        // vertically aligns titlebar and dialog body
+        const auto root_layout{ new BoxLayout<Alignment::Vertical>{ "Dialog Root Vert" } };
+        root_layout->set_margins({ 2.0f }, { 2.0f });
+
+        root_layout->set_size_policy(SizePolicy::Maximum);
+        root_layout->add_nested_layout(m_titlebar_layout);
+        root_layout->add_nested_layout(m_body_layout);
+
+        this->assign_layout(root_layout);
+        Widget::perform_layout();
     }
 
     std::tuple<Interaction, Component, Side> ScrollableDialog::check_interaction(const ds::point<f32> pt) const
@@ -85,10 +135,17 @@ namespace rl::ui {
         return ret;
     }
 
+    std::string_view ScrollableDialog::title() const
+    {
+        return m_title;
+    }
+
     f32 ScrollableDialog::header_height() const
     {
-        if (!m_title.empty())
-            return m_theme->dialog_header_height;
+        auto titlebar_rect{ m_titlebar_layout->rect() };
+        if (titlebar_rect.valid() && !m_title.empty())
+            // TODO: use margin values instead of 4.0f
+            return m_body_layout->rect().top() + 4.0f;
 
         return 0.0f;
     }
@@ -126,11 +183,6 @@ namespace rl::ui {
             return false;
 
         return (m_active_interactions & inter) != 0;
-    }
-
-    Widget* ScrollableDialog::button_panel() const
-    {
-        return nullptr;
     }
 
     void ScrollableDialog::set_title(std::string title)
@@ -186,8 +238,8 @@ namespace rl::ui {
 
         m_renderer->scoped_draw([&] {
             m_renderer->draw_path(false, [&] {
-                nvg::rounded_rect(context, m_rect.pt.x, m_rect.pt.y, m_rect.size.width,
-                                  m_rect.size.height, corner_radius);
+                m_renderer->draw_rounded_rect(m_rect, corner_radius);
+                nvg::rounded_rect(context, m_rect.pt.x, m_rect.pt.y, m_rect.size.width, m_rect.size.height, corner_radius);
                 nvg::fill_color(context, m_mouse_focus ? m_theme->dialog_fill_focused
                                                        : m_theme->dialog_fill_unfocused);
                 nvg::fill(context);
@@ -216,7 +268,7 @@ namespace rl::ui {
                 });
             });
 
-            if (!m_title.empty()) {
+            if (header_height > 0.0f) {
                 m_renderer->draw_path(false, [&] {
                     const nvg::PaintStyle header_style{
                         nvg::linear_gradient(
@@ -227,7 +279,8 @@ namespace rl::ui {
                     m_renderer->draw_rounded_rect(
                         ds::rect<f32>{
                             ds::point<f32>{ m_rect.pt },
-                            ds::dims<f32>{ m_rect.size.width, header_height } },
+                            ds::dims<f32>{ m_rect.size.width, header_height },
+                        },
                         corner_radius);
 
                     m_renderer->fill_current_path(header_style);
@@ -254,32 +307,32 @@ namespace rl::ui {
                     nvg::stroke(context);
                 });
 
-                nvg::set_font_size(context, m_theme->tooltip_font_size);
-                nvg::set_font_face(context, m_theme->tooltip_font_name.data());
-                nvg::set_text_align(context, Align::HCenter | Align::VMiddle);
+                // nvg::set_font_size(context, m_theme->tooltip_font_size);
+                // nvg::set_font_face(context, m_theme->tooltip_font_name.data());
+                // nvg::set_text_align(context, Align::HCenter | Align::VMiddle);
 
-                // header text shadow
-                nvg::font_blur_(context, 2.0f);
-                nvg::fill_color(context, m_theme->text_shadow);
-                nvg::draw_text(
-                    context,
-                    ds::point<f32>{
-                        m_rect.pt.x + (m_rect.size.width / 2.0f),
-                        m_rect.pt.y + (header_height / 2.0f),
-                    },
-                    m_title);
+                //// header text shadow
+                // nvg::font_blur_(context, 2.0f);
+                // nvg::fill_color(context, m_theme->text_shadow);
+                // nvg::draw_text(
+                //     context,
+                //     ds::point<f32>{
+                //         m_rect.pt.x + (m_rect.size.width / 2.0f),
+                //         m_rect.pt.y + (header_height / 2.0f),
+                //     },
+                //     m_title);
 
-                // Header text
-                nvg::font_blur_(context, 0.0f);
-                nvg::fill_color(context, m_focused ? m_theme->dialog_title_focused
-                                                   : m_theme->dialog_title_unfocused);
-                nvg::draw_text(
-                    context,
-                    ds::point<f32>{
-                        m_rect.pt.x + (m_rect.size.width / 2.0f),
-                        m_rect.pt.y + (header_height / 2.0f) - 1.0f,
-                    },
-                    m_title);
+                //// Header text
+                // nvg::font_blur_(context, 0.0f);
+                // nvg::fill_color(context, m_focused ? m_theme->dialog_title_focused
+                //                                    : m_theme->dialog_title_unfocused);
+                // nvg::draw_text(
+                //     context,
+                //     ds::point<f32>{
+                //         m_rect.pt.x + (m_rect.size.width / 2.0f),
+                //         m_rect.pt.y + (header_height / 2.0f) - 1.0f,
+                //     },
+                //     m_title);
             }
         });
 
