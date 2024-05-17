@@ -36,9 +36,9 @@ include(submodule-init)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_EXTENSIONS ON)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_COLOR_DIAGNOSTICS ON)
 set(CMAKE_DIRECTORY_LABELS ON)
+set(EXPORT_COMPILE_COMMANDS ON)
 
 project(roguelike
   LANGUAGES
@@ -136,7 +136,7 @@ target_compile_options(${PROJECT_NAME}
         /utf-8
         /EHsc
         /nologo
-        /arch:AVX2
+        #/arch:AVX2
         /fp:fast
 
         $<$<CONFIG:Debug>:

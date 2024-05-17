@@ -120,7 +120,7 @@ namespace rl::ui {
         return m_container->draw_mouse_intersection(local_pos);
     }
 
-    bool VerticalScrollPanel::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb)
+    bool VerticalScrollPanel::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb, ds::point<f32>)
     {
         m_prev_click_location = Component::None;
         const ds::point<f32> mouse_pos{ mouse.pos() };

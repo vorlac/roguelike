@@ -56,7 +56,7 @@ namespace rl::ui {
 
     void Dialog::draw()
     {
-        auto&& context{ m_renderer->context() };
+        const auto context{ m_renderer->context() };
         const f32 drop_shadow_size{ m_theme->dialog_drop_shadow_size };
         const f32 corner_radius{ m_theme->dialog_corner_radius };
         const f32 header_height{ this->header_height() };
@@ -104,7 +104,7 @@ namespace rl::ui {
                         },
                         corner_radius);
 
-                    m_renderer->fill_current_path(std::move(header_style));
+                    m_renderer->fill_current_path(header_style);
                 });
 
                 m_renderer->draw_path(false, [&] {
@@ -259,7 +259,7 @@ namespace rl::ui {
         return false;
     }
 
-    bool Dialog::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb)
+    bool Dialog::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb, ds::point<f32>)
     {
         if (Widget::on_mouse_button_pressed(mouse, kb))
             return true;

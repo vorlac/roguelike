@@ -58,7 +58,7 @@ namespace rl::ui {
     public:
         virtual bool on_mouse_entered(const Mouse& mouse) override;
         virtual bool on_mouse_exited(const Mouse& mouse) override;
-        virtual bool on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb) override;
+        virtual bool on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb, ds::point<f32> local_pos = {}) override;
         virtual bool on_mouse_button_released(const Mouse& mouse, const Keyboard& kb) override;
 
     public:

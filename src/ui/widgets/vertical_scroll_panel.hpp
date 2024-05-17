@@ -37,7 +37,7 @@ namespace rl::ui {
         Widget* container() const;
 
     public:
-        virtual bool on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb) override;
+        virtual bool on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb, ds::point<f32> local_pos = {}) override;
         virtual bool on_mouse_button_released(const Mouse& mouse, const Keyboard& kb) override;
         virtual bool on_mouse_move(const Mouse& mouse, const Keyboard& kb) override;
         virtual bool on_mouse_scroll(const Mouse& mouse, const Keyboard& kb) override;

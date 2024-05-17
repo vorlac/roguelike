@@ -4,6 +4,8 @@
 #include <tuple>
 #include <vector>
 
+#include "gfx/vg/nanovg_state.hpp"
+#include "panel.hpp"
 #include "ui/canvas.hpp"
 #include "ui/widgets/scroll_dialog.hpp"
 #include "utils/conversions.hpp"
@@ -40,27 +42,33 @@ namespace rl::ui {
         };
 
         m_titlebar_layout->set_size_policy(SizePolicy::Minimum);
-        m_titlebar_layout->set_margins({ 1 }, { 1 });
+        m_titlebar_layout->set_margins({ 0.0f }, { 1.0f });
+        m_titlebar_layout->set_spacing(2.0f);
 
-        // horizontally aligns the contents panel containing all children, and scrollbar
+        // horizontally aligns the contents panel
+        // containing all children, and scrollbar
+        auto scrollbar_panel{ new Label{ "" } };
+        scrollbar_panel->set_fixed_width(250.0f);
+        scrollbar_panel->set_expansion(0.025f);
         m_body_layout = new BoxLayout<Alignment::Horizontal>{
             "Body Horiz",
             {
                 new Label{ "Body", -1.0f, Align::HCenter | Align::VMiddle },
+                scrollbar_panel,
             },
         };
 
-        m_body_layout->set_margins({ 2.0f }, { 2.0f });
+        m_body_layout->set_margins({ 0.0f }, { 1.0f });
+        m_body_layout->set_spacing(0.0f);
 
         // vertically aligns titlebar and dialog body
-        const auto root_layout{ new BoxLayout<Alignment::Vertical>{ "Dialog Root Vert" } };
-        root_layout->set_margins({ 2.0f }, { 2.0f });
+        m_root_layout = new BoxLayout<Alignment::Vertical>{ "Dialog Root Vert" };
+        m_root_layout->set_margins({ 0.0f }, { 1.0f });
+        m_root_layout->set_size_policy(SizePolicy::Maximum);
+        m_root_layout->add_nested_layout(m_titlebar_layout);
+        m_root_layout->add_nested_layout(m_body_layout);
 
-        root_layout->set_size_policy(SizePolicy::Maximum);
-        root_layout->add_nested_layout(m_titlebar_layout);
-        root_layout->add_nested_layout(m_body_layout);
-
-        this->assign_layout(root_layout);
+        this->assign_layout(m_root_layout);
         Widget::perform_layout();
     }
 
@@ -142,7 +150,7 @@ namespace rl::ui {
 
     f32 ScrollableDialog::header_height() const
     {
-        auto titlebar_rect{ m_titlebar_layout->rect() };
+        const auto titlebar_rect{ m_titlebar_layout->rect() };
         if (titlebar_rect.valid() && !m_title.empty())
             // TODO: use margin values instead of 4.0f
             return m_body_layout->rect().top() + 4.0f;
@@ -209,22 +217,60 @@ namespace rl::ui {
         dynamic_cast<Canvas*>(owner)->dispose_dialog(this);
     }
 
-    bool ScrollableDialog::on_mouse_button_pressed(const Mouse&, const Keyboard&)
+    bool ScrollableDialog::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb, ds::point<f32>)
     {
-        return false;
+        if (Widget::on_mouse_button_pressed(mouse, kb))
+            return true;
+
+        if ((m_enabled_interactions & Interaction::Move) == 0)
+            return false;
+        if (mouse.button_pressed() != Mouse::Button::Left)
+            return false;
+
+        {
+            LocalTransform dialog_transform{ this };
+            LocalTransform root_transform{ m_root_layout };
+            LocalTransform titlebar_transform{ m_titlebar_layout };
+
+            const ds::point<f32> local_mouse_pos{ mouse.pos() - LocalTransform::absolute_pos };
+            if (!m_titlebar_layout->contains(local_mouse_pos))
+                return false;
+        }
+
+        m_active_interactions |= Interaction::Move;
+        return true;
     }
 
-    bool ScrollableDialog::on_mouse_button_released(const Mouse&, const Keyboard&)
+    bool ScrollableDialog::on_mouse_drag(const Mouse& mouse, const Keyboard& kb)
     {
+        if (Widget::on_mouse_drag(mouse, kb))
+            return true;
+
+        if ((m_enabled_interactions & Interaction::Move) == 0)
+            return false;
+        if (!mouse.is_button_held(Mouse::Button::Left))
+            return false;
+
+        m_rect.pt += mouse.pos_delta();
+        return true;
+    }
+
+    bool ScrollableDialog::on_mouse_button_released(const Mouse& mouse, const Keyboard& kb)
+    {
+        if (Widget::on_mouse_button_released(mouse, kb))
+            return true;
+
+        if ((m_enabled_interactions & (Interaction::Move | Interaction::Scroll)) == 0)
+            return false;
+        if (mouse.button_released() != Mouse::Button::Left)
+            return false;
+
+        m_active_interactions &= ~Interaction::Move;
+        m_active_interactions &= ~Interaction::Scroll;
         return false;
     }
 
     bool ScrollableDialog::on_mouse_scroll(const Mouse&, const Keyboard&)
-    {
-        return false;
-    }
-
-    bool ScrollableDialog::on_mouse_drag(const Mouse&, const Keyboard&)
     {
         return false;
     }
@@ -306,33 +352,6 @@ namespace rl::ui {
                     nvg::stroke_color(context, m_theme->dialog_header_sep_bot);
                     nvg::stroke(context);
                 });
-
-                // nvg::set_font_size(context, m_theme->tooltip_font_size);
-                // nvg::set_font_face(context, m_theme->tooltip_font_name.data());
-                // nvg::set_text_align(context, Align::HCenter | Align::VMiddle);
-
-                //// header text shadow
-                // nvg::font_blur_(context, 2.0f);
-                // nvg::fill_color(context, m_theme->text_shadow);
-                // nvg::draw_text(
-                //     context,
-                //     ds::point<f32>{
-                //         m_rect.pt.x + (m_rect.size.width / 2.0f),
-                //         m_rect.pt.y + (header_height / 2.0f),
-                //     },
-                //     m_title);
-
-                //// Header text
-                // nvg::font_blur_(context, 0.0f);
-                // nvg::fill_color(context, m_focused ? m_theme->dialog_title_focused
-                //                                    : m_theme->dialog_title_unfocused);
-                // nvg::draw_text(
-                //     context,
-                //     ds::point<f32>{
-                //         m_rect.pt.x + (m_rect.size.width / 2.0f),
-                //         m_rect.pt.y + (header_height / 2.0f) - 1.0f,
-                //     },
-                //     m_title);
             }
         });
 
@@ -347,5 +366,4 @@ namespace rl::ui {
     void ScrollableDialog::refresh_relative_placement()
     {
     }
-
 }

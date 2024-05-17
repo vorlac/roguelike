@@ -56,7 +56,7 @@ namespace rl::ui {
         virtual bool on_mouse_entered(const Mouse& mouse) override;
         virtual bool on_mouse_exited(const Mouse& mouse) override;
 
-        virtual bool on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb) override;
+        virtual bool on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb, ds::point<f32> local_pos = {}) override;
         virtual bool on_mouse_button_released(const Mouse& mouse, const Keyboard& kb) override;
 
         virtual bool on_mouse_move(const Mouse& mouse, const Keyboard& kb) override;
@@ -188,7 +188,7 @@ namespace rl::ui {
             set_max_value(max_value);
         }
 
-        virtual bool on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb) override
+        virtual bool on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb, ds::point<f32> local_pos) override
         {
             if (m_editable || m_spinnable)
                 m_mouse_down_value = this->value();
@@ -335,7 +335,7 @@ namespace rl::ui {
             set_max_value(max_value);
         }
 
-        virtual bool on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb) override
+        virtual bool on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb, ds::point<f32> local_pos) override
         {
             if (m_editable || m_spinnable)
                 m_mouse_down_value = this->value();

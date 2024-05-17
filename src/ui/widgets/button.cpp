@@ -260,7 +260,7 @@ namespace rl::ui {
         return false;
     }
 
-    bool Button::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb)
+    bool Button::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb, ds::point<f32>)
     {
         Widget::on_mouse_button_pressed(mouse, kb);
         return handle_mouse_button_event(mouse.pos(), mouse.button_pressed(),

@@ -37,7 +37,7 @@ namespace rl {
             [[nodiscard]] bool mode_active(Interaction inter) const;
 
         public:
-            virtual bool on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb) override;
+            virtual bool on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb, ds::point<f32> local_pos = {}) override;
             virtual bool on_mouse_button_released(const Mouse& mouse, const Keyboard& kb) override;
             virtual bool on_mouse_scroll(const Mouse& mouse, const Keyboard& kb) override;
             virtual bool on_mouse_drag(const Mouse& mouse, const Keyboard& kb) override;
@@ -57,6 +57,8 @@ namespace rl {
         private:
             BoxLayout<Alignment::Horizontal>* m_titlebar_layout{ nullptr };
             BoxLayout<Alignment::Horizontal>* m_body_layout{ nullptr };
+            BoxLayout<Alignment::Vertical>* m_root_layout{ nullptr };
+
             constexpr static ds::color<f32> SDScrollbarColor{ 220, 220, 220, 100 };
             constexpr static ds::color<f32> SDScrollbarShadowColor{ 128, 128, 128, 100 };
             constexpr static ds::color<f32> SDScrollGuideColor{ 0, 0, 0, 32 };

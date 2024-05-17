@@ -65,7 +65,7 @@ namespace rl::ui {
         m_toggled_callback = toggled_callback;
     }
 
-    bool CheckBox::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb)
+    bool CheckBox::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb, ds::point<f32>)
     {
         Widget::on_mouse_button_pressed(mouse, kb);
         if (m_enabled && mouse.is_button_pressed(Mouse::Button::Left)) {

@@ -33,6 +33,7 @@ namespace rl::ui {
 
             // TODO: handle color overrides?
             m_text_color = m_theme->label_font_color;
+            m_text_outline_color = m_theme->text_shadow_color;
         }
     }
 
@@ -78,49 +79,26 @@ namespace rl::ui {
 
         m_renderer->set_text_properties(m_font, m_font_size, m_text_alignment);
 
-        auto context{ m_renderer->context() };
+        const auto context{ m_renderer->context() };
         if (math::not_equal(m_fixed_size.width, 0.0f) && m_fixed_size.width > 0.0f) {
-            // TODO: clean this up
-            // use TL aligntment if nvg has to compute the actual font size from a predefined width
-            constexpr static Align TOP_LEFT_ALIGNMENT{ Align::HLeft | Align::VTop };
-
+            // use TL aligntment if nvg has to compute
+            // the font size from a predefined width
             nvg::fill_color(context, m_text_color);
-            nvg::set_text_align(context, TOP_LEFT_ALIGNMENT);
+            nvg::set_text_align(context, Align::HLeft | Align::VTop);
             nvg::text_box(context, m_rect.pt, m_fixed_size.width + 2.0f, m_text);
         }
         else {
-            // nvg::set_font_size(context, m_theme->tooltip_font_size);
-            // nvg::set_font_face(context, m_theme->tooltip_font_name.data());
-            // nvg::set_text_align(context, Align::HCenter | Align::VMiddle);
-
-            //// header text shadow
-            // nvg::font_blur_(context, 2.0f);
-            // nvg::fill_color(context, m_theme->text_shadow);
-            // nvg::draw_text(
-            //     context,
-            //     ds::point<f32>{
-            //         m_rect.pt.x + (m_rect.size.width / 2.0f),
-            //         m_rect.pt.y + (header_height / 2.0f),
-            //     },
-            //     m_title);
-
-            //// Header text
-            // nvg::font_blur_(context, 0.0f);
-            // nvg::fill_color(context, m_focused ? m_theme->dialog_title_focused
-            //                                    : m_theme->dialog_title_unfocused);
-            // nvg::draw_text(
-            //     context,
-            //     ds::point<f32>{
-            //         m_rect.pt.x + (m_rect.size.width / 2.0f),
-            //         m_rect.pt.y + (header_height / 2.0f) - 1.0f,
-            //     },
-            //     m_title);
-
             const ds::point<f32> pos{ m_rect.reference_point(m_text_alignment) };
 
+            // text shadow
+            nvg::font_blur_(context, 5.0f);
+            nvg::fill_color(context, m_text_outline_color);
+            nvg::draw_text(context, pos + 2.0f, m_text);
+
+            // text, slightly offset from shadow pos
+            nvg::font_blur_(context, 0.0f);
             nvg::fill_color(context, m_text_color);
-            // nvg::set_text_align(context, m_text_alignment);
-            nvg::draw_text(context, pos, m_text);
+            nvg::draw_text(context, pos + 1.0f, m_text);
         }
     }
 

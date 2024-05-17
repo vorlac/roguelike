@@ -429,7 +429,7 @@ namespace rl::ui {
         return true;
     }
 
-    bool TextBox::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb)
+    bool TextBox::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb, ds::point<f32>)
     {
         auto&& mouse_pos{ mouse.pos() };
 

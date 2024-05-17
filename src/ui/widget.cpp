@@ -337,7 +337,7 @@ namespace rl::ui {
         return false;
     }
 
-    bool Widget::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb)
+    bool Widget::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb, ds::point<f32>)
     {
         LocalTransform transform{ this };
         const ds::point<f32> local_mouse_pos{ mouse.pos() - LocalTransform::absolute_pos };
@@ -346,7 +346,7 @@ namespace rl::ui {
                 continue;
             if (!child->contains(local_mouse_pos))
                 continue;
-            if (!child->on_mouse_button_pressed(mouse, kb))
+            if (!child->on_mouse_button_pressed(mouse, kb, local_mouse_pos))
                 continue;
 
             return true;

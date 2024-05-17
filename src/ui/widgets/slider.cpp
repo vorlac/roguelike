@@ -99,7 +99,7 @@ namespace rl::ui {
         return true;
     }
 
-    bool Slider::on_mouse_button_pressed(const Mouse& mouse, const Keyboard&)
+    bool Slider::on_mouse_button_pressed(const Mouse& mouse, const Keyboard&, ds::point<f32>)
     {
         if (!m_enabled)
             return false;

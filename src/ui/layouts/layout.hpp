@@ -77,6 +77,11 @@ namespace rl::ui {
             this->set_outer_margin(outer);
         }
 
+        void set_spacing(const f32 spacing)
+        {
+            m_spacing = spacing;
+        }
+
         [[nodiscard]]
         auto widgets() const
         {
@@ -105,6 +110,12 @@ namespace rl::ui {
         ds::margin<f32> inner_margin() const
         {
             return m_inner_margin;
+        }
+
+        [[nodiscard]]
+        f32 spacing() const
+        {
+            return m_spacing;
         }
 
     public:

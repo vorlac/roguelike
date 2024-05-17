@@ -50,7 +50,7 @@ namespace rl::ui {
         ds::color<f32> icon_color{ Colors::LightGrey };
 
         std::string_view label_font_name{ text::font::style::Sans };
-        ds::color<f32> label_font_color{ Colors::White };
+        ds::color<f32> label_font_color{ Colors::LightGrey };
 
         f32 button_font_size{ 24.0f };
         f32 button_corner_radius{ 2.5f };

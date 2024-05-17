@@ -243,3 +243,74 @@ namespace rl::bench {
         });
     }
 }
+
+#include <cmath>
+#include <iomanip>
+#include <iostream>
+#include <vector>
+
+namespace rl::circular_nums {
+    std::vector<int> primes(int n)
+    {
+        std::vector<int> primes;
+        for (int i = 2; i < n; i++) {
+            bool isPrime = true;
+            for (int j = 2; j < i; j++) {
+                if (i % j == 0) {
+                    isPrime = false;
+                    break;
+                }
+            }
+            if (isPrime) {
+                primes.push_back(i);
+            }
+        }
+        return primes;
+    }
+
+    bool check(std::string_view a, std::string_view b)
+    {
+        for (int i = 0; i < a.size(); i++) {
+            bool found = true;
+            for (int j = 0; j < a.size(); j++) {
+                if (a[j] != b[(i + j) % a.size()]) {
+                    found = false;
+                    break;
+                }
+            }
+            if (found) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    bool isCyclic(long long n)
+    {
+        int length = std::log10(n);
+        std::string nStr = std::to_string(n * length);
+        for (int i = length - 1; i > 0; i--) {
+            std::string a = std::to_string(n * i);
+            while (a.size() != nStr.size())
+                a = "0" + a;
+            // std::cout << nStr.size() - a.size() << " ";
+            // auto b = std::string(nStr.size() - a.size(), '0');
+            if (!check(nStr, a)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    int solution()
+    {
+        for (auto prime : primes(22)) {
+            long double cyclic = (std::pow((long double)10, prime - 1) - 1) / prime;
+            int length = std::log10(cyclic);
+            if (std::abs(cyclic - std::round(cyclic)) < 0.001 && isCyclic(std::round(cyclic))) {
+                std::string cyclicStr = std::to_string((long)std::round(cyclic));
+                std::cout << cyclicStr << std::endl;
+            }
+        }
+    }
+}

@@ -17,6 +17,7 @@ namespace rl {
         Dock      = 1 << 4,  // dock to a side of the screen
         Merge     = 1 << 5,  // merge dialog into another as tabs
         Modal     = 1 << 6,  // blocks all events outside of scope
+        Scroll    = 1 << 7,  // being actively or can be scrolled
         All       = 0x00FF,  // All Interactions Modes
     };
 

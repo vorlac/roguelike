@@ -80,7 +80,7 @@ namespace rl::ui {
         return true;
     }
 
-    bool ImagePanel::on_mouse_button_pressed(const Mouse& mouse, const Keyboard&)
+    bool ImagePanel::on_mouse_button_pressed(const Mouse& mouse, const Keyboard&, ds::point<f32>)
     {
         const i32 index{ this->index_for_position(mouse.pos()) };
         if (index >= 0 && index < static_cast<i32>(m_images.size()) && m_callback != nullptr)

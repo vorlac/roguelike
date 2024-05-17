@@ -106,7 +106,7 @@ namespace rl::ui {
         virtual bool on_mouse_entered(const Mouse& mouse);
         virtual bool on_mouse_exited(const Mouse& mouse);
         virtual bool on_mouse_scroll(const Mouse& mouse, const Keyboard& kb);
-        virtual bool on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb);
+        virtual bool on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb, ds::point<f32> local_pos = {});
         virtual bool on_mouse_button_released(const Mouse& mouse, const Keyboard& kb);
         virtual bool on_mouse_move(const Mouse& mouse, const Keyboard& kb);
         virtual bool on_mouse_drag(const Mouse& mouse, const Keyboard& kb);
