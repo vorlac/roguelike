@@ -18,28 +18,16 @@ namespace rl {
     class OpenGLRenderer
     {
     public:
-        struct Properties : std::bitset<32>
-        {
-            using type = SDL3::SDL_RendererFlags;
-
-            enum Flag : std::underlying_type_t<type> {
-                None = 0,
-                VSync = SDL3::SDL_RENDERER_PRESENTVSYNC,
-            };
-        };
-
         struct BlendMode
         {
             using type = SDL3::SDL_BlendMode;
-            constexpr static auto None = SDL3::SDL_BLENDMODE_NONE;
-            constexpr static auto Blend = SDL3::SDL_BLENDMODE_BLEND;
-            constexpr static auto Add = SDL3::SDL_BLENDMODE_ADD;
-            constexpr static auto Mod = SDL3::SDL_BLENDMODE_MOD;
-            constexpr static auto Mul = SDL3::SDL_BLENDMODE_MUL;
-            constexpr static auto Invalid = SDL3::SDL_BLENDMODE_INVALID;
+            constexpr static auto None = SDL_BLENDMODE_NONE;
+            constexpr static auto Blend = SDL_BLENDMODE_BLEND;
+            constexpr static auto Add = SDL_BLENDMODE_ADD;
+            constexpr static auto Mod = SDL_BLENDMODE_MOD;
+            constexpr static auto Mul = SDL_BLENDMODE_MUL;
+            constexpr static auto Invalid = SDL_BLENDMODE_INVALID;
         };
-
-        constexpr static OpenGLRenderer::Properties DefaultProperties{ Properties::None };
 
     public:
         explicit OpenGLRenderer() = delete;
@@ -50,8 +38,7 @@ namespace rl {
 
     public:
         explicit OpenGLRenderer(
-            MainWindow& window,
-            OpenGLRenderer::Properties flags = OpenGLRenderer::DefaultProperties);
+            MainWindow& window);
 
         [[nodiscard]] SDL3::SDL_GLContext gl_context() const;
         [[nodiscard]] ds::dims<i32> get_output_size() const;
@@ -67,7 +54,6 @@ namespace rl {
     private:
         // TODO: move to style configs
         constexpr static ds::color m_bg_color{ rl::Colors::Background };
-        Properties m_properties{ OpenGLRenderer::DefaultProperties };
         SDL3::SDL_GLContext m_sdl_glcontext{ nullptr };
     };
 }

@@ -45,9 +45,8 @@ namespace rl {
         }
     }
 
-    OpenGLRenderer::OpenGLRenderer(MainWindow& window, const OpenGLRenderer::Properties flags)
-        : m_properties{ flags }
-        , m_sdl_glcontext{ detail::create_opengl_context(window.sdl_handle()) }
+    OpenGLRenderer::OpenGLRenderer(MainWindow& window)
+        : m_sdl_glcontext{ detail::create_opengl_context(window.sdl_handle()) }
     {
         if (m_sdl_glcontext != nullptr) {
             sdl_assert(m_sdl_glcontext != nullptr, "failed to create renderer");

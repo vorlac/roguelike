@@ -23,14 +23,14 @@ namespace rl {
         struct Subsystem
         {
             enum ID : u16_fast {
-                Timer = SDL3::SDL_INIT_TIMER,
-                Audio = SDL3::SDL_INIT_AUDIO,
-                Video = SDL3::SDL_INIT_VIDEO,
-                Joystick = SDL3::SDL_INIT_JOYSTICK,
-                Haptic = SDL3::SDL_INIT_HAPTIC,
-                Gamepad = SDL3::SDL_INIT_GAMEPAD,
-                Events = SDL3::SDL_INIT_EVENTS,
-                Sensor = SDL3::SDL_INIT_SENSOR,
+                Timer = SDL_INIT_TIMER,
+                Audio = SDL_INIT_AUDIO,
+                Video = SDL_INIT_VIDEO,
+                Joystick = SDL_INIT_JOYSTICK,
+                Haptic = SDL_INIT_HAPTIC,
+                Gamepad = SDL_INIT_GAMEPAD,
+                Events = SDL_INIT_EVENTS,
+                Sensor = SDL_INIT_SENSOR,
                 All = Timer | Audio | Video | Joystick | Haptic | Gamepad | Events | Sensor
             };
         };
