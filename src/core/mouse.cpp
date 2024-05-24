@@ -42,18 +42,27 @@ namespace rl {
     {
         switch (side) {
             case Side::Top:
+                [[fallthrough]];
             case Side::Bottom:
                 return this->set_cursor(Mouse::Cursor::SizeNS);
+
             case Side::Left:
+                [[fallthrough]];
             case Side::Right:
                 return this->set_cursor(Mouse::Cursor::SizeWE);
+
             case Side::TopRight:
+                [[fallthrough]];
             case Side::BottomLeft:
                 return this->set_cursor(Mouse::Cursor::SizeNESW);
+
             case Side::TopLeft:
+                [[fallthrough]];
             case Side::BottomRight:
                 return this->set_cursor(Mouse::Cursor::SizeNWSE);
+
             case Side::None:
+                [[fallthrough]];
             default:
                 return this->set_cursor(Mouse::Cursor::Arrow);
         }

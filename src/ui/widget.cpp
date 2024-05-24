@@ -289,11 +289,11 @@ namespace rl::ui {
             if (!child->visible())
                 continue;
 
-            if (child->resizable() && child->resize_rect().contains(pt - m_rect.pt)) {
+            if (child->resizable() && child->resize_rect().contains(local_mouse_pos)) {
                 // if the child is resizable and the larger resize rect (for grab points)
                 // contains the mouse, but the smaller inner rect doesn't then favor resizing
                 // over recursively going deeper into the tree of widgets for more children
-                if (!child->rect().expanded(-RESIZE_GRAB_BUFFER).contains(pt - m_rect.pt))
+                if (!child->rect().expanded(-RESIZE_GRAB_BUFFER).contains(local_mouse_pos))
                     return child;
 
                 // otherwise continue searching for a better match
@@ -302,7 +302,7 @@ namespace rl::ui {
 
             // recurse deeper checking each child
             // for containmane with the point
-            if (child->contains(pt - m_rect.pt))
+            if (child->contains(local_mouse_pos))
                 return child->find_widget(local_mouse_pos);
         }
 
@@ -397,7 +397,7 @@ namespace rl::ui {
         bool handled{ false };
 
         LocalTransform transform{ this };
-        const ds::point<f32> local_mouse_pos{ mouse.pos() - LocalTransform::absolute_pos };
+        const ds::point<f32> local_mouse_pos{ mouse.pos() - this->abs_position() };
         for (Widget* child : m_children | std::views::reverse) {
             if (!child->visible())
                 continue;

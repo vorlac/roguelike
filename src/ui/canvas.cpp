@@ -447,8 +447,7 @@ namespace rl::ui {
             // represented where the root (Canvas) is the last item in the list, if a
             // ScrollableDialog is focused, then it will always be the 2nd to last item in the
             // m_focus_path vector.
-            ScrollableDialog* dialog{ dynamic_cast<ScrollableDialog*>(
-                m_focus_path[m_focus_path.size() - 2]) };
+            ScrollableDialog* dialog{ dynamic_cast<ScrollableDialog*>(m_focus_path[m_focus_path.size() - 2]) };
             if (dialog != nullptr) {
                 m_active_dialog = dialog;
                 auto [mode, component, grab_pos] = dialog->check_interaction(mouse_pos);
@@ -468,16 +467,24 @@ namespace rl::ui {
                     const bool resize_btn_pressed{ mouse.is_button_pressed(Mouse::Button::Left) };
                     if (resize_btn_pressed && m_active_dialog != nullptr) {
                         auto [mode, comp, grab_pos] = m_active_dialog->check_interaction(mouse_pos);
-                        if (grab_pos != Side::None) {
+                        m_active_dialog->set_resize_grab_pos(grab_pos);
+                        if (grab_pos == Side::None)
+                            m_active_dialog->set_mode(DialogMode::None);
+                        else {
                             m_mouse_mode = MouseMode::Resize;
+                            m_active_dialog->set_mode(DialogMode::Resize);
                             m_redraw |= m_active_dialog->on_mouse_button_pressed(mouse, kb);
                         }
                     }
 
                     if (!m_redraw && drag_btn_pressed) {
                         m_mouse_mode = MouseMode::Drag;
+                        m_active_dialog->set_mode(DialogMode::Move);
                         m_redraw |= m_active_dialog->on_mouse_button_pressed(mouse, kb);
                     }
+
+                    if (!m_redraw && m_active_dialog != nullptr)
+                        m_active_dialog->set_mode(DialogMode::None);
                 }
 
                 break;

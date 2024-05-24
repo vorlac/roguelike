@@ -59,18 +59,18 @@ namespace rl::ui {
         f32 m_scrollbar_pos{ 0.0f };
         bool m_update_layout{ false };
 
-        constexpr static inline ds::color<f32> ScrollbarColor{ 220, 220, 220, 100 };
-        constexpr static inline ds::color<f32> ScrollbarShadowColor{ 128, 128, 128, 100 };
-        constexpr static inline ds::color<f32> ScrollGuideColor{ 0, 0, 0, 32 };
-        constexpr static inline ds::color<f32> ScrollGuideShadowColor{ 0, 0, 0, 92 };
+        constexpr static ds::color<f32> ScrollbarColor{ 220, 220, 220, 100 };
+        constexpr static ds::color<f32> ScrollbarShadowColor{ 128, 128, 128, 100 };
+        constexpr static ds::color<f32> ScrollGuideColor{ 0, 0, 0, 32 };
+        constexpr static ds::color<f32> ScrollGuideShadowColor{ 0, 0, 0, 92 };
 
-        constexpr static inline f32 ScrollBarBackgroundRadius{ 3.0f };
-        constexpr static inline f32 ScrollBarCornerRadius{ 2.0f };
-        constexpr static inline f32 ShadowBlur{ 4.0f };
-        constexpr static inline f32 ScrollbarWidth{ 12.0f };
-        constexpr static inline f32 ScrollbarBorder{ 1.0f };
-        constexpr static inline f32 OutlineSize{ 1.0f };
-        constexpr static inline f32 Margin{ 4.0f };
+        constexpr static f32 ScrollBarBackgroundRadius{ 3.0f };
+        constexpr static f32 ScrollBarCornerRadius{ 2.0f };
+        constexpr static f32 ShadowBlur{ 4.0f };
+        constexpr static f32 ScrollbarWidth{ 12.0f };
+        constexpr static f32 ScrollbarBorder{ 1.0f };
+        constexpr static f32 OutlineSize{ 1.0f };
+        constexpr static f32 Margin{ 4.0f };
     };
 
 }

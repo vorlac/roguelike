@@ -34,6 +34,7 @@ namespace rl {
             void enable_interaction(Interaction inter);
             void disable_interaction(Interaction inter);
             void set_mode(DialogMode mode);
+            void set_resize_grab_pos(Side side);
 
             [[nodiscard]] f32 scroll_pos() const;
             [[nodiscard]] f32 header_height() const;
@@ -52,6 +53,7 @@ namespace rl {
             virtual bool on_mouse_drag(const Mouse& mouse, const Keyboard& kb) override;
 
             virtual void draw() override;
+            virtual Widget* find_widget(ds::point<f32> pt) override;
             virtual ds::dims<f32> preferred_size() const override;
             virtual void refresh_relative_placement();
 
@@ -71,6 +73,7 @@ namespace rl {
             BoxLayout<Alignment::Horizontal>* m_body_layout{ nullptr };
             BoxLayout<Alignment::Vertical>* m_root_layout{ nullptr };
             Label* m_scrollbar_panel{ nullptr };
+            Label* m_dialog_title_label{ nullptr };
 
             constexpr static ds::color<f32> SDScrollbarColor{ 220, 220, 220, 100 };
             constexpr static ds::color<f32> SDScrollbarShadowColor{ 128, 128, 128, 100 };

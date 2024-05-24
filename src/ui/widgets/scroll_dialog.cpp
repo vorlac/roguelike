@@ -22,20 +22,20 @@ namespace rl::ui {
 
         // horizontally aligns title (centered),
         // minimize, maximize, and close buttons
-        const auto dgtitle{ new Label{ "Dialog Title", 24, Align::HLeft | Align::VMiddle } };
         const auto min_btn{ new Button{ Icon::WindowMinimize } };
-        const auto max_btn{ new Button{ Icon::WindowMaximize } };
-        const auto cls_btn{ new Button{ Icon::WindowClose } };
-
-        dgtitle->set_expansion(20.0f);
         min_btn->set_font_size(18.0f);
+        const auto max_btn{ new Button{ Icon::WindowMaximize } };
         max_btn->set_font_size(18.0f);
+        const auto cls_btn{ new Button{ Icon::WindowClose } };
         cls_btn->set_font_size(18.0f);
+
+        m_dialog_title_label = new Label{ "Dialog Title", 24, Align::HLeft | Align::VMiddle };
+        m_dialog_title_label->set_expansion(20.0f);
 
         m_titlebar_layout = new BoxLayout<Alignment::Horizontal>{
             "Buttons Horiz",
             {
-                dgtitle,
+                m_dialog_title_label,
                 min_btn,
                 max_btn,
                 cls_btn,
@@ -217,6 +217,48 @@ namespace rl::ui {
         dynamic_cast<Canvas*>(owner)->dispose_dialog(this);
     }
 
+    Widget* ScrollableDialog::find_widget(ds::point<f32> pt)
+    {
+        {
+            LocalTransform dialog_transform{ this };
+            ds::point<f32> temp = pt - m_rect.pt;
+            LocalTransform root_transform{ m_root_layout };
+            temp -= m_root_layout->rect().pt;
+            LocalTransform titlebar_layout_transform{ m_titlebar_layout };
+            temp -= m_titlebar_layout->rect().pt;
+            if (m_dialog_title_label->contains(temp - m_dialog_title_label->rect().pt)) {
+                return this;
+            }
+        }
+
+        LocalTransform transform{ this };
+        const ds::point<f32> local_mouse_pos{ pt - m_rect.pt };
+        for (Widget* child : m_children | std::views::reverse) {
+            if (!child->visible())
+                continue;
+
+            if (child->resizable() && child->resize_rect().contains(local_mouse_pos)) {
+                // if the child is resizable and the larger resize rect (for grab points)
+                // contains the mouse, but the smaller inner rect doesn't then favor resizing
+                // over recursively going deeper into the tree of widgets for more children
+                if (!child->rect().expanded(-RESIZE_GRAB_BUFFER).contains(local_mouse_pos))
+                    return child;
+
+                // otherwise continue searching for a better match
+                return child->find_widget(local_mouse_pos);
+            }
+
+            // recurse deeper checking each child
+            // for containmane with the point
+            if (child->contains(local_mouse_pos))
+                return child->find_widget(local_mouse_pos);
+        }
+
+        return this->contains(pt)
+                 ? this
+                 : nullptr;
+    }
+
     bool ScrollableDialog::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb, ds::point<f32>)
     {
         if (Widget::on_mouse_button_pressed(mouse, kb))
@@ -225,11 +267,14 @@ namespace rl::ui {
         switch (m_mode) {
             case DialogMode::Move:
             {
+                ds::point<f32> pt{ mouse.pos() };
                 LocalTransform dialog_transform{ this };
+                pt -= this->rect().pt;
                 LocalTransform root_transform{ m_root_layout };
-                LocalTransform titlebar_transform{ m_titlebar_layout };
-                const ds::point<f32> local_mouse_pos{ mouse.pos() - LocalTransform::absolute_pos };
-                return m_titlebar_layout->contains(local_mouse_pos);
+                pt -= m_root_layout->rect().pt;
+                LocalTransform titlebar_layout_transform{ m_titlebar_layout };
+                pt -= m_titlebar_layout->rect().pt;
+                return m_dialog_title_label->contains(pt - m_dialog_title_label->rect().pt);
             }
             case DialogMode::Resize:
             {
@@ -278,44 +323,36 @@ namespace rl::ui {
                         case Side::Top:
                             m_rect.pt.y += delta.y;
                             m_rect.size.height -= delta.y;
-                            this->perform_layout();
                             return true;
                         case Side::Bottom:
                             m_rect.size.height += delta.y;
-                            this->perform_layout();
                             return true;
                         case Side::Left:
                             m_rect.pt.x += delta.x;
                             m_rect.size.width -= delta.x;
-                            this->perform_layout();
                             return true;
                         case Side::Right:
                             m_rect.size.width += delta.x;
-                            this->perform_layout();
                             return true;
                         case Side::TopLeft:
                             m_rect.pt.x += delta.x;
                             m_rect.pt.y += delta.y;
                             m_rect.size.width -= delta.x;
                             m_rect.size.height -= delta.y;
-                            this->perform_layout();
                             return true;
                         case Side::TopRight:
                             m_rect.pt.y += delta.y;
                             m_rect.size.width += delta.x;
                             m_rect.size.height -= delta.y;
-                            this->perform_layout();
                             return true;
                         case Side::BottomLeft:
                             m_rect.pt.x += delta.x;
                             m_rect.size.width -= delta.x;
                             m_rect.size.height += delta.y;
-                            this->perform_layout();
                             return true;
                         case Side::BottomRight:
                             m_rect.size.width += delta.x;
                             m_rect.size.height += delta.y;
-                            this->perform_layout();
                             return true;
 
                         default:
@@ -457,6 +494,11 @@ namespace rl::ui {
     void ScrollableDialog::set_mode(const DialogMode mode)
     {
         m_mode = mode;
+    }
+
+    void ScrollableDialog::set_resize_grab_pos(const Side side)
+    {
+        m_resize_grab_location = side;
     }
 
     void ScrollableDialog::refresh_relative_placement()
