@@ -257,21 +257,21 @@ namespace rl {
         void window_moved_event_callback(const SDL3::SDL_Event& e);
 
     protected:
-        bool window_shown_event_callback(const SDL3::SDL_Event& e) const;
-        bool window_occluded_event_callback(const SDL3::SDL_Event& e) const;
-        bool window_hidden_event_callback(const SDL3::SDL_Event& e) const;
-        bool window_exposed_event_callback(const SDL3::SDL_Event& e) const;
-        bool window_minimized_event_callback(const SDL3::SDL_Event& e) const;
-        bool window_maximized_event_callback(const SDL3::SDL_Event& e) const;
-        bool window_restored_event_callback(const SDL3::SDL_Event& e) const;
-        bool window_close_requested_event_callback(const SDL3::SDL_Event& e) const;
-        bool window_take_focus_event_callback(const SDL3::SDL_Event& e) const;
-        bool window_hit_test_event_callback(const SDL3::SDL_Event& e) const;
-        bool window_icc_profile_changed_callback(const SDL3::SDL_Event& e) const;
-        bool window_pixel_size_changed_event_callback(const SDL3::SDL_Event& e);
-        bool window_display_changed_event_callback(const SDL3::SDL_Event& e) const;
-        bool window_display_scale_changed_event_callback(const SDL3::SDL_Event& e) const;
-        bool window_destroyed_event_callback(const SDL3::SDL_Event& e) const;
+        void window_shown_event_callback(const SDL3::SDL_Event& e) const;
+        void window_occluded_event_callback(const SDL3::SDL_Event& e) const;
+        void window_hidden_event_callback(const SDL3::SDL_Event& e) const;
+        void window_exposed_event_callback(const SDL3::SDL_Event& e) const;
+        void window_minimized_event_callback(const SDL3::SDL_Event& e) const;
+        void window_maximized_event_callback(const SDL3::SDL_Event& e) const;
+        void window_restored_event_callback(const SDL3::SDL_Event& e) const;
+        void window_close_requested_event_callback(const SDL3::SDL_Event& e) const;
+        void window_take_focus_event_callback(const SDL3::SDL_Event& e) const;
+        void window_hit_test_event_callback(const SDL3::SDL_Event& e) const;
+        void window_icc_profile_changed_callback(const SDL3::SDL_Event& e) const;
+        void window_pixel_size_changed_event_callback(const SDL3::SDL_Event& e);
+        void window_display_changed_event_callback(const SDL3::SDL_Event& e) const;
+        void window_display_scale_changed_event_callback(const SDL3::SDL_Event& e) const;
+        void window_destroyed_event_callback(const SDL3::SDL_Event& e) const;
 
     public:
         explicit MainWindow(const MainWindow& window) = delete;
@@ -279,7 +279,8 @@ namespace rl {
         explicit MainWindow(SDL3::SDL_Window* other) = delete;
 
     private:
-        SDL3::SDL_Window* m_sdl_window{ nullptr };
+        using window_deleter_t = std::function<decltype(SDL3::SDL_DestroyWindow)>;
+        std::unique_ptr<SDL3::SDL_Window, window_deleter_t> m_sdl_window{ nullptr };
         std::unique_ptr<NVGRenderer> m_vg_renderer;
         std::unique_ptr<OpenGLRenderer> m_gl_renderer;
         Keyboard m_keyboard{};

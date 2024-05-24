@@ -134,7 +134,7 @@ namespace rl::inline cast {
 
         constexpr static bool value(From val)
         {
-            return val <= std::numeric_limits<To>::max() &&  //
+            return val <= std::numeric_limits<To>::max() &&
                    val >= std::numeric_limits<To>::lowest();
         }
     };
@@ -150,8 +150,8 @@ namespace rl::inline cast {
     template <rl::integer To, rl::floating_point From>
     constexpr To to(const From val)
     {
-        return static_cast<To>(val >= static_cast<From>(0.0)       //
-                                   ? val + static_cast<From>(0.5)  //
+        return static_cast<To>(val >= static_cast<From>(0.0)
+                                   ? val + static_cast<From>(0.5)
                                    : val - static_cast<From>(0.5));
     }
 

@@ -38,7 +38,7 @@ set(CMAKE_CXX_EXTENSIONS ON)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_COLOR_DIAGNOSTICS ON)
 set(CMAKE_DIRECTORY_LABELS ON)
-set(EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 project(roguelike
   LANGUAGES
@@ -138,6 +138,8 @@ target_compile_options(${PROJECT_NAME}
         /nologo
         #/arch:AVX2
         /fp:fast
+        /std:c++latest
+        /TP
 
         $<$<CONFIG:Debug>:
 			# /fsanitize=fuzzer
@@ -264,6 +266,14 @@ add_custom_command(TARGET ${PROJECT_NAME}
     ${CMAKE_COMMAND} -E create_symlink
       ${CMAKE_CURRENT_SOURCE_DIR}/src/gfx/gl/shaders
       $<TARGET_FILE_DIR:${PROJECT_NAME}>/shaders
+)
+
+# Create symlink to compile_commands.json for IDE to pick it up
+execute_process(
+  COMMAND
+    ${CMAKE_COMMAND} -E create_symlink
+      ${CMAKE_BINARY_DIR}/compile_commands.json
+      ${CMAKE_CURRENT_SOURCE_DIR}/compile_commands.json
 )
 
 include(ide-config)

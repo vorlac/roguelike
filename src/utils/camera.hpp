@@ -1,3 +1,7 @@
+#pragma once
+
+#include "ds/rect.hpp"
+
 namespace rl::test3 {
     ds::rect<f32> zoom_to_point(ds::rect<f32> orig_rect, ds::point<f32> zoom_pos, f32 zoom_factor)
     {
@@ -50,10 +54,10 @@ namespace rl::test3 {
         // zoom in 50%
         // (area that's visible will be 2/3 what it was)
         constexpr f32 zoom_factor1{ 1.5f };
-        constexpr ds::point zoom_pos1{ 500.0f, 500.0f };
+        constexpr ds::point<f32> zoom_pos1{ 500.0f, 500.0f };
         constexpr ds::rect<f32> orig_rect1{
-            ds::point{ 0.0f, 0.0f },
-            ds::dims{ 1000.0f, 1000.0f }
+            ds::point<f32>{ 0.0f, 0.0f },
+            ds::dims<f32>{ 1000.0f, 1000.0f }
         };
 
         const ds::rect<f32> orig_rect2{
@@ -64,7 +68,7 @@ namespace rl::test3 {
         // zoom out 2x
         // (area that's visible will be 2x what it was)
         constexpr f32 zoom_factor2{ 0.5f };
-        constexpr ds::point zoom_pos2{ 250.0f, 250.0f };
+        constexpr ds::point<f32> zoom_pos2{ 250.0f, 250.0f };
 
         const ds::rect<f32> final_rect{
             zoom_to_point(orig_rect2, zoom_pos2,

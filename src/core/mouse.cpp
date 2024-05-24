@@ -19,6 +19,7 @@ namespace rl {
                 SDL3::SDL_DestroyCursor(m_system_cursors[i]);
     }
 
+    [[maybe_unused]]
     bool Mouse::set_cursor(const Mouse::Cursor::ID cursor_id) const
     {
         if (m_active_cursor == cursor_id)

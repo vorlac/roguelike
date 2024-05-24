@@ -1,11 +1,9 @@
 #include <memory>
-#include <ranges>
 #include <utility>
 
 #include "core/keyboard.hpp"
 #include "core/main_window.hpp"
 #include "core/mouse.hpp"
-#include "ds/shared.hpp"
 #include "gfx/nvg_renderer.hpp"
 #include "gfx/vg/nanovg_state.hpp"
 #include "ui/canvas.hpp"
@@ -540,6 +538,11 @@ namespace rl::ui {
     void Widget::set_icon_extra_scale(const f32 scale)
     {
         m_icon_extra_scale = scale;
+    }
+
+    void Widget::set_resizable(const bool resizable)
+    {
+        m_resizable = resizable;
     }
 
     Mouse::Cursor::ID Widget::cursor() const

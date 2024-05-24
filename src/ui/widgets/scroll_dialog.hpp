@@ -7,14 +7,21 @@
 
 #include "ds/color.hpp"
 #include "ui/layouts/box_layout.hpp"
-#include "ui/widgets/Label.hpp"
 #include "ui/widgets/button.hpp"
+#include "ui/widgets/label.hpp"
 
 namespace rl {
     class Keyboard;
     class Mouse;
 
     namespace ui {
+        enum class DialogMode {
+            None,   // constant positionioning
+            Modal,  // scopes all GUI focus/input
+            Move,   // being moved or can be moved
+            Resize  // being resized or can be resized
+        };
+
         class ScrollableDialog : public Widget
         {
         public:
@@ -26,10 +33,12 @@ namespace rl {
             void set_title(std::string title);
             void enable_interaction(Interaction inter);
             void disable_interaction(Interaction inter);
+            void set_mode(DialogMode mode);
 
             [[nodiscard]] f32 scroll_pos() const;
             [[nodiscard]] f32 header_height() const;
             [[nodiscard]] std::string_view title() const;
+            [[nodiscard]] DialogMode mode() const;
 
             using interactions_t = std::tuple<Interaction, Component, Side>;
             [[nodiscard]] interactions_t check_interaction(ds::point<f32> pt) const;
@@ -55,9 +64,13 @@ namespace rl {
             std::string m_title{};
 
         private:
+            DialogMode m_mode{ DialogMode::None };
+            Side m_resize_grab_location{ Side::None };
+
             BoxLayout<Alignment::Horizontal>* m_titlebar_layout{ nullptr };
             BoxLayout<Alignment::Horizontal>* m_body_layout{ nullptr };
             BoxLayout<Alignment::Vertical>* m_root_layout{ nullptr };
+            Label* m_scrollbar_panel{ nullptr };
 
             constexpr static ds::color<f32> SDScrollbarColor{ 220, 220, 220, 100 };
             constexpr static ds::color<f32> SDScrollbarShadowColor{ 128, 128, 128, 100 };

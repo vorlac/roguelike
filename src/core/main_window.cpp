@@ -37,7 +37,11 @@ namespace rl {
                                    OpenGL::ContextFlag::ForwardCompatible);
 
         m_properties = flags;
-        m_sdl_window = SDL3::SDL_CreateWindow(title.data(), dims.width, dims.height, m_properties);
+
+        m_sdl_window = {
+            SDL3::SDL_CreateWindow(title.data(), dims.width, dims.height, m_properties),
+            SDL3::SDL_DestroyWindow,
+        };
 
         m_window_id = this->get_window_id();
         m_window_rect = ds::rect{
@@ -61,20 +65,16 @@ namespace rl {
 
     MainWindow::~MainWindow()
     {
-        if (m_sdl_window != nullptr) {
-            SDL3::SDL_DestroyWindow(m_sdl_window);
-            m_sdl_window = nullptr;
-        }
     }
 
     MainWindow& MainWindow::operator=(MainWindow&& other) noexcept
     {
         if (m_sdl_window != nullptr) {
-            SDL3::SDL_DestroyWindow(m_sdl_window);
+            SDL3::SDL_DestroyWindow(m_sdl_window.get());
             m_sdl_window = nullptr;
         }
 
-        std::swap(m_sdl_window, other.m_sdl_window);
+        m_sdl_window.swap(other.m_sdl_window);
         m_gl_renderer = std::move(other.m_gl_renderer);
         m_properties = other.m_properties;
 
@@ -83,42 +83,42 @@ namespace rl {
 
     bool MainWindow::maximize() const
     {
-        const i32 result{ SDL3::SDL_MaximizeWindow(m_sdl_window) };
+        const i32 result{ SDL3::SDL_MaximizeWindow(m_sdl_window.get()) };
         sdl_assert(result == 0, "failed to maximize");
         return result == 0;
     }
 
     bool MainWindow::minimize() const
     {
-        const i32 result{ SDL3::SDL_MinimizeWindow(m_sdl_window) };
+        const i32 result{ SDL3::SDL_MinimizeWindow(m_sdl_window.get()) };
         sdl_assert(result == 0, "failed to minimize");
         return result == 0;
     }
 
     bool MainWindow::hide() const
     {
-        const i32 result{ SDL3::SDL_HideWindow(m_sdl_window) };
+        const i32 result{ SDL3::SDL_HideWindow(m_sdl_window.get()) };
         sdl_assert(result == 0, "failed hiding");
         return result == 0;
     }
 
     bool MainWindow::restore() const
     {
-        const i32 result{ SDL3::SDL_RestoreWindow(m_sdl_window) };
+        const i32 result{ SDL3::SDL_RestoreWindow(m_sdl_window.get()) };
         sdl_assert(result == 0, "failed restoring");
         return result == 0;
     }
 
     bool MainWindow::raise() const
     {
-        const i32 result{ SDL3::SDL_RaiseWindow(m_sdl_window) };
+        const i32 result{ SDL3::SDL_RaiseWindow(m_sdl_window.get()) };
         sdl_assert(result == 0, "failed raising");
         return result == 0;
     }
 
     bool MainWindow::show() const
     {
-        const i32 result{ SDL3::SDL_ShowWindow(m_sdl_window) };
+        const i32 result{ SDL3::SDL_ShowWindow(m_sdl_window.get()) };
         sdl_assert(result == 0, "failed to show");
         return result == 0;
     }
@@ -131,7 +131,7 @@ namespace rl {
 
     WindowID MainWindow::get_window_id()
     {
-        const WindowID result{ SDL3::SDL_GetWindowID(m_sdl_window) };
+        const WindowID result{ SDL3::SDL_GetWindowID(m_sdl_window.get()) };
         sdl_assert(result != 0, "failed to get window id");
         sdl_assert(m_window_id == 0 || result == m_window_id, "sdl window id mismatch");
         m_window_id = result;
@@ -148,42 +148,42 @@ namespace rl {
 
     bool MainWindow::set_kb_grab(const bool grabbed) const
     {
-        const i32 result{ SDL3::SDL_SetWindowKeyboardGrab(m_sdl_window, grabbed) };
+        const i32 result{ SDL3::SDL_SetWindowKeyboardGrab(m_sdl_window.get(), grabbed) };
         sdl_assert(result == 0, "failed to set kb grab");
         return result == 0;
     }
 
     bool MainWindow::set_mouse_grab(const bool grabbed) const
     {
-        const i32 result{ SDL3::SDL_SetWindowMouseGrab(m_sdl_window, grabbed) };
+        const i32 result{ SDL3::SDL_SetWindowMouseGrab(m_sdl_window.get(), grabbed) };
         sdl_assert(result == 0, "failed to set mouse grab");
         return result == 0;
     }
 
     bool MainWindow::set_bordered(const bool bordered) const
     {
-        const i32 result{ SDL3::SDL_SetWindowBordered(m_sdl_window, bordered) };
+        const i32 result{ SDL3::SDL_SetWindowBordered(m_sdl_window.get(), bordered) };
         sdl_assert(result == 0, "failed to set bordered");
         return result == 0;
     }
 
     bool MainWindow::set_resizable(const bool resizable) const
     {
-        const i32 result{ SDL3::SDL_SetWindowResizable(m_sdl_window, resizable) };
+        const i32 result{ SDL3::SDL_SetWindowResizable(m_sdl_window.get(), resizable) };
         sdl_assert(result == 0, "failed to set resizeable");
         return result == 0;
     }
 
     bool MainWindow::set_fullscreen(const bool fullscreen) const
     {
-        const i32 result{ SDL3::SDL_SetWindowFullscreen(m_sdl_window, fullscreen) };
+        const i32 result{ SDL3::SDL_SetWindowFullscreen(m_sdl_window.get(), fullscreen) };
         debug_assert(result == 0, "Failed to set window to fullscreen");
         return result == 0;
     }
 
     bool MainWindow::set_opacity(const float opacity) const
     {
-        const i32 result{ SDL3::SDL_SetWindowOpacity(m_sdl_window, opacity) };
+        const i32 result{ SDL3::SDL_SetWindowOpacity(m_sdl_window.get(), opacity) };
         debug_assert(result != 0, "failed to set window opacity");
         return result == 0;
     }
@@ -197,7 +197,7 @@ namespace rl {
     bool MainWindow::set_title(const std::string& title)
     {
         m_title = title;
-        const i32 result{ SDL3::SDL_SetWindowTitle(m_sdl_window, title.c_str()) };
+        const i32 result{ SDL3::SDL_SetWindowTitle(m_sdl_window.get(), title.c_str()) };
         sdl_assert(result == 0, "failed to set title");
         return result == 0;
     }
@@ -210,7 +210,7 @@ namespace rl {
 
     bool MainWindow::set_position(const ds::point<i32>& pos)
     {
-        const i32 result{ SDL3::SDL_SetWindowPosition(m_sdl_window, pos.x, pos.y) };
+        const i32 result{ SDL3::SDL_SetWindowPosition(m_sdl_window.get(), pos.x, pos.y) };
         sdl_assert(result == 0, "failed to set position");
         m_window_rect.pt = pos;
         return result == 0;
@@ -218,7 +218,7 @@ namespace rl {
 
     bool MainWindow::set_size(const ds::dims<i32> size)
     {
-        const i32 result{ SDL3::SDL_SetWindowSize(m_sdl_window, size.width, size.height) };
+        const i32 result{ SDL3::SDL_SetWindowSize(m_sdl_window.get(), size.width, size.height) };
         debug_assert(result == 0, "failed to set size");
 
         m_window_rect.size = size;
@@ -231,21 +231,21 @@ namespace rl {
 
     bool MainWindow::set_min_size(const ds::dims<i32>& size) const
     {
-        const i32 result{ SDL3::SDL_SetWindowMinimumSize(m_sdl_window, size.width, size.height) };
+        const i32 result{ SDL3::SDL_SetWindowMinimumSize(m_sdl_window.get(), size.width, size.height) };
         sdl_assert(result == 0, "failed to set min size");
         return result == 0;
     }
 
     bool MainWindow::set_max_size(const ds::dims<i32>& size) const
     {
-        const i32 result{ SDL3::SDL_SetWindowMaximumSize(m_sdl_window, size.width, size.height) };
+        const i32 result{ SDL3::SDL_SetWindowMaximumSize(m_sdl_window.get(), size.width, size.height) };
         sdl_assert(result == 0, "failed to set max size");
         return result == 0;
     }
 
     MainWindow::Properties::Flags MainWindow::get_flags() const
     {
-        return static_cast<Properties::Flags>(SDL3::SDL_GetWindowFlags(m_sdl_window));
+        return static_cast<Properties::Flags>(SDL3::SDL_GetWindowFlags(m_sdl_window.get()));
     }
 
     bool MainWindow::is_valid() const
@@ -265,7 +265,7 @@ namespace rl {
 
     SDL3::SDL_Window* MainWindow::sdl_handle() const
     {
-        return m_sdl_window;
+        return m_sdl_window.get();
     }
 
     const Keyboard& MainWindow::keyboard() const
@@ -285,14 +285,14 @@ namespace rl {
 
     std::string MainWindow::get_title()
     {
-        m_title = std::string{ SDL3::SDL_GetWindowTitle(m_sdl_window) };
+        m_title = std::string{ SDL3::SDL_GetWindowTitle(m_sdl_window.get()) };
         return m_title;
     }
 
     ds::point<i32> MainWindow::get_position() const
     {
         ds::point<i32> pos{ 0, 0 };
-        [[maybe_unused]] const i32 result{ SDL3::SDL_GetWindowPosition(m_sdl_window, &pos.x, &pos.y) };
+        [[maybe_unused]] const i32 result{ SDL3::SDL_GetWindowPosition(m_sdl_window.get(), &pos.x, &pos.y) };
         sdl_assert(result == 0, "failed to get pos");
         return pos;
     }
@@ -300,7 +300,7 @@ namespace rl {
     ds::dims<i32> MainWindow::get_min_size() const
     {
         ds::dims<i32> size{ 0, 0 };
-        [[maybe_unused]] const i32 result{ SDL3::SDL_GetWindowMinimumSize(m_sdl_window, &size.width, &size.height) };
+        [[maybe_unused]] const i32 result{ SDL3::SDL_GetWindowMinimumSize(m_sdl_window.get(), &size.width, &size.height) };
         sdl_assert(result == 0, "failed to get min size");
         return size;
     }
@@ -308,24 +308,24 @@ namespace rl {
     ds::dims<i32> MainWindow::get_max_size() const
     {
         ds::dims<i32> size{ 0, 0 };
-        [[maybe_unused]] const i32 result{ SDL3::SDL_GetWindowMaximumSize(m_sdl_window, &size.width, &size.height) };
+        [[maybe_unused]] const i32 result{ SDL3::SDL_GetWindowMaximumSize(m_sdl_window.get(), &size.width, &size.height) };
         sdl_assert(result == 0, "failed to get max size");
         return size;
     }
 
     bool MainWindow::kb_grabbed() const
     {
-        return SDL3::SDL_GetWindowKeyboardGrab(m_sdl_window);
+        return SDL3::SDL_GetWindowKeyboardGrab(m_sdl_window.get());
     }
 
     bool MainWindow::mouse_grabbed() const
     {
-        return SDL3::SDL_GetWindowMouseGrab(m_sdl_window);
+        return SDL3::SDL_GetWindowMouseGrab(m_sdl_window.get());
     }
 
     DisplayID MainWindow::get_display_id()
     {
-        m_display_id = SDL3::SDL_GetDisplayForWindow(m_sdl_window);
+        m_display_id = SDL3::SDL_GetDisplayForWindow(m_sdl_window.get());
         debug_assert(m_display_id != 0, "failed to set window display idx");
         return m_display_id;
     }
@@ -333,7 +333,7 @@ namespace rl {
     SDL3::SDL_DisplayMode MainWindow::get_display_mode() const
     {
         SDL3::SDL_DisplayMode ret{};
-        const SDL3::SDL_DisplayMode* mode{ SDL3::SDL_GetWindowFullscreenMode(m_sdl_window) };
+        const SDL3::SDL_DisplayMode* mode{ SDL3::SDL_GetWindowFullscreenMode(m_sdl_window.get()) };
         debug_assert(mode == nullptr, "failed to get window display mode");
 
         if (mode != nullptr)
@@ -345,7 +345,7 @@ namespace rl {
     f32 MainWindow::get_opacity() const
     {
         f32 opacity{ 0.0f };
-        [[maybe_unused]] const i32 result{ SDL3::SDL_GetWindowOpacity(m_sdl_window, &opacity) };
+        [[maybe_unused]] const i32 result{ SDL3::SDL_GetWindowOpacity(m_sdl_window.get(), &opacity) };
         debug_assert(result == -1, "failed to get window opacity");
         return opacity;
     }
@@ -353,7 +353,7 @@ namespace rl {
     const ds::dims<i32>& MainWindow::get_size()
     {
         auto& size = m_window_rect.size;
-        [[maybe_unused]] const i32 result{ SDL3::SDL_GetWindowSize(m_sdl_window, &size.width, &size.height) };
+        [[maybe_unused]] const i32 result{ SDL3::SDL_GetWindowSize(m_sdl_window.get(), &size.width, &size.height) };
         sdl_assert(result == 0, "failed to set size");
         return m_window_rect.size;
     }
@@ -361,11 +361,11 @@ namespace rl {
     const ds::dims<i32>& MainWindow::get_render_size()
     {
         ds::dims<i32>& size{ m_framebuf_size };
-        [[maybe_unused]] const i32 result{ SDL3::SDL_GetWindowSizeInPixels(m_sdl_window, &size.width, &size.height) };
+        [[maybe_unused]] const i32 result{ SDL3::SDL_GetWindowSizeInPixels(m_sdl_window.get(), &size.width, &size.height) };
         sdl_assert(result == 0, "failed to set render size");
-        m_pixel_ratio = SDL3::SDL_GetWindowDisplayScale(m_sdl_window);
+        m_pixel_ratio = SDL3::SDL_GetWindowDisplayScale(m_sdl_window.get());
         sdl_assert(m_pixel_ratio != 0.0f, "failed to get pixel ratio [window:{}]", m_window_id);
-        m_pixel_density = SDL3::SDL_GetWindowPixelDensity(m_sdl_window);
+        m_pixel_density = SDL3::SDL_GetWindowPixelDensity(m_sdl_window.get());
         sdl_assert(m_pixel_density != 0.0f, "failed to get pixel density [window:{}]", m_window_id);
         return m_framebuf_size;
     }
@@ -403,7 +403,7 @@ namespace rl {
 
     bool MainWindow::render()
     {
-        const i32 result{ SDL3::SDL_GL_MakeCurrent(m_sdl_window, m_gl_renderer->gl_context()) };
+        const i32 result{ SDL3::SDL_GL_MakeCurrent(m_sdl_window.get(), m_gl_renderer->gl_context()) };
         sdl_assert(result == 0, "failed to make context current");
 
         this->clear();
@@ -525,13 +525,12 @@ namespace rl {
         };
     }
 
-    bool MainWindow::window_pixel_size_changed_event_callback(const SDL3::SDL_Event&)
+    void MainWindow::window_pixel_size_changed_event_callback(const SDL3::SDL_Event&)
     {
-        m_pixel_ratio = SDL3::SDL_GetWindowDisplayScale(m_sdl_window);
+        m_pixel_ratio = SDL3::SDL_GetWindowDisplayScale(m_sdl_window.get());
         sdl_assert(m_pixel_ratio != 0.0f, "failed to get pixel ratio [window:{}]", m_window_id);
-        m_pixel_density = SDL3::SDL_GetWindowPixelDensity(m_sdl_window);
+        m_pixel_density = SDL3::SDL_GetWindowPixelDensity(m_sdl_window.get());
         sdl_assert(m_pixel_density != 0.0f, "failed to get pixel density [window:{}]", m_window_id);
-        return m_pixel_ratio > 0.0f && m_pixel_density > 0.0f;
     }
 
     void MainWindow::window_focus_gained_event_callback(const SDL3::SDL_Event&) const
@@ -544,73 +543,73 @@ namespace rl {
         m_gui_canvas->on_focus_lost();
     }
 
-    bool MainWindow::window_shown_event_callback(const SDL3::SDL_Event&) const
+    void MainWindow::window_shown_event_callback(const SDL3::SDL_Event&) const
     {
-        return true;
+        return;
     }
 
-    bool MainWindow::window_occluded_event_callback(const SDL3::SDL_Event&) const
+    void MainWindow::window_occluded_event_callback(const SDL3::SDL_Event&) const
     {
-        return true;
+        return;
     }
 
-    bool MainWindow::window_hidden_event_callback(const SDL3::SDL_Event&) const
+    void MainWindow::window_hidden_event_callback(const SDL3::SDL_Event&) const
     {
-        return true;
+        return;
     }
 
-    bool MainWindow::window_exposed_event_callback(const SDL3::SDL_Event&) const
+    void MainWindow::window_exposed_event_callback(const SDL3::SDL_Event&) const
     {
-        return true;
+        return;
     }
 
-    bool MainWindow::window_minimized_event_callback(const SDL3::SDL_Event&) const
+    void MainWindow::window_minimized_event_callback(const SDL3::SDL_Event&) const
     {
-        return true;
+        return;
     }
 
-    bool MainWindow::window_maximized_event_callback(const SDL3::SDL_Event&) const
+    void MainWindow::window_maximized_event_callback(const SDL3::SDL_Event&) const
     {
-        return true;
+        return;
     }
 
-    bool MainWindow::window_restored_event_callback(const SDL3::SDL_Event&) const
+    void MainWindow::window_restored_event_callback(const SDL3::SDL_Event&) const
     {
-        return true;
+        return;
     }
 
-    bool MainWindow::window_close_requested_event_callback(const SDL3::SDL_Event&) const
+    void MainWindow::window_close_requested_event_callback(const SDL3::SDL_Event&) const
     {
-        return true;
+        return;
     }
 
-    bool MainWindow::window_take_focus_event_callback(const SDL3::SDL_Event&) const
+    void MainWindow::window_take_focus_event_callback(const SDL3::SDL_Event&) const
     {
-        return true;
+        return;
     }
 
-    bool MainWindow::window_hit_test_event_callback(const SDL3::SDL_Event&) const
+    void MainWindow::window_hit_test_event_callback(const SDL3::SDL_Event&) const
     {
-        return true;
+        return;
     }
 
-    bool MainWindow::window_icc_profile_changed_callback(const SDL3::SDL_Event&) const
+    void MainWindow::window_icc_profile_changed_callback(const SDL3::SDL_Event&) const
     {
-        return true;
+        return;
     }
 
-    bool MainWindow::window_display_changed_event_callback(const SDL3::SDL_Event&) const
+    void MainWindow::window_display_changed_event_callback(const SDL3::SDL_Event&) const
     {
-        return true;
+        return;
     }
 
-    bool MainWindow::window_display_scale_changed_event_callback(const SDL3::SDL_Event&) const
+    void MainWindow::window_display_scale_changed_event_callback(const SDL3::SDL_Event&) const
     {
-        return true;
+        return;
     }
 
-    bool MainWindow::window_destroyed_event_callback(const SDL3::SDL_Event&) const
+    void MainWindow::window_destroyed_event_callback(const SDL3::SDL_Event&) const
     {
-        return true;
+        return;
     }
 }

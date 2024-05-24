@@ -1,8 +1,6 @@
 #pragma once
 
-#include <memory>
 #include <string_view>
-#include <type_traits>
 
 namespace rl {
     template <typename T>
@@ -28,7 +26,7 @@ namespace rl {
         constexpr auto func = std::string_view(__FUNCSIG__);
 #endif
 
-        constexpr auto start = func.find(Prefix) + pref.size();
+        constexpr auto start = func.find(pref) + pref.size();
         constexpr auto end = func.find(suff);
         constexpr auto size = end - start;
 

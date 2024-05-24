@@ -1,15 +1,15 @@
 #pragma once
 
 #include <memory>
-#include <string>
+#include <string_view>
 #include <vector>
 
 #include "core/keyboard.hpp"
 #include "core/mouse.hpp"
 #include "ds/rect.hpp"
 #include "ds/refcounted.hpp"
-#include "ds/vector2d.hpp"
 #include "gfx/nvg_renderer.hpp"
+#include "utils/numeric.hpp"
 #include "utils/time.hpp"
 
 namespace rl::ui {
@@ -49,6 +49,7 @@ namespace rl::ui {
         void set_expansion(f32 stretch);
         void set_font_size(f32 font_size);
         void set_icon_extra_scale(f32 scale);
+        void set_resizable(bool resizable);
         void set_cursor(Mouse::Cursor::ID cursor);
         void remove_child_at(u64 index);
         void request_focus();

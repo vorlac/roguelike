@@ -3,6 +3,7 @@ log/
 .out/
 .cache/
 cmake-build-*/
+compile_commands.json
 
 export.cfg
 export_presets.cfg

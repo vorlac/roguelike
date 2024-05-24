@@ -169,21 +169,11 @@ namespace rl {
                 dialog->center();
             }
 
-            // const std::unique_ptr<rl::OpenGLRenderer>& renderer{ m_main_window->glrenderer() };
-            // gl::InstancedVertexBuffer vbo{ renderer->get_viewport() };
-            // vbo.bind_buffers();
-
             m_timer.reset();
             while (!this->should_exit()) {
                 this->handle_events();
                 this->update();
                 this->render();
-
-                // this->handle_events();
-                // this->update();
-                // vbo.update_buffers(renderer->get_viewport());
-                // vbo.draw_triangles();
-                // m_main_window->swap_buffers();
 
                 if constexpr (debug::core::loop_timing_stats)
                     this->print_loop_stats(m_timer.delta());

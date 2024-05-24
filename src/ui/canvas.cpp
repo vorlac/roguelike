@@ -402,13 +402,12 @@ namespace rl::ui {
                         if (dialog == widget) {
                             auto [mode, component, grab_pos] = dialog->check_interaction(mouse_pos);
                             // if the dialog is resizable and the mouse is at grab location
-                            if ((mode & Interaction::Resize) != 0) {
+                            if ((mode & Interaction::Resize) != 0)
                                 handled |= false;
-                            }
+
                             // if the dialog is moveable and the cursor is over the header
-                            if ((mode & Interaction::Move) != 0) {
+                            if ((mode & Interaction::Move) != 0)
                                 handled |= false;
-                            }
 
                             m_active_dialog = dialog;
                             if (dialog->resizable() && grab_pos != Side::None)
@@ -461,7 +460,7 @@ namespace rl::ui {
         switch (m_mouse_mode) {
             case MouseMode::Propagate:
             {
-                m_active_widget = find_widget(mouse_pos);
+                m_active_widget = Widget::find_widget(mouse_pos);
                 m_active_dialog = dynamic_cast<ScrollableDialog*>(m_active_widget);
 
                 if (m_active_dialog != nullptr) {

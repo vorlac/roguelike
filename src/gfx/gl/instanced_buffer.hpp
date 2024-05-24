@@ -14,6 +14,19 @@
 #include "utils/time.hpp"
 
 namespace rl::gl {
+
+    // const std::unique_ptr<rl::OpenGLRenderer>& renderer{ m_main_window->glrenderer() };
+    // gl::InstancedVertexBuffer vbo{ renderer->get_viewport() };
+    // vbo.bind_buffers();
+    //
+    // while (!this->should_exit()) {
+    //     this->handle_events();
+    //     this->update();
+    //     vbo.update_buffers(renderer->get_viewport());
+    //     vbo.draw_triangles();
+    //     m_main_window->swap_buffers();
+    // }
+
     class InstancedVertexBuffer
     {
     public:

@@ -241,8 +241,8 @@ namespace rl {
     }
 
     ds::dims<f32> NVGRenderer::get_text_size(
-        const std::string& text, const std::string_view& font_name, const f32 font_size,
-        const Align alignment) const
+        const std::string& text, const std::string_view& font_name,
+        const f32 font_size, const Align alignment) const
     {
         this->set_text_properties(font_name, font_size, alignment);
         const f32 width{ nvg::text_bounds(m_nvg_context.get(), ds::point<f32>::zero(), text) };
@@ -255,8 +255,8 @@ namespace rl {
     }
 
     void NVGRenderer::draw_rect_outline(
-        const ds::rect<f32>& rect, const f32 stroke_width, const ds::color<f32>& color,
-        const Outline type) const
+        const ds::rect<f32>& rect, const f32 stroke_width,
+        const ds::color<f32>& color, const Outline type) const
     {
         nvg::stroke_width(m_nvg_context.get(), stroke_width);
         nvg::begin_path(m_nvg_context.get());

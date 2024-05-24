@@ -15,6 +15,7 @@ namespace rl::ui {
         : Widget{ nullptr }
         , m_title{ std::move(title) }
     {
+        this->set_resizable(true);
         this->set_icon_extra_scale(0.8f);
         if (fixed_size.valid())
             Widget::set_size(fixed_size);
@@ -47,14 +48,14 @@ namespace rl::ui {
 
         // horizontally aligns the contents panel
         // containing all children, and scrollbar
-        auto scrollbar_panel{ new Label{ "" } };
-        scrollbar_panel->set_fixed_width(250.0f);
-        scrollbar_panel->set_expansion(0.025f);
+        m_scrollbar_panel = new Label{ "" };
+        m_scrollbar_panel->set_fixed_width(250.0f);
+        m_scrollbar_panel->set_expansion(0.025f);
         m_body_layout = new BoxLayout<Alignment::Horizontal>{
             "Body Horiz",
             {
                 new Label{ "Body", -1.0f, Align::HCenter | Align::VMiddle },
-                scrollbar_panel,
+                m_scrollbar_panel,
             },
         };
 
@@ -134,7 +135,7 @@ namespace rl::ui {
 
         // check if the mouse cursor falls within
         // the widget container body of the dialog
-        if (m_rect.contains(pt)) {
+        if (m_body_layout->contains(pt)) {
             interaction = Interaction::Propagate;
             component = Component::Body;
             return ret;
@@ -181,7 +182,6 @@ namespace rl::ui {
 
     void ScrollableDialog::disable_interaction(const Interaction inter)
     {
-        // todo: clean this up
         m_enabled_interactions &= ~inter;
     }
 
@@ -222,57 +222,146 @@ namespace rl::ui {
         if (Widget::on_mouse_button_pressed(mouse, kb))
             return true;
 
-        if ((m_enabled_interactions & Interaction::Move) == 0)
-            return false;
-        if (mouse.button_pressed() != Mouse::Button::Left)
-            return false;
-
-        {
-            LocalTransform dialog_transform{ this };
-            LocalTransform root_transform{ m_root_layout };
-            LocalTransform titlebar_transform{ m_titlebar_layout };
-
-            const ds::point<f32> local_mouse_pos{ mouse.pos() - LocalTransform::absolute_pos };
-            if (!m_titlebar_layout->contains(local_mouse_pos))
+        switch (m_mode) {
+            case DialogMode::Move:
+            {
+                LocalTransform dialog_transform{ this };
+                LocalTransform root_transform{ m_root_layout };
+                LocalTransform titlebar_transform{ m_titlebar_layout };
+                const ds::point<f32> local_mouse_pos{ mouse.pos() - LocalTransform::absolute_pos };
+                return m_titlebar_layout->contains(local_mouse_pos);
+            }
+            case DialogMode::Resize:
+            {
+                m_resize_grab_location = m_rect.edge_overlap(RESIZE_GRAB_BUFFER, mouse.pos());
+                debug_assert(m_resize_grab_location != Side::None,
+                             "dialog resizing without grab location");
+                return m_resize_grab_location != Side::None;
+            }
+            case DialogMode::None:
+            {
+                // const Side border_grab{ m_rect.edge_overlap(RESIZE_GRAB_BUFFER, mouse.pos()) };
+                // m_resize_grab_location = border_grab;
+                return false;
+            }
+            case DialogMode::Modal:
                 return false;
         }
 
-        m_active_interactions |= Interaction::Move;
-        return true;
+        return false;
     }
 
-    bool ScrollableDialog::on_mouse_drag(const Mouse& mouse, const Keyboard& kb)
+    bool ScrollableDialog::on_mouse_drag(const Mouse& mouse, const Keyboard&)
     {
-        if (Widget::on_mouse_drag(mouse, kb))
-            return true;
+        switch (m_mode) {
+            case DialogMode::Move:
+            {
+                const bool move_btn_down{ mouse.is_button_down(Mouse::Button::Left) };
+                if (move_btn_down) {
+                    m_rect.pt += mouse.pos_delta();
+                    m_rect.pt.x = std::max(m_rect.pt.x, 0.0f);
+                    m_rect.pt.y = std::max(m_rect.pt.y, 0.0f);
 
-        if ((m_enabled_interactions & Interaction::Move) == 0)
-            return false;
-        if (!mouse.is_button_held(Mouse::Button::Left))
-            return false;
+                    const ds::dims relative_size{ this->parent()->size() - m_rect.size };
+                    m_rect.pt.x = std::min(m_rect.pt.x, relative_size.width);
+                    m_rect.pt.y = std::min(m_rect.pt.y, relative_size.height);
+                    return true;
+                }
+                break;
+            }
+            case DialogMode::Resize:
+            {
+                const bool resize_btn_down{ mouse.is_button_down(Mouse::Button::Left) };
+                if (resize_btn_down) {
+                    const auto delta{ mouse.pos_delta() };
+                    switch (m_resize_grab_location) {
+                        case Side::Top:
+                            m_rect.pt.y += delta.y;
+                            m_rect.size.height -= delta.y;
+                            this->perform_layout();
+                            return true;
+                        case Side::Bottom:
+                            m_rect.size.height += delta.y;
+                            this->perform_layout();
+                            return true;
+                        case Side::Left:
+                            m_rect.pt.x += delta.x;
+                            m_rect.size.width -= delta.x;
+                            this->perform_layout();
+                            return true;
+                        case Side::Right:
+                            m_rect.size.width += delta.x;
+                            this->perform_layout();
+                            return true;
+                        case Side::TopLeft:
+                            m_rect.pt.x += delta.x;
+                            m_rect.pt.y += delta.y;
+                            m_rect.size.width -= delta.x;
+                            m_rect.size.height -= delta.y;
+                            this->perform_layout();
+                            return true;
+                        case Side::TopRight:
+                            m_rect.pt.y += delta.y;
+                            m_rect.size.width += delta.x;
+                            m_rect.size.height -= delta.y;
+                            this->perform_layout();
+                            return true;
+                        case Side::BottomLeft:
+                            m_rect.pt.x += delta.x;
+                            m_rect.size.width -= delta.x;
+                            m_rect.size.height += delta.y;
+                            this->perform_layout();
+                            return true;
+                        case Side::BottomRight:
+                            m_rect.size.width += delta.x;
+                            m_rect.size.height += delta.y;
+                            this->perform_layout();
+                            return true;
 
-        m_rect.pt += mouse.pos_delta();
-        return true;
+                        default:
+                            debug_assert("Invalid/unhandled resize grab location");
+                            [[fallthrough]];
+                        case Side::None:
+                            break;
+                    }
+                }
+
+                break;
+            }
+
+            default:
+                debug_assert("Invalid/unsupported DialogMode");
+                [[fallthrough]];
+            case DialogMode::None:
+                [[fallthrough]];
+            case DialogMode::Modal:
+                break;
+        }
+
+        return false;
     }
 
     bool ScrollableDialog::on_mouse_button_released(const Mouse& mouse, const Keyboard& kb)
     {
+        m_mode = DialogMode::None;
+        m_resize_grab_location = Side::None;
         if (Widget::on_mouse_button_released(mouse, kb))
             return true;
 
-        if ((m_enabled_interactions & (Interaction::Move | Interaction::Scroll)) == 0)
-            return false;
-        if (mouse.button_released() != Mouse::Button::Left)
-            return false;
+        // if ((m_enabled_interactions & (Interaction::Move | Interaction::Scroll)) == 0)
+        //     return false;
+        // if (mouse.button_released() != Mouse::Button::Left)
+        //     return false;
 
-        m_active_interactions &= ~Interaction::Move;
-        m_active_interactions &= ~Interaction::Scroll;
+        // m_active_interactions &= ~Interaction::Move;
+        // m_active_interactions &= ~Interaction::Scroll;
         return false;
     }
 
-    bool ScrollableDialog::on_mouse_scroll(const Mouse&, const Keyboard&)
+    bool ScrollableDialog::on_mouse_scroll(const Mouse& mouse, const Keyboard& kb)
     {
-        return false;
+        Widget::on_mouse_scroll(mouse, kb);
+        return true;
     }
 
     void ScrollableDialog::draw()
@@ -296,16 +385,16 @@ namespace rl::ui {
                 m_renderer->reset_scissor();
                 m_renderer->draw_path(false, [&] {
                     const nvg::PaintStyle shadow_paint{
-                        nvg::box_gradient(
-                            context, m_rect.pt.x, m_rect.pt.y, m_rect.size.width, m_rect.size.height,
-                            corner_radius * 2.0f, drop_shadow_size * 2.0f, m_theme->dialog_shadow,
-                            m_theme->transparent)
+                        m_renderer->create_rect_gradient_paint_style(
+                            m_rect, corner_radius * 2.0f, drop_shadow_size * 2.0f,
+                            m_theme->dialog_shadow, m_theme->transparent)
                     };
 
                     nvg::rect(context, m_rect.pt.x - drop_shadow_size,
                               m_rect.pt.y - drop_shadow_size,
                               m_rect.size.width + 2.0f * drop_shadow_size,
                               m_rect.size.height + 2.0f * drop_shadow_size);
+
                     nvg::rounded_rect(context, m_rect.pt.x, m_rect.pt.y, m_rect.size.width,
                                       m_rect.size.height, corner_radius);
                     nvg::path_winding(context, nvg::Solidity::Hole);
@@ -323,12 +412,8 @@ namespace rl::ui {
                     };
 
                     m_renderer->draw_rounded_rect(
-                        ds::rect<f32>{
-                            ds::point<f32>{ m_rect.pt },
-                            ds::dims<f32>{ m_rect.size.width, header_height },
-                        },
+                        ds::rect<f32>{ m_rect.pt, ds::dims{ m_rect.size.width, header_height } },
                         corner_radius);
-
                     m_renderer->fill_current_path(header_style);
                 });
 
@@ -360,10 +445,23 @@ namespace rl::ui {
 
     ds::dims<f32> ScrollableDialog::preferred_size() const
     {
-        return ds::dims<f32>::zero();
+        debug_assert("not implemented");
+        return {};
+    }
+
+    DialogMode ScrollableDialog::mode() const
+    {
+        return m_mode;
+    }
+
+    void ScrollableDialog::set_mode(const DialogMode mode)
+    {
+        m_mode = mode;
     }
 
     void ScrollableDialog::refresh_relative_placement()
     {
+        // derived classes should define
+        return;
     }
 }
