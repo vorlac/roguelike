@@ -19,7 +19,7 @@ AllowShortFunctionsOnASingleLine: false # [InlineOnly, true]
 AllowShortLambdasOnASingleLine: false
 AllowShortIfStatementsOnASingleLine: false
 AllowShortLoopsOnASingleLine: false
-AllowShortCompoundRequirementOnASingleLine: true # clang-format v18 requrired
+#AllowShortCompoundRequirementOnASingleLine: true # clang-format v18 requrired
 AlwaysBreakAfterDefinitionReturnType: false
 AlwaysBreakAfterReturnType: None
 AlwaysBreakBeforeMultilineStrings: true

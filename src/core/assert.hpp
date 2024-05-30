@@ -1,5 +1,9 @@
 #pragma once
 
+#ifdef __linux__
+  #include <signal.h>
+#endif
+
 #include <ranges>
 
 #include <fmt/color.h>
@@ -13,6 +17,12 @@
   #define sdl_assert(...)   static_cast<void>(0)
 
 #else
+
+  #if defined(_WIN32)
+    #define pause_debugger __debugbreak()
+  #elif defined(__linux__)
+    #define pause_debugger ::raise(SIGTRAP)
+  #endif
 
   #define assert_dbg_(condition, fmtstr, ...)                                                \
       fmt::print(fmt::fg(fmt::color{ 0xDCB4AA }),                                            \
@@ -88,7 +98,7 @@
           using cond_t = std::decay_t<decltype(cond)>;                                      \
           if constexpr (std::same_as<cond_t, const char*>) {                                \
               assert_msg_(cond __VA_OPT__(, ) __VA_ARGS__);                                 \
-              __debugbreak();                                                               \
+              pause_debugger;                                                               \
           }                                                                                 \
           else if (!(cond)) [[unlikely]] { /* NOLINT(clang-diagnostic-string-conversion) */ \
               const std::tuple args{ std::make_tuple(__VA_ARGS__) };                        \
@@ -99,7 +109,7 @@
               else if constexpr (arg_count == 0) {                                          \
                   assert_cond_(cond);                                                       \
               }                                                                             \
-              __debugbreak();                                                               \
+              pause_debugger;                                                               \
           }                                                                                 \
       }                                                                                     \
       while (false)
@@ -108,7 +118,7 @@
       do {                                                  \
           if (!(cond)) [[unlikely]] {                       \
               assert_sdl_(cond __VA_OPT__(, ) __VA_ARGS__); \
-              __debugbreak();                               \
+              pause_debugger;                               \
           }                                                 \
       }                                                     \
       while (false)

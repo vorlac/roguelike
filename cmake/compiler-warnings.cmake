@@ -10,7 +10,7 @@ target_compile_options(${PROJECT_NAME}
 		>
 
         # Clang and GNU
-        $<$<OR:${compiler_is_clang},${compiler_is_gnu}>:
+        $<${compiler_is_clang}:
             -Wall
             -Wcast-align
             -Wctor-dtor-privacy
@@ -61,12 +61,7 @@ target_compile_options(${PROJECT_NAME}
             -Wno-covered-switch-default
             -Wno-ctad-maybe-unsupported
             -Wno-disabled-macro-expansion
-        >
-
-        # Clang only
-        $<${compiler_is_clang}:
             -Wimplicit-fallthrough
-
         >
 
         # GNU only
@@ -75,6 +70,10 @@ target_compile_options(${PROJECT_NAME}
             -Wduplicated-branches
             -Wduplicated-cond
             -Wlogical-op
+
+            -Wno-narrowing
+            -Wno-duplicated-branches
+            -fpermissive
         >
 )
 

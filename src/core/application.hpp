@@ -72,7 +72,7 @@ namespace rl {
                 const auto layout_abc_h1{
                     new ui::BoxLayout<Alignment::Horizontal>(
                         "A=>M Inner Horiz",
-                        {
+                        std::initializer_list<ui::Widget*>{
                             new ui::Label{ "A", font_size, alignment },
                             new ui::Label{ "B", font_size, alignment },
                             new ui::Label{ "C", font_size, alignment },
@@ -92,7 +92,7 @@ namespace rl {
                 const auto layout_abc_h2{
                     new ui::BoxLayout<Alignment::Horizontal>(
                         "N=>Z Inner Horiz",
-                        {
+                        std::initializer_list<ui::Widget*>{
                             new ui::Label{ "N", font_size, alignment },
                             new ui::Label{ "O", font_size, alignment },
                             new ui::Label{ "P", font_size, alignment },
@@ -114,7 +114,7 @@ namespace rl {
                 const auto layout_num_v1{
                     new ui::BoxLayout<Alignment::Vertical>(
                         "Nums1 Inner Vert",
-                        {
+                        std::initializer_list<ui::Widget*>{
                             new ui::Button{ "Button", ui::Icon::ID::Bong },
                             new ui::Label{ "2", font_size, alignment },
                             label,
@@ -126,7 +126,7 @@ namespace rl {
                 const auto layout_num_v2{
                     new ui::BoxLayout<Alignment::Vertical>(
                         "Nums2 Inner Vert",
-                        {
+                        std::initializer_list<ui::Widget*>{
                             new ui::CheckBox{ "Checkbox ASDFGHJKL" },
                             new ui::Label{ "2", font_size, alignment },
                             new ui::Label{ "3", font_size, alignment },
@@ -138,7 +138,7 @@ namespace rl {
                 const auto layout_nums_horiz_outer{
                     new ui::BoxLayout<Alignment::Horizontal>(
                         "Nums Outer Horiz",
-                        {
+                        std::initializer_list<ui::Layout*>{
                             layout_num_v1,
                             layout_num_v2,
                         })
@@ -147,7 +147,7 @@ namespace rl {
                 const auto layout_abc_vert_nested{
                     new ui::BoxLayout<Alignment::Vertical>(
                         "ABC Nested Vert",
-                        {
+                        std::initializer_list<ui::Layout*>{
                             layout_abc_h1,
                             layout_abc_h2,
                         })

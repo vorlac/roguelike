@@ -53,10 +53,10 @@ namespace rl::io {
 namespace rl::io {
 
     using namespace std::chrono_literals;
-
+#if 0
     struct ScopedWriter
     {
-        explicit ScopedWriter(std::filesystem::path file_path, int32_t flags = std::fstream::binary | std::fstream::app)
+        explicit ScopedWriter(std::filesystem::path file_path, auto flags = std::fstream::binary | std::fstream::app)
             : m_write_stream{
                 std::move(file_path),
                 std::fstream::out | flags,
@@ -77,10 +77,10 @@ namespace rl::io {
         {
             // binary write example...
             debug_assert(m_write_stream.is_open());
-#pragma pack(4)  // force 4 byte alignment to avoid most unwanted padding
+  #pragma pack(4)  // force 4 byte alignment to avoid most unwanted padding
             m_write_stream.write(static_cast<uint8_t*>(&data), sizeof(data));
             m_write_stream.flush();
-#pragma pack()
+  #pragma pack()
         }
 
         std::size_t write(const std::string& data)
@@ -98,4 +98,5 @@ namespace rl::io {
     private:
         std::fstream m_write_stream{};
     };
+#endif
 }
