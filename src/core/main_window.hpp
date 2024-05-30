@@ -164,16 +164,16 @@ namespace rl {
 
         // clang-format on
 
-        constexpr static inline MainWindow::Properties DEFAULT_PROPERTY_FLAGS = {
+        constexpr static MainWindow::Properties DEFAULT_PROPERTY_FLAGS = {
             Properties::Flags::Resizable | Properties::Flags::OpenGL
         };
 
-        constexpr static inline ds::point<i32> DEFAULT_POSITION{
+        constexpr static ds::point<i32> DEFAULT_POSITION{
             SDL_WINDOWPOS_CENTERED_MASK,
             SDL_WINDOWPOS_CENTERED_MASK,
         };
 
-        constexpr static inline ds::dims<i32> DEFAULT_SIZE{ 1920, 1080 };
+        constexpr static ds::dims<i32> DEFAULT_SIZE{ 1920, 1080 };
 
     public:
         explicit MainWindow(const std::string& title, const ds::dims<i32>& dims = DEFAULT_SIZE,
