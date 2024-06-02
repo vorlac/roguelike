@@ -576,7 +576,7 @@ namespace rl::ui {
     {
         m_last_interaction = m_timer.elapsed();
         if (m_focus_path.size() > 1) {
-            auto dialog{ dynamic_cast<ScrollableDialog*>(m_focus_path[m_focus_path.size() - 2]) };
+            const auto dialog{ dynamic_cast<ScrollableDialog*>(m_focus_path[m_focus_path.size() - 2]) };
             if (dialog != nullptr && dialog->mode_active(Interaction::Modal))
                 if (!dialog->contains(mouse.pos()))
                     return true;

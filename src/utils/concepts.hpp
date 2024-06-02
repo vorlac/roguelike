@@ -8,9 +8,8 @@
 
 namespace rl::inline constraint {
     template <typename T>
-    concept refcountable = requires(const T& t) {
-        t.acquire_ref();
-        t.release_ref();
+    concept spatial = requires(const T& t) {
+        t.rect();
     };
 
     template <typename T, typename... TOther>

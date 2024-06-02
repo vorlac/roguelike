@@ -9,8 +9,22 @@ namespace rl::ds {
     template <rl::numeric T>
     struct line
     {
-        point<T> start{ point<T>::null() };
-        point<T> end{ point<T>::null() };
+        line(const point<T>& a, const point<T>& b)
+            : coordinates{ a, b }
+        {
+        }
+
+        point<T>& end()
+        {
+            return coordinates.back();
+        }
+
+        point<T>& start()
+        {
+            return coordinates.back();
+        }
+
+        std::vector<point<T>> coordinates{};
     };
 
 #pragma pack()

@@ -148,8 +148,8 @@ namespace rl {
         // defines how blurry the border of the rectangle is. Parameter icol specifies the inner
         // color and ocol the outer color of the gradient. The gradient is transformed by the
         // current transform when it is passed to FillPaint() or StrokePaint().
-        return nvg::linear_gradient(m_nvg_context.get(), line.start.x, line.start.y, line.end.x,
-                                    line.end.y, inner_color, outer_gradient_color);
+        return nvg::linear_gradient(m_nvg_context.get(), line.start().x, line.start().y, line.end().x,
+                                    line.end().y, inner_color, outer_gradient_color);
     }
 
     text::font::handle NVGRenderer::load_font(const std::string_view& font_name,

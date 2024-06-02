@@ -237,17 +237,6 @@ namespace rl::ui {
             if (!child->visible())
                 continue;
 
-            if (child->resizable() && child->resize_rect().contains(local_mouse_pos)) {
-                // if the child is resizable and the larger resize rect (for grab points)
-                // contains the mouse, but the smaller inner rect doesn't then favor resizing
-                // over recursively going deeper into the tree of widgets for more children
-                if (!child->rect().expanded(-RESIZE_GRAB_BUFFER).contains(local_mouse_pos))
-                    return child;
-
-                // otherwise continue searching for a better match
-                return child->find_widget(local_mouse_pos);
-            }
-
             // recurse deeper checking each child
             // for containmane with the point
             if (child->contains(local_mouse_pos))
