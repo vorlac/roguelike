@@ -2,8 +2,10 @@
 
 #include <cstdio>
 #include <functional>
+#include <regex>
 #include <sstream>
 #include <string>
+#include <tuple>
 
 #include "core/keyboard.hpp"
 #include "core/mouse.hpp"

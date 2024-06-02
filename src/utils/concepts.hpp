@@ -26,10 +26,10 @@ namespace rl::inline constraint {
     concept unsigned_integer = (any_of<std::type_identity_t<T>, u8, u16, u32, u64> && ...);
 
     template <typename... T>
-    concept integer = ((unsigned_integer<std::type_identity_t<T>> || signed_integer<std::type_identity_t<T>>) && ...);
+    concept integer = ((unsigned_integer<std::type_identity_t<T>> || signed_integer<std::type_identity_t<T>>)&&...);
 
     template <typename... T>
-    concept numeric = ((floating_point<std::type_identity_t<T>> || integer<std::type_identity_t<T>>) && ...);
+    concept numeric = ((floating_point<std::type_identity_t<T>> || integer<std::type_identity_t<T>>)&&...);
 
     template <auto... N>
     concept positive_numeric_v = ((numeric<decltype(N)> && N > 0) && ...);

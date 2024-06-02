@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ds/rect.hpp"
+#include "gfx/text.hpp"
 #include "gfx/vg/nanovg.hpp"
 #include "ui/theme.hpp"
 #include "utils/numeric.hpp"

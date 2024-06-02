@@ -1,17 +1,20 @@
 #include <glad/gl.h>
 
-#include <bit>
+#include <algorithm>
 #include <memory>
+#include <string>
+#include <string_view>
 #include <type_traits>
+#include <utility>
 
 #include "ds/color.hpp"
 #include "ds/dims.hpp"
 #include "ds/line.hpp"
 #include "gfx/nvg_renderer.hpp"
-#include "gfx/text.hpp"
 #include "gfx/vg/nanovg.hpp"
 #include "gfx/vg/nanovg_gl.hpp"
 #include "resources/fonts.hpp"
+#include "utils/std_utils.hpp"
 
 namespace rl {
     namespace {
@@ -173,8 +176,10 @@ namespace rl {
     void NVGRenderer::load_fonts(const std::vector<text::font::Data>& fonts)
     {
         for (auto&& [font_name, font_ttf] : fonts) {
-            const text::font::handle fh{ this->load_font(font_name, font_ttf) };
-            m_font_map[font_name] = fh;
+            text::font::handle fh{ this->load_font(
+                std::forward<decltype(font_name)>(font_name),
+                std::forward<decltype(font_ttf)>(font_ttf)) };
+            m_font_map[font_name] = std::move(fh);
         }
     }
 

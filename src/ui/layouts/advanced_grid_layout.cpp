@@ -1,12 +1,11 @@
 
 #include <array>
 #include <numeric>
+#include <unordered_map>
 #include <utility>
 #include <vector>
 
-#include "ds/dims.hpp"
 #include "ui/layouts/advanced_grid_layout.hpp"
-#include "ui/layouts/layout.hpp"
 #include "ui/theme.hpp"
 #include "ui/widget.hpp"
 #include "ui/widgets/dialog.hpp"
@@ -140,14 +139,16 @@ namespace rl::ui {
                                             std::array<std::vector<f32>, 2>& grid_cell_sizes) const
     {
         const ds::dims fs_w{ widget->fixed_size() };
-        ds::dims container_size{
-            std::fabs(fs_w.width) > std::numeric_limits<f32>::epsilon() ? fs_w.width
-                                                                        : widget->width(),
-            std::fabs(fs_w.height) > std::numeric_limits<f32>::epsilon() ? fs_w.height
-                                                                         : widget->height(),
+        ds::dims<f32> container_size{
+            std::fabs(fs_w.width) > std::numeric_limits<f32>::epsilon()
+                ? fs_w.width
+                : widget->width(),
+            std::fabs(fs_w.height) > std::numeric_limits<f32>::epsilon()
+                ? fs_w.height
+                : widget->height(),
         };
 
-        ds::dims extra{
+        ds::dims<f32> extra{
             m_margin * 2.0f,
             m_margin * 2.0f,
         };
@@ -274,7 +275,8 @@ namespace rl::ui {
 
     void AdvancedGridLayout::set_anchor(const Widget* widget, const Anchor& anchor)
     {
-        m_anchor[widget] = anchor;
+        debug_assert("not implemented");
+        // m_anchor[widget] = anchor;
     }
 
     Anchor AdvancedGridLayout::anchor(const Widget* widget) const

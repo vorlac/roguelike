@@ -81,8 +81,8 @@ namespace rl::ds {
         constexpr operator dims<I>() const
         {
             return dims<I>{
-                std::lroundf(this->width),
-                std::lroundf(this->height),
+                static_cast<I>(std::round(this->width)),
+                static_cast<I>(std::round(this->height)),
             };
         }
 

@@ -1,3 +1,4 @@
+#include <ranges>
 #include <string>
 #include <string_view>
 #include <utility>
@@ -308,7 +309,7 @@ namespace rl::ui {
 
             const ds::line<f32> line{
                 m_rect.pt,
-                ds::point{ m_rect.pt.x, m_rect.pt.y + m_rect.size.height }
+                ds::point<f32>{ m_rect.pt.x, m_rect.pt.y + m_rect.size.height }
             };
             const nvg::PaintStyle bg{ m_renderer->create_linear_gradient_paint_style(line, grad_top, grad_bot) };
             nvg::fill_paint(context, bg);

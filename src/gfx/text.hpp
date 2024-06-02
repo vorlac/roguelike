@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string_view>
+
 #include <parallel_hashmap/phmap.h>
 
 #include "utils/numeric.hpp"
@@ -7,7 +9,7 @@
 namespace rl::text {
     namespace font {
         using handle = i32;
-        using Map = phmap::flat_hash_map<std::string_view, handle>;
+        using Map = phmap::flat_hash_map<std::string_view, font::handle>;
         using Data = std::pair<std::string_view, std::basic_string_view<u8>>;
 
         enum class Source {

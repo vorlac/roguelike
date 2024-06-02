@@ -122,7 +122,7 @@ namespace rl::utf8 {
                 return unicode_block{
                     .length = 3,
                     .buffer = {
-                        static_cast<u8>(THREE_BYTE_MARKER | (cp >> 12) & 0x0F),
+                        static_cast<u8>(THREE_BYTE_MARKER | ((cp >> 12) & 0x0F)),
                         static_cast<u8>(SURROGATE_MARKER | ((cp >> 6) & 0x3F)),
                         static_cast<u8>(SURROGATE_MARKER | (cp & 0x3F)),
                         0,

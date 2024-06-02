@@ -1566,9 +1566,9 @@ namespace rl::stb {
             n = comp - 1;
         for (int i = 0; i < x * y; ++i) {
             for (k = 0; k < n; ++k) {
-                float z{ (pow(data[i * comp + k] * stbi_h2l_scale_i, stbi_h2l_gamma_i)) *
-                             255.0f +
-                         0.5f };
+                f32 z{ static_cast<f32>(pow(data[i * comp + k] * stbi_h2l_scale_i, stbi_h2l_gamma_i)) *
+                           255.0f +
+                       0.5f };
                 if (z < 0)
                     z = 0;
                 if (z > 255)

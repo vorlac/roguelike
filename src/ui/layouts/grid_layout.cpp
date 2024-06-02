@@ -147,7 +147,7 @@ namespace rl::ui {
         const u32 axis1{ static_cast<u32>(m_orientation) };
         const u32 axis2{ (axis1 + 1) % 2 };
 
-        ds::dims<i32> start_offset{ ds::dims<i32>(extra + m_margin) };
+        ds::dims<i32> start_offset{ extra + m_margin };
         ds::point<i32> start{ start_offset.width, start_offset.height };
         ds::point<i32> pos{ start };
 

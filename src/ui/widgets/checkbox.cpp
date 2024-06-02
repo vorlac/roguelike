@@ -134,14 +134,14 @@ namespace rl::ui {
                                : m_theme->disabled_text_color,
             .font_size = checkbox_height,
         };
-        const ds::rect<f32> checkbox_rect{
-            ds::point{
+        const ds::rect checkbox_rect{
+            ds::point<f32>{
                 m_rect.pt.x,
                 m_rect.pt.y +
                     m_rect.size.height / 2.0f -
                     checkbox_height / 2.0f,
             },
-            ds::dims{
+            ds::dims<f32>{
                 checkbox_height,
                 checkbox_height,
             },
