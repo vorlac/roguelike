@@ -2,16 +2,21 @@
 
 #include <array>
 #include <chrono>
+#include <cmath>
+#include <iomanip>
 #include <iostream>
 #include <ranges>
 #include <string>
 #include <tuple>
+#include <type_traits>
 #include <utility>
+#include <vector>
 
 #include <fmt/format.h>
 #include <nanobench.h>
 
 #include "ds/rect.hpp"
+#include "utils/generator.hpp"
 #include "utils/memory.hpp"
 #include "utils/numeric.hpp"
 #include "utils/random.hpp"
@@ -46,34 +51,6 @@ namespace rl::bench::asdf {
     }
 
     namespace b {
-        /////////////////////////////////////////
-        // template <typename... TArgs>
-        // auto sum(TArgs&&... args)
-        //{
-        //     return (args + ...);
-        // }
-        //
-        // int main()
-        //{
-        //     std::tuple tup{ 3, 4.56 };
-        //     double val = 0.0;
-        //     std::apply(
-        //         [&]<typename... T>(T&&... n) {
-        //             val = sum(std::forward<T>(n)...);
-        //         },
-        //         tup);
-        //
-        //     fmt::print("{}", val);
-        // }
-        /////////////////////////////////////////
-
-#include <array>
-#include <chrono>
-#include <tuple>
-#include <type_traits>
-#include <utility>
-
-#include <fmt/format.h>
 
         template <typename... TDurations>
         std::tuple<TDurations...> convert_durations(auto in_duration)
@@ -95,12 +72,23 @@ namespace rl::bench::asdf {
 
         int main()
         {
+            std::tuple tup{ 3, 4.56 };
+            double val = 0.0;
+            std::apply(
+                [&]<typename... T>(T&&... n) {
+                    val = sum(std::forward<T>(n)...);
+                },
+                tup);
+
+            fmt::print("{}", val);
+
+            //========================================================
+
             using namespace std::chrono_literals;
             // start with some time like we did in the example above...
             auto orig_duration{ std::chrono::seconds(8742054346) };
             // print out the base time in seconds...
             fmt::print("1 >> orig_duration = {}\n", orig_duration);
-
             // convert the original time from seconds -> (hours + seconds(
             auto hours_and_mins{ convert_durations<std::chrono::hours, std::chrono::seconds>(
                 orig_duration) };
@@ -242,12 +230,38 @@ namespace rl::bench {
             ankerl::nanobench::doNotOptimizeAway(result);
         });
     }
-}
 
-#include <cmath>
-#include <iomanip>
-#include <iostream>
-#include <vector>
+    void run_coroutine_generator_benchmarks()
+    {
+        constexpr auto fibonacci{
+            [](rl::u32 count = u32_max) -> generator<rl::u64> {
+                rl::u64 a{ 0 };
+                rl::u64 b{ 1 };
+                rl::u64 prev{};
+                rl::u32 iterations{ 0 };
+                while (iterations++ < count) {
+                    co_yield b;
+                    prev = a;
+                    a = b;
+                    b += prev;
+                }
+            }
+        };
+
+        ankerl::nanobench::Bench bench{};
+        bench.title("fib coroutine")
+            .unit("iterations")
+            .warmup(1000)
+            .relative(true)
+            .performanceCounters(true);
+
+        using namespace std::literals;
+        bench.minEpochTime(1s).run("fib", [&] {
+            for (auto&& i : fibonacci(100))
+                ankerl::nanobench::doNotOptimizeAway(i);
+        });
+    }
+}
 
 namespace rl::circular_nums {
     std::vector<int> primes(int n)

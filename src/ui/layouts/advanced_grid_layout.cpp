@@ -273,7 +273,7 @@ namespace rl::ui {
         m_col_stretch.at(index) = stretch;
     }
 
-    void AdvancedGridLayout::set_anchor(const Widget* widget, const Anchor& anchor)
+    void AdvancedGridLayout::set_anchor(const Widget*, const Anchor&)
     {
         debug_assert("not implemented");
         // m_anchor[widget] = anchor;

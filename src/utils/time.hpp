@@ -27,8 +27,19 @@ namespace rl::inline utils {
         // clang-format on
     };
 
-    template <rl::numeric T = f32, auto FixedStep = 240, auto VDuration = TimeDuration::Second>
-        requires std::same_as<decltype(VDuration), TimeDuration>
+    template <typename... TDurations>
+    std::tuple<TDurations...> convert_durations(auto in_duration)
+    {
+        std::tuple<TDurations...> ret{};
+        ((std::get<TDurations>(ret) = std::chrono::duration_cast<TDurations>(in_duration),
+          in_duration -= std::chrono::duration_cast<TDurations>(std::get<TDurations>(ret))),
+         ...);
+
+        return ret;
+    }
+
+    template <rl::numeric T = f32, auto FixedStep = 240, auto Duration = TimeDuration::Second>
+        requires std::same_as<decltype(Duration), TimeDuration>
     struct Timer
     {
         // gets time unit of a single tick
@@ -59,7 +70,7 @@ namespace rl::inline utils {
         // data type that will be output
         using time_type = T;
         // the unti that will be output by the timer
-        constexpr static inline TimeDuration time_unit{ VDuration };
+        constexpr static TimeDuration time_unit{ Duration };
         // the timer internally always stores the
         // highest resolution of time point units
         static inline const TimeDuration tick_unit{ Timer::unit() };
@@ -115,6 +126,8 @@ namespace rl::inline utils {
         void reset()
         {
             m_start_timestamp = Timer::now();
+            m_tick_count = 0;
+            m_delta_time = 0;
         }
 
         template <std::invocable TCallable>
@@ -127,10 +140,7 @@ namespace rl::inline utils {
             m_fps_cur_timer += m_delta_time;
 
             const u64 last_frame_count{ m_frame_count };
-            if (m_delta_time > m_max_delta_time)
-                m_delta_time = m_max_delta_time;
-
-            if (m_fixed_timestep > 0) {
+            if constexpr (m_fixed_timestep > 0) {
                 // Fixed timestep update logic
                 if (std::abs(m_delta_time - m_fixed_timestep) < 1.0f / 4000)
                     m_delta_time = m_fixed_timestep;
@@ -140,9 +150,9 @@ namespace rl::inline utils {
                     m_elapsed_time = m_fixed_timestep;
                     m_tick_timer += m_fixed_timestep;
                     m_leftover_ticks -= m_fixed_timestep;
-                    ++m_frame_count;
 
                     std::invoke(std::forward<TCallable>(callable));
+                    ++m_frame_count;
                 }
             }
             else {
@@ -150,9 +160,9 @@ namespace rl::inline utils {
                 m_elapsed_time = m_delta_time;
                 m_tick_timer += m_delta_time;
                 m_leftover_ticks = 0;
-                ++m_frame_count;
 
                 std::invoke(std::forward<TCallable>(callable));
+                ++m_frame_count;
             }
 
             // Track the current framerate.
@@ -166,7 +176,7 @@ namespace rl::inline utils {
             }
         }
 
-    private:
+    public:
         // the number of times tick() has been called
         u64 m_tick_count{ 0 };
         u64 m_frame_count{ 0 };
@@ -174,27 +184,32 @@ namespace rl::inline utils {
         u64 m_start_timestamp{ Timer::now() };
         // tick captured each time delta() is called
         u64 m_delta_timestamp{ Timer::now() };
-
         // elapsed time (in seconds) since timer
         // was initialized or last reset
         f64 m_elapsed_time{ 0.0 };
-        // elapsed time (in seconds) since timer
-        // was initialized or last reset
+        // time
         f64 m_delta_time{ 0.0 };
-        f64 m_max_delta_time{ 1.0 };
+        f64 m_max_delta_time{};
         // time when tick was last called (in seconds)
         f64 m_prev_tick_time{ 0.0 };
         f64 m_leftover_ticks{ 0.0 };
         f64 m_tick_timer{ 0.0 };
-
-        f64 m_fixed_timestep{ FixedStep > 0 ? 1.0f / FixedStep : -1.0f };
         // total average ticks per second
         f64 m_fps_avg_count{ 0.0 };
         // ticks per second in the past second
         f64 m_fps_cur_count{ 0.0 };
         f64 m_fps_cur_timer{ 0.0 };
 
-        constexpr static TimeDuration m_duration_unit{ VDuration };
+        constexpr static f64 m_fixed_timestep{ FixedStep > 0 ? 1.0f / FixedStep : -1.0f };
+        constexpr static TimeDuration m_duration_unit{ Duration };
         const u64 m_perf_counter_freq{ SDL3::SDL_GetPerformanceFrequency() };
     };
+
+    template <rl::numeric T, auto FixedStep, auto Duration>
+    auto format_as(const Timer<T, FixedStep, Duration>& timer)
+    {
+        return fmt::format("ticks:[{}] framecount[{}] elapsed:[{:.2f}] dt:[{:.6f}] fpsavg:[{:.1f}]]",
+                           timer.m_tick_count, timer.m_frame_count, timer.m_elapsed_time,
+                           timer.m_delta_time, timer.m_fps_avg_count);
+    }
 }
