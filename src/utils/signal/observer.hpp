@@ -78,12 +78,12 @@ namespace rl::inline utils {
         static inline phmap::flat_hash_map<std::string_view, TCallable> m_subscribers{};
     };
 
-    template <auto& SignalName, typename TSubscriber, std::invocable TCallable>
-    Signal(TSubscriber, TCallable) -> Signal<SignalName, TSubscriber, TCallable>;
-    template <auto& SignalName, typename TSubscriber, std::invocable TCallable>
-    Signal(TCallable) -> Signal<SignalName, void, TCallable>;
-    template <auto& SignalName, typename TSubscriber, std::invocable TCallable>
-    Signal() -> Signal<SignalName, std::void_t<void>>;
+    // template <auto& SignalName, typename TSubscriber, std::invocable TCallable>
+    // Signal(TSubscriber, TCallable) -> Signal<SignalName, TSubscriber, TCallable>;
+    // template <auto& SignalName, typename TSubscriber, std::invocable TCallable>
+    // Signal(TCallable) -> Signal<SignalName, void, TCallable>;
+    // template <auto& SignalName, typename TSubscriber, std::invocable TCallable>
+    // Signal() -> Signal<SignalName, std::void_t<void>>;
 }
 
 // namespace std {
