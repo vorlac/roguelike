@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <string>
 #include <string_view>
 
 namespace rl {
@@ -11,7 +12,7 @@ namespace rl {
     }
 
     template <typename T>
-    constexpr std::string_view demangled_typename()
+    constexpr std::string_view type_name()
     {
 #if defined(__clang__)
         constexpr std::string_view pref{ "[T = " };
@@ -22,8 +23,8 @@ namespace rl {
         constexpr std::string_view suff{ "; " };
         constexpr std::string_view func{ __PRETTY_FUNCTION__ };
 #elif defined(_MSC_VER)
-        constexpr std::string_view pref{ "wolv::type::getTypeName<" };
-        constexpr std::string_view suff{ ">(void)" };
+        constexpr std::string_view pref{ "rl::type_name<" };
+        constexpr std::string_view suff{ ">()" };
         constexpr std::string_view func{ __FUNCSIG__ };
 #endif
 
