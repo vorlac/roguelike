@@ -168,7 +168,6 @@ namespace rl::inline utils {
 
     template <typename T>
     class generator
-
     {
     public:
         using promise_type = detail::generator_promise<T>;
