@@ -44,9 +44,15 @@ namespace rl::bench::asdf {
 
         int asdf()
         {
-            auto ints{ std::make_integer_sequence<int, 28>{} };
-            constexpr std::array int_vals{ int_array(std::forward<decltype(ints)>(ints)) };
-            constexpr std::array fib_vals{ fib_array(std::forward<decltype(ints)>(ints)) };
+            auto ints{ std::make_integer_sequence<int, 16>{} };
+            constexpr static std::array [[maybe_unused]] int_vals{
+                int_array(std::forward<decltype(ints)>(ints))
+            };
+            constexpr static std::array [[maybe_unused]] fib_vals{
+                fib_array(std::forward<decltype(ints)>(ints))
+            };
+
+            return 0;
         }
     }
 
@@ -138,6 +144,8 @@ namespace rl::bench::asdf {
             // 2 >> class std::chrono::duration<__int64,struct std::ratio<1,1> > = 1546s
             // 3 >> orig_to_hours = 2428348h
             // 4 >> new_to_hours = 2428348h
+
+            return 0;
         }
 
     }
@@ -181,16 +189,16 @@ namespace rl::bench {
 
         rand_benchmarks.minEpochTime(1s).run("memcmp", [&] {
             const ds::rect<i32> rect1{
-                rl::random<1, 100>::value(),
-                rl::random<1, 100>::value(),
-                rl::random<1, 100>::value(),
-                rl::random<1, 100>::value(),
+                { random<1, 100>::value(),
+                  random<1, 100>::value() },
+                { random<1, 100>::value(),
+                  random<1, 100>::value() },
             };
             const ds::rect<i32> rect2{
-                rl::random<1, 100>::value(),
-                rl::random<1, 100>::value(),
-                rl::random<1, 100>::value(),
-                rl::random<1, 100>::value(),
+                { random<1, 100>::value(),
+                  random<1, 100>::value() },
+                { random<1, 100>::value(),
+                  random<1, 100>::value() },
             };
             const i32 result{ memcmp(&rect1, &rect2, sizeof(rect1)) };
             ankerl::nanobench::doNotOptimizeAway(result);
@@ -198,16 +206,16 @@ namespace rl::bench {
 
         rand_benchmarks.minEpochTime(1s).run("static_memcmp", [&] {
             const ds::rect<i32> rect1{
-                rl::random<1, 100>::value(),
-                rl::random<1, 100>::value(),
-                rl::random<1, 100>::value(),
-                rl::random<1, 100>::value(),
+                { random<1, 100>::value(),
+                  random<1, 100>::value() },
+                { random<1, 100>::value(),
+                  random<1, 100>::value() },
             };
             const ds::rect<i32> rect2{
-                rl::random<1, 100>::value(),
-                rl::random<1, 100>::value(),
-                rl::random<1, 100>::value(),
-                rl::random<1, 100>::value(),
+                { random<1, 100>::value(),
+                  random<1, 100>::value() },
+                { random<1, 100>::value(),
+                  random<1, 100>::value() },
             };
             const bool result{ memory::static_memcmp(rect1, rect2) };
             ankerl::nanobench::doNotOptimizeAway(result);
@@ -215,30 +223,30 @@ namespace rl::bench {
 
         rand_benchmarks.minEpochTime(1s).run("operator==", [&] {
             const ds::rect<i32> rect1{
-                rl::random<1, 100>::value(),
-                rl::random<1, 100>::value(),
-                rl::random<1, 100>::value(),
-                rl::random<1, 100>::value(),
+                { random<1, 100>::value(),
+                  random<1, 100>::value() },
+                { random<1, 100>::value(),
+                  random<1, 100>::value() },
             };
             const ds::rect<i32> rect2{
-                rl::random<1, 100>::value(),
-                rl::random<1, 100>::value(),
-                rl::random<1, 100>::value(),
-                rl::random<1, 100>::value(),
+                { random<1, 100>::value(),
+                  random<1, 100>::value() },
+                { random<1, 100>::value(),
+                  random<1, 100>::value() },
             };
             const bool result{ rect1 == rect2 };
             ankerl::nanobench::doNotOptimizeAway(result);
         });
     }
 
-    void run_coroutine_generator_benchmarks()
+    inline void run_coroutine_generator_benchmarks()
     {
         constexpr auto fibonacci{
-            [](rl::u32 count = u32_max) -> generator<rl::u64> {
-                rl::u64 a{ 0 };
-                rl::u64 b{ 1 };
-                rl::u64 prev{};
-                rl::u32 iterations{ 0 };
+            [](u32 count = u32_max) -> generator<u64> {
+                u64 a{ 0 };
+                u64 b{ 1 };
+                u64 prev{};
+                u32 iterations{ 0 };
                 while (iterations++ < count) {
                     co_yield b;
                     prev = a;
@@ -247,18 +255,33 @@ namespace rl::bench {
                 }
             }
         };
-
+        constexpr auto factorial{
+            [](u32 iterations = u32_max) -> generator<u64> {
+                u64 num{ 1 };
+                u64 count{ 0 };
+                while (iterations >= ++count) {
+                    co_yield num;
+                    num *= num++;
+                }
+            }
+        };
         ankerl::nanobench::Bench bench{};
-        bench.title("fib coroutine")
+        bench.title("prototypes")
             .unit("iterations")
             .warmup(1000)
             .relative(true)
             .performanceCounters(true);
 
         using namespace std::literals;
-        bench.minEpochTime(1s).run("fib", [&] {
+        bench.minEpochTime(1s).run("fib(1)", [&] {
             for (auto&& i : fibonacci(100))
                 ankerl::nanobench::doNotOptimizeAway(i);
+        });
+
+        bench.minEpochTime(1s).run("fib(2)", [&] {
+            auto fac = factorial(100);
+            auto ret = std::vector{ fac... };
+            ankerl::nanobench::doNotOptimizeAway(ret);
         });
     }
 }
@@ -301,7 +324,7 @@ namespace rl::circular_nums {
 
     bool isCyclic(long long n)
     {
-        int length = std::log10(n);
+        int length = static_cast<int>(std::log10(n));
         std::string nStr = std::to_string(n * length);
         for (int i = length - 1; i > 0; i--) {
             std::string a = std::to_string(n * i);
@@ -320,11 +343,12 @@ namespace rl::circular_nums {
     {
         for (auto prime : primes(22)) {
             long double cyclic = (std::pow((long double)10, prime - 1) - 1) / prime;
-            int length = std::log10(cyclic);
-            if (std::abs(cyclic - std::round(cyclic)) < 0.001 && isCyclic(std::round(cyclic))) {
+            [[maybe_unused]] int length = static_cast<int>(std::log10(cyclic));
+            if (std::abs(cyclic - std::round(cyclic)) < 0.001 && isCyclic(static_cast<i64>(std::round(cyclic)))) {
                 std::string cyclicStr = std::to_string((long)std::round(cyclic));
-                std::cout << cyclicStr << std::endl;
+                fmt::println("{}", cyclicStr);
             }
         }
+        return 0;
     }
 }

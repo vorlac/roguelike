@@ -63,7 +63,6 @@ set(compiler_is_clang "$<OR:$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:Clan
 set(FORCE_STATIC_VCRT ON)
 set(BUILD_SHARED_LIBS OFF)
 
-# SDL3 build options
 set(SDL_LIBC OFF)
 set(SDL_VULKAN OFF)
 set(SDL_SHARED OFF)
@@ -116,7 +115,7 @@ target_compile_definitions(${PROJECT_NAME}
         _CRT_SECURE_NO_WARNINGS
 
         $<$<CONFIG:Debug>:
-			# _DISABLE_STRING_ANNOTATION=1 # needed with ASAN enabled because of fmt
+		    # _DISABLE_STRING_ANNOTATION=1 # needed with ASAN enabled because of fmt
 			# _DISABLE_VECTOR_ANNOTATION=1 # needed with ASAN enabled because of fmt
             _NO_DEBUG_HEAP=1
         >

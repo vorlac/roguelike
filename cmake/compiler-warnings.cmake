@@ -39,7 +39,7 @@ target_compile_options(${PROJECT_NAME}
 			-Wno-invalid-constexpr
 			-Wno-unused-variable
 			-Wno-uninitialized
-			-Wno-unsafe-buffer-usage
+			#-Wno-unsafe-buffer-usage
 			-Wno-zero-as-null-pointer-constant
 			-Wno-format-security
 			-Wno-reserved-macro-identifier
@@ -54,7 +54,7 @@ target_compile_options(${PROJECT_NAME}
 			-Wno-unused-function # test_renderer.hpp
 			-Wno-reserved-identifier
 			-Wno-implicit-float-conversion
-			-Wno-cast-function-type-strict
+			#-Wno-cast-function-type-strict
 			-Wno-strict-prototypes
 			-Wno-language-extension-token
 			-Wno-unused-macros
@@ -66,6 +66,7 @@ target_compile_options(${PROJECT_NAME}
 
         # GNU only
         $<${compiler_is_gnu}:
+            -Wall
             -Walloc-zero
             -Wduplicated-branches
             -Wduplicated-cond

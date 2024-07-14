@@ -7,6 +7,8 @@
         "/**",
         "///"
     ],
+    "problems.decorations.enabled": true,
+    "problems.visibility": true,
     "C_Cpp.default.enableConfigurationSquiggles": true,
     "C_Cpp.enhancedColorization": "enabled",
     "C_Cpp.formatting": "clangFormat",

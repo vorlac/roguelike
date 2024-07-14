@@ -14,7 +14,6 @@
 #include "gfx/vg/nanovg.hpp"
 #include "gfx/vg/nanovg_gl.hpp"
 #include "resources/fonts.hpp"
-#include "utils/std_utils.hpp"
 
 namespace rl {
     namespace {
@@ -88,7 +87,7 @@ namespace rl {
         return m_nvg_context.get();
     }
 
-    void NVGRenderer::begin_frame(const ds::dims<f32>& render_size, f32 pixel_ratio) const
+    void NVGRenderer::begin_frame(const ds::dims<f32>& render_size, const f32 pixel_ratio) const
     {
         nvg::begin_frame(
             m_nvg_context.get(), render_size.width,

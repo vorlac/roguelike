@@ -167,6 +167,7 @@
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/CppDkmDebugger/CppStepIntoFilter/=BC89ACF250EC0F40A804BFACA3704E17/IsEnabled/@EntryValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/CppDkmDebugger/CppStepIntoFilter/=CA8D4BEBB5D691408788EF479FE4F627/IsEnabled/@EntryValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/CppDkmDebugger/CppStepIntoFilter/=FC1F9EBFB0603B42A810DEA809093964/IsEnabled/@EntryValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/ResxEditorPersonal/Initialized/@EntryValue">True</s:Boolean>
 	<s:Int64 x:Key="/Default/SubsystemManager/ActiveProfileInTimeline/@EntryValue">1</s:Int64>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=nanovg/@EntryIndexedValue">True</s:Boolean>
 </wpf:ResourceDictionary>

@@ -18,7 +18,7 @@
 #include "utils/concepts.hpp"
 #include "utils/logging.hpp"
 #include "utils/numeric.hpp"
-#include "utils/std_utils.hpp"
+#include "utils/reflect.hpp"
 
 namespace rl::inline utils {
 
@@ -30,7 +30,7 @@ namespace rl::inline utils {
         using callable_t = TCallable;
         using subscriber_t = std::remove_cvref_t<TSubscriber>;
         constexpr static std::string_view name{ SignalName };
-        constexpr static std::string_view hash_name{ rl::type_name<callable_t>() };
+        constexpr static std::string_view hash_name{ reflect::demangled_typename<callable_t>() };
 
         Signal() = default;
 

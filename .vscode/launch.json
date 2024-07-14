@@ -56,12 +56,31 @@
             ]
         },
         {
-            "name": "Python: Current File",
-            "type": "python",
+            "name": "Debug (LLDB)",
+            "type": "cppdbg",
+            "MIMode": "lldb",
             "request": "launch",
-            "program": "${file}",
-            "console": "integratedTerminal",
-            "justMyCode": true
+            "program": "${command:cmake.launchTargetPath}",
+            "args": [
+                "--debug",
+                "--verbose",
+                "--path",
+                "${workspaceFolder}/project"
+            ],
+            "cwd": "${workspaceFolder}",
+            "internalConsoleOptions": "openOnSessionStart",
+            "launchCompleteCommand": "exec-run",
+            "symbolLoadInfo": {
+                "loadAll": true,
+                "exceptionList": ""
+            },
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
         }
     ]
 }
