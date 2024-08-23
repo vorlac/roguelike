@@ -6,8 +6,7 @@
 
 namespace rl::ui::icon {
 
-    struct ForkAwesome
-    {
+    struct ForkAwesome {
         constexpr static inline std::string_view FILE_NAME{ "forkawesome-webfont.ttf" };
 
         constexpr static inline u16 IconMin{ 0xf000 };
@@ -691,7 +690,7 @@ namespace rl::ui::icon {
         constexpr static inline std::string_view Meetup{ "\xef\x8b\xa0" };                            // U+f2e0
         constexpr static inline std::string_view Mastodon{ "\xef\x8b\xa1" };                          // U+f2e1
         constexpr static inline std::string_view MastodonAlt{ "\xef\x8b\xa2" };                       // U+f2e2
-        constexpr static inline std::string_view ForkAwesome{ "\xef\x8b\xa3" };                       // U+f2e3
+        constexpr static inline std::string_view ForkAwesome_{ "\xef\x8b\xa3" };                      // U+f2e3
         constexpr static inline std::string_view Peertube{ "\xef\x8b\xa4" };                          // U+f2e4
         constexpr static inline std::string_view Diaspora{ "\xef\x8b\xa5" };                          // U+f2e5
         constexpr static inline std::string_view Friendica{ "\xef\x8b\xa6" };                         // U+f2e6

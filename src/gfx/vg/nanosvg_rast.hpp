@@ -2,7 +2,7 @@
 
 namespace rl::nvg::svg {
     typedef struct NSVGrasterizer NSVGrasterizer;
-
+    struct NSVGimage;
     // Allocated rasterizer context.
     NSVGrasterizer* nsvg_create_rasterizer();
 

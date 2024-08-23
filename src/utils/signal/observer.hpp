@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <concepts>
 #include <cstddef>
 #include <functional>
@@ -63,11 +64,11 @@ namespace rl::inline utils {
             return hash_value(*this) == hash_value(other);
         }
 
-        friend std::size_t hash_value(const TSubscriber& subscriber)
+        friend auto hash_value(const TSubscriber& subscriber)
         {
             debug_assert(hash_name == Signal::hash_name);
             debug_assert(hash_name == decltype(subscriber)::hash_name);
-            return std::hash(Signal::hash_name);
+            return ::std::hash<std::string_view>(Signal::hash_name);
         }
 
     protected:

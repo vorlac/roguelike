@@ -1,7 +1,7 @@
-﻿# Creates a custom "graphviz" target that outputs useful information
-# about the project's (and sub target) lib deps/linkage relationships
+﻿set(GRAPHVIZ_OUTPUT OFF)
+set(DEPENDENCY_DIAGNOSTICS OFF)
+
 function(run_active_cmake_diagnostics)
-    # enabled with -D DEPENDENCY_DIAGNOSTICS=ON
     if(DEPENDENCY_DIAGNOSTICS MATCHES ON)
         # prints a dependency hierarchy for all targets in project
         set_property(GLOBAL PROPERTY GLOBAL_DEPENDS_DEBUG_MODE ON)
@@ -12,15 +12,16 @@ function(run_active_cmake_diagnostics)
         # Outputs graphviz dot files and generates png images showing dependency
         # relationships for top level project and all targets it contains.
         # All files will be generated in src/build/graphviz_output by default.
-        #
-        # Note: png image graph generation requires graphviz to be installed
-        include(${CMAKE_SOURCE_DIR}/CMakeGraphVizOptions.cmake)
+        set(GRAPHVIZ_GRAPH_NAME "Dependency tree")
         add_custom_target(graphviz ALL
-
-            # TODO: wipe out ${CMAKE_BINARY_DIR}/graphviz_output dir here
-            COMMAND ${CMAKE_COMMAND} "--graphviz=${CMAKE_BINARY_DIR}/graphviz_output/${PROJECT_NAME}.dot" .
-            COMMAND for dot_file in \$$\(find "${CMAKE_BINARY_DIR}/graphviz_output/*.dot*" ! -name \"*.png\" \)\; do echo \"Generating \$\${dot_file}.png\" && dot -Tpng \"\$$dot_file\" -o \"\$$dot_file.png\" \; done;
-            WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
+            COMMAND ${CMAKE_COMMAND} "--graphviz=${CURRENT_CMAKE_BINARY_DIR}/graphviz_output/${PROJECT_NAME}.dot" .
+            WORKING_DIRECTORY ${CURRENT_CMAKE_BINARY_DIR}
+        )
+        # Generate PNG from graphviz `${PROJECT_NAME}.dot` file...
+        # Note: png image graph generation requires graphviz (dot executable specifically) to be installed
+        execute_process(
+            COMMAND dot -Tpng -o "./graphviz_output/${PROJECT_NAME}.png" "./graphviz_output/${PROJECT_NAME}.dot"
+            WORKING_DIRECTORY "${CURRENT_CMAKE_BINARY_DIR}"
         )
     endif()
 endfunction(run_active_cmake_diagnostics)

@@ -38,7 +38,7 @@ namespace rl::ds {
         }
 
         template <typename TRow, typename... TOtherRows>
-            requires(rl::all_match<std::array<T, Cols>, TRow, TOtherRows...> &&
+            requires(rl::all_of<std::array<T, Cols>, TRow, TOtherRows...> &&
                      1 + sizeof...(TOtherRows) == Rows)
         constexpr matrix(TRow&& first, TOtherRows&&... rest)
         {
@@ -124,8 +124,8 @@ namespace rl::ds {
 
         constexpr matrix& operator*=(const matrix& other)
         {
-            for (auto&& row : Rows) {
-                for (auto&& col : Cols) {
+            for (auto row = 0; row < Rows; ++row) {
+                for (auto col = 0; col < Cols; ++col) {
                     m_rows[{ row, col }] * other[{ col, row }];
                 }
             }
@@ -160,7 +160,7 @@ namespace rl::ds {
     using row_t = std::array<typename TRow::value_type, sizeof(TRow) / sizeof(TRow::value_type)>;
 
     template <typename TRow, typename... TOtherRows>
-        requires(rl::all_match<row_t<TRow>, TRow, TOtherRows...>)
+        requires(rl::all_of<row_t<TRow>, TRow, TOtherRows...>)
     matrix(TRow, TOtherRows...) -> matrix<typename TRow::value_type, 1 + sizeof...(TOtherRows),
                                           sizeof(TRow) / sizeof(TRow::value_type)>;
 }

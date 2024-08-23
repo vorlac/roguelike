@@ -164,7 +164,7 @@ namespace rl::ui {
     protected:
         constexpr static f32 RESIZE_GRAB_BUFFER{ 5.0f };
         constexpr static bool DiagnosticsEnabled{ true };
-        constinit static inline Theme m_default_theme{};
+        constexpr static Theme m_default_theme{};
 
     public:
         // TODO: get rid of this stuff

@@ -11,6 +11,9 @@ namespace rl::ui {
     class Theme final : public ds::refcounted
     {
     public:
+        constexpr Theme() = default;
+        constexpr ~Theme() = default;
+
         std::string_view tooltip_font_name{ text::font::style::SansBold };
         std::string_view form_group_font_name{ text::font::style::Mono };
 

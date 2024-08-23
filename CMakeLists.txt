@@ -76,11 +76,11 @@ find_package(glm CONFIG REQUIRED)
 find_package(fmt CONFIG REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
 find_package(nanobench CONFIG REQUIRED)
-
+find_path(PCG_INCLUDE_DIRS "pcg_extras.hpp")
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/sdl)
 
 file(GLOB_RECURSE
-  roguelike_sources
+project_sources
   CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/extern/glad/gl.[hc]"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/*.[hc]"
@@ -88,7 +88,8 @@ file(GLOB_RECURSE
 )
 
 add_executable(${PROJECT_NAME}
-  ${roguelike_sources}
+  #${project_sources}
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/resources/fonts.cpp
 )
 
@@ -109,6 +110,8 @@ target_compile_definitions(${PROJECT_NAME}
 	NANOVG_GL3
     NOMINMAX
 	UNICODE
+
+    _CRT_SECURE_NO_WARNINGS
 
     $<${compiler_is_msvc}:
         _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING
@@ -133,12 +136,12 @@ target_compile_options(${PROJECT_NAME}
     $<${compiler_is_msvc}:
         /Zc:preprocessor
         /utf-8
-        /EHsc
+        #/EHsc
         /nologo
         #/arch:AVX2
-        /fp:fast
+        #/fp:fast
         /std:c++latest
-        /TP
+        #/TP
 
         $<$<CONFIG:Debug>:
 			# /fsanitize=fuzzer
@@ -158,23 +161,24 @@ target_compile_options(${PROJECT_NAME}
         >
 
         $<$<CONFIG:Release>:
-            /O2 # maximize speed
-            #/Oi # generate intrinsics
-            /Oy # frame pointer omission
-            /Gw # optimize global data
-            /GS- # disable buffer security checks
-            # /GA # optimize for windows application
-            /GL # whole program optimization
-            /fp:fast # prefer fast over accurate floating point math
-            # /favor:INTEL64
-
-            /Ox # enable most speed optimizations
-            /Ot # favor fast code
-            #/Ob2 # inline function expansion
-            #/GR- # disable RTTI
-            #/EHa- # disable exception handling
-            /Gr # __vectorcall calling convention, Gr for __fastcall
-            #/order # order functions for optimal paging
+            /O2
+     #       /Ox # maximize speed
+     #       /Oi # generate intrinsics
+     #       /Oy # frame pointer omission
+     #       #/Gw # optimize global data
+     #       /GS- # disable buffer security checks
+     #       #/GA # optimize for windows application
+             /GL # whole program optimization
+     #       /fp:fast # prefer fast over accurate floating point math
+     #       /favor:INTEL64
+     #       /Gy
+     #       #/Ox # enable most speed optimizations
+     #       /Ot # favor fast code
+     #       #/Ob2 # inline function expansion
+     #       #/GR- # disable RTTI
+     #       #/EHa- # disable exception handling
+     #       /Gr #/Gz # __vectorcall calling convention, Gr for __fastcall
+     #       #/order # order functions for optimal paging
         >
     >
 
@@ -182,6 +186,7 @@ target_compile_options(${PROJECT_NAME}
         -march=native
         -flto
         -DNDEBUG
+        -std=c++23
     >
 
     $<${compiler_is_gnu}:
@@ -191,12 +196,13 @@ target_compile_options(${PROJECT_NAME}
 
 target_link_options(${PROJECT_NAME}
   PRIVATE
+     /STACK:16777216
     $<${compiler_is_msvc}:
         # /verbose
 
         $<$<CONFIG:Release>:
-            # /machine:x64
-            # /ltcg # link time code gen
+            /machine:x64
+            /ltcg # link time code gen
             /opt:ref # eliminate unreferenced functions/data
             # /FASTGENPROFILE # generate optimization profile
         >
@@ -211,18 +217,23 @@ target_link_options(${PROJECT_NAME}
     >
 
     $<$<NOT:${compiler_is_msvc}>:
-		$<${compiler_is_gnu}:
-			$<$<CONFIG:Release>:
-				-fomit-frame-pointer
-			>
-			$<$<CONFIG:Debug>:
-				-lstdc++exp
-			>
-		>
+        #-lstdcxx
+        #"-LC:\\Program Files\\LLVM\\lib\\LLVM-C.lib"
+        #-lstdlib=libc++
+        -MT
+        #"-use-ld=C:\\Program Files\\LLVM\\bin\\lld.exe"
+        #-lc++abi
+        $<$<CONFIG:Release>:
+            #-fomit-frame-pointer
+            -O2
+        >
+        $<$<CONFIG:Debug>:
+            -lstdc++exp
+        >
 
         -static-libgcc
         -static-libstdc++
-        -Wl,-R,'$$ORIGIN'
+        #-Wl,-R,'$$ORIGIN'
     >
 )
 
@@ -232,14 +243,15 @@ target_include_directories(${PROJECT_NAME}
     "${CMAKE_CURRENT_BINARY_DIR}"
   SYSTEM
     "${CMAKE_CURRENT_SOURCE_DIR}/extern/glad/include"
+    ${PCG_INCLUDE_DIRS}
 )
 
 target_link_libraries(${PROJECT_NAME}
   PRIVATE fmt::fmt
-  PRIVATE spdlog::spdlog_header_only
+#  PRIVATE spdlog::spdlog_header_only
   PRIVATE nanobench::nanobench
-  PRIVATE SDL3::SDL3-static
-  PRIVATE glm::glm
+#   PRIVATE SDL3::SDL3-static
+#   PRIVATE glm::glm
 )
 
 if (ENABLE_CCACHE MATCHES ON)
@@ -249,7 +261,6 @@ endif()
 if (AUTOFORMAT_SRC_ON_CONFIGURE MATCHES ON)
   include(clang-format)
 endif()
-
 
 # permissions fix to allow this on windows:
 # 1. Open gpedit.msc
@@ -277,3 +288,4 @@ execute_process(
 
 include(ide-config)
 include(cmake-utils)
+# run_active_cmake_diagnostics()

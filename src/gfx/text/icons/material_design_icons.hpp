@@ -6,13 +6,12 @@
 
 namespace rl::ui::icon {
 
-    struct MaterialDesignIcons
-    {
+    struct MaterialDesignIcons {
         constexpr static inline std::string_view FileName{ "materialdesignicons-webfont.ttf" };
 
         constexpr static inline u16 IconMin{ 0xF68C };
-        constexpr static inline u16 IconMax16{ 0xF68C };
-        constexpr static inline u16 IconMax{ 0xF1D17 };
+        constexpr static inline u16 IconMax16{ static_cast<u16>(0xF68C) };
+        constexpr static inline u16 IconMax{ static_cast<u16>(0xF1D17) };
 
         constexpr static inline std::string_view AbTesting{ "\xf3\xb0\x87\x89" };                               // U+F01C9
         constexpr static inline std::string_view Abacus{ "\xf3\xb1\x9b\xa0" };                                  // U+F16E0

@@ -16,6 +16,9 @@ namespace rl::inline constraint {
     template <typename T, typename... TOther>
     concept any_of = (std::same_as<std::type_identity_t<T>, TOther> || ...);
 
+    template <typename T, typename... TOther>
+    concept all_of = (std::same_as<std::type_identity_t<T>, TOther> && ...);
+
     template <typename... T>
     concept floating_point = (any_of<std::type_identity_t<T>, f32, f64> && ...);
 

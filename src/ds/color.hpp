@@ -10,9 +10,9 @@
 #include "utils/random.hpp"
 #include "utils/sdl_defs.hpp"
 
-SDL_C_LIB_BEGIN
-#include <SDL3/SDL_pixels.h>
-SDL_C_LIB_END
+// SDL_C_LIB_BEGIN
+// #include <SDL3/SDL_pixels.h>
+// SDL_C_LIB_END
 
 namespace rl::ds {
 #pragma pack(4)
@@ -217,15 +217,13 @@ namespace rl::ds {
             return { s + (e - s) * step };
         }
 
-        u32 rgb(const SDL3::SDL_PixelFormat* format) const
-        {
-            return SDL3::SDL_MapRGB(format, this->r, this->g, this->b);
-        }
+        // u32 rgb(const SDL3::SDL_PixelFormat* format) const {
+        //     return SDL3::SDL_MapRGB(format, this->r, this->g, this->b);
+        // }
 
-        u32 rgba(const SDL3::SDL_PixelFormat* format) const
-        {
-            return SDL3::SDL_MapRGBA(format, this->r, this->g, this->b, this->a);
-        }
+        // u32 rgba(const SDL3::SDL_PixelFormat* format) const {
+        //     return SDL3::SDL_MapRGBA(format, this->r, this->g, this->b, this->a);
+        // }
 
         [[nodiscard]]
         constexpr bool is_empty() const

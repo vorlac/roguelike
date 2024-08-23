@@ -1,13 +1,6 @@
-﻿#include "core/application.hpp"
-#include "utils/options.hpp"
+﻿#include "utils/test/testing.hpp"
 
-int main(const int argc, char** argv)
+int main()
 {
-    int ret{ -1 };
-    if (rl::parse_args(argc, argv)) {
-        rl::Application game{};
-        ret = game.run();
-    }
-
-    return ret;
+    rl::bench::run_lc_benchmark();
 }

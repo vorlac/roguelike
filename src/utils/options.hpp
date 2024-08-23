@@ -5,6 +5,7 @@
 // #include <argparse/argparse.hpp>
 
 #include "utils/io.hpp"
+#include "utils/numeric.hpp"
 
 namespace rl {
     [[maybe_unused]]

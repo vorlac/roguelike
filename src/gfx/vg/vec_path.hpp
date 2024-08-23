@@ -24,7 +24,7 @@ namespace rl::ui {
         enum class instruction {
             move    = 0x0000, // move from current location to new position
             line    = 1 << 0, // add line from current pos to new position
-            bezier  = 1 << 2, // add bezier / quad from current pos to 
+            bezier  = 1 << 2, // add bezier / quad from current pos to
             close   = 1 << 3,
             winding = 1 << 4,
         };
@@ -44,7 +44,7 @@ namespace rl::ui {
         explicit path() = default;
 
         explicit path(std::vector<step> sequence)
-            m_path_sequence{ std::move(sequence) }
+            : m_path_sequence{ std::move(sequence) }
         {
         }
 

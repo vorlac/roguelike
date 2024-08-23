@@ -4,7 +4,10 @@
 
 #include <parallel_hashmap/phmap.h>
 
+#include "ds/color.hpp"
+#include "ds/vector2d.hpp"
 #include "utils/numeric.hpp"
+#include "utils/properties.hpp"
 
 namespace rl::text {
     namespace font {
@@ -42,6 +45,6 @@ namespace rl::text {
         ds::color<f32> border_color{ Colors::Transparent };
 
         ds::vector2<f32> margins{ 10.0f, 10.0f };
-        Align alignment{ Align::HCenter | Align::VMiddle };
+        Align alignment{ rl::Align::HCenter | rl::Align::VMiddle };
     };
 }

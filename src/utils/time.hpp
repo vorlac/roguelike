@@ -3,6 +3,7 @@
 #include <concepts>
 
 #include "core/assert.hpp"
+#include "utils/concepts.hpp"
 #include "utils/numeric.hpp"
 #include "utils/sdl_defs.hpp"
 

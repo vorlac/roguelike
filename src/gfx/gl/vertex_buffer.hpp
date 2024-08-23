@@ -4,12 +4,12 @@
 #include <utility>
 #include <vector>
 
-#include "core/window.hpp"
+#include "core/main_window.hpp"
 #include "ds/color.hpp"
 #include "ds/point.hpp"
 #include "ds/triangle.hpp"
 #include "ds/vector2d.hpp"
-#include "gl/shader.hpp"
+#include "gfx/gl/shader.hpp"
 #include "utils/numeric.hpp"
 
 namespace rl::gl {
@@ -129,14 +129,14 @@ namespace rl::gl {
     private:
         Shader m_shader{ "vertex_shader.glsl", "fragment_shader.glsl" };
 
-        constexpr static inline std::array quads = {
-            ds::rect<f32>{ 0.0f, 0.0f, 1920.0f, 1080.0f }.quads(),
+        static inline const std::array quads{
+            ds::rect<f32>{ { 0.0f, 0.0f }, { 1920.0f, 1080.0f } }.quads(),
         };
-        constexpr static inline std::array m_rects = {
-            ds::rect<f32>{ quads[0].inflated(-50.0f) }.triangles(rl::Colors::Red),
-            ds::rect<f32>{ quads[1].inflated(-50.0f) }.triangles(rl::Colors::Blue),
-            ds::rect<f32>{ quads[2].inflated(-50.0f) }.triangles(rl::Colors::Purple),
-            ds::rect<f32>{ quads[3].inflated(-50.0f) }.triangles(rl::Colors::Green),
+        static inline const std::array m_rects{
+            ds::rect<f32>{ quads[0].expanded(-50.0f) }.triangles(rl::Colors::Red),
+            ds::rect<f32>{ quads[1].expanded(-50.0f) }.triangles(rl::Colors::Blue),
+            ds::rect<f32>{ quads[2].expanded(-50.0f) }.triangles(rl::Colors::Purple),
+            ds::rect<f32>{ quads[3].expanded(-50.0f) }.triangles(rl::Colors::Green),
         };
 
         i32 m_buffer_vertex_count{ 0 };

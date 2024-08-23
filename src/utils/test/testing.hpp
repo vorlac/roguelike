@@ -5,21 +5,26 @@
 #include <cmath>
 #include <iomanip>
 #include <iostream>
+#include <print>
 #include <ranges>
 #include <string>
+#include <thread>
 #include <tuple>
 #include <type_traits>
 #include <utility>
 #include <vector>
 
+#include <fmt/chrono.h>
 #include <fmt/format.h>
 #include <nanobench.h>
+#include <pcg_random.hpp>
 
 #include "ds/rect.hpp"
 #include "utils/generator.hpp"
 #include "utils/memory.hpp"
 #include "utils/numeric.hpp"
 #include "utils/random.hpp"
+#include "utils/test/input.hpp"
 
 namespace rl::bench::asdf {
     namespace a {
@@ -45,10 +50,10 @@ namespace rl::bench::asdf {
         int asdf()
         {
             auto ints{ std::make_integer_sequence<int, 16>{} };
-            constexpr static std::array [[maybe_unused]] int_vals{
+            [[maybe_unused]] constexpr static std::array int_vals{
                 int_array(std::forward<decltype(ints)>(ints))
             };
-            constexpr static std::array [[maybe_unused]] fib_vals{
+            [[maybe_unused]] constexpr static std::array fib_vals{
                 fib_array(std::forward<decltype(ints)>(ints))
             };
 
@@ -152,33 +157,355 @@ namespace rl::bench::asdf {
 }
 
 namespace rl::bench {
+    using ll = int;  // long long;
+
+    class OrigRecursiveSolution
+    {
+    public:
+        long long maximumTotalDamage(std::vector<int>& power)
+        {
+            std::unordered_map<ll, ll> freq;
+            for (int x : power)
+                freq[x]++;
+
+            std::sort(power.begin(), power.end());
+            power.erase(std::unique(power.begin(), power.end()), power.end());
+            int n = static_cast<int>(power.size());
+
+            std::vector<ll> memo(n, -1);
+            auto max_damage = [&](auto&& self, int i) -> ll {
+                if (i < 0)
+                    return 0;
+
+                if (memo[i] != -1)
+                    return memo[i];
+
+                ll skip = self(self, i - 1);
+                int j = i - 1;
+                while (j >= 0 && power[j] >= power[i] - 2)
+                    j--;
+                ll take = power[i] * freq[power[i]] + self(self, j);
+                return memo[i] = std::max(skip, take);
+            };
+
+            return max_damage(max_damage, n - 1);
+        }
+    };
+
+    class OrigIterativeSolution
+    {
+    public:
+        long long maximumTotalDamage(std::vector<int>& power)
+        {
+            std::unordered_map<ll, ll> freq;
+            for (int x : power)
+                freq[x]++;
+
+            std::sort(power.begin(), power.end());
+            power.erase(std::unique(power.begin(), power.end()), power.end());
+            int n = static_cast<int>(power.size());
+
+            std::vector<ll> dp(n, 0);
+            dp[0] = power[0] * freq[power[0]];
+            for (int i = 1; i < n; i++) {
+                int j = i - 1;
+                while (j >= 0 && power[j] >= power[i] - 2)
+                    j--;
+                ll take = power[i] * freq[power[i]] + (j >= 0 ? dp[j] : 0LL);
+                ll skip = dp[i - 1];
+                dp[i] = std::max(take, skip);
+            }
+            return dp[n - 1];
+        }
+    };
+
+    class NewRecursiveSolution
+    {
+    public:
+        long long maximumTotalDamage(std::vector<int>& power)
+        {
+            int run = 0;
+            std::unordered_map<ll, ll> freq;
+            for (int x : power)
+                freq[x]++;
+
+            std::sort(power.begin(), power.end());
+            power.erase(std::unique(power.begin(), power.end()), power.end());
+            std::vector<ll> wtf2(power.begin(), power.end());
+            int n = static_cast<int>(power.size());
+
+            std::vector<ll> memo(n, -1);
+            auto max_damage = [&](auto&& self, int i) -> ll {
+                if (i < 0)
+                    return 0;
+
+                if (memo[i] != -1)
+                    return memo[i];
+
+                ll skip = self(self, i - 1);
+                int j = i - 1;
+                while (j >= 0 && power[j] >= power[i] - 2)
+                    j--;
+                ll wtf = wtf2[i];
+                ++run;
+                ll take = wtf * freq[wtf2[i]] + self(self, j);
+                return memo[i] = std::max(skip, take);
+            };
+            return max_damage(max_damage, n - 1);
+        }
+    };
+
+    inline void run_lc_benchmark()
+    {
+        OrigRecursiveSolution or_sln{};
+        OrigIterativeSolution oi_sln{};
+        NewRecursiveSolution nr_sln{};
+
+        using namespace std::literals;
+        ankerl::nanobench::Bench lc_benchmarks{};
+        lc_benchmarks.title("Random Number Generators")
+            .unit("value")
+            .warmup(10)
+            .relative(true)
+            .performanceCounters(true)
+            .minEpochTime(250ms);
+
+        lc_benchmarks.minEpochTime(1s).run("OrigRecursiveSolution", [&] {
+            auto ret = or_sln.maximumTotalDamage(benchmark::BENCHMARK_INPUT);
+            ankerl::nanobench::doNotOptimizeAway(ret);
+        });
+        lc_benchmarks.minEpochTime(1s).run("OrigIterativeSolution", [&] {
+            auto ret = oi_sln.maximumTotalDamage(benchmark::BENCHMARK_INPUT);
+            ankerl::nanobench::doNotOptimizeAway(ret);
+        });
+        lc_benchmarks.minEpochTime(1s).run("NewRecursiveSolution", [&] {
+            auto ret = nr_sln.maximumTotalDamage(benchmark::BENCHMARK_INPUT);
+            ankerl::nanobench::doNotOptimizeAway(ret);
+        });
+    }
+}
+
+namespace rl::bench {
     using namespace std::chrono_literals;
 
-    void run_rand_benchmarks()
+    inline void run_rand_benchmarks()
     {
+        using namespace std::literals;
         ankerl::nanobench::Bench rand_benchmarks{};
         rand_benchmarks.title("Random Number Generators")
             .unit("value")
             .warmup(1000)
             .relative(true)
-            .performanceCounters(true);
+            .performanceCounters(true)
+            .minEpochTime(250ms);
 
-        rand_benchmarks.minEpochTime(1s).run("c_rand", [&] {
-            const i32 randval{ rl::random<1, 100>::value() };
-            ankerl::nanobench::doNotOptimizeAway(randval);
-            const bool is_in_range{ randval >= 1 && randval <= 100 };
-            ankerl::nanobench::doNotOptimizeAway(is_in_range);
+        // rand_benchmarks.run("std::mt19937", [&] {
+        //     const auto rand_val{ random<1, 10000, std::mt19937>::value() };
+        //     ankerl::nanobench::doNotOptimizeAway(rand_val);
+        // });
+        // rand_benchmarks.run("std::mt19937_64", [&] {
+        //     const auto randval{ random<1, 10000, std::mt19937_64>::value() };
+        //     ankerl::nanobench::doNotOptimizeAway(randval);
+        // });
+        // rand_benchmarks.run("std::ranlux24_base", [&] {
+        //     auto randval{ random<1, 10000, std::ranlux24_base>::value() };
+        //     ankerl::nanobench::doNotOptimizeAway(randval);
+        // });
+        // rand_benchmarks.run("std::ranlux48_base", [&] {
+        //     auto rand_val{ random<1, 10000, std::ranlux48_base>::value() };
+        //     ankerl::nanobench::doNotOptimizeAway(rand_val);
+        // });
+        // rand_benchmarks.run("std::ranlux24", [&] {
+        //     auto randval{ random<1, 10000, std::ranlux24>::value() };
+        //     ankerl::nanobench::doNotOptimizeAway(randval);
+        // });
+        // rand_benchmarks.run("std::ranlux48;", [&] {
+        //     auto randval{ random<1, 10000, std::ranlux48>::value() };
+        //     ankerl::nanobench::doNotOptimizeAway(randval);
+        // });
+        // rand_benchmarks.run("std::knuth_b", [&] {
+        //     const auto rand_val{ random<1, 10000, std::knuth_b>::value() };
+        //     ankerl::nanobench::doNotOptimizeAway(rand_val);
+        // });
+        // rand_benchmarks.run("std::minstd_rand0", [&] {
+        //     auto rand_val{ random<1, 10000, std::minstd_rand0>::value() };
+        //     ankerl::nanobench::doNotOptimizeAway(rand_val);
+        // });
+        // rand_benchmarks.run("std::minstd_rand", [&] {
+        //     auto rand_val{ random<1, 10000, std::minstd_rand>::value() };
+        //     ankerl::nanobench::doNotOptimizeAway(rand_val);
+        // });
+        // rand_benchmarks.run("pcg32 / setseq_xsh_rr_64_32", [&] {
+        //     const auto rand_val{ random<1, 10000, pcg32>::value() };
+        //     ankerl::nanobench::doNotOptimizeAway(rand_val);
+        // });
+        // rand_benchmarks.run("pcg32_oneseq / oneseq_xsh_rr_64_32", [&] {
+        //     const auto rand_val{ random<1, 10000, pcg32_oneseq>::value() };
+        //     ankerl::nanobench::doNotOptimizeAway(rand_val);
+        // });
+        // rand_benchmarks.run("pcg32_unique / unique_xsh_rr_64_32", [&] {
+        //     const auto rand_val{ random<1, 10000, pcg32_unique>::value() };
+        //     ankerl::nanobench::doNotOptimizeAway(rand_val);
+        // });
+        // rand_benchmarks.run("pcg32_fast / mcg_xsh_rs_64_32", [&] {
+        //     const auto rand_val{ random<1, 10000, pcg32_fast>::value() };
+        //     ankerl::nanobench::doNotOptimizeAway(rand_val);
+        // });
+        // rand_benchmarks.run("pcg64 / setseq_xsl_rr_128_64", [&] {
+        //     const auto rand_val{ random<1, 10000, pcg64>::value() };
+        //     ankerl::nanobench::doNotOptimizeAway(rand_val);
+        // });
+        // rand_benchmarks.run("pcg64_oneseq / oneseq_xsl_rr_128_64", [&] {
+        //     const auto rand_val{ random<1, 10000, pcg64_oneseq>::value() };
+        //     ankerl::nanobench::doNotOptimizeAway(rand_val);
+        // });
+        // rand_benchmarks.run("pcg64_unique/unique_xsl_rr_128_64", [&] {
+        //     const auto rand_val{ random<1, 10000, pcg64_unique>::value() };
+        //     ankerl::nanobench::doNotOptimizeAway(rand_val);
+        // });
+        // rand_benchmarks.run("pcg64_fast / mcg_xsl_rr_128_64", [&] {
+        //     const auto rand_val{ random<1, 10000, pcg64_fast>::value() };
+        //     ankerl::nanobench::doNotOptimizeAway(rand_val);
+        // });
+        //  rand_benchmarks.run("pcg8_once_insecure / setseq_rxs_m_xs_8_8", [&] {
+        //      const auto rand_val{ random<1, 10000, pcg8_once_insecure>::value() };
+        //      ankerl::nanobench::doNotOptimizeAway(rand_val);
+        //  });
+        // rand_benchmarks.run("pcg16_once_insecure / setseq_rxs_m_xs_16_16", [&] {
+        //     const auto rand_val{ random<1, 10000, pcg16_once_insecure>::value() };
+        //     ankerl::nanobench::doNotOptimizeAway(rand_val);
+        // });
+        // rand_benchmarks.run("pcg32_once_insecure / setseq_rxs_m_xs_32_32", [&] {
+        //     const auto rand_val{ random<1, 10000, pcg32_once_insecure>::value() };
+        //     ankerl::nanobench::doNotOptimizeAway(rand_val);
+        // });
+        // rand_benchmarks.run("pcg64_once_insecure / setseq_rxs_m_xs_64_64", [&] {
+        //     const auto rand_val{ random<1, 10000, pcg64_once_insecure>::value() };
+        //     ankerl::nanobench::doNotOptimizeAway(rand_val);
+        // });
+        //  rand_benchmarks.run("pcg128_once_insecure/setseq_xsl_rr_rr_128_128", [&] {
+        //      const auto rand_val{ random<1, 10000, pcg128_once_insecure>::value() };
+        //      ankerl::nanobench::doNotOptimizeAway(rand_val);
+        //  });
+        /* rand_benchmarks.run("pcg8_oneseq_once_insecure / oneseq_rxs_m_xs_8_8", [&] {
+             const auto rand_val{ random<1, 10000, pcg8_oneseq_once_insecure>::value() };
+             ankerl::nanobench::doNotOptimizeAway(rand_val);
+         });
+         rand_benchmarks.run("pcg16_oneseq_once_insecure / oneseq_rxs_m_xs_16_16", [&] {
+             const auto rand_val{ random<1, 10000, pcg16_oneseq_once_insecure>::value() };
+             ankerl::nanobench::doNotOptimizeAway(rand_val);
+         });
+         rand_benchmarks.run("pcg32_oneseq_once_insecure / oneseq_rxs_m_xs_32_32", [&] {
+             const auto rand_val{ random<1, 10000, pcg32_oneseq_once_insecure>::value() };
+             ankerl::nanobench::doNotOptimizeAway(rand_val);
+         });
+         rand_benchmarks.run("pcg64_oneseq_once_insecure / oneseq_rxs_m_xs_64_64", [&] {
+             const auto rand_val{ random<1, 10000, pcg64_oneseq_once_insecure>::value() };
+             ankerl::nanobench::doNotOptimizeAway(rand_val);
+         });*/
+        // rand_benchmarks.run("pcg128_oneseq_once_insecure/oneseq_xsl_rr_rr_128_128", [&] {
+        //     const auto rand_val{ random<1, 10000, pcg128_oneseq_once_insecure>::value() };
+        //     ankerl::nanobench::doNotOptimizeAway(rand_val);
+        // });
+        /*rand_benchmarks.run("pcg32_k2 / ext_setseq_xsh_rr_64_32<1,16,true>", [&] {
+            const auto rand_val{ random<1, 10000, pcg32_k2>::value() };
+            ankerl::nanobench::doNotOptimizeAway(rand_val);
         });
-
-        rand_benchmarks.minEpochTime(1s).run("cpp_rand", [&] {
-            const i32 randval{ rl::random<1, 100>::value() };
-            ankerl::nanobench::doNotOptimizeAway(randval);
-            const bool is_in_range{ randval >= 1 && randval <= 100 };
-            ankerl::nanobench::doNotOptimizeAway(is_in_range);
+        rand_benchmarks.run("pcg32_k2_fast / ext_oneseq_xsh_rs_64_32<1,32,true>", [&] {
+            const auto rand_val{ random<1, 10000, pcg32_k2_fast>::value() };
+            ankerl::nanobench::doNotOptimizeAway(rand_val);
         });
+        rand_benchmarks.run("pcg32_k64 / ext_setseq_xsh_rr_64_32<6,16,true>", [&] {
+            const auto rand_val{ random<1, 10000, pcg32_k64>::value() };
+            ankerl::nanobench::doNotOptimizeAway(rand_val);
+        });
+        rand_benchmarks.run("pcg32_k64_oneseq / ext_mcg_xsh_rs_64_32<6,32,true>", [&] {
+            const auto rand_val{ random<1, 10000, pcg32_k64_oneseq>::value() };
+            ankerl::nanobench::doNotOptimizeAway(rand_val);
+        });
+        rand_benchmarks.run("pcg32_k64_fast / ext_oneseq_xsh_rs_64_32<6,32,true>", [&] {
+            const auto rand_val{ random<1, 10000, pcg32_k64_fast>::value() };
+            ankerl::nanobench::doNotOptimizeAway(rand_val);
+        });
+        rand_benchmarks.run("pcg32_c64 / ext_setseq_xsh_rr_64_32<6,16,false>", [&] {
+            const auto rand_val{ random<1, 10000, pcg32_c64>::value() };
+            ankerl::nanobench::doNotOptimizeAway(rand_val);
+        });
+        rand_benchmarks.run("pcg32_c64_oneseq / ext_oneseq_xsh_rs_64_32<6,32,false>", [&] {
+            const auto rand_val{ random<1, 10000, pcg32_c64_oneseq>::value() };
+            ankerl::nanobench::doNotOptimizeAway(rand_val);
+        });
+        rand_benchmarks.run("pcg32_c64_fast / ext_mcg_xsh_rs_64_32<6,32,false>", [&] {
+            const auto rand_val{ random<1, 10000, pcg32_c64_fast>::value() };
+            ankerl::nanobench::doNotOptimizeAway(rand_val);
+        });
+        rand_benchmarks.run("pcg64_k32 / ext_setseq_xsl_rr_128_64<5,16,true>", [&] {
+            const auto rand_val{ random<1, 10000, pcg64_k32>::value() };
+            ankerl::nanobench::doNotOptimizeAway(rand_val);
+        });
+        rand_benchmarks.run("pcg64_k32_oneseq / ext_oneseq_xsl_rr_128_64<5,128,true>", [&] {
+            const auto rand_val{ random<1, 10000, pcg64_k32_oneseq>::value() };
+            ankerl::nanobench::doNotOptimizeAway(rand_val);
+        });
+        rand_benchmarks.run("pcg64_k32_fast / ext_mcg_xsl_rr_128_64<5,128,true>", [&] {
+            const auto rand_val{ random<1, 10000, pcg64_k32_fast>::value() };
+            ankerl::nanobench::doNotOptimizeAway(rand_val);
+        });
+        rand_benchmarks.run("pcg64_c32 / ext_setseq_xsl_rr_128_64<5,16,false>", [&] {
+            const auto rand_val{ random<1, 10000, pcg64_c32>::value() };
+            ankerl::nanobench::doNotOptimizeAway(rand_val);
+        });
+        rand_benchmarks.run("pcg64_c32_oneseq / ext_oneseq_xsl_rr_128_64<5,128,false>", [&] {
+            const auto rand_val{ random<1, 10000, pcg64_c32_oneseq>::value() };
+            ankerl::nanobench::doNotOptimizeAway(rand_val);
+        });
+        rand_benchmarks.run("pcg64_c32_fast / ext_mcg_xsl_rr_128_64<5,128,false>", [&] {
+            const auto rand_val{ random<1, 10000, pcg64_c32_fast>::value() };
+            ankerl::nanobench::doNotOptimizeAway(rand_val);
+        });
+        rand_benchmarks.run("pcg32_k1024 / ext_setseq_xsh_rr_64_32<10,16,true>", [&] {
+            const auto rand_val{ random<1, 10000, pcg32_k1024>::value() };
+            ankerl::nanobench::doNotOptimizeAway(rand_val);
+        });
+        rand_benchmarks.run("pcg32_k1024_fast / ext_oneseq_xsh_rs_64_32<10,32,true>", [&] {
+            const auto rand_val{ random<1, 10000, pcg32_k1024_fast>::value() };
+            ankerl::nanobench::doNotOptimizeAway(rand_val);
+        });
+        rand_benchmarks.run("pcg32_c1024 / ext_setseq_xsh_rr_64_32<10,16,false>", [&] {
+            const auto rand_val{ random<1, 10000, pcg32_c1024>::value() };
+            ankerl::nanobench::doNotOptimizeAway(rand_val);
+        });
+        rand_benchmarks.run("pcg32_c1024_fas / ext_oneseq_xsh_rs_64_32<10,32,false>t", [&] {
+            const auto rand_val{ random<1, 10000, pcg32_c1024_fast>::value() };
+            ankerl::nanobench::doNotOptimizeAway(rand_val);
+        });
+        rand_benchmarks.run("pcg64_k1024 / ext_setseq_xsl_rr_128_64<10, 16, true>", [&] {
+            const auto rand_val{ random<1, 10000, pcg64_k1024>::value() };
+            ankerl::nanobench::doNotOptimizeAway(rand_val);
+        });
+        rand_benchmarks.run("pcg64_k1024_fast / ext_oneseq_xsl_rr_128_64<10, 128, true>", [&] {
+            const auto rand_val{ random<1, 10000, pcg64_k1024_fast>::value() };
+            ankerl::nanobench::doNotOptimizeAway(rand_val);
+        });
+        rand_benchmarks.run("pcg64_c1024 / ext_setseq_xsl_rr_128_64<10, 16, false>", [&] {
+            const auto rand_val{ random<1, 10000, pcg64_c1024>::value() };
+            ankerl::nanobench::doNotOptimizeAway(rand_val);
+        });
+        rand_benchmarks.run("pcg64_c1024_fast / ext_oneseq_xsl_rr_128_64<10, 128, false>", [&] {
+            const auto rand_val{ random<1, 10000, pcg64_c1024_fast>::value() };
+            ankerl::nanobench::doNotOptimizeAway(rand_val);
+        });
+        rand_benchmarks.run("pcg32_k16384 / ext_setseq_xsh_rr_64_32<14, 16, true>", [&] {
+            const auto rand_val{ random<1, 10000, pcg32_k16384>::value() };
+            ankerl::nanobench::doNotOptimizeAway(rand_val);
+        });
+        rand_benchmarks.run("pcg32_k16384_fast / ext_oneseq_xsh_rs_64_32<14, 32, true>", [&] {
+            const auto rand_val{ random<1, 10000, pcg32_k16384_fast>::value() };
+            ankerl::nanobench::doNotOptimizeAway(rand_val);
+        });*/
     }
 
-    void run_memcmp_benchmarks()
+    inline void run_memcmp_benchmarks()
     {
         ankerl::nanobench::Bench rand_benchmarks{};
         rand_benchmarks.title("memcmp version")
@@ -188,13 +515,13 @@ namespace rl::bench {
             .performanceCounters(true);
 
         rand_benchmarks.minEpochTime(1s).run("memcmp", [&] {
-            const ds::rect<i32> rect1{
+            const ds::rect<u32> rect1{
                 { random<1, 100>::value(),
                   random<1, 100>::value() },
                 { random<1, 100>::value(),
                   random<1, 100>::value() },
             };
-            const ds::rect<i32> rect2{
+            const ds::rect<u32> rect2{
                 { random<1, 100>::value(),
                   random<1, 100>::value() },
                 { random<1, 100>::value(),
@@ -205,30 +532,30 @@ namespace rl::bench {
         });
 
         rand_benchmarks.minEpochTime(1s).run("static_memcmp", [&] {
-            const ds::rect<i32> rect1{
+            const ds::rect<u32> rect1{
                 { random<1, 100>::value(),
                   random<1, 100>::value() },
                 { random<1, 100>::value(),
                   random<1, 100>::value() },
             };
-            const ds::rect<i32> rect2{
+            const ds::rect<u32> rect2{
                 { random<1, 100>::value(),
                   random<1, 100>::value() },
                 { random<1, 100>::value(),
                   random<1, 100>::value() },
             };
-            const bool result{ memory::static_memcmp(rect1, rect2) };
-            ankerl::nanobench::doNotOptimizeAway(result);
+            // const bool result{ memory::static_memcmp(rect1, rect2) };
+            // ankerl::nanobench::doNotOptimizeAway(result);
         });
 
         rand_benchmarks.minEpochTime(1s).run("operator==", [&] {
-            const ds::rect<i32> rect1{
+            const ds::rect<u32> rect1{
                 { random<1, 100>::value(),
                   random<1, 100>::value() },
                 { random<1, 100>::value(),
                   random<1, 100>::value() },
             };
-            const ds::rect<i32> rect2{
+            const ds::rect<u32> rect2{
                 { random<1, 100>::value(),
                   random<1, 100>::value() },
                 { random<1, 100>::value(),
@@ -280,8 +607,8 @@ namespace rl::bench {
 
         bench.minEpochTime(1s).run("fib(2)", [&] {
             auto fac = factorial(100);
-            auto ret = std::vector{ fac... };
-            ankerl::nanobench::doNotOptimizeAway(ret);
+            // auto ret = std::vector{ fac... };
+            // ankerl::nanobench::doNotOptimizeAway(ret);
         });
     }
 }

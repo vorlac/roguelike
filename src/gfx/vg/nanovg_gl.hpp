@@ -26,7 +26,7 @@ namespace rl::nvg::gl {
     Context* create_gl_context(CreateFlags flags);
     void delete_gl_context(Context* ctx);
 
-    int create_image_from_handle(Context* ctx, GLuint texture_id, int w, int h, int flags);
-    GLuint image_handle(Context* ctx, int image);
+    int create_image_from_handle(Context* ctx, unsigned int texture_id, int w, int h, int flags);
+    unsigned int image_handle(Context* ctx, int image);
 
 }

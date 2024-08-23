@@ -13,7 +13,7 @@ namespace rl::stb {
         STBI_rgb_alpha = 4
     };
 
-#include <stdlib.h>
+#include <cstdlib>
     using stbi_uc = unsigned char;
     using stbi_us = unsigned short;
 
@@ -26,8 +26,7 @@ namespace rl::stb {
     // load image by filename, open file, or memory buffer
     //
 
-    struct stbi_io_callbacks
-    {
+    struct stbi_io_callbacks {
         // fill 'data' with 'size' bytes. return number of bytes actually read
         int (*read)(void* user, char* data, int size);
         // skip the next 'n' bytes, or 'unget' the last -n bytes if negative
