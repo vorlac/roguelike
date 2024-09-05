@@ -12,8 +12,7 @@ namespace rl {
     namespace ui {
         class Popup;
 
-        class Dialog : public Widget
-        {
+        class Dialog : public Widget {
         public:
             friend class Popup;
 

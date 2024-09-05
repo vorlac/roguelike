@@ -11,8 +11,7 @@ namespace rl {
     class Keyboard;
 
     namespace ui {
-        class ImagePanel : public Widget
-        {
+        class ImagePanel : public Widget {
         public:
             using Images = std::vector<std::pair<i32, std::string>>;
 

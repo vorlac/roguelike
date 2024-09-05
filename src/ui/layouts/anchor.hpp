@@ -8,8 +8,7 @@
 
 namespace rl::ui {
 
-    struct Anchor
-    {
+    struct Anchor {
     public:
         Anchor() = default;
 
@@ -18,8 +17,7 @@ namespace rl::ui {
                const Placement_OldAlignment vert = Placement_OldAlignment::Fill)
             : grid_pos{ static_cast<u8>(x), static_cast<u8>(y) }
             , cell_size{ 1, 1 }
-            , align{ horiz, vert }
-        {
+            , align{ horiz, vert } {
         }
 
         Anchor(const u32 grid_x, const u32 grid_y, const u32 cell_span_width,
@@ -28,8 +26,7 @@ namespace rl::ui {
                const Placement_OldAlignment vertical_alignment = Placement_OldAlignment::Fill)
             : grid_pos{ grid_x, grid_y }
             , cell_size{ cell_span_width, cell_span_height }
-            , align{ horizontal_alignment, vertical_alignment }
-        {
+            , align{ horizontal_alignment, vertical_alignment } {
         }
 
     public:

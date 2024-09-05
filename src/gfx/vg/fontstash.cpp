@@ -17,8 +17,7 @@ namespace rl::nvg::font {
     constexpr static i32 ZPREC{ 7 };
 
     namespace {
-        u32 hashint(u32 a)
-        {
+        u32 hashint(u32 a) {
             a += ~(a << 15);
             a ^= (a >> 10);
             a += (a << 3);
@@ -28,19 +27,16 @@ namespace rl::nvg::font {
             return a;
         }
 
-        i32 tt_init(Context*)
-        {
+        i32 tt_init(Context*) {
             return 1;
         }
 
-        i32 tt_done(Context*)
-        {
+        i32 tt_done(Context*) {
             return 1;
         }
 
         i32 tt_load_font(Context* context, STTFontImpl* font, const u8* data, i32 /*data_size*/,
-                         const i32 font_index)
-        {
+                         const i32 font_index) {
             i32 stb_error;
             font->font.userdata = context;
             const i32 offset = stbtt_get_font_offset_for_index(data, font_index);
@@ -53,25 +49,21 @@ namespace rl::nvg::font {
             return stb_error;
         }
 
-        void tt_get_font_v_metrics(const STTFontImpl* font, i32* ascent, i32* descent, i32* line_gap)
-        {
+        void tt_get_font_v_metrics(const STTFontImpl* font, i32* ascent, i32* descent, i32* line_gap) {
             stbtt_get_font_v_metrics(&font->font, ascent, descent, line_gap);
         }
 
-        f32 tt_get_pixel_height_scale(const STTFontImpl* font, const f32 size)
-        {
+        f32 tt_get_pixel_height_scale(const STTFontImpl* font, const f32 size) {
             return stbtt_scale_for_mapping_em_to_pixels(&font->font, size);
         }
 
-        i32 tt_get_glyph_index(const STTFontImpl* font, const i32 codepoint)
-        {
+        i32 tt_get_glyph_index(const STTFontImpl* font, const i32 codepoint) {
             return stbtt_find_glyph_index(&font->font, codepoint);
         }
 
         i32 tt_build_glyph_bitmap(const STTFontImpl* font, const i32 glyph, f32 /*size*/,
                                   const f32 scale, i32* advance, i32* lsb, i32* x0, i32* y0,
-                                  i32* x1, i32* y1)
-        {
+                                  i32* x1, i32* y1) {
             stbtt_get_glyph_h_metrics(&font->font, glyph, advance, lsb);
             stbtt_get_glyph_bitmap_box(&font->font, glyph, scale, scale, x0, y0, x1, y1);
             return 1;
@@ -79,19 +71,16 @@ namespace rl::nvg::font {
 
         void tt_render_glyph_bitmap(const STTFontImpl* font, u8* output, const i32 out_width,
                                     const i32 out_height, const i32 out_stride, const f32 scale_x,
-                                    const f32 scale_y, const i32 glyph)
-        {
+                                    const f32 scale_y, const i32 glyph) {
             stbtt_make_glyph_bitmap(&font->font, output, out_width, out_height, out_stride, scale_x,
                                     scale_y, glyph);
         }
 
-        i32 tt_get_glyph_kern_advance(const STTFontImpl* font, const i32 glyph1, const i32 glyph2)
-        {
+        i32 tt_get_glyph_kern_advance(const STTFontImpl* font, const i32 glyph1, const i32 glyph2) {
             return stbtt_get_glyph_kern_advance(&font->font, glyph1, glyph2);
         }
 
-        u32 decutf8(u32* state, u32* codep, const u32 byte)
-        {
+        u32 decutf8(u32* state, u32* codep, const u32 byte) {
             constexpr static std::array utf8d = std::to_array<u32>(
                 { // The first part of the table maps bytes to character classes that
                   // to reduce the size of the transition table and create bitmasks.
@@ -125,8 +114,7 @@ namespace rl::nvg::font {
         }
 
         // Atlas based on Skyline Bin Packer by Jukka Jyl�nki
-        void delete_atlas(Atlas* atlas)
-        {
+        void delete_atlas(Atlas* atlas) {
             if (atlas == nullptr)
                 return;
             if (atlas->nodes != nullptr)
@@ -134,8 +122,7 @@ namespace rl::nvg::font {
             free(atlas);
         }
 
-        Atlas* alloc_atlas(const i32 w, const i32 h, const i32 nnodes)
-        {
+        Atlas* alloc_atlas(const i32 w, const i32 h, const i32 nnodes) {
             // Allocate memory for the font font_ctx.
             const auto atlas = static_cast<Atlas*>(std::malloc(sizeof(Atlas)));
             if (atlas != nullptr) {
@@ -168,8 +155,7 @@ namespace rl::nvg::font {
             return nullptr;
         }
 
-        i32 atlas_insert_node(Atlas* atlas, const i32 idx, const i32 x, const i32 y, const i32 w)
-        {
+        i32 atlas_insert_node(Atlas* atlas, const i32 idx, const i32 x, const i32 y, const i32 w) {
             // Insert node
             if (atlas->nnodes + 1 > atlas->cnodes) {
                 atlas->cnodes = atlas->cnodes == 0 ? 8 : atlas->cnodes * 2;
@@ -192,8 +178,7 @@ namespace rl::nvg::font {
             return 1;
         }
 
-        void atlas_remove_node(Atlas* atlas, const i32 idx)
-        {
+        void atlas_remove_node(Atlas* atlas, const i32 idx) {
             if (atlas->nnodes == 0)
                 return;
 
@@ -203,8 +188,7 @@ namespace rl::nvg::font {
             atlas->nnodes--;
         }
 
-        void atlas_expand(Atlas* atlas, const i32 w, const i32 h)
-        {
+        void atlas_expand(Atlas* atlas, const i32 w, const i32 h) {
             // Insert node for empty space
             if (w > atlas->width)
                 atlas_insert_node(atlas, atlas->nnodes, atlas->width, 0, w - atlas->width);
@@ -213,8 +197,7 @@ namespace rl::nvg::font {
             atlas->height = h;
         }
 
-        void atlas_reset(Atlas* atlas, const i32 w, const i32 h)
-        {
+        void atlas_reset(Atlas* atlas, const i32 w, const i32 h) {
             atlas->width = w;
             atlas->height = h;
             atlas->nnodes = 0;
@@ -227,8 +210,7 @@ namespace rl::nvg::font {
         }
 
         i32 atlas_add_skyline_level(Atlas* atlas, const i32 idx, const i32 x, const i32 y,
-                                    const i32 w, const i32 h)
-        {
+                                    const i32 w, const i32 h) {
             // Insert new node
             if (atlas_insert_node(atlas, idx, x, y + h, w) == 0)
                 return 0;
@@ -262,8 +244,7 @@ namespace rl::nvg::font {
             return 1;
         }
 
-        i32 atlas_rect_fits(const Atlas* atlas, i32 i, const i32 w, const i32 h)
-        {
+        i32 atlas_rect_fits(const Atlas* atlas, i32 i, const i32 w, const i32 h) {
             // Checks if there is enough space at the location of skyline span 'i',
             // and return the max height of all skyline spans under that at that location,
             // (think tetris block being dropped at that position). Or -1 if no space found.
@@ -288,8 +269,7 @@ namespace rl::nvg::font {
             return y;
         }
 
-        i32 atlas_add_rect(Atlas* atlas, const i32 rw, const i32 rh, i32* rx, i32* ry)
-        {
+        i32 atlas_add_rect(Atlas* atlas, const i32 rw, const i32 rh, i32* rx, i32* ry) {
             i32 besth = atlas->height, bestw = atlas->width, besti = -1;
             i32 bestx = -1, besty = -1;
 
@@ -320,8 +300,7 @@ namespace rl::nvg::font {
             return 1;
         }
 
-        void add_white_rect(Context* font_ctx, const i32 w, const i32 h)
-        {
+        void add_white_rect(Context* font_ctx, const i32 w, const i32 h) {
             i32 gx, gy;
             if (atlas_add_rect(font_ctx->atlas, w, h, &gx, &gy) == 0)
                 return;
@@ -340,13 +319,11 @@ namespace rl::nvg::font {
             font_ctx->dirty_rect[3] = math::max(font_ctx->dirty_rect[3], gy + h);
         }
 
-        font::State* get_state(Context* font_ctx)
-        {
+        font::State* get_state(Context* font_ctx) {
             return &font_ctx->states[font_ctx->nstates - 1];
         }
 
-        void blur_cols(u8* dst, const i32 w, const i32 h, const i32 dst_stride, const i32 alpha)
-        {
+        void blur_cols(u8* dst, const i32 w, const i32 h, const i32 dst_stride, const i32 alpha) {
             i32 x;
             for (i32 y = 0; y < h; y++) {
                 i32 z = 0;  // force zero border
@@ -365,8 +342,7 @@ namespace rl::nvg::font {
             }
         }
 
-        void blur_rows(u8* dst, const i32 w, const i32 h, const i32 dst_stride, const i32 alpha)
-        {
+        void blur_rows(u8* dst, const i32 w, const i32 h, const i32 dst_stride, const i32 alpha) {
             i32 y;
             for (i32 x = 0; x < w; x++) {
                 i32 z = 0;  // force zero border
@@ -386,8 +362,7 @@ namespace rl::nvg::font {
         }
 
         void blur(const Context* font_ctx, u8* dst, const i32 w, const i32 h, const i32 dst_stride,
-                  const i32 blur)
-        {
+                  const i32 blur) {
             (void)font_ctx;
 
             if (blur < 1)
@@ -404,8 +379,7 @@ namespace rl::nvg::font {
             //  _blurcols(dst, w, h, dstStride, alpha);
         }
 
-        Glyph* alloc_glyph(Font* font)
-        {
+        Glyph* alloc_glyph(Font* font) {
             if (font->nglyphs + 1 > font->cglyphs) {
                 font->cglyphs = font->cglyphs == 0 ? 8 : font->cglyphs * 2;
                 font->glyphs = static_cast<Glyph*>(std::realloc(
@@ -422,8 +396,7 @@ namespace rl::nvg::font {
         }
 
         Glyph* get_glyph(Context* font_ctx, Font* font, const u32 codepoint, const i16 isize,
-                         i16 iblur, const i32 bitmap_option)
-        {
+                         i16 iblur, const i32 bitmap_option) {
             i32 advance;
             i32 lsb;
             i32 x0;
@@ -573,8 +546,7 @@ namespace rl::nvg::font {
 
         void get_quad(const Context* font_ctx, const Font* font, const i32 prev_glyph_index,
                       const Glyph* glyph, const f32 scale, const f32 spacing, f32* x, const f32* y,
-                      FontQuad* q)
-        {
+                      FontQuad* q) {
             if (prev_glyph_index != -1) {
                 const f32 adv{ scale * static_cast<f32>(tt_get_glyph_kern_advance(
                                            &font->font, prev_glyph_index, glyph->index)) };
@@ -623,8 +595,7 @@ namespace rl::nvg::font {
             *x += std::round(static_cast<f32>(glyph->x_adv) / 10.0f);
         }
 
-        void flush(Context* font_ctx)
-        {
+        void flush(Context* font_ctx) {
             // Flush texture
             if (font_ctx->dirty_rect[0] < font_ctx->dirty_rect[2] &&
                 font_ctx->dirty_rect[1] < font_ctx->dirty_rect[3]) {
@@ -649,8 +620,7 @@ namespace rl::nvg::font {
         }
 
         void vertex(Context* font_ctx, const f32 x, const f32 y, const f32 s, const f32 t,
-                    const u32 c)
-        {
+                    const u32 c) {
             font_ctx->verts[font_ctx->nverts * 2 + 0] = x;
             font_ctx->verts[font_ctx->nverts * 2 + 1] = y;
             font_ctx->tcoords[font_ctx->nverts * 2 + 0] = s;
@@ -660,8 +630,7 @@ namespace rl::nvg::font {
         }
 
         f32 get_vert_align(const Context* font_ctx, const Font* font, const Align align,
-                           const i16 isize)
-        {
+                           const i16 isize) {
             if (font_ctx->params.flags & FonsZeroTopleft) {
                 if ((align & Align::VTop) != 0)
                     return font->ascender * static_cast<f32>(isize) / 10.0f;
@@ -685,8 +654,7 @@ namespace rl::nvg::font {
             return 0.0;
         }
 
-        void free_font(Font* font)
-        {
+        void free_font(Font* font) {
             if (font == nullptr)
                 return;
 
@@ -698,8 +666,7 @@ namespace rl::nvg::font {
             std::free(font);
         }
 
-        i32 alloc_font(Context* font_ctx)
-        {
+        i32 alloc_font(Context* font_ctx) {
             if (font_ctx->nfonts + 1 > font_ctx->cfonts) {
                 font_ctx->cfonts = font_ctx->cfonts == 0 ? 8 : font_ctx->cfonts * 2;
                 font_ctx->fonts = static_cast<Font**>(
@@ -729,8 +696,7 @@ namespace rl::nvg::font {
         }
     }
 
-    Context* create_internal(const Params* params)
-    {
+    Context* create_internal(const Params* params) {
         // Allocate memory for the font font_ctx.
         const auto font_ctx = static_cast<Context*>(std::malloc(sizeof(Context)));
         if (font_ctx != nullptr) {
@@ -788,8 +754,7 @@ namespace rl::nvg::font {
         return nullptr;
     }
 
-    i32 add_fallback_font(const Context* font_ctx, const i32 base, const i32 fallback)
-    {
+    i32 add_fallback_font(const Context* font_ctx, const i32 base, const i32 fallback) {
         Font* base_font = font_ctx->fonts[base];
         if (base_font->nfallbacks < MAX_FALLBACKS) {
             base_font->fallbacks[base_font->nfallbacks++] = fallback;
@@ -798,8 +763,7 @@ namespace rl::nvg::font {
         return 0;
     }
 
-    void reset_fallback_font(const Context* font_ctx, const i32 base)
-    {
+    void reset_fallback_font(const Context* font_ctx, const i32 base) {
         Font* base_font = font_ctx->fonts[base];
         base_font->nfallbacks = 0;
         base_font->nglyphs = 0;
@@ -807,38 +771,31 @@ namespace rl::nvg::font {
             i = -1;
     }
 
-    void set_size(Context* font_ctx, const f32 size)
-    {
+    void set_size(Context* font_ctx, const f32 size) {
         get_state(font_ctx)->size = size;
     }
 
-    void set_color(Context* font_ctx, const u32 color)
-    {
+    void set_color(Context* font_ctx, const u32 color) {
         get_state(font_ctx)->color = color;
     }
 
-    void set_spacing(Context* font_ctx, const f32 spacing)
-    {
+    void set_spacing(Context* font_ctx, const f32 spacing) {
         get_state(font_ctx)->spacing = spacing;
     }
 
-    void set_blur(Context* font_ctx, const f32 blur)
-    {
+    void set_blur(Context* font_ctx, const f32 blur) {
         get_state(font_ctx)->blur = blur;
     }
 
-    void set_align(Context* font_ctx, const Align align)
-    {
+    void set_align(Context* font_ctx, const Align align) {
         get_state(font_ctx)->align = align;
     }
 
-    void set_font(Context* font_ctx, const i32 font)
-    {
+    void set_font(Context* font_ctx, const i32 font) {
         get_state(font_ctx)->font = font;
     }
 
-    void push_state(Context* font_ctx)
-    {
+    void push_state(Context* font_ctx) {
         if (font_ctx->nstates >= MAX_STATES) {
             if (font_ctx->handle_error)
                 font_ctx->handle_error(font_ctx->error_uptr, ErrorCode::FonsStatesOverflow, 0);
@@ -854,8 +811,7 @@ namespace rl::nvg::font {
         font_ctx->nstates++;
     }
 
-    void pop_state(Context* font_ctx)
-    {
+    void pop_state(Context* font_ctx) {
         if (font_ctx->nstates <= 1) {
             if (font_ctx->handle_error)
                 font_ctx->handle_error(font_ctx->error_uptr, ErrorCode::FonsStatesUnderflow, 0);
@@ -865,8 +821,7 @@ namespace rl::nvg::font {
         font_ctx->nstates--;
     }
 
-    void clear_state(Context* font_ctx)
-    {
+    void clear_state(Context* font_ctx) {
         font::State* state = get_state(font_ctx);
         state->size = 12.0f;
         state->color = 0xffffffff;
@@ -876,8 +831,7 @@ namespace rl::nvg::font {
         state->align = Align::HLeft | Align::VBaseline;
     }
 
-    i32 add_font(Context* font_ctx, const char* name, const char* path, const i32 font_index)
-    {
+    i32 add_font(Context* font_ctx, const char* name, const char* path, const i32 font_index) {
         u8* data = nullptr;
         i32 status = -1;
 
@@ -912,8 +866,7 @@ namespace rl::nvg::font {
     }
 
     i32 add_font_mem(Context* font_ctx, const char* name, u8* data, const i32 data_size,
-                     const i32 free_data, const i32 font_index)
-    {
+                     const i32 free_data, const i32 font_index) {
         i32 ascent, descent, line_gap;
 
         const i32 idx = alloc_font(font_ctx);
@@ -954,8 +907,7 @@ namespace rl::nvg::font {
         return INVALID;
     }
 
-    i32 get_font_by_name(const Context* font_ctx, const char* name)
-    {
+    i32 get_font_by_name(const Context* font_ctx, const char* name) {
         for (i32 i = 0; i < font_ctx->nfonts; i++)
             if (std::strcmp(font_ctx->fonts[i]->name, name) == 0)
                 return i;
@@ -963,8 +915,7 @@ namespace rl::nvg::font {
         return INVALID;
     }
 
-    f32 draw_text(Context* font_ctx, f32 x, f32 y, const char* str, const char* end)
-    {
+    f32 draw_text(Context* font_ctx, f32 x, f32 y, const char* str, const char* end) {
         const font::State* state = get_state(font_ctx);
         u32 codepoint;
         u32 utf8_state = 0;
@@ -1033,8 +984,7 @@ namespace rl::nvg::font {
     }
 
     i32 text_iter_init(Context* font_ctx, TextIter* iter, ds::point<f32> pos, const char* str,
-                       const char* end, const i32 bitmap_option)
-    {
+                       const char* end, const i32 bitmap_option) {
         const nvg::font::State* state{ nvg::font::get_state(font_ctx) };
 
         std::memset(iter, 0, sizeof(*iter));
@@ -1084,8 +1034,7 @@ namespace rl::nvg::font {
         return 1;
     }
 
-    i32 text_iter_next(Context* font_ctx, TextIter* iter, FontQuad* quad)
-    {
+    i32 text_iter_next(Context* font_ctx, TextIter* iter, FontQuad* quad) {
         const char* str = iter->next;
         iter->str = iter->next;
 
@@ -1115,8 +1064,7 @@ namespace rl::nvg::font {
         return 1;
     }
 
-    void draw_debug(Context* font_ctx, const f32 x, const f32 y)
-    {
+    void draw_debug(Context* font_ctx, const f32 x, const f32 y) {
         const f32 w{ static_cast<f32>(font_ctx->params.width) };
         const f32 h{ static_cast<f32>(font_ctx->params.height) };
         const f32 u{ math::equal(w, 0.0f) ? 0 : (1.0f / w) };
@@ -1166,15 +1114,13 @@ namespace rl::nvg::font {
         flush(font_ctx);
     }
 
-    f32 text_bounds(Context* font_ctx, const ds::point<f32> pos, const char* str, const char* end)
-    {
+    f32 text_bounds(Context* font_ctx, const ds::point<f32> pos, const char* str, const char* end) {
         ds::rect<f32> bounds{ ds::rect<f32>::null() };
         return text_bounds(font_ctx, pos, str, end, bounds);
     }
 
     f32 text_bounds(Context* font_ctx, ds::point<f32> pos, const char* str, const char* end,
-                    ds::rect<f32>& bounds)
-    {
+                    ds::rect<f32>& bounds) {
         f32 text_width{ 0.0f };
 
         const font::State* state = get_state(font_ctx);
@@ -1271,8 +1217,7 @@ namespace rl::nvg::font {
         return text_width;
     }
 
-    void vert_metrics(Context* font_ctx, f32* ascender, f32* descender, f32* lineh)
-    {
+    void vert_metrics(Context* font_ctx, f32* ascender, f32* descender, f32* lineh) {
         if (font_ctx == nullptr)
             return;
 
@@ -1293,8 +1238,7 @@ namespace rl::nvg::font {
             *lineh = font->lineh * isize / 10.0f;
     }
 
-    void line_bounds(Context* font_ctx, f32 y, f32* miny, f32* maxy)
-    {
+    void line_bounds(Context* font_ctx, f32 y, f32* miny, f32* maxy) {
         if (font_ctx == nullptr)
             return;
 
@@ -1319,8 +1263,7 @@ namespace rl::nvg::font {
         }
     }
 
-    const u8* get_texture_data(const Context* font_ctx, i32* width, i32* height)
-    {
+    const u8* get_texture_data(const Context* font_ctx, i32* width, i32* height) {
         if (width != nullptr)
             *width = font_ctx->params.width;
         if (height != nullptr)
@@ -1329,8 +1272,7 @@ namespace rl::nvg::font {
         return font_ctx->tex_data;
     }
 
-    i32 validate_texture(Context* font_ctx, i32* dirty)
-    {
+    i32 validate_texture(Context* font_ctx, i32* dirty) {
         if (font_ctx->dirty_rect[0] < font_ctx->dirty_rect[2] &&
             font_ctx->dirty_rect[1] < font_ctx->dirty_rect[3]) {
             dirty[0] = font_ctx->dirty_rect[0];
@@ -1347,8 +1289,7 @@ namespace rl::nvg::font {
         return 0;
     }
 
-    void delete_internal(Context* font_ctx)
-    {
+    void delete_internal(Context* font_ctx) {
         if (font_ctx == nullptr)
             return;
 
@@ -1373,8 +1314,7 @@ namespace rl::nvg::font {
     }
 
     void set_error_callback(Context* font_ctx,
-                            void (*callback)(void* uptr, ErrorCode error, i32 val), void* uptr)
-    {
+                            void (*callback)(void* uptr, ErrorCode error, i32 val), void* uptr) {
         if (font_ctx == nullptr)
             return;
 
@@ -1382,8 +1322,7 @@ namespace rl::nvg::font {
         font_ctx->error_uptr = uptr;
     }
 
-    void get_atlas_size(const Context* font_ctx, i32* width, i32* height)
-    {
+    void get_atlas_size(const Context* font_ctx, i32* width, i32* height) {
         if (font_ctx == nullptr)
             return;
 
@@ -1391,8 +1330,7 @@ namespace rl::nvg::font {
         *height = font_ctx->params.height;
     }
 
-    i32 expand_atlas(Context* font_ctx, i32 width, i32 height)
-    {
+    i32 expand_atlas(Context* font_ctx, i32 width, i32 height) {
         i32 maxy = 0;
         if (font_ctx == nullptr)
             return 0;
@@ -1451,8 +1389,7 @@ namespace rl::nvg::font {
         return 1;
     }
 
-    i32 reset_atlas(Context* font_ctx, const i32 width, const i32 height)
-    {
+    i32 reset_atlas(Context* font_ctx, const i32 width, const i32 height) {
         if (font_ctx == nullptr)
             return 0;
 

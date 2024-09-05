@@ -9,8 +9,7 @@
 namespace rl::traits {
 
     template <rl::numeric T>
-    struct numeric_traits
-    {
+    struct numeric_traits {
         using type = T;
         using limits = std::numeric_limits<T>;
 
@@ -24,14 +23,12 @@ namespace rl::traits {
     };
 
     template <rl::integer T>
-    struct integer_traits : numeric_traits<T>
-    {
+    struct integer_traits : numeric_traits<T> {
         constexpr static inline bool is_signed{ std::is_signed_v<T> };
     };
 
     template <rl::floating_point T>
-    struct float_traits : numeric_traits<T>
-    {
+    struct float_traits : numeric_traits<T> {
         constexpr static inline T eps{ std::numeric_limits<T>::epsilon() };
         constexpr static inline T pi{ std::numbers::pi_v<T> };
     };

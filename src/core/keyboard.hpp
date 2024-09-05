@@ -17,8 +17,7 @@ namespace rl {
     class EventHandler;
     class MainWindow;
 
-    class Keyboard
-    {
+    class Keyboard {
         friend MainWindow;
 
     public:
@@ -297,8 +296,7 @@ namespace rl {
         };
 
         // Keyboard Keycode Identifiers
-        struct Key
-        {
+        struct Key {
             enum ID {
                 Unknown = SDLK_UNKNOWN,
                 Return = SDLK_RETURN,

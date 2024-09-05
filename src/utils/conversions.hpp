@@ -14,8 +14,7 @@
 namespace rl::math {
 
     template <rl::floating_point A, rl::floating_point B>
-    constexpr bool equal(const A& lhs, const B& rhs)
-    {
+    constexpr bool equal(const A& lhs, const B& rhs) {
         if constexpr (rl::lower_precision<A, B>) {
             using lp_float_t = rl::traits::float_traits<A>;
             return math::abs(lhs - rhs) <= lp_float_t::eps * math::abs(lhs + rhs) ||
@@ -29,8 +28,7 @@ namespace rl::math {
     }
 
     template <rl::integer A, rl::integer B>
-    constexpr bool equal(const A lhs, const B rhs)
-    {
+    constexpr bool equal(const A lhs, const B rhs) {
         if constexpr (std::is_signed_v<A> && !std::is_signed_v<B>)
             return lhs == static_cast<std::make_signed_t<B>>(rhs);
         if constexpr (std::is_signed_v<B> && !std::is_signed_v<A>)
@@ -40,86 +38,73 @@ namespace rl::math {
     }
 
     template <rl::numeric T>
-    constexpr bool not_equal(const T lhs, const T rhs)
-    {
+    constexpr bool not_equal(const T lhs, const T rhs) {
         return !equal(lhs, rhs);
     }
 }
 
 namespace rl {
     template <rl::scoped_enum TEnum>
-    constexpr TEnum operator|(const TEnum lhs, const TEnum rhs)
-    {
+    constexpr TEnum operator|(const TEnum lhs, const TEnum rhs) {
         return static_cast<TEnum>(std::to_underlying(lhs) | std::to_underlying(rhs));
     }
 
     template <rl::scoped_enum TEnum, rl::integer TUnderlying>
-    constexpr bool operator|(const TUnderlying lhs, const TEnum rhs)
-    {
+    constexpr bool operator|(const TUnderlying lhs, const TEnum rhs) {
         return lhs | std::to_underlying(rhs);
     }
 
     template <rl::scoped_enum TEnum>
-    constexpr TEnum& operator|=(TEnum& lhs, const TEnum rhs)
-    {
+    constexpr TEnum& operator|=(TEnum& lhs, const TEnum rhs) {
         lhs = (lhs | rhs);
         return lhs;
     }
 
     template <rl::scoped_enum TEnum>
-    constexpr TEnum operator~(const TEnum val)
-    {
+    constexpr TEnum operator~(const TEnum val) {
         return static_cast<TEnum>(~std::to_underlying(val));
     }
 
     template <rl::scoped_enum TEnum>
-    constexpr TEnum operator&(const TEnum lhs, const TEnum rhs)
-    {
+    constexpr TEnum operator&(const TEnum lhs, const TEnum rhs) {
         return static_cast<TEnum>(std::to_underlying(lhs) & std::to_underlying(rhs));
     }
 
     template <rl::scoped_enum TEnum, rl::integer TUnderlying>
-    constexpr bool operator&(const TUnderlying lhs, const TEnum rhs)
-    {
+    constexpr bool operator&(const TUnderlying lhs, const TEnum rhs) {
         return lhs & std::to_underlying(rhs);
     }
 
     template <rl::scoped_enum TEnum>
-    constexpr TEnum operator&=(TEnum& lhs, const TEnum rhs)
-    {
+    constexpr TEnum operator&=(TEnum& lhs, const TEnum rhs) {
         lhs = static_cast<TEnum>(std::to_underlying(lhs) & std::to_underlying(rhs));
         return lhs;
     }
 
     template <rl::scoped_enum TEnum, rl::integer TUnderlying>
-    constexpr bool operator==(const TUnderlying lhs, const TEnum rhs)
-    {
+    constexpr bool operator==(const TUnderlying lhs, const TEnum rhs) {
         return static_cast<std::underlying_type_t<TEnum>>(lhs) == std::to_underlying(rhs);
     }
 
     template <rl::scoped_enum TEnum, rl::integer TUnderlying>
-    constexpr bool operator==(const TEnum lhs, const TUnderlying rhs)
-    {
+    constexpr bool operator==(const TEnum lhs, const TUnderlying rhs) {
         return std::to_underlying(lhs) == static_cast<std::underlying_type_t<TEnum>>(rhs);
     }
 
     template <rl::scoped_enum TEnum, rl::integer TUnderlying>
-    constexpr bool operator!=(const TUnderlying lhs, const TEnum rhs)
-    {
+    constexpr bool operator!=(const TUnderlying lhs, const TEnum rhs) {
         return !(lhs == rhs);
     }
 
     template <rl::scoped_enum TEnum, rl::integer TUnderlying>
-    constexpr bool operator!=(const TEnum lhs, const TUnderlying rhs)
-    {
+    constexpr bool operator!=(const TEnum lhs, const TUnderlying rhs) {
         return !(lhs == rhs);
     }
 };
 
 namespace rl::inline cast {
     template <typename To, typename From>
-    struct within_bounds
-    {
+    struct within_bounds {
         constexpr static bool value(From val)
             requires rl::signed_integer<To> && rl::unsigned_integer<From>
         {
@@ -134,8 +119,7 @@ namespace rl::inline cast {
                    static_cast<u64>(val) >= std::numeric_limits<To>::min();
         }
 
-        constexpr static bool value(From val)
-        {
+        constexpr static bool value(From val) {
             return val <= std::numeric_limits<To>::max() &&
                    val >= std::numeric_limits<To>::lowest();
         }
@@ -143,15 +127,13 @@ namespace rl::inline cast {
 
     // widening  conversions
     template <rl::numeric To, rl::numeric From>
-    constexpr To to(const From val)
-    {
+    constexpr To to(const From val) {
         return static_cast<To>(val);
     }
 
     // floating point to integer conversion
     template <rl::integer To, rl::floating_point From>
-    constexpr To to(const From val)
-    {
+    constexpr To to(const From val) {
         return static_cast<To>(val >= static_cast<From>(0.0)
                                    ? val + static_cast<From>(0.5)
                                    : val - static_cast<From>(0.5));
@@ -160,8 +142,7 @@ namespace rl::inline cast {
     // narrowing integer conversion
     template <rl::integer To, rl::integer From>
         requires(!rl::higher_max<To, From> || !rl::lower_min<To, From>)
-    constexpr To to(const From in)
-    {
+    constexpr To to(const From in) {
         const bool value_in_bounds{ within_bounds<To, From>::value(in) };
         debug_assert(value_in_bounds,
                      "narrowing integer numeric cast results in overflow {}  ({}) -> {}",
@@ -173,8 +154,7 @@ namespace rl::inline cast {
     // narrowing floating point conversion
     template <rl::floating_point To, rl::floating_point From>
         requires(!rl::higher_max<To, From> || !rl::lower_min<To, From>)
-    constexpr To to(const From in)
-    {
+    constexpr To to(const From in) {
         const bool value_in_bounds{ within_bounds<To, From>::value(in) };
         debug_assert(value_in_bounds,
                      "narrowing integer numeric cast results in overflow {}  ({}) -> {}",

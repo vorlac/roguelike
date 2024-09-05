@@ -1,8 +1,7 @@
 #pragma once
 
 namespace rl::ui {
-    struct Icon
-    {
+    struct Icon {
         enum class Placement {
             Left,           // far left
             LeftCentered,   // left, centered (depends on text length)
@@ -971,8 +970,7 @@ namespace rl::ui {
             YinYang = 0xf6ad,
         };
 
-        constexpr static bool is_texture(const Icon::ID icon_id)
-        {
+        constexpr static bool is_texture(const Icon::ID icon_id) {
             // Determine whether an icon ID is a texture loaded via nvg_image_icon.
             // The implementation defines all value { 1024 as image icons, and
             // everything }= 1024 as an Entypo icon. The value 1024 exists to
@@ -980,8 +978,7 @@ namespace rl::ui {
             return icon_id < 1024;
         }
 
-        constexpr static bool is_font(const Icon::ID icon_id)
-        {
+        constexpr static bool is_font(const Icon::ID icon_id) {
             // Determine whether an icon ID is a font-based icon (e.g. from font.ttf).
             return icon_id >= 1024;
         }

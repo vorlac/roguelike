@@ -14,32 +14,27 @@
 namespace rl::ui {
     ComboBox::ComboBox(Widget* parent)
         : PopupButton{ parent }
-        , m_item_container{ this->popup() }
-    {
+        , m_item_container{ this->popup() } {
     }
 
     ComboBox::ComboBox(Widget* parent, const std::vector<std::string>& items)
         : PopupButton{ parent }
-        , m_item_container{ this->popup() }
-    {
+        , m_item_container{ this->popup() } {
         this->set_items(items);
     }
 
     ComboBox::ComboBox(Widget* parent, const std::vector<std::string>& items,
                        const std::vector<std::string>& items_short)
         : PopupButton{ parent }
-        , m_item_container{ this->popup() }
-    {
+        , m_item_container{ this->popup() } {
         this->set_items(items, items_short);
     }
 
-    i32 ComboBox::selected_index() const
-    {
+    i32 ComboBox::selected_index() const {
         return m_selected_index;
     }
 
-    void ComboBox::set_selected_index(const i32 idx)
-    {
+    void ComboBox::set_selected_index(const i32 idx) {
         if (m_items_short.empty())
             return;
 
@@ -51,28 +46,23 @@ namespace rl::ui {
         this->set_text(m_items_short[static_cast<u32>(idx)]);
     }
 
-    const std::function<void(u32)>& ComboBox::callback() const
-    {
+    const std::function<void(u32)>& ComboBox::callback() const {
         return m_callback;
     }
 
-    void ComboBox::set_callback(const std::function<void(u32)>& callback)
-    {
+    void ComboBox::set_callback(const std::function<void(u32)>& callback) {
         m_callback = callback;
     }
 
-    const std::vector<std::string>& ComboBox::items() const
-    {
+    const std::vector<std::string>& ComboBox::items() const {
         return m_items;
     }
 
-    const std::vector<std::string>& ComboBox::items_short() const
-    {
+    const std::vector<std::string>& ComboBox::items_short() const {
         return m_items_short;
     }
 
-    i32 ComboBox::item_count() const
-    {
+    i32 ComboBox::item_count() const {
         debug_assert(m_items.size() == m_items_short.size(),
                      "Combo box: item counts mismatch: \n\titems:{} vs items_short:{}",
                      m_items.size(), m_items_short.size());
@@ -80,14 +70,12 @@ namespace rl::ui {
         return static_cast<i32>(m_items.size());
     }
 
-    void ComboBox::set_items(const std::vector<std::string>& items)
-    {
+    void ComboBox::set_items(const std::vector<std::string>& items) {
         this->set_items(items, items);
     }
 
     void ComboBox::set_items(const std::vector<std::string>& items,
-                             const std::vector<std::string>& items_short)
-    {
+                             const std::vector<std::string>& items_short) {
         debug_assert(items.size() == items_short.size(),
                      "item counts mismatch: {} vs {}",
                      items.size(), items_short.size());
@@ -134,8 +122,7 @@ namespace rl::ui {
         this->set_selected_index(m_selected_index);
     }
 
-    bool ComboBox::on_mouse_scroll(const Mouse& mouse, const Keyboard& kb)
-    {
+    bool ComboBox::on_mouse_scroll(const Mouse& mouse, const Keyboard& kb) {
         this->set_pressed(false);
         this->popup()->set_visible(false);
 

@@ -11,8 +11,7 @@
 namespace rl::ui {
     class Widget;
 
-    struct CellProperties
-    {
+    struct CellProperties {
         f32 stretch_factor{ 0.0f };
         Placement_OldAlignment alignment{ Placement_OldAlignment::Fill };
         ds::margin<f32> inner_padding{ 5.0f, 5.0f, 10.0f, 10.0f };
@@ -20,12 +19,10 @@ namespace rl::ui {
         ds::margin<f32> inner_margin{ 20.0f, 20.0f, 20.0f, 20.0f };
     };
 
-    class Layout : public Widget
-    {
+    class Layout : public Widget {
     public:
         explicit Layout(std::string name)
-            : Widget(nullptr)
-        {
+            : Widget(nullptr) {
             this->set_name(std::move(name));
             // TODO: remove, debug
             this->set_tooltip(std::string{ this->name() });
@@ -34,22 +31,19 @@ namespace rl::ui {
             m_layout = this;
         }
 
-        void add_widget(Widget* widget)
-        {
+        void add_widget(Widget* widget) {
             this->add_child(widget);
             m_cell_data.emplace_back(widget, CellProperties{});
         }
 
-        void add_nested_layout(Layout* layout)
-        {
+        void add_nested_layout(Layout* layout) {
             this->add_widget(layout);
             if (m_size_policy != SizePolicy::Inherit &&
                 layout->size_policy() == SizePolicy::Inherit)
                 layout->set_size_policy(m_size_policy);
         }
 
-        void set_size_policy(const SizePolicy policy)
-        {
+        void set_size_policy(const SizePolicy policy) {
             if (m_size_policy == SizePolicy::Inherit && policy != SizePolicy::Inherit) {
                 for (const Widget* widget : m_cell_data | std::views::keys) {
                     Layout* widget_layout{ widget->layout() };
@@ -61,60 +55,50 @@ namespace rl::ui {
             m_size_policy = policy;
         }
 
-        void set_inner_margin(const ds::margin<f32> margin)
-        {
+        void set_inner_margin(const ds::margin<f32> margin) {
             m_inner_margin = margin;
         }
 
-        void set_outer_margin(const ds::margin<f32> margin)
-        {
+        void set_outer_margin(const ds::margin<f32> margin) {
             m_outer_margin = margin;
         }
 
-        void set_margins(const ds::margin<f32> inner, const ds::margin<f32> outer)
-        {
+        void set_margins(const ds::margin<f32> inner, const ds::margin<f32> outer) {
             this->set_inner_margin(inner);
             this->set_outer_margin(outer);
         }
 
-        void set_spacing(const f32 spacing)
-        {
+        void set_spacing(const f32 spacing) {
             m_spacing = spacing;
         }
 
         [[nodiscard]]
-        auto widgets() const
-        {
+        auto widgets() const {
             return m_cell_data | std::ranges::views::keys;
         }
 
         [[nodiscard]]
-        SizePolicy size_policy() const
-        {
+        SizePolicy size_policy() const {
             return m_size_policy;
         }
 
         [[nodiscard]]
-        Alignment alignment() const
-        {
+        Alignment alignment() const {
             return m_alignment;
         }
 
         [[nodiscard]]
-        ds::margin<f32> outer_margin() const
-        {
+        ds::margin<f32> outer_margin() const {
             return m_outer_margin;
         }
 
         [[nodiscard]]
-        ds::margin<f32> inner_margin() const
-        {
+        ds::margin<f32> inner_margin() const {
             return m_inner_margin;
         }
 
         [[nodiscard]]
-        f32 spacing() const
-        {
+        f32 spacing() const {
             return m_spacing;
         }
 
@@ -136,8 +120,7 @@ namespace rl::ui {
         f32 m_spacing{ 5.0f };
     };
 
-    class OldLayout : public ds::refcounted
-    {
+    class OldLayout : public ds::refcounted {
     public:
         // Performs applies all Layout computations for the given widget.
         virtual void apply_layout(nvg::Context* nvc, const Widget* w) const = 0;

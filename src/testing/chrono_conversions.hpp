@@ -17,8 +17,7 @@ namespace rl::test::chrono {
     // duration conversions. you can convert any unit & value of time
     // duration to any number of duration unit & value combinations.
     template <typename... TDurations>
-    std::tuple<TDurations...> convert_durations(auto&& in_duration)
-    {
+    std::tuple<TDurations...> convert_durations(auto&& in_duration) {
         std::tuple<TDurations...> ret{};
         ((std::get<TDurations>(ret) = std::chrono::duration_cast<TDurations>(in_duration),
           in_duration -= std::chrono::duration_cast<TDurations>(std::get<TDurations>(ret))),
@@ -27,8 +26,7 @@ namespace rl::test::chrono {
         return ret;
     }
 
-    void duration_conversion_example()
-    {
+    void duration_conversion_example() {
         using namespace std::chrono;
         using namespace std::literals;
         std::println("\nTime Duration Conversions:");
@@ -50,8 +48,7 @@ namespace rl::test::chrono {
         std::println("  duration1 to minutes = {}\n", orig_to_mins);
     }
 
-    void date_and_time_example()
-    {
+    void date_and_time_example() {
         using namespace std::chrono;
         using namespace std::literals;
 
@@ -63,8 +60,7 @@ namespace rl::test::chrono {
         std::println("   yesterday: {:%D %r}", now - 24h);
     }
 
-    int run_chrono_exmaples()
-    {
+    int run_chrono_exmaples() {
         duration_conversion_example();
         date_and_time_example();
         return 0;

@@ -116,8 +116,7 @@ namespace rl {
 // clang-format on
 
 namespace rl {
-    constexpr auto format_as(const Side side)
-    {
+    constexpr auto format_as(const Side side) {
         switch (side) {
             case Side::None:
                 return "None";
@@ -142,8 +141,7 @@ namespace rl {
         }
     }
 
-    constexpr auto format_as(const Placement_OldAlignment alignment)
-    {
+    constexpr auto format_as(const Placement_OldAlignment alignment) {
         switch (alignment) {
             case Placement_OldAlignment::None:
                 return "None";
@@ -160,8 +158,7 @@ namespace rl {
         return "Unknown";
     }
 
-    constexpr auto format_as(const Alignment orientation)
-    {
+    constexpr auto format_as(const Alignment orientation) {
         switch (orientation) {
             case Alignment::None:
                 return "None";
@@ -174,8 +171,7 @@ namespace rl {
         return "Unknown";
     }
 
-    constexpr auto format_as(const Axis axis)
-    {
+    constexpr auto format_as(const Axis axis) {
         switch (axis) {
             case Axis::Horizontal:
                 return "Horizontal";

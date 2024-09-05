@@ -5,8 +5,7 @@
 #include "ui/widget.hpp"
 
 namespace rl {
-    struct LocalTransform final
-    {
+    struct LocalTransform final {
     public:
         LocalTransform() = delete;
         LocalTransform(const LocalTransform&) = delete;
@@ -15,8 +14,7 @@ namespace rl {
         LocalTransform& operator=(const LocalTransform&) = delete;
 
     public:
-        explicit LocalTransform(const ui::Widget* widget) noexcept
-        {
+        explicit LocalTransform(const ui::Widget* widget) noexcept {
             debug_assert(widget != nullptr, "invalid reference to UI element");
             if (scope_stack.empty() || scope_stack.back() != widget) {
                 absolute_pos += widget->position();
@@ -26,8 +24,7 @@ namespace rl {
             }
         }
 
-        ~LocalTransform()
-        {
+        ~LocalTransform() {
             if (m_added_to_stack) {
                 const ui::Widget* widget{ scope_stack.back() };
                 absolute_pos -= widget->position();

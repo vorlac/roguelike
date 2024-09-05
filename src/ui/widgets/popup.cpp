@@ -7,62 +7,50 @@
 namespace rl::ui {
     Popup::Popup(Widget*, ScrollableDialog* parent_dialog)
         : ScrollableDialog{}
-        , m_parent_dialog{ parent_dialog }
-    {
+        , m_parent_dialog{ parent_dialog } {
     }
 
-    void Popup::set_anchor_pos(const ds::point<f32> anchor_pos)
-    {
+    void Popup::set_anchor_pos(const ds::point<f32> anchor_pos) {
         m_anchor_pos = anchor_pos;
     }
 
-    ds::point<f32> Popup::anchor_pos() const
-    {
+    ds::point<f32> Popup::anchor_pos() const {
         return m_anchor_pos;
     }
 
-    void Popup::set_anchor_offset(const f32 anchor_offset)
-    {
+    void Popup::set_anchor_offset(const f32 anchor_offset) {
         m_anchor_offset = anchor_offset;
     }
 
-    f32 Popup::anchor_offset() const
-    {
+    f32 Popup::anchor_offset() const {
         return m_anchor_offset;
     }
 
-    void Popup::set_anchor_size(const f32 anchor_size)
-    {
+    void Popup::set_anchor_size(const f32 anchor_size) {
         m_anchor_size = anchor_size;
     }
 
-    f32 Popup::anchor_size() const
-    {
+    f32 Popup::anchor_size() const {
         return m_anchor_size;
     }
 
-    void Popup::set_side(const Side popup_side)
-    {
+    void Popup::set_side(const Side popup_side) {
         m_side = popup_side;
     }
 
-    Side Popup::side() const
-    {
+    Side Popup::side() const {
         return m_side;
     }
 
-    ScrollableDialog* Popup::parent_dialog()
-    {
+    ScrollableDialog* Popup::parent_dialog() {
         return m_parent_dialog;
     }
 
-    const ScrollableDialog* Popup::parent_dialog() const
-    {
+    const ScrollableDialog* Popup::parent_dialog() const {
         return m_parent_dialog;
     }
 
-    void Popup::perform_layout()
-    {
+    void Popup::perform_layout() {
         if (m_layout != nullptr || m_children.size() != 1)
             Widget::perform_layout();  // NOLINT(bugprone-parent-virtual-call)
         else {
@@ -76,8 +64,7 @@ namespace rl::ui {
             m_anchor_pos.x -= m_rect.size.width;
     }
 
-    void Popup::refresh_relative_placement()
-    {
+    void Popup::refresh_relative_placement() {
         if (m_parent_dialog == nullptr)
             return;
 
@@ -87,8 +74,7 @@ namespace rl::ui {
                     ds::point<f32>{ 0.0f, m_anchor_offset };
     }
 
-    void Popup::draw()
-    {
+    void Popup::draw() {
         this->refresh_relative_placement();
         if (!m_visible)
             return;

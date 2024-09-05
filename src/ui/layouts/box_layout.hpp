@@ -10,34 +10,28 @@
 
 namespace rl::ui {
     template <Alignment VAlignment>
-    class BoxLayout final : public Layout
-    {
+    class BoxLayout final : public Layout {
     public:
         constexpr explicit BoxLayout(std::string name)
-            : Layout{ std::move(name) }
-        {
+            : Layout{ std::move(name) } {
             m_alignment = VAlignment;
         }
 
         constexpr explicit BoxLayout(std::string name, const std::initializer_list<Widget*>& widgets)
-            : BoxLayout{ std::move(name) }
-        {
+            : BoxLayout{ std::move(name) } {
             for (Widget* widget : widgets)
                 this->add_widget(widget);
         }
 
         constexpr explicit BoxLayout(std::string name, const std::initializer_list<Layout*>& nested_layouts)
-            : BoxLayout{ std::move(name) }
-        {
+            : BoxLayout{ std::move(name) } {
             for (Layout* layout : nested_layouts)
                 this->add_nested_layout(layout);
         }
 
-        virtual void adjust_for_size_policy() override
-        {
+        virtual void adjust_for_size_policy() override {
             switch (this->size_policy()) {
-                case SizePolicy::Minimum:
-                {
+                case SizePolicy::Minimum: {
                     // interestingly enough, both Minimim and Maximum both
                     // use the same code to adjust internal layours/widgets.
                     // The main difference between the two is in an outer
@@ -47,8 +41,7 @@ namespace rl::ui {
                     // minimum policy to behave exactly like the maximum policy
                     [[fallthrough]];
                 }
-                case SizePolicy::Maximum:
-                {
+                case SizePolicy::Maximum: {
                     const Widget* parent_widget{ this->parent() };
                     debug_assert(parent_widget != nullptr,
                                  "layout missing a parent");
@@ -200,8 +193,7 @@ namespace rl::ui {
             }
         }
 
-        virtual void apply_layout() override
-        {
+        virtual void apply_layout() override {
             ds::rect<f32> computed_rect{};
             ds::point<f32> curr_widget_pos{ m_outer_margin.offset() };
 
@@ -248,8 +240,7 @@ namespace rl::ui {
         }
 
         [[nodiscard]]
-        virtual ds::dims<f32> computed_size() const override
-        {
+        virtual ds::dims<f32> computed_size() const override {
             ds::dims<f32> computed_size{ ds::dims<f32>::zero() };
             for (const Widget* widget : m_cell_data | std::views::keys) {
                 const Layout* widget_layout{ widget->layout() };

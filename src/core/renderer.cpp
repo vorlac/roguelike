@@ -19,8 +19,7 @@ SDL_C_LIB_END
 
 namespace rl {
     namespace detail {
-        static SDL3::SDL_GLContext create_opengl_context(SDL3::SDL_Window* sdl_window)
-        {
+        static SDL3::SDL_GLContext create_opengl_context(SDL3::SDL_Window* sdl_window) {
             sdl_assert(sdl_window != nullptr,
                        "Attempting to create context from uninitialized window");
             const SDL3::SDL_GLContext gl_context{ SDL3::SDL_GL_CreateContext(sdl_window) };
@@ -46,8 +45,7 @@ namespace rl {
     }
 
     OpenGLRenderer::OpenGLRenderer(MainWindow& window)
-        : m_sdl_glcontext{ detail::create_opengl_context(window.sdl_handle()) }
-    {
+        : m_sdl_glcontext{ detail::create_opengl_context(window.sdl_handle()) } {
         if (m_sdl_glcontext != nullptr) {
             sdl_assert(m_sdl_glcontext != nullptr, "failed to create renderer");
             const ds::dims<i32> viewport{ window.get_render_size() };
@@ -55,54 +53,46 @@ namespace rl {
         }
     }
 
-    bool OpenGLRenderer::clear() const
-    {
+    bool OpenGLRenderer::clear() const {
         glClearColor(m_bg_color.r, m_bg_color.g, m_bg_color.b, m_bg_color.a);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         return true;
     }
 
-    bool OpenGLRenderer::swap_buffers(const rl::MainWindow& window) const
-    {
+    bool OpenGLRenderer::swap_buffers(const rl::MainWindow& window) const {
         const i32 result{ SDL3::SDL_GL_SwapWindow(window.sdl_handle()) };
         sdl_assert(result == 0, "OpenGL renderer buffer swap failed");
         return result == 0;
     }
 
-    SDL3::SDL_GLContext OpenGLRenderer::gl_context() const
-    {
+    SDL3::SDL_GLContext OpenGLRenderer::gl_context() const {
         return m_sdl_glcontext;
     }
 
-    ds::dims<i32> OpenGLRenderer::get_output_size() const
-    {
+    ds::dims<i32> OpenGLRenderer::get_output_size() const {
         debug_assert("not implemented");
         return ds::dims<i32>{ 0, 0 };
     }
 
-    bool OpenGLRenderer::set_draw_color(ds::color<f32>) const
-    {
+    bool OpenGLRenderer::set_draw_color(ds::color<f32>) const {
         constexpr i32 result{ 0 };
         debug_assert("not implemented");
         return result == 0;
     }
 
-    bool OpenGLRenderer::set_target() const
-    {
+    bool OpenGLRenderer::set_target() const {
         constexpr i32 result{ 0 };
         debug_assert("not implemented");
         return result == 0;
     }
 
-    bool OpenGLRenderer::set_draw_blend_mode(const SDL3::SDL_BlendMode) const
-    {
+    bool OpenGLRenderer::set_draw_blend_mode(const SDL3::SDL_BlendMode) const {
         constexpr i32 result{ 0 };
         debug_assert("not implemented");
         return result == 0;
     }
 
-    ds::rect<f32> OpenGLRenderer::get_viewport() const
-    {
+    ds::rect<f32> OpenGLRenderer::get_viewport() const {
         std::array buff{ 0, 0, 0, 0 };
         glGetIntegerv(GL_VIEWPORT, buff.data());
         debug_assert(buff[2] > 0 && buff[3] > 0, "failed to get viewport");
@@ -119,8 +109,7 @@ namespace rl {
         };
     }
 
-    bool OpenGLRenderer::set_viewport(const ds::rect<i32>& rect) const
-    {
+    bool OpenGLRenderer::set_viewport(const ds::rect<i32>& rect) const {
         debug_assert(!rect.is_empty(), "invalid viewport rect being set");
         glViewport(rect.pt.x, rect.pt.y, rect.size.width, rect.size.height);
         return !rect.is_empty();

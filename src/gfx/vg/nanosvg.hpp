@@ -37,14 +37,12 @@ namespace rl::nvg::svg {
         NSVGFlagsVisible = 0x01
     };
 
-    struct NSVGgradientStop
-    {
+    struct NSVGgradientStop {
         unsigned int color;
         float offset;
     };
 
-    struct NSVGgradient
-    {
+    struct NSVGgradient {
         float xform[6];
         char spread;
         float fx, fy;
@@ -52,19 +50,16 @@ namespace rl::nvg::svg {
         NSVGgradientStop stops[1];
     };
 
-    struct NSVGpaint
-    {
+    struct NSVGpaint {
         signed char type;
 
-        union
-        {
+        union {
             unsigned int color;
             NSVGgradient* gradient;
         };
     };
 
-    struct NSVGpath
-    {
+    struct NSVGpath {
         float* pts;       // Cubic bezier points: x0,y0, [cpx1,cpx1,cpx2,cpy2,x1,y1], ...
         int npts;         // Total number of bezier points.
         char closed;      // Flag indicating if shapes should be treated as closed.
@@ -72,8 +67,7 @@ namespace rl::nvg::svg {
         NSVGpath* next;   // Pointer to next path, or NULL if last element.
     };
 
-    struct NSVGshape
-    {
+    struct NSVGshape {
         char id[64];                 // Optional 'id' attr of the shape or its group
         NSVGpaint fill;              // Fill paint
         NSVGpaint stroke;            // Stroke paint
@@ -95,8 +89,7 @@ namespace rl::nvg::svg {
         NSVGshape* next;             // Pointer to next shape, or NULL if last element.
     };
 
-    struct NSVGimage
-    {
+    struct NSVGimage {
         float width;        // Width of the image.
         float height;       // Height of the image.
         NSVGshape* shapes;  // Linked list of shapes in the image.

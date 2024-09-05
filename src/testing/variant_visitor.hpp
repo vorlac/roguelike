@@ -10,12 +10,10 @@
 
 namespace rl::test {
     template <typename... TVisitorFunction>
-    struct variant_visitor : TVisitorFunction...
-    {
+    struct variant_visitor : TVisitorFunction... {
         template <typename... TCallable>
         variant_visitor(TCallable&&... vc)
-            : TVisitorFunction{ std::forward<TCallable>(vc) }...
-        {
+            : TVisitorFunction{ std::forward<TCallable>(vc) }... {
         }
 
         using TVisitorFunction::operator()...;
@@ -42,8 +40,7 @@ namespace rl::test {
 
     // clang-format on
 
-    int run_varian_visitor_example()
-    {
+    int run_varian_visitor_example() {
         using variant_t = std::variant<A, B, C, D>;
         std::vector<variant_t> variants = {
             A{ .a = 123 },

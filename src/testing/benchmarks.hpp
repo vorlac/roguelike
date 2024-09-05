@@ -27,27 +27,23 @@
 
 namespace rl::bench {
     namespace fib {
-        consteval static inline int fib(const int n)
-        {
+        consteval static inline int fib(const int n) {
             if (n <= 1)
                 return n;
             return fib(n - 1) + fib(n - 2);
         }
 
         template <typename T, T... nums>
-        static inline consteval auto fib_array(std::integer_sequence<T, nums...>&& intseq)
-        {
+        static inline consteval auto fib_array(std::integer_sequence<T, nums...>&& intseq) {
             return std::array{ fib(nums)... };
         }
 
         template <typename T, T... nums>
-        static inline consteval auto int_array(std::integer_sequence<T, nums...>&& intseq)
-        {
+        static inline consteval auto int_array(std::integer_sequence<T, nums...>&& intseq) {
             return std::array{ nums... };
         }
 
-        int asdf()
-        {
+        int asdf() {
             auto ints{ std::make_integer_sequence<int, 16>{} };
             [[maybe_unused]] constexpr static std::array int_vals{
                 int_array(std::forward<decltype(ints)>(ints))
@@ -64,8 +60,7 @@ namespace rl::bench {
 namespace rl::bench {
     using namespace std::chrono_literals;
 
-    inline void run_rand_benchmarks()
-    {
+    inline void run_rand_benchmarks() {
         using namespace std::literals;
         ankerl::nanobench::Bench rand_benchmarks{};
         rand_benchmarks.title("Random Number Generators")
@@ -281,8 +276,7 @@ namespace rl::bench {
         });
     }
 
-    inline void run_memcmp_benchmarks()
-    {
+    inline void run_memcmp_benchmarks() {
         ankerl::nanobench::Bench memcmp_benchmarks{};
         memcmp_benchmarks.title("memcmp version")
             .unit("comparison")
@@ -358,8 +352,7 @@ namespace rl::bench {
         });
     }
 
-    inline void run_coroutine_generator_benchmarks()
-    {
+    inline void run_coroutine_generator_benchmarks() {
         constexpr auto fibonacci{
             [](u32 count = u32_max) -> generator<u64> {
                 u64 a{ 0 };
@@ -406,8 +399,7 @@ namespace rl::bench {
 }
 
 namespace rl::circular_nums {
-    std::vector<int> primes(int n)
-    {
+    std::vector<int> primes(int n) {
         std::vector<int> primes;
         for (int i = 2; i < n; i++) {
             bool isPrime = true;
@@ -424,8 +416,7 @@ namespace rl::circular_nums {
         return primes;
     }
 
-    bool check(std::string_view a, std::string_view b)
-    {
+    bool check(std::string_view a, std::string_view b) {
         for (int i = 0; i < a.size(); i++) {
             bool found = true;
             for (int j = 0; j < a.size(); j++) {
@@ -441,8 +432,7 @@ namespace rl::circular_nums {
         return false;
     }
 
-    bool isCyclic(long long n)
-    {
+    bool isCyclic(long long n) {
         int length = static_cast<int>(std::log10(n));
         std::string nStr = std::to_string(n * length);
         for (int i = length - 1; i > 0; i--) {
@@ -458,8 +448,7 @@ namespace rl::circular_nums {
         return true;
     }
 
-    int solution()
-    {
+    int solution() {
         for (auto prime : primes(22)) {
             long double cyclic = (std::pow((long double)10, prime - 1) - 1) / prime;
             [[maybe_unused]] int length = static_cast<int>(std::log10(cyclic));

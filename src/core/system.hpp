@@ -9,11 +9,9 @@ SDL_C_LIB_END
 
 namespace rl {
 
-    class System
-    {
+    class System {
     public:
-        struct Event
-        {
+        struct Event {
             using type = SDL3::SDL_EventType;
 
             enum ID : std::underlying_type_t<type> {

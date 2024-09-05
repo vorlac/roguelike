@@ -5,8 +5,7 @@
 
 namespace rl::ui {
 
-    class ProgressBar final : public Widget
-    {
+    class ProgressBar final : public Widget {
     public:
         explicit ProgressBar(Widget* parent);
 

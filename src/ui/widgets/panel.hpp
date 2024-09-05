@@ -4,8 +4,7 @@
 
 namespace rl::ui {
 
-    class Panel final : public Widget
-    {
+    class Panel final : public Widget {
     public:
         explicit Panel(Widget* parent);
     };

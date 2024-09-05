@@ -8,8 +8,7 @@
 
 namespace rl::ui {
 
-    class Theme final : public ds::refcounted
-    {
+    class Theme final : public ds::refcounted {
     public:
         constexpr Theme() = default;
         constexpr ~Theme() = default;

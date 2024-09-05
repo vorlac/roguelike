@@ -29,8 +29,7 @@ namespace rl::inline utils {
     };
 
     template <typename... TDurations>
-    std::tuple<TDurations...> convert_durations(auto in_duration)
-    {
+    std::tuple<TDurations...> convert_durations(auto in_duration) {
         std::tuple<TDurations...> ret{};
         ((std::get<TDurations>(ret) = std::chrono::duration_cast<TDurations>(in_duration),
           in_duration -= std::chrono::duration_cast<TDurations>(std::get<TDurations>(ret))),
@@ -41,11 +40,9 @@ namespace rl::inline utils {
 
     template <rl::numeric T = f32, auto FixedStep = 240, auto Duration = TimeDuration::Second>
         requires std::same_as<decltype(Duration), TimeDuration>
-    struct Timer
-    {
+    struct Timer {
         // gets time unit of a single tick
-        static TimeDuration unit()
-        {
+        static TimeDuration unit() {
             constexpr static u64 pico{ std::to_underlying(TimeDuration::Picosecond) };
             constexpr static u64 nano{ std::to_underlying(TimeDuration::Nanosecond) };
             constexpr static u64 micr{ std::to_underlying(TimeDuration::Microsecond) };
@@ -78,30 +75,26 @@ namespace rl::inline utils {
 
     public:
         [[nodiscard]]
-        constexpr T convert(const u64 timestamp_duration)
-        {
+        constexpr T convert(const u64 timestamp_duration) {
             constexpr u64 to_ratio{ std::to_underlying(time_unit) };
             const f32 seconds{ static_cast<f32>(timestamp_duration) / m_perf_counter_freq };
             return static_cast<T>(seconds * to_ratio);
         }
 
         [[nodiscard]]
-        static u64 timer_freq()
-        {
+        static u64 timer_freq() {
             // get tick frequency
             return SDL3::SDL_GetPerformanceFrequency();
         }
 
         [[nodiscard]]
-        static u64 now()
-        {
+        static u64 now() {
             // get current performance counter tick
             return SDL3::SDL_GetPerformanceCounter();
         }
 
         [[nodiscard]]
-        constexpr time_type delta()
-        {
+        constexpr time_type delta() {
             const u64 curr_timestamp{ Timer::now() };
             const u64 prev_timestamp{ m_delta_timestamp };
 
@@ -111,29 +104,25 @@ namespace rl::inline utils {
         }
 
         [[nodiscard]]
-        constexpr time_type elapsed()
-        {
+        constexpr time_type elapsed() {
             const u64 curr_timestamp{ Timer::now() };
             const u64 init_timestamp{ m_start_timestamp };
             return this->convert(curr_timestamp - init_timestamp);
         }
 
         [[nodiscard]]
-        constexpr u64 tick_count() const
-        {
+        constexpr u64 tick_count() const {
             return m_tick_count;
         }
 
-        void reset()
-        {
+        void reset() {
             m_start_timestamp = Timer::now();
             m_tick_count = 0;
             m_delta_time = 0;
         }
 
         template <std::invocable TCallable>
-        void tick(TCallable&& callable)
-        {
+        void tick(TCallable&& callable) {
             // Query the current time.
             m_elapsed_time = this->elapsed();
             m_delta_time = m_elapsed_time - m_prev_tick_time;
@@ -207,8 +196,7 @@ namespace rl::inline utils {
     };
 
     template <rl::numeric T, auto FixedStep, auto Duration>
-    auto format_as(const Timer<T, FixedStep, Duration>& timer)
-    {
+    auto format_as(const Timer<T, FixedStep, Duration>& timer) {
         return fmt::format("ticks:[{}] framecount[{}] elapsed:[{:.2f}] dt:[{:.6f}] fpsavg:[{:.1f}]]",
                            timer.m_tick_count, timer.m_frame_count, timer.m_elapsed_time,
                            timer.m_delta_time, timer.m_fps_avg_count);

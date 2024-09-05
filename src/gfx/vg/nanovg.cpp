@@ -42,78 +42,64 @@ namespace rl::nvg {
 
     namespace {
         namespace detail {
-            f32 sqrtf(const f32 a)
-            {
+            f32 sqrtf(const f32 a) {
                 return std::sqrtf(a);
             }
 
-            f32 modf(const f32 a, const f32 b)
-            {
+            f32 modf(const f32 a, const f32 b) {
                 return std::fmodf(a, b);
             }
 
-            f32 sinf(const f32 a)
-            {
+            f32 sinf(const f32 a) {
                 return std::sinf(a);
             }
 
-            f32 cosf(const f32 a)
-            {
+            f32 cosf(const f32 a) {
                 return std::cosf(a);
             }
 
-            f32 tanf(const f32 a)
-            {
+            f32 tanf(const f32 a) {
                 return std::tanf(a);
             }
 
             // ReSharper disable once CppInconsistentNaming
-            f32 atan2f(const f32 a, const f32 b)
-            {
+            f32 atan2f(const f32 a, const f32 b) {
                 return std::atan2f(a, b);
             }
 
-            f32 acosf(const f32 a)
-            {
+            f32 acosf(const f32 a) {
                 return std::acosf(a);
             }
 
             template <typename T>
-            constexpr auto min(const T a, const T b)
-            {
+            constexpr auto min(const T a, const T b) {
                 return a < b ? a : b;
             }
 
             template <typename T>
-            constexpr auto max(const T a, const T b)
-            {
+            constexpr auto max(const T a, const T b) {
                 return a > b ? a : b;
             }
 
-            constexpr f32 absf(const f32 a)
-            {
+            constexpr f32 absf(const f32 a) {
                 return a >= 0.0f ? a : -a;
             }
 
-            constexpr f32 signf(const f32 a)
-            {
+            constexpr f32 signf(const f32 a) {
                 return a >= 0.0f ? 1.0f : -1.0f;
             }
 
-            constexpr f32 clampf(const f32 a, const f32 mn, const f32 mx)
-            {
+            constexpr f32 clampf(const f32 a, const f32 mn, const f32 mx) {
                 return a < mn ? mn
                      : a > mx ? mx
                               : a;
             }
 
-            constexpr f32 cross(const f32 dx0, const f32 dy0, const f32 dx1, const f32 dy1)
-            {
+            constexpr f32 cross(const f32 dx0, const f32 dy0, const f32 dx1, const f32 dy1) {
                 return dx1 * dy0 - dx0 * dy1;
             }
 
-            f32 normalize(f32* x, f32* y)
-            {
+            f32 normalize(f32* x, f32* y) {
                 const f32 d = sqrtf(*x * *x + *y * *y);
                 if (d > 1e-6f) {
                     const f32 id = 1.0f / d;
@@ -123,8 +109,7 @@ namespace rl::nvg {
                 return d;
             }
 
-            void delete_path_cache(PathCache* c)
-            {
+            void delete_path_cache(PathCache* c) {
                 if (c == nullptr)
                     return;
                 if (c->points != nullptr)
@@ -137,8 +122,7 @@ namespace rl::nvg {
                 std::free(c);
             }
 
-            PathCache* alloc_path_cache()
-            {
+            PathCache* alloc_path_cache() {
                 const auto c = static_cast<PathCache*>(std::malloc(sizeof(PathCache)));
                 if (c != nullptr) {
                     std::memset(c, 0, sizeof(PathCache));
@@ -170,84 +154,71 @@ namespace rl::nvg {
                 return nullptr;
             }
 
-            constexpr void set_device_pixel_ratio(Context* ctx, const f32 ratio)
-            {
+            constexpr void set_device_pixel_ratio(Context* ctx, const f32 ratio) {
                 ctx->tess_tol = 0.25f / ratio;
                 ctx->dist_tol = 0.01f / ratio;
                 ctx->fringe_width = 1.0f / ratio;
                 ctx->device_px_ratio = ratio;
             }
 
-            constexpr CompositeOperationState composite_operation_state(const CompositeOperation op)
-            {
+            constexpr CompositeOperationState composite_operation_state(const CompositeOperation op) {
                 BlendFactor sfactor{};
                 BlendFactor dfactor{};
 
                 switch (op) {
                     default:
                         [[fallthrough]];
-                    case CompositeOperation::Copy:
-                    {
+                    case CompositeOperation::Copy: {
                         sfactor = BlendFactor::One;
                         dfactor = BlendFactor::Zero;
                         break;
                     }
-                    case CompositeOperation::SourceOver:
-                    {
+                    case CompositeOperation::SourceOver: {
                         sfactor = BlendFactor::One;
                         dfactor = BlendFactor::OneMinusSrcAlpha;
                         break;
                     }
-                    case CompositeOperation::SourceIn:
-                    {
+                    case CompositeOperation::SourceIn: {
                         sfactor = BlendFactor::DstAlpha;
                         dfactor = BlendFactor::Zero;
                         break;
                     }
-                    case CompositeOperation::SourceOut:
-                    {
+                    case CompositeOperation::SourceOut: {
                         sfactor = BlendFactor::OneMinusDstAlpha;
                         dfactor = BlendFactor::Zero;
                         break;
                     }
-                    case CompositeOperation::Atop:
-                    {
+                    case CompositeOperation::Atop: {
                         sfactor = BlendFactor::DstAlpha;
                         dfactor = BlendFactor::OneMinusSrcAlpha;
                         break;
                     }
-                    case CompositeOperation::DestinationOver:
-                    {
+                    case CompositeOperation::DestinationOver: {
                         sfactor = BlendFactor::OneMinusDstAlpha;
                         dfactor = BlendFactor::One;
                         break;
                     }
-                    case CompositeOperation::DestinationIn:
-                    {
+                    case CompositeOperation::DestinationIn: {
                         sfactor = BlendFactor::Zero;
                         dfactor = BlendFactor::SrcAlpha;
                         break;
                     }
-                    case CompositeOperation::DestinationOut:
-                    {
+                    case CompositeOperation::DestinationOut: {
                         sfactor = BlendFactor::Zero;
                         dfactor = BlendFactor::OneMinusSrcAlpha;
                         break;
                     }
-                    case CompositeOperation::DestinationAtop:
-                    {
+                    case CompositeOperation::DestinationAtop: {
                         sfactor = BlendFactor::OneMinusDstAlpha;
                         dfactor = BlendFactor::SrcAlpha;
                         break;
                     }
-                    case CompositeOperation::Lighter:
-                    {
+                    case CompositeOperation::Lighter: {
                         sfactor = BlendFactor::One;
                         dfactor = BlendFactor::One;
                         break;
                     }
-                    case CompositeOperation::Xor:
-                    {
+                    case CompositeOperation::Xor: {
                         sfactor = BlendFactor::OneMinusDstAlpha;
                         dfactor = BlendFactor::OneMinusSrcAlpha;
                         break;
@@ -262,26 +233,22 @@ namespace rl::nvg {
                 };
             }
 
-            State* get_state(Context* ctx)
-            {
+            State* get_state(Context* ctx) {
                 return &ctx->states[ctx->nstates - 1];
             }
 
-            void clear_path_cache(const Context* ctx)
-            {
+            void clear_path_cache(const Context* ctx) {
                 ctx->cache->npoints = 0;
                 ctx->cache->npaths = 0;
             }
 
-            NVGpath* last_path(const Context* ctx)
-            {
+            NVGpath* last_path(const Context* ctx) {
                 if (ctx->cache->npaths > 0)
                     return &ctx->cache->paths[ctx->cache->npaths - 1];
                 return nullptr;
             }
 
-            void add_path(const Context* ctx)
-            {
+            void add_path(const Context* ctx) {
                 if (ctx->cache->npaths + 1 > ctx->cache->cpaths) {
                     const i32 cpaths = ctx->cache->npaths + 1 + ctx->cache->cpaths / 2;
                     const auto paths = static_cast<NVGpath*>(realloc(
@@ -301,22 +268,19 @@ namespace rl::nvg {
                 ctx->cache->npaths++;
             }
 
-            Point* last_point(const Context* ctx)
-            {
+            Point* last_point(const Context* ctx) {
                 if (ctx->cache->npoints > 0)
                     return &ctx->cache->points[ctx->cache->npoints - 1];
                 return nullptr;
             }
 
-            i32 pt_equals(const f32 x1, const f32 y1, const f32 x2, const f32 y2, const f32 tol)
-            {
+            i32 pt_equals(const f32 x1, const f32 y1, const f32 x2, const f32 y2, const f32 tol) {
                 const f32 dx = x2 - x1;
                 const f32 dy = y2 - y1;
                 return dx * dx + dy * dy < tol * tol;
             }
 
-            void add_point(const Context* ctx, const f32 x, const f32 y, const i32 flags)
-            {
+            void add_point(const Context* ctx, const f32 x, const f32 y, const i32 flags) {
                 NVGpath* path = last_path(ctx);
                 Point* pt;
                 if (path == nullptr)
@@ -350,31 +314,27 @@ namespace rl::nvg {
                 path->count++;
             }
 
-            void close_path_internal(const Context* ctx)
-            {
+            void close_path_internal(const Context* ctx) {
                 NVGpath* path{ detail::last_path(ctx) };
                 if (path == nullptr)
                     return;
                 path->closed = 1;
             }
 
-            void path_winding_internal(const Context* ctx, const ShapeWinding winding)
-            {
+            void path_winding_internal(const Context* ctx, const ShapeWinding winding) {
                 NVGpath* path = detail::last_path(ctx);
                 if (path == nullptr)
                     return;
                 path->winding = winding;
             }
 
-            f32 get_average_scale(const f32* t)
-            {
+            f32 get_average_scale(const f32* t) {
                 const f32 sx = detail::sqrtf(t[0] * t[0] + t[2] * t[2]);
                 const f32 sy = detail::sqrtf(t[1] * t[1] + t[3] * t[3]);
                 return (sx + sy) * 0.5f;
             }
 
-            Vertex* alloc_temp_verts(const Context* ctx, const i32 nverts)
-            {
+            Vertex* alloc_temp_verts(const Context* ctx, const i32 nverts) {
                 if (nverts > ctx->cache->cverts) {
                     const i32 cverts = nverts + 0xff & ~0xff;  // Round up to prevent
                                                                // allocations when
@@ -393,8 +353,7 @@ namespace rl::nvg {
             }
 
             f32 triarea2(const f32 ax, const f32 ay, const f32 bx, const f32 by, const f32 cx,
-                         const f32 cy)
-            {
+                         const f32 cy) {
                 const f32 abx{ bx - ax };
                 const f32 aby{ by - ay };
                 const f32 acx{ cx - ax };
@@ -402,8 +361,7 @@ namespace rl::nvg {
                 return acx * aby - abx * acy;
             }
 
-            f32 poly_area(const Point* pts, const i32 npts)
-            {
+            f32 poly_area(const Point* pts, const i32 npts) {
                 f32 area = 0;
                 for (i32 i = 2; i < npts; ++i) {
                     const Point* a{ &pts[0] };
@@ -414,8 +372,7 @@ namespace rl::nvg {
                 return area * 0.5f;
             }
 
-            void poly_reverse(Point* pts, const i32 npts)
-            {
+            void poly_reverse(Point* pts, const i32 npts) {
                 i32 i = 0, j = npts - 1;
                 while (i < j) {
                     const Point tmp = pts[i];
@@ -426,8 +383,7 @@ namespace rl::nvg {
                 }
             }
 
-            void vset(Vertex* vtx, const f32 x, const f32 y, const f32 u, const f32 v)
-            {
+            void vset(Vertex* vtx, const f32 x, const f32 y, const f32 u, const f32 v) {
                 vtx->x = x;
                 vtx->y = y;
                 vtx->u = u;
@@ -436,8 +392,7 @@ namespace rl::nvg {
 
             void tesselate_bezier(Context* ctx, const f32 x1, const f32 y1, const f32 x2,
                                   const f32 y2, const f32 x3, const f32 y3, const f32 x4,
-                                  const f32 y4, const i32 level, const i32 type)
-            {
+                                  const f32 y4, const i32 level, const i32 type) {
                 if (level > 10)
                     return;
 
@@ -473,8 +428,7 @@ namespace rl::nvg {
                 tesselate_bezier(ctx, x1234, y1234, x234, y234, x34, y34, x4, y4, level + 1, type);
             }
 
-            void flatten_paths(Context* ctx)
-            {
+            void flatten_paths(Context* ctx) {
                 PathCache* cache = ctx->cache;
                 //  State* state = _getState(ctx);
                 const Point* last{ nullptr };
@@ -569,15 +523,13 @@ namespace rl::nvg {
                 }
             }
 
-            i32 curve_divs(const f32 r, const f32 arc, const f32 tol)
-            {
+            i32 curve_divs(const f32 r, const f32 arc, const f32 tol) {
                 const f32 da = acosf(r / (r + tol)) * 2.0f;
                 return detail::max(2, static_cast<i32>(std::ceil(arc / da)));
             }
 
             void choose_bevel(const i32 bevel, const Point* p0, const Point* p1, const f32 w,
-                              f32* x0, f32* y0, f32* x1, f32* y1)
-            {
+                              f32* x0, f32* y0, f32* x1, f32* y1) {
                 if (bevel) {
                     *x0 = p1->x + p0->dy * w;
                     *y0 = p1->y - p0->dx * w;
@@ -593,8 +545,7 @@ namespace rl::nvg {
             }
 
             Vertex* round_join(Vertex* dst, const Point* p0, const Point* p1, const f32 lw,
-                               const f32 rw, const f32 lu, const f32 ru, const i32 ncap, f32)
-            {
+                               const f32 rw, const f32 lu, const f32 ru, const i32 ncap, f32) {
                 const f32 dlx0{ p0->dy };
                 const f32 dly0{ -p0->dx };
                 const f32 dlx1{ p1->dy };
@@ -681,8 +632,7 @@ namespace rl::nvg {
             }
 
             Vertex* bevel_join(Vertex* dst, const Point* p0, const Point* p1, const f32 lw,
-                               const f32 rw, const f32 lu, const f32 ru, f32)
-            {
+                               const f32 rw, const f32 lu, const f32 ru, f32) {
                 f32 rx0, ry0, rx1, ry1;
                 f32 lx0, ly0, lx1, ly1;
                 const f32 dlx0{ p0->dy };
@@ -786,8 +736,7 @@ namespace rl::nvg {
 
             Vertex* butt_cap_start(Vertex* dst, const Point* p, const f32 dx, const f32 dy,
                                    const f32 w, const f32 d, const f32 aa, const f32 u0,
-                                   const f32 u1)
-            {
+                                   const f32 u1) {
                 const f32 px{ p->x - dx * d };
                 const f32 py{ p->y - dy * d };
                 const f32 dlx{ dy };
@@ -807,8 +756,7 @@ namespace rl::nvg {
             }
 
             Vertex* butt_cap_end(Vertex* dst, const Point* p, const f32 dx, const f32 dy,
-                                 const f32 w, const f32 d, const f32 aa, const f32 u0, const f32 u1)
-            {
+                                 const f32 w, const f32 d, const f32 aa, const f32 u0, const f32 u1) {
                 const f32 px = p->x + dx * d;
                 const f32 py = p->y + dy * d;
                 const f32 dlx = dy;
@@ -827,8 +775,7 @@ namespace rl::nvg {
             }
 
             Vertex* round_cap_start(Vertex* dst, const Point* p, const f32 dx, const f32 dy,
-                                    const f32 w, const i32 ncap, f32, const f32 u0, const f32 u1)
-            {
+                                    const f32 w, const i32 ncap, f32, const f32 u0, const f32 u1) {
                 const f32 px{ p->x };
                 const f32 py{ p->y };
                 const f32 dlx{ dy };
@@ -853,8 +800,7 @@ namespace rl::nvg {
             }
 
             Vertex* round_cap_end(Vertex* dst, const Point* p, const f32 dx, const f32 dy,
-                                  const f32 w, const i32 ncap, f32, const f32 u0, const f32 u1)
-            {
+                                  const f32 w, const i32 ncap, f32, const f32 u0, const f32 u1) {
                 const f32 px{ p->x };
                 const f32 py{ p->y };
                 const f32 dlx{ dy };
@@ -880,8 +826,7 @@ namespace rl::nvg {
             }
 
             void calculate_joins(const Context* ctx, const f32 w, const LineCap line_join,
-                                 const f32 miter_limit)
-            {
+                                 const f32 miter_limit) {
                 const PathCache* cache{ ctx->cache };
                 f32 iw = 0.0f;
 
@@ -950,8 +895,7 @@ namespace rl::nvg {
             }
 
             i32 expand_stroke(const Context* ctx, f32 w, const f32 fringe, const LineCap line_cap,
-                              const LineCap line_join, const f32 miter_limit)
-            {
+                              const LineCap line_join, const f32 miter_limit) {
                 const PathCache* cache = ctx->cache;
                 const f32 aa = fringe;  // ctx->fringeWidth;
 
@@ -1085,8 +1029,7 @@ namespace rl::nvg {
             }
 
             i32 expand_fill(const Context* ctx, const f32 w, const LineCap lineJoin,
-                            const f32 miterLimit)
-            {
+                            const f32 miterLimit) {
                 const PathCache* cache = ctx->cache;
                 i32 i, j;
                 const f32 aa = ctx->fringe_width;
@@ -1214,8 +1157,7 @@ namespace rl::nvg {
                 return 1;
             }
 
-            void set_paint_color(PaintStyle* p, const ds::color<f32>& color)
-            {
+            void set_paint_color(PaintStyle* p, const ds::color<f32>& color) {
                 *p = PaintStyle{};
 
                 transform_identity(p->xform);
@@ -1226,8 +1168,7 @@ namespace rl::nvg {
                 p->outer_color = color;
             }
 
-            constexpr f32 hue(f32 h, const f32 m1, const f32 m2)
-            {
+            constexpr f32 hue(f32 h, const f32 m1, const f32 m2) {
                 if (h < 0)
                     h += 1;
 
@@ -1246,18 +1187,15 @@ namespace rl::nvg {
                 return m1;
             }
 
-            f32 quantize(const f32 a, const f32 d)
-            {
+            f32 quantize(const f32 a, const f32 d) {
                 return (a / d + 0.5f) * d;
             }
 
-            f32 get_font_scale(const State* state)
-            {
+            f32 get_font_scale(const State* state) {
                 return min(quantize(get_average_scale(state->xform), 0.01f), 4.0f);
             }
 
-            void flush_text_texture(const Context* ctx)
-            {
+            void flush_text_texture(const Context* ctx) {
                 i32 dirty[4] = { 0 };
 
                 if (font::validate_texture(ctx->fs, dirty)) {
@@ -1276,8 +1214,7 @@ namespace rl::nvg {
                 }
             }
 
-            i32 alloc_text_atlas(Context* ctx)
-            {
+            i32 alloc_text_atlas(Context* ctx) {
                 flush_text_texture(ctx);
                 if (ctx->font_image_idx >= NvgMaxFontimages - 1)
                     return 0;
@@ -1309,8 +1246,7 @@ namespace rl::nvg {
                 return 1;
             }
 
-            void render_text(Context* ctx, const Vertex* vertices, const i32 vertex_count)
-            {
+            void render_text(Context* ctx, const Vertex* vertices, const i32 vertex_count) {
                 const State* state = detail::get_state(ctx);
                 PaintStyle paint = state->fill;
 
@@ -1329,15 +1265,13 @@ namespace rl::nvg {
                 ctx->text_tri_count += vertex_count / 3;
             }
 
-            i32 is_transform_flipped(const f32* xform)
-            {
+            i32 is_transform_flipped(const f32* xform) {
                 const f32 det = xform[0] * xform[3] - xform[2] * xform[1];
                 return det < 0;
             }
 
             void isect_rects(f32* dst, const f32 ax, const f32 ay, const f32 aw, const f32 ah,
-                             const f32 bx, const f32 by, const f32 bw, const f32 bh)
-            {
+                             const f32 bx, const f32 by, const f32 bw, const f32 bh) {
                 const f32 minx = detail::max(ax, bx);
                 const f32 miny = detail::max(ay, by);
                 const f32 maxx = detail::min(ax + aw, bx + bw);
@@ -1349,8 +1283,7 @@ namespace rl::nvg {
             }
 
             f32 dist_pt_seg(const f32 x, const f32 y, const f32 px, const f32 py, const f32 qx,
-                            const f32 qy)
-            {
+                            const f32 qy) {
                 const f32 pqx = qx - px;
                 const f32 pqy = qy - py;
                 f32 dx = x - px;
@@ -1368,8 +1301,7 @@ namespace rl::nvg {
                 return dx * dx + dy * dy;
             }
 
-            void append_commands(Context* ctx, f32* vals, const i32 nvals)
-            {
+            void append_commands(Context* ctx, f32* vals, const i32 nvals) {
                 const State* state = detail::get_state(ctx);
                 if (ctx->ncommands + nvals > ctx->ccommands) {
                     const i32 ccommands = ctx->ncommands + nvals + ctx->ccommands / 2;
@@ -1431,8 +1363,7 @@ namespace rl::nvg {
         }
     }
 
-    Context* create_internal(const Params* params)
-    {
+    Context* create_internal(const Params* params) {
         font::Params font_params{};
         const auto ctx{ static_cast<Context*>(std::malloc(sizeof(Context))) };
         if (ctx != nullptr) {
@@ -1485,13 +1416,11 @@ namespace rl::nvg {
         return nullptr;
     }
 
-    Params* internal_params(Context* ctx)
-    {
+    Params* internal_params(Context* ctx) {
         return &ctx->params;
     }
 
-    void delete_internal(Context* ctx)
-    {
+    void delete_internal(Context* ctx) {
         if (ctx == nullptr)
             return;
         if (ctx->commands != nullptr)
@@ -1515,8 +1444,7 @@ namespace rl::nvg {
     }
 
     void begin_frame(Context* ctx, const f32 window_width, const f32 window_height,
-                     const f32 device_pixel_ratio)
-    {
+                     const f32 device_pixel_ratio) {
         ctx->nstates = 0;
 
         save(ctx);
@@ -1532,13 +1460,11 @@ namespace rl::nvg {
         ctx->text_tri_count = 0;
     }
 
-    void cancel_frame(const Context* ctx)
-    {
+    void cancel_frame(const Context* ctx) {
         ctx->params.render_cancel(ctx->params.user_ptr);
     }
 
-    void end_frame(Context* ctx)
-    {
+    void end_frame(Context* ctx) {
         ctx->params.render_flush(ctx->params.user_ptr);
         if (ctx->font_image_idx != 0) {
             const i32 font_image = ctx->font_images[ctx->font_image_idx];
@@ -1575,20 +1501,17 @@ namespace rl::nvg {
         }
     }
 
-    ds::color<f32> trans_rgba(ds::color<f32> c0, const u8 a)
-    {
+    ds::color<f32> trans_rgba(ds::color<f32> c0, const u8 a) {
         c0.a = static_cast<f32>(a) / 255.0f;
         return c0;
     }
 
-    ds::color<f32> trans_rgba_f(ds::color<f32> c0, const f32 a)
-    {
+    ds::color<f32> trans_rgba_f(ds::color<f32> c0, const f32 a) {
         c0.a = a;
         return c0;
     }
 
-    ds::color<f32> lerp_rgba(const ds::color<f32>& c0, const ds::color<f32>& c1, f32 u)
-    {
+    ds::color<f32> lerp_rgba(const ds::color<f32>& c0, const ds::color<f32>& c1, f32 u) {
         ds::color<f32> cint{ 0, 0, 0 };
 
         u = std::clamp(u, 0.0f, 1.0f);
@@ -1602,13 +1525,11 @@ namespace rl::nvg {
         return cint;
     }
 
-    ds::color<f32> hsl(const f32 h, const f32 s, const f32 l)
-    {
+    ds::color<f32> hsl(const f32 h, const f32 s, const f32 l) {
         return hsla(h, s, l, 255);
     }
 
-    ds::color<f32> hsla(f32 h, f32 s, f32 l, const u8 a)
-    {
+    ds::color<f32> hsla(f32 h, f32 s, f32 l, const u8 a) {
         ds::color<f32> col{ 0, 0, 0, 0 };
         h = detail::modf(h, 1.0f);
         if (h < 0.0f)
@@ -1628,8 +1549,7 @@ namespace rl::nvg {
         return col;
     }
 
-    void transform_identity(f32* dst)
-    {
+    void transform_identity(f32* dst) {
         dst[0] = 1.0f;
         dst[1] = 0.0f;
         dst[2] = 0.0f;
@@ -1638,8 +1558,7 @@ namespace rl::nvg {
         dst[5] = 0.0f;
     }
 
-    void transform_translate(f32* dst, const f32 tx, const f32 ty)
-    {
+    void transform_translate(f32* dst, const f32 tx, const f32 ty) {
         dst[0] = 1.0f;
         dst[1] = 0.0f;
         dst[2] = 0.0f;
@@ -1648,8 +1567,7 @@ namespace rl::nvg {
         dst[5] = ty;
     }
 
-    void transform_translate(f32* t, const ds::vector2<f32> translation)
-    {
+    void transform_translate(f32* t, const ds::vector2<f32> translation) {
         t[0] = 1.0f;
         t[1] = 0.0f;
         t[2] = 0.0f;
@@ -1658,8 +1576,7 @@ namespace rl::nvg {
         t[5] = translation.y;
     }
 
-    void transform_scale(f32* dst, const f32 sx, const f32 sy)
-    {
+    void transform_scale(f32* dst, const f32 sx, const f32 sy) {
         dst[0] = sx;
         dst[1] = 0.0f;
         dst[2] = 0.0f;
@@ -1668,8 +1585,7 @@ namespace rl::nvg {
         dst[5] = 0.0f;
     }
 
-    void transform_rotate(f32* dst, const f32 a)
-    {
+    void transform_rotate(f32* dst, const f32 a) {
         const f32 cs = std::cosf(a);
         const f32 sn = std::sinf(a);
         dst[0] = cs;
@@ -1680,8 +1596,7 @@ namespace rl::nvg {
         dst[5] = 0.0f;
     }
 
-    void transform_skew_x(f32* dst, const f32 a)
-    {
+    void transform_skew_x(f32* dst, const f32 a) {
         dst[0] = 1.0f;
         dst[1] = 0.0f;
         dst[2] = std::tanf(a);
@@ -1690,8 +1605,7 @@ namespace rl::nvg {
         dst[5] = 0.0f;
     }
 
-    void transform_skew_y(f32* dst, const f32 a)
-    {
+    void transform_skew_y(f32* dst, const f32 a) {
         dst[0] = 1.0f;
         dst[1] = std::tanf(a);
         dst[2] = 0.0f;
@@ -1700,8 +1614,7 @@ namespace rl::nvg {
         dst[5] = 0.0f;
     }
 
-    void transform_multiply(f32* dst, const f32* src)
-    {
+    void transform_multiply(f32* dst, const f32* src) {
         const f32 t0{ dst[0] * src[0] + dst[1] * src[2] };
         const f32 t2{ dst[2] * src[0] + dst[3] * src[2] };
         const f32 t4{ dst[4] * src[0] + dst[5] * src[2] + src[4] };
@@ -1715,16 +1628,14 @@ namespace rl::nvg {
         dst[4] = t4;
     }
 
-    void transform_premultiply(f32* dst, const f32* src)
-    {
+    void transform_premultiply(f32* dst, const f32* src) {
         f32 s2[6] = {};
         std::memcpy(s2, src, sizeof(f32) * 6);
         transform_multiply(s2, dst);
         std::memcpy(dst, s2, sizeof(f32) * 6);
     }
 
-    i32 transform_inverse(f32* dst, const f32* src)
-    {
+    i32 transform_inverse(f32* dst, const f32* src) {
         const double det = static_cast<double>(src[0]) * src[3] -
                            static_cast<double>(src[2]) * src[1];
 
@@ -1746,14 +1657,12 @@ namespace rl::nvg {
         return 1;
     }
 
-    void transform_point(f32* dstx, f32* dsty, const f32* xform, const f32 srcx, const f32 srcy)
-    {
+    void transform_point(f32* dstx, f32* dsty, const f32* xform, const f32 srcx, const f32 srcy) {
         *dstx = srcx * xform[0] + srcy * xform[2] + xform[4];
         *dsty = srcx * xform[1] + srcy * xform[3] + xform[5];
     }
 
-    ds::point<f32> transform_point(Context* ctx, ds::point<f32> src_pt)
-    {
+    ds::point<f32> transform_point(Context* ctx, ds::point<f32> src_pt) {
         f32 xform[6] = {};
         current_transform(ctx, xform);
         return ds::point<f32>{
@@ -1762,19 +1671,16 @@ namespace rl::nvg {
         };
     }
 
-    f32 deg_to_rad(const f32 deg)
-    {
+    f32 deg_to_rad(const f32 deg) {
         return deg / 180.0f * std::numbers::pi_v<f32>;
     }
 
-    f32 rad_to_deg(const f32 rad)
-    {
+    f32 rad_to_deg(const f32 rad) {
         return rad / std::numbers::pi_v<f32> * 180.0f;
     }
 
     // State handling
-    void save(Context* ctx)
-    {
+    void save(Context* ctx) {
         if (ctx->nstates >= MaxNVGStates)
             return;
 
@@ -1784,15 +1690,13 @@ namespace rl::nvg {
         ctx->nstates++;
     }
 
-    void restore(Context* ctx)
-    {
+    void restore(Context* ctx) {
         if (ctx->nstates <= 1)
             return;
         ctx->nstates--;
     }
 
-    void reset(Context* ctx)
-    {
+    void reset(Context* ctx) {
         State* state{ detail::get_state(ctx) };
         *state = {};
 
@@ -1823,133 +1727,114 @@ namespace rl::nvg {
     }
 
     // State setting
-    void shape_anti_alias(Context* ctx, const bool enabled)
-    {
+    void shape_anti_alias(Context* ctx, const bool enabled) {
         State* state = detail::get_state(ctx);
         state->shape_anti_alias = enabled;
     }
 
-    void stroke_width(Context* ctx, const f32 width)
-    {
+    void stroke_width(Context* ctx, const f32 width) {
         State* state = detail::get_state(ctx);
         state->stroke_width = width;
     }
 
-    void miter_limit(Context* ctx, const f32 limit)
-    {
+    void miter_limit(Context* ctx, const f32 limit) {
         State* state = detail::get_state(ctx);
         state->miter_limit = limit;
     }
 
-    void line_cap(Context* ctx, const LineCap cap)
-    {
+    void line_cap(Context* ctx, const LineCap cap) {
         State* state = detail::get_state(ctx);
         state->line_cap = cap;
     }
 
-    void line_join(Context* ctx, const LineCap join)
-    {
+    void line_join(Context* ctx, const LineCap join) {
         State* state = detail::get_state(ctx);
         state->line_join = join;
     }
 
-    void global_alpha(Context* ctx, const f32 alpha)
-    {
+    void global_alpha(Context* ctx, const f32 alpha) {
         State* state = detail::get_state(ctx);
         state->alpha = alpha;
     }
 
     void transform(Context* ctx, const f32 a, const f32 b, const f32 c, const f32 d, const f32 e,
-                   const f32 f)
-    {
+                   const f32 f) {
         State* state = detail::get_state(ctx);
         const f32 t[6] = { a, b, c, d, e, f };
         transform_premultiply(state->xform, t);
     }
 
-    void reset_transform(Context* ctx)
-    {
+    void reset_transform(Context* ctx) {
         State* state = detail::get_state(ctx);
         transform_identity(state->xform);
     }
 
-    void translate(Context* ctx, const f32 x, const f32 y)
-    {
+    void translate(Context* ctx, const f32 x, const f32 y) {
         State* state = detail::get_state(ctx);
         f32 t[6];
         transform_translate(t, x, y);
         transform_premultiply(state->xform, t);
     }
 
-    void translate(Context* ctx, const ds::vector2<f32>& local_offset)
-    {
+    void translate(Context* ctx, const ds::vector2<f32>& local_offset) {
         f32 t[6] = { 0 };
         State* state{ detail::get_state(ctx) };
         transform_translate(t, local_offset.x, local_offset.y);
         transform_premultiply(state->xform, t);
     }
 
-    void rotate(Context* ctx, const f32 angle)
-    {
+    void rotate(Context* ctx, const f32 angle) {
         State* state = detail::get_state(ctx);
         f32 t[6];
         transform_rotate(t, angle);
         transform_premultiply(state->xform, t);
     }
 
-    void skew_x(Context* ctx, const f32 angle)
-    {
+    void skew_x(Context* ctx, const f32 angle) {
         State* state = detail::get_state(ctx);
         f32 t[6];
         transform_skew_x(t, angle);
         transform_premultiply(state->xform, t);
     }
 
-    void skew_y(Context* ctx, const f32 angle)
-    {
+    void skew_y(Context* ctx, const f32 angle) {
         State* state = detail::get_state(ctx);
         f32 t[6];
         transform_skew_y(t, angle);
         transform_premultiply(state->xform, t);
     }
 
-    void scale(Context* ctx, const f32 x, const f32 y)
-    {
+    void scale(Context* ctx, const f32 x, const f32 y) {
         State* state = detail::get_state(ctx);
         f32 t[6];
         transform_scale(t, x, y);
         transform_premultiply(state->xform, t);
     }
 
-    void current_transform(Context* ctx, f32* xform)
-    {
+    void current_transform(Context* ctx, f32* xform) {
         const State* state = detail::get_state(ctx);
         if (xform == nullptr)
             return;
         std::memcpy(xform, state->xform, sizeof(f32) * 6);
     }
 
-    void stroke_color(Context* ctx, const ds::color<f32>& color)
-    {
+    void stroke_color(Context* ctx, const ds::color<f32>& color) {
         State* state = detail::get_state(ctx);
         detail::set_paint_color(&state->stroke, color);
     }
 
-    void stroke_paint(Context* ctx, const PaintStyle& paint)
-    {
+    void stroke_paint(Context* ctx, const PaintStyle& paint) {
         State* state = detail::get_state(ctx);
         state->stroke = paint;
         transform_multiply(state->stroke.xform, state->xform);
     }
 
-    void fill_color(Context* ctx, const ds::color<f32>& color)
-    {
+    void fill_color(Context* ctx, const ds::color<f32>& color) {
         State* state = detail::get_state(ctx);
         detail::set_paint_color(&state->fill, color);
     }
 
-    void fill_paint(Context* ctx, PaintStyle&& paint)
-    {
+    void fill_paint(Context* ctx, PaintStyle&& paint) {
         State* state{ detail::get_state(ctx) };
         state->fill = std::move(paint);
         transform_multiply(state->fill.xform, state->xform);
@@ -1957,16 +1842,14 @@ namespace rl::nvg {
 
     // TODO: clean up
     // near identical clone of above
-    void fill_paint(Context* ctx, const PaintStyle& paint)
-    {
+    void fill_paint(Context* ctx, const PaintStyle& paint) {
         State* state{ detail::get_state(ctx) };
         state->fill = paint;
         transform_multiply(state->fill.xform, state->xform);
     }
 
 #ifndef NO_STB
-    i32 create_image(const Context* ctx, const char* filename, const ImageFlags image_flags)
-    {
+    i32 create_image(const Context* ctx, const char* filename, const ImageFlags image_flags) {
         i32 w{ 0 };
         i32 h{ 0 };
         i32 n{ 0 };
@@ -1985,8 +1868,7 @@ namespace rl::nvg {
     }
 
     i32 create_image_mem(const Context* ctx, const ImageFlags image_flags, const u8* data,
-                         const i32 ndata)
-    {
+                         const i32 ndata) {
         i32 w{ 0 };
         i32 h{ 0 };
         i32 n{ 0 };
@@ -2003,21 +1885,18 @@ namespace rl::nvg {
 #endif
 
     i32 create_image_rgba(const Context* ctx, const i32 w, const i32 h,
-                          const ImageFlags image_flags, const u8* data)
-    {
+                          const ImageFlags image_flags, const u8* data) {
         return ctx->params.render_create_texture(ctx->params.user_ptr, TextureProperty::RGBA, w, h,
                                                  image_flags, data);
     }
 
     i32 create_image_alpha(const Context* ctx, const i32 w, const i32 h,
-                           const ImageFlags image_flags, const u8* data)
-    {
+                           const ImageFlags image_flags, const u8* data) {
         return ctx->params.render_create_texture(ctx->params.user_ptr, TextureProperty::Alpha, w, h,
                                                  image_flags, data);
     }
 
-    void update_image(const Context* ctx, const i32 image, const u8* data)
-    {
+    void update_image(const Context* ctx, const i32 image, const u8* data) {
         f32 w{ 0.0f };
         f32 h{ 0.0f };
         ctx->params.render_get_texture_size(ctx->params.user_ptr, image, &w, &h);
@@ -2025,26 +1904,22 @@ namespace rl::nvg {
                                           static_cast<i32>(h), data);
     }
 
-    void image_size(const Context* ctx, const i32 image, f32* w, f32* h)
-    {
+    void image_size(const Context* ctx, const i32 image, f32* w, f32* h) {
         ctx->params.render_get_texture_size(ctx->params.user_ptr, image, w, h);
     }
 
-    ds::dims<f32> image_size(const Context* ctx, const i32 image)
-    {
+    ds::dims<f32> image_size(const Context* ctx, const i32 image) {
         ds::dims size{ 0.0f, 0.0f };
         ctx->params.render_get_texture_size(ctx->params.user_ptr, image, &size.width, &size.height);
         return size;
     }
 
-    void delete_image(const Context* ctx, const i32 image)
-    {
+    void delete_image(const Context* ctx, const i32 image) {
         ctx->params.render_delete_texture(ctx->params.user_ptr, image);
     }
 
     PaintStyle linear_gradient(Context*, const f32 sx, const f32 sy, const f32 ex, const f32 ey,
-                               const ds::color<f32>& inner_color, const ds::color<f32>& outer_color)
-    {
+                               const ds::color<f32>& inner_color, const ds::color<f32>& outer_color) {
         PaintStyle p{};
         constexpr static f32 large{ 1e5 };
 
@@ -2083,8 +1958,7 @@ namespace rl::nvg {
     }
 
     PaintStyle radial_gradient(Context*, const f32 cx, const f32 cy, const f32 inr, const f32 outr,
-                               const ds::color<f32>& inner_color, const ds::color<f32>& outer_color)
-    {
+                               const ds::color<f32>& inner_color, const ds::color<f32>& outer_color) {
         const f32 r = (inr + outr) * 0.5f;
         const f32 f = outr - inr;
 
@@ -2109,8 +1983,7 @@ namespace rl::nvg {
 
     PaintStyle box_gradient(Context*, const f32 x, const f32 y, const f32 w, const f32 h,
                             const f32 r, const f32 f, const ds::color<f32>& icol,
-                            const ds::color<f32>& ocol)
-    {
+                            const ds::color<f32>& ocol) {
         PaintStyle p{};
 
         transform_identity(p.xform);
@@ -2130,8 +2003,7 @@ namespace rl::nvg {
 
     PaintStyle box_gradient(Context*, const ds::rect<f32>& rect, const f32 corner_radius,
                             const f32 feather_blur, const ds::color<f32>& inner_color,
-                            const ds::color<f32>& outer_gradient_color)
-    {
+                            const ds::color<f32>& outer_gradient_color) {
         PaintStyle paint{};
         transform_identity(paint.xform);
 
@@ -2149,8 +2021,7 @@ namespace rl::nvg {
     }
 
     PaintStyle image_pattern(Context*, const f32 cx, const f32 cy, const f32 w, const f32 h,
-                             const f32 angle, const i32 image, f32 alpha)
-    {
+                             const f32 angle, const i32 image, f32 alpha) {
         PaintStyle p{};
 
         transform_rotate(p.xform, angle);
@@ -2170,8 +2041,7 @@ namespace rl::nvg {
     }
 
     // Scissoring
-    void scissor(Context* ctx, const f32 x, const f32 y, f32 w, f32 h)
-    {
+    void scissor(Context* ctx, const f32 x, const f32 y, f32 w, f32 h) {
         State* state = detail::get_state(ctx);
 
         w = detail::max(0.0f, w);
@@ -2186,8 +2056,7 @@ namespace rl::nvg {
         state->scissor.extent[1] = h * 0.5f;
     }
 
-    void intersect_scissor(Context* ctx, const f32 x, const f32 y, const f32 w, const f32 h)
-    {
+    void intersect_scissor(Context* ctx, const f32 x, const f32 y, const f32 w, const f32 h) {
         const State* state = detail::get_state(ctx);
         f32 pxform[6], invxorm[6];
         f32 rect[4];
@@ -2214,8 +2083,7 @@ namespace rl::nvg {
         scissor(ctx, rect[0], rect[1], rect[2], rect[3]);
     }
 
-    void reset_scissor(Context* ctx)
-    {
+    void reset_scissor(Context* ctx) {
         State* state = detail::get_state(ctx);
         memset(state->scissor.xform, 0, sizeof(state->scissor.xform));
         state->scissor.extent[0] = -1.0f;
@@ -2223,22 +2091,19 @@ namespace rl::nvg {
     }
 
     // Global composite operation.
-    void global_composite_operation(Context* ctx, const CompositeOperation op)
-    {
+    void global_composite_operation(Context* ctx, const CompositeOperation op) {
         State* state{ detail::get_state(ctx) };
         state->composite_operation = detail::composite_operation_state(op);
     }
 
     void global_composite_blend_func(Context* ctx, const BlendFactor sfactor,
-                                     const BlendFactor dfactor)
-    {
+                                     const BlendFactor dfactor) {
         global_composite_blend_func_separate(ctx, sfactor, dfactor, sfactor, dfactor);
     }
 
     void global_composite_blend_func_separate(
         Context* ctx, const BlendFactor src_rgb, const BlendFactor dst_rgb,
-        const BlendFactor src_alpha, const BlendFactor dst_alpha)
-    {
+        const BlendFactor src_alpha, const BlendFactor dst_alpha) {
         CompositeOperationState op;
         op.src_rgb = src_rgb;
         op.dst_rgb = dst_rgb;
@@ -2250,33 +2115,28 @@ namespace rl::nvg {
     }
 
     // Draw
-    void begin_path(Context* ctx)
-    {
+    void begin_path(Context* ctx) {
         ctx->ncommands = 0;
         detail::clear_path_cache(ctx);
     }
 
-    void move_to(Context* ctx, const f32 x, const f32 y)
-    {
+    void move_to(Context* ctx, const f32 x, const f32 y) {
         auto vals = std::array{ static_cast<f32>(Commands::MoveTo), x, y };
         detail::append_commands(ctx, vals.data(), static_cast<i32>(vals.size()));
     }
 
-    void line_to(Context* ctx, const f32 x, const f32 y)
-    {
+    void line_to(Context* ctx, const f32 x, const f32 y) {
         auto vals = std::array{ static_cast<f32>(Commands::LineTo), x, y };
         detail::append_commands(ctx, vals.data(), static_cast<i32>(vals.size()));
     }
 
     void bezier_to(Context* ctx, const f32, const f32, const f32, const f32, const f32 x,
-                   const f32 y)
-    {
+                   const f32 y) {
         auto vals = std::array{ static_cast<f32>(Commands::Bezierto), x, y };
         detail::append_commands(ctx, vals.data(), static_cast<i32>(vals.size()));
     }
 
-    void quad_to(Context* ctx, const f32 cx, const f32 cy, const f32 x, const f32 y)
-    {
+    void quad_to(Context* ctx, const f32 cx, const f32 cy, const f32 x, const f32 y) {
         const f32 x0 = ctx->commandx;
         const f32 y0 = ctx->commandy;
         auto vals = std::array{
@@ -2292,8 +2152,7 @@ namespace rl::nvg {
     }
 
     void arc_to(Context* ctx, const f32 x1, const f32 y1, const f32 x2, const f32 y2,
-                const f32 radius)
-    {
+                const f32 radius) {
         const f32 x0 = ctx->commandx;
         const f32 y0 = ctx->commandy;
 
@@ -2355,21 +2214,18 @@ namespace rl::nvg {
         arc(ctx, cx, cy, radius, a0, a1, dir);
     }
 
-    void close_path(Context* ctx)
-    {
+    void close_path(Context* ctx) {
         f32 vals[]{ static_cast<f32>(Commands::Close) };
         detail::append_commands(ctx, vals, static_cast<i32>(std::size(vals)));
     }
 
-    void path_winding(Context* ctx, const Solidity dir)
-    {
+    void path_winding(Context* ctx, const Solidity dir) {
         f32 vals[] = { static_cast<f32>(Commands::Winding), static_cast<f32>(dir) };
         detail::append_commands(ctx, vals, static_cast<i32>(std::size(vals)));
     }
 
     void barc(Context* ctx, const f32 cx, const f32 cy, const f32 r, const f32 a0, const f32 a1,
-              const ShapeWinding dir, const i32 join)
-    {
+              const ShapeWinding dir, const i32 join) {
         f32 px = 0.0f;
         f32 py = 0.0f;
         f32 ptanx = 0.0f;
@@ -2442,13 +2298,11 @@ namespace rl::nvg {
     }
 
     void arc(Context* ctx, const f32 cx, const f32 cy, const f32 r, const f32 a0, const f32 a1,
-             const ShapeWinding dir)
-    {
+             const ShapeWinding dir) {
         barc(ctx, cx, cy, r, a0, a1, dir, 1);
     }
 
-    void rect(Context* ctx, ds::rect<f32>&& rect)
-    {
+    void rect(Context* ctx, ds::rect<f32>&& rect) {
         std::array vals = std::array{
             static_cast<f32>(Commands::MoveTo),
             rect.pt.x,
@@ -2468,8 +2322,7 @@ namespace rl::nvg {
         detail::append_commands(ctx, vals.data(), static_cast<i32>(vals.size()));
     }
 
-    void rect(Context* ctx, const f32 x, const f32 y, const f32 w, const f32 h)
-    {
+    void rect(Context* ctx, const f32 x, const f32 y, const f32 w, const f32 h) {
         auto vals = std::array{
             static_cast<f32>(Commands::MoveTo),
             x,
@@ -2489,21 +2342,18 @@ namespace rl::nvg {
         detail::append_commands(ctx, vals.data(), static_cast<i32>(std::size(vals)));
     }
 
-    void rounded_rect(Context* ctx, const f32 x, const f32 y, const f32 w, const f32 h, const f32 r)
-    {
+    void rounded_rect(Context* ctx, const f32 x, const f32 y, const f32 w, const f32 h, const f32 r) {
         rounded_rect_varying(ctx, x, y, w, h, r, r, r, r);
     }
 
-    void rounded_rect(Context* ctx, const ds::rect<f32>& rect, const f32 radius)
-    {
+    void rounded_rect(Context* ctx, const ds::rect<f32>& rect, const f32 radius) {
         rounded_rect_varying(ctx, rect.pt.x, rect.pt.y, rect.size.width, rect.size.height, radius,
                              radius, radius, radius);
     }
 
     void rounded_rect_varying(Context* ctx, const f32 x, const f32 y, const f32 w, const f32 h,
                               const f32 rad_top_left, const f32 rad_top_right,
-                              const f32 rad_bottom_right, const f32 rad_bottom_left)
-    {
+                              const f32 rad_bottom_right, const f32 rad_bottom_left) {
         if (rad_top_left < 0.1f && rad_top_right < 0.1f && rad_bottom_right < 0.1f &&
             rad_bottom_left < 0.1f) {
             rect(ctx, x, y, w, h);
@@ -2571,8 +2421,7 @@ namespace rl::nvg {
         detail::append_commands(ctx, vals.data(), static_cast<i32>(vals.size()));
     }
 
-    void ellipse(Context* ctx, const f32 cx, const f32 cy, const f32 rx, const f32 ry)
-    {
+    void ellipse(Context* ctx, const f32 cx, const f32 cy, const f32 rx, const f32 ry) {
         auto vals = std::array{
             static_cast<f32>(Commands::MoveTo),
             cx - rx,
@@ -2611,13 +2460,11 @@ namespace rl::nvg {
         detail::append_commands(ctx, vals.data(), static_cast<i32>(std::size(vals)));
     }
 
-    void circle(Context* ctx, const f32 cx, const f32 cy, const f32 r)
-    {
+    void circle(Context* ctx, const f32 cx, const f32 cy, const f32 r) {
         ellipse(ctx, cx, cy, r, r);
     }
 
-    void debug_dump_path_cache(const Context* ctx)
-    {
+    void debug_dump_path_cache(const Context* ctx) {
         i32 j;
 
         std::println("Dumping {} cached paths", ctx->cache->npaths);
@@ -2637,8 +2484,7 @@ namespace rl::nvg {
         }
     }
 
-    void fill(Context* ctx)
-    {
+    void fill(Context* ctx) {
         const State* state = detail::get_state(ctx);
         PaintStyle fill_paint = state->fill;
 
@@ -2665,8 +2511,7 @@ namespace rl::nvg {
         }
     }
 
-    void stroke(Context* ctx)
-    {
+    void stroke(Context* ctx) {
         const State* state = detail::get_state(ctx);
         const f32 scale = detail::get_average_scale(state->xform);
         f32 stroke_width = detail::clampf(state->stroke_width * scale, 0.0f, 200.0f);
@@ -2707,26 +2552,22 @@ namespace rl::nvg {
     }
 
     // Add fonts
-    i32 create_font(const Context* ctx, const char* name, const char* filename)
-    {
+    i32 create_font(const Context* ctx, const char* name, const char* filename) {
         return font::add_font(ctx->fs, name, filename, 0);
     }
 
     i32 create_font_at_index(const Context* ctx, const char* name, const char* filename,
-                             const i32 font_index)
-    {
+                             const i32 font_index) {
         return font::add_font(ctx->fs, name, filename, font_index);
     }
 
     i32 create_font_mem(const Context* ctx, const char* name, u8* data, const i32 ndata,
-                        const i32 free_data)
-    {
+                        const i32 free_data) {
         return font::add_font_mem(ctx->fs, name, data, ndata, free_data, 0);
     }
 
     i32 create_font_mem(const Context* ctx, const std::string_view& name,
-                        const std::basic_string_view<u8>& font_data) noexcept
-    {
+                        const std::basic_string_view<u8>& font_data) noexcept {
         constexpr static i32 font_index{ 0 };
         constexpr static i32 dealloc_data{ false };
         return font::add_font_mem(ctx->fs, name.data(), const_cast<u8*>(font_data.data()),
@@ -2734,101 +2575,85 @@ namespace rl::nvg {
     }
 
     i32 create_font_mem_at_index(const Context* ctx, const char* name, u8* data, const i32 ndata,
-                                 const i32 free_data, const i32 font_index)
-    {
+                                 const i32 free_data, const i32 font_index) {
         return font::add_font_mem(ctx->fs, name, data, ndata, free_data, font_index);
     }
 
-    i32 find_font_(const Context* ctx, const char* name)
-    {
+    i32 find_font_(const Context* ctx, const char* name) {
         if (name == nullptr)
             return -1;
 
         return font::get_font_by_name(ctx->fs, name);
     }
 
-    i32 add_fallback_font_id(const Context* ctx, const i32 base_font, const i32 fallback_font)
-    {
+    i32 add_fallback_font_id(const Context* ctx, const i32 base_font, const i32 fallback_font) {
         if (base_font == -1 || fallback_font == -1)
             return 0;
 
         return font::add_fallback_font(ctx->fs, base_font, fallback_font);
     }
 
-    i32 add_fallback_font(const Context* ctx, const char* base_font, const char* fallback_font)
-    {
+    i32 add_fallback_font(const Context* ctx, const char* base_font, const char* fallback_font) {
         return add_fallback_font_id(ctx, find_font_(ctx, base_font), find_font_(ctx, fallback_font));
     }
 
-    void reset_fallback_fonts_id(const Context* ctx, const i32 base_font)
-    {
+    void reset_fallback_fonts_id(const Context* ctx, const i32 base_font) {
         font::reset_fallback_font(ctx->fs, base_font);
     }
 
-    void reset_fallback_fonts(const Context* ctx, const char* base_font)
-    {
+    void reset_fallback_fonts(const Context* ctx, const char* base_font) {
         reset_fallback_fonts_id(ctx, find_font_(ctx, base_font));
     }
 
     // State setting
-    void set_font_size(Context* ctx, const f32 size)
-    {
+    void set_font_size(Context* ctx, const f32 size) {
         State* state = detail::get_state(ctx);
         state->font_size = size;
     }
 
-    void font_blur_(Context* ctx, const f32 blur)
-    {
+    void font_blur_(Context* ctx, const f32 blur) {
         State* state = detail::get_state(ctx);
         state->font_blur = blur;
     }
 
-    void text_letter_spacing_(Context* ctx, const f32 spacing)
-    {
+    void text_letter_spacing_(Context* ctx, const f32 spacing) {
         State* state = detail::get_state(ctx);
         state->letter_spacing = spacing;
     }
 
-    void text_line_height_(Context* ctx, const f32 line_height)
-    {
+    void text_line_height_(Context* ctx, const f32 line_height) {
         State* state = detail::get_state(ctx);
         state->line_height = line_height;
     }
 
-    void set_text_align(Context* ctx, const Align align)
-    {
+    void set_text_align(Context* ctx, const Align align) {
         State* state = detail::get_state(ctx);
         state->text_align = align;
     }
 
-    void font_face_id_(Context* ctx, const i32 font)
-    {
+    void font_face_id_(Context* ctx, const i32 font) {
         State* state = detail::get_state(ctx);
         state->font_id = font;
     }
 
-    void set_font_face(Context* ctx, const char* font)
-    {
+    void set_font_face(Context* ctx, const char* font) {
         State* state = detail::get_state(ctx);
         state->font_id = font::get_font_by_name(ctx->fs, font);
         debug_assert(state->font_id != text::font::InvalidHandle, "failed to set font: {}", font);
     }
 
-    void set_font_face(Context* ctx, const std::string_view& font)
-    {
+    void set_font_face(Context* ctx, const std::string_view& font) {
         State* state{ detail::get_state(ctx) };
         state->font_id = font::get_font_by_name(ctx->fs, font.data());
         debug_assert(state->font_id != text::font::InvalidHandle, "failed to set font: {}", font);
     }
 
-    void set_font_face(Context* ctx, const std::string& font)
-    {
+    void set_font_face(Context* ctx, const std::string& font) {
         State* state{ detail::get_state(ctx) };
         state->font_id = font::get_font_by_name(ctx->fs, font.c_str());
     }
 
-    f32 draw_text(Context* ctx, const ds::point<f32> pos, const std::string& text)
-    {
+    f32 draw_text(Context* ctx, const ds::point<f32> pos, const std::string& text) {
         State* state{ detail::get_state(ctx) };
         if (state->font_id == font::INVALID) {
             debug_assert("draw_text: invalid font");
@@ -2920,13 +2745,11 @@ namespace rl::nvg {
         return iter.nextx / scale;
     }
 
-    void text_box(Context* ctx, const ds::point<f32> pos, const f32 break_row_width, const std::string& text)
-    {
+    void text_box(Context* ctx, const ds::point<f32> pos, const f32 break_row_width, const std::string& text) {
         return text_box(ctx, pos, break_row_width, std::string_view{ text });
     }
 
-    void text_box(Context* ctx, ds::point<f32> pos, const f32 break_row_width, const std::string_view text)
-    {
+    void text_box(Context* ctx, ds::point<f32> pos, const f32 break_row_width, const std::string_view text) {
         State* state{ detail::get_state(ctx) };
         if (state->font_id == font::INVALID) {
             debug_assert("font not loaded");
@@ -2971,8 +2794,7 @@ namespace rl::nvg {
     }
 
     i32 text_glyph_positions_(Context* ctx, f32 x, f32 y, const char* string, const char* end,
-                              GlyphPosition* positions, i32 max_positions)
-    {
+                              GlyphPosition* positions, i32 max_positions) {
         State* state = detail::get_state(ctx);
         f32 scale = detail::get_font_scale(state) * ctx->device_px_ratio;
         f32 invscale = 1.0f / scale;
@@ -3018,8 +2840,7 @@ namespace rl::nvg {
     }
 
     u32 text_break_lines(Context* ctx, const char* str, const char* end, f32 break_row_width,
-                         TextRow* rows, u32 max_rows)
-    {
+                         TextRow* rows, u32 max_rows) {
         State* state = detail::get_state(ctx);
         f32 scale = detail::get_font_scale(state) * ctx->device_px_ratio;
         f32 invscale = 1.0f / scale;
@@ -3242,13 +3063,11 @@ namespace rl::nvg {
         return nrows;
     }
 
-    f32 text_bounds(Context* ctx, const ds::point<f32> pos, const std::string& text, ds::rect<f32>& bounds)
-    {
+    f32 text_bounds(Context* ctx, const ds::point<f32> pos, const std::string& text, ds::rect<f32>& bounds) {
         return text_bounds(ctx, pos, std::string_view{ text }, bounds);
     }
 
-    f32 text_bounds(Context* ctx, const ds::point<f32> pos, std::string_view text, ds::rect<f32>& bounds)
-    {
+    f32 text_bounds(Context* ctx, const ds::point<f32> pos, std::string_view text, ds::rect<f32>& bounds) {
         const State* state = detail::get_state(ctx);
         const f32 scale = detail::get_font_scale(state) * ctx->device_px_ratio;
         const f32 invscale = 1.0f / scale;
@@ -3277,20 +3096,17 @@ namespace rl::nvg {
         return width * invscale;
     }
 
-    f32 text_bounds(Context* ctx, const ds::point<f32> pos, const std::string& text)
-    {
+    f32 text_bounds(Context* ctx, const ds::point<f32> pos, const std::string& text) {
         ds::rect<f32> _ = ds::rect<f32>::null();
         return text_bounds(ctx, pos, text, _);
     }
 
-    f32 text_bounds(Context* ctx, ds::point<f32> pos, std::string_view text)
-    {
+    f32 text_bounds(Context* ctx, ds::point<f32> pos, std::string_view text) {
         ds::rect<f32> _ = ds::rect<f32>::null();
         return text_bounds(ctx, pos, text, _);
     }
 
-    ds::rect<f32> text_box_bounds(Context* ctx, ds::point<f32> pos, f32 break_row_width, const std::string& text)
-    {
+    ds::rect<f32> text_box_bounds(Context* ctx, ds::point<f32> pos, f32 break_row_width, const std::string& text) {
         return text_box_bounds(ctx, pos, break_row_width, std::string_view{ text });
     }
 
@@ -3298,8 +3114,7 @@ namespace rl::nvg {
     // f32[4], if the bounding box of the text should be returned. The bounds value are
     // [xmin,ymin, xmax,ymax] Measured values are returned in local coordinate space.
     [[nodiscard]]
-    ds::rect<f32> text_box_bounds(Context* ctx, ds::point<f32> pos, const f32 break_row_width, std::string_view text)
-    {
+    ds::rect<f32> text_box_bounds(Context* ctx, ds::point<f32> pos, const f32 break_row_width, std::string_view text) {
         State* state = detail::get_state(ctx);
         const f32 scale{ detail::get_font_scale(state) * ctx->device_px_ratio };
         const f32 invscale{ 1.0f / scale };
@@ -3379,8 +3194,7 @@ namespace rl::nvg {
         };
     }
 
-    void text_metrics_(Context* ctx, f32* ascender, f32* descender, f32* lineh)
-    {
+    void text_metrics_(Context* ctx, f32* ascender, f32* descender, f32* lineh) {
         const State* state{ detail::get_state(ctx) };
         const f32 scale{ detail::get_font_scale(state) * ctx->device_px_ratio };
         const f32 invscale{ 1.0f / scale };

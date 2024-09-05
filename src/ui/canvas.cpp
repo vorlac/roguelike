@@ -22,8 +22,7 @@ namespace rl::ui {
         : Widget{ nullptr, nvg_renderer }
         , m_mouse{ mouse }
         , m_keyboard{ kb }
-        , m_main_window{ main_window }
-    {
+        , m_main_window{ main_window } {
         this->set_rect(ds::rect{
             ds::point<f32>{ 0.0f, 0.0f },
             rect.size,
@@ -34,26 +33,22 @@ namespace rl::ui {
         m_last_interaction = m_timer.elapsed();
     }
 
-    bool Canvas::update() const
-    {
+    bool Canvas::update() const {
         for (const auto& update_widget_func : m_update_callbacks)
             update_widget_func();
 
         return !m_update_callbacks.empty();
     }
 
-    bool Canvas::draw_setup() const
-    {
+    bool Canvas::draw_setup() const {
         return true;
     }
 
-    bool Canvas::draw_contents() const
-    {
+    bool Canvas::draw_contents() const {
         return true;
     }
 
-    bool Canvas::draw_widgets()
-    {
+    bool Canvas::draw_widgets() {
         const auto context{ m_renderer->context() };
         constexpr static f32 PIXEL_RATIO{ 1.0f };
         nvg::begin_frame(context, m_rect.size.width, m_rect.size.height, PIXEL_RATIO);
@@ -127,20 +122,17 @@ namespace rl::ui {
         return true;
     }
 
-    bool Canvas::redraw()
-    {
+    bool Canvas::redraw() {
         m_redraw = true;
         return true;
     }
 
-    bool Canvas::draw_teardown() const
-    {
+    bool Canvas::draw_teardown() const {
         // moved to Window::render_end()
         return true;
     }
 
-    bool Canvas::draw_all()
-    {
+    bool Canvas::draw_all() {
         if (m_redraw) {
             m_redraw = false;
             this->update();
@@ -154,83 +146,70 @@ namespace rl::ui {
         return false;
     }
 
-    void Canvas::set_visible(const bool visible)
-    {
+    void Canvas::set_visible(const bool visible) {
         if (visible != m_visible) {
             m_visible = visible;
             visible ? this->show() : this->hide();
         }
     }
 
-    ds::dims<i32> Canvas::frame_buffer_size() const
-    {
+    ds::dims<i32> Canvas::frame_buffer_size() const {
         // Return the framebuffer size (potentially larger than size() on high-DPI screens)
         // TODO: is ds::dims<i32> get_render_size() good equivalent?
         return m_framebuf_size;
     }
 
-    const std::function<void(ds::dims<f32>)>& Canvas::resize_callback() const
-    {
+    const std::function<void(ds::dims<f32>)>& Canvas::resize_callback() const {
         return m_resize_callback;
     }
 
-    void Canvas::set_resize_callback(const std::function<void(ds::dims<f32>)>& callback)
-    {
+    void Canvas::set_resize_callback(const std::function<void(ds::dims<f32>)>& callback) {
         m_resize_callback = callback;
     }
 
-    void Canvas::set_mouse_mode(const MouseMode mouse_mode)
-    {
+    void Canvas::set_mouse_mode(const MouseMode mouse_mode) {
         m_mouse_mode = mouse_mode;
     }
 
-    void Canvas::add_update_callback(const std::function<void()>& refresh_func)
-    {
+    void Canvas::add_update_callback(const std::function<void()>& refresh_func) {
         m_update_callbacks.push_back(refresh_func);
     }
 
-    ComponentFormat Canvas::component_format() const
-    {
+    ComponentFormat Canvas::component_format() const {
         // Return the component format underlying the screen
         debug_assert(false, "not implemented");
         return 0;
     }
 
-    PixelFormat Canvas::pixel_format() const
-    {
+    PixelFormat Canvas::pixel_format() const {
         // Return the pixel format underlying the screen
         debug_assert(false, "not implemented");
         return 0;
     }
 
-    bool Canvas::has_depth_buffer() const
-    {
+    bool Canvas::has_depth_buffer() const {
         // Does the framebuffer have a depth buffer
         // TODO: call opengl to confirm for debug builds
         return true;
     }
 
-    bool Canvas::has_stencil_buffer() const
-    {
+    bool Canvas::has_stencil_buffer() const {
         // Does the framebuffer have a stencil buffer
         // TODO: call opengl to confirm for debug builds
         return true;
     }
 
-    bool Canvas::has_float_buffer() const
-    {
+    bool Canvas::has_float_buffer() const {
         // Does the framebuffer use a floating point representation
         // TODO: call opengl to confirm for debug builds
         return true;
     }
 
-    std::string Canvas::title() const
-    {
+    std::string Canvas::title() const {
         return m_title;
     }
 
-    void Canvas::set_size(const ds::dims<f32> size)
-    {
+    void Canvas::set_size(const ds::dims<f32> size) {
         debug_assert(
             m_main_window != nullptr,
             "canvas missing window reference");
@@ -239,20 +218,17 @@ namespace rl::ui {
         m_main_window->set_size(size);
     }
 
-    void Canvas::set_min_size(const ds::dims<f32> size)
-    {
+    void Canvas::set_min_size(const ds::dims<f32> size) {
         Widget::set_min_size(size);
         m_main_window->set_min_size(size);
     }
 
-    void Canvas::set_max_size(const ds::dims<f32> size)
-    {
+    void Canvas::set_max_size(const ds::dims<f32> size) {
         Widget::set_min_size(size);
         m_main_window->set_max_size(size);
     }
 
-    bool Canvas::tooltip_fade_in_progress()
-    {
+    bool Canvas::tooltip_fade_in_progress() {
         // Is a tooltip currently fading in?
         const f32 elapsed{ m_timer.elapsed() - m_last_interaction };
         if (elapsed < (m_tooltip_delay / 2.0f) || elapsed > (m_tooltip_delay * 2.0f))
@@ -263,8 +239,7 @@ namespace rl::ui {
         return widget != nullptr && !widget->tooltip().empty();
     }
 
-    void Canvas::dispose_dialog(const ScrollableDialog* dialog)
-    {
+    void Canvas::dispose_dialog(const ScrollableDialog* dialog) {
         const bool match_found{
             std::ranges::find_if(
                 m_focus_path,
@@ -283,8 +258,7 @@ namespace rl::ui {
         this->remove_child(dialog);
     }
 
-    void Canvas::center_dialog(ScrollableDialog* dialog) const
-    {
+    void Canvas::center_dialog(ScrollableDialog* dialog) const {
         if (dialog->size() == ds::dims<f32>::zero()) {
             const auto pref_size{ dialog->preferred_size() };
             dialog->set_size(pref_size);
@@ -296,8 +270,7 @@ namespace rl::ui {
         dialog->set_position(position);
     }
 
-    void Canvas::update_focus(Widget* widget)
-    {
+    void Canvas::update_focus(Widget* widget) {
         for (const auto focus_widget : m_focus_path) {
             if (!focus_widget->focused())
                 continue;
@@ -323,8 +296,7 @@ namespace rl::ui {
         //     this->move_dialog_to_front(dialog);
     }
 
-    void Canvas::move_dialog_to_front(ScrollableDialog* dialog)
-    {
+    void Canvas::move_dialog_to_front(ScrollableDialog* dialog) {
         const auto removal_iterator{ std::ranges::remove(m_children, dialog).begin() };
         m_children.erase(removal_iterator, m_children.end());
         m_children.push_back(dialog);
@@ -349,14 +321,12 @@ namespace rl::ui {
         }
     }
 
-    bool Canvas::on_moved(const ds::point<f32>& pt)
-    {
+    bool Canvas::on_moved(const ds::point<f32>& pt) {
         this->set_position(pt);
         return true;
     }
 
-    bool Canvas::on_resized(const ds::dims<f32> size)
-    {
+    bool Canvas::on_resized(const ds::dims<f32> size) {
         if (math::equal(size.area(), 0.0f))
             return false;
 
@@ -373,28 +343,24 @@ namespace rl::ui {
         return true;
     }
 
-    bool Canvas::on_mouse_move_event(const Mouse& mouse, const Keyboard& kb)
-    {
+    bool Canvas::on_mouse_move_event(const Mouse& mouse, const Keyboard& kb) {
         bool handled{ false };
 
         const auto& mouse_pos{ mouse.pos() };
         m_last_interaction = m_timer.elapsed();
         if (m_mouse_mode != MouseMode::Ignore) {
             switch (m_mouse_mode) {
-                case MouseMode::Drag:
-                {
+                case MouseMode::Drag: {
                     LocalTransform transform{ m_active_dialog };
                     handled |= m_active_dialog->on_mouse_drag(mouse, kb);
                     break;
                 }
-                case MouseMode::Resize:
-                {
+                case MouseMode::Resize: {
                     LocalTransform transform{ m_active_dialog };
                     handled |= m_active_dialog->on_mouse_drag(mouse, kb);
                     break;
                 }
-                case MouseMode::Propagate:
-                {
+                case MouseMode::Propagate: {
                     m_active_dialog = nullptr;
                     Widget* widget{ this->find_widget(mouse_pos) };
                     if (widget != nullptr) {
@@ -434,8 +400,7 @@ namespace rl::ui {
         return false;
     }
 
-    bool Canvas::on_mouse_button_pressed_event(const Mouse& mouse, const Keyboard& kb)
-    {
+    bool Canvas::on_mouse_button_pressed_event(const Mouse& mouse, const Keyboard& kb) {
         m_active_dialog = nullptr;
         m_last_interaction = m_timer.elapsed();
         if (m_mouse_mode == MouseMode::Ignore)
@@ -457,8 +422,7 @@ namespace rl::ui {
         }
 
         switch (m_mouse_mode) {
-            case MouseMode::Propagate:
-            {
+            case MouseMode::Propagate: {
                 m_active_widget = Widget::find_widget(mouse_pos);
                 m_active_dialog = dynamic_cast<ScrollableDialog*>(m_active_widget);
 
@@ -503,8 +467,7 @@ namespace rl::ui {
         return false;
     }
 
-    bool Canvas::on_mouse_button_released_event(const Mouse& mouse, const Keyboard& kb)
-    {
+    bool Canvas::on_mouse_button_released_event(const Mouse& mouse, const Keyboard& kb) {
         if (m_mouse_mode == MouseMode::Ignore)
             return true;
 
@@ -524,8 +487,7 @@ namespace rl::ui {
             m_mouse.set_cursor(drop_widget->cursor());
 
         switch (m_mouse_mode) {
-            case MouseMode::Drag:
-            {
+            case MouseMode::Drag: {
                 debug_assert(m_active_dialog != nullptr,
                              "canvas in drag mode but no widgets active");
 
@@ -541,8 +503,7 @@ namespace rl::ui {
 
                 break;
             }
-            case MouseMode::Resize:
-            {
+            case MouseMode::Resize: {
                 debug_assert(m_active_dialog != nullptr,
                              "canvas in resize mode but no widgets active");
 
@@ -572,8 +533,7 @@ namespace rl::ui {
         return false;
     }
 
-    bool Canvas::on_mouse_scroll_event(const Mouse& mouse, const Keyboard& kb)
-    {
+    bool Canvas::on_mouse_scroll_event(const Mouse& mouse, const Keyboard& kb) {
         m_last_interaction = m_timer.elapsed();
         if (m_focus_path.size() > 1) {
             auto dialog{ dynamic_cast<ScrollableDialog*>(m_focus_path[m_focus_path.size() - 2]) };
@@ -586,22 +546,19 @@ namespace rl::ui {
         return false;
     }
 
-    bool Canvas::on_key_pressed(const Keyboard& kb)
-    {
+    bool Canvas::on_key_pressed(const Keyboard& kb) {
         m_last_interaction = m_timer.elapsed();
         m_redraw |= Widget::on_key_pressed(kb);
         return m_redraw;
     }
 
-    bool Canvas::on_key_released(const Keyboard& kb)
-    {
+    bool Canvas::on_key_released(const Keyboard& kb) {
         m_last_interaction = m_timer.elapsed();
         m_redraw |= Widget::on_key_released(kb);
         return m_redraw;
     }
 
-    bool Canvas::on_character_input(const Keyboard& kb)
-    {
+    bool Canvas::on_character_input(const Keyboard& kb) {
         m_last_interaction = m_timer.elapsed();
         m_redraw |= Widget::on_character_input(kb);
         return m_redraw;

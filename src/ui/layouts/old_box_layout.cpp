@@ -19,12 +19,10 @@ namespace rl::ui {
         : m_margin{ margin }
         , m_spacing{ spacing }
         , m_orientation{ orientation }
-        , m_alignment{ alignment }
-    {
+        , m_alignment{ alignment } {
     }
 
-    ds::dims<f32> OldBoxLayout::computed_size(nvg::Context*, const Widget* widget) const
-    {
+    ds::dims<f32> OldBoxLayout::computed_size(nvg::Context*, const Widget* widget) const {
         ds::dims size{
             2.0f * m_margin,
             2.0f * m_margin,
@@ -63,8 +61,7 @@ namespace rl::ui {
         return size + ds::dims{ 0.0f, y_offset };
     }
 
-    void OldBoxLayout::apply_layout(nvg::Context*, const Widget* widget) const
-    {
+    void OldBoxLayout::apply_layout(nvg::Context*, const Widget* widget) const {
         const ds::dims fs_w{ widget->fixed_size() };
         ds::dims container_size{
             std::fabs(fs_w.width) > std::numeric_limits<f32>::epsilon() ? fs_w.width
@@ -137,43 +134,35 @@ namespace rl::ui {
         }
     }
 
-    Alignment OldBoxLayout::orientation() const
-    {
+    Alignment OldBoxLayout::orientation() const {
         return m_orientation;
     }
 
-    void OldBoxLayout::set_orientation(const Alignment orientation)
-    {
+    void OldBoxLayout::set_orientation(const Alignment orientation) {
         m_orientation = orientation;
     }
 
-    Placement_OldAlignment OldBoxLayout::alignment() const
-    {
+    Placement_OldAlignment OldBoxLayout::alignment() const {
         return m_alignment;
     }
 
-    void OldBoxLayout::set_alignment(const Placement_OldAlignment alignment)
-    {
+    void OldBoxLayout::set_alignment(const Placement_OldAlignment alignment) {
         m_alignment = alignment;
     }
 
-    f32 OldBoxLayout::margin() const
-    {
+    f32 OldBoxLayout::margin() const {
         return m_margin;
     }
 
-    void OldBoxLayout::set_margin(const f32 margin)
-    {
+    void OldBoxLayout::set_margin(const f32 margin) {
         m_margin = margin;
     }
 
-    f32 OldBoxLayout::spacing() const
-    {
+    f32 OldBoxLayout::spacing() const {
         return m_spacing;
     }
 
-    void OldBoxLayout::set_spacing(const f32 spacing)
-    {
+    void OldBoxLayout::set_spacing(const f32 spacing) {
         m_spacing = spacing;
     }
 }

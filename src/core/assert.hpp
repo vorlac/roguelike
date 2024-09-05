@@ -111,8 +111,7 @@
               }                                                                             \
               pause_debugger;                                                               \
           }                                                                                 \
-      }                                                                                     \
-      while (false)
+      } while (false)
 
   #define sdl_assert(cond, ...)                             \
       do {                                                  \
@@ -120,7 +119,6 @@
               assert_sdl_(cond __VA_OPT__(, ) __VA_ARGS__); \
               pause_debugger;                               \
           }                                                 \
-      }                                                     \
-      while (false)
+      } while (false)
 
 #endif

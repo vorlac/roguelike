@@ -25,20 +25,17 @@ namespace rl::ds {
     margin(T) -> margin<T>;
 
     template <rl::numeric T>
-    class rect
-    {
+    class rect {
     public:
         consteval rect() = default;
 
         constexpr rect(point<T> tl_point, dims<T> rect_size)
             : pt{ tl_point }
-            , size{ rect_size }
-        {
+            , size{ rect_size } {
         }
 
         [[nodiscard]]
-        consteval static rect<T> null()
-        {
+        consteval static rect<T> null() {
             return rect{
                 point<T>::null(),
                 dims<T>::null(),
@@ -46,8 +43,7 @@ namespace rl::ds {
         }
 
         [[nodiscard]]
-        consteval static rect<T> zero()
-        {
+        consteval static rect<T> zero() {
             return rect{
                 point<T>::zero(),
                 dims<T>::zero(),
@@ -65,37 +61,31 @@ namespace rl::ds {
         }
 
         [[nodiscard]]
-        constexpr T area() const
-        {
+        constexpr T area() const {
             return size.area();
         }
 
         [[nodiscard]]
-        constexpr bool is_empty() const
-        {
+        constexpr bool is_empty() const {
             return math::equal(this->area(), 0);
         }
 
         [[nodiscard]]
-        constexpr bool invalid() const
-        {
+        constexpr bool invalid() const {
             return this->size.invalid() || this->pt == point<T>::null();
         }
 
         [[nodiscard]]
-        constexpr bool valid() const
-        {
+        constexpr bool valid() const {
             return !this->invalid();
         }
 
         [[nodiscard]]
-        constexpr bool is_null() const
-        {
+        constexpr bool is_null() const {
             return *this == rect<T>::null();
         }
 
-        constexpr auto triangles() -> std::array<point<T>, 6>
-        {
+        constexpr auto triangles() -> std::array<point<T>, 6> {
             // Generates an array of vertices representing
             // the rect to be used in an OpenGL VBO
             point<T> tl{ pt.x, pt.y + size.height };
@@ -114,8 +104,7 @@ namespace rl::ds {
         }
 
         constexpr auto triangles(const color<f32>& clr)
-            -> std::array<std::pair<point<f32>, color<f32>>, 6>
-        {
+            -> std::array<std::pair<point<f32>, color<f32>>, 6> {
             // Generates a packed array of vertex/color
             // pairs to be used in an OpenGL VBO
             point<T> tl{ pt.x, pt.y + size.height };
@@ -134,8 +123,7 @@ namespace rl::ds {
         }
 
         [[nodiscard]]
-        auto triangle_ebo() const
-        {
+        auto triangle_ebo() const {
             // returns list of packed verices and indexes for each triangle
             // for both triangles to be used as Element constexpr inline Buffer Objects
             point<T> tl{ pt.x, pt.y + size.height };
@@ -153,8 +141,7 @@ namespace rl::ds {
         }
 
         [[nodiscard]]
-        constexpr rect<T> expanded(const rect<T>& other) const
-        {
+        constexpr rect<T> expanded(const rect<T>& other) const {
             // expand current rect to include rect other
             const T min_x{ math::min(this->pt.x, other.pt.x) };
             const T max_x{ math::max((this->pt.x + this->size.width),
@@ -176,16 +163,14 @@ namespace rl::ds {
             };
         }
 
-        constexpr rect<T>& engulf(const rect<T> other) noexcept
-        {
+        constexpr rect<T>& engulf(const rect<T> other) noexcept {
             // expand current rect to include rect other
             *this = std::move(this->expanded(other));
             return *this;
         }
 
         [[nodiscard]]
-        constexpr rect<T> expanded(T amount) const noexcept
-        {
+        constexpr rect<T> expanded(T amount) const noexcept {
             // Expands a rect by the amount on all sides
             return rect<T>{
                 point<T>{
@@ -200,8 +185,7 @@ namespace rl::ds {
         }
 
         [[nodiscard]]
-        constexpr rect<T> expanded(T top, T bottom, T left, T right) const noexcept
-        {
+        constexpr rect<T> expanded(T top, T bottom, T left, T right) const noexcept {
             // Expands a rect by the specific amounts on each side
             return rect<T>{
                 point<T>{
@@ -216,8 +200,7 @@ namespace rl::ds {
         }
 
         [[nodiscard]]
-        constexpr rect<T> expanded(margin<T> expansion) const noexcept
-        {
+        constexpr rect<T> expanded(margin<T> expansion) const noexcept {
             // Expands a rect by the specific amounts on each side
             return rect<T>{
                 point<T>{
@@ -232,8 +215,7 @@ namespace rl::ds {
         }
 
         [[nodiscard]]
-        constexpr Side edge_overlap(T buffer_size, const point<T>& pnt) const noexcept
-        {
+        constexpr Side edge_overlap(T buffer_size, const point<T>& pnt) const noexcept {
             Side overlap{ Side::None };
 
             const rect bigger{ this->expanded(buffer_size) };
@@ -267,8 +249,7 @@ namespace rl::ds {
         }
 
         [[nodiscard]]
-        constexpr rect<T> top(T expand) const noexcept
-        {
+        constexpr rect<T> top(T expand) const noexcept {
             return rect<T>{
                 point<T>{ this->pt.x + expand, this->pt.y - expand },
                 dims<T>{ this->size.width - expand * 2, expand * 2 },
@@ -276,8 +257,7 @@ namespace rl::ds {
         }
 
         [[nodiscard]]
-        constexpr rect<T> bottom(T expand) const noexcept
-        {
+        constexpr rect<T> bottom(T expand) const noexcept {
             return rect<T>{
                 point<T>{ pt.x + expand, (pt.y + this->size.height) - expand },
                 dims<T>{ this->size.width - expand * 2, expand * 2 },
@@ -285,8 +265,7 @@ namespace rl::ds {
         }
 
         [[nodiscard]]
-        constexpr rect<T> left(T expand) const noexcept
-        {
+        constexpr rect<T> left(T expand) const noexcept {
             return rect<T>{
                 point<T>{ this->pt.x - expand, pt.y + expand },
                 dims<T>{ expand * 2, this->size.height - expand * 2 },
@@ -294,8 +273,7 @@ namespace rl::ds {
         }
 
         [[nodiscard]]
-        constexpr rect<T> right(T expand) const noexcept
-        {
+        constexpr rect<T> right(T expand) const noexcept {
             return rect<T>{
                 point<T>{ (this->pt.x + this->size.width) - expand, pt.y + expand },
                 dims<T>{ expand * 2, this->size.height - expand * 2 },
@@ -303,8 +281,7 @@ namespace rl::ds {
         }
 
         [[nodiscard]]
-        constexpr rect<T> top_left(T expand) const noexcept
-        {
+        constexpr rect<T> top_left(T expand) const noexcept {
             const point<T> ret{ this->top_left() };
             return rect<T>{
                 point<T>{ ret - expand },
@@ -313,8 +290,7 @@ namespace rl::ds {
         }
 
         [[nodiscard]]
-        constexpr rect<T> top_right(T expand) const noexcept
-        {
+        constexpr rect<T> top_right(T expand) const noexcept {
             const point<T> ret{ this->top_right() };
             return rect<T>{
                 point<T>{ ret - expand },
@@ -323,8 +299,7 @@ namespace rl::ds {
         }
 
         [[nodiscard]]
-        constexpr rect<T> bot_left(T expand) const noexcept
-        {
+        constexpr rect<T> bot_left(T expand) const noexcept {
             const point<T> ret{ this->bot_left() };
             return rect<T>{
                 point<T>{ ret - expand },
@@ -333,8 +308,7 @@ namespace rl::ds {
         }
 
         [[nodiscard]]
-        constexpr rect<T> bot_right(T expand) const noexcept
-        {
+        constexpr rect<T> bot_right(T expand) const noexcept {
             const point<T> ret{ this->bot_right() };
             return rect<T>{
                 point<T>{ ret - expand },
@@ -343,8 +317,7 @@ namespace rl::ds {
         }
 
         [[nodiscard]]
-        constexpr point<T> reference_point(const Align alignment) const noexcept
-        {
+        constexpr point<T> reference_point(const Align alignment) const noexcept {
             return alignment == (Align::HLeft | Align::VMiddle)     ? point<T>{ pt.x, pt.y + (size.height / 2.0f) }
                  : alignment == (Align::HLeft | Align::VBaseline)   ? point<T>{ pt.x, pt.y + size.height }
                  : alignment == (Align::HCenter | Align::VMiddle)   ? point<T>{ pt.x + (size.width / 2.0f), pt.y + (size.height / 2.0f) }
@@ -362,51 +335,43 @@ namespace rl::ds {
         }
 
         [[nodiscard]]
-        constexpr T bottom() const noexcept
-        {
+        constexpr T bottom() const noexcept {
             return pt.y + size.height;
         }
 
         [[nodiscard]]
-        constexpr T left() const noexcept
-        {
+        constexpr T left() const noexcept {
             return pt.x;
         }
 
         [[nodiscard]]
-        constexpr T right() const noexcept
-        {
+        constexpr T right() const noexcept {
             return pt.x + size.width;
         }
 
         [[nodiscard]]
-        constexpr point<T> top_left() const noexcept
-        {
+        constexpr point<T> top_left() const noexcept {
             return point<T>{ pt.x, pt.y };
         }
 
         [[nodiscard]]
-        constexpr point<T> top_right() const noexcept
-        {
+        constexpr point<T> top_right() const noexcept {
             return point<T>{ pt.x + size.width, pt.y };
         }
 
         [[nodiscard]]
-        constexpr point<T> bot_left() const noexcept
-        {
+        constexpr point<T> bot_left() const noexcept {
             return point<T>{ pt.x, pt.y + size.height };
         }
 
         [[nodiscard]]
-        constexpr point<T> bot_right() const noexcept
-        {
+        constexpr point<T> bot_right() const noexcept {
             return point<T>{ static_cast<T>(pt.x + size.width),
                              static_cast<T>(pt.y + size.height) };
         }
 
         [[nodiscard]]
-        constexpr rect<T> centered(const point<f32> pos) const
-        {
+        constexpr rect<T> centered(const point<f32> pos) const {
             // Returns a new rect centered at pos
             const vector2<T> delta{ pos - this->centroid() };
             return rect<T>{
@@ -416,8 +381,7 @@ namespace rl::ds {
         }
 
         [[nodiscard]]
-        constexpr rect<T>& center(const point<f32> pos)
-        {
+        constexpr rect<T>& center(const point<f32> pos) {
             // Centers the rect at the point
             const vector2<T> delta{ pos - this->centroid() };
             this->pt += delta;
@@ -425,8 +389,7 @@ namespace rl::ds {
         }
 
         [[nodiscard]]
-        constexpr point<T> centroid() const noexcept
-        {
+        constexpr point<T> centroid() const noexcept {
             // Gets the center point of the rectangle
             return point<T>{ pt.x + (size.width / 2.0f),
                              pt.y + (size.height / 2.0f) };
@@ -434,47 +397,41 @@ namespace rl::ds {
 
         // Checks if the rect shares any space with pt
         [[nodiscard]]
-        constexpr bool overlaps(const point<T>& pnt) const
-        {
+        constexpr bool overlaps(const point<T>& pnt) const {
             return (pnt.x >= this->pt.x && pnt.x <= this->pt.x + this->size.width) &&
                    (pnt.y >= this->pt.y && pnt.y <= this->pt.y + this->size.height);
         }
 
         [[nodiscard]]
-        constexpr bool overlaps(const rect<T>& other) const
-        {
+        constexpr bool overlaps(const rect<T>& other) const {
             // Checks if the rects share any space with each other
             return this->overlaps(other.top_left()) || this->overlaps(other.top_right()) ||
                    this->overlaps(other.bot_left()) || this->overlaps(other.bot_right());
         }
 
         [[nodiscard]]
-        constexpr bool contains(point<T> point) const
-        {
+        constexpr bool contains(point<T> point) const {
             // Checks if the rect fully contains the point
             return (point.x > this->pt.x && point.x < this->pt.x + this->size.width) &&
                    (point.y > this->pt.y && point.y < this->pt.y + this->size.height);
         }
 
         [[nodiscard]]
-        constexpr bool contains(const rect<T>& other) const
-        {
+        constexpr bool contains(const rect<T>& other) const {
             // Checks if the rect fully contains the other
             return this->contains(other.top_left()) &&
                    this->contains(other.top_right());
         }
 
         [[nodiscard]]
-        constexpr bool contained_by(const rect<T>& other) const
-        {
+        constexpr bool contained_by(const rect<T>& other) const {
             // Checks if the rect fully contains the other
             return other.contains(this->top_left()) &&
                    other.contains(this->top_right());
         }
 
         [[nodiscard]]
-        constexpr bool touches(const point<T>& pnt) const
-        {
+        constexpr bool touches(const point<T>& pnt) const {
             // Checks if the point perfeclty falls on the rect's bounds
             return (pnt.x == this->pt.x && this->pt.y <= pnt.y &&
                     pnt.y <= this->pt.y + this->size.width) ||
@@ -483,15 +440,13 @@ namespace rl::ds {
         }
 
         [[nodiscard]]
-        constexpr bool touches(const rect<T>& other) const
-        {
+        constexpr bool touches(const rect<T>& other) const {
             // Checks if the this rect externally touches the other rect
             return this->overlaps(other) && not this->overlaps(other);
         }
 
         [[nodiscard]]
-        constexpr rect<T> quad(Quad quad) const
-        {
+        constexpr rect<T> quad(Quad quad) const {
             // Returns a quadrant of the rectangle
             point<T> center{ this->centroid() };
             dims<T> quad_size{
@@ -527,8 +482,7 @@ namespace rl::ds {
         }
 
         [[nodiscard]]
-        std::array<rect<T>, 4> quads() const
-        {
+        std::array<rect<T>, 4> quads() const {
             // returns an array of the 4
             // quadrants of the rectangle
             return std::array{
@@ -540,8 +494,7 @@ namespace rl::ds {
         }
 
         [[nodiscard]]
-        constexpr rect<T> scaled(f32 ratio) const
-        {
+        constexpr rect<T> scaled(f32 ratio) const {
             // Returns a new rect scaled by the ratio,
             // expanded / shrunk from the centroid
             dims<T> scaled_size{
@@ -555,8 +508,7 @@ namespace rl::ds {
         }
 
         [[nodiscard]]
-        constexpr rect<T> scaled(vector2<f32> ratio) const
-        {
+        constexpr rect<T> scaled(vector2<f32> ratio) const {
             // Returns a new rect scaled by the ratio,
             // expanded / shrunk from the centroid
             dims<T> scaled_size{
@@ -570,13 +522,11 @@ namespace rl::ds {
         }
 
         [[nodiscard]]
-        constexpr std::array<rect<T>, 2> split(const Axis axis) const
-        {
+        constexpr std::array<rect<T>, 2> split(const Axis axis) const {
             // returns two halves of a
             // rectange, split along axis
             switch (axis) {
-                case Axis::Horizontal:
-                {
+                case Axis::Horizontal: {
                     // split the rect in half using a
                     // horizontal line as the slice point
                     dims<T> half_size{
@@ -595,8 +545,7 @@ namespace rl::ds {
                         },
                     };
                 }
-                case Axis::Vertical:
-                {
+                case Axis::Vertical: {
                     // split the rect in half using a
                     // vertical line as the slice point
                     dims<T> half_size{
@@ -622,44 +571,38 @@ namespace rl::ds {
         }
 
     public:
-        constexpr bool operator==(const rect<T>& other) const
-        {
+        constexpr bool operator==(const rect<T>& other) const {
             return (this->pt == other.pt) &&  //
                    (this->size == other.size);
         }
 
         // Moves the rectangle by the magnitude of the vector
-        constexpr const rect<T>& operator+=(vector2<T> vec)
-        {
+        constexpr const rect<T>& operator+=(vector2<T> vec) {
             this->pt += vec;
             return *this;
         }
 
         // Moves the rectangle by the magnitude of the vector
-        constexpr rect<T> operator-=(vector2<T> vec)
-        {
+        constexpr rect<T> operator-=(vector2<T> vec) {
             this->pt -= vec;
             return *this;
         }
 
         // Returns a rectangle that's been moved by the magnitude of the vector
-        constexpr rect<T> operator+(vector2<T> vec) const
-        {
+        constexpr rect<T> operator+(vector2<T> vec) const {
             rect ret{ *this };
             ret += vec;
             return ret;
         }
 
         // Returns a rectangle that's been moved by the magnitude of the vector
-        constexpr rect<T> operator-(vector2<T> vec) const
-        {
+        constexpr rect<T> operator-(vector2<T> vec) const {
             rect ret{ *this };
             ret -= vec;
             return ret;
         }
 
-        constexpr rect<T>& operator*=(T val)
-        {
+        constexpr rect<T>& operator*=(T val) {
             this->pt *= val;
             this->size *= val;
             return *this;
@@ -674,8 +617,7 @@ namespace rl::ds {
     };
 
     template <rl::numeric T>
-    constexpr auto format_as(const rect<T>& r)
-    {
+    constexpr auto format_as(const rect<T>& r) {
         return fmt::format("[{} | {}]", r.pt, r.size);
     }
 

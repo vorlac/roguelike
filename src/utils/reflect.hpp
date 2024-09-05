@@ -14,8 +14,7 @@
 
 namespace rl::inline reflect {
     template <typename T>
-    consteval decltype(auto) demangled_typename()
-    {
+    consteval decltype(auto) demangled_typename() {
 #if defined(__clang__)
         constexpr std::string_view pref{ "[T = " };
         constexpr std::string_view suff{ "]" };
@@ -39,8 +38,7 @@ namespace rl::inline reflect {
     template <typename T>
     concept aggregate = std::is_aggregate_v<std::remove_cvref_t<T>>;
 
-    struct member_info
-    {
+    struct member_info {
         std::string name{};
         std::string type{};
         std::string value{};
@@ -50,10 +48,8 @@ namespace rl::inline reflect {
         constexpr static std::size_t max_depth{ 128 };
         constexpr static std::size_t max_depth_overflow{ std::size_t(-1) };
 
-        struct name_skip_config
-        {
-            constexpr std::string_view apply(std::string_view sv)
-            {
+        struct name_skip_config {
+            constexpr std::string_view apply(std::string_view sv) {
                 sv.remove_prefix(std::min(prefix_size, sv.size()));
                 sv.remove_suffix(std::min(suffix_size, sv.size()));
                 if (delimiter.empty())
@@ -71,15 +67,13 @@ namespace rl::inline reflect {
             std::string_view delimiter{};
         };
 
-        struct any_type
-        {
+        struct any_type {
             template <typename T>
             constexpr operator T() const;
         };
 
         template <typename T>
-        struct wrapper
-        {
+        struct wrapper {
             const T value;
         };
 
@@ -87,8 +81,7 @@ namespace rl::inline reflect {
         const wrapper<T> helper;
 
         template <typename T>
-        constexpr const T& fake_object() noexcept
-        {
+        constexpr const T& fake_object() noexcept {
             return helper<T>.value;
         }
 
@@ -104,41 +97,34 @@ namespace rl::inline reflect {
         struct tie_as_tuple_t;
 
         template <>
-        struct tie_as_tuple_t<1>
-        {
+        struct tie_as_tuple_t<1> {
             template <typename T>
-            constexpr static auto as_tuple(T&& s)
-            {
+            constexpr static auto as_tuple(T&& s) {
                 auto&& [e0] = std::forward<T>(s);
                 return std::tie(e0);
             }
         };
 
         template <>
-        struct tie_as_tuple_t<2>
-        {
+        struct tie_as_tuple_t<2> {
             template <typename T>
-            constexpr static auto as_tuple(T&& s)
-            {
+            constexpr static auto as_tuple(T&& s) {
                 auto&& [e0, e1] = std::forward<T>(s);
                 return std::tie(e0, e1);
             }
         };
 
         template <>
-        struct tie_as_tuple_t<3>
-        {
+        struct tie_as_tuple_t<3> {
             template <typename T>
-            constexpr static auto as_tuple(T&& s)
-            {
+            constexpr static auto as_tuple(T&& s) {
                 auto&& [e0, e1, e3] = std::forward<T>(s);
                 return std::tie(e0, e1, e3);
             }
         };
 
         template <std::size_t N, typename S>
-        constexpr auto tie_as_tuple(S&& s)
-        {
+        constexpr auto tie_as_tuple(S&& s) {
             return tie_as_tuple_t<N>::as_tuple(std::forward<S>(s));
         }
 
@@ -155,8 +141,7 @@ namespace rl::inline reflect {
                                                  std::size_t,
                                                  N - 1 == max_depth
                                                      ? max_depth_overflow
-                                                     : N>>
-        {
+                                                     : N>> {
         };
 
         template <aggregate T>
@@ -167,16 +152,14 @@ namespace rl::inline reflect {
         constexpr auto member_count_v{ count_aggregate_members_t<T>::value };
 
         template <auto ptr>
-        constexpr auto get_member_name() noexcept
-        {
+        constexpr auto get_member_name() noexcept {
             constexpr static std::string_view sv{ __PRETTY_FUNCTION__ };
             auto&& config{ name_skip_config{ 145, 1, "::" } };
             return config.apply(sv);
         }
 
         template <aggregate T, std::size_t... I>
-        constexpr auto get_member_names_impl(std::index_sequence<I...>)
-        {
+        constexpr auto get_member_names_impl(std::index_sequence<I...>) {
             return std::array<std::string_view, sizeof...(I)>{
                 get_member_name<std::addressof(std::get<I>(
                     tie_as_tuple<sizeof...(I)>(fake_object<T>())))>()...
@@ -184,15 +167,13 @@ namespace rl::inline reflect {
         }
 
         template <aggregate T>
-        constexpr auto get_member_names()
-        {
+        constexpr auto get_member_names() {
             constexpr auto count{ member_count_v<T> };
             return get_member_names_impl<T>(std::make_index_sequence<count>{});
         }
 
         template <aggregate T, std::size_t... I>
-        constexpr auto get_member_info(const T& s, std::index_sequence<I...>)
-        {
+        constexpr auto get_member_info(const T& s, std::index_sequence<I...>) {
             constexpr auto member_names = get_member_names<T>();
             const auto members{ tie_as_tuple<sizeof...(I)>(s) };
             return std::vector<member_info>{
@@ -205,17 +186,14 @@ namespace rl::inline reflect {
     }
 
     template <aggregate T>
-    constexpr auto get_member_info(const T& s)
-    {
+    constexpr auto get_member_info(const T& s) {
         constexpr auto count{ detail::member_count_v<T> };
         return detail::get_member_info(s, std::make_index_sequence<count>{});
     }
 
     template <aggregate auto S>
-    struct aggregate_traits
-    {
-        constexpr static void print()
-        {
+    struct aggregate_traits {
+        constexpr static void print() {
             std::println("  {} {{", demangled_typename<decltype(S)>());
             for (auto&& [name, type, value] : members)
                 std::println("      [ {:<13} ] {:6} => {}", type, name, value);
@@ -228,22 +206,19 @@ namespace rl::inline reflect {
 }
 
 namespace rl::test {
-    struct aggregate_type
-    {
+    struct aggregate_type {
         double dbl_val{};
         int int_val{};
         float flt_val{};
     };
 
-    constexpr static void compile_time_test()
-    {
+    constexpr static void compile_time_test() {
         std::println("\nSTATIC DURATION INSTANCE:");
         constexpr static aggregate_type consteval_test{ 1.23, 4, 5.6f };
         reflect::aggregate_traits<consteval_test>::print();
     }
 
-    static void runtime_test()
-    {
+    static void runtime_test() {
         const aggregate_type runtime_test{ 6.9, 420, 6.9f };
         const auto member_info{ reflect::get_member_info(runtime_test) };
 
@@ -254,8 +229,7 @@ namespace rl::test {
         std::println("  }}");
     }
 
-    int run_reflection_tests()
-    {
+    int run_reflection_tests() {
         test::compile_time_test();
         test::runtime_test();
     }

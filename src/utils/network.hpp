@@ -9,8 +9,7 @@
   #include <Windows.h>
 #endif
 
-void get_ipv4(const char* const hostname, char* ipv4_addr, int buf_len)
-{
+void get_ipv4(const char* const hostname, char* ipv4_addr, int buf_len) {
     WSADATA wsaData;
     int result = WSAStartup(MAKEWORD(2, 2), &wsaData);
     if (result == 0) {

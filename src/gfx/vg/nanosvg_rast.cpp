@@ -17,8 +17,7 @@ namespace rl::nvg::svg {
     constexpr i32 NSVG_FIXMASK{ NSVG_FIX - 1 };
     constexpr i32 NSVG_MEMPAGE_SIZE{ 1024 };
 
-    struct NSVGedge
-    {
+    struct NSVGedge {
         f32 x0{};
         f32 y0{};
         f32 x1{};
@@ -27,8 +26,7 @@ namespace rl::nvg::svg {
         NSVGedge* next{ nullptr };
     };
 
-    struct NSVGpoint
-    {
+    struct NSVGpoint {
         f32 x{}, y{};
         f32 dx{}, dy{};
         f32 len{};
@@ -36,31 +34,27 @@ namespace rl::nvg::svg {
         u8 flags{};
     };
 
-    struct NSVGactiveEdge
-    {
+    struct NSVGactiveEdge {
         i32 x{}, dx{};
         f32 ey{};
         i32 dir{};
         NSVGactiveEdge* next{ nullptr };
     };
 
-    struct NSVGmemPage
-    {
+    struct NSVGmemPage {
         u8 mem[NSVG_MEMPAGE_SIZE]{};
         i32 size{};
         NSVGmemPage* next{ nullptr };
     };
 
-    struct NSVGcachedPaint
-    {
+    struct NSVGcachedPaint {
         signed char type{};
         char spread{};
         f32 xform[6]{};
         i32 colors[256]{};
     };
 
-    struct NSVGrasterizer
-    {
+    struct NSVGrasterizer {
         f32 px{}, py{};
 
         f32 tess_tol{};
@@ -89,8 +83,7 @@ namespace rl::nvg::svg {
         i32 width{}, height{}, stride{};
     };
 
-    NSVGrasterizer* nsvg_create_rasterizer()
-    {
+    NSVGrasterizer* nsvg_create_rasterizer() {
         const auto r = static_cast<NSVGrasterizer*>(malloc(sizeof(NSVGrasterizer)));
         if (r != nullptr) {
             std::memset(r, 0, sizeof(NSVGrasterizer));
@@ -106,8 +99,7 @@ namespace rl::nvg::svg {
         return nullptr;
     }
 
-    void nsvg_delete_rasterizer(NSVGrasterizer* r)
-    {
+    void nsvg_delete_rasterizer(NSVGrasterizer* r) {
         if (r == nullptr)
             return;
 
@@ -137,8 +129,7 @@ namespace rl::nvg::svg {
             NSVGPntLeft = 0x04
         };
 
-        NSVGmemPage* nsvg_next_page(NSVGrasterizer* r, NSVGmemPage* cur)
-        {
+        NSVGmemPage* nsvg_next_page(NSVGrasterizer* r, NSVGmemPage* cur) {
             // If using existing chain, return the next page in chain
             if (cur != nullptr && cur->next != nullptr)
                 return cur->next;
@@ -159,8 +150,7 @@ namespace rl::nvg::svg {
             return newp;
         }
 
-        void nsvg_reset_pool(NSVGrasterizer* r)
-        {
+        void nsvg_reset_pool(NSVGrasterizer* r) {
             NSVGmemPage* p = r->pages;
             while (p != nullptr) {
                 p->size = 0;
@@ -170,8 +160,7 @@ namespace rl::nvg::svg {
             r->curpage = r->pages;
         }
 
-        u8* nsvg_alloc(NSVGrasterizer* r, const i32 size)
-        {
+        u8* nsvg_alloc(NSVGrasterizer* r, const i32 size) {
             if (size > NSVG_MEMPAGE_SIZE)
                 return nullptr;
 
@@ -184,15 +173,13 @@ namespace rl::nvg::svg {
             return buf;
         }
 
-        i32 nsvg_pt_equals(const f32 x1, const f32 y1, const f32 x2, const f32 y2, const f32 tol)
-        {
+        i32 nsvg_pt_equals(const f32 x1, const f32 y1, const f32 x2, const f32 y2, const f32 tol) {
             const f32 dx = x2 - x1;
             const f32 dy = y2 - y1;
             return dx * dx + dy * dy < tol * tol;
         }
 
-        void nsvg_add_path_point(NSVGrasterizer* r, const f32 x, const f32 y, const i32 flags)
-        {
+        void nsvg_add_path_point(NSVGrasterizer* r, const f32 x, const f32 y, const i32 flags) {
             NSVGpoint* pt;
 
             if (r->npoints > 0) {
@@ -219,8 +206,7 @@ namespace rl::nvg::svg {
             r->npoints++;
         }
 
-        void nsvg_append_path_point(NSVGrasterizer* r, const NSVGpoint& pt)
-        {
+        void nsvg_append_path_point(NSVGrasterizer* r, const NSVGpoint& pt) {
             if (r->npoints + 1 > r->cpoints) {
                 r->cpoints = r->cpoints > 0 ? r->cpoints * 2 : 64;
                 r->points = static_cast<NSVGpoint*>(
@@ -233,8 +219,7 @@ namespace rl::nvg::svg {
             r->npoints++;
         }
 
-        void nsvg_duplicate_points(NSVGrasterizer* r)
-        {
+        void nsvg_duplicate_points(NSVGrasterizer* r) {
             if (r->npoints > r->cpoints2) {
                 r->cpoints2 = r->npoints;
                 r->points2 = static_cast<NSVGpoint*>(
@@ -247,8 +232,7 @@ namespace rl::nvg::svg {
             r->npoints2 = r->npoints;
         }
 
-        void nsvg_add_edge(NSVGrasterizer* r, const f32 x0, const f32 y0, const f32 x1, const f32 y1)
-        {
+        void nsvg_add_edge(NSVGrasterizer* r, const f32 x0, const f32 y0, const f32 x1, const f32 y1) {
             // Skip horizontal edges
             if (std::fabs(y0 - y1) < std::numeric_limits<f32>::epsilon())
                 return;
@@ -280,8 +264,7 @@ namespace rl::nvg::svg {
             }
         }
 
-        f32 nsvg_normalize(f32* x, f32* y)
-        {
+        f32 nsvg_normalize(f32* x, f32* y) {
             const f32 d = std::sqrtf((*x) * (*x) + (*y) * (*y));
             if (d > 1e-6f) {
                 const f32 id = 1.0f / d;
@@ -292,15 +275,13 @@ namespace rl::nvg::svg {
             return d;
         }
 
-        f32 nsvg_absf(const f32 x)
-        {
+        f32 nsvg_absf(const f32 x) {
             return x < 0 ? -x : x;
         }
 
         void nsvg_flatten_cubic_bez(NSVGrasterizer* r, const f32 x1, const f32 y1, const f32 x2,
                                     const f32 y2, const f32 x3, const f32 y3, const f32 x4,
-                                    const f32 y4, i32 level, const i32 type)
-        {
+                                    const f32 y4, i32 level, const i32 type) {
             constexpr i32 max_level = 10;
 
             if (level > max_level)
@@ -339,8 +320,7 @@ namespace rl::nvg::svg {
         }
 
         void nsvg_flatten_shape(NSVGrasterizer* r, const nvg::svg::NSVGshape* shape, const f32 sx,
-                                const f32 sy)
-        {
+                                const f32 sy) {
             for (const nvg::svg::NSVGpath* path = shape->paths; path != nullptr; path = path->next) {
                 r->npoints = 0;
 
@@ -362,8 +342,7 @@ namespace rl::nvg::svg {
         }
 
         void nsvg_init_closed(NSVGpoint* left, NSVGpoint* right, const NSVGpoint* p0,
-                              const NSVGpoint* p1, const f32 line_width)
-        {
+                              const NSVGpoint* p1, const f32 line_width) {
             f32 dx = p1->x - p0->x;
             f32 dy = p1->y - p0->y;
             const f32 len = nsvg_normalize(&dx, &dy);
@@ -384,8 +363,7 @@ namespace rl::nvg::svg {
         }
 
         void nsvg_butt_cap(NSVGrasterizer* r, NSVGpoint* left, NSVGpoint* right, const NSVGpoint* p,
-                           const f32 dx, const f32 dy, const f32 line_width, const i32 connect)
-        {
+                           const f32 dx, const f32 dy, const f32 line_width, const i32 connect) {
             const f32 w = line_width * 0.5f;
             const f32 px = p->x, py = p->y;
             const f32 dlx = dy, dly = -dx;
@@ -408,8 +386,7 @@ namespace rl::nvg::svg {
 
         void nsvg_square_cap(NSVGrasterizer* r, NSVGpoint* left, NSVGpoint* right,
                              const NSVGpoint* p, const f32 dx, const f32 dy, const f32 line_width,
-                             const i32 connect)
-        {
+                             const i32 connect) {
             const f32 w = line_width * 0.5f;
             const f32 px = p->x - dx * w, py = p->y - dy * w;
             const f32 dlx = dy, dly = -dx;
@@ -432,8 +409,7 @@ namespace rl::nvg::svg {
 
         void nsvg_round_cap(NSVGrasterizer* r, NSVGpoint* left, NSVGpoint* right,
                             const NSVGpoint* p, const f32 dx, const f32 dy, const f32 line_width,
-                            const i32 ncap, const i32 connect)
-        {
+                            const i32 ncap, const i32 connect) {
             const f32 w = line_width * 0.5f;
             const f32 px = p->x, py = p->y;
             const f32 dlx = dy, dly = -dx;
@@ -482,8 +458,7 @@ namespace rl::nvg::svg {
         }
 
         void nsvg_bevel_join(NSVGrasterizer* r, NSVGpoint* left, NSVGpoint* right,
-                             const NSVGpoint* p0, const NSVGpoint* p1, const f32 line_width)
-        {
+                             const NSVGpoint* p0, const NSVGpoint* p1, const f32 line_width) {
             const f32 w = line_width * 0.5f;
             const f32 dlx0 = p0->dy, dly0 = -p0->dx;
             const f32 dlx1 = p1->dy, dly1 = -p1->dx;
@@ -505,8 +480,7 @@ namespace rl::nvg::svg {
         }
 
         void nsvg_miter_join(NSVGrasterizer* r, NSVGpoint* left, NSVGpoint* right,
-                             const NSVGpoint* p0, const NSVGpoint* p1, const f32 line_width)
-        {
+                             const NSVGpoint* p0, const NSVGpoint* p1, const f32 line_width) {
             const f32 w = line_width * 0.5f;
             const f32 dlx0 = p0->dy, dly0 = -p0->dx;
             const f32 dlx1 = p1->dy, dly1 = -p1->dx;
@@ -556,8 +530,7 @@ namespace rl::nvg::svg {
 
         void nsvg_round_join(NSVGrasterizer* r, NSVGpoint* left, NSVGpoint* right,
                              const NSVGpoint* p0, const NSVGpoint* p1, const f32 line_width,
-                             const i32 ncap)
-        {
+                             const i32 ncap) {
             const f32 w = line_width * 0.5f;
             const f32 dlx0 = p0->dy, dly0 = -p0->dx;
             const f32 dlx1 = p1->dy, dly1 = -p1->dx;
@@ -608,8 +581,7 @@ namespace rl::nvg::svg {
         }
 
         void nsvg_straight_join(NSVGrasterizer* r, NSVGpoint* left, NSVGpoint* right,
-                                const NSVGpoint* p1, const f32 line_width)
-        {
+                                const NSVGpoint* p1, const f32 line_width) {
             const f32 w = line_width * 0.5f;
             const f32 lx = p1->x - (p1->dmx * w), ly = p1->y - (p1->dmy * w);
             const f32 rx = p1->x + (p1->dmx * w), ry = p1->y + (p1->dmy * w);
@@ -623,8 +595,7 @@ namespace rl::nvg::svg {
             right->y = ry;
         }
 
-        i32 nsvg_curve_divs(const f32 r, const f32 arc, const f32 tol)
-        {
+        i32 nsvg_curve_divs(const f32 r, const f32 arc, const f32 tol) {
             const f32 da = std::acosf(r / (r + tol)) * 2.0f;
 
             i32 divs = static_cast<i32>(ceilf(arc / da));
@@ -636,8 +607,7 @@ namespace rl::nvg::svg {
 
         void nsvg_expand_stroke(NSVGrasterizer* r, const NSVGpoint* points, const i32 npoints,
                                 const i32 closed, const i32 line_join, const i32 line_cap,
-                                const f32 line_width)
-        {
+                                const f32 line_width) {
             const i32 ncap = nsvg_curve_divs(line_width * 0.5f, std::numbers::pi_v<f32>,
                                              r->tess_tol);  // Calculate
             NSVGpoint left = { 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -719,8 +689,7 @@ namespace rl::nvg::svg {
         }
 
         void nsvg_prepare_stroke(const NSVGrasterizer* r, const f32 miter_limit,
-                                 const char line_join)
-        {
+                                 const char line_join) {
             NSVGpoint* p0 = &r->points[r->npoints - 1];
             NSVGpoint* p1 = &r->points[0];
             for (i32 i = 0; i < r->npoints; i++) {
@@ -774,8 +743,7 @@ namespace rl::nvg::svg {
         }
 
         void nsvg_flatten_shape_stroke(NSVGrasterizer* r, const nvg::svg::NSVGshape* shape,
-                                       const f32 sx, const f32 sy)
-        {
+                                       const f32 sx, const f32 sy) {
             i32 j;
             const f32 miter_limit = shape->miter_limit;
             const char line_join = shape->stroke_line_join;
@@ -893,8 +861,7 @@ namespace rl::nvg::svg {
             }
         }
 
-        i32 nsvg_cmp_edge(const void* p, const void* q)
-        {
+        i32 nsvg_cmp_edge(const void* p, const void* q) {
             const auto a = static_cast<const NSVGedge*>(p);
             const auto b = static_cast<const NSVGedge*>(q);
 
@@ -906,8 +873,7 @@ namespace rl::nvg::svg {
             return 0;
         }
 
-        NSVGactiveEdge* nsvg_add_active(NSVGrasterizer* r, const NSVGedge* e, const f32 startPoint)
-        {
+        NSVGactiveEdge* nsvg_add_active(NSVGrasterizer* r, const NSVGedge* e, const f32 startPoint) {
             NSVGactiveEdge* z;
 
             if (r->freelist != nullptr) {
@@ -939,15 +905,13 @@ namespace rl::nvg::svg {
             return z;
         }
 
-        void nsvg_free_active(NSVGrasterizer* r, NSVGactiveEdge* z)
-        {
+        void nsvg_free_active(NSVGrasterizer* r, NSVGactiveEdge* z) {
             z->next = r->freelist;
             r->freelist = z;
         }
 
         void nsvg_fill_scanline(u8* scanline, const i32 len, const i32 x0, const i32 x1,
-                                const i32 max_weight, i32* xmin, i32* xmax)
-        {
+                                const i32 max_weight, i32* xmin, i32* xmax) {
             i32 i = x0 >> NSVG_FIXSHIFT;
             i32 j = x1 >> NSVG_FIXSHIFT;
 
@@ -985,8 +949,7 @@ namespace rl::nvg::svg {
         // wouldn't happen, but it could happen if the truetype glyph bounding boxes
         // are wrong, or if the user supplies a too-small bitmap
         void nsvg_fill_active_edges(u8* scanline, const i32 len, const NSVGactiveEdge* e,
-                                    const i32 maxWeight, i32* xmin, i32* xmax, const char fillRule)
-        {
+                                    const i32 maxWeight, i32* xmin, i32* xmax, const char fillRule) {
             // non-zero winding fill
             i32 x0 = 0, w = 0;
 
@@ -1026,19 +989,16 @@ namespace rl::nvg::svg {
             }
         }
 
-        f32 nsvg_clampf(const f32 a, const f32 mn, const f32 mx)
-        {
+        f32 nsvg_clampf(const f32 a, const f32 mn, const f32 mx) {
             return a < mn ? mn : (a > mx ? mx : a);
         }
 
-        i32 nsvg_rgba(const u8 r, const u8 g, const u8 b, const u8 a)
-        {
+        i32 nsvg_rgba(const u8 r, const u8 g, const u8 b, const u8 a) {
             return static_cast<i32>(r) | (static_cast<i32>(g) << 8) | (static_cast<i32>(b) << 16) |
                    (static_cast<i32>(a) << 24);
         }
 
-        i32 nsvg_lerp_rgba(const i32 c0, const i32 c1, const f32 u)
-        {
+        i32 nsvg_lerp_rgba(const i32 c0, const i32 c1, const f32 u) {
             const i32 iu = static_cast<i32>(nsvg_clampf(u, 0.0f, 1.0f) * 256.0f);
             const i32 r = (((c0) & 0xff) * (256 - iu) + (((c1) & 0xff) * iu)) >> 8;
             const i32 g = (((c0 >> 8) & 0xff) * (256 - iu) + (((c1 >> 8) & 0xff) * iu)) >> 8;
@@ -1048,8 +1008,7 @@ namespace rl::nvg::svg {
                              static_cast<u8>(a));
         }
 
-        i32 nsvg_apply_opacity(const i32 c, const f32 u)
-        {
+        i32 nsvg_apply_opacity(const i32 c, const f32 u) {
             const i32 iu = static_cast<i32>(nsvg_clampf(u, 0.0f, 1.0f) * 256.0f);
             const i32 r = (c) & 0xff;
             const i32 g = (c >> 8) & 0xff;
@@ -1059,15 +1018,13 @@ namespace rl::nvg::svg {
                              static_cast<u8>(a));
         }
 
-        i32 nsvg_div255(const i32 x)
-        {
+        i32 nsvg_div255(const i32 x) {
             return ((x + 1) * 257) >> 16;
         }
 
         void nsvg_scanline_solid(u8* dst, const i32 count, u8* cover, const i32 x, const i32 y,
                                  const f32 tx, const f32 ty, const f32 sx, const f32 sy,
-                                 NSVGcachedPaint* cache)
-        {
+                                 NSVGcachedPaint* cache) {
             if (cache->type == nvg::svg::NSVGPaintColor) {
                 const i32 cr = (cache->colors[0] & 0xff);
                 const i32 cg = (cache->colors[0] >> 8) & 0xff;
@@ -1200,8 +1157,7 @@ namespace rl::nvg::svg {
 
         void nsvg_rasterize_sorted_edges(NSVGrasterizer* r, const f32 tx, const f32 ty,
                                          const f32 sx, const f32 sy, NSVGcachedPaint* cache,
-                                         const char fill_rule)
-        {
+                                         const char fill_rule) {
             // weight per vertical scanline
             constexpr static i32 max_weight = (255 / NSVG_SUBSAMPLES);
             NSVGactiveEdge* active = nullptr;
@@ -1309,8 +1265,7 @@ namespace rl::nvg::svg {
             }
         }
 
-        void nsvg_unpremultiply_alpha(u8* image, const i32 w, const i32 h, const i32 stride)
-        {
+        void nsvg_unpremultiply_alpha(u8* image, const i32 w, const i32 h, const i32 stride) {
             i32 x;
             i32 y;
 
@@ -1374,8 +1329,7 @@ namespace rl::nvg::svg {
         }
 
         void nsvg_init_paint(NSVGcachedPaint* cache, const nvg::svg::NSVGpaint* paint,
-                             const f32 opacity)
-        {
+                             const f32 opacity) {
             i32 i;
 
             cache->type = paint->type;
@@ -1438,8 +1392,7 @@ namespace rl::nvg::svg {
 
     void nsvg_rasterize_xy(NSVGrasterizer* r, const nvg::svg::NSVGimage* image, const f32 tx,
                            const f32 ty, const f32 sx, const f32 sy, u8* dst, const i32 w,
-                           const i32 h, const i32 stride)
-    {
+                           const i32 h, const i32 stride) {
         NSVGedge* e = nullptr;
         NSVGcachedPaint cache;
         i32 i;
@@ -1531,8 +1484,7 @@ namespace rl::nvg::svg {
 
     void nsvg_rasterize(NSVGrasterizer* r, const nvg::svg::NSVGimage* image, const f32 tx,
                         const f32 ty, const f32 scale, u8* dst, const i32 w, const i32 h,
-                        const i32 stride)
-    {
+                        const i32 stride) {
         nsvg_rasterize_xy(r, image, tx, ty, scale, scale, dst, w, h, stride);
     }
 }

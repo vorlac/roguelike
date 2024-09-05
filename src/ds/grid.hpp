@@ -18,33 +18,28 @@
 namespace rl::ds::test {
 
     template <typename T, std::size_t N>
-    class grid
-    {
+    class grid {
         using size_type = std::size_t;
 
     public:
         constexpr grid(std::initializer_list<std::array<T, N>>&& rows)
             : m_width{ N }
-            , m_height{ N }
-        {
+            , m_height{ N } {
             // m_cells = std::vector{ rows | std::ranges::views::as_const | std::ranges::views::as_const };
             for (auto&& row : std::move(rows))
                 m_cells.append_range(std::move(row));
             debug_assert(m_cells.size() == N * N);
         }
 
-        constexpr size_type rows() const
-        {
+        constexpr size_type rows() const {
             return m_height;
         }
 
-        constexpr size_type columns() const
-        {
+        constexpr size_type columns() const {
             return m_width;
         }
 
-        constexpr const T& operator[](const std::pair<size_type, size_type>& idx) const
-        {
+        constexpr const T& operator[](const std::pair<size_type, size_type>& idx) const {
             auto&& [row, col] = idx;
             return m_cells[row * m_width + col];
         }
@@ -59,8 +54,7 @@ namespace rl::ds::test {
     grid(std::initializer_list<std::array<const char*, 4>>&&)
         -> grid<std::string_view, 4>;
 
-    int test_grid()
-    {
+    int test_grid() {
         static const grid cell_grid{ {
             { "A1", "B1", "C1", "D1" },
             { "A2", "B2", "C2", "D2" },

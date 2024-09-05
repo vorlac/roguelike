@@ -13,8 +13,7 @@
 namespace rl::ui {
     class PopupButton;
 
-    class Button : public Widget
-    {
+    class Button : public Widget {
     public:
         enum class Property {
             StandardPush = 1 << 0,

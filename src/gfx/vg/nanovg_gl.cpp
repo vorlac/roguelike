@@ -33,16 +33,14 @@ namespace rl::nvg::gl {
         NVGTriangles,
     };
 
-    struct GLShader
-    {
+    struct GLShader {
         GLuint prog{ 0 };
         GLuint frag{ 0 };
         GLuint vert{ 0 };
         GLint loc[MaxLocs] = {};
     };
 
-    struct GLTexture
-    {
+    struct GLTexture {
         i32 id{ 0 };
         GLuint tex{ 0 };
         i32 width{ 0 };
@@ -51,16 +49,14 @@ namespace rl::nvg::gl {
         ImageFlags flags{ ImageFlags::None };
     };
 
-    struct GLBlend
-    {
+    struct GLBlend {
         GLenum src_rgb{ 0 };
         GLenum dst_rgb{ 0 };
         GLenum src_alpha{ 0 };
         GLenum dst_alpha{ 0 };
     };
 
-    struct GLCall
-    {
+    struct GLCall {
         i32 type{ 0 };
         i32 image{ 0 };
         i32 path_offset{ 0 };
@@ -71,16 +67,14 @@ namespace rl::nvg::gl {
         GLBlend blend_func{ 0 };
     };
 
-    struct GLPath
-    {
+    struct GLPath {
         i32 fill_offset{ 0 };
         i32 fill_count{ 0 };
         i32 stroke_offset{ 0 };
         i32 stroke_count{ 0 };
     };
 
-    struct GLFragUniforms
-    {
+    struct GLFragUniforms {
         // matrices are actually 3 vec4s
         f32 scissor_mat[12] = {};
         f32 paint_mat[12] = {};
@@ -97,8 +91,7 @@ namespace rl::nvg::gl {
         i32 type{ 0 };
     };
 
-    struct GLContext
-    {
+    struct GLContext {
         GLShader shader{};
         GLTexture* textures{ nullptr };
         f32 view[2] = {};
@@ -138,29 +131,25 @@ namespace rl::nvg::gl {
 
     namespace {
         namespace detail {
-            i32 maxi(const i32 a, const i32 b)
-            {
+            i32 maxi(const i32 a, const i32 b) {
                 return a > b ? a : b;
             }
 
-            void bind_texture(GLContext* gl, const GLuint tex)
-            {
+            void bind_texture(GLContext* gl, const GLuint tex) {
                 if (gl->bound_texture != tex) {
                     gl->bound_texture = tex;
                     glBindTexture(GL_TEXTURE_2D, tex);
                 }
             }
 
-            void stencil_mask(GLContext* gl, const GLuint mask)
-            {
+            void stencil_mask(GLContext* gl, const GLuint mask) {
                 if (gl->stencil_mask != mask) {
                     gl->stencil_mask = mask;
                     glStencilMask(mask);
                 }
             }
 
-            void stencil_func(GLContext* gl, const GLenum func, const GLint ref, const GLuint mask)
-            {
+            void stencil_func(GLContext* gl, const GLenum func, const GLint ref, const GLuint mask) {
                 if ((gl->stencil_func != func) || (gl->stencil_func_ref != ref) ||
                     (gl->stencil_func_mask != mask)) {
                     gl->stencil_func = func;
@@ -170,8 +159,7 @@ namespace rl::nvg::gl {
                 }
             }
 
-            void blend_func_separate(GLContext* gl, const GLBlend* blend)
-            {
+            void blend_func_separate(GLContext* gl, const GLBlend* blend) {
                 if ((gl->blend_func.src_rgb != blend->src_rgb) ||
                     (gl->blend_func.dst_rgb != blend->dst_rgb) ||
                     (gl->blend_func.src_alpha != blend->src_alpha) ||
@@ -182,8 +170,7 @@ namespace rl::nvg::gl {
                 }
             }
 
-            GLTexture* alloc_texture(GLContext* gl)
-            {
+            GLTexture* alloc_texture(GLContext* gl) {
                 GLTexture* tex{ nullptr };
                 for (i32 i = 0; i < gl->ntextures; i++) {
                     if (gl->textures[i].id == 0) {
@@ -214,8 +201,7 @@ namespace rl::nvg::gl {
                 return tex;
             }
 
-            GLTexture* find_texture(const GLContext* gl, const i32 id)
-            {
+            GLTexture* find_texture(const GLContext* gl, const i32 id) {
                 for (i32 i = 0; i < gl->ntextures; i++)
                     if (gl->textures[i].id == id)
                         return &gl->textures[i];
@@ -223,8 +209,7 @@ namespace rl::nvg::gl {
                 return nullptr;
             }
 
-            i32 delete_texture(const GLContext* gl, const i32 id)
-            {
+            i32 delete_texture(const GLContext* gl, const i32 id) {
                 for (i32 i = 0; i < gl->ntextures; i++) {
                     if (gl->textures[i].id == id) {
                         if (gl->textures[i].tex != 0 &&
@@ -238,8 +223,7 @@ namespace rl::nvg::gl {
                 return 0;
             }
 
-            void dump_shader_error(const GLuint shader, const char* name, const char* type)
-            {
+            void dump_shader_error(const GLuint shader, const char* name, const char* type) {
                 GLsizei len{ 0 };
                 GLchar str[512 + 1];
 
@@ -251,8 +235,7 @@ namespace rl::nvg::gl {
                 std::println("Shader {}/{} error:\n{}", name, type, str);
             }
 
-            void dump_program_error(const GLuint prog, const char* name)
-            {
+            void dump_program_error(const GLuint prog, const char* name) {
                 GLsizei len{ 0 };
                 GLchar str[512 + 1]{};
 
@@ -264,8 +247,7 @@ namespace rl::nvg::gl {
                 std::println("Program {} error:\n{}", name, str);
             }
 
-            void check_error(const GLContext* gl, const char* str)
-            {
+            void check_error(const GLContext* gl, const char* str) {
                 if ((gl->flags & CreateFlags::Debug) == 0)
                     return;
 
@@ -275,8 +257,7 @@ namespace rl::nvg::gl {
             }
 
             i32 create_shader(GLShader* shader, const char* name, const char* header,
-                              const char* opts, const char* vshader, const char* fshader)
-            {
+                              const char* opts, const char* vshader, const char* fshader) {
                 GLint status;
                 const char* str[3];
                 str[0] = header;
@@ -326,8 +307,7 @@ namespace rl::nvg::gl {
                 return 1;
             }
 
-            void delete_shader(const GLShader* shader)
-            {
+            void delete_shader(const GLShader* shader) {
                 if (shader->prog != 0)
                     glDeleteProgram(shader->prog);
                 if (shader->vert != 0)
@@ -336,8 +316,7 @@ namespace rl::nvg::gl {
                     glDeleteShader(shader->frag);
             }
 
-            void get_uniforms(GLShader* shader)
-            {
+            void get_uniforms(GLShader* shader) {
                 shader->loc[LocViewsize] = glGetUniformLocation(shader->prog, "viewSize");
                 shader->loc[LocTex] = glGetUniformLocation(shader->prog, "tex");
                 shader->loc[LocFrag] = glGetUniformBlockIndex(shader->prog, "frag");
@@ -346,8 +325,7 @@ namespace rl::nvg::gl {
             i32 render_create_texture(void* uptr, TextureProperty type, i32 w, i32 h,
                                       ImageFlags image_flags, const uint8_t* data);
 
-            i32 render_create(void* uptr)
-            {
+            i32 render_create(void* uptr) {
                 auto gl{ static_cast<GLContext*>(uptr) };
                 static auto shader_header =
                     "#version 330 core\n"
@@ -489,8 +467,7 @@ namespace rl::nvg::gl {
 
             i32 render_create_texture(void* uptr, const TextureProperty type, const i32 w,
                                       const i32 h, const ImageFlags image_flags,
-                                      const uint8_t* data)
-            {
+                                      const uint8_t* data) {
                 auto gl = static_cast<GLContext*>(uptr);
                 GLTexture* tex = alloc_texture(gl);
 
@@ -558,15 +535,13 @@ namespace rl::nvg::gl {
                 return tex->id;
             }
 
-            i32 render_delete_texture(void* uptr, const i32 image)
-            {
+            i32 render_delete_texture(void* uptr, const i32 image) {
                 auto gl{ static_cast<GLContext*>(uptr) };
                 return delete_texture(gl, image);
             }
 
             i32 render_update_texture(void* uptr, const i32 image, const i32 x, const i32 y,
-                                      const i32 w, const i32 h, const uint8_t* data)
-            {
+                                      const i32 w, const i32 h, const uint8_t* data) {
                 auto gl{ static_cast<GLContext*>(uptr) };
                 const GLTexture* tex = find_texture(gl, image);
 
@@ -593,8 +568,7 @@ namespace rl::nvg::gl {
                 return 1;
             }
 
-            i32 render_get_texture_size(void* uptr, const i32 image, f32* w, f32* h)
-            {
+            i32 render_get_texture_size(void* uptr, const i32 image, f32* w, f32* h) {
                 auto gl = static_cast<GLContext*>(uptr);
                 const GLTexture* tex = find_texture(gl, image);
                 if (tex == nullptr)
@@ -605,8 +579,7 @@ namespace rl::nvg::gl {
                 return 1;
             }
 
-            void xform_to_mat3_x4(f32* m3, const f32* t)
-            {
+            void xform_to_mat3_x4(f32* m3, const f32* t) {
                 m3[0] = t[0];
                 m3[1] = t[1];
                 m3[2] = 0.0f;
@@ -621,8 +594,7 @@ namespace rl::nvg::gl {
                 m3[11] = 0.0f;
             }
 
-            ds::color<f32> premul_color(ds::color<f32> c)
-            {
+            ds::color<f32> premul_color(ds::color<f32> c) {
                 c.r *= c.a;
                 c.g *= c.a;
                 c.b *= c.a;
@@ -631,8 +603,7 @@ namespace rl::nvg::gl {
 
             i32 convert_paint(const GLContext* gl, GLFragUniforms* frag, const PaintStyle* paint,
                               const ScissorParams* scissor, const f32 width, const f32 fringe,
-                              const f32 stroke_thr)
-            {
+                              const f32 stroke_thr) {
                 f32 invxform[6];
 
                 std::memset(frag, 0, sizeof(*frag));
@@ -701,13 +672,11 @@ namespace rl::nvg::gl {
                 return 1;
             }
 
-            GLFragUniforms* frag_uniform_ptr(const GLContext* gl, const i32 i)
-            {
+            GLFragUniforms* frag_uniform_ptr(const GLContext* gl, const i32 i) {
                 return reinterpret_cast<GLFragUniforms*>(&gl->uniforms[i]);
             }
 
-            void set_uniforms(GLContext* gl, const i32 uniformOffset, const i32 image)
-            {
+            void set_uniforms(GLContext* gl, const i32 uniformOffset, const i32 image) {
                 const GLTexture* tex = nullptr;
                 glBindBufferRange(GL_UNIFORM_BUFFER, FragBinding, gl->frag_buf, uniformOffset,
                                   sizeof(GLFragUniforms));
@@ -723,15 +692,13 @@ namespace rl::nvg::gl {
                 check_error(gl, "tex paint tex");
             }
 
-            void render_viewport(void* uptr, const f32 width, const f32 height, f32)
-            {
+            void render_viewport(void* uptr, const f32 width, const f32 height, f32) {
                 auto gl = static_cast<GLContext*>(uptr);
                 gl->view[0] = width;
                 gl->view[1] = height;
             }
 
-            void fill(GLContext* gl, const GLCall* call)
-            {
+            void fill(GLContext* gl, const GLCall* call) {
                 const GLPath* paths = &gl->paths[call->path_offset];
                 const i32 npaths = call->path_count;
 
@@ -776,8 +743,7 @@ namespace rl::nvg::gl {
                 glDisable(GL_STENCIL_TEST);
             }
 
-            void convex_fill(GLContext* gl, const GLCall* call)
-            {
+            void convex_fill(GLContext* gl, const GLCall* call) {
                 const GLPath* paths = &gl->paths[call->path_offset];
                 const i32 npaths = call->path_count;
 
@@ -793,8 +759,7 @@ namespace rl::nvg::gl {
                 }
             }
 
-            void stroke(GLContext* gl, const GLCall* call)
-            {
+            void stroke(GLContext* gl, const GLCall* call) {
                 const GLPath* paths = &gl->paths[call->path_offset];
                 const i32 npaths = call->path_count;
 
@@ -844,16 +809,14 @@ namespace rl::nvg::gl {
                 }
             }
 
-            void triangles(GLContext* gl, const GLCall* call)
-            {
+            void triangles(GLContext* gl, const GLCall* call) {
                 set_uniforms(gl, call->uniform_offset, call->image);
                 check_error(gl, "triangles fill");
 
                 glDrawArrays(GL_TRIANGLES, call->triangle_offset, call->triangle_count);
             }
 
-            void render_cancel(void* uptr)
-            {
+            void render_cancel(void* uptr) {
                 auto gl = static_cast<GLContext*>(uptr);
                 gl->nverts = 0;
                 gl->npaths = 0;
@@ -861,8 +824,7 @@ namespace rl::nvg::gl {
                 gl->nuniforms = 0;
             }
 
-            GLenum convert_blend_func_factor(const BlendFactor factor)
-            {
+            GLenum convert_blend_func_factor(const BlendFactor factor) {
                 if (factor == BlendFactor::Zero)
                     return GL_ZERO;
                 if (factor == BlendFactor::One)
@@ -888,8 +850,7 @@ namespace rl::nvg::gl {
                 return GL_INVALID_ENUM;
             }
 
-            GLBlend blend_composite_operation(const CompositeOperationState op)
-            {
+            GLBlend blend_composite_operation(const CompositeOperationState op) {
                 GLBlend blend;
                 blend.src_rgb = convert_blend_func_factor(op.src_rgb);
                 blend.dst_rgb = convert_blend_func_factor(op.dst_rgb);
@@ -906,8 +867,7 @@ namespace rl::nvg::gl {
                 return blend;
             }
 
-            void render_flush(void* uptr)
-            {
+            void render_flush(void* uptr) {
                 auto gl = static_cast<GLContext*>(uptr);
 
                 if (gl->ncalls > 0) {
@@ -990,8 +950,7 @@ namespace rl::nvg::gl {
                 gl->nuniforms = 0;
             }
 
-            i32 max_vert_count(const NVGpath* paths, const i32 npaths)
-            {
+            i32 max_vert_count(const NVGpath* paths, const i32 npaths) {
                 i32 count = 0;
                 for (i32 i = 0; i < npaths; i++) {
                     count += paths[i].nfill;
@@ -1001,8 +960,7 @@ namespace rl::nvg::gl {
                 return count;
             }
 
-            GLCall* alloc_call(GLContext* gl)
-            {
+            GLCall* alloc_call(GLContext* gl) {
                 if (gl->ncalls + 1 > gl->ccalls) {
                     const i32 ccalls{ math::max(gl->ncalls + 1, 128) + gl->ccalls / 2 };
                     auto calls = static_cast<GLCall*>(
@@ -1019,8 +977,7 @@ namespace rl::nvg::gl {
                 return ret;
             }
 
-            i32 alloc_paths(GLContext* gl, const i32 n)
-            {
+            i32 alloc_paths(GLContext* gl, const i32 n) {
                 if (gl->npaths + n > gl->cpaths) {
                     const i32 cpaths{ math::max(gl->npaths + n, 128) + gl->cpaths / 2 };
                     auto paths = static_cast<GLPath*>(
@@ -1039,8 +996,7 @@ namespace rl::nvg::gl {
                 return ret;
             }
 
-            i32 alloc_verts(GLContext* gl, const i32 n)
-            {
+            i32 alloc_verts(GLContext* gl, const i32 n) {
                 if (gl->nverts + n > gl->cverts) {
                     // 1.5x Overallocate
                     i32 cverts{ math::max(gl->nverts + n, 4096) + gl->cverts / 2 };
@@ -1060,8 +1016,7 @@ namespace rl::nvg::gl {
                 return ret;
             }
 
-            i32 alloc_frag_uniforms(GLContext* gl, const i32 n)
-            {
+            i32 alloc_frag_uniforms(GLContext* gl, const i32 n) {
                 const i32 struct_size{ gl->frag_size };
                 if (gl->nuniforms + n > gl->cuniforms) {
                     const i32 cuniforms{ math::max(gl->nuniforms + n, 128) + gl->cuniforms / 2 };
@@ -1081,8 +1036,7 @@ namespace rl::nvg::gl {
                 return ret;
             }
 
-            void vset(Vertex* vtx, const f32 x, const f32 y, const f32 u, const f32 v)
-            {
+            void vset(Vertex* vtx, const f32 x, const f32 y, const f32 u, const f32 v) {
                 vtx->x = x;
                 vtx->y = y;
                 vtx->u = u;
@@ -1092,8 +1046,7 @@ namespace rl::nvg::gl {
             void render_fill(void* uptr, const PaintStyle* paint,
                              const CompositeOperationState composite_operation,
                              const ScissorParams* scissor, const f32 fringe, const f32* bounds,
-                             const NVGpath* paths, const i32 npaths)
-            {
+                             const NVGpath* paths, const i32 npaths) {
                 GLContext* gl = static_cast<GLContext*>(uptr);
                 GLCall* call = alloc_call(gl);
                 Vertex* quad;
@@ -1185,8 +1138,7 @@ namespace rl::nvg::gl {
             void render_stroke(void* uptr, const PaintStyle* paint,
                                const CompositeOperationState compositeOperation,
                                const ScissorParams* scissor, const f32 fringe,
-                               const f32 strokeWidth, const NVGpath* paths, const i32 npaths)
-            {
+                               const f32 strokeWidth, const NVGpath* paths, const i32 npaths) {
                 auto gl = static_cast<GLContext*>(uptr);
                 GLCall* call = alloc_call(gl);
 
@@ -1249,8 +1201,7 @@ namespace rl::nvg::gl {
             void render_triangles(void* uptr, const PaintStyle* paint,
                                   const CompositeOperationState composite_operation,
                                   const ScissorParams* scissor, const Vertex* verts,
-                                  const i32 nverts, const f32 fringe)
-            {
+                                  const i32 nverts, const f32 fringe) {
                 auto gl = static_cast<GLContext*>(uptr);
                 GLCall* call = alloc_call(gl);
 
@@ -1285,8 +1236,7 @@ namespace rl::nvg::gl {
                     gl->ncalls--;
             }
 
-            void render_delete(void* uptr)
-            {
+            void render_delete(void* uptr) {
                 auto gl{ static_cast<GLContext*>(uptr) };
                 if (gl == nullptr)
                     return;
@@ -1315,8 +1265,7 @@ namespace rl::nvg::gl {
         }
     }
 
-    Context* create_gl_context(const CreateFlags flags)
-    {
+    Context* create_gl_context(const CreateFlags flags) {
         auto gl = static_cast<GLContext*>(std::malloc(sizeof(GLContext)));
         if (gl != nullptr) {
             Params params{};
@@ -1353,14 +1302,12 @@ namespace rl::nvg::gl {
         return nullptr;
     }
 
-    void delete_gl_context(Context* ctx)
-    {
+    void delete_gl_context(Context* ctx) {
         delete_internal(ctx);
     }
 
     i32 create_image_from_handle(Context* ctx, const u32 texture_id, const i32 w, const i32 h,
-                                 const ImageFlags image_flags)
-    {
+                                 const ImageFlags image_flags) {
         auto gl = static_cast<GLContext*>(internal_params(ctx)->user_ptr);
         GLTexture* tex = detail::alloc_texture(gl);
 
@@ -1376,8 +1323,7 @@ namespace rl::nvg::gl {
         return tex->id;
     }
 
-    u32 image_handle(Context* ctx, const i32 image)
-    {
+    u32 image_handle(Context* ctx, const i32 image) {
         auto gl{ static_cast<GLContext*>(internal_params(ctx)->user_ptr) };
         const GLTexture* tex = detail::find_texture(gl, image);
         return tex->tex;

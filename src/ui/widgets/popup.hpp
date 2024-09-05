@@ -5,8 +5,7 @@
 
 namespace rl::ui {
 
-    class Popup final : public ScrollableDialog
-    {
+    class Popup final : public ScrollableDialog {
     public:
         explicit Popup(Widget* parent, ScrollableDialog* parent_dialog = nullptr);
 

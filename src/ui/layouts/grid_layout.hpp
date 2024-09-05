@@ -9,8 +9,7 @@
 namespace rl::ui {
     class Widget;
 
-    class GridLayout final : public OldLayout
-    {
+    class GridLayout final : public OldLayout {
     public:
         explicit GridLayout(const Alignment orientation = Alignment::Horizontal,
                             const f32 resolution = 2.0f,
@@ -20,8 +19,7 @@ namespace rl::ui {
             , m_resolution{ resolution }
             , m_spacing{ spacing, spacing }
             , m_orientation{ orientation }
-            , m_default_alignment{ alignment, alignment }
-        {
+            , m_default_alignment{ alignment, alignment } {
         }
 
         f32 margin() const;

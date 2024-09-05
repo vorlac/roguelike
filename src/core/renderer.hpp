@@ -15,11 +15,9 @@ struct NVGLUframebuffer;
 namespace rl {
     class MainWindow;
 
-    class OpenGLRenderer
-    {
+    class OpenGLRenderer {
     public:
-        struct BlendMode
-        {
+        struct BlendMode {
             using type = SDL3::SDL_BlendMode;
             constexpr static auto None = SDL_BLENDMODE_NONE;
             constexpr static auto Blend = SDL_BLENDMODE_BLEND;

@@ -22,14 +22,12 @@ namespace rl::utf8 {
                                                         //
     constexpr u8 INVALID_BYTE_MARKER_AND_MASK{ 0xF8 };  // 1111'1000
 
-    struct unicode_block final
-    {
+    struct unicode_block final {
         size_t length{ 0 };
         std::array<u8, 5> buffer{};
     };
 
-    constexpr u32 codepoint_byte_size(const u8 cp)
-    {
+    constexpr u32 codepoint_byte_size(const u8 cp) {
         if ((ONE_BYTE_MASK & cp) == ONE_BYTE_MARKER)
             return 1;
         if ((TWO_BYTE_MASK & cp) == TWO_BYTE_MARKER)
@@ -41,8 +39,7 @@ namespace rl::utf8 {
         return 0;
     }
 
-    constexpr u64 codepoint_size_as_utf8(const codepoint cp)
-    {
+    constexpr u64 codepoint_size_as_utf8(const codepoint cp) {
         return cp < 0x80        ? 1
              : cp < 0x800       ? 2
              : cp < 0x10000     ? 3
@@ -53,8 +50,7 @@ namespace rl::utf8 {
     }
 
     // Given a pointer to a valid utf8 character, produce the codepoint
-    constexpr codepoint utf8_to_codepoint(const char* const str)
-    {
+    constexpr codepoint utf8_to_codepoint(const char* const str) {
         // debug_assert(p != nullptr);
         switch (codepoint_byte_size(static_cast<u8>(*str))) {
             case 1:
@@ -87,8 +83,7 @@ namespace rl::utf8 {
         }
     }
 
-    constexpr unicode_block codepoint_to_utf8(const codepoint cp)
-    {
+    constexpr unicode_block codepoint_to_utf8(const codepoint cp) {
         switch (codepoint_size_as_utf8(cp)) {
             default:
             case 0:
@@ -143,8 +138,7 @@ namespace rl::utf8 {
         }
     }
 
-    constexpr std::string codepoint_to_str(codepoint cp)
-    {
+    constexpr std::string codepoint_to_str(codepoint cp) {
         std::array<char, 8> ret{};
         switch (codepoint_size_as_utf8(cp)) {
             case 6:
@@ -185,8 +179,7 @@ namespace rl::utf8 {
         return ret.data();
     }
 
-    constexpr std::string codepoint_to_str_old(codepoint c)
-    {
+    constexpr std::string codepoint_to_str_old(codepoint c) {
         char seq[8]{};
 
         i32 n{ 0 };

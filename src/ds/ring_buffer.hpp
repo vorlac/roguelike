@@ -32,16 +32,14 @@ namespace rl::ds {
     };
 
     template <std::movable TElem, u64 BufferSize = 512U>
-    class ring_buffer
-    {
+    class ring_buffer {
     public:
         using data_elem_t = TElem;
         using buff_size_t = decltype(BufferSize);
         using container_t = std::array<TElem, BufferSize>;
 
     public:
-        u32 push(TElem item)
-        {
+        u32 push(TElem item) {
             // if the buffer happens to be full, block any threads
             // trying to transfer a new item to the buffer until
             // notified that the buffer has at least one vacancy
@@ -79,8 +77,7 @@ namespace rl::ds {
             return m_occupancies;
         }
 
-        auto pop() -> std::pair<BufferItemStatus, TElem>
-        {
+        auto pop() -> std::pair<BufferItemStatus, TElem> {
             // if the buffer happens to be empty, block any threads
             // from moving any further until an item is added to
             // the buffer or the 2.5s timeout is reached

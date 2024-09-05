@@ -19,130 +19,107 @@ namespace rl::ui {
     TextBox::TextBox(Widget* parent, const std::string& value)
         : Widget{ parent }
         , m_value{ value }
-        , m_value_temp{ value }
-    {
+        , m_value_temp{ value } {
         if (m_theme != nullptr)
             m_font_size = m_theme->text_box_font_size;
 
         this->set_icon_extra_scale(0.8f);
     }
 
-    bool TextBox::editable() const
-    {
+    bool TextBox::editable() const {
         return m_editable;
     }
 
-    bool TextBox::spinnable() const
-    {
+    bool TextBox::spinnable() const {
         return m_spinnable;
     }
 
-    void TextBox::set_spinnable(const bool spinnable)
-    {
+    void TextBox::set_spinnable(const bool spinnable) {
         m_spinnable = spinnable;
     }
 
-    const std::string& TextBox::value() const
-    {
+    const std::string& TextBox::value() const {
         return m_value;
     }
 
-    void TextBox::set_value(const std::string& value)
-    {
+    void TextBox::set_value(const std::string& value) {
         m_value = value;
     }
 
-    const std::string& TextBox::default_value() const
-    {
+    const std::string& TextBox::default_value() const {
         return m_default_value;
     }
 
-    void TextBox::set_default_value(const std::string& default_value)
-    {
+    void TextBox::set_default_value(const std::string& default_value) {
         m_default_value = default_value;
     }
 
-    TextBox::Alignment TextBox::alignment() const
-    {
+    TextBox::Alignment TextBox::alignment() const {
         return m_alignment;
     }
 
-    void TextBox::set_alignment(const TextBox::Alignment align)
-    {
+    void TextBox::set_alignment(const TextBox::Alignment align) {
         m_alignment = align;
     }
 
-    const std::string& TextBox::units() const
-    {
+    const std::string& TextBox::units() const {
         return m_units;
     }
 
-    void TextBox::set_units(const std::string& units)
-    {
+    void TextBox::set_units(const std::string& units) {
         m_units = units;
     }
 
-    i32 TextBox::units_image() const
-    {
+    i32 TextBox::units_image() const {
         return m_units_image;
     }
 
-    void TextBox::set_units_image(const int image)
-    {
+    void TextBox::set_units_image(const int image) {
         m_units_image = image;
     }
 
     // Return the underlying regular expression specifying valid formats
-    const std::string& TextBox::format() const
-    {
+    const std::string& TextBox::format() const {
         return m_format;
     }
 
     // Specify a regular expression specifying valid formats
-    void TextBox::set_format(const std::string& format)
-    {
+    void TextBox::set_format(const std::string& format) {
         m_format = format;
     }
 
     // Return the placeholder text to be displayed while the text box is empty.
-    const std::string& TextBox::placeholder() const
-    {
+    const std::string& TextBox::placeholder() const {
         return m_placeholder;
     }
 
     // Specify a placeholder text to be displayed while the text box is empty.
-    void TextBox::set_placeholder(const std::string& placeholder)
-    {
+    void TextBox::set_placeholder(const std::string& placeholder) {
         m_placeholder = placeholder;
     }
 
     // The callback to execute when the value of this TextBox has changed.
-    const std::function<bool(const std::string& str)>& TextBox::callback() const
-    {
+    const std::function<bool(const std::string& str)>& TextBox::callback() const {
         return m_callback;
     }
 
     // Sets the callback to execute when the value of this TextBox has changed.
-    void TextBox::set_callback(const std::function<bool(const std::string& str)>& callback)
-    {
+    void TextBox::set_callback(const std::function<bool(const std::string& str)>& callback) {
         m_callback = callback;
     }
 
-    void TextBox::set_editable(const bool editable)
-    {
+    void TextBox::set_editable(const bool editable) {
         m_editable = editable;
         this->set_cursor(editable ? Mouse::Cursor::IBeam : Mouse::Cursor::Arrow);
     }
 
-    void TextBox::set_theme(Theme* theme)
-    {
+    void TextBox::set_theme(Theme* theme) {
         Widget::set_theme(theme);
         if (m_theme != nullptr)
             m_font_size = m_theme->text_box_font_size;
     }
 
-    ds::dims<f32> TextBox::preferred_size() const
-    {
+    ds::dims<f32> TextBox::preferred_size() const {
         f32 uw{ 0.0f };
         ds::dims size{
             0.0f,
@@ -166,8 +143,7 @@ namespace rl::ui {
         return size;
     }
 
-    void TextBox::draw()
-    {
+    void TextBox::draw() {
         Widget::draw();
 
         auto&& context{ m_renderer->context() };
@@ -416,20 +392,17 @@ namespace rl::ui {
         nvg::restore(context);
     }
 
-    bool TextBox::on_mouse_entered(const Mouse& mouse)
-    {
+    bool TextBox::on_mouse_entered(const Mouse& mouse) {
         Widget::on_mouse_entered(mouse);
         return true;
     }
 
-    bool TextBox::on_mouse_exited(const Mouse& mouse)
-    {
+    bool TextBox::on_mouse_exited(const Mouse& mouse) {
         Widget::on_mouse_exited(mouse);
         return true;
     }
 
-    bool TextBox::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb, ds::point<f32>)
-    {
+    bool TextBox::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb, ds::point<f32>) {
         auto&& mouse_pos{ mouse.pos() };
 
         if (mouse.is_button_pressed(Mouse::Button::Left) && !m_focused) {
@@ -491,8 +464,7 @@ namespace rl::ui {
         return false;
     }
 
-    bool TextBox::on_mouse_button_released(const Mouse&, const Keyboard&)
-    {
+    bool TextBox::on_mouse_button_released(const Mouse&, const Keyboard&) {
         if (m_editable && this->focused()) {
             m_mouse_down_pos = { -1.0f, -1.0f };
             m_mouse_drag_pos = { -1.0f, -1.0f };
@@ -508,8 +480,7 @@ namespace rl::ui {
         return false;
     }
 
-    bool TextBox::on_mouse_move(const Mouse& mouse, const Keyboard&)
-    {
+    bool TextBox::on_mouse_move(const Mouse& mouse, const Keyboard&) {
         m_mouse_pos = mouse.pos();
 
         if (!m_editable)
@@ -523,15 +494,13 @@ namespace rl::ui {
         return m_editable;
     }
 
-    bool TextBox::on_mouse_drag(const Mouse& mouse, const Keyboard&)
-    {
+    bool TextBox::on_mouse_drag(const Mouse& mouse, const Keyboard&) {
         m_mouse_pos = mouse.pos();
         m_mouse_drag_pos = mouse.pos();
         return m_editable && this->focused();
     }
 
-    bool TextBox::on_focus_gained()
-    {
+    bool TextBox::on_focus_gained() {
         Widget::on_focus_gained();
         std::string backup{ m_value };
 
@@ -545,8 +514,7 @@ namespace rl::ui {
         return true;
     }
 
-    bool TextBox::on_focus_lost()
-    {
+    bool TextBox::on_focus_lost() {
         Widget::on_focus_lost();
 
         const std::string backup{ m_value };
@@ -569,8 +537,7 @@ namespace rl::ui {
         return true;
     }
 
-    bool TextBox::on_key_pressed(const Keyboard& kb)
-    {
+    bool TextBox::on_key_pressed(const Keyboard& kb) {
         if (m_editable && this->focused()) {
             // TODO: make sure repeat/hold keys is handled
             if (kb.is_button_pressed(Keyboard::Scancode::Left)) {
@@ -665,16 +632,14 @@ namespace rl::ui {
         return false;
     }
 
-    bool TextBox::on_key_released(const Keyboard&)
-    {
+    bool TextBox::on_key_released(const Keyboard&) {
         if (m_editable && this->focused())
             return true;
 
         return false;
     }
 
-    bool TextBox::on_character_input(const Keyboard& kb)
-    {
+    bool TextBox::on_character_input(const Keyboard& kb) {
         if (m_editable && this->focused()) {
             std::ostringstream convert;
             convert << kb.get_inputted_text();
@@ -691,8 +656,7 @@ namespace rl::ui {
         return false;
     }
 
-    bool TextBox::check_format(const std::string& input, const std::string& format) const
-    {
+    bool TextBox::check_format(const std::string& input, const std::string& format) const {
         if (format.empty())
             return true;
         try {
@@ -703,8 +667,7 @@ namespace rl::ui {
         }
     }
 
-    bool TextBox::copy_selection()
-    {
+    bool TextBox::copy_selection() {
         if (m_selection_pos > -1) {
             const ScrollableDialog* dialog{ this->dialog() };
             if (dialog == nullptr)
@@ -723,8 +686,7 @@ namespace rl::ui {
         return false;
     }
 
-    void TextBox::paste_from_clipboard()
-    {
+    void TextBox::paste_from_clipboard() {
         const ScrollableDialog* dialog{ this->dialog() };
         if (dialog == nullptr)
             return;
@@ -736,8 +698,7 @@ namespace rl::ui {
         }
     }
 
-    bool TextBox::delete_selection()
-    {
+    bool TextBox::delete_selection() {
         if (m_selection_pos > -1) {
             int begin = m_cursor_pos;
             int end = m_selection_pos;
@@ -758,8 +719,7 @@ namespace rl::ui {
         return false;
     }
 
-    void TextBox::update_cursor(const f32 last_x, const nvg::GlyphPosition* glyphs, const i32 size)
-    {
+    void TextBox::update_cursor(const f32 last_x, const nvg::GlyphPosition* glyphs, const i32 size) {
         // handle mouse cursor events
         if (math::not_equal(m_mouse_down_pos.x, -1.0f)) {
             if ((m_mouse_down_modifier & Keyboard::Scancode::LShift) == 0)
@@ -787,8 +747,7 @@ namespace rl::ui {
     }
 
     f32 TextBox::cursor_index_to_position(const i32 index, const f32 last_x,
-                                          const nvg::GlyphPosition* glyphs, const i32 size) const
-    {
+                                          const nvg::GlyphPosition* glyphs, const i32 size) const {
         f32 pos{ 0.0f };
         if (index != size)
             pos = glyphs[index].x;
@@ -801,8 +760,7 @@ namespace rl::ui {
     }
 
     i32 TextBox::position_to_cursor_index(const f32 pos_x, const f32 last_x,
-                                          const nvg::GlyphPosition* glyphs, const i32 size) const
-    {
+                                          const nvg::GlyphPosition* glyphs, const i32 size) const {
         i32 cursor_id{ 0 };
         f32 caretx{ glyphs[cursor_id].x };
 
@@ -819,8 +777,7 @@ namespace rl::ui {
         return cursor_id;
     }
 
-    TextBox::SpinArea TextBox::spin_area(const ds::point<f32>& pos) const
-    {
+    TextBox::SpinArea TextBox::spin_area(const ds::point<f32>& pos) const {
         if ((0 <= pos.x - m_rect.pt.x) && (pos.x - m_rect.pt.x < 14.f)) {
             // on scrolling arrows
             if (m_rect.size.height >= pos.y - m_rect.pt.y &&

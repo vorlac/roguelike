@@ -14,15 +14,13 @@
 namespace rl {
     template <auto RangeStart = 0, auto RangeEnd = std::numeric_limits<decltype(RangeStart)>::max(), typename TRandEngine = std::mt19937>
         requires(std::same_as<decltype(RangeStart), decltype(RangeEnd)> && std::integral<decltype(RangeStart)>)
-    struct random
-    {
+    struct random {
         using numeric_type = decltype(RangeStart);
         using result_type = typename std::type_identity<TRandEngine>::type::result_type;
         using internal_t = typename std::conditional_t<sizeof(result_type) >= sizeof(i32), result_type, i32>;
 
     public:
-        static auto value()
-        {
+        static auto value() {
             return m_dist(m_engine);
         }
 

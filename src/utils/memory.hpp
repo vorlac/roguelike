@@ -9,8 +9,7 @@ namespace rl::memory {
     namespace detail {
         template <u64 Size>
             requires(Size < 32)
-        constexpr i32 static_memcmp(const void* a, const void* b)
-        {
+        constexpr i32 static_memcmp(const void* a, const void* b) {
             const u8* const s1{ static_cast<const u8*>(a) };
             const u8* const s2{ static_cast<const u8*>(b) };
             const u8 diff = s1[0] - s2[0];
@@ -19,16 +18,14 @@ namespace rl::memory {
         }
 
         template <>
-        constexpr i32 static_memcmp<0>(const void*, const void*)
-        {
+        constexpr i32 static_memcmp<0>(const void*, const void*) {
             return 0;
         }
 
     }
 
     template <typename T>
-    constexpr bool static_memcmp(const T& a, const T& b)
-    {
+    constexpr bool static_memcmp(const T& a, const T& b) {
         constexpr static auto size{ sizeof(T) };
         auto ret = detail::static_memcmp<size>(
             static_cast<const void*>(&a),
@@ -37,8 +34,7 @@ namespace rl::memory {
     }
 
     template <rl::integer I>
-    I align_to(I value, I alignment)
-    {
+    I align_to(I value, I alignment) {
         const I mod{ value % alignment };
         return mod != 0 ? value + (alignment - mod)
                         : value;

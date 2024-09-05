@@ -11,8 +11,7 @@ namespace rl {
     class Keyboard;
 
     namespace ui {
-        class Slider final : public Widget
-        {
+        class Slider final : public Widget {
         public:
             explicit Slider(Widget* parent);
 

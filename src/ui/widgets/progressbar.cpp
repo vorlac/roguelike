@@ -3,27 +3,22 @@
 namespace rl::ui {
 
     ProgressBar::ProgressBar(Widget* parent)
-        : Widget{ parent }
-    {
+        : Widget{ parent } {
     }
 
-    f32 ProgressBar::value() const
-    {
+    f32 ProgressBar::value() const {
         return m_value;
     }
 
-    void ProgressBar::set_value(const f32 value)
-    {
+    void ProgressBar::set_value(const f32 value) {
         m_value = value;
     }
 
-    ds::dims<f32> ProgressBar::preferred_size() const
-    {
+    ds::dims<f32> ProgressBar::preferred_size() const {
         return ds::dims{ 70.0f, 12.0f };
     }
 
-    void ProgressBar::draw()
-    {
+    void ProgressBar::draw() {
         Widget::draw();
 
         auto&& context{ m_renderer->context() };

@@ -9,8 +9,7 @@
 
 namespace rl {
     [[maybe_unused]]
-    static bool parse_args(const i32 /*argc*/, char** /*argv[]*/)
-    {
+    static bool parse_args(const i32 /*argc*/, char** /*argv[]*/) {
         // auto args = argparse::ArgumentParser{
         //     "roguelike",
         //     "0.0.1",

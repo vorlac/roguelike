@@ -101,22 +101,19 @@ namespace rl::nvg {
         NvgMaxFontimages = 4
     };
 
-    struct ScissorParams
-    {
+    struct ScissorParams {
         f32 xform[6]{};
         f32 extent[2]{};
     };
 
-    struct Vertex
-    {
+    struct Vertex {
         f32 x{ 0.0f };
         f32 y{ 0.0f };
         f32 u{ 0.0f };
         f32 v{ 0.0f };
     };
 
-    struct NVGpath
-    {
+    struct NVGpath {
         i32 first{ 0 };
         i32 count{ 0 };
         u8 closed{ 0 };
@@ -129,16 +126,14 @@ namespace rl::nvg {
         i32 convex{ 0 };
     };
 
-    struct CompositeOperationState
-    {
+    struct CompositeOperationState {
         BlendFactor src_rgb{};
         BlendFactor dst_rgb{};
         BlendFactor src_alpha{};
         BlendFactor dst_alpha{};
     };
 
-    struct PaintStyle
-    {
+    struct PaintStyle {
         f32 xform[6]{};
         f32 extent[2]{};
         f32 radius{ 0.0f };
@@ -148,8 +143,7 @@ namespace rl::nvg {
         i32 image{ 0 };
     };
 
-    struct State
-    {
+    struct State {
         CompositeOperationState composite_operation{};
         bool shape_anti_alias{ false };
         PaintStyle fill{};
@@ -193,8 +187,7 @@ namespace rl::nvg {
 
     // clang-format on
 
-    struct Point
-    {
+    struct Point {
         f32 x{ 0.0f };
         f32 y{ 0.0f };
         f32 dx{ 0.0f };
@@ -205,8 +198,7 @@ namespace rl::nvg {
         u8 flags{ 0 };
     };
 
-    struct PathCache
-    {
+    struct PathCache {
         Point* points{ nullptr };
         i32 npoints{ 0 };
         i32 cpoints{ 0 };
@@ -219,8 +211,7 @@ namespace rl::nvg {
         f32 bounds[4]{};
     };
 
-    struct Context
-    {
+    struct Context {
         Params params{};
         f32* commands{ nullptr };
         i32 ccommands{ 0 };
@@ -243,16 +234,14 @@ namespace rl::nvg {
         i32 text_tri_count{ 0 };
     };
 
-    struct GlyphPosition
-    {
+    struct GlyphPosition {
         const char* str{ nullptr };  // Position of the glyph in the input string.
         f32 x{ 0.0f };               // The x-coordinate of the logical glyph position.
         f32 min_x{ 0.0f };
         f32 max_x{ 0.0f };
     };
 
-    struct TextRow
-    {
+    struct TextRow {
         // Pointer to the input text where the row starts.
         const char* start{ nullptr };
 

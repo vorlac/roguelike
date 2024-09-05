@@ -10,63 +10,52 @@
 
 namespace rl::ui {
     CheckBox::CheckBox(std::string text, const std::function<void(bool)>& toggled_callback)
-        : CheckBox{ nullptr, std::move(text), toggled_callback }
-    {
+        : CheckBox{ nullptr, std::move(text), toggled_callback } {
     }
 
     CheckBox::CheckBox(Widget* parent, std::string text, const std::function<void(bool)>& toggled_callback)
         : Widget{ parent }
         , m_text{ std::move(text) }
-        , m_toggled_callback{ toggled_callback }
-    {
+        , m_toggled_callback{ toggled_callback } {
         // TODO: move into stylesheet
         // scale checkmark to 80% so it
         // cleanly fits in the square
         m_icon_extra_scale = 0.75f;
     }
 
-    std::string_view CheckBox::text() const
-    {
+    std::string_view CheckBox::text() const {
         return m_text;
     }
 
-    bool CheckBox::checked() const
-    {
+    bool CheckBox::checked() const {
         return m_checked;
     }
 
-    bool CheckBox::pressed() const
-    {
+    bool CheckBox::pressed() const {
         return m_pressed;
     }
 
-    void CheckBox::set_text(std::string text)
-    {
+    void CheckBox::set_text(std::string text) {
         m_text = std::move(text);
     }
 
-    void CheckBox::set_checked(const bool checked)
-    {
+    void CheckBox::set_checked(const bool checked) {
         m_checked = checked;
     }
 
-    void CheckBox::set_pressed(const bool pressed)
-    {
+    void CheckBox::set_pressed(const bool pressed) {
         m_pressed = pressed;
     }
 
-    const std::function<void(bool)>& CheckBox::callback() const
-    {
+    const std::function<void(bool)>& CheckBox::callback() const {
         return m_toggled_callback;
     }
 
-    void CheckBox::set_callback(const std::function<void(bool)>& toggled_callback)
-    {
+    void CheckBox::set_callback(const std::function<void(bool)>& toggled_callback) {
         m_toggled_callback = toggled_callback;
     }
 
-    bool CheckBox::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb, ds::point<f32>)
-    {
+    bool CheckBox::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb, ds::point<f32>) {
         Widget::on_mouse_button_pressed(mouse, kb);
         if (m_enabled && mouse.is_button_pressed(Mouse::Button::Left)) {
             m_pressed = true;
@@ -76,8 +65,7 @@ namespace rl::ui {
         return false;
     }
 
-    bool CheckBox::on_mouse_button_released(const Mouse& mouse, const Keyboard& kb)
-    {
+    bool CheckBox::on_mouse_button_released(const Mouse& mouse, const Keyboard& kb) {
         Widget::on_mouse_button_released(mouse, kb);
 
         if (!m_enabled)
@@ -97,8 +85,7 @@ namespace rl::ui {
         return true;
     }
 
-    ds::dims<f32> CheckBox::preferred_size() const
-    {
+    ds::dims<f32> CheckBox::preferred_size() const {
         if (!m_fixed_size.empty())
             return m_fixed_size;
 
@@ -116,8 +103,7 @@ namespace rl::ui {
         return pref_size;
     }
 
-    void CheckBox::draw()
-    {
+    void CheckBox::draw() {
         Widget::draw();
 
         const auto context{ m_renderer->context() };

@@ -27,8 +27,7 @@ namespace rl::gl {
     //     m_main_window->swap_buffers();
     // }
 
-    class InstancedVertexBuffer
-    {
+    class InstancedVertexBuffer {
     public:
         enum class DrawMode {
             Fill,
@@ -36,13 +35,11 @@ namespace rl::gl {
         };
 
     public:
-        static std::string name()
-        {
+        static std::string name() {
             return "InstancedVertexBuffer";
         }
 
-        explicit InstancedVertexBuffer(const ds::rect<f32>& viewport_rect)
-        {
+        explicit InstancedVertexBuffer(const ds::rect<f32>& viewport_rect) {
             // create vertex array object
             glGenVertexArrays(1, &m_vao_id);
 
@@ -83,8 +80,7 @@ namespace rl::gl {
             }
         }
 
-        bool update_buffers(const ds::rect<f32> viewport)
-        {
+        bool update_buffers(const ds::rect<f32> viewport) {
             constexpr static auto top_bottom_collision = [](const ds::point<f32> pos,
                                                             const ds::rect<f32> window_rect) {
                 const bool top_collision{ pos.y <= 0.0f };
@@ -115,8 +111,7 @@ namespace rl::gl {
             return true;
         }
 
-        ~InstancedVertexBuffer()
-        {
+        ~InstancedVertexBuffer() {
             // cleanup when everything leaves scope
             glDeleteVertexArrays(1, &m_vao_id);
             glDeleteBuffers(1, &m_vbo_positions_id);
@@ -124,8 +119,7 @@ namespace rl::gl {
             glDeleteBuffers(1, &m_vbo_id);
         }
 
-        void set_draw_mode(const DrawMode mode = DrawMode::Fill) const
-        {
+        void set_draw_mode(const DrawMode mode = DrawMode::Fill) const {
             if (mode == m_draw_mode)
                 return;
 
@@ -139,8 +133,7 @@ namespace rl::gl {
             }
         }
 
-        void bind_buffers() const
-        {
+        void bind_buffers() const {
             // bind the VAO vertex array
             glBindVertexArray(m_vao_id);
 
@@ -199,8 +192,7 @@ namespace rl::gl {
             this->set_draw_mode(DrawMode::Fill);
         }
 
-        void draw_triangles() const
-        {
+        void draw_triangles() const {
             glBindBuffer(GL_ARRAY_BUFFER, m_vbo_positions_id);
             glBufferData(GL_ARRAY_BUFFER, m_rect_positions_data.size() * 3 * sizeof(f32),
                          m_rect_positions_data.data(), GL_STREAM_DRAW);

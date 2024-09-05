@@ -15,13 +15,11 @@ namespace rl::nvg::font {
     constexpr i32 MAX_STATES{ 20 };
     constexpr i32 MAX_FALLBACKS{ 20 };
 
-    struct STTFontImpl
-    {
+    struct STTFontImpl {
         stb::stbtt_fontinfo font{};
     };
 
-    struct Glyph
-    {
+    struct Glyph {
         u32 codepoint{ 0 };
         i32 index{ 0 };
         i32 next{ 0 };
@@ -36,8 +34,7 @@ namespace rl::nvg::font {
         i16 y_off{ 0 };
     };
 
-    struct Font
-    {
+    struct Font {
         STTFontImpl font{};
         char name[64]{};
         u8* data{ nullptr };
@@ -54,8 +51,7 @@ namespace rl::nvg::font {
         i32 nfallbacks{ 0 };
     };
 
-    struct State
-    {
+    struct State {
         i32 font{ 0 };
         Align align{ 0 };
         f32 size{ 0 };
@@ -64,15 +60,13 @@ namespace rl::nvg::font {
         f32 spacing{ 0 };
     };
 
-    struct AtlasNode
-    {
+    struct AtlasNode {
         i32 x{ 0 };
         i32 y{ 0 };
         i32 width{ 0 };
     };
 
-    struct Atlas
-    {
+    struct Atlas {
         i32 width{ 0 };
         i32 height{ 0 };
         AtlasNode* nodes{ nullptr };
@@ -80,8 +74,7 @@ namespace rl::nvg::font {
         i32 cnodes{ 0 };
     };
 
-    struct Params
-    {
+    struct Params {
         i32 width;
         i32 height;
         u8 flags;
@@ -108,8 +101,7 @@ namespace rl::nvg::font {
         FonsStatesUnderflow = 4,
     };
 
-    struct Context
-    {
+    struct Context {
         Params params{};
         f32 itw{ 0.0f };
         f32 ith{ 0.0f };
@@ -141,8 +133,7 @@ namespace rl::nvg::font {
         FonsGlyphBitmapRequired = 2,
     };
 
-    struct FontQuad
-    {
+    struct FontQuad {
         f32 x0{ 0.0f };
         f32 y0{ 0.0f };
         f32 s0{ 0.0f };
@@ -153,8 +144,7 @@ namespace rl::nvg::font {
         f32 t1{ 0.0f };
     };
 
-    struct TextIter
-    {
+    struct TextIter {
         f32 x{ 0.0f };
         f32 y{ 0.0f };
         f32 nextx{ 0.0f };

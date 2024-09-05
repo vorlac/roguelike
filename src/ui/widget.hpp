@@ -17,8 +17,7 @@ namespace rl::ui {
     class Canvas;
     class Layout;
 
-    class Widget
-    {
+    class Widget {
     private:
         friend class Canvas;
         explicit Widget(Widget* parent, const std::unique_ptr<NVGRenderer>& vg_renderer);
@@ -168,13 +167,11 @@ namespace rl::ui {
 
     public:
         // TODO: get rid of this stuff
-        static nvg::Context* context()
-        {
+        static nvg::Context* context() {
             return m_renderer->context();
         }
 
-        static NVGRenderer* renderer()
-        {
+        static NVGRenderer* renderer() {
             return m_renderer;
         }
     };

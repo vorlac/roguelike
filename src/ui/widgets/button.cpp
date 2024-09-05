@@ -13,133 +13,108 @@
 
 namespace rl::ui {
     Button::Button(const Icon::ID icon)
-        : Button{ nullptr, "", icon }
-    {
+        : Button{ nullptr, "", icon } {
     }
 
     Button::Button(std::string text, const Icon::ID icon)
-        : Button{ nullptr, std::move(text), icon }
-    {
+        : Button{ nullptr, std::move(text), icon } {
     }
 
     Button::Button(Widget* parent, std::string text, const Icon::ID icon)
         : Widget{ parent }
         , m_text{ std::move(text) }
-        , m_icon{ icon }
-    {
+        , m_icon{ icon } {
         if (m_theme != nullptr) {
             m_background_color = m_theme->button_gradient_top_focused;
             m_text_color = m_theme->text_color;
         }
     }
 
-    bool Button::has_property(const Button::Property prop) const
-    {
+    bool Button::has_property(const Button::Property prop) const {
         return (m_props & prop) != 0;
     }
 
-    void Button::set_property(const Button::Property prop)
-    {
+    void Button::set_property(const Button::Property prop) {
         m_props = prop;
     }
 
-    Button::Property Button::properties() const
-    {
+    Button::Property Button::properties() const {
         return m_props;
     }
 
-    std::string_view Button::text() const
-    {
+    std::string_view Button::text() const {
         return m_text;
     }
 
-    void Button::set_text(std::string text)
-    {
+    void Button::set_text(std::string text) {
         m_text = std::move(text);
     }
 
-    ds::color<f32> Button::background_color() const
-    {
+    ds::color<f32> Button::background_color() const {
         return m_background_color;
     }
 
-    void Button::set_background_color(const ds::color<f32> bg_color)
-    {
+    void Button::set_background_color(const ds::color<f32> bg_color) {
         m_background_color = bg_color;
     }
 
-    ds::color<f32> Button::text_color() const
-    {
+    ds::color<f32> Button::text_color() const {
         return m_text_color;
     }
 
-    void Button::set_text_color(const ds::color<f32> text_color)
-    {
+    void Button::set_text_color(const ds::color<f32> text_color) {
         m_text_color = text_color;
     }
 
-    Icon::ID Button::icon() const
-    {
+    Icon::ID Button::icon() const {
         return m_icon;
     }
 
-    void Button::set_icon(const Icon::ID icon)
-    {
+    void Button::set_icon(const Icon::ID icon) {
         m_icon = icon;
     }
 
-    Icon::Placement Button::icon_placement() const
-    {
+    Icon::Placement Button::icon_placement() const {
         return m_icon_placement;
     }
 
-    void Button::set_icon_placement(const Icon::Placement placement)
-    {
+    void Button::set_icon_placement(const Icon::Placement placement) {
         m_icon_placement = placement;
     }
 
-    bool Button::pressed() const
-    {
+    bool Button::pressed() const {
         return m_pressed;
     }
 
-    void Button::set_pressed(const bool pressed)
-    {
+    void Button::set_pressed(const bool pressed) {
         m_pressed = pressed;
     }
 
-    const std::function<void()>& Button::callback() const
-    {
+    const std::function<void()>& Button::callback() const {
         return m_callback;
     }
 
-    void Button::set_callback(const std::function<void()>& callback)
-    {
+    void Button::set_callback(const std::function<void()>& callback) {
         m_callback = callback;
     }
 
-    const std::function<void(bool)>& Button::change_callback() const
-    {
+    const std::function<void(bool)>& Button::change_callback() const {
         return m_change_callback;
     }
 
-    void Button::set_change_callback(const std::function<void(bool)>& callback)
-    {
+    void Button::set_change_callback(const std::function<void(bool)>& callback) {
         m_change_callback = callback;
     }
 
-    const std::vector<Button*>& Button::button_group() const
-    {
+    const std::vector<Button*>& Button::button_group() const {
         return m_button_group;
     }
 
-    void Button::set_button_group(const std::vector<Button*>& button_group)
-    {
+    void Button::set_button_group(const std::vector<Button*>& button_group) {
         m_button_group = button_group;
     }
 
-    ds::dims<f32> Button::preferred_size() const
-    {
+    ds::dims<f32> Button::preferred_size() const {
         // TODO: check font size here
         const auto context{ m_renderer->context() };
 
@@ -176,21 +151,18 @@ namespace rl::ui {
         };
     }
 
-    bool Button::on_mouse_entered(const Mouse& mouse)
-    {
+    bool Button::on_mouse_entered(const Mouse& mouse) {
         Widget::on_mouse_entered(mouse);
         return true;
     }
 
-    bool Button::on_mouse_exited(const Mouse& mouse)
-    {
+    bool Button::on_mouse_exited(const Mouse& mouse) {
         Widget::on_mouse_exited(mouse);
         return true;
     }
 
     bool Button::handle_mouse_button_event(const ds::point<f32> pt, const Mouse::Button::ID button,
-                                           const bool button_pressed, Keyboard::Scancode)
-    {
+                                           const bool button_pressed, Keyboard::Scancode) {
         // Temporarily increase the reference count of the button in
         // case the button causes the parent window to be destructed
         // const auto lifetime_extend{ std::make_shared<Button>(this) };
@@ -261,22 +233,19 @@ namespace rl::ui {
         return false;
     }
 
-    bool Button::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb, ds::point<f32>)
-    {
+    bool Button::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb, ds::point<f32>) {
         Widget::on_mouse_button_pressed(mouse, kb);
         return handle_mouse_button_event(mouse.pos(), mouse.button_pressed(),
                                          true, kb.keys_down());
     }
 
-    bool Button::on_mouse_button_released(const Mouse& mouse, const Keyboard& kb)
-    {
+    bool Button::on_mouse_button_released(const Mouse& mouse, const Keyboard& kb) {
         Widget::on_mouse_button_released(mouse, kb);
         return handle_mouse_button_event(mouse.pos(), mouse.button_released(),
                                          false, kb.keys_down());
     }
 
-    void Button::draw()
-    {
+    void Button::draw() {
         Widget::draw();
 
         ds::color<f32> grad_top{ m_theme->button_gradient_top_unfocused };

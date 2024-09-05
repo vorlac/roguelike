@@ -24,8 +24,7 @@ namespace rl {
         class Canvas;
     }
 
-    class MainWindow final
-    {
+    class MainWindow final {
         friend class Popup;
         friend class EventHandler;
 

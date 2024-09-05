@@ -9,8 +9,7 @@
 namespace rl::ui {
 
     PopupButton::PopupButton(Widget* parent, std::string caption, const Icon::ID button_icon)
-        : Button{ parent, std::forward<std::string>(caption), button_icon }
-    {
+        : Button{ parent, std::forward<std::string>(caption), button_icon } {
         scoped_log();
 
         this->set_icon_extra_scale(0.8f);
@@ -31,43 +30,36 @@ namespace rl::ui {
         m_popup->set_visible(false);
     }
 
-    void PopupButton::set_chevron_icon(const Icon::ID icon)
-    {
+    void PopupButton::set_chevron_icon(const Icon::ID icon) {
         scoped_log("{}", static_cast<i32>(icon));
         m_chevron_icon = icon;
     }
 
-    Icon::ID PopupButton::chevron_icon() const
-    {
+    Icon::ID PopupButton::chevron_icon() const {
         scoped_log("{}", static_cast<i32>(m_chevron_icon));
         return m_chevron_icon;
     }
 
-    Side PopupButton::side() const
-    {
+    Side PopupButton::side() const {
         scoped_logger(log_level::debug, "{}", m_popup->side());
         return m_popup->side();
     }
 
-    Popup* PopupButton::popup()
-    {
+    Popup* PopupButton::popup() {
         return m_popup;
     }
 
-    const Popup* PopupButton::popup() const
-    {
+    const Popup* PopupButton::popup() const {
         return m_popup;
     }
 
-    ds::dims<f32> PopupButton::preferred_size() const
-    {
+    ds::dims<f32> PopupButton::preferred_size() const {
         scoped_trace(log_level::trace);
         constexpr static ds::dims width_buffer{ 24.0f, 0.0f };
         return Button::preferred_size() + width_buffer;
     }
 
-    void PopupButton::draw()
-    {
+    void PopupButton::draw() {
         scoped_trace(log_level::trace);
         if (!m_enabled && m_pressed)
             m_pressed = false;
@@ -100,8 +92,7 @@ namespace rl::ui {
         }
     }
 
-    void PopupButton::perform_layout()
-    {
+    void PopupButton::perform_layout() {
         scoped_trace(log_level::trace);
 
         Widget::perform_layout();
@@ -136,8 +127,7 @@ namespace rl::ui {
         }
     }
 
-    void PopupButton::set_side(const Side side)
-    {
+    void PopupButton::set_side(const Side side) {
         scoped_trace(log_level::debug);
         const Icon::ID right_icon{ m_theme->popup_chevron_right_icon };
         const Icon::ID left_icon{ m_theme->popup_chevron_left_icon };

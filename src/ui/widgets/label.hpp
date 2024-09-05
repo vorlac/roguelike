@@ -10,8 +10,7 @@
 
 namespace rl::ui {
 
-    class Label final : public Widget
-    {
+    class Label final : public Widget {
     public:
         explicit Label(
             std::string text,

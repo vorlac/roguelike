@@ -11,40 +11,34 @@ namespace rl::ds {
 
     template <typename T>
         requires std::derived_from<T, ds::refcounted>
-    class shared final
-    {
+    class shared final {
     public:
         constexpr shared() = default;
 
         explicit constexpr shared(T* data)
-            : m_data{ data }
-        {
+            : m_data{ data } {
             if (m_data != nullptr)
                 m_data->acquire_ref();
         }
 
         constexpr shared(const shared& other)
-            : m_data{ other.m_data }
-        {
+            : m_data{ other.m_data } {
             // acquire a reference to existing
             if (m_data != nullptr)
                 m_data->acquire_ref();
         }
 
         constexpr shared(shared&& other) noexcept
-            : m_data{ other.m_data }
-        {
+            : m_data{ other.m_data } {
             other.m_data = nullptr;
         }
 
-        constexpr ~shared()
-        {
+        constexpr ~shared() {
             if (m_data != nullptr)
                 m_data->release_ref();
         }
 
-        constexpr shared& operator=(shared&& other) noexcept
-        {
+        constexpr shared& operator=(shared&& other) noexcept {
             // release reference on existing data
             // if one was already being held to it
             if (m_data != nullptr) {
@@ -56,8 +50,7 @@ namespace rl::ds {
             return *this;
         }
 
-        constexpr shared& operator=(const shared& other)
-        {
+        constexpr shared& operator=(const shared& other) {
             if (this != &other) {
                 if (other.m_data != nullptr)
                     other.m_data->acquire_ref();
@@ -70,8 +63,7 @@ namespace rl::ds {
             return *this;
         }
 
-        constexpr shared& operator=(T* data)
-        {
+        constexpr shared& operator=(T* data) {
             if (data != m_data) {
                 if (data != nullptr)
                     data->acquire_ref();
@@ -84,59 +76,49 @@ namespace rl::ds {
             return *this;
         }
 
-        constexpr bool operator==(const shared& other) const
-        {
+        constexpr bool operator==(const shared& other) const {
             // address comparison to guarantee it's
             // the same exact shared<T> object ref
             return m_data == other.m_data;
         }
 
-        constexpr bool operator==(const T* data) const
-        {
+        constexpr bool operator==(const T* data) const {
             // address comparison to guarantee it's
             // the same exact data being referenced
             return m_data == data;
         }
 
-        constexpr bool operator!=(const shared& other) const
-        {
+        constexpr bool operator!=(const shared& other) const {
             return !this->operator==(other);
         }
 
-        constexpr bool operator!=(const T* data) const
-        {
+        constexpr bool operator!=(const T* data) const {
             return !this->operator==(data);
         }
 
-        constexpr T* operator->()
-        {
+        constexpr T* operator->() {
             return m_data;
         }
 
-        constexpr const T* operator->() const
-        {
+        constexpr const T* operator->() const {
             return m_data;
         }
 
-        constexpr T& operator*()
-        {
+        constexpr T& operator*() {
             debug_assert(m_data != nullptr, "dereferencing null shared<{}>", typeid(T).name());
             return *m_data;
         }
 
-        constexpr const T& operator*() const
-        {
+        constexpr const T& operator*() const {
             debug_assert(m_data != nullptr, "dereferencing null shared<{}>", typeid(T).name());
             return *m_data;
         }
 
-        constexpr operator T*()
-        {
+        constexpr operator T*() {
             return m_data;
         }
 
-        constexpr const T* get() const
-        {
+        constexpr const T* get() const {
             return m_data;
         }
 

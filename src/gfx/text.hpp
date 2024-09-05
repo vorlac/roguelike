@@ -33,8 +33,7 @@ namespace rl::text {
         }
     };
 
-    struct Properties
-    {
+    struct Properties {
         f32 font_size{ 18.0f };
         f32 border_thickness{ 1.0f };
         f32 border_blur{ 2.0f };

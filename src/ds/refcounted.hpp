@@ -7,38 +7,31 @@
 
 namespace rl::ds {
 
-    class refcounted
-    {
+    class refcounted {
     public:
         constexpr refcounted() = default;
         virtual ~refcounted() = default;
 
-        constexpr refcounted(const refcounted&) noexcept
-        {
+        constexpr refcounted(const refcounted&) noexcept {
         }
 
-        constexpr refcounted(refcounted&&) noexcept
-        {
+        constexpr refcounted(refcounted&&) noexcept {
         }
 
-        constexpr refcounted& operator=(const refcounted&) noexcept
-        {
+        constexpr refcounted& operator=(const refcounted&) noexcept {
             return *this;
         }
 
-        constexpr refcounted& operator=(refcounted&&) noexcept
-        {
+        constexpr refcounted& operator=(refcounted&&) noexcept {
             return *this;
         }
 
-        void acquire_ref() const noexcept
-        {
+        void acquire_ref() const noexcept {
             // m_references.fetch_add(1, std::memory_order_relaxed);
             ++m_references;
         }
 
-        void release_ref() const noexcept
-        {
+        void release_ref() const noexcept {
             if (--m_references == 0)
                 delete this;
         }

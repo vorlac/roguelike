@@ -18,8 +18,7 @@ namespace rl::log {
     };
 
     template <auto VLogLevel, typename... TArgs>
-    constexpr void print(fmt::format_string<TArgs...> format_str, TArgs&&... args)
-    {
+    constexpr void print(fmt::format_string<TArgs...> format_str, TArgs&&... args) {
         constexpr static LogLevel active_log_level{ LogLevel::Trace };
         if constexpr (active_log_level >= VLogLevel) {
             fmt::text_style c{ fmt::fg(fmt::color{ 0xC1C4CA }) };
@@ -50,38 +49,32 @@ namespace rl::log {
     }
 
     template <typename... TArgs>
-    constexpr void trace(fmt::format_string<TArgs...> format_str, TArgs&&... args)
-    {
+    constexpr void trace(fmt::format_string<TArgs...> format_str, TArgs&&... args) {
         log::print<LogLevel::Trace>(format_str, std::forward<TArgs>(args)...);
     }
 
     template <typename... TArgs>
-    constexpr void info(fmt::format_string<TArgs...> format_str, TArgs&&... args)
-    {
+    constexpr void info(fmt::format_string<TArgs...> format_str, TArgs&&... args) {
         log::print<LogLevel::Info>(format_str, std::forward<TArgs>(args)...);
     }
 
     template <typename... TArgs>
-    constexpr void debug(fmt::format_string<TArgs...> format_str, TArgs&&... args)
-    {
+    constexpr void debug(fmt::format_string<TArgs...> format_str, TArgs&&... args) {
         log::print<LogLevel::Debug>(format_str, std::forward<TArgs>(args)...);
     }
 
     template <typename... TArgs>
-    constexpr void warning(fmt::format_string<TArgs...> format_str, TArgs&&... args)
-    {
+    constexpr void warning(fmt::format_string<TArgs...> format_str, TArgs&&... args) {
         log::print<LogLevel::Warning>(format_str, std::forward<TArgs>(args)...);
     }
 
     template <typename... TArgs>
-    constexpr void error(fmt::format_string<TArgs...> format_str, TArgs&&... args)
-    {
+    constexpr void error(fmt::format_string<TArgs...> format_str, TArgs&&... args) {
         log::print<LogLevel::Error>(format_str, std::forward<TArgs>(args)...);
     }
 
     template <typename... TArgs>
-    constexpr void fatal(fmt::format_string<TArgs...> format_str, TArgs&&... args)
-    {
+    constexpr void fatal(fmt::format_string<TArgs...> format_str, TArgs&&... args) {
         log::print<LogLevel::Fatal>(format_str, std::forward<TArgs>(args)...);
         std::exit(-1);  // NOLINT(concurrency-mt-unsafe)
     }
@@ -136,51 +129,43 @@ namespace rl::log {
       do {                                               \
           std::string _diag{ fmt::format(__VA_ARGS__) }; \
           _lg.inner_scope_diag(std::move(_diag));        \
-      }                                                  \
-      while (0)
+      } while (0)
 
 namespace rl {
     using namespace std::chrono_literals;
     using log_level = spdlog::level::level_enum;
 
-    class ScopedLogger
-    {
+    class ScopedLogger {
         constexpr static inline log_level LOGFILE_LEVEL{ log_level::critical };
         constexpr static inline log_level STD_OUT_LEVEL{ log_level::critical };
 
     public:
         explicit ScopedLogger(std::string&& str)
-            : m_log_str{ std::move(str) }
-        {
+            : m_log_str{ std::move(str) } {
             m_logger->log(m_level, "{:{}}-> {}", "", ++m_depth * INDENT, m_log_str);
         }
 
         explicit ScopedLogger(std::string&& str, const log_level log_level)
             : m_log_str{ std::move(str) }
-            , m_level{ log_level }
-        {
+            , m_level{ log_level } {
             m_logger->log(m_level, "{:{}}-> {}", "", ++m_depth * INDENT, m_log_str);
         }
 
         explicit ScopedLogger(const log_level log_level)
-            : m_level{ log_level }
-        {
+            : m_level{ log_level } {
             m_logger->log(m_level, "{:{}}-> {}", "", ++m_depth * INDENT, m_log_str);
         }
 
-        ~ScopedLogger()
-        {
+        ~ScopedLogger() {
             m_logger->log(m_level, "{:{}}<- {}", "", m_depth-- * INDENT, m_log_str);
         }
 
-        void inner_scope_diag(std::string&& str) const
-        {
+        void inner_scope_diag(std::string&& str) const {
             m_logger->log(log_level::warn, "{:{}}   | {}", "", m_depth * INDENT, std::move(str));
         }
 
     private:
-        static bool init_sinks()
-        {
+        static bool init_sinks() {
             constexpr log_level detail_level{ std::min(LOGFILE_LEVEL, STD_OUT_LEVEL) };
             auto stdout_sink = std::make_shared<spdlog::sinks::stderr_color_sink_mt>(
                 spdlog::color_mode::always);

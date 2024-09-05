@@ -13,49 +13,41 @@
 namespace rl::ui {
     Dialog::Dialog(Widget* parent, std::string title)
         : Widget{ parent }
-        , m_title{ std::move(title) }
-    {
+        , m_title{ std::move(title) } {
         m_resizable = true;
     }
 
-    std::string Dialog::title() const
-    {
+    std::string Dialog::title() const {
         return m_title;
     }
 
-    void Dialog::set_title(const std::string& title)
-    {
+    void Dialog::set_title(const std::string& title) {
         m_title = title;
     }
 
-    Dialog::Mode Dialog::mode() const
-    {
+    Dialog::Mode Dialog::mode() const {
         return m_mode;
     }
 
-    void Dialog::set_mode(const Dialog::Mode mode)
-    {
+    void Dialog::set_mode(const Dialog::Mode mode) {
         m_mode = mode;
     }
 
-    Widget* Dialog::button_panel()
-    {
+    Widget* Dialog::button_panel() {
         if (m_button_panel == nullptr)
             m_button_panel = new Widget{ this };
 
         return m_button_panel;
     }
 
-    f32 Dialog::header_height() const
-    {
+    f32 Dialog::header_height() const {
         if (!m_title.empty())
             return m_theme->dialog_header_height;
 
         return 0.0f;
     }
 
-    void Dialog::draw()
-    {
+    void Dialog::draw() {
         const auto context{ m_renderer->context() };
         const f32 drop_shadow_size{ m_theme->dialog_drop_shadow_size };
         const f32 corner_radius{ m_theme->dialog_corner_radius };
@@ -159,21 +151,17 @@ namespace rl::ui {
         Widget::draw();
     }
 
-    void Dialog::set_resize_grab_pos(const Side side)
-    {
+    void Dialog::set_resize_grab_pos(const Side side) {
         m_resize_grab_location = side;
     }
 
-    Side Dialog::resize_side() const
-    {
+    Side Dialog::resize_side() const {
         return m_resize_grab_location;
     }
 
-    bool Dialog::on_mouse_drag(const Mouse& mouse, const Keyboard&)
-    {
+    bool Dialog::on_mouse_drag(const Mouse& mouse, const Keyboard&) {
         switch (m_mode) {
-            case Dialog::Mode::Move:
-            {
+            case Dialog::Mode::Move: {
                 const bool move_btn_down{ mouse.is_button_down(Mouse::Button::Left) };
                 if (move_btn_down) {
                     m_rect.pt += mouse.pos_delta();
@@ -188,8 +176,7 @@ namespace rl::ui {
                 }
                 break;
             }
-            case Dialog::Mode::Resizing:
-            {
+            case Dialog::Mode::Resizing: {
                 const bool resize_btn_down{ mouse.is_button_down(Mouse::Button::Left) };
                 if (resize_btn_down) {
                     const auto delta{ mouse.pos_delta() };
@@ -259,28 +246,24 @@ namespace rl::ui {
         return false;
     }
 
-    bool Dialog::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb, ds::point<f32>)
-    {
+    bool Dialog::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb, ds::point<f32>) {
         if (Widget::on_mouse_button_pressed(mouse, kb))
             return true;
 
         switch (m_mode) {
-            case Dialog::Mode::Move:
-            {
+            case Dialog::Mode::Move: {
                 const f32 offset_height{ mouse.pos().y - m_rect.pt.y };
                 if (offset_height < m_theme->dialog_header_height)
                     return true;
                 return false;
             }
-            case Dialog::Mode::Resizing:
-            {
+            case Dialog::Mode::Resizing: {
                 // m_resize_grab_location = m_rect.edge_overlap(RESIZE_GRAB_BUFFER, mouse.pos());
                 debug_assert(m_resize_grab_location != Side::None,
                              "dialog resizing without grab location");
                 return m_resize_grab_location != Side::None;
             }
-            case Dialog::Mode::None:
-            {
+            case Dialog::Mode::None: {
                 // const Side border_grab{ m_rect.edge_overlap(RESIZE_GRAB_BUFFER, mouse.pos()) };
                 // m_resize_grab_location = border_grab;
                 return false;
@@ -292,8 +275,7 @@ namespace rl::ui {
         return false;
     }
 
-    bool Dialog::on_mouse_button_released(const Mouse& mouse, const Keyboard& kb)
-    {
+    bool Dialog::on_mouse_button_released(const Mouse& mouse, const Keyboard& kb) {
         m_mode = Dialog::Mode::None;
         m_resize_grab_location = Side::None;
 
@@ -303,14 +285,12 @@ namespace rl::ui {
         return false;
     }
 
-    bool Dialog::on_mouse_scroll(const Mouse& mouse, const Keyboard& kb)
-    {
+    bool Dialog::on_mouse_scroll(const Mouse& mouse, const Keyboard& kb) {
         Widget::on_mouse_scroll(mouse, kb);
         return true;
     }
 
-    ds::dims<f32> Dialog::preferred_size() const
-    {
+    ds::dims<f32> Dialog::preferred_size() const {
         if (m_button_panel != nullptr)
             m_button_panel->hide();
 
@@ -338,8 +318,7 @@ namespace rl::ui {
         return bounding_rect.size;
     }
 
-    void Dialog::perform_layout()
-    {
+    void Dialog::perform_layout() {
         scoped_log();
         if (m_button_panel == nullptr)
             Widget::perform_layout();
@@ -361,8 +340,7 @@ namespace rl::ui {
         }
     }
 
-    void Dialog::refresh_relative_placement()
-    {
+    void Dialog::refresh_relative_placement() {
         // helper to maintain nested window
         // position values, Popup overrides
     }

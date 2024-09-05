@@ -6,32 +6,26 @@
 namespace rl::ui {
 
     ImagePanel::ImagePanel(Widget* parent)
-        : Widget(parent)
-    {
+        : Widget(parent) {
     }
 
-    void ImagePanel::set_images(const ImagePanel::Images& data)
-    {
+    void ImagePanel::set_images(const ImagePanel::Images& data) {
         m_images = data;
     }
 
-    const ImagePanel::Images& ImagePanel::images() const
-    {
+    const ImagePanel::Images& ImagePanel::images() const {
         return m_images;
     }
 
-    const std::function<void(int)>& ImagePanel::callback() const
-    {
+    const std::function<void(int)>& ImagePanel::callback() const {
         return m_callback;
     }
 
-    void ImagePanel::set_callback(const std::function<void(int)>& callback)
-    {
+    void ImagePanel::set_callback(const std::function<void(int)>& callback) {
         m_callback = callback;
     }
 
-    ds::dims<i32> ImagePanel::grid_size() const
-    {
+    ds::dims<i32> ImagePanel::grid_size() const {
         const i32 cols{
             1 + std::max(0, static_cast<i32>(
                                 (m_rect.size.width - 2.0f * m_margin.x - m_thumb_size.width) /
@@ -41,8 +35,7 @@ namespace rl::ui {
         return ds::dims{ cols, rows };
     }
 
-    i32 ImagePanel::index_for_position(const ds::point<f32>& mouse_pos) const
-    {
+    i32 ImagePanel::index_for_position(const ds::point<f32>& mouse_pos) const {
         // TODO: revisit this and remove the duplicate logic if doesn't trigger assert
         const ds::point<f32> pp{ ((mouse_pos - m_rect.pt) - m_margin) / (m_thumb_size + m_spacing) };
         const ds::dims<f32> icon_size{ m_thumb_size / ds::dims<f32>{ m_thumb_size + m_spacing } };
@@ -74,22 +67,19 @@ namespace rl::ui {
                           : -1;
     }
 
-    bool ImagePanel::on_mouse_move(const Mouse& mouse, const Keyboard&)
-    {
+    bool ImagePanel::on_mouse_move(const Mouse& mouse, const Keyboard&) {
         m_mouse_index = this->index_for_position(mouse.pos());
         return true;
     }
 
-    bool ImagePanel::on_mouse_button_pressed(const Mouse& mouse, const Keyboard&, ds::point<f32>)
-    {
+    bool ImagePanel::on_mouse_button_pressed(const Mouse& mouse, const Keyboard&, ds::point<f32>) {
         const i32 index{ this->index_for_position(mouse.pos()) };
         if (index >= 0 && index < static_cast<i32>(m_images.size()) && m_callback != nullptr)
             m_callback(index);
         return true;
     }
 
-    ds::dims<f32> ImagePanel::preferred_size() const
-    {
+    ds::dims<f32> ImagePanel::preferred_size() const {
         ds::dims<f32> grid{ static_cast<ds::dims<f32>>(this->grid_size()) };
         return ds::dims<f32>{
             (m_thumb_size.width * grid.width) + ((grid.width - 1.0f) * m_spacing.x) +
@@ -99,8 +89,7 @@ namespace rl::ui {
         };
     }
 
-    void ImagePanel::draw()
-    {
+    void ImagePanel::draw() {
         const ds::dims grid{ this->grid_size() };
         const auto context{ m_renderer->context() };
 

@@ -11,16 +11,14 @@ namespace rl {
         struct PaintStyle;
     }
 
-    struct TextProperties
-    {
+    struct TextProperties {
         std::string_view font{};
         Align align{ Align::None };
         ds::color<f32> color{ Colors::Transparent };
         f32 font_size{ -1.0f };
     };
 
-    class NVGRenderer
-    {
+    class NVGRenderer {
     public:
         NVGRenderer();
 
@@ -78,24 +76,21 @@ namespace rl {
 
     public:
         template <std::invocable TCallable>
-        void scoped_draw(TCallable&& callable)
-        {
+        void scoped_draw(TCallable&& callable) {
             this->save_state();
             std::invoke(std::forward<TCallable>(callable));
             this->restore_state();
         }
 
         template <std::invocable TCallable>
-        void draw_frame(TCallable&& callable, const ds::dims<f32>& render_size, f32 pixel_ratio)
-        {
+        void draw_frame(TCallable&& callable, const ds::dims<f32>& render_size, f32 pixel_ratio) {
             this->begin_frame(render_size, pixel_ratio);
             std::invoke(std::forward<TCallable>(callable));
             this->end_frame();
         }
 
         template <std::invocable TCallable>
-        void draw_path(const bool close_when_done, TCallable&& callable)
-        {
+        void draw_path(const bool close_when_done, TCallable&& callable) {
             this->begin_path();
             std::invoke(std::forward<TCallable>(callable));
             if (close_when_done)

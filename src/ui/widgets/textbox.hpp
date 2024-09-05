@@ -21,8 +21,7 @@ namespace rl::ui {
     // This class overrides widget::m_icon_extra_scale to be 0.8f, which
     // affects all subclasses of this widget. Subclasses must explicitly set
     // a different value if needed (e.g., in their constructor).
-    class TextBox : public Widget
-    {
+    class TextBox : public Widget {
     public:
         enum class Alignment {
             Left,
@@ -128,12 +127,10 @@ namespace rl::ui {
 
     // A specialization of TextBox for representing integral values.
     template <constraint::integer Scalar>
-    class IntBox : public TextBox
-    {
+    class IntBox : public TextBox {
     public:
         explicit IntBox(Widget* parent, Scalar value = static_cast<Scalar>(0))
-            : TextBox(parent)
-        {
+            : TextBox(parent) {
             this->set_default_value("0");
             this->set_format(std::is_signed_v<Scalar> ? "[-]?[0-9]*" : "[0-9]*");
             this->set_value_increment(1);
@@ -143,22 +140,19 @@ namespace rl::ui {
             this->set_spinnable(false);
         }
 
-        Scalar value() const
-        {
+        Scalar value() const {
             std::istringstream iss(TextBox::value());
             Scalar value = 0;
             iss >> value;
             return value;
         }
 
-        void set_value(Scalar value)
-        {
+        void set_value(Scalar value) {
             Scalar clamped_value = std::min(std::max(value, m_min_value), m_max_value);
             TextBox::set_value(std::to_string(clamped_value));
         }
 
-        void set_callback(const std::function<void(Scalar)>& cb)
-        {
+        void set_callback(const std::function<void(Scalar)>& cb) {
             TextBox::set_callback([cb, this](const std::string& str) {
                 std::istringstream iss(str);
                 Scalar value = 0;
@@ -169,29 +163,24 @@ namespace rl::ui {
             });
         }
 
-        void set_value_increment(Scalar incr)
-        {
+        void set_value_increment(Scalar incr) {
             m_value_increment = incr;
         }
 
-        void set_min_value(Scalar min_value)
-        {
+        void set_min_value(Scalar min_value) {
             m_min_value = min_value;
         }
 
-        void set_max_value(Scalar max_value)
-        {
+        void set_max_value(Scalar max_value) {
             m_max_value = max_value;
         }
 
-        void set_min_max_values(Scalar min_value, Scalar max_value)
-        {
+        void set_min_max_values(Scalar min_value, Scalar max_value) {
             set_min_value(min_value);
             set_max_value(max_value);
         }
 
-        virtual bool on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb, ds::point<f32> local_pos) override
-        {
+        virtual bool on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb, ds::point<f32> local_pos) override {
             if (m_editable || m_spinnable)
                 m_mouse_down_value = this->value();
 
@@ -214,13 +203,11 @@ namespace rl::ui {
             return TextBox::on_mouse_button_pressed(mouse, kb);
         }
 
-        virtual bool on_mouse_button_released(const Mouse& mouse, const Keyboard& kb) override
-        {
+        virtual bool on_mouse_button_released(const Mouse& mouse, const Keyboard& kb) override {
             return TextBox::on_mouse_button_released(mouse, kb);
         }
 
-        virtual bool on_mouse_drag(const Mouse& mouse, const Keyboard& kb) override
-        {
+        virtual bool on_mouse_drag(const Mouse& mouse, const Keyboard& kb) override {
             if (TextBox::on_mouse_drag(mouse, kb))
                 return true;
 
@@ -238,8 +225,7 @@ namespace rl::ui {
             return false;
         }
 
-        virtual bool on_mouse_scroll(const Mouse& mouse, const Keyboard& kb) override
-        {
+        virtual bool on_mouse_scroll(const Mouse& mouse, const Keyboard& kb) override {
             if (Widget::on_mouse_scroll(mouse, kb))
                 return true;
 
@@ -267,12 +253,10 @@ namespace rl::ui {
     // emplate parametersshould a be floating point type, e.g. `float` or
     // `double`.
     template <constraint::floating_point Scalar>
-    class FloatBox : public TextBox
-    {
+    class FloatBox : public TextBox {
     public:
         FloatBox(Widget* parent, Scalar value = static_cast<Scalar>(0.f))
-            : TextBox(parent)
-        {
+            : TextBox(parent) {
             m_number_format = sizeof(Scalar) == sizeof(float) ? "%.4g" : "%.7g";
             this->set_default_value("0");
             this->set_format("[-+]?[0-9]*\\.?[0-9]+([e_e][-+]?[0-9]+)?");
@@ -283,31 +267,26 @@ namespace rl::ui {
             this->set_spinnable(false);
         }
 
-        std::string number_format() const
-        {
+        std::string number_format() const {
             return m_number_format;
         }
 
-        void number_format(const std::string& format)
-        {
+        void number_format(const std::string& format) {
             m_number_format = format;
         }
 
-        Scalar value() const
-        {
+        Scalar value() const {
             return static_cast<Scalar>(std::stod(TextBox::value()));
         }
 
-        void set_value(Scalar value)
-        {
+        void set_value(Scalar value) {
             Scalar clamped_value = std::min(std::max(value, m_min_value), m_max_value);
             char buffer[50];
             std::snprintf(buffer, 50, m_number_format.c_str(), clamped_value);
             TextBox::set_value(buffer);
         }
 
-        void set_callback(const std::function<void(Scalar)>& cb)
-        {
+        void set_callback(const std::function<void(Scalar)>& cb) {
             TextBox::set_callback([cb, this](const std::string& str) {
                 Scalar scalar = static_cast<Scalar>(std::stod(str));
                 set_value(scalar);
@@ -316,29 +295,24 @@ namespace rl::ui {
             });
         }
 
-        void set_value_increment(Scalar incr)
-        {
+        void set_value_increment(Scalar incr) {
             m_value_increment = incr;
         }
 
-        void set_min_value(Scalar min_value)
-        {
+        void set_min_value(Scalar min_value) {
             m_min_value = min_value;
         }
 
-        void set_max_value(Scalar max_value)
-        {
+        void set_max_value(Scalar max_value) {
             m_max_value = max_value;
         }
 
-        void set_min_max_values(Scalar min_value, Scalar max_value)
-        {
+        void set_min_max_values(Scalar min_value, Scalar max_value) {
             set_min_value(min_value);
             set_max_value(max_value);
         }
 
-        virtual bool on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb, ds::point<f32> local_pos) override
-        {
+        virtual bool on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb, ds::point<f32> local_pos) override {
             if (m_editable || m_spinnable)
                 m_mouse_down_value = this->value();
 
@@ -361,13 +335,11 @@ namespace rl::ui {
             return TextBox::on_mouse_button_pressed(mouse, kb);
         }
 
-        virtual bool on_mouse_button_released(const Mouse& mouse, const Keyboard& kb) override
-        {
+        virtual bool on_mouse_button_released(const Mouse& mouse, const Keyboard& kb) override {
             return TextBox::on_mouse_button_released(mouse, kb);
         }
 
-        virtual bool on_mouse_drag(const Mouse& mouse, const Keyboard& kb) override
-        {
+        virtual bool on_mouse_drag(const Mouse& mouse, const Keyboard& kb) override {
             if (TextBox::on_mouse_drag(mouse, kb))
                 return true;
 
@@ -384,8 +356,7 @@ namespace rl::ui {
             return false;
         }
 
-        virtual bool on_mouse_scroll(const Mouse& mouse, const Keyboard& kb) override
-        {
+        virtual bool on_mouse_scroll(const Mouse& mouse, const Keyboard& kb) override {
             if (Widget::on_mouse_scroll(mouse, kb))
                 return true;
 

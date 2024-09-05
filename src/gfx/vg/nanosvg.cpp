@@ -11,8 +11,7 @@
 #define NSVG_NOTUSED(v)                    \
     do {                                   \
         (void)(1 ? (void)0 : ((void)(v))); \
-    }                                      \
-    while (0)
+    } while (0)
 
 #define NSVG_RGB(r, g, b) \
     (((unsigned int)(r)) | ((unsigned int)(g) << 8) | ((unsigned int)(b) << 16))
@@ -66,31 +65,26 @@ namespace rl::nvg::svg {
     };
 
     namespace {
-        int nsvg_isspace(const char c)
-        {
+        int nsvg_isspace(const char c) {
             return strchr(" \t\n\v\f\r", c) != nullptr;
         }
 
-        int nsvg_isdigit(const char c)
-        {
+        int nsvg_isdigit(const char c) {
             return c >= '0' && c <= '9';
         }
 
-        float nsvg_minf(const float a, const float b)
-        {
+        float nsvg_minf(const float a, const float b) {
             return a < b ? a : b;
         }
 
-        float nsvg_maxf(const float a, const float b)
-        {
+        float nsvg_maxf(const float a, const float b) {
             return a > b ? a : b;
         }
 
         // Simple XML parser
 
         void nsvg_parse_content(const char* str, void (*content_cb)(void* ud, const char* s),
-                                void* ud)
-        {
+                                void* ud) {
             // Trim start white spaces
             while (*str && nsvg_isspace(*str))
                 str++;
@@ -103,8 +97,7 @@ namespace rl::nvg::svg {
 
         void nsvg_parse_element(char* s,
                                 void (*startel_cb)(void* ud, const char* el, const char** attr),
-                                void (*endel_cb)(void* ud, const char* el), void* ud)
-        {
+                                void (*endel_cb)(void* ud, const char* el), void* ud) {
             const char* attr[MaxAttribs];
             int nattr = 0;
             int start = 0;
@@ -195,8 +188,7 @@ namespace rl::nvg::svg {
         int nsvg_parse_xml(char* input,
                            void (*startel_cb)(void* ud, const char* el, const char** attr),
                            void (*endel_cb)(void* ud, const char* el),
-                           void (*content_cb)(void* ud, const char* s), void* ud)
-        {
+                           void (*content_cb)(void* ud, const char* s), void* ud) {
             char* s = input;
             char* mark = s;
             int state = Content;
@@ -224,30 +216,25 @@ namespace rl::nvg::svg {
 
     /* Simple SVG parser. */
 
-    struct NSVGcoordinate
-    {
+    struct NSVGcoordinate {
         float value;
         int units;
     };
 
-    struct NSVGlinearData
-    {
+    struct NSVGlinearData {
         NSVGcoordinate x1, y1, x2, y2;
     };
 
-    struct NSVGradialData
-    {
+    struct NSVGradialData {
         NSVGcoordinate cx, cy, r, fx, fy;
     };
 
-    struct NSVGgradientData
-    {
+    struct NSVGgradientData {
         char id[64];
         char ref[64];
         signed char type;
 
-        union
-        {
+        union {
             NSVGlinearData linear;
             NSVGradialData radial;
         };
@@ -260,8 +247,7 @@ namespace rl::nvg::svg {
         NSVGgradientData* next;
     };
 
-    struct NSVGattrib
-    {
+    struct NSVGattrib {
         char id[64];
         float xform[6];
         unsigned int fill_color;
@@ -288,8 +274,7 @@ namespace rl::nvg::svg {
         char visible;
     };
 
-    struct NSVGparser
-    {
+    struct NSVGparser {
         NSVGattrib attr[MaxAttr];
         int attr_head;
         float* pts;
@@ -312,8 +297,7 @@ namespace rl::nvg::svg {
     };
 
     namespace {
-        void nsvg_xform_identity(float* t)
-        {
+        void nsvg_xform_identity(float* t) {
             t[0] = 1.0f;
             t[1] = 0.0f;
             t[2] = 0.0f;
@@ -322,8 +306,7 @@ namespace rl::nvg::svg {
             t[5] = 0.0f;
         }
 
-        void nsvg_xform_set_translation(float* t, const float tx, const float ty)
-        {
+        void nsvg_xform_set_translation(float* t, const float tx, const float ty) {
             t[0] = 1.0f;
             t[1] = 0.0f;
             t[2] = 0.0f;
@@ -332,8 +315,7 @@ namespace rl::nvg::svg {
             t[5] = ty;
         }
 
-        void nsvg_xform_set_scale(float* t, const float sx, const float sy)
-        {
+        void nsvg_xform_set_scale(float* t, const float sx, const float sy) {
             t[0] = sx;
             t[1] = 0.0f;
             t[2] = 0.0f;
@@ -342,8 +324,7 @@ namespace rl::nvg::svg {
             t[5] = 0.0f;
         }
 
-        void nsvg_xform_set_skew_x(float* t, const float a)
-        {
+        void nsvg_xform_set_skew_x(float* t, const float a) {
             t[0] = 1.0f;
             t[1] = 0.0f;
             t[2] = tanf(a);
@@ -352,8 +333,7 @@ namespace rl::nvg::svg {
             t[5] = 0.0f;
         }
 
-        void nsvg_xform_set_skew_y(float* t, const float a)
-        {
+        void nsvg_xform_set_skew_y(float* t, const float a) {
             t[0] = 1.0f;
             t[1] = tanf(a);
             t[2] = 0.0f;
@@ -362,8 +342,7 @@ namespace rl::nvg::svg {
             t[5] = 0.0f;
         }
 
-        void nsvg_xform_set_rotation(float* t, const float a)
-        {
+        void nsvg_xform_set_rotation(float* t, const float a) {
             const float cs = cosf(a), sn = sinf(a);
             t[0] = cs;
             t[1] = sn;
@@ -373,8 +352,7 @@ namespace rl::nvg::svg {
             t[5] = 0.0f;
         }
 
-        void nsvg_xform_multiply(float* t, const float* s)
-        {
+        void nsvg_xform_multiply(float* t, const float* s) {
             const float t0 = t[0] * s[0] + t[1] * s[2];
             const float t2 = t[2] * s[0] + t[3] * s[2];
             const float t4 = t[4] * s[0] + t[5] * s[2] + s[4];
@@ -386,8 +364,7 @@ namespace rl::nvg::svg {
             t[4] = t4;
         }
 
-        void nsvg_xform_inverse(float* inv, float* t)
-        {
+        void nsvg_xform_inverse(float* inv, float* t) {
             const float det = t[0] * t[3] - t[2] * t[1];
             if (det > -NSVG_EPSILON && det < NSVG_EPSILON) {
                 nsvg_xform_identity(t);
@@ -402,42 +379,36 @@ namespace rl::nvg::svg {
             inv[5] = (t[1] * t[4] - t[0] * t[5]) * invdet;
         }
 
-        void nsvg_xform_premultiply(float* t, const float* s)
-        {
+        void nsvg_xform_premultiply(float* t, const float* s) {
             float s2[6];
             std::memcpy(s2, s, sizeof(float) * 6);
             nsvg_xform_multiply(s2, t);
             std::memcpy(t, s2, sizeof(float) * 6);
         }
 
-        void nsvg_xform_point(float* dx, float* dy, const float x, const float y, const float* t)
-        {
+        void nsvg_xform_point(float* dx, float* dy, const float x, const float y, const float* t) {
             *dx = x * t[0] + y * t[2] + t[4];
             *dy = x * t[1] + y * t[3] + t[5];
         }
 
-        void nsvg_xform_vec(float* dx, float* dy, const float x, const float y, const float* t)
-        {
+        void nsvg_xform_vec(float* dx, float* dy, const float x, const float y, const float* t) {
             *dx = x * t[0] + y * t[2];
             *dy = x * t[1] + y * t[3];
         }
 
-        int nsvg_pt_in_bounds(const float* pt, const float* bounds)
-        {
+        int nsvg_pt_in_bounds(const float* pt, const float* bounds) {
             return pt[0] >= bounds[0] && pt[0] <= bounds[2] && pt[1] >= bounds[1] &&
                    pt[1] <= bounds[3];
         }
 
         double nsvg_eval_bezier(const double t, const double p0, const double p1, const double p2,
-                                const double p3)
-        {
+                                const double p3) {
             const double it = 1.0 - t;
             return it * it * it * p0 + 3.0 * it * it * t * p1 + 3.0 * it * t * t * p2 +
                    t * t * t * p3;
         }
 
-        void nsvg_curve_bounds(float* bounds, const float* curve)
-        {
+        void nsvg_curve_bounds(float* bounds, const float* curve) {
             double roots[2] = {};
             double t{};
 
@@ -489,8 +460,7 @@ namespace rl::nvg::svg {
             }
         }
 
-        NSVGparser* nsvg_create_parser()
-        {
+        NSVGparser* nsvg_create_parser() {
             NSVGparser* p = static_cast<NSVGparser*>(malloc(sizeof(NSVGparser)));
             if (p != nullptr) {
                 std::memset(p, 0, sizeof(NSVGparser));
@@ -530,8 +500,7 @@ namespace rl::nvg::svg {
             return nullptr;
         }
 
-        void nsvg_delete_paths(NSVGpath* path)
-        {
+        void nsvg_delete_paths(NSVGpath* path) {
             while (path) {
                 NSVGpath* next = path->next;
                 if (path->pts != nullptr)
@@ -541,14 +510,12 @@ namespace rl::nvg::svg {
             }
         }
 
-        void nsvg_delete_paint(const NSVGpaint* paint)
-        {
+        void nsvg_delete_paint(const NSVGpaint* paint) {
             if (paint->type == NSVGPaintLinearGradient || paint->type == NSVGPaintRadialGradient)
                 std::free(paint->gradient);
         }
 
-        void nsvg_delete_gradient_data(NSVGgradientData* grad)
-        {
+        void nsvg_delete_gradient_data(NSVGgradientData* grad) {
             while (grad != nullptr) {
                 NSVGgradientData* next = grad->next;
                 std::free(grad->stops);
@@ -557,8 +524,7 @@ namespace rl::nvg::svg {
             }
         }
 
-        void nsvg_delete_parser(NSVGparser* p)
-        {
+        void nsvg_delete_parser(NSVGparser* p) {
             if (p != nullptr) {
                 nsvg_delete_paths(p->plist);
                 nsvg_delete_gradient_data(p->gradients);
@@ -568,13 +534,11 @@ namespace rl::nvg::svg {
             }
         }
 
-        void nsvg_reset_path(NSVGparser* p)
-        {
+        void nsvg_reset_path(NSVGparser* p) {
             p->npts = 0;
         }
 
-        void nsvg_add_point(NSVGparser* p, const float x, const float y)
-        {
+        void nsvg_add_point(NSVGparser* p, const float x, const float y) {
             if (p->npts + 1 > p->cpts) {
                 p->cpts = p->cpts ? p->cpts * 2 : 8;
                 p->pts = static_cast<float*>(realloc(p->pts, p->cpts * 2 * sizeof(float)));
@@ -586,8 +550,7 @@ namespace rl::nvg::svg {
             p->npts++;
         }
 
-        void nsvg_move_to(NSVGparser* p, const float x, const float y)
-        {
+        void nsvg_move_to(NSVGparser* p, const float x, const float y) {
             if (p->npts > 0) {
                 p->pts[(p->npts - 1) * 2 + 0] = x;
                 p->pts[(p->npts - 1) * 2 + 1] = y;
@@ -596,8 +559,7 @@ namespace rl::nvg::svg {
                 nsvg_add_point(p, x, y);
         }
 
-        void nsvg_line_to(NSVGparser* p, const float x, const float y)
-        {
+        void nsvg_line_to(NSVGparser* p, const float x, const float y) {
             if (p->npts > 0) {
                 const float px = p->pts[(p->npts - 1) * 2 + 0];
                 const float py = p->pts[(p->npts - 1) * 2 + 1];
@@ -610,8 +572,7 @@ namespace rl::nvg::svg {
         }
 
         void nsvg_cubic_bez_to(NSVGparser* p, const float cpx1, const float cpy1, const float cpx2,
-                               const float cpy2, const float x, const float y)
-        {
+                               const float cpy2, const float x, const float y) {
             if (p->npts > 0) {
                 nsvg_add_point(p, cpx1, cpy1);
                 nsvg_add_point(p, cpx2, cpy2);
@@ -619,55 +580,46 @@ namespace rl::nvg::svg {
             }
         }
 
-        NSVGattrib* nsvg_get_attr(NSVGparser* p)
-        {
+        NSVGattrib* nsvg_get_attr(NSVGparser* p) {
             return &p->attr[p->attr_head];
         }
 
-        void nsvg_push_attr(NSVGparser* p)
-        {
+        void nsvg_push_attr(NSVGparser* p) {
             if (p->attr_head < MaxAttr - 1) {
                 p->attr_head++;
                 std::memcpy(&p->attr[p->attr_head], &p->attr[p->attr_head - 1], sizeof(NSVGattrib));
             }
         }
 
-        void nsvg_pop_attr(NSVGparser* p)
-        {
+        void nsvg_pop_attr(NSVGparser* p) {
             if (p->attr_head > 0)
                 p->attr_head--;
         }
 
-        float nsvg_actual_orig_x(const NSVGparser* p)
-        {
+        float nsvg_actual_orig_x(const NSVGparser* p) {
             return p->view_minx;
         }
 
-        float nsvg_actual_orig_y(const NSVGparser* p)
-        {
+        float nsvg_actual_orig_y(const NSVGparser* p) {
             return p->view_miny;
         }
 
-        float nsvg_actual_width(const NSVGparser* p)
-        {
+        float nsvg_actual_width(const NSVGparser* p) {
             return p->view_width;
         }
 
-        float nsvg_actual_height(const NSVGparser* p)
-        {
+        float nsvg_actual_height(const NSVGparser* p) {
             return p->view_height;
         }
 
-        float nsvg_actual_length(const NSVGparser* p)
-        {
+        float nsvg_actual_length(const NSVGparser* p) {
             const float w = nsvg_actual_width(p);
             const float h = nsvg_actual_height(p);
             return sqrtf(w * w + h * h) / sqrtf(2.0f);
         }
 
         float nsvg_convert_to_pixels(NSVGparser* p, const NSVGcoordinate c, const float orig,
-                                     const float length)
-        {
+                                     const float length) {
             const NSVGattrib* attr = nsvg_get_attr(p);
             switch (c.units) {
                 case NSVGUnitsUser:
@@ -695,8 +647,7 @@ namespace rl::nvg::svg {
             }
         }
 
-        NSVGgradientData* nsvg_find_gradient_data(const NSVGparser* p, const char* id)
-        {
+        NSVGgradientData* nsvg_find_gradient_data(const NSVGparser* p, const char* id) {
             NSVGgradientData* grad = p->gradients;
             if (id == nullptr || *id == '\0')
                 return nullptr;
@@ -709,8 +660,7 @@ namespace rl::nvg::svg {
         }
 
         NSVGgradient* nsvg_create_gradient(NSVGparser* p, const char* id, const float* local_bounds,
-                                           const float* xform, signed char* paint_type)
-        {
+                                           const float* xform, signed char* paint_type) {
             const NSVGgradientData* data = nullptr;
             const NSVGgradientData* ref = nullptr;
             const NSVGgradientStop* stops = nullptr;
@@ -806,15 +756,13 @@ namespace rl::nvg::svg {
             return grad;
         }
 
-        float nsvg_get_average_scale(const float* t)
-        {
+        float nsvg_get_average_scale(const float* t) {
             const float sx = sqrtf(t[0] * t[0] + t[2] * t[2]);
             const float sy = sqrtf(t[1] * t[1] + t[3] * t[3]);
             return (sx + sy) * 0.5f;
         }
 
-        void nsvg_get_local_bounds(float* bounds, const NSVGshape* shape, const float* xform)
-        {
+        void nsvg_get_local_bounds(float* bounds, const NSVGshape* shape, const float* xform) {
             float curve[4 * 2], curve_bounds[4];
             int first = 1;
             for (const NSVGpath* path = shape->paths; path != nullptr; path = path->next) {
@@ -846,8 +794,7 @@ namespace rl::nvg::svg {
             }
         }
 
-        void nsvg_add_shape(NSVGparser* p)
-        {
+        void nsvg_add_shape(NSVGparser* p) {
             const NSVGattrib* attr = nsvg_get_attr(p);
             float scale = 1.0f;
 
@@ -929,8 +876,7 @@ namespace rl::nvg::svg {
                 std::free(shape);
         }
 
-        void nsvg_add_path(NSVGparser* p, const char closed)
-        {
+        void nsvg_add_path(NSVGparser* p, const char closed) {
             const NSVGattrib* attr = nsvg_get_attr(p);
             NSVGpath* path = nullptr;
             float bounds[4];
@@ -995,8 +941,7 @@ namespace rl::nvg::svg {
 
         // We roll our own string to float because the std library one uses locale and messes things
         // up.
-        double nsvg_atof(const char* s)
-        {
+        double nsvg_atof(const char* s) {
             const char* cur = const_cast<char*>(s);
             char* end = nullptr;
             double res = 0.0, sign = 1.0;
@@ -1054,8 +999,7 @@ namespace rl::nvg::svg {
             return res * sign;
         }
 
-        const char* nsvg_parse_number(const char* s, char* it, const int size)
-        {
+        const char* nsvg_parse_number(const char* s, char* it, const int size) {
             const int last = size - 1;
             int i = 0;
 
@@ -1104,8 +1048,7 @@ namespace rl::nvg::svg {
             return s;
         }
 
-        const char* nsvg_get_next_path_item_when_arc_flag(const char* s, char* it)
-        {
+        const char* nsvg_get_next_path_item_when_arc_flag(const char* s, char* it) {
             it[0] = '\0';
             // Skip white spaces and commas
             while (*s && (nsvg_isspace(*s) || *s == ','))
@@ -1124,8 +1067,7 @@ namespace rl::nvg::svg {
             return s;
         }
 
-        const char* nsvg_get_next_path_item(const char* s, char* it)
-        {
+        const char* nsvg_get_next_path_item(const char* s, char* it) {
             it[0] = '\0';
             // Skip white spaces and commas
             while (*s && (nsvg_isspace(*s) || *s == ','))
@@ -1144,8 +1086,7 @@ namespace rl::nvg::svg {
             return s;
         }
 
-        unsigned int nsvg_parse_color_hex(const char* str)
-        {
+        unsigned int nsvg_parse_color_hex(const char* str) {
             unsigned int r = 0, g = 0, b = 0;
             if (sscanf(str, "#%2x%2x%2x", &r, &g, &b) == 3)  // 2 digit hex
                 return NSVG_RGB(r, g, b);
@@ -1158,8 +1099,7 @@ namespace rl::nvg::svg {
         // This function returns gray (rgb(128, 128, 128) == '#808080') on parse errors
         // for backwards compatibility. Note: other image viewers return black instead.
 
-        unsigned int nsvg_parse_color_rgb(const char* str)
-        {
+        unsigned int nsvg_parse_color_rgb(const char* str) {
             int i;
             unsigned int rgbi[3];
             float rgbf[3];
@@ -1221,8 +1161,7 @@ namespace rl::nvg::svg {
             return NSVG_RGB(rgbi[0], rgbi[1], rgbi[2]);
         }
 
-        using NSVGNamedColor = struct NSVGNamedColor
-        {
+        using NSVGNamedColor = struct NSVGNamedColor {
             const char* name;
             unsigned int color;
         };
@@ -1377,8 +1316,7 @@ namespace rl::nvg::svg {
             { "yellowgreen", NSVG_RGB(154, 205, 50) },
         };
 
-        unsigned int nsvg_parse_color_name(const char* str)
-        {
+        unsigned int nsvg_parse_color_name(const char* str) {
             constexpr int ncolors = sizeof(nsvg_colors) / sizeof(NSVGNamedColor);
 
             for (int i = 0; i < ncolors; i++)
@@ -1388,8 +1326,7 @@ namespace rl::nvg::svg {
             return NSVG_RGB(128, 128, 128);
         }
 
-        unsigned int nsvg_parse_color(const char* str)
-        {
+        unsigned int nsvg_parse_color(const char* str) {
             size_t len = 0;
             while (*str == ' ')
                 ++str;
@@ -1401,8 +1338,7 @@ namespace rl::nvg::svg {
             return nsvg_parse_color_name(str);
         }
 
-        float nsvg_parse_opacity(const char* str)
-        {
+        float nsvg_parse_opacity(const char* str) {
             float val = nsvg_atof(str);
             if (val < 0.0f)
                 val = 0.0f;
@@ -1411,16 +1347,14 @@ namespace rl::nvg::svg {
             return val;
         }
 
-        float nsvg_parse_miter_limit(const char* str)
-        {
+        float nsvg_parse_miter_limit(const char* str) {
             float val = nsvg_atof(str);
             if (val < 0.0f)
                 val = 0.0f;
             return val;
         }
 
-        int nsvg_parse_units(const char* units)
-        {
+        int nsvg_parse_units(const char* units) {
             if (units[0] == 'p' && units[1] == 'x')
                 return NSVGUnitsPx;
             if (units[0] == 'p' && units[1] == 't')
@@ -1442,8 +1376,7 @@ namespace rl::nvg::svg {
             return NSVGUnitsUser;
         }
 
-        int nsvg_is_coordinate(const char* s)
-        {
+        int nsvg_is_coordinate(const char* s) {
             // optional sign
             if (*s == '-' || *s == '+')
                 s++;
@@ -1451,8 +1384,7 @@ namespace rl::nvg::svg {
             return nsvg_isdigit(*s) || *s == '.';
         }
 
-        NSVGcoordinate nsvg_parse_coordinate_raw(const char* str)
-        {
+        NSVGcoordinate nsvg_parse_coordinate_raw(const char* str) {
             NSVGcoordinate coord = { 0, NSVGUnitsUser };
             char buf[64];
             coord.units = nsvg_parse_units(nsvg_parse_number(str, buf, 64));
@@ -1460,21 +1392,18 @@ namespace rl::nvg::svg {
             return coord;
         }
 
-        NSVGcoordinate nsvg_coord(const float v, const int units)
-        {
+        NSVGcoordinate nsvg_coord(const float v, const int units) {
             const NSVGcoordinate coord = { v, units };
             return coord;
         }
 
         float nsvg_parse_coordinate(NSVGparser* p, const char* str, const float orig,
-                                    const float length)
-        {
+                                    const float length) {
             const NSVGcoordinate coord = nsvg_parse_coordinate_raw(str);
             return nsvg_convert_to_pixels(p, coord, orig, length);
         }
 
-        int nsvg_parse_transform_args(const char* str, float* args, const int max_na, int* na)
-        {
+        int nsvg_parse_transform_args(const char* str, float* args, const int max_na, int* na) {
             char it[64];
 
             *na = 0;
@@ -1501,8 +1430,7 @@ namespace rl::nvg::svg {
             return static_cast<int>(end - str);
         }
 
-        int nsvg_parse_matrix(float* xform, const char* str)
-        {
+        int nsvg_parse_matrix(float* xform, const char* str) {
             float t[6];
             int na = 0;
             const int len = nsvg_parse_transform_args(str, t, 6, &na);
@@ -1512,8 +1440,7 @@ namespace rl::nvg::svg {
             return len;
         }
 
-        int nsvg_parse_translate(float* xform, const char* str)
-        {
+        int nsvg_parse_translate(float* xform, const char* str) {
             float args[2];
             float t[6];
             int na = 0;
@@ -1526,8 +1453,7 @@ namespace rl::nvg::svg {
             return len;
         }
 
-        int nsvg_parse_scale(float* xform, const char* str)
-        {
+        int nsvg_parse_scale(float* xform, const char* str) {
             float args[2];
             int na = 0;
             float t[6];
@@ -1539,8 +1465,7 @@ namespace rl::nvg::svg {
             return len;
         }
 
-        int nsvg_parse_skew_x(float* xform, const char* str)
-        {
+        int nsvg_parse_skew_x(float* xform, const char* str) {
             float args[1];
             int na = 0;
             float t[6];
@@ -1550,8 +1475,7 @@ namespace rl::nvg::svg {
             return len;
         }
 
-        int nsvg_parse_skew_y(float* xform, const char* str)
-        {
+        int nsvg_parse_skew_y(float* xform, const char* str) {
             float args[1];
             int na = 0;
             float t[6];
@@ -1561,8 +1485,7 @@ namespace rl::nvg::svg {
             return len;
         }
 
-        int nsvg_parse_rotate(float* xform, const char* str)
-        {
+        int nsvg_parse_rotate(float* xform, const char* str) {
             float args[3];
             int na = 0;
             float m[6];
@@ -1592,8 +1515,7 @@ namespace rl::nvg::svg {
             return len;
         }
 
-        void nsvg_parse_transform(float* xform, const char* str)
-        {
+        void nsvg_parse_transform(float* xform, const char* str) {
             float t[6];
             int len;
             nsvg_xform_identity(xform);
@@ -1625,8 +1547,7 @@ namespace rl::nvg::svg {
             }
         }
 
-        void nsvg_parse_url(char* id, const char* str)
-        {
+        void nsvg_parse_url(char* id, const char* str) {
             int i = 0;
             str += 4;  // "url(";
             if (*str && *str == '#')
@@ -1638,8 +1559,7 @@ namespace rl::nvg::svg {
             id[i] = '\0';
         }
 
-        char nsvg_parse_line_cap(const char* str)
-        {
+        char nsvg_parse_line_cap(const char* str) {
             if (std::strcmp(str, "butt") == 0)
                 return NSVGCapButt;
             if (std::strcmp(str, "round") == 0)
@@ -1650,8 +1570,7 @@ namespace rl::nvg::svg {
             return NSVGCapButt;
         }
 
-        char nsvg_parse_line_join(const char* str)
-        {
+        char nsvg_parse_line_join(const char* str) {
             if (std::strcmp(str, "miter") == 0)
                 return NSVGJoinMiter;
             if (std::strcmp(str, "round") == 0)
@@ -1662,8 +1581,7 @@ namespace rl::nvg::svg {
             return NSVGJoinMiter;
         }
 
-        char nsvg_parse_fill_rule(const char* str)
-        {
+        char nsvg_parse_fill_rule(const char* str) {
             if (std::strcmp(str, "nonzero") == 0)
                 return NSVGFillruleNonzero;
             if (std::strcmp(str, "evenodd") == 0)
@@ -1672,8 +1590,7 @@ namespace rl::nvg::svg {
             return NSVGFillruleNonzero;
         }
 
-        const char* nsvg_get_next_dash_item(const char* s, char* it)
-        {
+        const char* nsvg_get_next_dash_item(const char* s, char* it) {
             int n = 0;
             it[0] = '\0';
             // Skip white spaces and commas
@@ -1689,8 +1606,7 @@ namespace rl::nvg::svg {
             return s;
         }
 
-        int nsvg_parse_stroke_dash_array(NSVGparser* p, const char* str, float* stroke_dash_array)
-        {
+        int nsvg_parse_stroke_dash_array(NSVGparser* p, const char* str, float* stroke_dash_array) {
             char item[64];
             int count = 0;
             float sum = 0.0f;
@@ -1719,8 +1635,7 @@ namespace rl::nvg::svg {
 
         void nsvg_parse_style(NSVGparser* p, const char* str);
 
-        int nsvg_parse_attr(NSVGparser* p, const char* name, const char* value)
-        {
+        int nsvg_parse_attr(NSVGparser* p, const char* name, const char* value) {
             float xform[6];
             NSVGattrib* attr = nsvg_get_attr(p);
             if (!attr)
@@ -1800,8 +1715,7 @@ namespace rl::nvg::svg {
             return 1;
         }
 
-        int nsvg_parse_name_value(NSVGparser* p, const char* start, const char* end)
-        {
+        int nsvg_parse_name_value(NSVGparser* p, const char* start, const char* end) {
             char name[512];
             char value[512];
 
@@ -1836,8 +1750,7 @@ namespace rl::nvg::svg {
             return nsvg_parse_attr(p, name, value);
         }
 
-        void nsvg_parse_style(NSVGparser* p, const char* str)
-        {
+        void nsvg_parse_style(NSVGparser* p, const char* str) {
             while (*str) {
                 // Left Trim
                 while (*str && nsvg_isspace(*str))
@@ -1858,8 +1771,7 @@ namespace rl::nvg::svg {
             }
         }
 
-        void nsvg_parse_attribs(NSVGparser* p, const char** attr)
-        {
+        void nsvg_parse_attribs(NSVGparser* p, const char** attr) {
             for (int i = 0; attr[i]; i += 2)
                 if (std::strcmp(attr[i], "style") == 0)
                     nsvg_parse_style(p, attr[i + 1]);
@@ -1867,8 +1779,7 @@ namespace rl::nvg::svg {
                     nsvg_parse_attr(p, attr[i], attr[i + 1]);
         }
 
-        int nsvg_get_args_per_element(const char cmd)
-        {
+        int nsvg_get_args_per_element(const char cmd) {
             switch (cmd) {
                 case 'v':
                 case 'V':
@@ -1901,8 +1812,7 @@ namespace rl::nvg::svg {
         }
 
         void nsvg_path_move_to(NSVGparser* p, float* cpx, float* cpy, const float* args,
-                               const int rel)
-        {
+                               const int rel) {
             if (rel) {
                 *cpx += args[0];
                 *cpy += args[1];
@@ -1915,8 +1825,7 @@ namespace rl::nvg::svg {
         }
 
         void nsvg_path_line_to(NSVGparser* p, float* cpx, float* cpy, const float* args,
-                               const int rel)
-        {
+                               const int rel) {
             if (rel) {
                 *cpx += args[0];
                 *cpy += args[1];
@@ -1929,8 +1838,7 @@ namespace rl::nvg::svg {
         }
 
         void nsvg_path_h_line_to(NSVGparser* p, float* cpx, const float* cpy, const float* args,
-                                 const int rel)
-        {
+                                 const int rel) {
             if (rel)
                 *cpx += args[0];
             else
@@ -1939,8 +1847,7 @@ namespace rl::nvg::svg {
         }
 
         void nsvg_path_v_line_to(NSVGparser* p, const float* cpx, float* cpy, const float* args,
-                                 const int rel)
-        {
+                                 const int rel) {
             if (rel)
                 *cpy += args[0];
             else
@@ -1949,8 +1856,7 @@ namespace rl::nvg::svg {
         }
 
         void nsvg_path_cubic_bez_to(NSVGparser* p, float* cpx, float* cpy, float* cpx2, float* cpy2,
-                                    const float* args, const int rel)
-        {
+                                    const float* args, const int rel) {
             float x2, y2, cx1, cy1, cx2, cy2;
 
             if (rel) {
@@ -1979,8 +1885,7 @@ namespace rl::nvg::svg {
         }
 
         void nsvg_path_cubic_bez_short_to(NSVGparser* p, float* cpx, float* cpy, float* cpx2,
-                                          float* cpy2, const float* args, const int rel)
-        {
+                                          float* cpy2, const float* args, const int rel) {
             float x2, y2, cx2, cy2;
 
             const float x1 = *cpx;
@@ -2010,8 +1915,7 @@ namespace rl::nvg::svg {
         }
 
         void nsvg_path_quad_bez_to(NSVGparser* p, float* cpx, float* cpy, float* cpx2, float* cpy2,
-                                   const float* args, const int rel)
-        {
+                                   const float* args, const int rel) {
             float x2, y2, cx, cy;
 
             const float x1 = *cpx;
@@ -2044,8 +1948,7 @@ namespace rl::nvg::svg {
         }
 
         void nsvg_path_quad_bez_short_to(NSVGparser* p, float* cpx, float* cpy, float* cpx2,
-                                         float* cpy2, const float* args, const int rel)
-        {
+                                         float* cpy2, const float* args, const int rel) {
             float x2, y2;
             const float x1 = *cpx;
             const float y1 = *cpy;
@@ -2075,23 +1978,19 @@ namespace rl::nvg::svg {
             *cpy = y2;
         }
 
-        float nsvg_sqr(const float x)
-        {
+        float nsvg_sqr(const float x) {
             return x * x;
         }
 
-        float nsvg_vmag(const float x, const float y)
-        {
+        float nsvg_vmag(const float x, const float y) {
             return sqrtf(x * x + y * y);
         }
 
-        float nsvg_vecrat(const float ux, const float uy, const float vx, const float vy)
-        {
+        float nsvg_vecrat(const float ux, const float uy, const float vx, const float vy) {
             return (ux * vx + uy * vy) / (nsvg_vmag(ux, uy) * nsvg_vmag(vx, vy));
         }
 
-        float nsvg_vecang(const float ux, const float uy, const float vx, const float vy)
-        {
+        float nsvg_vecang(const float ux, const float uy, const float vx, const float vy) {
             float r = nsvg_vecrat(ux, uy, vx, vy);
             if (r < -1.0f)
                 r = -1.0f;
@@ -2100,8 +1999,7 @@ namespace rl::nvg::svg {
             return (ux * vy < uy * vx ? -1.0f : 1.0f) * acosf(r);
         }
 
-        void nsvg_path_arc_to(NSVGparser* p, float* cpx, float* cpy, float* args, int rel)
-        {
+        void nsvg_path_arc_to(NSVGparser* p, float* cpx, float* cpy, float* args, int rel) {
             float rx;
             float ry;
             float rotx;
@@ -2260,8 +2158,7 @@ namespace rl::nvg::svg {
             *cpy = y2;
         }
 
-        void nsvg_parse_path(NSVGparser* p, const char** attr)
-        {
+        void nsvg_parse_path(NSVGparser* p, const char** attr) {
             const char* s = nullptr;
             char cmd = '\0';
             float args[10];
@@ -2419,8 +2316,7 @@ namespace rl::nvg::svg {
             nsvg_add_shape(p);
         }
 
-        void nsvg_parse_rect(NSVGparser* p, const char** attr)
-        {
+        void nsvg_parse_rect(NSVGparser* p, const char** attr) {
             float x = 0.0f;
             float y = 0.0f;
             float w = 0.0f;
@@ -2493,8 +2389,7 @@ namespace rl::nvg::svg {
             }
         }
 
-        void nsvg_parse_circle(NSVGparser* p, const char** attr)
-        {
+        void nsvg_parse_circle(NSVGparser* p, const char** attr) {
             float cx = 0.0f;
             float cy = 0.0f;
             float r = 0.0f;
@@ -2531,8 +2426,7 @@ namespace rl::nvg::svg {
             }
         }
 
-        void nsvg_parse_ellipse(NSVGparser* p, const char** attr)
-        {
+        void nsvg_parse_ellipse(NSVGparser* p, const char** attr) {
             float cx = 0.0f;
             float cy = 0.0f;
             float rx = 0.0f;
@@ -2573,8 +2467,7 @@ namespace rl::nvg::svg {
             }
         }
 
-        void nsvg_parse_line(NSVGparser* p, const char** attr)
-        {
+        void nsvg_parse_line(NSVGparser* p, const char** attr) {
             float x1 = 0.0;
             float y1 = 0.0;
             float x2 = 0.0;
@@ -2606,8 +2499,7 @@ namespace rl::nvg::svg {
             nsvg_add_shape(p);
         }
 
-        void nsvg_parse_poly(NSVGparser* p, const char** attr, const int closeFlag)
-        {
+        void nsvg_parse_poly(NSVGparser* p, const char** attr, const int closeFlag) {
             float args[2];
             int npts = 0;
             char item[64];
@@ -2638,8 +2530,7 @@ namespace rl::nvg::svg {
             nsvg_add_shape(p);
         }
 
-        void nsvg_parse_svg(NSVGparser* p, const char** attr)
-        {
+        void nsvg_parse_svg(NSVGparser* p, const char** attr) {
             for (int i = 0; attr[i]; i += 2)
                 if (!nsvg_parse_attr(p, attr[i], attr[i + 1])) {
                     if (std::strcmp(attr[i], "width") == 0)
@@ -2698,8 +2589,7 @@ namespace rl::nvg::svg {
                 }
         }
 
-        void nsvg_parse_gradient(NSVGparser* p, const char** attr, const signed char type)
-        {
+        void nsvg_parse_gradient(NSVGparser* p, const char** attr, const signed char type) {
             NSVGgradientData* grad = static_cast<NSVGgradientData*>(
                 std::malloc(sizeof(NSVGgradientData)));
             if (grad == nullptr)
@@ -2783,8 +2673,7 @@ namespace rl::nvg::svg {
             p->gradients = grad;
         }
 
-        void nsvg_parse_gradient_stop(NSVGparser* p, const char** attr)
-        {
+        void nsvg_parse_gradient_stop(NSVGparser* p, const char** attr) {
             NSVGattrib* cur_attr = nsvg_get_attr(p);
             int i;
 
@@ -2822,8 +2711,7 @@ namespace rl::nvg::svg {
             stop->offset = cur_attr->stop_offset;
         }
 
-        void nsvg_start_element(void* ud, const char* el, const char** attr)
-        {
+        void nsvg_start_element(void* ud, const char* el, const char** attr) {
             NSVGparser* p = static_cast<NSVGparser*>(ud);
 
             if (p->defs_flag) {
@@ -2890,8 +2778,7 @@ namespace rl::nvg::svg {
                 nsvg_parse_svg(p, attr);
         }
 
-        void nsvg_end_element(void* ud, const char* el)
-        {
+        void nsvg_end_element(void* ud, const char* el) {
             NSVGparser* p = static_cast<NSVGparser*>(ud);
 
             if (std::strcmp(el, "g") == 0)
@@ -2902,15 +2789,13 @@ namespace rl::nvg::svg {
                 p->defs_flag = 0;
         }
 
-        void nsvg_content(void* ud, const char* s)
-        {
+        void nsvg_content(void* ud, const char* s) {
             NSVG_NOTUSED(ud);
             NSVG_NOTUSED(s);
             // empty
         }
 
-        void nsvg_image_bounds(const NSVGparser* p, float* bounds)
-        {
+        void nsvg_image_bounds(const NSVGparser* p, float* bounds) {
             const NSVGshape* shape = p->image->shapes;
             if (shape == nullptr) {
                 bounds[0] = bounds[1] = bounds[2] = bounds[3] = 0.0;
@@ -2928,8 +2813,7 @@ namespace rl::nvg::svg {
             }
         }
 
-        float nsvg_view_align(const float content, const float container, const int type)
-        {
+        float nsvg_view_align(const float content, const float container, const int type) {
             if (type == Min)
                 return 0;
             if (type == Max)
@@ -2939,8 +2823,7 @@ namespace rl::nvg::svg {
         }
 
         void nsvg_scale_gradient(NSVGgradient* grad, const float tx, const float ty, const float sx,
-                                 const float sy)
-        {
+                                 const float sy) {
             float t[6];
             nsvg_xform_set_translation(t, tx, ty);
             nsvg_xform_multiply(grad->xform, t);
@@ -2949,8 +2832,7 @@ namespace rl::nvg::svg {
             nsvg_xform_multiply(grad->xform, t);
         }
 
-        void nsvg_scale_to_viewbox(NSVGparser* p, const char* units)
-        {
+        void nsvg_scale_to_viewbox(NSVGparser* p, const char* units) {
             float bounds[4], t[6];
             int i;
 
@@ -3041,8 +2923,7 @@ namespace rl::nvg::svg {
             }
         }
 
-        void nsvg_create_gradients(NSVGparser* p)
-        {
+        void nsvg_create_gradients(NSVGparser* p) {
             for (NSVGshape* shape = p->image->shapes; shape != nullptr; shape = shape->next) {
                 if (shape->fill.type == NSVGPaintUndef) {
                     if (shape->fill_gradient[0] != '\0') {
@@ -3071,8 +2952,7 @@ namespace rl::nvg::svg {
         }
     }
 
-    NSVGimage* nsvg_parse(char* input, const char* units, const float dpi)
-    {
+    NSVGimage* nsvg_parse(char* input, const char* units, const float dpi) {
         NSVGimage* ret = nullptr;
 
         NSVGparser* p = nsvg_create_parser();
@@ -3096,8 +2976,7 @@ namespace rl::nvg::svg {
         return ret;
     }
 
-    NSVGimage* nsvg_parse_from_file(const char* filename, const char* units, const float dpi)
-    {
+    NSVGimage* nsvg_parse_from_file(const char* filename, const char* units, const float dpi) {
         FILE* fp = nullptr;
         char* data = nullptr;
         NSVGimage* image = nullptr;
@@ -3130,8 +3009,7 @@ namespace rl::nvg::svg {
         return nullptr;
     }
 
-    NSVGpath* nsvg_duplicate_path(const NSVGpath* p)
-    {
+    NSVGpath* nsvg_duplicate_path(const NSVGpath* p) {
         NSVGpath* res = nullptr;
 
         if (p == nullptr)
@@ -3162,8 +3040,7 @@ namespace rl::nvg::svg {
         return nullptr;
     }
 
-    void nsvg_delete(NSVGimage* image)
-    {
+    void nsvg_delete(NSVGimage* image) {
         if (image == nullptr)
             return;
 

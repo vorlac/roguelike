@@ -21,8 +21,7 @@ namespace rl::ui {
     using ComponentFormat = i32;
     class ScrollableWidget;
 
-    class Canvas final : public Widget
-    {
+    class Canvas final : public Widget {
     public:
         enum class MouseMode {
             Propagate,  // Propagate mouse inputs to children widgets

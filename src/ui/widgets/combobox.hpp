@@ -12,8 +12,7 @@ namespace rl {
         class Widget;
         class VerticalScrollPanel;
 
-        class ComboBox final : public PopupButton
-        {
+        class ComboBox final : public PopupButton {
         public:
             explicit ComboBox(Widget* parent);
             ComboBox(Widget* parent, const std::vector<std::string>& items);

@@ -12,13 +12,11 @@ SDL_C_LIB_END
 namespace rl {
     class MainWindow;
 
-    class Mouse
-    {
+    class Mouse {
     public:
         friend MainWindow;
 
-        struct Event
-        {
+        struct Event {
             using type_t = SDL3::SDL_EventType;
             using type = std::underlying_type_t<type_t>;
 
@@ -29,15 +27,13 @@ namespace rl {
                 MouseWheel = SDL3::SDL_EVENT_MOUSE_WHEEL,
             };
 
-            struct Data
-            {
+            struct Data {
                 using Motion = SDL3::SDL_MouseMotionEvent;
                 using Wheel = SDL3::SDL_MouseWheelEvent;
             };
         };
 
-        struct Button
-        {
+        struct Button {
             using type = u8;
 
             enum ID : type {
@@ -50,8 +46,7 @@ namespace rl {
             };
         };
 
-        struct Cursor
-        {
+        struct Cursor {
             using type = SDL3::SDL_SystemCursor;
 
             enum ID : std::underlying_type_t<type> {
@@ -79,8 +74,7 @@ namespace rl {
             };
         };
 
-        struct Wheel
-        {
+        struct Wheel {
             using type = u8;
 
             enum Direction : type {
@@ -145,16 +139,14 @@ namespace rl {
 }
 
 namespace rl {
-    inline auto format_as(const Mouse& mouse)
-    {
+    inline auto format_as(const Mouse& mouse) {
         return fmt::format("pos={} lmb={}, rmb={}, wheel=[{} | {}]", mouse.pos(),
                            mouse.get_button_state(Mouse::Button::Left),
                            mouse.get_button_state(Mouse::Button::Right),
                            mouse.get_button_state(Mouse::Button::Middle), mouse.wheel());
     }
 
-    constexpr auto format_as(const Mouse::Button::ID btn)
-    {
+    constexpr auto format_as(const Mouse::Button::ID btn) {
         switch (btn) {
             case Mouse::Button::ID::Left:
                 return "left";
@@ -173,8 +165,7 @@ namespace rl {
 }
 
 SDL_C_LIB_BEGIN
-auto format_as(const auto& wheel)
-{
+auto format_as(const auto& wheel) {
     return fmt::format("({},{})", wheel.x, wheel.y);
 }
 

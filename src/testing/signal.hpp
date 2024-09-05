@@ -24,8 +24,7 @@
 namespace rl::test::signals {
     template <auto& SignalName, typename TSubscriber = std::nullopt_t, std::invocable TCallable = std::function<void()>>
         requires rl::any_of<std::remove_cvref_t<decltype(SignalName)>, std::string_view, const char*, const char[]>
-    class Signal
-    {
+    class Signal {
     public:
         using callable_t = TCallable;
         using subscriber_t = std::remove_cvref_t<TSubscriber>;
@@ -46,25 +45,21 @@ namespace rl::test::signals {
             m_subscribers.emplace(hash_name, std::forward<TCallable>(slot));
         }
 
-        static void disconnect(TCallable&&)
-        {
+        static void disconnect(TCallable&&) {
             m_subscribers.erase(hash_name);
         }
 
-        void emit() noexcept
-        {
+        void emit() noexcept {
             for (auto&& [key, slot] : m_subscribers)
                 std::invoke(std::forward<decltype(slot)>(slot));
         }
 
-        bool operator==(const Signal& other) const
-        {
+        bool operator==(const Signal& other) const {
             debug_assert(hash_value(*this) == hash_value(other));
             return hash_value(*this) == hash_value(other);
         }
 
-        friend auto hash_value(const TSubscriber& subscriber)
-        {
+        friend auto hash_value(const TSubscriber& subscriber) {
             debug_assert(hash_name == Signal::hash_name);
             debug_assert(hash_name == decltype(subscriber)::hash_name);
             return ::std::hash<std::string_view>(Signal::hash_name);

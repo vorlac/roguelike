@@ -15,8 +15,7 @@
 #include "utils/properties.hpp"
 
 namespace rl::ui {
-    ds::dims<f32> GridLayout::computed_size(nvg::Context* nvg_context, const Widget* widget) const
-    {
+    ds::dims<f32> GridLayout::computed_size(nvg::Context* nvg_context, const Widget* widget) const {
         std::array<std::vector<f32>, 2> grid{ { {}, {} } };
         this->compute_layout(nvg_context, widget, grid);
 
@@ -35,8 +34,7 @@ namespace rl::ui {
     }
 
     void GridLayout::compute_layout(nvg::Context*, const Widget* widget,
-                                    std::array<std::vector<f32>, 2>& grid) const
-    {
+                                    std::array<std::vector<f32>, 2>& grid) const {
         const u32 axis1{ static_cast<u32>(m_orientation) };
         const u32 axis2{ (axis1 + 1) % 2 };
         const u64 num_children{ widget->child_count() };
@@ -70,8 +68,7 @@ namespace rl::ui {
                         return;
 
                     w = widget->children()[child++];
-                }
-                while (!w->visible());
+                } while (!w->visible());
 
                 ds::dims ps{ w->preferred_size() };
                 ds::dims fs{ w->fixed_size() };
@@ -93,8 +90,7 @@ namespace rl::ui {
         }
     }
 
-    void GridLayout::apply_layout(nvg::Context* nvg_context, const Widget* widget) const
-    {
+    void GridLayout::apply_layout(nvg::Context* nvg_context, const Widget* widget) const {
         ds::dims fs_w{ widget->fixed_size() };
         ds::dims container_size{
             std::fabs(fs_w.width) > std::numeric_limits<f32>::epsilon() ? fs_w.width
@@ -167,8 +163,7 @@ namespace rl::ui {
                         return;
 
                     child = widget->children()[child_idx++];
-                }
-                while (!child->visible());
+                } while (!child->visible());
 
                 const ds::dims<f32> ps{ child->preferred_size() };
                 ds::dims<f32> fs{ child->fixed_size() };
@@ -224,28 +219,23 @@ namespace rl::ui {
         }
     }
 
-    Alignment GridLayout::orientation() const
-    {
+    Alignment GridLayout::orientation() const {
         return m_orientation;
     }
 
-    void GridLayout::set_orientation(const Alignment orientation)
-    {
+    void GridLayout::set_orientation(const Alignment orientation) {
         m_orientation = orientation;
     }
 
-    f32 GridLayout::resolution() const
-    {
+    f32 GridLayout::resolution() const {
         return m_resolution;
     }
 
-    void GridLayout::set_resolution(const f32 resolution)
-    {
+    void GridLayout::set_resolution(const f32 resolution) {
         m_resolution = resolution;
     }
 
-    f32 GridLayout::spacing(const Axis axis) const
-    {
+    f32 GridLayout::spacing(const Axis axis) const {
         switch (axis) {
             case Axis::Horizontal:
                 return m_spacing.x;
@@ -257,8 +247,7 @@ namespace rl::ui {
         }
     }
 
-    void GridLayout::set_spacing(const Axis axis, const f32 spacing)
-    {
+    void GridLayout::set_spacing(const Axis axis, const f32 spacing) {
         switch (axis) {
             case Axis::Horizontal:
                 m_spacing.x = spacing;
@@ -272,23 +261,19 @@ namespace rl::ui {
         }
     }
 
-    void GridLayout::set_spacing(const f32 spacing)
-    {
+    void GridLayout::set_spacing(const f32 spacing) {
         m_spacing = ds::vector2{ spacing, spacing };
     }
 
-    f32 GridLayout::margin() const
-    {
+    f32 GridLayout::margin() const {
         return m_margin;
     }
 
-    void GridLayout::set_margin(f32 margin)
-    {
+    void GridLayout::set_margin(f32 margin) {
         m_margin = margin;
     }
 
-    Placement_OldAlignment GridLayout::alignment(Axis axis, i32 item) const
-    {
+    Placement_OldAlignment GridLayout::alignment(Axis axis, i32 item) const {
         i32 axis_idx = std::to_underlying(axis);
         if (item < static_cast<i32>(m_alignment[axis_idx].size()))
             return m_alignment[axis_idx][item];
@@ -296,23 +281,19 @@ namespace rl::ui {
             return m_default_alignment[axis_idx];
     }
 
-    void GridLayout::set_col_alignment(Placement_OldAlignment value)
-    {
+    void GridLayout::set_col_alignment(Placement_OldAlignment value) {
         m_default_alignment[std::to_underlying(Axis::Horizontal)] = value;
     }
 
-    void GridLayout::set_row_alignment(Placement_OldAlignment value)
-    {
+    void GridLayout::set_row_alignment(Placement_OldAlignment value) {
         m_default_alignment[std::to_underlying(Axis::Vertical)] = value;
     }
 
-    void GridLayout::set_col_alignment(const std::vector<Placement_OldAlignment>& value)
-    {
+    void GridLayout::set_col_alignment(const std::vector<Placement_OldAlignment>& value) {
         m_alignment[std::to_underlying(Axis::Horizontal)] = value;
     }
 
-    void GridLayout::set_row_alignment(const std::vector<Placement_OldAlignment>& value)
-    {
+    void GridLayout::set_row_alignment(const std::vector<Placement_OldAlignment>& value) {
         m_alignment[std::to_underlying(Axis::Vertical)] = value;
     }
 

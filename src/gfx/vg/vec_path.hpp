@@ -9,8 +9,7 @@
 #include "utils/numeric.hpp"
 
 namespace rl::ui {
-    class path
-    {
+    class path {
     public:
         // clang-format off
 
@@ -44,24 +43,20 @@ namespace rl::ui {
         explicit path() = default;
 
         explicit path(std::vector<step> sequence)
-            : m_path_sequence{ std::move(sequence) }
-        {
+            : m_path_sequence{ std::move(sequence) } {
         }
 
-        auto& move_to(ds::point<f32> pos)
-        {
+        auto& move_to(ds::point<f32> pos) {
             m_path_sequence.emplace_back(op::move, { pos.x, pos.y });
             return *this;
         }
 
-        auto& line_to(ds::point<f32> pos)
-        {
+        auto& line_to(ds::point<f32> pos) {
             m_path_sequence.emplace_back(op::line, { pos.x, pos.y });
             return *this;
         }
 
-        auto& add_rect(ds::rect<f32> rect)
-        {
+        auto& add_rect(ds::rect<f32> rect) {
             m_path_sequence.emplace_back(op::rect, { pos.x, pos.y });
             return *this;
         }

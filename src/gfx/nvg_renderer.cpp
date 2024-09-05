@@ -17,8 +17,7 @@
 
 namespace rl {
     namespace {
-        nvg::Context* create_nvg_context(bool& stencil_buf, bool& depth_buf, bool& float_buf)
-        {
+        nvg::Context* create_nvg_context(bool& stencil_buf, bool& depth_buf, bool& float_buf) {
             constexpr u8 float_mode{ 0 };
             i32 depth_bits{ 0 };
             i32 stencil_bits{ 0 };
@@ -48,8 +47,7 @@ namespace rl {
     }
 
     NVGRenderer::NVGRenderer()
-        : m_nvg_context{ create_nvg_context(m_stencil_buffer, m_depth_buffer, m_float_buffer) }
-    {
+        : m_nvg_context{ create_nvg_context(m_stencil_buffer, m_depth_buffer, m_float_buffer) } {
         this->load_fonts({
             text::font::Data{
                 text::font::style::Sans,
@@ -82,52 +80,43 @@ namespace rl {
         });
     }
 
-    nvg::Context* NVGRenderer::context() const
-    {
+    nvg::Context* NVGRenderer::context() const {
         return m_nvg_context.get();
     }
 
-    void NVGRenderer::begin_frame(const ds::dims<f32>& render_size, const f32 pixel_ratio) const
-    {
+    void NVGRenderer::begin_frame(const ds::dims<f32>& render_size, const f32 pixel_ratio) const {
         nvg::begin_frame(
             m_nvg_context.get(), render_size.width,
             render_size.height, pixel_ratio);
     }
 
-    void NVGRenderer::end_frame() const
-    {
+    void NVGRenderer::end_frame() const {
         nvg::end_frame(m_nvg_context.get());
     }
 
-    void NVGRenderer::save_state() const
-    {
+    void NVGRenderer::save_state() const {
         nvg::save(m_nvg_context.get());
     }
 
-    void NVGRenderer::begin_path() const
-    {
+    void NVGRenderer::begin_path() const {
         nvg::begin_path(m_nvg_context.get());
     }
 
-    void NVGRenderer::end_path() const
-    {
+    void NVGRenderer::end_path() const {
         nvg::begin_path(m_nvg_context.get());
     }
 
-    void NVGRenderer::restore_state() const
-    {
+    void NVGRenderer::restore_state() const {
         nvg::restore(m_nvg_context.get());
     }
 
-    void NVGRenderer::reset_scissor() const
-    {
+    void NVGRenderer::reset_scissor() const {
         nvg::reset_scissor(m_nvg_context.get());
     }
 
     nvg::PaintStyle NVGRenderer::create_rect_gradient_paint_style(const ds::rect<f32>& rect, const f32 corner_radius,
                                                                   const f32 outer_blur, const ds::color<f32>& inner_color,
-                                                                  const ds::color<f32>& outer_gradient_color) const
-    {
+                                                                  const ds::color<f32>& outer_gradient_color) const {
         // Creates and returns a box gradient.
         // Box gradient is a feathered rounded rectangle, it is useful for rendering drop shadows or
         // highlights for boxes. Parameters (x,y) define the top-left corner of the rectangle, (w,h)
@@ -141,8 +130,7 @@ namespace rl {
 
     nvg::PaintStyle NVGRenderer::create_linear_gradient_paint_style(ds::line<f32> line,
                                                                     const ds::color<f32>& inner_color,
-                                                                    const ds::color<f32>& outer_gradient_color) const
-    {
+                                                                    const ds::color<f32>& outer_gradient_color) const {
         // Creates and returns a box gradient.
         // Box gradient is a feathered rounded rectangle, it is useful for rendering drop shadows or
         // highlights for boxes. Parameters (x,y) define the top-left corner of the rectangle, (w,h)
@@ -155,8 +143,7 @@ namespace rl {
     }
 
     text::font::handle NVGRenderer::load_font(const std::string_view& font_name,
-                                              const std::basic_string_view<u8>& font_ttf) const
-    {
+                                              const std::basic_string_view<u8>& font_ttf) const {
         // Creates font by loading it from the specified memory chunk.
         // Returns handle to the font.
         const text::font::handle fh{ nvg::create_font_mem(m_nvg_context.get(), font_name, font_ttf) };
@@ -164,16 +151,14 @@ namespace rl {
         return fh;
     }
 
-    void NVGRenderer::flush(const ds::dims<f32>& viewport, const f32 pixel_ratio) const
-    {
+    void NVGRenderer::flush(const ds::dims<f32>& viewport, const f32 pixel_ratio) const {
         // Flush all queued up NanoVG rendering commands
         const nvg::Params* params{ nvg::internal_params(m_nvg_context.get()) };
         params->render_flush(params->user_ptr);
         params->render_viewport(params->user_ptr, viewport.width, viewport.height, pixel_ratio);
     }
 
-    void NVGRenderer::load_fonts(const std::vector<text::font::Data>& fonts)
-    {
+    void NVGRenderer::load_fonts(const std::vector<text::font::Data>& fonts) {
         for (auto&& [font_name, font_ttf] : fonts) {
             text::font::handle fh{ this->load_font(
                 std::forward<decltype(font_name)>(font_name),
@@ -182,20 +167,17 @@ namespace rl {
         }
     }
 
-    void NVGRenderer::set_fill_paint_style(const nvg::PaintStyle& paint_style) const
-    {
+    void NVGRenderer::set_fill_paint_style(const nvg::PaintStyle& paint_style) const {
         nvg::fill_paint(m_nvg_context.get(), paint_style);
     }
 
-    void NVGRenderer::fill_current_path(const nvg::PaintStyle& paint_style) const
-    {
+    void NVGRenderer::fill_current_path(const nvg::PaintStyle& paint_style) const {
         nvg::fill_paint(m_nvg_context.get(), paint_style);
         nvg::fill(m_nvg_context.get());
     }
 
     void NVGRenderer::set_text_properties(const std::string_view font_name, const f32 font_size,
-                                          const Align alignment, const ds::color<f32>& text_color) const
-    {
+                                          const Align alignment, const ds::color<f32>& text_color) const {
         if (!font_name.empty())
             nvg::set_font_face(m_nvg_context.get(), font_name);
         if (font_size > 0.0f)
@@ -206,28 +188,24 @@ namespace rl {
             nvg::fill_color(m_nvg_context.get(), text_color);
     }
 
-    void NVGRenderer::set_text_properties(const TextProperties& props) const
-    {
+    void NVGRenderer::set_text_properties(const TextProperties& props) const {
         this->set_text_properties(props.font, props.font_size, props.align, props.color);
     }
 
     void NVGRenderer::draw_text(std::string text, const ds::point<f32> pos,
-                                const TextProperties& props) const
-    {
+                                const TextProperties& props) const {
         this->set_text_properties(props.font, props.font_size, props.align, props.color);
         nvg::draw_text(m_nvg_context.get(), pos, std::move(text));
     }
 
-    ds::dims<f32> NVGRenderer::get_text_size(const std::string&) const
-    {
+    ds::dims<f32> NVGRenderer::get_text_size(const std::string&) const {
         debug_assert("not implemented");
         return ds::dims<f32>::zero();
     }
 
     ds::rect<f32> NVGRenderer::get_text_box_rect(
         const std::string& text, ds::point<f32> pos, std::string_view font_name,
-        const f32 font_size, const f32 fold_width, const Align alignment) const
-    {
+        const f32 font_size, const f32 fold_width, const Align alignment) const {
         this->set_text_properties(font_name, font_size, alignment);
         // Measures the specified multi-text string. Parameter bounds should be a pointer to
         // float[4], if the bounding box of the text should be returned. The bounds value are
@@ -246,8 +224,7 @@ namespace rl {
 
     ds::dims<f32> NVGRenderer::get_text_size(
         const std::string& text, const std::string_view& font_name,
-        const f32 font_size, const Align alignment) const
-    {
+        const f32 font_size, const Align alignment) const {
         this->set_text_properties(font_name, font_size, alignment);
         const f32 width{ nvg::text_bounds(m_nvg_context.get(), ds::point<f32>::zero(), text) };
 
@@ -260,8 +237,7 @@ namespace rl {
 
     void NVGRenderer::draw_rect_outline(
         const ds::rect<f32>& rect, const f32 stroke_width,
-        const ds::color<f32>& color, const Outline type) const
-    {
+        const ds::color<f32>& color, const Outline type) const {
         nvg::stroke_width(m_nvg_context.get(), stroke_width);
         nvg::begin_path(m_nvg_context.get());
 
@@ -289,8 +265,7 @@ namespace rl {
         nvg::stroke(m_nvg_context.get());
     }
 
-    void NVGRenderer::draw_rounded_rect(const ds::rect<f32>& rect, const f32 corner_radius) const
-    {
+    void NVGRenderer::draw_rounded_rect(const ds::rect<f32>& rect, const f32 corner_radius) const {
         nvg::rounded_rect(m_nvg_context.get(), rect.pt.x, rect.pt.y,
                           rect.size.width, rect.size.height, corner_radius);
     }

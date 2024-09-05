@@ -35,8 +35,7 @@ namespace rl::io {
         Trace
     };
 
-    struct logging
-    {
+    struct logging {
         constexpr static inline LogMode mode{ LogMode::StdOut };
         constexpr static inline LogLevel level{ LogLevel::Trace };
 

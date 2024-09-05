@@ -9,8 +9,7 @@
 namespace rl::ui {
     class Widget;
 
-    class AdvancedGridLayout final : public OldLayout
-    {
+    class AdvancedGridLayout final : public OldLayout {
     public:
         explicit AdvancedGridLayout(const std::vector<f32>& cols = {},
                                     const std::vector<f32>& rows = {}, f32 margin = 0.0f);

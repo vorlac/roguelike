@@ -13,8 +13,7 @@
 #include "utils/numeric.hpp"
 
 namespace rl::ui {
-    ds::dims<f32> GroupLayout::computed_size(nvg::Context*, const Widget* widget) const
-    {
+    ds::dims<f32> GroupLayout::computed_size(nvg::Context*, const Widget* widget) const {
         f32 height{ m_margin };
         f32 width{ 2.0f * m_margin };
 
@@ -53,8 +52,7 @@ namespace rl::ui {
         return ds::dims{ width, height };
     }
 
-    void GroupLayout::apply_layout(nvg::Context*, const Widget* widget) const
-    {
+    void GroupLayout::apply_layout(nvg::Context*, const Widget* widget) const {
         f32 height{ m_margin };
         const f32 available_width{ math::equal(widget->fixed_width(), 0.0f)
                                        ? widget->width() - 2.0f * m_margin
@@ -102,43 +100,35 @@ namespace rl::ui {
         }
     }
 
-    f32 GroupLayout::margin() const
-    {
+    f32 GroupLayout::margin() const {
         return m_margin;
     }
 
-    void GroupLayout::set_margin(const f32 margin)
-    {
+    void GroupLayout::set_margin(const f32 margin) {
         m_margin = margin;
     }
 
-    f32 GroupLayout::spacing() const
-    {
+    f32 GroupLayout::spacing() const {
         return m_spacing;
     }
 
-    void GroupLayout::set_spacing(const f32 spacing)
-    {
+    void GroupLayout::set_spacing(const f32 spacing) {
         m_spacing = spacing;
     }
 
-    f32 GroupLayout::group_indent() const
-    {
+    f32 GroupLayout::group_indent() const {
         return m_group_indent;
     }
 
-    void GroupLayout::set_group_indent(const f32 group_indent)
-    {
+    void GroupLayout::set_group_indent(const f32 group_indent) {
         m_group_indent = group_indent;
     }
 
-    f32 GroupLayout::group_spacing() const
-    {
+    f32 GroupLayout::group_spacing() const {
         return m_group_spacing;
     }
 
-    void GroupLayout::set_group_spacing(const f32 group_spacing)
-    {
+    void GroupLayout::set_group_spacing(const f32 group_spacing) {
         m_group_spacing = group_spacing;
     }
 

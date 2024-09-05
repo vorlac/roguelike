@@ -8,12 +8,10 @@
 
 namespace rl {
     template <auto& String>
-    struct hash
-    {
+    struct hash {
         constexpr static std::string_view str{ String };
 
-        static consteval uint32_t rs()
-        {
+        static consteval uint32_t rs() {
             constexpr uint32_t b = 378551;
             uint32_t a = 63689;
             uint32_t hash = 0;
@@ -25,8 +23,7 @@ namespace rl {
             return hash;
         }
 
-        static consteval uint32_t js()
-        {
+        static consteval uint32_t js() {
             uint32_t hash{ 1315423911 };
             for (const char c : str)
                 hash ^= ((hash << 5) + c + (hash >> 2));
@@ -34,8 +31,7 @@ namespace rl {
             return hash;
         }
 
-        static consteval uint32_t pjw()
-        {
+        static consteval uint32_t pjw() {
             constexpr uint32_t bits_in_unsigned_int{ sizeof(uint32_t) * 8 };
             constexpr uint32_t three_quarters{ (bits_in_unsigned_int * 3) / 4 };
             constexpr uint32_t one_eighth{ bits_in_unsigned_int / 8 };
@@ -52,8 +48,7 @@ namespace rl {
             return hash;
         }
 
-        static consteval uint32_t elf()
-        {
+        static consteval uint32_t elf() {
             uint32_t hash{ 0 };
             uint32_t x{ 0 };
 
@@ -67,8 +62,7 @@ namespace rl {
             return hash;
         }
 
-        static consteval uint32_t bkdr()
-        {
+        static consteval uint32_t bkdr() {
             constexpr uint32_t seed{ 131 };  // 31 131 1313 13131 131313 etc..
             uint32_t hash = 0;
             for (const char c : str)
@@ -77,8 +71,7 @@ namespace rl {
             return hash;
         }
 
-        static consteval uint32_t sdbm()
-        {
+        static consteval uint32_t sdbm() {
             uint32_t hash = 0;
             for (const char c : str)
                 hash = c + (hash << 6) + (hash << 16) - hash;
@@ -86,8 +79,7 @@ namespace rl {
             return hash;
         }
 
-        static consteval uint32_t djb()
-        {
+        static consteval uint32_t djb() {
             uint32_t hash = 5381;
             for (const char c : str)
                 hash = ((hash << 5) + hash) + c;
@@ -95,8 +87,7 @@ namespace rl {
             return hash;
         }
 
-        static consteval uint32_t dek()
-        {
+        static consteval uint32_t dek() {
             uint32_t hash = static_cast<uint32_t>(str.length());
             for (const char c : str) {
                 hash = ((hash << 5) ^ (hash >> 27)) ^ c;
@@ -105,8 +96,7 @@ namespace rl {
             return hash;
         }
 
-        static consteval uint32_t bp()
-        {
+        static consteval uint32_t bp() {
             uint32_t hash = 0;
             for (const char c : str) {
                 hash = hash << 7 ^ c;
@@ -115,8 +105,7 @@ namespace rl {
             return hash;
         }
 
-        static consteval uint32_t fnv()
-        {
+        static consteval uint32_t fnv() {
             constexpr uint32_t fnv_prime{ 0x811C9DC5 };
 
             uint32_t hash = 0;
@@ -128,8 +117,7 @@ namespace rl {
             return hash;
         }
 
-        static consteval uint32_t ap()
-        {
+        static consteval uint32_t ap() {
             uint32_t hash{ 0xAAAAAAAA };
             for (std::size_t i = 0; i < str.size(); i++) {
                 hash ^= (i & 1) == 0
@@ -143,8 +131,7 @@ namespace rl {
 }
 
 namespace rl::test {
-    void test_hash()
-    {
+    void test_hash() {
         constexpr static auto str{ "asdf" };
         fmt::println("ap hash   = {}", rl::hash<str>::ap());
         fmt::println("bp hash   = {}", rl::hash<str>::bp());

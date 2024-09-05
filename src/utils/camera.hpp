@@ -3,8 +3,7 @@
 #include "ds/rect.hpp"
 
 namespace rl::test3 {
-    ds::rect<f32> zoom_to_point(ds::rect<f32> orig_rect, ds::point<f32> zoom_pos, f32 zoom_factor)
-    {
+    ds::rect<f32> zoom_to_point(ds::rect<f32> orig_rect, ds::point<f32> zoom_pos, f32 zoom_factor) {
         const ds::rect new_rect{
             // first scale the rectangle by the zoom factor,
             // then center the scaled rect at the zoom point
@@ -49,8 +48,7 @@ namespace rl::test3 {
         return new_rect;
     }
 
-    int zoomtest()
-    {
+    int zoomtest() {
         // zoom in 50%
         // (area that's visible will be 2/3 what it was)
         constexpr f32 zoom_factor1{ 1.5f };

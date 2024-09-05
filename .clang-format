@@ -29,23 +29,23 @@ BinPackArguments: true
 BinPackParameters: true
 BreakBeforeBraces: Custom
 BraceWrapping:
-  AfterCaseLabel: true
-  AfterClass: true
+  AfterCaseLabel: false
+  AfterClass: false
   AfterControlStatement: false
   AfterEnum: false
-  AfterFunction: true
+  AfterFunction: false
   AfterNamespace: false
-  AfterStruct: true
-  AfterUnion: true
+  AfterStruct: false
+  AfterUnion: false
   AfterExternBlock: true
   BeforeCatch: false
   BeforeElse: true
   BeforeLambdaBody: false
-  BeforeWhile: true
+  BeforeWhile: false
   IndentBraces: false
-  SplitEmptyFunction: true
-  SplitEmptyRecord: true
-  SplitEmptyNamespace: true
+  SplitEmptyFunction: false
+  SplitEmptyRecord: false
+  SplitEmptyNamespace: false
 BreakBeforeBinaryOperators: None # NonAssignment # All
 BreakBeforeConceptDeclarations: true
 BreakBeforeInheritanceComma: true

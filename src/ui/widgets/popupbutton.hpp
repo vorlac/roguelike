@@ -9,8 +9,7 @@ namespace rl::ui {
     // This class overrides widget::m_icon_extra_scale to be 0.8, which
     // affects all subclasses of this widget. Subclasses must explicitly set
     // a different value if needed (e.g., in their constructor).
-    class PopupButton : public Button
-    {
+    class PopupButton : public Button {
     public:
         explicit PopupButton(Widget* parent, std::string caption = "Untitled",
                              Icon::ID button_icon = Icon::None);

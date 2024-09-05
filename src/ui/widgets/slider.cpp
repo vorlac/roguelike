@@ -7,77 +7,62 @@
 namespace rl::ui {
 
     Slider::Slider(Widget* parent)
-        : Widget(parent)
-    {
+        : Widget(parent) {
     }
 
-    f32 Slider::value() const
-    {
+    f32 Slider::value() const {
         return m_value;
     }
 
-    void Slider::set_value(const f32 value)
-    {
+    void Slider::set_value(const f32 value) {
         m_value = value;
     }
 
-    const ds::color<f32>& Slider::highlight_color() const
-    {
+    const ds::color<f32>& Slider::highlight_color() const {
         return m_highlight_color;
     }
 
-    void Slider::set_highlight_color(const ds::color<f32>& highlight_color)
-    {
+    void Slider::set_highlight_color(const ds::color<f32>& highlight_color) {
         m_highlight_color = highlight_color;
     }
 
-    std::pair<f32, f32> Slider::range() const
-    {
+    std::pair<f32, f32> Slider::range() const {
         return m_range;
     }
 
-    void Slider::set_range(const std::pair<f32, f32> range)
-    {
+    void Slider::set_range(const std::pair<f32, f32> range) {
         m_range = range;
     }
 
-    std::pair<f32, f32> Slider::highlighted_range() const
-    {
+    std::pair<f32, f32> Slider::highlighted_range() const {
         return m_highlighted_range;
     }
 
-    void Slider::set_highlighted_range(const std::pair<f32, f32> highlighted_range)
-    {
+    void Slider::set_highlighted_range(const std::pair<f32, f32> highlighted_range) {
         m_highlighted_range = highlighted_range;
     }
 
-    const std::function<void(f32)>& Slider::callback() const
-    {
+    const std::function<void(f32)>& Slider::callback() const {
         return m_callback;
     }
 
-    void Slider::set_callback(const std::function<void(f32)>& callback)
-    {
+    void Slider::set_callback(const std::function<void(f32)>& callback) {
         m_callback = callback;
     }
 
-    const std::function<void(f32)>& Slider::final_callback() const
-    {
+    const std::function<void(f32)>& Slider::final_callback() const {
         return m_final_callback;
     }
 
-    void Slider::set_final_callback(const std::function<void(f32)>& callback)
-    {
+    void Slider::set_final_callback(const std::function<void(f32)>& callback) {
         m_final_callback = callback;
     }
 
-    ds::dims<f32> Slider::preferred_size() const
-    {
+    ds::dims<f32> Slider::preferred_size() const {
         return ds::dims{ 70.0f, 16.0f };
     }
 
-    bool Slider::on_mouse_drag(const Mouse& mouse, const Keyboard&)
-    {
+    bool Slider::on_mouse_drag(const Mouse& mouse, const Keyboard&) {
         if (!m_enabled)
             return false;
 
@@ -99,8 +84,7 @@ namespace rl::ui {
         return true;
     }
 
-    bool Slider::on_mouse_button_pressed(const Mouse& mouse, const Keyboard&, ds::point<f32>)
-    {
+    bool Slider::on_mouse_button_pressed(const Mouse& mouse, const Keyboard&, ds::point<f32>) {
         if (!m_enabled)
             return false;
 
@@ -122,8 +106,7 @@ namespace rl::ui {
         return true;
     }
 
-    bool Slider::on_mouse_button_released(const Mouse& mouse, const Keyboard&)
-    {
+    bool Slider::on_mouse_button_released(const Mouse& mouse, const Keyboard&) {
         if (!m_enabled)
             return false;
 
@@ -148,8 +131,7 @@ namespace rl::ui {
         return true;
     }
 
-    void Slider::draw()
-    {
+    void Slider::draw() {
         const auto context{ m_renderer->context() };
         const ds::point<f32> center{ ds::rect{ m_rect.pt, m_rect.size }.centroid() };
         const f32 kr{ m_rect.size.height * 0.4f };

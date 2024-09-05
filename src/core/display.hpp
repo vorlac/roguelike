@@ -10,11 +10,9 @@ SDL_C_LIB_BEGIN
 SDL_C_LIB_END
 
 namespace rl {
-    class Display
-    {
+    class Display {
     public:
-        struct Event
-        {
+        struct Event {
             using type_t = SDL3::SDL_EventType;
             using type = std::underlying_type_t<type_t>;
 

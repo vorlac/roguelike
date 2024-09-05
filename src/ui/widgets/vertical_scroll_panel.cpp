@@ -8,35 +8,30 @@
 namespace rl::ui {
 
     VerticalScrollPanel::VerticalScrollPanel(Widget* parent)
-        : Widget{ parent }
-    {
+        : Widget{ parent } {
         m_container = new ScrollableContainer{ nullptr };
         Widget::add_child(0, m_container);
     }
 
-    f32 VerticalScrollPanel::scroll() const
-    {
+    f32 VerticalScrollPanel::scroll() const {
         // Return the current scroll amount as a value between 0 and 1.
         // 0 means scrolled to the top and 1 to the bottom.
         return m_scrollbar_pos;
     }
 
-    void VerticalScrollPanel::set_scroll(const f32 scroll)
-    {
+    void VerticalScrollPanel::set_scroll(const f32 scroll) {
         // Set the scroll amount to a value between 0 and 1.
         // 0 means scrolled to the top and 1 to the bottom.
         m_scrollbar_pos = scroll;
     }
 
-    Widget* VerticalScrollPanel::container() const
-    {
+    Widget* VerticalScrollPanel::container() const {
         // Set the scroll amount to a value between 0 and 1.
         // 0 means scrolled to the top and 1 to the bottom.
         return m_container;
     }
 
-    void VerticalScrollPanel::perform_layout()
-    {
+    void VerticalScrollPanel::perform_layout() {
         Widget::perform_layout();
         if (m_container == nullptr)
             return;
@@ -71,16 +66,14 @@ namespace rl::ui {
         m_container->perform_layout();
     }
 
-    ds::dims<f32> VerticalScrollPanel::preferred_size() const
-    {
+    ds::dims<f32> VerticalScrollPanel::preferred_size() const {
         if (m_container == nullptr)
             return { 0.0f, 0.0f };
 
         return m_container->preferred_size() + ds::dims{ Margin + ScrollbarWidth, 0.0f };
     }
 
-    Widget* VerticalScrollPanel::find_widget(const ds::point<f32> pt)
-    {
+    Widget* VerticalScrollPanel::find_widget(const ds::point<f32> pt) {
         scoped_trace(log_level::debug);
         if (m_scroll_bar_rect.contains(pt))
             return this;
@@ -88,8 +81,7 @@ namespace rl::ui {
         return m_container->find_widget(pt - m_rect.pt);
     }
 
-    bool VerticalScrollPanel::on_mouse_drag(const Mouse& mouse, const Keyboard& kb)
-    {
+    bool VerticalScrollPanel::on_mouse_drag(const Mouse& mouse, const Keyboard& kb) {
         const auto mouse_delta{ mouse.pos_delta() };
         if (m_prev_click_location == Component::ScrollBar &&
             m_cont_prefsize.height > m_rect.size.height) {
@@ -108,8 +100,7 @@ namespace rl::ui {
         return Widget::on_mouse_drag(mouse, kb);
     }
 
-    bool VerticalScrollPanel::draw_mouse_intersection(ds::point<f32> pt)
-    {
+    bool VerticalScrollPanel::draw_mouse_intersection(ds::point<f32> pt) {
         ds::point<f32> local_pos{ pt - m_rect.pt };
         if (this->contains(pt)) {
             const ds::rect<f32> widget_rect{ m_rect.pt, m_rect.size };
@@ -120,8 +111,7 @@ namespace rl::ui {
         return m_container->draw_mouse_intersection(local_pos);
     }
 
-    bool VerticalScrollPanel::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb, ds::point<f32>)
-    {
+    bool VerticalScrollPanel::on_mouse_button_pressed(const Mouse& mouse, const Keyboard& kb, ds::point<f32>) {
         m_prev_click_location = Component::None;
         const ds::point<f32> mouse_pos{ mouse.pos() };
         const ds::point<f32> local_mouse_pos{ mouse_pos - LocalTransform::absolute_pos };
@@ -158,20 +148,17 @@ namespace rl::ui {
         return m_container->on_mouse_button_pressed(mouse, kb);
     }
 
-    bool VerticalScrollPanel::on_mouse_button_released(const Mouse& mouse, const Keyboard& kb)
-    {
+    bool VerticalScrollPanel::on_mouse_button_released(const Mouse& mouse, const Keyboard& kb) {
         LocalTransform transform{ this };
         return m_container->on_mouse_button_released(mouse, kb);
     }
 
-    bool VerticalScrollPanel::on_mouse_move(const Mouse& mouse, const Keyboard& kb)
-    {
+    bool VerticalScrollPanel::on_mouse_move(const Mouse& mouse, const Keyboard& kb) {
         LocalTransform transform{ this };
         return m_container->on_mouse_move(mouse, kb);
     }
 
-    bool VerticalScrollPanel::on_mouse_scroll(const Mouse& mouse, const Keyboard& kb)
-    {
+    bool VerticalScrollPanel::on_mouse_scroll(const Mouse& mouse, const Keyboard& kb) {
         if (m_container == nullptr || m_cont_prefsize.height <= m_rect.size.height)
             return Widget::on_mouse_scroll(mouse, kb);
 
@@ -190,8 +177,7 @@ namespace rl::ui {
         return true;
     }
 
-    void VerticalScrollPanel::draw()
-    {
+    void VerticalScrollPanel::draw() {
         if (m_container == nullptr)
             return;
 

@@ -10,15 +10,12 @@ namespace rl::ui {
         Any
     };
 
-    class VerticalScrollPanel final : public Widget
-    {
-        class ScrollableContainer final : public Widget
-        {
+    class VerticalScrollPanel final : public Widget {
+        class ScrollableContainer final : public Widget {
         public:
             using Widget::Widget;
 
-            virtual bool on_mouse_drag(const Mouse& mouse, const Keyboard& kb) override
-            {
+            virtual bool on_mouse_drag(const Mouse& mouse, const Keyboard& kb) override {
                 return this->parent()->on_mouse_drag(mouse, kb);
             }
         };

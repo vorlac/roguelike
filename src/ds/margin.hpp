@@ -11,8 +11,7 @@ namespace rl::ds {
     struct vector2;
 
     template <rl::numeric T>
-    struct margin
-    {
+    struct margin {
     public:
         consteval margin() = default;
 
@@ -20,75 +19,63 @@ namespace rl::ds {
             : top{ val }
             , bottom{ val }
             , left{ val }
-            , right{ val }
-        {
+            , right{ val } {
         }
 
         consteval margin(T t, T b, T l, T r)
             : top{ t }
             , bottom{ b }
             , left{ l }
-            , right{ r }
-        {
+            , right{ r } {
         }
 
         [[nodiscard]]
-        consteval static margin<T> zero()
-        {
+        consteval static margin<T> zero() {
             return margin{ 0, 0, 0, 0 };
         }
 
         [[nodiscard]]
-        consteval static margin<T> null()
-        {
+        consteval static margin<T> null() {
             return margin{ -1, -1, -1, -1 };
         }
 
         [[nodiscard]]
-        consteval static margin<T> init(T val)
-        {
+        consteval static margin<T> init(T val) {
             return margin{ val, val, val, val };
         }
 
         [[nodiscard]]
-        consteval static margin<T> init(T top, T bot, T lft, T rgt)
-        {
+        consteval static margin<T> init(T top, T bot, T lft, T rgt) {
             return margin{ top, bot, lft, rgt };
         }
 
         [[nodiscard]]
-        constexpr vector2<T> offset() const
-        {
+        constexpr vector2<T> offset() const {
             return vector2{ left, top };
         }
 
         [[nodiscard]]
-        constexpr T vertical() const
-        {
+        constexpr T vertical() const {
             return top + bottom;
         }
 
         [[nodiscard]]
-        constexpr T horizontal() const
-        {
+        constexpr T horizontal() const {
             return left + right;
         }
 
-        constexpr bool operator==(const margin<T> other) const
-        {
+        constexpr bool operator==(const margin<T> other) const {
             return math::equal(this->top, other.top) &&
                    math::equal(this->bottom, other.bottom) &&
                    math::equal(this->left, other.left) &&
                    math::equal(this->right, other.right);
         }
 
-        constexpr bool operator!=(const margin<T> other) const
-        {
+        constexpr bool operator!=(const margin<T> other) const {
             return !this->operator==(other);
         }
 
-        constexpr margin<T> operator-() const
-        {
+        constexpr margin<T> operator-() const {
             // TODO: confirm this is better
             //       than *= -1 for float
             margin ret{ *this };
@@ -99,8 +86,7 @@ namespace rl::ds {
             return ret;
         }
 
-        constexpr const margin<T>& operator+=(T val)
-        {
+        constexpr const margin<T>& operator+=(T val) {
             this->top += val;
             this->bottom += val;
             this->left += val;
@@ -108,8 +94,7 @@ namespace rl::ds {
             return *this;
         }
 
-        constexpr const margin<T>& operator-=(T val)
-        {
+        constexpr const margin<T>& operator-=(T val) {
             this->top -= val;
             this->bottom -= val;
             this->left -= val;
@@ -117,8 +102,7 @@ namespace rl::ds {
             return *this;
         }
 
-        constexpr const margin<T>& operator*=(T val)
-        {
+        constexpr const margin<T>& operator*=(T val) {
             this->top *= val;
             this->bottom *= val;
             this->left *= val;
@@ -126,8 +110,7 @@ namespace rl::ds {
             return *this;
         }
 
-        constexpr const margin<T>& operator/=(T val)
-        {
+        constexpr const margin<T>& operator/=(T val) {
             this->top /= val;
             this->bottom /= val;
             this->left /= val;
@@ -135,8 +118,7 @@ namespace rl::ds {
             return *this;
         }
 
-        constexpr const margin<T>& operator+=(const margin<T>& other)
-        {
+        constexpr const margin<T>& operator+=(const margin<T>& other) {
             this->top += other.top;
             this->bottom += other.bottom;
             this->left += other.left;
@@ -144,8 +126,7 @@ namespace rl::ds {
             return *this;
         }
 
-        constexpr const margin<T>& operator-=(const margin<T>& other)
-        {
+        constexpr const margin<T>& operator-=(const margin<T>& other) {
             this->top -= other.top;
             this->bottom -= other.bottom;
             this->left -= other.left;
@@ -153,8 +134,7 @@ namespace rl::ds {
             return *this;
         }
 
-        constexpr const margin<T>& operator*=(const margin<T>& other)
-        {
+        constexpr const margin<T>& operator*=(const margin<T>& other) {
             this->top *= other.top;
             this->bottom *= other.bottom;
             this->left *= other.left;
@@ -162,8 +142,7 @@ namespace rl::ds {
             return *this;
         }
 
-        constexpr const margin<T>& operator/=(const margin<T>& other)
-        {
+        constexpr const margin<T>& operator/=(const margin<T>& other) {
             this->top /= other.top;
             this->bottom /= other.bottom;
             this->left /= other.left;
@@ -171,57 +150,49 @@ namespace rl::ds {
             return *this;
         }
 
-        constexpr margin<T> operator+(T val) const
-        {
+        constexpr margin<T> operator+(T val) const {
             margin ret{ *this };
             ret += val;
             return ret;
         }
 
-        constexpr margin<T> operator-(T val) const
-        {
+        constexpr margin<T> operator-(T val) const {
             margin ret{ *this };
             ret -= val;
             return ret;
         }
 
-        constexpr margin<T> operator*(T val) const
-        {
+        constexpr margin<T> operator*(T val) const {
             margin ret{ *this };
             ret *= val;
             return ret;
         }
 
-        constexpr margin<T> operator/(T val) const
-        {
+        constexpr margin<T> operator/(T val) const {
             margin ret{ *this };
             ret /= val;
             return ret;
         }
 
-        constexpr margin<T> operator+(const margin<T>& other) const
-        {
+        constexpr margin<T> operator+(const margin<T>& other) const {
             margin ret{ *this };
             ret += other;
             return ret;
         }
 
-        constexpr margin<T> operator-(const margin<T>& other) const
-        {
+        constexpr margin<T> operator-(const margin<T>& other) const {
             margin ret{ *this };
             ret -= other;
             return ret;
         }
 
-        constexpr margin<T> operator*(const margin<T>& other) const
-        {
+        constexpr margin<T> operator*(const margin<T>& other) const {
             margin ret{ *this };
             ret *= other;
             return ret;
         }
 
-        constexpr margin<T> operator/(const margin<T>& other) const
-        {
+        constexpr margin<T> operator/(const margin<T>& other) const {
             margin ret{ *this };
             ret /= other;
             return ret;
@@ -239,8 +210,7 @@ namespace rl::ds {
 
 namespace rl::ds {
     template <rl::numeric T>
-    constexpr auto format_as(const margin<T> mar)
-    {
+    constexpr auto format_as(const margin<T> mar) {
         return fmt::format("margin=[t:{} b:{} l:{} r:{}]",
                            mar.top, mar.bottom, mar.left, mar.right);
     }

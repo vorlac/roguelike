@@ -158,8 +158,7 @@ namespace rl::ui {
     // Aside form defining the Layout interface for sizing and
     // performing the Layout, a BoxLayout only handles basic orientation,
     // margins and spacing.
-    class OldBoxLayout final : public OldLayout
-    {
+    class OldBoxLayout final : public OldLayout {
     public:
         explicit OldBoxLayout(Alignment orientation,
                               Placement_OldAlignment alignment = Placement_OldAlignment::Center,

@@ -7,10 +7,8 @@
 #include "utils/sdl_defs.hpp"
 
 namespace rl {
-    class EventHandler
-    {
-        constexpr static i32 resizing_event_watcher(void* data, SDL3::SDL_Event* e)
-        {
+    class EventHandler {
+        constexpr static i32 resizing_event_watcher(void* data, SDL3::SDL_Event* e) {
             if (e->type != MainWindow::Event::Resized)
                 return 0;
 
@@ -22,13 +20,11 @@ namespace rl {
     public:
         constexpr EventHandler() = default;
 
-        explicit EventHandler(const std::unique_ptr<MainWindow>& window)
-        {
+        explicit EventHandler(const std::unique_ptr<MainWindow>& window) {
             SDL3::SDL_AddEventWatch(resizing_event_watcher, window.get());
         }
 
-        bool handle_events(const std::unique_ptr<MainWindow>& window)
-        {
+        bool handle_events(const std::unique_ptr<MainWindow>& window) {
             SDL3::SDL_Event e{};
             while (SDL3::SDL_PollEvent(&e) != 0) {
                 switch (e.type) {
@@ -45,8 +41,7 @@ namespace rl {
                         window->mouse_button_released_event_callback(e);
                         break;
 
-                    case Keyboard::Event::KeyDown:
-                    {
+                    case Keyboard::Event::KeyDown: {
                         window->keyboard_key_pressed_event_callback(e);
                         const auto key{ static_cast<Keyboard::Scancode>(e.key.keysym.scancode) };
                         if (key == Keyboard::Scancode::Escape) [[unlikely]]
@@ -138,8 +133,7 @@ namespace rl {
             return true;
         }
 
-        constexpr bool quit_triggered() const
-        {
+        constexpr bool quit_triggered() const {
             return m_quit;
         }
 
@@ -152,16 +146,14 @@ namespace rl {
             Released = 1,
         };
 
-        struct EventAction
-        {
+        struct EventAction {
             using type = SDL3::SDL_EventAction;
             constexpr static type Add = SDL3::SDL_ADDEVENT;
             constexpr static type Peek = SDL3::SDL_PEEKEVENT;
             constexpr static type Get = SDL3::SDL_GETEVENT;
         };
 
-        struct Event
-        {
+        struct Event {
             using type = SDL3::SDL_EventType;
             constexpr static type First = SDL3::SDL_EVENT_FIRST;
             constexpr static type Quit = SDL3::SDL_EVENT_QUIT;

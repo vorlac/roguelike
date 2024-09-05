@@ -3,8 +3,7 @@
 #include "ds/color.hpp"
 
 namespace rl::debug {
-    struct ui
-    {
+    struct ui {
         constexpr static bool mouse_interaction{ true };
         constexpr static bool widget_outlines{ false };
 
@@ -13,8 +12,7 @@ namespace rl::debug {
         constexpr static ds::color<f32> active_outline_color{ Colors::Yellow };
     };
 
-    struct core
-    {
+    struct core {
         constexpr static bool loop_timing_stats{ true };
         constexpr static bool loop_throttling{ true };
     };

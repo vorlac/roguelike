@@ -23,8 +23,7 @@ namespace rl {
             Resize  // being resized or can be resized
         };
 
-        class ScrollableDialog : public Widget
-        {
+        class ScrollableDialog : public Widget {
         public:
             explicit ScrollableDialog(std::string title = {},
                                       ds::dims<f32> fixed_size = {});

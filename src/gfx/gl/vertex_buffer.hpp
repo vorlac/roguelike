@@ -17,8 +17,7 @@ namespace rl::gl {
      * @brief OpenGL Vertex Buffer Object (VBO) representing a buffer of vertices
      * that openGL can read from when executing shaders on the data being rendered
      * */
-    class VertexBuffer
-    {
+    class VertexBuffer {
     public:
         enum class DrawMode {
             Fill,
@@ -26,8 +25,7 @@ namespace rl::gl {
         };
 
     public:
-        VertexBuffer(const ds::rect<f32>& viewport_rect)
-        {
+        VertexBuffer(const ds::rect<f32>& viewport_rect) {
             // bind vertex array object
             glGenVertexArrays(1, &m_vao_id);
             // create vertex buffer object
@@ -38,8 +36,7 @@ namespace rl::gl {
             debug_assert(shaders_valid, "Failed to compile shaders");
         }
 
-        ~VertexBuffer()
-        {
+        ~VertexBuffer() {
             // cleanup when everything leaves scope
             glDeleteVertexArrays(1, &m_vao_id);
             glDeleteBuffers(1, &m_vbo_id);
@@ -47,8 +44,7 @@ namespace rl::gl {
         }
 
         // Defaults to fill
-        void set_draw_mode(DrawMode mode = DrawMode::Fill)
-        {
+        void set_draw_mode(DrawMode mode = DrawMode::Fill) {
             switch (mode) {
                 case DrawMode::Wireframe:
                     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -63,8 +59,7 @@ namespace rl::gl {
          * @brief Configure/define and bind all shared
          * buffers between application and openGL API
          * */
-        void bind_buffers()
-        {
+        void bind_buffers() {
             // bind the VAO vertex array
             glBindVertexArray(m_vao_id);
 
@@ -110,8 +105,7 @@ namespace rl::gl {
             this->set_draw_mode(DrawMode::Wireframe);
         }
 
-        void draw_triangles()
-        {
+        void draw_triangles() {
             // Set shader program to use
             m_shader.set_active();
             // glUseProgram(m_shader_id);

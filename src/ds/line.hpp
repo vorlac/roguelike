@@ -7,8 +7,7 @@ namespace rl::ds {
 #pragma pack(4)
 
     template <rl::numeric T>
-    struct line
-    {
+    struct line {
         point<T> start{ point<T>::null() };
         point<T> end{ point<T>::null() };
     };

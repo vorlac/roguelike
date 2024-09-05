@@ -17,11 +17,9 @@ SDL_C_LIB_BEGIN
 SDL_C_LIB_END
 
 namespace rl {
-    class Application
-    {
+    class Application {
     public:
-        struct Subsystem
-        {
+        struct Subsystem {
             enum ID : u16_fast {
                 Timer = SDL_INIT_TIMER,
                 Audio = SDL_INIT_AUDIO,
@@ -42,16 +40,14 @@ namespace rl {
         Application& operator=(Application&& other) = delete;
 
     public:
-        Application()
-        {
+        Application() {
             [[maybe_unused]] bool status{ this->init_subsystem(Subsystem::All) };
             debug_assert(status, "failed to init SDL subsystems");
             m_main_window = std::make_unique<MainWindow>("Roguelite [OpenGL Window]");
             m_event_handler = EventHandler{ m_main_window };
         }
 
-        ~Application()
-        {
+        ~Application() {
             SDL3::SDL_Quit();
         }
 
@@ -60,8 +56,7 @@ namespace rl {
             ScrollDialog,
         };
 
-        i32 run()
-        {
+        i32 run() {
             bool ret{ this->setup() };
 
             constexpr auto test_case{ UITest::ScrollDialog };
@@ -187,66 +182,55 @@ namespace rl {
             return ret ? 0 : 1;
         }
 
-        void render() const
-        {
+        void render() const {
             m_main_window->render();
         }
 
         [[nodiscard]]
-        bool setup() const
-        {
+        bool setup() const {
             return true;
         }
 
         [[nodiscard]]
-        bool teardown() const
-        {
+        bool teardown() const {
             return true;
         }
 
-        bool handle_events()
-        {
+        bool handle_events() {
             return m_event_handler.handle_events(m_main_window);
         }
 
-        void update() const
-        {
+        void update() const {
             m_main_window->gui()->perform_layout();
         }
 
         [[nodiscard]]
-        bool should_exit() const
-        {
+        bool should_exit() const {
             return m_event_handler.quit_triggered();
         }
 
         [[nodiscard]]
-        bool quit() const
-        {
+        bool quit() const {
             return this->teardown();
         }
 
         [[nodiscard]]
-        bool init_subsystem(const Subsystem::ID flags) const
-        {
+        bool init_subsystem(const Subsystem::ID flags) const {
             const i32 result{ SDL3::SDL_Init(flags) };
             debug_assert(result == 0, "failed to init subsystem");
             return result == 0;
         }
 
-        std::unique_ptr<MainWindow>& main_window()
-        {
+        std::unique_ptr<MainWindow>& main_window() {
             return m_main_window;
         }
 
-        Application& sdl()
-        {
+        Application& sdl() {
             return *this;
         }
 
     private:
-        void print_loop_stats(const f32 delta_time)
-        {
+        void print_loop_stats(const f32 delta_time) {
             f32 elapsed_time{ m_timer.elapsed() };
             u64 iterations{ m_timer.tick_count() };
             if (iterations % 2400 != 0)

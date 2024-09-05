@@ -10,8 +10,7 @@ namespace rl {
     class Keyboard;
 
     namespace ui {
-        class CheckBox final : public Widget
-        {
+        class CheckBox final : public Widget {
         public:
             explicit CheckBox(
                 std::string text,
