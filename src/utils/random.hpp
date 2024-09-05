@@ -12,7 +12,6 @@
 #include "utils/conversions.hpp"
 
 namespace rl {
-
     template <auto RangeStart = 0, auto RangeEnd = std::numeric_limits<decltype(RangeStart)>::max(), typename TRandEngine = std::mt19937>
         requires(std::same_as<decltype(RangeStart), decltype(RangeEnd)> && std::integral<decltype(RangeStart)>)
     struct random
@@ -22,16 +21,10 @@ namespace rl {
         using internal_t = typename std::conditional_t<sizeof(result_type) >= sizeof(i32), result_type, i32>;
 
     public:
-        constexpr static auto value()
+        static auto value()
         {
             return m_dist(m_engine);
         }
-
-        // private:
-        //     constexpr static bool seed() {
-        //         m_engine.seed(m_random_device);
-        //         return true;
-        //     }
 
     private:
         static thread_local inline pcg_extras::seed_seq_from<std::random_device> m_random_device{};
@@ -40,29 +33,5 @@ namespace rl {
             static_cast<internal_t>(RangeStart),
             static_cast<internal_t>(RangeEnd),
         };
-        // static inline const bool m_seeded{ rl::random<RangeStart, RangeEnd, TRandEngine>::seed() };
     };
-
-    // template <typename TRandEngine = pcg32, auto RangeStart = 0, auto RangeEnd = std::numeric_limits<decltype(RangeStart)>::max()>
-    //     requires(std::same_as<decltype(RangeStart), decltype(RangeEnd)> && std::integral<decltype(RangeStart)>)
-    // struct pcg_rand {
-    //     using numeric_type = decltype(RangeStart);
-
-    // public:
-    //     constexpr static decltype(auto) value() {
-    //         return m_dist(m_engine);
-    //     }
-
-    // private:
-    //     constexpr static bool seed() {
-    //         m_engine.seed(m_random_device);
-    //         return true;
-    //     }
-
-    // private:
-    //     static thread_local inline pcg_extras::seed_seq_from<std::random_device> m_random_device{};
-    //     static thread_local inline TRandEngine m_engine{ m_random_device };
-    //     static thread_local inline std::uniform_int_distribution<numeric_type> m_dist{ RangeStart, RangeEnd };
-    //     static thread_local inline bool m_seeded{ rl::pcg_rand<TRandEngine, RangeStart, RangeEnd>::seed() };
-    // };
 }

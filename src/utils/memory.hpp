@@ -9,7 +9,7 @@ namespace rl::memory {
     namespace detail {
         template <u64 Size>
             requires(Size < 32)
-        constexpr u32 static_memcmp(const void* a, const void* b)
+        constexpr i32 static_memcmp(const void* a, const void* b)
         {
             const u8* const s1{ static_cast<const u8*>(a) };
             const u8* const s2{ static_cast<const u8*>(b) };
@@ -19,7 +19,7 @@ namespace rl::memory {
         }
 
         template <>
-        constexpr u32 static_memcmp<0>(const void*, const void*)
+        constexpr i32 static_memcmp<0>(const void*, const void*)
         {
             return 0;
         }
@@ -44,37 +44,3 @@ namespace rl::memory {
                         : value;
     }
 }
-
-// int main()
-//{
-//     const small_trivially_copyable a = {
-//         .a = static_cast<int32_t>(rand()),
-//         .b = static_cast<uint64_t>(rand()),
-//         .c = static_cast<float>(rand()) / 10.0f,
-//     };
-//
-//     auto&& static_memcmp_bench = ankerl::nanobench::Bench().run("static_memcmp", [&] {
-//         const small_trivially_copyable b = {
-//             .a = static_cast<int32_t>(rand()),
-//             .b = static_cast<uint64_t>(rand()),
-//             .c = static_cast<float>(rand()) / 10.0f,
-//         };
-//         static_memcmp(a, b);
-//         ankerl::nanobench::doNotOptimizeAway(a);
-//     });
-//
-//     auto&& std_memcmp_bench = ankerl::nanobench::Bench().run("memcmp", [&] {
-//         const small_trivially_copyable b = {
-//             .a = static_cast<int32_t>(rand()),
-//             .b = static_cast<uint64_t>(rand()),
-//             .c = static_cast<float>(rand()) / 10.0f,
-//         };
-//         (void)memcmp(&a, &b, sizeof(a));
-//         ankerl::nanobench::doNotOptimizeAway(a);
-//     });
-//
-//     std::cout << static_memcmp_bench.output();
-//     std::cout << std::endl << std::endl;
-//     std::cout << std_memcmp_bench.output();
-//     std::cout << std::endl << std::endl;
-// }

@@ -21,8 +21,7 @@
 #include "utils/numeric.hpp"
 #include "utils/reflect.hpp"
 
-namespace rl::inline utils {
-
+namespace rl::test::signals {
     template <auto& SignalName, typename TSubscriber = std::nullopt_t, std::invocable TCallable = std::function<void()>>
         requires rl::any_of<std::remove_cvref_t<decltype(SignalName)>, std::string_view, const char*, const char[]>
     class Signal
@@ -31,7 +30,7 @@ namespace rl::inline utils {
         using callable_t = TCallable;
         using subscriber_t = std::remove_cvref_t<TSubscriber>;
         constexpr static std::string_view name{ SignalName };
-        constexpr static std::string_view hash_name{ reflect::demangled_typename<callable_t>() };
+        constexpr static std::string_view hash_name{ reflect::nameof<callable_t>() };
 
         Signal() = default;
 

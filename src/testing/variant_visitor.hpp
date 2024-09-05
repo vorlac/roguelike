@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <concepts>
 #include <iostream>
 #include <memory>
@@ -7,7 +8,7 @@
 #include <variant>
 #include <vector>
 
-namespace rl::crtp::example {
+namespace rl::test {
     template <typename... TVisitorFunction>
     struct variant_visitor : TVisitorFunction...
     {
@@ -41,7 +42,7 @@ namespace rl::crtp::example {
 
     // clang-format on
 
-    int test()
+    int run_varian_visitor_example()
     {
         using variant_t = std::variant<A, B, C, D>;
         std::vector<variant_t> variants = {
@@ -54,22 +55,25 @@ namespace rl::crtp::example {
         };
 
         for (auto&& var : variants) {
-            std::visit(variant_visitor{
-                           [](A& a_variant) {
-                               std::cout << "A: " << a_variant.a << std::endl;
-                           },
-                           [](B& b_variant) {
-                               std::cout << "B: " << b_variant.b << std::endl;
-                           },
-                           [](auto& other) {
-                               using other_t = std::remove_cvref_t<decltype(other)>;
-                               if constexpr (std::same_as<other_t, C>)
-                                   std::cout << "C: " << other.c << std::endl;
-                               if constexpr (std::same_as<other_t, D>)
-                                   std::cout << "D: " << other.d << std::endl;
-                           },
-                       },
-                       var);
+            std::visit(
+                variant_visitor{
+                    [](A& a_variant) {
+                        std::cout << "A: " << a_variant.a << std::endl;
+                    },
+                    [](B& b_variant) {
+                        std::cout << "B: " << b_variant.b << std::endl;
+                    },
+                    [](auto& other) {
+                        using other_t = std::remove_cvref_t<decltype(other)>;
+                        if constexpr (std::same_as<other_t, C>)
+                            std::cout << "C: " << other.c << std::endl;
+                        if constexpr (std::same_as<other_t, D>)
+                            std::cout << "D: " << other.d << std::endl;
+                    },
+                },
+                var);
         }
+
+        return 0;
     }
 }

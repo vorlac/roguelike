@@ -88,7 +88,7 @@ project_sources
 )
 
 add_executable(${PROJECT_NAME}
-  #${project_sources}
+  ${project_sources}
   ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/resources/fonts.cpp
 )
@@ -217,12 +217,7 @@ target_link_options(${PROJECT_NAME}
     >
 
     $<$<NOT:${compiler_is_msvc}>:
-        #-lstdcxx
-        #"-LC:\\Program Files\\LLVM\\lib\\LLVM-C.lib"
-        #-lstdlib=libc++
         -MT
-        #"-use-ld=C:\\Program Files\\LLVM\\bin\\lld.exe"
-        #-lc++abi
         $<$<CONFIG:Release>:
             #-fomit-frame-pointer
             -O2
@@ -248,10 +243,9 @@ target_include_directories(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME}
   PRIVATE fmt::fmt
-#  PRIVATE spdlog::spdlog_header_only
   PRIVATE nanobench::nanobench
-#   PRIVATE SDL3::SDL3-static
-#   PRIVATE glm::glm
+  PRIVATE SDL3::SDL3-static
+  PRIVATE glm::glm
 )
 
 if (ENABLE_CCACHE MATCHES ON)
@@ -263,6 +257,8 @@ if (AUTOFORMAT_SRC_ON_CONFIGURE MATCHES ON)
 endif()
 
 # permissions fix to allow this on windows:
+# 1. Enable "developer mode"
+#         OR...
 # 1. Open gpedit.msc
 # 2. Computer Configuration
 #      => Windows Settings

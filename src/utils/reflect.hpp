@@ -1,3 +1,5 @@
+#pragma once
+
 #include <array>
 #include <concepts>
 #include <iostream>
@@ -10,24 +12,21 @@
 #include <utility>
 #include <vector>
 
-namespace rl::reflect {
+namespace rl::inline reflect {
     template <typename T>
-    concept aggregate = std::is_aggregate_v<std::remove_cvref_t<T>>;
-
-    template <typename T>
-    constexpr std::string_view demangled_typename()
+    consteval decltype(auto) demangled_typename()
     {
 #if defined(__clang__)
-        constexpr static std::string_view pref{ "[T = " };
-        constexpr static std::string_view suff{ "]" };
-        constexpr static std::string_view func{ __PRETTY_FUNCTION__ };
+        constexpr std::string_view pref{ "[T = " };
+        constexpr std::string_view suff{ "]" };
+        constexpr std::string_view func{ __PRETTY_FUNCTION__ };
 #elif defined(__GNUC__)
-        constexpr static std::string_view pref{ "with T = " };
-        constexpr static std::string_view suff{ "; " };
-        constexpr static std::string_view func{ __PRETTY_FUNCTION__ };
+        constexpr std::string_view pref{ "with T = " };
+        constexpr std::string_view suff{ "; " };
+        constexpr std::string_view func{ __PRETTY_FUNCTION__ };
 #elif defined(_MSC_VER)
-        constexpr std::string_view pref{ "rl::reflect::detail::demangled_typename<" };
-        constexpr std::string_view suff{ ">()" };
+        constexpr std::string_view pref{ "rl::reflect::demangled_typename<" };
+        constexpr std::string_view suff{ ">(void)" };
         constexpr std::string_view func{ __FUNCSIG__ };
 #endif
         constexpr auto start{ func.find(pref) + pref.size() };
@@ -37,6 +36,9 @@ namespace rl::reflect {
     }
 
 #if defined(__GNUC__)
+    template <typename T>
+    concept aggregate = std::is_aggregate_v<std::remove_cvref_t<T>>;
+
     struct member_info
     {
         std::string name{};
