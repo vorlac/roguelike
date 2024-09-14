@@ -13,9 +13,6 @@
 #include "utils/reflect.hpp"
 
 namespace rl::test::chrono {
-    // this is really the one and only function that handles all time
-    // duration conversions. you can convert any unit & value of time
-    // duration to any number of duration unit & value combinations.
     template <typename... TDurations>
     std::tuple<TDurations...> convert_durations(auto&& in_duration) {
         std::tuple<TDurations...> ret{};

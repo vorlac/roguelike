@@ -32,7 +32,7 @@
 	<s:Boolean x:Key="/Default/CodeInspection/CodeAnnotations/PropagateAnnotations/@EntryValue">False</s:Boolean>
 	<s:String x:Key="/Default/CodeInspection/CppClangTidy/ConfigFile/@EntryValue">C:\Users\sal\development\vorlac\roguelike\.clang-tidy</s:String>
 	<s:String x:Key="/Default/CodeInspection/CppClangTidy/ExecutableToUse/@EntryValue">FromPath</s:String>
-	<s:Boolean x:Key="/Default/CodeInspection/CppClangTidy/UseSpecificConfigFile/@EntryValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/CppClangTidy/UseSpecificConfigFile/@EntryValue">False</s:Boolean>
 	<s:String x:Key="/Default/CodeInspection/CppGutterIcons/ShowGutterIcons/@EntryValue">ExceptDeclarationDefinition</s:String>
 	<s:Boolean x:Key="/Default/CodeInspection/CppInspection/IdentifierHighlightingEnabled/@EntryValue">False</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeInspection/CppInspection/QuickInfoEnabled/@EntryValue">False</s:Boolean>

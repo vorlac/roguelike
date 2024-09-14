@@ -146,7 +146,6 @@ namespace rl {
                             layout_abc_h1,
                             layout_abc_h2,
                         })
-
                 };
 
                 const auto layout_canvas_vert{ new ui::BoxLayout<Alignment::Vertical>("Top Level Vert") };
